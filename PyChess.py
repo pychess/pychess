@@ -20,7 +20,7 @@ import thread
 from Game import game
 
 def saveGameBefore (action):
-    #TODO: Test om noget er ændret
+    #TODO: Test om noget er ændret!
     defText = window["savedialogtext1"].get_label()
     window["savedialogtext1"].set_markup(defText % action)
     response = window["savegamedialog"].run()
