@@ -2,6 +2,7 @@ import pygtk
 pygtk.require("2.0")
 from gtk import gdk
 import gtk, time, gobject, pango
+from math import ceil
 from threading import Thread
 
 class ChessClock (gtk.DrawingArea):
@@ -59,7 +60,6 @@ class ChessClock (gtk.DrawingArea):
         else: context.set_source_color(self.dark)
         context.move_to(float(rect.width)/2+hpad,vpad)
         context.show_layout(layout1)
-        
 
     def redraw_canvas(self):
         if self.window:
@@ -68,40 +68,42 @@ class ChessClock (gtk.DrawingArea):
                 rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
                 self.window.invalidate_rect(rect, True)
                 self.window.process_updates(True)
-                return False
+            gobject.idle_add(func)
 
     def update(self):
-        if self.p0 <= 0 or self.p1 <= 0:
-            return False
-            
         if self.player == 0:
             self.p0 -= 1
         else: self.p1 -= 1
         
         if self.p0 <= 0 or self.p1 <= 0:
             self.emit_time_out_signal(self.player)
-            return False
 
         return True
 
     def emit_time_out_signal(self, player):
         self.emit("time_out", player)
 
-    def formatTime(self, seconds):
+    def formatTime(self, dseconds):
+        seconds = dseconds / 10
         minus = seconds < 0 and "-" or ""
         if minus: seconds = -seconds
         h = int(seconds / 3600)
-        m = seconds % 3600 / 60
+        m = int(seconds % 3600 / 60)
         s = seconds % 60
         if h: return minus+"%d:%02d:%02d" % (h,m,s)
-        else: return minus+"%d:%02d" % (m,s)
+        elif not m and s < 10: return minus+"%.1f" % s
+        else: return minus+"%d:%02d" % (m,ceil(s))
 
     def setTime(self, time):
         self.p0 = time
         self.p1 = time
     
+    gain = 0
+    def setGain(self, gain):
+        self.gain = gain
+    
     def start(self):
-        self.thread = gobject.timeout_add(1000, self.update)
+        self.thread = gobject.timeout_add(100, self.update)
     
     thread = None
     def stop(self):
@@ -114,17 +116,21 @@ class ChessClock (gtk.DrawingArea):
     _p0 = 0
     def _get_time0(self):
         return self._p0
-    def _set_time0(self, secs):
-        self._p0 = secs
-        self.redraw_canvas()
+    def _set_time0(self, dsecs):
+        if dsecs == 0: return
+        self._p0 = dsecs
+        if -100 < dsecs < 100 or dsecs % 10 == 0:
+            self.redraw_canvas()
     p0 = property(_get_time0, _set_time0)
 
     _p1 = 0
     def _get_time1(self):
         return self._p1
-    def _set_time1(self, secs):
-        self._p1 = secs
-        self.redraw_canvas()
+    def _set_time1(self, dsecs):
+        if dsecs == 0: return
+        self._p1 = dsecs
+        if -100 < dsecs < 100 or dsecs % 10 == 0:
+            self.redraw_canvas()
     p1 = property(_get_time1, _set_time1)
 
     _player = 0
@@ -132,6 +138,9 @@ class ChessClock (gtk.DrawingArea):
         return self._player
     def _set_player(self, player):
         if player == self._player: return
+        if self._player == 0:
+            self.p0 += self.gain
+        else: self.p1 += self.gain
         self._player = player
         self.redraw_canvas()
         self.stop()
