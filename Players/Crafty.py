@@ -6,29 +6,34 @@ from Engine import Engine
 
 class Crafty (Engine):
     
+    name = None
     def __init__ (self):
         from popen2 import popen4
-        self.inn, self.out = popen4("nice gnuchess -x", 0)
-        self.out = LogPipe(self.out)
+        self.inn, self.out = popen4("nice crafty", 0)
+        self.out = LogPipe(self.out, "CrW: ")
         atexit.register(self.__del__)
         
-        self._get()
+        print >> self.out, "xboard"
+        for line in self._get():
+            if line.startswith("Crafty "):
+                self.name = line
         
     def setStrength (self, strength):
         if strength == 0:
             print >> self.out, "easy"
             print >> self.out, "random"
-            print >> self.out, "book random"
-            print >> self.out, "depth 1"
+            print >> self.out, "book width 100"
+            print >> self.out, "sd 1"
         elif strength == 1:
             print >> self.out, "easy"
             print >> self.out, "random"
-            print >> self.out, "book random"
-            print >> self.out, "depth 4"
+            print >> self.out, "book width 10"
+            print >> self.out, "sd 4"
         elif strength == 2:
             print >> self.out, "hard"
-            print >> self.out, "book best"
-            print >> self.out, "depth 9"
+            print >> self.out, "book width 3"
+            print >> self.out, "sd 9"
+            print >> self.out, "egtb"
     
     def setTime (self, secs, gain):
         print >> self.out, "level 0", secs/60.0, gain
@@ -39,47 +44,31 @@ class Crafty (Engine):
             print >> self.out, "go"
         else:
             move = history.moves[-1]
-            print >> self.out, move.simple()
+            print >> self.out, str(move)
         
         replies = self._get()
         for reply in replies:
-            if reply.startswith("My move is"):
-                mymove = reply[12:].strip()
-                c1, c2 = mymove[:2], mymove[2:4]
-                if len(mymove) == 5:
-                    return Move(history, c1, c2, mymove[4:5])
-                return Move(history, c1, c2)
+            if reply.startswith("move "):
+                mymove = reply[5:].strip()
+                return Move(history, mymove)
                 
-        log.error("Unable to parse gnuchess reply '%s'" % str(replies))
+        log.error("Unable to parse crafty reply '%s'" % str(replies))
         print history[-1]
         return None
     
     # Methods usable in human vs. human enviroments
     
     def score (self):
-        print >> self.out, "show pin"
-        reply = self._get()
-        return int(reply[-1][24:])
+        pass
     
     def getSpeed (self):
-        print >> self.out, "test movegenspeed"
-        reply = self._get()
-        e = reply[-1].find(".")
-        return int(reply[-1][7:e])
+        pass
     
     def hint (self):
-        print >> self.out, "hint"
-        return _get()[0][6:]
+        pass
     
-    from re import compile
-    bookExpr = compile(r"(\w{2,3})\((\d+)?/?(\d+)?/?(\d+)?/?(\d+)?\)")
     def book (self):
-        """[(move,percent,wins,loses,draws),]"""
-        print >> self.out, "bk"
-        reply = self._get()
-        if len(reply) < 2 or reply[1].endswith("there is no move"):
-            return []
-        return self.bookExpr.findall("".join(reply))
+        pass
     
     # Private methods
     
@@ -88,8 +77,8 @@ class Crafty (Engine):
         result = []
         while True:
             line = self.inn.readline()
-            log.debug(line)
-            if line == "Illegal move: flush plz\n":
+            log.debug("CrR: " + line.strip())
+            if line == "Illegal move: flush\n":
                 break
             result += [line]
         return result
@@ -98,18 +87,11 @@ class Crafty (Engine):
     # Other methods
     
     def testEngine (self):
-        assert repr(self), "You must have gnuchess installed"
+        assert repr(self), "You must have crafty installed"
     
     def __repr__ (self):
-        from os import popen
-        if not hasattr(self,"name"):
-            self.name = popen("gnuchess --version").read()[:-1]
         return self.name
     
     def __del__ (self):
-        print >> self.out, "exit"
-
-if __name__ == "__main__":
-    c = GnuChess()
-    c.move
-    del c
+        print >> self.out, "end"
+        

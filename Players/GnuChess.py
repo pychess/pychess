@@ -9,7 +9,7 @@ class GnuChess (Engine):
     def __init__ (self):
         from popen2 import popen4
         self.inn, self.out = popen4("nice gnuchess -x", 0)
-        self.out = LogPipe(self.out, "Write: ")
+        self.out = LogPipe(self.out, "GnW: ")
         atexit.register(self.__del__)
         
         self._get()
@@ -88,7 +88,7 @@ class GnuChess (Engine):
         result = []
         while True:
             line = self.inn.readline()
-            log.debug("Read: " + line.strip())
+            log.debug("GnR: " + line.strip())
             if line == "Illegal move: flush plz\n":
                 break
             result += [line]
