@@ -44,7 +44,7 @@ class Board:
             row = self.data[r]
             for piece in row:
                 if piece:
-                    sign = piece.name[:1]
+                    sign = piece.sign
                     sign = piece.color == "white" and sign.upper() or sign.lower()
                     b += sign
                 else: b += "."

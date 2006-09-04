@@ -3,7 +3,7 @@ from Utils.Cord import Cord
 class Move:
     enpassant = None # None, Cord
     castling = None # None, (rook cord0, rook cord1)
-    promotion = None # "q", "r", "b", "k"
+    promotion = None # "q", "r", "b", "k", "n"
 
     def _get_cords (self):
         return (self.cord0, self.cord1)
@@ -34,13 +34,17 @@ class Move:
         
         else:
             notat = move
-            notat = notat.strip().lower()
+            notat = notat.replace("0","o").replace("O","o")
+            notat = notat.strip()
+            if notat[-1] in ("q", "r", "b", "n"):
+                promotino = notat[-1]
+                notat = notat[:-1]
             if notat.endswith("+"):
                 notat = notat[:-1]
             color = number % 2 == 0 and "white" or "black"
             
             if notat.startswith("o-o"):
-                if color == white:
+                if color == "white":
                     row = "1"
                 else: row = "8"
                 self.cord0 = Cord("e"+row)
@@ -50,17 +54,40 @@ class Move:
                 else:
                     self.cord1 = Cord("c"+row)
                     self.castling = (Cord("a"+row), Cord("d"+row))
+                return
     
-            elif "x" in notat:
+            if "x" in notat:
                 since, then = notat.split("x")
                 self.cord1 = Cord(then)
-                if not since[0] in "abcdefgh":
-                    pass #TODO: Most first have a working validator
+                notat = since
+    
+            sign = "p"
+            print "notat er0:",notat
+            if notat[0] in ("Q", "R", "B", "K", "N"):
+                sign = notat[0].lower()
+                notat = notat[1:]    
+    
+            row = None
+            col = None
+            if notat and len(notat) != 2 and notat[0] in ("a","b","c","d","e","f","g","h"):
+                col = ord(notat[0]) - ord("a")
+                notat = notat[1:]
+            if notat and notat[0] in ("1","2","3","4","5","6","7","8"):
+                row = int(notat[0])-1
+                notat = notat[1:]
+            
+            if notat:
+                print "notat er:",notat
+                self.cord1 = Cord(notat)
+            from Utils.validator import getPiecesPointingAt
+            mvs = getPiecesPointingAt(history, self.cord1, color, sign, row, col)
+            self.cord0 = mvs[0].cord0
         
         if self.cord1.y in (0,7) and board[self.cord0].sign == "p":
             self.promotion = promotion
 
     def algNotat (self, history):
+        #FIXME: Don't know the rule, of setting row/collum in front
         board = history[-1]
         
         c0, c1 = self.cords
