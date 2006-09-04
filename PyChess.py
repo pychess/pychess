@@ -28,7 +28,6 @@ def saveGameBefore (action):
     window["savedialogtext1"].set_markup(defText)
     if response == gtk.RESPONSE_YES: window["save_game1"].activate()
     return response
-    return 1
 
 def createCombo (combo, data):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
@@ -124,8 +123,8 @@ class GladeHandlers:
     #          Game Menu          #
     
     def on_new_game1_activate (widget):
-        res = saveGameBefore(_("a new game starts"))
-        if res == gtk.RESPONSE_CANCEL: return
+        #res = saveGameBefore(_("a new game starts"))
+        #if res == gtk.RESPONSE_CANCEL: return
         
         #window["ChessClock"].reset()
         #window["CairoBoard"].reset()
@@ -168,9 +167,9 @@ class GladeHandlers:
         thread.start_new(game, (window["CairoBoard"], players[0], players[1], clock, secs, gain))
         
     def on_load_game1_activate (widget):
-        res = saveGameBefore(_("you open a new game"))
-        if res == gtk.RESPONSE_CANCEL: return
-        #TODO
+        #res = saveGameBefore(_("you open a new game"))
+        #if res == gtk.RESPONSE_CANCEL: return
+        pass #TODO
     
     def on_save_game1_activate (widget):
         pass #TODO
@@ -179,9 +178,9 @@ class GladeHandlers:
         pass #TODO
     
     def on_quit1_activate (widget):
-        res = saveGameBefore(_("exit"))
-        if res == gtk.RESPONSE_CANCEL: return
-        pass #TODO
+        #res = saveGameBefore(_("exit"))
+        #if res == gtk.RESPONSE_CANCEL: return
+        gtk.main_quit()
     
     #          View Menu          #
     
