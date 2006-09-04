@@ -1,6 +1,7 @@
 from Utils.History import WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
 from Utils.Move import Move
 from Utils.Cord import Cord
+from Utils.Log import log
 
 def sort (list):
     list.sort()
@@ -22,12 +23,14 @@ def validate (move, history):
         return False
     
     if willChess(history, move, color):
+        log.debug("v chess")
         return False
         
     return True
     
 def tryBishop (move, color, history, board):
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
+        log.debug("v b 1" + str((move.cord0.x, move.cord1.x)))
         return False
     dx = move.cord1.x > move.cord0.x and 1 or -1
     dy = move.cord1.y > move.cord0.y and 1 or -1
@@ -38,6 +41,7 @@ def tryBishop (move, color, history, board):
         if x == move.cord1.x or y == move.cord0.y:
             break
         if board[Cord(x,y)] != None:
+            log.debug("v b 2" + str(Cord(x,y)))
             return False
     return True
     
@@ -102,20 +106,26 @@ def tryPawn (move, color, history, board):
 
 def tryRook (move, color, history, board):
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
+        log.debug("v r 1 " + str((move.cord0.x, move.cord1.x)))
         return False
-    xmovement = move.cord0.x != move.cord1.x
-    if (xmovement and move.cord0.x - move.cord1.x > 0) or \
-       (not xmovement and move.cord0.y - move.cord1.y > 0):
-        dr = -1
-    else: dr = 1
-    if xmovement:
-        n = [move.cord0.x+dr, move.cord1.x]
-    else: n = [move.cord0.y+dr, move.cord1.y]
-    for i in range (*sort(n)):
-        if xmovement:
-            c = Cord(i,move.cord0.y)
-        else: c = Cord(move.cord0.x,i)
-        if board[c] != None:
+    
+    if move.cord1.x > move.cord0.x:
+        dx = 1; dy = 0
+    elif move.cord1.x < move.cord0.x:
+        dx = -1; dy = 0
+    elif move.cord1.y > move.cord0.y:
+        dx = 0; dy = 1
+    elif move.cord1.y < move.cord0.y:
+        dx = 0; dy = -1
+    x = move.cord0.x
+    y = move.cord0.y
+    
+    for i in range(8):
+        x += dx; y += dy
+        if x == move.cord1.x and y == move.cord1.y:
+            break
+        if board[Cord(x,y)] != None:
+            log.debug("v r 2" + str(Cord(x,y)))
             return False
     return True
 
@@ -138,16 +148,36 @@ def getLegalMoves (history, cord):
                     cords += [cord1]
     return cords
 
-def getPiecesPointingAt (history, cord, color=None):
+def getPiecesPointingAt (history, cord, color=None, sign=None, r=None, c=None):
+    if sign:
+        print "search", cord, color, sign, r, c
+        import sys
+        sys.stdout.write(str(history[-1]))
     list = []
     board = history[-1]
-    for row in board:
-        for piece in row:
-            if piece == None: continue
-            if color and piece.color != color: continue
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            piece = board[row][col]
+            if piece == None:
+                log.debug("f 1 %d %d" % (row, col))
+                continue
+            if color and piece.color != color:
+                log.debug("f 2 %d %d" % (row, col))
+                continue
+            if sign and piece.sign != sign:
+                log.debug("f 3 %d %d" % (row, col))
+                continue
+            if r and row != r:
+                log.debug("f 4 %d %d" % (row, col))
+                continue
+            if c and col != c:
+                log.debug("f 5 %d %d" % (row, col))
+                continue
             move = Move (history, (board.getCord(piece), cord))
             if validate (move, history):
                 list += [move]
+    if sign:
+        print list
     return list
 
 def willChess (history, move, color):
