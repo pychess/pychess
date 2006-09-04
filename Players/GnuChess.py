@@ -1,0 +1,115 @@
+import sys, os, atexit
+
+from Utils.Log import LogPipe
+from Utils.Log import log
+from Engine import Engine
+
+class GnuChess (Engine):
+    
+    def __init__ (self):
+        from popen2 import popen4
+        self.inn, self.out = popen4("nice gnuchess -x", 0)
+        self.out = LogPipe(self.out, "Write: ")
+        atexit.register(self.__del__)
+        
+        self._get()
+        
+    def setStrength (self, strength):
+        if strength == 0:
+            print >> self.out, "easy"
+            print >> self.out, "random"
+            print >> self.out, "book random"
+            print >> self.out, "depth 1"
+        elif strength == 1:
+            print >> self.out, "easy"
+            print >> self.out, "random"
+            print >> self.out, "book random"
+            print >> self.out, "depth 4"
+        elif strength == 2:
+            print >> self.out, "hard"
+            print >> self.out, "book best"
+            print >> self.out, "depth 9"
+    
+    def setTime (self, secs, gain):
+        print >> self.out, "level 0", secs/60.0, gain
+            
+    def makeMove (self, history):
+        from Utils.Move import Move
+        if len(history.moves) < 1:
+            print >> self.out, "go"
+        else:
+            move = history.moves[-1]
+            print >> self.out, str(move)
+        
+        replies = self._get()
+        for reply in replies:
+            if reply.startswith("My move is"):
+                mymove = reply[12:].strip()
+                c1, c2 = mymove[:2], mymove[2:4]
+                if len(mymove) == 5:
+                    return Move(history, (c1, c2), mymove[4:5])
+                return Move(history, (c1, c2))
+                
+        log.error("Unable to parse gnuchess reply '%s'" % str(replies))
+        print history[-1]
+        return None
+    
+    # Methods usable in human vs. human enviroments
+    
+    def score (self):
+        print >> self.out, "show pin"
+        reply = self._get()
+        return int(reply[-1][24:])
+    
+    def getSpeed (self):
+        print >> self.out, "test movegenspeed"
+        reply = self._get()
+        e = reply[-1].find(".")
+        return int(reply[-1][7:e])
+    
+    def hint (self):
+        print >> self.out, "hint"
+        return _get()[0][6:]
+    
+    from re import compile
+    bookExpr = compile(r"(\w{2,3})\((\d+)?/?(\d+)?/?(\d+)?/?(\d+)?\)")
+    def book (self):
+        """[(move,percent,wins,loses,draws),]"""
+        print >> self.out, "bk"
+        reply = self._get()
+        if len(reply) < 2 or reply[1].endswith("there is no move"):
+            return []
+        return self.bookExpr.findall("".join(reply))
+    
+    # Private methods
+    
+    def _get (self):
+        print >> self.out, "flush plz"
+        result = []
+        while True:
+            line = self.inn.readline()
+            log.debug("Read: " + line.strip())
+            if line == "Illegal move: flush plz\n":
+                break
+            result += [line]
+        return result
+    
+    
+    # Other methods
+    
+    def testEngine (self):
+        assert repr(self), "You must have gnuchess installed"
+    
+    def __repr__ (self):
+        from os import popen
+        if not hasattr(self,"name"):
+            self.name = popen("gnuchess --version").read()[:-1]
+        return self.name
+    
+    def __del__ (self):
+        print >> self.out, "exit"
+
+if __name__ == "__main__":
+    c = GnuChess()
+    c.move
+    del c
