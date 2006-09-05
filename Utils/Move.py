@@ -1,4 +1,26 @@
 from Utils.Cord import Cord
+from Utils.Log import log
+
+import gtk.glade
+widgets = gtk.glade.XML("glade/moveerror.glade")
+dialog = widgets.get_widget("moveerror")
+
+def doDialog (move, stacktrace):
+    hlabel = widgets.get_widget("hlabel")
+    origtext = hlabel.get_label()
+    hlabel.set_markup(origtext % str(move))
+    textview = widgets.get_widget("trace")
+    textview.get_buffer().set_text(stacktrace)
+    response = dialog.run()
+    dialog.hide()
+    hlabel.set_markup(origtext)
+    if response != gtk.RESPONSE_OK:
+        return None
+    cbs = [widgets.get_widget("combobox%d"%i) for i in range(4)]
+    v = [cb.get_active() for cb in cbs if cb.get_active() >= 0]
+    if len(v) != 4:
+        return None
+    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
 
 class Move:
     enpassant = None # None, Cord
@@ -15,8 +37,23 @@ class Move:
            (board, (strcord1, strcord2), [promotion])
            Promotion will be set to None, if not aplieable"""
         
+        #try:
+        self.privateInit (history, move, promotion)
+        #except Exception, e:
+        #    log.error(str(e))
+        #    import traceback
+        #    r = doDialog (move, traceback.format_exc())
+        #    if not r:
+        #        log.error("Could not parse %s. User did not specify" % str(move))
+        #        import sys; sys.exit()
+        #    self.cord0, self.cord1 = r
+        #    self.promotion = "q"
+        
+    def privateInit (self, history, move, promotion):
         self.number = number = len(history) -1
         board = history[-1]
+        
+        self.promotion = promotion
         
         if type(move) in (list, tuple):
             if type(move[0]) == str:
@@ -35,11 +72,10 @@ class Move:
         else:
             notat = move
             notat = notat.replace("0","o").replace("O","o")
+            notat = notat.replace("=","").replace("+","").replace("#","")
             notat = notat.strip()
-            if notat[-1] in ("q", "r", "b", "n"):
-                promotino = notat[-1]
-                notat = notat[:-1]
-            if notat.endswith("+"):
+            if notat[-1].lower() in ("q", "r", "b", "n"):
+                promotion = notat[-1].lower()
                 notat = notat[:-1]
             color = number % 2 == 0 and "white" or "black"
             
@@ -82,9 +118,6 @@ class Move:
             from Utils.validator import getPiecesPointingAt
             mvs = getPiecesPointingAt(history, self.cord1, color, sign, row, col)
             self.cord0 = mvs[0].cord0
-        
-        if self.cord1.y in (0,7) and board[self.cord0].sign == "p":
-            self.promotion = promotion
 
     def algNotat (self, history):
         #FIXME: Don't know the rule, of setting row/collum in front
@@ -120,8 +153,11 @@ class Move:
             
         return notat
     
-    def __repr__ (self):
-        s = str(self.cord0) + str(self.cord1) 
-        if self.promotion:
+    def gnuchess (self, board):
+        s = str(self.cord0) + str(self.cord1)
+        if board[self.cord0].sign == "p" and self.cord1.y in (0,7):
             return s + self.promotion
         return s
+
+    def __repr__ (self):
+        return str(self.cord0) + str(self.cord1)

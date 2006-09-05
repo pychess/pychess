@@ -372,17 +372,16 @@
 
 	      <child>
 		<widget class="GtkAlignment" id="ccalign">
-		  <property name="border_width">2</property>
-		  <property name="height_request">40</property>
+		  <property name="height_request">38</property>
 		  <property name="visible">True</property>
 		  <property name="xalign">0.5</property>
 		  <property name="yalign">0.5</property>
 		  <property name="xscale">1</property>
 		  <property name="yscale">1</property>
-		  <property name="top_padding">2</property>
-		  <property name="bottom_padding">2</property>
-		  <property name="left_padding">0</property>
-		  <property name="right_padding">0</property>
+		  <property name="top_padding">4</property>
+		  <property name="bottom_padding">0</property>
+		  <property name="left_padding">2</property>
+		  <property name="right_padding">2</property>
 
 		  <child>
 		    <widget class="Custom" id="ChessClock">
@@ -401,27 +400,41 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEventBox" id="eventbox1">
-		  <property name="width_request">300</property>
-		  <property name="height_request">300</property>
+		<widget class="GtkAlignment" id="alignment16">
 		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="has_focus">True</property>
-		  <property name="events">GDK_POINTER_MOTION_MASK</property>
-		  <property name="visible_window">True</property>
-		  <property name="above_child">False</property>
-		  <signal name="button_press_event" handler="on_eventbox1_button_press_event" last_modification_time="Mon, 07 Aug 2006 15:15:25 GMT"/>
-		  <signal name="focus_out_event" handler="on_eventbox1_focus_out_event" last_modification_time="Mon, 07 Aug 2006 15:15:33 GMT"/>
-		  <signal name="motion_notify_event" handler="on_eventbox1_motion_notify_event" last_modification_time="Tue, 22 Aug 2006 15:03:53 GMT"/>
-		  <signal name="button_release_event" handler="on_eventbox1_button_release_event" last_modification_time="Tue, 22 Aug 2006 16:00:49 GMT"/>
-		  <signal name="leave_notify_event" handler="on_eventbox1_leave_notify_event" last_modification_time="Wed, 23 Aug 2006 15:34:09 GMT"/>
+		  <property name="xalign">0.5</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xscale">1</property>
+		  <property name="yscale">1</property>
+		  <property name="top_padding">4</property>
+		  <property name="bottom_padding">0</property>
+		  <property name="left_padding">0</property>
+		  <property name="right_padding">0</property>
 
 		  <child>
-		    <widget class="Custom" id="CairoBoard">
+		    <widget class="GtkEventBox" id="eventbox1">
+		      <property name="width_request">300</property>
+		      <property name="height_request">300</property>
 		      <property name="visible">True</property>
-		      <property name="int1">0</property>
-		      <property name="int2">0</property>
-		      <property name="last_modification_time">Wed, 05 Jul 2006 17:53:06 GMT</property>
+		      <property name="can_focus">True</property>
+		      <property name="has_focus">True</property>
+		      <property name="events">GDK_POINTER_MOTION_MASK</property>
+		      <property name="visible_window">True</property>
+		      <property name="above_child">False</property>
+		      <signal name="button_press_event" handler="on_eventbox1_button_press_event" last_modification_time="Mon, 07 Aug 2006 15:15:25 GMT"/>
+		      <signal name="focus_out_event" handler="on_eventbox1_focus_out_event" last_modification_time="Mon, 07 Aug 2006 15:15:33 GMT"/>
+		      <signal name="motion_notify_event" handler="on_eventbox1_motion_notify_event" last_modification_time="Tue, 22 Aug 2006 15:03:53 GMT"/>
+		      <signal name="button_release_event" handler="on_eventbox1_button_release_event" last_modification_time="Tue, 22 Aug 2006 16:00:49 GMT"/>
+		      <signal name="leave_notify_event" handler="on_eventbox1_leave_notify_event" last_modification_time="Wed, 23 Aug 2006 15:34:09 GMT"/>
+
+		      <child>
+			<widget class="Custom" id="CairoBoard">
+			  <property name="visible">True</property>
+			  <property name="int1">0</property>
+			  <property name="int2">0</property>
+			  <property name="last_modification_time">Wed, 05 Jul 2006 17:53:06 GMT</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>
@@ -531,7 +544,7 @@
 		  <property name="yscale">1</property>
 		  <property name="top_padding">0</property>
 		  <property name="bottom_padding">4</property>
-		  <property name="left_padding">7</property>
+		  <property name="left_padding">5</property>
 		  <property name="right_padding">2</property>
 
 		  <child>
@@ -547,6 +560,28 @@
 			<placeholder/>
 		      </child>
 
+		      <child>
+			<widget class="GtkLabel" id="label67">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes"></property>
+			  <property name="use_underline">False</property>
+			  <property name="use_markup">False</property>
+			  <property name="justify">GTK_JUSTIFY_LEFT</property>
+			  <property name="wrap">False</property>
+			  <property name="selectable">False</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			  <property name="width_chars">-1</property>
+			  <property name="single_line_mode">False</property>
+			  <property name="angle">0</property>
+			</widget>
+			<packing>
+			  <property name="type">tab</property>
+			</packing>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>

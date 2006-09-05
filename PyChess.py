@@ -74,7 +74,7 @@ def makeNewGameDialogReady ():
     GladeHandlers.__dict__['on_combobox6_changed'](window["combobox6"])
     
     for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
-                   "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG"):
+            "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
         v = myconf.get(widget)
         if v != None:
             if hasattr(window[widget], "set_active"):
@@ -146,7 +146,7 @@ class GladeHandlers:
             gain = 0
         
         for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
-                       "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG"):
+                "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
             if hasattr(window[widget], "get_active"):
                 v = window[widget].get_active()
             else: v = window[widget].get_value()
@@ -160,7 +160,8 @@ class GladeHandlers:
             if choise != 0:
                 player = window.engines[choise-1]()
                 player.setStrength(dfc)
-                player.setTime(secs, gain)
+                if secs:
+                    player.setTime(secs, gain)
             else: player = Human(window["CairoBoard"], pnum)
             players += [player]
         
@@ -304,10 +305,11 @@ class PyChess:
         from types import ClassType
         for name, module in globals().iteritems():
             for attr in [getattr(module, a) for a in dir(module)]:
-                if type(attr) is ClassType and \
-                        issubclass(attr, Engine) and \
-                        attr != Engine:
-                    self.engines += [attr]
+                if type(attr) is ClassType and issubclass(attr, Engine) and attr != Engine:
+                    e = attr()
+                    if e.testEngine():
+                        self.engines += [attr]
+                    e.__del__()
     
     def widgetHandler (self, glade, functionName, widgetName, str1, str2, int1, int2):
         if widgetName in self.files["."]:

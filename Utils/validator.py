@@ -99,6 +99,7 @@ def tryPawn (move, color, history, board):
     row = color == "white" and 1 or 6
     if (move.cord1.y - move.cord0.y)*dr == 2 and \
         move.cord0.y == row and \
+        board[move.cord1] == None and \
         board[Cord(move.cord0.x, move.cord0.y+dr)] == None and \
         move.cord0.x == move.cord1.x:
         return True

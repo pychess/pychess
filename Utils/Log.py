@@ -1,6 +1,7 @@
 import os, sys, time
 
 debug = True
+logfile = "~/.pychess.log"
 
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -59,4 +60,4 @@ class Log:
     def clearErrors (self):
         del self.errors[:]
 
-log = Log (os.path.expanduser("~/.pychess.log"))
+log = Log (os.path.expanduser(logfile))
