@@ -64,6 +64,7 @@ class CairoBoard(gtk.DrawingArea):
         if not validate(Move(self.history, (cord0, cord1)), self.history):
             return
         
+        #TODO: Move promotion to Human
         promotion = "q"
         if len(self.history) > 0 and self.history[-1][cord0] != None and \
                 self.history[-1][cord0].sign == "p" and cord1.y in [0,7]:

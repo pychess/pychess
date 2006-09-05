@@ -62,6 +62,7 @@ class ChessClock (gtk.DrawingArea):
         context.show_layout(layout1)
 
     def redraw_canvas(self):
+        #Fixme: redraw only one side
         if self.window:
             def func():
                 alloc = self.get_allocation()
@@ -71,6 +72,7 @@ class ChessClock (gtk.DrawingArea):
             gobject.idle_add(func)
 
     def update(self):
+        #Fixme: use timestamp-timestamp
         if self.player == 0:
             self.p0 -= 1
         else: self.p1 -= 1

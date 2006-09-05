@@ -78,9 +78,8 @@ def history_changed (history):
     if len(history) / 2 > len(numbers.get_model()):
         num = str(int(len(history)/2))+"."
         idle_add(numbers.get_model().append, [num])
-    #idle_add(lambda: numbers.scroll_to_cell((4,)))
-    #idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
-    #        numbers.get_allocation().height)
+    idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
+            numbers.get_allocation().height)
 
 def shown_changed (board, shown):
     if shown <= 0:
@@ -95,5 +94,6 @@ def shown_changed (board, shown):
     row = int((shown-1) / 2)
     def todo():
         col.get_selection().select_iter(col.get_model().get_iter(row))
+        numbers.scroll_to_cell((row,))
         other.get_selection().unselect_all()
     idle_add(todo)
