@@ -26,3 +26,8 @@ class Human (Player):
         self.move = None
         self.cond.release()
         return move
+
+    def __repr__ (self):
+        #TODO: Get name from preferences or accountname
+        #(probably preferences, as accountname would give problems in pvp games)
+        return "Human"

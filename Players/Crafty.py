@@ -14,7 +14,7 @@ class Crafty (Engine):
         atexit.register(self.__del__)
         
         print >> self.out, "xboard"
-        for line in self._get():
+        for line in self._get("Crafty"):
             if line.startswith("Crafty "):
                 self.name = line
         
@@ -44,9 +44,9 @@ class Crafty (Engine):
             print >> self.out, "go"
         else:
             move = history.moves[-1]
-            print >> self.out, str(move)
+            print >> self.out, move.gnuchess(history[-2])
         
-        replies = self._get()
+        replies = self._get("move ")
         for reply in replies:
             if reply.startswith("move "):
                 mymove = reply[5:].strip()
@@ -56,38 +56,24 @@ class Crafty (Engine):
         print history[-1]
         return None
     
-    # Methods usable in human vs. human enviroments
-    
-    def score (self):
-        pass
-    
-    def getSpeed (self):
-        pass
-    
-    def hint (self):
-        pass
-    
-    def book (self):
-        pass
-    
     # Private methods
     
-    def _get (self):
-        print >> self.out, "flush plz"
+    def _get (self, waitfor):
+        log.debug("Cr waiting for: " + str([waitfor]))
         result = []
         while True:
             line = self.inn.readline()
             log.debug("CrR: " + line.strip())
-            if line == "Illegal move: flush\n":
-                break
             result += [line]
+            if line.find(waitfor) >= 0:
+                break
         return result
     
     
     # Other methods
     
     def testEngine (self):
-        assert repr(self), "You must have crafty installed"
+        return repr(self) and True or False
     
     def __repr__ (self):
         return self.name

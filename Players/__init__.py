@@ -1,1 +1,1 @@
-__all__ = ["GnuChess", "Crafty"]
+__all__ = ["GnuChess", "Crafty", "ICS"]
