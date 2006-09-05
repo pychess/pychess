@@ -39,7 +39,7 @@ class GnuChess (Engine):
             print >> self.out, "go"
         else:
             move = history.moves[-1]
-            print >> self.out, str(move)
+            print >> self.out, move.gnuchess(history[-2])
         
         replies = self._get()
         for reply in replies:
@@ -98,7 +98,7 @@ class GnuChess (Engine):
     # Other methods
     
     def testEngine (self):
-        assert repr(self), "You must have gnuchess installed"
+        return repr(self) and True or False
     
     def __repr__ (self):
         from os import popen
