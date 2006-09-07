@@ -7,6 +7,7 @@ class Human (Player):
     def __init__ (self, board, pnum):
         self.cond = Condition()
         self.pnum = pnum
+        self.board = board
         board.connect("piece_moved", self.piece_moved)
     
     move = None
@@ -19,12 +20,16 @@ class Human (Player):
         self.cond.release()
     
     def makeMove (self, history):
+        print "unlocking"
+        self.board.locked = False
         self.cond.acquire()
         while not self.move:
             self.cond.wait()
         move = self.move
         self.move = None
         self.cond.release()
+        print "locking"
+        self.board.locked = True
         return move
 
     def __repr__ (self):

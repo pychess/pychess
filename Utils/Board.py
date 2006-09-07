@@ -2,6 +2,7 @@ import sys
 from copy import deepcopy
 from Utils.Piece import Piece
 from Utils.Cord import Cord
+from Utils.Log import log
 
 class Board:
     def __init__ (self, array):
@@ -17,7 +18,8 @@ class Board:
         if move.castling:
             board[move.castling[1]] = board[move.castling[0]]
             board[move.castling[0]] = None
-        if board[cord1].sign == "p" and cord1.y in [0,7]:
+        if not board[cord1]: log.warn("How is this move possible? "+str(move))
+        if board[cord1] and board[cord1].sign == "p" and cord1.y in [0,7]:
             board[cord1] = Piece(board[cord1].color, move.promotion)
         return board
     
@@ -40,7 +42,7 @@ class Board:
 
     def __repr__ (self):
         b = ""
-        for r in range(7,-1,-1):
+        for r in range(8)[::-1]:
             row = self.data[r]
             for piece in row:
                 if piece:
@@ -58,3 +60,8 @@ class Board:
                 if self.data[row][col] == piece:
                     return Cord (col, row)
     
+    def __equals__ (self, other):
+        return type(self) == type(other) and \
+            self.__class__ == other.__class__ and \
+            self.data == other.data
+            

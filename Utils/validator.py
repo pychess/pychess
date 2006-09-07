@@ -2,12 +2,17 @@ from Utils.History import WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
 from Utils.Move import Move
 from Utils.Cord import Cord
 from Utils.Log import log
+from time import time
 
 def sort (list):
     list.sort()
     return list
 
-def validate (move, history):
+call = 0
+def validate (move, history, testCheck=True):
+    #global call
+    #call += 1
+    #print "CALL", call, round(call/float(9*4),2)
     """Will asume the first cord is an ally piece"""
     
     board = history[-1]
@@ -22,15 +27,14 @@ def validate (move, history):
     if not globals()[method](move, color, history, board):
         return False
     
-    if willChess(history, move, color):
-        log.debug("v chess")
-        return False
+    if testCheck:
+        if willChess(history, move, color):
+            return False
         
     return True
     
 def tryBishop (move, color, history, board):
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
-        log.debug("v b 1" + str((move.cord0.x, move.cord1.x)))
         return False
     dx = move.cord1.x > move.cord0.x and 1 or -1
     dy = move.cord1.y > move.cord0.y and 1 or -1
@@ -41,23 +45,29 @@ def tryBishop (move, color, history, board):
         if x == move.cord1.x or y == move.cord0.y:
             break
         if board[Cord(x,y)] != None:
-            log.debug("v b 2" + str(Cord(x,y)))
             return False
     return True
-    
+
+def _isclear (board, rows, cols):
+    for row in rows:
+        for col in cols:
+            if board[row][col] != None:
+                return False
+    return True
+
 def tryKing (move, color, history, board):
-    row = color == "black" and 7 or 0
-    if move.cord0.y == row and move.cord1.y == row:
-        if move.cord0.x - move.cord1.x == 2:
-            if color == "black" and history.castling & BLACK_OOO:
-                return True
-            elif color == "white" and history.castling & WHITE_OOO:
-                return True
-        elif move.cord0.x - move.cord1.x == -2:
-            if color == "black" and history.castling & BLACK_OO:
-                return True
-            elif color == "white" and history.castling & WHITE_OO:
-                return True
+    #TODO: not allowed to move, if checked
+    if color == "white":
+        if str(move) == "e1g1" and history.castling & WHITE_OO and \
+            _isclear(board, [0], [5,6]): return True
+        if str(move) == "e1c1" and history.castling & WHITE_OOO and \
+            _isclear(board, [0], [1,2,3]): return True
+    elif color == "black":
+        if str(move) == "e8g8" and history.castling & BLACK_OO and \
+            _isclear(board, [7], [5,6]): return True
+        if str(move) == "e8c8" and history.castling & BLACK_OOO and \
+            _isclear(board, [7], [1,2,3]): return True
+
     return abs(move.cord0.x - move.cord1.x) <= 1 and \
            abs(move.cord0.y - move.cord1.y) <= 1
 
@@ -107,7 +117,6 @@ def tryPawn (move, color, history, board):
 
 def tryRook (move, color, history, board):
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
-        log.debug("v r 1 " + str((move.cord0.x, move.cord1.x)))
         return False
     
     if move.cord1.x > move.cord0.x:
@@ -126,7 +135,6 @@ def tryRook (move, color, history, board):
         if x == move.cord1.x and y == move.cord1.y:
             break
         if board[Cord(x,y)] != None:
-            log.debug("v r 2" + str(Cord(x,y)))
             return False
     return True
 
@@ -141,15 +149,33 @@ def getLegalMoves (history, cord):
         for col in range(len(board[row])):
             if row == cord.y and col == cord.x: continue
             if abs(row - cord.y) <= 2 or abs(col - cord.x) <= 2 or \
-                cord.y == row or cord.x == col or \
-                abs(cord.y - row) == abs(cord.x - col):
+                    cord.y == row or cord.x == col or \
+                    abs(cord.y - row) == abs(cord.x - col):
                 cord1 = Cord(col, row)
                 move = Move(history, (cord, cord1))
                 if validate (move, history):
                     cords += [cord1]
     return cords
 
-def getPiecesPointingAt (history, cord, color=None, sign=None, r=None, c=None):
+def findMoves (history, color):
+    from time import time
+    t = time()
+    moves = {}
+    board = history[-1]
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            piece = board[row][col]
+            if not piece: continue
+            if piece.color != color: continue
+            cord0 = Cord(col, row)
+            for cord1 in getLegalMoves (history, cord0):
+                if cord0 in moves:
+                    moves[cord0] += [cord1]
+                else: moves[cord0] = [cord1]
+    log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t))
+    return moves
+
+def getPiecesPointingAt (history, cord, color=None, sign=None, r=None, c=None, testCheck=True):
     if sign:
         print "search", cord, color, sign, r, c
         import sys
@@ -159,33 +185,26 @@ def getPiecesPointingAt (history, cord, color=None, sign=None, r=None, c=None):
     for row in range(len(board)):
         for col in range(len(board[row])):
             piece = board[row][col]
-            if piece == None:
-                log.debug("f 1 %d %d" % (row, col))
-                continue
-            if color and piece.color != color:
-                log.debug("f 2 %d %d" % (row, col))
-                continue
-            if sign and piece.sign != sign:
-                log.debug("f 3 %d %d" % (row, col))
-                continue
-            if r and row != r:
-                log.debug("f 4 %d %d" % (row, col))
-                continue
-            if c and col != c:
-                log.debug("f 5 %d %d" % (row, col))
-                continue
+            if piece == None: continue
+            if color and piece.color != color: continue
+            if sign and piece.sign != sign: continue
+            if r and row != r: continue
+            if c and col != c: continue
             move = Move (history, (board.getCord(piece), cord))
-            if validate (move, history):
-                list += [move]
-    if sign:
-        print list
-    return list
+            if validate (move, history, testCheck):
+                if sign:
+                    print "Found move:", move
+                return move
 
 def willChess (history, move, color):
-    afterhis = history.clone().add(move)
+    history = history.clone()
+    history.add(move)
+    return _isChess(history, color)
+
+def _isChess (history, color):
     opcolor = color == "white" and "black" or "white"
-    cord = _findKing(afterhis[-1], color)
-    if getPiecesPointingAt(afterhis, cord, opcolor):
+    cord = _findKing(history[-1], color)
+    if getPiecesPointingAt(history, cord, opcolor, testCheck=False):
         return True
     return False
 
@@ -197,7 +216,20 @@ def _findKing (board, color):
             if piece != None and piece.sign == "k" and piece.color == color:
                 return cord
 
-def test():
-    from History import History
-    history = History()
-    print validate(Move(history, ("g2", "g4")), history)
+FINE, STALE, MATE = range(3)
+def status (history, possibleMoves = None):
+    #Should -2 and -4 also be the same?
+    if len(history) >= 5 and history[-1] == history[-3] == history[-5]:
+        log.log("Game is stale as %s == %s == %s" % (history[-1], history[-3], history[-5]))
+        return STALE
+    if history.fifty >= 100:
+        log.log("Game is stale by the 50 moves rule")
+        return STALE
+    color = len(history) % 2 == 0 and "black" or "white"
+    if not possibleMoves:
+        possibleMoves = findMoves (history, color)
+    if len(possibleMoves) == 0 and _isChess(history, color):
+        return MATE
+    elif len(possibleMoves) == 0:
+        return STALE
+    return FINE

@@ -11,6 +11,7 @@ from Utils.Cord import Cord
 from Utils.Move import Move
 from math import floor
 from Utils.validator import validate, getLegalMoves
+from Utils import validator
 
 def intersects (r1, r2):
     r = r1.intersect(r2)
@@ -28,7 +29,8 @@ class CairoBoard(gtk.DrawingArea):
     __gsignals__ = {
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,)),
-        'history_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,))
+        'history_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
     }
     
     def __init__(self):
@@ -43,6 +45,9 @@ class CairoBoard(gtk.DrawingArea):
         self._history = history
         self.emit("history_changed", self.history)
         self.redraw_canvas()
+        color = len(self.history) % 2 == 0 and "black" or "white"
+        print "Now:", color
+        self.moves = validator.findMoves(self.history, color)
     history = property(_get_history, _set_history)
     
     _shown = 0
@@ -55,16 +60,31 @@ class CairoBoard(gtk.DrawingArea):
             idle_add(self.redraw_canvas)
     shown = property(_get_shown, _set_shown)
     
+    moves = {}
     def move (self, move, animate):
         self.history.add(move)
         self.shown += 1
+        
+        color = len(self.history) % 2 == 0 and "black" or "white"
+        self.moves = validator.findMoves(self.history, color)
+        s = validator.status(self.history, self.moves)
+        if s == validator.STALE:
+            self.locked = True
+            self.emit("game_ended", s)
+            return False
+        elif s == validator.MATE:
+            self.locked = True
+            self.emit("game_ended", s)
+            return False
+        
+        return True
     
     def emit_move_signal (self, cord0, cord1):
         
         if not validate(Move(self.history, (cord0, cord1)), self.history):
             return
         
-        #TODO: Move promotion to Human
+        #TODO: Move promotion code to the "Human" class
         promotion = "q"
         if len(self.history) > 0 and self.history[-1][cord0] != None and \
                 self.history[-1][cord0].sign == "p" and cord1.y in [0,7]:
@@ -165,8 +185,6 @@ class CairoBoard(gtk.DrawingArea):
         elif cord: r = self.cord2Rect(cord)
         self._selected = cord
         self.redraw_canvas(grow(r))
-        if cord == None: self.legalMoves = []
-        else: self.legalMoves = getLegalMoves(self.history, cord)
     def _get_selected (self):
         return self._selected
     selected = property(_get_selected, _set_selected)
@@ -209,15 +227,16 @@ class CairoBoard(gtk.DrawingArea):
         x, y = cord.cords
         return x % 2 + y % 2 == 1
     
-    legalMoves = []
+    locked = False
     def isSelectable (self, cord):
+        if self.locked: return False
         if not self.history: return False
         if not cord: return False
 
         if self.shown != len(self.history)-1:
             return False
 
-        if cord in self.legalMoves:
+        if self.selected in self.moves and cord in self.moves[self.selected]:
             return True
         if self.history[-1][cord] == None:
             return False

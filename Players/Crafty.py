@@ -59,11 +59,13 @@ class Crafty (Engine):
     # Private methods
     
     def _get (self, waitfor):
-        log.debug("Cr waiting for: " + str([waitfor]))
+        log.debug("Cr waiting for: '%s'" % waitfor)
         result = []
         while True:
             line = self.inn.readline()
-            log.debug("CrR: " + line.strip())
+            if line.find("Illegal move") >= 0:
+                log.error("CrR: " + line.strip())
+            else: log.debug("CrR: " + line.strip())
             result += [line]
             if line.find(waitfor) >= 0:
                 break
@@ -79,5 +81,6 @@ class Crafty (Engine):
         return self.name
     
     def __del__ (self):
-        print >> self.out, "end"
-        
+        try:
+            print >> self.out, "end"
+        except: pass
