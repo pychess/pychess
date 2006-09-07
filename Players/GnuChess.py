@@ -88,9 +88,11 @@ class GnuChess (Engine):
         result = []
         while True:
             line = self.inn.readline()
-            log.debug("GnR: " + line.strip())
             if line == "Illegal move: flush plz\n":
                 break
+            if line.find("Illegal move") >= 0:
+                log.error("GnR: " + line.strip())
+            else: log.debug("CrR: " + line.strip())
             result += [line]
         return result
     
@@ -107,7 +109,9 @@ class GnuChess (Engine):
         return self.name
     
     def __del__ (self):
-        print >> self.out, "exit"
+        try:
+            print >> self.out, "exit"
+        except: pass
 
 if __name__ == "__main__":
     c = GnuChess()

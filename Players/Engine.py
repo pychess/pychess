@@ -53,3 +53,6 @@ class Engine (Player):
     def __repr__ (self):
         """For example 'GNU Chess 5.07'"""
         abstract
+
+    def __del__ (self):
+        pass #optional

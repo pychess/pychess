@@ -73,7 +73,9 @@ def idle_add(proc, *args):
 
 def history_changed (history):
     view = len(history) & 1 and right or left
-    notat = history.moves[-1].algNotat(history.clone().reverse())
+    
+    notat = history.moves[-1].algNotat(history)
+    
     idle_add(view.get_model().append, [notat])
     if len(history) / 2 > len(numbers.get_model()):
         num = str(int(len(history)/2))+"."

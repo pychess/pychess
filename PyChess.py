@@ -255,6 +255,8 @@ class GladeHandlers:
         if window["CairoBoard"].history:
             window["CairoBoard"].shown = len(window["CairoBoard"].history)-1
 
+from time import time
+
 class PyChess:
     def __init__(self):
         self.initGlade()
@@ -267,7 +269,11 @@ class PyChess:
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML("glade/PyChess.glade")
         
-        self["ChessClock"].connect("time_out", self.time_out)
+        self["ChessClock"].connect("time_out",
+            lambda w,p: self.end("Player %d is timeout" % p))
+        self["CairoBoard"].connect("game_ended",
+            lambda w,r: self.end(r == 2 and "Mate" or "Stale"))
+        
         self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         
@@ -283,10 +289,8 @@ class PyChess:
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
     
-    def time_out (self, widget, player):
-        m = "Player %d is timeout" % player
-        from time import time
-        self["statusbar1"].push(int(time()), m)
+    def end (self, message):
+        self["statusbar1"].push(int(time()), message)
     
     from UserDict import UserDict
     class Files (UserDict):

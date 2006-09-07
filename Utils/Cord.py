@@ -42,3 +42,6 @@ class Cord:
     
     def __repr__ (self):
         return self.cx + str(self.y+1)
+
+    def __hash__ (self):
+        return self.x*8+self.y

@@ -1,30 +1,33 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from Utils.Cord import Cord
 from Utils.Log import log
 
-import gtk.glade
-widgets = gtk.glade.XML("glade/moveerror.glade")
-dialog = widgets.get_widget("moveerror")
+#import gtk.glade
+#widgets = gtk.glade.XML("glade/moveerror.glade")
+#dialog = widgets.get_widget("moveerror")
 
-def doDialog (move, stacktrace):
-    hlabel = widgets.get_widget("hlabel")
-    origtext = hlabel.get_label()
-    hlabel.set_markup(origtext % str(move))
-    textview = widgets.get_widget("trace")
-    textview.get_buffer().set_text(stacktrace)
-    response = dialog.run()
-    dialog.hide()
-    hlabel.set_markup(origtext)
-    if response != gtk.RESPONSE_OK:
-        return None
-    cbs = [widgets.get_widget("combobox%d"%i) for i in range(4)]
-    v = [cb.get_active() for cb in cbs if cb.get_active() >= 0]
-    if len(v) != 4:
-        return None
-    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
+#def doDialog (move, stacktrace):
+#    hlabel = widgets.get_widget("hlabel")
+#    origtext = hlabel.get_label()
+#    hlabel.set_markup(origtext % str(move))
+#    textview = widgets.get_widget("trace")
+#    textview.get_buffer().set_text(stacktrace)
+#    response = dialog.run()
+#    dialog.hide()
+#    hlabel.set_markup(origtext)
+#    if response != gtk.RESPONSE_OK:
+#        return None
+#    cbs = [widgets.get_widget("combobox%d"%i) for i in range(4)]
+#    v = [cb.get_active() for cb in cbs if cb.get_active() >= 0]
+#    if len(v) != 4:
+#        return None
+#    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
 
 class Move:
     enpassant = None # None, Cord
-    castling = None # None, (rook cord0, rook cord1)
+    castling = None # None, (rookCordSide, rookCordMiddle)
     promotion = None # "q", "r", "b", "k", "n"
 
     def _get_cords (self):
@@ -75,7 +78,7 @@ class Move:
             notat = notat.replace("=","").replace("+","").replace("#","")
             notat = notat.strip()
             if notat[-1].lower() in ("q", "r", "b", "n"):
-                promotion = notat[-1].lower()
+                self.promotion = notat[-1].lower()
                 notat = notat[:-1]
             color = number % 2 == 0 and "white" or "black"
             
@@ -98,7 +101,6 @@ class Move:
                 notat = since
     
             sign = "p"
-            print "notat er0:",notat
             if notat[0] in ("Q", "R", "B", "K", "N"):
                 sign = notat[0].lower()
                 notat = notat[1:]    
@@ -116,12 +118,22 @@ class Move:
                 print "notat er:",notat
                 self.cord1 = Cord(notat)
             from Utils.validator import getPiecesPointingAt
-            mvs = getPiecesPointingAt(history, self.cord1, color, sign, row, col)
-            self.cord0 = mvs[0].cord0
+            mv = getPiecesPointingAt(history, self.cord1, color, sign, row, col)
+            assert mv != None
+            self.cord0 = mv.cord0
 
     def algNotat (self, history):
+        """Note: History should have thismove as last element in its .move list"""
+        
         #FIXME: Don't know the rule, of setting row/collum in front
-        board = history[-1]
+        if len(history) > 0:
+            board = history[-2]
+        else: board = history[-1]
+        
+        idea = {
+            "white": {"k":"♔", "q":"♕", "r":"♖", "b":"♗", "n":"♘", "p":"♙"},
+            "black": {"k":"♚", "q":"♛", "r":"♜", "b":"♝", "n":"♞", "p":"♟"}
+        }
         
         c0, c1 = self.cords
         if board[c0].sign == "k":
@@ -134,6 +146,7 @@ class Move:
         
         if board[c0].sign != "p":
             part0 += board[c0].sign.upper()
+        #part0 += idea[board[c0].color][board[c0].sign]
         
         part1 = str(c1)
         
@@ -146,9 +159,9 @@ class Move:
         if board[c0].sign == "p" and c1.y in [0,7]:
             notat += self.promotion
         
-        from Utils.validator import willChess
+        from Utils.validator import _isChess
         opcolor = board[c0].color == "white" and "black" or "white"
-        if willChess(history, self, opcolor):
+        if _isChess(history, opcolor):
             notat += "+"
             
         return notat
@@ -161,3 +174,6 @@ class Move:
 
     def __repr__ (self):
         return str(self.cord0) + str(self.cord1)
+
+    def __eqal__ (self, other):
+        return other.cord0 == self.cord0 and other.cord1 == self.cord1

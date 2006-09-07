@@ -33,8 +33,7 @@ class Log:
     
     def log (self, message, flush = True):
         self.file.write (self._format(message))
-        if debug:
-            sys.stdout.write ("L %s\n" % message)
+        sys.stdout.write ("L %s\n" % message)
         if flush: self.file.flush ()
     
     def warn (self, message, flush = True):
