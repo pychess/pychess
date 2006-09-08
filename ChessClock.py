@@ -122,6 +122,7 @@ class ChessClock (gtk.DrawingArea):
     
     thread = None
     def stop(self):
+        self.redraw_canvas()
         if self.thread:
             gobject.source_remove(self.thread)
     
@@ -153,7 +154,6 @@ class ChessClock (gtk.DrawingArea):
         
         self._player = player
        
-        self.redraw_canvas()
         self.stop()
         self.startTime = time.time()
         self.start()
