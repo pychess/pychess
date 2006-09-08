@@ -122,10 +122,15 @@ class Move:
             assert mv != None
             self.cord0 = mv.cord0
 
+            if board[self.cord0].sign == "p" and self.cord0.y in [3,4]:
+                if self.cord0.x != self.cord1.x and board[self.cord1] == None:
+                    self.enpassant = Cord(self.cord1.x, self.cord0.y)
+
     def algNotat (self, history):
         """Note: History should have thismove as last element in its .move list"""
         
         #FIXME: Don't know the rule, of setting row/collum in front
+        #FIXME!!!!!! Don't set the enpassant variabel
         if len(history) > 0:
             board = history[-2]
         else: board = history[-1]
