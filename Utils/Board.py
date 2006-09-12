@@ -53,15 +53,14 @@ class Board:
                 b += " "
             b += "\n"
         return b
-
-    def getCord (self, piece):
-        for row in range(len(self.data)):
-            for col in range(len(self.data[row])):
-                if self.data[row][col] == piece:
-                    return Cord (col, row)
     
-    def __equals__ (self, other):
-        return type(self) == type(other) and \
-            self.__class__ == other.__class__ and \
-            self.data == other.data
-            
+    def __eq__ (self, other):
+        if type(self) != type(other) or self.__class__ != other.__class__:
+            return False
+        for row in range(len(self)):
+            for col in range(len(self[row])):
+                if not self[row][col] and other[row][col]: return False
+                if not self[row][col] and not other[row][col]: continue
+                if not self[row][col].__eq__(other[row][col]):
+                    return False
+        return True

@@ -10,7 +10,7 @@ from Utils.History import History
 from Utils.Cord import Cord
 from Utils.Move import Move
 from math import floor
-from Utils.validator import validate, getLegalMoves
+from Utils.validator import validate
 from Utils import validator
 
 def intersects (r1, r2):
@@ -45,9 +45,6 @@ class CairoBoard(gtk.DrawingArea):
         self._history = history
         self.emit("history_changed", self.history)
         self.redraw_canvas()
-        color = len(self.history) % 2 == 0 and "black" or "white"
-        print "Now:", color
-        self.moves = validator.findMoves(self.history, color)
     history = property(_get_history, _set_history)
     
     _shown = 0
@@ -60,14 +57,11 @@ class CairoBoard(gtk.DrawingArea):
             idle_add(self.redraw_canvas)
     shown = property(_get_shown, _set_shown)
     
-    moves = {}
     def move (self, move, animate):
-        self.history.add(move)
+        self.history.add(move, True)
         self.shown += 1
         
-        color = len(self.history) % 2 == 0 and "black" or "white"
-        self.moves = validator.findMoves(self.history, color)
-        s = validator.status(self.history, self.moves)
+        s = validator.status(self.history)
         if s == validator.STALE:
             self.locked = True
             self.emit("game_ended", s)
@@ -236,7 +230,8 @@ class CairoBoard(gtk.DrawingArea):
         if self.shown != len(self.history)-1:
             return False
 
-        if self.selected in self.moves and cord in self.moves[self.selected]:
+        if self.selected in self.history.movelist[-1] and \
+            cord in self.history.movelist[-1][self.selected]:
             return True
         if self.history[-1][cord] == None:
             return False
@@ -248,6 +243,7 @@ class CairoBoard(gtk.DrawingArea):
         return True
     
     def point2Cord (self, x, y):
+        if not self.square: return None
         xc, yc, square, s = self.square
         y -= yc; x -= xc
         if (x < 0 or x >= square or y < 0 or y >= square):

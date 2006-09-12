@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+from time import time
+
 import pygtk
 pygtk.require("2.0")
 import gtk
@@ -9,6 +11,18 @@ WHITE_OO = 1
 WHITE_OOO = 2
 BLACK_OO = 4
 BLACK_OOO = 8
+
+class HistoryPool:
+    def __init__ (self):
+        self.objects = []
+    def pop (self):
+        if len(self.objects) <= 0:
+            self.objects.append(History())
+        return self.objects.pop()
+    def add (self, history):
+        #Todo: deconnect signals
+        self.objects.append(history)
+hisPool = HistoryPool()
 
 from Piece import Piece
 def c (str):
@@ -33,12 +47,12 @@ import validator
 from copy import copy
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
-def getStartPieces ():
+def cloneStartPieces ():
     l = []
     for row in startPieces:
-        l += [[]]
+        l.append([])
         for piece in row:
-            l[-1] += [piece]
+            l[-1].append(piece)
     return l
 
 def rm (var, opp):
@@ -50,16 +64,17 @@ class History (GObject):
     '''Class remembers all moves, and can give you
     a two dimensional array (8x8) of Piece objects'''
     
-    __gsignals__ = {'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-                    'stall':   (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-                    'mate':    (SIGNAL_RUN_FIRST, TYPE_NONE, ())}
+    __gsignals__ = {'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ())}
     
-    def __init__ (self):
+    def __init__ (self, mvlist=False):
         GObject.__init__(self)
-        self.boards = [Board(getStartPieces())]
+        self.boards = [Board(cloneStartPieces())]
         self.fifty = 0
         self.moves = []
         self.castling = WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO
+        self.movelist = []
+        if mvlist:
+            self.movelist.append(validator.findMoves(self))
     
     def __getitem__(self, i):
         return self.boards[i]
@@ -67,7 +82,10 @@ class History (GObject):
     def __len__(self):
         return len(self.boards)
     
-    def add (self, move):
+    def curCol (self):
+        return len(self) % 2 == 1 and "white" or "black"
+    
+    def add (self, move, mvlist=False):
         capture = self.boards[-1][move.cord1] != None
         
         if move.castling:
@@ -94,28 +112,25 @@ class History (GObject):
             elif c == 'a8': self.castling = rm(self.castling, BLACK_OOO)
             elif c == 'h8': self.castling = rm(self.castling, BLACK_OO)
         
-        self.moves += [move]
-        self.boards += [self.boards[-1].move(move)]
+        self.moves.append(move)
+        self.boards.append(self.boards[-1].move(move))
 
         if capture or self.boards[-1][move.cord1].sign != "p":
             self.fifty += 1
         else: self.fifty = 0
         
+        if mvlist:
+            self.movelist.append(validator.findMoves(self))
+        
         self.emit("changed")
         return self
     
-    def __getslice__(self, i, j):
-        i = max(i, 0); j = max(j, 0)
-        return self.__class__(self.data[i:j])
-    
     def reverse (self):
-        log.warn("Using buggy Move.reverse method!")
+        """Don't use this method! Doesn't work"""
+        log.warn("Using buggy History.reverse method!")
         
         del self.boards[-1]
         move = self.moves.pop()
-        
-        #FIXME: This doesn't work at ALL!!!!
-        #Not fixing as the new validator system hopefully will make it irrelevant
         
         if str(move.castling) == "a1":
             self.castling |= WHITE_OOO
@@ -130,7 +145,7 @@ class History (GObject):
         return self
     
     def clone (self):
-        his = History()
+        his = hisPool.pop()
         his.castling = self.castling
         his.fifty = self.fifty
         his.moves = copy(self.moves)

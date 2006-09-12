@@ -65,7 +65,7 @@ class Crafty (Engine):
             line = self.inn.readline()
             if line.find("Illegal move") >= 0:
                 log.error("CrR: " + line.strip())
-            else: log.debug("CrR: " + line.strip())
+            else: log.debug("CrR: " + line.strip(), flush=True)
             result += [line]
             if line.find(waitfor) >= 0:
                 break
@@ -73,6 +73,14 @@ class Crafty (Engine):
     
     
     # Other methods
+    
+    def showBoard (self):
+        """Mostly for debugging"""
+        print >> self.out, "display"
+        from time import sleep
+        sleep(0.1)
+        print >> self.out, "ed"
+        log.log("".join(self._get("ed")[:-1]))
     
     def testEngine (self):
         return repr(self) and True or False
