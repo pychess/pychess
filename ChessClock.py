@@ -82,12 +82,14 @@ class ChessClock (gtk.DrawingArea):
                 self.window.process_updates(True)
             gobject.idle_add(func)
 
+    emited = False
     def update(self):
         self.ptemp[self.player] -= 1
         self.redraw_canvas(False)
         
-        if self.ptemp[self.player] <= 0:
+        if self.ptemp[self.player] <= 0 and not self.emited:
             self.emit_time_out_signal(self.player)
+            self.emited = True
 
         return True
 

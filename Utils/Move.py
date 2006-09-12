@@ -25,10 +25,25 @@ from Utils.Log import log
 #        return None
 #    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
 
+class MovePool:
+    def __init__ (self):
+        self.objects = []
+    def pop (self, history, move, promotion="q"):
+        if len(self.objects) <= 0:
+            return Move(history, move, promotion)
+        mv = self.objects.pop()
+        mv.init(history, move, promotion)
+        return mv
+    def add (self, move):
+        move.enpassant = None
+        move.castling = None
+        move.promotion = None
+        move.cord0 = None
+        move.cord1 = None
+        self.objects.append(move)
+movePool = MovePool()
+
 class Move:
-    enpassant = None # None, Cord
-    castling = None # None, (rookCordSide, rookCordMiddle)
-    promotion = None # "q", "r", "b", "k", "n"
 
     def _get_cords (self):
         return (self.cord0, self.cord1)
@@ -39,9 +54,13 @@ class Move:
            (board, (cord0, cord1), [promotion]) or
            (board, (strcord1, strcord2), [promotion])
            Promotion will be set to None, if not aplieable"""
+           
+        self.enpassant = None # None, Cord
+        self.castling = None # None, (rookCordSide, rookCordMiddle)
+        self.promotion = None # "q", "r", "b", "k", "n"
         
         #try:
-        self.privateInit (history, move, promotion)
+        self.init (history, move, promotion)
         #except Exception, e:
         #    log.error(str(e))
         #    import traceback
@@ -52,10 +71,8 @@ class Move:
         #    self.cord0, self.cord1 = r
         #    self.promotion = "q"
         
-    def privateInit (self, history, move, promotion):
-        self.number = number = len(history) -1
+    def init (self, history, move, promotion):
         board = history[-1]
-        
         self.promotion = promotion
         
         if type(move) in (list, tuple):
@@ -68,7 +85,7 @@ class Move:
                     self.castling = (Cord(7,r),Cord(5,r))
                 elif self.cord0.x - self.cord1.x == 2:
                     self.castling = (Cord(0,r),Cord(3,r))
-            elif board[self.cord0].sign == "p" and self.cord0.y in [3,4]:
+            elif board[self.cord0].sign == "p" and self.cord0.y in (3,4):
                 if self.cord0.x != self.cord1.x and board[self.cord1] == None:
                     self.enpassant = Cord(self.cord1.x, self.cord0.y)
         
@@ -80,7 +97,7 @@ class Move:
             if notat[-1].lower() in ("q", "r", "b", "n"):
                 self.promotion = notat[-1].lower()
                 notat = notat[:-1]
-            color = number % 2 == 0 and "white" or "black"
+            color = history.curCol()
             
             if notat.startswith("o-o"):
                 if color == "white":
@@ -115,12 +132,12 @@ class Move:
                 notat = notat[1:]
             
             if notat:
-                print "notat er:",notat
+                print "Notat is:",notat
                 self.cord1 = Cord(notat)
-            from Utils.validator import getPiecesPointingAt
-            mv = getPiecesPointingAt(history, self.cord1, color, sign, row, col)
-            assert mv != None
-            self.cord0 = mv.cord0
+            from Utils.validator import getMovePointingAt
+            cord0 = getMovePointingAt(history, self.cord1, color, sign, row, col)
+            assert cord0 != None, "Unable to parse move %s" % move
+            self.cord0 = cord0
 
             if board[self.cord0].sign == "p" and self.cord0.y in [3,4]:
                 if self.cord0.x != self.cord1.x and board[self.cord1] == None:
@@ -129,8 +146,8 @@ class Move:
     def algNotat (self, history):
         """Note: History should have thismove as last element in its .move list"""
         
-        #FIXME: Don't know the rule, of setting row/collum in front
-        #FIXME!!!!!! Don't set the enpassant variabel
+        #FIXME: Don't know the rule, of setting row/collum in front (works for pawns ofcource)
+        #FIXME!!: Don't set the enpassant variabel - This is fixed, right?
         if len(history) > 0:
             board = history[-2]
         else: board = history[-1]
@@ -164,9 +181,8 @@ class Move:
         if board[c0].sign == "p" and c1.y in [0,7]:
             notat += self.promotion
         
-        from Utils.validator import _isChess
-        opcolor = board[c0].color == "white" and "black" or "white"
-        if _isChess(history, opcolor):
+        from Utils.validator import isCheck
+        if isCheck(history, history.curCol()):
             notat += "+"
             
         return notat

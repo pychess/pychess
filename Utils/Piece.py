@@ -8,8 +8,8 @@ class Piece:
     def __repr__ (self):
         return self.color + " " + self.name
 
-    def __equals__ (self, other):
-        return type(self) == type(other) and \
-               self.__class__ == other.__class__ and \
-               self.color == other.color and \
-               self.sign == other.sign
+    def __eq__ (self, other):
+        return  type(self) == type(other) and \
+                self.__class__ == other.__class__ and \
+                self.color == other.color and \
+                self.sign == other.sign

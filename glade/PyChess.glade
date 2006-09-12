@@ -779,9 +779,9 @@
 
 <widget class="GtkAboutDialog" id="aboutdialog1">
   <property name="destroy_with_parent">True</property>
-  <property name="name" translatable="yes">PyChess</property>
+  <property name="name" translatable="yes">PyChess 0.2</property>
   <property name="copyright" translatable="yes">Thomas Dybdahl Ahle</property>
-  <property name="comments" translatable="yes">Xboard for gnome</property>
+  <property name="comments" translatable="yes">Chessclient for the Gnome desktop</property>
   <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
 the Free Software Foundation; either version 2 of the License, or 
@@ -799,7 +799,9 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="website">http://code.google.com/p/pychess/</property>
   <property name="website_label" translatable="yes">http://code.google.com/p/pychess/</property>
   <property name="authors">Thomas Dybdahl Ahle</property>
+  <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">Thomas Dybdahl Ahle</property>
+  <property name="logo">pychess.png</property>
 </widget>
 
 <widget class="GtkDialog" id="savegamedialog">

@@ -20,7 +20,6 @@ class Human (Player):
         self.cond.release()
     
     def makeMove (self, history):
-        print "unlocking"
         self.board.locked = False
         self.cond.acquire()
         while not self.move:
@@ -28,7 +27,6 @@ class Human (Player):
         move = self.move
         self.move = None
         self.cond.release()
-        print "locking"
         self.board.locked = True
         return move
 

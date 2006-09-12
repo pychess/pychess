@@ -1,19 +1,21 @@
 from Utils.History import WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
-from Utils.Move import Move
+from Utils.History import hisPool
+from Utils.Move import Move, movePool
 from Utils.Cord import Cord
 from Utils.Log import log
 from time import time
 
-def sort (list):
-    list.sort()
-    return list
 
-call = 0
+call0 = 0
+call1 = 0
 def validate (move, history, testCheck=True):
-    #global call
-    #call += 1
-    #print "CALL", call, round(call/float(9*4),2)
     """Will asume the first cord is an ally piece"""
+    
+    #global call0, call1
+    #if testCheck:
+    #    call0 += 1
+    #else: call1 += 1
+    #print "CALL", call0, call1
     
     board = history[-1]
     color = board[move.cord0].color
@@ -22,13 +24,13 @@ def validate (move, history, testCheck=True):
         return False
     if board[move.cord1] != None and board[move.cord1].color == color:
         return False
-        
+    
     method = "try" + board[move.cord0].name
     if not globals()[method](move, color, history, board):
         return False
     
     if testCheck:
-        if willChess(history, move, color):
+        if willCheck(history, move):
             return False
         
     return True
@@ -55,18 +57,29 @@ def _isclear (board, rows, cols):
                 return False
     return True
 
+moveToCastling = {"e1g1": WHITE_OO, "e1c1": WHITE_OOO,
+                  "e8g8": BLACK_OO, "e8c8": BLACK_OOO}
 def tryKing (move, color, history, board):
-    #TODO: not allowed to move, if checked
-    if color == "white":
-        if str(move) == "e1g1" and history.castling & WHITE_OO and \
-            _isclear(board, [0], [5,6]): return True
-        if str(move) == "e1c1" and history.castling & WHITE_OOO and \
-            _isclear(board, [0], [1,2,3]): return True
-    elif color == "black":
-        if str(move) == "e8g8" and history.castling & BLACK_OO and \
-            _isclear(board, [7], [5,6]): return True
-        if str(move) == "e8c8" and history.castling & BLACK_OOO and \
-            _isclear(board, [7], [1,2,3]): return True
+
+    strmove = str(move)
+    if strmove in moveToCastling:
+        if not history.castling & moveToCastling[strmove]:
+            return False
+        
+        opcolor = color == "white" and "black" or "white"
+        rows = color == "black" and (7,) or (0,)
+        if move.cord0.x < move.cord1.x:
+            cols = [5,6]
+        else: cols = [1,2,3]
+        if not _isclear(board, rows, cols):
+            return False
+        
+        cols.append(4)
+        opcolor = history.curCol() == "white" and "black" or "white"
+        if genMovesPointingAt (history, cols, rows, opcolor):
+            return False
+        
+        return True
 
     return abs(move.cord0.x - move.cord1.x) <= 1 and \
            abs(move.cord0.y - move.cord1.y) <= 1
@@ -142,7 +155,7 @@ def tryQueen (move, color, history, board):
     return tryRook (move, color, history, board) or \
            tryBishop (move, color, history, board)
 
-def getLegalMoves (history, cord):
+def _getLegalMoves (history, cord, testCheck):
     cords = []
     board = history[-1]
     for row in range(len(board)):
@@ -153,58 +166,75 @@ def getLegalMoves (history, cord):
                     abs(cord.y - row) == abs(cord.x - col):
                 cord1 = Cord(col, row)
                 move = Move(history, (cord, cord1))
-                if validate (move, history):
-                    cords += [cord1]
+                if validate (move, history, testCheck):
+                    cords.append(cord1)
     return cords
 
-def findMoves (history, color):
-    from time import time
+def findMoves (history):
     t = time()
     moves = {}
     board = history[-1]
+    color = history.curCol()
     for row in range(len(board)):
         for col in range(len(board[row])):
             piece = board[row][col]
             if not piece: continue
             if piece.color != color: continue
             cord0 = Cord(col, row)
-            for cord1 in getLegalMoves (history, cord0):
+            for cord1 in _getLegalMoves (history, cord0, True):
                 if cord0 in moves:
-                    moves[cord0] += [cord1]
+                    moves[cord0].append(cord1)
                 else: moves[cord0] = [cord1]
     log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t))
+    #log.debug(str(moves))
     return moves
 
-def getPiecesPointingAt (history, cord, color=None, sign=None, r=None, c=None, testCheck=True):
-    if sign:
-        print "search", cord, color, sign, r, c
-        import sys
-        sys.stdout.write(str(history[-1]))
-    list = []
+def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
+    #if sign:
+    #    print "search", cord, color, sign, r, c
+    #    print "movelist", history.movelist[-1]
+    #    import sys
+    #    sys.stdout.write(str(history[-1]))
     board = history[-1]
+    
+    for cord0, cord1s in history.movelist[-1].iteritems():
+        piece = board[cord0]
+        if color and piece.color != color: continue
+        if sign and piece.sign != sign: continue
+        if r and cord0.y != r: continue
+        if c and cord0.x != c: continue
+        for cord1 in cord1s:
+            if cord1 == cord:
+                #if sign:
+                #    print "Found move:", cord0, cord1
+                return cord0
+
+def genMovesPointingAt (history, cols, rows, color, testCheck=False):
+    board = history[-1]
+    
     for row in range(len(board)):
         for col in range(len(board[row])):
             piece = board[row][col]
             if piece == None: continue
-            if color and piece.color != color: continue
-            if sign and piece.sign != sign: continue
-            if r and row != r: continue
-            if c and col != c: continue
-            move = Move (history, (board.getCord(piece), cord))
-            if validate (move, history, testCheck):
-                if sign:
-                    print "Found move:", move
-                return move
+            if piece.color != color: continue
+            cord0 = Cord(col,row)
+            for r in rows:
+                for c in cols:
+                    move = Move (history, (cord0, Cord(c,r)))
+                    if validate (move, history, testCheck):
+                        return move
 
-def willChess (history, move, color):
+def willCheck (history, move):
     history = history.clone()
-    history.add(move)
-    return _isChess(history, color)
+    history.add(move, mvlist=False)
+    check = isCheck(history, history.curCol() == "white" and "black" or "white")
+    hisPool.add(history)
+    return check
 
-def _isChess (history, color):
+def isCheck (history, color):
     opcolor = color == "white" and "black" or "white"
     cord = _findKing(history[-1], color)
-    if getPiecesPointingAt(history, cord, opcolor, testCheck=False):
+    if genMovesPointingAt(history, (cord.x,), (cord.y,), opcolor):
         return True
     return False
 
@@ -217,19 +247,15 @@ def _findKing (board, color):
                 return cord
 
 FINE, STALE, MATE = range(3)
-def status (history, possibleMoves = None):
-    #Should -2 and -4 also be the same?
-    if len(history) >= 5 and history[-1] == history[-3] == history[-5]:
-        log.log("Game is stale as %s == %s == %s" % (history[-1], history[-3], history[-5]))
+def status (history):
+    if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
+        log.log("Game is stale as %s == %s == %s" % (history[-1], history[-5], history[-9]))
         return STALE
     if history.fifty >= 100:
         log.log("Game is stale by the 50 moves rule")
         return STALE
-    color = len(history) % 2 == 0 and "black" or "white"
-    if not possibleMoves:
-        possibleMoves = findMoves (history, color)
-    if len(possibleMoves) == 0 and _isChess(history, color):
-        return MATE
-    elif len(possibleMoves) == 0:
+    if len(history.movelist[-1]) == 0:
+        if isCheck(history, history.curCol()):
+            return MATE
         return STALE
     return FINE

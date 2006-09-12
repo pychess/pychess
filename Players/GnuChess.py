@@ -92,7 +92,7 @@ class GnuChess (Engine):
                 break
             if line.find("Illegal move") >= 0:
                 log.error("GnR: " + line.strip())
-            else: log.debug("CrR: " + line.strip())
+            else: log.debug("GnR: " + line.strip())
             result += [line]
         return result
     
@@ -101,6 +101,11 @@ class GnuChess (Engine):
     
     def testEngine (self):
         return repr(self) and True or False
+    
+    def showBoard (self):
+        """Mostly for debugging"""
+        print >> self.out, "show board"
+        log.log("".join(self._get()))
     
     def __repr__ (self):
         from os import popen
