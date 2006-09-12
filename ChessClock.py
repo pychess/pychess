@@ -18,6 +18,7 @@ class ChessClock (gtk.DrawingArea):
         pass #TODO
     
     def expose(self, widget, event):
+        print "expose"
         context = widget.window.cairo_create()
         context.rectangle(event.area.x, event.area.y,
                           event.area.width, event.area.height)

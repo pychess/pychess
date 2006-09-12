@@ -43,7 +43,7 @@ class CairoBoard(gtk.DrawingArea):
         return self._history
     def _set_history(self, history):
         self._history = history
-        self.emit("history_changed", self.history)
+        idle_add(lambda: self.emit("history_changed", self.history))
         self.redraw_canvas()
     history = property(_get_history, _set_history)
     
@@ -101,6 +101,7 @@ class CairoBoard(gtk.DrawingArea):
         self.draw(context, event.area)
         return False
     
+    square = None
     def draw(self, context, rect):
         r = self.get_allocation()
         square = float(min(r.width, r.height)) -4
