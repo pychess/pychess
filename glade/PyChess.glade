@@ -801,7 +801,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="authors">Thomas Dybdahl Ahle</property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">Thomas Dybdahl Ahle</property>
-  <property name="logo">pychess.png</property>
+  <property name="logo">pixmaps/pychess.png</property>
 </widget>
 
 <widget class="GtkDialog" id="savegamedialog">

@@ -30,7 +30,13 @@ class ChessClock (gtk.DrawingArea):
         self.light = self.get_style().light[gtk.STATE_NORMAL]
         
         hpad, vpad = 7, 1
-        ra = self.redrawingAll
+        #FIXME: The clock will always redraw everything,
+        #while the next line is outcommented
+        #Problem is that saving the redrawingAll in self,
+        #will make natural redraws, as when hidden under another window,
+        #only draw the one side, and leave the other empty.
+        #ra = self.redrawingAll
+        ra = True
         
         if ra or self.player == 0:
             time0 = self.names[0],self.formatTime(self.getDeciSeconds(0))     
