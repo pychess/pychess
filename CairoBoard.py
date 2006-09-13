@@ -61,6 +61,7 @@ class CairoBoard(gtk.DrawingArea):
         self.history.add(move, True)
         self.shown += 1
         
+        #TODO: move status checking to Game.py
         s = validator.status(self.history)
         if s == validator.STALE:
             self.locked = True
@@ -74,9 +75,9 @@ class CairoBoard(gtk.DrawingArea):
         return True
     
     def emit_move_signal (self, cord0, cord1):
-        
-        if not validate(Move(self.history, (cord0, cord1)), self.history):
-            return
+
+        #if not validate(Move(self.history, (cord0, cord1)), self.history):
+        #    return
         
         #TODO: Move promotion code to the "Human" class
         promotion = "q"

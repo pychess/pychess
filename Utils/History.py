@@ -66,8 +66,10 @@ class History (GObject):
     
     __gsignals__ = {'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ())}
     
+    
     def __init__ (self, mvlist=False):
         GObject.__init__(self)
+        
         self.boards = [Board(cloneStartPieces())]
         self.fifty = 0
         self.moves = []
@@ -86,6 +88,7 @@ class History (GObject):
         return len(self) % 2 == 1 and "white" or "black"
     
     def add (self, move, mvlist=False):
+    
         capture = self.boards[-1][move.cord1] != None
         
         if move.castling:
@@ -119,10 +122,13 @@ class History (GObject):
             self.fifty += 1
         else: self.fifty = 0
         
+        # Emiting before the add is really completed
+        #    (need movelist) for better performace
+        self.emit("changed")
+        
         if mvlist:
             self.movelist.append(validator.findMoves(self))
         
-        self.emit("changed")
         return self
     
     def reverse (self):

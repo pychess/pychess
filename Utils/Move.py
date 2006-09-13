@@ -25,6 +25,8 @@ from Utils.Log import log
 #        return None
 #    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
 
+class ParsingError (Exception): pass
+
 class MovePool:
     def __init__ (self):
         self.objects = []
@@ -132,11 +134,10 @@ class Move:
                 notat = notat[1:]
             
             if notat:
-                print "Notat is:",notat
                 self.cord1 = Cord(notat)
             from Utils.validator import getMovePointingAt
             cord0 = getMovePointingAt(history, self.cord1, color, sign, row, col)
-            assert cord0 != None, "Unable to parse move %s" % move
+            if cord0 == None: raise ParsingError, "Unable to parse move %s" % move
             self.cord0 = cord0
 
             if board[self.cord0].sign == "p" and self.cord0.y in [3,4]:

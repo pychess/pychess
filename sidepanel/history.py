@@ -37,8 +37,7 @@ def ready (window):
     global board
     board = window["CairoBoard"]
     
-    board.connect("history_changed",
-            lambda w,his: his.connect("changed", history_changed))
+    board.connect("history_changed", lambda w,his: new_history_object(his))
     board.connect("shown_changed", shown_changed)
     
 def select_cursor_row (tree, col):
@@ -71,15 +70,31 @@ def idle_add(proc, *args):
         return False
     gobject.idle_add(proc_star)
 
+def new_history_object (history):
+    left.get_model().clear()
+    right.get_model().clear()
+    numbers.get_model().clear()
+    #TODO: Add all moves from history
+    history.connect("changed", history_changed)
+
 def history_changed (history):
     view = len(history) & 1 and right or left
     
     notat = history.moves[-1].algNotat(history)
     
-    idle_add(view.get_model().append, [notat])
+    def todo():
+        view.get_model().append([notat])
+        shown = len(history)-1
+        row = int((shown-1) / 2)
+        view.get_selection().select_iter(view.get_model().get_iter(row))
+        other = shown & 1 and right or left
+        other.get_selection().unselect_all()
+    idle_add(todo)
+    
     if len(history) / 2 > len(numbers.get_model()):
         num = str(int(len(history)/2))+"."
         idle_add(numbers.get_model().append, [num])
+        
     idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
             numbers.get_allocation().height)
 

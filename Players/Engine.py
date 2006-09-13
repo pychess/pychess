@@ -1,5 +1,7 @@
 from Player import Player
 
+class EngineDead (Exception): pass
+
 class Engine (Player):
     def newGame (self, color, strength, (hours, minutes, seconds, plus)):
         """Takes a color (-1: human vs. human, 0: white, 1: black),

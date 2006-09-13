@@ -8,7 +8,7 @@ class Human (Player):
         self.cond = Condition()
         self.pnum = pnum
         self.board = board
-        board.connect("piece_moved", self.piece_moved)
+        self.conid = board.connect("piece_moved", self.piece_moved)
     
     move = None
     def piece_moved (self, board, move):
@@ -34,3 +34,6 @@ class Human (Player):
         #TODO: Get name from preferences or accountname
         #(probably preferences, as accountname would give problems in pvp games)
         return "Human"
+
+    def __del__ (self):
+        self.board.disconnect(self.conid)

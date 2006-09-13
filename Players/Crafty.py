@@ -2,15 +2,19 @@ import sys, os, atexit
 
 from Utils.Log import LogPipe
 from Utils.Log import log
-from Engine import Engine
+from Engine import Engine, EngineDead
 
 class Crafty (Engine):
     
-    name = None
     def __init__ (self):
-        from popen2 import popen4
-        self.inn, self.out = popen4("nice crafty", 0)
+        self.last = "notnull"
+        self.name = ""
+        
+        from popen2 import Popen4
+        popen = Popen4("nice crafty", 0)
+        self.out, self.inn = popen.tochild, popen.fromchild
         self.out = LogPipe(self.out, "CrW: ")
+        self.pid = popen.pid
         atexit.register(self.__del__)
         
         print >> self.out, "xboard"
@@ -63,6 +67,8 @@ class Crafty (Engine):
         result = []
         while True:
             line = self.inn.readline()
+            if not line.strip() and not self.last:
+                raise EngineDead
             if line.find("Illegal move") >= 0:
                 log.error("CrR: " + line.strip())
             else: log.debug("CrR: " + line.strip(), flush=True)
@@ -89,6 +95,4 @@ class Crafty (Engine):
         return self.name
     
     def __del__ (self):
-        try:
-            print >> self.out, "end"
-        except: pass
+        os.system("kill %d" % self.pid)
