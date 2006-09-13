@@ -18,6 +18,7 @@ from Players.Human import Human
 import myconf
 import thread
 from Game import game
+import Game
 
 def saveGameBefore (action):
     #TODO: Test om noget er ændret!
@@ -165,7 +166,12 @@ class GladeHandlers:
             else: player = Human(window["CairoBoard"], pnum)
             players += [player]
         
-        thread.start_new(game, (window["CairoBoard"], players[0], players[1], clock, secs, gain))
+        if id in window.sbids:
+            window["statusbar1"].pop(id)
+        window["CairoBoard"].shown = 0
+        window["ChessClock"].stop()
+        Game.kill()
+        t = thread.start_new(game, (window["CairoBoard"], players[0], players[1], clock, secs, gain))
         
     def on_load_game1_activate (widget):
         #res = saveGameBefore(_("you open a new game"))
@@ -289,8 +295,10 @@ class PyChess:
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
     
+    sbids = [0]
     def end (self, message):
-        self["statusbar1"].push(int(time()), message)
+        self["statusbar1"].push(self.sbids[-1], message)
+        self.sbids.append(self.sbids[-1]+1)
     
     from UserDict import UserDict
     class Files (UserDict):

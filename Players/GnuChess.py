@@ -2,16 +2,17 @@ import sys, os, atexit
 
 from Utils.Log import LogPipe
 from Utils.Log import log
-from Engine import Engine
+from Engine import Engine, EngineDead
 
 class GnuChess (Engine):
     
     def __init__ (self):
-        from popen2 import popen4
-        self.inn, self.out = popen4("nice gnuchess -x", 0)
+        from popen2 import Popen4
+        popen = Popen4("nice gnuchess -x", 0)
+        self.out, self.inn = popen.tochild, popen.fromchild
         self.out = LogPipe(self.out, "GnW: ")
+        self.pid = popen.pid
         atexit.register(self.__del__)
-        
         self._get()
         
     def setStrength (self, strength):
@@ -88,6 +89,8 @@ class GnuChess (Engine):
         result = []
         while True:
             line = self.inn.readline()
+            if not line.strip():
+                raise EngineDead
             if line == "Illegal move: flush plz\n":
                 break
             if line.find("Illegal move") >= 0:
@@ -95,7 +98,6 @@ class GnuChess (Engine):
             else: log.debug("GnR: " + line.strip())
             result += [line]
         return result
-    
     
     # Other methods
     
@@ -114,9 +116,7 @@ class GnuChess (Engine):
         return self.name
     
     def __del__ (self):
-        try:
-            print >> self.out, "exit"
-        except: pass
+        os.system("kill %d" % self.pid)
 
 if __name__ == "__main__":
     c = GnuChess()
