@@ -13,7 +13,9 @@ class GnuChess (Engine):
         self.out = LogPipe(self.out, "GnW: ")
         self.pid = popen.pid
         atexit.register(self.__del__)
-        self._get()
+        try:
+            self._get()
+        except: pass
         
     def setStrength (self, strength):
         if strength == 0:

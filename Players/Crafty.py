@@ -18,9 +18,12 @@ class Crafty (Engine):
         atexit.register(self.__del__)
         
         print >> self.out, "xboard"
-        for line in self._get("Crafty"):
-            if line.startswith("Crafty "):
-                self.name = line
+        try:
+            for line in self._get("Crafty"):
+                if line.startswith("Crafty "):
+                    self.name = line
+        except:
+            self.name = ""
         
     def setStrength (self, strength):
         if strength == 0:
@@ -69,6 +72,7 @@ class Crafty (Engine):
             line = self.inn.readline()
             if not line.strip() and not self.last:
                 raise EngineDead
+            self.last = line.strip()
             if line.find("Illegal move") >= 0:
                 log.error("CrR: " + line.strip())
             else: log.debug("CrR: " + line.strip(), flush=True)
