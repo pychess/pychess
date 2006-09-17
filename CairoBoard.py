@@ -25,11 +25,11 @@ def grow (r, grow = 0):
     return r
 
 class CairoBoard(gtk.DrawingArea):
+    #TODO: Split in two classes, a viewer extending DrawingArea, and a controller extending EventBox
     
     __gsignals__ = {
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,)),
-        'history_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
     }
     
@@ -37,16 +37,8 @@ class CairoBoard(gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.connect("expose_event", self.expose)
         self.widgets = gtk.glade.XML("glade/promotion.glade")
-    
-    _history = None
-    def _get_history(self):
-        return self._history
-    def _set_history(self, history):
-        self._history = history
-        idle_add(lambda: self.emit("history_changed", self.history))
-        self.redraw_canvas()
-    history = property(_get_history, _set_history)
-    
+        self.history = History()
+        
     _shown = 0
     def _get_shown(self):
         return self._shown
@@ -226,7 +218,7 @@ class CairoBoard(gtk.DrawingArea):
     locked = False
     def isSelectable (self, cord):
         if self.locked: return False
-        if not self.history: return False
+        if not self.history.movelist: return False
         if not cord: return False
 
         if self.shown != len(self.history)-1:

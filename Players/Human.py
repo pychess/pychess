@@ -16,7 +16,7 @@ class Human (Player):
             return
         self.cond.acquire()
         self.move = move
-        self.cond.notifyAll()
+        self.cond.notify()
         self.cond.release()
     
     def makeMove (self, history):

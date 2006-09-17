@@ -1,7 +1,7 @@
 import sys, os, atexit
 
-from Utils.Log import LogPipe
-from Utils.Log import log
+from System.Log import LogPipe
+from System.Log import log
 from Engine import Engine, EngineDead
 
 class Crafty (Engine):
@@ -92,11 +92,14 @@ class Crafty (Engine):
         print >> self.out, "ed"
         log.log("".join(self._get("ed")[:-1]))
     
-    def testEngine (self):
-        return repr(self) and True or False
-    
     def __repr__ (self):
         return self.name
     
     def __del__ (self):
         os.system("kill %d" % self.pid)
+
+def testEngine ():
+    for path in os.environ["PATH"].split(":"):
+        if os.path.isfile(os.path.join(path,"crafty")):
+            return True
+    return False

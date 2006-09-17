@@ -1,7 +1,7 @@
 import sys, os, atexit
 
-from Utils.Log import LogPipe
-from Utils.Log import log
+from System.Log import LogPipe
+from System.Log import log
 from Engine import Engine, EngineDead
 
 class GnuChess (Engine):
@@ -50,7 +50,7 @@ class GnuChess (Engine):
                 mymove = reply[12:].strip()
                 c1, c2 = mymove[:2], mymove[2:4]
                 if len(mymove) == 5:
-                    return Move(history, (c1, c2), mymove[4:5])
+                    return Move(history, (c1, c2), mymove[4])
                 return Move(history, (c1, c2))
                 
         log.error("Unable to parse gnuchess reply '%s'" % str(replies))
@@ -103,9 +103,6 @@ class GnuChess (Engine):
     
     # Other methods
     
-    def testEngine (self):
-        return repr(self) and True or False
-    
     def showBoard (self):
         """Mostly for debugging"""
         print >> self.out, "show board"
@@ -119,6 +116,12 @@ class GnuChess (Engine):
     
     def __del__ (self):
         os.system("kill %d" % self.pid)
+
+def testEngine ():
+    for path in os.environ["PATH"].split(":"):
+        if os.path.isfile(os.path.join(path,"gnuchess")):
+            return True
+    return False
 
 if __name__ == "__main__":
     c = GnuChess()

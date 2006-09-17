@@ -2,7 +2,7 @@ from Utils.History import WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
 from Utils.History import hisPool
 from Utils.Move import Move, movePool
 from Utils.Cord import Cord
-from Utils.Log import log
+from System.Log import log
 from time import time
 
 

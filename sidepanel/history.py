@@ -37,7 +37,8 @@ def ready (window):
     global board
     board = window["CairoBoard"]
     
-    board.connect("history_changed", lambda w,his: new_history_object(his))
+    board.history.connect("cleared", new_history_object)
+    board.history.connect("changed", history_changed)
     board.connect("shown_changed", shown_changed)
     
 def select_cursor_row (tree, col):
@@ -74,8 +75,6 @@ def new_history_object (history):
     left.get_model().clear()
     right.get_model().clear()
     numbers.get_model().clear()
-    #TODO: Add all moves from history
-    history.connect("changed", history_changed)
 
 def history_changed (history):
     view = len(history) & 1 and right or left
