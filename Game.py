@@ -8,12 +8,12 @@ player2 = None
 chessclock = None
 run = False
 
-def game (board, p1, p2, cc = None, seconds = 0, plus = 0):
+def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
     global player1, player2, chessclock, run
     player1, player2, chessclock = p1, p2, cc
     run = True
     
-    board.history = History(True)
+    board.history.reset(True)
     if chessclock:
         chessclock.setTime(seconds*10)
         chessclock.setGain(plus*10)

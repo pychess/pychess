@@ -41,7 +41,7 @@ startPieces = \
 [c("br"),c("bn"),c("bb"),c("bq"),c("bk"),c("bb"),c("bn"),c("br")]]
 
 from Utils.Move import Move
-from Utils.Log import log
+from System.Log import log
 import validator
 
 from copy import copy
@@ -64,10 +64,16 @@ class History (GObject):
     '''Class remembers all moves, and can give you
     a two dimensional array (8x8) of Piece objects'''
     
-    __gsignals__ = {'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ())}
-    
+    __gsignals__ = {
+        'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+    }
     
     def __init__ (self, mvlist=False):
+        GObject.__init__(self)
+        self.reset(mvlist)
+    
+    def reset (self, mvlist=False):
         GObject.__init__(self)
         
         self.boards = [Board(cloneStartPieces())]
@@ -77,6 +83,8 @@ class History (GObject):
         self.movelist = []
         if mvlist:
             self.movelist.append(validator.findMoves(self))
+        
+        self.emit("cleared")
     
     def __getitem__(self, i):
         return self.boards[i]
@@ -123,31 +131,12 @@ class History (GObject):
         else: self.fifty = 0
         
         # Emiting before the add is really completed
-        #    (need movelist) for better performace
+        #    (hasn't yet generated movelist) for better performace
         self.emit("changed")
         
         if mvlist:
             self.movelist.append(validator.findMoves(self))
         
-        return self
-    
-    def reverse (self):
-        """Don't use this method! Doesn't work"""
-        log.warn("Using buggy History.reverse method!")
-        
-        del self.boards[-1]
-        move = self.moves.pop()
-        
-        if str(move.castling) == "a1":
-            self.castling |= WHITE_OOO
-        elif str(move.castling) == "h1":
-            self.castling |= WHITE_OO
-        elif str(move.castling) == "h8":
-            self.castling |= BLACK_OO
-        elif str(move.castling) == "a8":
-            self.castling |= BLACK_OOO
-        
-        self.emit("changed")
         return self
     
     def clone (self):

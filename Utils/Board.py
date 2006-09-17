@@ -2,7 +2,7 @@ import sys
 from copy import deepcopy
 from Utils.Piece import Piece
 from Utils.Cord import Cord
-from Utils.Log import log
+from System.Log import log
 
 class Board:
     def __init__ (self, array):

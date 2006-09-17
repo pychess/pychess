@@ -11,14 +11,15 @@ gettext.install("pychess",localedir="lang",unicode=1)
 gtk.glade.bindtextdomain("pychess","lang")
 gtk.glade.textdomain("pychess")
 
-from Utils.Log import log
+from System.Log import log
 
 from Players import *
 from Players.Human import Human
-import myconf
+from System import myconf
 import thread
 from Game import game
 import Game
+from Utils.Oracle import Oracle
 
 def saveGameBefore (action):
     #TODO: Test om noget er ændret!
@@ -127,8 +128,6 @@ class GladeHandlers:
         #res = saveGameBefore(_("a new game starts"))
         #if res == gtk.RESPONSE_CANCEL: return
         
-        #window["ChessClock"].reset()
-        #window["CairoBoard"].reset()
         res = window["newgamedialog"].run()
         window["newgamedialog"].hide()
         if res == gtk.RESPONSE_CANCEL: return
@@ -171,7 +170,8 @@ class GladeHandlers:
         window["CairoBoard"].shown = 0
         window["ChessClock"].stop()
         Game.kill()
-        t = thread.start_new(game, (window["CairoBoard"], players[0], players[1], clock, secs, gain))
+        t = thread.start_new(game, (window["CairoBoard"], window.oracle, players[0], players[1], clock, secs, gain))
+        
         
     def on_load_game1_activate (widget):
         #res = saveGameBefore(_("you open a new game"))
@@ -287,6 +287,9 @@ class PyChess:
         
         self["window1"].show_all()
         
+        self.oracle = Oracle()
+        self.oracle.attach(self["CairoBoard"].history)
+        
         self.loadEngines()
         makeNewGameDialogReady()
         makeSidePanelReady()
@@ -318,10 +321,8 @@ class PyChess:
         for name, module in globals().iteritems():
             for attr in [getattr(module, a) for a in dir(module)]:
                 if type(attr) is ClassType and issubclass(attr, Engine) and attr != Engine:
-                    e = attr()
-                    if e.testEngine():
+                    if module.testEngine():
                         self.engines += [attr]
-                    e.__del__()
     
     def widgetHandler (self, glade, functionName, widgetName, str1, str2, int1, int2):
         if widgetName in self.files["."]:

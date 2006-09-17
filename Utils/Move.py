@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from Utils.Cord import Cord
-from Utils.Log import log
+from System.Log import log
 
 #import gtk.glade
 #widgets = gtk.glade.XML("glade/moveerror.glade")
@@ -197,5 +197,9 @@ class Move:
     def __repr__ (self):
         return str(self.cord0) + str(self.cord1)
 
-    def __eqal__ (self, other):
-        return other.cord0 == self.cord0 and other.cord1 == self.cord1
+    def __eq__ (self, other):
+        return other.cord0 == self.cord0 and \
+               other.cord1 == self.cord1 and \
+               other.promotion == self.promotion and \
+               other.enpassant == self.enpassant and \
+               other.castling == self.castling
