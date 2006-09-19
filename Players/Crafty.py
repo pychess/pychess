@@ -19,11 +19,13 @@ class Crafty (Engine):
         
         print >> self.out, "xboard"
         try:
+            print >> self.out, "info"
             for line in self._get("Crafty"):
                 if line.startswith("Crafty "):
                     self.name = line
         except:
             self.name = ""
+        print "----------- CRAFTY NAME: %s" % self.name
         
     def setStrength (self, strength):
         if strength == 0:
