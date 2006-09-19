@@ -171,8 +171,17 @@ class GladeHandlers:
         window["ChessClock"].stop()
         Game.kill()
         t = thread.start_new(game, (window["CairoBoard"], window.oracle, players[0], players[1], clock, secs, gain))
-        
-        
+    
+    def on_ccalign_show (widget):
+        clockHeight = window["ccalign"].get_allocation().height
+        windowSize = window["window1"].get_size()
+        window["window1"].resize(windowSize[0],windowSize[1]+clockHeight)
+    
+    def on_ccalign_hide (widget):
+        clockHeight = window["ccalign"].get_allocation().height
+        windowSize = window["window1"].get_size()
+        window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
+    
     def on_load_game1_activate (widget):
         #res = saveGameBefore(_("you open a new game"))
         #if res == gtk.RESPONSE_CANCEL: return
