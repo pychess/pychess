@@ -5,7 +5,8 @@ __title__ = _("Move History")
 
 widgets = gtk.glade.XML("sidepanel/history.glade")
 __widget__ = widgets.get_widget("panel")
-widgets.get_widget("window").remove(__widget__)
+__widget__.unparent()
+#widgets.get_widget("window").remove(__widget__)
 
 __active__ = True
 

@@ -23,6 +23,7 @@ def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
                 answer = player.makeMove(board.history)
                 
             except Utils.Move.ParsingError:
+                #Mostly debugging really
                 import traceback
                 print traceback.format_exc()
                 print "Player 1 board:"
@@ -33,7 +34,8 @@ def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
                 sys.exit()
                 
             except EngineDead:
-                return
+                run = False
+                break
             
             if type(answer) in (list, tuple):
                 move, animate = answer
@@ -41,14 +43,17 @@ def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
             again = board.move(move, animate)
             
             if not again:
-                player1.__del__()
-                player2.__del__()
-                if chessclock:
-                    chessclock.stop()
-                return
+                run = False
+                break
                 
             if chessclock:
                 chessclock.switch()
+                
+    player1.__del__()
+    player2.__del__()
+    if chessclock:
+        chessclock.stop()
+    oracle.reset()
 
 def kill ():
     global player1, player2, chessclock, run
