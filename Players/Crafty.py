@@ -25,7 +25,6 @@ class Crafty (Engine):
                     self.name = line
         except:
             self.name = ""
-        print "----------- CRAFTY NAME: %s" % self.name
         
     def setStrength (self, strength):
         if strength == 0:
