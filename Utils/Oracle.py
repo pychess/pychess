@@ -119,6 +119,8 @@ class Oracle (gobject.GObject):
                 
                 self.history.add(move)
                 score = self.score()
+                if len(self.history.moves) % 2 == 1:
+                    score = -score
                 self.future.append((move,score))
                 if self.queue.empty():
                     self.emit("foretold_move", move, score)
