@@ -36,7 +36,8 @@ class CairoBoard(gtk.DrawingArea):
     def __init__(self):
         gtk.DrawingArea.__init__(self)
         self.connect("expose_event", self.expose)
-        self.widgets = gtk.glade.XML("glade/promotion.glade")
+        widgets = gtk.glade.XML("glade/promotion.glade")
+        self.promotionDialog = widgets.get_widget("promotionDialog")
         self.history = History()
         
     _shown = 0
@@ -75,8 +76,8 @@ class CairoBoard(gtk.DrawingArea):
         promotion = "q"
         if len(self.history) > 0 and self.history[-1][cord0] != None and \
                 self.history[-1][cord0].sign == "p" and cord1.y in [0,7]:
-            res = int(self.widgets.get_widget("promotionDialog").run())
-            self.widgets.get_widget("promotionDialog").hide()
+            res = int(self.promotionDialog.run())
+            self.promotionDialog.hide()
             if res == int(gtk.RESPONSE_DELETE_EVENT):
                 return
             promotion = ["q","r","b","n"][res]

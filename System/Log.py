@@ -1,6 +1,6 @@
 import os, sys, time
 
-debug = True
+debug = False
 logfile = "~/.pychess.log"
 
 class LogPipe:
@@ -45,6 +45,8 @@ class Log:
         self.file.write (self._format(message, "Error"));
         if flush: self.file.flush ()
         sys.stderr.write ("*E* %s\n" % message)
+        global debug
+        debug = True
         if len (self.errors) > 0 and self.errors[-1][0] == message:
             self.errors[-1][1] += 1
         else: self.errors += [[message, 1]]

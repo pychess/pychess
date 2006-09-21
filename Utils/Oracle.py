@@ -19,7 +19,8 @@ class Oracle (gobject.GObject):
         'foretold_end': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT, TYPE_INT)),
         'clear': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'rmfirst': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'foundbook': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,))
+        'foundbook': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'foundscore': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
     }
     
     def __init__ (self):
@@ -59,6 +60,8 @@ class Oracle (gobject.GObject):
         self.bookmv = []
         self.history.reset()
         self.emit("clear")
+        self.emit("foundscore", self.score())
+        self.emit("foundbook", self.book())
         self.cond.release()
         self.run()
     
@@ -102,6 +105,7 @@ class Oracle (gobject.GObject):
         del self.future[:]
         self.history = history
         
+        self.emit("foundscore", self.score())
         self.emit("foundbook", self.book())
     
     def _getmove (self):
@@ -119,8 +123,6 @@ class Oracle (gobject.GObject):
                 
                 self.history.add(move)
                 score = self.score()
-                if len(self.history.moves) % 2 == 1:
-                    score = -score
                 self.future.append((move,score))
                 if self.queue.empty():
                     self.emit("foretold_move", move, score)
@@ -159,7 +161,10 @@ class Oracle (gobject.GObject):
         for line in self._get("Phase"):
             if line.startswith("Phase"):
                 s = line.find("sco")
-                return int(line[s+8:])
+                score = int(line[s+8:])
+                if len(self.history.moves) % 2 == 1:
+                    score = -score
+                return score
     
     from re import compile
     bookExpr = compile(r"(\w{2,3})\((\d+)?/?(\d+)?/?(\d+)?/?(\d+)?\)")
