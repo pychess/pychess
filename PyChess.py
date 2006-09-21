@@ -46,9 +46,6 @@ def createCombo (combo, data):
     combo.pack_start(crt, False)
     combo.add_attribute(crt, 'text', 1)
 
-def makePromotionDialogReady ():
-    window["promotionDialog"].hide()
-
 def makeNewGameDialogReady ():
     it = gtk.icon_theme_get_default()
 
@@ -103,7 +100,7 @@ def makeSidePanelReady ():
     
     panels = ["sidepanel/"+f for f in os.listdir("sidepanel")]
     panels = [f[:-3] for f in panels if f.endswith(".py")]
-    for panel in [__import__(f, globals()) for f in panels]:
+    for panel in [__import__(f, locals()) for f in panels]:
         panel.ready(window)
         window["ToggleComboBox"].addItem(panel.__title__)
         num = window["panelbook"].append_page(panel.__widget__)
@@ -301,8 +298,13 @@ class PyChess:
         
         self.loadEngines()
         makeNewGameDialogReady()
+        
+        #Very ugly hack, needed because of pygtk bug 357022
+        #http://bugzilla.gnome.org/show_bug.cgi?id=357022
+        from BookCellRenderer import BookCellRenderer
+        self.BookCellRenderer = BookCellRenderer
+        
         makeSidePanelReady()
-        makePromotionDialogReady()
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)

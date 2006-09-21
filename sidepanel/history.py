@@ -6,7 +6,6 @@ __title__ = _("Move History")
 widgets = gtk.glade.XML("sidepanel/history.glade")
 __widget__ = widgets.get_widget("panel")
 __widget__.unparent()
-#widgets.get_widget("window").remove(__widget__)
 
 __active__ = True
 
@@ -14,17 +13,17 @@ numbers = widgets.get_widget("treeview1")
 left = widgets.get_widget("treeview2")
 right = widgets.get_widget("treeview3")
 
-def fixList (list):
+def fixList (list, xalign=0):
     list.set_model(gtk.ListStore(str))
     renderer = gtk.CellRendererText()
+    renderer.set_property("xalign",xalign)
     #import pango
     #renderer.set_property("alignment", "left")
     list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
 
 def ready (window):
-    #TODO: number should be right alligned
-    for list in (numbers, left, right):
-        fixList(list)
+    fixList(numbers, 1)
+    map(fixList, (left, right))
     numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
     
     widgets.signal_autoconnect ({
