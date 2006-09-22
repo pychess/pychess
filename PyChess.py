@@ -159,15 +159,15 @@ class GladeHandlers:
                 player.setStrength(dfc)
                 if secs:
                     player.setTime(secs, gain)
-            else: player = Human(window["CairoBoard"], pnum)
+            else: player = Human(window["BoardControl"], pnum)
             players += [player]
         
         if id in window.sbids:
             window["statusbar1"].pop(id)
-        window["CairoBoard"].shown = 0
+        window["BoardControl"].view.shown = 0
         window["ChessClock"].stop()
         Game.kill()
-        t = thread.start_new(game, (window["CairoBoard"], window.oracle, players[0], players[1], clock, secs, gain))
+        t = thread.start_new(game, (window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain))
     
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
@@ -198,7 +198,7 @@ class GladeHandlers:
     #          View Menu          #
     
     def on_rotate_board1_activate (widget):
-        window["CairoBoard"].fromWhite = not window["CairoBoard"].fromWhite
+        window["BoardControl"].view.fromWhite = not window["BoardControl"].view.fromWhite
     
     def on_side_panel1_activate (widget):
         myconf.set("sidepanel", widget.get_active())
@@ -238,34 +238,18 @@ class GladeHandlers:
     
     #          Cairo Board          #
     
-    def on_eventbox1_button_press_event (widget, event):
-        window["CairoBoard"].button_press(widget, event)
-    
-    def on_eventbox1_button_release_event (widget, event):
-        window["CairoBoard"].button_release(widget, event)
-    
-    def on_eventbox1_focus_out_event (widget, event):
-        window["CairoBoard"].focus_out(widget, event)
-    
-    def on_eventbox1_motion_notify_event (widget, event):
-        window["CairoBoard"].motion_notify(widget, event)
-    
-    def on_eventbox1_leave_notify_event (widget, event):
-        window["CairoBoard"].leave_notify(widget, event)
-
-
     def on_start_clicked (widget):
-        window["CairoBoard"].shown = 0
+        window["BoardControl"].view.shown = 0
     
     def on_backward_clicked (widget):
-        window["CairoBoard"].shown -= 1
+        window["BoardControl"].view.shown -= 1
     
     def on_forward_clicked (widget):
-        window["CairoBoard"].shown += 1
+        window["BoardControl"].view.shown += 1
     
     def on_end_clicked (widget):
-        if window["CairoBoard"].history:
-            window["CairoBoard"].shown = len(window["CairoBoard"].history)-1
+        if window["BoardControl"].view.history:
+            window["BoardControl"].view.shown = len(window["BoardControl"].view.history)-1
 
 from time import time
 
@@ -283,18 +267,18 @@ class PyChess:
         
         self["ChessClock"].connect("time_out",
             lambda w,p: self.end("Player %d is timeout" % p))
-        self["CairoBoard"].connect("game_ended",
+        self["BoardControl"].view.history.connect("game_ended",
             lambda w,r: self.end(r == 2 and "Mate" or "Stale"))
         
         self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         
-        self["CairoBoard"].eventbox = self["eventbox1"]
+        self["BoardControl"].eventbox = self["eventbox1"]
         
         self["window1"].show_all()
         
         self.oracle = Oracle()
-        self.oracle.attach(self["CairoBoard"].history)
+        self.oracle.attach(self["BoardControl"].view.history)
         
         self.loadEngines()
         makeNewGameDialogReady()

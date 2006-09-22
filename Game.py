@@ -8,19 +8,19 @@ player2 = None
 chessclock = None
 run = False
 
-def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
+def game (history, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
     global player1, player2, chessclock, run
     player1, player2, chessclock = p1, p2, cc
     run = True
     
-    board.history.reset(True)
+    history.reset(True)
     if chessclock:
         chessclock.setTime(seconds*10)
         chessclock.setGain(plus*10)
     while run:
         for player in player1, player2:
             try:
-                answer = player.makeMove(board.history)
+                answer = player.makeMove(history)
                 
             except Utils.Move.ParsingError:
                 #Mostly debugging really
@@ -40,9 +40,8 @@ def game (board, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
             if type(answer) in (list, tuple):
                 move, animate = answer
             else: move, animate = answer, True
-            again = board.move(move, animate)
             
-            if not again:
+            if not history.add(move,True):
                 run = False
                 break
                 

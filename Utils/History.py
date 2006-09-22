@@ -66,7 +66,8 @@ class History (GObject):
     
     __gsignals__ = {
         'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     }
     
     def __init__ (self, mvlist=False):
@@ -136,6 +137,17 @@ class History (GObject):
         
         if mvlist:
             self.movelist.append(validator.findMoves(self))
+        
+        if len(self.movelist) > 0:
+            s = validator.status(self)
+            if s == validator.STALE:
+                self.locked = True
+                self.emit("game_ended", s)
+                return False
+            elif s == validator.MATE:
+                self.locked = True
+                self.emit("game_ended", s)
+                return False
         
         return self
     
