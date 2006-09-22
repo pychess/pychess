@@ -35,7 +35,7 @@ def ready (window):
     })
     
     global board
-    board = window["CairoBoard"]
+    board = window["BoardControl"].view
     
     board.history.connect("cleared", new_history_object)
     board.history.connect("changed", history_changed)
@@ -104,7 +104,7 @@ def shown_changed (board, shown):
             right.get_selection().unselect_all()
         idle_add(todo)
         return
-        
+    
     col = shown & 1 and left or right
     other = shown & 1 and right or left
     row = int((shown-1) / 2)

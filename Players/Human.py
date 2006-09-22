@@ -12,7 +12,7 @@ class Human (Player):
     
     move = None
     def piece_moved (self, board, move):
-        if (len(board.history)-1) % 2 != self.pnum:
+        if (len(board.view.history)-1) % 2 != self.pnum:
             return
         self.cond.acquire()
         self.move = move
@@ -36,4 +36,6 @@ class Human (Player):
         return "Human"
 
     def __del__ (self):
-        self.board.disconnect(self.conid)
+        try:
+            self.board.disconnect(self.conid)
+        except: pass
