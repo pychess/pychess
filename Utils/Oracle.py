@@ -2,6 +2,7 @@ import sys, os, atexit
 
 from System.Log import LogPipe
 from System.Log import log
+from Syste import Log
 import gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT, TYPE_INT
 from validator import STALE, MATE
@@ -151,7 +152,9 @@ class Oracle (gobject.GObject):
                 raise EngineDead
             if line.find("Illegal move") >= 0 and not line.find("flush") >= 0:
                 log.error("Ora(Gn)R: " + line)
-                sys.exit()
+                Log.debug = True
+                print >> self.out, "show board"
+                print self.history[-1]
             else: log.debug("Ora(Gn)R: " + line)
             result += [line]
             if len([True for p in waitfor if line.find(p) >= 0]) > 0:
