@@ -77,23 +77,28 @@ def new_history_object (history):
     numbers.get_model().clear()
 
 def history_changed (history):
+
+    if len(history) / 2 > len(numbers.get_model()):
+        num = str(int(len(history)/2))+"."
+        idle_add(numbers.get_model().append, [num])
+
     view = len(history) & 1 and right or left
-    
     notat = history.moves[-1].algNotat(history)
-    
+
     def todo():
         view.get_model().append([notat])
+        if board.shown < len(history):
+            return
         shown = len(history)-1
         row = int((shown-1) / 2)
         view.get_selection().select_iter(view.get_model().get_iter(row))
         other = shown & 1 and right or left
         other.get_selection().unselect_all()
+
     idle_add(todo)
     
-    if len(history) / 2 > len(numbers.get_model()):
-        num = str(int(len(history)/2))+"."
-        idle_add(numbers.get_model().append, [num])
-        
+    if board.shown < len(history):
+        return
     idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
             numbers.get_allocation().height)
 

@@ -42,6 +42,8 @@ class BoardView (gtk.DrawingArea):
         self.set_size_request(300,300)
         
     def move (self, history):
+        if self.shown+2 < len(history):
+            return
         self.shown += 1
     
     #############################
@@ -168,6 +170,9 @@ class BoardView (gtk.DrawingArea):
         context.restore()
     
     def drawArrows (self, context):
+        if self.shown != len(self.history.moves):
+            return
+    
         aw = 0.3 # Arrow width
         ahw = 0.72 # Arrow head width
         ahh = 0.64 # Arrow head height

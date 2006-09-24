@@ -2,7 +2,7 @@ import sys, os, atexit
 
 from System.Log import LogPipe
 from System.Log import log
-from Syste import Log
+from System import Log
 import gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT, TYPE_INT
 from validator import STALE, MATE
