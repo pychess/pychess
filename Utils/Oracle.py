@@ -35,6 +35,7 @@ class Oracle (gobject.GObject):
         
         self.queue = Queue(0)
         self.cond = Condition()
+        self.future = []
         
         print >> self.out, "manual"
         print >> self.out, "hard"
@@ -44,6 +45,7 @@ class Oracle (gobject.GObject):
         if self.future and self.future[0][0] == his.moves[-1]:
             del self.future[0]
             self.emit("rmfirst")
+            #FIXME: showbook? showscore?
         else:
             self.emit("clear")
             print >> self.out, "depth 1"

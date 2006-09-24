@@ -215,6 +215,49 @@ class GladeHandlers:
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
     
+    def on_hint_mode_activate (widget):
+        def foretold_move (oracle, move, score):
+            if len(oracle.future) == 1:
+                window["BoardControl"].view.greenarrow = move.cords
+        def rmfirst (oracle):
+            if len(oracle.future) >= 1:
+                window["BoardControl"].view.greenarrow = oracle.future[0][0].cords
+        def cleared (oracle):
+            window["BoardControl"].view.greenarrow = None
+        if widget.get_active():
+            if len(window.oracle.future) >= 1:
+                window["BoardControl"].view.greenarrow = window.oracle.future[0][0].cords
+            window.hintconid0 = window.oracle.connect("foretold_move", foretold_move)
+            window.hintconid1 = window.oracle.connect("rmfirst", rmfirst)
+            window.hintconid2 = window.oracle.connect("clear", cleared)
+        else:
+            window.oracle.disconnect(window.hintconid0)
+            window.oracle.disconnect(window.hintconid1)
+            window.oracle.disconnect(window.hintconid2)
+            window["BoardControl"].view.greenarrow = None
+    
+    def on_spy_mode_activate (widget):
+        #Case: Spy slås til efter trækket er i gang
+        def foretold_move (oracle, move, score):
+            if len(oracle.future) == 2:
+                window["BoardControl"].view.redarrow = move.cords
+        def rmfirst (oracle):
+            if len(oracle.future) >= 2:
+                window["BoardControl"].view.redarrow = oracle.future[1][0].cords
+        def cleared (oracle):
+            window["BoardControl"].view.redarrow = None
+        if widget.get_active():
+            if len(window.oracle.future) >= 2:
+                window["BoardControl"].view.redarrow = window.oracle.future[1][0].cords
+            window.spyconid0 = window.oracle.connect("foretold_move", foretold_move)
+            window.spyconid1 = window.oracle.connect("rmfirst", rmfirst)
+            window.spyconid2 = window.oracle.connect("clear", cleared)
+        else:
+            window.oracle.disconnect(window.spyconid0)
+            window.oracle.disconnect(window.spyconid1)
+            window.oracle.disconnect(window.spyconid2)
+            window["BoardControl"].view.redarrow = None
+    
     #          New Game Dialog          #
 
     def on_checkbutton4_clicked (widget):
