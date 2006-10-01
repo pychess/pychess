@@ -66,12 +66,15 @@ class Oracle (gobject.GObject):
         self.emit("foundscore", self.score())
         self.emit("foundbook", self.book())
         self.cond.release()
-        print "RESET"
+        print "\nRESET\n"
+        self.running = True
         self.run()
     
     def game_ended (self):
+        print "ORACLE GOT GAME ENDED"
         self.running = False
         self.cond.acquire()
+        print "GAME ENDED IS IN"
         print >> self.out, "new"
         print >> self.out, "manual"
         print >> self.out, "hard"
@@ -90,7 +93,6 @@ class Oracle (gobject.GObject):
     # Private methods
     
     def _run (self):
-        self.running = True
         dead = False
         while self.running:
             self.cond.acquire()
