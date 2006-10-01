@@ -31,6 +31,44 @@ def saveGameBefore (action):
     if response == gtk.RESPONSE_YES: window["save_game1"].activate()
     return response
 
+def makeFileDialogReady ():
+    global enddir
+
+    enddir = {}
+    types = []
+    savers = ["Savers/"+s for s in os.listdir("Savers")]
+    savers = [s[:-3] for s in savers if s.endswith(".py")]
+    for saver in [__import__(s, locals()) for s in savers]:
+        for ending in saver.__endings__:
+            enddir[ending] = saver
+        types.append((saver.__label__, saver.__endings__))
+    
+    global savedialog, opendialog
+    savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+    opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
+    savedialog.set_current_folder(os.environ["HOME"])
+    opendialog.set_current_folder(os.environ["HOME"])
+    
+    #TODO: Working with mime-types might gennerelly be a better idea.
+    
+    all = gtk.FileFilter()
+    all.set_name(_("All Chess Files"))
+    opendialog.add_filter(all)
+    
+    custom = gtk.FileFilter()
+    custom.set_name(_("Detect type automatically"))
+    custom.add_pattern("*")
+    savedialog.add_filter(custom)
+    
+    for label, endings in types:
+        f = gtk.FileFilter()
+        f.set_name(label)
+        for ending in endings:
+            f.add_pattern("*."+ending)
+            all.add_pattern("*."+ending)
+        savedialog.add_filter(f)
+        opendialog.add_filter(f)
+    
 def createCombo (combo, data):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
     for icon, label in data:
@@ -127,7 +165,7 @@ class GladeHandlers:
         
         res = window["newgamedialog"].run()
         window["newgamedialog"].hide()
-        if res == gtk.RESPONSE_CANCEL: return
+        if res != gtk.RESPONSE_OK: return
         
         if window["useTimeCB"].get_active():
             window["ccalign"].show()
@@ -165,6 +203,7 @@ class GladeHandlers:
         if id in window.sbids:
             window["statusbar1"].pop(id)
         window["BoardControl"].view.shown = 0
+        window["BoardControl"].locked = True
         window["ChessClock"].stop()
         Game.kill()
         t = thread.start_new(game, (window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain))
@@ -182,14 +221,65 @@ class GladeHandlers:
     def on_load_game1_activate (widget):
         #res = saveGameBefore(_("you open a new game"))
         #if res == gtk.RESPONSE_CANCEL: return
-        pass #TODO
+        
+        res = opendialog.run()
+        opendialog.hide()
+
+        if res != gtk.RESPONSE_ACCEPT: return
+        uri = opendialog.get_uri()[7:]
+        ending = uri[uri.rfind(".")+1:]
+        history = enddir[ending].load(file(uri))
+        print history[-1]
     
     def on_save_game1_activate (widget):
         pass #TODO
     
     def on_save_game_as1_activate (widget):
-        pass #TODO
-    
+        #FIXME: If file exists or has wrong filetype, the window is wrongly hidden..
+
+        res = savedialog.run()
+        savedialog.hide()
+        if res != gtk.RESPONSE_ACCEPT: return
+        uri = savedialog.get_uri()[7:]
+        
+        s = uri.rfind(".")
+        if s >= 0:
+            ending = uri[s+1:]
+        else: ending = None
+        
+        history = window["BoardControl"].view.history
+        
+        if savedialog.get_filter().filter((None,None,"foo",None)):
+            if not ending in enddir:
+                d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+                folder, file = os.path.split(uri)
+                d.set_markup(_("<big><b>Unknown filetype '%s'</b></big>") % ending)
+                d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
+                d.run()
+                d.hide()
+                return
+            saver = enddir[ending]
+        else:
+            for e,sr in enddir.iteritems():
+                if savedialog.get_filter().filter((None,None,"."+e,None)):
+                    if not ending in sr.__endings__:
+                        uri += "." + e
+                    saver = sr
+                    break
+                    
+        if os.path.isfile(uri):
+            d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
+            d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"), gtk.RESPONSE_ACCEPT)
+            d.set_title(_("File exists"))
+            folder, file = os.path.split(uri)
+            d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
+            d.format_secondary_text(_("The file alredy exists in '%s'. If you replace it, its content will be overwritten.") % folder)
+            res = d.run()
+            d.hide()
+            if res != gtk.RESPONSE_ACCEPT:
+                return
+        saver.save(open(uri,"w"), history)
+        
     def on_quit1_activate (widget):
         #res = saveGameBefore(_("exit"))
         #if res == gtk.RESPONSE_CANCEL: return
@@ -206,15 +296,14 @@ class GladeHandlers:
     def on_sidepanel_closebutton_clicked (widget):
         myconf.set("sidepanel",False)
     
-    def on_book1_activate (widget):
-        pass
-    
-    def on_hint1_activate (widget):
-        pass #TODO
+    def on_show_cords_activate (widget):
+        window["BoardControl"].view.showCords = widget.get_active()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
     
+    #Case: Efter spiller 1 har rykket, tænker oraclet og ingen pile vises.
+    #      Klient slår så pilen fra og til. Nu vil pilen for det andet hold vises :(
     def on_hint_mode_activate (widget):
         def foretold_move (oracle, move, score):
             if len(oracle.future) == 1:
@@ -225,7 +314,8 @@ class GladeHandlers:
         def cleared (oracle):
             window["BoardControl"].view.greenarrow = None
         if widget.get_active():
-            if len(window.oracle.future) >= 1:
+            if len(window.oracle.history) >= len(window["BoardControl"].view.history) \
+                    and len(window.oracle.future) >= 1:
                 window["BoardControl"].view.greenarrow = window.oracle.future[0][0].cords
             window.hintconid0 = window.oracle.connect("foretold_move", foretold_move)
             window.hintconid1 = window.oracle.connect("rmfirst", rmfirst)
@@ -237,7 +327,6 @@ class GladeHandlers:
             window["BoardControl"].view.greenarrow = None
     
     def on_spy_mode_activate (widget):
-        #Case: Spy slås til efter trækket er i gang
         def foretold_move (oracle, move, score):
             if len(oracle.future) == 2:
                 window["BoardControl"].view.redarrow = move.cords
@@ -247,7 +336,8 @@ class GladeHandlers:
         def cleared (oracle):
             window["BoardControl"].view.redarrow = None
         if widget.get_active():
-            if len(window.oracle.future) >= 2:
+            if len(window.oracle.history) >= len(window["BoardControl"].view.history) \
+                    and len(window.oracle.future) >= 2:
                 window["BoardControl"].view.redarrow = window.oracle.future[1][0].cords
             window.spyconid0 = window.oracle.connect("foretold_move", foretold_move)
             window.spyconid1 = window.oracle.connect("rmfirst", rmfirst)
@@ -332,6 +422,7 @@ class PyChess:
         self.BookCellRenderer = BookCellRenderer
         
         makeSidePanelReady()
+        makeFileDialogReady()
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)

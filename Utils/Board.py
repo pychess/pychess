@@ -64,3 +64,11 @@ class Board:
                 if not self[row][col].__eq__(other[row][col]):
                     return False
         return True
+
+    def clone (self):
+        l = []
+        for row in self.data:
+            l.append([])
+            for piece in row:
+                l[-1].append(piece)
+        return Board(l)

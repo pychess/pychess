@@ -40,17 +40,18 @@ class Oracle (gobject.GObject):
         
         print >> self.out, "manual"
         print >> self.out, "hard"
-        print >> self.out, "book best"
     
     def addMove (self, his):
-        if self.future and self.future[0][0] == his.moves[-1]:
-            del self.future[0]
-            self.emit("rmfirst")
-            #FIXME: showbook? showscore?
-        else:
-            self.emit("clear")
-            print >> self.out, "depth 1"
-            self.queue.put(his.clone())
+        # FIXME: rmfirst code has been disabled until there is a way
+        # to make it emit correct showbook and showscore signals. URGENT!!! 
+        
+        #if self.future and self.future[0][0] == his.moves[-1]:
+        #    del self.future[0]
+        #    self.emit("rmfirst")
+        #else:
+        self.emit("clear")
+        #print >> self.out, "depth 1"
+        self.queue.put(his.clone())
     
     def reset (self):
         self.running = False
@@ -58,7 +59,6 @@ class Oracle (gobject.GObject):
         print >> self.out, "new"
         print >> self.out, "manual"
         print >> self.out, "hard"
-        print >> self.out, "book best"
         self.future = []
         self.bookmv = []
         self.history.reset()
@@ -66,12 +66,26 @@ class Oracle (gobject.GObject):
         self.emit("foundscore", self.score())
         self.emit("foundbook", self.book())
         self.cond.release()
+        print "RESET"
         self.run()
+    
+    def game_ended (self):
+        self.running = False
+        self.cond.acquire()
+        print >> self.out, "new"
+        print >> self.out, "manual"
+        print >> self.out, "hard"
+        self.future = []
+        self.bookmv = []
+        self.emit("foundbook", [])
+        self.emit("clear")
+        self.cond.release()
     
     def attach (self, history):
         self.history = history.clone()
         history.connect("changed", self.addMove)
         history.connect("cleared", lambda h: self.reset())
+        history.connect("game_ended", lambda m, h: self.game_ended())
         
     # Private methods
     
@@ -85,7 +99,7 @@ class Oracle (gobject.GObject):
                 except: break
                 self._writemove(history)
                 dead = False
-            print >> self.out, "depth %d" % max(min(len(self.future),6),2)
+            #print >> self.out, "depth %d" % max(min(len(self.future),6),2)
             print >> self.out, "go"
             if not self._getmove():
                 dead = True
@@ -123,6 +137,7 @@ class Oracle (gobject.GObject):
                     else: move = Move(self.history, (c1, c2))
                 except:
                     print self.history[-1]
+                    break
                 
                 self.history.add(move)
                 score = self.score()
