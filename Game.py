@@ -52,7 +52,7 @@ def game (history, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
     player2.__del__()
     if chessclock:
         chessclock.stop()
-    oracle.reset()
+    oracle.game_ended()
 
 def kill ():
     global player1, player2, chessclock, run

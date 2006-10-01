@@ -200,12 +200,8 @@ class GladeHandlers:
             else: player = Human(window["BoardControl"], pnum)
             players += [player]
         
-        if id in window.sbids:
-            window["statusbar1"].pop(id)
+        window.ended = False
         window["BoardControl"].view.shown = 0
-        window["BoardControl"].locked = True
-        window["ChessClock"].stop()
-        Game.kill()
         t = thread.start_new(game, (window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain))
     
     def on_ccalign_show (widget):
@@ -398,8 +394,8 @@ class PyChess:
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML("glade/PyChess.glade")
         
-        self["ChessClock"].connect("time_out",
-            lambda w,p: self.end("Player %d is timeout" % p))
+        #self["ChessClock"].connect("time_out",
+        #    lambda w,p: self.end("Player %d is timeout" % p))
         self["BoardControl"].view.history.connect("game_ended",
             lambda w,r: self.end(r == 2 and "Mate" or "Stale"))
         
@@ -428,9 +424,18 @@ class PyChess:
         return self.widgets.get_widget(key)
     
     sbids = [0]
+    ended = True
     def end (self, message):
+        if self.ended: return
+    
         self["statusbar1"].push(self.sbids[-1], message)
         self.sbids.append(self.sbids[-1]+1)
+        
+        if id in self.sbids:
+            self["statusbar1"].pop(id)
+        self["BoardControl"].locked = True
+        self["ChessClock"].stop()
+        Game.kill()
     
     from UserDict import UserDict
     class Files (UserDict):
