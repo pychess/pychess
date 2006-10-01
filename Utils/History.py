@@ -40,7 +40,6 @@ startBoard = Board(
 [c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp")],
 [c("br"),c("bn"),c("bb"),c("bq"),c("bk"),c("bb"),c("bn"),c("br")]])
 
-from Utils.Move import Move
 from System.Log import log
 import validator
 
@@ -59,6 +58,12 @@ def rm (var, opp):
     if var & opp:
         return var ^ opp
     return var
+
+from Utils.Cord import Cord
+a1 = Cord('a1')
+h1 = Cord('h1')
+a8 = Cord('a8')
+h8 = Cord('h8')
 
 class History (GObject):
     '''Class remembers all moves, and can give you
@@ -101,11 +106,11 @@ class History (GObject):
         capture = self.boards[-1][move.cord1] != None
         
         if move.castling:
-            c = str(move.castling[0])
-            if c == 'a1': self.castling = rm(self.castling, WHITE_OOO)
-            elif c == 'h1': self.castling = rm(self.castling, WHITE_OO)
-            elif c == 'a8': self.castling = rm(self.castling, BLACK_OOO)
-            elif c == 'h8': self.castling = rm(self.castling, BLACK_OO)
+            c = move.castling[0]
+            if c == a1: self.castling = rm(self.castling, WHITE_OOO)
+            elif c == h1: self.castling = rm(self.castling, WHITE_OO)
+            elif c == a8: self.castling = rm(self.castling, BLACK_OOO)
+            elif c == h8: self.castling = rm(self.castling, BLACK_OO)
 
         p = self.boards[-1][move.cord0]
 
@@ -118,11 +123,11 @@ class History (GObject):
                 self.castling = rm(self.castling, WHITE_OOO)
         
         elif p.sign == "r":
-            c = str(move.cord0)
-            if c == 'a1': self.castling = rm(self.castling, WHITE_OOO)
-            elif c == 'h1': self.castling = rm(self.castling, WHITE_OO)
-            elif c == 'a8': self.castling = rm(self.castling, BLACK_OOO)
-            elif c == 'h8': self.castling = rm(self.castling, BLACK_OO)
+            c = move.cord0
+            if c == a1: self.castling = rm(self.castling, WHITE_OOO)
+            elif c == h1: self.castling = rm(self.castling, WHITE_OO)
+            elif c == a8: self.castling = rm(self.castling, BLACK_OOO)
+            elif c == h8: self.castling = rm(self.castling, BLACK_OO)
         
         self.moves.append(move)
         self.boards.append(self.boards[-1].move(move))

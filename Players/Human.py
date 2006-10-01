@@ -1,5 +1,7 @@
 from threading import Condition
 from Player import Player
+#TODO: This should be PlayerDead or something
+from Engine import EngineDead
 
 #http://linuxgazette.net/107/pai.html
 
@@ -24,6 +26,8 @@ class Human (Player):
         self.cond.acquire()
         while not self.move:
             self.cond.wait()
+        if self.move == "k":
+            raise EngineDead
         move = self.move
         self.move = None
         self.cond.release()
@@ -36,6 +40,10 @@ class Human (Player):
         return "Human"
 
     def __del__ (self):
-        try:
+        self.cond.acquire()
+        if self.board.handler_is_connected(self.conid):
             self.board.disconnect(self.conid)
-        except: pass
+        self.move = "k"
+        self.cond.notify()
+        self.cond.release()
+        

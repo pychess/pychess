@@ -1,5 +1,6 @@
 class CordFormatException(Exception): pass
 
+#TODO: In like 6 moves, more than 25000 Cords are inited. Perhaps it should be pooled..
 class Cord:
     def __init__ (self, x, y = None):
         if y == None:
