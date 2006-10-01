@@ -72,9 +72,11 @@ def idle_add(proc, *args):
     gobject.idle_add(proc_star)
 
 def new_history_object (history):
-    left.get_model().clear()
-    right.get_model().clear()
-    numbers.get_model().clear()
+    def helper():
+        left.get_model().clear()
+        right.get_model().clear()
+        numbers.get_model().clear()
+    gobject.idle_add(helper)
 
 def history_changed (history):
 

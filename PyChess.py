@@ -200,6 +200,7 @@ class GladeHandlers:
             else: player = Human(window["BoardControl"], pnum)
             players += [player]
         
+        window.end("")
         window.ended = False
         window["BoardControl"].view.shown = 0
         t = thread.start_new(game, (window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain))
@@ -434,7 +435,6 @@ class PyChess:
         if id in self.sbids:
             self["statusbar1"].pop(id)
         self["BoardControl"].locked = True
-        self["ChessClock"].stop()
         Game.kill()
     
     from UserDict import UserDict
@@ -470,3 +470,5 @@ if __name__ == "__main__":
     PyChess()
     gtk.gdk.threads_init()
     gtk.main()
+
+    

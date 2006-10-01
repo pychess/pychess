@@ -198,6 +198,8 @@ class Move:
         return str(self.cord0) + str(self.cord1)
 
     def __eq__ (self, other):
+        if not type(self) == type(other):
+            return False
         return other.cord0 == self.cord0 and \
                other.cord1 == self.cord1 and \
                other.promotion == self.promotion and \

@@ -5,17 +5,11 @@ from Utils.Cord import Cord
 from System.Log import log
 from time import time
 
+range8 = range(8)
 
-call0 = 0
-call1 = 0
+functions = None
 def validate (move, history, testCheck=True):
     """Will asume the first cord is an ally piece"""
-    
-    #global call0, call1
-    #if testCheck:
-    #    call0 += 1
-    #else: call1 += 1
-    #print "CALL", call0, call1
     
     board = history[-1]
     color = board[move.cord0].color
@@ -25,8 +19,10 @@ def validate (move, history, testCheck=True):
     if board[move.cord1] != None and board[move.cord1].color == color:
         return False
     
-    method = "try" + board[move.cord0].name
-    if not globals()[method](move, color, history, board):
+    method = board[move.cord0].name
+    global functions
+    if not functions: functions = globals()
+    if not functions[method](move, color, history, board):
         return False
     
     if testCheck:
@@ -35,14 +31,14 @@ def validate (move, history, testCheck=True):
         
     return True
     
-def tryBishop (move, color, history, board):
+def Bishop (move, color, history, board):
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
         return False
     dx = move.cord1.x > move.cord0.x and 1 or -1
     dy = move.cord1.y > move.cord0.y and 1 or -1
     x = move.cord0.x
     y = move.cord0.y
-    for i in range(8):
+    for i in range8:
         x += dx; y += dy
         if x == move.cord1.x or y == move.cord0.y:
             break
@@ -59,7 +55,7 @@ def _isclear (board, rows, cols):
 
 moveToCastling = {"e1g1": WHITE_OO, "e1c1": WHITE_OOO,
                   "e8g8": BLACK_OO, "e8c8": BLACK_OOO}
-def tryKing (move, color, history, board):
+def King (move, color, history, board):
 
     strmove = str(move)
     if strmove in moveToCastling:
@@ -84,13 +80,13 @@ def tryKing (move, color, history, board):
     return abs(move.cord0.x - move.cord1.x) <= 1 and \
            abs(move.cord0.y - move.cord1.y) <= 1
 
-def tryKnight (move, color, history, board):
+def Knight (move, color, history, board):
     return (abs(move.cord0.x - move.cord1.x) == 1 and \
             abs(move.cord0.y - move.cord1.y) == 2) or \
            (abs(move.cord0.x - move.cord1.x) == 2 and \
             abs(move.cord0.y - move.cord1.y) == 1)
 
-def tryPawn (move, color, history, board):
+def Pawn (move, color, history, board):
     dr = color == "white" and 1 or -1
     #Leaves only 1 and 2 cords difference - ahead
     if not 0 < (move.cord1.y - move.cord0.y)*dr <= 2:
@@ -128,7 +124,7 @@ def tryPawn (move, color, history, board):
         return True
     return False
 
-def tryRook (move, color, history, board):
+def Rook (move, color, history, board):
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
         return False
     
@@ -143,7 +139,7 @@ def tryRook (move, color, history, board):
     x = move.cord0.x
     y = move.cord0.y
     
-    for i in range(8):
+    for i in range8:
         x += dx; y += dy
         if x == move.cord1.x and y == move.cord1.y:
             break
@@ -151,23 +147,24 @@ def tryRook (move, color, history, board):
             return False
     return True
 
-def tryQueen (move, color, history, board):
-    return tryRook (move, color, history, board) or \
-           tryBishop (move, color, history, board)
+def Queen (move, color, history, board):
+    return Rook (move, color, history, board) or \
+           Bishop (move, color, history, board)
 
 def _getLegalMoves (history, cord, testCheck):
     cords = []
     board = history[-1]
-    for row in range(len(board)):
-        for col in range(len(board[row])):
+    for row in range8:
+        for col in range8:
             if row == cord.y and col == cord.x: continue
             if abs(row - cord.y) <= 2 or abs(col - cord.x) <= 2 or \
                     cord.y == row or cord.x == col or \
                     abs(cord.y - row) == abs(cord.x - col):
                 cord1 = Cord(col, row)
-                move = Move(history, (cord, cord1))
+                move = movePool.pop(history, (cord, cord1))
                 if validate (move, history, testCheck):
                     cords.append(cord1)
+                movePool.add(move)
     return cords
 
 def findMoves (history):
@@ -175,8 +172,8 @@ def findMoves (history):
     moves = {}
     board = history[-1]
     color = history.curCol()
-    for row in range(len(board)):
-        for col in range(len(board[row])):
+    for row in range8:
+        for col in range8:
             piece = board[row][col]
             if not piece: continue
             if piece.color != color: continue
@@ -185,7 +182,7 @@ def findMoves (history):
                 if cord0 in moves:
                     moves[cord0].append(cord1)
                 else: moves[cord0] = [cord1]
-    log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t))
+    log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t), False)
     #log.debug(str(moves))
     return moves
 
@@ -212,17 +209,18 @@ def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
 def genMovesPointingAt (history, cols, rows, color, testCheck=False):
     board = history[-1]
     
-    for row in range(len(board)):
-        for col in range(len(board[row])):
+    for row in range8:
+        for col in range8:
             piece = board[row][col]
             if piece == None: continue
             if piece.color != color: continue
             cord0 = Cord(col,row)
             for r in rows:
                 for c in cols:
-                    move = Move (history, (cord0, Cord(c,r)))
+                    move = movePool.pop(history, (cord0, Cord(c,r)))
                     if validate (move, history, testCheck):
                         return move
+                    else: movePool.add(move)
 
 def willCheck (history, move):
     history = history.clone()
@@ -239,8 +237,8 @@ def isCheck (history, color):
     return False
 
 def _findKing (board, color):
-    for row in range(len(board)):
-        for col in range(len(board[row])):
+    for row in range8:
+        for col in range8:
             cord = Cord (col, row)
             piece = board[cord]
             if piece != None and piece.sign == "k" and piece.color == color:

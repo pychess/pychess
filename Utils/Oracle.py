@@ -87,8 +87,8 @@ class Oracle (gobject.GObject):
     def attach (self, history):
         self.history = history.clone()
         history.connect("changed", self.addMove)
-        history.connect("cleared", lambda h: self.reset())
-        history.connect("game_ended", lambda m, h: self.game_ended())
+        history.connect("cleared", lambda h: pool.start(self.reset))
+        history.connect("game_ended", lambda m, h: pool.start(self.game_ended))
         
     # Private methods
     

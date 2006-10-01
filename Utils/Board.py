@@ -1,15 +1,23 @@
 import sys
-from copy import deepcopy
 from Utils.Piece import Piece
 from Utils.Cord import Cord
 from System.Log import log
+from copy import copy
+
+def clone2dArray (array):
+    l = []
+    for row in array:
+        l.append([])
+        for v in row:
+            l[-1].append(v)
+    return l
 
 class Board:
     def __init__ (self, array):
         self.data = array
     
     def move (self, move):
-        board = Board(deepcopy(self.data))
+        board = Board(clone2dArray(self.data))
         cord0, cord1 = move.cords
         board[cord1] = board[cord0]
         board[cord0] = None
