@@ -1,6 +1,6 @@
 import os, sys, time
 
-debug = False
+debug = True
 logfile = "~/.pychess.log"
 
 class LogPipe:

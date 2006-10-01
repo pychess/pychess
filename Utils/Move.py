@@ -52,14 +52,14 @@ class Move:
     cords = property(_get_cords)
     
     def __init__ (self, history, move, promotion="q"):
-        """(board, notat) or
-           (board, (cord0, cord1), [promotion]) or
-           (board, (strcord1, strcord2), [promotion])
+        """(history, notat) or
+           (history, (cord0, cord1), [promotion]) or
+           (history, (strcord1, strcord2), [promotion])
            Promotion will be set to None, if not aplieable"""
            
-        self.enpassant = None # None, Cord
-        self.castling = None # None, (rookCordSide, rookCordMiddle)
-        self.promotion = None # "q", "r", "b", "k", "n"
+        self.enpassant = None # None or Cord
+        self.castling = None # None or (rookCordSide, rookCordMiddle)
+        self.promotion = None # "q" or "r" or "b" or "k" or "n"
         
         #try:
         self.init (history, move, promotion)

@@ -12,6 +12,7 @@ from Utils.Move import Move
 from math import floor
 from Utils.validator import validate
 from Utils import validator
+import pango
 
 def intersects (r1, r2):
     r = r1.intersect(r2)
@@ -58,22 +59,60 @@ class BoardView (gtk.DrawingArea):
         self.draw(context, event.area)
         return False
     
+    padding = 0
     square = None
     def draw(self, context, rect):
+        p = (1-self.padding)
         r = self.get_allocation()
-        square = float(min(r.width, r.height)) -4
+        square = float(min(r.width*p, r.height*p)) -4
         xc = float(r.width)/2 - square/2
         yc = float(r.height)/2 - square/2 -2
         s = square/8
         self.square = (xc, yc, square, s)
     
         self.drawBoard (context)
-        self.drawSpecial (context)
-        self.drawLastMove(context)
-        self.drawArrows(context)
+        self.drawCords (context)
         if not self.history: return
         pieces = self.history[self.shown]
+        self.drawSpecial (context)
+        self.drawArrows (context)
         self.drawPieces (context, pieces, rect)
+        self.drawLastMove (context)
+    
+    pad = 0.13
+    def drawCords (self, context):
+        thickness = 0.01
+        signsize = 0.04
+        
+        if not self.showCords: return
+        xc, yc, square, s = self.square
+        t = thickness*square
+        ss = signsize*square
+        
+        context.rectangle(xc-t*1.5,yc-t*1.5,square+t*3,square+t*3)
+        context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
+        context.set_line_width(t)
+        context.set_line_join(gtk.gdk.JOIN_ROUND)
+        context.stroke()
+        
+        for n in range(8):
+            o = (self.fromWhite and [n] or [7-n])[0]
+            
+            layout = self.create_pango_layout(str(8-o))
+            layout.set_font_description(pango.FontDescription("bold %d" % ss))
+            context.move_to(xc-t*1.5-ss, s*n+yc+s*0.24)
+            context.show_layout(layout)
+            
+            context.move_to(xc+t*2.85+square, s*n+yc+s*0.24)
+            context.show_layout(layout)
+            
+            layout = self.create_pango_layout(chr(o+ord("A")))
+            layout.set_font_description(pango.FontDescription("bold %d" % ss))
+            context.move_to(xc+s*n+s*0.35, yc+square+t*1.3)
+            context.show_layout(layout)
+            
+            context.move_to(xc+s*n+s*0.35, yc-ss*2.05)
+            context.show_layout(layout)
     
     def drawBoard(self, context):
         xc, yc, square, s = self.square
@@ -82,11 +121,7 @@ class BoardView (gtk.DrawingArea):
                 if x % 2 + y % 2 == 1:
                     context.rectangle(xc+x*s,yc+y*s,s,s)
         
-        state = gtk.STATE_NORMAL
-        if self.history and self.shown != len(self.history)-1:
-            state = gtk.STATE_INSENSITIVE
-        context.set_source_color(self.get_style().dark[state])
-        
+        context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
         context.fill_preserve()
         context.new_path()
     
@@ -182,6 +217,9 @@ class BoardView (gtk.DrawingArea):
             
             lvx = cords[1].x-cords[0].x
             lvy = cords[0].y-cords[1].y
+            if not self.fromWhite:
+                lvx = -1*lvx
+                lvy = -1*lvy
             from math import sqrt
             l = float(sqrt(lvx**2+lvy**2))
             vx = lvx/l
@@ -218,7 +256,7 @@ class BoardView (gtk.DrawingArea):
             drawArrow(self.greenarrow, (.54,.886,0.2,0.9), (.306,.604,.024,1))
         if self.redarrow:
             drawArrow(self.redarrow, (.937,.16,0.16,0.9), (.643,0,0,1))
-        
+    
     def redraw_canvas(self, rect=None):
         if self.window:
             if not rect:
@@ -315,6 +353,17 @@ class BoardView (gtk.DrawingArea):
     def _get_fromWhite (self):
         return self._fromWhite
     fromWhite = property(_get_fromWhite, _set_fromWhite)
+    
+    _showCords = False
+    def _set_showCords (self, showCords):
+        if not showCords:
+            self.padding = 0
+        else: self.padding = self.pad
+        self._showCords = showCords
+        self.redraw_canvas()
+    def _get_showCords (self):
+        return self._showCords
+    showCords = property(_get_showCords, _set_showCords)
     
     lastMove = None
     

@@ -30,7 +30,7 @@ def c (str):
     return Piece (color, str[1])
 
 from Board import Board
-startPieces = \
+startBoard = Board(
 [[c("wr"),c("wn"),c("wb"),c("wq"),c("wk"),c("wb"),c("wn"),c("wr")],
 [c("wp"),c("wp"),c("wp"),c("wp"),c("wp"),c("wp"),c("wp"),c("wp")],
 [None,None,None,None,None,None,None,None],
@@ -38,7 +38,7 @@ startPieces = \
 [None,None,None,None,None,None,None,None],
 [None,None,None,None,None,None,None,None],
 [c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp"),c("bp")],
-[c("br"),c("bn"),c("bb"),c("bq"),c("bk"),c("bb"),c("bn"),c("br")]]
+[c("br"),c("bn"),c("bb"),c("bq"),c("bk"),c("bb"),c("bn"),c("br")]])
 
 from Utils.Move import Move
 from System.Log import log
@@ -77,7 +77,7 @@ class History (GObject):
     def reset (self, mvlist=False):
         GObject.__init__(self)
         
-        self.boards = [Board(cloneStartPieces())]
+        self.boards = [startBoard.clone()]
         self.fifty = 0
         self.moves = []
         self.castling = WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO

@@ -17,11 +17,8 @@ class BookCellRenderer (gtk.GenericCellRenderer):
         return getattr(self, pspec.name)
         
     def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
+        if not self.data: return
         cairo = window.cairo_create()
-        #print "---"
-        #for r in (background_area, cell_area, expose_area):
-        #    print r.x, r.y, r.width, r.height
-            
         w,d,l = self.data
         paintGraph(cairo, w, d, l, cell_area)
        
@@ -74,17 +71,7 @@ def pathBlock (cairo, x,y,w,h):
     cairo.rel_line_to(0, -3)
     cairo.rel_curve_to(0, -10, 0, -10, 10, -10)
 
-#context = window.cairo_create()
-#        print "on_render", window, widget, background_area, cell_area, expose_area, #flags
-#        print window.get("data")
-#layout = pango.Layout(context)
-#layout.set_text(long_string)
-#layout.set_wrap(gtk.WRAP_CHAR)
-#layout.set_width(cell_area.width)
-#widget.style.paint_layout(window, gtk.STATE_NORMAL, gtk.TRUE,
-#                          cell_area, widget, 'footext',
-#                          cell_area.x, cell_area.y,
-#                          layout)
+
 
 
 
@@ -108,6 +95,11 @@ def pathBlock (cairo, x,y,w,h):
 # Some ideas to get this working using a pixbuf instead of a customrenderer
 # Sadly cairo / gtk support is not too good yet :(
 #
+
+#surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 80, 23)
+#context = gtk.gdk.CairoContext(cairo.Context(surface))
+#paintGraph(context,win,draw,loss,80)
+#pixbuf = surfaceToPixbuf(surface)
 
 def getCairoPixbuf (width, height):
     #Doesn't work :(

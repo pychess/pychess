@@ -79,6 +79,7 @@ class Crafty (Engine):
             else: log.debug("CrR: " + line.strip(), flush=True)
             result += [line]
             if line.find(waitfor) >= 0:
+                log.debug("Cr found: '%s' in '%s'" % (waitfor,line))
                 break
         return result
     
