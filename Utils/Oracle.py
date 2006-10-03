@@ -5,8 +5,8 @@ from System.Log import log
 from System import Log
 import gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT, TYPE_INT
-from validator import STALE, MATE
-from Utils.Move import Move
+from validator import DRAW, WHITEWON, BLACKWON
+from Move import Move
 from thread import start_new
 from Players.Engine import EngineDead
 from Queue import Queue
@@ -66,15 +66,12 @@ class Oracle (gobject.GObject):
         self.emit("foundscore", self.score())
         self.emit("foundbook", self.book())
         self.cond.release()
-        print "\nRESET\n"
         self.running = True
         self.run()
     
     def game_ended (self):
-        print "ORACLE GOT GAME ENDED"
         self.running = False
         self.cond.acquire()
-        print "GAME ENDED IS IN"
         print >> self.out, "new"
         print >> self.out, "manual"
         print >> self.out, "hard"
@@ -149,11 +146,11 @@ class Oracle (gobject.GObject):
 
             elif reply.find("{draw}") >= 0:
                 if self.queue.empty():
-                    self.emit("foretold_end", len(self.future), STALE)
+                    self.emit("foretold_end", len(self.future), DRAW)
                 return False
             elif reply.find("{computer") >= 0:
                 if self.queue.empty():
-                    self.emit("foretold_end", len(self.future), MATE)
+                    self.emit("foretold_end", len(self.future), WHITEWON) #TODO: Put the right player
                 return False
         return True
     

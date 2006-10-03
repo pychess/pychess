@@ -144,14 +144,9 @@ class History (GObject):
             self.movelist.append(validator.findMoves(self))
         
         if len(self.movelist) > 0:
-            s = validator.status(self)
-            if s == validator.STALE:
-                self.locked = True
-                self.emit("game_ended", s)
-                return False
-            elif s == validator.MATE:
-                self.locked = True
-                self.emit("game_ended", s)
+            status, comment = validator.status(self)
+            if status != validator.FINE:
+                self.emit("game_ended", status, comment)
                 return False
         
         return self

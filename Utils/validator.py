@@ -244,16 +244,24 @@ def _findKing (board, color):
             if piece != None and piece.sign == "k" and piece.color == color:
                 return cord
 
-FINE, STALE, MATE = range(3)
+FINE, DRAW, WHITEWON, BLACKWON = range(4)
+DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE = range(7)
+
 def status (history):
+
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
-        log.log("Game is stale as %s == %s == %s" % (history[-1], history[-5], history[-9]))
-        return STALE
+        return DRAW, DRAW_REPITITION
+        
     if history.fifty >= 100:
-        log.log("Game is stale by the 50 moves rule")
-        return STALE
+        return DRAW, DRAW_50MOVES
+        
     if len(history.movelist[-1]) == 0:
+    
         if isCheck(history, history.curCol()):
-            return MATE
-        return STALE
-    return FINE
+            if history.curCol() == "white":
+                return BLACKWON, WON_MATE
+            else: return WHITEWON, WON_MATE
+            
+        return DRAW, DRAW_STALEMATE
+        
+    return FINE, None

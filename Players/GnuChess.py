@@ -1,4 +1,5 @@
 import sys, os, atexit
+from gobject import GObject
 
 from System.Log import LogPipe
 from System.Log import log
@@ -7,6 +8,8 @@ from Engine import Engine, EngineDead
 class GnuChess (Engine):
     
     def __init__ (self):
+        GObject.__init__(self)
+        
         from popen2 import Popen4
         popen = Popen4("nice gnuchess -x", 0)
         self.out, self.inn = popen.tochild, popen.fromchild
@@ -83,6 +86,9 @@ class GnuChess (Engine):
         if len(reply) < 2 or reply[1].endswith("there is no move"):
             return []
         return self.bookExpr.findall("".join(reply))
+    
+    def hurry (self):
+        os.system("kill -SIGINT %d" % self.pid)
     
     # Private methods
     

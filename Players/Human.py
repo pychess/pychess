@@ -1,4 +1,6 @@
 from threading import Condition
+from gobject import GObject
+
 from Player import Player
 #TODO: This should be PlayerDead or something
 from Engine import EngineDead
@@ -7,6 +9,8 @@ from Engine import EngineDead
 
 class Human (Player):
     def __init__ (self, board, pnum):
+        GObject.__init__(self)
+        
         self.cond = Condition()
         self.pnum = pnum
         self.board = board
@@ -46,4 +50,3 @@ class Human (Player):
         self.move = "k"
         self.cond.notify()
         self.cond.release()
-        
