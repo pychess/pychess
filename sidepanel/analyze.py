@@ -37,7 +37,7 @@ def rmfirst (oracle):
     text = "\n".join(label.get_text().split("\n")[1:])
     once (lambda: label.set_text(text))
 
-from Utils.validator import STALE, MATE
+from Utils.validator import DRAW, WHITEWON, BLACKWON
 def foretold_end (oracle, moves, endtype):
-    endtype = endtype == STALE and "stalemate" or "mate"
+    endtype = endtype == DRAW and "draw" or "mate"
     log.warn("Foresaw %s in %d moves!" % (endtype, moves))

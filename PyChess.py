@@ -16,9 +16,7 @@ from System.Log import log
 from Players import *
 from Players.Human import Human
 from System import myconf
-import thread
-from Game import game
-import Game
+from Game import Game
 from Utils.Oracle import Oracle
 
 def saveGameBefore (action):
@@ -69,22 +67,23 @@ def makeFileDialogReady ():
         savedialog.add_filter(f)
         opendialog.add_filter(f)
     
-def createCombo (combo, data):
-    ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-    for icon, label in data:
-        ls.append([icon, label])
-    combo.clear()
-    combo.set_model(ls)
-    crp = gtk.CellRendererPixbuf()
-    crp.set_property('xalign',0)
-    combo.pack_start(crp, False)
-    combo.add_attribute(crp, 'pixbuf', 0)
-    crt = gtk.CellRendererText()
-    crt.set_property('xalign',0)
-    combo.pack_start(crt, False)
-    combo.add_attribute(crt, 'text', 1)
-
 def makeNewGameDialogReady ():
+
+    def createCombo (combo, data):
+        ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        for icon, label in data:
+            ls.append([icon, label])
+        combo.clear()
+        combo.set_model(ls)
+        crp = gtk.CellRendererPixbuf()
+        crp.set_property('xalign',0)
+        combo.pack_start(crp, False)
+        combo.add_attribute(crp, 'pixbuf', 0)
+        crt = gtk.CellRendererText()
+        crt.set_property('xalign',0)
+        combo.pack_start(crt, False)
+        combo.add_attribute(crt, 'text', 1)
+
     it = gtk.icon_theme_get_default()
 
     items = []
@@ -101,7 +100,7 @@ def makeNewGameDialogReady ():
     items = [(image, _("Human Being"))]
     image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
     
-    for engine in [str(e).split(".")[-1] for e in window.engines]:
+    for engine in [str(e).split(".")[-1][:-2] for e in window.engines]:
         items += [(image, engine)]
     for combo in (window["combobox5"], window["combobox6"]):
         createCombo(combo, items)
@@ -200,10 +199,13 @@ class GladeHandlers:
             else: player = Human(window["BoardControl"], pnum)
             players += [player]
         
-        window.end("")
-        window.ended = False
-        window["BoardControl"].view.shown = 0
-        t = thread.start_new(game, (window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain))
+        window.game = Game(window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain)
+        window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
+        window.game.run()
+    
+    def game_ended (game, status, comment):
+        window["statusbar1"].pop(0)
+        window["statusbar1"].push(0, str(comment))
     
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
@@ -395,11 +397,6 @@ class PyChess:
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML("glade/PyChess.glade")
         
-        #self["ChessClock"].connect("time_out",
-        #    lambda w,p: self.end("Player %d is timeout" % p))
-        self["BoardControl"].view.history.connect("game_ended",
-            lambda w,r: self.end(r == 2 and "Mate" or "Stale"))
-        
         self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         
@@ -424,19 +421,6 @@ class PyChess:
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
     
-    sbids = [0]
-    ended = True
-    def end (self, message):
-        if self.ended: return
-    
-        self["statusbar1"].push(self.sbids[-1], message)
-        self.sbids.append(self.sbids[-1]+1)
-        
-        if id in self.sbids:
-            self["statusbar1"].pop(id)
-        self["BoardControl"].locked = True
-        Game.kill()
-    
     from UserDict import UserDict
     class Files (UserDict):
         def __getitem__(self, folder="./"):
@@ -451,10 +435,10 @@ class PyChess:
     engines = []
     def loadEngines (self):
         from Players.Engine import Engine
-        from types import ClassType
+        from gobject import GObjectMeta
         for name, module in globals().iteritems():
             for attr in [getattr(module, a) for a in dir(module)]:
-                if type(attr) is ClassType and issubclass(attr, Engine) and attr != Engine:
+                if type(attr) is GObjectMeta and issubclass(attr, Engine) and attr != Engine:
                     if module.testEngine():
                         self.engines += [attr]
     
@@ -468,7 +452,7 @@ class PyChess:
 
 if __name__ == "__main__":
     PyChess()
+    import signal
+    signal.signal(signal.SIGINT, gtk.main_quit)
     gtk.gdk.threads_init()
     gtk.main()
-
-    

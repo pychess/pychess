@@ -40,12 +40,16 @@ class BoardView (gtk.DrawingArea):
         self.history = History()
         self.connect("expose_event", self.expose)
         self.history.connect_after("changed", self.move)
+        self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         
     def move (self, history):
         if self.shown+2 < len(history):
             return
         self.shown += 1
+    
+    def reset (self, history):
+        self.shown = 0
     
     #############################
     #          Drawing          #

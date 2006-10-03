@@ -167,3 +167,9 @@ class ChessClock (gtk.DrawingArea):
         self.start()
         
     player = property(_get_player, _set_player)
+
+
+    def _get_playerTime (self, player):
+        return self.ptemp[player]
+    p0time = property(lambda: self._get_playerTime(0))
+    p1time = property(lambda: self._get_playerTime(1))

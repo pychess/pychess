@@ -1,4 +1,5 @@
 import sys, os, atexit
+from gobject import GObject
 
 from System.Log import LogPipe
 from System.Log import log
@@ -7,6 +8,8 @@ from Engine import Engine, EngineDead
 class Crafty (Engine):
     
     def __init__ (self):
+        GObject.__init__(self)
+        
         self.last = "notnull"
         self.name = ""
         
@@ -83,6 +86,8 @@ class Crafty (Engine):
                 break
         return result
     
+    def hurry (self):
+        print >> self.out, "?"
     
     # Other methods
     
