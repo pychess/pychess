@@ -4,7 +4,7 @@
 import pygtk
 pygtk.require("2.0")
 import sys, gtk, gtk.glade, os
-import pango
+import pango, gobject
 
 import gettext
 gettext.install("pychess",localedir="lang",unicode=1)
@@ -18,6 +18,7 @@ from Players.Human import Human
 from System import myconf
 from Game import Game
 from Utils.Oracle import Oracle
+from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
 
 def saveGameBefore (action):
     #TODO: Test om noget er ændret!
@@ -202,10 +203,26 @@ class GladeHandlers:
         window.game = Game(window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain)
         window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
         window.game.run()
-    
+
     def game_ended (game, status, comment):
-        window["statusbar1"].pop(0)
-        window["statusbar1"].push(0, str(comment))
+        def func():
+            window["statusbar1"].pop(0)
+            m1 = {
+                DRAW: _("The game ended in a draw"),
+                WHITEWON: _("White player won the game"),
+                BLACKWON: _("Black player won the game")
+            }[status]
+            m2 = {
+                DRAW_REPITITION: _("as the same position was repeated three times in a row"),
+                DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
+                DRAW_STALEMATE: _("because of stalemate"),
+                DRAW_AGREE: _("as the players agreed to"),
+                WON_RESIGN: _("as opponent resigned"),
+                WON_CALLFLAG: _("as opponent ran out of time"),
+                WON_MATE: _("on a mate")
+            }[comment]
+            window["statusbar1"].push(0, "%s %s." % (m1,m2))
+        gobject.idle_add(func)
     
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height

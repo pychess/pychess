@@ -72,7 +72,7 @@ class History (GObject):
     __gsignals__ = {
         'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
+        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
     
     def __init__ (self, mvlist=False):

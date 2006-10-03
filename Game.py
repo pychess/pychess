@@ -12,7 +12,7 @@ from Utils.validator import DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_
 class Game (GObject):
 
     __gsignals__ = {
-        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,str))
+        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
 
     def __init__(self, his, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
@@ -28,7 +28,7 @@ class Game (GObject):
             self.chessclock.setTime(seconds*10)
             self.chessclock.setGain(plus*10)
         
-        self.history.connect("game_ended", lambda h,stat,comm: self.emit("game_ended",stat,comm))
+        self.history.connect("game_ended", lambda h,stat,comm: self.emit("game_ended", stat, comm))
         
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)

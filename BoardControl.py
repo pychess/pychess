@@ -48,7 +48,7 @@ class BoardControl (gtk.EventBox):
     
     #          Selection and stuff          #
     
-    locked = False
+    locked = True
     def isSelectable (self, cord):
         if self.locked: return False
         if not self.view.history.movelist: return False
