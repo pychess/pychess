@@ -85,7 +85,7 @@ class Oracle (gobject.GObject):
         self.history = history.clone()
         history.connect("changed", self.addMove)
         history.connect("cleared", lambda h: pool.start(self.reset))
-        history.connect("game_ended", lambda m, h: pool.start(self.game_ended))
+        history.connect("game_ended", lambda m,s,c: pool.start(self.game_ended))
         
     # Private methods
     
