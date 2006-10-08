@@ -303,25 +303,10 @@
 		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="skillelinje13">
 		      <property name="visible">True</property>
-
-		      <child>
-			<widget class="GtkMenu" id="skillelinje13_menu">
-
-			  <child>
-			    <widget class="GtkCheckMenuItem" id="show_cords">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Show _cords</property>
-			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
-			      <signal name="activate" handler="on_show_cords_activate" last_modification_time="Mon, 25 Sep 2006 17:49:47 GMT"/>
-			    </widget>
-			  </child>
-			</widget>
-		      </child>
 		    </widget>
 		  </child>
 
-          <child>
+		  <child>
 		    <widget class="GtkCheckMenuItem" id="show_cords">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Show _cords</property>
@@ -1208,11 +1193,11 @@ if do don't save it.</property>
 		      <property name="column_spacing">2</property>
 
 		      <child>
-			<widget class="GtkComboBox" id="combobox5">
+			<widget class="GtkComboBox" id="whitePlayerCombobox">
 			  <property name="visible">True</property>
 			  <property name="add_tearoffs">False</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="changed" handler="on_combobox5_changed" last_modification_time="Mon, 07 Aug 2006 18:44:34 GMT"/>
+			  <signal name="changed" handler="on_whitePlayerCombobox_changed" last_modification_time="Sun, 08 Oct 2006 21:56:24 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -1224,11 +1209,11 @@ if do don't save it.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkComboBox" id="combobox6">
+			<widget class="GtkComboBox" id="blackPlayerCombobox">
 			  <property name="visible">True</property>
 			  <property name="add_tearoffs">False</property>
 			  <property name="focus_on_click">True</property>
-			  <signal name="changed" handler="on_combobox6_changed" last_modification_time="Mon, 07 Aug 2006 18:44:40 GMT"/>
+			  <signal name="changed" handler="on_blackPlayerCombobox_changed" last_modification_time="Sun, 08 Oct 2006 21:56:37 GMT"/>
 			</widget>
 			<packing>
 			  <property name="left_attach">1</property>
@@ -1432,7 +1417,7 @@ if do don't save it.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkComboBox" id="combobox8">
+			<widget class="GtkComboBox" id="blackDifficulty">
 			  <property name="height_request">32</property>
 			  <property name="visible">True</property>
 			  <property name="sensitive">False</property>
@@ -1451,7 +1436,7 @@ if do don't save it.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkComboBox" id="combobox7">
+			<widget class="GtkComboBox" id="whiteDifficulty">
 			  <property name="height_request">32</property>
 			  <property name="visible">True</property>
 			  <property name="sensitive">False</property>
