@@ -94,7 +94,7 @@ def makeNewGameDialogReady ():
         image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
         items += [(image, level)]
 
-    for combo in (window["combobox7"], window["combobox8"]):
+    for combo in (window["whiteDifficulty"], window["blackDifficulty"]):
         createCombo(combo, items)
 
     image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
@@ -103,14 +103,14 @@ def makeNewGameDialogReady ():
     
     for engine in [str(e).split(".")[-1][:-2] for e in window.engines]:
         items += [(image, engine)]
-    for combo in (window["combobox5"], window["combobox6"]):
+    for combo in (window["whitePlayerCombobox"], window["blackPlayerCombobox"]):
         createCombo(combo, items)
         
-    window["combobox5"].set_active(0)
-    window["combobox6"].set_active(min(1,len(window.engines)))
-    GladeHandlers.__dict__['on_combobox6_changed'](window["combobox6"])
+    window["whitePlayerCombobox"].set_active(0)
+    window["blackPlayerCombobox"].set_active(min(1,len(window.engines)))
+    GladeHandlers.__dict__['on_blackPlayerCombobox_changed'](window["blackPlayerCombobox"])
     
-    for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
+    for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
             "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
         v = myconf.get(widget)
         if v != None:
@@ -180,7 +180,7 @@ class GladeHandlers:
             secs = 0
             gain = 0
         
-        for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
+        for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
                 "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
             if hasattr(window[widget], "get_active"):
                 v = window[widget].get_active()
@@ -188,8 +188,8 @@ class GladeHandlers:
             myconf.set(widget, v)
         
         players = []
-        for box, dfcbox, pnum in (("combobox5","combobox7",0),
-                                  ("combobox6","combobox8",1)):
+        for box, dfcbox, pnum in (("whitePlayerCombobox","whiteDifficulty",0),
+                                  ("blackPlayerCombobox","blackDifficulty",1)):
             choise = window[box].get_active()
             dfc = window[dfcbox].get_active()
             if choise != 0:
@@ -369,21 +369,21 @@ class GladeHandlers:
     def on_checkbutton4_clicked (widget):
         window["table6"].set_sensitive(widget.get_active())
     
-    def on_combobox5_changed (widget):
+    def on_whitePlayerCombobox_changed (widget):
         if widget.get_active() != 0:
-            window["combobox7"].set_sensitive(True)
-            window["combobox7"].set_active(1)
+            window["whiteDifficulty"].set_sensitive(True)
+            window["whiteDifficulty"].set_active(1)
         else:
-            window["combobox7"].set_sensitive(False)
-            window["combobox7"].set_active(-1)
+            window["whiteDifficulty"].set_sensitive(False)
+            window["whiteDifficulty"].set_active(-1)
     
-    def on_combobox6_changed (widget):
+    def on_blackPlayerCombobox_changed (widget):
         if widget.get_active() != 0:
-            window["combobox8"].set_sensitive(True)
-            window["combobox8"].set_active(1)
+            window["blackDifficulty"].set_sensitive(True)
+            window["blackDifficulty"].set_active(1)
         else:
-            window["combobox8"].set_sensitive(False)
-            window["combobox8"].set_active(-1)
+            window["blackDifficulty"].set_sensitive(False)
+            window["blackDifficulty"].set_active(-1)
     
     #          Cairo Board          #
     
