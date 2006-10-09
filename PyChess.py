@@ -294,7 +294,7 @@ class GladeHandlers:
             d.hide()
             if res != gtk.RESPONSE_ACCEPT:
                 return
-        saver.save(open(uri,"w"), history)
+        saver.save(open(uri,"w"), window.game)
         
     def on_quit1_activate (widget):
         #res = saveGameBefore(_("exit"))

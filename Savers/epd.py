@@ -6,9 +6,10 @@ from Utils.Piece import Piece
 __label__ = _("Chess Position (.epd, .fen)")
 __endings__ = "epd", "fen"
 
-def save (file, history):
+def save (file, game):
+    history = game.history
     """Saves history to file"""
-    pieces = history[-1]
+    pieces = game.history[-1]
     sign = lambda p: p.color == "white" and p.sign.upper() or p.sign
     for i in range(len(pieces))[::-1]:
         row = pieces[i]

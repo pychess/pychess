@@ -5,7 +5,7 @@ __endings__ = "pgn",
 
 import datetime
 
-def save (file, history):
+def save (file, game):
     today = datetime.date.today()
     year = str(today.year)
     month = str(today.month)
@@ -20,14 +20,14 @@ def save (file, history):
     file.write("[Site \"Local Game\"]" + "\n")
     file.write("[Date \"" + year + "." + month + "." + day + "\"]" + "\n")
     file.write("[Round \"?\"]" + "\n")
-    file.write("[White \"Human Player\"]" + "\n")
-    file.write("[Black \"Human Player\"]" + "\n")
+    file.write("[White \"" + str(game.player1) + "\"]" + "\n")
+    file.write("[Black \"" + str(game.player2) + "\"]" + "\n")
     file.write("[Result \"?\"]" + "\n")
     file.write("\n")
     
     halfMoves = 0
     nrOfCharsInLine = 0
-    for move in history.moves:
+    for move in game.history.moves:
         charsToBeWritten = ""
         # write movenr. every 2 halfmoves...
         if halfMoves % 2 == 0:
