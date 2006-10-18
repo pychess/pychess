@@ -158,6 +158,23 @@ def makeSidePanelReady ():
 class GladeHandlers:
     
     #          Game Menu          #
+
+    def on_game_information_activate (Widget):
+        window["eventEntry"].set_text(window.game.event)
+        window["siteEntry"].set_text(window.game.site)
+        window["roundEntry"].set_text(window.game.round)
+        window["dayEntry"].set_text(window.game.day)
+        window["monthEntry"].set_text(window.game.month)
+        window["yearEntry"].set_text(window.game.year)
+        res = window["infogamedialog"].run()
+        window["infogamedialog"].hide()
+        if res == gtk.RESPONSE_OK:
+            window.game.event = window["eventEntry"].get_text()
+            window.game.site= window["siteEntry"].get_text()
+            window.game.round = window["roundEntry"].get_text()
+            window.game.day = window["dayEntry"].get_text()
+            window.game.month = window["monthEntry"].get_text()
+            window.game.year = window["yearEntry"].get_text()
     
     def on_new_game1_activate (widget):
         #res = saveGameBefore(_("a new game starts"))
@@ -206,6 +223,7 @@ class GladeHandlers:
         
         window.game = Game(window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain)
         window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
+        window["game_information"].set_sensitive(True)
         window.game.run()
 
     def game_ended (game, status, comment):
