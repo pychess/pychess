@@ -6,20 +6,12 @@ __endings__ = "pgn",
 import datetime
 
 def save (file, game):
-    today = datetime.date.today()
-    year = str(today.year)
-    month = str(today.month)
-    if len(month) == 1:
-        month = "0" + month
-    day = str(today.day)
-    if len(day) == 1:
-        day = "0" + day
         
     # TODO: get some more calculated values here
-    file.write("[Event \"Local Game\"]" + "\n")
-    file.write("[Site \"Local Game\"]" + "\n")
-    file.write("[Date \"" + year + "." + month + "." + day + "\"]" + "\n")
-    file.write("[Round \"?\"]" + "\n")
+    file.write("[Event \"" + game.event + "\"]" + "\n")
+    file.write("[Site \"" + game.site + "\"]" + "\n")
+    file.write("[Date \"" + game.year + "." + game.month + "." + game.day + "\"]" + "\n")
+    file.write("[Round \"" + str(game.round) + "\"]" + "\n")
     file.write("[White \"" + str(game.player1) + "\"]" + "\n")
     file.write("[Black \"" + str(game.player2) + "\"]" + "\n")
     file.write("[Result \"?\"]" + "\n")
