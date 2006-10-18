@@ -199,6 +199,8 @@ class GladeHandlers:
                     player.setTime(secs, gain)
             else: 
                 player = Human(window["BoardControl"], pnum)
+                if window[name].get_text() == '':
+                    window[name].set_text('Human Player')
                 player.setName(window[name].get_text())
             players += [player]
         
