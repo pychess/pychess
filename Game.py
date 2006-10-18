@@ -1,4 +1,5 @@
 import os, thread
+import datetime
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from Utils.History import History
@@ -22,6 +23,17 @@ class Game (GObject):
         self.player2 = p2
         self.chessclock = cc
         self.history = his
+        self.event = 'Local Event'
+        self.site = 'Local site'
+        self.round = '1'
+        today = datetime.date.today()
+        self.year = str(today.year)
+        self.month = str(today.month)
+        if len(self.month) == 1:
+            self.month = "0" + self.month
+        self.day = str(today.day)
+        if len(self.day) == 1:
+            self.day = "0" + self.day
         
         self.history.reset(True)
         if self.chessclock:
