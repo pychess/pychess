@@ -5,6 +5,9 @@ class Player (GObject):
     RESIGNATION, FLAG_CALL, DRAW_OFFER, DRAW_ACCEPTION = range(4)
     __gsignals__ = {"action": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))}
     
+    def setName (self, name):
+        abstract
+
     def makeMove (self, history):
         """ Takes a history object, concidering the last move as an opponent move,
             and returns a new moveobject with the players answer."""

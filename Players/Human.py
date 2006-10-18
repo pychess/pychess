@@ -15,6 +15,7 @@ class Human (Player):
         self.pnum = pnum
         self.board = board
         self.conid = board.connect("piece_moved", self.piece_moved)
+        self.name = "Human"
     
     move = None
     def piece_moved (self, board, move):
@@ -38,10 +39,13 @@ class Human (Player):
         self.board.locked = True
         return move
 
+    def setName (self, name):
+        self.name = name
+
     def __repr__ (self):
         #TODO: Get name from preferences or accountname
         #(probably preferences, as accountname would give problems in pvp games)
-        return "Human"
+        return self.name
 
     def __del__ (self):
         self.cond.acquire()
