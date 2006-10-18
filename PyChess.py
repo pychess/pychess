@@ -188,8 +188,8 @@ class GladeHandlers:
             myconf.set(widget, v)
         
         players = []
-        for box, dfcbox, pnum in (("whitePlayerCombobox","whiteDifficulty",0),
-                                  ("blackPlayerCombobox","blackDifficulty",1)):
+        for box, name, dfcbox, pnum in (("whitePlayerCombobox","whitePlayerName","whiteDifficulty",0),
+                                  ("blackPlayerCombobox","blackPlayerName","blackDifficulty",1)):
             choise = window[box].get_active()
             dfc = window[dfcbox].get_active()
             if choise != 0:
@@ -197,7 +197,9 @@ class GladeHandlers:
                 player.setStrength(dfc)
                 if secs:
                     player.setTime(secs, gain)
-            else: player = Human(window["BoardControl"], pnum)
+            else: 
+                player = Human(window["BoardControl"], pnum)
+                player.setName(window[name].get_text())
             players += [player]
         
         window.game = Game(window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain)
@@ -373,17 +375,23 @@ class GladeHandlers:
         if widget.get_active() != 0:
             window["whiteDifficulty"].set_sensitive(True)
             window["whiteDifficulty"].set_active(1)
+            window["whitePlayerName"].set_sensitive(False)
+            window["whitePlayerName"].set_text('')
         else:
             window["whiteDifficulty"].set_sensitive(False)
             window["whiteDifficulty"].set_active(-1)
+            window["whitePlayerName"].set_sensitive(True)
     
     def on_blackPlayerCombobox_changed (widget):
         if widget.get_active() != 0:
             window["blackDifficulty"].set_sensitive(True)
             window["blackDifficulty"].set_active(1)
+            window["blackPlayerName"].set_sensitive(False)
+            window["blackPlayerName"].set_text('')
         else:
             window["blackDifficulty"].set_sensitive(False)
             window["blackDifficulty"].set_active(-1)
+            window["blackPlayerName"].set_sensitive(True)
     
     #          Cairo Board          #
     
