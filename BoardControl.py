@@ -94,13 +94,20 @@ class BoardControl (gtk.EventBox):
         elif cord == self.view.active:
             color = len(self.view.history) % 2 == 0 and "black" or "white"
             if self.view.history[-1][cord] != None and self.view.history[-1][cord].color == color:
-                self.view.selected = self.point2Cord (event.x, event.y)
+                self.view.selected = cord
             elif self.view.selected:
                 self.emit_move_signal(self.view.selected, cord)
                 self.view._hover = cord
                 self.view.selected = None
-            else: self.view.selected = self.point2Cord (event.x, event.y)
-        else: self.view.active = None
+            else: self.view.selected = cord
+        else:
+            if self.view.active != None:
+                self.view.selected = self.view.active
+                if not self.isSelectable(cord):
+                    self.view.selected = None
+                else:
+                    self.view.active = cord
+                    self.button_release(widget, event)
     
     def motion_notify (self, widget, event):
         cord = self.point2Cord (event.x, event.y)
