@@ -25,10 +25,7 @@ class Crafty (Engine):
             print >> self.out, "info"
             for line in self._get("Crafty"):
                 if line.startswith("Crafty "):
-                    self.name = line
-            # Crafty sets a \n after his name, and this is not needed
-            if self.name[len(self.name)-1] == '\n':
-                self.name = self.name[0:len(self.name)-1]
+                    self.name = line[:-1]
         except:
             self.name = "Crafty"
         
