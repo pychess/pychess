@@ -7,7 +7,8 @@ from time import time
 
 range8 = range(8)
 
-functions = None
+#functions = None
+
 def validate (move, history, testCheck=True):
     """Will asume the first cord is an ally piece"""
     
@@ -20,8 +21,8 @@ def validate (move, history, testCheck=True):
         return False
     
     method = board[move.cord0].name
-    global functions
-    if not functions: functions = globals()
+    #global functions
+    #if not functions: functions = globals()
     if not functions[method](move, color, history, board):
         return False
     
@@ -42,14 +43,14 @@ def Bishop (move, color, history, board):
         x += dx; y += dy
         if x == move.cord1.x or y == move.cord0.y:
             break
-        if board[Cord(x,y)] != None:
+        if board.data[y][x] != None:
             return False
     return True
 
 def _isclear (board, rows, cols):
     for row in rows:
         for col in cols:
-            if board[row][col] != None:
+            if board.data[row][col] != None:
                 return False
     return True
 
@@ -143,7 +144,7 @@ def Rook (move, color, history, board):
         x += dx; y += dy
         if x == move.cord1.x and y == move.cord1.y:
             break
-        if board[Cord(x,y)] != None:
+        if board.data[y][x] != None:
             return False
     return True
 
@@ -151,9 +152,10 @@ def Queen (move, color, history, board):
     return Rook (move, color, history, board) or \
            Bishop (move, color, history, board)
 
+functions = {"Bishop":Bishop,"King":King,"Queen":Queen,"Rook":Rook,"Pawn":Pawn,"Knight":Knight}
+
 def _getLegalMoves (history, cord, testCheck):
     cords = []
-    board = history[-1]
     for row in range8:
         for col in range8:
             if row == cord.y and col == cord.x: continue
@@ -172,49 +174,77 @@ def findMoves (history):
     moves = {}
     board = history[-1]
     color = history.curCol()
-    for row in range8:
-        for col in range8:
-            piece = board[row][col]
+    for y, row in enumerate(board.data):
+        for x, piece in enumerate(row):
             if not piece: continue
             if piece.color != color: continue
-            cord0 = Cord(col, row)
+            cord0 = Cord(x, y)
             for cord1 in _getLegalMoves (history, cord0, True):
                 if cord0 in moves:
                     moves[cord0].append(cord1)
                 else: moves[cord0] = [cord1]
-    log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t), False)
+    #log.log("Found %d moves in %.3f seconds" % (sum([len(v) for v in moves.values()]), time()-t), False)
     #log.debug(str(moves))
     return moves
 
 def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
     #if sign:
     #    print "search", cord, color, sign, r, c
-    #    print "movelist", history.movelist[-1]
+    #    print "movelist", history.movelist
     #    import sys
     #    sys.stdout.write(str(history[-1]))
     board = history[-1]
     
-    for cord0, cord1s in history.movelist[-1].iteritems():
-        piece = board[cord0]
-        if color and piece.color != color: continue
-        if sign and piece.sign != sign: continue
-        if r and cord0.y != r: continue
-        if c and cord0.x != c: continue
-        for cord1 in cord1s:
-            if cord1 == cord:
-                #if sign:
-                #    print "Found move:", cord0, cord1
-                return cord0
+    if history.movelist[-1] != None:
+    
+        for cord0, cord1s in history.movelist[-1].iteritems():
+            piece = board[cord0]
+            if color and piece.color != color: continue
+            if sign and piece.sign != sign: continue
+            if r and cord0.y != r: continue
+            if c and cord0.x != c: continue
+            for cord1 in cord1s:
+                if cord1 == cord:
+                    #if sign:
+                    #    print "Found move:", cord0, cord1
+                    return cord0
+    
+    else:
+    
+        cords = []
+        for y, row in enumerate(board.data):
+            for x, piece in enumerate(row):
+                if piece == None: continue
+                if color and piece.color != color: continue
+                if sign and piece.sign != sign: continue
+                if r and y != r: continue
+                if c and x != c: continue
+                cord1 = Cord(x,y)
+                moves = _getLegalMoves(history,cord1,False)
+                if cord in moves:
+                    cords.append(cord1)
+        
+        if len(cords) == 1:
+            return cords[0]
+        
+        elif len(cords) > 1:
+            for cord1 in cords:
+                moves = _getLegalMoves(history,cord1,True)
+                if cord in moves:
+                    return cord1
+            
+        else: return None
+
+
 
 def genMovesPointingAt (history, cols, rows, color, testCheck=False):
     board = history[-1]
     
-    for row in range8:
-        for col in range8:
-            piece = board[row][col]
+    for y, row in enumerate(board.data):
+        for x, piece in enumerate(row):
             if piece == None: continue
             if piece.color != color: continue
-            cord0 = Cord(col,row)
+            cord0 = Cord(x,y)
             for r in rows:
                 for c in cols:
                     move = movePool.pop(history, (cord0, Cord(c,r)))

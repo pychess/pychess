@@ -79,8 +79,10 @@ def new_history_object (history):
     gobject.idle_add(helper)
 
 def history_changed (history):
+    
+    if not history.moves: return
 
-    if len(history) / 2 > len(numbers.get_model()):
+    if len(history) % 2 == 0:
         num = str(int(len(history)/2))+"."
         idle_add(numbers.get_model().append, [num])
 

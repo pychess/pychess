@@ -11,11 +11,15 @@ from Utils.Cord import Cord
 from Utils.Move import Move
 from math import floor
 from BoardView import BoardView
+from Utils.Log import log
 
 class BoardControl (gtk.EventBox):
 
     __gsignals__ = {
-        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,))
+        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'call_flag' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'draw' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'resign' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     
     def __init__(self):
@@ -51,7 +55,7 @@ class BoardControl (gtk.EventBox):
     locked = True
     def isSelectable (self, cord):
         if self.locked: return False
-        if not self.view.history.movelist: return False
+        if not self.view.history.movelist[-1]: return False
         if not cord: return False
 
         if self.view.shown != len(self.view.history)-1:
@@ -63,7 +67,7 @@ class BoardControl (gtk.EventBox):
         if self.view.history[-1][cord] == None:
             return False
 
-        color = len(self.view.history) % 2 == 0 and "black" or "white"
+        color = self.view.history.curCol()
         if self.view.history[-1][cord].color != color:
             return False
         
@@ -92,7 +96,7 @@ class BoardControl (gtk.EventBox):
         if self.view.selected == cord or cord == None:
             self.view.selected = None
         elif cord == self.view.active:
-            color = len(self.view.history) % 2 == 0 and "black" or "white"
+            color = self.view.history.curCol()
             if self.view.history[-1][cord] != None and self.view.history[-1][cord].color == color:
                 self.view.selected = cord
             elif self.view.selected:
@@ -125,3 +129,24 @@ class BoardControl (gtk.EventBox):
         pass
     #    self.view.selected = None
     #    self.view.active = None
+
+
+    def on_call_flag_activate (self, widget):
+        if self.locked:
+            #TODO: Should BoardControl own the action menu?
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            return
+        self.emit("call_flag")
+        
+    def on_draw_activate (self, widget):
+        if self.locked:
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            return
+        self.emit("draw")
+        
+    def on_resign_activate (self, widget):
+        if self.locked:
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            return
+        self.emit("resign")
+    

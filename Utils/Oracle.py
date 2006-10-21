@@ -26,7 +26,7 @@ class Oracle (gobject.GObject):
     
     def __init__ (self):
         gobject.GObject.__init__(self)
-        
+        return
         from popen2 import Popen4
         popen = Popen4("nice gnuchess -x", 0)
         self.out, self.inn = popen.tochild, popen.fromchild
@@ -42,6 +42,7 @@ class Oracle (gobject.GObject):
         print >> self.out, "hard"
     
     def addMove (self, his):
+        return
         # FIXME: rmfirst code has been disabled until there is a way
         # to make it emit correct showbook and showscore signals. URGENT!!! 
         
@@ -54,6 +55,7 @@ class Oracle (gobject.GObject):
         self.queue.put(his.clone())
     
     def reset (self):
+        return
         self.running = False
         self.cond.acquire()
         print >> self.out, "new"
@@ -70,6 +72,7 @@ class Oracle (gobject.GObject):
         self.run()
     
     def game_ended (self):
+        return
         self.running = False
         self.cond.acquire()
         print >> self.out, "new"
@@ -82,6 +85,7 @@ class Oracle (gobject.GObject):
         self.cond.release()
     
     def attach (self, history):
+        return
         self.history = history.clone()
         history.connect("changed", self.addMove)
         history.connect("cleared", lambda h: pool.start(self.reset))
@@ -90,6 +94,7 @@ class Oracle (gobject.GObject):
     # Private methods
     
     def _run (self):
+        return
         dead = False
         while self.running:
             self.cond.acquire()

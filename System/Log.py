@@ -11,8 +11,10 @@ class LogPipe:
     def write (self, data):
         if data.strip():
             log.debug (self.flag+data.strip())
-        self.to.write(data)
-
+        try:
+            self.to.write(data)
+        except IOError:
+            log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
 class Log:
     errors = []
     

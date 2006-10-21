@@ -17,70 +17,67 @@ def ready (window):
     r.set_property("xalign", 1)
     tv.append_column(gtk.TreeViewColumn("Games", r, text=1))
     tv.append_column(gtk.TreeViewColumn("Win/Draw/Loss", window.BookCellRenderer(), data=2))
-
-    window.oracle.connect("foundbook", foundbook)
-    window.oracle.connect("clear", clear)
-
-running = None
-def clear (oracle):
-    if __widget__.get_child() != sw:
-        return
-    global s
-    s = 0
-    def runner():
-        global s
-        def helper():
-            global s, running
-            if not running: return
-            store.clear()
-            store.append (["."*s,"",None])
-        gobject.idle_add(helper)
-        s += 1
-        if s > 3: s = 0
-        return running
-    global running
-    running = True
-    gobject.timeout_add(250, runner)
-
-int2 = lambda x: x != "" and int(x) or 0
-float2 = lambda x: x != "" and float(x) or 0.0
+    
+    global board
+    board = window["BoardControl"].view
+    board.connect("shown_changed", shown_changed)
+    tv.connect("cursor_changed", selection_changed)
+    tv.connect("select_cursor_row", selection_changed)
+    
+int2 = lambda x: x and int(x) or 0
+float2 = lambda x: x and float(x) or 0.0
 
 def sortbook (x, y):
     xgames = sum(map(int2,x[2:5]))
     ygames = sum(map(int2,y[2:5]))
     return ygames - xgames
 
-from threading import Condition
-cond = Condition()
+from Utils.book import getOpenings
 
-def foundbook (oracle, book):
-    global running
-    running = False
+def shown_changed (board, shown):
+    global openings
+    openings = getOpenings(board.history, shown)
+    openings.sort(sortbook)
     
-    book.sort(sortbook)
+    board.bluearrow = None
+    
     def helper():
         store.clear()
         
-        #cond.acquire()
-        if not book and __widget__.get_child() == sw:
+        if not openings and __widget__.get_child() == sw:
             __widget__.remove(sw)
             label = gtk.Label(_("In this position,\nthere is no book move."))
             label.set_property("yalign",0.1)
             __widget__.add(label)
             __widget__.show_all()
-            #cond.release()
             return
-        if book and __widget__.get_child() != sw:
+        if openings and __widget__.get_child() != sw:
             __widget__.remove(__widget__.get_child())
             __widget__.add(sw)
-        #cond.release()
-            
         
         i = 0
-        for move, p, win, draw, loss in book:
-            win,draw,loss = map(float2, (win,draw,loss))
-            games = win+draw+loss
+        for move, wins, draws, loses in openings:
+            wins,draws,loses = map(float2, (wins,draws,loses))
+            games = wins+draws+loses
             if not games: continue
-            win,draw,loss = map(lambda x: x/games, (win,draw,loss))
-            store.append ([move, str(int(games)), (win,draw,loss)])
+            wins,draws,loses = map(lambda x: x/games, (wins,draws,loses))
+            store.append ([move, str(int(games)), (wins,draws,loses)])
     gobject.idle_add(helper)
+
+from Utils.Move import movePool
+
+def selection_changed (widget):
+    if len(board.history) != board.shown+1:
+        # History/moveparsing model, sucks, sucks, sucks
+        board.bluearrow = None
+        return
+    
+    iter = tv.get_selection().get_selected()[1]
+    if iter == None:
+        board.bluearrow = None
+        return
+    else: sel = tv.get_model().get_path(iter)[0]
+    
+    move = movePool.pop(board.history, openings[sel][0])
+    board.bluearrow = move.cords
+    movePool.add(move)
