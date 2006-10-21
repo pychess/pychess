@@ -32,8 +32,8 @@ class Board:
         return board
     
     def __getitem__(self, cord):
-        if type(cord) == int:
-            return self.data[cord]
+        #if type(cord) == int:
+        #    return self.data[cord]
         return self.data[cord.y][cord.x]
     
     def __setitem__(self, cord, piece):
@@ -65,11 +65,12 @@ class Board:
     def __eq__ (self, other):
         if type(self) != type(other) or self.__class__ != other.__class__:
             return False
-        for row in range(len(self)):
-            for col in range(len(self[row])):
-                if not self[row][col] and other[row][col]: return False
-                if not self[row][col] and not other[row][col]: continue
-                if not self[row][col].__eq__(other[row][col]):
+        for y, row in enumerate(self.data):
+            for x, piece in enumerate(row):
+                oPiece = other.data[y][x]
+                if not piece and oPiece: return False
+                if not piece and not oPiece: continue
+                if not piece.__eq__(oPiece):
                     return False
         return True
 

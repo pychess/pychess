@@ -19,6 +19,10 @@ class Cord:
         return self.intToChar(self.x)
     cx = property(_get_cx)
     
+    def _get_cy (self):
+        return str(self.y+1)
+    cy = property(_get_cy)
+    
     def intToChar (self, x):
         assert 0 <= x <= 7
         return chr(x + ord('a'))
@@ -42,7 +46,7 @@ class Cord:
         return type(other) == type(self) and (other.x,other.y) == (self.x,self.y)
     
     def __repr__ (self):
-        return self.cx + str(self.y+1)
+        return self.cx + self.cy
 
     def __hash__ (self):
         return self.x*8+self.y

@@ -46,7 +46,7 @@ class BoardView (gtk.DrawingArea):
     def move (self, history):
         if self.shown+2 < len(history):
             return
-        self.shown += 1
+        self.shown = len(history)-1
     
     def reset (self, history):
         self.shown = 0
@@ -132,9 +132,8 @@ class BoardView (gtk.DrawingArea):
     def drawPieces(self, context, pieces, rect):
         xc, yc, square, s = self.square
         context.set_source_color(self.get_style().black)
-        for y in xrange(len(pieces)):
-            for x in xrange(len(pieces[y])):
-                piece = pieces[y][x]
+        for y, row in enumerate(pieces.data):
+            for x, piece in enumerate(row):
                 if not piece: continue
                 if not intersects(self.cord2Rect(Cord(x,y)), rect):
                     continue
@@ -257,9 +256,11 @@ class BoardView (gtk.DrawingArea):
             context.restore()
             
         if self.greenarrow:
-            drawArrow(self.greenarrow, (.54,.886,0.2,0.9), (.306,.604,.024,1))
+            drawArrow(self.greenarrow, (.54,.886,.2,0.9), (.306,.604,.024,1))
         if self.redarrow:
-            drawArrow(self.redarrow, (.937,.16,0.16,0.9), (.643,0,0,1))
+            drawArrow(self.redarrow, (.937,.16,.16,0.9), (.643,0,0,1))
+        if self.bluearrow:
+            drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
     
     def redraw_canvas(self, rect=None):
         if self.window:
@@ -332,6 +333,14 @@ class BoardView (gtk.DrawingArea):
     def _get_greenarrow (self):
         return self._greenarrow
     greenarrow = property(_get_greenarrow, _set_greenarrow)
+    
+    _bluearrow = None
+    def _set_bluearrow (self, cords):
+        self._bluearrow = cords
+        idle_add(self.redraw_canvas)
+    def _get_bluearrow (self):
+        return self._bluearrow
+    bluearrow = property(_get_bluearrow, _set_bluearrow)
     
     ################################
     #          Other vars          #

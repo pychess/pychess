@@ -145,10 +145,8 @@ class Move:
                     self.enpassant = Cord(self.cord1.x, self.cord0.y)
 
     def algNotat (self, history):
-        """Note: History should have thismove as last element in its .move list"""
+        """Note: History should have thismove as last element in its .moves list"""
         
-        #FIXME: Don't know the rule, of setting row/collum in front (works for pawns ofcource)
-        #FIXME!!: Don't set the enpassant variabel - This is fixed, right?
         if len(history) > 0:
             board = history[-2]
         else: board = history[-1]
@@ -161,9 +159,9 @@ class Move:
         c0, c1 = self.cords
         if board[c0].sign == "k":
             if c0.x - c1.x == 2:
-                return "o-o-o"
+                return "O-O-O"
             elif c0.x - c1.x == -2:
-                return "o-o"
+                return "O-O"
         
         part0 = part1 = ""
         
@@ -173,17 +171,59 @@ class Move:
         
         part1 = str(c1)
         
+        #Can this be moved to validator? It is quite hacky... (Because of old history)
+        if len(history) >= 2 and not board[c0].sign in ("p","k"):
+            xs = []
+            ys = []
+            
+            if history.movelist[-2] != None:
+                for cord0, cord1s in history.movelist[-2].iteritems():
+                    if self.cord1 in cord1s and not cord0.__eq__(self.cord0) and \
+                            board[cord0].sign == board[self.cord0].sign:
+                        xs.append(cord0.x)
+                        ys.append(cord0.x)
+            else:
+                hisclon = history.clone()
+                del hisclon.moves[-1]
+                del hisclon.boards[-1]
+                del hisclon.movelist[-1]
+                for y, row in enumerate(board.data):
+                    for x, piece in enumerate(row):
+                        if not piece: continue
+                        if piece.sign != board[c0].sign: continue
+                        if piece.color != board[c0].color: continue
+                        if y == c0.y and x == c0.x: continue
+                        cord0 = Cord(x, y)
+                        move = movePool.pop(hisclon, (cord0, self.cord1))
+                        from validator import validate
+                        if validate (move, hisclon, False):
+                            xs.append(cord0.x)
+                            ys.append(cord0.x)
+                        movePool.add(move)
+
+            if xs or ys:
+                if not self.cord0.y in ys and not self.cord0.x in xs:
+                    part0 += self.cord0.cx
+                elif self.cord0.y in ys and not self.cord0.x in xs:
+                    part0 += self.cord0.cx
+                elif self.cord0.x in xs and not self.cord0.y in ys:
+                    part0 += self.cord0.cy
+                else: part0 += str(self.cord0)
+                
+
         if board[c1] != None:
             part1 = "x" + part1
             if board[c0].sign == "p":
                 part0 += c0.cx
-                
+        
         notat = part0 + part1
         if board[c0].sign == "p" and c1.y in [0,7]:
-            notat += self.promotion
+            notat += "="+self.promotion.upper()
         
-        from Utils.validator import isCheck
-        if isCheck(history, history.curCol()):
+        from Utils import validator
+        if history.status in (validator.WHITEWON, validator.BLACKWON):
+            notat += "#"
+        elif validator.isCheck(history, history.curCol()):
             notat += "+"
             
         return notat

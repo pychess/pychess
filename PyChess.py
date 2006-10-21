@@ -11,14 +11,14 @@ gettext.install("pychess",localedir="lang",unicode=1)
 gtk.glade.bindtextdomain("pychess","lang")
 gtk.glade.textdomain("pychess")
 
-from System.Log import log
-
-from Players import *
+from Players import engines
 from Players.Human import Human
 from System import myconf
+from System.Log import log
 from Game import Game
 from Utils.Oracle import Oracle
 from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
+import statusbar
 
 def saveGameBefore (action):
     #TODO: Test om noget er ændret!
@@ -40,7 +40,8 @@ def makeFileDialogReady ():
     for saver in [__import__(s, locals()) for s in savers]:
         for ending in saver.__endings__:
             enddir[ending] = saver
-        types.append((saver.__label__, saver.__endings__))
+        l = saver.__label__ + " (."+", .".join(saver.__endings__)+")"
+        types.append((l, saver.__endings__))
     
     global savedialog, opendialog
     savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
@@ -68,7 +69,18 @@ def makeFileDialogReady ():
         savedialog.add_filter(f)
         opendialog.add_filter(f)
     
+    global filechooserbutton
+    filechooserbutton = gtk.FileChooserButton(opendialog)
+    window["ngfcalignment"].add(filechooserbutton)
+    filechooserbutton.show()
+
+isMakeNewGameDialogReady = False
 def makeNewGameDialogReady ():
+
+    global isMakeNewGameDialogReady
+    if isMakeNewGameDialogReady:
+        return
+    isMakeNewGameDialogReady = True
 
     def createCombo (combo, data):
         ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
@@ -101,14 +113,20 @@ def makeNewGameDialogReady ():
     items = [(image, _("Human Being"))]
     image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
     
-    for engine in [str(e).split(".")[-1][:-2] for e in window.engines]:
+    for engine in [engines.getName((e,a)) for e,a in engines.availableEngines]:
         items += [(image, engine)]
     for combo in (window["whitePlayerCombobox"], window["blackPlayerCombobox"]):
         createCombo(combo, items)
         
+<<<<<<< .mine
+    window["combobox5"].set_active(0)
+    window["combobox6"].set_active(min(1,len(engines.availableEngines)))
+    GladeHandlers.__dict__['on_combobox6_changed'](window["combobox6"])
+=======
     window["whitePlayerCombobox"].set_active(0)
     window["blackPlayerCombobox"].set_active(min(1,len(window.engines)))
     GladeHandlers.__dict__['on_blackPlayerCombobox_changed'](window["blackPlayerCombobox"])
+>>>>>>> .r50
     
     for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
             "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
@@ -154,7 +172,74 @@ def makeSidePanelReady ():
     
     on_sidepanel_change(None)
     myconf.notify_add ("sidepanel", on_sidepanel_change)
+
+def runNewGameDialog (hideFC=True):
+    makeNewGameDialogReady ()
     
+    if hideFC:
+        window["ngfcalignment"].hide()
+    else: window["ngfcalignment"].show()
+
+    res = window["newgamedialog"].run()
+    window["newgamedialog"].hide()
+    if res != gtk.RESPONSE_OK: return
+        
+    if window["useTimeCB"].get_active():
+        window["ccalign"].show()
+        clock = window["ChessClock"]
+        secs = window["spinbuttonH"].get_value()*3600
+        secs += window["spinbuttonM"].get_value()*60
+        secs += window["spinbuttonS"].get_value()
+        gain = window["spinbuttonG"].get_value()
+    else:
+        window["ccalign"].hide()
+        clock = None
+        secs = 0
+        gain = 0
+        
+    for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
+            "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
+        if hasattr(window[widget], "get_active"):
+            v = window[widget].get_active()
+        else: v = window[widget].get_value()
+        myconf.set(widget, v)
+        
+    players = []
+    for box, dfcbox, color in (("combobox5","combobox7","white"),
+                              ("combobox6","combobox8","black")):
+        choise = window[box].get_active()
+        dfc = window[dfcbox].get_active()
+        if choise != 0:
+            engine = engines.availableEngines[choise-1][0]
+            player = engine(engines.availableEngines[choise-1][1],color)
+            player.connect("dead", engineDead)
+            player.wait() # Wait for engine to init
+            player.setStrength(dfc)
+            if secs:
+                player.setTime(secs, gain)
+        else: player = Human(window["BoardControl"], color)
+        players += [player]
+    
+    if hasattr(window, "game"):
+        window.game.kill()
+        
+    window.game = Game( window["BoardControl"].view.history,
+            window.oracle, players[0], players[1], clock, secs, gain)
+            
+    window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
+    statusbar.status(None)
+    
+    return window.game
+import thread
+def engineDead (engine):
+    #TODO: Ask to save the game
+    window.game.kill()
+    d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+    d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
+    d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
+    d.connect("response", lambda d,r: d.hide())
+    d.show_all()
+                
 class GladeHandlers:
     
     #          Game Menu          #
@@ -179,6 +264,8 @@ class GladeHandlers:
     def on_new_game1_activate (widget):
         #res = saveGameBefore(_("a new game starts"))
         #if res == gtk.RESPONSE_CANCEL: return
+<<<<<<< .mine
+=======
         
         res = window["newgamedialog"].run()
         window["newgamedialog"].hide()
@@ -225,26 +312,29 @@ class GladeHandlers:
         window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
         window["game_information"].set_sensitive(True)
         window.game.run()
+>>>>>>> .r50
+
+        game = runNewGameDialog()
+        if game:
+            window["BoardControl"].view.history.reset(True)
+            game.run()
 
     def game_ended (game, status, comment):
-        def func():
-            window["statusbar1"].pop(0)
-            m1 = {
-                DRAW: _("The game ended in a draw"),
-                WHITEWON: _("White player won the game"),
-                BLACKWON: _("Black player won the game")
-            }[status]
-            m2 = {
-                DRAW_REPITITION: _("as the same position was repeated three times in a row"),
-                DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
-                DRAW_STALEMATE: _("because of stalemate"),
-                DRAW_AGREE: _("as the players agreed to"),
-                WON_RESIGN: _("as opponent resigned"),
-                WON_CALLFLAG: _("as opponent ran out of time"),
-                WON_MATE: _("on a mate")
-            }[comment]
-            window["statusbar1"].push(0, "%s %s." % (m1,m2))
-        gobject.idle_add(func)
+        m1 = {
+            DRAW: _("The game ended in a draw"),
+            WHITEWON: _("White player won the game"),
+            BLACKWON: _("Black player won the game")
+        }[status]
+        m2 = {
+            DRAW_REPITITION: _("as the same position was repeated three times in a row"),
+            DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
+            DRAW_STALEMATE: _("because of stalemate"),
+            DRAW_AGREE: _("as the players agreed to"),
+            WON_RESIGN: _("as opponent resigned"),
+            WON_CALLFLAG: _("as opponent ran out of time"),
+            WON_MATE: _("on a mate")
+        }[comment]
+        statusbar.status("%s %s." % (m1,m2), idle_add=True)
     
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
@@ -264,10 +354,16 @@ class GladeHandlers:
         opendialog.hide()
 
         if res != gtk.RESPONSE_ACCEPT: return
-        uri = opendialog.get_uri()[7:]
-        ending = uri[uri.rfind(".")+1:]
-        history = enddir[ending].load(file(uri))
-        print history[-1]
+        uri = opendialog.get_uri()
+        filechooserbutton.set_uri(uri)
+        game = runNewGameDialog(hideFC=False)
+        
+        if game:
+            path = filechooserbutton.get_uri()[7:]
+            ending = path[path.rfind(".")+1:]
+            enddir[ending].load(file(path), window["BoardControl"].view.history)
+            
+            game.run()
     
     def on_save_game1_activate (widget):
         pass #TODO
@@ -428,6 +524,20 @@ class GladeHandlers:
         if window["BoardControl"].view.history:
             window["BoardControl"].view.shown = len(window["BoardControl"].view.history)-1
 
+    #          Action menu          #
+    
+    def on_call_flag_activate (widget):
+        window["BoardControl"].on_call_flag_activate (widget)
+
+    def on_draw_activate (widget):
+        window["BoardControl"].on_draw_activate (widget)
+        
+    def on_resign_activate (widget):
+        window["BoardControl"].on_resign_activate (widget)
+
+    def on_force_to_move_activate (widget):
+        window.game.activePlayer.hurry()
+
 from time import time
 
 class PyChess:
@@ -445,15 +555,11 @@ class PyChess:
         self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         
-        self["BoardControl"].eventbox = self["eventbox1"]
-        
+        statusbar.statusbar = self["statusbar1"]
         self["window1"].show_all()
         
         self.oracle = Oracle()
         self.oracle.attach(self["BoardControl"].view.history)
-        
-        self.loadEngines()
-        makeNewGameDialogReady()
         
         #Very ugly hack, needed because of pygtk bug 357022
         #http://bugzilla.gnome.org/show_bug.cgi?id=357022
@@ -476,16 +582,6 @@ class PyChess:
                 self[folder] = files
             return self.data[folder]
     files = Files()
-    
-    engines = []
-    def loadEngines (self):
-        from Players.Engine import Engine
-        from gobject import GObjectMeta
-        for name, module in globals().iteritems():
-            for attr in [getattr(module, a) for a in dir(module)]:
-                if type(attr) is GObjectMeta and issubclass(attr, Engine) and attr != Engine:
-                    if module.testEngine():
-                        self.engines += [attr]
     
     def widgetHandler (self, glade, functionName, widgetName, str1, str2, int1, int2):
         if widgetName in self.files["."]:

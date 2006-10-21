@@ -11,14 +11,19 @@ WHITE_OO = 1
 WHITE_OOO = 2
 BLACK_OO = 4
 BLACK_OOO = 8
+WHITE_CASTLED = 16
+BLACK_CASTLED = 32
 
 class HistoryPool:
     def __init__ (self):
         self.objects = []
-    def pop (self):
+    def pop (self, clear=True):
         if len(self.objects) <= 0:
             self.objects.append(History())
-        return self.objects.pop()
+        his = self.objects.pop()
+        his.castling = WHITE_OO | WHITE_OOO | WHITE_CASTLED \
+                     | BLACK_OO | BLACK_OOO | BLACK_CASTLED
+        return his
     def add (self, history):
         #Todo: deconnect signals
         self.objects.append(history)
@@ -83,12 +88,15 @@ class History (GObject):
         GObject.__init__(self)
         
         self.boards = [startBoard.clone()]
+        self.curColModi = 0
         self.fifty = 0
         self.moves = []
         self.castling = WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO
+        self.status = validator.FINE
         self.movelist = []
         if mvlist:
             self.movelist.append(validator.findMoves(self))
+        else: self.movelist.append(None)
         
         self.emit("cleared")
     
@@ -99,7 +107,12 @@ class History (GObject):
         return len(self.boards)
     
     def curCol (self):
-        return len(self) % 2 == 1 and "white" or "black"
+        return (len(self)+self.curColModi) % 2 == 1 and "white" or "black"
+    
+    def setStartingColor (self, color):
+        if color == "black":
+            self.curColModi = 1
+        else: self.curColModi = 0
     
     def add (self, move, mvlist=False):
     
@@ -107,10 +120,10 @@ class History (GObject):
         
         if move.castling:
             c = move.castling[0]
-            if c == a1: self.castling = rm(self.castling, WHITE_OOO)
-            elif c == h1: self.castling = rm(self.castling, WHITE_OO)
-            elif c == a8: self.castling = rm(self.castling, BLACK_OOO)
-            elif c == h8: self.castling = rm(self.castling, BLACK_OO)
+            if c == a1: self.castling |= WHITE_CASTLED
+            elif c == h1: self.castling |= WHITE_CASTLED
+            elif c == a8: self.castling |= BLACK_CASTLED
+            elif c == h8: self.castling |= BLACK_CASTLED
 
         p = self.boards[-1][move.cord0]
 
@@ -136,18 +149,19 @@ class History (GObject):
             self.fifty += 1
         else: self.fifty = 0
         
-        # Emiting before the add is really completed
-        #    (hasn't yet generated movelist) for better performace
-        self.emit("changed")
-        
         if mvlist:
             self.movelist.append(validator.findMoves(self))
+        else: self.movelist.append(None)
         
-        if len(self.movelist) > 0:
+        if mvlist:
             status, comment = validator.status(self)
             if status != validator.FINE:
+                self.status = status
+                self.emit("changed")
                 self.emit("game_ended", status, comment)
                 return False
+        
+        self.emit("changed")
         
         return self
     
@@ -157,4 +171,6 @@ class History (GObject):
         his.fifty = self.fifty
         his.moves = copy(self.moves)
         his.boards = copy(self.boards)
+        his.movelist = copy(self.movelist)
+        his.status = self.status
         return his

@@ -24,6 +24,9 @@ class Player (GObject):
         pass #Optional
     
     def showBoard (self):
-        """ Print the board as it the players sees it, e.g. in fen. Used for debugging only"""
+        """ Print the board as it the players sees it, e.g. in fen. Used for debugging only """
         pass #Optional
     
+    def hurry (self):
+        """ Forces engines to move now, and sends a hurry message to nonlocal human players """
+        pass #Optional
