@@ -7,7 +7,6 @@ __endings__ = "pgn",
 
 import datetime
 
-<<<<<<< .mine
 def save (file, history):
     today = datetime.date.today()
 
@@ -30,20 +29,7 @@ def save (file, history):
     print >> file, '[Black "Black Player"]'
     print >> file, '[Result "%s"]' % result
     print >> file
-=======
-def save (file, game):
-        
-    # TODO: get some more calculated values here
-    file.write("[Event \"" + game.event + "\"]" + "\n")
-    file.write("[Site \"" + game.site + "\"]" + "\n")
-    file.write("[Date \"" + game.year + "." + game.month + "." + game.day + "\"]" + "\n")
-    file.write("[Round \"" + str(game.round) + "\"]" + "\n")
-    file.write("[White \"" + str(game.player1) + "\"]" + "\n")
-    file.write("[Black \"" + str(game.player2) + "\"]" + "\n")
-    file.write("[Result \"?\"]" + "\n")
-    file.write("\n")
->>>>>>> .r50
-    
+
     halfMoves = 0
     nrOfCharsInLine = 0
     temphis = History()
