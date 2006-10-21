@@ -1,0 +1,247 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Pychess 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-10-18 23:32+0200\n"
+"PO-Revision-Date: 2006-10-18 23:32+0200\n"
+"Last-Translator: Norbert Fabritius <nori.f@gmx.de>\n"
+"Language-Team: German <nori.f@gmx.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: glade/PyChess.glade:36
+msgid "_Game"
+msgstr "_Partie"
+
+#: glade/PyChess.glade:45
+msgid "_New Game"
+msgstr "_Neue Partie"
+
+#: glade/PyChess.glade:73
+msgid "_Load Game"
+msgstr "Partie _Laden"
+
+#: glade/PyChess.glade:101
+msgid "_Save Game"
+msgstr "Partie _Speichern"
+
+#: glade/PyChess.glade:123
+msgid "Save Game _As"
+msgstr "Partie speichern _Unter"
+
+#: glade/PyChess.glade:164
+msgid "_Actions"
+msgstr "_Aktionen"
+
+#: glade/PyChess.glade:173
+msgid "_Call Flag"
+msgstr "_Call Flag"
+
+#: glade/PyChess.glade:182
+msgid "_Draw"
+msgstr "_Remis anbieten"
+#: glade/PyChess.glade:191
+msgid "_Resign"
+msgstr "_Aufgeben"
+
+#: glade/PyChess.glade:206
+msgid "_Undo"
+msgstr "Zug _Zurücknehmen"
+
+#: glade/PyChess.glade:227
+msgid "_Pause"
+msgstr "_Pause"
+
+#: glade/PyChess.glade:238
+msgid "_Force Move"
+msgstr "Zug _Erzwingen"
+
+#: glade/PyChess.glade:264
+msgid "_View"
+msgstr "_Ansicht"
+
+#: glade/PyChess.glade:273
+msgid "_Rotate Board"
+msgstr "Brett _Drehen"
+
+#: glade/PyChess.glade:294
+msgid "_Side Panel"
+msgstr "_Seitenleiste"
+
+#: glade/PyChess.glade:311
+msgid "_Hint"
+msgstr "_Tip"
+
+#: glade/PyChess.glade:325
+msgid "_Help"
+msgstr "_Hilfe"
+
+#: glade/PyChess.glade:768
+msgid "PyChess"
+msgstr ""
+
+#: glade/PyChess.glade:769
+#: glade/PyChess.glade:788
+msgid "Thomas Dybdahl Ahle"
+msgstr ""
+
+#: glade/PyChess.glade:770
+msgid "Xboard for gnome"
+msgstr ""
+
+#: glade/PyChess.glade:771
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+
+#: glade/PyChess.glade:786
+msgid "http://code.google.com/p/pychess/"
+msgstr ""
+
+#: glade/PyChess.glade:855
+msgid "_Don't save"
+msgstr "_Nicht speichern"
+
+#: glade/PyChess.glade:904
+msgid "<b><big>Save the current game before %s?</big></b>"
+msgstr "<b><big>Die Partie vorher abspeichern?</big></b>"
+
+#: glade/PyChess.glade:930
+msgid ""
+"It is not possible later to continue the game,\n"
+"if do don't save it."
+msgstr "Es ist nicht möglich die Partie später fortzusetzen, wenn Sie sie jetzt nicht speichern"
+
+#: glade/PyChess.glade:1000
+msgid "New Game"
+msgstr "Partie auf Zeit"
+
+#: glade/PyChess.glade:1088
+msgid "_Start Game"
+msgstr "Partie _Starten"
+
+#: glade/PyChess.glade:1206
+#: glade/PyChess.glade:1369
+msgid "Black Player:"
+msgstr "Schwarzer Spieler"
+
+#: glade/PyChess.glade:1234
+#: glade/PyChess.glade:1341
+msgid "White Player:"
+msgstr "Weißer Spieler"
+
+#: glade/PyChess.glade:1271
+msgid "<b>Players</b>"
+msgstr "<b>Spieler</b>"
+
+#: glade/PyChess.glade:1443
+msgid "<b>Difficulty</b>"
+msgstr "<b>Schwierigkeit</b>"
+
+#: glade/PyChess.glade:1511
+msgid "Game has time"
+msgstr "Partie auf Zeit"
+
+#: glade/PyChess.glade:1557
+msgid "Hours:"
+msgstr "Stunden"
+
+#: glade/PyChess.glade:1585
+msgid "Minutes: "
+msgstr "Minuten"
+
+#: glade/PyChess.glade:1613
+msgid "Seconds: "
+msgstr "Sekunden"
+
+#: glade/PyChess.glade:1641
+msgid "Gain:"
+msgstr "Zuschlag"
+
+#: glade/PyChess.glade:1778
+#: glade/PyChess.glade:2517
+msgid "<b>Alarm</b>"
+msgstr "<b>Alarm</b>"
+
+#: glade/PyChess.glade:2645
+msgid "Promotion"
+msgstr "Umwandlung"
+
+#: glade/PyChess.glade:2676
+msgid "Queen"
+msgstr "Dame"
+
+#: glade/PyChess.glade:2690
+msgid "Rook"
+msgstr "Turm"
+
+#: glade/PyChess.glade:2703
+msgid "Bishop"
+msgstr "Läufer"
+
+#: glade/PyChess.glade:2716
+msgid "Knight"
+msgstr "Springer"
+
+#: glade/PyChess.glade:2735
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>In was den Bauern umwandlen?"
+
+#: sidepanel/book.py:3
+msgid "Opening Book"
+msgstr "Eröffnugsbuch"
+
+#: sidepanel/history.py:4
+msgid "Move History"
+msgstr "Notation"
+
+#: sidepanel/players.py:3
+msgid "Player info"
+msgstr "Spieler Informationen"
+
+#: PyChess.py:54
+msgid "Beginner"
+msgstr "Anfänger"
+
+#: PyChess.py:55
+msgid "Intermediate"
+msgstr "Fortgeschritten"
+
+#: PyChess.py:56
+msgid "Expert"
+msgstr "Experte"
+
+#: PyChess.py:64
+msgid "Human Being"
+msgstr "Mensch"
+
+#: PyChess.py:126
+msgid "a new game starts"
+msgstr "Eine neue Partie beginnt"
+
+#: PyChess.py:170
+msgid "you open a new game"
+msgstr "Sie öffnen eine neue Partie"
+
+#: PyChess.py:181
+msgid "exit"
+msgstr "Schliessen"
+
