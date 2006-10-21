@@ -118,15 +118,9 @@ def makeNewGameDialogReady ():
     for combo in (window["whitePlayerCombobox"], window["blackPlayerCombobox"]):
         createCombo(combo, items)
         
-<<<<<<< .mine
-    window["combobox5"].set_active(0)
-    window["combobox6"].set_active(min(1,len(engines.availableEngines)))
-    GladeHandlers.__dict__['on_combobox6_changed'](window["combobox6"])
-=======
     window["whitePlayerCombobox"].set_active(0)
-    window["blackPlayerCombobox"].set_active(min(1,len(window.engines)))
+    window["blackPlayerCombobox"].set_active(min(1,len(engines.availableEngines)))
     GladeHandlers.__dict__['on_blackPlayerCombobox_changed'](window["blackPlayerCombobox"])
->>>>>>> .r50
     
     for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
             "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
@@ -197,16 +191,15 @@ def runNewGameDialog (hideFC=True):
         secs = 0
         gain = 0
         
-    for widget in ("combobox5", "combobox6", "combobox7", "combobox8",
-            "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
+    for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
         if hasattr(window[widget], "get_active"):
             v = window[widget].get_active()
         else: v = window[widget].get_value()
         myconf.set(widget, v)
         
     players = []
-    for box, dfcbox, color in (("combobox5","combobox7","white"),
-                              ("combobox6","combobox8","black")):
+    for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty","white"),
+                              ("blackPlayerCombobox","blackDifficulty","black")):
         choise = window[box].get_active()
         dfc = window[dfcbox].get_active()
         if choise != 0:
@@ -264,56 +257,7 @@ class GladeHandlers:
     def on_new_game1_activate (widget):
         #res = saveGameBefore(_("a new game starts"))
         #if res == gtk.RESPONSE_CANCEL: return
-<<<<<<< .mine
-=======
         
-        res = window["newgamedialog"].run()
-        window["newgamedialog"].hide()
-        if res != gtk.RESPONSE_OK: return
-        
-        if window["useTimeCB"].get_active():
-            window["ccalign"].show()
-            clock = window["ChessClock"]
-            secs = window["spinbuttonH"].get_value()*3600
-            secs += window["spinbuttonM"].get_value()*60
-            secs += window["spinbuttonS"].get_value()
-            gain = window["spinbuttonG"].get_value()
-        else:
-            window["ccalign"].hide()
-            clock = None
-            secs = 0
-            gain = 0
-        
-        for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
-                "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
-            if hasattr(window[widget], "get_active"):
-                v = window[widget].get_active()
-            else: v = window[widget].get_value()
-            myconf.set(widget, v)
-        
-        players = []
-        for box, name, dfcbox, pnum in (("whitePlayerCombobox","whitePlayerName","whiteDifficulty",0),
-                                  ("blackPlayerCombobox","blackPlayerName","blackDifficulty",1)):
-            choise = window[box].get_active()
-            dfc = window[dfcbox].get_active()
-            if choise != 0:
-                player = window.engines[choise-1]()
-                player.setStrength(dfc)
-                if secs:
-                    player.setTime(secs, gain)
-            else: 
-                player = Human(window["BoardControl"], pnum)
-                if window[name].get_text() == '':
-                    window[name].set_text('Human Player')
-                player.setName(window[name].get_text())
-            players += [player]
-        
-        window.game = Game(window["BoardControl"].view.history, window.oracle, players[0], players[1], clock, secs, gain)
-        window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
-        window["game_information"].set_sensitive(True)
-        window.game.run()
->>>>>>> .r50
-
         game = runNewGameDialog()
         if game:
             window["BoardControl"].view.history.reset(True)
@@ -488,26 +432,26 @@ class GladeHandlers:
         window["table6"].set_sensitive(widget.get_active())
     
     def on_whitePlayerCombobox_changed (widget):
-        if widget.get_active() != 0:
+        if widget.get_active() > 0:
             window["whiteDifficulty"].set_sensitive(True)
             window["whiteDifficulty"].set_active(1)
-            window["whitePlayerName"].set_sensitive(False)
-            window["whitePlayerName"].set_text('')
+            #window["whitePlayerName"].set_sensitive(False)
+            #window["whitePlayerName"].set_text('')
         else:
             window["whiteDifficulty"].set_sensitive(False)
             window["whiteDifficulty"].set_active(-1)
-            window["whitePlayerName"].set_sensitive(True)
+            #window["whitePlayerName"].set_sensitive(True)
     
     def on_blackPlayerCombobox_changed (widget):
-        if widget.get_active() != 0:
+        if widget.get_active() > 0:
             window["blackDifficulty"].set_sensitive(True)
             window["blackDifficulty"].set_active(1)
-            window["blackPlayerName"].set_sensitive(False)
-            window["blackPlayerName"].set_text('')
+            #window["blackPlayerName"].set_sensitive(False)
+            #window["blackPlayerName"].set_text('')
         else:
             window["blackDifficulty"].set_sensitive(False)
             window["blackDifficulty"].set_active(-1)
-            window["blackPlayerName"].set_sensitive(True)
+            #window["blackPlayerName"].set_sensitive(True)
     
     #          Cairo Board          #
     

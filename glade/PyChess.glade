@@ -49,11 +49,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image702">
-=======
 			<widget class="GtkImage" id="image679">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -81,11 +77,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image703">
-=======
 			<widget class="GtkImage" id="image680">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -113,11 +105,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image704">
-=======
 			<widget class="GtkImage" id="image681">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -139,11 +127,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image705">
-=======
 			<widget class="GtkImage" id="image682">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -254,11 +238,7 @@
 		      <signal name="activate" handler="on_undo1_activate" last_modification_time="Thu, 06 Jul 2006 13:10:09 GMT"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image706">
-=======
 			<widget class="GtkImage" id="image684">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-undo</property>
 			  <property name="icon_size">1</property>
@@ -291,11 +271,7 @@
 		      <accelerator key="F" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image707">
-=======
 			<widget class="GtkImage" id="image685">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-go-forward</property>
 			  <property name="icon_size">1</property>
@@ -329,11 +305,7 @@
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
 
 		      <child internal-child="image">
-<<<<<<< .mine
-			<widget class="GtkImage" id="image708">
-=======
 			<widget class="GtkImage" id="image686">
->>>>>>> .r50
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -1080,10 +1052,6 @@ if do don't save it.</property>
 <widget class="GtkDialog" id="newgamedialog">
   <property name="border_width">6</property>
   <property name="width_request">350</property>
-<<<<<<< .mine
-=======
-  <property name="height_request">450</property>
->>>>>>> .r50
   <property name="title" translatable="yes">New Game</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -1216,7 +1184,6 @@ if do don't save it.</property>
 
 	  <child>
 	    <widget class="GtkAlignment" id="ngfcalignment">
-	      <property name="visible">True</property>
 	      <property name="xalign">0.5</property>
 	      <property name="yalign">0.5</property>
 	      <property name="xscale">1</property>
@@ -1271,7 +1238,7 @@ if do don't save it.</property>
 		  <child>
 		    <widget class="GtkTable" id="table4">
 		      <property name="visible">True</property>
-		      <property name="n_rows">4</property>
+		      <property name="n_rows">2</property>
 		      <property name="n_columns">2</property>
 		      <property name="homogeneous">False</property>
 		      <property name="row_spacing">2</property>
@@ -1324,89 +1291,12 @@ if do don't save it.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="label69">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">name :</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">False</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">0</property>
-			  <property name="right_attach">1</property>
-			  <property name="top_attach">3</property>
-			  <property name="bottom_attach">4</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkEntry" id="blackPlayerName">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="editable">True</property>
-			  <property name="visibility">True</property>
-			  <property name="max_length">0</property>
-			  <property name="text" translatable="yes"></property>
-			  <property name="has_frame">True</property>
-			  <property name="invisible_char">●</property>
-			  <property name="activates_default">False</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">1</property>
-			  <property name="right_attach">2</property>
-			  <property name="top_attach">3</property>
-			  <property name="bottom_attach">4</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
 			<widget class="GtkLabel" id="label31">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">Black Player:</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">0</property>
-			  <property name="right_attach">1</property>
-			  <property name="top_attach">2</property>
-			  <property name="bottom_attach">3</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkLabel" id="label68">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">name :</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">False</property>
-			  <property name="justify">GTK_JUSTIFY_RIGHT</property>
 			  <property name="wrap">False</property>
 			  <property name="selectable">False</property>
 			  <property name="xalign">0</property>
@@ -1430,6 +1320,7 @@ if do don't save it.</property>
 
 		      <child>
 			<widget class="GtkComboBox" id="blackPlayerCombobox">
+			  <property name="height_request">32</property>
 			  <property name="visible">True</property>
 			  <property name="add_tearoffs">False</property>
 			  <property name="focus_on_click">True</property>
@@ -1438,31 +1329,10 @@ if do don't save it.</property>
 			<packing>
 			  <property name="left_attach">1</property>
 			  <property name="right_attach">2</property>
-			  <property name="top_attach">2</property>
-			  <property name="bottom_attach">3</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options">fill</property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkEntry" id="whitePlayerName">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="editable">True</property>
-			  <property name="visibility">True</property>
-			  <property name="max_length">0</property>
-			  <property name="text" translatable="yes"></property>
-			  <property name="has_frame">True</property>
-			  <property name="invisible_char">●</property>
-			  <property name="activates_default">False</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">1</property>
-			  <property name="right_attach">2</property>
 			  <property name="top_attach">1</property>
 			  <property name="bottom_attach">2</property>
-			  <property name="y_options"></property>
+			  <property name="x_options">fill</property>
+			  <property name="y_options">fill</property>
 			</packing>
 		      </child>
 		    </widget>
@@ -1672,13 +1542,8 @@ if do don't save it.</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
-<<<<<<< .mine
 	      <property name="expand">False</property>
 	      <property name="fill">False</property>
-=======
-	      <property name="expand">False</property>
-	      <property name="fill">True</property>
->>>>>>> .r50
 	    </packing>
 	  </child>
 
@@ -2012,13 +1877,8 @@ if do don't save it.</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
-<<<<<<< .mine
 	      <property name="expand">True</property>
 	      <property name="fill">True</property>
-=======
-	      <property name="expand">True</property>
-	      <property name="fill">False</property>
->>>>>>> .r50
 	    </packing>
 	  </child>
 	</widget>

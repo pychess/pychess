@@ -49,7 +49,6 @@ class Human (Player):
         self.cond.release()
         return move
 
-<<<<<<< .mine
     def offerDraw (self):
         d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
         d.set_markup(_("<big><b>You've got a draw offer. Accept?</b></big>"))
@@ -59,11 +58,9 @@ class Human (Player):
         if result == gtk.RESPONSE_YES:
             self.emit("action", self.DRAW_ACCEPTION)
 
-=======
     def setName (self, name):
         self.name = name
 
->>>>>>> .r50
     def __repr__ (self):
         #TODO: Get name from preferences or accountname
         #(probably preferences, as accountname would give problems in pvp games)
