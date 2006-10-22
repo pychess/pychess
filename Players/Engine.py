@@ -64,13 +64,13 @@ class EngineConnection (gobject.GObject):
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
         
-        log.debug(self.defname, executable+"\n")
+        log.debug(executable+"\n", self.defname)
         
         self.buffer = ""
         gobject.io_add_watch(self.fd, gobject.IO_HUP, self.recieved)
 
     def recieved (self, fd, condition):
-        log.warn(self.defname, "hungup\n")
+        log.warn("hungup\n", self.defname)
         self.emit("hungup")
             
     def readline (self, timeout=600):
@@ -101,12 +101,12 @@ class EngineConnection (gobject.GObject):
             line = self.buffer[:i]
             self.buffer = self.buffer[i+1:]
             if line.strip():
-                log.debug(self.defname, line+"\n")
+                log.debug(line+"\n", self.defname)
                 return line
     
     def write (self, data):
         try:
-            log.log(self.defname, data)
+            log.log(data, self.defname)
             os.write(self.fd, data)
         except:
             pass
