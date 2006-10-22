@@ -46,7 +46,9 @@ def newMessage (log, task, message, type):
     
     textbuffer.insert_with_tags_by_name(textbuffer.get_end_iter(), message, str(type))
 
-log.connect ("logged", newMessage)
+from gobject import idle_add
+log.connect ("logged", lambda *a: idle_add(newMessage,*a))
+
 def show ():
     w.show_all()
     
