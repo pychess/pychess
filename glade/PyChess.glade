@@ -49,7 +49,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image679">
+			<widget class="GtkImage" id="image707">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -77,7 +77,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image680">
+			<widget class="GtkImage" id="image708">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -105,7 +105,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image681">
+			<widget class="GtkImage" id="image709">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -127,7 +127,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image682">
+			<widget class="GtkImage" id="image710">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -156,7 +156,7 @@
 		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image683">
+			<widget class="GtkImage" id="image711">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-properties</property>
 			  <property name="icon_size">1</property>
@@ -238,7 +238,7 @@
 		      <signal name="activate" handler="on_undo1_activate" last_modification_time="Thu, 06 Jul 2006 13:10:09 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image684">
+			<widget class="GtkImage" id="image712">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-undo</property>
 			  <property name="icon_size">1</property>
@@ -271,7 +271,7 @@
 		      <accelerator key="F" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image685">
+			<widget class="GtkImage" id="image713">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-go-forward</property>
 			  <property name="icon_size">1</property>
@@ -305,7 +305,7 @@
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image686">
+			<widget class="GtkImage" id="image714">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -326,6 +326,17 @@
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_side_panel1_activate" last_modification_time="Thu, 06 Jul 2006 13:25:17 GMT"/>
 		      <accelerator key="i" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckMenuItem" id="log_viewer1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Log Viewer</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_log_viewer1_activate" last_modification_time="Sun, 22 Oct 2006 10:16:54 GMT"/>
+		      <accelerator key="L" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
