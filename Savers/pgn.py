@@ -61,14 +61,27 @@ def save (file, history):
     
     file.close() # close the savegame
 
+def stripBrackets (string):
+    brackets = 0
+    end = 0
+    result = ""
+    for i, c in enumerate(string):
+        if c == '(':
+            if brackets == 0:
+                result += string[end:i]
+            brackets += 1
+        elif c == ')':
+            brackets -= 1
+            if brackets == 0:
+                end = i+1
+    result += string[end:-1]
+    return result
+
 import re
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-movre = re.compile(r"([a-hxKQRBNO1-8+#=-]{2,7})\s")
-comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\([^\(]*?)\)", re.DOTALL)
-def load (file, history):
-    #FIXME: Doens't support variations ()
-    #FIXME: Doesn't support ? and !
-    
+movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
+comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
+def load (file):
     files = []
     inTags = False
     for line in file:
@@ -86,13 +99,13 @@ def load (file, history):
             inTags = False
             files[-1][1] += line
 
-    #TODO: Atm, we'll simply return the first game from the file
     myFile = files[0]
     
     try:
         #These tags won't be used for a lot atm.
         tags = tagre.findall(myFile[0])
         moves = comre.sub("", myFile[1])
+        moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
         if moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
             del moves[-1]
