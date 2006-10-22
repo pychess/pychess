@@ -41,16 +41,16 @@ class Log (gobject.GObject):
         if type == ERROR:
             print formated
     
-    def debug (self, task, message):
+    def debug (self, message, task="Default"):
         self._log (task, message, DEBUG)
     
-    def log (self, task, message):
+    def log (self, message, task="Default"):
         self._log (task, message, LOG)
     
-    def warn (self, task, message):
+    def warn (self, message, task="Default"):
         self._log (task, message, WARNING)
     
-    def error (self, task, message):
+    def error (self, message, task="Default"):
         self._log (task, message, ERROR)
 
 log = Log (os.path.expanduser(logfile))

@@ -141,7 +141,7 @@ class CECProtocol (GObject):
         self.engine = EngineConnection (self.executable)
         self.connected = True
         
-        log.debug(defname, color+"\n")
+        log.debug(color+"\n", defname)
         
         self.engine.connect("readline", lambda e, l: self.parseLine(l))
         def callback (engine):
