@@ -15,6 +15,7 @@ from Players import engines
 from Players.Human import Human
 from System import myconf
 from System.Log import log
+import System.LogDialog
 from Game import Game
 from Utils.Oracle import Oracle
 from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
@@ -379,6 +380,11 @@ class GladeHandlers:
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
+    
+    def on_log_viewer1_activate (widget):
+        if widget.get_active():
+            System.LogDialog.show()
+        else: System.LogDialog.hide()
     
     #Case: Efter spiller 1 har rykket, tænker oraclet og ingen pile vises.
     #      Klient slår så pilen fra og til. Nu vil pilen for det andet hold vises :(

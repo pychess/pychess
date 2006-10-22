@@ -41,7 +41,8 @@ class Engine (Player):
     
     def wait (self):
         pass #optional
-    
+
+from System.Log import log
 import os, select, signal, time, errno, tty
 import gobject
 CHILD = 0
@@ -60,10 +61,16 @@ class EngineConnection (gobject.GObject):
             os.nice(10)
             os.execv(executable, [])
         
+        self.defname = os.path.split(executable)[1]
+        self.defname = self.defname[:1].upper() + self.defname[1:].lower()
+        
+        log.debug(self.defname, executable+"\n")
+        
         self.buffer = ""
         gobject.io_add_watch(self.fd, gobject.IO_HUP, self.recieved)
 
     def recieved (self, fd, condition):
+        log.warn(self.defname, "hungup\n")
         self.emit("hungup")
             
     def readline (self, timeout=600):
@@ -94,10 +101,12 @@ class EngineConnection (gobject.GObject):
             line = self.buffer[:i]
             self.buffer = self.buffer[i+1:]
             if line.strip():
+                log.debug(self.defname, line+"\n")
                 return line
     
     def write (self, data):
         try:
+            log.log(self.defname, data)
             os.write(self.fd, data)
         except:
             pass
