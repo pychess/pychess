@@ -32,7 +32,7 @@ def newMessage (log, task, message, type):
         vp.add(view)
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.set_usize(width, height)
+        scroll.set_size_request(width, height)
         scroll.add(vp)
 
         notebook.append_page (scroll, gtk.Label(task))
