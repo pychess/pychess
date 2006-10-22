@@ -31,9 +31,7 @@ def save (file, game):
             file.write("/")
     file.write(" ")
     
-    if len(history) % 2 == 1:
-        file.write("w")
-    else: file.write("b")
+    file.write(history.curCol()[:1])
     file.write(" ")
     
     if history.castling == 0:
