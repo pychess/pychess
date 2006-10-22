@@ -5,6 +5,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineDead, EngineConnection
 from Utils.Move import Move
+from System.Log import log
 
 knownCECPEngines = ("gnuchess", "crafty")
 def findKnownEngines ():
@@ -89,7 +90,6 @@ class CECPEngine (Engine):
 import re
 d_plus_dot_expr = re.compile(r"\d+\.")
 
-from gobject import io_add_watch
 import gobject, select
 
 # Chess Engine Communication Protocol
@@ -140,6 +140,8 @@ class CECProtocol (GObject):
         self.ready = False
         self.engine = EngineConnection (self.executable)
         self.connected = True
+        
+        log.debug(defname, color+"\n")
         
         self.engine.connect("readline", lambda e, l: self.parseLine(l))
         def callback (engine):
