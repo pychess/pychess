@@ -74,14 +74,14 @@ def stripBrackets (string):
             brackets -= 1
             if brackets == 0:
                 end = i+1
-    result += string[end:-1]
+    result += string[end:]
     return result
 
 import re
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
+movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})\s")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
-def load (file):
+def load (file, history):
     files = []
     inTags = False
     for line in file:
