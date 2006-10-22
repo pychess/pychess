@@ -20,7 +20,7 @@ def stripBrackets (string):
             brackets -= 1
             if brackets == 0:
                 end = i+1
-    result += string[end:-1]
+    result += string[end:]
     return result
 
 import re
