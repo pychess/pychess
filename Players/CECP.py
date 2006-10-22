@@ -218,10 +218,13 @@ class CECProtocol (GObject):
                 if self.features["san"]:
                     move = Move(self.history, movestr)
                 else:
-                    c1, c2 = movestr[:2], movestr[2:4]
-                    if len(movestr) == 5:
-                        move = Move(self.history, (c1, c2), movestr[4])
-                    move = Move(self.history, (c1, c2))
+                    try:
+                        c1, c2 = movestr[:2], movestr[2:4]
+                        if len(movestr) == 5:
+                            move = Move(self.history, (c1, c2), movestr[4])
+                        move = Move(self.history, (c1, c2))
+                    except:
+                        move = Move(self.history, movestr)
                 
                 self.history = None
                 self.emit("move", move)
