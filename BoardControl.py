@@ -11,7 +11,7 @@ from Utils.Cord import Cord
 from Utils.Move import Move
 from math import floor
 from BoardView import BoardView
-from Utils.Log import log
+from System.Log import log
 
 class BoardControl (gtk.EventBox):
 
