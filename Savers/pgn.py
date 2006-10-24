@@ -33,7 +33,7 @@ def save (file, history):
     halfMoves = 0
     nrOfCharsInLine = 0
     temphis = History()
-    for move in game.history.moves:
+    for move in history.moves:
         charsToBeWritten = ""
         # write movenr. every 2 halfmoves...
         if halfMoves % 2 == 0:

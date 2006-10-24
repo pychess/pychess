@@ -53,6 +53,9 @@ class CECPEngine (Engine):
     def setTime (self, secs, gain):
         self.proto.setTimeControls(secs, gain)
     
+    def setBoard (self, fen):
+        self.proto.setBoard(fen)
+    
     def makeMove (self, history):
         self.movecond.acquire()
         self.proto.move(history)
@@ -87,10 +90,11 @@ class CECPEngine (Engine):
     def __del__ (self):
         self.proto.__del__()
     
-import re
+import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
 
-import gobject, select
+from Savers import epd
+from cStringIO import StringIO
 
 # Chess Engine Communication Protocol
 class CECProtocol (GObject):
@@ -132,7 +136,7 @@ class CECProtocol (GObject):
         
         self.history = None
         self.forced = False
-        self.bookRequested = False
+        self.gonext = False
         self.sd = True
         self.st = True
         
@@ -294,8 +298,9 @@ class CECProtocol (GObject):
         
         self.history = history
         
-        if len(history.moves) <= 0:
+        if not history.moves or self.gonext:
             print >> self.engine, "go"
+            self.gonext = False
             return
         
         if self.features["usermove"]:
@@ -356,17 +361,24 @@ class CECProtocol (GObject):
         assert self.ready, "Still waiting for done=1"
         
         if b: print >> self.engine, "hard"
-        else: print >> self.engine, "hard\neasy"
+        else:
+            print >> self.engine, "hard"
+            print >> self.engine, "easy"
     
     def hint (self):
         assert self.ready, "Still waiting for done=1"
         print >> self.engine, "hint"
     
-    def setBoard (self, fen):
+    def setBoard (self, history):
         assert self.ready, "Still waiting for done=1"
         
-        if self.features["setboard"]:
-            print >> self.engine, "setboard", fen
+        #if self.features["setboard"]:
+        io = StringIO()
+        epd.save(io, history)
+        fen = io.getvalue()
+        if history.curCol() == self.color:
+            self.gonext = True
+        print >> self.engine, "setboard", fen
         #FIXME: Convert fen to edit commands
     
     def setDepth (self, depth):

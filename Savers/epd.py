@@ -8,9 +8,9 @@ from Utils import validator
 __label__ = _("Chess Position")
 __endings__ = "epd", "fen"
 
-def save (file, game):
-    history = game.history
+def save (file, history):
     """Saves history to file"""
+    
     pieces = history[-1].data
     sign = lambda p: p.color == "white" and p.sign.upper() or p.sign
     for i in range(len(pieces))[::-1]:
@@ -54,7 +54,8 @@ def save (file, game):
             file.write(str(Cord(move.cord0.x,(move.cord0.y+move.cord1.y)/2)))
             return
     file.write("-")
-    file.close()
+    #Closing the file prevents us from using StringIO
+    #file.close()
     
 def load (file, history):
     data = None

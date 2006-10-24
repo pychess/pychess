@@ -13,7 +13,7 @@ from Utils.validator import DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_
 
 from statusbar import status
 
-profile = False
+profile = True
 
 class Game (GObject):
 
@@ -98,9 +98,7 @@ class Game (GObject):
             if not self.history.add(move,True):
                 self.kill()
                 break
-            
-            #print getOpenings(self.history)
-            #print getBestOpening(self.history)
+                
             #print "ADDED MOVE %s, SCORE IS NOW: %d" % (move.algNotat(self.history), evaluateComplete(self.history))
             
             if self.chessclock:
@@ -141,3 +139,7 @@ class Game (GObject):
     def _get_active_player (self):
         return self.history.curCol() == "white" and self.player1 or self.player2
     activePlayer = property(_get_active_player)
+
+    def _get_players (self):
+        return self.player1, self.player2
+    players = property(_get_players)
