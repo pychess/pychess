@@ -4,7 +4,7 @@ from threading import Condition
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineDead, EngineConnection
-from Utils.Move import Move
+from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
 from System.Log import log
 
 knownCECPEngines = ("gnuchess", "crafty")
@@ -220,15 +220,12 @@ class CECProtocol (GObject):
             
             if movestr:
                 if self.features["san"]:
-                    move = Move(self.history, movestr)
+                    move = parseSAN(self.history, movestr)
                 else:
                     try:
-                        c1, c2 = movestr[:2], movestr[2:4]
-                        if len(movestr) == 5:
-                            move = Move(self.history, (c1, c2), movestr[4])
-                        move = Move(self.history, (c1, c2))
+                        move = parseAN(self.history, movestr)
                     except:
-                        move = Move(self.history, movestr)
+                        move = parseLAN(self.history, movestr)
                 
                 self.history = None
                 self.emit("move", move)
@@ -308,8 +305,8 @@ class CECProtocol (GObject):
         
         move = history.moves[-1]
         if self.features["san"]:
-            print >> self.engine, move.algNotat(history)
-        else: print >> self.engine, move.gnuchess(history[-2])
+            print >> self.engine, toSAN(history)
+        else: print >> self.engine, toAN(history)
         
     def pause (self):
         assert self.ready, "Still waiting for done=1"

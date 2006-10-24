@@ -2,7 +2,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine
 from Utils.History import hisPool
-from Utils.Move import movePool
+from Utils.Move import movePool, parseSAN
 from Utils import eval
 from Utils.book import getOpenings
 from Utils.validator import findMoves2
@@ -33,7 +33,7 @@ class PyChessEngine (Engine):
         
     def makeMove (self, history):
         omove = getBestOpening(history)
-        if omove: return movePool.pop(history,omove)
+        if omove: return parseSAN(history,omove)
         from time import time
         t = time()
         move, score = alphaBeta(history, 2, -9999, 9999)
@@ -61,7 +61,7 @@ def moves (history):
     else:
         for cord0, cord1s in history.movelist[-1].iteritems():
             for cord1 in cord1s:
-                yield movePool.pop(history,(cord0,cord1))
+                yield movePool.pop(history,cord0,cord1)
 
 #TODO: RESIGN:
 # And now, if the best we can do is ALPHABETA_GIVEUP or worse, then it is

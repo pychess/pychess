@@ -99,7 +99,7 @@ def load (file, history):
         lastb[c1] = None
         
         history.boards = [lastb]
-        history.add(Move(history,(c0,c1)), mvlist=True)
+        history.add(Move(history,c0,c1), mvlist=True)
 
     else:
         if history.curCol()[0] != starter:

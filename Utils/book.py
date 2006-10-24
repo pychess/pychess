@@ -1,7 +1,7 @@
 from time import time
 
 from Utils.History import History
-from Utils.Move import movePool
+from Utils.Move import movePool, parseSAN, toSAN
 
 MAXMOVES = 14
 PROFILE = False
@@ -77,14 +77,14 @@ def load (file):
         if MAXMOVES: moves = moves[:MAXMOVES]
         for move in moves:
             try:
-                m = movePool.pop(history,move)
+                m = parseSAN(history,move)
             except:
                 continue
             epd = fen(history)
             res = resultDic[tags["Result"]]
             if epd.endswith("b"): res = 2-res
             history.add(m, False)
-            yield epd, m.algNotat(history), res
+            yield epd, toSAN(history), res
             mcatch.append(m)
         history.reset(False)
         for move in mcatch:

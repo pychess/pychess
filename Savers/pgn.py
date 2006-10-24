@@ -1,5 +1,5 @@
 from Utils.History import History
-from Utils.Move import Move
+from Utils.Move import Move, parseSAN, toSAN
 from Utils.validator import FINE, DRAW, WHITEWON, BLACKWON
 
 __label__ = _("Chess Game")
@@ -41,7 +41,7 @@ def save (file, history):
 
         # ...and the move
         temphis.add(move)
-        charsToBeWritten += move.algNotat(temphis) + " "
+        charsToBeWritten += toSAN(temphis) + " "
         
         #wordwrap?
         if nrOfCharsInLine + len(charsToBeWritten) > 80:
@@ -118,7 +118,7 @@ def load (file, history):
     
     history.reset(False)
     for i, move in enumerate(moves):
-        m = Move(history,move)
+        m = parseSAN(history, move)
         if i+1 < len(moves):
             history.add(m, False)
         else: history.add(m, True)

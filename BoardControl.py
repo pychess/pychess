@@ -47,7 +47,7 @@ class BoardControl (gtk.EventBox):
                 return
             promotion = ["q","r","b","n"][res]
             
-        move = Move(self.view.history, (cord0, cord1), promotion)
+        move = Move(self.view.history, cord0, cord1, promotion)
         self.emit("piece_moved", move)
     
     #          Selection and stuff          #

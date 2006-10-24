@@ -1,11 +1,12 @@
-import gtk, pango
+import gtk, pango, os.path
 
 from Log import log
 from Log import DEBUG, LOG, WARNING, ERROR
 
 w = gtk.Window()
 w.set_title("Pychess - Log Viewer")
-w.set_icon(gtk.gdk.pixbuf_new_from_file("glade/pychess24.png"))
+iconpath = os.path.join(os.path.split(__file__)[0], "../glade/pychess24.png")
+w.set_icon(gtk.gdk.pixbuf_new_from_file(iconpath))
 
 notebook = gtk.Notebook()
 notebook.show()
