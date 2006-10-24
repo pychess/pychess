@@ -306,8 +306,10 @@ class GladeHandlers:
         if game:
             path = filechooserbutton.get_uri()[7:]
             ending = path[path.rfind(".")+1:]
-            enddir[ending].load(file(path), window["BoardControl"].view.history)
-            
+            enddir[ending].load(file(path), game.history)
+            for player in game.players:
+                if hasattr(player, "setBoard"):
+                    player.setBoard(game.history)
             game.run()
     
     def on_save_game1_activate (widget):
@@ -357,7 +359,7 @@ class GladeHandlers:
             d.hide()
             if res != gtk.RESPONSE_ACCEPT:
                 return
-        saver.save(open(uri,"w"), window.game)
+        saver.save(open(uri,"w"), window.game.history)
         
     def on_quit1_activate (widget):
         #res = saveGameBefore(_("exit"))
@@ -545,5 +547,6 @@ if __name__ == "__main__":
     PyChess()
     import signal
     signal.signal(signal.SIGINT, gtk.main_quit)
+    signal.signal(signal.SIGCHLD, lambda *args: None)
     gtk.gdk.threads_init()
     gtk.main()

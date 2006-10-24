@@ -11,28 +11,16 @@ class Engine (Player):
     def setTime (self, seconds, gain):
         abstract
     
+    def setBoard (self, history):
+        abstract
+    
     def undoMoves (self, moves = 1):
         """Undos a number of moves."""
-        optional
+        pass #No yet used
     
-    # Info stuff
-    
-    def score (self):
-        """Returns a score of opponents situation"""
-        optional
-    
-    def getSpeed (self):
-        """Returns a the number of moves, the engine calculates per second"""
-        optional
-        
-    def hint (self):
-        """Returns a hint to the opponent"""
-        optional
-    
-    def book (self):
-        """Returns a tuple of usable bookmoves"""
-        optional
-    
+    def setBoard (self, fen):
+        op
+
     # Other methods
         
     def __repr__ (self):

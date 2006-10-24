@@ -138,17 +138,26 @@ def evaluateQuickie (history, color="white"):
     s = evalMaterial (history)
     return (color == "white" and [s] or [-s])[0]
 
+from Savers import epd
+from cStringIO import StringIO
+hashmap = {}
+
 def evaluateComplete (history, color="white"):
     """ A detailed evaluation function, taking into account several positional factors """
-    analyzePawnStructure (history)
 
-    s = evalMaterial (history) + \
-        evalPawnStructure (history) + \
-        evalBadBishops (history) + \
-        evalDevelopment (history) + \
-        evalRookBonus (history) + \
-        evalKingTropism (history)
-        
+    board = history[-1]
+    if board in hashmap:
+        s = hashmap[board]
+    else:
+        analyzePawnStructure (history)
+        s = evalMaterial (history) + \
+            evalPawnStructure (history) + \
+            evalBadBishops (history) + \
+            evalDevelopment (history) + \
+            evalRookBonus (history) + \
+            evalKingTropism (history)
+        hashmap[board] = s
+
     return (color == "white" and [s] or [-s])[0]
 
 def evalMaterial (history):
@@ -279,7 +288,7 @@ def evalDevelopment (history):
         
         mainrow = board.data[int(3.5-3.5*mod)]
         
-        # We don't care about castling before opponent's got its queen out
+        # We don't wanna care about castling before opponent's got its queen out
         dobreak = False
         for piece in mainrow:
             if piece and piece.sign == 'q' and piece.color == color:
