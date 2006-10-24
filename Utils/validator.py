@@ -271,7 +271,7 @@ def findMoves2 (history, testCheck=True):
             if piece.color != history.curCol(): continue
             cord0 = Cord(x,y)
             for xy in sign2gen[piece.sign](cord0,history):
-                move = movePool.pop(history, (cord0, Cord(*xy)))
+                move = movePool.pop(history, cord0, Cord(*xy))
                 if not testCheck or not willCheck(history, move):
                     yield move
                 else: movePool.add(move)
@@ -285,7 +285,7 @@ def _getLegalMoves (history, cord, testCheck):
                     cord.y == row or cord.x == col or \
                     abs(cord.y - row) == abs(cord.x - col):
                 cord1 = Cord(col, row)
-                move = movePool.pop(history, (cord, cord1))
+                move = movePool.pop(history, cord, cord1)
                 if validate (move, history, testCheck):
                     cords.append(cord1)
                 movePool.add(move)
@@ -375,7 +375,7 @@ def genMovesPointingAt (history, cols, rows, color, testCheck=False):
             cord0 = Cord(x,y)
             for r in rows:
                 for c in cols:
-                    move = movePool.pop(history, (cord0, Cord(c,r)))
+                    move = movePool.pop(history, cord0, Cord(c,r))
                     if validate (move, history, testCheck):
                         return move
                     else: movePool.add(move)

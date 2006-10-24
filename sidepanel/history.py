@@ -78,6 +78,8 @@ def new_history_object (history):
         numbers.get_model().clear()
     gobject.idle_add(helper)
 
+from Utils.Move import toSAN
+
 def history_changed (history):
     
     if not history.moves: return
@@ -87,7 +89,7 @@ def history_changed (history):
         idle_add(numbers.get_model().append, [num])
 
     view = len(history) & 1 and right or left
-    notat = history.moves[-1].algNotat(history)
+    notat = toSAN(history)
 
     def todo():
         view.get_model().append([notat])
