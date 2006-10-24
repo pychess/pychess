@@ -13,7 +13,7 @@ from Utils.validator import DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_
 
 from statusbar import status
 
-profile = True
+profile = False
 
 class Game (GObject):
 
