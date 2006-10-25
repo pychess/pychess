@@ -33,40 +33,41 @@ availableEngines.append((PyChessEngine,()))
 
 ###################
 
-namesFound = False
+infoFound = False
 
 from threading import Condition, Lock
 diclock = Lock()
-namecond = Condition()
+infocond = Condition()
 
 engineDic = {}
 def _addToDic (key, value):
     diclock.acquire()
     engineDic[key] = value
     if len(engineDic) == len(availableEngines):
-        namecond.acquire()
-        global namesFound
-        namesFound = True
-        namecond.notify()
-        namecond.release()
+        infocond.acquire()
+        global infoFound
+        infoFound = True
+        infocond.notify()
+        infocond.release()
     diclock.release()
 
 import thread
 
-def _getName (engine, args):
+def _getInfo (engine, args):
     en = engine(args, "white")
     en.wait() # Wait for engine to init
-    _addToDic((engine,args), repr(en))
+    info = {"name":repr(en), "canAnalyze":en.canAnalyze()}
+    _addToDic((engine,args), info)
     en.__del__()
 
 for engine, args in availableEngines:
-    thread.start_new(_getName, (engine,args))
+    thread.start_new(_getInfo, (engine,args))
 
-def getName ((engine,args)):
-    if namesFound:
+def getInfo ((engine,args)):
+    if infoFound:
         return engineDic[(engine,args)]
     else:
-        namecond.acquire()
-        while not namesFound:
-            namecond.wait()
+        infocond.acquire()
+        while not infoFound:
+            infocond.wait()
         return engineDic[(engine,args)]

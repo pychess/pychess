@@ -17,7 +17,6 @@ from System import myconf
 from System.Log import log
 import System.LogDialog
 from Game import Game
-from Utils.Oracle import Oracle
 from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
 import statusbar
 
@@ -38,6 +37,8 @@ def makeFileDialogReady ():
     types = []
     savers = ["Savers/"+s for s in os.listdir("Savers")]
     savers = [s[:-3] for s in savers if s.endswith(".py")]
+    print savers
+    savers = [s for s in savers if s != "Savers/__init__"]
     for saver in [__import__(s, locals()) for s in savers]:
         for ending in saver.__endings__:
             enddir[ending] = saver
@@ -114,7 +115,7 @@ def makeNewGameDialogReady ():
     items = [(image, _("Human Being"))]
     image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
     
-    for engine in [engines.getName((e,a)) for e,a in engines.availableEngines]:
+    for engine in [engines.getInfo((e,a))["name"] for e,a in engines.availableEngines]:
         items += [(image, engine)]
     for combo in (window["whitePlayerCombobox"], window["blackPlayerCombobox"]):
         createCombo(combo, items)
@@ -216,9 +217,14 @@ def runNewGameDialog (hideFC=True):
     
     if hasattr(window, "game"):
         window.game.kill()
-        
+    
+    engine, args = [(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"] if a[0].find("crafty") < 0][0]
+    window.analyzer = engine(args, "white")
+    window.analyzer.wait()
+    window.analyzer.analyze()
+    
     window.game = Game( window["BoardControl"].view.history,
-            window.oracle, players[0], players[1], clock, secs, gain)
+            window.analyzer, players[0], players[1], clock, secs, gain)
             
     window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
     statusbar.status(None)
@@ -389,49 +395,38 @@ class GladeHandlers:
         else: System.LogDialog.hide()
     
     #Case: Efter spiller 1 har rykket, tænker oraclet og ingen pile vises.
-    #      Klient slår så pilen fra og til. Nu vil pilen for det andet hold vises :(
+    #  Klient slår så pilen fra og til. Nu vil pilen for det andet hold vises :(
     def on_hint_mode_activate (widget):
-        def foretold_move (oracle, move, score):
-            if len(oracle.future) == 1:
-                window["BoardControl"].view.greenarrow = move.cords
-        def rmfirst (oracle):
-            if len(oracle.future) >= 1:
-                window["BoardControl"].view.greenarrow = oracle.future[0][0].cords
-        def cleared (oracle):
+        def on_analyze (analyzer, moves):
+            window["BoardControl"].view.greenarrow = moves[0].cords
+        def on_clear (history):
             window["BoardControl"].view.greenarrow = None
         if widget.get_active():
-            if len(window.oracle.history) >= len(window["BoardControl"].view.history) \
-                    and len(window.oracle.future) >= 1:
-                window["BoardControl"].view.greenarrow = window.oracle.future[0][0].cords
-            window.hintconid0 = window.oracle.connect("foretold_move", foretold_move)
-            window.hintconid1 = window.oracle.connect("rmfirst", rmfirst)
-            window.hintconid2 = window.oracle.connect("clear", cleared)
+            if len(window.analyzer.analyzeMoves) >= 1:
+                window["BoardControl"].view.greenarrow = \
+                        window.analyzer.analyzeMoves[0].cords
+            window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
+            window.hintconid1 = window["BoardControl"].view.history.connect("changed", on_clear)
         else:
-            window.oracle.disconnect(window.hintconid0)
-            window.oracle.disconnect(window.hintconid1)
-            window.oracle.disconnect(window.hintconid2)
+            window.analyzer.disconnect(window.hintconid0)
+            window["BoardControl"].view.history.disconnect(window.hintconid1)
             window["BoardControl"].view.greenarrow = None
     
     def on_spy_mode_activate (widget):
-        def foretold_move (oracle, move, score):
-            if len(oracle.future) == 2:
-                window["BoardControl"].view.redarrow = move.cords
-        def rmfirst (oracle):
-            if len(oracle.future) >= 2:
-                window["BoardControl"].view.redarrow = oracle.future[1][0].cords
-        def cleared (oracle):
+        def on_analyze (analyzer, moves):
+            if len(analyzer.analyzeMoves) >= 2:
+                window["BoardControl"].view.redarrow = moves[1].cords
+        def on_clear (history):
             window["BoardControl"].view.redarrow = None
         if widget.get_active():
-            if len(window.oracle.history) >= len(window["BoardControl"].view.history) \
-                    and len(window.oracle.future) >= 2:
-                window["BoardControl"].view.redarrow = window.oracle.future[1][0].cords
-            window.spyconid0 = window.oracle.connect("foretold_move", foretold_move)
-            window.spyconid1 = window.oracle.connect("rmfirst", rmfirst)
-            window.spyconid2 = window.oracle.connect("clear", cleared)
+            if len(window.analyzer.analyzeMoves) >= 2:
+                window["BoardControl"].view.redarrow = \
+                        window.analyzer.analyzeMoves[1].cords
+            window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
+            window.spyconid1 = window["BoardControl"].view.history.connect("changed", on_clear)
         else:
-            window.oracle.disconnect(window.spyconid0)
-            window.oracle.disconnect(window.spyconid1)
-            window.oracle.disconnect(window.spyconid2)
+            window.analyzer.disconnect(window.spyconid0)
+            window["BoardControl"].view.history.disconnect(window.spyconid1)
             window["BoardControl"].view.redarrow = None
     
     #          New Game Dialog          #
@@ -443,23 +438,17 @@ class GladeHandlers:
         if widget.get_active() > 0:
             window["whiteDifficulty"].set_sensitive(True)
             window["whiteDifficulty"].set_active(1)
-            #window["whitePlayerName"].set_sensitive(False)
-            #window["whitePlayerName"].set_text('')
         else:
             window["whiteDifficulty"].set_sensitive(False)
             window["whiteDifficulty"].set_active(-1)
-            #window["whitePlayerName"].set_sensitive(True)
     
     def on_blackPlayerCombobox_changed (widget):
         if widget.get_active() > 0:
             window["blackDifficulty"].set_sensitive(True)
             window["blackDifficulty"].set_active(1)
-            #window["blackPlayerName"].set_sensitive(False)
-            #window["blackPlayerName"].set_text('')
         else:
             window["blackDifficulty"].set_sensitive(False)
             window["blackDifficulty"].set_active(-1)
-            #window["blackPlayerName"].set_sensitive(True)
     
     #          Cairo Board          #
     
@@ -509,9 +498,6 @@ class PyChess:
         
         statusbar.statusbar = self["statusbar1"]
         self["window1"].show_all()
-        
-        self.oracle = Oracle()
-        self.oracle.attach(self["BoardControl"].view.history)
         
         #Very ugly hack, needed because of pygtk bug 357022
         #http://bugzilla.gnome.org/show_bug.cgi?id=357022

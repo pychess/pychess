@@ -64,7 +64,7 @@ def shown_changed (board, shown):
             store.append ([move, str(int(games)), (wins,draws,loses)])
     gobject.idle_add(helper)
 
-from Utils.Move import movePool
+from Utils.Move import parseSAN, movePool
 
 def selection_changed (widget):
     if len(board.history) != board.shown+1:
@@ -78,6 +78,6 @@ def selection_changed (widget):
         return
     else: sel = tv.get_model().get_path(iter)[0]
     
-    move = movePool.pop(board.history, openings[sel][0])
+    move = parseSAN(board.history, openings[sel][0])
     board.bluearrow = move.cords
     movePool.add(move)

@@ -21,24 +21,25 @@ class Game (GObject):
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
 
-    def __init__(self, his, oracle, p1, p2, cc = None, seconds = 0, plus = 0):
+    def __init__(self, his, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
         GObject.__init__(self)
     
         self.player1 = p1
         self.player2 = p2
         self.chessclock = cc
         self.history = his
-        self.event = 'Local Event'
-        self.site = 'Local site'
-        self.round = '1'
-        today = datetime.date.today()
-        self.year = str(today.year)
-        self.month = str(today.month)
-        if len(self.month) == 1:
-            self.month = "0" + self.month
-        self.day = str(today.day)
-        if len(self.day) == 1:
-            self.day = "0" + self.day
+        self.analyzer = analyzer
+        #self.event = 'Local Event'
+        #self.site = 'Local site'
+        #self.round = '1'
+        #today = datetime.date.today()
+        #self.year = str(today.year)
+        #self.month = str(today.month)
+        #if len(self.month) == 1:
+        #    self.month = "0" + self.month
+        #self.day = str(today.day)
+        #if len(self.day) == 1:
+        #    self.day = "0" + self.day
         
         if self.chessclock:
             self.chessclock.setTime(seconds*10)
@@ -98,7 +99,9 @@ class Game (GObject):
             if not self.history.add(move,True):
                 self.kill()
                 break
-                
+            
+            self.analyzer.makeMove(self.history)
+            
             #print "ADDED MOVE %s, SCORE IS NOW: %d" % (move.algNotat(self.history), evaluateComplete(self.history))
             
             if self.chessclock:

@@ -1,23 +1,27 @@
 import sys, os, time, thread
-from threading import Condition
+from threading import Condition, Lock
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineDead, EngineConnection
 from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
+from Utils.History import History
 from System.Log import log
 
-knownCECPEngines = ("gnuchess", "crafty")
-def findKnownEngines ():
-    for engine in knownCECPEngines:
-        for path in os.environ["PATH"].split(":"):
-            executable = os.path.join(path, engine)
-            if os.path.isfile(executable):
-                yield executable
+def isdigits (strings):
+    for s in strings:
+        if s.startswith("-"):
+            if not s[1:].isdigit():
+                return False
+        else:
+            if not s.isdigit():
+                return False
+    return True
 
 class CECPEngine (Engine):
 
     __gsignals__ = {
+        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
@@ -30,7 +34,9 @@ class CECPEngine (Engine):
         
         self.movecond = Condition()
         self.move = None
+        self.analyzeMoves = []
         self.proto.connect("move", self.onMove)
+        self.proto.connect("analyze", self.onAnalyze)
         def dead (engine):
             self.movecond.acquire()
             self.move = None
@@ -59,12 +65,19 @@ class CECPEngine (Engine):
     def makeMove (self, history):
         self.movecond.acquire()
         self.proto.move(history)
+        
+        if self.proto.forced:
+            self.movecond.release()
+            return None
+        
         while not self.move:
             self.movecond.wait()
         if not self.move:
+            self.movecond.release()
             raise EngineDead
         move = self.move
         self.move = None
+        self.movecond.release()
         return move
     
     def onMove (self, proto, move):
@@ -83,7 +96,17 @@ class CECPEngine (Engine):
         if not self.proto.connected:
             return False
         return True
-        
+    
+    def onAnalyze (self, proto, moves):
+        self.analyzeMoves = moves
+        self.emit ("analyze", moves)
+    
+    def canAnalyze (self):
+        return self.proto.features["analyze"]
+    
+    def analyze (self):
+        self.proto.analyze()
+    
     def __repr__ (self):
         return self.proto.features["myname"]
     
@@ -92,6 +115,7 @@ class CECPEngine (Engine):
     
 import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
+multiWs = re.compile(r"\s+")
 
 from Savers import epd
 from cStringIO import StringIO
@@ -101,6 +125,7 @@ class CECProtocol (GObject):
     
     __gsignals__ = {
         'move': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
@@ -134,13 +159,14 @@ class CECProtocol (GObject):
         self.color = color
         self.executable = executable
         
-        self.history = None
+        self.history = History()
         self.forced = False
         self.gonext = False
         self.sd = True
         self.st = True
         
         self.cond = Condition()
+        self.lock = Lock()
         self.ready = False
         self.engine = EngineConnection (self.executable)
         self.connected = True
@@ -164,7 +190,7 @@ class CECProtocol (GObject):
 
         print >> self.engine, "xboard"
         print >> self.engine, "protover 2"
-        print >> self.engine, "nopost" # Mostly a service to the "Faile" engine
+        self.nopost() # Mostly a service to the "Faile" engine
         
         self.timeout = 2
         self.start = time.time()
@@ -197,8 +223,20 @@ class CECProtocol (GObject):
             
     ########################
     
+    def parseMove (self, movestr, history=None):
+        if not history: history=self.history
+        if self.features["san"]:
+            return parseSAN(history, movestr)
+        else:
+            try: return parseAN(history, movestr)
+            except:
+                try: return parseLAN(history, movestr)
+                except: return parseSAN(history, movestr)
+    
     def parseLine (self, line):
-        parts = line.split()
+        #self.lock.acquire()
+    
+        parts = multiWs.split(line.strip())
         if self.features["sigint"]:
             self.engine.sigint()
     
@@ -219,16 +257,22 @@ class CECProtocol (GObject):
                 movestr = False
             
             if movestr:
-                if self.features["san"]:
-                    move = parseSAN(self.history, movestr)
-                else:
-                    try:
-                        move = parseAN(self.history, movestr)
-                    except:
-                        move = parseLAN(self.history, movestr)
-                
+                move = self.parseMove(movestr)
                 self.history = None
                 self.emit("move", move)
+        
+        if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+            his2 = self.history.clone()
+            moves = []
+            for m in parts[4:]:
+                try:
+                    moves.append(self.parseMove(m, his2))
+                except Exception, e:
+                    if moves: #Some engines add signs as "!" in the eol
+                        self.emit("analyze", moves)
+                    return #Line is probably out of date
+                his2.add(moves[-1], mvlist=False)
+            self.emit("analyze", moves)
         
         # A Hint
         if parts[0] == "Hint:":
@@ -269,7 +313,9 @@ class CECProtocol (GObject):
                 else: value = int(value)
                 
                 self.features[key] = value
-    
+        
+        #self.lock.release()
+        
     ########################
     
     def newGame (self):
@@ -293,10 +339,12 @@ class CECProtocol (GObject):
     def move (self, history):
         assert self.ready, "Still waiting for done=1"
         
+        #self.lock.acquire()
+        
         self.history = history
         
         if not history.moves or self.gonext:
-            print >> self.engine, "go"
+            self.go()
             self.gonext = False
             return
         
@@ -308,14 +356,15 @@ class CECProtocol (GObject):
             print >> self.engine, toSAN(history)
         else: print >> self.engine, toAN(history)
         
+        #self.lock.release()
+        
     def pause (self):
         assert self.ready, "Still waiting for done=1"
         
         if self.features["pause"]:
             print >> self.engine, "pause"
         else:
-            print >> self.engine, "force"
-            self.forced = True
+            self.force()
     
     def resume (self):
         assert self.ready, "Still waiting for done=1"
@@ -323,7 +372,20 @@ class CECProtocol (GObject):
         if self.features["pause"]:
             print >> self.engine, "resume"
         else:
-            print >> self.engine, "go"
+            self.go()
+    
+    def force (self):
+        print >> self.engine, "force"
+        self.forced = True
+    
+    def go (self):
+        print >> self.engine, "go"
+    
+    def post (self):
+        print >> self.engine, "post"
+    
+    def nopost (self):
+        print >> self.engine, "nopost"
     
     def resultWhite (self, comment="White Mates"):
         assert self.ready, "Still waiting for done=1"
@@ -398,13 +460,8 @@ class CECProtocol (GObject):
         
         print >> self.engine, "level %d %s %d" % (moves, s, increment)
     
-    def getBook (self):
-        pass #TODO: "bk" og self.bookRequested
-    
-    def getScore (self):
-        pass #TODO
-    
     def analyze (self):
         if self.features["analyze"]:
-            print >> self.engine, "post\nanalyze"
-            # Some engines don't support analyze (e.g. faile) and gives no response what so ever..
+            self.force()
+            self.post()
+            print >> self.engine, "analyze"

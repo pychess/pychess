@@ -51,6 +51,9 @@ class PyChessEngine (Engine):
     def setTime (self, secs, gain):
         pass
     
+    def canAnalyze (self):
+        return False
+    
     def __repr__ (self):
         return "PyChess %s" % VERSION
 
