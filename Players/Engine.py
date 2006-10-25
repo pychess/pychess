@@ -14,12 +14,15 @@ class Engine (Player):
     def setBoard (self, history):
         abstract
     
+    def canAnalyze (self):
+        abstract
+    
+    def analyze (self):
+        pass #Won't be used if "canAnalyze" responds false
+    
     def undoMoves (self, moves = 1):
         """Undos a number of moves."""
         pass #No yet used
-    
-    def setBoard (self, fen):
-        op
 
     # Other methods
         

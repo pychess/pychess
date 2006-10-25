@@ -181,8 +181,6 @@ def parseLAN (history, lan):
         c1 = c1[:2]
         promotion = c1[-1]
     
-    print "parsed", lan, "to", c0, c1, promotion
-    
     return movePool.pop (history, Cord(c0), Cord(c1), promotion)
 
 def parseAN (history, an):
@@ -190,8 +188,6 @@ def parseAN (history, an):
     if not 4 <= len(an) <= 5: raise ValueError, "Bad an move, %s" % an
     c0 = Cord(an[:2])
     c1 = Cord(an[2:4])
-    
-    print "parsed", an, "to", c0, c1
     
     if len(an) == 5:
         return movePool.pop(history, c0, c1, an[4])
