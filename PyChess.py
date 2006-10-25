@@ -37,7 +37,6 @@ def makeFileDialogReady ():
     types = []
     savers = ["Savers/"+s for s in os.listdir("Savers")]
     savers = [s[:-3] for s in savers if s.endswith(".py")]
-    print savers
     savers = [s for s in savers if s != "Savers/__init__"]
     for saver in [__import__(s, locals()) for s in savers]:
         for ending in saver.__endings__:

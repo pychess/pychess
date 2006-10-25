@@ -1,4 +1,5 @@
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+from time import time
 
 from Engine import Engine
 from Utils.History import hisPool
@@ -30,29 +31,53 @@ class PyChessEngine (Engine):
     def __init__ (self, executable, color):
         GObject.__init__(self)
         self.color = color
+        self.depth = 2
+        self.secs = 0
+        self.gain = 0
+        self.analyzing = False
         
     def makeMove (self, history):
+        if self.analyzing:
+            return None
         omove = getBestOpening(history)
         if omove: return parseSAN(history,omove)
-        from time import time
-        t = time()
-        move, score = alphaBeta(history, 2, -9999, 9999)
-        print time()-t
-        print move, "Score:", score
-        print "---"
+        #from time import time
+        #t = time()
+        
+        if self.secs <= 0:
+            move, score = alphaBeta(history, self.depth, -9999, 9999)
+        else:
+            usetime = self.secs/30+self.gain
+            endtime = time() + usetime
+            for d in range(self.depth):
+                move, score = alphaBeta(history, d, -9999, 9999)
+                if time() > endtime:
+                    break
+        #print time()-t
+        #print move, "Score:", score
+        #print "---"
         return move
     
     def setBoard (self, history):
         pass #No code is needed here
     
     def setStrength (self, strength):
-        pass
+        if strength == 0:
+            self.depth = 1
+        elif strength == 1:
+            self.depth = 2
+        elif strength == 2:
+            self.depth = 3
     
     def setTime (self, secs, gain):
-        pass
+        self.secs = secs
+        self.gain = gain
     
     def canAnalyze (self):
-        return False
+        return True
+    
+    def analyze (self):
+        self.analyzing = True
     
     def __repr__ (self):
         return "PyChess %s" % VERSION
