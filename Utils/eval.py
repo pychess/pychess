@@ -313,13 +313,13 @@ def evalDevelopment (history):
         
         # Biggest penalty if you can't castle at all
         if not history.castling & (qside|kside):
-            score -= 120*mod
+            score -= 60*mod
         # Penalty if you can only castle kingside
         elif not history.castling & qside:
-            score -= 40*mod
+            score -= 30*mod
         # Bigger penalty if you can only castle queenside
         elif not history.castling & kside:
-            score -= 80*mod
+            score -= 45*mod
     
     return score
 

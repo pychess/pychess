@@ -162,8 +162,8 @@ class BoardView (gtk.DrawingArea):
     def drawLastMove (self, context):
         if not self.lastMove: return
     
-        wh = 0.25 # Width of marker
-        p0 = 0.15 # Padding on last cord
+        wh = 0.27 # Width of marker
+        p0 = 0.155 # Padding on last cord
         p1 = 0.085 # Padding on current cord
         sw = 0.02 # Stroke width
         
@@ -199,9 +199,9 @@ class BoardView (gtk.DrawingArea):
                 -wh*r.width*m[0], wh*r.width*m[1])
             context.close_path()
         
-        context.set_source_rgba(.929, .831, 0, .5)
+        context.set_source_rgba(.929, .831, 0, 0.8)
         context.fill_preserve()
-        context.set_source_rgba(.769, 0.627, 0, .7)
+        context.set_source_rgba(.769, 0.627, 0, 0.5)
         context.set_line_width(sw*r.width)
         context.stroke()
         

@@ -265,14 +265,15 @@ functions = {"Bishop":Bishop,"King":King,"Queen":Queen,"Rook":Rook,"Pawn":Pawn,"
 
 sign2gen = {"k":genKing, "q":genQueen, "r":genRook, "b":genBishop, "n":genKnight, "p":genPawn}
 def findMoves2 (history, testCheck=True):
-    for y, row in enumerate(history[-1].data):
+    his2 = history.clone()
+    for y, row in enumerate(his2[-1].data):
         for x, piece in enumerate(row):
             if not piece: continue
-            if piece.color != history.curCol(): continue
+            if piece.color != his2.curCol(): continue
             cord0 = Cord(x,y)
             for xy in sign2gen[piece.sign](cord0,history):
-                move = movePool.pop(history, cord0, Cord(*xy))
-                if not testCheck or not willCheck(history, move):
+                move = movePool.pop(his2, cord0, Cord(*xy))
+                if not testCheck or not willCheck(his2, move):
                     yield move
                 else: movePool.add(move)
 
@@ -400,6 +401,8 @@ def _findKing (board, color):
             piece = board.data[y][x]
             if piece and piece.sign == "k" and piece.color == color:
                 return Cord(x,y)
+    print "Could not find %s king on board ?!" % color
+    print board
 
 FINE, DRAW, WHITEWON, BLACKWON = range(4)
 DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE = range(7)
