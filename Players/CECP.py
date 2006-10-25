@@ -115,6 +115,7 @@ class CECPEngine (Engine):
     
 import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
+movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})\s")
 multiWs = re.compile(r"\s+")
 
 from Savers import epd
@@ -264,15 +265,14 @@ class CECProtocol (GObject):
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             his2 = self.history.clone()
             moves = []
-            for m in parts[4:]:
+            for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
                     moves.append(self.parseMove(m, his2))
                 except Exception, e:
-                    if moves: #Some engines add signs as "!" in the eol
-                        self.emit("analyze", moves)
-                    return #Line is probably out of date
+                    break
                 his2.add(moves[-1], mvlist=False)
-            self.emit("analyze", moves)
+            if moves:
+                self.emit("analyze", moves)
         
         # A Hint
         if parts[0] == "Hint:":
@@ -462,6 +462,7 @@ class CECProtocol (GObject):
     
     def analyze (self):
         if self.features["analyze"]:
+            print >> self.engine, "book off"
             self.force()
             self.post()
             print >> self.engine, "analyze"

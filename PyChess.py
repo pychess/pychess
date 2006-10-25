@@ -218,7 +218,7 @@ def runNewGameDialog (hideFC=True):
     if hasattr(window, "game"):
         window.game.kill()
     
-    engine, args = [(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"] if a[0].find("crafty") < 0][0]
+    engine, args = [(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"]][0]
     window.analyzer = engine(args, "white")
     window.analyzer.wait()
     window.analyzer.analyze()
