@@ -1,5 +1,6 @@
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from time import time
+from threading import Lock
 
 from Engine import Engine
 from Utils.History import hisPool
@@ -7,6 +8,7 @@ from Utils.Move import movePool, parseSAN
 from Utils import eval
 from Utils.book import getOpenings
 from Utils.validator import findMoves2
+from System.ThreadPool import pool
 
 import random
 def getBestOpening (history):
@@ -23,6 +25,7 @@ VERSION = "0.1"
 
 class PyChessEngine (Engine):
     __gsignals__ = {
+        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
@@ -30,33 +33,38 @@ class PyChessEngine (Engine):
 
     def __init__ (self, executable, color):
         GObject.__init__(self)
+        
         self.color = color
         self.depth = 2
         self.secs = 0
         self.gain = 0
+        
         self.analyzing = False
+        self.analyzingBoard = 1
+        self.analyzeLock = Lock()
+        self.analyzeMoves = []
         
     def makeMove (self, history):
+    
         if self.analyzing:
+            self.analyzingBoard = len(history)
+            pool.start(self.runAnalyze, history)
             return None
+            
         omove = getBestOpening(history)
         if omove: return parseSAN(history,omove)
-        #from time import time
-        #t = time()
-        
+
         if self.secs <= 0:
-            move, score = alphaBeta(history, self.depth, -9999, 9999)
+            mvs, score = alphaBeta(history, self.depth, -9999, 9999)
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                move, score = alphaBeta(history, d, -9999, 9999)
+                mvs, score = alphaBeta(history, d, -9999, 9999)
                 if time() > endtime:
                     break
-        #print time()-t
-        #print move, "Score:", score
-        #print "---"
-        return move
+
+        return mvs[0]
     
     def setBoard (self, history):
         pass #No code is needed here
@@ -78,18 +86,35 @@ class PyChessEngine (Engine):
     
     def analyze (self):
         self.analyzing = True
+        self.analyzingBoard = 1
+        pool.start(self.runAnalyze, hisPool.pop())
     
+    def runAnalyze (self, history):
+        self.analyzeLock.acquire()
+        his2 = history.clone()
+        mvs, score = alphaBeta(his2, 1, -9999, 9999)
+        self.analyzeMoves = mvs
+        self.emit("analyze", mvs)
+        if len(history) == self.analyzingBoard:
+            mvs, score = alphaBeta(his2, 2, -9999, 9999)
+            self.analyzeMoves = mvs
+            self.emit("analyze", mvs)
+        self.analyzeLock.release()
+        
     def __repr__ (self):
         return "PyChess %s" % VERSION
 
 def moves (history):
-    if history.movelist[-1] == None:
-        for m in findMoves2(history):
-            yield m
-    else:
-        for cord0, cord1s in history.movelist[-1].iteritems():
-            for cord1 in cord1s:
-                yield movePool.pop(history,cord0,cord1)
+    #if history.movelist[-1] == None:
+    for m in findMoves2(history):
+        yield m
+    #else:
+    #    for cord0, cord1s in history.movelist[-1].iteritems():
+    #        for cord1 in cord1s:
+    #            try:
+    #                yield movePool.pop(history,cord0,cord1)
+    #            except:
+    #                pass
 
 #TODO: RESIGN:
 # And now, if the best we can do is ALPHABETA_GIVEUP or worse, then it is
@@ -99,49 +124,41 @@ def moves (history):
 #TODO: Add mating support
 #TODO: Add hash support
 def alphaBeta (history, depth, alpha, beta):
+    
     foundPv = False
-
-    amove = None
+    amove = []
 
     if depth <= 0:
-        return None, eval.evaluateComplete(history, history.curCol())
-    
-    #his2 = history.clone()
-    #his2.moves.append(None)
-    #his2.boards.append(his2.boards[-1])
-    #m, val = alphaBeta(his2, depth-2, -beta, -beta+1)
-    #if m: movePool.add(m)
-    #val = -val
-    #if val >= beta:
-    #    return None, beta
-    #hisPool.add(his2)
-    
+        return [], eval.evaluateComplete(history, history.curCol())
+
+    move = None    
     for move in moves(history):
         his2 = history.clone()
         his2.add(move, mvlist=False)
         
         if foundPv:
-            m, val = alphaBeta(his2, depth-1, -alpha-1, -alpha)
-            if m: movePool.add(m)
+            mvs, val = alphaBeta(his2, depth-1, -alpha-1, -alpha)
             val = -val
             if val > alpha and val < beta:
-                m, val = alphaBeta(his2, depth-1, -beta, -alpha)
-                if m: movePool.add(m)
+                map(movePool.add, mvs)
+                mvs, val = alphaBeta(his2, depth-1, -beta, -alpha)
                 val = -val
         else:
-            m, val = alphaBeta(his2, depth-1, -beta, -alpha)
-            if m: movePool.add(m)
+            mvs, val = alphaBeta(his2, depth-1, -beta, -alpha)
             val = -val
         
         hisPool.add(his2)
         
         if val >= beta:
-            return move, beta
+            return [move]+mvs, beta
 
         if val > alpha:
+            map(movePool.add, amove)
             alpha = val
-            amove = move
+            amove = [move]+mvs
             foundPv = True
+        else:
+            map(movePool.add, mvs)
 
     if amove: return amove, alpha
-    return move, alpha
+    return [move], alpha

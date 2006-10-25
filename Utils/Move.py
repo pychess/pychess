@@ -3,6 +3,7 @@
 
 from Utils.Cord import Cord
 from System.Log import log
+from threading import Lock
 
 #import gtk.glade
 #widgets = gtk.glade.XML("glade/moveerror.glade")
@@ -30,15 +31,20 @@ class ParsingError (Exception): pass
 class MovePool:
     def __init__ (self):
         self.objects = []
+        self.lock = Lock()
         
     def pop (self, history, cord0, cord1, promotion="q"):
+        self.lock.acquire()
         if len(self.objects) <= 0:
+            self.lock.release()
             return Move(history, cord0, cord1, promotion)
         mv = self.objects.pop()
         mv.init(history, cord0, cord1, promotion)
+        self.lock.release()
         return mv
         
     def add (self, move):
+        if not move: return
         move.enpassant = None
         move.castling = None
         move.promotion = None
@@ -78,6 +84,7 @@ class Move:
     def init (self, history, cord0, cord1, promotion):
         self.cord0 = cord0
         self.cord1 = cord1
+        self.promotion = promotion
         board = history[-1]
         if board[self.cord0].sign == "k":
             r = self.cord0.y

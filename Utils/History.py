@@ -115,7 +115,7 @@ class History (GObject):
         else: self.curColModi = 0
     
     def add (self, move, mvlist=False):
-    
+        
         capture = self.boards[-1][move.cord1] != None
         
         if move.castling:

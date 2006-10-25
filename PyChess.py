@@ -5,6 +5,7 @@ import pygtk
 pygtk.require("2.0")
 import sys, gtk, gtk.glade, os
 import pango, gobject
+import random
 
 import gettext
 gettext.install("pychess",localedir="lang",unicode=1)
@@ -217,7 +218,7 @@ def runNewGameDialog (hideFC=True):
     if hasattr(window, "game"):
         window.game.kill()
     
-    engine, args = [(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"]][0]
+    engine, args = random.choice([(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"]])
     window.analyzer = engine(args, "white")
     window.analyzer.wait()
     window.analyzer.analyze()

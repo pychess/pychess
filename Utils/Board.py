@@ -93,15 +93,15 @@ class Board:
     def __eq__ (self, other):
         if type(self) != type(other) or self.__class__ != other.__class__:
             return False
-        return hash(self) == hash(other)
-        #for y, row in enumerate(self.data):
-        #    for x, piece in enumerate(row):
-        #        oPiece = other.data[y][x]
-        #        if not piece and oPiece: return False
-        #        if not piece and not oPiece: continue
-        #        if not piece.__eq__(oPiece):
-        #            return False
-        #return True
+        #return hash(self) == hash(other)
+        for y, row in enumerate(self.data):
+            for x, piece in enumerate(row):
+                oPiece = other.data[y][x]
+                if not piece and oPiece: return False
+                if not piece and not oPiece: continue
+                if not piece.__eq__(oPiece):
+                    return False
+        return True
 
     def clone (self):
         l = [[[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]]]

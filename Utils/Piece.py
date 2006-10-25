@@ -3,7 +3,10 @@ class Piece:
     def __init__ (self, color, sign):
         self.color = color
         self.sign = sign
-        self.name = signToName[sign]
+        try:
+            self.name = signToName[sign]
+        except:
+            print "SIGN WAS", sign
     
     def __repr__ (self):
         return self.color + " " + self.name
