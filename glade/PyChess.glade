@@ -695,7 +695,7 @@
 			<widget class="GtkImage" id="image3">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-previous</property>
-			  <property name="icon_size">2</property>
+			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -721,7 +721,7 @@
 			<widget class="GtkImage" id="image1">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-rewind</property>
-			  <property name="icon_size">2</property>
+			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -747,7 +747,7 @@
 			<widget class="GtkImage" id="image4">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-forward</property>
-			  <property name="icon_size">2</property>
+			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -773,7 +773,7 @@
 			<widget class="GtkImage" id="image2">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-next</property>
-			  <property name="icon_size">2</property>
+			  <property name="icon_size">1</property>
 			  <property name="xalign">0</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -847,11 +847,14 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="website">http://code.google.com/p/pychess/</property>
   <property name="website_label" translatable="yes">http://code.google.com/p/pychess/</property>
   <property name="authors">Thomas Dybdahl Ahle
-Norbert Fabritius</property>
+Norbert Fabritius
+Thijs Vermeir</property>
   <property name="documenters"></property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">Danish (da) - Thomas Dybdahl Ahle
-Dutch (nl_NL) - Wouter Stomp</property>
+English (en) - Thomas Dybdahl Ahle
+Dutch (nl_NL) - Wouter Stomp
+German (de_DE) - Norbert Fabritius</property>
   <property name="logo">pychess.png</property>
 </widget>
 
@@ -1904,6 +1907,7 @@ if do don't save it.</property>
 </widget>
 
 <widget class="GtkDialog" id="infogamedialog">
+  <property name="border_width">14</property>
   <property name="title" translatable="yes">Game information</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -1923,7 +1927,7 @@ if do don't save it.</property>
     <widget class="GtkVBox" id="dialog-vbox3">
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
+      <property name="spacing">5</property>
 
       <child internal-child="action_area">
 	<widget class="GtkHButtonBox" id="dialog-action_area3">
@@ -1967,301 +1971,62 @@ if do don't save it.</property>
       <child>
 	<widget class="GtkTable" id="table7">
 	  <property name="visible">True</property>
-	  <property name="n_rows">4</property>
+	  <property name="n_rows">2</property>
 	  <property name="n_columns">2</property>
 	  <property name="homogeneous">False</property>
-	  <property name="row_spacing">0</property>
-	  <property name="column_spacing">0</property>
+	  <property name="row_spacing">10</property>
+	  <property name="column_spacing">10</property>
 
 	  <child>
-	    <widget class="GtkLabel" id="label70">
+	    <widget class="GtkImage" id="image715">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Event :</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">False</property>
-	      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
+	      <property name="icon_size">6</property>
+	      <property name="icon_name">x-office-address-book</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.100000008941</property>
 	      <property name="xpad">0</property>
 	      <property name="ypad">0</property>
-	      <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
-	      <property name="width_chars">-1</property>
-	      <property name="single_line_mode">False</property>
-	      <property name="angle">0</property>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">0</property>
 	      <property name="right_attach">1</property>
 	      <property name="top_attach">0</property>
 	      <property name="bottom_attach">1</property>
-	      <property name="x_options">fill</property>
-	      <property name="y_options"></property>
+	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>
 
 	  <child>
-	    <widget class="GtkLabel" id="label71">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Site :</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">False</property>
-	      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">0</property>
-	      <property name="ypad">0</property>
-	      <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
-	      <property name="width_chars">-1</property>
-	      <property name="single_line_mode">False</property>
-	      <property name="angle">0</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">0</property>
-	      <property name="right_attach">1</property>
-	      <property name="top_attach">1</property>
-	      <property name="bottom_attach">2</property>
-	      <property name="x_options">fill</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkLabel" id="label72">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Round :</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">False</property>
-	      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">0</property>
-	      <property name="ypad">0</property>
-	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-	      <property name="width_chars">-1</property>
-	      <property name="single_line_mode">False</property>
-	      <property name="angle">0</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">0</property>
-	      <property name="right_attach">1</property>
-	      <property name="top_attach">2</property>
-	      <property name="bottom_attach">3</property>
-	      <property name="x_options">fill</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkEntry" id="eventEntry">
-	      <property name="width_request">200</property>
+	    <widget class="GtkCalendar" id="calendar1">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="editable">True</property>
-	      <property name="visibility">True</property>
-	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes"></property>
-	      <property name="has_frame">True</property>
-	      <property name="invisible_char">●</property>
-	      <property name="activates_default">False</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">1</property>
-	      <property name="right_attach">2</property>
-	      <property name="top_attach">0</property>
-	      <property name="bottom_attach">1</property>
-	      <property name="x_options">expand</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkEntry" id="siteEntry">
-	      <property name="width_request">200</property>
-	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="editable">True</property>
-	      <property name="visibility">True</property>
-	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes"></property>
-	      <property name="has_frame">True</property>
-	      <property name="invisible_char">●</property>
-	      <property name="activates_default">False</property>
+	      <property name="display_options">GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES</property>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">1</property>
 	      <property name="right_attach">2</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
-	      <property name="x_options">expand</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkEntry" id="roundEntry">
-	      <property name="width_request">200</property>
-	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="editable">True</property>
-	      <property name="visibility">True</property>
-	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes"></property>
-	      <property name="has_frame">True</property>
-	      <property name="invisible_char">●</property>
-	      <property name="activates_default">False</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">1</property>
-	      <property name="right_attach">2</property>
-	      <property name="top_attach">2</property>
-	      <property name="bottom_attach">3</property>
-	      <property name="x_options">expand</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkLabel" id="label79">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Date :</property>
-	      <property name="use_underline">False</property>
-	      <property name="use_markup">False</property>
-	      <property name="justify">GTK_JUSTIFY_RIGHT</property>
-	      <property name="wrap">False</property>
-	      <property name="selectable">False</property>
-	      <property name="xalign">0</property>
-	      <property name="yalign">0.5</property>
-	      <property name="xpad">0</property>
-	      <property name="ypad">0</property>
-	      <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
-	      <property name="width_chars">-1</property>
-	      <property name="single_line_mode">False</property>
-	      <property name="angle">0</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">0</property>
-	      <property name="right_attach">1</property>
-	      <property name="top_attach">3</property>
-	      <property name="bottom_attach">4</property>
 	      <property name="x_options">fill</property>
-	      <property name="y_options"></property>
+	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>
 
 	  <child>
-	    <widget class="GtkHBox" id="hbox19">
+	    <widget class="GtkHBox" id="hbox21">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">0</property>
 
 	      <child>
-		<widget class="GtkEntry" id="dayEntry">
+		<widget class="GtkImage" id="image716">
 		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="editable">True</property>
-		  <property name="visibility">True</property>
-		  <property name="max_length">2</property>
-		  <property name="text" translatable="yes"></property>
-		  <property name="has_frame">True</property>
-		  <property name="invisible_char">●</property>
-		  <property name="activates_default">False</property>
-		  <property name="width_chars">2</property>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkLabel" id="label80">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes"> / </property>
-		  <property name="use_underline">False</property>
-		  <property name="use_markup">False</property>
-		  <property name="justify">GTK_JUSTIFY_LEFT</property>
-		  <property name="wrap">False</property>
-		  <property name="selectable">False</property>
+		  <property name="icon_size">6</property>
+		  <property name="icon_name">x-office-calendar</property>
 		  <property name="xalign">0.5</property>
-		  <property name="yalign">0.5</property>
+		  <property name="yalign">0.10000000149</property>
 		  <property name="xpad">0</property>
 		  <property name="ypad">0</property>
-		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-		  <property name="width_chars">-1</property>
-		  <property name="single_line_mode">False</property>
-		  <property name="angle">0</property>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">False</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkEntry" id="monthEntry">
-		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="editable">True</property>
-		  <property name="visibility">True</property>
-		  <property name="max_length">2</property>
-		  <property name="text" translatable="yes"></property>
-		  <property name="has_frame">True</property>
-		  <property name="invisible_char">●</property>
-		  <property name="activates_default">False</property>
-		  <property name="width_chars">2</property>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkLabel" id="label81">
-		  <property name="visible">True</property>
-		  <property name="label" translatable="yes"> / </property>
-		  <property name="use_underline">False</property>
-		  <property name="use_markup">False</property>
-		  <property name="justify">GTK_JUSTIFY_LEFT</property>
-		  <property name="wrap">False</property>
-		  <property name="selectable">False</property>
-		  <property name="xalign">0.5</property>
-		  <property name="yalign">0.5</property>
-		  <property name="xpad">0</property>
-		  <property name="ypad">0</property>
-		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-		  <property name="width_chars">-1</property>
-		  <property name="single_line_mode">False</property>
-		  <property name="angle">0</property>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">False</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkEntry" id="yearEntry">
-		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="editable">True</property>
-		  <property name="visibility">True</property>
-		  <property name="max_length">4</property>
-		  <property name="text" translatable="yes"></property>
-		  <property name="has_frame">True</property>
-		  <property name="invisible_char">●</property>
-		  <property name="activates_default">False</property>
-		  <property name="width_chars">4</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -2271,10 +2036,185 @@ if do don't save it.</property>
 	      </child>
 	    </widget>
 	    <packing>
+	      <property name="left_attach">0</property>
+	      <property name="right_attach">1</property>
+	      <property name="top_attach">1</property>
+	      <property name="bottom_attach">2</property>
+	      <property name="x_options">fill</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkTable" id="table8">
+	      <property name="visible">True</property>
+	      <property name="n_rows">3</property>
+	      <property name="n_columns">2</property>
+	      <property name="homogeneous">False</property>
+	      <property name="row_spacing">4</property>
+	      <property name="column_spacing">6</property>
+
+	      <child>
+		<widget class="GtkLabel" id="label82">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Site:</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		  <property name="width_chars">-1</property>
+		  <property name="single_line_mode">False</property>
+		  <property name="angle">0</property>
+		  <accessibility>
+		    <atkproperty name="AtkObject::accessible_description" translatable="yes">Example: Belgrade, Serbia JUG</atkproperty>
+		  </accessibility>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">1</property>
+		  <property name="top_attach">1</property>
+		  <property name="bottom_attach">2</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkLabel" id="label83">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Round:</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		  <property name="width_chars">-1</property>
+		  <property name="single_line_mode">False</property>
+		  <property name="angle">0</property>
+		  <accessibility>
+		    <atkproperty name="AtkObject::accessible_description" translatable="yes">The round of the turnament</atkproperty>
+		  </accessibility>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">1</property>
+		  <property name="top_attach">2</property>
+		  <property name="bottom_attach">3</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkSpinButton" id="spinbutton1">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="climb_rate">1</property>
+		  <property name="digits">0</property>
+		  <property name="numeric">False</property>
+		  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
+		  <property name="snap_to_ticks">False</property>
+		  <property name="wrap">False</property>
+		  <property name="adjustment">1 0 100 1 10 10</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">1</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">2</property>
+		  <property name="bottom_attach">3</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkEntry" id="entry1">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="editable">True</property>
+		  <property name="visibility">True</property>
+		  <property name="max_length">0</property>
+		  <property name="text" translatable="yes"></property>
+		  <property name="has_frame">True</property>
+		  <property name="invisible_char">•</property>
+		  <property name="activates_default">False</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">1</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkEntry" id="entry2">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="editable">True</property>
+		  <property name="visibility">True</property>
+		  <property name="max_length">0</property>
+		  <property name="text" translatable="yes"></property>
+		  <property name="has_frame">True</property>
+		  <property name="invisible_char">•</property>
+		  <property name="activates_default">False</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">1</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">1</property>
+		  <property name="bottom_attach">2</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkLabel" id="label84">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Event:</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		  <property name="width_chars">-1</property>
+		  <property name="single_line_mode">False</property>
+		  <property name="angle">0</property>
+		  <accessibility>
+		    <atkproperty name="AtkObject::accessible_name" translatable="yes">Event:</atkproperty>
+		    <atkproperty name="AtkObject::accessible_description" translatable="yes">Example: F/S Return Match</atkproperty>
+		  </accessibility>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">1</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
 	      <property name="left_attach">1</property>
 	      <property name="right_attach">2</property>
-	      <property name="top_attach">3</property>
-	      <property name="bottom_attach">4</property>
+	      <property name="top_attach">0</property>
+	      <property name="bottom_attach">1</property>
 	      <property name="x_options">fill</property>
 	      <property name="y_options">fill</property>
 	    </packing>
