@@ -262,6 +262,7 @@ class CECProtocol (GObject):
                 self.history = None
                 self.emit("move", move)
         
+        # Analyzing
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             his2 = self.history.clone()
             moves = []
@@ -269,8 +270,9 @@ class CECProtocol (GObject):
                 try:
                     moves.append(self.parseMove(m, his2))
                 except Exception, e:
-                    break
-                his2.add(moves[-1], mvlist=False)
+                    continue
+                if moves:
+	                his2.add(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
         
