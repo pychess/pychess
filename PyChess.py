@@ -53,6 +53,11 @@ def makeFileDialogReady ():
     
     #TODO: Working with mime-types might gennerelly be a better idea.
     
+    star = gtk.FileFilter()
+    star.set_name(_("All Files"))
+    star.add_pattern("*")
+    opendialog.add_filter(star)
+    
     all = gtk.FileFilter()
     all.set_name(_("All Chess Files"))
     opendialog.add_filter(all)
