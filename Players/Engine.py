@@ -63,7 +63,8 @@ class EngineConnection (gobject.GObject):
     def recieved (self, fd, condition):
         log.warn("hungup\n", self.defname)
         self.emit("hungup")
-            
+        return False
+        
     def readline (self, timeout=600):
         i = self.buffer.find("\n")
         if i >= 0:
@@ -103,17 +104,17 @@ class EngineConnection (gobject.GObject):
             pass
 
     def sigkill (self):
-        print "kill"
+        #print "kill"
         os.kill(self.pid, signal.SIGKILL)
         try: os.close(self.fd)
         except: pass
     
     def sigterm (self):
-        print "term"
+        #print "term"
         os.kill(self.pid, signal.SIGTERM)
         try: os.close(self.fd)
         except: pass
     
     def sigint (self):
-        print "int"
+        #print "int"
         os.kill(self.pid, signal.SIGINT)
