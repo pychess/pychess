@@ -333,6 +333,7 @@ class CECProtocol (GObject):
             if self.features["sigterm"]:
                 self.engine.sigterm()
             else: self.engine.sigkill()
+        self.engine.wait4exit()
     
     def moveNow (self):
         assert self.ready, "Still waiting for done=1"

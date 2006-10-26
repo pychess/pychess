@@ -103,18 +103,38 @@ class EngineConnection (gobject.GObject):
         except:
             pass
 
+    def wait4exit (self):
+        pid, code = os.waitpid(self.pid, 0)
+        log.debug(os.strerror(code)+"\n", self.defname)
+
     def sigkill (self):
         #print "kill"
-        os.kill(self.pid, signal.SIGKILL)
-        try: os.close(self.fd)
-        except: pass
+        try:
+            os.kill(self.pid, signal.SIGKILL)
+            os.close(self.fd)
+        except OSError, error:
+            if error.errno == 3:
+                #No such process
+                pass
+            else: raise OSError, error
     
     def sigterm (self):
         #print "term"
-        os.kill(self.pid, signal.SIGTERM)
-        try: os.close(self.fd)
-        except: pass
+        try:
+            os.kill(self.pid, signal.SIGTERM)
+            os.close(self.fd)
+        except OSError, error:
+            if error.errno == 3:
+                #No such process
+                pass
+            else: raise OSError, error
     
     def sigint (self):
         #print "int"
-        os.kill(self.pid, signal.SIGINT)
+        try:
+            os.kill(self.pid, signal.SIGINT)
+        except OSError, error:
+            if error.errno == 3:
+                #No such process
+                pass
+            else: raise OSError, error
