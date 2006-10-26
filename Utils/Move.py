@@ -133,7 +133,7 @@ def parseSAN (history, san):
             cord1 = Cord(6, row)
         else:
             cord1 = Cord(2, row)
-        return
+        return movePool.pop (history, cord0, cord1, promotion)
 
     if "x" in notat:
         since, then = notat.split("x")
