@@ -1,3 +1,5 @@
+#TODO: Add zoom buttons
+
 import gtk, gobject
 class ScorePlot (gtk.DrawingArea):
 
@@ -28,15 +30,16 @@ class ScorePlot (gtk.DrawingArea):
         context.rectangle(event.area.x, event.area.y,
                           event.area.width, event.area.height)
         context.clip()
-        self.draw(context, float(event.area.width))
+        self.draw(context)
         self.set_size_request(-1, (len(self.scores)-1)*self.moveHeight)
         return False
     
-    def draw (self, cr, width):
+    def draw (self, cr):
         for score in self.scores:
             if abs(score) > self.maxScore:
                 self.maxScore = abs(score) +10
         
+        width = self.get_allocation().width
         height = (len(self.scores)-1)*self.moveHeight
         
         cr.set_source_rgb (0, 0, 0)
