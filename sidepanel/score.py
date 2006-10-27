@@ -1,17 +1,31 @@
 #TODO: Add zoom buttons
 
 import gtk, gobject
-class ScorePlot (gtk.DrawingArea):
+from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
 
+class ScorePlot (gtk.DrawingArea):
+    
+    __gtype_name__ = "ScorePlot"
+    
+    __gsignals__ = {
+        "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
+    }
+    
     def __init__ (self):
         gtk.DrawingArea.__init__(self)
         self.connect("expose_event", self.expose)
+        self.connect("button-press-event", self.press)
+        self.set_events(gtk.gdk.BUTTON_PRESS_MASK)
         self.moveHeight = 12
         self.maxScore = 10**3
         self.scores = []
-
+        self.selected = 0
+        
     def addScore (self, score):
         self.scores.append(score)
+    
+    def select (self, index):
+        self.selected = index
     
     def clear (self):
         del self.scores[:]
@@ -23,7 +37,10 @@ class ScorePlot (gtk.DrawingArea):
                 rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
                 self.window.invalidate_rect(rect, True)
                 self.window.process_updates(True)
-            func()
+            gobject.idle_add(func)
+    
+    def press (self, widget, event):
+        self.emit('selected', int(event.y/self.moveHeight)+1)
     
     def expose (self, widget, event):
         context = widget.window.cairo_create()
@@ -37,7 +54,7 @@ class ScorePlot (gtk.DrawingArea):
     def draw (self, cr):
         for score in self.scores:
             if abs(score) > self.maxScore:
-                self.maxScore = abs(score) +10
+                self.maxScore = abs(score)
         
         width = self.get_allocation().width
         height = (len(self.scores)-1)*self.moveHeight
@@ -54,6 +71,18 @@ class ScorePlot (gtk.DrawingArea):
             cr.line_to(x, y)
         cr.line_to(0,height)
         cr.fill()
+        
+        if self.selected >= 1:
+            lw = 2.
+            cr.set_line_width(lw)
+            y = (self.selected-1)*self.moveHeight
+            cr.rectangle(lw/2, y-lw/2, width-lw/2, self.moveHeight+lw/2)
+            col = self.get_style().base[gtk.STATE_SELECTED]
+            r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
+            cr.set_source_rgba (r, g, b, .15)
+            cr.fill_preserve()
+            cr.set_source_rgb (r, g, b)
+            cr.stroke()
     
 __title__ = _("Score")
 
@@ -67,21 +96,32 @@ __widget__.add(port)
 __widget__.show_all()
 
 def ready (window):
-    global history
-    history = window["BoardControl"].view.history
+    global history, boardview
     
+    boardview = window["BoardControl"].view
+    history = boardview.history
+    
+    plot.connect("selected", plot_selected)
+    boardview.connect('shown_changed', shown_changed)
     history.connect("cleared", history_cleared)
     history.connect("changed", history_changed)
-
+    
 def history_cleared (history):
     plot.clear()
     history_changed(history)
-
+    shown_changed(None,0)
+    
 from Utils.eval import evaluateComplete
 
 def history_changed (history):
     points = evaluateComplete(history)
     plot.addScore(points)
-    plot.redraw()
     #adj = __widget__.get_hadjustment()
     #adj.set_value(adj.get_property("upper"))
+
+def shown_changed (boardview, shown):
+    plot.select(shown)
+    plot.redraw()
+
+def plot_selected (plot, selected):
+    boardview.shown = selected
