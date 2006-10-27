@@ -225,9 +225,10 @@ def runNewGameDialog (hideFC=True):
     
     engine, args = random.choice([(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"]])
     window.analyzer = engine(args, "white")
+    
     window.analyzer.wait()
     window.analyzer.analyze()
-    
+    log.debug("Analyzer: %s" % repr(window.analyzer))
     window.game = Game( window["BoardControl"].view.history,
             window.analyzer, players[0], players[1], clock, secs, gain)
             

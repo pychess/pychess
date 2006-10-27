@@ -264,6 +264,10 @@ class CECProtocol (GObject):
         
         # Analyzing
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+            if parts[:4] == ["0","0","0","0"]:
+            	# Crafty don't analyze untill it is out of book
+                print >> self.engine, "book off"
+                return
             his2 = self.history.clone()
             moves = []
             for m in movre.findall(" ".join(parts[4:])+" "):
@@ -272,7 +276,7 @@ class CECProtocol (GObject):
                 except Exception, e:
                     continue
                 if moves:
-	                his2.add(moves[-1], mvlist=False)
+                    his2.add(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
         
@@ -465,7 +469,6 @@ class CECProtocol (GObject):
     
     def analyze (self):
         if self.features["analyze"]:
-            print >> self.engine, "book off"
             self.force()
             self.post()
             print >> self.engine, "analyze"
