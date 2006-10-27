@@ -411,10 +411,15 @@ class GladeHandlers:
                 window["BoardControl"].view.greenarrow = \
                         window.analyzer.analyzeMoves[0].cords
             window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
-            window.hintconid1 = window["BoardControl"].view.history.connect("changed", on_clear)
+            history = window["BoardControl"].view.history
+            window.hintconid1 = history.connect("changed", on_clear)
+            window.hintconid2 = history.connect("cleared", on_clear)
         else:
-            window.analyzer.disconnect(window.hintconid0)
-            window["BoardControl"].view.history.disconnect(window.hintconid1)
+            try:
+                window.analyzer.disconnect(window.hintconid0)
+                window["BoardControl"].view.history.disconnect(window.hintconid1)
+                window["BoardControl"].view.history.disconnect(window.hintconid2)
+            except: pass
             window["BoardControl"].view.greenarrow = None
     
     def on_spy_mode_activate (widget):
@@ -428,10 +433,15 @@ class GladeHandlers:
                 window["BoardControl"].view.redarrow = \
                         window.analyzer.analyzeMoves[1].cords
             window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
-            window.spyconid1 = window["BoardControl"].view.history.connect("changed", on_clear)
+            history = window["BoardControl"].view.history
+            window.spyconid1 = history.connect("changed", on_clear)
+            window.spyconid2 = history.connect("cleared", on_clear)
         else:
-            window.analyzer.disconnect(window.spyconid0)
-            window["BoardControl"].view.history.disconnect(window.spyconid1)
+            try:
+                window.analyzer.disconnect(window.spyconid0)
+                window["BoardControl"].view.history.disconnect(window.spyconid1)
+                window["BoardControl"].view.history.disconnect(window.spyconid2)
+            except: pass
             window["BoardControl"].view.redarrow = None
     
     #          New Game Dialog          #

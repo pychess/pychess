@@ -110,20 +110,20 @@ def genKing (cord, history):
             
     if history.curCol() == "white":
         if history.castling & WHITE_OO:
-            if _isclear (board, (0,), (5,6)) and \
+            if _isclear (board, (5,6), (0,)) and \
                not genMovesPointingAt (history, (4,5,6), (0,), "black"):
                 yield 6,0
         if history.castling & WHITE_OOO:
-            if _isclear (board, (0,), (1,2,3)) and \
+            if _isclear (board, (1,2,3), (0,)) and \
                not genMovesPointingAt (history, (2,3,4), (0,), "black"):
                 yield 2,0
     if history.curCol() == "black":
         if history.castling & BLACK_OO:
-            if _isclear (board, (7,), (5,6)) and \
+            if _isclear (board, (5,6), (7,)) and \
                not genMovesPointingAt (history, (4,5,6), (7,), "white"):
                 yield 6,7
         if history.castling & BLACK_OOO:
-            if _isclear (board, (7,), (1,2,3)) and \
+            if _isclear (board, (1,2,3), (7,)) and \
                not genMovesPointingAt (history, (2,3,4), (7,), "white"):
                 yield 2,7
 
