@@ -4,7 +4,6 @@ import pygtk
 pygtk.require("2.0")
 import gtk, gtk.gdk, re
 from gobject import *
-from Numeric import arange
 from gfx.Pieces import piece as getPiece
 from Utils.History import History
 from Utils.Cord import Cord
