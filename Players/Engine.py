@@ -104,8 +104,14 @@ class EngineConnection (gobject.GObject):
             pass
 
     def wait4exit (self):
-        pid, code = os.waitpid(self.pid, 0)
-        log.debug(os.strerror(code)+"\n", self.defname)
+        try:
+            pid, code = os.waitpid(self.pid, 0)
+            log.debug(os.strerror(code)+"\n", self.defname)
+        except OSError, error:
+            if error.errno == 10:
+                #No child processes
+                pass
+            else: raise OSError, error
 
     def sigkill (self):
         #print "kill"
