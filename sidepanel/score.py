@@ -48,7 +48,7 @@ class ScorePlot (gtk.DrawingArea):
                           event.area.width, event.area.height)
         context.clip()
         self.draw(context)
-        self.set_size_request(-1, (len(self.scores)-1)*self.moveHeight)
+        self.set_size_request(-1, max(0,(len(self.scores)-1)*self.moveHeight))
         return False
     
     def draw (self, cr):
