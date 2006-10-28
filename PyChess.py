@@ -354,12 +354,9 @@ class GladeHandlers:
         if not window.game:
             noOpenGame()
         elif not lastSave[1]:
-            print lastSave, "her"
             return GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
         elif not lastSave[0] == window.game.history:
-            print "just save"
             GladeHandlers.__dict__["save"](lastSave[1])
-        print "do nothing"
         
     def on_save_game_as1_activate (widget):
         if not window.game:
@@ -451,6 +448,9 @@ class GladeHandlers:
             window["BoardControl"].view.greenarrow = moves[0].cords
         def on_clear (history):
             window["BoardControl"].view.greenarrow = None
+        def on_reset (history):
+        	on_clear (history)
+        	window["hint_mode"].set_active(False)
         if widget.get_active():
             if len(window.analyzer.analyzeMoves) >= 1:
                 window["BoardControl"].view.greenarrow = \
@@ -458,7 +458,7 @@ class GladeHandlers:
             window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
             history = window["BoardControl"].view.history
             window.hintconid1 = history.connect("changed", on_clear)
-            window.hintconid2 = history.connect("cleared", on_clear)
+            window.hintconid2 = history.connect("cleared", on_reset)
         else:
             try:
                 window.analyzer.disconnect(window.hintconid0)
@@ -473,6 +473,9 @@ class GladeHandlers:
                 window["BoardControl"].view.redarrow = moves[1].cords
         def on_clear (history):
             window["BoardControl"].view.redarrow = None
+        def on_reset (history):
+        	on_clear (history)
+        	window["spy_mode"].set_active(False)
         if widget.get_active():
             if len(window.analyzer.analyzeMoves) >= 2:
                 window["BoardControl"].view.redarrow = \
@@ -480,7 +483,7 @@ class GladeHandlers:
             window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
             history = window["BoardControl"].view.history
             window.spyconid1 = history.connect("changed", on_clear)
-            window.spyconid2 = history.connect("cleared", on_clear)
+            window.spyconid2 = history.connect("cleared", on_reset)
         else:
             try:
                 window.analyzer.disconnect(window.spyconid0)

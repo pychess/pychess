@@ -94,7 +94,7 @@ class Game (GObject):
             else: move, animate = answer, True
             
             if not self.run:
-                log.warn("The 'line' in Game.py was used :O")
+                self.kill()
                 break
             
             if not self.history.add(move,True):
@@ -102,8 +102,6 @@ class Game (GObject):
                 break
             
             self.analyzer.makeMove(self.history)
-            
-            #print "ADDED MOVE %s, SCORE IS NOW: %d" % (move.algNotat(self.history), evaluateComplete(self.history))
             
             if self.chessclock:
                 self.chessclock.switch()

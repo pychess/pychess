@@ -17,17 +17,6 @@ def intersects (r1, r2):
     r = r1.intersect(r2)
     return r.width+r.height > 0
 
-# This might be an ugly hack and a bad idea,
-# as four squares instead of one will be redrawn on hover.
-# Until now, though, it works fine for ensuring, that no ugly "stripes"
-# are left when you for example select a cord.
-def grow (r, grow = 2):
-    #r.x -= grow
-    #r.y -= grow
-    #r.width += grow
-    #r.height += grow
-    return r
-
 def rect (r):
     x, y, w = [int(round(v)) for v in r]
     return gtk.gdk.Rectangle (x, y, w, w)
@@ -102,23 +91,34 @@ class BoardView (gtk.DrawingArea):
         context.set_line_join(gtk.gdk.JOIN_ROUND)
         context.stroke()
         
+        pangoScale = float(pango.SCALE)
+        
         for n in range(8):
             o = (self.fromWhite and [n] or [7-n])[0]
             
-            layout = self.create_pango_layout(str(8-o))
+            layout = self.create_pango_layout("%d" % (8-o))
             layout.set_font_description(pango.FontDescription("bold %d" % ss))
-            context.move_to(xc-t*1.5-ss, s*n+yc+s*0.24)
+            
+            w = layout.get_extents()[1][2]/pangoScale
+            h = layout.get_extents()[0][3]/pangoScale
+            
+            context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
             context.show_layout(layout)
             
-            context.move_to(xc+t*2.85+square, s*n+yc+s*0.24)
+            context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
             context.show_layout(layout)
             
             layout = self.create_pango_layout(chr(o+ord("A")))
             layout.set_font_description(pango.FontDescription("bold %d" % ss))
-            context.move_to(xc+s*n+s*0.35, yc+square+t*1.3)
+            
+            w = layout.get_pixel_size()[0]
+            h = layout.get_pixel_size()[1]
+            y = layout.get_extents()[1][1]/pangoScale
+            
+            context.move_to(xc+s*n+s/2.-w/2., yc-h-t*1.5)
             context.show_layout(layout)
             
-            context.move_to(xc+s*n+s*0.35, yc-ss*2.05)
+            context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
             context.show_layout(layout)
     
     def drawBoard(self, context):
