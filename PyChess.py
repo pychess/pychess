@@ -537,7 +537,8 @@ class GladeHandlers:
         window["BoardControl"].on_resign_activate (widget)
 
     def on_force_to_move_activate (widget):
-        window.game.activePlayer.hurry()
+        if window.game:
+            window.game.activePlayer.hurry()
 
 from time import time
 

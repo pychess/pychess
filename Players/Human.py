@@ -12,7 +12,7 @@ class Human (Player):
         GObject.__init__(self)
         
         self.move = None
-        
+        self.history = board.view.history
         self.cond = Condition()
         self.color = color
         self.board = board
@@ -23,7 +23,7 @@ class Human (Player):
         self.name = "Human"
     
     def piece_moved (self, board, move):
-        if board.view.history.curCol() != self.color:
+        if self.history.curCol() != self.color:
             return
         self.cond.acquire()
         self.move = move
@@ -31,7 +31,7 @@ class Human (Player):
         self.cond.release()
     
     def emit_action (self, action):
-        if board.view.history.curCol() != self.color:
+        if self.history.curCol() != self.color:
             return
         self.emit("action", action)
     

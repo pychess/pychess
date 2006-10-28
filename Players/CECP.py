@@ -35,6 +35,8 @@ class CECPEngine (Engine):
         self.movecond = Condition()
         self.move = None
         self.analyzeMoves = []
+        self.proto.connect("draw_offer", lambda w:self.emit("draw_offer"))
+        self.proto.connect("resign", lambda w:self.emit("resign"))
         self.proto.connect("move", self.onMove)
         self.proto.connect("analyze", self.onAnalyze)
         def dead (engine):
@@ -64,6 +66,9 @@ class CECPEngine (Engine):
     
     def hurry (self):
     	self.proto.moveNow()
+    
+    def offerDraw (self):
+    	self.proto.offerDraw()
     
     def makeMove (self, history):
         self.movecond.acquire()
@@ -283,14 +288,10 @@ class CECProtocol (GObject):
                     his2.add(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
-        
-        # A Hint
-        if parts[0] == "Hint:":
-            print "Hint", parts[1]
-        
+                
         # Offers draw
         if parts[0] == "offer" and parts[1] == "draw":
-            print "Offer Draw"
+            self.emit("draw_offer")
         
         #Tell User Error
         if parts[0] in ("tellusererror", "Error"):
@@ -303,7 +304,7 @@ class CECProtocol (GObject):
         
         # Resigns
         if line.find("resign") >= 0:
-            print "Resigns"
+            self.emit("resgin")
         
         # Features
         try: j = parts.index("feature")
