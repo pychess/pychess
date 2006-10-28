@@ -21,7 +21,7 @@ def getBestOpening (history):
             score = s
     return move
     
-VERSION = "0.1"
+VERSION = "0.4"
 
 class PyChessEngine (Engine):
     __gsignals__ = {
