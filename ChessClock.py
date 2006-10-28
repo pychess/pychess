@@ -56,11 +56,13 @@ class ChessClock (gtk.DrawingArea):
         context.fill_preserve()
         context.new_path()
         
+        pangoScale = float(pango.SCALE)
+        
         if ra or self.player == 0:
             if self.player == 0:
                 context.set_source_color(self.light)
-            y = rect.height/2. - layout0.get_extents()[0][3]/2/pango.SCALE \
-                               - layout0.get_extents()[0][1]/pango.SCALE
+            y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
+                               - layout0.get_extents()[0][1]/pangoScale
             context.move_to(0,y)
             context.show_layout(layout0)
         
@@ -68,8 +70,8 @@ class ChessClock (gtk.DrawingArea):
             if self.player == 1:
                 context.set_source_color(self.light)
             else: context.set_source_color(self.dark)
-            y = rect.height/2. - layout1.get_extents()[0][3]/2/pango.SCALE \
-                               - layout1.get_extents()[0][1]/pango.SCALE
+            y = rect.height/2. - layout1.get_extents()[0][3]/pangoScale/2 \
+                               - layout1.get_extents()[0][1]/pangoScale
             context.move_to(rect.width/2.,y)
             context.show_layout(layout1)
 
@@ -98,7 +100,17 @@ class ChessClock (gtk.DrawingArea):
             self.emited = True
 
         return True
-
+    
+    def reset (self):
+        self.emited = False
+        self.time = 0
+        self.gain = 0
+        self.thread = None
+        self.p = [None, None]
+        self.ptemp = [None, None]
+        self.startTime = None
+        self._player = 0
+    
     def emit_time_out_signal(self, player):
         self.emit("time_out", player)
 
