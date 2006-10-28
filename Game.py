@@ -42,6 +42,7 @@ class Game (GObject):
         #    self.day = "0" + self.day
         
         if self.chessclock:
+            self.chessclock.reset()
             self.chessclock.setTime(seconds*10)
             self.chessclock.setGain(plus*10)
         
