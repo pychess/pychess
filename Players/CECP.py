@@ -62,6 +62,9 @@ class CECPEngine (Engine):
     def setBoard (self, fen):
         self.proto.setBoard(fen)
     
+    def hurry (self):
+    	self.proto.moveNow()
+    
     def makeMove (self, history):
         self.movecond.acquire()
         self.proto.move(history)
