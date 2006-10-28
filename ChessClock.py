@@ -11,7 +11,7 @@ class ChessClock (gtk.DrawingArea):
     def __init__(self):
         super(ChessClock, self).__init__()
         self.connect("expose_event", self.expose)
-        self.names = ["White","Black"]
+        self.names = [_("White"),_("Black")]
         self.setTime(0)
     
     def expose(self, widget, event):
