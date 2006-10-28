@@ -31,6 +31,7 @@ def saveGameBefore (action):
     if response == gtk.RESPONSE_YES: window["save_game1"].activate()
     return response
 
+lastSave = (None, "")
 def makeFileDialogReady ():
     global enddir
 
@@ -220,14 +221,14 @@ def runNewGameDialog (hideFC=True):
         else: player = Human(window["BoardControl"], color)
         players += [player]
     
-    if hasattr(window, "game"):
+    if window.game:
         window.game.kill()
     
     anaengines = [(e,a) for e,a in engines.availableEngines \
-    									if engines.getInfo((e,a))["canAnalyze"]]
+                                        if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
         # We assume that the Pychess engine i the last
-	    engine, args = random.choice(anaengines[:-1])
+        engine, args = random.choice(anaengines[:-1])
     else: engine, args = anaengines[0]
     window.analyzer = engine(args, "white")
     
@@ -236,9 +237,12 @@ def runNewGameDialog (hideFC=True):
     log.debug("Analyzer: %s\n" % repr(window.analyzer))
     window.game = Game( window["BoardControl"].view.history,
             window.analyzer, players[0], players[1], clock, secs, gain)
-            
+    
     window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
     statusbar.status(None)
+    
+    global lastSave
+    lastSave = (None, "")
     
     return window.game
 
@@ -252,7 +256,14 @@ def engineDead (engine):
     d.show_all()
 
 def makeLogDialogReady ():
-	System.LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))
+    System.LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))
+
+def noOpenGame ():
+    d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+    d.set_markup(_("<big><b>No open game to save</b></big>"))
+    d.format_secondary_text(_("You are not currently playing any game pychess can save for you."))
+    d.connect("response", lambda d,r: d.hide())
+    d.show_all()
 
 class GladeHandlers:
     
@@ -325,6 +336,8 @@ class GladeHandlers:
         
         if game:
             path = filechooserbutton.get_uri()[7:]
+            global lastSave
+            lastSave = (game.history.clone(), path)
             ending = path[path.rfind(".")+1:]
             enddir[ending].load(file(path), game.history)
             for player in game.players:
@@ -334,11 +347,20 @@ class GladeHandlers:
             game.run()
     
     def on_save_game1_activate (widget):
-        pass #TODO
+        if not window.game:
+            noOpenGame()
+        elif not lastSave[1]:
+            GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
+        elif not lastSave[0] == window.game.history:
+            GladeHandlers.__dict__["save"](lastSave[1])
     
     def on_save_game_as1_activate (widget):
-        #FIXME: If file exists or has wrong filetype, the window is wrongly hidden..
-
+        if not window.game:
+            noOpenGame()
+            return
+            
+        #TODO: If file exists or has wrong filetype, the window is hidden..
+        #      And the user has to reopen it to type a new name
         res = savedialog.run()
         savedialog.hide()
         if res != gtk.RESPONSE_ACCEPT: return
@@ -348,8 +370,6 @@ class GladeHandlers:
         if s >= 0:
             ending = uri[s+1:]
         else: ending = None
-        
-        history = window["BoardControl"].view.history
         
         if savedialog.get_filter().filter((None,None,"foo",None)):
             if not ending in enddir:
@@ -366,7 +386,6 @@ class GladeHandlers:
                 if savedialog.get_filter().filter((None,None,"."+e,None)):
                     if not ending in sr.__endings__:
                         uri += "." + e
-                    saver = sr
                     break
                     
         if os.path.isfile(uri):
@@ -380,7 +399,18 @@ class GladeHandlers:
             d.hide()
             if res != gtk.RESPONSE_ACCEPT:
                 return
+        
+        GladeHandlers.__dict__["save"](uri)
+    
+    def save (uri):
+        s = uri.rfind(".")
+        if s >= 0:
+            ending = uri[s+1:]
+        else: return
+        saver = enddir[ending]
         saver.save(open(uri,"w"), window.game.history)
+        global lastSave
+        lastSave = (window.game.history.clone(), uri)
         
     def on_quit1_activate (widget):
         #res = saveGameBefore(_("exit"))
@@ -527,6 +557,7 @@ class PyChess:
         from BookCellRenderer import BookCellRenderer
         self.BookCellRenderer = BookCellRenderer
         
+        self.game = None
         makeSidePanelReady()
         makeFileDialogReady()
         makeLogDialogReady()

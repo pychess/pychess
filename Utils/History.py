@@ -165,6 +165,23 @@ class History (GObject):
         
         return self
     
+    def __eq__ (self, other):
+    	""" Warning: Not complete equals test.
+    		Only most important stuff is tested """
+    	
+    	if not isinstance(other, History):
+    		return False
+    	
+    	if len(self) != len(other) or \
+	    		self.curColModi != other.curColModi or \
+    			self.status != other.status or \
+    			self.castling != other.castling:
+    		return False
+    	
+    	if self.boards[-1].__eq__(other.boards[-1]):
+    		return True
+    	return False
+
     def clone (self):
         his = hisPool.pop()
         his.castling = self.castling
