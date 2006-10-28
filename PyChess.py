@@ -327,6 +327,7 @@ class GladeHandlers:
             for player in game.players:
                 if hasattr(player, "setBoard"):
                     player.setBoard(game.history)
+            window.analyzer.setBoard(game.history)
             game.run()
     
     def on_save_game1_activate (widget):

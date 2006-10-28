@@ -446,6 +446,7 @@ class CECProtocol (GObject):
         if history.curCol() == self.color:
             self.gonext = True
         print >> self.engine, "setboard", fen
+        self.history = history
         #FIXME: Convert fen to edit commands
     
     def setDepth (self, depth):
