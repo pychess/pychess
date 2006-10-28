@@ -49,7 +49,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image707">
+			<widget class="GtkImage" id="image717">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -77,7 +77,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image708">
+			<widget class="GtkImage" id="image718">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -105,7 +105,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image709">
+			<widget class="GtkImage" id="image719">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -127,38 +127,9 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image710">
+			<widget class="GtkImage" id="image720">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="skillelinje5">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="game_information">
-		      <property name="visible">True</property>
-		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">_Game information</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_game_information_activate" last_modification_time="Wed, 18 Oct 2006 13:04:04 GMT"/>
-		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image711">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-properties</property>
 			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -238,7 +209,7 @@
 		      <signal name="activate" handler="on_undo1_activate" last_modification_time="Thu, 06 Jul 2006 13:10:09 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image712">
+			<widget class="GtkImage" id="image721">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-undo</property>
 			  <property name="icon_size">1</property>
@@ -271,7 +242,7 @@
 		      <accelerator key="F" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image713">
+			<widget class="GtkImage" id="image722">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-go-forward</property>
 			  <property name="icon_size">1</property>
@@ -305,7 +276,7 @@
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image714">
+			<widget class="GtkImage" id="image723">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
