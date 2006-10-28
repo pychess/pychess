@@ -14,9 +14,6 @@ class ChessClock (gtk.DrawingArea):
         self.names = ["White","Black"]
         self.setTime(0)
     
-    def reset (self):
-        pass #TODO
-    
     def expose(self, widget, event):
         context = widget.window.cairo_create()
         context.rectangle(event.area.x, event.area.y,
@@ -29,33 +26,32 @@ class ChessClock (gtk.DrawingArea):
         self.dark = self.get_style().dark[gtk.STATE_NORMAL]
         self.light = self.get_style().light[gtk.STATE_NORMAL]
         
-        hpad, vpad = 7, 1
         #FIXME: The clock will always redraw everything,
         #while the next line is outcommented
         #Problem is that saving the redrawingAll in self,
         #will make natural redraws, as when hidden under another window,
-        #only draw the one side, and leave the other empty.
+        #only drafw the one side, and leave the other empty.
         #ra = self.redrawingAll
         ra = True
         
         if ra or self.player == 0:
-            time0 = self.names[0],self.formatTime(self.getDeciSeconds(0))     
-            layout0 = self.create_pango_layout("%s: %s" % (time0))
+            time0 = self.names[0],self.formatTime(self.getDeciSeconds(0))
+            layout0 = self.create_pango_layout(" %s: %s " % (time0))
             layout0.set_font_description(pango.FontDescription("Sans Serif 17"))
         
         if ra or self.player == 1:
             time1 = self.names[1],self.formatTime(self.getDeciSeconds(1))
-            layout1 = self.create_pango_layout("%s: %s" % (time1))
+            layout1 = self.create_pango_layout(" %s: %s " % (time1))
             layout1.set_font_description(pango.FontDescription("Sans Serif 17"))
         
         if ra:
-            w = layout1.get_pixel_size()[0] + layout0.get_pixel_size()[0]
-            self.set_size_request(w+hpad*4, self.get_size_request()[1])
+            w = max(layout1.get_pixel_size()[0], layout0.get_pixel_size()[0])*2
+            self.set_size_request(w, self.get_size_request()[1])
         
         rect = self.get_allocation()
         context.rectangle(
-            float(rect.width)/2 * self.player, 0,
-            float(rect.width)/2, rect.height)
+            rect.width/2. * self.player, 0,
+            rect.width/2., rect.height)
         context.set_source_color(self.dark)
         context.fill_preserve()
         context.new_path()
@@ -63,14 +59,18 @@ class ChessClock (gtk.DrawingArea):
         if ra or self.player == 0:
             if self.player == 0:
                 context.set_source_color(self.light)
-            context.move_to(hpad,vpad)
+            y = rect.height/2. - layout0.get_extents()[0][3]/2/pango.SCALE \
+                               - layout0.get_extents()[0][1]/pango.SCALE
+            context.move_to(0,y)
             context.show_layout(layout0)
         
         if ra or self.player == 1:
             if self.player == 1:
                 context.set_source_color(self.light)
             else: context.set_source_color(self.dark)
-            context.move_to(float(rect.width)/2+hpad,vpad)
+            y = rect.height/2. - layout1.get_extents()[0][3]/2/pango.SCALE \
+                               - layout1.get_extents()[0][1]/pango.SCALE
+            context.move_to(rect.width/2.,y)
             context.show_layout(layout1)
 
     redrawingAll = True
@@ -167,7 +167,6 @@ class ChessClock (gtk.DrawingArea):
         self.start()
         
     player = property(_get_player, _set_player)
-
 
     def _get_playerTime (self, player):
         return self.ptemp[player]
