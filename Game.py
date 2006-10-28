@@ -112,6 +112,7 @@ class Game (GObject):
         self.run = False
         if self.player1: self.player1.__del__()
         if self.player2: self.player2.__del__()
+        if self.analyzer: self.analyzer.__del__()
         if self.chessclock: self.chessclock.stop()
     
     def _action (self, player, action):

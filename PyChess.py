@@ -22,13 +22,17 @@ from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MO
 import statusbar
 
 def saveGameBefore (action):
-    #TODO: Test om noget er ændret!
+    if not window.game: return
+    if window.game.history == lastSave[0]: return
+    
     defText = window["savedialogtext1"].get_label()
     window["savedialogtext1"].set_markup(defText % action)
     response = window["savegamedialog"].run()
     window["savegamedialog"].hide()
     window["savedialogtext1"].set_markup(defText)
-    if response == gtk.RESPONSE_YES: window["save_game1"].activate()
+    if response == gtk.RESPONSE_YES:
+        if GladeHandlers.__dict__["on_save_game1_activate"](None) == False:
+            return gtk.RESPONSE_CANCEL
     return response
 
 lastSave = (None, "")
@@ -287,8 +291,8 @@ class GladeHandlers:
             window.game.year = window["yearEntry"].get_text()
     
     def on_new_game1_activate (widget):
-        #res = saveGameBefore(_("a new game starts"))
-        #if res == gtk.RESPONSE_CANCEL: return
+        res = saveGameBefore(_("a new game starts"))
+        if res == gtk.RESPONSE_CANCEL: return
         
         game = runNewGameDialog()
         if game:
@@ -323,8 +327,8 @@ class GladeHandlers:
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
     def on_load_game1_activate (widget):
-        #res = saveGameBefore(_("you open a new game"))
-        #if res == gtk.RESPONSE_CANCEL: return
+        res = saveGameBefore(_("you open a new game"))
+        if res == gtk.RESPONSE_CANCEL: return
         
         res = opendialog.run()
         opendialog.hide()
@@ -350,10 +354,13 @@ class GladeHandlers:
         if not window.game:
             noOpenGame()
         elif not lastSave[1]:
-            GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
+            print lastSave, "her"
+            return GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
         elif not lastSave[0] == window.game.history:
+            print "just save"
             GladeHandlers.__dict__["save"](lastSave[1])
-    
+        print "do nothing"
+        
     def on_save_game_as1_activate (widget):
         if not window.game:
             noOpenGame()
@@ -363,7 +370,7 @@ class GladeHandlers:
         #      And the user has to reopen it to type a new name
         res = savedialog.run()
         savedialog.hide()
-        if res != gtk.RESPONSE_ACCEPT: return
+        if res != gtk.RESPONSE_ACCEPT: return False
         uri = savedialog.get_uri()[7:]
         
         s = uri.rfind(".")
@@ -413,8 +420,8 @@ class GladeHandlers:
         lastSave = (window.game.history.clone(), uri)
         
     def on_quit1_activate (widget):
-        #res = saveGameBefore(_("exit"))
-        #if res == gtk.RESPONSE_CANCEL: return
+        res = saveGameBefore(_("exit"))
+        if res == gtk.RESPONSE_CANCEL: return
         gtk.main_quit()
     
     #          View Menu          #
