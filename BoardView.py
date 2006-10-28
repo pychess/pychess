@@ -24,9 +24,13 @@ def intersects (r1, r2):
 def grow (r, grow = 2):
     #r.x -= grow
     #r.y -= grow
-    r.width += grow
-    r.height += grow
+    #r.width += grow
+    #r.height += grow
     return r
+
+def rect (r):
+    x, y, w = [int(round(v)) for v in r]
+    return gtk.gdk.Rectangle (x, y, w, w)
 
 class BoardView (gtk.DrawingArea):
     
@@ -56,15 +60,15 @@ class BoardView (gtk.DrawingArea):
     
     def expose(self, widget, event):
         context = widget.window.cairo_create()
-        rect = (event.area.x, event.area.y, event.area.width, event.area.height)
-        context.rectangle(*rect)
+        r = (event.area.x, event.area.y, event.area.width, event.area.height)
+        context.rectangle(*r)
         context.clip()
         self.draw(context, event.area)
         return False
     
     padding = 0
     square = None
-    def draw(self, context, rect):
+    def draw(self, context, r):
         p = (1-self.padding)
         r = self.get_allocation()
         square = float(min(r.width*p, r.height*p)) -4
@@ -79,7 +83,7 @@ class BoardView (gtk.DrawingArea):
         pieces = self.history[self.shown]
         self.drawSpecial (context)
         self.drawArrows (context)
-        self.drawPieces (context, pieces, rect)
+        self.drawPieces (context, pieces, r)
         self.drawLastMove (context)
     
     pad = 0.13
@@ -128,13 +132,13 @@ class BoardView (gtk.DrawingArea):
         context.fill_preserve()
         context.new_path()
     
-    def drawPieces(self, context, pieces, rect):
+    def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
         context.set_source_color(self.get_style().black)
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
                 if not piece: continue
-                if not intersects(self.cord2Rect(Cord(x,y)), rect):
+                if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
                 str = piece.name[:1].upper() + piece.name[1:].lower()
                 cx, cy = self.cord2Point(Cord(x,y))
@@ -175,33 +179,33 @@ class BoardView (gtk.DrawingArea):
         r = self.cord2Rect(self.lastMove.cord0)
         for m in ms:
             context.move_to(
-                r.x+(d0[m[0]]+wh*m[0])*r.width,
-                r.y+(d0[m[1]]+wh*m[1])*r.width)
+                r[0]+(d0[m[0]]+wh*m[0])*r[2],
+                r[1]+(d0[m[1]]+wh*m[1])*r[2])
             context.rel_line_to(
-                0, -wh*r.width*m[1])
+                0, -wh*r[2]*m[1])
             context.rel_curve_to(
-                0, wh*r.width*m[1]/2.0,
-                -wh*r.width*m[0]/2.0, wh*r.width*m[1],
-                -wh*r.width*m[0], wh*r.width*m[1])
+                0, wh*r[2]*m[1]/2.0,
+                -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
+                -wh*r[2]*m[0], wh*r[2]*m[1])
             context.close_path()
         
         r = self.cord2Rect(self.lastMove.cord1)
         for m in ms:
             context.move_to(
-                r.x+d1[m[0]]*r.width,
-                r.y+d1[m[1]]*r.width)
+                r[0]+d1[m[0]]*r[2],
+                r[1]+d1[m[1]]*r[2])
             context.rel_line_to(
-                wh*r.width*m[0], 0)
+                wh*r[2]*m[0], 0)
             context.rel_curve_to(
-                -wh*r.width*m[0]/2.0, 0,
-                -wh*r.width*m[0], wh*r.width*m[1]/2.0,
-                -wh*r.width*m[0], wh*r.width*m[1])
+                -wh*r[2]*m[0]/2.0, 0,
+                -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
+                -wh*r[2]*m[0], wh*r[2]*m[1])
             context.close_path()
         
         context.set_source_rgba(.929, .831, 0, 0.8)
         context.fill_preserve()
         context.set_source_rgba(.769, 0.627, 0, 0.5)
-        context.set_line_width(sw*r.width)
+        context.set_line_width(sw*r[2])
         context.stroke()
         
         context.restore()
@@ -229,18 +233,18 @@ class BoardView (gtk.DrawingArea):
             v1x = -vy
             v1y = vx
             r = self.cord2Rect(cords[0])
-            px = r.x+r.width/2.0
-            py = r.y+r.height/2.0
-            ax = v1x*r.width*aw/2
-            ay = v1y*r.width*aw/2
+            px = r[0]+r[2]/2.0
+            py = r[1]+r[2]/2.0
+            ax = v1x*r[2]*aw/2
+            ay = v1y*r[2]*aw/2
             context.move_to(px+ax, py+ay)
-            p1x = px+(lvx-vx*ahh)*r.width
-            p1y = py+(lvy-vy*ahh)*r.width
+            p1x = px+(lvx-vx*ahh)*r[2]
+            p1y = py+(lvy-vy*ahh)*r[2]
             context.line_to(p1x+ax, p1y+ay)
-            lax = v1x*r.width*ahw/2
-            lay = v1y*r.width*ahw/2
+            lax = v1x*r[2]*ahw/2
+            lay = v1y*r[2]*ahw/2
             context.line_to(p1x+lax, p1y+lay)
-            context.line_to(px+lvx*r.width, py+lvy*r.width)
+            context.line_to(px+lvx*r[2], py+lvy*r[2])
             context.line_to(p1x-lax, p1y-lay)
             context.line_to(p1x-ax, p1y-ay)
             context.line_to(px-ax, py-ay)
@@ -249,7 +253,7 @@ class BoardView (gtk.DrawingArea):
             context.set_source_rgba(*fillc)
             context.fill_preserve()
             context.set_line_join(gtk.gdk.JOIN_ROUND)
-            context.set_line_width(asw*r.width)
+            context.set_line_width(asw*r[2])
             context.set_source_rgba(*strkc)
             context.stroke()
             context.restore()
@@ -261,12 +265,12 @@ class BoardView (gtk.DrawingArea):
         if self.bluearrow:
             drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
     
-    def redraw_canvas(self, rect=None):
+    def redraw_canvas(self, r=None):
         if self.window:
-            if not rect:
+            if not r:
                 alloc = self.get_allocation()
-                rect = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
-            self.window.invalidate_rect(rect, True)
+                r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
+            self.window.invalidate_rect(r, True)
             self.window.process_updates(True)
 
     ###############################
@@ -278,11 +282,11 @@ class BoardView (gtk.DrawingArea):
         self._active = None
         if self._selected == cord: return
         if self._selected:
-            r = self.cord2Rect(self._selected)
-            if cord: r = r.union (self.cord2Rect(cord))
-        elif cord: r = self.cord2Rect(cord)
+            r = rect(self.cord2Rect(self._selected))
+            if cord: r = r.union(rect(self.cord2Rect(cord)))
+        elif cord: r = rect(self.cord2Rect(cord))
         self._selected = cord
-        self.redraw_canvas(grow(r))
+        self.redraw_canvas(r)
     def _get_selected (self):
         return self._selected
     selected = property(_get_selected, _set_selected)
@@ -291,11 +295,11 @@ class BoardView (gtk.DrawingArea):
     def _set_hover (self, cord):
         if self._hover == cord: return
         if self._hover:
-            r = self.cord2Rect(self._hover)
-            if cord: r = r.union (self.cord2Rect(cord))
-        elif cord: r = self.cord2Rect(cord)
+            r = rect(self.cord2Rect(self._hover))
+            if cord: r = r.union(rect(self.cord2Rect(cord)))
+        elif cord: r = rect(self.cord2Rect(cord))
         self._hover = cord
-        self.redraw_canvas(grow(r))
+        self.redraw_canvas(r)
     def _get_hover (self):
         return self._hover
     hover = property(_get_hover, _set_hover)
@@ -304,11 +308,11 @@ class BoardView (gtk.DrawingArea):
     def _set_active (self, cord):
         if self._active == cord: return
         if self._active:
-            r = self.cord2Rect(self._active)
-            if cord: r = r.union (self.cord2Rect(cord))
-        elif cord: r = self.cord2Rect(cord)
+            r = rect(self.cord2Rect(self._active))
+            if cord: r = r.union(rect(self.cord2Rect(cord)))
+        elif cord: r = rect(self.cord2Rect(cord))
         self._active = cord
-        self.redraw_canvas(grow(r))
+        self.redraw_canvas(r)
     def _get_active (self):
         return self._active
     active = property(_get_active, _set_active)
@@ -387,12 +391,12 @@ class BoardView (gtk.DrawingArea):
         xc, yc, square, s = self.square
         x = (self.fromWhite and [cord.x] or [7-cord.x])[0]
         y = (self.fromWhite and [7-cord.y] or [cord.y])[0]
-        r = (xc+x*s, yc+y*s, s, s)
-        return gtk.gdk.Rectangle (*[int(v) for v in r])
+        r = (xc+x*s, yc+y*s, s)
+        return r
     
     def cord2Point (self, cord):
         r = self.cord2Rect(cord)
-        return (r.x, r.y)
+        return r[:2]
 
     def isLight (self, cord):
         x, y = cord.cords
