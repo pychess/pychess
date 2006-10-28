@@ -225,7 +225,10 @@ def runNewGameDialog (hideFC=True):
     
     anaengines = [(e,a) for e,a in engines.availableEngines \
     									if engines.getInfo((e,a))["canAnalyze"]]
-    engine, args = random.choice(anaengines[:-1])
+    if len(anaengines) > 1:
+        # We assume that the Pychess engine i the last
+	    engine, args = random.choice(anaengines[:-1])
+    else: engine, args = anaengines[0]
     window.analyzer = engine(args, "white")
     
     window.analyzer.wait()
