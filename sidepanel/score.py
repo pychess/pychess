@@ -76,7 +76,7 @@ class ScorePlot (gtk.DrawingArea):
             lw = 2.
             cr.set_line_width(lw)
             y = (self.selected-1)*self.moveHeight
-            cr.rectangle(lw/2, y-lw/2, width-lw/2, self.moveHeight+lw/2)
+            cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
             col = self.get_style().base[gtk.STATE_SELECTED]
             r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
             cr.set_source_rgba (r, g, b, .15)
