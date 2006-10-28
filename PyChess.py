@@ -223,12 +223,14 @@ def runNewGameDialog (hideFC=True):
     if hasattr(window, "game"):
         window.game.kill()
     
-    engine, args = random.choice([(e,a) for e,a in engines.availableEngines if engines.getInfo((e,a))["canAnalyze"]])
+    anaengines = [(e,a) for e,a in engines.availableEngines \
+    									if engines.getInfo((e,a))["canAnalyze"]]
+    engine, args = random.choice(anaengines[:-1])
     window.analyzer = engine(args, "white")
     
     window.analyzer.wait()
     window.analyzer.analyze()
-    log.debug("Analyzer: %s" % repr(window.analyzer))
+    log.debug("Analyzer: %s\n" % repr(window.analyzer))
     window.game = Game( window["BoardControl"].view.history,
             window.analyzer, players[0], players[1], clock, secs, gain)
             
@@ -236,16 +238,19 @@ def runNewGameDialog (hideFC=True):
     statusbar.status(None)
     
     return window.game
+
 import thread
 def engineDead (engine):
-    #TODO: Ask to save the game
     window.game.kill()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
     d.connect("response", lambda d,r: d.hide())
     d.show_all()
-                
+
+def makeLogDialogReady ():
+	System.LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))
+
 class GladeHandlers:
     
     #          Game Menu          #
@@ -522,6 +527,7 @@ class PyChess:
         
         makeSidePanelReady()
         makeFileDialogReady()
+        makeLogDialogReady()
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
