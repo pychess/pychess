@@ -67,6 +67,7 @@ class CECPEngine (Engine):
         self.proto.move(history)
         
         if self.proto.forced:
+            del self.analyzeMoves[:]
             self.movecond.release()
             return None
         

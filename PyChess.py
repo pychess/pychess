@@ -405,8 +405,6 @@ class GladeHandlers:
             System.LogDialog.show()
         else: System.LogDialog.hide()
     
-    #Case: Efter spiller 1 har rykket, tænker oraclet og ingen pile vises.
-    #  Klient slår så pilen fra og til. Nu vil pilen for det andet hold vises :(
     def on_hint_mode_activate (widget):
         def on_analyze (analyzer, moves):
             window["BoardControl"].view.greenarrow = moves[0].cords
