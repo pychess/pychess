@@ -91,6 +91,7 @@ class PyChessEngine (Engine):
     
     def runAnalyze (self, history):
         self.analyzeLock.acquire()
+        del self.analyzeMoves[:]
         his2 = history.clone()
         mvs, score = alphaBeta(his2, 1, -9999, 9999)
         self.analyzeMoves = mvs
