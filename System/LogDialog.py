@@ -23,9 +23,7 @@ height = pango.PIXELS(metrics.get_ascent()+metrics.get_descent())*24
 
 task2book = {}
 def newMessage (log, task, message, type):
-
     if not task in task2book:
-    
         view = gtk.TextView ()
         view.set_editable(False)
         vp = gtk.Viewport()
@@ -55,3 +53,12 @@ def show ():
     
 def hide ():
     w.hide()
+
+destroy_funcs = []
+def add_destroy_notify (func):
+	destroy_funcs.append(func)
+
+def _destroy_notify (widget, *args):
+	[func() for func in destroy_funcs]
+	return True
+w.connect("delete-event", _destroy_notify)
