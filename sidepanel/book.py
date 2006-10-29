@@ -23,21 +23,13 @@ def ready (window):
     board.connect("shown_changed", shown_changed)
     tv.connect("cursor_changed", selection_changed)
     tv.connect("select_cursor_row", selection_changed)
-    
-int2 = lambda x: x and int(x) or 0
-float2 = lambda x: x and float(x) or 0.0
-
-def sortbook (x, y):
-    xgames = sum(map(int2,x[2:5]))
-    ygames = sum(map(int2,y[2:5]))
-    return ygames - xgames
 
 from Utils.book import getOpenings
 
 def shown_changed (board, shown):
     global openings
     openings = getOpenings(board.history, shown)
-    openings.sort(sortbook)
+    openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
     
     board.bluearrow = None
     
@@ -57,11 +49,10 @@ def shown_changed (board, shown):
         
         i = 0
         for move, wins, draws, loses in openings:
-            wins,draws,loses = map(float2, (wins,draws,loses))
             games = wins+draws+loses
             if not games: continue
-            wins,draws,loses = map(lambda x: x/games, (wins,draws,loses))
-            store.append ([move, str(int(games)), (wins,draws,loses)])
+            wins,draws,loses = map(lambda x: x/float(games), (wins,draws,loses))
+            store.append ([move, str(games), (wins,draws,loses)])
     gobject.idle_add(helper)
 
 from Utils.Move import parseSAN, movePool

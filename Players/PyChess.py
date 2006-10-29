@@ -117,13 +117,6 @@ def moves (history):
     #            except:
     #                pass
 
-#TODO: RESIGN:
-# And now, if the best we can do is ALPHABETA_GIVEUP or worse, then it is
-# time to resign...  Unless the opponent was kind wnough to put us in
-# stalemate!
-
-#TODO: Add mating support
-#TODO: Add hash support
 def alphaBeta (history, depth, alpha, beta):
     
     foundPv = False
