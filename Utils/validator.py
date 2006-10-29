@@ -409,6 +409,9 @@ DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLF
 
 def status (history):
 
+	#Fixme: We don't test enough to know if positions are equal to the FIDE rules:
+	#Positions are not the same if a pawn that could have been captured en passant can no longer be captured or if the right to castle has been changed.
+
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION
         
