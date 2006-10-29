@@ -221,7 +221,6 @@ def runNewGameDialog (hideFC=True):
             engine = engines.availableEngines[choise-1][0]
             player = engine(engines.availableEngines[choise-1][1],color)
             player.connect("dead", engineDead)
-            player.wait() # Wait for engine to init
             player.setStrength(dfc)
             if secs:
                 player.setTime(secs, gain)
@@ -239,7 +238,6 @@ def runNewGameDialog (hideFC=True):
     else: engine, args = anaengines[0]
     window.analyzer = engine(args, "white")
     
-    window.analyzer.wait()
     window.analyzer.analyze()
     log.debug("Analyzer: %s\n" % repr(window.analyzer))
     window.game = Game( window["BoardControl"].view.history,
@@ -601,7 +599,7 @@ class PyChess:
 if __name__ == "__main__":
     PyChess()
     import signal
-    signal.signal(signal.SIGINT, gtk.main_quit)
-    signal.signal(signal.SIGCHLD, lambda *args: None)
+    #signal.signal(signal.SIGINT, gtk.main_quit)
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     gtk.gdk.threads_init()
     gtk.main()
