@@ -271,13 +271,13 @@ class CECProtocol (GObject):
             self.engine.sigint()
     
         # Illegal Move
-        if parts[0].lower().find("illegal") >= 0:
+        elif parts[0].lower().find("illegal") >= 0:
             if parts[-2] == "sd" and parts[-1].isdigit():
                 self.sd = False
                 self.setDepth (int(parts[-1]))
         
         # A Move
-        if self.history:
+        elif self.history:
             if parts[0] == "move":
                 movestr = parts[1]
             # Old Variation
@@ -292,7 +292,7 @@ class CECProtocol (GObject):
                 self.emit("move", move)
         
         # Analyzing
-        if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+        elif len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             if parts[:4] == ["0","0","0","0"]:
                 # Crafty don't analyze untill it is out of book
                 print >> self.engine, "book off"
@@ -310,27 +310,30 @@ class CECProtocol (GObject):
                 self.emit("analyze", moves)
                 
         # Offers draw
-        if parts[0] == "offer" and parts[1] == "draw":
+        elif parts[0] == "offer" and parts[1] == "draw":
             self.emit("draw_offer")
         
+        # Resigns
+        elif line.find("resign") >= 0:
+            self.emit("resign")
+        
         #Tell User Error
-        if parts[0] in ("tellusererror", "Error"):
+        elif parts[0] in ("tellusererror", "Error"):
             print "Tell User Error", repr(" ".join(parts[1:]))
         
         # Tell Somebody
-        if parts[0][:4] == "tell" and \
+        elif parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
             pass
             #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
         
-        # Resigns
-        if line.find("resign") >= 0:
-            self.emit("resign")
+        # Error
+        elif parts[0].lower() in ("illegal", "error"):
+            self.__del__()
+            self.emit('dead')
         
         # Features
-        try: j = parts.index("feature")
-        except ValueError: j = -1
-        if j >= 0:
+        elif parts.count("feature") > 0:
             for i, pair in enumerate(parts[j+1:]):
                 if pair.find("=") < 0: continue
                 key, value = pair.split("=")

@@ -70,7 +70,12 @@ class Game (GObject):
     def _run (self):
         self.run = True
         while self.run:
-            player = {"white":self.player1, "black":self.player2}[self.history.curCol()]
+            player, no = { "white": (self.player1, 0),
+                           "black": (self.player2, 1)} [self.history.curCol()]
+            
+            if self.chessclock:
+                self.chessclock.player = no
+            
             try:
                 answer = player.makeMove(self.history)
             
@@ -103,8 +108,6 @@ class Game (GObject):
             
             self.analyzer.makeMove(self.history)
             
-            if self.chessclock:
-                self.chessclock.switch()
                 
     def kill (self):
         self.run = False
