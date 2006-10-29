@@ -23,6 +23,8 @@ def getBestOpening (history):
     
 VERSION = "0.4"
 
+#TODO: Move PyChessEngine to another Process to set its priority
+
 class PyChessEngine (Engine):
     __gsignals__ = {
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
