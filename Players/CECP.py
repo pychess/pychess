@@ -471,11 +471,11 @@ class CECProtocol (GObject):
             print >> self.engine, "force"
             print >> self.engine, "setboard", fen
         else:
-            print >> self.engine, "new"
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
-            #if history.curCol() == "black":
-            #    print >> self.engine, "a2a3"
+            print >> self.engine, "force"
+            if history.curCol() == "black":
+                print >> self.engine, "a2a3"
             print >> self.engine, "edit"
             print >> self.engine, "#"
             for color in "white", "black":
@@ -488,9 +488,10 @@ class CECProtocol (GObject):
                         print >> self.engine, sign+cord
                 print >> self.engine, "c"
             print >> self.engine, "."
-            
+        
         if history.curCol() == self.color and not self.forced:
             self.gonext = True
+        
         self.history = history
     
     def setDepth (self, depth):
