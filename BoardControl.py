@@ -37,7 +37,6 @@ class BoardControl (gtk.EventBox):
         self.connect("leave_notify_event", self.leave_notify)
     
     def emit_move_signal (self, cord0, cord1):
-        #TODO: Should this be moved static to Human class?
         promotion = "q"
         if len(self.view.history) > 0 and self.view.history[-1][cord0] != None and \
                 self.view.history[-1][cord0].sign == "p" and cord1.y in [0,7]:

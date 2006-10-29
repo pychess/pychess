@@ -86,7 +86,7 @@ class Game (GObject):
                 sys.exit()
                 
             except EngineDead:
-                self.run = False
+                self.kill()
                 break
                 
             if type(answer) in (list, tuple):

@@ -21,6 +21,7 @@ class HistoryPool:
         if len(self.objects) <= 0:
             self.objects.append(History())
         his = self.objects.pop()
+        his.status = validator.FINE
         his.castling = WHITE_OO | WHITE_OOO | WHITE_CASTLED \
                      | BLACK_OO | BLACK_OOO | BLACK_CASTLED
         return his

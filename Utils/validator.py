@@ -264,6 +264,7 @@ def genQueen (cord, history):
 functions = {"Bishop":Bishop,"King":King,"Queen":Queen,"Rook":Rook,"Pawn":Pawn,"Knight":Knight}
 
 sign2gen = {"k":genKing, "q":genQueen, "r":genRook, "b":genBishop, "n":genKnight, "p":genPawn}
+#TODO: Add hash support
 def findMoves2 (history, testCheck=True):
     his2 = history.clone()
     for y, row in enumerate(his2[-1].data):

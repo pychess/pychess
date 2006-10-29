@@ -6,6 +6,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from Engine import Engine, EngineDead, EngineConnection
 from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
 from Utils.History import History
+from Utils.Cord import Cord
 from System.Log import log
 
 def isdigits (strings):
@@ -463,15 +464,34 @@ class CECProtocol (GObject):
     def setBoard (self, history):
         assert self.ready, "Still waiting for done=1"
         
-        #if self.features["setboard"]:
-        io = StringIO()
-        epd.save(io, history)
-        fen = io.getvalue()
-        if history.curCol() == self.color:
+        if self.features["setboard"]:
+            io = StringIO()
+            epd.save(io, history)
+            fen = io.getvalue()
+            print >> self.engine, "force"
+            print >> self.engine, "setboard", fen
+        else:
+            print >> self.engine, "new"
+            # Kludge to set black to move, avoiding the troublesome and now
+            # deprecated "black" command. - Equal to the one xboard uses
+            #if history.curCol() == "black":
+            #    print >> self.engine, "a2a3"
+            print >> self.engine, "edit"
+            print >> self.engine, "#"
+            for color in "white", "black":
+                for y, row in enumerate(history[-1].data):
+                    for x, piece in enumerate(row):
+                        if not piece or piece.color != color:
+                            continue
+                        sign = piece.sign.upper()
+                        cord = repr(Cord(x,y))
+                        print >> self.engine, sign+cord
+                print >> self.engine, "c"
+            print >> self.engine, "."
+            
+        if history.curCol() == self.color and not self.forced:
             self.gonext = True
-        print >> self.engine, "setboard", fen
         self.history = history
-        #FIXME: Convert fen to edit commands
     
     def setDepth (self, depth):
         assert self.ready, "Still waiting for done=1"

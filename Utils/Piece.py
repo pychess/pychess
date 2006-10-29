@@ -5,8 +5,8 @@ class Piece:
         self.sign = sign
         try:
             self.name = signToName[sign]
-        except:
-            print "SIGN WAS", sign
+        except Exception:
+            raise Exception, "Sign %s not in signToName" % sign
     
     def __repr__ (self):
         return self.color + " " + self.name

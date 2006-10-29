@@ -142,20 +142,29 @@ from Savers import epd
 from cStringIO import StringIO
 hashmap = {}
 
+from Utils.validator import FINE, DRAW, WHITEWON, BLACKWON
+
 def evaluateComplete (history, color="white"):
-    """ A detailed evaluation function, taking into account several positional factors """
+    """ A detailed evaluation function, taking into account
+        several positional factors """
 
     board = history[-1]
     if board in hashmap:
         s = hashmap[board]
     else:
-        analyzePawnStructure (history)
-        s = evalMaterial (history) + \
-            evalPawnStructure (history) + \
-            evalBadBishops (history) + \
-            evalDevelopment (history) + \
-            evalRookBonus (history) + \
-            evalKingTropism (history)
+        if history.status == FINE:
+            analyzePawnStructure (history)
+            s = evalMaterial (history) + \
+                evalPawnStructure (history) + \
+                evalBadBishops (history) + \
+                evalDevelopment (history) + \
+                evalRookBonus (history) + \
+                evalKingTropism (history)
+        elif history.status == DRAW:
+            s = 0
+        elif history.status == WHITEWON:
+            s = 9999
+        else: s = -9999
         hashmap[board] = s
 
     return (color == "white" and [s] or [-s])[0]
