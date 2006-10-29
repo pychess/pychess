@@ -130,8 +130,8 @@ def do(none):
     cond.acquire()
     global con
     con = sqlite.connect(path)
-    con.db.execute("PRAGMA default_synchronous=OFF")
-    con.db.execute("PRAGMA cache_size=10000")
+    #con.db.execute("PRAGMA default_synchronous=OFF")
+    #con.db.execute("PRAGMA cache_size=10000")
     cond.release()
 pool.start(do,None)
 
