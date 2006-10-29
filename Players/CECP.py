@@ -30,7 +30,9 @@ class CECPEngine (Engine):
     def __init__ (self, args, color):
         GObject.__init__(self)
         self.proto = CECProtocol (args[0], color)
-        self.readycond = self.proto.cond
+        
+        self.readycon = Condition()
+        self.readylist = []
         
         self.movecond = Condition()
         self.move = None
@@ -47,37 +49,57 @@ class CECPEngine (Engine):
             self.emit("dead")
         self.proto.connect("dead", dead)
         
+        self.proto.connect("ready", self.onReady)
+        
     def setStrength (self, strength):
-        if strength == 0:
-            self.proto.setPonder (False)
-            self.proto.setDepth (1)
-        elif strength == 1:
-            self.proto.setPonder (False)
-            self.proto.setDepth (4)
-        elif strength == 2:
-            self.proto.setPonder (True)
-            self.proto.setDepth (9)
+        def todo():
+            if strength == 0:
+                self.proto.setPonder (False)
+                self.proto.setDepth (1)
+            elif strength == 1:
+                self.proto.setPonder (False)
+                self.proto.setDepth (4)
+            elif strength == 2:
+                self.proto.setPonder (True)
+                self.proto.setDepth (9)
+        self.runWhenReady(todo)
+    
+    def runWhenReady (self, method, *args):
+        self.readycon.acquire()
+        if self.proto.ready:
+            method(*args)
+        else:
+            self.readylist.append((method,args))
+        self.readycon.release()
+    
+    def onReady (self, proto):
+        self.readycon.acquire()
+        if self.readylist:
+            for method, args in self.readylist:
+                method(*args)
+        self.readycon.notifyAll()
+        self.readycon.release()
     
     def setTime (self, secs, gain):
-        self.proto.setTimeControls(secs, gain)
+        self.runWhenReady(self.proto.setTimeControls, secs, gain)
     
     def setBoard (self, fen):
-        self.proto.setBoard(fen)
+        self.runWhenReady(self.proto.setBoard, fen)
     
     def hurry (self):
-    	self.proto.moveNow()
+        self.runWhenReady(self.proto.moveNow)
     
     def offerDraw (self):
-    	self.proto.offerDraw()
+        self.runWhenReady(self.proto.offerDraw)
     
     def makeMove (self, history):
         self.movecond.acquire()
-        self.proto.move(history)
+        self.runWhenReady(self.proto.move, history)
         
         if self.proto.forced:
             del self.analyzeMoves[:]
             self.movecond.release()
-            return None
+            return
         
         while not self.move:
             self.movecond.wait()
@@ -95,13 +117,13 @@ class CECPEngine (Engine):
         self.movecond.notifyAll()
         self.movecond.release()
         
-    def wait (self):
+    def _wait (self):
         if self.proto.ready:
             return
-        self.readycond.acquire()
+        self.readycon.acquire()
         while not self.proto.ready and self.proto.connected:
-            self.readycond.wait()
-        self.readycond.release()
+            self.readycon.wait()
+        self.readycon.release()
         if not self.proto.connected:
             return False
         return True
@@ -111,12 +133,14 @@ class CECPEngine (Engine):
         self.emit ("analyze", moves)
     
     def canAnalyze (self):
+        self._wait()
         return self.proto.features["analyze"]
     
     def analyze (self):
-        self.proto.analyze()
+        self.runWhenReady(self.proto.analyze)
     
     def __repr__ (self):
+        self._wait()
         return self.proto.features["myname"]
     
     def __del__ (self):
@@ -138,7 +162,8 @@ class CECProtocol (GObject):
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'ready': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     
     def __init__ (self, executable, color):
@@ -175,7 +200,7 @@ class CECProtocol (GObject):
         self.sd = True
         self.st = True
         
-        self.cond = Condition()
+        self.readycon = Condition()
         self.lock = Lock()
         self.ready = False
         self.engine = EngineConnection (self.executable)
@@ -183,15 +208,13 @@ class CECProtocol (GObject):
         
         log.debug(color+"\n", defname)
         
-        self.engine.connect("readline", lambda e, l: self.parseLine(l))
         def callback (engine):
             if self.connected:
-                self.cond.acquire()
                 self.__del__()
-                self.cond.notifyAll()
-                self.cond.release()
+                if not self.ready:
+                    self.ready = True
+                    self.emit("ready")
                 self.emit('dead')
-                
         self.engine.connect("hungup", callback)
         
         thread.start_new(self.run,())
@@ -218,13 +241,9 @@ class CECProtocol (GObject):
             elif line.find("done=0") >= 0:
                 # This'll buy you 10 more minutes
                 self.timeout = 60*10
-        
-        self.cond.acquire()
+
         self.ready = True
-        self.cond.notifyAll()
-        self.cond.release()
-        
-        #print self.features
+        self.emit("ready")
             
         while self.connected:
             line = self.engine.readline()
@@ -274,7 +293,7 @@ class CECProtocol (GObject):
         # Analyzing
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             if parts[:4] == ["0","0","0","0"]:
-            	# Crafty don't analyze untill it is out of book
+                # Crafty don't analyze untill it is out of book
                 print >> self.engine, "book off"
                 return
             his2 = self.history.clone()
@@ -305,7 +324,7 @@ class CECProtocol (GObject):
         
         # Resigns
         if line.find("resign") >= 0:
-            self.emit("resgin")
+            self.emit("resign")
         
         # Features
         try: j = parts.index("feature")

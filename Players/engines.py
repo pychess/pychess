@@ -55,7 +55,6 @@ import thread
 
 def _getInfo (engine, args):
     en = engine(args, "white")
-    en.wait() # Wait for engine to init
     info = {"name":repr(en), "canAnalyze":en.canAnalyze()}
     _addToDic((engine,args), info)
     en.__del__()

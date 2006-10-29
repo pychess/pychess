@@ -41,7 +41,6 @@ CHILD = 0
 class EngineConnection (gobject.GObject):
 
     __gsignals__ = {
-        'readline': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (str,)),
         'hungup': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
     }
 
