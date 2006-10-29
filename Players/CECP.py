@@ -300,7 +300,8 @@ class CECProtocol (GObject):
         # Tell Somebody
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-            print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
+            pass
+            #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
         
         # Resigns
         if line.find("resign") >= 0:

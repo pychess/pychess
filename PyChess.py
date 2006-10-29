@@ -160,6 +160,9 @@ def on_sidepanel_change (client, *args):
 def makeSidePanelReady ():
     start = 0 #Todo: must be controlled by gconf
     
+    # The first page is a holder as libglade doesn't like empty notebooks
+    window["panelbook"].remove_page(0)
+    
     panels = ["sidepanel/"+f for f in os.listdir("sidepanel")]
     panels = [f[:-3] for f in panels if f.endswith(".py")]
     for panel in [__import__(f, locals()) for f in panels]:
