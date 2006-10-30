@@ -126,14 +126,14 @@ cond = Condition()
 
 import sqlite, sys, os
 path = os.path.join(os.path.split(__file__)[0], "open.db")
-def do(none):
+def do (None):
     cond.acquire()
     global con
     con = sqlite.connect(path)
     #con.db.execute("PRAGMA default_synchronous=OFF")
     #con.db.execute("PRAGMA cache_size=10000")
     cond.release()
-pool.start(do,None)
+pool.start (do,None)
 
 sql1 = "select * from openings WHERE fen = '%s' AND move = '%s'"
 sql2 = "UPDATE openings SET %s = %s+1 WHERE fen = '%s' AND move = '%s'"
@@ -146,7 +146,7 @@ def toDb (fenstr, move, res):
     else: con.db.execute(sql3 % (res, fenstr, move))
     cond.release()
     
-def do ():
+def remake ():
     con.db.execute("drop table if exists openings")
     con.db.execute("create table openings( fen varchar(73), move varchar(7), \
                 wins int DEFAULT 0, draws int DEFAULT 0, loses int DEFAULT 0)")
@@ -164,10 +164,10 @@ def do ():
 
 if __name__ == "__main__":
     if not PROFILE:
-        do()
+        remake()
     else:
         import profile
-        profile.run("do()", "/tmp/pychessprofile")
+        profile.run("remake()", "/tmp/pychessprofile")
         from pstats import Stats
         s = Stats("/tmp/pychessprofile")
         s.sort_stats("time")
