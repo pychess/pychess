@@ -126,14 +126,14 @@ cond = Condition()
 
 import sqlite, sys, os
 path = os.path.join(os.path.split(__file__)[0], "open.db")
-def do (None):
+def do ():
     cond.acquire()
     global con
     con = sqlite.connect(path)
     #con.db.execute("PRAGMA default_synchronous=OFF")
     #con.db.execute("PRAGMA cache_size=10000")
     cond.release()
-pool.start (do,None)
+pool.start (do)
 
 sql1 = "select * from openings WHERE fen = '%s' AND move = '%s'"
 sql2 = "UPDATE openings SET %s = %s+1 WHERE fen = '%s' AND move = '%s'"
