@@ -135,6 +135,7 @@ class CECPEngine (Engine):
     
     def canAnalyze (self):
         self._wait()
+        assert self.proto.ready
         return self.proto.features["analyze"]
     
     def analyze (self):
@@ -269,15 +270,16 @@ class CECProtocol (GObject):
         parts = multiWs.split(line.strip())
         if self.features["sigint"]:
             self.engine.sigint()
-    
+        
         # Illegal Move
-        elif parts[0].lower().find("illegal") >= 0:
+        if parts[0].lower().find("illegal") >= 0:
             if parts[-2] == "sd" and parts[-1].isdigit():
                 self.sd = False
                 self.setDepth (int(parts[-1]))
-        
+            return
+            
         # A Move
-        elif self.history:
+        if self.history:
             if parts[0] == "move":
                 movestr = parts[1]
             # Old Variation
@@ -290,9 +292,10 @@ class CECProtocol (GObject):
                 move = self.parseMove(movestr)
                 self.history = None
                 self.emit("move", move)
+                return
         
         # Analyzing
-        elif len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+        if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             if parts[:4] == ["0","0","0","0"]:
                 # Crafty don't analyze untill it is out of book
                 print >> self.engine, "book off"
@@ -308,39 +311,44 @@ class CECProtocol (GObject):
                     his2.add(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
-                
+            return
+            
         # Offers draw
-        elif parts[0] == "offer" and parts[1] == "draw":
+        if parts[0] == "offer" and parts[1] == "draw":
             self.emit("draw_offer")
-        
+            return
+            
         # Resigns
-        elif line.find("resign") >= 0:
+        if line.find("resign") >= 0:
             self.emit("resign")
-        
+            return
+            
         #Tell User Error
-        elif parts[0] in ("tellusererror", "Error"):
+        if parts[0] in ("tellusererror", "Error"):
             print "Tell User Error", repr(" ".join(parts[1:]))
-        
+            return
+            
         # Tell Somebody
-        elif parts[0][:4] == "tell" and \
+        if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-            pass
+            return
             #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
         
         # Error
-        elif parts[0].lower() in ("illegal", "error"):
+        if parts[0].lower() in ("illegal", "error"):
             self.__del__()
             self.emit('dead')
-        
+            return
+            
         # Features
-        elif parts.count("feature") > 0:
-            for i, pair in enumerate(parts[j+1:]):
+        if parts[0] == "feature":
+            for i, pair in enumerate(parts[1:]):
                 if pair.find("=") < 0: continue
                 key, value = pair.split("=")
                 if value.startswith("\"") and value.endswith("\""):
                     value = value[1:-1]
                 elif value.startswith("\"") and not value.endswith("\""):
-                    rest = value[1:]+" "+" ".join(parts[2+i+j:])
+                    rest = value[1:]+" "+" ".join(parts[2+i:])
                     i = rest.find("\"")
                     if i >= 0:
                         value = rest[:i]
@@ -348,7 +356,7 @@ class CECProtocol (GObject):
                 else: value = int(value)
                 
                 self.features[key] = value
-        
+            return
         #self.lock.release()
         
     ########################
