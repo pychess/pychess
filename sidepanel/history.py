@@ -38,7 +38,7 @@ def ready (window):
     board = window["BoardControl"].view
     
     board.history.connect("cleared", new_history_object)
-    board.history.connect("changed", history_changed)
+    board.history.connect("added", history_changed)
     board.connect("shown_changed", shown_changed)
     
 def select_cursor_row (tree, col):

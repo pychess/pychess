@@ -77,6 +77,7 @@ class History (GObject):
     
     __gsignals__ = {
         'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'added': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
@@ -153,6 +154,8 @@ class History (GObject):
         if mvlist:
             self.movelist.append(validator.findMoves(self))
         else: self.movelist.append(None)
+        
+        self.emit("added")
         
         if mvlist:
             status, comment = validator.status(self)
