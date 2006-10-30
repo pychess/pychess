@@ -172,3 +172,4 @@ if __name__ == "__main__":
         from pstats import Stats
         s = Stats("/tmp/pychessprofile")
         s.sort_stats("time")
+        s.print_stats()
