@@ -46,6 +46,8 @@ class PyChessEngine (Engine):
         self.analyzeLock = Lock()
         self.analyzeMoves = []
         
+        self.alive = True
+        
     def makeMove (self, history):
     
         if self.analyzing:
@@ -57,12 +59,12 @@ class PyChessEngine (Engine):
         if omove: return parseSAN(history,omove)
 
         if self.secs <= 0:
-            mvs, score = alphaBeta(history, self.depth, -9999, 9999)
+            mvs, score = alphaBeta(self, history, self.depth, -9999, 9999)
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                mvs, score = alphaBeta(history, d, -9999, 9999)
+                mvs, score = alphaBeta(self, history, d, -9999, 9999)
                 if time() > endtime:
                     break
 
@@ -95,18 +97,21 @@ class PyChessEngine (Engine):
         self.analyzeLock.acquire()
         del self.analyzeMoves[:]
         his2 = history.clone()
-        mvs, score = alphaBeta(his2, 1, -9999, 9999)
+        mvs, score = alphaBeta(self, his2, 1, -9999, 9999)
         self.analyzeMoves = mvs
         self.emit("analyze", mvs)
         if len(history) == self.analyzingBoard:
-            mvs, score = alphaBeta(his2, 2, -9999, 9999)
+            mvs, score = alphaBeta(self, his2, 2, -9999, 9999)
             self.analyzeMoves = mvs
             self.emit("analyze", mvs)
         self.analyzeLock.release()
         
     def __repr__ (self):
         return "PyChess %s" % VERSION
-
+	
+	def __kill__ (self):
+		self.alive = False
+	
 def moves (history):
     #if history.movelist[-1] == None:
     for m in findMoves2(history):
@@ -119,12 +124,12 @@ def moves (history):
     #            except:
     #                pass
 
-def alphaBeta (history, depth, alpha, beta):
+def alphaBeta (engine, history, depth, alpha, beta):
     
     foundPv = False
     amove = []
 
-    if depth <= 0:
+    if depth <= 0 or not engine.alive:
         return [], eval.evaluateComplete(history, history.curCol())
 
     move = None
@@ -135,14 +140,14 @@ def alphaBeta (history, depth, alpha, beta):
         his2.add(move, mvlist=False)
         
         if foundPv:
-            mvs, val = alphaBeta(his2, depth-1, -alpha-1, -alpha)
+            mvs, val = alphaBeta(engine, his2, depth-1, -alpha-1, -alpha)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
-                mvs, val = alphaBeta(his2, depth-1, -beta, -alpha)
+                mvs, val = alphaBeta(engine, his2, depth-1, -beta, -alpha)
                 val = -val
         else:
-            mvs, val = alphaBeta(his2, depth-1, -beta, -alpha)
+            mvs, val = alphaBeta(engine, his2, depth-1, -beta, -alpha)
             val = -val
         
         hisPool.add(his2)
