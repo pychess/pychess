@@ -107,7 +107,8 @@ def load (file):
         for move in mcatch:
             movePool.add(move)
         del mcatch[:]
-            
+
+# We can't use boardhash for dbkeys, as the boardhashes vary for each time Board.py is loaded.
 def fen (history, no=-1):
     r = ""
 
