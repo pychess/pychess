@@ -250,12 +250,12 @@ def toSAN (history):
                     if piece.color != board[c0].color: continue
                     if y == c0.y and x == c0.x: continue
                     cord0 = Cord(x, y)
-                    move = movePool.pop(hisclon, cord0, move.cord1)
+                    mov = movePool.pop(hisclon, cord0, move.cord1)
                     from validator import validate
-                    if validate (move, hisclon, False):
+                    if validate (mov, hisclon, False):
                         xs.append(cord0.x)
                         ys.append(cord0.x)
-                    movePool.add(move)
+                    movePool.add(mov)
 
         if xs or ys:
             if not move.cord0.y in ys and not move.cord0.x in xs:
