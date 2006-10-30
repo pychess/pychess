@@ -13,13 +13,21 @@ from Utils.validator import validate
 from Utils import validator
 import pango
 
-def intersects (r1, r2):
-    r = r1.intersect(r2)
-    return r.width+r.height > 0
+def intersects (r0, r1):
+    w0 = r0.width + r0.x
+    h0 = r0.height + r0.y
+    w1 = r1.width + r1.x
+    h1 = r1.height + r1.y
+    return  (w1 < r1.x or w1 > r0.x) and \
+            (h1 < r1.y or h1 > r0.y) and \
+            (w0 < r0.x or w0 > r1.x) and \
+            (h0 < r0.y or h0 > r1.y)
 
 def rect (r):
     x, y, w = [int(round(v)) for v in r]
     return gtk.gdk.Rectangle (x, y, w, w)
+
+range8 = range(8)
 
 class BoardView (gtk.DrawingArea):
     
@@ -50,22 +58,32 @@ class BoardView (gtk.DrawingArea):
     def expose(self, widget, event):
         context = widget.window.cairo_create()
         r = (event.area.x, event.area.y, event.area.width, event.area.height)
-        context.rectangle(*r)
+        context.rectangle(r[0]-.5, r[1]-.5, r[2]+1, r[3]+1)
         context.clip()
-        self.draw(context, event.area)
+        
+        if False:
+            import profile
+            profile.runctx("self.draw(context, event.area)", locals(), globals(), "/tmp/pychessprofile")
+            from pstats import Stats
+            s = Stats("/tmp/pychessprofile")
+            s.sort_stats('cumulative')
+            s.print_stats()
+        else:
+            self.draw(context, event.area)
+        
         return False
     
     padding = 0
     square = None
     def draw(self, context, r):
         p = (1-self.padding)
-        r = self.get_allocation()
-        square = float(min(r.width*p, r.height*p)) -4
-        xc = float(r.width)/2 - square/2
-        yc = float(r.height)/2 - square/2 -2
+        alloc = self.get_allocation()
+        square = float(min(alloc.width, alloc.height))*p
+        xc = alloc.width/2. - square/2
+        yc = alloc.height/2. - square/2
         s = square/8
         self.square = (xc, yc, square, s)
-    
+    	
         self.drawBoard (context)
         self.drawCords (context)
         if not self.history: return
@@ -93,7 +111,7 @@ class BoardView (gtk.DrawingArea):
         
         pangoScale = float(pango.SCALE)
         
-        for n in range(8):
+        for n in range8:
             o = (self.fromWhite and [n] or [7-n])[0]
             
             layout = self.create_pango_layout("%d" % (8-o))
@@ -123,14 +141,14 @@ class BoardView (gtk.DrawingArea):
     
     def drawBoard(self, context):
         xc, yc, square, s = self.square
-        for x in range(8):
-            for y in range(8):
+        for x in range8:
+            for y in range8:
                 if x % 2 + y % 2 == 1:
                     context.rectangle(xc+x*s,yc+y*s,s,s)
         
         context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
-        context.fill_preserve()
-        context.new_path()
+        context.fill()
+        #context.new_path()
     
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
@@ -142,9 +160,10 @@ class BoardView (gtk.DrawingArea):
                     continue
                 str = piece.name[:1].upper() + piece.name[1:].lower()
                 cx, cy = self.cord2Point(Cord(x,y))
-                getPiece(piece.color+str, context, s, cx, cy)
-        context.fill_preserve()
-        context.new_path()
+                context.move_to(cx, cy)
+                getPiece(piece.color+str, context, s)
+        context.fill()
+        #context.new_path()
     
     def drawSpecial (self, context):
         used = []
@@ -159,8 +178,8 @@ class BoardView (gtk.DrawingArea):
             context.rectangle(x, y, s, s)
             style = self.isLight(cord) and self.get_style().bg or self.get_style().dark
             context.set_source_color(style[state])
-            context.fill_preserve()
-            context.new_path()
+            context.fill()
+            #context.new_path()
     
     def drawLastMove (self, context):
         if not self.lastMove: return
@@ -323,24 +342,45 @@ class BoardView (gtk.DrawingArea):
     
     _redarrow = None
     def _set_redarrow (self, cords):
+        if cords == self._redarrow: return
+        paintCords = []
+        if cords: paintCords += cords
+        if self._redarrow: paintCords += self._redarrow
+        r = rect(self.cord2Rect(paintCords[0]))
+        for cord in paintCords[1:]:
+            r = r.union(rect(self.cord2Rect(cord)))
         self._redarrow = cords
-        idle_add(self.redraw_canvas)
+        idle_add(self.redraw_canvas, r)
     def _get_redarrow (self):
         return self._redarrow
     redarrow = property(_get_redarrow, _set_redarrow)
     
     _greenarrow = None
     def _set_greenarrow (self, cords):
+        if cords == self._greenarrow: return
+        paintCords = []
+        if cords: paintCords += cords
+        if self._greenarrow: paintCords += self._greenarrow
+        r = rect(self.cord2Rect(paintCords[0]))
+        for cord in paintCords[1:]:
+            r = r.union(rect(self.cord2Rect(cord)))
         self._greenarrow = cords
-        idle_add(self.redraw_canvas)
+        idle_add(self.redraw_canvas, r)
     def _get_greenarrow (self):
         return self._greenarrow
     greenarrow = property(_get_greenarrow, _set_greenarrow)
     
     _bluearrow = None
     def _set_bluearrow (self, cords):
+        if cords == self._bluearrow: return
+        paintCords = []
+        if cords: paintCords += cords
+        if self._bluearrow: paintCords += self._bluearrow
+        r = rect(self.cord2Rect(paintCords[0]))
+        for cord in paintCords[1:]:
+            r = r.union(rect(self.cord2Rect(cord)))
         self._bluearrow = cords
-        idle_add(self.redraw_canvas)
+        idle_add(self.redraw_canvas, r)
     def _get_bluearrow (self):
         return self._bluearrow
     bluearrow = property(_get_bluearrow, _set_bluearrow)
