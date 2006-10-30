@@ -127,7 +127,9 @@ def alphaBeta (history, depth, alpha, beta):
     if depth <= 0:
         return [], eval.evaluateComplete(history, history.curCol())
 
-    move = None    
+    move = None
+    # TODO: Could this stuff be hashed,
+    # so pychess always new what to do in a certen position?
     for move in moves(history):
         his2 = history.clone()
         his2.add(move, mvlist=False)
