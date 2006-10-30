@@ -1,11 +1,17 @@
-from time import time
 
-from Utils.History import History
-from Utils.Move import movePool, parseSAN, toSAN
+import os.path
+from System import tsqlite
+path = os.path.join(os.path.split(__file__)[0], "open.db")
+tsqlite.connect(path)
 
-MAXMOVES = 14
-PROFILE = False
-FILESMAX = 0
+import atexit
+atexit.register(tsqlite.close)
+
+def getOpenings (history, no=-1):
+    return tsqlite.execSQL (
+        "select move,wins,draws,loses from openings where fen = '%s'" % fen(history, no))
+
+#	#	#	CREATION	#	#	#
 
 def stripBrackets (string):
     brackets = 0
@@ -23,11 +29,19 @@ def stripBrackets (string):
     result += string[end:]
     return result
 
-import re
-tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
-comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
-resultDic = {"1-0":0, "1/2-1/2":1, "0-1":2}
+if __name__ == "__main__":
+	MAXMOVES = 14
+	PROFILE = False
+	FILESMAX = 0
+	from Utils.History import History
+	from Utils.Move import movePool, parseSAN, toSAN
+	from time import time
+	import re
+	tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
+	movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
+	comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
+	resultDic = {"1-0":0, "1/2-1/2":1, "0-1":2}
+	
 def load (file):
     files = []
     inTags = False
@@ -54,11 +68,14 @@ def load (file):
     for i, myFile in enumerate(files):
         number = str(i).rjust(len(max))
         procent = ("%.1f%%" % (i/float(len(files))*100)).rjust(4)
-        if i == 0: estimation = "etr: N/A"
+        if i == 0:
+        	estimation = "N/A etr"
+        	speed = "N/A g/s"
         else:
             s = round((time()-start)/i*(len(files)-i))
-            estimation = ("etr: %d:%02d" % (s / 60, s % 60)).rjust(5)
-        print number, "/", max, "-", procent, "-", estimation
+            estimation = ("%d:%02d etr" % (s / 60, s % 60)).rjust(5)
+            speed = "%.2f g/s" % (i/(time()-start))
+        print "%s/%s: %s - %s (%s)" % (number, max, procent, estimation, speed)
         try:
             #These tags won't be used for a lot atm.
             tags = dict(tagre.findall(myFile[0]))
@@ -120,18 +137,6 @@ def fen (history, no=-1):
     
     return r
 
-import os.path
-from System import tsqlite
-path = os.path.join(os.path.split(__file__)[0], "open.db")
-tsqlite.connect(path)
-
-import atexit
-atexit.register(tsqlite.close)
-
-def getOpenings (history, no=-1):
-    return tsqlite.execSQL (
-        "select move,wins,draws,loses from openings where fen = '%s'" % fen(history, no))
-
 def remake ():
     tsqlite.execSQL("drop table if exists openings")
     tsqlite.execSQL("create table openings( fen varchar(73), move varchar(7), \
@@ -146,7 +151,8 @@ def remake ():
         if tsqlite.execSQL (sql1 % (fenstr, move)):
             tsqlite.execSQL (sql2 % (res, res, fenstr, move))
         else: tsqlite.execSQL (sql3 % (res, fenstr, move))
-        
+    
+    import sys
     from System.ThreadPool import pool
     for fenstr, move, score in load(open(sys.argv[1])):
         pool.start(toDb,fenstr, move, resd[score])

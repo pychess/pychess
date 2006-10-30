@@ -25,7 +25,11 @@ class DbWrapper(Thread):
                 commitneeded = False
                 res = []
                 for sql in queries:
-                    cur.execute(sql)
+                    try:
+                        cur.execute(sql)
+                    except Exception, e:
+                        print sql
+                        raise e
                     if not sql.upper().startswith("SELECT"): 
                         commitneeded = True
                     res += cur.fetchall()
@@ -49,8 +53,7 @@ def connect (path):
     wrap.start()
 
 def close ():
-    resultqueue = Queue.Queue()
-    sqlqueue.put((END_CMD, [], resultqueue))
+    sqlqueue.put((END_CMD, [], Queue.Queue()))
     # leep until all threads are stopped
     while qthreads > 0: time.sleep(0.1)
 
