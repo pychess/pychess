@@ -66,6 +66,7 @@ def makeFileDialogReady ():
     all = gtk.FileFilter()
     all.set_name(_("All Chess Files"))
     opendialog.add_filter(all)
+    opendialog.set_filter(all)
     
     custom = gtk.FileFilter()
     custom.set_name(_("Detect type automatically"))
