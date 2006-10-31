@@ -155,8 +155,6 @@ class History (GObject):
             self.movelist.append(validator.findMoves(self))
         else: self.movelist.append(None)
         
-        self.emit("added")
-        
         if mvlist:
             status, comment = validator.status(self)
             if status != validator.FINE:

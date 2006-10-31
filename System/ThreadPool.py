@@ -25,8 +25,8 @@ class ThreadPool:
                 self.cond.acquire()
                 while not self.availables:
                     self.cond.wait()
-                self.lock.acquire()
                 self.cond.release()
+                self.lock.acquire()
                 a = self.availables.pop()
         else: a = self.availables.pop()
 

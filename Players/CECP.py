@@ -134,6 +134,7 @@ class CECPEngine (Engine):
         self.emit ("analyze", moves)
     
     def canAnalyze (self):
+        return False
         self._wait()
         assert self.proto.ready
         return self.proto.features["analyze"]
@@ -383,8 +384,6 @@ class CECProtocol (GObject):
     def move (self, history):
         assert self.ready, "Still waiting for done=1"
         
-        #self.lock.acquire()
-        
         self.history = history
         
         if not history.moves or self.gonext:
@@ -399,8 +398,6 @@ class CECProtocol (GObject):
         if self.features["san"]:
             print >> self.engine, toSAN(history)
         else: print >> self.engine, toAN(history)
-        
-        #self.lock.release()
         
     def pause (self):
         assert self.ready, "Still waiting for done=1"
