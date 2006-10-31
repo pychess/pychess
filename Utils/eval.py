@@ -213,9 +213,12 @@ def evalKingTropism (history):
     
     score = 0
     
-    wky, wkx = _findKing(history[-1], "white").cords
-    bky, bkx = _findKing(history[-1], "black").cords
-    
+    try:
+        wky, wkx = _findKing(history[-1], "white").cords
+        bky, bkx = _findKing(history[-1], "black").cords
+    except:
+        return 0
+        
     for py, row in enumerate(history[-1].data):
         for px, piece in enumerate(row):
             if piece and piece.color == "white":

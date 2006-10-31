@@ -39,7 +39,7 @@ class BoardView (gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.history = History()
         self.connect("expose_event", self.expose)
-        self.history.connect_after("added", self.move)
+        self.history.connect_after("changed", self.move)
         self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         

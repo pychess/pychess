@@ -70,6 +70,9 @@ class PyChessEngine (Engine):
 
         return mvs[0]
     
+    def offerDraw (self):
+        pass #TODO
+    
     def setBoard (self, history):
         pass #No code is needed here
     
@@ -99,19 +102,23 @@ class PyChessEngine (Engine):
         his2 = history.clone()
         mvs, score = alphaBeta(self, his2, 1, -9999, 9999)
         self.analyzeMoves = mvs
-        self.emit("analyze", mvs)
+        if mvs:
+            self.emit("analyze", mvs)
+        # TODO: When PyChess is put in its own process,
+        # this should be turned into a loop, seaking deeper and deeper
         if len(history) == self.analyzingBoard:
             mvs, score = alphaBeta(self, his2, 2, -9999, 9999)
             self.analyzeMoves = mvs
-            self.emit("analyze", mvs)
+            if mvs:
+                self.emit("analyze", mvs)
         self.analyzeLock.release()
         
     def __repr__ (self):
         return "PyChess %s" % VERSION
-	
-	def __kill__ (self):
-		self.alive = False
-	
+    
+    def __kill__ (self):
+        self.alive = False
+    
 def moves (history):
     #if history.movelist[-1] == None:
     for m in findMoves2(history):
@@ -129,12 +136,15 @@ def alphaBeta (engine, history, depth, alpha, beta):
     foundPv = False
     amove = []
 
-    if depth <= 0 or not engine.alive:
+    if depth <= 0:
         return [], eval.evaluateComplete(history, history.curCol())
-
+    if not engine.alive:
+        return [], 0
+    
     move = None
     # TODO: Could this stuff be hashed,
-    # so pychess always new what to do in a certen position?
+    # so pychess always new what to do in a certain position?
+    # TODO: No kind of endgame test
     for move in moves(history):
         his2 = history.clone()
         his2.add(move, mvlist=False)
@@ -164,4 +174,5 @@ def alphaBeta (engine, history, depth, alpha, beta):
             map(movePool.add, mvs)
 
     if amove: return amove, alpha
+    if not move: return [], alpha
     return [move], alpha
