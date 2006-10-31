@@ -64,7 +64,7 @@ class PyChessEngine (Engine):
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                mvs, score = alphaBeta(self, history, d, -9999, 9999)
+                mvs, score = alphaBeta(self, history, d+1, -9999, 9999)
                 if time() > endtime:
                     break
 
