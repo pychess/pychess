@@ -134,7 +134,6 @@ class CECPEngine (Engine):
         self.emit ("analyze", moves)
     
     def canAnalyze (self):
-        return False
         self._wait()
         assert self.proto.ready
         return self.proto.features["analyze"]
