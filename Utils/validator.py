@@ -402,16 +402,15 @@ def _findKing (board, color):
             piece = board.data[y][x]
             if piece and piece.sign == "k" and piece.color == color:
                 return Cord(x,y)
-    print "Could not find %s king on board ?!" % color
-    print board
+    raise Exception, "Could not find %s king on board ?!\n%s" % (color, repr(board))
 
 FINE, DRAW, WHITEWON, BLACKWON = range(4)
 DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE = range(7)
 
 def status (history):
 
-	#Fixme: We don't test enough to know if positions are equal to the FIDE rules:
-	#Positions are not the same if a pawn that could have been captured en passant can no longer be captured or if the right to castle has been changed.
+	# FIXME: We don't test enough to know if positions are equal to the FIDE rules:
+	# Positions are not the same if a pawn that could have been captured en passant can no longer be captured or if the right to castle has been changed.
 
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION
