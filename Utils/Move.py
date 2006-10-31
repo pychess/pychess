@@ -117,8 +117,12 @@ def parseSAN (history, san):
     
     notat = san
     notat = notat.replace("0","o").replace("O","o")
-    notat = notat.replace("=","").replace("+","").replace("#","")
+    notat = notat.replace("=","").replace("+","").replace("#","").replace("x","")
     notat = notat.strip()
+    # only remove the "-" if no rokade detected
+    if notat != "o-o":
+        if notat != "o-o-o":
+            notat = notat.replace("-","")
     if notat[-1].lower() in ("q", "r", "b", "n"):
         promotion = notat[-1].lower()
         notat = notat[:-1]
