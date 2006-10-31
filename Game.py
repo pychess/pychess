@@ -105,9 +105,8 @@ class Game (GObject):
             if not self.history.add(move,True):
                 self.kill()
                 break
-            
+
             self.analyzer.makeMove(self.history)
-            
                 
     def kill (self):
         self.run = False
