@@ -18,11 +18,13 @@ def ready (window):
     tv.append_column(gtk.TreeViewColumn("Games", r, text=1))
     tv.append_column(gtk.TreeViewColumn("Win/Draw/Loss", window.BookCellRenderer(), data=2))
     
-    global board
+    global board, boardcontrol
+    boardcontrol = window["BoardControl"]
     board = window["BoardControl"].view
     board.connect("shown_changed", shown_changed)
     tv.connect("cursor_changed", selection_changed)
     tv.connect("select_cursor_row", selection_changed)
+    tv.connect("row-activated", row_activated)
 
 from Utils.book import getOpenings
 
@@ -72,3 +74,8 @@ def selection_changed (widget):
     move = parseSAN(board.history, openings[sel][0])
     board.bluearrow = move.cords
     movePool.add(move)
+
+def row_activated (widget, *args):
+	arrow = board.bluearrow
+	if arrow:
+		boardcontrol.emit_move_signal(*arrow)
