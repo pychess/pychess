@@ -21,6 +21,8 @@ from Game import Game
 from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
 import statusbar
 
+import atexit
+
 def saveGameBefore (action):
     if not window.game: return
     if window.game.history == lastSave[0]: return
@@ -574,6 +576,18 @@ class PyChess:
         makeSidePanelReady()
         makeFileDialogReady()
         makeLogDialogReady()
+        
+        win = self["window1"]
+        def do ():
+            r = win.get_allocation()
+            w, h = r.width, r.height
+            myconf.set("window_width", w)
+            myconf.set("window_height", h)
+        atexit.register(do)
+        w = myconf.get("window_width")
+        h = myconf.get("window_height")
+        if w and h:
+            self["window1"].resize(w,h)
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
