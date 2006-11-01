@@ -114,11 +114,16 @@ def makeNewGameDialogReady ():
 
     it = gtk.icon_theme_get_default()
 
+    icons = ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
+             (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
+             (_("Expert"), "stock_weather-storm", "weather-storm"))
+                
     items = []
-    for level, stock in ((_("Beginner"), "stock_weather-few-clouds"), 
-                         (_("Intermediate"), "stock_weather-cloudy"),
-                         (_("Expert"), "stock_weather-storm")):
-        image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+    for level, stock, altstock in icons:
+        try:
+            image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        except gobject.GError:
+            image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
         items += [(image, level)]
 
     for combo in (window["whiteDifficulty"], window["blackDifficulty"]):
