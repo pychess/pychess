@@ -201,7 +201,7 @@ def genPawn (cord, history):
         if board.data[y+direction][x+side] and \
            board.data[y+direction][x+side].color != history.curCol():
             yield x+side, y+direction
-        elif len(history) >= 2:
+        elif len(history) >= 2 and y in (2,5):
             newside = board.data[y][x+side]
             newdown = board.data[y+direction*2][x+side]
             oldside = history[-2].data[y][x+side]
