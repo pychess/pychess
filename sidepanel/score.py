@@ -1,6 +1,7 @@
 #TODO: Add zoom buttons
 
 import gtk, gobject
+from math import e
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
 
 class ScorePlot (gtk.DrawingArea):
@@ -52,9 +53,9 @@ class ScorePlot (gtk.DrawingArea):
         return False
     
     def draw (self, cr):
-        for score in self.scores:
-            if abs(score) > self.maxScore:
-                self.maxScore = abs(score)
+        #for score in self.scores:
+        #    if abs(score) > self.maxScore:
+        #        self.maxScore = abs(score)
         
         width = self.get_allocation().width
         height = (len(self.scores)-1)*self.moveHeight
@@ -66,7 +67,9 @@ class ScorePlot (gtk.DrawingArea):
         cr.set_source_rgb (1, 1, 1)
         cr.move_to(0, 0)
         for i, score in enumerate(self.scores):
-            x = width/2 + score*width/2/self.maxScore
+            score2 = 1-e**(-1./1000*abs(score/2.))
+            if score < 0: score2 = -score2
+            x = width/2 + score2*width/2
             y = i * self.moveHeight
             cr.line_to(x, y)
         cr.line_to(0,height)
