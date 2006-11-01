@@ -7,94 +7,317 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pychess 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-03 16:42+0200\n"
-"PO-Revision-Date: 2006-09-16 01:58+0100\n"
+"POT-Creation-Date: 2006-10-28 21:03+0200\n"
+"PO-Revision-Date: 2006-10-31 23:37+0100\n"
 "Last-Translator: Wouter Stomp <wouterstomp@yahoo.com>\n"
 "Language-Team: Danish <thomas@ahle.dk>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: glade/PyChess.glade:36
+# In the chessclock
+#: ChessClock.py:14
+msgid "White"
+msgstr "Wit"
+
+# In the chessclock
+#: ChessClock.py:14
+msgid "Black"
+msgstr "Zwart"
+
+#: Game.py:125
+msgid "Draw offer has been sent"
+msgstr "Remise aanbod verzonden"
+
+#: Game.py:135
+msgid "Couldn't call flag in game with no timecontrols"
+msgstr "Kan vlag niet claimen in spel zonder tijdslimiet"
+
+#: Game.py:142
+msgid "Couldn't call flag on player not out of time"
+msgstr "Kan vlag niet claimen want de tegenstander heeft nog tijd"
+
+#: PyChess.py:54
+msgid "Save Game"
+msgstr "Spel Opslaan"
+
+#: PyChess.py:55
+msgid "Open Game"
+msgstr "Open Spel"
+
+#: PyChess.py:62
+msgid "All Files"
+msgstr "Alle Bestanden"
+
+#: PyChess.py:67
+msgid "All Chess Files"
+msgstr "Alle Schaak Bestanden"
+
+#: PyChess.py:71
+msgid "Detect type automatically"
+msgstr "Type automatisch detecteren"
+
+#: PyChess.py:115
+msgid "Beginner"
+msgstr "Beginner"
+
+#: PyChess.py:116
+msgid "Intermediate"
+msgstr "Gevorderde"
+
+#: PyChess.py:117
+msgid "Expert"
+msgstr "Expert"
+
+#: PyChess.py:125
+msgid "Human Being"
+msgstr "Mens"
+
+#: PyChess.py:257
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>Engine, %s, is gestopt</b></big>"
+
+#: PyChess.py:258
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against another one."
+msgstr ""
+"PyChess heeft de verbinding met de schaakengine verloren, waarschijnlijk omdat deze gestopt is.\n"
+"\n"
+"U kunt proberen een nieuw spel te starten met deze engine of spelen tegen een andere."
+
+#: PyChess.py:267
+msgid "<big><b>No open game to save</b></big>"
+msgstr "<big><b>Geen open spel om op te slaan</b></big>"
+
+#: PyChess.py:268
+msgid "You are not currently playing any game pychess can save for you."
+msgstr "U speelt op dit moment geen spel dat pychess kan opslaan."
+
+#: PyChess.py:294
+msgid "a new game starts"
+msgstr "een nieuw spel start"
+
+#: PyChess.py:304
+msgid "The game ended in a draw"
+msgstr "Het spel is geeindigd in remise"
+
+#: PyChess.py:305
+msgid "White player won the game"
+msgstr "Wit heeft gewonnen"
+
+#: PyChess.py:306
+msgid "Black player won the game"
+msgstr "Zwart heeft gewonnen"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:309
+msgid "as the same position was repeated three times in a row"
+msgstr "omdat de laatste positie drie keer achter elkaar werd herhaald"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:310
+msgid "as the last 50 moves brought nothing new"
+msgstr "omdat de laatste 50 zetten"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:311
+msgid "because of stalemate"
+msgstr "door schaakmat"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:312
+msgid "as the players agreed to"
+msgstr "omdat beide spelers hebben ingestemd om"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:313
+msgid "as opponent resigned"
+msgstr "omdat de tegenstander heeft opgegeven"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:314
+msgid "as opponent ran out of time"
+msgstr "omdat de tijd van de tegenstander op was"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: PyChess.py:315
+msgid "on a mate"
+msgstr "in mat"
+
+#: PyChess.py:330
+msgid "you open a new game"
+msgstr "u opent een nieuw spel"
+
+#: PyChess.py:385
+#, python-format
+msgid "<big><b>Unknown filetype '%s'</b></big>"
+msgstr "<big><b>Onbekend bestandstype '%s'</b></big>"
+
+#: PyChess.py:386
+#, python-format
+msgid "Wasn't able to save '%s' as pychess doesn't know the format '%s'."
+msgstr "Niet gelukt om '%s' op te slaan omdat pychess het formaat '%s' niet kent."
+
+#: PyChess.py:400
+msgid "_Replace"
+msgstr "Vervangen"
+
+#: PyChess.py:401
+msgid "File exists"
+msgstr "Bestand bestaat"
+
+#: PyChess.py:403
+#, python-format
+msgid "<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>"
+msgstr "<big><b>Er bestaat al een bestand genaamd '%s'. wilt u het vervangen?</b></big>"
+
+#: PyChess.py:404
+#, python-format
+msgid "The file alredy exists in '%s'. If you replace it, its content will be overwritten."
+msgstr "Dit bestand bestaat al in '%s'. Als u het vervangt, wordt de inhoud overschreven."
+
+#: PyChess.py:423
+msgid "exit"
+msgstr "afsluiten"
+
+#: sidepanel/book.py:3
+msgid "Opening Book"
+msgstr "Openingen boek"
+
+#: sidepanel/book.py:49
+msgid ""
+"In this position,\n"
+"there is no book move."
+msgstr ""
+"In deze positie,\n"
+"is er geen zet in het boek."
+
+#: sidepanel/history.py:4
+msgid "Move History"
+msgstr "Notatie"
+
+#: sidepanel/score.py:87
+msgid "Score"
+msgstr "Score"
+
+#: Savers/epd.py:8
+msgid "Chess Position"
+msgstr "Schaakpositie"
+
+#: Savers/pgn.py:5
+msgid "Chess Game"
+msgstr "Schaakspel"
+
+#: Players/Human.py:54
+msgid "<big><b>You've got a draw offer. Accept?</b></big>"
+msgstr "<big><b>Er wordt remise aangeboden. Accepteren?</b></big>"
+
+#: Players/Human.py:55
+msgid "Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."
+msgstr "Uw tegenstander heeft remise aangeboden. Als u dit accepteert eindigt het spel met de score 1/2 - 1/2."
+
+#: glade/promotion.glade:9
+msgid "Promotion"
+msgstr "Promoveren"
+
+#: glade/promotion.glade:40
+msgid "Queen"
+msgstr "Koningin"
+
+#: glade/promotion.glade:54
+msgid "Rook"
+msgstr "Toren"
+
+#: glade/promotion.glade:67
+msgid "Bishop"
+msgstr "Loper"
+
+#: glade/promotion.glade:80
+msgid "Knight"
+msgstr "Paard"
+
+#: glade/promotion.glade:99
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>Pion waarnaar promoveren?</big></b>"
+
+#: glade/PyChess.glade:37
 msgid "_Game"
 msgstr "_Spel"
 
-#: glade/PyChess.glade:45
+#: glade/PyChess.glade:46
 msgid "_New Game"
 msgstr "_Nieuw spel"
 
-#: glade/PyChess.glade:73
+#: glade/PyChess.glade:74
 msgid "_Load Game"
 msgstr "_Laad spel"
 
-#: glade/PyChess.glade:101
+#: glade/PyChess.glade:102
 msgid "_Save Game"
 msgstr "Spel _opslaan"
 
-#: glade/PyChess.glade:123
+#: glade/PyChess.glade:124
 msgid "Save Game _As"
 msgstr "Spel opslaan _als"
 
-#: glade/PyChess.glade:164
+#: glade/PyChess.glade:165
 msgid "_Actions"
 msgstr "_Acties"
 
-#: glade/PyChess.glade:173
+#: glade/PyChess.glade:174
 msgid "_Call Flag"
-msgstr "_Call flag"
+msgstr "Vlag _claimen"
 
-#: glade/PyChess.glade:182
+#: glade/PyChess.glade:183
 msgid "_Draw"
 msgstr "_Remise aanbieden"
 
-#: glade/PyChess.glade:191
+#: glade/PyChess.glade:192
 msgid "_Resign"
 msgstr "_Opgeven"
 
-#: glade/PyChess.glade:206
-msgid "_Undo"
-msgstr "Ongedaan _maken"
+#: glade/PyChess.glade:207
+msgid "_Force to move"
+msgstr "_Zet forceren"
 
-#: glade/PyChess.glade:227
-msgid "_Pause"
-msgstr "_Pause"
-
-#: glade/PyChess.glade:238
-msgid "_Force Move"
-msgstr "_Beweging forceren"
-
-#: glade/PyChess.glade:264
+#: glade/PyChess.glade:233
 msgid "_View"
 msgstr "_Beeld"
 
-#: glade/PyChess.glade:273
+#: glade/PyChess.glade:242
 msgid "_Rotate Board"
 msgstr "_Bord draaien"
 
-#: glade/PyChess.glade:294
+#: glade/PyChess.glade:263
 msgid "_Side Panel"
 msgstr "_Zijpaneel"
 
-#: glade/PyChess.glade:311
-msgid "_Hint"
-msgstr "_Hint"
+#: glade/PyChess.glade:274
+msgid "_Log Viewer"
+msgstr "_Logboek"
 
-#: glade/PyChess.glade:325
+#: glade/PyChess.glade:291
+msgid "Show _cords"
+msgstr "Laat coordinaten zien"
+
+#: glade/PyChess.glade:301
+msgid "_Hint mode"
+msgstr "_Hint mode"
+
+#: glade/PyChess.glade:312
+msgid "Sp_y mode"
+msgstr "Spionage mode"
+
+#: glade/PyChess.glade:327
 msgid "_Help"
 msgstr "_Help"
 
-#: glade/PyChess.glade:768
-msgid "PyChess"
-msgstr ""
-
-#: glade/PyChess.glade:769
-#: glade/PyChess.glade:788
-msgid "Thomas Dybdahl Ahle"
-msgstr ""
-
 #: glade/PyChess.glade:770
-msgid "Xboard for gnome"
-msgstr ""
+msgid "Chessclient for the Gnome desktop"
+msgstr "Schaakprogramma voor de Gnome desktop"
 
 #: glade/PyChess.glade:771
 msgid ""
@@ -111,21 +334,21 @@ msgid ""
 "You should have received a copy of the GNU General Public License \n"
 "along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
 "51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
-msgstr ""
+msgstr "Dit Programma is vrije software; U kan het verspreiden en/of wijzigen onder debepalingen van de GNU Algemene Publieke Licentie, zoals uitgegeven door de FreeSoftware Foundation; oftewel versie 2 van de Licentie,of (naar vrije keuze) eenlatere versie. Dit Programma is verspreid met de hoop dat het nuttig zal zijn maar ZONDER EENDER WELKE GARANTIE; zelfs zonder de impliciete garantie van VERKOOPBAARHEID of GESCHIKTHEID VOOR EEN BEPAALD DOEL. Zie de GNU AlgemenePublieke Licentie voor meer details.U zou een kopie van de GNU Algemene Publieke Licentie ontvangen moetenhebben samen met dit Programma; indien dit niet zo is, schrijf naarde Free Software Foundation, Inc.,59 Temple Place, Suite 330, Boston, MA 02111-1307 USA"
 
 #: glade/PyChess.glade:786
 msgid "http://code.google.com/p/pychess/"
-msgstr ""
+msgstr "http://code.google.com/p/pychess/"
 
-#: glade/PyChess.glade:855
+#: glade/PyChess.glade:863
 msgid "_Don't save"
 msgstr "Niet opslaan"
 
-#: glade/PyChess.glade:904
+#: glade/PyChess.glade:912
 msgid "<b><big>Save the current game before %s?</big></b>"
 msgstr "<b><big>Huidige spel opslaan voor %s?</big></b>"
 
-#: glade/PyChess.glade:930
+#: glade/PyChess.glade:938
 msgid ""
 "It is not possible later to continue the game,\n"
 "if do don't save it."
@@ -133,118 +356,60 @@ msgstr ""
 "Het is niet mogelijk later verder te soelen,\n"
 " het spel wordt niet opgeslagen."
 
-#: glade/PyChess.glade:1000
+#: glade/PyChess.glade:1007
 msgid "New Game"
 msgstr "Nieuw spel"
 
-#: glade/PyChess.glade:1088
+#: glade/PyChess.glade:1095
 msgid "_Start Game"
 msgstr "_Start spel"
 
-#: glade/PyChess.glade:1206
-#: glade/PyChess.glade:1369
-msgid "Black Player:"
-msgstr "Zwarte speler:"
-
-#: glade/PyChess.glade:1234
-#: glade/PyChess.glade:1341
+#: glade/PyChess.glade:1220
+#: glade/PyChess.glade:1373
 msgid "White Player:"
 msgstr "Witte speler:"
 
-#: glade/PyChess.glade:1271
+#: glade/PyChess.glade:1248
+#: glade/PyChess.glade:1401
+msgid "Black Player:"
+msgstr "Zwarte speler:"
+
+#: glade/PyChess.glade:1303
 msgid "<b>Players</b>"
 msgstr "<b>Spelers</b>"
 
-#: glade/PyChess.glade:1443
+#: glade/PyChess.glade:1475
 msgid "<b>Difficulty</b>"
 msgstr "<b>Moeilijkheid</b>"
 
-#: glade/PyChess.glade:1511
+#: glade/PyChess.glade:1543
 msgid "Game has time"
 msgstr "Spel met tijd"
 
-#: glade/PyChess.glade:1557
+#: glade/PyChess.glade:1589
 msgid "Hours:"
 msgstr "Uren:"
 
-#: glade/PyChess.glade:1585
+#: glade/PyChess.glade:1617
 msgid "Minutes: "
 msgstr "Minuten:"
 
-#: glade/PyChess.glade:1613
+#: glade/PyChess.glade:1645
 msgid "Seconds: "
 msgstr "Secondes:"
 
-#: glade/PyChess.glade:1641
+#: glade/PyChess.glade:1673
 msgid "Gain:"
 msgstr "Extra:"
 
-#: glade/PyChess.glade:1778
-#: glade/PyChess.glade:2517
+#: glade/PyChess.glade:1810
 msgid "<b>Alarm</b>"
 msgstr "<b>Alarm</b>"
 
-#: glade/PyChess.glade:2645
-msgid "Promotion"
-msgstr "Promoveren"
-
-#: glade/PyChess.glade:2676
-msgid "Queen"
-msgstr "Koningin"
-
-#: glade/PyChess.glade:2690
-msgid "Rook"
-msgstr "Toren"
-
-#: glade/PyChess.glade:2703
-msgid "Bishop"
-msgstr "Loper"
-
-#: glade/PyChess.glade:2716
-msgid "Knight"
-msgstr "Paard"
-
-#: glade/PyChess.glade:2735
-msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>Pion waarnaar promoveren?</big></b>"
-
-#: sidepanel/book.py:3
-msgid "Opening Book"
-msgstr "Openingen boek"
-
-#: sidepanel/history.py:4
-msgid "Move History"
-msgstr "Notatie"
-
-#: sidepanel/players.py:3
-msgid "Player info"
-msgstr "Speler info"
-
-#: PyChess.py:54
-msgid "Beginner"
-msgstr "Beginner"
-
-#: PyChess.py:55
-msgid "Intermediate"
-msgstr "Gevorderde"
-
-#: PyChess.py:56
-msgid "Expert"
-msgstr "Expert"
-
-#: PyChess.py:64
-msgid "Human Being"
-msgstr "Mens"
-
-#: PyChess.py:126
-msgid "a new game starts"
-msgstr "een nieuw spel start"
-
-#: PyChess.py:170
-msgid "you open a new game"
-msgstr "u opent een nieuw spel"
-
-#: PyChess.py:181
-msgid "exit"
-msgstr "afsluiten"
+#~ msgid "_Undo"
+#~ msgstr "Ongedaan _maken"
+#~ msgid "_Pause"
+#~ msgstr "_Pause"
+#~ msgid "Player info"
+#~ msgstr "Speler info"
 
