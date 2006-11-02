@@ -761,7 +761,7 @@
 </widget>
 
 <widget class="GtkAboutDialog" id="aboutdialog1">
-  <property name="destroy_with_parent">True</property>
+  <property name="destroy_with_parent">False</property>
   <property name="name">PyChess 0.4</property>
   <property name="copyright">Copyright © 2006</property>
   <property name="comments" translatable="yes">Chessclient for the Gnome desktop</property>

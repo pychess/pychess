@@ -271,6 +271,15 @@ def engineDead (engine):
 def makeLogDialogReady ():
     System.LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))
 
+def makeAboutDialogReady ():
+    clb = window["aboutdialog1"].get_child().get_children()[1].get_children()[2]
+    def callback(button, *args):
+        window["aboutdialog1"].hide()
+        return True
+    clb.connect("activate", callback)
+    clb.connect("clicked", callback)
+    window["aboutdialog1"].connect("delete-event", callback)
+
 def noOpenGame ():
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>No open game to save</b></big>"))
@@ -581,6 +590,8 @@ class PyChess:
         makeSidePanelReady()
         makeFileDialogReady()
         makeLogDialogReady()
+        makeAboutDialogReady()
+        
         
         win = self["window1"]
         def do ():
