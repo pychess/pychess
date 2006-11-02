@@ -32,12 +32,12 @@ msgstr "Remisangebot wurde gesendet"
 
 #: Game.py:135
 msgid "Couldn't call flag in game with no timecontrols"
-msgstr "Konnte nicht auf Zeit reklamieren, da nicht auf Zeit gespielt wird"
+msgstr "Konnte nicht auf Zeit reklamieren, da nicht auf Zeit gespielt wird."
 
 #: Game.py:142
 msgid "Couldn't call flag on player not out of time"
 msgstr "Konnte nicht auf Zeit reklamieren. Die Zeit des Spielers ist noch nicht "
-"abgelaufen"
+"abgelaufen."
 
 #: PyChess.py:54
 #, fuzzy
@@ -128,7 +128,7 @@ msgstr "wegen dreimaliger Stellungswiederholung"
 # In the sentence "The game has (e.g. ended) ..."
 #: PyChess.py:310
 msgid "as the last 50 moves brought nothing new"
-msgstr ", weil 50 Zügen kein Bauer gezogen wurde"
+msgstr "durch die 50-Züge Regel"
 
 # In the sentence "The game has (e.g. ended) ..."
 #: PyChess.py:311
@@ -148,7 +148,7 @@ msgstr "durch Aufgabe des Gegners"
 # In the sentence "The game has (e.g. ended) ..."
 #: PyChess.py:314
 msgid "as opponent ran out of time"
-msgstr ", weil der Gegner auf Zeit verlor"
+msgstr "auf Zeit"
 
 # In the sentence "The game has (e.g. ended) ..."
 #: PyChess.py:315
