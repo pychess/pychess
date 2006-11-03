@@ -38,9 +38,8 @@ class BoardControl (gtk.EventBox):
         self.connect("leave_notify_event", self.leave_notify)
     
     def emit_move_signal (self, cord0, cord1):
-        promotion = "q"
-        if len(self.view.history) > 0 and self.view.history[-1][cord0] != None and \
-                self.view.history[-1][cord0].sign == "p" and cord1.y in [0,7]:
+        promotion = QUEEN
+        if self.view.history[-1][cord0].sign == PAWN and cord1.y in (0,7):
             res = int(self.promotionDialog.run())
             self.promotionDialog.hide()
             if res == int(gtk.RESPONSE_DELETE_EVENT):
