@@ -137,7 +137,7 @@ def alphaBeta (engine, history, depth, alpha, beta):
     amove = []
 
     if depth <= 0:
-        return [], eval.evaluateComplete(history, history.curCol())
+        return [], eval.evaluateComplete(history[-1], history.curCol())
     if not engine.alive:
         return [], 0
     

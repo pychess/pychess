@@ -12,6 +12,7 @@ from Utils.Move import Move
 from math import floor
 from BoardView import BoardView
 from System.Log import log
+from Utils.const import *
 
 class BoardControl (gtk.EventBox):
 
@@ -44,9 +45,9 @@ class BoardControl (gtk.EventBox):
             self.promotionDialog.hide()
             if res == int(gtk.RESPONSE_DELETE_EVENT):
                 return
-            promotion = ["q","r","b","n"][res]
+            promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
             
-        move = Move(self.view.history, cord0, cord1, promotion)
+        move = Move(cord0, cord1, promotion)
         self.emit("piece_moved", move)
     
     #          Selection and stuff          #
@@ -54,14 +55,14 @@ class BoardControl (gtk.EventBox):
     locked = True
     def isSelectable (self, cord):
         if self.locked: return False
-        if not self.view.history.movelist[-1]: return False
+        if not self.view.history[-1].movelist: return False
         if not cord: return False
 
         if self.view.shown != len(self.view.history)-1:
             return False
 
-        if self.view.selected in self.view.history.movelist[-1] and \
-            cord in self.view.history.movelist[-1][self.view.selected]:
+        if self.view.selected in self.view.history[-1].movelist and \
+            cord in self.view.history[-1].movelist[self.view.selected]:
             return True
         if self.view.history[-1][cord] == None:
             return False
@@ -128,7 +129,6 @@ class BoardControl (gtk.EventBox):
         pass
     #    self.view.selected = None
     #    self.view.active = None
-
 
     def on_call_flag_activate (self, widget):
         if self.locked:

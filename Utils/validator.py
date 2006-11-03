@@ -1,38 +1,30 @@
-from Utils.History import WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
 from Utils.History import hisPool
 from Utils.Move import Move, movePool
 from Utils.Cord import Cord
 from System.Log import log
+from Utils.const import *
 from time import time
 
 range8 = range(8)
 
-#functions = None
-
-def validate (move, history, testCheck=True):
+def validate (move, board, testCheck=True):
     """Will asume the first cord is an ally piece"""
     
-    board = history[-1]
-    color = board[move.cord0].color
-    
-    if move.cord0 == move.cord1:
-        return False
-    if board[move.cord1] != None and board[move.cord1].color == color:
+    if move.cord0 == move.cord1 or \
+       not board[move.cord1]:
         return False
     
-    method = board[move.cord0].name
-    #global functions
-    #if not functions: functions = globals()
-    if not functions[method](move, color, history, board):
+    method = validators[board[move.cord0].sign]
+    if not method(move, board):
         return False
     
     if testCheck:
-        if willCheck(history, move):
+        if willCheck(board, move):
             return False
         
     return True
     
-def Bishop (move, color, history, board):
+def Bishop (move, board):
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
         return False
     dx = move.cord1.x > move.cord0.x and 1 or -1
@@ -47,8 +39,7 @@ def Bishop (move, color, history, board):
             return False
     return True
 
-def genBishop (cord, history):
-    board = history[-1]
+def genBishop (cord, board):
     for dx, dy in (1,1),(-1,1),(-1,-1),(1,-1):
         x, y = cord.x, cord.y
         while True:
@@ -57,7 +48,7 @@ def genBishop (cord, history):
             if not (0 <= x <= 7 and 0 <= y <= 7):
                 break
             if board.data[y][x]:
-                if board.data[y][x].color == history.curCol():
+                if board.data[y][x].color == board.color:
                     break
                 else:
                     yield x,y
@@ -73,15 +64,15 @@ def _isclear (board, cols, rows):
 
 moveToCastling = {"e1g1": WHITE_OO, "e1c1": WHITE_OOO,
                   "e8g8": BLACK_OO, "e8c8": BLACK_OOO}
-def King (move, color, history, board):
+def King (move, board):
 
     strmove = str(move)
     if strmove in moveToCastling:
-        if not history.castling & moveToCastling[strmove]:
+        if not board.castling & moveToCastling[strmove]:
             return False
         
-        opcolor = color == "white" and "black" or "white"
-        rows = color == "black" and (7,) or (0,)
+        opcolor = 1 - board.color
+        rows = board.color == BLACK and (7,) or (0,)
         if move.cord0.x < move.cord1.x:
             cols = [4,5,6]
         else: cols = [2,3,4]
@@ -89,8 +80,8 @@ def King (move, color, history, board):
             return False
         
         cols.append(4)
-        opcolor = history.curCol() == "white" and "black" or "white"
-        if genMovesPointingAt (history, cols, rows, opcolor):
+        opcolor = 1 - board.color
+        if genMovesPointingAt (board, cols, rows, opcolor):
             return False
         
         return True
@@ -99,52 +90,50 @@ def King (move, color, history, board):
            abs(move.cord0.y - move.cord1.y) <= 1
 
 kingPlaces = (1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1),(0,1),(1,1)
-def genKing (cord, history):
-    board = history[-1]
+def genKing (cord, board):
     for dx, dy in kingPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
             continue
-        if not board.data[y][x] or board.data[y][x].color != history.curCol():
+        if not board.data[y][x] or board.data[y][x].color != board.color:
             yield x,y
             
-    if history.curCol() == "white":
-        if history.castling & WHITE_OO:
+    if board.color == WHITE:
+        if board.castling & WHITE_OO:
             if _isclear (board, (5,6), (0,)) and \
-               not genMovesPointingAt (history, (4,5,6), (0,), "black"):
+               not genMovesPointingAt (board, (4,5,6), (0,), BLACK):
                 yield 6,0
-        if history.castling & WHITE_OOO:
+        if board.castling & WHITE_OOO:
             if _isclear (board, (1,2,3), (0,)) and \
-               not genMovesPointingAt (history, (2,3,4), (0,), "black"):
+               not genMovesPointingAt (board, (2,3,4), (0,), BLACK):
                 yield 2,0
-    if history.curCol() == "black":
-        if history.castling & BLACK_OO:
+    if board.color == BLACK:
+        if board.castling & BLACK_OO:
             if _isclear (board, (5,6), (7,)) and \
-               not genMovesPointingAt (history, (4,5,6), (7,), "white"):
+               not genMovesPointingAt (board, (4,5,6), (7,), WHITE):
                 yield 6,7
-        if history.castling & BLACK_OOO:
+        if board.castling & BLACK_OOO:
             if _isclear (board, (1,2,3), (7,)) and \
-               not genMovesPointingAt (history, (2,3,4), (7,), "white"):
+               not genMovesPointingAt (board, (2,3,4), (7,), WHITE):
                 yield 2,7
 
-def Knight (move, color, history, board):
+def Knight (move, board):
     return (abs(move.cord0.x - move.cord1.x) == 1 and \
             abs(move.cord0.y - move.cord1.y) == 2) or \
            (abs(move.cord0.x - move.cord1.x) == 2 and \
             abs(move.cord0.y - move.cord1.y) == 1)
 
 knightPlaces = (1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)
-def genKnight (cord, history):
-    board = history[-1]
+def genKnight (cord, board):
     for dx, dy in knightPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
             continue
-        if not board.data[y][x] or board.data[y][x].color != history.curCol():
+        if not board.data[y][x] or board.data[y][x].color != board.color:
             yield x,y
 
-def Pawn (move, color, history, board):
-    dr = color == "white" and 1 or -1
+def Pawn (move, board):
+    dr = board.color == WHITE and 1 or -1
     #Leaves only 1 and 2 cords difference - ahead
     if not 0 < (move.cord1.y - move.cord0.y)*dr <= 2:
         return False
@@ -158,21 +147,13 @@ def Pawn (move, color, history, board):
         abs(move.cord0.x - move.cord1.x) == 1:
         #Normal
         if board[move.cord1] != None and \
-           board[move.cord1].color != color:
+           board[move.cord1].color != board.color:
             return True
         #En passant
-        if len(history) < 2 or move.cord1.y in [0,7]:
-            return False
-        newside = board[Cord(move.cord1.x, move.cord0.y)]
-        newdown = board[Cord(move.cord1.x, move.cord1.y+dr)]
-        oldside = history[-2][Cord(move.cord1.x, move.cord0.y)]
-        olddown = history[-2][Cord(move.cord1.x, move.cord1.y+dr)]
-        if newside != None and newside.sign == "p" and newside.color != color and \
-           olddown != None and olddown.sign == "p" and \
-           newdown == None and oldside == None:
-            return True
+        if board.enpassant == move.cord1:
+        	return True
     #Handles double move
-    row = color == "white" and 1 or 6
+    row = board.color == WHITE and 1 or 6
     if (move.cord1.y - move.cord0.y)*dr == 2 and \
         move.cord0.y == row and \
         board[move.cord1] == None and \
@@ -181,15 +162,14 @@ def Pawn (move, color, history, board):
         return True
     return False
 
-def genPawn (cord, history):
-    board = history[-1]
+def genPawn (cord, board):
 
-    direction = history.curCol() == "white" and 1 or -1
+    direction = board.color == WHITE and 1 or -1
     x, y = cord.x, cord.y
     if not board.data[y+direction][x]:
         yield x, y+direction
         
-    row = history.curCol() == "white" and 1 or 6
+    row = board.color == WHITE and 1 or 6
     if y == row:
         if not board.data[y+direction*2][x] and \
            not board.data[y+direction][x]:
@@ -199,19 +179,21 @@ def genPawn (cord, history):
         if not 0 <= x+side <= 7:
             continue
         if board.data[y+direction][x+side] and \
-           board.data[y+direction][x+side].color != history.curCol():
+           board.data[y+direction][x+side].color != board.color:
             yield x+side, y+direction
-        elif len(history) >= 2 and y in (2,5):
-            newside = board.data[y][x+side]
-            newdown = board.data[y+direction*2][x+side]
-            oldside = history[-2].data[y][x+side]
-            olddown = history[-2].data[y+direction*2][x+side]
-            if newside != None and newside.sign == "p" and newside.color != history.curCol() and \
-               olddown != None and olddown.sign == "p" and \
-               newdown == None and oldside == None:
-                yield x+side, y+direction
-                
-def Rook (move, color, history, board):
+        if board.enpassant:
+            yield board.enpassant.x, board.enpassant.y
+
+#len(history) >= 2 and y in (2,5):
+#newside = board.data[y][x+side]
+#newdown = board.data[y+direction*2][x+side]
+#oldside = history[-2].data[y][x+side]
+#olddown = history[-2].data[y+direction*2][x+side]
+#if newside != None and newside.sign == PAWN and newside.color != history.curCol() and \
+# olddown != None and olddown.sign == PAWN and \
+# newdown == None and oldside == None:
+     
+def Rook (move, board):
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
         return False
     
@@ -234,8 +216,7 @@ def Rook (move, color, history, board):
             return False
     return True
 
-def genRook (cord, history):
-    board = history[-1]
+def genRook (cord, board):
     for dx, dy in (1,0),(0,-1),(-1,0),(0,1):
         x, y = cord.x, cord.y
         while True:
@@ -244,41 +225,39 @@ def genRook (cord, history):
             if not (0 <= x <= 7 and 0 <= y <= 7):
                 break
             if board.data[y][x]:
-                if board.data[y][x].color == history.curCol():
+                if board.data[y][x].color == board.color:
                     break
                 else:
                     yield x,y
                     break
             yield x,y
 
-def Queen (move, color, history, board):
-    return Rook (move, color, history, board) or \
-           Bishop (move, color, history, board)
+def Queen (move, board):
+    return Rook (move, board) or \
+           Bishop (move, board)
 
-def genQueen (cord, history):
-    for move in genRook (cord,history):
+def genQueen (cord, board):
+    for move in genRook (cord, board):
         yield move
-    for move in genBishop (cord,history):
+    for move in genBishop (cord, board):
         yield move
 
-functions = {"Bishop":Bishop,"King":King,"Queen":Queen,"Rook":Rook,"Pawn":Pawn,"Knight":Knight}
+validators = [King, Queen, Rook, Bishop, Knight, Pawn]
+sign2gen = [genKing, genQueen, genRook, genBishop, genKnight, genPawn]
 
-sign2gen = {"k":genKing, "q":genQueen, "r":genRook, "b":genBishop, "n":genKnight, "p":genPawn}
-
-def findMoves2 (history, testCheck=True):
-    his2 = history.clone()
-    for y, row in enumerate(his2[-1].data):
+def findMoves2 (board, testCheck=True):
+    for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if not piece: continue
-            if piece.color != his2.curCol(): continue
+            if piece.color != board.color: continue
             cord0 = Cord(x,y)
-            for xy in sign2gen[piece.sign](cord0,history):
-                move = movePool.pop(his2, cord0, Cord(*xy))
-                if not testCheck or not willCheck(his2, move):
+            for xy in sign2gen[piece.sign](cord0,board):
+                move = movePool.pop(cord0, Cord(*xy))
+                if not testCheck or not willCheck(board, move):
                     yield move
                 else: movePool.add(move)
 
-def _getLegalMoves (history, cord, testCheck):
+def _getLegalMoves (board, cord, testCheck):
     cords = []
     for row in range8:
         for col in range8:
@@ -287,17 +266,17 @@ def _getLegalMoves (history, cord, testCheck):
                     cord.y == row or cord.x == col or \
                     abs(cord.y - row) == abs(cord.x - col):
                 cord1 = Cord(col, row)
-                move = movePool.pop(history, cord, cord1)
-                if validate (move, history, testCheck):
+                move = movePool.pop(cord, cord1)
+                if validate (move, board, testCheck):
                     cords.append(cord1)
                 movePool.add(move)
     return cords
 
-def findMoves (history):
+def findMoves (board):
     #t = time()
     
     moves = {}
-    for move in findMoves2(history, True):
+    for move in findMoves2(board, True):
         c0, c1 = move.cords
         if c0 in moves:
             moves[c0].append(c1)
@@ -321,17 +300,15 @@ def findMoves (history):
     
     return moves
 
-def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
+def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
     #if sign:
     #    print "search", cord, color, sign, r, c
     #    print "movelist", history.movelist
     #    import sys
     #    sys.stdout.write(str(history[-1]))
-    board = history[-1]
-    
-    if history.movelist[-1] != None:
-    
-        for cord0, cord1s in history.movelist[-1].iteritems():
+
+    if board.movelist != None:
+        for cord0, cord1s in board.movelist.iteritems():
             piece = board[cord0]
             if color and piece.color != color: continue
             if sign and piece.sign != sign: continue
@@ -353,7 +330,7 @@ def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
                 if r and y != r: continue
                 if c and x != c: continue
                 cord1 = Cord(x,y)
-                moves = _getLegalMoves(history,cord1,False)
+                moves = _getLegalMoves(board,cord1,False)
                 if cord in moves:
                     cords.append(cord1)
         
@@ -362,14 +339,13 @@ def getMovePointingAt (history, cord, color=None, sign=None, r=None, c=None):
         
         elif len(cords) > 1:
             for cord1 in cords:
-                moves = _getLegalMoves(history,cord1,True)
+                moves = _getLegalMoves(board,cord1,True)
                 if cord in moves:
                     return cord1
             
         else: return None
 
-def genMovesPointingAt (history, cols, rows, color, testCheck=False):
-    board = history[-1]
+def genMovesPointingAt (board, cols, rows, color, testCheck=False, draw=False):
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if piece == None: continue
@@ -377,22 +353,20 @@ def genMovesPointingAt (history, cols, rows, color, testCheck=False):
             cord0 = Cord(x,y)
             for r in rows:
                 for c in cols:
-                    move = movePool.pop(history, cord0, Cord(c,r))
-                    if validate (move, history, testCheck):
+                    move = movePool.pop(cord0, Cord(c,r))
+                    if draw: print move
+                    if validate (move, board, testCheck):
                         return move
                     else: movePool.add(move)
 
-def willCheck (history, move):
-    history = history.clone()
-    history.add(move, mvlist=False)
-    check = isCheck(history, history.curCol() == "white" and "black" or "white")
-    hisPool.add(history)
+def willCheck (board, move):
+    board2 = board.move(move)
+    check = isCheck(board2, board.color)
     return check
 
-def isCheck (history, color):
-    opcolor = color == "white" and "black" or "white"
-    cord = _findKing(history[-1], color)
-    if genMovesPointingAt(history, (cord.x,), (cord.y,), opcolor):
+def isCheck (board, who):
+    cord = _findKing(board, who)
+    if genMovesPointingAt(board, (cord.x,), (cord.y,), 1-who):
         return True
     return False
 
@@ -400,31 +374,33 @@ def _findKing (board, color):
     for x in range8:
         for y in range8:
             piece = board.data[y][x]
-            if piece and piece.sign == "k" and piece.color == color:
+            if piece and piece.sign == KING and piece.color == color:
                 return Cord(x,y)
-    raise Exception, "Could not find %s king on board ?!\n%s" % (color, repr(board))
-
-FINE, DRAW, WHITEWON, BLACKWON = range(4)
-DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE = range(7)
+    raise Exception, "Could not find %s king on board ?!\n%s" % \
+            (reprColor[board.color], repr(board))
 
 def status (history):
 
 	# FIXME: We don't test enough to know if positions are equal to the FIDE rules:
-	# Positions are not the same if a pawn that could have been captured en passant can no longer be captured or if the right to castle has been changed.
+	# Positions are not the same if:
+	# * a pawn that could have been captured,
+	# * en passant can no longer be captured
+	# * the right to castle has been changed.
 
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION
-        
-    if history.fifty >= 100:
-        return DRAW, DRAW_50MOVES
-        
-    if len(history.movelist[-1]) == 0:
     
-        if isCheck(history, history.curCol()):
-            if history.curCol() == "white":
+    board = history[-1]
+    
+    if board.fifty >= 100:
+        return DRAW, DRAW_50MOVES
+    
+    if len(board.movelist) == 0:
+        if isCheck(board, board.color):
+            if board.color == WHITE:
                 return BLACKWON, WON_MATE
             else: return WHITEWON, WON_MATE
             
         return DRAW, DRAW_STALEMATE
         
-    return FINE, None
+    return RUNNING, None

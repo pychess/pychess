@@ -8,8 +8,7 @@ from Utils.eval import evaluateComplete
 #from Utils.book import getBestOpening, getOpenings
 
 from Players.Engine import EngineDead
-from Utils.validator import FINE, DRAW, WHITEWON, BLACKWON
-from Utils.validator import DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
+from Utils.const import *
 
 from statusbar import status
 
@@ -70,8 +69,8 @@ class Game (GObject):
     def _run (self):
         self.run = True
         while self.run:
-            player, no = { "white": (self.player1, 0),
-                           "black": (self.player2, 1)} [self.history.curCol()]
+            player, no = { WHITE: (self.player1, 0),
+                           BLACK: (self.player2, 1)} [self.history.curCol()]
             
             if self.chessclock:
                 self.chessclock.player = no
@@ -118,7 +117,7 @@ class Game (GObject):
     def _action (self, player, action):
 
         if action == player.RESIGNATION:
-            p = player == self.player2 and WHITEWON or BLACKWON
+            p = player == self.player1 and BLACKWON or WHITEWON
             self.emit("game_ended", p, WON_RESIGN)
             
         elif action == player.DRAW_OFFER:
@@ -142,7 +141,7 @@ class Game (GObject):
                 status(_("Couldn't call flag on player not out of time"), True)
                 
     def _get_active_player (self):
-        return self.history.curCol() == "white" and self.player1 or self.player2
+        return self.history.curCol() == WHITE and self.player1 or self.player2
     activePlayer = property(_get_active_player)
 
     def _get_players (self):

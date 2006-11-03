@@ -7,6 +7,7 @@ from Engine import Engine, EngineDead, EngineConnection
 from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
 from Utils.History import History
 from Utils.Cord import Cord
+from Utils.const import *
 from System.Log import log
 
 def isdigits (strings):
@@ -208,7 +209,7 @@ class CECProtocol (GObject):
         self.engine = EngineConnection (self.executable)
         self.connected = True
         
-        log.debug(color+"\n", defname)
+        log.debug(reprColor[color]+"\n", defname)
         
         def callback (engine):
             if self.connected:
@@ -255,14 +256,14 @@ class CECProtocol (GObject):
     ########################
     
     def parseMove (self, movestr, history=None):
-        if not history: history=self.history
+        if not history: history = self.history
         if self.features["san"]:
-            return parseSAN(history, movestr)
+            return parseSAN(history[-1], movestr)
         else:
-            try: return parseAN(history, movestr)
+            try: return parseAN(history[-1], movestr)
             except:
-                try: return parseLAN(history, movestr)
-                except: return parseSAN(history, movestr)
+                try: return parseLAN(history[-1], movestr)
+                except: return parseSAN(history[-1], movestr)
     
     def parseLine (self, line):
         #self.lock.acquire()
@@ -395,8 +396,8 @@ class CECProtocol (GObject):
         
         move = history.moves[-1]
         if self.features["san"]:
-            print >> self.engine, toSAN(history)
-        else: print >> self.engine, toAN(history)
+            print >> self.engine, toSAN(history[-2], history[-1], history.moves[-1])
+        else: print >> self.engine, toAN(history[-2], history.moves[-1])
         
     def pause (self):
         assert self.ready, "Still waiting for done=1"
@@ -443,7 +444,7 @@ class CECProtocol (GObject):
         assert self.ready, "Still waiting for done=1"
         
         if self.features["time"]:
-            if self.color == "white":
+            if self.color == WHITE:
                 print >> self.engine, "time", whitetime
                 print >> self.engine, "otim", blacktime
             else:
@@ -481,16 +482,16 @@ class CECProtocol (GObject):
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
             print >> self.engine, "force"
-            if history.curCol() == "black":
+            if history.curCol() == BLACK:
                 print >> self.engine, "a2a3"
             print >> self.engine, "edit"
             print >> self.engine, "#"
-            for color in "white", "black":
+            for color in WHITE, BLACK:
                 for y, row in enumerate(history[-1].data):
                     for x, piece in enumerate(row):
                         if not piece or piece.color != color:
                             continue
-                        sign = piece.sign.upper()
+                        sign = reprSign[piece.sign]
                         cord = repr(Cord(x,y))
                         print >> self.engine, sign+cord
                 print >> self.engine, "c"

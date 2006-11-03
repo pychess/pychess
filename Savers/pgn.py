@@ -1,6 +1,6 @@
 from Utils.History import History
 from Utils.Move import Move, parseSAN, toSAN
-from Utils.validator import FINE, DRAW, WHITEWON, BLACKWON
+from Utils.const import *
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -18,7 +18,7 @@ def save (file, history):
     if not name:
         name = userdata.pw_name
     
-    result = {FINE:"*", DRAW:"1/2-1/2", WHITEWON:"1-0", BLACKWON:"0-1"}[history.status]
+    result = reprResult[history.status]
     
     # TODO: get some more calculated values here
     print >> file, '[Event "Local Game"]' #Event: the name of the tournament or match event.
@@ -55,7 +55,7 @@ def save (file, history):
         # increment halfmoves
         halfMoves += 1
     
-    if history.status != FINE:
+    if history.status != RUNNING:
         #FIXME: This don't work with wordwrap
         file.write(result)
     
