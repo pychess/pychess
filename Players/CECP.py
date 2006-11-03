@@ -228,18 +228,24 @@ class CECProtocol (GObject):
         print >> self.engine, "protover 2"
         self.nopost() # Mostly a service to the "Faile" engine
         
+        # The XBoard/CECP doc says 2 seconds, but it is acually quite a long time.
+        # Perhaps we could measure how long it normaly takes,
+        # and then scale it down for later calls.
         self.timeout = 2
         self.start = time.time()
         
         while self.connected:
             now = time.time()
             if now >= self.start+self.timeout:
+                print "timeout broke it", self.features["myname"]
                 break
             line = self.engine.readline(self.start+self.timeout-now)
-            if not line:
+            if line == None:
+                print "notline broke it", self.features["myname"]
                 break # We've probably met the select timeout
             self.parseLine(line)
             if line.find("done=1") >= 0:
+                print "done broke it", self.features["myname"]
                 break
             elif line.find("done=0") >= 0:
                 # This'll buy you 10 more minutes
@@ -523,7 +529,7 @@ class CECProtocol (GObject):
         print >> self.engine, "level %d %s %d" % (moves, s, increment)
     
     def analyze (self):
-        if self.features["analyze"]:
-            self.force()
-            self.post()
-            print >> self.engine, "analyze"
+        #if self.features["analyze"]:
+        self.force()
+        self.post()
+        print >> self.engine, "analyze"

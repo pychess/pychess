@@ -73,19 +73,26 @@ class EngineConnection (gobject.GObject):
                 return line
             
         while True:
-            try:
-                rlist, _, _ = select.select([self.fd], [], [], timeout)
-                assert rlist
-            except:
-                return None
+            while True:
+                try:
+                    rlist, _, _ = select.select([self.fd], [], [], timeout)
+                except select.error, error: 
+                    if error.args[0] == 4: #Interupt
+                        continue
+                    raise
+                break
                 
+            if not rlist:
+                # We have reached timeout
+                return None
+            
             try:
                 data = os.read(self.fd, rlist[0])
             except OSError, error:
                 if error.errno in (5, 9): # ioerrro, file-descriptor error
                     return None
                 else: raise
-                
+            
             self.buffer += data.replace("\r\n","\n").replace("\r","\n")
             i = self.buffer.find("\n")
             if i < 0: continue
