@@ -1,4 +1,4 @@
-
+from Utils.const import *
 import os.path
 from System import tsqlite
 path = os.path.join(os.path.split(__file__)[0], "open.db")
@@ -101,7 +101,7 @@ def load (file):
             res = resultDic[tags["Result"]]
             if epd.endswith("b"): res = 2-res
             history.add(m, False)
-            yield epd, toSAN(history), res
+            yield epd, toSAN(history[-2], history[-1], history.moves[-1]), res
             mcatch.append(m)
         history.reset(False)
         for move in mcatch:
@@ -113,7 +113,7 @@ def fen (history, no=-1):
     r = ""
 
     pieces = history[no].data
-    sign = lambda p: p.color == "white" and p.sign.upper() or p.sign
+    sign = lambda p: p.color == WHITE and reprSign[p.sign][0] or reprSign[p.sign].lower()
     for i in range(len(pieces))[::-1]:
         row = pieces[i]
         empty = 0

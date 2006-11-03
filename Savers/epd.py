@@ -4,6 +4,7 @@ from Utils.Board import Board
 from Utils.Piece import Piece
 from Utils.Move import Move
 from Utils import validator
+from Utils.const import *
 
 __label__ = _("Chess Position")
 __endings__ = "epd", "fen"
@@ -12,7 +13,7 @@ def save (file, history):
     """Saves history to file"""
     
     pieces = history[-1].data
-    sign = lambda p: p.color == "white" and p.sign.upper() or p.sign
+    sign = lambda p: p.color == WHITE and reprSign[p.sign][0] or reprSign[p.sign][0].lower()
     for i in range(len(pieces))[::-1]:
         row = pieces[i]
         empty = 0
@@ -31,29 +32,27 @@ def save (file, history):
             file.write("/")
     file.write(" ")
     
-    file.write(history.curCol()[:1])
+    file.write(history.curCol() == WHITE and "w" or "b")
     file.write(" ")
     
     if history.castling == 0:
         file.write("-")
     else:
-        if history.castling & WHITE_OO:
+        if history[-1].castling & WHITE_OO:
             file.write("K")
-        if history.castling & WHITE_OOO:
+        if history[-1].castling & WHITE_OOO:
             file.write("Q")
-        if history.castling & BLACK_OO:
+        if history[-1].castling & BLACK_OO:
             file.write("k")
-        if history.castling & BLACK_OOO:
+        if history[-1].castling & BLACK_OOO:
             file.write("q")
     file.write(" ")
     
-    if len(history) >= 2:
-        move = history.moves[-1]
-        if abs(move.cord0.y - move.cord1.y) == 2 and \
-                history[-1][move.cord1].sign == "p":
-            file.write(str(Cord(move.cord0.x,(move.cord0.y+move.cord1.y)/2)))
-            return
-    file.write("-")
+    if history[-1].enpassant:
+    	file.write(repr(history[-1].enpassant))
+    else:
+	    file.write("-")
+
     #Closing the file prevents us from using StringIO
     #file.close()
     
@@ -79,19 +78,20 @@ def load (file, history):
             if c.isdigit():
                 rows[-1] += [None]*int(c)
             else:
-                color = c.islower() and "black" or "white"
+                color = c.islower() and BLACK or WHITE
                 rows[-1].append(Piece(color, c.lower()))
     rows.reverse()
     board = Board(rows)
     
     starter = data[1].lower()
+    startc = starter == "b" and WHITE or BLACK
     
     if data[3] != "-":
-        if history.curCol()[0] == starter:
-            history.setStartingColor("black")
+        if history.curCol() == startc:
+            history.setStartingColor(BLACK)
     
         c = Cord(data[3])
-        dy = starter == "w" and -1 or 1
+        dy = startc == WHITE and -1 or 1
         lastb = board.clone()
         c0 = Cord(c.x,c.y-dy)
         c1 = Cord(c.x,c.y+dy)
@@ -102,8 +102,8 @@ def load (file, history):
         history.add(Move(history,c0,c1), mvlist=True)
 
     else:
-        if history.curCol()[0] != starter:
-            history.setStartingColor("black")
+        if history.curCol() != startc:
+            history.setStartingColor(BLACK)
             
         history.boards = [board]
         history.movelist.append(validator.findMoves(history))

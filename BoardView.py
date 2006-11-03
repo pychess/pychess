@@ -4,7 +4,7 @@ import pygtk
 pygtk.require("2.0")
 import gtk, gtk.gdk, re
 from gobject import *
-from gfx.Pieces import piece as getPiece
+from gfx.Pieces import drawPiece
 from Utils.History import History
 from Utils.Cord import Cord
 from Utils.Move import Move
@@ -158,10 +158,9 @@ class BoardView (gtk.DrawingArea):
                 if not piece: continue
                 if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
-                str = piece.name[:1].upper() + piece.name[1:].lower()
                 cx, cy = self.cord2Point(Cord(x,y))
                 context.move_to(cx, cy)
-                getPiece(piece.color+str, context, s)
+                drawPiece(piece, context, s)
         context.fill()
         #context.new_path()
     

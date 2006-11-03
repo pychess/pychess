@@ -52,9 +52,10 @@ def _addToDic (key, value):
     diclock.release()
 
 import thread
+from Utils.const import *
 
 def _getInfo (engine, args):
-    en = engine(args, "white")
+    en = engine(args, WHITE)
     info = {"name":repr(en), "canAnalyze":en.canAnalyze()}
     _addToDic((engine,args), info)
     en.__del__()

@@ -1,18 +1,17 @@
-signToName = {"b":"Bishop","k":"King","n":"Knight","p":"Pawn","q":"Queen","r":"Rook"}
+from const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
+from const import reprSign, reprColor
+
+pieceName = ["King", "Queen", "Rook", "Bishop", "Knight", "Pawn"]
+
 class Piece:
     def __init__ (self, color, sign):
         self.color = color
         self.sign = sign
-        try:
-            self.name = signToName[sign]
-        except Exception:
-            raise Exception, "Sign %s not in signToName" % sign
     
     def __repr__ (self):
-        return self.color + " " + self.name
+        return "<%s %s>" % (reprColor[self.color], pieceName[self.name])
 
     def __eq__ (self, other):
-        return  type(self) == type(other) and \
-                self.__class__ == other.__class__ and \
+        return  isinstance(other, Piece) and \
                 self.color == other.color and \
                 self.sign == other.sign
