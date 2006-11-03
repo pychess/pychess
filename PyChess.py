@@ -12,6 +12,7 @@ gettext.install("pychess",localedir="lang",unicode=1)
 gtk.glade.bindtextdomain("pychess","lang")
 gtk.glade.textdomain("pychess")
 
+from Utils.const import *
 from Players import engines
 from Players.Human import Human
 from System import myconf
@@ -221,8 +222,8 @@ def runNewGameDialog (hideFC=True):
         myconf.set(widget, v)
         
     players = []
-    for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty","white"),
-                              ("blackPlayerCombobox","blackDifficulty","black")):
+    for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty",WHITE),
+                              ("blackPlayerCombobox","blackDifficulty",BLACK)):
         choise = window[box].get_active()
         dfc = window[dfcbox].get_active()
         if choise != 0:
@@ -244,7 +245,7 @@ def runNewGameDialog (hideFC=True):
         # We assume that the Pychess engine i the last
         engine, args = random.choice(anaengines[:-1])
     else: engine, args = anaengines[0]
-    window.analyzer = engine(args, "white")
+    window.analyzer = engine(args, WHITE)
     
     window.analyzer.analyze()
     log.debug("Analyzer: %s\n" % repr(window.analyzer))

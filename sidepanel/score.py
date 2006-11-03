@@ -117,7 +117,7 @@ def history_cleared (history):
 from Utils.eval import evaluateComplete
 
 def history_changed (history):
-    points = evaluateComplete(history)
+    points = evaluateComplete(history[-1])
     plot.addScore(points)
     #adj = __widget__.get_hadjustment()
     #adj.set_value(adj.get_property("upper"))

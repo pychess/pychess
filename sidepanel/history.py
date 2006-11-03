@@ -89,7 +89,7 @@ def history_changed (history):
         idle_add(numbers.get_model().append, [num])
 
     view = len(history) & 1 and right or left
-    notat = toSAN(history)
+    notat = toSAN(history[-2], history[-1], history.moves[-1])
 
     def todo():
         view.get_model().append([notat])

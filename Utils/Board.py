@@ -2,60 +2,112 @@ import sys
 from Utils.Piece import Piece
 from Utils.Cord import Cord
 from System.Log import log
-from copy import copy
+from Utils.const import *
+from Utils import validator
 
-def clone2dArray (array):
-    l = []
-    for row in array:
-        l.append([])
-        for v in row:
-            l[-1].append(v)
-    return l
-
-# In a future release the zobrit table might be used with extra castling etc. flags
-# This would be done to move parts like that from history into Board, and thereby reduce history.clone calls.
-
-# Somepeople find 64bit better
+# Somepeople find 64bit better, but python hash only supports int
 zobritMax = 2**31-1
 from random import randint
 zobrit = []
-for sign in ("k","q","r","b","n","p"):
+for piece in (WHITE, BLACK):
     zobrit.append([])
-    for color in ("white", "black"):
+    for color in (KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN):
         zobrit[-1].append([])
         for x in range(8):
             zobrit[-1][-1].append([])
             for y in range(8):
                 zobrit[-1][-1][-1].append(randint(0,zobritMax))
 
-sign2int = {"k":0,"q":1,"r":2,"b":3,"n":4,"p":5}
-color2int = {"white":0,"black":1}
+def rm (var, opp):
+    if var & opp:
+        return var ^ opp
+    return var
+
+a1 = Cord('a1')
+h1 = Cord('h1')
+a8 = Cord('a8')
+h8 = Cord('h8')
 
 class Board:
-    
     def __init__ (self, array):
         self.data = array
+        self.enpassant = None
+        self.movelist = None
+        self.color = WHITE
+        self.castling = WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO
+        self.status = RUNNING
+        self.fifty = 0
         self.myhash = 0
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 if not piece: continue
-                self.myhash ^= zobrit[sign2int[piece.sign]][color2int[piece.color]][x][y]
+                self.myhash ^= zobrit[piece.color][piece.sign][x][y]
     
-    def move (self, move):
+    def move (self, move, mvlist=False):
         board = self.clone()
+        board.movelist = None
         cord0, cord1 = move.cords
         
         p = board[cord0]
-        board.myhash = self.myhash ^ zobrit[sign2int[p.sign]][color2int[p.color]][cord0.x][cord0.y]
-        board.myhash = self.myhash ^ zobrit[sign2int[p.sign]][color2int[p.color]][cord1.x][cord1.y]
+        board.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
+        board.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
         
-        board[cord1] = board[cord0]
+        if p.sign == KING:
+            r = cord0.y
+            if cord0.x - cord1.x == -2:
+                board.data[r][5] = board.data[r][7]
+                board.data[r][7] = None
+            elif cord0.x - cord1.x == 2:
+                board.data[r][3] = board.data[r][0]
+                board.data[r][0] = None
+        
+        elif p.sign == PAWN and cord0.y in (3,4):
+            if cord0.x != cord1.x and board[cord1] == None:
+                board.data[cord1.x][cord0.y] = None
+        
+        board[cord1] = p
         board[cord0] = None
-        if move.enpassant:
-            board[move.enpassant] = None
-        if move.castling:
-            board[move.castling[1]] = board[move.castling[0]]
-            board[move.castling[0]] = None
+        board.color = 1 - self.color
+        
+        if board[cord1].sign == KING:
+            if abs(cord0.x - cord1.x) == 2:
+                if board[cord1].color == WHITE:
+                    board.castling |= WHITE_CASTLED
+                    board.castling = rm(board.castling, WHITE_OO)
+                    board.castling = rm(board.castling, WHITE_OOO)
+                else:
+                    board.castling |= BLACK_CASTLED
+                    board.castling = rm(board.castling, BLACK_OO)
+                    board.castling = rm(board.castling, BLACK_OOO)
+            else:
+                if board[cord1].color == WHITE:
+                    board.castling = rm(board.castling, WHITE_OO)
+                    board.castling = rm(board.castling, WHITE_OOO)
+                else:
+                    board.castling = rm(board.castling, BLACK_OO)
+                    board.castling = rm(board.castling, BLACK_OOO)
+        
+        elif board[cord1].sign == ROOK:
+            if board[cord1].color == WHITE:
+                if cord0 == a1: board.castling =   rm(board.castling, WHITE_OOO)
+                elif cord0 == h1: board.castling = rm(board.castling, WHITE_OO)
+            else:
+                if cord0 == a8: board.castling = rm(board.castling, BLACK_OOO)
+                elif cord0 == h8: board.castling = rm(board.castling, BLACK_OO)
+        
+        elif board[cord1].sign == PAWN and abs(cord0.y - cord1.y) == 2:
+            self.enpassant = Cord(cord0.x, (cord0.y+cord1.y)/2)
+        
+        else: self.enpassant = None
+        
+        iscapture = self[cord1] != None
+        if iscapture or board[cord1].sign != PAWN:
+            board.fifty += 1
+        else: board.fifty = 0
+        
+        if mvlist:
+            board.movelist = validator.findMoves(board)
+                
         if not board[cord1]: log.warn("How is this move possible? "+str(move))
         if board[cord1] and board[cord1].sign == "p" and cord1.y in [0,7]:
             board[cord1] = Piece(board[cord1].color, move.promotion)
@@ -82,8 +134,8 @@ class Board:
             row = self.data[r]
             for piece in row:
                 if piece:
-                    sign = piece.sign
-                    sign = piece.color == "white" and sign.upper() or sign.lower()
+                    sign = reprSign[piece.sign][0]
+                    sign = piece.color == WHITE and sign.upper() or sign.lower()
                     b += sign
                 else: b += "."
                 b += " "
@@ -91,9 +143,10 @@ class Board:
         return b
     
     def __eq__ (self, other):
-        if type(self) != type(other) or self.__class__ != other.__class__:
+        if not isinstance(other, Board) or \
+                self.castling != other.castling:
             return False
-        #return hash(self) == hash(other)
+        #TODO: Test flags
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 oPiece = other.data[y][x]
@@ -110,6 +163,12 @@ class Board:
                 l[y][x] = piece
         b = Board(l)
         b.myhash = self.myhash
+        b.enpassant = self.enpassant
+        b.movelist = self.movelist
+        b.color = self.color
+        b.castling = self.castling
+        b.status = self.status
+        b.fifty = self.fifty
         return b
     
     def __hash__ (self):
