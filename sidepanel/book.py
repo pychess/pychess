@@ -30,7 +30,7 @@ from Utils.book import getOpenings
 
 def shown_changed (board, shown):
     global openings
-    openings = getOpenings(board.history, shown)
+    openings = getOpenings(board.history[shown])
     openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
     
     board.bluearrow = None
@@ -71,7 +71,7 @@ def selection_changed (widget):
         return
     else: sel = tv.get_model().get_path(iter)[0]
     
-    move = parseSAN(board.history, openings[sel][0])
+    move = parseSAN(board.history[-1], openings[sel][0])
     board.bluearrow = move.cords
     movePool.add(move)
 
