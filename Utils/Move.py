@@ -270,11 +270,11 @@ def toSAN (board, board2, move, fan=False):
     if board2:
         if board2.status in (WHITEWON, BLACKWON):
             notat += "#"
-        elif validator.isCheck(board2, board2.color):
+        elif validator.isCheck(board2, 1-board2.color):
             notat += "+"
     else:
         board2 = board.move(move)
-        if validator.isCheck(board2, board2.color):
+        if validator.isCheck(board2, 1-board2.color):
             notat += "+"
     board2.color = 1 - board2.color
     
