@@ -7,9 +7,9 @@ tsqlite.connect(path)
 import atexit
 atexit.register(tsqlite.close)
 
-def getOpenings (history, no=-1):
+def getOpenings (board):
     return tsqlite.execSQL (
-        "select move,wins,draws,loses from openings where fen = '%s'" % fen(history, no))
+        "select move,wins,draws,loses from openings where fen = '%s'" % fen(board))
 
 #	#	#	CREATION	#	#	#
 
@@ -97,7 +97,7 @@ def load (file):
                 m = parseSAN(history,move)
             except:
                 continue
-            epd = fen(history)
+            epd = fen(history[-1])
             res = resultDic[tags["Result"]]
             if epd.endswith("b"): res = 2-res
             history.add(m, False)
@@ -109,32 +109,27 @@ def load (file):
         del mcatch[:]
 
 # We can't use boardhash for dbkeys, as the boardhashes vary for each time Board.py is loaded.
-def fen (history, no=-1):
+def fen (board):
     r = ""
 
-    pieces = history[no].data
-    sign = lambda p: p.color == WHITE and reprSign[p.sign][0] or reprSign[p.sign].lower()
-    for i in range(len(pieces))[::-1]:
-        row = pieces[i]
+    sign = lambda p: p.color == WHITE and reprSign[p.sign] or reprSign[p.sign].lower()
+    for y, row in enumerate(board.data[::-1]):
         empty = 0
-        for j in range(len(row)):
-            piece = row[j]
+        for x, piece in enumerate(row):
             if piece == None:
                 empty += 1
-                if j == 7:
+                if x == 7:
                     r += str(empty)
             else:
                 if empty > 0:
                     r += str(empty)
                     empty = 0
                 r += sign(piece)
-        if i != 0:
+        if y != 7:
             r += "/"
     r += " "
     
-    if no < 0: l = len(history)+no+history.curColModi
-    else: l = no
-    r += l % 2 == 0 and "w" or "b"
+    r += reprColor[board.color][0].lower()
     
     return r
 
