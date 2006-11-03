@@ -11,10 +11,10 @@ from Utils.validator import findMoves2
 from System.ThreadPool import pool
 
 import random
-def getBestOpening (history):
+def getBestOpening (board):
     score = 0
     move = None
-    for m, w, d, l in getOpenings(history):
+    for m, w, d, l in getOpenings(board):
         s = (w+d/3.0)*random.random()
         if not move or s > score:
             move = m
@@ -55,16 +55,16 @@ class PyChessEngine (Engine):
             pool.start(self.runAnalyze, history)
             return None
             
-        omove = getBestOpening(history)
-        if omove: return parseSAN(history,omove)
+        omove = getBestOpening(history[-1])
+        if omove: return parseSAN(history[-1],omove)
 
         if self.secs <= 0:
-            mvs, score = alphaBeta(self, history, self.depth, -9999, 9999)
+            mvs, score = alphaBeta(self, history[-1], self.depth, -9999, 9999)
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                mvs, score = alphaBeta(self, history, d+1, -9999, 9999)
+                mvs, score = alphaBeta(self, history[-1], d+1, -9999, 9999)
                 if time() > endtime:
                     break
 
@@ -99,15 +99,15 @@ class PyChessEngine (Engine):
     def runAnalyze (self, history):
         self.analyzeLock.acquire()
         del self.analyzeMoves[:]
-        his2 = history.clone()
-        mvs, score = alphaBeta(self, his2, 1, -9999, 9999)
+        
+        mvs, score = alphaBeta(self, history[-1], 1, -9999, 9999)
         self.analyzeMoves = mvs
         if mvs:
             self.emit("analyze", mvs)
         # TODO: When PyChess is put in its own process,
         # this should be turned into a loop, seaking deeper and deeper
         if len(history) == self.analyzingBoard:
-            mvs, score = alphaBeta(self, his2, 2, -9999, 9999)
+            mvs, score = alphaBeta(self, history[-1], 2, -9999, 9999)
             self.analyzeMoves = mvs
             if mvs:
                 self.emit("analyze", mvs)
@@ -119,9 +119,9 @@ class PyChessEngine (Engine):
     def __kill__ (self):
         self.alive = False
     
-def moves (history):
+def moves (board):
     #if history.movelist[-1] == None:
-    for m in findMoves2(history):
+    for m in findMoves2(board):
         yield m
     #else:
     #    for cord0, cord1s in history.movelist[-1].iteritems():
@@ -131,13 +131,13 @@ def moves (history):
     #            except:
     #                pass
 
-def alphaBeta (engine, history, depth, alpha, beta):
+def alphaBeta (engine, board, depth, alpha, beta):
     
     foundPv = False
     amove = []
 
     if depth <= 0:
-        return [], eval.evaluateComplete(history[-1], history.curCol())
+        return [], eval.evaluateComplete(board)
     if not engine.alive:
         return [], 0
     
@@ -145,22 +145,18 @@ def alphaBeta (engine, history, depth, alpha, beta):
     # TODO: Could this stuff be hashed,
     # so pychess always new what to do in a certain position?
     # TODO: No kind of endgame test
-    for move in moves(history):
-        his2 = history.clone()
-        his2.add(move, mvlist=False)
-        
+    for move in moves(board):
+        board2 = board.move(move)
         if foundPv:
-            mvs, val = alphaBeta(engine, his2, depth-1, -alpha-1, -alpha)
+            mvs, val = alphaBeta(engine, board2, depth-1, -alpha-1, -alpha)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
-                mvs, val = alphaBeta(engine, his2, depth-1, -beta, -alpha)
+                mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha)
                 val = -val
         else:
-            mvs, val = alphaBeta(engine, his2, depth-1, -beta, -alpha)
+            mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha)
             val = -val
-        
-        hisPool.add(his2)
         
         if val >= beta:
             return [move]+mvs, beta
