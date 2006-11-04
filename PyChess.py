@@ -434,7 +434,10 @@ class GladeHandlers:
         saver.save(open(uri,"w"), window.game.history)
         global lastSave
         lastSave = (window.game.history.clone(), uri)
-        
+    
+    def on_properties1_activate (widget):
+        window["game_info"].show()
+    
     def on_quit1_activate (widget):
         res = saveGameBefore(_("exit"))
         if res == gtk.RESPONSE_CANCEL: return
@@ -561,7 +564,12 @@ class GladeHandlers:
     def on_force_to_move_activate (widget):
         if window.game:
             window.game.activePlayer.hurry()
-
+    
+    #          Settings menu          #
+    
+    def on_preferences2_activate (widget):
+        window["preferences"].show()
+    
 from time import time
 
 class PyChess:
