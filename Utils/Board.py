@@ -23,10 +23,10 @@ def rm (var, opp):
         return var ^ opp
     return var
 
-a1 = Cord('a1')
-h1 = Cord('h1')
-a8 = Cord('a8')
-h8 = Cord('h8')
+a1 = Cord('a1'); d1 = Cord('d1')
+h1 = Cord('h1'); f1 = Cord('f1')
+a8 = Cord('a8'); d8 = Cord('d8')
+h8 = Cord('h8'); f8 = Cord('f8')
 
 class Board:
     def __init__ (self, array):
@@ -41,7 +41,16 @@ class Board:
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 if not piece: continue
-                self.myhash ^= zobrit[piece.color][piece.sign][x][y]
+                try:
+                    self.myhash ^= zobrit[piece.color][piece.sign][x][y]
+                except: print [piece.color,piece.sign,x,y]
+    
+    def _move (self, cord0, cord1):
+    	p = self[cord0]
+    	self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
+        self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
+    	self[cord1] = p
+        self[cord0] = None
     
     def move (self, move, mvlist=False):
         board = self.clone()
@@ -49,24 +58,40 @@ class Board:
         cord0, cord1 = move.cords
         
         p = board[cord0]
-        board.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
-        board.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
         
+        if not p:
+            print move,"\n",board
+            raise Exception
+            
         if p.sign == KING:
-            r = cord0.y
-            if cord0.x - cord1.x == -2:
-                board.data[r][5] = board.data[r][7]
-                board.data[r][7] = None
-            elif cord0.x - cord1.x == 2:
-                board.data[r][3] = board.data[r][0]
-                board.data[r][0] = None
+            if cord0.y == 0:
+                if cord0.x - cord1.x == 2:
+                    board._move(a1, d1)
+                elif cord0.x - cord1.x == -2:
+                    board._move(h1, f1)
+            else:
+                if cord0.x - cord1.x == 2:
+                    board._move(a8, d8)
+                elif cord0.x - cord1.x == -2:
+                    board._move(h8, f8)
         
         elif p.sign == PAWN and cord0.y in (3,4):
             if cord0.x != cord1.x and board[cord1] == None:
-                board.data[cord1.x][cord0.y] = None
+                q = board.data[cord1.y][cord0.x]
+                if q:
+                    board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
+                    board.data[cord1.y][cord0.x] = None
         
-        board[cord1] = p
-        board[cord0] = None
+        elif p.sign == PAWN and cord1.y in (0,7):
+            q = board[cord0]
+            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
+            board[cord0] = Piece(q.color, move.promotion)
+            q = board[cord0]
+            try:
+                board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
+            except: print [q.color, q.sign, cord0.x, cord0.y]
+            
+        board._move(cord0, cord1)
         board.color = 1 - self.color
         
         if board[cord1].sign == KING:
@@ -96,9 +121,9 @@ class Board:
                 elif cord0 == h8: board.castling = rm(board.castling, BLACK_OO)
         
         elif board[cord1].sign == PAWN and abs(cord0.y - cord1.y) == 2:
-            self.enpassant = Cord(cord0.x, (cord0.y+cord1.y)/2)
+            board.enpassant = Cord(cord0.x, (cord0.y+cord1.y)/2)
         
-        else: self.enpassant = None
+        else: board.enpassant = None
         
         iscapture = self[cord1] != None
         if iscapture or board[cord1].sign != PAWN:
