@@ -47,6 +47,8 @@ class Board:
     
     def _move (self, cord0, cord1):
     	p = self[cord0]
+    	if not p:
+    		print cord0, cord1, self
     	self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
         self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
     	self[cord1] = p
