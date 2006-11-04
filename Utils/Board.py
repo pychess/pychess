@@ -61,10 +61,6 @@ class Board:
         
         p = board[cord0]
         
-        if not p:
-            print move,"\n",board
-            raise Exception
-            
         if p.sign == KING:
             if cord0.y == 0:
                 if cord0.x - cord1.x == 2:

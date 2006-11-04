@@ -307,7 +307,7 @@ class CECProtocol (GObject):
                 # Crafty don't analyze untill it is out of book
                 print >> self.engine, "book off"
                 return
-            his2 = self.history.clone()
+            board = self.history[-1].clone()
             moves = []
             for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
@@ -315,7 +315,7 @@ class CECProtocol (GObject):
                 except Exception, e:
                     continue
                 if moves:
-                    his2.add(moves[-1], mvlist=False)
+                    board = board.add(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
             return

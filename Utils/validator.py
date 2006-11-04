@@ -11,7 +11,7 @@ def validate (move, board, testCheck=True):
     """Will asume the first cord is an ally piece"""
     
     if move.cord0 == move.cord1 or \
-       not board[move.cord1]:
+       not board[move.cord0]:
         return False
     
     method = validators[board[move.cord0].sign]
@@ -21,7 +21,7 @@ def validate (move, board, testCheck=True):
     if testCheck:
         if willCheck(board, move):
             return False
-        
+    
     return True
     
 def Bishop (move, board):
@@ -101,20 +101,20 @@ def genKing (cord, board):
     if board.color == WHITE:
         if board.castling & WHITE_OO:
             if _isclear (board, (5,6), (0,)) and \
-               not genMovesPointingAt (board, (4,5,6), (0,), BLACK):
+               not genMovesPointingAt (board, (4,5), (0,), BLACK):
                 yield 6,0
         if board.castling & WHITE_OOO:
             if _isclear (board, (1,2,3), (0,)) and \
-               not genMovesPointingAt (board, (2,3,4), (0,), BLACK):
+               not genMovesPointingAt (board, (3,4), (0,), BLACK):
                 yield 2,0
     if board.color == BLACK:
         if board.castling & BLACK_OO:
             if _isclear (board, (5,6), (7,)) and \
-               not genMovesPointingAt (board, (4,5,6), (7,), WHITE):
+               not genMovesPointingAt (board, (4,5), (7,), WHITE):
                 yield 6,7
         if board.castling & BLACK_OOO:
             if _isclear (board, (1,2,3), (7,)) and \
-               not genMovesPointingAt (board, (2,3,4), (7,), WHITE):
+               not genMovesPointingAt (board, (3,4), (7,), WHITE):
                 yield 2,7
 
 def Knight (move, board):
@@ -176,12 +176,14 @@ def genPawn (cord, board):
             yield x, y+direction*2
     
     for side in (1,-1):
-        if not 0 <= x+side <= 7:
-            continue
+        if not 0 <= x+side <= 7: continue
         if board.data[y+direction][x+side] and \
            board.data[y+direction][x+side].color != board.color:
             yield x+side, y+direction
-        if board.enpassant:
+    
+    if board.enpassant and abs(board.enpassant.x - cord.x) == 1:
+        if board.enpassant.y == 5 and board.color == WHITE or \
+           board.enpassant.y == 2 and board.color == BLACK:
             yield board.enpassant.x, board.enpassant.y
 
 #len(history) >= 2 and y in (2,5):
@@ -253,9 +255,13 @@ def findMoves2 (board, testCheck=True):
             cord0 = Cord(x,y)
             for xy in sign2gen[piece.sign](cord0,board):
                 move = movePool.pop(cord0, Cord(*xy))
-                if not testCheck or not willCheck(board, move):
-                    yield move
-                else: movePool.add(move)
+                try:
+                    if not testCheck or not willCheck(board, move):
+                        yield move
+                    else: movePool.add(move)
+                except Exception:
+                    print piece, cord, board.data
+                    raise Exception, "Im sure it was ok?!"
 
 def _getLegalMoves (board, cord, testCheck):
     cords = []
@@ -345,7 +351,7 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
             
         else: return None
 
-def genMovesPointingAt (board, cols, rows, color, testCheck=False, draw=False):
+def genMovesPointingAt (board, cols, rows, color, testCheck=False):
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if piece == None: continue
@@ -354,7 +360,6 @@ def genMovesPointingAt (board, cols, rows, color, testCheck=False, draw=False):
             for r in rows:
                 for c in cols:
                     move = movePool.pop(cord0, Cord(c,r))
-                    if draw: print move
                     if validate (move, board, testCheck):
                         return move
                     else: movePool.add(move)
@@ -377,7 +382,7 @@ def _findKing (board, color):
             if piece and piece.sign == KING and piece.color == color:
                 return Cord(x,y)
     raise Exception, "Could not find %s king on board ?!\n%s" % \
-            (reprColor[board.color], repr(board))
+            (reprColor[color], repr(board))
 
 def status (history):
 

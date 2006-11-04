@@ -12,6 +12,7 @@ DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, \
 KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN = range(6)
 
 reprSign = ["K", "Q", "R", "B", "N", "P"]
+reprPiece = [_("King"), _("Queen"), _("Rook"), _("Bishop"), _("Knight"), _("Pawn")]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
 
 WHITE_OO, WHITE_OOO, BLACK_OO, \
