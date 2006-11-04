@@ -51,13 +51,9 @@ class MovePool:
         
         if len(self.objects) <= 0:
             self.lock.release()
-            assert type(cord0) != int
-            assert type(cord1) != int
             return Move(cord0, cord1, promotion)
             
         mv = self.objects.pop()
-        assert type(cord0) != int
-        assert type(cord1) != int
         mv.cord0 = cord0
         mv.cord1 = cord1
         mv.promotion = promotion
