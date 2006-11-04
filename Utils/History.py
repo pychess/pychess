@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from copy import copy
+from threading import Lock
 
 class HistoryPool:
     def __init__ (self):
