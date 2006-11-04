@@ -2,8 +2,9 @@ import pygtk
 pygtk.require("2.0")
 from gtk import gdk
 import gtk, time, gobject, pango
-from math import ceil, floor
+from math import ceil, floor, pi, cos, sin
 from threading import Thread
+import cairo
 
 class ChessClock (gtk.DrawingArea):
     __gsignals__ = {'time_out' : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_INT,))}
@@ -56,6 +57,48 @@ class ChessClock (gtk.DrawingArea):
         context.fill_preserve()
         context.new_path()
         
+        # Analog clock code. Testing
+        
+        c = rect.height/2.
+        r = rect.height/2.-5
+        
+        context.arc(c,c, r-1, 0, 2*pi)
+        context.set_source_rgba( .5, .5, .5, .3)
+        context.fill()
+        
+        linear = cairo.LinearGradient(c-r, c-r, c+r, c+r)
+        linear.add_color_stop_rgba(0, 0, 0, 0, 0.5)
+        linear.add_color_stop_rgba(1, 1, 1, 1, 0.5)
+        context.arc(c,c, r, 0, 2*pi)
+        context.set_source(linear)
+        context.stroke()
+        
+        time = self.time != 0 and self.time or 1
+        used = self.getDeciSeconds(0) / float(time)
+        if used > 0:
+            if used > 0:
+                context.arc(c,c, r-1.5, -(used+0.25)*2*pi, -0.5*pi)
+                context.line_to(c,c)
+                context.close_path()
+            elif used == 0:
+                context.arc(c,c, r-2, -0.5*pi, 1.5*pi)
+                context.line_to(c,c)
+            
+            radial = cairo.RadialGradient(c,c, 3, c,c,r)
+            radial.add_color_stop_rgb(0, .73, .74, .71)
+            radial.add_color_stop_rgb(1, .93, .93, .92)
+            context.set_source(radial)
+            context.fill()
+        
+            x = c - cos((used-0.25)*2*pi)*(r-1)
+            y = c + sin((used-0.25)*2*pi)*(r-1)
+            context.move_to(c,c-r)
+            context.line_to(c,c)
+            context.line_to(x,y)
+            context.set_line_width(0.4)
+            context.set_source_rgb(0,0,0)
+            context.stroke()
+        
         pangoScale = float(pango.SCALE)
         
         if ra or self.player == 0:
@@ -63,7 +106,7 @@ class ChessClock (gtk.DrawingArea):
                 context.set_source_color(self.light)
             y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
                                - layout0.get_extents()[0][1]/pangoScale
-            context.move_to(0,y)
+            context.move_to(r*2,y)
             context.show_layout(layout0)
         
         if ra or self.player == 1:
