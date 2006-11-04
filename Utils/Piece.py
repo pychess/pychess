@@ -9,7 +9,7 @@ class Piece:
         self.sign = sign
     
     def __repr__ (self):
-        return "<%s %s>" % (reprColor[self.color], pieceName[self.name])
+        return "<%s %s>" % (reprColor[self.color], reprPiece[self.sign])
 
     def __eq__ (self, other):
         return  isinstance(other, Piece) and \

@@ -11,7 +11,7 @@
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -831,7 +831,7 @@ Thijs Vermeir</property>
 English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
 German (de_DE) - Norbert Fabritius</property>
-  <property name="logo">pychess.png</property>
+  <property name="logo">pixmaps/pychess24.png</property>
 </widget>
 
 <widget class="GtkDialog" id="savegamedialog">
@@ -842,6 +842,7 @@ German (de_DE) - Norbert Fabritius</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="icon_name"></property>
   <property name="role"></property>
   <property name="decorated">True</property>
@@ -1048,6 +1049,7 @@ if do don't save it.</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -1893,7 +1895,7 @@ if do don't save it.</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">True</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -2289,7 +2291,7 @@ if do don't save it.</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -4532,7 +4534,7 @@ if do don't save it.</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">pixmaps/pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
