@@ -6,12 +6,17 @@ from copy import copy
 class HistoryPool:
     def __init__ (self):
         self.objects = []
+        self.lock = Lock()
         
     def pop (self, clear=True):
+        self.lock.acquire()
+        
         if len(self.objects) <= 0:
             self.objects.append(History())
         his = self.objects.pop()
         his.castling = WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO
+        
+        self.lock.release()
         return his
         
     def add (self, history):
