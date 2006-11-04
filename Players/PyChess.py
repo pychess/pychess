@@ -137,7 +137,7 @@ def alphaBeta (engine, board, depth, alpha, beta):
     amove = []
 
     if depth <= 0:
-        return [], eval.evaluateComplete(board)
+        return [], eval.evaluateComplete(board, board.color)
     if not engine.alive:
         return [], 0
     
