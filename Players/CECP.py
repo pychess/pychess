@@ -4,7 +4,7 @@ from threading import Condition, Lock
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineDead, EngineConnection
-from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
+from Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN, ParsingError
 from Utils.History import History
 from Utils.Cord import Cord
 from Utils.const import *
@@ -235,17 +235,11 @@ class CECProtocol (GObject):
         self.start = time.time()
         
         while self.connected:
-            now = time.time()
-            if now >= self.start+self.timeout:
-                print "timeout broke it", self.features["myname"]
-                break
-            line = self.engine.readline(self.start+self.timeout-now)
+            line = self.engine.readline(self.start+self.timeout)
             if line == None:
-                print "notline broke it", self.features["myname"]
                 break # We've probably met the select timeout
             self.parseLine(line)
             if line.find("done=1") >= 0:
-                print "done broke it", self.features["myname"]
                 break
             elif line.find("done=0") >= 0:
                 # This'll buy you 10 more minutes
@@ -261,15 +255,15 @@ class CECProtocol (GObject):
             
     ########################
     
-    def parseMove (self, movestr, history=None):
-        if not history: history = self.history
+    def parseMove (self, movestr, board=None):
+        board = board and board or self.history[-1]
         if self.features["san"]:
-            return parseSAN(history[-1], movestr)
+            return parseSAN(board, movestr)
         else:
-            try: return parseAN(history[-1], movestr)
+            try: return parseAN(board, movestr)
             except:
-                try: return parseLAN(history[-1], movestr)
-                except: return parseSAN(history[-1], movestr)
+                try: return parseLAN(board, movestr)
+                except: return parseSAN(board, movestr)
     
     def parseLine (self, line):
         #self.lock.acquire()
@@ -307,17 +301,19 @@ class CECProtocol (GObject):
                 # Crafty don't analyze untill it is out of book
                 print >> self.engine, "book off"
                 return
-            board = self.history[-1].clone()
+                
+            board = self.history[-1]
             moves = []
             for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
-                    moves.append(self.parseMove(m, his2))
-                except Exception, e:
+                    moves.append(self.parseMove(m, board))
+                except ParsingError:
                     continue
                 if moves:
-                    board = board.add(moves[-1], mvlist=False)
+                    board = board.move(moves[-1], mvlist=False)
             if moves:
                 self.emit("analyze", moves)
+            
             return
             
         # Offers draw
@@ -404,6 +400,7 @@ class CECProtocol (GObject):
         if self.features["san"]:
             print >> self.engine, toSAN(history[-2], history[-1], history.moves[-1])
         else: print >> self.engine, toAN(history[-2], history.moves[-1])
+        
         
     def pause (self):
         assert self.ready, "Still waiting for done=1"

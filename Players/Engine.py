@@ -33,8 +33,9 @@ class Engine (Player):
     def wait (self):
         pass #optional
 
+from time import time
 from System.Log import log
-import os, select, signal, time, errno, tty
+import os, select, signal, errno, tty
 import gobject
 CHILD = 0
 
@@ -64,7 +65,10 @@ class EngineConnection (gobject.GObject):
         self.emit("hungup")
         return False
         
-    def readline (self, timeout=600):
+    def readline (self, timeout=-1):
+    	if timeout < 0:
+    		timeout = time()+600
+    	
         i = self.buffer.find("\n")
         if i >= 0:
             line = self.buffer[:i]
@@ -75,7 +79,7 @@ class EngineConnection (gobject.GObject):
         while True:
             while True:
                 try:
-                    rlist, _, _ = select.select([self.fd], [], [], timeout)
+                    rlist, _, _ = select.select([self.fd], [], [], timeout-time())
                 except select.error, error: 
                     if error.args[0] == 4: #Interupt
                         continue
