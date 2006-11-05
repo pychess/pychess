@@ -1,3 +1,5 @@
+VERSION = "0.5.2"
+
 WHITE, BLACK = range(2)
 
 reprColor = ["White", "Black"]
