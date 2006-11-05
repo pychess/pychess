@@ -5,12 +5,8 @@ from Utils.const import *
 __label__ = _("Chess Game")
 __endings__ = "pgn",
 
-import datetime
-
 def save (file, game):
     history = game.history
-    today = datetime.date.today()
-
     # TODO: Create some kind of "match_param" (in knights) class to handle this kind of data. Might also be an expanded model class, instead of History
     from pwd import getpwuid
     from os import getuid
@@ -19,13 +15,14 @@ def save (file, game):
     if not name:
         name = userdata.pw_name
     
-    result = reprResult[history.status]
+    #result = reprResult[history.status]
+    result = '1-1'
     
     # TODO: get some more calculated values here
-    print >> file, '[Event "Local Game"]' #Event: the name of the tournament or match event.
-    print >> file, '[Site "Local Game"]' #Site: the location of the event.
-    print >> file, '[Date "%04d.%02d.%02d"]' % (today.year, today.month, today.day)
-    print >> file, '[Round "?"]'
+    print >> file, '[Event "%s"]' % game.event #Event: the name of the tournament or match event.
+    print >> file, '[Site "%s"]' % game.site #Site: the location of the event.
+    print >> file, '[Date "%04d.%02d.%02d"]' % (game.year, game.month, game.day)
+    print >> file, '[Round "%d"]' % game.round
     print >> file, '[White "%s"]' % name
     print >> file, '[Black "Black Player"]'
     print >> file, '[Result "%s"]' % result
@@ -56,9 +53,9 @@ def save (file, game):
         # increment halfmoves
         halfMoves += 1
     
-    if history.status != RUNNING:
+    #if history.status != RUNNING:
         #FIXME: This don't work with wordwrap
-        file.write(result)
+    #    file.write(result)
     
     file.close() # close the savegame
 
