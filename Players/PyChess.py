@@ -6,6 +6,7 @@ from Engine import Engine
 from Utils.History import hisPool
 from Utils.Move import movePool, parseSAN
 from Utils import eval
+from Utils.const import *
 from Utils.book import getOpenings
 from Utils.validator import findMoves2
 from System.ThreadPool import pool
@@ -20,8 +21,6 @@ def getBestOpening (board):
             move = m
             score = s
     return move
-    
-VERSION = "0.4"
 
 #TODO: Move PyChessEngine to another Process to set its priority
 
