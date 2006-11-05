@@ -104,6 +104,7 @@ class ChessClock (gtk.DrawingArea):
         if ra or self.player == 0:
             if self.player == 0:
                 context.set_source_color(self.light)
+            else: context.set_source_color(self.dark)
             y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
                                - layout0.get_extents()[0][1]/pangoScale
             context.move_to(r*2,y)
