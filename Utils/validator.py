@@ -182,18 +182,9 @@ def genPawn (cord, board):
             yield x+side, y+direction
     
     if board.enpassant and abs(board.enpassant.x - cord.x) == 1:
-        if (board.enpassant.y == 5 and board.color == WHITE and cord.y = 4) or \
-           (board.enpassant.y == 2 and board.color == BLACK and cord.y = 3) :
+        if (board.enpassant.y == 5 and board.color == WHITE and cord.y == 4) or \
+           (board.enpassant.y == 2 and board.color == BLACK and cord.y == 3) :
             yield board.enpassant.x, board.enpassant.y
-
-#len(history) >= 2 and y in (2,5):
-#newside = board.data[y][x+side]
-#newdown = board.data[y+direction*2][x+side]
-#oldside = history[-2].data[y][x+side]
-#olddown = history[-2].data[y+direction*2][x+side]
-#if newside != None and newside.sign == PAWN and newside.color != history.curCol() and \
-# olddown != None and olddown.sign == PAWN and \
-# newdown == None and oldside == None:
      
 def Rook (move, board):
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
@@ -307,23 +298,16 @@ def findMoves (board):
     return moves
 
 def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
-    #if sign:
-    #    print "search", cord, color, sign, r, c
-    #    print "movelist", history.movelist
-    #    import sys
-    #    sys.stdout.write(str(history[-1]))
 
     if board.movelist != None:
         for cord0, cord1s in board.movelist.iteritems():
             piece = board[cord0]
-            if color and piece.color != color: continue
-            if sign and piece.sign != sign: continue
-            if r and cord0.y != r: continue
-            if c and cord0.x != c: continue
+            if color != None and piece.color != color: continue
+            if sign != None and piece.sign != sign: continue
+            if r != None and cord0.y != r: continue
+            if c != None and cord0.x != c: continue
             for cord1 in cord1s:
                 if cord1 == cord:
-                    #if sign:
-                    #    print "Found move:", cord0, cord1
                     return cord0
     
     else:
@@ -331,10 +315,10 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
         for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
                 if piece == None: continue
-                if color and piece.color != color: continue
-                if sign and piece.sign != sign: continue
-                if r and y != r: continue
-                if c and x != c: continue
+                if color != None and piece.color != color: continue
+                if sign != None and piece.sign != sign: continue
+                if r != None and y != r: continue
+                if c != None and x != c: continue
                 cord1 = Cord(x,y)
                 moves = _getLegalMoves(board,cord1,False)
                 if cord in moves:
@@ -343,11 +327,15 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
         if len(cords) == 1:
             return cords[0]
         
+        # If there are more than one piece that can be moved to the cord,
+        # We have to test if one of them moving will cause check.
         elif len(cords) > 1:
+            print "cord", cord, "cords", cords
             for cord1 in cords:
-                moves = _getLegalMoves(board,cord1,True)
-                if cord in moves:
-                    return cord1
+            	move = movePool.pop(cord, cord1)
+            	if validate(move,True):
+            	    return cord1
+            	else: movePool.add(move)
             
         else: return None
 
