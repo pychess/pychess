@@ -333,7 +333,7 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
             print "cord", cord, "cords", cords
             for cord1 in cords:
             	move = movePool.pop(cord, cord1)
-            	if validate(move,True):
+            	if willCheck(board,move):
             	    return cord1
             	else: movePool.add(move)
             
