@@ -182,8 +182,8 @@ def genPawn (cord, board):
             yield x+side, y+direction
     
     if board.enpassant and abs(board.enpassant.x - cord.x) == 1:
-        if board.enpassant.y == 5 and board.color == WHITE or \
-           board.enpassant.y == 2 and board.color == BLACK:
+        if (board.enpassant.y == 5 and board.color == WHITE and cord.y = 4) or \
+           (board.enpassant.y == 2 and board.color == BLACK and cord.y = 3) :
             yield board.enpassant.x, board.enpassant.y
 
 #len(history) >= 2 and y in (2,5):
