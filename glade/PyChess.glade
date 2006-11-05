@@ -1917,7 +1917,7 @@ if do don't save it.</property>
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="button1">
+	    <widget class="GtkButton" id="game_info_cancel_button">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -1930,7 +1930,7 @@ if do don't save it.</property>
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="button2">
+	    <widget class="GtkButton" id="game_info_ok_button">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -2066,7 +2066,7 @@ if do don't save it.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkSpinButton" id="spinbutton1">
+			    <widget class="GtkSpinButton" id="round_sinbutton">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="climb_rate">1</property>
@@ -2087,7 +2087,7 @@ if do don't save it.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkEntry" id="entry1">
+			    <widget class="GtkEntry" id="event_entry">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
@@ -2108,7 +2108,7 @@ if do don't save it.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkEntry" id="entry2">
+			    <widget class="GtkEntry" id="site_entry">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
@@ -2228,7 +2228,7 @@ if do don't save it.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkCalendar" id="calendar1">
+			<widget class="GtkCalendar" id="game_info_calendar">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="display_options">GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES</property>
