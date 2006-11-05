@@ -303,14 +303,19 @@ class CECProtocol (GObject):
                 return
                 
             board = self.history[-1]
+            boards = [board]
             moves = []
             for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
                     moves.append(self.parseMove(m, board))
                 except ParsingError:
                     continue
+                except Exception:
+                	print boards, moves, parts
+                	raise
                 if moves:
                     board = board.move(moves[-1], mvlist=False)
+                    boards.append(board)
             if moves:
                 self.emit("analyze", moves)
             

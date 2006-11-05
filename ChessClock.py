@@ -27,6 +27,8 @@ class ChessClock (gtk.DrawingArea):
         self.dark = self.get_style().dark[gtk.STATE_NORMAL]
         self.light = self.get_style().light[gtk.STATE_NORMAL]
         
+        drawClock = True #TODO: move to gconf
+        
         #FIXME: The clock will always redraw everything,
         #while the next line is outcommented
         #Problem is that saving the redrawingAll in self,
@@ -57,66 +59,82 @@ class ChessClock (gtk.DrawingArea):
         context.fill_preserve()
         context.new_path()
         
-        # Analog clock code. Testing
-        
-        c = rect.height/2.
-        r = rect.height/2.-5
-        
-        context.arc(c,c, r-1, 0, 2*pi)
-        context.set_source_rgba( .5, .5, .5, .3)
-        context.fill()
-        
-        linear = cairo.LinearGradient(c-r, c-r, c+r, c+r)
-        linear.add_color_stop_rgba(0, 0, 0, 0, 0.5)
-        linear.add_color_stop_rgba(1, 1, 1, 1, 0.5)
-        context.arc(c,c, r, 0, 2*pi)
-        context.set_source(linear)
-        context.stroke()
-        
-        time = self.time != 0 and self.time or 1
-        used = self.getDeciSeconds(0) / float(time)
-        if used > 0:
-            if used > 0:
-                context.arc(c,c, r-1.5, -(used+0.25)*2*pi, -0.5*pi)
-                context.line_to(c,c)
-                context.close_path()
-            elif used == 0:
-                context.arc(c,c, r-2, -0.5*pi, 1.5*pi)
-                context.line_to(c,c)
-            
-            radial = cairo.RadialGradient(c,c, 3, c,c,r)
-            radial.add_color_stop_rgb(0, .73, .74, .71)
-            radial.add_color_stop_rgb(1, .93, .93, .92)
-            context.set_source(radial)
-            context.fill()
-        
-            x = c - cos((used-0.25)*2*pi)*(r-1)
-            y = c + sin((used-0.25)*2*pi)*(r-1)
-            context.move_to(c,c-r)
-            context.line_to(c,c)
-            context.line_to(x,y)
-            context.set_line_width(0.4)
-            context.set_source_rgb(0,0,0)
-            context.stroke()
-        
         pangoScale = float(pango.SCALE)
         
+        # Analog clock code. Testing
+        def paintClock (player):
+            cy = rect.height/2.
+            cx = cy + rect.width/2.*player + 1
+            r = rect.height/2.-3.5
+            
+            context.arc(cx,cy, r-1, 0, 2*pi)
+            linear = cairo.LinearGradient(cx-r*2, cy-r*2, cx+r*2, cy+r*2)
+            linear.add_color_stop_rgba(0, 1, 1, 1, 0.3)
+            linear.add_color_stop_rgba(1, 0, 0, 0, 0.3)
+            #context.set_source_rgba( 0, 0, 0, .3)
+            context.set_source(linear)
+            context.fill()
+        
+            linear = cairo.LinearGradient(cx-r, cy-r, cx+r, cy+r)
+            linear.add_color_stop_rgba(0, 0, 0, 0, 0.5)
+            linear.add_color_stop_rgba(1, 1, 1, 1, 0.5)
+            context.arc(cx,cy, r, 0, 2*pi)
+            context.set_source(linear)
+            context.set_line_width(2.5)
+            context.stroke()
+            
+            time = self.time != 0 and self.time or 1
+            used = self.getDeciSeconds(player) / float(time)
+            if used > 0:
+                if used > 0:
+                    context.arc(cx,cy, r-.8, -(used+0.25)*2*pi, -0.5*pi)
+                    context.line_to(cx,cy)
+                    context.close_path()
+                elif used == 0:
+                    context.arc(cx,cy, r-.8, -0.5*pi, 1.5*pi)
+                    context.line_to(cx,cy)
+                
+                radial = cairo.RadialGradient(cx,cy, 3, cx,cy,r)
+                if player == 0:
+                    #radial.add_color_stop_rgb(0, .73, .74, .71)
+                    radial.add_color_stop_rgb(0, .93, .93, .92)
+                    radial.add_color_stop_rgb(1, 1, 1, 1)
+                else:
+                    #radial.add_color_stop_rgb(0, .53, .54, .52)
+                    radial.add_color_stop_rgb(0, .18, .20, .21)
+                    radial.add_color_stop_rgb(1, 0, 0, 0)
+                context.set_source(radial)
+                context.fill()
+            
+                x = cx - cos((used-0.25)*2*pi)*(r-1)
+                y = cy + sin((used-0.25)*2*pi)*(r-1)
+                context.move_to(cx,cy-r+1)
+                context.line_to(cx,cy)
+                context.line_to(x,y)
+                context.set_line_width(0.2)
+                context.set_source_rgb(0,0,0)
+                context.stroke()
+        
         if ra or self.player == 0:
+            if drawClock:
+                paintClock (0)
             if self.player == 0:
                 context.set_source_color(self.light)
             else: context.set_source_color(self.dark)
             y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
                                - layout0.get_extents()[0][1]/pangoScale
-            context.move_to(r*2,y)
+            context.move_to(rect.height-7,y)
             context.show_layout(layout0)
         
         if ra or self.player == 1:
+            if drawClock:
+                paintClock (1)
             if self.player == 1:
                 context.set_source_color(self.light)
             else: context.set_source_color(self.dark)
             y = rect.height/2. - layout1.get_extents()[0][3]/pangoScale/2 \
                                - layout1.get_extents()[0][1]/pangoScale
-            context.move_to(rect.width/2.,y)
+            context.move_to(rect.width/2. + rect.height-7, y)
             context.show_layout(layout1)
 
     redrawingAll = True
