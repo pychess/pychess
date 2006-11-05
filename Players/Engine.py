@@ -79,7 +79,9 @@ class EngineConnection (gobject.GObject):
         while True:
             while True:
                 try:
-                    rlist, _, _ = select.select([self.fd], [], [], timeout-time())
+                    t = timeout-time()
+                    if t < 0: t = 0
+                    rlist, _, _ = select.select([self.fd], [], [], t)
                 except select.error, error: 
                     if error.args[0] == 4: #Interupt
                         continue
