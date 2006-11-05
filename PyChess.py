@@ -589,6 +589,11 @@ class GladeHandlers:
     
     def on_preferences2_activate (widget):
         window["preferences"].show()
+        def hide_window(button, *args):
+            window["preferences"].hide()
+            return True
+        window["preferences"].connect("delete-event", hide_window)
+
     
 from time import time
 
