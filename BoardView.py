@@ -43,6 +43,20 @@ class BoardView (gtk.DrawingArea):
         self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         
+        self.padding = 0 # Set to self.pad when setcords is active
+        self.square = None # An object global variable with the current board size
+        self.pad = 0.13 # Used when setcords is active
+        self._selected = None
+        self._hover = None
+        self._active = None
+        self._redarrow = None
+        self._greenarrow = None
+        self._bluearrow = None
+        self._shown = 0
+        self._fromWhite = True
+        self._showCords = False
+        self.lastMove = None
+        
     def move (self, history):
         if self.shown+2 < len(history):
             return
@@ -73,8 +87,6 @@ class BoardView (gtk.DrawingArea):
         
         return False
     
-    padding = 0
-    square = None
     def draw(self, context, r):
         p = (1-self.padding)
         alloc = self.get_allocation()
@@ -93,7 +105,6 @@ class BoardView (gtk.DrawingArea):
         self.drawPieces (context, pieces, r)
         self.drawLastMove (context)
     
-    pad = 0.13
     def drawCords (self, context):
         thickness = 0.01
         signsize = 0.04
@@ -295,7 +306,6 @@ class BoardView (gtk.DrawingArea):
     #          Cord vars          #
     ###############################
 
-    _selected = None
     def _set_selected (self, cord):
         self._active = None
         if self._selected == cord: return
@@ -309,7 +319,6 @@ class BoardView (gtk.DrawingArea):
         return self._selected
     selected = property(_get_selected, _set_selected)
     
-    _hover = None
     def _set_hover (self, cord):
         if self._hover == cord: return
         if self._hover:
@@ -322,7 +331,6 @@ class BoardView (gtk.DrawingArea):
         return self._hover
     hover = property(_get_hover, _set_hover)
     
-    _active = None
     def _set_active (self, cord):
         if self._active == cord: return
         if self._active:
@@ -339,7 +347,6 @@ class BoardView (gtk.DrawingArea):
     #          Arrow vars          #
     ################################
     
-    _redarrow = None
     def _set_redarrow (self, cords):
         if cords == self._redarrow: return
         paintCords = []
@@ -354,7 +361,6 @@ class BoardView (gtk.DrawingArea):
         return self._redarrow
     redarrow = property(_get_redarrow, _set_redarrow)
     
-    _greenarrow = None
     def _set_greenarrow (self, cords):
         if cords == self._greenarrow: return
         paintCords = []
@@ -369,7 +375,6 @@ class BoardView (gtk.DrawingArea):
         return self._greenarrow
     greenarrow = property(_get_greenarrow, _set_greenarrow)
     
-    _bluearrow = None
     def _set_bluearrow (self, cords):
         if cords == self._bluearrow: return
         paintCords = []
@@ -388,7 +393,6 @@ class BoardView (gtk.DrawingArea):
     #          Other vars          #
     ################################
     
-    _shown = 0
     def _get_shown(self):
         return self._shown
     def _set_shown(self, shown):
@@ -401,7 +405,6 @@ class BoardView (gtk.DrawingArea):
             idle_add(self.redraw_canvas)
     shown = property(_get_shown, _set_shown)
     
-    _fromWhite = True
     def _set_fromWhite (self, fromWhite):
         self._fromWhite = fromWhite
         self.redraw_canvas()
@@ -409,7 +412,6 @@ class BoardView (gtk.DrawingArea):
         return self._fromWhite
     fromWhite = property(_get_fromWhite, _set_fromWhite)
     
-    _showCords = False
     def _set_showCords (self, showCords):
         if not showCords:
             self.padding = 0
@@ -419,9 +421,7 @@ class BoardView (gtk.DrawingArea):
     def _get_showCords (self):
         return self._showCords
     showCords = property(_get_showCords, _set_showCords)
-    
-    lastMove = None
-    
+        
     ###########################
     #          Other          #
     ###########################
