@@ -31,14 +31,10 @@ class Game (GObject):
         self.event = 'Local Event'
         self.site = 'Local site'
         self.round = 1
-        #today = datetime.date.today()
-        #self.year = str(today.year)
-        #self.month = str(today.month)
-        #if len(self.month) == 1:
-        #    self.month = "0" + self.month
-        #self.day = str(today.day)
-        #if len(self.day) == 1:
-        #    self.day = "0" + self.day
+        today = datetime.date.today()
+        self.year = today.year
+        self.month = today.month
+        self.day = today.day
         
         if self.chessclock:
             self.chessclock.reset()

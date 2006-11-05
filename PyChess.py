@@ -449,7 +449,9 @@ class GladeHandlers:
             window.game.event = window["event_entry"].get_text()
             window.game.site = window["site_entry"].get_text()
             window.game.round = window["round_spinbutton"].get_value()
-            #TODO accept the date
+            window.game.year = window["game_info_calendar"].get_date()[0]
+            window.game.month = window["game_info_calendar"].get_date()[1] + 1 # bug in GtkCalender
+            window.game.day = window["game_info_calendar"].get_date()[2]
             window["game_info"].hide()
             return True
         window["game_info"].connect("delete-event", hide_window)
