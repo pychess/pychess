@@ -257,7 +257,7 @@ def runNewGameDialog (hideFC=True):
     
     global lastSave
     lastSave = (None, "")
-    
+    window["properties1"].set_sensitive(True)
     return window.game
 
 import thread

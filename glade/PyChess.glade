@@ -143,6 +143,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="properties1">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label">gtk-properties</property>
 		      <property name="use_stock">True</property>
 		      <signal name="activate" handler="on_properties1_activate" last_modification_time="Sat, 04 Nov 2006 14:37:31 GMT"/>
