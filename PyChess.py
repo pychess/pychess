@@ -438,6 +438,11 @@ class GladeHandlers:
     
     def on_properties1_activate (widget):
         window["game_info"].show()
+        def hide_window(button, *args):
+            window["game_info"].hide()
+            return True
+        window["game_info"].connect("delete-event", hide_window)
+
     
     def on_quit1_activate (widget):
         res = saveGameBefore(_("exit"))
