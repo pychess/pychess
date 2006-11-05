@@ -439,7 +439,7 @@ class GladeHandlers:
     def on_properties1_activate (widget):
         window["event_entry"].set_text(window.game.event)
         window["site_entry"].set_text(window.game.site)
-        #TODO set the round
+        window["round_spinbutton"].set_value(window.game.round)
         #TODO set the date
         window["game_info"].show()
         def hide_window(button, *args):
@@ -447,8 +447,8 @@ class GladeHandlers:
             return True
         def accept_new_properties(button, *args):
             window.game.event = window["event_entry"].get_text()
-            #TODO accept the site
-            #TODO accept the round
+            window.game.site = window["site_entry"].get_text()
+            window.game.round = window["round_spinbutton"].get_value()
             #TODO accept the date
             window["game_info"].hide()
             return True
