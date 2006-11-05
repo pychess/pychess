@@ -432,17 +432,29 @@ class GladeHandlers:
             ending = uri[s+1:]
         else: return
         saver = enddir[ending]
-        saver.save(open(uri,"w"), window.game.history)
+        saver.save(open(uri,"w"), window.game)
         global lastSave
         lastSave = (window.game.history.clone(), uri)
     
     def on_properties1_activate (widget):
+        window["event_entry"].set_text(window.game.event)
+        window["site_entry"].set_text(window.game.site)
+        #TODO set the round
+        #TODO set the date
         window["game_info"].show()
         def hide_window(button, *args):
             window["game_info"].hide()
             return True
+        def accept_new_properties(button, *args):
+            window.game.event = window["event_entry"].get_text()
+            #TODO accept the site
+            #TODO accept the round
+            #TODO accept the date
+            window["game_info"].hide()
+            return True
         window["game_info"].connect("delete-event", hide_window)
-
+        window["game_info_cancel_button"].connect("clicked", hide_window)
+        window["game_info_ok_button"].connect("clicked", accept_new_properties)
     
     def on_quit1_activate (widget):
         res = saveGameBefore(_("exit"))
