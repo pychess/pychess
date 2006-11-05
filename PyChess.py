@@ -593,6 +593,7 @@ class GladeHandlers:
             window["preferences"].hide()
             return True
         window["preferences"].connect("delete-event", hide_window)
+        window["preferences_close_button"].connect("clicked", hide_window)
 
     
 from time import time
