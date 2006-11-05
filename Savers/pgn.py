@@ -7,7 +7,8 @@ __endings__ = "pgn",
 
 import datetime
 
-def save (file, history):
+def save (file, game):
+    history = game.history
     today = datetime.date.today()
 
     # TODO: Create some kind of "match_param" (in knights) class to handle this kind of data. Might also be an expanded model class, instead of History

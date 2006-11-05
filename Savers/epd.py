@@ -9,7 +9,8 @@ from Utils.const import *
 __label__ = _("Chess Position")
 __endings__ = "epd", "fen"
 
-def save (file, history):
+def save (file, game):
+    history = game.history
     """Saves history to file"""
     
     pieces = history[-1].data
