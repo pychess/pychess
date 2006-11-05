@@ -30,7 +30,7 @@ class Game (GObject):
         self.analyzer = analyzer
         self.event = 'Local Event'
         self.site = 'Local site'
-        self.round = '1'
+        self.round = 1
         #today = datetime.date.today()
         #self.year = str(today.year)
         #self.month = str(today.month)
