@@ -37,6 +37,14 @@ class ChessClock (gtk.DrawingArea):
         #ra = self.redrawingAll
         ra = True
         
+        rect = self.get_allocation()
+        context.rectangle(
+            rect.width/2. * self.player, 0,
+            rect.width/2., rect.height)
+        context.set_source_color(self.dark)
+        context.fill_preserve()
+        context.new_path()
+        
         if ra or self.player == 0:
             time0 = self.names[0],self.formatTime(self.getDeciSeconds(0))
             layout0 = self.create_pango_layout(" %s: %s " % (time0))
@@ -49,15 +57,9 @@ class ChessClock (gtk.DrawingArea):
         
         if ra:
             w = max(layout1.get_pixel_size()[0], layout0.get_pixel_size()[0])*2
-            self.set_size_request(w, self.get_size_request()[1])
+            self.set_size_request(w+rect.height+7, -1)
         
-        rect = self.get_allocation()
-        context.rectangle(
-            rect.width/2. * self.player, 0,
-            rect.width/2., rect.height)
-        context.set_source_color(self.dark)
-        context.fill_preserve()
-        context.new_path()
+        
         
         pangoScale = float(pango.SCALE)
         
