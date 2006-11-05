@@ -59,8 +59,6 @@ class ChessClock (gtk.DrawingArea):
             w = max(layout1.get_pixel_size()[0], layout0.get_pixel_size()[0])*2
             self.set_size_request(w+rect.height+7, -1)
         
-        
-        
         pangoScale = float(pango.SCALE)
         
         # Analog clock code. Testing
@@ -114,7 +112,9 @@ class ChessClock (gtk.DrawingArea):
                 context.line_to(cx,cy)
                 context.line_to(x,y)
                 context.set_line_width(0.2)
-                context.set_source_rgb(0,0,0)
+                if player == 0:
+                    context.set_source_rgb(0,0,0)
+                else: context.set_source_rgb(1,1,1)
                 context.stroke()
         
         if ra or self.player == 0:

@@ -4,9 +4,6 @@ import pygtk
 pygtk.require("2.0")
 import gtk, gtk.gdk, re
 from gobject import *
-from Numeric import arange
-from gfx.Pieces import piece as getPiece
-from Utils.History import History
 from Utils.Cord import Cord
 from Utils.Move import Move
 from math import floor
@@ -36,6 +33,8 @@ class BoardControl (gtk.EventBox):
         self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
+        
+        self.locked = True
     
     def emit_move_signal (self, cord0, cord1):
         promotion = QUEEN
@@ -51,7 +50,6 @@ class BoardControl (gtk.EventBox):
     
     #          Selection and stuff          #
     
-    locked = True
     def isSelectable (self, cord):
         if self.locked: return False
         if not self.view.history[-1].movelist: return False
