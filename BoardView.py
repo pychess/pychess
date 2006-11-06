@@ -12,6 +12,7 @@ from math import floor
 from Utils.validator import validate
 from Utils import validator
 import pango
+from time import time
 
 def intersects (r0, r1):
     w0 = r0.width + r0.x
@@ -29,6 +30,8 @@ def rect (r):
 
 range8 = range(8)
 
+ANIMATION_TIME = .15
+
 class BoardView (gtk.DrawingArea):
     
     __gsignals__ = {
@@ -43,6 +46,8 @@ class BoardView (gtk.DrawingArea):
         self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         
+        self.animationStart = time()
+        
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = None # An object global variable with the current board size
         self.pad = 0.13 # Used when setcords is active
@@ -56,15 +61,83 @@ class BoardView (gtk.DrawingArea):
         self._fromWhite = True
         self._showCords = False
         self.lastMove = None
-        
+    
     def move (self, history):
-        if self.shown+2 < len(history):
+    	if self.shown+2 < len(history):
             return
         self.shown = len(history)-1
     
     def reset (self, history):
         self.shown = 0
     
+    ###############################
+    #          Animation          #
+    ###############################
+    
+    def _get_shown(self):
+        return self._shown
+        
+    def _set_shown(self, shown):
+        if not self.history or not 0 <= shown < len(self.history):
+            return
+        
+        step = shown > self.shown and 1 or -1
+
+        for i in range(self.shown, shown, step):
+            board0 = self.history[i]
+            board1 = self.history[i+step]
+            
+            for y, row in enumerate(board0.data):
+                for x, piece in enumerate(row):
+                    if not piece: continue
+                    if piece == board1.data[y][x]:
+                        # Skip if not moved
+                        continue
+                    if piece.x != None:
+                        # Skip if already moving
+                        continue
+                    piece.x = x
+                    piece.y = y
+                    # We cannot break here, as in rare cases (castling)
+                    #there will be more than one piece moving
+        
+        self._shown = shown
+        self.emit("shown_changed", self.shown)
+        
+        if self.shown != 0:
+            self.lastMove = self.history.moves[self.shown-1]
+        else: self.lastMove = None
+        
+        self.animationStart = time()
+        self.animationID = idle_add(self.runAnimation)
+        
+    shown = property(_get_shown, _set_shown)
+    
+    def runAnimation (self):
+        mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
+    	board = self.history[self.shown]
+    	any = False
+    	
+    	for y, row in enumerate(board.data):
+            for x, piece in enumerate(row):
+                if not piece or piece.x == None:
+                    continue
+                any = True
+                
+                newx = piece.x + (x-piece.x)*mod
+                newy = piece.y + (y-piece.y)*mod
+                
+                if (newx <= x <= piece.x or newx >= x >= piece.x) and \
+                   (newy <= y <= piece.y or newy >= y >= piece.y):
+                    piece.x = None
+                    piece.y = None
+                else:
+                	piece.x = newx
+                	piece.y = newy
+                	
+        idle_add(self.redraw_canvas)
+        return any
+                
     #############################
     #          Drawing          #
     #############################
@@ -164,16 +237,25 @@ class BoardView (gtk.DrawingArea):
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
         context.set_source_color(self.get_style().black)
+        
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
-                if not piece: continue
+                if not piece or piece.x != None: continue
                 if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
                 context.move_to(cx, cy)
                 drawPiece(piece, context, s)
+        
+        for y, row in enumerate(pieces.data):
+            for x, piece in enumerate(row):
+                if piece and piece.x != None:
+                    x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
+                    y = (self.fromWhite and [7-piece.y] or [piece.y])[0]
+                    context.move_to(xc+x*s, yc+y*s)
+                    drawPiece(piece, context, s)
+        
         context.fill()
-        #context.new_path()
     
     def drawSpecial (self, context):
         used = []
@@ -392,18 +474,6 @@ class BoardView (gtk.DrawingArea):
     ################################
     #          Other vars          #
     ################################
-    
-    def _get_shown(self):
-        return self._shown
-    def _set_shown(self, shown):
-        if self.history and 0 <= shown < len(self.history):
-            self._shown = shown
-            self.emit("shown_changed", self.shown)
-            if self.history.moves and self.shown:
-                self.lastMove = self.history.moves[self.shown-1]
-            else: self.lastMove = None
-            idle_add(self.redraw_canvas)
-    shown = property(_get_shown, _set_shown)
     
     def _set_fromWhite (self, fromWhite):
         self._fromWhite = fromWhite
