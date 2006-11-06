@@ -1,6 +1,7 @@
 from Utils.History import History
 from Utils.Move import Move, parseSAN, toSAN
 from Utils.const import *
+from System import Log
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -33,6 +34,7 @@ def save (file, game):
     temphis = History()
     for move in history.moves:
         charsToBeWritten = ""
+        print move
         # write movenr. every 2 halfmoves...
         if halfMoves % 2 == 0:
             charsToBeWritten += str( (halfMoves / 2)+1 ) + ". "
@@ -92,27 +94,36 @@ def load (file, history):
                 files.append(["",""])
                 inTags = True
             files[-1][0] += line
+            print line
         
         else:
             inTags = False
             files[-1][1] += line
+            print line
 
     myFile = files[0]
     
-    try:
+    #try:
         #These tags won't be used for a lot atm.
-        tags = tagre.findall(myFile[0])
-        moves = comre.sub("", myFile[1])
-        moves = stripBrackets(moves)
-        moves = movre.findall(moves+" ")
-        if moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
-            del moves[-1]
-    except:
-        import traceback
-        log.error(traceback.format_exc())
-        log.error("Couldn't parse pgn file: %s" % repr(file))
-        log.debug("Part tried to parse: %s" % repr(myFile))
-        return
+    tags = tagre.findall(myFile[0])
+    for tag in tags:
+        print tag
+    moves = comre.sub("", myFile[1])
+    print 'Number of moves ' + str(len(moves))
+    moves = stripBrackets(moves)
+    print 'Number of moves ' + str(len(moves))
+    moves = movre.findall(moves+" ")
+    print 'Number of moves ' + str(len(moves))
+    for move in moves:
+        print moves
+    if moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
+        del moves[-1]
+    #except:
+        #import traceback
+        #Log.error(traceback.format_exc())
+        #Log.error("Couldn't parse pgn file: %s" % repr(file))
+        #Log.debug("Part tried to parse: %s" % repr(myFile))
+        #return
     
     history.reset(False)
     for i, move in enumerate(moves):
