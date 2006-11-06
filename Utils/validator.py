@@ -379,12 +379,8 @@ def status (history):
 	# * a pawn that could have been captured,
 	# * en passant can no longer be captured
 	# * the right to castle has been changed.
-    print len(history.boards)
-    if len(history) >= 12 and \
-        ( history[-1] == history[-5] == history[-9]) and \
-        ( history[-3] == history[-7] == history[-11]) and \
-        ( history[-2] == history[-6] == history[-10]) and \
-        ( history[-4] == history[-8] == history[-12]):
+
+    if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION
     
     board = history[-1]
