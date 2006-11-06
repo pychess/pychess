@@ -309,7 +309,7 @@ class CECProtocol (GObject):
                 try:
                     moves.append(self.parseMove(m, board))
                 except ParsingError:
-                    continue
+                    break
                 except Exception:
                 	print boards, moves, parts
                 	raise
