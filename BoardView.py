@@ -8,7 +8,7 @@ from gfx.Pieces import drawPiece
 from Utils.History import History
 from Utils.Cord import Cord
 from Utils.Move import Move
-from math import floor
+from math import floor, ceil
 from Utils.validator import validate
 from Utils import validator
 import pango
@@ -24,9 +24,28 @@ def intersects (r0, r1):
             (w0 < r0.x or w0 > r1.x) and \
             (h0 < r0.y or h0 > r1.y)
 
+def join (r0, r1):
+    """ Take (x, y, w, [h]) squares """
+    
+    if len(r0) == 3:
+        r0 = (r0[0], r0[1], r0[2], r0[2])
+    if len(r1) == 3:
+        r1 = (r1[0], r1[1], r1[2], r1[2])
+    
+    x1 = min(r0[0], r1[0])
+    x2 = max(r0[0]+r0[2], r1[0]+r1[2])
+    y1 = min(r0[1], r1[1])
+    y2 = max(r0[1]+r0[3], r1[1]+r1[3])
+    
+    return (x1, y1, x2 - x1, y2 - y1)
+
 def rect (r):
-    x, y, w = [int(round(v)) for v in r]
-    return gtk.gdk.Rectangle (x, y, w, w)
+    x, y = [int(floor(v)) for v in r[:2]]
+    w = int(ceil(r[2]))
+    if len(r) == 4:
+        h = int(ceil(r[3]))
+    else: h = w
+    return gtk.gdk.Rectangle (x, y, w, h)
 
 range8 = range(8)
 
@@ -63,7 +82,7 @@ class BoardView (gtk.DrawingArea):
         self.lastMove = None
     
     def move (self, history):
-    	if self.shown+2 < len(history):
+        if self.shown+2 < len(history):
             return
         self.shown = len(history)-1
     
@@ -115,10 +134,12 @@ class BoardView (gtk.DrawingArea):
     
     def runAnimation (self):
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
-    	board = self.history[self.shown]
-    	any = False
-    	
-    	for y, row in enumerate(board.data):
+        board = self.history[self.shown]
+        any = False
+        
+        paintBox = None
+        
+        for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
                 if not piece or piece.x == None:
                     continue
@@ -127,15 +148,23 @@ class BoardView (gtk.DrawingArea):
                 newx = piece.x + (x-piece.x)*mod
                 newy = piece.y + (y-piece.y)*mod
                 
+                if not paintBox:
+                    paintBox = self.fcord2Rect(piece.x, piece.y)
+                else: paintBox = join(paintBox, self.fcord2Rect(piece.x, piece.y))
+                paintBox = join(paintBox, self.fcord2Rect(newx, newy))
+                
                 if (newx <= x <= piece.x or newx >= x >= piece.x) and \
                    (newy <= y <= piece.y or newy >= y >= piece.y):
                     piece.x = None
                     piece.y = None
                 else:
-                	piece.x = newx
-                	piece.y = newy
-                	
-        idle_add(self.redraw_canvas)
+                    piece.x = newx
+                    piece.y = newy
+        
+        if paintBox:
+            paintBox = rect(paintBox)
+        idle_add(lambda: self.redraw_canvas(paintBox))
+        
         return any
                 
     #############################
@@ -168,7 +197,7 @@ class BoardView (gtk.DrawingArea):
         yc = alloc.height/2. - square/2
         s = square/8
         self.square = (xc, yc, square, s)
-    	
+        
         self.drawBoard (context)
         self.drawCords (context)
         if not self.history: return
@@ -249,11 +278,13 @@ class BoardView (gtk.DrawingArea):
         
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
-                if piece and piece.x != None:
-                    x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
-                    y = (self.fromWhite and [7-piece.y] or [piece.y])[0]
-                    context.move_to(xc+x*s, yc+y*s)
-                    drawPiece(piece, context, s)
+                if not piece or piece.x == None: continue
+                if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
+                    continue
+                x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
+                y = (self.fromWhite and [7-piece.y] or [piece.y])[0]
+                context.move_to(xc+x*s, yc+y*s)
+                drawPiece(piece, context, s)
         
         context.fill()
     
@@ -495,6 +526,13 @@ class BoardView (gtk.DrawingArea):
     ###########################
     #          Other          #
     ###########################
+    
+    def fcord2Rect (self, x, y):
+        xc, yc, square, s = self.square
+        x = (self.fromWhite and [x] or [7-x])[0]
+        y = (self.fromWhite and [7-y] or [y])[0]
+        r = (xc+x*s, yc+y*s, s)
+        return r
     
     def cord2Rect (self, cord):
         xc, yc, square, s = self.square
