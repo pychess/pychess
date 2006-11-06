@@ -99,6 +99,7 @@ class BoardView (gtk.DrawingArea):
         return self._shown
         
     def _set_shown(self, shown):
+        
         if not self.history or not 0 <= shown < len(self.history):
             return
         

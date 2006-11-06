@@ -73,7 +73,7 @@ class Game (GObject):
                 self.chessclock.player = no
             
             try:
-                answer = player.makeMove(self.history)
+                move = player.makeMove(self.history)
             
             except Utils.Move.ParsingError:
                 #Mostly debugging really
@@ -89,10 +89,6 @@ class Game (GObject):
             except EngineDead:
                 self.kill()
                 break
-                
-            if type(answer) in (list, tuple):
-                move, animate = answer
-            else: move, animate = answer, True
             
             if not self.run:
                 self.kill()
