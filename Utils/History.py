@@ -92,16 +92,17 @@ class History (GObject):
         self.moves.append(move)
         board = self.boards[-1].move(move, mvlist)
         self.boards.append(board)
-        self.emit("changed")
         
         if mvlist:
             status, comment = validator.status(self)
             if status != RUNNING:
                 board.status = status
                 board.comment = comment
+                self.emit("changed")
                 self.emit("game_ended", board.status, board.comment)
                 return False
-            
+        
+        self.emit("changed")
         return self
     
     def __eq__ (self, other):

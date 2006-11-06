@@ -314,8 +314,11 @@ class CECProtocol (GObject):
                 	print boards, moves, parts
                 	raise
                 if moves:
-                    board = board.move(moves[-1], mvlist=False)
-                    boards.append(board)
+                    try:
+                        board = board.move(moves[-1], mvlist=False)
+                        boards.append(board)
+                    except AttributeError:
+                        break
             if moves:
                 self.emit("analyze", moves)
             
