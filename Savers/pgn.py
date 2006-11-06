@@ -29,34 +29,23 @@ def save (file, game):
     print >> file
 
     halfMoves = 0
-    nrOfCharsInLine = 0
     temphis = History()
+    result = ''
     for move in history.moves:
-        charsToBeWritten = ""
-        # write movenr. every 2 halfmoves...
         if halfMoves % 2 == 0:
-            charsToBeWritten += str( (halfMoves / 2)+1 ) + ". "
-
-        # ...and the move
+            result += str((halfMoves / 2) + 1)
+            result += '. '
         temphis.add(move)
-        charsToBeWritten += toSAN(temphis) + " "
-        
-        #wordwrap?
-        if nrOfCharsInLine + len(charsToBeWritten) > 80:
-            print >> file
-            file.write(charsToBeWritten)
-            nrOfCharsInLine = len(charsToBeWritten)
-        else:
-            file.write(charsToBeWritten)
-            nrOfCharsInLine += len(charsToBeWritten)
-
-        # increment halfmoves
+        result += toSAN(temphis[-2], temphis[-1], temphis.moves[-1])
+        result += ' '
+        if len(result) >= 80:
+            result += '\n'
+            file.write(result)
+            result = ''
         halfMoves += 1
-    
-    #if history.status != RUNNING:
-        #FIXME: This don't work with wordwrap
-    #    file.write(result)
-    
+    #TODO Append the score
+    result += '\n'
+    file.write(result)
     file.close() # close the savegame
 
 def stripBrackets (string):
