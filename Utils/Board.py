@@ -38,6 +38,7 @@ class Board:
         self.status = RUNNING
         self.fifty = 0
         self.myhash = 0
+        self.deadlist = []
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 if not piece: continue
