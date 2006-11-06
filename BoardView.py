@@ -66,6 +66,7 @@ class BoardView (gtk.DrawingArea):
         self.set_size_request(300,300)
         
         self.animationStart = time()
+        self.lastShown = None
         
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = None # An object global variable with the current board size
@@ -80,7 +81,7 @@ class BoardView (gtk.DrawingArea):
         self._fromWhite = True
         self._showCords = False
         self.lastMove = None
-    
+        
     def move (self, history):
         if self.shown+2 < len(history):
             return
@@ -88,6 +89,7 @@ class BoardView (gtk.DrawingArea):
     
     def reset (self, history):
         self.shown = 0
+        self.lastMove = None
     
     ###############################
     #          Animation          #
@@ -98,6 +100,11 @@ class BoardView (gtk.DrawingArea):
         
     def _set_shown(self, shown):
         if not self.history or not 0 <= shown < len(self.history):
+            return
+        
+        if len(self.history) == 1 and shown == 0:
+            self._shown = shown
+            idle_add(self.redraw_canvas)
             return
         
         step = shown > self.shown and 1 or -1
@@ -128,11 +135,12 @@ class BoardView (gtk.DrawingArea):
         else: self.lastMove = None
         
         self.animationStart = time()
+        idle_add(lambda: False and self.runAnimation(first = True))
         self.animationID = idle_add(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
     
-    def runAnimation (self):
+    def runAnimation (self, first=False):
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.history[self.shown]
         any = False
@@ -160,6 +168,20 @@ class BoardView (gtk.DrawingArea):
                 else:
                     piece.x = newx
                     piece.y = newy
+        
+        #FIXME: Tegn alt i starten. Så bliver pile m.v. clearet
+        
+        if first:
+            for cord in (self.selected, self.hover, self.active):
+                if cord:
+                    paintBox = join(paintBox, self.cord2Rect(cord))
+            for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
+                if arrow:
+                    paintBox = join(paintBox, self.cord2Rect(arrow[0]))
+                    paintBox = join(paintBox, self.cord2Rect(arrow[1]))
+            if self.lastMove:
+                paintBox = join(paintBox, self.cord2Rect(lastMove.cord0))
+                paintBox = join(paintBox, self.cord2Rect(lastMove.cord1))
         
         if paintBox:
             paintBox = rect(paintBox)
