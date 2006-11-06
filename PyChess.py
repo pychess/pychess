@@ -494,13 +494,16 @@ class GladeHandlers:
         	on_clear (history)
         	window["hint_mode"].set_active(False)
         if widget.get_active():
-            if len(window.analyzer.analyzeMoves) >= 1:
-                window["BoardControl"].view.greenarrow = \
+            try:
+                if len(window.analyzer.analyzeMoves) >= 1:
+                    window["BoardControl"].view.greenarrow = \
                         window.analyzer.analyzeMoves[0].cords
-            window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
-            history = window["BoardControl"].view.history
-            window.hintconid1 = history.connect("changed", on_clear)
-            window.hintconid2 = history.connect("cleared", on_reset)
+                window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
+                history = window["BoardControl"].view.history
+                window.hintconid1 = history.connect("changed", on_clear)
+                window.hintconid2 = history.connect("cleared", on_reset)
+            except:
+        	    window["hint_mode"].set_active(False)
         else:
             try:
                 window.analyzer.disconnect(window.hintconid0)
@@ -519,13 +522,16 @@ class GladeHandlers:
         	on_clear (history)
         	window["spy_mode"].set_active(False)
         if widget.get_active():
-            if len(window.analyzer.analyzeMoves) >= 2:
-                window["BoardControl"].view.redarrow = \
+            try:
+                if len(window.analyzer.analyzeMoves) >= 2:
+                    window["BoardControl"].view.redarrow = \
                         window.analyzer.analyzeMoves[1].cords
-            window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
-            history = window["BoardControl"].view.history
-            window.spyconid1 = history.connect("changed", on_clear)
-            window.spyconid2 = history.connect("cleared", on_reset)
+                window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
+                history = window["BoardControl"].view.history
+                window.spyconid1 = history.connect("changed", on_clear)
+                window.spyconid2 = history.connect("cleared", on_reset)
+            except:
+                window["spy_mode"].set_active(False)
         else:
             try:
                 window.analyzer.disconnect(window.spyconid0)
