@@ -76,10 +76,10 @@ class Board:
         
         elif p.sign == PAWN and cord0.y in (3,4):
             if cord0.x != cord1.x and board[cord1] == None:
-                q = board.data[cord1.y][cord0.x]
+                q = board.data[cord0.y][cord1.x]
                 if q:
                     board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
-                    board.data[cord1.y][cord0.x] = None
+                    board.data[cord0.y][cord1.x] = None
         
         elif p.sign == PAWN and cord1.y in (0,7):
             q = board[cord0]
