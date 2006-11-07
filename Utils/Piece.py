@@ -1,5 +1,5 @@
 from const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
-from const import reprSign, reprColor
+from const import reprSign, reprColor, reprPiece
 
 pieceName = ["King", "Queen", "Rook", "Bishop", "Knight", "Pawn"]
 
