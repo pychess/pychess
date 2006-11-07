@@ -22,6 +22,8 @@ class HistoryPool:
         
     def add (self, history):
         #Todo: deconnect signals
+        import gobject
+        print gobject.signal_list_ids(history)
         self.objects.append(history)
 hisPool = HistoryPool()
 
@@ -58,10 +60,11 @@ class History (GObject):
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
     
-    def __init__ (self, mvlist=False):
+    def __init__ (self, mvlist=False, special=False):
         GObject.__init__(self)
         self.reset(mvlist)
-    
+        self.special = special
+        
     def reset (self, mvlist=False):
         GObject.__init__(self)
         
@@ -89,8 +92,11 @@ class History (GObject):
     
     def add (self, move, mvlist=False):
         
-        self.moves.append(move)
+        if self.special:
+            print "move", move
+        
         board = self.boards[-1].move(move, mvlist)
+        self.moves.append(move)
         self.boards.append(board)
         
         if mvlist:

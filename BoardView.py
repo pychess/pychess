@@ -49,7 +49,7 @@ def rect (r):
 
 range8 = range(8)
 
-ANIMATION_TIME = .15
+ANIMATION_TIME = 75
 
 class BoardView (gtk.DrawingArea):
     
@@ -59,14 +59,16 @@ class BoardView (gtk.DrawingArea):
     
     def __init__(self):
         gtk.DrawingArea.__init__(self)
-        self.history = History()
+        self.history = History(special=True)
         self.connect("expose_event", self.expose)
         self.history.connect_after("changed", self.move)
         self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         
+        self.animationID = -1
         self.animationStart = time()
         self.lastShown = None
+        self.deadlist = []
         
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = None # An object global variable with the current board size
@@ -109,7 +111,9 @@ class BoardView (gtk.DrawingArea):
             return
         
         step = shown > self.shown and 1 or -1
-
+        
+        self.deadlist = []
+        
         for i in range(self.shown, shown, step):
             board0 = self.history[i]
             board1 = self.history[i+step]
@@ -117,78 +121,108 @@ class BoardView (gtk.DrawingArea):
             for y, row in enumerate(board0.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
-                    if piece == board1.data[y][x]:
-                        # Skip if not moved
-                        continue
                     if piece.x != None:
                         # Skip if already moving
                         continue
-                    piece.x = x
-                    piece.y = y
-                    # We cannot break here, as in rare cases (castling)
-                    #there will be more than one piece moving
+                    if piece != board1.data[y][x]:
+                        if board1.data[y][x] != None and step > 0:
+                            # A piece is dying
+                            self.deadlist.append((piece,x,y))
+                        else:
+                            # It has moved
+                            piece.x = x
+                            piece.y = y
         
         self._shown = shown
         self.emit("shown_changed", self.shown)
         
-        if self.shown != 0:
-            self.lastMove = self.history.moves[self.shown-1]
-        else: self.lastMove = None
+        if self.animationID != -1:
+            source_remove(self.animationID)
         
         self.animationStart = time()
-        idle_add(lambda: False and self.runAnimation(first = True))
-        self.animationID = idle_add(self.runAnimation)
+        def do():
+            self.runAnimation(first = True)
+            if self.shown != 0:
+                self.lastMove = self.history.moves[self.shown-1]
+            else: self.lastMove = None
+            self.animationID = idle_add(self.runAnimation)
+        idle_add(do)
         
     shown = property(_get_shown, _set_shown)
     
     def runAnimation (self, first=False):
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.history[self.shown]
-        any = False
-        
+
         paintBox = None
         
         for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
-                if not piece or piece.x == None:
-                    continue
-                any = True
+                if not piece: continue
                 
-                newx = piece.x + (x-piece.x)*mod
-                newy = piece.y + (y-piece.y)*mod
+                if piece.x != None:
+                    newx = piece.x + (x-piece.x)*mod
+                    newy = piece.y + (y-piece.y)*mod
+                    
+                    if not paintBox:
+                        paintBox = self.fcord2Rect(piece.x, piece.y)
+                    else: paintBox = join(paintBox, self.fcord2Rect(piece.x, piece.y))
+                    paintBox = join(paintBox, self.fcord2Rect(newx, newy))
+                    
+                    if (newx <= x <= piece.x or newx >= x >= piece.x) and \
+                       (newy <= y <= piece.y or newy >= y >= piece.y) or \
+                       abs(newx-x) < 0.01 and abs(newy-y) < 0.01:
+                        piece.x = None
+                        piece.y = None
+                    else:
+                        piece.x = newx
+                        piece.y = newy
                 
-                if not paintBox:
-                    paintBox = self.fcord2Rect(piece.x, piece.y)
-                else: paintBox = join(paintBox, self.fcord2Rect(piece.x, piece.y))
-                paintBox = join(paintBox, self.fcord2Rect(newx, newy))
-                
-                if (newx <= x <= piece.x or newx >= x >= piece.x) and \
-                   (newy <= y <= piece.y or newy >= y >= piece.y):
-                    piece.x = None
-                    piece.y = None
-                else:
-                    piece.x = newx
-                    piece.y = newy
+                if piece.opacity < 1:
+                    if piece.x != None:
+                        px = piece.x
+                        py = piece.y
+                    else:
+                        px = x
+                        py = y
+                        
+                    if not paintBox:
+                        paintBox = self.fcord2Rect(px, py)
+                    else: paintBox = join(paintBox, self.fcord2Rect(px, py))
+                    
+                    newOp = piece.opacity + (1-piece.opacity)*mod
+                    
+                    if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
+                        piece.opacity = 1
+                    else: piece.opacity = newOp
         
-        #FIXME: Tegn alt i starten. Så bliver pile m.v. clearet
-        
-        if first:
-            for cord in (self.selected, self.hover, self.active):
-                if cord:
-                    paintBox = join(paintBox, self.cord2Rect(cord))
-            for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
-                if arrow:
-                    paintBox = join(paintBox, self.cord2Rect(arrow[0]))
-                    paintBox = join(paintBox, self.cord2Rect(arrow[1]))
-            if self.lastMove:
-                paintBox = join(paintBox, self.cord2Rect(lastMove.cord0))
-                paintBox = join(paintBox, self.cord2Rect(lastMove.cord1))
-        
+        for i, (piece, x, y) in enumerate(self.deadlist):
+            if not paintBox:
+                paintBox = self.fcord2Rect(x, y)
+            else: paintBox = join(paintBox, self.fcord2Rect(x, y))
+            
+            newOp = piece.opacity + (0-piece.opacity)*mod
+            
+            if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
+                del self.deadlist[i]
+            else: piece.opacity = newOp
+            
         if paintBox:
+            if first:
+                for cord in (self.selected, self.hover, self.active):
+                    if cord:
+                        paintBox = join(paintBox, self.cord2Rect(cord))
+                for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
+                    if arrow:
+                        paintBox = join(paintBox, self.cord2Rect(arrow[0]))
+                        paintBox = join(paintBox, self.cord2Rect(arrow[1]))
+                if self.lastMove:
+                    paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord0))
+                    paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord1))
             paintBox = rect(paintBox)
-        idle_add(lambda: self.redraw_canvas(paintBox))
+            idle_add(lambda: self.redraw_canvas(paintBox))
         
-        return any
+        return paintBox and True or False
                 
     #############################
     #          Drawing          #
@@ -229,7 +263,11 @@ class BoardView (gtk.DrawingArea):
         self.drawArrows (context)
         self.drawPieces (context, pieces, r)
         self.drawLastMove (context)
-    
+        
+        #context.rectangle(r.x,r.y,r.width,r.height)
+        #context.set_source_rgb(1,0,0)
+        #context.stroke()
+        
     def drawCords (self, context):
         thickness = 0.01
         signsize = 0.04
@@ -288,11 +326,31 @@ class BoardView (gtk.DrawingArea):
     
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
-        context.set_source_color(self.get_style().black)
+        
+        for piece, x, y in self.deadlist:
+            x = (self.fromWhite and [x] or [7-x])[0]
+            y = (self.fromWhite and [7-y] or [y])[0]
+            context.move_to(xc+x*s, yc+y*s)
+            context.set_source_rgba(0,0,0,piece.opacity)
+            drawPiece(piece, context, s)
+            context.fill()
+            
+        for y, row in enumerate(pieces.data):
+            for x, piece in enumerate(row):
+                if not piece or piece.opacity == 1:
+                    continue
+                cx, cy = self.cord2Point(Cord(x,y))
+                context.move_to(cx, cy)
+                context.set_source_rgba(0,0,0,piece.opacity)
+                drawPiece(piece, context, s)
+                context.fill()
+                
+        context.set_source_rgb(0,0,0)
         
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
-                if not piece or piece.x != None: continue
+                if not piece or piece.x != None or piece.opacity < 1:
+                    continue
                 if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
@@ -301,8 +359,7 @@ class BoardView (gtk.DrawingArea):
         
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
-                if not piece or piece.x == None: continue
-                if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
+                if not piece or piece.x == None or piece.opacity < 1:
                     continue
                 x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
                 y = (self.fromWhite and [7-piece.y] or [piece.y])[0]

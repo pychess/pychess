@@ -38,7 +38,6 @@ class Board:
         self.status = RUNNING
         self.fifty = 0
         self.myhash = 0
-        self.deadlist = []
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 if not piece: continue
@@ -56,11 +55,15 @@ class Board:
         self[cord0] = None
     
     def move (self, move, mvlist=False):
+
         board = self.clone()
         board.movelist = None
         cord0, cord1 = move.cords
         
         p = board[cord0]
+        
+        if not p:
+            print board, cord0
         
         if p.sign == KING:
             if cord0.y == 0:
@@ -86,9 +89,7 @@ class Board:
             board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
             board[cord0] = Piece(q.color, move.promotion)
             q = board[cord0]
-            try:
-                board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
-            except: print [q.color, q.sign, cord0.x, cord0.y]
+            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
             
         board._move(cord0, cord1)
         board.color = 1 - self.color
@@ -131,7 +132,7 @@ class Board:
         
         if mvlist:
             board.movelist = validator.findMoves(board)
-                
+        
         if not board[cord1]: log.warn("How is this move possible? "+str(move))
         if board[cord1] and board[cord1].sign == "p" and cord1.y in [0,7]:
             board[cord1] = Piece(board[cord1].color, move.promotion)
