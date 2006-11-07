@@ -94,6 +94,7 @@ def load (file, history):
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
         if moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
+            #TODO Save this result
             del moves[-1]
     except:
         import traceback
@@ -104,7 +105,7 @@ def load (file, history):
     
     history.reset(False)
     for i, move in enumerate(moves):
-        m = parseSAN(history, move)
+        m = parseSAN(history.boards[-1], move)
         if i+1 < len(moves):
             history.add(m, False)
         else: history.add(m, True)
