@@ -16,8 +16,8 @@ def save (file, game):
         name = userdata.pw_name
     
     #result = reprResult[history.status]
-    result = '1-1'
-    
+    game_status = reprResult[game.history.boards[-1].status]
+
     # TODO: get some more calculated values here
     print >> file, '[Event "%s"]' % game.event #Event: the name of the tournament or match event.
     print >> file, '[Site "%s"]' % game.site #Site: the location of the event.
@@ -25,7 +25,7 @@ def save (file, game):
     print >> file, '[Round "%d"]' % game.round
     print >> file, '[White "%s"]' % name
     print >> file, '[Black "Black Player"]'
-    print >> file, '[Result "%s"]' % result
+    print >> file, '[Result "%s"]' % game_status
     print >> file
 
     halfMoves = 0
@@ -43,10 +43,9 @@ def save (file, game):
             file.write(result)
             result = ''
         halfMoves += 1
-    #TODO Append the score
-    result += '\n'
+    result += game_status + '\n'
     file.write(result)
-    file.close() # close the savegame
+    file.close()
 
 def stripBrackets (string):
     brackets = 0
