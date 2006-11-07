@@ -50,7 +50,7 @@ def rect (r):
 
 range8 = range(8)
 
-ANIMATION_TIME = 15
+ANIMATION_TIME = .15
 
 class BoardView (gtk.DrawingArea):
     
@@ -145,10 +145,15 @@ class BoardView (gtk.DrawingArea):
         
         self.animationStart = time()
         def do():
+            if step < 0:
+                if self.shown != 0:
+                    self.lastMove = self.history.moves[self.shown-1]
+                else: self.lastMove = None
             self.runAnimation(first = True)
-            if self.shown != 0:
-                self.lastMove = self.history.moves[self.shown-1]
-            else: self.lastMove = None
+            if step > 0:
+                if self.shown != 0:
+                    self.lastMove = self.history.moves[self.shown-1]
+                else: self.lastMove = None
             self.animationID = idle_add(self.runAnimation)
         idle_add(do)
         
