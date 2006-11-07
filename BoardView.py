@@ -28,6 +28,10 @@ def intersects (r0, r1):
 def join (r0, r1):
     """ Take (x, y, w, [h]) squares """
     
+    if not r0: return r1
+    if not r1: return r0
+    if not r0 and not r1: return None
+    
     if len(r0) == 3:
         r0 = (r0[0], r0[1], r0[2], r0[2])
     if len(r1) == 3:
@@ -145,21 +149,21 @@ class BoardView (gtk.DrawingArea):
         
         self.animationStart = time()
         def do():
-            if step < 0:
-                if self.shown != 0:
-                    self.lastMove = self.history.moves[self.shown-1]
-                else: self.lastMove = None
-            self.runAnimation(first = True)
-            if step > 0:
-                if self.shown != 0:
-                    self.lastMove = self.history.moves[self.shown-1]
-                else: self.lastMove = None
+            if self.lastMove:
+                paintBox = self.cord2Rect(self.lastMove.cord0)
+                paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord1))
+                self.lastMove = None
+                self.redraw_canvas(rect(paintBox))
+            if self.shown != 0:
+                self.lastMove = self.history.moves[self.shown-1]
+            else: self.lastMove = None
+            self.runAnimation(redrawMisc = True)
             self.animationID = idle_add(self.runAnimation)
         idle_add(do)
         
     shown = property(_get_shown, _set_shown)
     
-    def runAnimation (self, first=False):
+    def runAnimation (self, redrawMisc=False):
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.history[self.shown]
 
@@ -216,20 +220,20 @@ class BoardView (gtk.DrawingArea):
                 del self.deadlist[i]
             else: piece.opacity = newOp
             
+        if redrawMisc:
+            for cord in (self.selected, self.hover, self.active):
+                if cord:
+                    paintBox = join(paintBox, self.cord2Rect(cord))
+            for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
+                if arrow:
+                    paintBox = join(paintBox, self.cord2Rect(arrow[0]))
+                    paintBox = join(paintBox, self.cord2Rect(arrow[1]))
+            if self.lastMove:
+                paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord0))
+                paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord1))
+        
         if paintBox:
-            if first:
-                for cord in (self.selected, self.hover, self.active):
-                    if cord:
-                        paintBox = join(paintBox, self.cord2Rect(cord))
-                for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
-                    if arrow:
-                        paintBox = join(paintBox, self.cord2Rect(arrow[0]))
-                        paintBox = join(paintBox, self.cord2Rect(arrow[1]))
-                if self.lastMove:
-                    paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord0))
-                    paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord1))
-            paintBox = rect(paintBox)
-            idle_add(lambda: self.redraw_canvas(paintBox))
+            self.redraw_canvas(rect(paintBox))
         
         return paintBox and True or False
                 
