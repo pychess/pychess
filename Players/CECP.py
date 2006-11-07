@@ -307,11 +307,13 @@ class CECProtocol (GObject):
             moves = []
             for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
-                    moves.append(self.parseMove(m, board))
+                	parsedMove = self.parseMove(m, board)
                 except ParsingError:
                     break
+                try:
+                    moves.append(self.parseMove(m, board))
                 except Exception:
-                	print boards, moves, parts
+                	print boards, moves, parts, m, parsedMove
                 	raise
                 if moves:
                     try:
