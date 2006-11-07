@@ -13,6 +13,7 @@ from Utils.validator import validate
 from Utils import validator
 import pango
 from time import time
+from Utils.const import *
 
 def intersects (r0, r1):
     w0 = r0.width + r0.x
@@ -49,7 +50,7 @@ def rect (r):
 
 range8 = range(8)
 
-ANIMATION_TIME = 75
+ANIMATION_TIME = 15
 
 class BoardView (gtk.DrawingArea):
     
@@ -125,13 +126,16 @@ class BoardView (gtk.DrawingArea):
                         # Skip if already moving
                         continue
                     if piece != board1.data[y][x]:
-                        if board1.data[y][x] != None and step > 0:
+                        if step > 0 and (board1.data[y][x] != None or \
+                           board0.enpassant != None and board1[board0.enpassant] != None and \
+                           board0.enpassant == Cord(x,y+(board0.color == WHITE and 1 or -1))):
                             # A piece is dying
                             self.deadlist.append((piece,x,y))
                         else:
                             # It has moved
                             piece.x = x
                             piece.y = y
+                    
         
         self._shown = shown
         self.emit("shown_changed", self.shown)
