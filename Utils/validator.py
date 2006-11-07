@@ -251,8 +251,9 @@ def findMoves2 (board, testCheck=True):
                         yield move
                     else: movePool.add(move)
                 except Exception:
-                    print piece, cord, board.data
-                    raise Exception, "Im sure it was ok?!"
+                    print piece, cord0, board
+                    print "Im sure it was ok?!"
+                    raise
 
 def _getLegalMoves (board, cord, testCheck):
     cords = []
