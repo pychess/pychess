@@ -241,19 +241,19 @@ def evalRookBonus (board):
             
             # We should try to keep the rooks at the back lines
             if y in (0,7):
-            	score += piece.color == WHITE and 22 or -22
+            	score += piece.color == WHITE and 12 or -12
 
             # Is this rook on a semi- or completely open file?
             noblack = blackPawnFileBins[x] == 0 and 1 or 0
             nowhite = whitePawnFileBins[x] == 0 and 1 or 0
             if piece.color == WHITE:
-                if nowhite:
-                    score += (noblack+nowhite)*8
-                else: score += noblack*6
-            else:
                 if noblack:
-                    score -= (noblack+nowhite)*8
-                else: score -= noblack*6
+                    score += (noblack+nowhite)*6
+                else: score += nowhite*8
+            else:
+                if nowhite:
+                    score -= (noblack+nowhite)*6
+                else: score -= nowhite*8
     
     return score
 

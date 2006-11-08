@@ -49,7 +49,7 @@ class EngineConnection (gobject.GObject):
         gobject.GObject.__init__(self)
         self.pid, self.fd = os.forkpty()
         if self.pid == CHILD:
-            os.nice(10)
+            os.nice(15)
             os.execv(executable, [""])
         
         self.defname = os.path.split(executable)[1]
