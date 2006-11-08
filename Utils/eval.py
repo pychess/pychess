@@ -134,7 +134,8 @@ endking = array('b', [
     -5, -3, -1,  0,  0, -1, -3, -5
 ])
 
-hashmap = {}
+from System.LimitedDict import LimitedDict
+hashmap = LimitedDict(10**3)
 
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
