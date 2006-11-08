@@ -10,11 +10,12 @@ range8 = range(8)
 def validate (move, board, testCheck=True):
     """Will asume the first cord is an ally piece"""
     
-    if move.cord0 == move.cord1 or \
-       not board[move.cord0]:
+    piece = board[move.cord0]
+    
+    if move.cord0 == move.cord1 or not piece:
         return False
     
-    method = validators[board[move.cord0].sign]
+    method = validators[piece.sign]
     if not method(move, board):
         return False
     
@@ -358,11 +359,26 @@ def willCheck (board, move):
     check = isCheck(board2, board.color)
     return check
 
-def isCheck (board, who):
+from System.LimitedDict import LimitedDict
+checkDic = LimitedDict(5000)
+
+def isCheck (board, who):  
+    
+    if board in checkDic:
+        r = checkDic[board][who]
+        if r != None:
+            return r
+    
     cord = _findKing(board, who)
     if genMovesPointingAt(board, (cord.x,), (cord.y,), 1-who):
-        return True
-    return False
+        r = True
+    else: r = False
+    
+    if not board in checkDic:
+        checkDic[board] = [None,None]
+    checkDic[board][who] = r
+    
+    return r
 
 def _findKing (board, color):
     for x in range8:
