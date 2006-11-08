@@ -13,7 +13,7 @@ class Piece:
     	self.y = None
     	
     def __eq__ (self, other):
-        return  isinstance(other, Piece) and \
+        return  other != None and \
                 self.color == other.color and \
                 self.sign == other.sign
     

@@ -5,8 +5,8 @@ from System.Log import log
 from Utils.const import *
 from Utils import validator
 
-# Somepeople find 64bit better, but python hash only supports int
-zobritMax = 2**31-1
+# We use 64 bit for comparing, but only 32 for __hash__
+zobritMax = 2**64
 from random import randint
 zobrit = []
 for piece in (WHITE, BLACK):
@@ -29,7 +29,7 @@ a8 = Cord('a8'); d8 = Cord('d8')
 h8 = Cord('h8'); f8 = Cord('f8')
 
 class Board:
-    def __init__ (self, array):
+    def __init__ (self, array, ar_hash=-1):
         self.data = array
         self.enpassant = None
         self.movelist = None
@@ -38,12 +38,14 @@ class Board:
         self.status = RUNNING
         self.fifty = 0
         self.myhash = 0
-        for y, row in enumerate(self.data):
-            for x, piece in enumerate(row):
-                if not piece: continue
-                try:
-                    self.myhash ^= zobrit[piece.color][piece.sign][x][y]
-                except: print [piece.color,piece.sign,x,y]
+        if ar_hash == -1:
+            for y, row in enumerate(self.data):
+                for x, piece in enumerate(row):
+                    if not piece: continue
+                    try:
+                        self.myhash ^= zobrit[piece.color][piece.sign][x][y]
+                    except: print [piece.color,piece.sign,x,y]
+        else: self.myhash = ar_hash
     
     def _move (self, cord0, cord1):
     	p = self[cord0]
@@ -168,10 +170,13 @@ class Board:
         return b
     
     def __eq__ (self, other):
-        if not isinstance(other, Board) or \
-                self.castling != other.castling:
+        if other == None or \
+            self.myhash != other.myhash or \
+            self.castling != other.castling or \
+            self.enpassant != other.enpassant:
             return False
-        #TODO: Test flags
+        return True
+        
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 oPiece = other.data[y][x]
@@ -186,8 +191,7 @@ class Board:
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 l[y][x] = piece
-        b = Board(l)
-        b.myhash = self.myhash
+        b = Board(l, self.myhash)
         b.enpassant = self.enpassant
         b.movelist = self.movelist
         b.color = self.color
@@ -197,4 +201,4 @@ class Board:
         return b
     
     def __hash__ (self):
-        return self.myhash
+        return int((self.myhash>>33)-1)
