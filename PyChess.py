@@ -22,6 +22,7 @@ from Game import Game
 from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
 import statusbar
 
+import webbrowser
 import atexit
 
 def saveGameBefore (action):
@@ -583,7 +584,14 @@ class GladeHandlers:
             return True
         window["preferences"].connect("delete-event", hide_window)
         window["preferences_close_button"].connect("clicked", hide_window)
-
+    
+    #          Help menu          #
+    
+    def on_about_chess1_activate (widget):
+        webbrowser.open(_("http://en.wikipedia.org/wiki/Chess"))
+    
+    def on_how_to_play1_activate (widget):
+        webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
     
 from time import time
 
