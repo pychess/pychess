@@ -12,7 +12,8 @@ from Utils.const import *
 
 from statusbar import status
 
-profile = False
+profile = True
+#profile = False
 
 class Game (GObject):
 
@@ -83,8 +84,7 @@ class Game (GObject):
                 self.player1.showBoard()
                 print "Player 2 board:"
                 self.player2.showBoard()
-                import sys
-                sys.exit()
+                raise
                 
             except EngineDead:
                 self.kill()
