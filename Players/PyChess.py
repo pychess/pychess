@@ -58,12 +58,12 @@ class PyChessEngine (Engine):
         if omove: return parseSAN(history[-1],omove)
 
         if self.secs <= 0:
-            mvs, score = alphaBeta(self, history[-1], self.depth, -9999, 9999)
+            mvs, score = alphaBeta(self, history[-1], 0, self.depth, -9999, 9999)
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                mvs, score = alphaBeta(self, history[-1], d+1, -9999, 9999)
+                mvs, score = alphaBeta(self, history[-1], 0, d+1, -9999, 9999)
                 if time() > endtime:
                     break
 
@@ -99,14 +99,14 @@ class PyChessEngine (Engine):
         self.analyzeLock.acquire()
         del self.analyzeMoves[:]
         
-        mvs, score = alphaBeta(self, history[-1], 1, -9999, 9999)
+        mvs, score = alphaBeta(self, history[-1], 0, 1, -9999, 9999)
         self.analyzeMoves = mvs
         if mvs:
             self.emit("analyze", mvs)
         # TODO: When PyChess is put in its own process,
         # this should be turned into a loop, seaking deeper and deeper
         if len(history) == self.analyzingBoard:
-            mvs, score = alphaBeta(self, history[-1], 2, -9999, 9999)
+            mvs, score = alphaBeta(self, history[-1], 0, 2, -9999, 9999)
             self.analyzeMoves = mvs
             if mvs:
                 self.emit("analyze", mvs)
@@ -130,15 +130,17 @@ def moves (board):
     #            except:
     #                pass
 
-def alphaBeta (engine, board, depth, alpha, beta):
+def alphaBeta (engine, board, curdep, depth, alpha, beta):
     
     foundPv = False
     amove = []
 
-    if depth <= 0:
+    if curdep >= depth:
         return [], eval.evaluateComplete(board, board.color)
     if not engine.alive:
         return [], 0
+    
+    curdep += 1
     
     move = None
     # TODO: Could this stuff be hashed,
@@ -146,15 +148,20 @@ def alphaBeta (engine, board, depth, alpha, beta):
     # TODO: No kind of endgame test
     for move in moves(board):
         board2 = board.move(move)
+        
+        tempdepth = depth
+        if depth < 4 and curdep == depth and board[move.cord1] != None:
+            tempdepth += 1
+        
         if foundPv:
-            mvs, val = alphaBeta(engine, board2, depth-1, -alpha-1, -alpha)
+            mvs, val = alphaBeta(engine, board2, curdep, tempdepth, -alpha-1, -alpha)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
-                mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha)
+                mvs, val = alphaBeta(engine, board2, curdep, tempdepth, -beta, -alpha)
                 val = -val
         else:
-            mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha)
+            mvs, val = alphaBeta(engine, board2, curdep, tempdepth, -beta, -alpha)
             val = -val
         
         if val >= beta:

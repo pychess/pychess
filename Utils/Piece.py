@@ -18,4 +18,4 @@ class Piece:
                 self.sign == other.sign
     
     def __repr__ (self):
-        return "<%s %s>" % (reprColor[self.color], reprSign[self.sign])
+        return "<%s %s>" % (reprColor[self.color], pieceName[self.sign])
