@@ -15,8 +15,17 @@ def validate (move, board, testCheck=True):
     if move.cord0 == move.cord1 or not piece:
         return False
     
-    method = validators[piece.sign]
-    if not method(move, board):
+    if piece.sign == PAWN and not Pawn(move, board):
+        return False
+    if piece.sign == KNIGHT and not Knight(move, board):
+        return False
+    if piece.sign == BISHOP and not Bishop(move, board):
+        return False
+    if piece.sign == ROOK and not Rook(move, board):
+        return False
+    if piece.sign == QUEEN and not Queen(move, board):
+        return False
+    if piece.sign == KING and not King(move, board):
         return False
     
     if testCheck:
@@ -236,7 +245,6 @@ def genQueen (cord, board):
     for move in genBishop (cord, board):
         yield move
 
-validators = [King, Queen, Rook, Bishop, Knight, Pawn]
 sign2gen = [genKing, genQueen, genRook, genBishop, genKnight, genPawn]
 
 def findMoves2 (board, testCheck=True):
@@ -352,7 +360,7 @@ def genMovesPointingAt (board, cols, rows, color, testCheck=False):
                     move = movePool.pop(cord0, Cord(c,r))
                     if validate (move, board, testCheck):
                         return move
-                    else: movePool.add(move)
+                    movePool.add(move)
 
 def willCheck (board, move):
     board2 = board.move(move)
