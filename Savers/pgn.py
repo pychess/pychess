@@ -1,6 +1,7 @@
 from Utils.History import History
 from Utils.Move import Move, parseSAN, toSAN
 from Utils.const import *
+from System.Log import log
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -93,15 +94,13 @@ def load (file, history):
         moves = comre.sub("", myFile[1])
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
-        if moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
+        if moves and moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
             #TODO Save this result
             del moves[-1]
     except:
-        import traceback
-        log.error(traceback.format_exc())
         log.error("Couldn't parse pgn file: %s" % repr(file))
         log.debug("Part tried to parse: %s" % repr(myFile))
-        return
+        raise
     
     history.reset(False)
     for i, move in enumerate(moves):
