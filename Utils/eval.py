@@ -150,6 +150,7 @@ def evaluateComplete (board, color=WHITE):
                 evalPawnStructure (board) + \
                 evalBadBishops (board) + \
                 evalDevelopment (board) + \
+                evalCastling (board) + \
                 evalRookBonus (board) + \
                 evalKingTropism (board)
         elif board.status == DRAW:
@@ -214,18 +215,18 @@ def evalKingTropism (board):
     for py, row in enumerate(board.data):
         for px, piece in enumerate(row):
             if piece and piece.color == WHITE:
-                if piece.sign == ROOK:
-                    score -= min(abs( bky - py ), abs( bkx - px )) *2
-                elif piece.sign == KNIGHT:
+                if piece.sign == KNIGHT:
                     score -= abs( bky - py ) + abs( bkx - px ) -5
+                elif piece.sign == ROOK:
+                    score -= min(abs( bky - py ), abs( bkx - px )) *2
                 elif piece.sign == QUEEN:
                     score -= min(abs( bky - py ), abs( bkx - px ))
 
             elif piece and piece.color == BLACK:
-                if piece.sign == ROOK:
-                    score += min(abs( wky - py ), abs( wkx - px )) *2
-                elif piece.sign == KNIGHT:
+                if piece.sign == KNIGHT:
                     score += abs( wky - py ) + abs( wkx - px ) -5
+                elif piece.sign == ROOK:
+                    score += min(abs( wky - py ), abs( wkx - px )) *2
                 elif piece.sign == QUEEN:
                     score += min(abs( wky - py ), abs( wkx - px ))
     
@@ -240,9 +241,10 @@ def evalRookBonus (board):
         for x, piece in enumerate(row):
             if not piece or not piece.sign == ROOK: continue
             
-            # We should try to keep the rooks at the back lines
-            if y in (0,7):
-            	score += piece.color == WHITE and 12 or -12
+            if pieceCount <= 6:
+                # We should try to keep the rooks at the back lines 
+                if y in (0,7):
+                	score += piece.color == WHITE and 12 or -12
 
             # Is this rook on a semi- or completely open file?
             noblack = blackPawnFileBins[x] == 0 and 1 or 0
@@ -267,7 +269,7 @@ def evalDevelopment (board):
     score = 0
     
     # Test endgame
-    if pieceCount <= 6 and sum(whitePawnFileBins) + sum(whitePawnFileBins) <= 8:
+    if pieceCount <= 6:
         for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
                 if piece and piece.sign == KING:
@@ -283,6 +285,16 @@ def evalDevelopment (board):
             if piece.color == WHITE:
                 score += s
             else: score -= s
+    
+    return score
+
+def evalCastling (board):
+    """ Used to encourage castling :$ """
+    
+    if pieceCount <= 6:
+        return 0
+    
+    score = 0
     
     for color, mod in ((WHITE,1),(BLACK,-1)):
         
@@ -324,7 +336,6 @@ def evalDevelopment (board):
             score -= 45*mod
     
     return score
-
 
 def evalBadBishops (board):
     """ Bishops may be limited in their movement
@@ -409,9 +420,10 @@ def analyzePawnStructure (board):
     pieceCount = 0
     
     data = board.data
-    for y, row in enumerate(data[1:-1][::-1]):
+    for y, row in enumerate(data[::-1]):
         for x, piece in enumerate(row):
-            if piece and piece.sign == PAWN:
+            if not piece: continue
+            if piece.sign == PAWN and y not in (0,7):
                 if piece.color == WHITE:
                     whitePawnFileBins[x] += 1
                 else: blackPawnFileBins[x] += 1
