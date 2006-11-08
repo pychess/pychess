@@ -593,6 +593,11 @@ class GladeHandlers:
     def on_how_to_play1_activate (widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
     
+    # Other #
+    
+    def on_notebook2_switch_page (widget, page, page_num):
+        window["notebook3"].set_current_page(page_num)
+    
 from time import time
 
 class PyChess:
