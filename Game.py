@@ -13,7 +13,7 @@ from Utils.const import *
 from statusbar import status
 
 profile = True
-#profile = False
+profile = False
 
 class Game (GObject):
 
