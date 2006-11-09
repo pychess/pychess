@@ -1,5 +1,6 @@
 import gtk, gobject
 from gtk import gdk
+import gamewidget
 
 __title__ = _("Move History")
 
@@ -21,7 +22,7 @@ def fixList (list, xalign=0):
     #renderer.set_property("alignment", "left")
     list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
 
-def ready (window):
+def ready (window, page_num):
     fixList(numbers, 1)
     map(fixList, (left, right))
     numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
@@ -35,7 +36,7 @@ def ready (window):
     })
     
     global board
-    board = window["BoardControl"].view
+    board = gamewidget.getWidgets(page_num)[0].view
     
     board.history.connect("cleared", new_history_object)
     board.history.connect("changed", history_changed)

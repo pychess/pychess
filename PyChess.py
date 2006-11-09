@@ -152,46 +152,6 @@ def makeNewGameDialogReady ():
                 window[widget].set_active(v)
             else: window[widget].set_value(v)
         
-def on_sidepanel_change (client, *args):
-    if myconf.get("sidepanel"):
-        window["sidepanel"].show()
-        if window["sidepanel"].get_allocation().width > 1:
-            panelWidth = window["sidepanel"].get_allocation().width
-        else: panelWidth = window["panelbook"].get_size_request()[0] +10
-        windowSize = window["window1"].get_size()
-        window["window1"].resize(windowSize[0]+panelWidth,windowSize[1])
-    else:
-        panelWidth = window["sidepanel"].get_allocation().width
-        window["sidepanel"].hide()
-        windowSize = window["window1"].get_size()
-        window["window1"].resize(windowSize[0]-panelWidth,windowSize[1])
-    window["side_panel1"].set_active(myconf.get("sidepanel"))
-
-def makeSidePanelReady ():
-    start = 0 #Todo: must be controlled by gconf
-    
-    # The first page is a holder as libglade doesn't like empty notebooks
-    window["panelbook"].remove_page(0)
-    
-    panels = ["sidepanel/"+f for f in os.listdir("sidepanel")]
-    panels = [f[:-3] for f in panels if f.endswith(".py")]
-    for panel in [__import__(f, locals()) for f in panels]:
-        panel.ready(window)
-        window["ToggleComboBox"].addItem(panel.__title__)
-        num = window["panelbook"].append_page(panel.__widget__)
-        panel.__widget__.show()
-        if hasattr(panel, "__active__") and panel.__active__:
-            start = num
-    
-    window["ToggleComboBox"].connect("changed", 
-            lambda w,i: window["panelbook"].set_current_page(i))
-            
-    window["panelbook"].set_current_page(start)
-    window["ToggleComboBox"].active = start
-    
-    on_sidepanel_change(None)
-    myconf.notify_add ("sidepanel", on_sidepanel_change)
-
 def runNewGameDialog (hideFC=True):
     makeNewGameDialogReady ()
     
@@ -545,21 +505,6 @@ class GladeHandlers:
             window["blackDifficulty"].set_sensitive(False)
             window["blackDifficulty"].set_active(-1)
     
-    #          Cairo Board          #
-    
-    def on_start_clicked (widget):
-        window["BoardControl"].view.shown = 0
-    
-    def on_backward_clicked (widget):
-        window["BoardControl"].view.shown -= 1
-    
-    def on_forward_clicked (widget):
-        window["BoardControl"].view.shown += 1
-    
-    def on_end_clicked (widget):
-        if window["BoardControl"].view.history:
-            window["BoardControl"].view.shown = len(window["BoardControl"].view.history)-1
-
     #          Action menu          #
     
     def on_call_flag_activate (widget):
@@ -599,6 +544,7 @@ class GladeHandlers:
         window["notebook3"].set_current_page(page_num)
     
 from time import time
+import gamewidget
 
 class PyChess:
     def __init__(self):
@@ -624,11 +570,15 @@ class PyChess:
         self.BookCellRenderer = BookCellRenderer
         
         self.game = None
-        makeSidePanelReady()
+        #makeSidePanelReady()
         makeFileDialogReady()
         makeLogDialogReady()
         makeAboutDialogReady()
         
+        gamewidget.set_widgets(self)
+        gamewidget.addGameTab("Thomas vs. others")
+        gamewidget.setTabReady(0, True)
+        #gamewidget.addGameTab("Thomas vs. others2")
         
         win = self["window1"]
         def do ():
