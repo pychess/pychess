@@ -435,10 +435,6 @@
       </child>
 
       <child>
-	<placeholder/>
-      </child>
-
-      <child>
 	<widget class="Custom" id="Background">
 	  <property name="visible">True</property>
 	  <property name="int1">0</property>
@@ -479,13 +475,13 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="authors">Thomas Dybdahl Ahle
 Norbert Fabritius
 Thijs Vermeir</property>
-  <property name="documenters"></property>
+  <property name="documenters">Nobody :O</property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits">Danish (da) - Thomas Dybdahl Ahle
 English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
 German (de_DE) - Norbert Fabritius</property>
-  <property name="logo">pychess24.png</property>
+  <property name="logo">pychess.png</property>
 </widget>
 
 <widget class="GtkDialog" id="savegamedialog">
