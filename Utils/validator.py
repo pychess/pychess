@@ -12,21 +12,27 @@ def validate (move, board, testCheck=True):
     
     piece = board[move.cord0]
     
-    if move.cord0 == move.cord1 or not piece:
+    if not piece:
         return False
     
-    if piece.sign == PAWN and not Pawn(move, board):
-        return False
-    if piece.sign == KNIGHT and not Knight(move, board):
-        return False
-    if piece.sign == BISHOP and not Bishop(move, board):
-        return False
-    if piece.sign == ROOK and not Rook(move, board):
-        return False
-    if piece.sign == QUEEN and not Queen(move, board):
-        return False
-    if piece.sign == KING and not King(move, board):
-        return False
+    if piece.sign == PAWN:
+        if not Pawn(move, board):
+            return False
+    elif piece.sign == KNIGHT:
+        if not Knight(move, board):
+           return False
+    elif piece.sign == BISHOP:
+        if not Bishop(move, board):
+            return False
+    elif piece.sign == ROOK:
+        if not Rook(move, board):
+            return False
+    elif piece.sign == QUEEN:
+        if not Queen(move, board):
+            return False
+    elif piece.sign == KING:
+        if not King(move, board):
+            return False
     
     if testCheck:
         if willCheck(board, move):
@@ -260,8 +266,7 @@ def findMoves2 (board, testCheck=True):
                         yield move
                     else: movePool.add(move)
                 except Exception:
-                    print piece, cord0, board
-                    print "Im sure it was ok?!"
+                    print piece, cord0, "\n", board
                     raise
 
 def _getLegalMoves (board, cord, testCheck):

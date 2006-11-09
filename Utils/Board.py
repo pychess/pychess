@@ -62,6 +62,9 @@ class Board:
         board.movelist = None
         cord0, cord1 = move.cords
         
+        if self[cord1] and self[cord1].sign == KING:
+            raise Exception, "Trying to capture king in %s\n%s" % (str(move), str(self))
+        
         p = board[cord0]
         
         if not p:
