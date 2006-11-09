@@ -98,10 +98,12 @@ port.set_shadow_type(gtk.SHADOW_NONE)
 __widget__.add(port)
 __widget__.show_all()
 
-def ready (window):
+import gamewidget
+
+def ready (window, page_num):
     global history, boardview
     
-    boardview = window["BoardControl"].view
+    boardview = gamewidget.getWidgets(page_num)[0].view
     history = boardview.history
     
     plot.connect("selected", plot_selected)
