@@ -115,20 +115,20 @@ def genKing (cord, board):
             yield x,y
             
     if board.color == WHITE:
-        if board.castling & WHITE_OO:
+        if board.castling & WHITE_OO and board.data[0][7] != None:
             if _isclear (board, (5,6), (0,)) and \
                not genMovesPointingAt (board, (4,5), (0,), BLACK):
                 yield 6,0
-        if board.castling & WHITE_OOO:
+        if board.castling & WHITE_OOO and board.data[0][0] != None:
             if _isclear (board, (1,2,3), (0,)) and \
                not genMovesPointingAt (board, (3,4), (0,), BLACK):
                 yield 2,0
     if board.color == BLACK:
-        if board.castling & BLACK_OO:
+        if board.castling & BLACK_OO and board.data[7][7] != None:
             if _isclear (board, (5,6), (7,)) and \
                not genMovesPointingAt (board, (4,5), (7,), WHITE):
                 yield 6,7
-        if board.castling & BLACK_OOO:
+        if board.castling & BLACK_OOO and board.data[7][0] != None:
             if _isclear (board, (1,2,3), (7,)) and \
                not genMovesPointingAt (board, (3,4), (7,), WHITE):
                 yield 2,7
