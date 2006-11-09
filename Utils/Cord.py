@@ -43,7 +43,7 @@ class Cord:
     cords = property(_get_cords, _set_cords)
     
     def __eq__ (self, other):
-        return type(other) == type(self) and (other.x,other.y) == (self.x,self.y)
+        return other != None and other.x == self.x and other.y == self.y
     
     def __repr__ (self):
         return self.cx + self.cy
