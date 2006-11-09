@@ -87,11 +87,17 @@ def King (move, board):
         if not board.castling & moveToCastling[strmove]:
             return False
         
-        opcolor = 1 - board.color
         rows = board.color == BLACK and (7,) or (0,)
         if move.cord0.x < move.cord1.x:
-            cols = [4,5,6]
-        else: cols = [2,3,4]
+            cols = [5,6]
+            rookx = 7
+        else:
+            cols = [1,2,3]
+            rookx = 0
+        
+        if board.data[rows[0]][rookx] == None:
+            return False
+        
         if not _isclear(board, cols, rows):
             return False
         
