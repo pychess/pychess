@@ -34,18 +34,28 @@ def createAlignment (top, right, bottom, left):
 	align.set_property("left-padding", left)
 	return align
 	
-def show_side_panel (page_num, show=True):
-	sidepanel = getWidgets(page_num)[2]
+def show_side_panel (show):
+	if __len__() < 1: return
+	
+	for page_num in range(__len__()):
+		sidepanel = getWidgets(page_num)[2]
+		if show:
+			sidepanel.show()
+		else:
+			alloc = sidepanel.get_allocation().width
+			sidepanel.hide()
+	
+	hbox = widgets["mainvbox"].get_children()[2].get_nth_page(0).get_children()[0].child
+	
 	if show:
-		sidepanel.show()
 		if sidepanel.get_allocation().width > 1:
-			panelWidth = sidepanel.get_allocation().width
-		else: panelWidth = sidepanel.get_size_request()[0] +10
+			panelWidth = sidepanel.get_allocation().width + hbox.get_spacing()
+		else: panelWidth = sidepanel.get_size_request()[0] + 10
 		widgetsSize = widgets["window1"].get_size()
 		widgets["window1"].resize(widgetsSize[0]+panelWidth,widgetsSize[1])
+		
 	else:
-		panelWidth = sidepanel.get_allocation().width
-		sidepanel.hide()
+		panelWidth = alloc + hbox.get_spacing()
 		widgetsSize = widgets["window1"].get_size()
 		widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
 	
@@ -56,14 +66,15 @@ def addSidepanels (notebook, toggleComboBox, page_num):
 	panels = ["sidepanel/"+f for f in os.listdir("sidepanel")]
 	panels = [f[:-3] for f in panels if f.endswith(".py")]
 	for panel in [__import__(f, locals()) for f in panels]:
-		panel.ready(widgets, page_num)
 		toggleComboBox.addItem(panel.__title__)
-		num = notebook.append_page(panel.__widget__)
-		panel.__widget__.show()
+		s = panel.Sidepanel()
+		num = notebook.append_page(s.load(widgets, page_num))
 		if hasattr(panel, "__active__") and panel.__active__:
 			start = num
 	
 	return start
+
+head2mainDic = {}
 
 def addGameTab (title):
 	vbox = widgets["mainvbox"]
@@ -81,11 +92,15 @@ def addGameTab (title):
 		def callback (widget, page, page_num):
 			mainbook.set_current_page(page_num)
 		headbook.connect("switch_page", callback)
-
+		def page_reordered (widget, child, new_page_num):
+			mainbook.reorder_child(head2mainDic[child], new_page_num)
+		headbook.connect("page-reordered", page_reordered)
+		
 		vbox.pack_start(align, expand=False)
 		vbox.pack_start(mainbook)
 	
 	headbook = vbox.get_children()[1].child
+	page_num = headbook.get_n_pages()
 	
 	hbox = gtk.HBox(False, 2)
 	hbox.pack_start(createImage(light_off), expand=False)
@@ -94,17 +109,17 @@ def addGameTab (title):
 	close_button.set_relief(gtk.RELIEF_NONE)
 	close_button.set_size_request(21,20)
 	def callback (widget):
-		print "Closebutton %d activated" % (headbook.get_n_pages()-1)
+		print "Closebutton %d activated" % (page_num)
 	close_button.connect("clicked", callback)
 	hbox.pack_end(close_button, expand=False)
 	hbox.pack_end(gtk.Label(title))
 	
+	headchild = gtk.HSeparator()
 	hbox.show_all() # Gtk doesn't show tablabels when the rest is show_all'ed
-	headbook.append_page(gtk.HSeparator(), hbox)
+	headbook.append_page(headchild, hbox)
+	headbook.set_tab_reorderable(headchild, True)
 	
 	mainbook = vbox.get_children()[2]
-	
-	page_num = headbook.get_n_pages()-1
 	
 	mvbox = gtk.VBox()
 	
@@ -135,7 +150,7 @@ def addGameTab (title):
 	toggle_combox = ToggleComboBox()
 	side_closebut = gtk.Button()
 	side_closebut.add(createImage(gtk_close20))
-	side_closebut.connect("clicked", lambda w: show_side_panel(page_num, False))
+	side_closebut.connect("clicked", lambda w: show_side_panel(False))
 	side_closebut.set_relief(gtk.RELIEF_NONE)
 	
 	side_top_hbox.pack_start(toggle_combox)
@@ -199,6 +214,8 @@ def addGameTab (title):
 	
 	mainbook.append_page(mvbox, None)
 	
+	head2mainDic[headchild] = mvbox
+	
 	start = addSidepanels(side_book, toggle_combox, page_num)
 	toggle_combox.connect("changed", lambda w,i: side_book.set_current_page(i))
 	side_book.set_current_page(start)
@@ -233,3 +250,12 @@ def getWidgets (page_num):
 	side = mvbox.get_children()[0].child.get_children()[1]
 	
 	return (board, cclock, side)
+
+def cur_page ():
+	return widgets["mainvbox"].get_children()[1].child.get_current_page()
+
+def cur_widgets ():
+	return getWidgets(cur_widgets())
+
+def __len__ ():
+	return widgets["mainvbox"].get_children()[1].child.get_n_pages()
