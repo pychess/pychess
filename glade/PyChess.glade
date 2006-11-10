@@ -49,7 +49,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image813">
+			<widget class="GtkImage" id="image820">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -71,7 +71,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image814">
+			<widget class="GtkImage" id="image821">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -99,7 +99,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image815">
+			<widget class="GtkImage" id="image822">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -121,7 +121,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image816">
+			<widget class="GtkImage" id="image823">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -229,7 +229,7 @@
 		      <accelerator key="F" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image817">
+			<widget class="GtkImage" id="image824">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-go-forward</property>
 			  <property name="icon_size">1</property>
@@ -263,7 +263,7 @@
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image818">
+			<widget class="GtkImage" id="image825">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -281,7 +281,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Side Panel</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
+		      <property name="active">True</property>
 		      <signal name="activate" handler="on_side_panel1_activate" last_modification_time="Thu, 06 Jul 2006 13:25:17 GMT"/>
 		      <accelerator key="i" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
@@ -380,7 +380,7 @@
 		      <signal name="activate" handler="on_about_chess1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image819">
+			<widget class="GtkImage" id="image826">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -401,7 +401,7 @@
 		      <signal name="activate" handler="on_how_to_play1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image820">
+			<widget class="GtkImage" id="image827">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>

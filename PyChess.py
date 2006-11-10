@@ -194,7 +194,7 @@ def runNewGameDialog (hideFC=True):
             player.setStrength(dfc)
             if secs:
                 player.setTime(secs, gain)
-        else: player = Human(window["BoardControl"], color)
+        else: player = Human(gamewidget.cur_widgets()[0], color)
         players += [player]
     
     if window.game:
@@ -203,14 +203,14 @@ def runNewGameDialog (hideFC=True):
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
-        # We assume that the Pychess engine i the last
+        # We assume that the Pychess engine is the last
         engine, args = random.choice(anaengines[:-1])
     else: engine, args = anaengines[0]
     window.analyzer = engine(args, WHITE)
     
     window.analyzer.analyze()
     log.debug("Analyzer: %s\n" % repr(window.analyzer))
-    window.game = Game( window["BoardControl"].view.history,
+    window.game = Game( gamewidget.cur_widgets()[0].view.history,
             window.analyzer, players[0], players[1], clock, secs, gain)
     
     window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
@@ -260,7 +260,7 @@ class GladeHandlers:
         
         game = runNewGameDialog()
         if game:
-            window["BoardControl"].view.history.reset(True)
+            gamewidget.cur_widgets()[0].view.history.reset(True)
             game.run()
 
     def game_ended (game, status, comment):
@@ -410,16 +410,14 @@ class GladeHandlers:
     #          View Menu          #
     
     def on_rotate_board1_activate (widget):
-        window["BoardControl"].view.fromWhite = not window["BoardControl"].view.fromWhite
+        gamewidget.cur_widgets()[0].view.fromWhite = \
+            not gamewidgets.cur_widgets()[0].view.fromWhite
     
     def on_side_panel1_activate (widget):
-        myconf.set("sidepanel", widget.get_active())
-    
-    def on_sidepanel_closebutton_clicked (widget):
-        myconf.set("sidepanel",False)
+        gamewidget.show_side_panel(widget.get_active())
     
     def on_show_cords_activate (widget):
-        window["BoardControl"].view.showCords = widget.get_active()
+        gamewidget.cur_widgets()[0].view.showCords = widget.get_active()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
@@ -431,19 +429,19 @@ class GladeHandlers:
     
     def on_hint_mode_activate (widget):
         def on_analyze (analyzer, moves):
-            window["BoardControl"].view.greenarrow = moves[0].cords
+            gamewidget.cur_widgets()[0].view.greenarrow = moves[0].cords
         def on_clear (history):
-            window["BoardControl"].view.greenarrow = None
+            gamewidget.cur_widgets()[0].view.greenarrow = None
         def on_reset (history):
         	on_clear (history)
         	window["hint_mode"].set_active(False)
         if widget.get_active():
             try:
                 if len(window.analyzer.analyzeMoves) >= 1:
-                    window["BoardControl"].view.greenarrow = \
+                    gamewidget.cur_widgets()[0].view.greenarrow = \
                         window.analyzer.analyzeMoves[0].cords
                 window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
-                history = window["BoardControl"].view.history
+                history = gamewidget.cur_widgets()[0].view.history
                 window.hintconid1 = history.connect("changed", on_clear)
                 window.hintconid2 = history.connect("cleared", on_reset)
             except:
@@ -451,27 +449,27 @@ class GladeHandlers:
         else:
             try:
                 window.analyzer.disconnect(window.hintconid0)
-                window["BoardControl"].view.history.disconnect(window.hintconid1)
-                window["BoardControl"].view.history.disconnect(window.hintconid2)
+                gamewidget.cur_widgets()[0].view.history.disconnect(window.hintconid1)
+                gamewidget.cur_widgets()[0].view.history.disconnect(window.hintconid2)
             except: pass
-            window["BoardControl"].view.greenarrow = None
+            gamewidget.cur_widgets()[0].view.greenarrow = None
     
     def on_spy_mode_activate (widget):
         def on_analyze (analyzer, moves):
             if len(analyzer.analyzeMoves) >= 2:
-                window["BoardControl"].view.redarrow = moves[1].cords
+                gamewidget.cur_widgets()[0].view.redarrow = moves[1].cords
         def on_clear (history):
-            window["BoardControl"].view.redarrow = None
+            gamewidget.cur_widgets()[0].view.redarrow = None
         def on_reset (history):
         	on_clear (history)
         	window["spy_mode"].set_active(False)
         if widget.get_active():
             try:
                 if len(window.analyzer.analyzeMoves) >= 2:
-                    window["BoardControl"].view.redarrow = \
+                    gamewidget.cur_widgets()[0].view.redarrow = \
                         window.analyzer.analyzeMoves[1].cords
                 window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
-                history = window["BoardControl"].view.history
+                history = gamewidget.cur_widgets()[0].view.history
                 window.spyconid1 = history.connect("changed", on_clear)
                 window.spyconid2 = history.connect("cleared", on_reset)
             except:
@@ -479,10 +477,10 @@ class GladeHandlers:
         else:
             try:
                 window.analyzer.disconnect(window.spyconid0)
-                window["BoardControl"].view.history.disconnect(window.spyconid1)
-                window["BoardControl"].view.history.disconnect(window.spyconid2)
+                gamewidget.cur_widgets()[0].view.history.disconnect(window.spyconid1)
+                gamewidget.cur_widgets()[0].view.history.disconnect(window.spyconid2)
             except: pass
-            window["BoardControl"].view.redarrow = None
+            gamewidget.cur_widgets()[0].view.redarrow = None
     
     #          New Game Dialog          #
 
@@ -508,13 +506,13 @@ class GladeHandlers:
     #          Action menu          #
     
     def on_call_flag_activate (widget):
-        window["BoardControl"].on_call_flag_activate (widget)
+        gamewidget.cur_widgets()[0].on_call_flag_activate (widget)
 
     def on_draw_activate (widget):
-        window["BoardControl"].on_draw_activate (widget)
+        gamewidget.cur_widgets()[0].on_draw_activate (widget)
         
     def on_resign_activate (widget):
-        window["BoardControl"].on_resign_activate (widget)
+        gamewidget.cur_widgets()[0].on_resign_activate (widget)
 
     def on_force_to_move_activate (widget):
         if window.game:
@@ -578,7 +576,7 @@ class PyChess:
         gamewidget.set_widgets(self)
         gamewidget.addGameTab("Thomas vs. others")
         gamewidget.setTabReady(0, True)
-        #gamewidget.addGameTab("Thomas vs. others2")
+        gamewidget.addGameTab("Thomas vs. others2")
         
         win = self["window1"]
         def do ():

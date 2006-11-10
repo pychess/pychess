@@ -89,44 +89,43 @@ class ScorePlot (gtk.DrawingArea):
     
 __title__ = _("Score")
 
-plot = ScorePlot()
-__widget__ = gtk.ScrolledWindow()
-__widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-port = gtk.Viewport()
-port.add(plot)
-port.set_shadow_type(gtk.SHADOW_NONE)
-__widget__.add(port)
-__widget__.show_all()
-
 import gamewidget
-
-def ready (window, page_num):
-    global history, boardview
-    
-    boardview = gamewidget.getWidgets(page_num)[0].view
-    history = boardview.history
-    
-    plot.connect("selected", plot_selected)
-    boardview.connect('shown_changed', shown_changed)
-    history.connect("cleared", history_cleared)
-    history.connect("changed", history_changed)
-    
-def history_cleared (history):
-    plot.clear()
-    history_changed(history)
-    shown_changed(None,0)
-    
 from Utils.eval import evaluateComplete
 
-def history_changed (history):
-    points = evaluateComplete(history[-1])
-    plot.addScore(points)
-    #adj = __widget__.get_hadjustment()
-    #adj.set_value(adj.get_property("upper"))
+class Sidepanel:
+    
+    def load (self, window, page_num):
+        plot = ScorePlot()
+        __widget__ = gtk.ScrolledWindow()
+        __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        port = gtk.Viewport()
+        port.add(plot)
+        port.set_shadow_type(gtk.SHADOW_NONE)
+        __widget__.add(port)
+        __widget__.show_all()
 
-def shown_changed (boardview, shown):
-    plot.select(shown)
-    plot.redraw()
-
-def plot_selected (plot, selected):
-    boardview.shown = selected
+        self.boardview = gamewidget.getWidgets(page_num)[0].view
+        self.history = self.boardview.history
+        
+        plot.connect("selected", self.plot_selected)
+        self.boardview.connect('shown_changed', self.shown_changed)
+        self.history.connect("cleared", self.history_cleared)
+        self.history.connect("changed", self.history_changed)
+        
+        return __widget__
+    
+    def history_cleared (self, history):
+        plot.clear()
+        history_changed(history)
+        shown_changed(None,0)
+    
+    def history_changed (self, history):
+        points = evaluateComplete(history[-1])
+        plot.addScore(points)
+    
+    def shown_changed (self, boardview, shown):
+        plot.select(shown)
+        plot.redraw()
+    
+    def plot_selected (self, plot, selected):
+        self.boardview.shown = selected
