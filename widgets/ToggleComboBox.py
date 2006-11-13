@@ -27,8 +27,10 @@ class ToggleComboBox (gtk.ToggleButton):
         deactivate = lambda w: self.set_active(False)
         menu.connect("deactivate", deactivate)
         menu.attach_to_widget(self, None)
-    
-    _active = -1
+        
+        self._active = -1
+        self._items = []
+        
     def _get_active(self):
         return self._active
     def _set_active(self, active):
@@ -38,7 +40,6 @@ class ToggleComboBox (gtk.ToggleButton):
         self.label.set_text(self._items[active])
     active = property(_get_active, _set_active)
     
-    _items = []
     def addItem (self, label):
         item = gtk.MenuItem(label)
         item.connect("activate", self.menu_item_activate, len(self._items))
