@@ -89,12 +89,12 @@ class ScorePlot (gtk.DrawingArea):
     
 __title__ = _("Score")
 
-import gamewidget
+from widgets import gamewidget
 from Utils.eval import evaluateComplete
 
 class Sidepanel:
     
-    def load (self, window, page_num):
+    def load (self, window, widgid):
         plot = ScorePlot()
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -104,7 +104,7 @@ class Sidepanel:
         __widget__.add(port)
         __widget__.show_all()
 
-        self.boardview = gamewidget.getWidgets(page_num)[0].view
+        self.boardview = gamewidget.getWidgets(widgid)[0].view
         self.history = self.boardview.history
         
         plot.connect("selected", self.plot_selected)

@@ -1,6 +1,6 @@
 import gtk, gobject
 from gtk import gdk
-import gamewidget
+from widgets import gamewidget
 from Utils.Move import toSAN
 
 from gtk.gdk import keyval_from_name
@@ -8,6 +8,7 @@ leftkeys = map(keyval_from_name,("Left", "KP_Left"))
 rightkeys = map(keyval_from_name,("Right", "KP_Right"))
 
 __title__ = _("Move History")
+__active__ = True
 
 def fixList (list, xalign=0):
     list.set_model(gtk.ListStore(str))

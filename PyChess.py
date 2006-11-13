@@ -5,7 +5,10 @@ import pygtk
 pygtk.require("2.0")
 import sys, gtk, gtk.glade, os
 import pango, gobject
+
 import random
+import webbrowser
+import atexit
 
 import gettext
 gettext.install("pychess",localedir="lang",unicode=1)
@@ -19,11 +22,9 @@ from System import myconf
 from System.Log import log
 import System.LogDialog
 from Game import Game
-from Utils.validator import DRAW, WHITEWON, BLACKWON, DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, WON_RESIGN, WON_CALLFLAG, WON_MATE
-import statusbar
+from widgets import gamewidget
 
-import webbrowser
-import atexit
+gameDic = {}
 
 def saveGameBefore (action):
     if not window.game: return
@@ -39,7 +40,6 @@ def saveGameBefore (action):
             return gtk.RESPONSE_CANCEL
     return response
 
-lastSave = (None, "")
 def makeFileDialogReady ():
     global enddir
 
@@ -162,16 +162,19 @@ def runNewGameDialog (hideFC=True):
     res = window["newgamedialog"].run()
     window["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return
-        
+    
+    widgid = gamewidget.addGameTab("")
+    ccalign = gamewidget.getWidgets(widgid)[5]
+    
     if window["useTimeCB"].get_active():
-        window["ccalign"].show()
+        ccalign.show()
         clock = window["ChessClock"]
         secs = window["spinbuttonH"].get_value()*3600
         secs += window["spinbuttonM"].get_value()*60
         secs += window["spinbuttonS"].get_value()
         gain = window["spinbuttonG"].get_value()
     else:
-        window["ccalign"].hide()
+        ccalign.hide()
         clock = None
         secs = 0
         gain = 0
@@ -181,7 +184,7 @@ def runNewGameDialog (hideFC=True):
             v = window[widget].get_active()
         else: v = window[widget].get_value()
         myconf.set(widget, v)
-        
+    
     players = []
     for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty",WHITE),
                               ("blackPlayerCombobox","blackDifficulty",BLACK)):
@@ -190,15 +193,14 @@ def runNewGameDialog (hideFC=True):
         if choise != 0:
             engine = engines.availableEngines[choise-1][0]
             player = engine(engines.availableEngines[choise-1][1],color)
-            player.connect("dead", engineDead)
+            player.connect("dead", engineDead, widgid)
             player.setStrength(dfc)
             if secs:
                 player.setTime(secs, gain)
         else: player = Human(gamewidget.cur_widgets()[0], color)
         players += [player]
     
-    if window.game:
-        window.game.kill()
+    gamewidget.setTabText(widgid, "%s vs %s" % (repr(players[0]), repr(players[1])))
     
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
@@ -206,24 +208,21 @@ def runNewGameDialog (hideFC=True):
         # We assume that the Pychess engine is the last
         engine, args = random.choice(anaengines[:-1])
     else: engine, args = anaengines[0]
-    window.analyzer = engine(args, WHITE)
+    analyzer = engine(args, WHITE)
+    analyzer.analyze()
+    log.debug("Analyzer: %s\n" % repr(analyzer))
+
+    game = Game(widgid, analyzer, players[0], players[1], clock, secs, gain)
     
-    window.analyzer.analyze()
-    log.debug("Analyzer: %s\n" % repr(window.analyzer))
-    window.game = Game( gamewidget.cur_widgets()[0].view.history,
-            window.analyzer, players[0], players[1], clock, secs, gain)
+    #game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
     
-    window.game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
-    statusbar.status(None)
-    
-    global lastSave
-    lastSave = (None, "")
     window["properties1"].set_sensitive(True)
-    return window.game
+    return game, widgid
 
 import thread
-def engineDead (engine):
-    window.game.kill()
+def engineDead (engine, widgid):
+    gamewidget.setCurrent(widgid)
+    gameList[widgid].kill()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
@@ -252,34 +251,6 @@ def noOpenGame ():
 
 class GladeHandlers:
     
-    #          Game Menu          #
-
-    def on_new_game1_activate (widget):
-        res = saveGameBefore(_("a new game starts"))
-        if res == gtk.RESPONSE_CANCEL: return
-        
-        game = runNewGameDialog()
-        if game:
-            gamewidget.cur_widgets()[0].view.history.reset(True)
-            game.run()
-
-    def game_ended (game, status, comment):
-        m1 = {
-            DRAW: _("The game ended in a draw"),
-            WHITEWON: _("White player won the game"),
-            BLACKWON: _("Black player won the game")
-        }[status]
-        m2 = {
-            DRAW_REPITITION: _("as the same position was repeated three times in a row"),
-            DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
-            DRAW_STALEMATE: _("because of stalemate"),
-            DRAW_AGREE: _("as the players agreed to"),
-            WON_RESIGN: _("as opponent resigned"),
-            WON_CALLFLAG: _("as opponent ran out of time"),
-            WON_MATE: _("on a mate")
-        }[comment]
-        statusbar.status("%s %s." % (m1,m2), idle_add=True)
-    
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
         windowSize = window["window1"].get_size()
@@ -290,6 +261,17 @@ class GladeHandlers:
         windowSize = window["window1"].get_size()
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
+    #          Game Menu          #
+
+    def on_new_game1_activate (widget):
+        res = saveGameBefore(_("a new game starts"))
+        if res == gtk.RESPONSE_CANCEL: return
+        
+        game, widgid = runNewGameDialog()
+        if game:
+            gameDic[widgid] = game
+            game.run()
+
     def on_load_game1_activate (widget):
         res = saveGameBefore(_("you open a new game"))
         if res == gtk.RESPONSE_CANCEL: return
@@ -300,30 +282,27 @@ class GladeHandlers:
         if res != gtk.RESPONSE_ACCEPT: return
         uri = opendialog.get_uri()
         filechooserbutton.set_uri(uri)
-        game = runNewGameDialog(hideFC=False)
+        game, widgid = runNewGameDialog(hideFC=False)
         
         if game:
-            path = filechooserbutton.get_uri()[7:]
-            global lastSave
-            lastSave = (game.history.clone(), path)
-            ending = path[path.rfind(".")+1:]
-            enddir[ending].load(file(path), game.history)
-            for player in game.players:
-                if hasattr(player, "setBoard"):
-                    player.setBoard(game.history)
-            window.analyzer.setBoard(game.history)
+            gameDic[widgid] = game
+            game.load(filechooserbutton.get_uri()[7:])
             game.run()
     
     def on_save_game1_activate (widget):
-        if not window.game:
+        if not len(gameList):
             noOpenGame()
-        elif not lastSave[1]:
+            return
+        game = gameDic[gamewidget.cur_widgid()]
+        if not game.isChanged:
+            return
+        if not game.lastSave[1]:
             return GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
-        elif not lastSave[0] == window.game.history:
+        else:
             GladeHandlers.__dict__["save"](lastSave[1])
         
     def on_save_game_as1_activate (widget):
-        if not window.game:
+        if not len(gameDic):
             noOpenGame()
             return
             
@@ -368,7 +347,8 @@ class GladeHandlers:
             if res != gtk.RESPONSE_ACCEPT:
                 return
         
-        GladeHandlers.__dict__["save"](uri)
+        saver = enddir[ending]
+        window.game.save(uri, saver)
     
     def save (uri):
         s = uri.rfind(".")
@@ -376,9 +356,7 @@ class GladeHandlers:
             ending = uri[s+1:]
         else: return
         saver = enddir[ending]
-        saver.save(open(uri,"w"), window.game)
-        global lastSave
-        lastSave = (window.game.history.clone(), uri)
+        window.game.save(uri, saver)
     
     def on_properties1_activate (widget):
         window["event_entry"].set_text(window.game.event)
@@ -390,12 +368,14 @@ class GladeHandlers:
             window["game_info"].hide()
             return True
         def accept_new_properties(button, *args):
-            window.game.event = window["event_entry"].get_text()
-            window.game.site = window["site_entry"].get_text()
-            window.game.round = window["round_spinbutton"].get_value()
-            window.game.year = window["game_info_calendar"].get_date()[0]
-            window.game.month = window["game_info_calendar"].get_date()[1] + 1 # bug in GtkCalender
-            window.game.day = window["game_info_calendar"].get_date()[2]
+            game = gameDic[gamewidget.cur_widgid()]
+            game.event = window["event_entry"].get_text()
+            game.site = window["site_entry"].get_text()
+            game.round = window["round_spinbutton"].get_value()
+            game.year = window["game_info_calendar"].get_date()[0]
+            # GtkCalender month goes from 0 to 11
+            game.month = window["game_info_calendar"].get_date()[1] + 1
+            game.day = window["game_info_calendar"].get_date()[2]
             window["game_info"].hide()
             return True
         window["game_info"].connect("delete-event", hide_window)
@@ -536,13 +516,10 @@ class GladeHandlers:
     def on_how_to_play1_activate (widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
     
-    # Other #
+    #          Other          #
     
     def on_notebook2_switch_page (widget, page, page_num):
         window["notebook3"].set_current_page(page_num)
-    
-from time import time
-import gamewidget
 
 class PyChess:
     def __init__(self):
@@ -559,12 +536,11 @@ class PyChess:
         self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         
-        statusbar.statusbar = self["statusbar1"]
         self["window1"].show_all()
         
         #Very ugly hack, needed because of pygtk bug 357022
         #http://bugzilla.gnome.org/show_bug.cgi?id=357022
-        from BookCellRenderer import BookCellRenderer
+        from widgets.BookCellRenderer import BookCellRenderer
         self.BookCellRenderer = BookCellRenderer
         
         self.game = None
@@ -574,9 +550,9 @@ class PyChess:
         makeAboutDialogReady()
         
         gamewidget.set_widgets(self)
-        gamewidget.addGameTab("Thomas vs. others")
-        gamewidget.setTabReady(0, True)
-        gamewidget.addGameTab("Thomas vs. others2")
+        #gamewidget.addGameTab("Thomas vs. others")
+        #gamewidget.setTabReady(0, True)
+        #gamewidget.addGameTab("Thomas vs. others2")
         
         win = self["window1"]
         def do ():
@@ -605,8 +581,8 @@ class PyChess:
     files = Files()
     
     def widgetHandler (self, glade, functionName, widgetName, str1, str2, int1, int2):
-        if widgetName in self.files["."]:
-            module = __import__(widgetName, globals(), locals())
+        if widgetName in self.files["widgets"]:
+            module = __import__("widgets/"+widgetName, globals(), locals())
             return getattr(module,widgetName)()
         else:
             log.error("Uncaught widget %s %s, %s %s %d %d" % \

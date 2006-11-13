@@ -59,7 +59,7 @@ def show_side_panel (show):
 		widgetsSize = widgets["window1"].get_size()
 		widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
 	
-def addSidepanels (notebook, toggleComboBox, page_num):
+def addSidepanels (notebook, toggleComboBox, widgid):
 	start = 0
 	
 	path = os.path.join(os.path.split(__file__)[0], "sidepanel") 
@@ -68,7 +68,7 @@ def addSidepanels (notebook, toggleComboBox, page_num):
 	for panel in [__import__(f, locals()) for f in panels]:
 		toggleComboBox.addItem(panel.__title__)
 		s = panel.Sidepanel()
-		num = notebook.append_page(s.load(widgets, page_num))
+		num = notebook.append_page(s.load(widgets, widgid))
 		if hasattr(panel, "__active__") and panel.__active__:
 			start = num
 	
@@ -102,12 +102,13 @@ def addGameTab (title):
 	headbook = vbox.get_children()[1].child
 	page_num = headbook.get_n_pages()
 	
-	hbox = gtk.HBox(False, 2)
+	hbox = gtk.HBox()
 	hbox.pack_start(createImage(light_off), expand=False)
 	close_button = gtk.Button()
+	close_button.set_property("can-focus", False)
 	close_button.add(createImage(gtk_close))
 	close_button.set_relief(gtk.RELIEF_NONE)
-	close_button.set_size_request(21,20)
+	close_button.set_size_request(19,18)
 	def callback (widget):
 		print "Closebutton %d activated" % (page_num)
 	close_button.connect("clicked", callback)
@@ -216,46 +217,66 @@ def addGameTab (title):
 	
 	head2mainDic[headchild] = mvbox
 	
-	start = addSidepanels(side_book, toggle_combox, page_num)
+	start = addSidepanels(side_book, toggle_combox, headchild)
 	toggle_combox.connect("changed", lambda w,i: side_book.set_current_page(i))
 	side_book.set_current_page(start)
 	toggle_combox.active = start
 	
 	vbox.show_all()
 	
-def setTabReady (page_num, ready):
-	headbook = widgets["mainvbox"].get_children()[1].child
-	if headbook.get_n_pages() <= page_num:
-		raise IndexError, "Tab index out of range %d <= %d" % \
-			(headbook.get_n_pages(), page_num)
+	return headchild # Used as widgid
 	
-	page = headbook.get_nth_page(page_num)
-	hbox = headbook.get_tab_label(page)
-	hbox.remove(hbox.get_children()[0])
+def setTabReady (widgid, ready):
+	tabhbox = getWidgets(widgid)[4]
+	tabhbox.remove(hbox.get_children()[0])
 	if ready:
-		hbox.pack_start(createImage(light_on), expand=False)
-	else: hbox.pack_start(createImage(light_off), expand=False)
-	hbox.show_all()
+		tabhbox.pack_start(createImage(light_on), expand=False)
+	else: tabhbox.pack_start(createImage(light_off), expand=False)
+	tabhbox.show_all()
+
+def setTabText (widgid, text):
+	tabhbox = getWidgets(widgid)[4]
+	tabhbox.get_children()[1].set_text(text)
 	
-def getWidgets (page_num):
-	headbook = widgets["mainvbox"].get_children()[1].child
-	if headbook.get_n_pages() <= page_num:
-		raise IndexError, "Tab index out of range %d <= %d" % \
-			(headbook.get_n_pages(), page_num)
+def getTabText (widgid):
+	tabhbox = getWidgets(widgid)[4]
+	return tabhbox[1].get_text()
 	
+def getWidgets (widgid):
+	headbook = _headbook()
+	
+	page_num = headbook.page_num(widgid)
 	mvbox = widgets["mainvbox"].get_children()[2].get_nth_page(page_num)
 	
 	board = mvbox.get_children()[0].child.get_children()[0].get_children()[1]
-	cclock = mvbox.get_children()[0].child.get_children()[0].get_children()[0].child
-	side = mvbox.get_children()[0].child.get_children()[1]
+	ccalign = mvbox.get_children()[0].child.get_children()[0].get_children()[0]
+	cclock = ccalign.child
+	sidepanel = mvbox.get_children()[0].child.get_children()[1]
+	statusbar = mvbox.get_children()[1].get_children()[1]
+	tabhbox = headbook.get_tab_label(widgid)
 	
-	return (board, cclock, side)
+	return (board, cclock, sidepanel, statusbar, tabhbox, ccalign)
 
-def cur_page ():
-	return widgets["mainvbox"].get_children()[1].child.get_current_page()
+def setCurrent (widgid):
+    headbook = _headbook()
+    headbook.set_current_page(headbook.page_num(widgid))
+
+def cur_widgid ():
+    headbook = _headbook()
+    return headbook.get_nth_page(headbook.get_current_page())
 
 def cur_widgets ():
-	return getWidgets(cur_widgets())
+	return getWidgets(cur_widgid())
 
-def __len__ ():
-	return widgets["mainvbox"].get_children()[1].child.get_n_pages()
+def _headbook ():
+    return widgets["mainvbox"].get_children()[1].child
+
+def status (widgid, message, idle_add=False):
+    statusbar = getWidgets(widgid)[3]
+    def func():
+        statusbar.pop(0)
+        if message:
+            statusbar.push(0,message)
+    if idle_add:
+        gobject.idle_add(func)
+    else: func()
