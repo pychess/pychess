@@ -1,5 +1,5 @@
 import gtk, gobject, cairo
-import gamewidget
+from widgets import gamewidget
 from Utils.book import getOpenings
 from Utils.Move import parseSAN, movePool
 

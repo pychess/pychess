@@ -10,7 +10,7 @@ from Utils.eval import evaluateComplete
 from Players.Engine import EngineDead
 from Utils.const import *
 
-from statusbar import status
+from widgets import gamewidget
 
 profile = True
 profile = False
@@ -21,17 +21,21 @@ class Game (GObject):
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
 
-    def __init__(self, his, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
+    def __init__(self, widgid, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
         GObject.__init__(self)
-    
+        
+        self.widgid = widgid
+        
         self.player1 = p1
         self.player2 = p2
         self.chessclock = cc
-        self.history = his
+        self.history = gamewidget.getWidgets(widgid)[0].view.history
         self.analyzer = analyzer
-
-        self.event = 'Local Event'
-        self.site = 'Local site'
+        
+        self.lastSave = (None, "")
+        
+        self.event = "Local Event"
+        self.site = "Local site"
         self.round = 1
         today = datetime.date.today()
         self.year = today.year
@@ -43,10 +47,26 @@ class Game (GObject):
             self.chessclock.setTime(seconds*10)
             self.chessclock.setGain(plus*10)
         
-        self.history.connect("game_ended", lambda h,stat,comm: self.emit("game_ended", stat, comm))
+        self.history.connect("game_ended", self._gameEnded)
         
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)
+    
+    def load (self, path):
+        self.lastSave = (self.history.clone(), path)
+        ending = path[path.rfind(".")+1:]
+        enddir[ending].load(file(path), game.history)
+        for player in self.players:
+            if hasattr(player, "setBoard"):
+                player.setBoard(game.history)
+        self.analyzer.setBoard(game.history)
+    
+    def save (self, path, saver):
+        saver.save(open(path,"w"), self)
+        lastSave = (self.history.clone(), path)
+    
+    def isChanged (self):
+        return not self.lastSave[1] or self.lastSave[0] != self.history
     
     def run (self):
         self.connect_after("game_ended", lambda g,stat,comm: self.kill())
@@ -107,6 +127,24 @@ class Game (GObject):
         if self.analyzer: self.analyzer.__del__()
         if self.chessclock: self.chessclock.stop()
     
+    def _gameEnded (self, history, stat, comment):
+        self.emit("game_ended", stat, comment)
+        m1 = {
+            DRAW: _("The game ended in a draw"),
+            WHITEWON: _("White player won the game"),
+            BLACKWON: _("Black player won the game")
+        }[status]
+        m2 = {
+            DRAW_REPITITION: _("as the same position was repeated three times in a row"),
+            DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
+            DRAW_STALEMATE: _("because of stalemate"),
+            DRAW_AGREE: _("as the players agreed to"),
+            WON_RESIGN: _("as opponent resigned"),
+            WON_CALLFLAG: _("as opponent ran out of time"),
+            WON_MATE: _("on a mate")
+        }[comment]
+        gamewidget.status(self.widgid, "%s %s." % (m1,m2), idle_add=True)
+        
     def _action (self, player, action):
 
         if action == player.RESIGNATION:
