@@ -519,6 +519,10 @@ class GladeHandlers:
     
     def on_how_to_play1_activate (widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
+        
+    def on_TipOfTheDayMenuItem_activate (widget):
+        myconf.set("show_tip_at_startup", True)
+        TipOfTheDay.TipOfTheDay()
     
     #          Other          #
     
