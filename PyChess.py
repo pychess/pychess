@@ -20,9 +20,11 @@ from Players import engines
 from Players.Human import Human
 from System import myconf
 from System.Log import log
+from System import TipOfTheDay
 import System.LogDialog
 from Game import Game
 from widgets import gamewidget
+
 
 gameDic = {}
 
@@ -567,6 +569,8 @@ class PyChess:
         h = myconf.get("window_height")
         if w and h:
             self["window1"].resize(w,h)
+        TipOfTheDay.TipOfTheDay()
+        
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
