@@ -31,7 +31,8 @@ class Sidepanel:
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
         
-        self.__widget__ = self.sw
+        self.shown_changed(self.board, 0)
+        
         return self.sw
     
     def shown_changed (self, board, shown):
@@ -43,16 +44,17 @@ class Sidepanel:
         def helper():
             self.store.clear()
             
-            if not self.openings and self.__widget__.get_child() == self.sw:
-                self.__widget__.remove(self.sw)
+            if not self.openings and self.sw.get_child() == self.tv:
+                self.sw.remove(self.tv)
                 label = gtk.Label(_("In this position,\nthere is no book move."))
                 label.set_property("yalign",0.1)
-                self.__widget__.add(label)
-                self.__widget__.show_all()
+                self.sw.add_with_viewport(label)
+                self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
+                self.sw.show_all()
                 return
-            if self.openings and self.__widget__.get_child() != self.sw:
-                self.__widget__.remove(self.__widget__.get_child())
-                self.__widget__.add(self.sw)
+            if self.openings and self.sw.get_child() != self.tv:
+                self.sw.remove(self.sw.get_child())
+                self.sw.add(self.tv)
             
             i = 0
             for move, wins, draws, loses in self.openings:

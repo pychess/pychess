@@ -94,7 +94,7 @@ class Sidepanel:
             num = str(int(len(history)/2))+"."
             idle_add(self.numbers.get_model().append, [num])
     
-        view = len(history) & 1 and right or left
+        view = len(history) & 1 and self.right or self.left
         notat = toSAN(history[-2], history[-1], history.moves[-1])
     
         def todo():
@@ -122,8 +122,8 @@ class Sidepanel:
             idle_add(todo)
             return
         
-        col = shown & 1 and left or right
-        other = shown & 1 and right or left
+        col = shown & 1 and self.left or self.right
+        other = shown & 1 and self.right or self.left
         row = int((shown-1) / 2)
         def todo():
             col.get_selection().select_iter(col.get_model().get_iter(row))
