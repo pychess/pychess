@@ -216,7 +216,8 @@ def runNewGameDialog (hideFC=True):
     
     #game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
     
-    window["properties1"].set_sensitive(True)
+    #TODO: enable this for tabs
+    #window["properties1"].set_sensitive(True)
     return game, widgid
 
 import thread
@@ -359,6 +360,7 @@ class GladeHandlers:
         window.game.save(uri, saver)
     
     def on_properties1_activate (widget):
+        #TODO Fix this in for the new Tab work
         window["event_entry"].set_text(window.game.event)
         window["site_entry"].set_text(window.game.site)
         window["round_spinbutton"].set_value(window.game.round)
