@@ -30,6 +30,7 @@ class Game (GObject):
         self.player2 = p2
         self.chessclock = cc
         self.history = gamewidget.getWidgets(widgid)[0].view.history
+        self.history.reset(mvlist=True)
         self.analyzer = analyzer
         
         self.lastSave = (None, "")
