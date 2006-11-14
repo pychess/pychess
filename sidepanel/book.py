@@ -31,6 +31,7 @@ class Sidepanel:
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
         
+        self.__widget__ = self.sw
         return self.sw
     
     def shown_changed (self, board, shown):
@@ -40,25 +41,25 @@ class Sidepanel:
         self.board.bluearrow = None
         
         def helper():
-            store.clear()
+            self.store.clear()
             
-            if not self.openings and __widget__.get_child() == self.sw:
-                __widget__.remove(self.sw)
+            if not self.openings and self.__widget__.get_child() == self.sw:
+                self.__widget__.remove(self.sw)
                 label = gtk.Label(_("In this position,\nthere is no book move."))
                 label.set_property("yalign",0.1)
-                __widget__.add(label)
-                __widget__.show_all()
+                self.__widget__.add(label)
+                self.__widget__.show_all()
                 return
-            if self.openings and __widget__.get_child() != self.sw:
-                __widget__.remove(__widget__.get_child())
-                __widget__.add(self.sw)
+            if self.openings and self.__widget__.get_child() != self.sw:
+                self.__widget__.remove(self.__widget__.get_child())
+                self.__widget__.add(self.sw)
             
             i = 0
             for move, wins, draws, loses in self.openings:
                 games = wins+draws+loses
                 if not games: continue
                 wins,draws,loses = map(lambda x: x/float(games), (wins,draws,loses))
-                store.append ([move, str(games), (wins,draws,loses)])
+                self.store.append ([move, str(games), (wins,draws,loses)])
         gobject.idle_add(helper)
 
     def selection_changed (self, widget):
