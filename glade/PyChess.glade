@@ -320,7 +320,7 @@
 		      <property name="label" translatable="yes">_Hint mode</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
-		      <signal name="activate" handler="on_hint_mode_activate" last_modification_time="Sat, 23 Sep 2006 15:55:29 GMT"/>
+		      <signal name="toggled" handler="on_hint_mode_activate" last_modification_time="Tue, 14 Nov 2006 13:20:29 GMT"/>
 		      <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>

@@ -35,8 +35,10 @@ class Game (GObject):
         
         self.lastSave = (None, "")
         
-        self.event = "Local Event"
-        self.site = "Local site"
+        #Event: the name of the tournament or match event.
+        self.event = _("Local Event")
+        #Site: the location of the event.
+        self.site = _("Local site")
         self.round = 1
         today = datetime.date.today()
         self.year = today.year
@@ -53,14 +55,24 @@ class Game (GObject):
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)
     
-    def load (self, path):
+    def load (self, path, loader):
         self.lastSave = (self.history.clone(), path)
         ending = path[path.rfind(".")+1:]
-        enddir[ending].load(file(path), game.history)
+        tags = loader.load(file(path), self.history)
         for player in self.players:
             if hasattr(player, "setBoard"):
-                player.setBoard(game.history)
-        self.analyzer.setBoard(game.history)
+                player.setBoard(self.history)
+        self.analyzer.setBoard(self.history)
+        
+        if "Event" in tags:
+            self.event = tags["Event"]
+        if "Site" in tags:
+            self.site = tags["Site"]
+        if "Round" in tags:
+            self.round = int(tags["Round"])
+        if "Date" in tags:
+             date = tags["Date"].split(".")
+             self.year, self.month, self.day = map(int, date)
     
     def save (self, path, saver):
         saver.save(open(path,"w"), self)
