@@ -77,7 +77,6 @@ def load (file):
             speed = "%.2f g/s" % (i/(time()-start))
         print "%s/%s: %s - %s (%s)" % (number, max, procent, estimation, speed)
         try:
-            #These tags won't be used for a lot atm.
             tags = dict(tagre.findall(myFile[0]))
             if not tags["Result"] in ("1/2-1/2", "1-0", "0-1"):
                 continue

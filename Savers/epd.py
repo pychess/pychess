@@ -9,8 +9,7 @@ from Utils.const import *
 __label__ = _("Chess Position")
 __endings__ = "epd", "fen"
 
-def save (file, game):
-    history = game.history
+def save (file, history):
     """Saves history to file"""
     
     pieces = history[-1].data
@@ -36,7 +35,7 @@ def save (file, game):
     file.write(history.curCol() == WHITE and "w" or "b")
     file.write(" ")
     
-    if history.castling == 0:
+    if history[-1].castling == 0:
         file.write("-")
     else:
         if history[-1].castling & WHITE_OO:

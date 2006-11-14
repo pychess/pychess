@@ -54,7 +54,7 @@ def rect (r):
 
 range8 = range(8)
 
-ANIMATION_TIME = .15
+ANIMATION_TIME = .5
 
 class BoardView (gtk.DrawingArea):
     

@@ -9,6 +9,7 @@ from System import myconf
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
+from Background import Background
 
 icons = gtk.icon_theme_get_default()
 light_on = icons.load_icon("stock_3d-light-on", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
@@ -35,9 +36,9 @@ def createAlignment (top, right, bottom, left):
 	return align
 	
 def show_side_panel (show):
-	if __len__() < 1: return
+	if len(head2mainDic) == 0: return
 	
-	for page_num in range(__len__()):
+	for page_num in head2mainDic.keys():
 		sidepanel = getWidgets(page_num)[2]
 		if show:
 			sidepanel.show()
@@ -76,7 +77,22 @@ def addSidepanels (notebook, toggleComboBox, widgid):
 
 head2mainDic = {}
 
-def addGameTab (title):
+def removeGameTab (widgid):
+	headbook = _headbook()
+	page_num = headbook.page_num(widgid)
+	headbook.remove_page(page_num)
+	vbox = widgets["mainvbox"]
+	mainbook = vbox.get_children()[2]
+	mainbook.remove_page(page_num)
+	del head2mainDic[widgid]
+	
+	if headbook.get_n_pages() == 0:
+		vbox.remove(vbox.get_children()[1])
+		vbox.remove(mainbook)
+		vbox.pack_end(Background())
+		vbox.show_all()
+		
+def addGameTab (title, closeFunc):
 	vbox = widgets["mainvbox"]
 	if len(vbox.get_children()) == 2:
 		vbox.remove(vbox.get_children()[1])
@@ -98,7 +114,9 @@ def addGameTab (title):
 		
 		vbox.pack_start(align, expand=False)
 		vbox.pack_start(mainbook)
-	
+		
+		vbox.show_all()
+		
 	headbook = vbox.get_children()[1].child
 	page_num = headbook.get_n_pages()
 	
@@ -109,9 +127,6 @@ def addGameTab (title):
 	close_button.add(createImage(gtk_close))
 	close_button.set_relief(gtk.RELIEF_NONE)
 	close_button.set_size_request(19,18)
-	def callback (widget):
-		print "Closebutton %d activated" % (page_num)
-	close_button.connect("clicked", callback)
 	hbox.pack_end(close_button, expand=False)
 	hbox.pack_end(gtk.Label(title))
 	
@@ -119,6 +134,8 @@ def addGameTab (title):
 	hbox.show_all() # Gtk doesn't show tablabels when the rest is show_all'ed
 	headbook.append_page(headchild, hbox)
 	headbook.set_tab_reorderable(headchild, True)
+	
+	close_button.connect("clicked", closeFunc, headchild)
 	
 	mainbook = vbox.get_children()[2]
 	
@@ -222,7 +239,11 @@ def addGameTab (title):
 	side_book.set_current_page(start)
 	toggle_combox.active = start
 	
-	vbox.show_all()
+	headbook.show_all()
+	mvbox.show_all()
+	
+	headbook.set_current_page(-1)
+	mainbook.set_current_page(-1)
 	
 	return headchild # Used as widgid
 	
