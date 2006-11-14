@@ -8,23 +8,22 @@ __endings__ = "pgn",
 
 def save (file, game):
     history = game.history
-    # TODO: Create some kind of "match_param" (in knights) class to handle this kind of data. Might also be an expanded model class, instead of History
-    from pwd import getpwuid
-    from os import getuid
-    userdata = getpwuid(getuid())
-    name = userdata.pw_gecos
-    if not name:
-        name = userdata.pw_name
+
+    #from pwd import getpwuid
+    #from os import getuid
+    #userdata = getpwuid(getuid())
+    #name = userdata.pw_gecos
+    #if not name:
+    #    name = userdata.pw_name
     
     #result = reprResult[history.status]
     game_status = reprResult[game.history.boards[-1].status]
 
-    # TODO: get some more calculated values here
-    print >> file, '[Event "%s"]' % game.event #Event: the name of the tournament or match event.
-    print >> file, '[Site "%s"]' % game.site #Site: the location of the event.
+    print >> file, '[Event "%s"]' % game.event 
+    print >> file, '[Site "%s"]' % game.site
     print >> file, '[Date "%04d.%02d.%02d"]' % (game.year, game.month, game.day)
     print >> file, '[Round "%d"]' % game.round
-    print >> file, '[White "%s"]' % name
+    print >> file, '[White "White Player"]'
     print >> file, '[Black "Black Player"]'
     print >> file, '[Result "%s"]' % game_status
     print >> file
@@ -89,8 +88,7 @@ def load (file, history):
     myFile = files[0]
     
     try:
-        #These tags won't be used for a lot atm.
-        tags = tagre.findall(myFile[0])
+        tags = dict(tagre.findall(myFile[0]))
         moves = comre.sub("", myFile[1])
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
@@ -104,7 +102,8 @@ def load (file, history):
     
     history.reset(False)
     for i, move in enumerate(moves):
-        m = parseSAN(history.boards[-1], move)
+        m = parseSAN(history[-1], move)
         if i+1 < len(moves):
             history.add(m, False)
         else: history.add(m, True)
+    return tags

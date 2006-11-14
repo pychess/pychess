@@ -11,8 +11,8 @@ import webbrowser
 import atexit
 
 import gettext
-gettext.install("pychess",localedir="lang",unicode=1)
-gtk.glade.bindtextdomain("pychess","lang")
+gettext.install("pychess", localedir="lang", unicode=1)
+gtk.glade.bindtextdomain("pychess", "lang")
 gtk.glade.textdomain("pychess")
 
 from Utils.const import *
@@ -29,8 +29,9 @@ from widgets import gamewidget
 gameDic = {}
 
 def saveGameBefore (action):
-    if not window.game: return
-    if window.game.history == lastSave[0]: return
+    if not gameDic: return
+    game = gameDic[gamewidget.cur_widgid()]
+    if not game.isChanged(): return
     
     defText = window["savedialogtext1"].get_label()
     window["savedialogtext1"].set_markup(defText % action)
@@ -153,10 +154,18 @@ def makeNewGameDialogReady ():
             if hasattr(window[widget], "set_active"):
                 window[widget].set_active(v)
             else: window[widget].set_value(v)
-        
+
+def gameClosed (widget, widgid):
+    res = saveGameBefore(_("you close it"))
+    if res == gtk.RESPONSE_CANCEL: return
+    gamewidget.removeGameTab(widgid)
+    gameDic[widgid].kill()
+    del gameDic[widgid]
+
 def runNewGameDialog (hideFC=True):
     makeNewGameDialogReady ()
     
+    #If the dialog should show or hide the filechooser button
     if hideFC:
         window["ngfcalignment"].hide()
     else: window["ngfcalignment"].show()
@@ -165,7 +174,7 @@ def runNewGameDialog (hideFC=True):
     window["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return
     
-    widgid = gamewidget.addGameTab("")
+    widgid = gamewidget.addGameTab("", gameClosed)
     ccalign = gamewidget.getWidgets(widgid)[5]
     
     if window["useTimeCB"].get_active():
@@ -267,18 +276,12 @@ class GladeHandlers:
     #          Game Menu          #
 
     def on_new_game1_activate (widget):
-        res = saveGameBefore(_("a new game starts"))
-        if res == gtk.RESPONSE_CANCEL: return
-        
         game, widgid = runNewGameDialog()
         if game:
             gameDic[widgid] = game
             game.run()
 
     def on_load_game1_activate (widget):
-        res = saveGameBefore(_("you open a new game"))
-        if res == gtk.RESPONSE_CANCEL: return
-        
         res = opendialog.run()
         opendialog.hide()
 
@@ -289,11 +292,13 @@ class GladeHandlers:
         
         if game:
             gameDic[widgid] = game
-            game.load(filechooserbutton.get_uri()[7:])
+            path = filechooserbutton.get_uri()[7:]
+            loader = enddir[path[path.rfind(".")+1:]]
+            game.load(path, loader)
             game.run()
     
     def on_save_game1_activate (widget):
-        if not len(gameList):
+        if not len(gameDic):
             noOpenGame()
             return
         game = gameDic[gamewidget.cur_widgid()]
@@ -302,7 +307,7 @@ class GladeHandlers:
         if not game.lastSave[1]:
             return GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
         else:
-            GladeHandlers.__dict__["save"](lastSave[1])
+            GladeHandlers.__dict__["save"](game.lastSave[1])
         
     def on_save_game_as1_activate (widget):
         if not len(gameDic):
@@ -351,7 +356,7 @@ class GladeHandlers:
                 return
         
         saver = enddir[ending]
-        window.game.save(uri, saver)
+        gameDic[gamewidget.cur_widgid()].save(uri, saver)
     
     def save (uri):
         s = uri.rfind(".")
@@ -359,13 +364,20 @@ class GladeHandlers:
             ending = uri[s+1:]
         else: return
         saver = enddir[ending]
-        window.game.save(uri, saver)
+        gameDic[gamewidget.cur_widgid()].save(uri, saver)
     
     def on_properties1_activate (widget):
+<<<<<<< .mine
+        game = gameDic[gamewidget.cur_widgid()]
+        window["event_entry"].set_text(game.event)
+        window["site_entry"].set_text(game.site)
+        window["round_spinbutton"].set_value(game.round)
+=======
         #TODO Fix this in for the new Tab work
         window["event_entry"].set_text(window.game.event)
         window["site_entry"].set_text(window.game.site)
         window["round_spinbutton"].set_value(window.game.round)
+>>>>>>> .r227
         #TODO set the date
         window["game_info"].show()
         def hide_window(button, *args):
@@ -401,7 +413,8 @@ class GladeHandlers:
         gamewidget.show_side_panel(widget.get_active())
     
     def on_show_cords_activate (widget):
-        gamewidget.cur_widgets()[0].view.showCords = widget.get_active()
+        for widgid in gameDic.keys():
+            gamewidget.getWidgets(widgid)[0].view.showCords = widget.get_active()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
@@ -412,59 +425,61 @@ class GladeHandlers:
         else: System.LogDialog.hide()
     
     def on_hint_mode_activate (widget):
-        def on_analyze (analyzer, moves):
-            gamewidget.cur_widgets()[0].view.greenarrow = moves[0].cords
-        def on_clear (history):
-            gamewidget.cur_widgets()[0].view.greenarrow = None
-        def on_reset (history):
-        	on_clear (history)
-        	window["hint_mode"].set_active(False)
-        if widget.get_active():
-            try:
-                if len(window.analyzer.analyzeMoves) >= 1:
-                    gamewidget.cur_widgets()[0].view.greenarrow = \
-                        window.analyzer.analyzeMoves[0].cords
-                window.hintconid0 = window.analyzer.connect("analyze", on_analyze)
-                history = gamewidget.cur_widgets()[0].view.history
-                window.hintconid1 = history.connect("changed", on_clear)
-                window.hintconid2 = history.connect("cleared", on_reset)
-            except:
-        	    window["hint_mode"].set_active(False)
-        else:
-            try:
-                window.analyzer.disconnect(window.hintconid0)
-                gamewidget.cur_widgets()[0].view.history.disconnect(window.hintconid1)
-                gamewidget.cur_widgets()[0].view.history.disconnect(window.hintconid2)
-            except: pass
-            gamewidget.cur_widgets()[0].view.greenarrow = None
+        if not gameDic: return
+
+        def on_analyze (analyzer, moves, board):
+            board.view.greenarrow = moves[0].cords
+        def on_clear (history, board):
+            board.view.greenarrow = None
+        def on_reset (history, board):
+            on_clear (history, board)
+            window["hint_mode"].set_active(False)
+        
+        for widgid in gameDic.keys():
+            game = gameDic[widgid]
+            board = gamewidget.getWidgets(widgid)[0]
+            history = board.view.history
+            
+            if widget.get_active():
+                if len(game.analyzer.analyzeMoves) >= 1:
+                    board.view.greenarrow = game.analyzer.analyzeMoves[0].cords
+                game.hintconid0 = game.analyzer.connect("analyze", on_analyze, board)
+                game.hintconid1 = history.connect("changed", on_clear, board)
+                game.hintconid2 = history.connect("cleared", on_reset, board)
+            else:
+                game.analyzer.disconnect(game.hintconid0)
+                history.disconnect(game.hintconid1)
+                history.disconnect(game.hintconid2)
+                board.view.greenarrow = None
     
     def on_spy_mode_activate (widget):
+        if not gameDic: return
+        
         def on_analyze (analyzer, moves):
             if len(analyzer.analyzeMoves) >= 2:
                 gamewidget.cur_widgets()[0].view.redarrow = moves[1].cords
         def on_clear (history):
             gamewidget.cur_widgets()[0].view.redarrow = None
         def on_reset (history):
-        	on_clear (history)
-        	window["spy_mode"].set_active(False)
-        if widget.get_active():
-            try:
-                if len(window.analyzer.analyzeMoves) >= 2:
-                    gamewidget.cur_widgets()[0].view.redarrow = \
-                        window.analyzer.analyzeMoves[1].cords
-                window.spyconid0 = window.analyzer.connect("analyze", on_analyze)
-                history = gamewidget.cur_widgets()[0].view.history
-                window.spyconid1 = history.connect("changed", on_clear)
-                window.spyconid2 = history.connect("cleared", on_reset)
-            except:
-                window["spy_mode"].set_active(False)
-        else:
-            try:
-                window.analyzer.disconnect(window.spyconid0)
-                gamewidget.cur_widgets()[0].view.history.disconnect(window.spyconid1)
-                gamewidget.cur_widgets()[0].view.history.disconnect(window.spyconid2)
-            except: pass
-            gamewidget.cur_widgets()[0].view.redarrow = None
+            on_clear (history)
+            window["spy_mode"].set_active(False)
+        
+        for widgid in gameDic.keys():
+            game = gameDic[widgid]
+            board = gamewidget.getWidgets(widgid)[0]
+            history = board.view.history
+            
+            if widget.get_active():
+                if len(game.analyzer.analyzeMoves) >= 2:
+                    board.view.redarrow = game.analyzer.analyzeMoves[1].cords
+                game.spyconid0 = game.analyzer.connect("analyze", on_analyze)
+                game.spyconid1 = history.connect("changed", on_clear)
+                game.spyconid2 = history.connect("cleared", on_reset)
+            else:
+                game.analyzer.disconnect(game.spyconid0)
+                board.view.history.disconnect(game.spyconid1)
+                board.view.history.disconnect(game.spyconid2)
+                board.view.redarrow = None
     
     #          New Game Dialog          #
 
@@ -499,8 +514,8 @@ class GladeHandlers:
         gamewidget.cur_widgets()[0].on_resign_activate (widget)
 
     def on_force_to_move_activate (widget):
-        if window.game:
-            window.game.activePlayer.hurry()
+        if len(gameDic):
+            gameDic[gamewidget.cur_widgid()].activePlayer.hurry()
     
     #          Settings menu          #
     
@@ -551,16 +566,11 @@ class PyChess:
         from widgets.BookCellRenderer import BookCellRenderer
         self.BookCellRenderer = BookCellRenderer
         
-        self.game = None
-        #makeSidePanelReady()
         makeFileDialogReady()
         makeLogDialogReady()
         makeAboutDialogReady()
         
         gamewidget.set_widgets(self)
-        #gamewidget.addGameTab("Thomas vs. others")
-        #gamewidget.setTabReady(0, True)
-        #gamewidget.addGameTab("Thomas vs. others2")
         
         win = self["window1"]
         def do ():
