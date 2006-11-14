@@ -13,7 +13,7 @@ class TipOfTheDay:
         self.dlg.add_button("Don't show anymore", 83)
         self.dlg.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
         self.dlg.set_resizable( False)
-        print self.get_show_tip_at_startup()
+        # print self.get_show_tip_at_startup()
         if  not self.get_show_tip_at_startup():
             return
         ret = self.dlg.run()
