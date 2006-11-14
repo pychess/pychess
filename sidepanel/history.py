@@ -35,13 +35,13 @@ class Sidepanel:
         
         __active__ = True
         
-        numbers = widgets.get_widget("treeview1")
-        left = widgets.get_widget("treeview2")
-        right = widgets.get_widget("treeview3")
+        self.numbers = widgets.get_widget("treeview1")
+        self.left = widgets.get_widget("treeview2")
+        self.right = widgets.get_widget("treeview3")
 
-        fixList(numbers, 1)
-        map(fixList, (left, right))
-        numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
+        fixList(self.numbers, 1)
+        map(fixList, (self.left, self.right))
+        self.numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
         
         widgets.signal_autoconnect ({
             "treeview1_selection_changed": lambda w: self.select_cursor_row(w,1), 
@@ -81,9 +81,9 @@ class Sidepanel:
 
     def new_history_object (self, history):
         def helper():
-            left.get_model().clear()
-            right.get_model().clear()
-            numbers.get_model().clear()
+            self.left.get_model().clear()
+            self.right.get_model().clear()
+            self.numbers.get_model().clear()
         gobject.idle_add(helper)
 
     def history_changed (self, history):
@@ -92,7 +92,7 @@ class Sidepanel:
     
         if len(history) % 2 == 0:
             num = str(int(len(history)/2))+"."
-            idle_add(numbers.get_model().append, [num])
+            idle_add(self.numbers.get_model().append, [num])
     
         view = len(history) & 1 and right or left
         notat = toSAN(history[-2], history[-1], history.moves[-1])
@@ -112,13 +112,13 @@ class Sidepanel:
         if self.board.shown < len(history):
             return
         idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
-                numbers.get_allocation().height)
+                self.numbers.get_allocation().height)
 
     def shown_changed (self, board, shown):
         if shown <= 0:
             def todo():
-                left.get_selection().unselect_all()
-                right.get_selection().unselect_all()
+                self.left.get_selection().unselect_all()
+                self.right.get_selection().unselect_all()
             idle_add(todo)
             return
         
@@ -127,6 +127,6 @@ class Sidepanel:
         row = int((shown-1) / 2)
         def todo():
             col.get_selection().select_iter(col.get_model().get_iter(row))
-            numbers.scroll_to_cell((row,))
+            self.numbers.scroll_to_cell((row,))
             other.get_selection().unselect_all()
         idle_add(todo)

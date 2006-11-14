@@ -95,11 +95,11 @@ from Utils.eval import evaluateComplete
 class Sidepanel:
     
     def load (self, window, widgid):
-        plot = ScorePlot()
+        self.plot = ScorePlot()
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         port = gtk.Viewport()
-        port.add(plot)
+        port.add(self.plot)
         port.set_shadow_type(gtk.SHADOW_NONE)
         __widget__.add(port)
         __widget__.show_all()
@@ -107,7 +107,7 @@ class Sidepanel:
         self.boardview = gamewidget.getWidgets(widgid)[0].view
         self.history = self.boardview.history
         
-        plot.connect("selected", self.plot_selected)
+        self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
         self.history.connect("cleared", self.history_cleared)
         self.history.connect("changed", self.history_changed)
@@ -115,17 +115,17 @@ class Sidepanel:
         return __widget__
     
     def history_cleared (self, history):
-        plot.clear()
-        history_changed(history)
-        shown_changed(None,0)
+        self.plot.clear()
+        self.history_changed(history)
+        self.shown_changed(None,0)
     
     def history_changed (self, history):
         points = evaluateComplete(history[-1])
-        plot.addScore(points)
+        self.plot.addScore(points)
     
     def shown_changed (self, boardview, shown):
-        plot.select(shown)
-        plot.redraw()
+        self.plot.select(shown)
+        self.plot.redraw()
     
     def plot_selected (self, plot, selected):
         self.boardview.shown = selected
