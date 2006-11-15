@@ -172,7 +172,7 @@ def runNewGameDialog (hideFC=True):
 
     res = window["newgamedialog"].run()
     window["newgamedialog"].hide()
-    if res != gtk.RESPONSE_OK: return
+    if res != gtk.RESPONSE_OK: return None,None
     
     widgid = gamewidget.addGameTab("", gameClosed)
     ccalign = gamewidget.getWidgets(widgid)[5]
@@ -261,8 +261,24 @@ def noOpenGame ():
     d.connect("response", lambda d,r: d.hide())
     d.show_all()
 
+from urllib import url2pathname
+
 class GladeHandlers:
     
+    def on_drag_received (wi, context, x, y, selection, target_type, timestamp):
+        uri = selection.data.strip()
+        uri = uri.split()[0] # we may have more than one file dropped
+        
+        filechooserbutton.set_uri(uri)
+        game, widgid = runNewGameDialog(hideFC=False)
+        
+        if game:
+            gameDic[widgid] = game
+            uri = filechooserbutton.get_uri()
+            loader = enddir[uri[uri.rfind(".")+1:]]
+            game.load(uri, loader)
+            game.run()
+
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
         windowSize = window["window1"].get_size()
@@ -292,9 +308,9 @@ class GladeHandlers:
         
         if game:
             gameDic[widgid] = game
-            path = filechooserbutton.get_uri()[7:]
-            loader = enddir[path[path.rfind(".")+1:]]
-            game.load(path, loader)
+            uri = filechooserbutton.get_uri()
+            loader = enddir[uri[uri.rfind(".")+1:]]
+            game.load(uri, loader)
             game.run()
     
     def on_save_game1_activate (widget):
@@ -537,11 +553,15 @@ class GladeHandlers:
     def on_notebook2_switch_page (widget, page, page_num):
         window["notebook3"].set_current_page(page_num)
 
+TARGET_TYPE_URI_LIST = 80
+dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]
+from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
+
 class PyChess:
     def __init__(self):
         self.initGlade()
         
-    def positionMainWindow(self, window):
+    def saveWindowSize (self, window):
         def savePosition ():
             r = window.get_allocation()
             width, height = r.width, r.height
@@ -577,7 +597,11 @@ class PyChess:
         makeAboutDialogReady()
         gamewidget.set_widgets(self)
         
-        self.positionMainWindow(self["window1"])
+        flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+        window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        window["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        
+        self.saveWindowSize(self["window1"])
         
         #TODO: disabled by default
         #TipOfTheDay.TipOfTheDay()

@@ -9,6 +9,7 @@ from Utils.eval import evaluateComplete
 
 from Players.Engine import EngineDead
 from Utils.const import *
+from Utils.protoopen import protoopen
 
 from widgets import gamewidget
 
@@ -55,10 +56,10 @@ class Game (GObject):
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)
     
-    def load (self, path, loader):
-        self.lastSave = (self.history.clone(), path)
-        ending = path[path.rfind(".")+1:]
-        tags = loader.load(file(path), self.history)
+    def load (self, uri, loader):
+        self.lastSave = (self.history.clone(), uri)
+        ending = uri[uri.rfind(".")+1:]
+        tags = loader.load(protoopen(uri), self.history)
         for player in self.players:
             if hasattr(player, "setBoard"):
                 player.setBoard(self.history)
@@ -69,7 +70,8 @@ class Game (GObject):
         if "Site" in tags:
             self.site = tags["Site"]
         if "Round" in tags:
-            self.round = int(tags["Round"])
+            if tags["Round"].isdigit():
+                self.round = int(tags["Round"])
         if "Date" in tags:
              date = tags["Date"].split(".")
              self.year, self.month, self.day = map(int, date)
