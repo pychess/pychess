@@ -540,6 +540,19 @@ class GladeHandlers:
 class PyChess:
     def __init__(self):
         self.initGlade()
+        
+    def positionMainWindow(self, window):
+        def savePosition ():
+            r = window.get_allocation()
+            width, height = r.width, r.height
+            myconf.set("window_width", width)
+            myconf.set("window_height", height)
+        atexit.register( savePosition)
+        width = myconf.get("window_width")
+        height = myconf.get("window_height")
+        if width and height:
+            window.resize(width, height)
+        
     
     def initGlade(self):
         global window
@@ -562,20 +575,10 @@ class PyChess:
         makeFileDialogReady()
         makeLogDialogReady()
         makeAboutDialogReady()
-        
         gamewidget.set_widgets(self)
         
-        win = self["window1"]
-        def do ():
-            r = win.get_allocation()
-            w, h = r.width, r.height
-            myconf.set("window_width", w)
-            myconf.set("window_height", h)
-        atexit.register(do)
-        w = myconf.get("window_width")
-        h = myconf.get("window_height")
-        if w and h:
-            self["window1"].resize(w,h)
+        self.positionMainWindow(self["window1"])
+        
         #TODO: disabled by default
         #TipOfTheDay.TipOfTheDay()
         
