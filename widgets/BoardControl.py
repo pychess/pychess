@@ -58,9 +58,13 @@ class BoardControl (gtk.EventBox):
 
         if self.view.shown != len(self.view.history)-1:
             return False
-
-        if self.view.selected in self.view.history[-1].movelist and \
-            cord in self.view.history[-1].movelist[self.view.selected]:
+        
+        if self.view.active:
+            basiscord = self.view.active
+        else: basiscord = self.view.selected
+        
+        if basiscord in self.view.history[-1].movelist and \
+            cord in self.view.history[-1].movelist[basiscord]:
             return True
         if self.view.history[-1][cord] == None:
             return False
@@ -100,7 +104,9 @@ class BoardControl (gtk.EventBox):
         
         if not self.isSelectable(cord):
             self.view.active = None
-        else: self.view.active = cord
+            self.view.selected = None
+        else:
+            self.view.active = cord
     
     def button_release (self, widget, event):
         self.pressed = False
@@ -110,19 +116,25 @@ class BoardControl (gtk.EventBox):
             self.view.selected = None
         elif cord == self.view.active:
             color = self.view.history.curCol()
-            if self.view.history[-1][cord] != None and self.view.history[-1][cord].color == color:
+            if self.view.history[-1][cord] != None and \
+                    self.view.history[-1][cord].color == color:
                 self.view.selected = cord
             elif self.view.selected:
-                self.emit_move_signal(self.view.selected, cord)
+                if self.view.active and self.view.history[-1][self.view.active] and \
+                        self.view.history[-1][cord].color == color:
+                    self.emit_move_signal(self.view.active, cord)
+                else: self.emit_move_signal(self.view.selected, cord)
                 self.view._hover = cord
                 self.view.selected = None
             else: self.view.selected = cord
         else:
             if self.view.active != None:
-                self.view.selected = self.view.active
                 if not self.isSelectable(cord):
+                    self.view.active = None
                     self.view.selected = None
+                    self.view.runAnimation()
                 else:
+                    self.view.selected = self.view.active
                     self.view.active = cord
                     self.button_release(widget, event)
     
@@ -136,6 +148,7 @@ class BoardControl (gtk.EventBox):
         
         if self.pressed and self.view.active:
             piece = self.view.history[self.view.shown][self.view.active]
+            if not piece: return
             xc, yc, square, s = self.view.square
             
             if not self.view.square: return
@@ -150,7 +163,6 @@ class BoardControl (gtk.EventBox):
                 paintBox = join(paintBox, self.view.fcord2Rect(x, y))
                 piece.x = x
                 piece.y = y
-                print paintBox
                 self.view.redraw_canvas(paintBox)
 
     def leave_notify (self, widget, event):

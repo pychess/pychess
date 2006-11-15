@@ -118,7 +118,6 @@ class BoardView (gtk.DrawingArea):
         step = shown > self.shown and 1 or -1
         
         self.deadlist = []
-        
         for i in range(self.shown, shown, step):
             board0 = self.history[i]
             board1 = self.history[i+step]
@@ -130,13 +129,15 @@ class BoardView (gtk.DrawingArea):
                         # Skip if already moving
                         continue
                     if piece != board1.data[y][x]:
+                        next = Cord (x, y + (board0.color == WHITE and 1 or -1))
                         if step > 0 and (board1.data[y][x] != None or \
-                           board0.enpassant != None and board1[board0.enpassant] != None and \
-                           board0.enpassant == Cord(x,y+(board0.color == WHITE and 1 or -1))):
+                           board0.enpassant == next and \
+                           board1[board0.enpassant] != None):
                             # A piece is dying
                             self.deadlist.append((piece,x,y))
                         else:
                             # It has moved
+                            print piece.x, x, "|", piece.y, y
                             piece.x = x
                             piece.y = y
                     

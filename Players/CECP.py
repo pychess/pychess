@@ -322,6 +322,10 @@ class CECProtocol (GObject):
                     except AttributeError:
                         break
             if moves:
+                # TODO: Sometimes lines may look like:
+                # 2. 58 0 1259	 Qxf5 Bh4+ Kd2 exd4
+                # 3. 35 0 3791	 Qxf5
+                # In these cases we should not skip the more moves
                 self.emit("analyze", moves)
             
             return
