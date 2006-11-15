@@ -576,8 +576,8 @@ class PyChess:
         h = myconf.get("window_height")
         if w and h:
             self["window1"].resize(w,h)
-        TipOfTheDay.TipOfTheDay()
-        
+        #TODO: disabled by default
+        #TipOfTheDay.TipOfTheDay()
         
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
