@@ -561,12 +561,10 @@ class PyChess:
     def __init__(self):
         self.initGlade()
         
-    def saveWindowSize (self, window):
+    def mainWindowSize (self, window):
         def savePosition ():
-            r = window.get_allocation()
-            width, height = r.width, r.height
-            myconf.set("window_width", width)
-            myconf.set("window_height", height)
+            myconf.set("window_width", window.get_allocation().width)
+            myconf.set("window_height", window.get_allocation().height)
         atexit.register( savePosition)
         width = myconf.get("window_width")
         height = myconf.get("window_height")
@@ -601,7 +599,7 @@ class PyChess:
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         window["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         
-        self.saveWindowSize(self["window1"])
+        self.mainWindowSize(self["window1"])
         
         #TODO: disabled by default
         #TipOfTheDay.TipOfTheDay()
