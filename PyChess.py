@@ -367,17 +367,10 @@ class GladeHandlers:
         gameDic[gamewidget.cur_widgid()].save(uri, saver)
     
     def on_properties1_activate (widget):
-<<<<<<< .mine
         game = gameDic[gamewidget.cur_widgid()]
         window["event_entry"].set_text(game.event)
         window["site_entry"].set_text(game.site)
         window["round_spinbutton"].set_value(game.round)
-=======
-        #TODO Fix this in for the new Tab work
-        window["event_entry"].set_text(window.game.event)
-        window["site_entry"].set_text(window.game.site)
-        window["round_spinbutton"].set_value(window.game.round)
->>>>>>> .r227
         #TODO set the date
         window["game_info"].show()
         def hide_window(button, *args):
