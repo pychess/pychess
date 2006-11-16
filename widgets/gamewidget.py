@@ -3,7 +3,7 @@ def set_widgets (w):
 	global widgets
 	widgets= w
 
-import gtk, os
+import gtk, os, gobject
 
 from System import myconf
 from ChessClock import ChessClock
