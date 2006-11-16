@@ -129,9 +129,9 @@ class BoardView (gtk.DrawingArea):
                         # Skip if already moving
                         continue
                     if piece != board1.data[y][x]:
-                        next = Cord (x, y + (board0.color == WHITE and 1 or -1))
                         if step > 0 and (board1.data[y][x] != None or \
-                           board0.enpassant == next and \
+                           0 < y < 7 and \
+                           board0.enpassant == Cord (x, y + (board0.color == WHITE and 1 or -1)) and \
                            board1[board0.enpassant] != None):
                             # A piece is dying
                             self.deadlist.append((piece,x,y))

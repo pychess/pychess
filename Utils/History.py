@@ -30,15 +30,26 @@ hisPool = HistoryPool()
 from Piece import Piece
 from Board import Board
 from Utils.const import *
-startBoard = Board(
-[[Piece(WHITE, ROOK), Piece(WHITE, KNIGHT), Piece(WHITE, BISHOP), Piece(WHITE, QUEEN), Piece(WHITE, KING), Piece(WHITE, BISHOP), Piece(WHITE, KNIGHT), Piece(WHITE, ROOK)],
-[Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN)],
-[None,None,None,None,None,None,None,None],
-[None,None,None,None,None,None,None,None],
-[None,None,None,None,None,None,None,None],
-[None,None,None,None,None,None,None,None],
-[Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN)],
-[Piece(BLACK, ROOK), Piece(BLACK, KNIGHT), Piece(BLACK, BISHOP), Piece(BLACK, QUEEN), Piece(BLACK, KING), Piece(BLACK, BISHOP), Piece(BLACK, KNIGHT), Piece(BLACK, ROOK)]])
+
+def startBoard ():
+    return Board ([
+        [   Piece(WHITE, ROOK), Piece(WHITE, KNIGHT), Piece(WHITE, BISHOP),
+            Piece(WHITE, QUEEN), Piece(WHITE, KING), Piece(WHITE, BISHOP),
+            Piece(WHITE, KNIGHT), Piece(WHITE, ROOK)],
+        [   Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN),
+            Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN),
+            Piece(WHITE, PAWN), Piece(WHITE, PAWN)],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN),
+            Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN),
+            Piece(BLACK, PAWN), Piece(BLACK, PAWN)],
+        [   Piece(BLACK, ROOK), Piece(BLACK, KNIGHT), Piece(BLACK, BISHOP),
+            Piece(BLACK, QUEEN), Piece(BLACK, KING), Piece(BLACK, BISHOP),
+            Piece(BLACK, KNIGHT), Piece(BLACK, ROOK)]
+    ])
 
 from System.Log import log
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
@@ -68,7 +79,7 @@ class History (GObject):
     def reset (self, mvlist=False):
         GObject.__init__(self)
         
-        self.boards = [startBoard.clone()]
+        self.boards = [startBoard()]
         self.moves = []
         self.curColModi = 0
         if mvlist:

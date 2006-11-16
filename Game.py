@@ -148,7 +148,7 @@ class Game (GObject):
             DRAW: _("The game ended in a draw"),
             WHITEWON: _("White player won the game"),
             BLACKWON: _("Black player won the game")
-        }[status]
+        }[stat]
         m2 = {
             DRAW_REPITITION: _("as the same position was repeated three times in a row"),
             DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
