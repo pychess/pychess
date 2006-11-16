@@ -234,7 +234,7 @@ def runNewGameDialog (hideFC=True):
 import thread
 def engineDead (engine, widgid):
     gamewidget.setCurrent(widgid)
-    gameList[widgid].kill()
+    gameDic[widgid].kill()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
