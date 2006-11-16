@@ -137,7 +137,6 @@ class BoardView (gtk.DrawingArea):
                             self.deadlist.append((piece,x,y))
                         else:
                             # It has moved
-                            print piece.x, x, "|", piece.y, y
                             piece.x = x
                             piece.y = y
                     
