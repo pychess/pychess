@@ -237,7 +237,14 @@ class BoardView (gtk.DrawingArea):
             self.redraw_canvas(rect(paintBox))
         
         return paintBox and True or False
-                
+    
+    def startAnimation (self):
+        self.animationStart = time()
+        def do():
+            self.runAnimation(redrawMisc = True)
+            self.animationID = idle_add(self.runAnimation)
+        idle_add(do)
+    
     #############################
     #          Drawing          #
     #############################

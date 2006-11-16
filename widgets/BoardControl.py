@@ -11,6 +11,7 @@ from BoardView import BoardView
 from System.Log import log
 from Utils.const import *
 from BoardView import join
+from time import time
 
 class BoardControl (gtk.EventBox):
 
@@ -110,15 +111,17 @@ class BoardControl (gtk.EventBox):
     
     def button_release (self, widget, event):
         self.pressed = False
-        
+
         cord = self.point2Cord (event.x, event.y)
         if self.view.selected == cord or cord == None:
             self.view.selected = None
+            self.view.startAnimation()
         elif cord == self.view.active:
             color = self.view.history.curCol()
             if self.view.history[-1][cord] != None and \
                     self.view.history[-1][cord].color == color:
                 self.view.selected = cord
+                self.view.startAnimation()
             elif self.view.selected:
                 if self.view.active and self.view.history[-1][self.view.active] and \
                         self.view.history[-1][cord].color == color:
@@ -126,18 +129,24 @@ class BoardControl (gtk.EventBox):
                 else: self.emit_move_signal(self.view.selected, cord)
                 self.view._hover = cord
                 self.view.selected = None
-            else: self.view.selected = cord
-        else:
-            if self.view.active != None:
-                if not self.isSelectable(cord):
-                    self.view.active = None
-                    self.view.selected = None
-                    self.view.runAnimation()
-                else:
-                    self.view.selected = self.view.active
-                    self.view.active = cord
-                    self.button_release(widget, event)
-    
+            else:
+                self.view.selected = cord
+        elif self.view.active != None:
+            color = self.view.history.curCol()
+            if self.isSelectable(cord) and (not self.view.history[-1][cord] or \
+                    self.view.history[-1][cord].color != color):
+                cord0 = self.view.active
+                self.view.active = None
+                self.view.selected = None
+                self.emit_move_signal(cord0, cord)
+            else:
+                self.view.active = None
+                self.view.selected = None
+                color = self.view.history.curCol()
+                if not self.isSelectable(cord) or self.view.history[-1][cord] and \
+                        self.view.history[-1][cord].color == color:
+                    self.view.startAnimation()
+                    
     def motion_notify (self, widget, event):
         cord = self.point2Cord (event.x, event.y)
         if cord == None: return
