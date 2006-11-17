@@ -58,8 +58,9 @@ langdirs = []
 for dir in [os.path.join("lang",f) for f in listdir("lang")]:
     if dir.find(".svn") == -1 and isdir(dir):
         langdirs.append(dir)
-    
-DATA_FILES += [(dir, [dir+"/pychess.po"]) for dir in langdirs]
+
+pofile = "LC_MESSAGES/pychess.po"
+DATA_FILES += [(dir, [dir+"/"+pofile]) for dir in langdirs]
 
 if isfile ("MANIFEST.in"):
     notlanglines = [l for l in open("MANIFEST.in") if not l.rstrip().endswith(".po")]
@@ -67,7 +68,7 @@ if isfile ("MANIFEST.in"):
     for line in notlanglines:
         print >> file, line[:-1]
     for dir in langdirs:
-        print >> file, "include %s/pychess.po" % dir
+        print >> file, "include %s/%s" % (dir, pofile)
     file.close()
 
 if isfile ("MANIFEST"):
@@ -90,5 +91,3 @@ setup (
     data_files       = DATA_FILES,
     scripts          = ['pychess']
 )
-
-print DATA_FILES
