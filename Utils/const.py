@@ -1,5 +1,7 @@
 VERSION = "0.5.2"
 
+NAME = "PyChess"
+
 WHITE, BLACK = range(2)
 
 reprColor = ["White", "Black"]
