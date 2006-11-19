@@ -90,7 +90,7 @@ class ScorePlot (gtk.DrawingArea):
 __title__ = _("Score")
 
 from widgets import gamewidget
-from Utils.eval import evaluateComplete
+from pychess.Utils.eval import evaluateComplete
 
 class Sidepanel:
     
