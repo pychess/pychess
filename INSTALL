@@ -1,0 +1,10 @@
+PyChess does not have to be compiled/installed to run.
+
+To run excute the following in this directory:
+$ PYTHONPATH=lib/ ./pychess
+
+To install to disk
+# python setup.py install
+
+To see other install options/formats:
+$ python setup.py --help-commands
