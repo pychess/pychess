@@ -4,7 +4,7 @@ NAME = "PyChess"
 
 ###
 
-from os.path import isdir, join, dirname
+from os.path import isdir, join, dirname, abspath
 prefixes = ("/usr/share", "/usr/local/share", "/usr/share/games", "/usr/local/share/games")
 # TODO: Locale is not located in the lang files
 localePrefixes = ("/usr/share/locale", "/usr/local/share/locale")
@@ -18,10 +18,10 @@ if __file__.find("site-packages") >= 0:
             break
 if not PREFIX:
     # We are local
-    PREFIX = join (dirname (__file__), "../../..")
+    PREFIX = abspath (join (dirname (__file__), "../../.."))
 
 def prefix (subpath):
-    return join (PREFIX, subpath)
+    return abspath (join (PREFIX, subpath))
 
 ###
 
