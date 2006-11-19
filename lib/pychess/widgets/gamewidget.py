@@ -70,7 +70,6 @@ def addSidepanels (notebook, toggleComboBox, widgid):
 	path = prefix("sidepanel")
 	pf = "Panel.py"
 	panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
-	print [imp.find_module(f,[path]) for f in panels]
 	panels = [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
 	for panel in panels:
 		toggleComboBox.addItem(panel.__title__)

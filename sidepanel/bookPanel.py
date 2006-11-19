@@ -1,5 +1,5 @@
 import gtk, gobject, cairo
-from widgets import gamewidget
+from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import parseSAN, movePool
 from pychess.Utils.const import prefix
