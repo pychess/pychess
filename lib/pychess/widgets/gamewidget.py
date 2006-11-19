@@ -3,7 +3,7 @@ def set_widgets (w):
 	global widgets
 	widgets= w
 
-import gtk, os, gobject
+import gtk, os, gobject, glob
 
 from pychess.System import myconf
 from pychess.Utils.const import prefix
@@ -61,14 +61,18 @@ def show_side_panel (show):
 		panelWidth = alloc + hbox.get_spacing()
 		widgetsSize = widgets["window1"].get_size()
 		widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
-	
+
+import imp
+
 def addSidepanels (notebook, toggleComboBox, widgid):
 	start = 0
 	
-	path = prefix("sidepanel") 
-	panels = [path+"/"+f for f in os.listdir(path)]
-	panels = [f for f in panels if f.endswith(".py")]
-	for panel in [__import__(f, locals()) for f in panels]:
+	path = prefix("sidepanel")
+	pf = "Panel.py"
+	panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
+	print [imp.find_module(f,[path]) for f in panels]
+	panels = [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
+	for panel in panels:
 		toggleComboBox.addItem(panel.__title__)
 		s = panel.Sidepanel()
 		num = notebook.append_page(s.load(widgets, widgid))
