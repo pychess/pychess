@@ -4,8 +4,8 @@
 import gettext
 gettext.install("pychess", localedir="lang", unicode=1)
 
-from System import myconf
-from Utils.const import VERSION
+from lib.pychess.System import myconf
+from lib.pychess.Utils.const import VERSION
 
 myconf.set("combobox6", 1)
 myconf.set("spinbuttonM", 10)
