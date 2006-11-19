@@ -1,6 +1,6 @@
 import gtk, gobject
 from gtk import gdk
-from widgets import gamewidget
+from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN
 from pychess.Utils.const import prefix
 
