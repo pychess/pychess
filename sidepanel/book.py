@@ -1,14 +1,15 @@
 import gtk, gobject, cairo
 from widgets import gamewidget
-from Utils.book import getOpenings
-from Utils.Move import parseSAN, movePool
+from pychess.Utils.book import getOpenings
+from pychess.Utils.Move import parseSAN, movePool
+from pychess.Utils.const import prefix
 
 __title__ = _("Opening Book")
 
 class Sidepanel:
     
     def load (self, window, page_num):
-        widgets = gtk.glade.XML("sidepanel/book.glade")
+        widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
         self.sw.unparent()

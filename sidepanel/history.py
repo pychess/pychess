@@ -1,7 +1,8 @@
 import gtk, gobject
 from gtk import gdk
 from widgets import gamewidget
-from Utils.Move import toSAN
+from pychess.Utils.Move import toSAN
+from pychess.Utils.const import prefix
 
 from gtk.gdk import keyval_from_name
 leftkeys = map(keyval_from_name,("Left", "KP_Left"))
@@ -29,7 +30,7 @@ class Sidepanel:
 
     def load (self, window, page_num):
         
-        widgets = gtk.glade.XML("sidepanel/history.glade")
+        widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
         __widget__ = widgets.get_widget("panel")
         __widget__.unparent()
         
