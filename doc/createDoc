@@ -1,0 +1,39 @@
+#!/usr/bin/python2.4
+# -*- coding: UTF-8 -*-
+
+import sys, inspect, os
+from os import listdir, chdir, getcwd
+from os.path import isdir, join, split
+
+docdir = getcwd()
+chdir(sys.argv[1])
+todir = "./"
+
+def search (path, extension):
+    for file in listdir(path):
+        file = join (path, file)
+        if isdir (file) and not split(file)[1].startswith("."):
+            yield file
+            for f in search (file, extension):
+                yield f
+        elif file.endswith (extension):
+            yield file
+
+index = False
+
+for file in search (todir, "py"):
+    file = file[len(todir):]
+    file = file.replace("/",".")
+    if file.endswith(".py"):
+        file = inspect.getmodulename(file)
+    os.system("pydoc -w %s" % file)
+    os.system("mv %s.html %s" % (file, docdir))
+    
+    if file.find(".") < 0:
+        index = file
+
+if index:
+    chdir(docdir)
+    os.system("ln -s %s.html index.html" % index)
+    import webbrowser
+    webbrowser.open("index.html")
