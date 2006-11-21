@@ -28,7 +28,7 @@ gameDic = {}
 
 def saveGameBefore (action):
     if not gameDic: return
-    game = gameDic[gamewidget.cur_widgid()]
+    game = gameDic[gamewidget.cur_gmwidg()]
     if not game.isChanged(): return
     
     defText = window["savedialogtext1"].get_label()
@@ -152,12 +152,12 @@ def makeNewGameDialogReady ():
                 window[widget].set_active(v)
             else: window[widget].set_value(v)
 
-def gameClosed (widget, widgid):
+def gameClosed (gmwidg):
     res = saveGameBefore(_("you close it"))
     if res == gtk.RESPONSE_CANCEL: return
-    gamewidget.removeGameTab(widgid)
-    gameDic[widgid].kill()
-    del gameDic[widgid]
+    gamewidget.delGameWidget(gmwidg)
+    gameDic[gmwidg].kill()
+    del gameDic[gmwidg]
 
 def runNewGameDialog (hideFC=True):
     makeNewGameDialogReady ()
@@ -171,8 +171,9 @@ def runNewGameDialog (hideFC=True):
     window["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
     
-    widgid = gamewidget.addGameTab("", gameClosed)
-    ccalign = gamewidget.getWidgets(widgid)[5]
+    gmwidg = gamewidget.createGameWidget("")
+    gmwidg.connect("closed",gameClosed)
+    ccalign = gmwidg.widgets["ccalign"]
     
     if window["useTimeCB"].get_active():
         ccalign.show()
@@ -201,14 +202,14 @@ def runNewGameDialog (hideFC=True):
         if choise != 0:
             engine = engines.availableEngines[choise-1][0]
             player = engine(engines.availableEngines[choise-1][1],color)
-            player.connect("dead", engineDead, widgid)
+            player.connect("dead", engineDead, gmwidg)
             player.setStrength(dfc)
             if secs:
                 player.setTime(secs, gain)
-        else: player = Human(gamewidget.cur_widgets()[0], color)
+        else: player = Human(gmwidg.widgets["board"], color)
         players += [player]
     
-    gamewidget.setTabText(widgid, "%s vs %s" % (repr(players[0]), repr(players[1])))
+    gmwidg.setTabText("%s vs %s" % (repr(players[0]), repr(players[1])))
     
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
@@ -220,18 +221,19 @@ def runNewGameDialog (hideFC=True):
     analyzer.analyze()
     log.debug("Analyzer: %s\n" % repr(analyzer))
 
-    game = Game(widgid, analyzer, players[0], players[1], clock, secs, gain)
+    history = gmwidg.widgets["board"].view.history
+    game = Game(gmwidg, history, analyzer, players[0], players[1], clock, secs, gain)
     
     #game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
     
     #TODO: enable this for tabs
     #window["properties1"].set_sensitive(True)
-    return game, widgid
+    return game, gmwidg
 
 import thread
-def engineDead (engine, widgid):
-    gamewidget.setCurrent(widgid)
-    gameDic[widgid].kill()
+def engineDead (engine, gmwidg):
+    gamewidget.setCurrent(gmwidg)
+    gameDic[gmwidg].kill()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
@@ -267,10 +269,10 @@ class GladeHandlers:
         uri = uri.split()[0] # we may have more than one file dropped
         
         filechooserbutton.set_uri(uri)
-        game, widgid = runNewGameDialog(hideFC=False)
+        game, gmwidg = runNewGameDialog(hideFC=False)
         
         if game:
-            gameDic[widgid] = game
+            gameDic[gmwidg] = game
             uri = filechooserbutton.get_uri()
             loader = enddir[uri[uri.rfind(".")+1:]]
             game.load(uri, loader)
@@ -289,9 +291,9 @@ class GladeHandlers:
     #          Game Menu          #
 
     def on_new_game1_activate (widget):
-        game, widgid = runNewGameDialog()
+        game, gmwidg = runNewGameDialog()
         if game:
-            gameDic[widgid] = game
+            gameDic[gmwidg] = game
             game.run()
 
     def on_load_game1_activate (widget):
@@ -301,10 +303,10 @@ class GladeHandlers:
         if res != gtk.RESPONSE_ACCEPT: return
         uri = opendialog.get_uri()
         filechooserbutton.set_uri(uri)
-        game, widgid = runNewGameDialog(hideFC=False)
+        game, gmwidg = runNewGameDialog(hideFC=False)
         
         if game:
-            gameDic[widgid] = game
+            gameDic[gmwidg] = game
             uri = filechooserbutton.get_uri()
             loader = enddir[uri[uri.rfind(".")+1:]]
             game.load(uri, loader)
@@ -314,7 +316,7 @@ class GladeHandlers:
         if not len(gameDic):
             noOpenGame()
             return
-        game = gameDic[gamewidget.cur_widgid()]
+        game = gameDic[gamewidget.cur_gmwidg()]
         if not game.isChanged:
             return
         if not game.lastSave[1]:
@@ -369,7 +371,7 @@ class GladeHandlers:
                 return
         
         saver = enddir[ending]
-        gameDic[gamewidget.cur_widgid()].save(uri, saver)
+        gameDic[gamewidget.cur_gmwidg()].save(uri, saver)
     
     def save (uri):
         s = uri.rfind(".")
@@ -377,10 +379,10 @@ class GladeHandlers:
             ending = uri[s+1:]
         else: return
         saver = enddir[ending]
-        gameDic[gamewidget.cur_widgid()].save(uri, saver)
+        gameDic[gamewidget.cur_gmwidg()].save(uri, saver)
     
     def on_properties1_activate (widget):
-        game = gameDic[gamewidget.cur_widgid()]
+        game = gameDic[gamewidget.cur_gmwidg()]
         window["event_entry"].set_text(game.event)
         window["site_entry"].set_text(game.site)
         window["round_spinbutton"].set_value(game.round)
@@ -390,7 +392,7 @@ class GladeHandlers:
             window["game_info"].hide()
             return True
         def accept_new_properties(button, *args):
-            game = gameDic[gamewidget.cur_widgid()]
+            game = gameDic[gamewidget.cur_gmwidg()]
             game.event = window["event_entry"].get_text()
             game.site = window["site_entry"].get_text()
             game.round = window["round_spinbutton"].get_value()
@@ -412,15 +414,16 @@ class GladeHandlers:
     #          View Menu          #
     
     def on_rotate_board1_activate (widget):
-        gamewidget.cur_widgets()[0].view.fromWhite = \
-            not gamewidgets.cur_widgets()[0].view.fromWhite
+        gmwidg = gamewidget.cur_gmwidg()
+        gmwidg.widgets["board"].view.fromWhite = \
+            not gmwidg.widgets["board"].view.fromWhite
     
     def on_side_panel1_activate (widget):
         gamewidget.show_side_panel(widget.get_active())
     
     def on_show_cords_activate (widget):
-        for widgid in gameDic.keys():
-            gamewidget.getWidgets(widgid)[0].view.showCords = widget.get_active()
+        for gmwidg in gameDic.keys():
+            gmwidg.widgets["board"].view.showCords = widget.get_active()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
@@ -441,9 +444,9 @@ class GladeHandlers:
             on_clear (history, board)
             window["hint_mode"].set_active(False)
         
-        for widgid in gameDic.keys():
-            game = gameDic[widgid]
-            board = gamewidget.getWidgets(widgid)[0]
+        for gmwidg in gameDic.keys():
+            game = gameDic[gmwidg]
+            board = gmwidg.widgets["board"]
             history = board.view.history
             
             if widget.get_active():
@@ -463,16 +466,18 @@ class GladeHandlers:
         
         def on_analyze (analyzer, moves):
             if len(analyzer.analyzeMoves) >= 2:
-                gamewidget.cur_widgets()[0].view.redarrow = moves[1].cords
+                gmwidg = gamewidget.cur_gmwidg()
+                gmwidg.widgets["board"].view.redarrow = moves[1].cords
         def on_clear (history):
-            gamewidget.cur_widgets()[0].view.redarrow = None
+            gmwidg = gamewidget.cur_gmwidg()
+            gmwidg.widgets["board"].view.redarrow = None
         def on_reset (history):
             on_clear (history)
             window["spy_mode"].set_active(False)
         
-        for widgid in gameDic.keys():
-            game = gameDic[widgid]
-            board = gamewidget.getWidgets(widgid)[0]
+        for gmwidg in gameDic.keys():
+            game = gameDic[gmwidg]
+            board = gmwidg.widgets["board"]
             history = board.view.history
             
             if widget.get_active():
@@ -511,17 +516,20 @@ class GladeHandlers:
     #          Action menu          #
     
     def on_call_flag_activate (widget):
-        gamewidget.cur_widgets()[0].on_call_flag_activate (widget)
+        gmwidg = gamewidget.cur_gmwidg()
+        gmwidg.widgets["board"].on_call_flag_activate (widget)
 
     def on_draw_activate (widget):
-        gamewidget.cur_widgets()[0].on_draw_activate (widget)
+        gmwidg = gamewidget.cur_gmwidg()
+        gmwidg.widgets["board"].on_draw_activate (widget)
         
     def on_resign_activate (widget):
-        gamewidget.cur_widgets()[0].on_resign_activate (widget)
+        gmwidg = gamewidget.cur_gmwidg()
+        gmwidg.widgets["board"].on_resign_activate (widget)
 
     def on_force_to_move_activate (widget):
         if len(gameDic):
-            gameDic[gamewidget.cur_widgid()].activePlayer.hurry()
+            gameDic[gamewidget.cur_gmwidg()].activePlayer.hurry()
     
     #          Settings menu          #
     

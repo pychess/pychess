@@ -94,7 +94,7 @@ from pychess.Utils.eval import evaluateComplete
 
 class Sidepanel:
     
-    def load (self, window, widgid):
+    def load (self, window, gmwidg):
         self.plot = ScorePlot()
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -104,7 +104,7 @@ class Sidepanel:
         __widget__.add(port)
         __widget__.show_all()
 
-        self.boardview = gamewidget.getWidgets(widgid)[0].view
+        self.boardview = gmwidg.widgets["board"].view
         self.history = self.boardview.history
         
         self.plot.connect("selected", self.plot_selected)

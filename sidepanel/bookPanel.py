@@ -8,7 +8,7 @@ __title__ = _("Opening Book")
 
 class Sidepanel:
     
-    def load (self, window, page_num):
+    def load (self, window, gmwidg):
         widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
@@ -25,7 +25,7 @@ class Sidepanel:
         self.tv.append_column(gtk.TreeViewColumn(
                 "Win/Draw/Loss", window.BookCellRenderer(), data=2))
         
-        self.boardcontrol = gamewidget.getWidgets(page_num)[0]
+        self.boardcontrol = gmwidg.widgets["board"]
         self.board = self.boardcontrol.view
         self.board.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
