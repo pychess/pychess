@@ -1,0 +1,162 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.System.Log</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.System.html"><font color="#ffffff">System</font></a>.Log</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/System/Log.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/System/Log.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="gobject.html">gobject</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="gobject.html#GObject">gobject.GObject</a>(<a href="__builtin__.html#object">__builtin__.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pychess.System.Log.html#Log">Log</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="pychess.System.Log.html#LogPipe">LogPipe</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Log">class <strong>Log</strong></a>(<a href="gobject.html#GObject">gobject.GObject</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pychess.System.Log.html#Log">Log</a></dd>
+<dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Log-__init__"><strong>__init__</strong></a>(self, logpath)</dt></dl>
+
+<dl><dt><a name="Log-debug"><strong>debug</strong></a>(self, message, task<font color="#909090">='Default'</font>)</dt></dl>
+
+<dl><dt><a name="Log-error"><strong>error</strong></a>(self, message, task<font color="#909090">='Default'</font>)</dt></dl>
+
+<dl><dt><a name="Log-log"><strong>log</strong></a>(self, message, task<font color="#909090">='Default'</font>)</dt></dl>
+
+<dl><dt><a name="Log-warn"><strong>warn</strong></a>(self, message, task<font color="#909090">='Default'</font>)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+System+Log+Log (144952656)&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><a name="Log-__cmp__"><strong>__cmp__</strong></a>(...)</dt><dd><tt>x.<a href="#Log-__cmp__">__cmp__</a>(y)&nbsp;&lt;==&gt;&nbsp;cmp(x,y)</tt></dd></dl>
+
+<dl><dt><a name="Log-__gobject_init__"><strong>__gobject_init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#Log-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Log-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#Log-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="Log-chain"><strong>chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-connect"><strong>connect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-connect_after"><strong>connect_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-connect_object"><strong>connect_object</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-connect_object_after"><strong>connect_object_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-disconnect"><strong>disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-disconnect_by_func"><strong>disconnect_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-emit"><strong>emit</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-emit_stop_by_name"><strong>emit_stop_by_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-freeze_notify"><strong>freeze_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-get_data"><strong>get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-get_property"><strong>get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_block"><strong>handler_block</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_block_by_func"><strong>handler_block_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_disconnect"><strong>handler_disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_is_connected"><strong>handler_is_connected</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_unblock"><strong>handler_unblock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-handler_unblock_by_func"><strong>handler_unblock_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-notify"><strong>notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-set_data"><strong>set_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-set_property"><strong>set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-stop_emission"><strong>stop_emission</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Log-thaw_notify"><strong>thaw_notify</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
+
+<dl><dt><strong>__gdoc__</strong> = 'Object pychess+System+Log+Log<font color="#c040c0">\n\n</font>Signals from pych... gint)<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+
+<dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
+
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#Log-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<dl><dt><strong>props</strong> = &lt;gobject.GProps object&gt;</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="LogPipe">class <strong>LogPipe</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="LogPipe-__init__"><strong>__init__</strong></a>(self, to, flag<font color="#909090">=''</font>)</dt></dl>
+
+<dl><dt><a name="LogPipe-write"><strong>write</strong></a>(self, data)</dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>DEBUG</strong> = 0<br>
+<strong>ERROR</strong> = 3<br>
+<strong>LOG</strong> = 1<br>
+<strong>WARNING</strong> = 2<br>
+<strong>labels</strong> = {0: 'Debug', 1: 'Log', 2: 'Warning', 3: 'Error'}<br>
+<strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;<br>
+<strong>logfile</strong> = '~/.pychess.log'</td></tr></table>
+</body></html>

@@ -1,0 +1,690 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.widgets.ChessClock</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.widgets.html"><font color="#ffffff">widgets</font></a>.ChessClock</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/widgets/ChessClock.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/widgets/ChessClock.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cairo.html">cairo</a><br>
+<a href="gtk.gdk.html">gtk.gdk</a><br>
+</td><td width="25%" valign=top><a href="gobject.html">gobject</a><br>
+<a href="gtk.html">gtk</a><br>
+</td><td width="25%" valign=top><a href="pango.html">pango</a><br>
+<a href="pygtk.html">pygtk</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial">gobject.DrawingArea(gobject.Widget)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pychess.widgets.ChessClock.html#ChessClock">ChessClock</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ChessClock">class <strong>ChessClock</strong></a>(gobject.DrawingArea)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pychess.widgets.ChessClock.html#ChessClock">ChessClock</a></dd>
+<dd>gobject.DrawingArea</dd>
+<dd>gobject.Widget</dd>
+<dd>gobject.Object</dd>
+<dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
+<dd><a href="atk.html#ImplementorIface">atk.ImplementorIface</a></dd>
+<dd><a href="gobject.html#GInterface">gobject.GInterface</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ChessClock-__init__"><strong>__init__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessClock-draw"><strong>draw</strong></a>(self, context)</dt></dl>
+
+<dl><dt><a name="ChessClock-emit_time_out_signal"><strong>emit_time_out_signal</strong></a>(self, player)</dt></dl>
+
+<dl><dt><a name="ChessClock-expose"><strong>expose</strong></a>(self, widget, event)</dt></dl>
+
+<dl><dt><a name="ChessClock-formatTime"><strong>formatTime</strong></a>(self, dseconds)</dt></dl>
+
+<dl><dt><a name="ChessClock-getDeciSeconds"><strong>getDeciSeconds</strong></a>(self, player)</dt></dl>
+
+<dl><dt><a name="ChessClock-redraw_canvas"><strong>redraw_canvas</strong></a>(self, all<font color="#909090">=True</font>)</dt></dl>
+
+<dl><dt><a name="ChessClock-reset"><strong>reset</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessClock-setGain"><strong>setGain</strong></a>(self, gain)</dt></dl>
+
+<dl><dt><a name="ChessClock-setTime"><strong>setTime</strong></a>(self, time)</dt></dl>
+
+<dl><dt><a name="ChessClock-start"><strong>start</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessClock-stop"><strong>stop</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessClock-switch"><strong>switch</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessClock-update"><strong>update</strong></a>(self)</dt></dl>
+
+<hr>
+Properties defined here:<br>
+<dl><dt><strong>p0time</strong></dt>
+<dd><dl><dt><strong><em>get</em></strong> <em>lambda</em> </dt></dl>
+</dd>
+</dl>
+<dl><dt><strong>p1time</strong></dt>
+<dd><dl><dt><strong><em>get</em></strong> <em>lambda</em> </dt></dl>
+</dd>
+</dl>
+<dl><dt><strong>player</strong></dt>
+<dd><dl><dt><a name="-<em>get</em>"><strong><em>get</em></strong></a> = _get_player(self)</dt></dl>
+</dd>
+<dd><dl><dt><a name="-<em>set</em>"><strong><em>set</em></strong></a> = _set_player(self, player)</dt></dl>
+</dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+widgets+ChessClock+ChessClock (158482064)&gt;</dl>
+
+<dl><dt><strong>emited</strong> = False</dl>
+
+<dl><dt><strong>gain</strong> = 0</dl>
+
+<dl><dt><strong>p</strong> = [None, None]</dl>
+
+<dl><dt><strong>ptemp</strong> = [None, None]</dl>
+
+<dl><dt><strong>redrawingAll</strong> = True</dl>
+
+<dl><dt><strong>startTime</strong> = None</dl>
+
+<dl><dt><strong>thread</strong> = None</dl>
+
+<dl><dt><strong>time</strong> = 0</dl>
+
+<hr>
+Methods inherited from gobject.DrawingArea:<br>
+<dl><dt><a name="ChessClock-size"><strong>size</strong></a>(...)</dt></dl>
+
+<hr>
+Methods inherited from gobject.Widget:<br>
+<dl><dt><a name="ChessClock-activate"><strong>activate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-add_accelerator"><strong>add_accelerator</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-add_events"><strong>add_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-add_mnemonic_label"><strong>add_mnemonic_label</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-can_activate_accel"><strong>can_activate_accel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-child_focus"><strong>child_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-child_notify"><strong>child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-class_path"><strong>class_path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-create_pango_context"><strong>create_pango_context</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-create_pango_layout"><strong>create_pango_layout</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-destroy"><strong>destroy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_begin"><strong>drag_begin</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_check_threshold"><strong>drag_check_threshold</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_add_image_targets"><strong>drag_dest_add_image_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_add_text_targets"><strong>drag_dest_add_text_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_add_uri_targets"><strong>drag_dest_add_uri_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_find_target"><strong>drag_dest_find_target</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_get_target_list"><strong>drag_dest_get_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_get_track_motion"><strong>drag_dest_get_track_motion</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_set"><strong>drag_dest_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_set_proxy"><strong>drag_dest_set_proxy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_set_target_list"><strong>drag_dest_set_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_set_track_motion"><strong>drag_dest_set_track_motion</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_dest_unset"><strong>drag_dest_unset</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_get_data"><strong>drag_get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_highlight"><strong>drag_highlight</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_add_image_targets"><strong>drag_source_add_image_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_add_text_targets"><strong>drag_source_add_text_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_add_uri_targets"><strong>drag_source_add_uri_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_get_target_list"><strong>drag_source_get_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set"><strong>drag_source_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set_icon"><strong>drag_source_set_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set_icon_name"><strong>drag_source_set_icon_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set_icon_pixbuf"><strong>drag_source_set_icon_pixbuf</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set_icon_stock"><strong>drag_source_set_icon_stock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_set_target_list"><strong>drag_source_set_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_source_unset"><strong>drag_source_unset</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-drag_unhighlight"><strong>drag_unhighlight</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-ensure_style"><strong>ensure_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-event"><strong>event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-freeze_child_notify"><strong>freeze_child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_accessible"><strong>get_accessible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_action"><strong>get_action</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_allocation"><strong>get_allocation</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_ancestor"><strong>get_ancestor</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_child_requisition"><strong>get_child_requisition</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_child_visible"><strong>get_child_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_clipboard"><strong>get_clipboard</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_colormap"><strong>get_colormap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_composite_name"><strong>get_composite_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_direction"><strong>get_direction</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_display"><strong>get_display</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_events"><strong>get_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_extension_events"><strong>get_extension_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_modifier_style"><strong>get_modifier_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_name"><strong>get_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_no_show_all"><strong>get_no_show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_pango_context"><strong>get_pango_context</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_parent"><strong>get_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_parent_window"><strong>get_parent_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_pointer"><strong>get_pointer</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_root_window"><strong>get_root_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_screen"><strong>get_screen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_settings"><strong>get_settings</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_size_request"><strong>get_size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_style"><strong>get_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_toplevel"><strong>get_toplevel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_visual"><strong>get_visual</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-grab_add"><strong>grab_add</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-grab_default"><strong>grab_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-grab_focus"><strong>grab_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-grab_remove"><strong>grab_remove</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-has_screen"><strong>has_screen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-hide"><strong>hide</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-hide_all"><strong>hide_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-hide_on_delete"><strong>hide_on_delete</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-input_shape_combine_mask"><strong>input_shape_combine_mask</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-intersect"><strong>intersect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-is_ancestor"><strong>is_ancestor</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-is_composited"><strong>is_composited</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-is_focus"><strong>is_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-list_mnemonic_labels"><strong>list_mnemonic_labels</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-map"><strong>map</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-menu_get_for_attach_widget"><strong>menu_get_for_attach_widget</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-mnemonic_activate"><strong>mnemonic_activate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_base"><strong>modify_base</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_bg"><strong>modify_bg</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_fg"><strong>modify_fg</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_font"><strong>modify_font</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_style"><strong>modify_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-modify_text"><strong>modify_text</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-path"><strong>path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_clear"><strong>queue_clear</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_clear_area"><strong>queue_clear_area</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_draw"><strong>queue_draw</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_draw_area"><strong>queue_draw_area</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_resize"><strong>queue_resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-queue_resize_no_redraw"><strong>queue_resize_no_redraw</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-rc_get_style"><strong>rc_get_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-realize"><strong>realize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-region_intersect"><strong>region_intersect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-remove_accelerator"><strong>remove_accelerator</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-remove_mnemonic_label"><strong>remove_mnemonic_label</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-render_icon"><strong>render_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-reparent"><strong>reparent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-reset_rc_styles"><strong>reset_rc_styles</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-reset_shapes"><strong>reset_shapes</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_add_target"><strong>selection_add_target</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_add_targets"><strong>selection_add_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_clear_targets"><strong>selection_clear_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_convert"><strong>selection_convert</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_owner_set"><strong>selection_owner_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-selection_remove_all"><strong>selection_remove_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-send_expose"><strong>send_expose</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_accel_path"><strong>set_accel_path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_app_paintable"><strong>set_app_paintable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_child_visible"><strong>set_child_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_colormap"><strong>set_colormap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_composite_name"><strong>set_composite_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_direction"><strong>set_direction</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_double_buffered"><strong>set_double_buffered</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_events"><strong>set_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_extension_events"><strong>set_extension_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_name"><strong>set_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_no_show_all"><strong>set_no_show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_parent"><strong>set_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_parent_window"><strong>set_parent_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_redraw_on_allocate"><strong>set_redraw_on_allocate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_scroll_adjustments"><strong>set_scroll_adjustments</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_sensitive"><strong>set_sensitive</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_size_request"><strong>set_size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_state"><strong>set_state</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_style"><strong>set_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_uposition"><strong>set_uposition</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_usize"><strong>set_usize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-shape_combine_mask"><strong>shape_combine_mask</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-show"><strong>show</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-show_all"><strong>show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-show_now"><strong>show_now</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-size_allocate"><strong>size_allocate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-size_request"><strong>size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-style_get_property"><strong>style_get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-thaw_child_notify"><strong>thaw_child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-translate_coordinates"><strong>translate_coordinates</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-unmap"><strong>unmap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-unparent"><strong>unparent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-unrealize"><strong>unrealize</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from gobject.Widget:<br>
+<dl><dt><strong>allocation</strong> = &lt;attribute 'allocation' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>do_button_press_event</strong> = &lt;built-in method do_button_press_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_button_release_event</strong> = &lt;built-in method do_button_release_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_can_activate_accel</strong> = &lt;built-in method do_can_activate_accel of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_client_event</strong> = &lt;built-in method do_client_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_composited_changed</strong> = &lt;built-in method do_composited_changed of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_configure_event</strong> = &lt;built-in method do_configure_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_delete_event</strong> = &lt;built-in method do_delete_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_destroy_event</strong> = &lt;built-in method do_destroy_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_direction_changed</strong> = &lt;built-in method do_direction_changed of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_begin</strong> = &lt;built-in method do_drag_begin of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_data_delete</strong> = &lt;built-in method do_drag_data_delete of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_data_get</strong> = &lt;built-in method do_drag_data_get of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_data_received</strong> = &lt;built-in method do_drag_data_received of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_drop</strong> = &lt;built-in method do_drag_drop of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_end</strong> = &lt;built-in method do_drag_end of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_leave</strong> = &lt;built-in method do_drag_leave of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_drag_motion</strong> = &lt;built-in method do_drag_motion of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_enter_notify_event</strong> = &lt;built-in method do_enter_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_event</strong> = &lt;built-in method do_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_expose_event</strong> = &lt;built-in method do_expose_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_focus</strong> = &lt;built-in method do_focus of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_focus_in_event</strong> = &lt;built-in method do_focus_in_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_focus_out_event</strong> = &lt;built-in method do_focus_out_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_get_accessible</strong> = &lt;built-in method do_get_accessible of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_grab_broken_event</strong> = &lt;built-in method do_grab_broken_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_grab_focus</strong> = &lt;built-in method do_grab_focus of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_grab_notify</strong> = &lt;built-in method do_grab_notify of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_hide</strong> = &lt;built-in method do_hide of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_hide_all</strong> = &lt;built-in method do_hide_all of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_hierarchy_changed</strong> = &lt;built-in method do_hierarchy_changed of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_key_press_event</strong> = &lt;built-in method do_key_press_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_key_release_event</strong> = &lt;built-in method do_key_release_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_leave_notify_event</strong> = &lt;built-in method do_leave_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_map</strong> = &lt;built-in method do_map of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_map_event</strong> = &lt;built-in method do_map_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_mnemonic_activate</strong> = &lt;built-in method do_mnemonic_activate of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_motion_notify_event</strong> = &lt;built-in method do_motion_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_no_expose_event</strong> = &lt;built-in method do_no_expose_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_parent_set</strong> = &lt;built-in method do_parent_set of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_popup_menu</strong> = &lt;built-in method do_popup_menu of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_property_notify_event</strong> = &lt;built-in method do_property_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_proximity_in_event</strong> = &lt;built-in method do_proximity_in_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_proximity_out_event</strong> = &lt;built-in method do_proximity_out_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_realize</strong> = &lt;built-in method do_realize of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_screen_changed</strong> = &lt;built-in method do_screen_changed of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_scroll_event</strong> = &lt;built-in method do_scroll_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_selection_clear_event</strong> = &lt;built-in method do_selection_clear_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_selection_get</strong> = &lt;built-in method do_selection_get of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_selection_notify_event</strong> = &lt;built-in method do_selection_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_selection_received</strong> = &lt;built-in method do_selection_received of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_selection_request_event</strong> = &lt;built-in method do_selection_request_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_show</strong> = &lt;built-in method do_show of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_show_all</strong> = &lt;built-in method do_show_all of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_show_help</strong> = &lt;built-in method do_show_help of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_size_allocate</strong> = &lt;built-in method do_size_allocate of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_size_request</strong> = &lt;built-in method do_size_request of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_state_changed</strong> = &lt;built-in method do_state_changed of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_style_set</strong> = &lt;built-in method do_style_set of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_unmap</strong> = &lt;built-in method do_unmap of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_unmap_event</strong> = &lt;built-in method do_unmap_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_unrealize</strong> = &lt;built-in method do_unrealize of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_visibility_notify_event</strong> = &lt;built-in method do_visibility_notify_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_window_state_event</strong> = &lt;built-in method do_window_state_event of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>get_activate_signal</strong> = &lt;built-in method get_activate_signal of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>name</strong> = &lt;attribute 'name' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>parent</strong> = &lt;attribute 'parent' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>saved_state</strong> = &lt;attribute 'saved_state' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>set_activate_signal</strong> = &lt;built-in method set_activate_signal of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>set_set_scroll_adjustments_signal</strong> = &lt;built-in method set_set_scroll_adjustments_signal of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>state</strong> = &lt;attribute 'state' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>style</strong> = &lt;attribute 'style' of 'gtk.Widget' objects&gt;</dl>
+
+<dl><dt><strong>window</strong> = &lt;attribute 'window' of 'gtk.Widget' objects&gt;</dl>
+
+<hr>
+Methods inherited from gobject.Object:<br>
+<dl><dt><a name="ChessClock-flags"><strong>flags</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-remove_data"><strong>remove_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-remove_no_notify"><strong>remove_no_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_flags"><strong>set_flags</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-unset_flags"><strong>unset_flags</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from gobject.Object:<br>
+<dl><dt><strong>do_destroy</strong> = &lt;built-in method do_destroy of GObjectMeta object&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><a name="ChessClock-__cmp__"><strong>__cmp__</strong></a>(...)</dt><dd><tt>x.<a href="#ChessClock-__cmp__">__cmp__</a>(y)&nbsp;&lt;==&gt;&nbsp;cmp(x,y)</tt></dd></dl>
+
+<dl><dt><a name="ChessClock-__gobject_init__"><strong>__gobject_init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#ChessClock-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="ChessClock-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#ChessClock-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="ChessClock-chain"><strong>chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-connect"><strong>connect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-connect_after"><strong>connect_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-connect_object"><strong>connect_object</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-connect_object_after"><strong>connect_object_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-disconnect"><strong>disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-disconnect_by_func"><strong>disconnect_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-emit"><strong>emit</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-emit_stop_by_name"><strong>emit_stop_by_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-freeze_notify"><strong>freeze_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_data"><strong>get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-get_property"><strong>get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_block"><strong>handler_block</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_block_by_func"><strong>handler_block_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_disconnect"><strong>handler_disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_is_connected"><strong>handler_is_connected</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_unblock"><strong>handler_unblock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-handler_unblock_by_func"><strong>handler_unblock_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-notify"><strong>notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_data"><strong>set_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-set_property"><strong>set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-stop_emission"><strong>stop_emission</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ChessClock-thaw_notify"><strong>thaw_notify</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
+
+<dl><dt><strong>__gdoc__</strong> = 'Object pychess+widgets+ChessClock+ChessClock<font color="#c040c0">\n\n</font>Si...-peger<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+
+<dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
+
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#ChessClock-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<dl><dt><strong>props</strong> = &lt;gobject.GProps object&gt;</dl>
+
+<hr>
+Methods inherited from <a href="atk.html#ImplementorIface">atk.ImplementorIface</a>:<br>
+<dl><dt><a name="ChessClock-ref_accessible"><strong>ref_accessible</strong></a>(...)</dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-ceil"><strong>ceil</strong></a>(...)</dt><dd><tt><a href="#-ceil">ceil</a>(x)<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;a&nbsp;float.<br>
+This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integral&nbsp;value&nbsp;&gt;=&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-cos"><strong>cos</strong></a>(...)</dt><dd><tt><a href="#-cos">cos</a>(x)<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-floor"><strong>floor</strong></a>(...)</dt><dd><tt><a href="#-floor">floor</a>(x)<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;a&nbsp;float.<br>
+This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integral&nbsp;value&nbsp;&lt;=&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-sin"><strong>sin</strong></a>(...)</dt><dd><tt><a href="#-sin">sin</a>(x)<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;sine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>pi</strong> = 3.1415926535897931</td></tr></table>
+</body></html>
