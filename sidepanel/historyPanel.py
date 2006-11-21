@@ -28,7 +28,7 @@ def idle_add(proc, *args):
 
 class Sidepanel:
 
-    def load (self, window, page_num):
+    def load (self, window, gmwidg):
         
         widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
         __widget__ = widgets.get_widget("panel")
@@ -52,7 +52,7 @@ class Sidepanel:
             "on_treeview3_key_press_event": lambda w,e: self.key_press_event(2,e)
         })
         
-        self.board = gamewidget.getWidgets(page_num)[0].view
+        self.board = gmwidg.widgets["board"].view
         
         self.board.history.connect("cleared", self.new_history_object)
         self.board.history.connect("changed", self.history_changed)

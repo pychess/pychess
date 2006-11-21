@@ -22,15 +22,15 @@ class Game (GObject):
         'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
     }
 
-    def __init__(self, widgid, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
+    def __init__(self, gmwidg, history, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
         GObject.__init__(self)
         
-        self.widgid = widgid
+        self.gmwidg = gmwidg
         
         self.player1 = p1
         self.player2 = p2
         self.chessclock = cc
-        self.history = gamewidget.getWidgets(widgid)[0].view.history
+        self.history = history
         self.history.reset(mvlist=True)
         self.analyzer = analyzer
         
@@ -158,7 +158,7 @@ class Game (GObject):
             WON_CALLFLAG: _("as opponent ran out of time"),
             WON_MATE: _("on a mate")
         }[comment]
-        gamewidget.status(self.widgid, "%s %s." % (m1,m2), idle_add=True)
+        self.gmwidg.status("%s %s." % (m1,m2), idle_add=True)
         
     def _action (self, player, action):
 
