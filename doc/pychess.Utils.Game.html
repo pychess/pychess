@@ -53,6 +53,8 @@
 Methods defined here:<br>
 <dl><dt><a name="Game-__init__"><strong>__init__</strong></a>(self, gmwidg, history, analyzer, p1, p2, cc<font color="#909090">=None</font>, seconds<font color="#909090">=0</font>, plus<font color="#909090">=0</font>)</dt></dl>
 
+<dl><dt><a name="Game-gameEnded"><strong>gameEnded</strong></a>(self, stat, comment)</dt></dl>
+
 <dl><dt><a name="Game-isChanged"><strong>isChanged</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="Game-kill"><strong>kill</strong></a>(self)</dt></dl>
@@ -73,10 +75,6 @@ Properties defined here:<br>
 <dd><dl><dt><a name="-<em>get</em>"><strong><em>get</em></strong></a> = _get_players(self)</dt></dl>
 </dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Utils+Game+Game (147841744)&gt;</dl>
-
 <hr>
 Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 <dl><dt><a name="Game-__cmp__"><strong>__cmp__</strong></a>(...)</dt><dd><tt>x.<a href="#Game-__cmp__">__cmp__</a>(y)&nbsp;&lt;==&gt;&nbsp;cmp(x,y)</tt></dd></dl>
@@ -137,9 +135,11 @@ Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 <dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
 
-<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Utils+Game+Game<font color="#c040c0">\n\n</font>Signals from pyc... gint)<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+<dl><dt><strong>__gdoc__</strong> = 'Object GObject<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
 
 <dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
+
+<dl><dt><strong>__gtype__</strong> = &lt;GType GObject (80)&gt;</dl>
 
 <dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#Game-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
 
@@ -152,7 +152,8 @@ Data and other attributes inherited from <a href="gobject.html#GObject">gobject.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>BISHOP</strong> = 3<br>
+<td width="100%"><strong>ARTIFICIAL</strong> = 1<br>
+<strong>BISHOP</strong> = 3<br>
 <strong>BLACK</strong> = 1<br>
 <strong>BLACKWON</strong> = 3<br>
 <strong>BLACK_CASTLED</strong> = 32<br>
@@ -165,10 +166,12 @@ Data and other attributes inherited from <a href="gobject.html#GObject">gobject.
 <strong>DRAW_STALEMATE</strong> = 2<br>
 <strong>KING</strong> = 0<br>
 <strong>KNIGHT</strong> = 4<br>
+<strong>LOCAL</strong> = 0<br>
 <strong>NAME</strong> = 'PyChess'<br>
 <strong>PAWN</strong> = 5<br>
 <strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
 <strong>QUEEN</strong> = 1<br>
+<strong>REMOTE</strong> = 2<br>
 <strong>ROOK</strong> = 2<br>
 <strong>RUNNING</strong> = 0<br>
 <strong>SIGNAL_RUN_FIRST</strong> = 1<br>

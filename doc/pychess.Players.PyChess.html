@@ -74,13 +74,17 @@ Methods defined here:<br>
 
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+PyChess+PyChessEngine (156797648)&gt;</dl>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+PyChess+PyChessEngine (154022536)&gt;</dl>
 
 <hr>
 Methods inherited from <a href="pychess.Players.Engine.html#Engine">pychess.Players.Engine.Engine</a>:<br>
 <dl><dt><a name="PyChessEngine-undoMoves"><strong>undoMoves</strong></a>(self, moves<font color="#909090">=1</font>)</dt><dd><tt>Undos&nbsp;a&nbsp;number&nbsp;of&nbsp;moves.</tt></dd></dl>
 
 <dl><dt><a name="PyChessEngine-wait"><strong>wait</strong></a>(self)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="pychess.Players.Engine.html#Engine">pychess.Players.Engine.Engine</a>:<br>
+<dl><dt><strong>__type__</strong> = 1</dl>
 
 <hr>
 Methods inherited from <a href="pychess.Players.Player.html#Player">pychess.Players.Player.Player</a>:<br>
@@ -161,7 +165,7 @@ Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 <dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
 
-<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Players+PyChess+PyChessEngine<font color="#c040c0">\n\n</font>Si...(gint)<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Players+PyChess+PyChessEngine<font color="#c040c0">\n\n</font>Si...ead ()<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
 
 <dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
 
@@ -194,7 +198,8 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>BISHOP</strong> = 3<br>
+<td width="100%"><strong>ARTIFICIAL</strong> = 1<br>
+<strong>BISHOP</strong> = 3<br>
 <strong>BLACK</strong> = 1<br>
 <strong>BLACKWON</strong> = 3<br>
 <strong>BLACK_CASTLED</strong> = 32<br>
@@ -207,15 +212,17 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>DRAW_STALEMATE</strong> = 2<br>
 <strong>KING</strong> = 0<br>
 <strong>KNIGHT</strong> = 4<br>
+<strong>LOCAL</strong> = 0<br>
 <strong>NAME</strong> = 'PyChess'<br>
 <strong>PAWN</strong> = 5<br>
 <strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
 <strong>QUEEN</strong> = 1<br>
+<strong>REMOTE</strong> = 2<br>
 <strong>ROOK</strong> = 2<br>
 <strong>RUNNING</strong> = 0<br>
 <strong>SIGNAL_RUN_FIRST</strong> = 1<br>
 <strong>TYPE_NONE</strong> = &lt;GType void (4)&gt;<br>
-<strong>TYPE_PYOBJECT</strong> = &lt;GType PyObject (156603392)&gt;<br>
+<strong>TYPE_PYOBJECT</strong> = &lt;GType PyObject (153826304)&gt;<br>
 <strong>VERSION</strong> = '0.5.2'<br>
 <strong>WHITE</strong> = 0<br>
 <strong>WHITEWON</strong> = 2<br>
