@@ -6,8 +6,10 @@ from gobject import GObject
 from Player import Player
 #TODO: This should be PlayerDead or something
 from Engine import EngineDead
+from pychess.Utils.const import LOCAL
 
 class Human (Player):
+    __type__ = LOCAL
     def __init__ (self, board, color):
         GObject.__init__(self)
         

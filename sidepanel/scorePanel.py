@@ -3,10 +3,12 @@
 import gtk, gobject
 from math import e
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
+from random import randint
+from sys import maxint
 
 class ScorePlot (gtk.DrawingArea):
     
-    __gtype_name__ = "ScorePlot"
+    __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
     
     __gsignals__ = {
         "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))

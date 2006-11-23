@@ -25,6 +25,8 @@ def prefix (subpath):
 
 ###
 
+LOCAL, ARTIFICIAL, REMOTE = range(3)
+
 WHITE, BLACK = range(2)
 
 reprColor = ["White", "Black"]

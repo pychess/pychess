@@ -10,8 +10,6 @@ def protoopen (uri):
     protocol = uri[:s]
     path = uri[s+3:]
     
-    print uri
-    
     if protocol == "file":
         return file(path)
     if protocol == "http":

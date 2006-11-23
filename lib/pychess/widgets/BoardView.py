@@ -347,12 +347,14 @@ class BoardView (gtk.DrawingArea):
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
         
+        CORD_BORDER = 1.5
+        
         for piece, x, y in self.deadlist:
             x = (self.fromWhite and [x] or [7-x])[0]
             y = (self.fromWhite and [7-y] or [y])[0]
-            context.move_to(xc+x*s, yc+y*s)
+            context.move_to(xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER)
             context.set_source_rgba(0,0,0,piece.opacity)
-            drawPiece(piece, context, s)
+            drawPiece(piece, context, s-CORD_BORDER*2)
             context.fill()
             
         for y, row in enumerate(pieces.data):
@@ -360,9 +362,9 @@ class BoardView (gtk.DrawingArea):
                 if not piece or piece.opacity == 1:
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
-                context.move_to(cx, cy)
+                context.move_to(cx+CORD_BORDER, cy+CORD_BORDER)
                 context.set_source_rgba(0,0,0,piece.opacity)
-                drawPiece(piece, context, s)
+                drawPiece(piece, context, s-CORD_BORDER*2)
                 context.fill()
                 
         context.set_source_rgb(0,0,0)
@@ -374,8 +376,8 @@ class BoardView (gtk.DrawingArea):
                 if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
-                context.move_to(cx, cy)
-                drawPiece(piece, context, s)
+                context.move_to(cx+CORD_BORDER, cy+CORD_BORDER)
+                drawPiece(piece, context, s-CORD_BORDER*2)
         
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
@@ -383,8 +385,8 @@ class BoardView (gtk.DrawingArea):
                     continue
                 x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
                 y = (self.fromWhite and [7-piece.y] or [piece.y])[0]
-                context.move_to(xc+x*s, yc+y*s)
-                drawPiece(piece, context, s)
+                context.move_to(xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER)
+                drawPiece(piece, context, s-CORD_BORDER*2)
         
         context.fill()
     

@@ -7,230 +7,22 @@ pygtk.require("2.0")
 import sys, gtk, gtk.glade, os
 import pango, gobject
 
-import random
 import webbrowser
 import atexit
 
-from pychess.Utils.const import *
-from pychess.Players import engines
-from pychess.Players.Human import Human
+from pychess.System import ionest
 from pychess.System import myconf
+from pychess.Utils.const import *
+from pychess.Players.Human import Human
 from pychess.System.Log import log
 from pychess.System import TipOfTheDay
 from pychess.System import LogDialog
-from pychess.Utils.Game import Game
-from pychess import Savers
-from pychess.Savers import *
 from pychess.widgets import gamewidget
 
+from pychess.System.ionest import loadGame, newGame, saveGame, saveGameAs
 
 gameDic = {}
 
-def saveGameBefore (action):
-    if not gameDic: return
-    game = gameDic[gamewidget.cur_gmwidg()]
-    if not game.isChanged(): return
-    
-    defText = window["savedialogtext1"].get_label()
-    window["savedialogtext1"].set_markup(defText % action)
-    response = window["savegamedialog"].run()
-    window["savegamedialog"].hide()
-    window["savedialogtext1"].set_markup(defText)
-    if response == gtk.RESPONSE_YES:
-        if GladeHandlers.__dict__["on_save_game1_activate"](None) == False:
-            return gtk.RESPONSE_CANCEL
-    return response
-
-def makeFileDialogReady ():
-    global enddir
-
-    enddir = {}
-    types = []
-    
-    savers = Savers.__all__
-    for saver in [getattr(Savers, s) for s in savers]:
-        for ending in saver.__endings__:
-            enddir[ending] = saver
-        l = saver.__label__ + " (."+", .".join(saver.__endings__)+")"
-        types.append((l, saver.__endings__))
-    
-    global savedialog, opendialog
-    savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
-    opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
-    savedialog.set_current_folder(os.environ["HOME"])
-    opendialog.set_current_folder(os.environ["HOME"])
-    
-    #TODO: Working with mime-types might gennerelly be a better idea.
-    
-    star = gtk.FileFilter()
-    star.set_name(_("All Files"))
-    star.add_pattern("*")
-    opendialog.add_filter(star)
-    
-    all = gtk.FileFilter()
-    all.set_name(_("All Chess Files"))
-    opendialog.add_filter(all)
-    opendialog.set_filter(all)
-    
-    custom = gtk.FileFilter()
-    custom.set_name(_("Detect type automatically"))
-    custom.add_pattern("*")
-    savedialog.add_filter(custom)
-    
-    for label, endings in types:
-        f = gtk.FileFilter()
-        f.set_name(label)
-        for ending in endings:
-            f.add_pattern("*."+ending)
-            all.add_pattern("*."+ending)
-        savedialog.add_filter(f)
-        opendialog.add_filter(f)
-    
-    global filechooserbutton
-    filechooserbutton = gtk.FileChooserButton(opendialog)
-    window["ngfcalignment"].add(filechooserbutton)
-    filechooserbutton.show()
-
-isMakeNewGameDialogReady = False
-def makeNewGameDialogReady ():
-
-    global isMakeNewGameDialogReady
-    if isMakeNewGameDialogReady:
-        return
-    isMakeNewGameDialogReady = True
-
-    def createCombo (combo, data):
-        ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-        for icon, label in data:
-            ls.append([icon, label])
-        combo.clear()
-        combo.set_model(ls)
-        crp = gtk.CellRendererPixbuf()
-        crp.set_property('xalign',0)
-        combo.pack_start(crp, False)
-        combo.add_attribute(crp, 'pixbuf', 0)
-        crt = gtk.CellRendererText()
-        crt.set_property('xalign',0)
-        combo.pack_start(crt, False)
-        combo.add_attribute(crt, 'text', 1)
-
-    it = gtk.icon_theme_get_default()
-
-    icons = ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
-             (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
-             (_("Expert"), "stock_weather-storm", "weather-storm"))
-                
-    items = []
-    for level, stock, altstock in icons:
-        try:
-            image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        except gobject.GError:
-            image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        items += [(image, level)]
-
-    for combo in (window["whiteDifficulty"], window["blackDifficulty"]):
-        createCombo(combo, items)
-
-    image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-    items = [(image, _("Human Being"))]
-    image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-    
-    for engine in [engines.getInfo((e,a))["name"] for e,a in engines.availableEngines]:
-        items += [(image, engine)]
-    for combo in (window["whitePlayerCombobox"], window["blackPlayerCombobox"]):
-        createCombo(combo, items)
-        
-    window["whitePlayerCombobox"].set_active(0)
-    window["blackPlayerCombobox"].set_active(min(1,len(engines.availableEngines)))
-    GladeHandlers.__dict__['on_blackPlayerCombobox_changed'](window["blackPlayerCombobox"])
-    
-    for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty",
-            "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
-        v = myconf.get(widget)
-        if v != None:
-            if hasattr(window[widget], "set_active"):
-                window[widget].set_active(v)
-            else: window[widget].set_value(v)
-
-def gameClosed (gmwidg):
-    res = saveGameBefore(_("you close it"))
-    if res == gtk.RESPONSE_CANCEL: return
-    gamewidget.delGameWidget(gmwidg)
-    gameDic[gmwidg].kill()
-    del gameDic[gmwidg]
-
-def runNewGameDialog (hideFC=True):
-    makeNewGameDialogReady ()
-    
-    #If the dialog should show or hide the filechooser button
-    if hideFC:
-        window["ngfcalignment"].hide()
-    else: window["ngfcalignment"].show()
-
-    res = window["newgamedialog"].run()
-    window["newgamedialog"].hide()
-    if res != gtk.RESPONSE_OK: return None,None
-    
-    gmwidg = gamewidget.createGameWidget("")
-    gmwidg.connect("closed",gameClosed)
-    ccalign = gmwidg.widgets["ccalign"]
-    
-    if window["useTimeCB"].get_active():
-        ccalign.show()
-        clock = window["ChessClock"]
-        secs = window["spinbuttonH"].get_value()*3600
-        secs += window["spinbuttonM"].get_value()*60
-        secs += window["spinbuttonS"].get_value()
-        gain = window["spinbuttonG"].get_value()
-    else:
-        ccalign.hide()
-        clock = None
-        secs = 0
-        gain = 0
-        
-    for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
-        if hasattr(window[widget], "get_active"):
-            v = window[widget].get_active()
-        else: v = window[widget].get_value()
-        myconf.set(widget, v)
-    
-    players = []
-    for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty",WHITE),
-                              ("blackPlayerCombobox","blackDifficulty",BLACK)):
-        choise = window[box].get_active()
-        dfc = window[dfcbox].get_active()
-        if choise != 0:
-            engine = engines.availableEngines[choise-1][0]
-            player = engine(engines.availableEngines[choise-1][1],color)
-            player.connect("dead", engineDead, gmwidg)
-            player.setStrength(dfc)
-            if secs:
-                player.setTime(secs, gain)
-        else: player = Human(gmwidg.widgets["board"], color)
-        players += [player]
-    
-    gmwidg.setTabText("%s vs %s" % (repr(players[0]), repr(players[1])))
-    
-    anaengines = [(e,a) for e,a in engines.availableEngines \
-                                        if engines.getInfo((e,a))["canAnalyze"]]
-    if len(anaengines) > 1:
-        # We assume that the Pychess engine is the last
-        engine, args = random.choice(anaengines[:-1])
-    else: engine, args = anaengines[0]
-    analyzer = engine(args, WHITE)
-    analyzer.analyze()
-    log.debug("Analyzer: %s\n" % repr(analyzer))
-
-    history = gmwidg.widgets["board"].view.history
-    game = Game(gmwidg, history, analyzer, players[0], players[1], clock, secs, gain)
-    
-    #game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
-    
-    #TODO: enable this for tabs
-    #window["properties1"].set_sensitive(True)
-    return game, gmwidg
-
-import thread
 def engineDead (engine, gmwidg):
     gamewidget.setCurrent(gmwidg)
     gameDic[gmwidg].kill()
@@ -253,31 +45,8 @@ def makeAboutDialogReady ():
     clb.connect("clicked", callback)
     window["aboutdialog1"].connect("delete-event", callback)
 
-def noOpenGame ():
-    d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-    d.set_markup(_("<big><b>No open game to save</b></big>"))
-    d.format_secondary_text(_("You are not currently playing any game pychess can save for you."))
-    d.connect("response", lambda d,r: d.hide())
-    d.show_all()
-
-from urllib import url2pathname
-
 class GladeHandlers:
     
-    def on_drag_received (wi, context, x, y, selection, target_type, timestamp):
-        uri = selection.data.strip()
-        uri = uri.split()[0] # we may have more than one file dropped
-        
-        filechooserbutton.set_uri(uri)
-        game, gmwidg = runNewGameDialog(hideFC=False)
-        
-        if game:
-            gameDic[gmwidg] = game
-            uri = filechooserbutton.get_uri()
-            loader = enddir[uri[uri.rfind(".")+1:]]
-            game.load(uri, loader)
-            game.run()
-
     def on_ccalign_show (widget):
         clockHeight = window["ccalign"].get_allocation().height
         windowSize = window["window1"].get_size()
@@ -288,98 +57,47 @@ class GladeHandlers:
         windowSize = window["window1"].get_size()
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
+    def on_page_added (handler, gmwidg):
+        for widget in ("save_game1", "save_game_as1", "properties1", "close1", "action1", "vis1"):
+            window[widget].set_property('sensitive', True)
+            
+    def on_page_removed (handler, gmwidg):
+        del gameDic[gmwidg]
+        if len (gameDic) == 0:
+            for widget in ("save_game1", "save_game_as1", "properties1", "close1", "action1", "vis1"):
+                window[widget].set_property('sensitive', False)
+    
+    #          Drag 'n' Drop          #
+    
+    def on_drag_received (wi, context, x, y, selection, target_type, timestamp):
+        uri = selection.data.strip()
+        uri = uri.split()[0] # we may have more than one file dropped
+        game, gmwidg = loadGame (uri)
+        if game:
+            gameDic[gmwidg] = game
+            GladeHandlers.__dict__["on_page_added"]()
+    
     #          Game Menu          #
 
     def on_new_game1_activate (widget):
-        game, gmwidg = runNewGameDialog()
+        game, gmwidg = newGame ()
         if game:
+            for player in game.players:
+                player.connect("dead", engineDead, gmwidg)
             gameDic[gmwidg] = game
-            game.run()
-
-    def on_load_game1_activate (widget):
-        res = opendialog.run()
-        opendialog.hide()
-
-        if res != gtk.RESPONSE_ACCEPT: return
-        uri = opendialog.get_uri()
-        filechooserbutton.set_uri(uri)
-        game, gmwidg = runNewGameDialog(hideFC=False)
         
+    def on_load_game1_activate (widget):
+        game, gmwidg = loadGame ()
         if game:
+            for player in game.players:
+                player.connect("dead", engineDead, gmwidg)
             gameDic[gmwidg] = game
-            uri = filechooserbutton.get_uri()
-            loader = enddir[uri[uri.rfind(".")+1:]]
-            game.load(uri, loader)
-            game.run()
     
     def on_save_game1_activate (widget):
-        if not len(gameDic):
-            noOpenGame()
-            return
-        game = gameDic[gamewidget.cur_gmwidg()]
-        if not game.isChanged:
-            return
-        if not game.lastSave[1]:
-            return GladeHandlers.__dict__["on_save_game_as1_activate"](widget)
-        else:
-            GladeHandlers.__dict__["save"](game.lastSave[1])
+        saveGame (gameDic[gamewidget.cur_gmwidg()])
         
     def on_save_game_as1_activate (widget):
-        if not len(gameDic):
-            noOpenGame()
-            return
-            
-        #TODO: If file exists or has wrong filetype, the window is hidden..
-        #      And the user has to reopen it to type a new name
-        res = savedialog.run()
-        savedialog.hide()
-        if res != gtk.RESPONSE_ACCEPT: return False
-        uri = savedialog.get_uri()[7:]
-        
-        s = uri.rfind(".")
-        if s >= 0:
-            ending = uri[s+1:]
-        else: ending = None
-        
-        if savedialog.get_filter().filter((None,None,"foo",None)):
-            if not ending in enddir:
-                d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-                folder, file = os.path.split(uri)
-                d.set_markup(_("<big><b>Unknown filetype '%s'</b></big>") % ending)
-                d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
-                d.run()
-                d.hide()
-                return
-            saver = enddir[ending]
-        else:
-            for e,sr in enddir.iteritems():
-                if savedialog.get_filter().filter((None,None,"."+e,None)):
-                    if not ending in sr.__endings__:
-                        uri += "." + e
-                    break
-                    
-        if os.path.isfile(uri):
-            d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
-            d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"), gtk.RESPONSE_ACCEPT)
-            d.set_title(_("File exists"))
-            folder, file = os.path.split(uri)
-            d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
-            d.format_secondary_text(_("The file alredy exists in '%s'. If you replace it, its content will be overwritten.") % folder)
-            res = d.run()
-            d.hide()
-            if res != gtk.RESPONSE_ACCEPT:
-                return
-        
-        saver = enddir[ending]
-        gameDic[gamewidget.cur_gmwidg()].save(uri, saver)
-    
-    def save (uri):
-        s = uri.rfind(".")
-        if s >= 0:
-            ending = uri[s+1:]
-        else: return
-        saver = enddir[ending]
-        gameDic[gamewidget.cur_gmwidg()].save(uri, saver)
+        saveGameAs (gameDic[gamewidget.cur_gmwidg()])
     
     def on_properties1_activate (widget):
         game = gameDic[gamewidget.cur_gmwidg()]
@@ -406,10 +124,14 @@ class GladeHandlers:
         window["game_info_cancel_button"].connect("clicked", hide_window)
         window["game_info_ok_button"].connect("clicked", accept_new_properties)
     
-    def on_quit1_activate (widget):
-        res = saveGameBefore(_("exit"))
-        if res == gtk.RESPONSE_CANCEL: return
-        gtk.main_quit()
+    def on_close1_activate (widget):
+        gmwidg = gamewidget.cur_gmwidg()
+        ionest.closeGame(gmwidg, gameDic[gmwidg])
+    
+    def on_quit1_activate (widget, *args):
+        if ionest.closeAllGames (gameDic.values()) == gtk.RESPONSE_OK:
+            gtk.main_quit()
+        else: return True
     
     #          View Menu          #
     
@@ -492,27 +214,6 @@ class GladeHandlers:
                 board.view.history.disconnect(game.spyconid2)
                 board.view.redarrow = None
     
-    #          New Game Dialog          #
-
-    def on_checkbutton4_clicked (widget):
-        window["table6"].set_sensitive(widget.get_active())
-    
-    def on_whitePlayerCombobox_changed (widget):
-        if widget.get_active() > 0:
-            window["whiteDifficulty"].set_sensitive(True)
-            window["whiteDifficulty"].set_active(1)
-        else:
-            window["whiteDifficulty"].set_sensitive(False)
-            window["whiteDifficulty"].set_active(-1)
-    
-    def on_blackPlayerCombobox_changed (widget):
-        if widget.get_active() > 0:
-            window["blackDifficulty"].set_sensitive(True)
-            window["blackDifficulty"].set_active(1)
-        else:
-            window["blackDifficulty"].set_sensitive(False)
-            window["blackDifficulty"].set_active(-1)
-    
     #          Action menu          #
     
     def on_call_flag_activate (widget):
@@ -575,7 +276,6 @@ class PyChess:
         height = myconf.get("window_height")
         if width and height:
             window.resize(width, height)
-        
     
     def initGlade(self):
         global window
@@ -585,9 +285,7 @@ class PyChess:
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML(prefix("glade/PyChess.glade"))
         
-        self["window1"].connect("destroy", gtk.main_quit)
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
-        
         self["window1"].show_all()
         
         #Very ugly hack, needed because of pygtk bug 357022
@@ -595,10 +293,11 @@ class PyChess:
         from widgets.BookCellRenderer import BookCellRenderer
         self.BookCellRenderer = BookCellRenderer
         
-        makeFileDialogReady()
         makeLogDialogReady()
         makeAboutDialogReady()
         gamewidget.set_widgets(self)
+        gamewidget.handler.connect("page_added", GladeHandlers.__dict__["on_page_added"])
+        gamewidget.handler.connect("page_removed", GladeHandlers.__dict__["on_page_removed"])
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
@@ -608,7 +307,7 @@ class PyChess:
         
         #TODO: disabled by default
         #TipOfTheDay.TipOfTheDay()
-        
+    
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
     

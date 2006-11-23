@@ -68,7 +68,7 @@ class History (GObject):
         'changed': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'added': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'cleared': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
+        'game_ended': (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int))
     }
     
     def __init__ (self, mvlist=False, special=False):

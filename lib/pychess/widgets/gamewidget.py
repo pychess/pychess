@@ -4,6 +4,7 @@ def set_widgets (w):
     widgets = w
 
 import gtk, os, gobject, glob
+from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System import myconf
 from pychess.Utils.const import prefix
@@ -14,15 +15,15 @@ from ToggleComboBox import ToggleComboBox
 from Background import Background
 
 icons = gtk.icon_theme_get_default()
-light_on = icons.load_icon("stock_3d-light-on", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-light_off = icons.load_icon("stock_3d-light-off", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-gtk_close = icons.load_icon("gtk-close", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-gtk_close20 = icons.load_icon("gtk-close", 20, gtk.ICON_LOOKUP_USE_BUILTIN)
+light_on = icons.load_icon("stock_3d-light-on", 16, ICON_LOOKUP_USE_BUILTIN)
+light_off = icons.load_icon("stock_3d-light-off", 16, ICON_LOOKUP_USE_BUILTIN)
+gtk_close = icons.load_icon("gtk-close", 16, ICON_LOOKUP_USE_BUILTIN)
+gtk_close20 = icons.load_icon("gtk-close", 20, ICON_LOOKUP_USE_BUILTIN)
 
-media_previous = icons.load_icon("media-skip-backward", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-media_rewind = icons.load_icon("media-seek-backward", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-media_forward = icons.load_icon("media-seek-forward", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-media_next = icons.load_icon("media-skip-forward", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+media_previous = icons.load_icon("media-skip-backward", 16, ICON_LOOKUP_USE_BUILTIN)
+media_rewind = icons.load_icon("media-seek-backward", 16, ICON_LOOKUP_USE_BUILTIN)
+media_forward = icons.load_icon("media-seek-forward", 16, ICON_LOOKUP_USE_BUILTIN)
+media_next = icons.load_icon("media-skip-forward", 16, ICON_LOOKUP_USE_BUILTIN)
 
 def createImage (pixbuf):
     image = gtk.Image()
@@ -40,15 +41,16 @@ def createAlignment (top, right, bottom, left):
 def show_side_panel (show):
     if len(head2mainDic) == 0: return
     
-    for page_num in head2mainDic.keys():
-        sidepanel = getWidgets(page_num)[2]
+    for gmwidg in widgid2gmwidg.values():
+        sidepanel = gmwidg.widgets["sidepanel"]
         if show:
             sidepanel.show()
         else:
             alloc = sidepanel.get_allocation().width
             sidepanel.hide()
     
-    hbox = widgets["mainvbox"].get_children()[2].get_nth_page(0).get_children()[0].child
+    hbox = widgets["mainvbox"].get_children()[2] \
+            .get_nth_page(0).get_children()[0].child
     
     if show:
         if sidepanel.get_allocation().width > 1:
@@ -70,7 +72,7 @@ widgid2gmwidg = {}
 class GameWidget (gobject.GObject):
     
     __gsignals__ = {
-        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
     }
     
     def __init__ (self, widgid):
@@ -152,6 +154,8 @@ def delGameWidget (gmwidg):
         vbox.remove(mainbook)
         vbox.pack_end(Background())
         vbox.show_all()
+    
+    handler.emit("page_removed", gmwidg)
         
 def createGameWidget (title):
     vbox = widgets["mainvbox"]
@@ -182,6 +186,7 @@ def createGameWidget (title):
     page_num = headbook.get_n_pages()
     
     hbox = gtk.HBox()
+    hbox.set_spacing(4)
     hbox.pack_start(createImage(light_off), expand=False)
     close_button = gtk.Button()
     close_button.set_property("can-focus", False)
@@ -203,7 +208,7 @@ def createGameWidget (title):
     align = createAlignment (3, 2, 4, 2)
     
     hbox = gtk.HBox()
-    hbox.set_spacing(4)    
+    hbox.set_spacing(4)
     
     lvbox = gtk.VBox()
     lvbox.set_spacing(4)
@@ -307,6 +312,7 @@ def createGameWidget (title):
     headbook.set_current_page(-1)
     mainbook.set_current_page(-1)
     
+    handler.emit("page_added", gmwidg)
     return gmwidg 
     
 def setCurrent (gmwidg):
@@ -320,3 +326,19 @@ def cur_gmwidg ():
 
 def _headbook ():
     return widgets["mainvbox"].get_children()[1].child
+
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+
+class Handler (gobject.GObject):
+    """ The goal of this class, is to provide signal handling for the gamewidget
+        module """
+        
+    __gsignals__ = {
+        'page_added': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'page_removed': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,))
+    }
+    
+    def __init__ (self):
+        gobject.GObject.__init__(self)
+        
+handler = Handler()

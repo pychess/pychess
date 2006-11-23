@@ -28,8 +28,7 @@ class PyChessEngine (Engine):
     __gsignals__ = {
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
 
     def __init__ (self, executable, color):

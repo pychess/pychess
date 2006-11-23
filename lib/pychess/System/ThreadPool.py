@@ -1,3 +1,5 @@
+""" This is a pool for reusing threads """
+
 from threading import Condition, Lock
 from threading import Thread
 from Log import log
