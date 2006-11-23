@@ -159,7 +159,7 @@ class Board:
         return len(self.data)
 
     def __repr__ (self):
-        b = ""
+        b = reprColor[self.color]+"\n"
         for r in range(8)[::-1]:
             row = self.data[r]
             for piece in row:

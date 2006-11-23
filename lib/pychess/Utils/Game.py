@@ -18,10 +18,6 @@ profile = False
 
 class Game (GObject):
 
-    __gsignals__ = {
-        'game_ended' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int))
-    }
-
     def __init__(self, gmwidg, history, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
         GObject.__init__(self)
         
@@ -32,6 +28,7 @@ class Game (GObject):
         self.chessclock = cc
         self.history = history
         self.history.reset(mvlist=True)
+        self.history.connect("game_ended", lambda h,s,c: self.gameEnded(s,c))
         self.analyzer = analyzer
         
         self.lastSave = (None, "")
@@ -50,8 +47,6 @@ class Game (GObject):
             self.chessclock.reset()
             self.chessclock.setTime(seconds*10)
             self.chessclock.setGain(plus*10)
-        
-        self.history.connect("game_ended", self._gameEnded)
         
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)
@@ -84,7 +79,7 @@ class Game (GObject):
         return not self.lastSave[1] or self.lastSave[0] != self.history
     
     def run (self):
-        self.connect_after("game_ended", lambda g,stat,comm: self.kill())
+        #self.connect_after("game_ended", lambda g,stat,comm: self.kill())
         if not profile:
             thread.start_new(self._run, ())
         else:
@@ -108,6 +103,10 @@ class Game (GObject):
             if self.chessclock:
                 self.chessclock.player = no
             
+            if player.__type__ == LOCAL:
+                self.gmwidg.setTabReady(True)
+            else: self.gmwidg.setTabReady(False)
+            
             try:
                 move = player.makeMove(self.history)
             
@@ -122,6 +121,7 @@ class Game (GObject):
                 raise
                 
             except EngineDead:
+                self.gmwidg.status(_("A player has died"))
                 self.kill()
                 break
             
@@ -136,14 +136,15 @@ class Game (GObject):
             self.analyzer.makeMove(self.history)
                 
     def kill (self):
+        self.gmwidg.setTabReady(False)
         self.run = False
         if self.player1: self.player1.__del__()
         if self.player2: self.player2.__del__()
         if self.analyzer: self.analyzer.__del__()
         if self.chessclock: self.chessclock.stop()
     
-    def _gameEnded (self, history, stat, comment):
-        self.emit("game_ended", stat, comment)
+    def gameEnded (self, stat, comment):
+        self.kill()
         m1 = {
             DRAW: _("The game ended in a draw"),
             WHITEWON: _("White player won the game"),
@@ -161,30 +162,30 @@ class Game (GObject):
         self.gmwidg.status("%s %s." % (m1,m2), idle_add=True)
         
     def _action (self, player, action):
-
+        
         if action == player.RESIGNATION:
             p = player == self.player1 and BLACKWON or WHITEWON
-            self.emit("game_ended", p, WON_RESIGN)
+            self.gameEnded(p, WON_RESIGN)
             
         elif action == player.DRAW_OFFER:
-            status(_("Draw offer has been sent"), True)
+            self.gmwidg.status(_("Draw offer has been sent"), True)
             otherPlayer = player == self.player1 and self.player2 or self.player1
             otherPlayer.offerDraw()
             
         elif action == player.DRAW_ACCEPTION:
             #FIXME: Test if draw is (still) valid
-            self.emit("game_ended", DRAW, DRAW_AGREE)
+            self.gameEnded(DRAW, DRAW_AGREE)
             
         elif action == player.FLAG_CALL:
             if not self.chessclock:
-                status(_("Couldn't call flag in game with no timecontrols"), True)
+                self.gmwidg.status(_("Couldn't call flag in game with no timecontrols"), True)
                 return
             p = player == self.player2 and BLACKWON or WHITEWON
             p_other = player == self.player1 and 1 or 0
             if self.chessclock._get_playerTime(p_other) <= 0:
-                self.emit("game_ended", p, WON_CALLFLAG)
+                self.gameEnded(p, WON_CALLFLAG)
             else:
-                status(_("Couldn't call flag on player not out of time"), True)
+                self.gmwidg.status(_("Couldn't call flag on player not out of time"), True)
                 
     def _get_active_player (self):
         return self.history.curCol() == WHITE and self.player1 or self.player2
