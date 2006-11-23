@@ -1,3 +1,10 @@
+"""
+    This module is written to do basic chess computing.
+    This module can validate a Move or generate a list of possible moves
+    It can also be used to find moves for SAN parsing
+    and to detect the status of the game
+"""
+
 from pychess.Utils.History import hisPool
 from pychess.Utils.Move import Move, movePool
 from pychess.Utils.Cord import Cord
@@ -8,12 +15,10 @@ from time import time
 range8 = range(8)
 
 def validate (move, board, testCheck=True):
-    """Will asume the first cord is an ally piece"""
+    """ Tests if "move" is a legal move on board "board"
+        Will asume the first cord of move is an ally piece """
     
     piece = board[move.cord0]
-    
-    if not piece:
-        return False
     
     if piece.sign == PAWN:
         if not Pawn(move, board):
@@ -41,6 +46,7 @@ def validate (move, board, testCheck=True):
     return True
     
 def Bishop (move, board):
+    """ Validate bishop move """
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
         return False
     dx = move.cord1.x > move.cord0.x and 1 or -1
@@ -56,6 +62,7 @@ def Bishop (move, board):
     return True
 
 def genBishop (cord, board):
+    """ Generate bishop moves. Bishop is located at cord """
     for dx, dy in (1,1),(-1,1),(-1,-1),(1,-1):
         x, y = cord.x, cord.y
         while True:
@@ -72,6 +79,7 @@ def genBishop (cord, board):
             yield x,y
 
 def _isclear (board, cols, rows):
+    """ Test if cords in cols and rows are empty """
     for row in rows:
         for col in cols:
             if board.data[row][col] != None:
@@ -81,7 +89,7 @@ def _isclear (board, cols, rows):
 moveToCastling = {"e1g1": WHITE_OO, "e1c1": WHITE_OOO,
                   "e8g8": BLACK_OO, "e8c8": BLACK_OOO}
 def King (move, board):
-
+    """ Validate king move """
     strmove = str(move)
     if strmove in moveToCastling:
         if not board.castling & moveToCastling[strmove]:
@@ -113,6 +121,7 @@ def King (move, board):
 
 kingPlaces = (1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1),(0,1),(1,1)
 def genKing (cord, board):
+    """ Generate king moves. King is located at cord """
     for dx, dy in kingPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
@@ -140,6 +149,7 @@ def genKing (cord, board):
                 yield 2,7
 
 def Knight (move, board):
+    """ Validate knight move """
     return (abs(move.cord0.x - move.cord1.x) == 1 and \
             abs(move.cord0.y - move.cord1.y) == 2) or \
            (abs(move.cord0.x - move.cord1.x) == 2 and \
@@ -147,6 +157,7 @@ def Knight (move, board):
 
 knightPlaces = (1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)
 def genKnight (cord, board):
+    """ Generate knight moves. Knight is located at cord """
     for dx, dy in knightPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
@@ -155,6 +166,7 @@ def genKnight (cord, board):
             yield x,y
 
 def Pawn (move, board):
+    """ Validate pawn move """
     dr = board.color == WHITE and 1 or -1
     #Leaves only 1 and 2 cords difference - ahead
     if not 0 < (move.cord1.y - move.cord0.y)*dr <= 2:
@@ -185,7 +197,8 @@ def Pawn (move, board):
     return False
 
 def genPawn (cord, board):
-
+    """ Generate pawn moves. Pawn is located at cord """
+    
     direction = board.color == WHITE and 1 or -1
     x, y = cord.x, cord.y
     if not board.data[y+direction][x]:
@@ -209,6 +222,8 @@ def genPawn (cord, board):
             yield board.enpassant.x, board.enpassant.y
      
 def Rook (move, board):
+    """ Validate rook move """
+    
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
         return False
     
@@ -232,6 +247,8 @@ def Rook (move, board):
     return True
 
 def genRook (cord, board):
+    """ Generate rook moves. Rook is located at cord """
+    
     for dx, dy in (1,0),(0,-1),(-1,0),(0,1):
         x, y = cord.x, cord.y
         while True:
@@ -248,10 +265,14 @@ def genRook (cord, board):
             yield x,y
 
 def Queen (move, board):
+    """ Validate queen move """
+    
     return Rook (move, board) or \
            Bishop (move, board)
 
 def genQueen (cord, board):
+    """ Generate queen moves. Queen is located at cord """
+    
     for move in genRook (cord, board):
         yield move
     for move in genBishop (cord, board):
@@ -260,6 +281,8 @@ def genQueen (cord, board):
 sign2gen = [genKing, genQueen, genRook, genBishop, genKnight, genPawn]
 
 def findMoves2 (board, testCheck=True):
+    """ Generate all possible moves for current player (board.color) """
+    
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if not piece: continue
@@ -276,6 +299,9 @@ def findMoves2 (board, testCheck=True):
                     raise
 
 def _getLegalMoves (board, cord, testCheck):
+    """ Find all legal moves for piece at cord
+        returns a list of possible destination cords """
+    
     cords = []
     for row in range8:
         for col in range8:
@@ -291,6 +317,9 @@ def _getLegalMoves (board, cord, testCheck):
     return cords
 
 def findMoves (board):
+    """ Creates a dict of all legal moves for current player (baord.color)
+        Returns a dict of {fromcord:[tocord,tocord...],...} """
+    
     #t = time()
     
     moves = {}
@@ -319,7 +348,11 @@ def findMoves (board):
     return moves
 
 def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
-
+    
+    """ Returns a cord containing a piece that can attack the specified cord
+        If color, sign, r, or c is not = None, only cords with that
+        color / sign / row / column will be returned """
+    
     if board.movelist != None:
         for cord0, cord1s in board.movelist.iteritems():
             piece = board[cord0]
@@ -361,6 +394,10 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
         else: return None
 
 def genMovesPointingAt (board, cols, rows, color, testCheck=False):
+    
+    """ Returns a move that legaly attack a cord with the specified color
+        in one of the specified columns or rows """
+    
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if piece == None: continue
@@ -374,6 +411,8 @@ def genMovesPointingAt (board, cols, rows, color, testCheck=False):
                     movePool.add(move)
 
 def willCheck (board, move):
+    """ Returns True if the move will cause the player
+        making the move to be in check """
     board2 = board.move(move)
     check = isCheck(board2, board.color)
     return check
@@ -382,6 +421,7 @@ from pychess.System.LimitedDict import LimitedDict
 checkDic = LimitedDict(5000)
 
 def isCheck (board, who):  
+    """ Returns True if "who" is in check in the specified possition """
     
     if board in checkDic:
         r = checkDic[board][who]
@@ -400,6 +440,7 @@ def isCheck (board, who):
     return r
 
 def _findKing (board, color):
+    """ Returns the cord of the king of the specified color """
     for x in range8:
         for y in range8:
             piece = board.data[y][x]
@@ -409,7 +450,10 @@ def _findKing (board, color):
             (reprColor[color], repr(board))
 
 def status (history):
-
+    """ Returns a tuple of (the current status of the game, a comment of the reason)
+        Status can be one of RUNNING, DRAW, WHITEWON or BLACKWON.
+        Comment can be any from pychess.Utils.const or None, if status is RUNNING """
+    
 	# FIXME: We don't test enough to know if positions are equal to the FIDE rules:
 	# Positions are not the same if:
 	# * a pawn that could have been captured,

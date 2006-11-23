@@ -1,3 +1,8 @@
+""" This module handles CECP/XBoard protocol engines
+    It consists of a CECPProtocol class, that is a lowlevel interface to the
+    CECP commands, and a CECPEngine class that implements the Engine Interface
+    """
+
 import sys, os, time, thread
 from threading import Condition, Lock
 
@@ -21,12 +26,11 @@ def isdigits (strings):
     return True
 
 class CECPEngine (Engine):
-
+    
     __gsignals__ = {
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
 
     def __init__ (self, args, color):

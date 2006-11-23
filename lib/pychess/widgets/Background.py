@@ -1,11 +1,7 @@
 import gtk, cairo
-from os import path
+from os import path, mkdir
 from pychess.Utils.const import prefix
 from array import array
-
-def INT_MULT (a, b):
-	c = a * b + 0x80
-	return ((c >> 8) + c) >> 8
 
 class Background (gtk.DrawingArea):
     
@@ -20,7 +16,6 @@ class Background (gtk.DrawingArea):
         cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)
         cr.set_source_surface(self.surface, 0, 0)
         pattern = cr.get_source()
-        #pattern.set_filter(cairo.FILTER_GAUSSIAN)
         pattern.set_extend(cairo.EXTEND_REPEAT)
         cr.fill()
     
@@ -41,13 +36,23 @@ class Background (gtk.DrawingArea):
                dnew.blue == dold.blue:
                 return
         
-        light = map(lambda x: x/256, (lnew.red, lnew.green, lnew.blue))
-        dark = map(lambda x: x/256, (dnew.red, dnew.green, dnew.blue))
+        dark = array('B',map(lambda x: x/256, (dnew.red, dnew.green, dnew.blue)))
+        
+        pydir = path.expanduser("~/.pychess/")
+        temppngdir = path.join(pydir,"temp.png")
+        if not path.isdir(pydir):
+            mkdir(pydir)
+        if path.isfile(temppngdir):
+            f = open(temppngdir)
+            b,g,r = [ord(c) for c in f.read(3)]
+            if dark[0] == r and dark[1] == g and dark[2] == b:
+                self.surface = cairo.ImageSurface.create_from_png(f)
+                return
         
         surface = cairo.ImageSurface.create_from_png(self.clearpath)
         buffer = surface.get_data_as_rgba()
         
-        data = array ('c', 'a' * surface.get_width() * surface.get_height() * 4)
+        data = array ('B', 'a' * surface.get_width() * surface.get_height() * 4)
         surf = cairo.ImageSurface.create_for_data (data, cairo.FORMAT_ARGB32,
                 surface.get_width(), surface.get_height(), surface.get_stride())
         ctx = cairo.Context (surf)
@@ -56,16 +61,18 @@ class Background (gtk.DrawingArea):
         ctx.fill()
         
         dark.reverse()
-        dic = {}
+
+        rang3 = range(3)
         for s in xrange(0, len(data), 4):
-            for i in xrange (3):
-                if not data[s+i] in dic:
-                    dic [data[s+i]] = {i: chr( (dark[i] + ord(data[s+i])) /3 )}
-                elif not i in dic [data[s+i]]:
-                    dic [data[s+i]][i] = chr( (dark[i] + ord(data[s+i])) /3 )
-                data [s+i] = dic[data [s+i]][i]
+            for i in rang3:
+                data[s+i] = (dark[i] + data[s+i]) /3
         
         self.surface = cairo.ImageSurface.create_for_data (
             data, cairo.FORMAT_ARGB32,
             surface.get_width(), surface.get_height(),
             surface.get_stride())
+        
+        f = open(temppngdir, "w")
+        for color in dark:
+            f.write(chr(color))
+        self.surface.write_to_png(f)

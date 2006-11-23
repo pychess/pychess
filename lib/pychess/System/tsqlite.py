@@ -1,3 +1,6 @@
+""" This is a threadsafe wrapper sqlite.
+    It is not classbased, so only one database can be open at a time """
+
 try:
     import pysqlite2.dbapi2 as sqlite
 except ImportError:

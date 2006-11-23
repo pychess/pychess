@@ -1,8 +1,11 @@
 from Player import Player
+from pychess.Utils.const import ARTIFICIAL
 
 class EngineDead (Exception): pass
 
 class Engine (Player):
+   
+    __type__ = ARTIFICIAL
    
     def setStrength (self, strength):
         """Takes strength 0, 1, 2 (higher is better)"""

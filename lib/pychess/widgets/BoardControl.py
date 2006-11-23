@@ -19,7 +19,8 @@ class BoardControl (gtk.EventBox):
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'call_flag' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         'draw' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'resign' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'lock_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     
     def __init__(self):
@@ -181,20 +182,19 @@ class BoardControl (gtk.EventBox):
     
     def on_call_flag_activate (self, widget):
         if self.locked:
-            #TODO: Should BoardControl own the action menu?
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
             return
         self.emit("call_flag")
         
     def on_draw_activate (self, widget):
         if self.locked:
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
             return
         self.emit("draw")
         
     def on_resign_activate (self, widget):
         if self.locked:
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked")
+            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
             return
         self.emit("resign")
     
