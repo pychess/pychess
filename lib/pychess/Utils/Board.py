@@ -172,23 +172,16 @@ class Board:
             b += "\n"
         return b
     
+    def __cmp__ (self, other):
+        return self.__eq__ (other)
+    
     def __eq__ (self, other):
-        if other == None or \
-            self.myhash != other.myhash or \
-            self.castling != other.castling or \
-            self.enpassant != other.enpassant:
-            return False
-        return True
+        return  other != None and \
+                self.myhash == other.myhash and \
+                self.castling == other.castling and \
+                self.enpassant == other.enpassant and \
+                self.color == other.color
         
-        for y, row in enumerate(self.data):
-            for x, piece in enumerate(row):
-                oPiece = other.data[y][x]
-                if not piece and oPiece: return False
-                if not piece and not oPiece: continue
-                if not piece.__eq__(oPiece):
-                    return False
-        return True
-
     def clone (self):
         l = [[[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]], [[None], [None], [None], [None], [None], [None], [None], [None]]]
         for y, row in enumerate(self.data):
