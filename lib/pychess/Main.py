@@ -1,6 +1,5 @@
 
 import os, sys
-print os.path.abspath( os.path.dirname(__file__) )
 
 import pygtk
 pygtk.require("2.0")
@@ -10,16 +9,17 @@ import pango, gobject
 import webbrowser
 import atexit
 
-from pychess.System import ionest
+from pychess.widgets import ionest
 from pychess.System import myconf
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.System.Log import log
-from pychess.System import TipOfTheDay
-from pychess.System import LogDialog
+from pychess.widgets import tipOfTheDay
+from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
+from pychess.widgets.Background import Background
 
-from pychess.System.ionest import loadGame, newGame, saveGame, saveGameAs
+from pychess.widgets.ionest import loadGame, newGame, saveGame, saveGameAs
 
 gameDic = {}
 
@@ -60,7 +60,9 @@ class GladeHandlers:
     def on_page_added (handler, gmwidg):
         for widget in ("save_game1", "save_game_as1", "properties1", "close1", "action1", "vis1"):
             window[widget].set_property('sensitive', True)
-            
+        gmwidg.widgets["sidepanel"].connect("hide", \
+            lambda w: window["side_panel1"].set_active(False))
+        
     def on_page_removed (handler, gmwidg):
         del gameDic[gmwidg]
         if len (gameDic) == 0:
@@ -158,8 +160,11 @@ class GladeHandlers:
     def on_hint_mode_activate (widget):
         if not gameDic: return
 
-        def on_analyze (analyzer, moves, board):
-            board.view.greenarrow = moves[0].cords
+        def on_analyze (analyzer, moves, board, game):
+            player = board.view.history.curCol() and game.player2 or game.player1
+            if player.__type__ == LOCAL:
+                board.view.greenarrow = moves[0].cords
+            else: board.view.greenarrow = None
         def on_clear (history, board):
             board.view.greenarrow = None
         def on_reset (history, board):
@@ -170,15 +175,16 @@ class GladeHandlers:
             game = gameDic[gmwidg]
             board = gmwidg.widgets["board"]
             history = board.view.history
+            hintanalyzer = game.analyzers[0]
             
             if widget.get_active():
-                if len(game.analyzer.analyzeMoves) >= 1:
-                    board.view.greenarrow = game.analyzer.analyzeMoves[0].cords
-                game.hintconid0 = game.analyzer.connect("analyze", on_analyze, board)
+                if len(hintanalyzer.analyzeMoves) >= 1:
+                    board.view.greenarrow = hintanalyzer.analyzeMoves[0].cords
+                game.hintconid0 = hintanalyzer.connect("analyze", on_analyze, board, game)
                 game.hintconid1 = history.connect("changed", on_clear, board)
                 game.hintconid2 = history.connect("cleared", on_reset, board)
             else:
-                game.analyzer.disconnect(game.hintconid0)
+                hintanalyzer.disconnect(game.hintconid0)
                 history.disconnect(game.hintconid1)
                 history.disconnect(game.hintconid2)
                 board.view.greenarrow = None
@@ -186,30 +192,31 @@ class GladeHandlers:
     def on_spy_mode_activate (widget):
         if not gameDic: return
         
-        def on_analyze (analyzer, moves):
-            if len(analyzer.analyzeMoves) >= 2:
-                gmwidg = gamewidget.cur_gmwidg()
-                gmwidg.widgets["board"].view.redarrow = moves[1].cords
-        def on_clear (history):
-            gmwidg = gamewidget.cur_gmwidg()
-            gmwidg.widgets["board"].view.redarrow = None
-        def on_reset (history):
-            on_clear (history)
+        def on_analyze (analyzer, moves, board, game):
+            player = board.view.history.curCol() and game.player1 or game.player2
+            if player.__type__ == LOCAL:
+                board.view.redarrow = moves[0].cords
+            else: board.view.redarrow = None
+        def on_clear (history, board):
+            board.view.redarrow = None
+        def on_reset (history, board):
+            on_clear (history, board)
             window["spy_mode"].set_active(False)
         
         for gmwidg in gameDic.keys():
             game = gameDic[gmwidg]
             board = gmwidg.widgets["board"]
             history = board.view.history
+            spyanalyzer = game.analyzers[1]
             
             if widget.get_active():
-                if len(game.analyzer.analyzeMoves) >= 2:
-                    board.view.redarrow = game.analyzer.analyzeMoves[1].cords
-                game.spyconid0 = game.analyzer.connect("analyze", on_analyze)
-                game.spyconid1 = history.connect("changed", on_clear)
-                game.spyconid2 = history.connect("cleared", on_reset)
+                if len(spyanalyzer.analyzeMoves) >= 1:
+                    board.view.redarrow = spyanalyzer.analyzeMoves[0].cords
+                game.spyconid0 = spyanalyzer.connect("analyze", on_analyze, board, game)
+                game.spyconid1 = history.connect("changed", on_clear, board)
+                game.spyconid2 = history.connect("cleared", on_reset, board)
             else:
-                game.analyzer.disconnect(game.spyconid0)
+                spyanalyzer.disconnect(game.spyconid0)
                 board.view.history.disconnect(game.spyconid1)
                 board.view.history.disconnect(game.spyconid2)
                 board.view.redarrow = None
@@ -251,8 +258,7 @@ class GladeHandlers:
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
         
     def on_TipOfTheDayMenuItem_activate (widget):
-        myconf.set("show_tip_at_startup", True)
-        TipOfTheDay.TipOfTheDay()
+        tipOfTheDay.show()
     
     #          Other          #
     
@@ -296,8 +302,10 @@ class PyChess:
         makeLogDialogReady()
         makeAboutDialogReady()
         gamewidget.set_widgets(self)
-        gamewidget.handler.connect("page_added", GladeHandlers.__dict__["on_page_added"])
-        gamewidget.handler.connect("page_removed", GladeHandlers.__dict__["on_page_removed"])
+        gamewidget.handler.connect("page_added",
+            GladeHandlers.__dict__["on_page_added"])
+        gamewidget.handler.connect("page_removed",
+            GladeHandlers.__dict__["on_page_removed"])
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
@@ -311,24 +319,8 @@ class PyChess:
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
     
-    from UserDict import UserDict
-    class Files (UserDict):
-        def __getitem__(self, folder="./"):
-            folder = os.path.abspath(folder)
-            if not folder in self:
-                files = os.listdir(folder)
-                files = [f[:-3] for f in files if f[-3:] == ".py"]
-                self[folder] = files
-            return self.data[folder]
-    files = Files()
-    
-    def widgetHandler (self, glade, functionName, widgetName, str1, str2, int1, int2):
-        if widgetName in self.files["widgets"]:
-            module = __import__("widgets/"+widgetName, globals(), locals())
-            return getattr(module,widgetName)()
-        else:
-            log.error("Uncaught widget %s %s, %s %s %d %d" % \
-                    (functionName, widgetName, str1, str1, int1, int2))
+    def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
+        return Background()
 
 def run ():
     PyChess()

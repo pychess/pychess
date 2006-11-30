@@ -9,7 +9,7 @@ from pychess.Utils.eval import evaluateComplete
 
 from pychess.Players.Engine import EngineDead
 from pychess.Utils.const import *
-from pychess.Utils.protoopen import protoopen
+from pychess.System.protoopen import protoopen
 
 from pychess.widgets import gamewidget
 
@@ -18,7 +18,9 @@ profile = False
 
 class Game (GObject):
 
-    def __init__(self, gmwidg, history, analyzer, p1, p2, cc = None, seconds = 0, plus = 0):
+    def __init__(   self, gmwidg, history, analyzers,
+                    p1, p2, cc = None, seconds = 0, plus = 0):
+        
         GObject.__init__(self)
         
         self.gmwidg = gmwidg
@@ -29,7 +31,7 @@ class Game (GObject):
         self.history = history
         self.history.reset(mvlist=True)
         self.history.connect("game_ended", lambda h,s,c: self.gameEnded(s,c))
-        self.analyzer = analyzer
+        self.analyzers = analyzers
         
         self.lastSave = (None, "")
         
@@ -51,35 +53,38 @@ class Game (GObject):
         self.player1.connect("action", self._action)
         self.player2.connect("action", self._action)
     
-    def load (self, uri, loader):
+    def load (self, uri, gameno, position, loader):
         self.lastSave = (self.history.clone(), uri)
         ending = uri[uri.rfind(".")+1:]
-        tags = loader.load(protoopen(uri), self.history)
+        chessfile = loader.load(protoopen(uri))
+        
+        self.gmwidg.widgets["board"].view.autoUpdateShown = False
+        chessfile.loadToHistory(gameno, position, self.history)
+        self.gmwidg.widgets["board"].view.autoUpdateShown = True
+        self.gmwidg.widgets["board"].view.shown = len(self.history)-1
+        
         for player in self.players:
             if hasattr(player, "setBoard"):
                 player.setBoard(self.history)
-        self.analyzer.setBoard(self.history)
         
-        if "Event" in tags:
-            self.event = tags["Event"]
-        if "Site" in tags:
-            self.site = tags["Site"]
-        if "Round" in tags:
-            if tags["Round"].isdigit():
-                self.round = int(tags["Round"])
-        if "Date" in tags:
-             date = tags["Date"].split(".")
-             self.year, self.month, self.day = map(int, date)
+        for analyzer in self.analyzers:
+            analyzer.setBoard(self.history)
+        
+        self.event = chessfile.get_event(gameno)
+        self.site = chessfile.get_site(gameno)
+        self.round = chessfile.get_round(gameno)
+        self.year, self.month, self.day = chessfile.get_date(gameno)
     
     def save (self, path, saver):
         saver.save(open(path,"w"), self)
         lastSave = (self.history.clone(), path)
     
     def isChanged (self):
-        return not self.lastSave[1] or self.lastSave[0] != self.history
+        if len(self.history) <= 1: return False
+        return not os.path.isfile(self.lastSave[1]) or \
+                self.lastSave[0] != self.history
     
     def run (self):
-        #self.connect_after("game_ended", lambda g,stat,comm: self.kill())
         if not profile:
             thread.start_new(self._run, ())
         else:
@@ -132,15 +137,17 @@ class Game (GObject):
             if not self.history.add(move,True):
                 self.kill()
                 break
-
-            self.analyzer.makeMove(self.history)
+            
+            for analyzer in self.analyzers:
+                analyzer.makeMove(self.history)
                 
     def kill (self):
         self.gmwidg.setTabReady(False)
         self.run = False
         if self.player1: self.player1.__del__()
         if self.player2: self.player2.__del__()
-        if self.analyzer: self.analyzer.__del__()
+        for analyzer in self.analyzers:
+            analyzer.__del__()
         if self.chessclock: self.chessclock.stop()
     
     def gameEnded (self, stat, comment):

@@ -45,11 +45,11 @@ class Sidepanel:
         self.numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
         
         widgets.signal_autoconnect ({
-            "treeview1_selection_changed": lambda w: self.select_cursor_row(w,1), 
-            "treeview2_selection_changed": lambda w: self.select_cursor_row(w,2), 
-            "treeview3_selection_changed": lambda w: self.select_cursor_row(w,3),
-            "on_treeview2_key_press_event": lambda w,e: self.key_press_event(1,e),
-            "on_treeview3_key_press_event": lambda w,e: self.key_press_event(2,e)
+            "treeview1_selection_changed": lambda w:self.select_cursor_row(w,1), 
+            "treeview2_selection_changed": lambda w:self.select_cursor_row(w,2), 
+            "treeview3_selection_changed": lambda w:self.select_cursor_row(w,3),
+            "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
+            "on_treeview3_key_press_event":lambda w,e:self.key_press_event(2,e)
         })
         
         self.board = gmwidg.widgets["board"].view
@@ -69,10 +69,10 @@ class Sidepanel:
     def key_press_event (self, col, event):
         if event.keyval in leftkeys and col == 2:
             shown = self.board.shown - 1
-            w = left
+            w = self.left
         elif event.keyval in rightkeys and col == 1:
             shown = self.board.shown + 1
-            w = right
+            w = self.right
         else: return
         row = int((shown-1) / 2)
         def todo():

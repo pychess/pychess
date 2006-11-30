@@ -8,8 +8,13 @@ class Engine (Player):
     __type__ = ARTIFICIAL
    
     def setStrength (self, strength):
-        """Takes strength 0, 1, 2 (higher is better)"""
+        """ Takes strength 0, 1, 2 (higher is better) """
         abstract
+    
+    def setDepth (self, depth):
+        """ Sets the depth of the engine. Should only be used for analyze engines.
+            Other engines will use the setStrength method. """
+        pass
     
     def setTime (self, seconds, gain):
         abstract
