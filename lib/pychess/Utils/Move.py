@@ -52,7 +52,10 @@ class MovePool:
         if len(self.objects) <= 0:
             self.lock.release()
             return Move(cord0, cord1, promotion)
-            
+        
+        assert cord0
+        assert cord1
+        
         mv = self.objects.pop()
         mv.cord0 = cord0
         mv.cord1 = cord1
@@ -78,8 +81,8 @@ class Move:
     def __init__ (self, cord0, cord1, promotion=QUEEN):
         """(cord0, cord1, [promotion])"""
         
-        assert type(cord0) != int
-        assert type(cord1) != int
+        assert cord0
+        assert cord1
         
         self.cord0 = cord0
         self.cord1 = cord1
