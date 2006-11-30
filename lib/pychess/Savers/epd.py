@@ -56,61 +56,72 @@ def save (file, history):
     #Closing the file prevents us from using StringIO
     #file.close()
     
-def load (file, history):
-    data = None
+def load (file):
+    games = []
     for line in file:
         if line.strip():
-            data = line.strip()
-            break
-    if not data:
-        return
-    
-    data = data.split(" ")
-    if len(data) < 4:
-        return
-    
-    history.reset(mvlist=False)
-    
-    rows = []
-    for row in data[0].split("/"):
-        rows.append([])
-        for c in row:
-            if c.isdigit():
-                rows[-1] += [None]*int(c)
-            else:
-                color = c.islower() and BLACK or WHITE
-                rows[-1].append(Piece(color, c.lower()))
-    rows.reverse()
-    board = Board(rows)
-    
-    starter = data[1].lower()
-    startc = starter == "b" and WHITE or BLACK
-    
-    if data[3] != "-":
-        if history.curCol() == startc:
-            history.setStartingColor(BLACK)
-    
-        c = Cord(data[3])
-        dy = startc == WHITE and -1 or 1
-        lastb = board.clone()
-        c0 = Cord(c.x,c.y-dy)
-        c1 = Cord(c.x,c.y+dy)
-        lastb[c0] = lastb[c1]
-        lastb[c1] = None
-        
-        history.boards = [lastb]
-        history.add(Move(history,c0,c1), mvlist=True)
+            games.append(line.strip())
+    return EpdFile (games)
 
-    else:
-        if history.curCol() != startc:
-            history.setStartingColor(BLACK)
-            
-        history.boards = [board]
-        history.movelist.append(validator.findMoves(history))
-        history.emit("changed")
-        
-    dic = {"K": WHITE_OO, "Q": WHITE_OOO, "k": BLACK_OO, "q": BLACK_OOO}
-    for char in data[2]:
-        if char in dic:
-            history.castling |= dic[char]
+from ChessFile import ChessFile
+
+class EpdFile (ChessFile):
     
+    def loadToHistory (self, gameno, position, history=None):
+        if not history: history = History(mvlist=False)
+        else: history.reset(mvlist=False)
+        
+        data = self.games[gameno].split(" ")
+        if len(data) < 4:
+            return
+        
+        rows = []
+        for row in data[0].split("/"):
+            rows.append([])
+            for c in row:
+                if c.isdigit():
+                    rows[-1] += [None]*int(c)
+                else:
+                    color = c.islower() and BLACK or WHITE
+                    sign = reprSign.index(c.upper())
+                    rows[-1].append(Piece(color, sign))
+        rows.reverse()
+        board = Board(rows)
+        
+        starter = data[1].lower()
+        startc = starter == "b" and WHITE or BLACK
+        
+        if data[3] != "-":
+            if history.curCol() == startc:
+                history.setStartingColor(BLACK)
+        
+            c = Cord(data[3])
+            dy = startc == WHITE and -1 or 1
+            lastb = board.clone()
+            c0 = Cord(c.x,c.y-dy)
+            c1 = Cord(c.x,c.y+dy)
+            lastb[c0] = lastb[c1]
+            lastb[c1] = None
+            
+            history.boards = [lastb]
+            history.add(Move(c0,c1), mvlist=True)
+    
+        else:
+            if history.curCol() != startc:
+                history.setStartingColor(BLACK)
+                
+            history.boards = [board]
+            history[-1].movelist = validator.findMoves(history[-1])
+            history.emit("changed")
+        
+        if position != -1:
+            history.boards = history.boards[:position+1]
+            if not history[-1].movelist:
+                history[-1].movelist = validator.findMoves(history[-1])
+        
+        dic = {"K": WHITE_OO, "Q": WHITE_OOO, "k": BLACK_OO, "q": BLACK_OOO}
+        for char in data[2]:
+            if char in dic:
+                history[-1].castling |= dic[char]
+        
+        return history

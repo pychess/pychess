@@ -1,7 +1,8 @@
 from pychess.Utils.History import History
-from pychess.Utils.Move import Move, parseSAN, toSAN
+from pychess.Utils.Move import *
 from pychess.Utils.const import *
 from pychess.System.Log import log
+import datetime
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -67,9 +68,11 @@ import re
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})\s")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
-def load (file, history):
+
+def load (file):
     files = []
     inTags = False
+    
     for line in file:
         line = line.lstrip()
         if not line: continue
@@ -84,26 +87,92 @@ def load (file, history):
         else:
             inTags = False
             files[-1][1] += line
+            
+    return PGNFile (files)
 
-    myFile = files[0]
+from ChessFile import ChessFile
+
+class PGNFile (ChessFile):
     
-    try:
-        tags = dict(tagre.findall(myFile[0]))
-        moves = comre.sub("", myFile[1])
+    def __init__ (self, games):
+        ChessFile.__init__(self, games)
+        self.tagcache = {}
+    
+    def _parseMoves (self, gameno):
+        moves = comre.sub("", self.games[gameno][1])
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
         if moves and moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
-            #TODO Save this result
             del moves[-1]
-    except:
-        log.error("Couldn't parse pgn file: %s" % repr(file))
-        log.debug("Part tried to parse: %s" % repr(myFile))
-        raise
+        return moves
+        
+    def loadToHistory (self, gameno, position, history=None):
+        moves = self._parseMoves (gameno)
+        if not history: history = History()
+                
+        for i, movestr in enumerate(moves):
+            
+            if position != -1 and i >= position: break
+            
+            try: m = parseSAN (history[-1], movestr)
+            except ParsingError:
+                try: m = parseLAN (history[-1], movestr)
+                except ParsingError:
+                    try: m = parseAN (history[-1], movestr)
+                    except ParsingError:
+                        continue
+            
+            if i+1 < len(moves) and (position == -1 or i+1 < position):
+                history.add(m, False)
+            else: history.add(m, True)
+            
+        return history
     
-    history.reset(False)
-    for i, move in enumerate(moves):
-        m = parseSAN(history[-1], move)
-        if i+1 < len(moves):
-            history.add(m, False)
-        else: history.add(m, True)
-    return tags
+    def _getTag (self, gameno, tagkey):
+        if gameno in self.tagcache:
+            if tagkey in self.tagcache[gameno]:
+                return self.tagcache[gameno][tagkey]
+            else: return None
+        else:
+            self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
+            return self._getTag(gameno, tagkey)
+    
+    def get_player_names (self, no):
+        p1 = self._getTag(no,"White") and self._getTag(no,"White") or "Unknown"
+        p2 = self._getTag(no,"Black") and self._getTag(no,"Black") or "Unknown"
+        return (p1, p2)
+    
+    def get_elo (self, no):
+        p1 = self._getTag(no,"WhiteElo") and self._getTag(no,"WhiteElo") or "1600"
+        p2 = self._getTag(no,"BlackElo") and self._getTag(no,"BlackElo") or "1600"
+        p1 = p1.isdigit() and int(p1) or 1600
+        p2 = p2.isdigit() and int(p2) or 1600
+        return (p1, p2)
+    
+    def get_date (self, no):
+        date = self._getTag(no,"Date")
+        today = datetime.date.today()
+        if not date:
+            return today.timetuple()[:3]
+        return [ s.isdigit() and int(s) or today.timetuple()[i] \
+                 for i,s in enumerate(date.split(".")) ]
+    
+    def get_site (self, no):
+        return self._getTag(no,"Site") and self._getTag(no,"Site") or "?"
+    
+    def get_event (self, no):
+        return self._getTag(no,"Event") and self._getTag(no,"Event") or "?"
+    
+    def get_round (self, no):
+        round = self._getTag(no,"Round")
+        if not round: return 1
+        if round.find(".") >= 1:
+            round = round[:round.find(".")]
+        if not round.isdigit(): return 1
+        return int(round)
+        
+    def get_result (self, no):
+        pgn2Const = {"*":RUNNING, "1/2-1/2":DRAW, "1-0":WHITEWON, "0-1":BLACKWON}
+        if self._getTag(no,"Result") in pgn2Const:
+            return pgn2Const[self._getTag(no,"Result")]
+        return RUNNING

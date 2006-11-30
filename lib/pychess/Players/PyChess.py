@@ -10,6 +10,7 @@ from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.validator import findMoves2
 from pychess.System.ThreadPool import pool
+from pychess.System.LimitedDict import LimitedDict
 
 import random
 def getBestOpening (board):
@@ -44,6 +45,8 @@ class PyChessEngine (Engine):
         self.analyzeLock = Lock()
         self.analyzeMoves = []
         
+        self.transpositionTable = LimitedDict(5000)
+        
         self.alive = True
         
     def makeMove (self, history):
@@ -57,12 +60,16 @@ class PyChessEngine (Engine):
         if omove: return parseSAN(history[-1],omove)
 
         if self.secs <= 0:
-            mvs, score = alphaBeta(self, history[-1], self.depth, -9999, 9999)
+            mvs, score = alphaBeta( self, self.transpositionTable,
+                                    history[-1], self.depth, -9999, 9999)
+            if history[-1][mvs[0].cord0].color != self.color:
+                raise Exception, "Tried to make illigal move. %s %s" % (str(mvs),str(history[-1]))
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
             for d in range(self.depth):
-                mvs, score = alphaBeta(self, history[-1], d+1, -9999, 9999)
+                mvs, score = alphaBeta( self, self.transpositionTable,
+                                        history[-1], d+1, -9999, 9999)
                 if time() > endtime:
                     break
 
@@ -82,6 +89,9 @@ class PyChessEngine (Engine):
         elif strength == 2:
             self.depth = 3
     
+    def setDepth (self, depth):
+        self.depth = depth
+    
     def setTime (self, secs, gain):
         self.secs = secs
         self.gain = gain
@@ -98,14 +108,16 @@ class PyChessEngine (Engine):
         self.analyzeLock.acquire()
         del self.analyzeMoves[:]
         
-        mvs, score = alphaBeta(self, history[-1], 1, -9999, 9999)
+        mvs, score = alphaBeta( self, self.transpositionTable,
+                                history[-1], 1, -9999, 9999)
         self.analyzeMoves = mvs
         if mvs:
             self.emit("analyze", mvs)
         # TODO: When PyChess is put in its own process,
         # this should be turned into a loop, seaking deeper and deeper
         if len(history) == self.analyzingBoard:
-            mvs, score = alphaBeta(self, history[-1], 2, -9999, 9999)
+            mvs, score = alphaBeta( self, self.transpositionTable,
+                                    history[-1], 2, -9999, 9999)
             self.analyzeMoves = mvs
             if mvs:
                 self.emit("analyze", mvs)
@@ -117,51 +129,47 @@ class PyChessEngine (Engine):
     def __kill__ (self):
         self.alive = False
     
-def moves (board):
-    #if history.movelist[-1] == None:
-    for m in findMoves2(board):
-        yield m
-    #else:
-    #    for cord0, cord1s in history.movelist[-1].iteritems():
-    #        for cord1 in cord1s:
-    #            try:
-    #                yield movePool.pop(history,cord0,cord1)
-    #            except:
-    #                pass
-
-def alphaBeta (engine, board, depth, alpha, beta, capture=False):
+def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
     
     foundPv = False
     amove = []
-
+    
+    if table.has_key(board.myhash):
+        return table[board.myhash]
+    
     if depth <= 0 and not capture:
         return [], eval.evaluateComplete(board, board.color)
     if not engine.alive:
         return [], 0
     
     move = None
-    # TODO: Could this stuff be hashed,
-    # so pychess always new what to do in a certain position?
-    # TODO: No kind of endgame test
-    for move in moves(board):
-        board2 = board.move(move)
+    for move in findMoves2(board):
+        try:
+            board2 = board.move(move)
+        except AttributeError:
+            print board, move
+            raise
         
         if depth < 5 and board[move.cord1] != None:
             tempcapture = True
         else: tempcapture = False
         
         if foundPv:
-            mvs, val = alphaBeta(engine, board2, depth-1, -alpha-1, -alpha, tempcapture)
+            mvs, val = alphaBeta ( engine, table, board2, depth-1,
+                                   -alpha-1, -alpha, tempcapture)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
-                mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha, tempcapture)
+                mvs, val = alphaBeta ( engine, table, board2, depth-1,
+                                       -beta, -alpha, tempcapture)
                 val = -val
         else:
-            mvs, val = alphaBeta(engine, board2, depth-1, -beta, -alpha, tempcapture)
+            mvs, val = alphaBeta ( engine, table, board2, depth-1,
+                                   -beta, -alpha, tempcapture)
             val = -val
         
         if val >= beta:
+            table[board.myhash] = ([move]+mvs, beta)
             return [move]+mvs, beta
 
         if val > alpha:
@@ -174,4 +182,5 @@ def alphaBeta (engine, board, depth, alpha, beta, capture=False):
 
     if amove: return amove, alpha
     if not move: return [], alpha
+    table[board.myhash] = ([move], alpha)
     return [move], alpha

@@ -12,7 +12,8 @@ from pychess.System.Log import log
 from pychess.Utils.const import *
 from time import time
 
-range8 = range(8)
+# this ordering cut down ab search from a 2-level search of 134 to 80
+range8 = (3, 4, 2, 5, 1, 6, 0, 7)
 
 def validate (move, board, testCheck=True):
     """ Tests if "move" is a legal move on board "board"
