@@ -56,14 +56,16 @@ class PyChessEngine (Engine):
             pool.start(self.runAnalyze, history)
             return None
             
-        omove = getBestOpening(history[-1])
-        if omove: return parseSAN(history[-1],omove)
+        #omove = getBestOpening(history[-1])
+        #if omove: return parseSAN(history[-1],omove)
 
         if self.secs <= 0:
             mvs, score = alphaBeta( self, self.transpositionTable,
                                     history[-1], self.depth, -9999, 9999)
-            if history[-1][mvs[0].cord0].color != self.color:
-                raise Exception, "Tried to make illigal move. %s %s" % (str(mvs),str(history[-1]))
+            global last
+            if not history[-1][mvs[0].cord0] or \
+                    history[-1][mvs[0].cord0].color != self.color:
+                raise Exception, "Tried to make illigal move. %s %s %d" % (str(mvs),str(history[-1]), last)
         else:
             usetime = self.secs/30+self.gain
             endtime = time() + usetime
@@ -128,19 +130,21 @@ class PyChessEngine (Engine):
     
     def __kill__ (self):
         self.alive = False
-    
+
+last = 0
+
 def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
-    
+    global last
     foundPv = False
     amove = []
     
-    if table.has_key(board.myhash):
-        return table[board.myhash]
+    if table.has_key(board):
+        last = -1; return table[board]
     
     if depth <= 0 and not capture:
-        return [], eval.evaluateComplete(board, board.color)
+        last = 1; return [], eval.evaluateComplete(board, board.color)
     if not engine.alive:
-        return [], 0
+        last = 2; return [], 0
     
     move = None
     for move in findMoves2(board):
@@ -150,6 +154,7 @@ def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
             print board, move
             raise
         
+        assert depth < 5
         if depth < 5 and board[move.cord1] != None:
             tempcapture = True
         else: tempcapture = False
@@ -169,8 +174,8 @@ def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
             val = -val
         
         if val >= beta:
-            table[board.myhash] = ([move]+mvs, beta)
-            return [move]+mvs, beta
+            table[board] = ([move]+mvs, beta)
+            last = 3; return [move]+mvs, beta
 
         if val > alpha:
             map(movePool.add, amove)
@@ -179,8 +184,9 @@ def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
             foundPv = True
         else:
             map(movePool.add, mvs)
-
-    if amove: return amove, alpha
-    if not move: return [], alpha
-    table[board.myhash] = ([move], alpha)
-    return [move], alpha
+    
+    if amove: last = 4; result = (amove, alpha)
+    elif not move: last = 5; result = ([], alpha)
+    else: last = 6; result = ([move], alpha)
+    table[board] = result
+    return result
