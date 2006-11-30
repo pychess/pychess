@@ -1,7 +1,7 @@
 import gtk, pango, os.path
 
-from Log import log
-from Log import DEBUG, LOG, WARNING, ERROR
+from pychess.System.Log import log
+from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
 from pychess.Utils.const import prefix
 
 w = gtk.Window()

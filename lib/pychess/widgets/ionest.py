@@ -11,6 +11,7 @@ from pychess.Players.Human import Human
 from pychess.Savers import *
 from pychess import Savers
 from pychess.widgets import gamewidget
+from pychess.widgets import BoardPreview
 
 widgets = gtk.glade.XML(prefix("glade/newInOut.glade"))
 class WidgetDic:
@@ -68,8 +69,10 @@ for label, endings in types:
     opendialog.add_filter(f)
 
 filechooserbutton = gtk.FileChooserButton(opendialog)
-widgets["ngfcalignment"].add(filechooserbutton)
+loadSidePanel = BoardPreview.BoardPreview()
+loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
 filechooserbutton.show()
+widgets["loadsidepanel"].add(loadSidePanel)
 
 #
 # Initing newGame dialog
@@ -78,13 +81,13 @@ filechooserbutton.show()
 isMakeNewGameDialogReady = False
 def makeNewGameDialogReady ():
     
-    # makeNewGameDialogReady uses lazy initializing,
-    # to let engines have as much time as possible to figuere out there names.
+    # makeNewGameDialogReady uses lazy initializing to let the
+    # engines have as much time as possible to figuere out there names.
     global isMakeNewGameDialogReady
     if isMakeNewGameDialogReady:
         return
     isMakeNewGameDialogReady = True
-
+    
     def createCombo (combo, data):
         ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
         for icon, label in data:
@@ -105,7 +108,7 @@ def makeNewGameDialogReady ():
     icons = ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
              (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
              (_("Expert"), "stock_weather-storm", "weather-storm"))
-                
+    
     items = []
     for level, stock, altstock in icons:
         try:
@@ -166,18 +169,12 @@ def runNewGameDialog (hideFC=True):
     if hideFC:
         widgets["loadsidepanel"].hide()
     else: widgets["loadsidepanel"].show()
-
+    
     res = widgets["newgamedialog"].run()
     widgets["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
     
-    #for widget in ("save_game1", "save_game_as1", "properties1", "close1"):
-    #    if not widgets[widget]: print repr(widget)
-    #    widgets[widget].set_property('sensitive', True)
-        
     gmwidg = gamewidget.createGameWidget("")
-    gmwidg.widgets["sidepanel"].connect("hide", \
-        lambda w: widgets["side_panel1"].set_active(False))
     ccalign = gmwidg.widgets["ccalign"]
     
     if widgets["useTimeCB"].get_active():
@@ -219,14 +216,26 @@ def runNewGameDialog (hideFC=True):
                                         if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
         # We assume that the Pychess engine is the last of the list
-        engine, args = random.choice(anaengines[:-1])
-    else: engine, args = anaengines[0]
-    analyzer = engine(args, WHITE)
-    analyzer.analyze()
-    log.debug("Analyzer: %s\n" % repr(analyzer))
+        #anaengines[:-1]
+        engine0, args0 = anaengines[-2]
+        engine1, args1 = anaengines[-2]
+    else:
+        engine0, args0 = anaengines[0]
+        engine1, args1= anaengines[0]
+    
+    hintanalyzer = engine0 (args0, WHITE)
+    hintanalyzer.setDepth(2)
+    hintanalyzer.analyze(inverse=False)
+    log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
+    
+    spyanalyzer = engine1 (args1, WHITE)
+    spyanalyzer.setDepth(2)
+    spyanalyzer.analyze(inverse=True)
+    log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
 
     history = gmwidg.widgets["board"].view.history
-    game = Game(gmwidg, history, analyzer, players[0], players[1], clock, secs, gain)
+    game = Game( gmwidg, history, (hintanalyzer, spyanalyzer),
+                 players[0], players[1], clock, secs, gain )
     
     gmwidg.connect("closed", closeGame, game)
     
@@ -241,6 +250,7 @@ def runNewGameDialog (hideFC=True):
 #
 
 def newGame ():
+    widgets["newgamedialog"].set_title("New Game")
     game, gmwidg = runNewGameDialog()
     if game:
         game.run()
@@ -252,16 +262,19 @@ def loadGame (path = None):
     if not path:
         res = opendialog.run()
         opendialog.hide()
-        if res != gtk.RESPONSE_ACCEPT: return
+        if res != gtk.RESPONSE_ACCEPT: return None, None
         uri = opendialog.get_uri()
     
     filechooserbutton.set_uri(uri)
+    widgets["newgamedialog"].set_title("Open Game")
     game, gmwidg = runNewGameDialog(hideFC=False)
     
     if game:
         uri = filechooserbutton.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
-        game.load(uri, loader)
+        
+        game.load (uri, loadSidePanel.get_gameno(),
+                   loadSidePanel.get_position(), loader)
         game.run()
         return game, gmwidg
         

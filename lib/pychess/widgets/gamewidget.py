@@ -197,7 +197,7 @@ def createGameWidget (title):
     hbox.pack_end(gtk.Label(title))
     
     headchild = gtk.HSeparator()
-    hbox.show_all() # Gtk doesn't show tablabels when the rest is show_all'ed
+    hbox.show_all() # Gtk doesn't show tab labels when the rest is show_all'ed
     headbook.append_page(headchild, hbox)
     headbook.set_tab_reorderable(headchild, True)
     

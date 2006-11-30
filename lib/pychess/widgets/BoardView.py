@@ -75,6 +75,8 @@ class BoardView (gtk.DrawingArea):
         self.lastShown = None
         self.deadlist = []
         
+        self.autoUpdateShown = True
+        
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = None # An object global variable with the current board size
         self.pad = 0.13 # Used when setcords is active
@@ -90,9 +92,11 @@ class BoardView (gtk.DrawingArea):
         self.lastMove = None
         
     def move (self, history):
-        if self.shown+2 < len(history):
-            return
-        self.shown = len(history)-1
+        # Updating can be disabled. Useful for loading games.
+        # If we are not at the latest game we are probably browsing the history,
+        # and we won't like auto updating.
+        if self.autoUpdateShown and self.shown+2 >= len(history):
+            self.shown = len(history)-1
     
     def reset (self, history):
         self.shown = 0
@@ -130,16 +134,17 @@ class BoardView (gtk.DrawingArea):
                         continue
                     if piece != board1.data[y][x]:
                         if step > 0 and (board1.data[y][x] != None or \
-                           0 < y < 7 and \
-                           board0.enpassant == Cord (x, y + (board0.color == WHITE and 1 or -1)) and \
-                           board1[board0.enpassant] != None):
+                                0 < y < 7 and board0.enpassant == \
+                                Cord (x,y+(board0.color == WHITE and 1 or -1)) \
+                                and board1[board0.enpassant] != None):
                             # A piece is dying
+                            piece.x = None
+                            piece.y = None
                             self.deadlist.append((piece,x,y))
                         else:
                             # It has moved
                             piece.x = x
                             piece.y = y
-                    
         
         self._shown = shown
         self.emit("shown_changed", self.shown)

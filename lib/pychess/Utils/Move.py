@@ -148,8 +148,10 @@ def parseSAN (board, san):
     if notat:
         cord1 = Cord(notat)
     from pychess.Utils.validator import getMovePointingAt
+
     cord0 = getMovePointingAt(board, cord1, color, sign, row, col)
-    if not cord0: raise ParsingError, "Unable to parse sanmove %s" % san
+    if not cord0:
+        raise ParsingError, "Unable to parse sanmove %s" % san
     
     return movePool.pop (cord0, cord1, promotion)
     
@@ -170,7 +172,10 @@ def parseLAN (board, lan):
     
     if lan.find("-") >= 0:
         c0, c1 = lan.split("-")
-    else: c0, c1 = lan.split("x")
+    elif lan.find("x") >= 0:
+        c0, c1 = lan.split("x")
+    else: raise ParsingError, "Unable to parse lanmove %s.\
+                               It should contain '-' or 'x'" % lan
     
     if len(c0) == 3: c0 = c0[1:]
     
@@ -178,14 +183,24 @@ def parseLAN (board, lan):
         c1 = c1[:2]
         promotion = chr2Sign[c1[-1]]
     
+    try:
+        c0 = Cord(c0)
+        c1 = Cord(c1)
+    except:
+        raise ParsingError, "Unable to parse lanmove %s" % lan
+    
     return movePool.pop (Cord(c0), Cord(c1), promotion)
 
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
-    if not 4 <= len(an) <= 5: raise ValueError, "Bad an move, %s" % an
-    c0 = Cord(an[:2])
-    c1 = Cord(an[2:4])
-    
+    if not 4 <= len(an) <= 5:
+        raise ParsingError, "Bad an move, %s. Too short" % an
+    try:
+        c0 = Cord(an[:2])
+        c1 = Cord(an[2:4])
+    except:
+        raise ParsingError, "Bad an move, %s" % an
+        
     if len(an) == 5:
         return movePool.pop(c0, c1, chr2Sign[an[4]])
     return movePool.pop(c0, c1)
