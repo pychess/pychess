@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=PyChess
+GenericName=Chess Game
+Icon=pychess
+Exec=pychess
+Terminal=false
+Categories=Application;Game;BoardGame;
