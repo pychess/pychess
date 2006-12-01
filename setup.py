@@ -40,20 +40,28 @@ CLASSIFIERS = [
     'Translations :: Dutch'
 ]
 
-os.chdir(os.path.abspath(os.path.split(__file__)[0]))
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
-DATA_FILES = [("", ["README", "AUTHORS", "LICENSE", "INSTALL", "open.db"])]
+DATA_FILES = [("share/games/pychess/",
+    ["README", "AUTHORS", "LICENSE", "INSTALL", "open.db"])]
 
 # UI
-DATA_FILES += [("glade", glob('glade/*.glade'))]
-DATA_FILES += [("glade", glob('glade/*.png'))]
+DATA_FILES += [("share/games/pychess/glade", glob('glade/*.glade'))]
+DATA_FILES += [("share/games/pychess/glade", glob('glade/*.png'))]
 
 # Sidepanel (not a package)
-DATA_FILES += [("sidepanel", glob('sidepanel/*.glade'))]
-DATA_FILES += [("sidepanel", glob('sidepanel/*.py'))]
+DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
+DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.py'))]
+
+# Data
+
+DATA_FILES += [('share/applications', ['pychess.desktop'])]
+DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 
 # Main modules
-DATA_FILES += [("", glob("*.py"))]
+#DATA_FILES += [("", glob("*.py"))]
+
+# Language
 
 langdirs = []
 for dir in [os.path.join("lang",f) for f in listdir("lang")]:
@@ -75,8 +83,12 @@ if isfile ("MANIFEST.in"):
 if isfile ("MANIFEST"):
 	os.remove ("MANIFEST")
 
+# Packages
+
 PACKAGES = ["pychess", "pychess.gfx", "pychess.Players", "pychess.Savers",
             "pychess.System", "pychess.Utils", "pychess.widgets"]
+
+# Setup
 
 setup (
     name             = 'PyChess',

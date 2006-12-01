@@ -1,5 +1,5 @@
 include glade/*.glade glade/*.png
-include README AUTHORS LICENSE, INSTALL
+include README AUTHORS LICENSE INSTALL
 include sidepanel/*.py sidepanel/*.glade
 include MANIFEST.in
 include open.db
