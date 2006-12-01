@@ -294,6 +294,8 @@ def evalCastling (board):
     if pieceCount <= 6:
         return 0
     
+    return 0 # Taken out because of causing bad play
+    
     score = 0
     
     for color, mod in ((WHITE,1),(BLACK,-1)):
