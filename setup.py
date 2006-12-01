@@ -4,11 +4,15 @@
 import gettext
 gettext.install("pychess", localedir="lang", unicode=1)
 
-from lib.pychess.System import myconf
-from lib.pychess.Utils.const import VERSION
+import imp
+VERSION = imp.load_module("const",
+          *imp.find_module("const",["lib/pychess/Utils"])).VERSION
 
-myconf.set("combobox6", 1)
-myconf.set("spinbuttonM", 10)
+#from pychess.System import myconf
+#from pychess.Utils.const import VERSION
+
+#myconf.set("combobox6", 1)
+#myconf.set("spinbuttonM", 10)
 
 from distutils.core import setup
 from glob import glob
@@ -38,7 +42,7 @@ CLASSIFIERS = [
 
 os.chdir(os.path.abspath(os.path.split(__file__)[0]))
 
-DATA_FILES = [("", ["README", "AUTHORS", "LICENSE"])]
+DATA_FILES = [("", ["README", "AUTHORS", "LICENSE", "INSTALL", "open.db"])]
 
 # UI
 DATA_FILES += [("glade", glob('glade/*.glade'))]
@@ -50,9 +54,6 @@ DATA_FILES += [("sidepanel", glob('sidepanel/*.py'))]
 
 # Main modules
 DATA_FILES += [("", glob("*.py"))]
-
-# Opening book
-DATA_FILES += [("Utils", glob('Utils/open.db'))]
 
 langdirs = []
 for dir in [os.path.join("lang",f) for f in listdir("lang")]:
@@ -74,7 +75,8 @@ if isfile ("MANIFEST.in"):
 if isfile ("MANIFEST"):
 	os.remove ("MANIFEST")
 
-PACKAGES = ["gfx", "Players", "Savers", "System", "Utils", "widgets"]
+PACKAGES = ["pychess", "pychess.gfx", "pychess.Players", "pychess.Savers",
+            "pychess.System", "pychess.Utils", "pychess.widgets"]
 
 setup (
     name             = 'PyChess',
@@ -87,6 +89,7 @@ setup (
     license          = 'GPL2',
     url              = 'http://pychess.googlepages.com/home',
     download_url     = 'http://gnomefiles.org/app.php/pychess',
+    package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
     scripts          = ['pychess']
