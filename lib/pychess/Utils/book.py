@@ -1,7 +1,8 @@
 from pychess.Utils.const import *
 import os.path
 from pychess.System import tsqlite
-path = os.path.join(os.path.split(__file__)[0], "open.db")
+from pychess.Utils.const import prefix
+path = os.path.join(prefix("open.db"))
 tsqlite.connect(path)
 
 import atexit

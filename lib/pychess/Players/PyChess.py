@@ -55,14 +55,17 @@ class PyChessEngine (Engine):
             self.analyzingBoard = len(history)
             pool.start(self.runAnalyze, history)
             return None
-            
-        #omove = getBestOpening(history[-1])
-        #if omove: return parseSAN(history[-1],omove)
+        
+        if len(history) < 10:
+            #TODO: Length info should be put in the book
+            omove = getBestOpening(history[-1])
+            if omove: return parseSAN(history[-1],omove)
 
         if self.secs <= 0:
             mvs, score = alphaBeta( self, self.transpositionTable,
                                     history[-1], self.depth, -9999, 9999)
             global last
+            print "Returned by", last
             if not history[-1][mvs[0].cord0] or \
                     history[-1][mvs[0].cord0].color != self.color:
                 raise Exception, "Tried to make illigal move. %s %s %d" % (str(mvs),str(history[-1]), last)
