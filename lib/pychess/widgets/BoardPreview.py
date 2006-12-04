@@ -3,7 +3,7 @@
 import gtk, gtk.glade
 from gobject import idle_add
 from time import sleep
-from pychess.Utils.const import prefix, reprResult
+from pychess.Utils.const import prefix, reprResult, BLACK
 from pychess.System.WidgetDic import WidgetDic
 from pychess.System.protoopen import protoopen
 from pychess.widgets.BoardView import BoardView
@@ -54,18 +54,9 @@ class BoardPreview (gtk.Alignment):
         self.widgets["forward_button"].connect("clicked", self.on_forward_button)
         self.widgets["last_button"].connect("clicked", self.on_last_button)
         
-        # First redraw of BoardView
+        # Connect label showing possition
         
-        #self.firstTime = True
-        #def do (*args):
-        #    if not self.firstTime: return
-        #    if not self.widgets["BoardView"].square:
-        #        idle_add(do)
-        #        return
-        #    self.widgets["BoardView"].shown = \
-        #            len(self.widgets["BoardView"].history)-1
-        #    self.firstTime = False
-        #self.connect_after("expose_event", do)
+        self.widgets["BoardView"].connect('shown_changed', self.shown_changed)
         
         # Adding glade widget to self
         
@@ -84,8 +75,11 @@ class BoardPreview (gtk.Alignment):
         # Well, this will crash if runned twice...
         self.widgets["ngfcalignment"].add(fcbutton)
         opendialog.connect("file-activated", self.on_file_activated, enddir)
-    
+        
     def on_file_activated (self, dialog, enddir):
+        
+        print dialog.get_uri()
+        
         uri = dialog.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
         ending = uri[uri.rfind(".")+1:]
@@ -121,7 +115,7 @@ class BoardPreview (gtk.Alignment):
         self.widgets["BoardView"].autoUpdateShown = True
         # As the event might have been sent before everything in the dialog was
         # painted, we have to wait for self.widgets["BoardView"].square to
-        # initialize. Ugly - yes
+        # initialize. Ugly? - sure
         def do():
             if not self.widgets["BoardView"].square:
                 sleep(0.05)
@@ -142,6 +136,13 @@ class BoardPreview (gtk.Alignment):
     def on_last_button (self, button):
         self.widgets["BoardView"].shown = \
             len(self.widgets["BoardView"].history)-1
+    
+    def shown_changed (self, boardView, shown):
+        pos = str((shown-1)/2+1) + "."
+        if len(boardView.history) % 2 != shown % 2 and \
+                boardView.history.curCol() != BLACK:
+            pos += ".."
+        self.widgets["posLabel"].set_text(pos)
     
     def get_position (self):
         return self.widgets["BoardView"].shown

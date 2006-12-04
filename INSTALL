@@ -8,3 +8,6 @@ To install to disk
 
 To see other install options/formats:
 $ python setup.py --help-commands
+
+To run unittest for pychess run
+$ PYTHONPATH=lib/ testing/unittest.py

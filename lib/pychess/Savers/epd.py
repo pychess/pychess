@@ -1,4 +1,4 @@
-from pychess.Utils.History import History, startBoard, WHITE_OO, WHITE_OOO, BLACK_OO, BLACK_OOO
+from pychess.Utils.History import History, startBoard
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
@@ -89,39 +89,42 @@ class EpdFile (ChessFile):
         board = Board(rows)
         
         starter = data[1].lower()
-        startc = starter == "b" and WHITE or BLACK
+        startc = starter == "b" and BLACK or WHITE
         
         if data[3] != "-":
-            if history.curCol() == startc:
-                history.setStartingColor(BLACK)
-        
             c = Cord(data[3])
             dy = startc == WHITE and -1 or 1
-            lastb = board.clone()
+            data = board.clone().data
             c0 = Cord(c.x,c.y-dy)
             c1 = Cord(c.x,c.y+dy)
-            lastb[c0] = lastb[c1]
-            lastb[c1] = None
+            data[c0.y][c0.x] = data[c1.y][c1.x]
+            data[c1.y][c1.x] = None
+            oldboard = Board(data)
             
-            history.boards = [lastb]
-            history.add(Move(c0,c1), mvlist=True)
-    
+            history.boards = [oldboard, board]
+            history.moves = [Move(c0,c1)]
         else:
-            if history.curCol() != startc:
-                history.setStartingColor(BLACK)
-                
             history.boards = [board]
-            history[-1].movelist = validator.findMoves(history[-1])
-            history.emit("changed")
         
         if position != -1:
+            if (len(history.boards[:position+1]) - len(history.boards)) % 2 != 0:
+                startc = 1-startc
             history.boards = history.boards[:position+1]
-            if not history[-1].movelist:
-                history[-1].movelist = validator.findMoves(history[-1])
+            history.moves = history.moves[:position]
+        
+        if history.curCol() != startc:
+            history.setStartingColor(BLACK)
+        else:
+            history.setStartingColor(WHITE)
+        
+        history[-1].movelist = validator.findMoves(history[-1])
         
         dic = {"K": WHITE_OO, "Q": WHITE_OOO, "k": BLACK_OO, "q": BLACK_OOO}
         for char in data[2]:
             if char in dic:
                 history[-1].castling |= dic[char]
+        
+        if len(history) > 1:
+            history.emit("changed")
         
         return history
