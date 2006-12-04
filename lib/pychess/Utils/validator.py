@@ -5,7 +5,6 @@
     and to detect the status of the game
 """
 
-from pychess.Utils.History import hisPool
 from pychess.Utils.Move import Move, movePool
 from pychess.Utils.Cord import Cord
 from pychess.System.Log import log
@@ -295,8 +294,6 @@ def genQueen (cord, board):
     for move in genBishop (cord, board):
         yield move
 
-sign2gen = [genKing, genQueen, genRook, genBishop, genKnight, genPawn]
-
 def findMoves2 (board, testCheck=True):
     """ Generate all possible moves for current player (board.color) """
     
@@ -394,11 +391,10 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
         # If there are more than one piece that can be moved to the cord,
         # We have to test if one of them moving will cause check.
         elif len(cords) > 1:
-            print "cord", cord, "cords", cords
-            for cord1 in cords:
-                move = movePool.pop(cord, cord1)
-                if willCheck(board,move):
-                    return cord1
+            for cord0 in cords:
+                move = movePool.pop(cord0, cord)
+                if not willCheck(board,move):
+                    return cord0
                 else: movePool.add(move)
             
         else: return None
