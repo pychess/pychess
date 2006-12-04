@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 import gtk, gtk.glade
+from gobject import idle_add
+from time import sleep
 from pychess.Utils.const import prefix, reprResult
 from pychess.System.WidgetDic import WidgetDic
 from pychess.System.protoopen import protoopen
@@ -31,7 +33,7 @@ class BoardPreview (gtk.Alignment):
         self.list.set_model(gtk.ListStore(str,str,str))
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.list.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        self.list.get_selection().connect('changed', self.on_selection_changed)
+        self.list.get_selection().connect_after('changed', self.on_selection_changed)
         
         # Add columns
         
@@ -51,6 +53,19 @@ class BoardPreview (gtk.Alignment):
         self.widgets["back_button"].connect("clicked", self.on_back_button)
         self.widgets["forward_button"].connect("clicked", self.on_forward_button)
         self.widgets["last_button"].connect("clicked", self.on_last_button)
+        
+        # First redraw of BoardView
+        
+        #self.firstTime = True
+        #def do (*args):
+        #    if not self.firstTime: return
+        #    if not self.widgets["BoardView"].square:
+        #        idle_add(do)
+        #        return
+        #    self.widgets["BoardView"].shown = \
+        #            len(self.widgets["BoardView"].history)-1
+        #    self.firstTime = False
+        #self.connect_after("expose_event", do)
         
         # Adding glade widget to self
         
@@ -97,14 +112,23 @@ class BoardPreview (gtk.Alignment):
         sel = self.list.get_model().get_path(iter)[0]
         if sel == self.lastSel: return
         self.lastSel = sel
-            
-        self.widgets["BoardView"].history.reset()
-        self.widgets["BoardView"].autoUpdateShown = False
         
+        self.widgets["BoardView"].autoUpdateShown = False
+        self.widgets["BoardView"].history.reset()
+   
         self.chessfile.loadToHistory(sel, -1, self.widgets["BoardView"].history)
         
         self.widgets["BoardView"].autoUpdateShown = True
-        self.widgets["BoardView"].shown = len(self.widgets["BoardView"].history)-1
+        # As the event might have been sent before everything in the dialog was
+        # painted, we have to wait for self.widgets["BoardView"].square to
+        # initialize. Ugly - yes
+        def do():
+            if not self.widgets["BoardView"].square:
+                sleep(0.05)
+                return True
+            self.widgets["BoardView"].shown = \
+                    len(self.widgets["BoardView"].history)-1
+        idle_add(do)
         
     def on_first_button (self, button):
         self.widgets["BoardView"].shown = 0

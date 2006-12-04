@@ -2,7 +2,7 @@
 
 import pygtk
 pygtk.require("2.0")
-import gtk, gtk.gdk, re
+import gtk, gtk.gdk, cairo
 from gobject import *
 from pychess.gfx.Pieces import drawPiece
 from pychess.Utils.History import History
@@ -24,6 +24,14 @@ def intersects (r0, r1):
             (h1 < r1.y or h1 > r0.y) and \
             (w0 < r0.x or w0 > r1.x) and \
             (h0 < r0.y or h0 > r1.y)
+
+def contains (r0, r1):
+    w0 = r0.width + r0.x
+    h0 = r0.height + r0.y
+    w1 = r1.width + r1.x
+    h1 = r1.height + r1.y
+    return r0.x <= r1.x and w0 >= w1 and \
+           r0.y <= r1.y and h0 >= h1
 
 def join (r0, r1):
     """ Take (x, y, w, [h]) squares """
@@ -111,7 +119,8 @@ class BoardView (gtk.DrawingArea):
         
     def _set_shown(self, shown):
         
-        if not self.history or not 0 <= shown < len(self.history):
+        if not self.history or shown == self._shown or\
+                not 0 <= shown < len(self.history):
             return
         
         if len(self.history) == 1 and shown == 0:
@@ -272,6 +281,8 @@ class BoardView (gtk.DrawingArea):
         return False
     
     def draw(self, context, r):
+        #context.set_antialias (cairo.ANTIALIAS_NONE)
+    
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -280,25 +291,29 @@ class BoardView (gtk.DrawingArea):
         s = square/8
         self.square = (xc, yc, square, s)
         
-        self.drawBoard (context)
-        self.drawCords (context)
+        self.drawBoard (context, r)
+        self.drawCords (context, r)
         if not self.history: return
         pieces = self.history[self.shown]
-        self.drawSpecial (context)
+        self.drawSpecial (context, r)
         self.drawArrows (context)
         self.drawPieces (context, pieces, r)
-        self.drawLastMove (context)
+        self.drawLastMove (context, r)
         
         #context.rectangle(r.x,r.y,r.width,r.height)
         #context.set_source_rgb(1,0,0)
         #context.stroke()
         
-    def drawCords (self, context):
+    def drawCords (self, context, r):
         thickness = 0.01
         signsize = 0.04
         
         if not self.showCords: return
+        
         xc, yc, square, s = self.square
+        
+        if contains(rect((xc, yc, square)), r): return
+        
         t = thickness*square
         ss = signsize*square
         
@@ -338,16 +353,16 @@ class BoardView (gtk.DrawingArea):
             context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
             context.show_layout(layout)
     
-    def drawBoard(self, context):
+    def drawBoard(self, context, r):
         xc, yc, square, s = self.square
         for x in range8:
             for y in range8:
                 if x % 2 + y % 2 == 1:
-                    context.rectangle(xc+x*s,yc+y*s,s,s)
+                    if intersects(rect((xc+x*s,yc+y*s,s,s)), r):
+                        context.rectangle(xc+x*s,yc+y*s,s,s)
         
         context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
         context.fill()
-        #context.new_path()
     
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
@@ -395,7 +410,7 @@ class BoardView (gtk.DrawingArea):
         
         context.fill()
     
-    def drawSpecial (self, context):
+    def drawSpecial (self, context, redrawn):
         used = []
         for cord, state in ((self.active, gtk.STATE_ACTIVE),
                             (self.selected, gtk.STATE_SELECTED),
@@ -405,13 +420,13 @@ class BoardView (gtk.DrawingArea):
             used += [cord]
             xc, yc, square, s = self.square
             x, y = self.cord2Point(cord)
+            if not intersects(rect((x, y, s, s)), redrawn): continue
             context.rectangle(x, y, s, s)
             style = self.isLight(cord) and self.get_style().bg or self.get_style().dark
             context.set_source_color(style[state])
             context.fill()
-            #context.new_path()
     
-    def drawLastMove (self, context):
+    def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
     
         wh = 0.27 # Width of marker
@@ -425,41 +440,48 @@ class BoardView (gtk.DrawingArea):
         d1 = {-1:1-p1,1:p1}
         ms = ((1,1),(-1,1),(-1,-1),(1,-1))
         
+        redrawAnything = False
+        
         r = self.cord2Rect(self.lastMove.cord0)
-        for m in ms:
-            context.move_to(
-                r[0]+(d0[m[0]]+wh*m[0])*r[2],
-                r[1]+(d0[m[1]]+wh*m[1])*r[2])
-            context.rel_line_to(
-                0, -wh*r[2]*m[1])
-            context.rel_curve_to(
-                0, wh*r[2]*m[1]/2.0,
-                -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
-                -wh*r[2]*m[0], wh*r[2]*m[1])
-            context.close_path()
+        if intersects(rect(r), redrawn):
+            redrawAnything = True
+            for m in ms:
+                context.move_to(
+                    r[0]+(d0[m[0]]+wh*m[0])*r[2],
+                    r[1]+(d0[m[1]]+wh*m[1])*r[2])
+                context.rel_line_to(
+                    0, -wh*r[2]*m[1])
+                context.rel_curve_to(
+                    0, wh*r[2]*m[1]/2.0,
+                    -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
+                    -wh*r[2]*m[0], wh*r[2]*m[1])
+                context.close_path()
         
         r = self.cord2Rect(self.lastMove.cord1)
-        for m in ms:
-            context.move_to(
-                r[0]+d1[m[0]]*r[2],
-                r[1]+d1[m[1]]*r[2])
-            context.rel_line_to(
-                wh*r[2]*m[0], 0)
-            context.rel_curve_to(
-                -wh*r[2]*m[0]/2.0, 0,
-                -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
-                -wh*r[2]*m[0], wh*r[2]*m[1])
-            context.close_path()
+        if intersects(rect(r), redrawn):
+            redrawAnything = True
+            for m in ms:
+                context.move_to(
+                    r[0]+d1[m[0]]*r[2],
+                    r[1]+d1[m[1]]*r[2])
+                context.rel_line_to(
+                    wh*r[2]*m[0], 0)
+                context.rel_curve_to(
+                    -wh*r[2]*m[0]/2.0, 0,
+                    -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
+                    -wh*r[2]*m[0], wh*r[2]*m[1])
+                context.close_path()
         
-        context.set_source_rgba(.929, .831, 0, 0.8)
-        context.fill_preserve()
-        context.set_source_rgba(.769, 0.627, 0, 0.5)
-        context.set_line_width(sw*r[2])
-        context.stroke()
+        if redrawAnything:
+            context.set_source_rgba(.929, .831, 0, 0.8)
+            context.fill_preserve()
+            context.set_source_rgba(.769, 0.627, 0, 0.5)
+            context.set_line_width(sw*r[2])
+            context.stroke()
         
-        context.restore()
-    
     def drawArrows (self, context):
+        # TODO: Only redraw when intersecting with the redrawn area
+        
         if self.shown != len(self.history.moves):
             return
     
@@ -519,6 +541,7 @@ class BoardView (gtk.DrawingArea):
             if not r:
                 alloc = self.get_allocation()
                 r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
+            assert type(r[2]) == int
             self.window.invalidate_rect(r, True)
             self.window.process_updates(True)
 

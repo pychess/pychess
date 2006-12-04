@@ -263,8 +263,7 @@ def evalRookBonus (board):
 def evalDevelopment (board):
     """ Mostly useful in the opening, this term encourages the machine to move
         its bishops and knights into play, to control the center with its queen's
-        and king's pawns, and to castle if the opponent has many major pieces on
-        the board """
+        and king's pawns """
     
     score = 0
     
@@ -289,13 +288,11 @@ def evalDevelopment (board):
     return score
 
 def evalCastling (board):
-    """ Used to encourage castling :$ """
+    """ Used to encourage castling """
     
     if pieceCount <= 6:
         return 0
-    
-    return 0 # Taken out because of causing bad play
-    
+   
     score = 0
     
     for color, mod in ((WHITE,1),(BLACK,-1)):

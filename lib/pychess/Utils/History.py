@@ -104,7 +104,8 @@ class History (GObject):
     def add (self, move, mvlist=False):
         
         if self.special:
-            print "move", move
+            pass
+            #print "move", move
         
         board = self.boards[-1].move(move, mvlist)
         self.moves.append(move)
