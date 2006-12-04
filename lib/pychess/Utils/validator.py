@@ -12,32 +12,33 @@ from pychess.System.Log import log
 from pychess.Utils.const import *
 from time import time
 
-# this ordering cut down ab search from a 2-level search of 134 to 80
+# this ordering cut down alphabeta search time, by searching from the center
 range8 = (3, 4, 2, 5, 1, 6, 0, 7)
 
-def validate (move, board, testCheck=True):
+def validate (move, board, testCheck=True, cancapture=False):
     """ Tests if "move" is a legal move on board "board"
-        Will asume the first cord of move is an ally piece """
+        Will asume the first cord of move is an ally piece
+        @param cancapture: Only test if the piece can capture cord1. """
     
     piece = board[move.cord0]
     
     if piece.sign == PAWN:
-        if not Pawn(move, board):
+        if not valiPawn(move, board, cancapture):
             return False
     elif piece.sign == KNIGHT:
-        if not Knight(move, board):
+        if not valiKnight(move, board, cancapture):
            return False
     elif piece.sign == BISHOP:
-        if not Bishop(move, board):
+        if not valiBishop(move, board, cancapture):
             return False
     elif piece.sign == ROOK:
-        if not Rook(move, board):
+        if not valiRook(move, board, cancapture):
             return False
     elif piece.sign == QUEEN:
-        if not Queen(move, board):
+        if not valiQueen(move, board, cancapture):
             return False
-    elif piece.sign == KING:
-        if not King(move, board):
+    else:
+        if not valiKing(move, board, cancapture):
             return False
     
     if testCheck:
@@ -45,8 +46,8 @@ def validate (move, board, testCheck=True):
             return False
     
     return True
-    
-def Bishop (move, board):
+
+def valiBishop (move, board, cancapture=False):
     """ Validate bishop move """
     if abs(move.cord0.x - move.cord1.x) != abs(move.cord0.y - move.cord1.y):
         return False
@@ -89,34 +90,36 @@ def _isclear (board, cols, rows):
 
 moveToCastling = {"e1g1": WHITE_OO, "e1c1": WHITE_OOO,
                   "e8g8": BLACK_OO, "e8c8": BLACK_OOO}
-def King (move, board):
+def valiKing (move, board, cancapture=False):
     """ Validate king move """
-    strmove = str(move)
-    if strmove in moveToCastling:
-        if not board.castling & moveToCastling[strmove]:
-            return False
+    
+    if not cancapture:
+        strmove = str(move)
+        if strmove in moveToCastling:
+            if not board.castling & moveToCastling[strmove]:
+                return False
+            
+            rows = board.color == BLACK and (7,) or (0,)
+            if move.cord0.x < move.cord1.x:
+                cols = [5,6]
+                rookx = 7
+            else:
+                cols = [1,2,3]
+                rookx = 0
         
-        rows = board.color == BLACK and (7,) or (0,)
-        if move.cord0.x < move.cord1.x:
-            cols = [5,6]
-            rookx = 7
-        else:
-            cols = [1,2,3]
-            rookx = 0
-        
-        if board.data[rows[0]][rookx] == None:
-            return False
-        
-        if not _isclear(board, cols, rows):
-            return False
-        
-        cols.append(4)
-        opcolor = 1 - board.color
-        if genMovesPointingAt (board, cols, rows, opcolor):
-            return False
-        
-        return True
-
+            if board.data[rows[0]][rookx] == None:
+                return False
+            
+            if not _isclear(board, cols, rows):
+                return False
+            
+            cols.append(4)
+            opcolor = 1 - board.color
+            if genMovesPointingAt (board, cols, rows, opcolor):
+                return False
+            
+            return True
+    
     return abs(move.cord0.x - move.cord1.x) <= 1 and \
            abs(move.cord0.y - move.cord1.y) <= 1
 
@@ -149,7 +152,7 @@ def genKing (cord, board):
                not genMovesPointingAt (board, (3,4), (7,), WHITE):
                 yield 2,7
 
-def Knight (move, board):
+def valiKnight (move, board, cancapture=False):
     """ Validate knight move """
     return (abs(move.cord0.x - move.cord1.x) == 1 and \
             abs(move.cord0.y - move.cord1.y) == 2) or \
@@ -166,27 +169,39 @@ def genKnight (cord, board):
         if not board.data[y][x] or board.data[y][x].color != board.color:
             yield x,y
 
-def Pawn (move, board):
+def valiPawn (move, board, cancapture=False):
     """ Validate pawn move """
     dr = board.color == WHITE and 1 or -1
+    
     #Leaves only 1 and 2 cords difference - ahead
     if not 0 < (move.cord1.y - move.cord0.y)*dr <= 2:
         return False
+    
+    #Can capture
+    if cancapture:
+        if abs(move.cord0.x - move.cord1.x) == 1:
+            return True
+        return False
+        
     #Handles normal move
     if (move.cord1.y - move.cord0.y)*dr == 1 and \
         move.cord0.x == move.cord1.x and \
         board[move.cord1] == None:
         return True
+        
     #Handles capturing
     if (move.cord1.y - move.cord0.y)*dr == 1 and \
         abs(move.cord0.x - move.cord1.x) == 1:
+        
         #Normal
         if board[move.cord1] != None and \
            board[move.cord1].color != board.color:
             return True
+            
         #En passant
         if board.enpassant == move.cord1:
-        	return True
+            return True
+            
     #Handles double move
     row = board.color == WHITE and 1 or 6
     if (move.cord1.y - move.cord0.y)*dr == 2 and \
@@ -195,6 +210,7 @@ def Pawn (move, board):
         board[Cord(move.cord0.x, move.cord0.y+dr)] == None and \
         move.cord0.x == move.cord1.x:
         return True
+        
     return False
 
 def genPawn (cord, board):
@@ -222,7 +238,7 @@ def genPawn (cord, board):
            (board.enpassant.y == 2 and board.color == BLACK and cord.y == 3) :
             yield board.enpassant.x, board.enpassant.y
      
-def Rook (move, board):
+def valiRook (move, board, cancapture=False):
     """ Validate rook move """
     
     if move.cord0.x != move.cord1.x and move.cord0.y != move.cord1.y:
@@ -265,11 +281,11 @@ def genRook (cord, board):
                     break
             yield x,y
 
-def Queen (move, board):
+def valiQueen (move, board, cancapture=False):
     """ Validate queen move """
     
-    return Rook (move, board) or \
-           Bishop (move, board)
+    return valiRook (move, board, cancapture) or \
+           valiBishop (move, board, cancapture)
 
 def genQueen (cord, board):
     """ Generate queen moves. Queen is located at cord """
@@ -284,67 +300,59 @@ sign2gen = [genKing, genQueen, genRook, genBishop, genKnight, genPawn]
 def findMoves2 (board, testCheck=True):
     """ Generate all possible moves for current player (board.color) """
     
-    for y, row in enumerate(board.data):
-        for x, piece in enumerate(row):
+    for y in range8:
+        for x in range8:
+            piece = board.data[y][x]
             if not piece: continue
             if piece.color != board.color: continue
             cord0 = Cord(x,y)
-            for xy in sign2gen[piece.sign](cord0,board):
-                move = movePool.pop(cord0, Cord(*xy))
-                try:
-                    if not testCheck or not willCheck(board, move):
-                        yield move
-                    else: movePool.add(move)
-                except Exception:
-                    print piece, cord0, "\n", board
-                    raise
+            
+            for move in genLegalMoves(board,cord0,testCheck):
+                yield move
+
+def genLegalMoves (board, cord, testCheck):
+    """ Generate all legal moves for piece at cord """
+    
+    piece = board[cord]
+    if piece.sign == PAWN:
+        generator = genPawn
+    elif piece.sign == KNIGHT:
+        generator = genKnight
+    elif piece.sign == BISHOP:
+        generator = genBishop
+    elif piece.sign == ROOK:
+        generator = genRook
+    elif piece.sign == QUEEN:
+        generator = genQueen
+    else:
+        generator = genKing
+    
+    for xy in generator (cord,board):
+        move = movePool.pop(cord, Cord(*xy))
+        try:
+            if not testCheck or not willCheck(board, move):
+                yield move
+            else: movePool.add(move)
+        except Exception:
+            print piece, cord0, "\n", board
+            raise
 
 def _getLegalMoves (board, cord, testCheck):
     """ Find all legal moves for piece at cord
         returns a list of possible destination cords """
-    
-    cords = []
-    for row in range8:
-        for col in range8:
-            if row == cord.y and col == cord.x: continue
-            if abs(row - cord.y) <= 2 or abs(col - cord.x) <= 2 or \
-                    cord.y == row or cord.x == col or \
-                    abs(cord.y - row) == abs(cord.x - col):
-                cord1 = Cord(col, row)
-                move = movePool.pop(cord, cord1)
-                if validate (move, board, testCheck):
-                    cords.append(cord1)
-                movePool.add(move)
-    return cords
+        
+    return [move.cord1 for move in genLegalMoves(board, cord, testCheck)]
 
-def findMoves (board):
+def findMoves (board, testCheck=True):
     """ Creates a dict of all legal moves for current player (baord.color)
         Returns a dict of {fromcord:[tocord,tocord...],...} """
     
-    #t = time()
-    
     moves = {}
-    for move in findMoves2(board, True):
+    for move in findMoves2(board, testCheck):
         c0, c1 = move.cords
         if c0 in moves:
             moves[c0].append(c1)
         else: moves[c0] = [c1]
-    
-    #board = history[-1]
-    #color = history.curCol()
-    #for y, row in enumerate(board.data):
-    #    for x, piece in enumerate(row):
-    #        if not piece: continue
-    #        if piece.color != color: continue
-    #        cord0 = Cord(x, y)
-    #        for cord1 in _getLegalMoves (history, cord0, True):
-    #            if cord0 in moves:
-    #                moves[cord0].append(cord1)
-    #            else: moves[cord0] = [cord1]
-                
-    #mvcount = sum([len(v) for v in moves.values()])
-    #log.log("Found %d moves in %.3f seconds\n" % (mvcount, time()-t))
-    #log.debug(str(moves))
     
     return moves
 
@@ -367,17 +375,18 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
     
     else:
         cords = []
-        for y, row in enumerate(board.data):
-            for x, piece in enumerate(row):
+        for y in range8:
+            for x in range8:
+                if r != None and y != r: continue
+                if c != None and x != c: continue
+                piece = board.data[y][x]
                 if piece == None: continue
                 if color != None and piece.color != color: continue
                 if sign != None and piece.sign != sign: continue
-                if r != None and y != r: continue
-                if c != None and x != c: continue
-                cord1 = Cord(x,y)
-                moves = _getLegalMoves(board,cord1,False)
-                if cord in moves:
-                    cords.append(cord1)
+                
+                for move in genLegalMoves(board, Cord(x,y), False):
+                    if move.cord1 == cord:
+                        cords.append(move.cord0)
         
         if len(cords) == 1:
             return cords[0]
@@ -387,10 +396,10 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
         elif len(cords) > 1:
             print "cord", cord, "cords", cords
             for cord1 in cords:
-            	move = movePool.pop(cord, cord1)
-            	if willCheck(board,move):
-            	    return cord1
-            	else: movePool.add(move)
+                move = movePool.pop(cord, cord1)
+                if willCheck(board,move):
+                    return cord1
+                else: movePool.add(move)
             
         else: return None
 
@@ -407,7 +416,7 @@ def genMovesPointingAt (board, cols, rows, color, testCheck=False):
             for r in rows:
                 for c in cols:
                     move = movePool.pop(cord0, Cord(c,r))
-                    if validate (move, board, testCheck):
+                    if validate (move, board, testCheck, cancapture=True):
                         return move
                     movePool.add(move)
 
@@ -455,11 +464,11 @@ def status (history):
         Status can be one of RUNNING, DRAW, WHITEWON or BLACKWON.
         Comment can be any from pychess.Utils.const or None, if status is RUNNING """
     
-	# FIXME: We don't test enough to know if positions are equal to the FIDE rules:
-	# Positions are not the same if:
-	# * a pawn that could have been captured,
-	# * en passant can no longer be captured
-	# * the right to castle has been changed.
+    # FIXME: We don't test enough to know if positions are equal to the FIDE rules:
+    # Positions are not the same if:
+    # * a pawn that could have been captured,
+    # * en passant can no longer be captured
+    # * the right to castle has been changed.
 
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION

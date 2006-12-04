@@ -6,8 +6,8 @@ import gtk, gtk.gdk, re
 from gobject import *
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
-from math import floor
-from BoardView import BoardView
+from math import floor, ceil
+from BoardView import BoardView, rect
 from pychess.System.Log import log
 from pychess.Utils.const import *
 from BoardView import join
@@ -57,7 +57,8 @@ class BoardControl (gtk.EventBox):
         if self.locked: return False
         if not self.view.history[-1].movelist: return False
         if not cord: return False
-
+        if cord.x < 0 or cord.x > 7 or cord.y < 0 or cord.y > 7: return False
+        
         if self.view.shown != len(self.view.history)-1:
             return False
         
@@ -81,21 +82,25 @@ class BoardControl (gtk.EventBox):
         if not self.view.square: return None
         xc, yc, square, s = self.view.square
         y -= yc; x -= xc
-        if (x < 0 or x >= square or y < 0 or y >= square):
-            return None
+        #if (x < 0 or x >= square or y < 0 or y >= square):
+        #    return None
         y /= float(s)
         x /= float(s)
         if self.view.fromWhite:
             y = 8 - y
+        else: x = 8 - x
         return x, y
     
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
-        if not point: return
-        x, y = map(floor, point)
-        if (x < 0 or x >= 8 or y < 0 or y >= 8):
-            return
+        #if not point: return
+        x = floor(point[0])
+        if self.view.fromWhite:
+            y = floor(point[1])
+        else: y = floor(point[1])
+        #if (x < 0 or x >= 8 or y < 0 or y >= 8):
+        #    return
         return Cord(x, y)
 
     def button_press (self, widget, event):
@@ -124,8 +129,8 @@ class BoardControl (gtk.EventBox):
                 self.view.selected = cord
                 self.view.startAnimation()
             elif self.view.selected:
-                if self.view.active and self.view.history[-1][self.view.active] and \
-                        self.view.history[-1][cord].color == color:
+                if self.view.active and self.view.history[-1][self.view.active] \
+                        and self.view.history[-1][cord].color == color:
                     self.emit_move_signal(self.view.active, cord)
                 else: self.emit_move_signal(self.view.selected, cord)
                 self.view._hover = cord
@@ -159,11 +164,14 @@ class BoardControl (gtk.EventBox):
         if self.pressed and self.view.active:
             piece = self.view.history[self.view.shown][self.view.active]
             if not piece: return
+            if piece.color != self.view.history.curCol(): return
             xc, yc, square, s = self.view.square
             
             if not self.view.square: return
             xc, yc, square, s = self.view.square
-            point = self.transPoint(event.x-s/2., event.y+s/2.)
+            if self.view.fromWhite:
+                point = self.transPoint(event.x-s/2., event.y+s/2.)
+            else: point = self.transPoint(event.x+s/2., event.y-s/2.)
             if not point: return
             x, y = point
             if piece.x != x or piece.y != y:
@@ -173,7 +181,7 @@ class BoardControl (gtk.EventBox):
                 paintBox = join(paintBox, self.view.fcord2Rect(x, y))
                 piece.x = x
                 piece.y = y
-                self.view.redraw_canvas(paintBox)
+                self.view.redraw_canvas(rect(paintBox))
 
     def leave_notify (self, widget, event):
         a = self.get_allocation()

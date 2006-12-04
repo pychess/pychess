@@ -20,7 +20,6 @@ class ScorePlot (gtk.DrawingArea):
         self.connect("button-press-event", self.press)
         self.set_events(gtk.gdk.BUTTON_PRESS_MASK)
         self.moveHeight = 12
-        self.maxScore = 10**3
         self.scores = []
         self.selected = 0
         
@@ -55,26 +54,29 @@ class ScorePlot (gtk.DrawingArea):
         return False
     
     def draw (self, cr):
-        #for score in self.scores:
-        #    if abs(score) > self.maxScore:
-        #        self.maxScore = abs(score)
-        
+
         width = self.get_allocation().width
         height = (len(self.scores)-1)*self.moveHeight
         
-        cr.set_source_rgb (0, 0, 0)
-        cr.rectangle(0,0,width,height)
+        cr.set_source_rgb (1, 1, 1)
+        cr.rectangle(0, 0, width, height)
         cr.fill()
         
-        cr.set_source_rgb (1, 1, 1)
-        cr.move_to(0, 0)
+        cr.set_source_rgb (0, 0, 0)
+        cr.move_to(width/2., 0)
+        cr.line_to(width/2., height)
+        cr.set_line_width(0.15)
+        cr.stroke()
+        
+        cr.set_source_rgb (0, 0, 0)
+        cr.move_to(width, 0)
         for i, score in enumerate(self.scores):
-            score2 = 1-e**(-1./1000*abs(score/2.))
-            if score < 0: score2 = -score2
+            score2 = -1+e**(-1./1000*abs(score/2.))
+            if score > 0: score2 = -score2
             x = width/2 + score2*width/2
             y = i * self.moveHeight
             cr.line_to(x, y)
-        cr.line_to(0,height)
+        cr.line_to(width, height)
         cr.fill()
         
         if self.selected >= 1:
