@@ -100,12 +100,15 @@ class History (GObject):
         if color == BLACK:
             self.curColModi = 1
         else: self.curColModi = 0
-    
+        for i in range(len(self)):
+            self[i].color = (i+self.curColModi)%2
+        assert self[-1].color == self.curCol()
+        
     def add (self, move, mvlist=False):
         
         if self.special:
-            pass
             #print "move", move
+            pass
         
         board = self.boards[-1].move(move, mvlist)
         self.moves.append(move)

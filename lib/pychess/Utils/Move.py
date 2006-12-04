@@ -184,7 +184,10 @@ def parseLAN (board, lan):
     
     if len(c1) > 2:
         c1 = c1[:2]
-        promotion = chr2Sign[c1[-1]]
+        try:
+            promotion = chr2Sign[c1[-1]]
+        except KeyError:
+            raise ParsingError, "Unable to parse lanmove %s" % lan
     
     try:
         c0 = Cord(c0)

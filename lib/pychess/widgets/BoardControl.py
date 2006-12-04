@@ -69,9 +69,12 @@ class BoardControl (gtk.EventBox):
         if basiscord in self.view.history[-1].movelist and \
             cord in self.view.history[-1].movelist[basiscord]:
             return True
+
+        # if not basiscord, we are probably trying to select a piece to move.
+        # In that case we should not want empty cords
         if self.view.history[-1][cord] == None:
             return False
-
+        
         color = self.view.history.curCol()
         if self.view.history[-1][cord].color != color:
             return False
@@ -82,8 +85,6 @@ class BoardControl (gtk.EventBox):
         if not self.view.square: return None
         xc, yc, square, s = self.view.square
         y -= yc; x -= xc
-        #if (x < 0 or x >= square or y < 0 or y >= square):
-        #    return None
         y /= float(s)
         x /= float(s)
         if self.view.fromWhite:
@@ -94,13 +95,10 @@ class BoardControl (gtk.EventBox):
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
-        #if not point: return
         x = floor(point[0])
         if self.view.fromWhite:
             y = floor(point[1])
         else: y = floor(point[1])
-        #if (x < 0 or x >= 8 or y < 0 or y >= 8):
-        #    return
         return Cord(x, y)
 
     def button_press (self, widget, event):
