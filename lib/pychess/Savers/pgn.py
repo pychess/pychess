@@ -96,6 +96,7 @@ class PGNFile (ChessFile):
     
     def __init__ (self, games):
         ChessFile.__init__(self, games)
+        self.expect = None
         self.tagcache = {}
     
     def _parseMoves (self, gameno):
@@ -105,6 +106,17 @@ class PGNFile (ChessFile):
         if moves and moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
             del moves[-1]
         return moves
+    
+    def loadToHistory2 (self, gameno, position, history=None):
+        from profile import runctx
+        loc = locals()
+        loc["self"] = self
+        runctx ("self.loadToHistory2(gameno, position, history)",
+                loc, globals(), "/tmp/pychessprofile")
+        from pstats import Stats
+        s = Stats("/tmp/pychessprofile")
+        s.sort_stats("time")
+        s.print_stats()
         
     def loadToHistory (self, gameno, position, history=None):
         moves = self._parseMoves (gameno)
@@ -114,19 +126,54 @@ class PGNFile (ChessFile):
             
             if position != -1 and i >= position: break
             
-            try: m = parseSAN (history[-1], movestr)
-            except ParsingError:
-                try: m = parseLAN (history[-1], movestr)
-                except ParsingError:
-                    try: m = parseAN (history[-1], movestr)
-                    except ParsingError:
-                        continue
+            m = self.parseMove (history[-1], movestr)
+            if not m: continue
             
             if i+1 < len(moves) and (position == -1 or i+1 < position):
                 history.add(m, False)
             else: history.add(m, True)
             
         return history
+    
+    def parseMove (self, board, movestr):
+        if self.expect == None or self.expect == SAN:
+            try: return parseSAN (board, movestr)
+            except ParsingError:
+                try:
+                    self.expect = LAN
+                    return parseLAN (board, movestr)
+                except ParsingError:
+                    try:
+                        self.expect = AN
+                        return parseAN (board, movestr)
+                    except ParsingError:
+                        return None
+                        
+        elif self.expect == LAN:
+            try: return parseLAN (board, movestr)
+            except ParsingError:
+                try:
+                    self.expect = SAN
+                    return parseSAN (board, movestr)
+                except ParsingError:
+                    try:
+                        self.expect = AN
+                        return parseAN (board, movestr)
+                    except ParsingError:
+                        return None
+                        
+        elif self.expect == AN:
+            try: return parseAN (board, movestr)
+            except ParsingError:
+                try:
+                    self.expect = LAN
+                    return parseLAN (board, movestr)
+                except ParsingError:
+                    try:
+                        self.expect = SAN
+                        return parseSAN (board, movestr)
+                    except ParsingError:
+                        return None
     
     def _getTag (self, gameno, tagkey):
         if gameno in self.tagcache:

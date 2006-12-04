@@ -27,6 +27,8 @@ def prefix (subpath):
 
 LOCAL, ARTIFICIAL, REMOTE = range(3)
 
+SAN, LAN, FAN, AN = range(4)
+
 WHITE, BLACK = range(2)
 
 reprColor = ["White", "Black"]

@@ -2,6 +2,8 @@ import gtk, gobject
 from System.Log import log
 from Utils.const import DRAW, WHITEWON, BLACKWON
 
+# TODO: If this makes an analyzer run, maybe that analyzer could also be used to add extra data in the scorepanel. So that the score of the analyzed moves apperes beneeth the real score plot.
+
 __title__ = _("Analyzis")
 
 def once (func):

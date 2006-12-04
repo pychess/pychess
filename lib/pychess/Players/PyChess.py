@@ -144,21 +144,24 @@ def alphaBeta (engine, table, board, depth, alpha, beta, capture=False):
     if table.has_key(board):
         last = -1; return table[board]
     
-    if depth <= 0 and not capture:
+    if (depth <= 0 and not capture) or depth < -2:
         last = 1; return [], eval.evaluateComplete(board, board.color)
     if not engine.alive:
         last = 2; return [], 0
     
     move = None
     for move in findMoves2(board):
+        # TODO: We could use some sort of moveordering here,
+        # to make alphaBeta more efficient.
+        # The killer move method might be applyable
+        
         try:
             board2 = board.move(move)
         except AttributeError:
             print board, move
             raise
         
-        assert depth < 5
-        if depth < 5 and board[move.cord1] != None:
+        if board[move.cord1] != None:
             tempcapture = True
         else: tempcapture = False
         

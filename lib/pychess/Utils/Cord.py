@@ -8,10 +8,10 @@ class Cord:
             y = int(x[1]) - 1
             x = self.charToInt(x[0])
     
-        assert 0 <= y <= 7
+        #assert 0 <= y <= 7
         if type(x) == str:
             x = self.charToInt(x)
-        assert 0 <= x <= 7
+        #assert 0 <= x <= 7
         
         self.x, self.y = int(x), int(y)
     
