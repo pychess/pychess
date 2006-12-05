@@ -152,7 +152,8 @@ def delGameWidget (gmwidg):
     if headbook.get_n_pages() == 0:
         vbox.remove(vbox.get_children()[1])
         vbox.remove(mainbook)
-        vbox.pack_end(Background())
+        global background
+        vbox.pack_end(background)
         vbox.show_all()
     
     handler.emit("page_removed", gmwidg)
@@ -160,7 +161,9 @@ def delGameWidget (gmwidg):
 def createGameWidget (title):
     vbox = widgets["mainvbox"]
     if len(vbox.get_children()) == 2:
-        vbox.remove(vbox.get_children()[1])
+        global background
+        background = vbox.get_children()[1] 
+        vbox.remove(background)
         align = createAlignment (4, 2, 0, 2)
         align.set_property("yscale", 0)
         headbook = gtk.Notebook()
