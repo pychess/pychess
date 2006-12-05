@@ -147,14 +147,28 @@ class BoardView (gtk.DrawingArea):
                                 Cord (x,y+(board0.color == WHITE and 1 or -1)) \
                                 and board1[board0.enpassant] != None):
                             # A piece is dying
-                            piece.x = None
-                            piece.y = None
+                            #piece.x = None
+                            #piece.y = None
                             self.deadlist.append((piece,x,y))
                         else:
                             # It has moved
                             piece.x = x
                             piece.y = y
-        
+                            #b0cast = board0.castling
+                            #b1cast = board1.castling
+                            #if b0cast & WHITE_OO and not b1cast & WHITE_OO:
+                            #    board0.data[0][7].x = 5
+                            #    board0.data[0][7].y = 0
+                            #elif b0cast & WHITE_OOO and not b1cast & WHITE_OOO:
+                            #    board0.data[0][0].x = 3
+                            #    board0.data[0][0].y = 0
+                            #elif b0cast & BLACK_OO and not b1cast & BLACK_OO:
+                            #    board0.data[7][7].x = 5
+                            #    board0.data[7][7].y = 7
+                            #elif b0cast & BLACK_OOO and not b1cast & BLACK_OOO:
+                            #    board0.data[0][7].x = 5
+                            #    board0.data[0][7].y = 0
+                                    
         self._shown = shown
         self.emit("shown_changed", self.shown)
         

@@ -40,7 +40,7 @@ savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION
 opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
     (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
 savedialog.set_current_folder(os.environ["HOME"])
-opendialog.set_current_folder(os.environ["HOME"])
+#opendialog.set_current_folder(os.environ["HOME"])
 
 # TODO: Working with mime-types might gennerelly be a better idea.
 
@@ -69,6 +69,7 @@ for label, endings in types:
     opendialog.add_filter(f)
 
 filechooserbutton = gtk.FileChooserButton(opendialog)
+#filechooserbutton = opendialog
 loadSidePanel = BoardPreview.BoardPreview()
 loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
 filechooserbutton.show()
@@ -257,22 +258,21 @@ def newGame ():
         return game, gmwidg
     return None, None
 
-def loadGame (path = None):
+def loadGame (uri = None):
     
-    if not path:
-        res = opendialog.run()
-        opendialog.hide()
-        if res != gtk.RESPONSE_ACCEPT: return None, None
-        uri = opendialog.get_uri()
+    if uri:
+        opendialog.set_uri(uri)
     
-    filechooserbutton.set_uri(uri)
+    res = opendialog.run()
+    opendialog.hide()
+    if res != gtk.RESPONSE_ACCEPT: return None, None
+    uri = opendialog.get_uri()
+
     widgets["newgamedialog"].set_title("Open Game")
     game, gmwidg = runNewGameDialog(hideFC=False)
     
     if game:
-        uri = filechooserbutton.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
-        
         game.load (uri, loadSidePanel.get_gameno(),
                    loadSidePanel.get_position(), loader)
         game.run()
@@ -281,6 +281,7 @@ def loadGame (path = None):
     return None, None
 
 def saveGame (game):
+    # TODO: used "do-overwrite-confirmation" property
     if not game.isChanged:
         return
     if game.lastSave[1]:
