@@ -266,12 +266,12 @@ def loadGame (uri = None):
     res = opendialog.run()
     opendialog.hide()
     if res != gtk.RESPONSE_ACCEPT: return None, None
-    uri = opendialog.get_uri()
-
+    
     widgets["newgamedialog"].set_title("Open Game")
     game, gmwidg = runNewGameDialog(hideFC=False)
     
     if game:
+        uri = loadSidePanel.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
         game.load (uri, loadSidePanel.get_gameno(),
                    loadSidePanel.get_position(), loader)
