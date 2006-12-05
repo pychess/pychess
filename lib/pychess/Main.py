@@ -77,7 +77,7 @@ class GladeHandlers:
         game, gmwidg = loadGame (uri)
         if game:
             gameDic[gmwidg] = game
-            GladeHandlers.__dict__["on_page_added"]()
+            GladeHandlers.__dict__["on_page_added"](None, gmwidg)
     
     #          Game Menu          #
 

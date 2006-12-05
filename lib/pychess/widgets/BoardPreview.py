@@ -72,15 +72,23 @@ class BoardPreview (gtk.Alignment):
         return bv
     
     def addFileChooserButton (self, fcbutton, opendialog, enddir):
-        # Well, this will crash if runned twice...
+        
+        # Well, this will crash if method runned twice...
         self.widgets["ngfcalignment"].add(fcbutton)
+        
         opendialog.connect("file-activated", self.on_file_activated, enddir)
+        openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
+        openbut.connect("clicked", lambda b:
+            self.on_file_activated(opendialog, enddir))
         
     def on_file_activated (self, dialog, enddir):
         
-        print dialog.get_uri()
+        if dialog.get_preview_filename():
+            uri = "file://"+dialog.get_preview_filename()
+        elif dialog.get_uri():
+            uri = dialog.get_uri()
+        else: return
         
-        uri = dialog.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
         ending = uri[uri.rfind(".")+1:]
         self.chessfile = chessfile = loader.load(protoopen(uri))
