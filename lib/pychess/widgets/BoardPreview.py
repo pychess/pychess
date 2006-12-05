@@ -85,9 +85,7 @@ class BoardPreview (gtk.Alignment):
     def on_file_activated (self, dialog, enddir):
         
         uri = self.get_uri()
-        if not uri:
-            dialog.set_uri(self.uri)
-            return
+        if not uri: return
         self.uri = uri
         
         loader = enddir[uri[uri.rfind(".")+1:]]
