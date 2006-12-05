@@ -19,6 +19,7 @@ class BoardPreview (gtk.Alignment):
         gtk.Alignment.__init__(self)
         self.position = 0
         self.gameno = 0
+        self.uri = None
         self.chessfile = None
         
         # Initing glade
@@ -75,7 +76,7 @@ class BoardPreview (gtk.Alignment):
         
         # Well, this will crash if method runned twice...
         self.widgets["ngfcalignment"].add(fcbutton)
-        
+        self.opendialog = opendialog
         opendialog.connect("file-activated", self.on_file_activated, enddir)
         openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
         openbut.connect("clicked", lambda b:
@@ -83,11 +84,11 @@ class BoardPreview (gtk.Alignment):
         
     def on_file_activated (self, dialog, enddir):
         
-        if dialog.get_preview_filename():
-            uri = "file://"+dialog.get_preview_filename()
-        elif dialog.get_uri():
-            uri = dialog.get_uri()
-        else: return
+        uri = self.get_uri()
+        if not uri:
+            dialog.set_uri(self.uri)
+            return
+        self.uri = uri
         
         loader = enddir[uri[uri.rfind(".")+1:]]
         ending = uri[uri.rfind(".")+1:]
@@ -151,6 +152,13 @@ class BoardPreview (gtk.Alignment):
                 boardView.history.curCol() != BLACK:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
+    
+    def get_uri (self):
+        if self.opendialog.get_preview_filename():
+            return "file://" + self.opendialog.get_preview_filename()
+        elif self.opendialog.get_uri():
+            return self.opendialog.get_uri()
+        else: return self.uri
     
     def get_position (self):
         return self.widgets["BoardView"].shown
