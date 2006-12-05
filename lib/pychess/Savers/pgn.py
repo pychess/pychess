@@ -87,7 +87,7 @@ def load (file):
         else:
             inTags = False
             files[-1][1] += line
-            
+    
     return PGNFile (files)
 
 from ChessFile import ChessFile
