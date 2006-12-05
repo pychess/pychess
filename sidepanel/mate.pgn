@@ -1,0 +1,18 @@
+[White "Thomas Dybdahl Ahle"]
+[WhiteNA "Unknown"]
+[Black "Thomas Dybdahl Ahle"]
+[BlackNA "Unknown"]
+[BlackType "human"]
+[WhiteType "human"]
+[RulesVariation "Standard"]
+[Date "2006.12.05"]
+[Time "06:55:00"]
+[Site "localhost.localdomain"]
+[Event "Knights Computer Chess Game"]
+[Round "-"]
+[Result "0-1"]
+[Termination "Normal"]
+[PlyCount "4"]
+
+1. f4 e6 2. g4 Qh4# 0-1
+
