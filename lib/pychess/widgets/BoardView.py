@@ -130,7 +130,7 @@ class BoardView (gtk.DrawingArea):
         
         step = shown > self.shown and 1 or -1
         
-        self.deadlist = []
+        deadset = set()
         for i in range(self.shown, shown, step):
             board0 = self.history[i]
             board1 = self.history[i+step]
@@ -138,8 +138,9 @@ class BoardView (gtk.DrawingArea):
             for y, row in enumerate(board0.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
-                    if piece.x != None:
-                        # Skip if already moving
+                    if step < 0 and piece.opacity < 1:
+                        continue
+                    if step > 0 and piece in deadset:
                         continue
                     if piece != board1.data[y][x]:
                         if step > 0 and (board1.data[y][x] != None or \
@@ -147,28 +148,20 @@ class BoardView (gtk.DrawingArea):
                                 Cord (x,y+(board0.color == WHITE and 1 or -1)) \
                                 and board1[board0.enpassant] != None):
                             # A piece is dying
-                            #piece.x = None
-                            #piece.y = None
-                            self.deadlist.append((piece,x,y))
-                        else:
+                            piece.x = None
+                            piece.y = None
+                            deadset.add(piece)
+                        elif piece.x == None:
                             # It has moved
                             piece.x = x
                             piece.y = y
-                            #b0cast = board0.castling
-                            #b1cast = board1.castling
-                            #if b0cast & WHITE_OO and not b1cast & WHITE_OO:
-                            #    board0.data[0][7].x = 5
-                            #    board0.data[0][7].y = 0
-                            #elif b0cast & WHITE_OOO and not b1cast & WHITE_OOO:
-                            #    board0.data[0][0].x = 3
-                            #    board0.data[0][0].y = 0
-                            #elif b0cast & BLACK_OO and not b1cast & BLACK_OO:
-                            #    board0.data[7][7].x = 5
-                            #    board0.data[7][7].y = 7
-                            #elif b0cast & BLACK_OOO and not b1cast & BLACK_OOO:
-                            #    board0.data[0][7].x = 5
-                            #    board0.data[0][7].y = 0
-                                    
+        
+        self.deadlist = []
+        for y,row in enumerate(self.history[self.shown].data):
+            for x,piece in enumerate(row):
+                if piece in deadset:
+                    self.deadlist.append((piece,x,y))
+        
         self._shown = shown
         self.emit("shown_changed", self.shown)
         
@@ -262,6 +255,7 @@ class BoardView (gtk.DrawingArea):
         
         if paintBox:
             self.redraw_canvas(rect(paintBox))
+            #self.redraw_canvas()
         
         return paintBox and True or False
     
@@ -314,6 +308,7 @@ class BoardView (gtk.DrawingArea):
         self.drawPieces (context, pieces, r)
         self.drawLastMove (context, r)
         
+        # Unselect to mark redrawn areas - for debugging purposes
         #context.rectangle(r.x,r.y,r.width,r.height)
         #context.set_source_rgb(1,0,0)
         #context.stroke()

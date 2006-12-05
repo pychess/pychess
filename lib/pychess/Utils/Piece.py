@@ -11,11 +11,14 @@ class Piece:
     	self.opacity = 1.0
     	self.x = None
     	self.y = None
-    	
-    def __eq__ (self, other):
-        return  other != None and \
-                self.color == other.color and \
-                self.sign == other.sign
     
     def __repr__ (self):
-        return "<%s %s>" % (reprColor[self.color], pieceName[self.sign])
+        represen = "<%s %s" % (reprColor[self.color], pieceName[self.sign])
+        if self.opacity != 1.0:
+            represen += " Op:%0.1f" % self.opacity
+        if self.x != None:
+            represen += " X:%0.1f" % self.x
+        if self.y != None:
+            represen += " Y:%0.1f" % self.y
+        represen += ">"
+        return represen
