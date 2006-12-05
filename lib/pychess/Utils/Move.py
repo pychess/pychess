@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from pychess.Utils.Cord import Cord
 from pychess.System.Log import log
-from threading import Lock
+from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
+from threading import Lock
 
 #import gtk.glade
 #widgets = gtk.glade.XML("glade/moveerror.glade")
@@ -149,9 +149,11 @@ def parseSAN (board, san):
         notat = notat[1:]
     
     if notat:
-        cord1 = Cord(notat)
+        try:
+            cord1 = Cord(notat)
+        except: raise ParsingError, "Unable to parse sanmove %s" % san
+    
     from pychess.Utils.validator import getMovePointingAt
-
     cord0 = getMovePointingAt(board, cord1, color, sign, row, col)
     if not cord0:
         raise ParsingError, "Unable to parse sanmove %s" % san

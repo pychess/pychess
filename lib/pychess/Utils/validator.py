@@ -178,7 +178,8 @@ def valiPawn (move, board, cancapture=False):
     
     #Can capture
     if cancapture:
-        if abs(move.cord0.x - move.cord1.x) == 1:
+        if move.cord0.y+dr == move.cord1.y and \
+                abs(move.cord0.x - move.cord1.x) == 1:
             return True
         return False
         
@@ -337,7 +338,6 @@ def genLegalMoves (board, cord, testCheck):
 def _getLegalMoves (board, cord, testCheck):
     """ Find all legal moves for piece at cord
         returns a list of possible destination cords """
-        
     return [move.cord1 for move in genLegalMoves(board, cord, testCheck)]
 
 def findMoves (board, testCheck=True):
@@ -420,8 +420,7 @@ def willCheck (board, move):
     """ Returns True if the move will cause the player
         making the move to be in check """
     board2 = board.move(move)
-    check = isCheck(board2, board.color)
-    return check
+    return isCheck(board2, board.color)
 
 from pychess.System.LimitedDict import LimitedDict
 checkDic = LimitedDict(5000)
@@ -429,19 +428,20 @@ checkDic = LimitedDict(5000)
 def isCheck (board, who):  
     """ Returns True if "who" is in check in the specified possition """
     
-    if board in checkDic:
-        r = checkDic[board][who]
-        if r != None:
-            return r
+    # TODO: Does this make a difference? I Guess not.
+    #if board in checkDic:
+    #    r = checkDic[board][who]
+    #    if r != None:
+    #        return r
     
     cord = _findKing(board, who)
     if genMovesPointingAt(board, (cord.x,), (cord.y,), 1-who):
         r = True
     else: r = False
     
-    if not board in checkDic:
-        checkDic[board] = [None,None]
-    checkDic[board][who] = r
+    #if not board in checkDic:
+    #    checkDic[board] = [None,None]
+    #checkDic[board][who] = r
     
     return r
 
