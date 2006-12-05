@@ -10,6 +10,7 @@ from math import floor, ceil
 from BoardView import BoardView, rect
 from pychess.System.Log import log
 from pychess.Utils.const import *
+from pychess.Utils.validator import _getLegalMoves
 from BoardView import join
 from time import time
 
@@ -35,6 +36,9 @@ class BoardControl (gtk.EventBox):
         self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
+        
+        self.fromcord = None # The cord to which the tocords list is relative
+        self.tocords = [] # List of cords to which the selected piece can move
         
         self.pressed = False
         self.locked = True
@@ -66,10 +70,18 @@ class BoardControl (gtk.EventBox):
             basiscord = self.view.active
         else: basiscord = self.view.selected
         
-        if basiscord in self.view.history[-1].movelist and \
-            cord in self.view.history[-1].movelist[basiscord]:
+        if basiscord and self.view.history[-1][basiscord] and \
+                self.fromcord != basiscord:
+            self.fromcord = basiscord
+            self.tocords = _getLegalMoves(self.view.history[-1], basiscord, True)
+        
+        #if basiscord in self.view.history[-1].movelist and \
+        #    cord in self.view.history[-1].movelist[basiscord]:
+        #    return True
+        
+        if cord in self.tocords:
             return True
-
+        
         # if not basiscord, we are probably trying to select a piece to move.
         # In that case we should not want empty cords
         if self.view.history[-1][cord] == None:

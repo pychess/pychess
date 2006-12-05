@@ -42,8 +42,14 @@ class Cord:
         return (self.x, self.y)
     cords = property(_get_cords, _set_cords)
     
+    def __cmp__ (self, other):
+        return self.__eq__(other)
+    
     def __eq__ (self, other):
         return other != None and other.x == self.x and other.y == self.y
+    
+    def __ne__ (self, other):
+        return not self.__eq__(other)
     
     def __repr__ (self):
         return self.cx + self.cy
