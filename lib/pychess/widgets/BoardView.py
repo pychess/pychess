@@ -138,19 +138,30 @@ class BoardView (gtk.DrawingArea):
             for y, row in enumerate(board0.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
+                    
                     if step < 0 and piece.opacity < 1:
+                        # If piece is fading in, it should not move
                         continue
+                        
                     if step > 0 and piece in deadset:
+                        # No need for more testing, if piece is dead
                         continue
+                        
                     if piece != board1.data[y][x]:
+                    
                         if step > 0 and (board1.data[y][x] != None or \
                                 0 < y < 7 and board0.enpassant == \
                                 Cord (x,y+(board0.color == WHITE and 1 or -1)) \
                                 and board1[board0.enpassant] != None):
+                                
                             # A piece is dying
+                            deadset.add(piece)
+                            
+                            # If dead pieces as a location, they jump a little
+                            # When they are waken to life
                             piece.x = None
                             piece.y = None
-                            deadset.add(piece)
+                            
                         elif piece.x == None:
                             # It has moved
                             piece.x = x
@@ -185,6 +196,10 @@ class BoardView (gtk.DrawingArea):
     shown = property(_get_shown, _set_shown)
     
     def runAnimation (self, redrawMisc=False):
+        
+        """ The animationsystem in pychess is very loosely inspired by the one of chessmonk. The idea is, that every piece has a place in an array (the board.data one) for where to be drawn. If a piece is to be animated, it can set its x and y properties, to some cord (or part cord like 0.42 for 42% right to file 0). Each time runAnimation is run, it will set those x and y properties a little closer to the location in the array. When it has reached its final location, x and y will be set to None.
+        _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
+        
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.history[self.shown]
 
