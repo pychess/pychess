@@ -47,6 +47,7 @@ class MovePool:
         self.lock = Lock()
         
     def pop (self, cord0, cord1, promotion=QUEEN):
+        return Move(cord0, cord1, promotion)
         self.lock.acquire()
         
         if len(self.objects) <= 0:
@@ -65,6 +66,7 @@ class MovePool:
         return mv
         
     def add (self, move):
+        return
         if not move: return
         move.promotion = None
         move.cord0 = None
@@ -108,7 +110,7 @@ def parseSAN (board, san):
     notat = notat.replace("0","o").replace("O","o")
     notat = notat.replace("=","").replace("+","").replace("#","").replace("x","")
     notat = notat.strip()
-    # only remove the "-" if no rokade detected
+    # only remove the "-" if no castling detected
     if notat != "o-o":
         if notat != "o-o-o":
             notat = notat.replace("-","")
@@ -300,17 +302,19 @@ def toSAN (board, board2, move, fan=False):
     return notat
     
 def toLAN (board, move):
-    """ Returns a Long/Expanded Algebraic Notation string of a move """
+    """ Returns a Long/Expanded Algebraic Notation string of a move
+        board should be prior to the move """
     
-    s = str(move.cord1) + "-" + str(move.cord1)
-    if board[move.cord1].sign != PAWN:
-        s = reprSign[board[move.cord1].sign][0] + s
-    if board[move.cord1].sign == PAWN and move.cord1.y in (0,7):
+    s = str(move.cord0) + "-" + str(move.cord1)
+    if board[move.cord0].sign != PAWN:
+        s = reprSign[board[move.cord0].sign][0] + s
+    if board[move.cord0].sign == PAWN and move.cord1.y in (0,7):
         return s + "=" + reprSign[move.promotion]
     return s
     
 def toAN (board, move):
-    """ Returns a Algebraic Notation string of a move """
+    """ Returns a Algebraic Notation string of a move
+        board should be prior to the move """
     
     s = str(move.cord0) + str(move.cord1)
     if board[move.cord0].sign == PAWN and move.cord1.y in (0,7):

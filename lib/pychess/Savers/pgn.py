@@ -132,7 +132,9 @@ class PGNFile (ChessFile):
             if i+1 < len(moves) and (position == -1 or i+1 < position):
                 history.add(m, False)
             else: history.add(m, True)
-            
+        
+        assert history[-1].movelist
+        
         return history
     
     def parseMove (self, board, movestr):

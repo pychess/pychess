@@ -63,12 +63,13 @@ class Board:
         cord0, cord1 = move.cords
         
         if self[cord1] and self[cord1].sign == KING:
-            raise Exception, "Trying to capture king in %s\n%s" % (str(move), str(self))
+            raise Exception, "Trying to capture king in %s %s %s\n%s" % \
+                    (str(move), cord1, self[cord1], str(self))
         
         p = board[cord0]
         
         if not p:
-            print board, cord0
+            print board, move, cord0
         
         if p.sign == KING:
             if cord0.y == 0:
@@ -173,7 +174,15 @@ class Board:
         return b
     
     def __cmp__ (self, other):
-        return self.__eq__ (other)
+        if other == None:
+            return 1
+        if cmp (self.myhash, other.myhash):
+            return cmp (self.myhash, other.myhash)
+        if cmp (self.castling, other.castling):
+            return cmp (self.castling, other.castling)
+        if cmp (self.enpassant, other.enpassant):
+            return cmp (self.enpassant, other.enpassant)
+        return cmp (self.color, other.color)
     
     def __eq__ (self, other):
         return  other != None and \

@@ -458,17 +458,22 @@ class BoardView (gtk.DrawingArea):
         p1 = 0.085 # Padding on current cord
         sw = 0.02 # Stroke width
         
+        xc, yc, square, s = self.square
+        
         context.save()
+        context.set_line_width(sw*s)
         
         d0 = {-1:1-p0,1:p0}
         d1 = {-1:1-p1,1:p1}
         ms = ((1,1),(-1,1),(-1,-1),(1,-1))
         
-        redrawAnything = False
+        light_yellow = (.929, .831, 0, 0.8)
+        dark_yellow  = (.769, .627, 0, 0.5)
+        light_orange = (.961, .475, 0, 0.8)
+        dark_orange  = (.808, .361, 0, 0.5)
         
         r = self.cord2Rect(self.lastMove.cord0)
         if intersects(rect(r), redrawn):
-            redrawAnything = True
             for m in ms:
                 context.move_to(
                     r[0]+(d0[m[0]]+wh*m[0])*r[2],
@@ -480,7 +485,12 @@ class BoardView (gtk.DrawingArea):
                     -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
                     -wh*r[2]*m[0], wh*r[2]*m[1])
                 context.close_path()
-        
+            
+            context.set_source_rgba(*light_yellow)
+            context.fill_preserve()
+            context.set_source_rgba(*dark_yellow)
+            context.stroke()
+            
         r = self.cord2Rect(self.lastMove.cord1)
         if intersects(rect(r), redrawn):
             redrawAnything = True
@@ -495,14 +505,18 @@ class BoardView (gtk.DrawingArea):
                     -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
                     -wh*r[2]*m[0], wh*r[2]*m[1])
                 context.close_path()
-        
-        if redrawAnything:
-            context.set_source_rgba(.929, .831, 0, 0.8)
-            context.fill_preserve()
-            context.set_source_rgba(.769, 0.627, 0, 0.5)
-            context.set_line_width(sw*r[2])
-            context.stroke()
-        
+            
+            if self.history[self.shown-1][self.lastMove.cord1]:
+                context.set_source_rgba(*light_orange)
+                context.fill_preserve()
+                context.set_source_rgba(*dark_orange)
+                context.stroke()
+            else:
+                context.set_source_rgba(*light_yellow)
+                context.fill_preserve()
+                context.set_source_rgba(*dark_yellow)
+                context.stroke()
+                
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         

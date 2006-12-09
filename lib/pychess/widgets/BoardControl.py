@@ -15,7 +15,7 @@ from BoardView import join
 from time import time
 
 class BoardControl (gtk.EventBox):
-
+    
     __gsignals__ = {
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
         'call_flag' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
@@ -66,27 +66,29 @@ class BoardControl (gtk.EventBox):
         if self.view.shown != len(self.view.history)-1:
             return False
         
+        # Set the basiscord to the selected or active
         if self.view.active:
             basiscord = self.view.active
         else: basiscord = self.view.selected
         
-        if basiscord and self.view.history[-1][basiscord] and \
-                self.fromcord != basiscord:
-            self.fromcord = basiscord
-            self.tocords = _getLegalMoves(self.view.history[-1], basiscord, True)
+        # If we are dealing with two cords (a piece select)
+        if basiscord and basiscord != cord:
+            # If the tocords list, is not relative to our basiscord, we have to
+            # create a new list.
+            if self.fromcord != basiscord:
+                self.tocords = _getLegalMoves(self.view.history[-1], basiscord, True)
+                self.fromcord = basiscord # Remember the basiscord of self.tocords
+            
+            # If cord is a legal move..
+            if cord in self.tocords:
+                return True
         
-        #if basiscord in self.view.history[-1].movelist and \
-        #    cord in self.view.history[-1].movelist[basiscord]:
-        #    return True
-        
-        if cord in self.tocords:
-            return True
-        
-        # if not basiscord, we are probably trying to select a piece to move.
-        # In that case we should not want empty cords
+        # if no other cord is active/selected, we are probably trying to select
+        # a piece to move. In that case we should not want empty cords
         if self.view.history[-1][cord] == None:
             return False
         
+        # We should not be able to select an opponent piece
         color = self.view.history.curCol()
         if self.view.history[-1][cord].color != color:
             return False
