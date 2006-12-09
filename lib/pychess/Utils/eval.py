@@ -307,14 +307,6 @@ def evalCastling (board):
                     score -= 10*mod
                 break
         
-        # We don't wanna care about castling before opponent's got its queen out
-        dobreak = False
-        for piece in mainrow:
-            if piece and piece.sign == QUEEN and piece.color == color:
-                dobreak = True
-                continue
-        if dobreak: continue
-        
         castled = color == BLACK and BLACK_CASTLED or WHITE_CASTLED
         kside = color == BLACK and BLACK_OO or WHITE_OO
         qside = color == BLACK and BLACK_OOO or WHITE_OOO

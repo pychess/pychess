@@ -2,6 +2,11 @@
 
 from CECP import CECPEngine
 
+# TODO: Use xml, like glchess.
+# Will be needed when more info is needed for the preferences:
+# * location
+# * "uses to send feature" (should let us start earlier)
+
 knownEngines = (
     ("gnuchess", CECPEngine),
     ("crafty", CECPEngine),
@@ -28,8 +33,9 @@ for e,p in knownEngines:
 ###################
 
 # Other engines
-from PyChess import PyChessEngine
-availableEngines.append((PyChessEngine,()))
+#from PyChess import PyChessEngine
+#availableEngines.append((PyChessEngine,()))
+availableEngines.append((CECPEngine,("/home/thomas/Programmering/python/skak/svn/lib/pychess/Players/PyChess.py",)))
 
 ###################
 

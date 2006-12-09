@@ -45,6 +45,7 @@ from time import time
 from pychess.System.Log import log
 import os, select, signal, errno, tty
 import gobject
+from random import randint, choice
 CHILD = 0
 
 class EngineConnection (gobject.GObject):
@@ -58,10 +59,14 @@ class EngineConnection (gobject.GObject):
         self.pid, self.fd = os.forkpty()
         if self.pid == CHILD:
             os.nice(15)
-            os.execv(executable, [""])
+            os.execve(executable, [""], {"PYTHONPATH":"/home/thomas/Programmering/python/skak/svn/lib/"})
         
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
+        
+        # This can be done smarter, when an enginepool is written
+        #chars = [(ord("a"), ord("z")), (ord("A"), ord("Z"))]
+        #self.defname  = self.defname+"#"+chr(randint(*choice(chars)))
         
         log.debug(executable+"\n", self.defname)
         
@@ -82,6 +87,7 @@ class EngineConnection (gobject.GObject):
             line = self.buffer[:i]
             self.buffer = self.buffer[i+1:]
             if line:
+                log.debug(line+"\n", self.defname)
                 return line
             
         while True:
@@ -102,17 +108,19 @@ class EngineConnection (gobject.GObject):
             
             try:
                 data = os.read(self.fd, rlist[0])
+                #print repr(data)
             except OSError, error:
                 if error.errno in (5, 9): # ioerrro, file-descriptor error
                     return None
                 else: raise
             
             self.buffer += data.replace("\r\n","\n").replace("\r","\n")
+            #print repr(self.buffer)
             i = self.buffer.find("\n")
             if i < 0: continue
             line = self.buffer[:i]
             self.buffer = self.buffer[i+1:]
-            if line.strip():
+            if line:
                 log.debug(line+"\n", self.defname)
                 return line
     

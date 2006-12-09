@@ -105,7 +105,6 @@ class History (GObject):
         assert self[-1].color == self.curCol()
         
     def add (self, move, mvlist=False):
-        
         if self.special:
             #print "move", move
             pass
@@ -143,6 +142,10 @@ class History (GObject):
 
     def clone (self):
         his = hisPool.pop()
+        # As a move class is imutable, it doesn't matter if clones share instances
         his.moves = copy(self.moves)
-        his.boards = copy(self.boards)
+        # As calling setStartingColor will change all boards, we would not like
+        # clones to share baord instances
+        his.boards = [board.clone() for board in self.boards]
+        his.curColModi = self.curColModi
         return his

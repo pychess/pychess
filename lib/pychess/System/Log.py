@@ -26,9 +26,16 @@ class Log (gobject.GObject):
     
     def __init__ (self, logpath):
         gobject.GObject.__init__(self)
-        if not os.path.exists (logpath):
-            self.file = open (logpath, "w")
-        else: self.file = open (logpath, "a")
+        
+        #if not os.path.exists (logpath):
+        #    self.file = open (logpath, "w")
+        #else: self.file = open (logpath, "a")
+        
+        # As we do not want gigantic logfiles, 
+        # we should probably erase it every time we start.
+        self.file = open (logpath, "w")
+        
+        self.messages = []
 
     def _format (self, task, message, type):
         t = time.strftime ("%F %T")
@@ -37,6 +44,7 @@ class Log (gobject.GObject):
     def _log (self, task, message, type):
         formated = self._format(task, message, type)
         print >> self.file, formated
+        self.messages.append ((task, message, type))
         self.emit ("logged", task, message, type)
         if type == ERROR:
             print formated

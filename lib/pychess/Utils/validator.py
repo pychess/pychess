@@ -332,7 +332,7 @@ def genLegalMoves (board, cord, testCheck):
                 yield move
             else: movePool.add(move)
         except Exception:
-            print piece, cord0, "\n", board
+            print piece, cord, "\n", board
             raise
 
 def _getLegalMoves (board, cord, testCheck):
@@ -460,12 +460,31 @@ def status (history):
         Status can be one of RUNNING, DRAW, WHITEWON or BLACKWON.
         Comment can be any from pychess.Utils.const or None, if status is RUNNING """
     
-    # FIXME: We don't test enough to know if positions are equal to the FIDE rules:
-    # Positions are not the same if:
-    # * a pawn that could have been captured,
-    # * en passant can no longer be captured
-    # * the right to castle has been changed.
-
+    board = history[-1]
+    pieceCount = {}
+    for x in range8:
+        for y in range8:
+            piece = board.data[y][x]
+            if piece:
+                if not piece.sign in pieceCount:
+                    pieceCount[piece.sign] = [x % 2 + y % 2 == 1]
+                else: pieceCount[piece.sign].append(x % 2 + y % 2 == 1)
+    copieces = sum([len(v) for v in pieceCount.values()])
+    
+    if copieces == 2:
+        # 1. king versus king
+        return DRAW, DRAW_INSUFFICIENT
+    elif copieces == 3 and BISHOP in pieceCount and len(pieceCount[BISHOP]) == 1:
+        # 2. king and bishop versus king
+        return DRAW, DRAW_INSUFFICIENT
+    elif copieces == 3 and KNIGHT in pieceCount and len(pieceCount[KNIGHT]) == 1:
+        # 3. king and knight against king
+        return DRAW, DRAW_INSUFFICIENT
+    elif copieces == 4 and BISHOP in pieceCount and len(pieceCount[BISHOP]) == 2 and \
+            pieceCount[BISHOP][0] and pieceCount[BISHOP][1]:
+        # 4. king and bishop versus king and bishop with the bishops on the same color.
+        return DRAW, DRAW_INSUFFICIENT
+    
     if len(history) >= 9 and history[-1] == history[-5] == history[-9]:
         return DRAW, DRAW_REPITITION
     

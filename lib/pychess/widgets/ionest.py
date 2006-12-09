@@ -216,21 +216,19 @@ def runNewGameDialog (hideFC=True):
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
-        # We assume that the Pychess engine is the last of the list
-        #anaengines[:-1]
+        # We assume that the Pychess engine is the last of the list (engines.py
+        # puts it there)
+        #engine, args = random.choice(anaengines[:-1])
         engine0, args0 = anaengines[-2]
-        engine1, args1 = anaengines[-2]
+        engine1, args1 = anaengines[-3]
     else:
-        engine0, args0 = anaengines[0]
-        engine1, args1= anaengines[0]
+        engine0, args0 = engine1, args1 = anaengines[0]
     
     hintanalyzer = engine0 (args0, WHITE)
-    hintanalyzer.setDepth(2)
     hintanalyzer.analyze(inverse=False)
     log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
     spyanalyzer = engine1 (args1, WHITE)
-    spyanalyzer.setDepth(2)
     spyanalyzer.analyze(inverse=True)
     log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
 
