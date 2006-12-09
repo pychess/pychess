@@ -161,10 +161,10 @@ class GladeHandlers:
         if not gameDic: return
 
         def on_analyze (analyzer, moves, board, game):
-            player = board.view.history.curCol() and game.player2 or game.player1
-            if player.__type__ == LOCAL:
-                board.view.greenarrow = moves[0].cords
-            else: board.view.greenarrow = None
+            #player = board.view.history.curCol() and game.player2 or game.player1
+            #if player.__type__ == LOCAL:
+            board.view.greenarrow = moves[0].cords
+            #else: board.view.greenarrow = None
         def on_clear (history, board):
             board.view.greenarrow = None
         def on_reset (history, board):
@@ -179,6 +179,7 @@ class GladeHandlers:
             
             if widget.get_active():
                 if len(hintanalyzer.analyzeMoves) >= 1:
+                    #if player.__type__ == LOCAL:
                     board.view.greenarrow = hintanalyzer.analyzeMoves[0].cords
                 game.hintconid0 = hintanalyzer.connect("analyze", on_analyze, board, game)
                 game.hintconid1 = history.connect("changed", on_clear, board)
@@ -193,10 +194,10 @@ class GladeHandlers:
         if not gameDic: return
         
         def on_analyze (analyzer, moves, board, game):
-            player = board.view.history.curCol() and game.player1 or game.player2
-            if player.__type__ == LOCAL:
-                board.view.redarrow = moves[0].cords
-            else: board.view.redarrow = None
+            #player = board.view.history.curCol() and game.player1 or game.player2
+            #if player.__type__ == LOCAL:
+            board.view.redarrow = moves[0].cords
+            #else: board.view.redarrow = None
         def on_clear (history, board):
             board.view.redarrow = None
         def on_reset (history, board):

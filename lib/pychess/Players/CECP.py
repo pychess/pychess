@@ -162,7 +162,7 @@ class CECPEngine (Engine):
     
 import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
-movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})\s")
+movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
 multiWs = re.compile(r"\s+")
 
 from pychess.Savers import epd
@@ -211,6 +211,7 @@ class CECProtocol (GObject):
         self.history = History()
         self.forced = False
         self.gonext = False
+        self.analyzing = False
         self.sd = True
         self.st = True
         
@@ -267,10 +268,10 @@ class CECProtocol (GObject):
             if line:
                 self.parseLine(line)
             
-    ########################
+    ######################## FROM ENGINE ########################
     
     def parseMove (self, movestr, board=None):
-        board = board and board or self.history[-1]
+        board = board or self.history[-1]
         if self.features["san"]:
             return parseSAN(board, movestr)
         else:
@@ -312,43 +313,30 @@ class CECProtocol (GObject):
         # Analyzing
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
             if parts[:4] == ["0","0","0","0"]:
-                # Crafty don't analyze untill it is out of book
+                # Crafty doesn't analyze untill it is out of book
                 print >> self.engine, "book off"
                 return
-            
-            if self.inverseAnalyze:
-                self.switchColor()
+                
             board = firstboard = self.history[-1]
-            firstboard.color = self.history.curCol()
             movelist = firstboard.movelist
             firstboard.movelist = None
             
-            boards = [board]
             moves = []
-            
+
             for m in movre.findall(" ".join(parts[4:])+" "):
                 try:
-                	parsedMove = self.parseMove(m, board)
+                  	parsedMove = self.parseMove(m, board)
+                   	moves.append(parsedMove)
+                   	board = board.move(parsedMove, mvlist=False)
                 except ParsingError:
-                    continue
-                try:
-                    moves.append(self.parseMove(m, board))
-                except Exception:
-                	print boards, moves, parts, m, parsedMove
-                	raise
-                if moves:
-                    try:
-                        board = board.move(moves[-1], mvlist=False)
-                        boards.append(board)
-                    except AttributeError:
-                        break
+                    break
+               	
             if moves:
+            #    print "emitting", moves
                 self.emit("analyze", moves)
+            #else: print "not emitting", self.features["myname"]
             
             firstboard.movelist = movelist
-            if self.inverseAnalyze:
-                self.switchColor()
-            firstboard.color = self.history.curCol()
             
             return
             
@@ -387,11 +375,13 @@ class CECProtocol (GObject):
             for i, pair in enumerate(parts[1:]):
                 if pair.find("=") < 0: continue
                 key, value = pair.split("=")
-                if value.startswith("\"") and value.endswith("\""):
+                if value[0] in ('"',"'") and value[-1] in ('"',"'"):
                     value = value[1:-1]
-                elif value.startswith("\"") and not value.endswith("\""):
+                elif value[0] in ('"',"'") and not value[-1] in ('"',"'"):
                     rest = value[1:]+" "+" ".join(parts[2+i:])
-                    i = rest.find("\"")
+                    i = rest.find('"')
+                    if i < 0:
+                        i = rest.find("'")
                     if i >= 0:
                         value = rest[:i]
                     else: value[1:]
@@ -401,7 +391,7 @@ class CECProtocol (GObject):
             return
         #self.lock.release()
         
-    ########################
+    ######################## TO ENGINE ########################
     
     def newGame (self):
         assert self.ready, "Still waiting for done=1"
@@ -425,15 +415,19 @@ class CECProtocol (GObject):
     def move (self, history):
         assert self.ready, "Still waiting for done=1"
         
-        if self.features["usermove"]:
-            self.write("usermove ")
+        self.history = history.clone()
         
-        self.history = history
-        
-        if not history.moves or self.gonext:
+        if not history.moves or self.gonext and not self.analyzing:
             self.go()
             self.gonext = False
             return
+        
+        if self.inverseAnalyze:
+            self.switchColor()
+            self.printColor()
+        
+        if self.features["usermove"]:
+            self.engine.write("usermove ")
         
         move = history.moves[-1]
         if self.features["san"]:
@@ -441,9 +435,11 @@ class CECProtocol (GObject):
         else: print >> self.engine, toAN(history[-2], history.moves[-1])
         
         if self.inverseAnalyze:
-            self.switchColor()
+            #self.switchColor()
             self.printColor()
-            self.switchColor()
+        
+        if self.forced and not self.analyzing:
+            self.go()
         
     def pause (self):
         assert self.ready, "Still waiting for done=1"
@@ -467,6 +463,7 @@ class CECProtocol (GObject):
     
     def go (self):
         print >> self.engine, "go"
+        self.forced = False
     
     def post (self):
         print >> self.engine, "post"
@@ -516,13 +513,16 @@ class CECProtocol (GObject):
         print >> self.engine, "hint"
     
     def switchColor (self):
-        self.history.curColModi = 1 - self.history.curColModi
+        #FIXME!! This bugs if we are waiting for the engine to move
+        if self.history:
+            self.history.setStartingColor (1 - self.history.curColModi)
     
     def printColor (self):
         #if self.features["colors"]:
         if self.history.curCol() == 0:
             print >> self.engine, "white"
         else: print >> self.engine, "black"
+        if self.forced: print >> self.engine, "force"
         #elif self.features["playother"]:
         #    print >> self.engine, "playother"
     
@@ -533,12 +533,12 @@ class CECProtocol (GObject):
             io = StringIO()
             epd.save(io, history)
             fen = io.getvalue()
-            print >> self.engine, "force"
+            self.force()
             print >> self.engine, "setboard", fen
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
-            print >> self.engine, "force"
+            self.force()
             if history.curCol() == BLACK:
                 print >> self.engine, "a2a3"
             print >> self.engine, "edit"
@@ -554,10 +554,13 @@ class CECProtocol (GObject):
                 print >> self.engine, "c"
             print >> self.engine, "."
         
-        if history.curCol() == self.color and not self.forced:
-            self.gonext = True
+        self.history = history.clone()
         
-        self.history = history
+        if self.analyzing:
+            self.analyze(self.inverseAnalyze)
+        
+        elif history.curCol() == self.color:
+            self.gonext = True
     
     def setDepth (self, depth):
         assert self.ready, "Still waiting for done=1"
@@ -580,12 +583,12 @@ class CECProtocol (GObject):
         print >> self.engine, "level %d %s %d" % (moves, s, increment)
     
     def analyze (self, inverse=False):
-        #if self.features["analyze"]:
-        self.force()
-        self.post()
-        self.inverseAnalyze = inverse
-        if self.inverseAnalyze:
-            self.switchColor()
-            self.printColor()
-            self.switchColor()
-        print >> self.engine, "analyze"
+        if self.features["analyze"]:
+            self.force()
+            self.post()
+            self.inverseAnalyze = inverse
+            if self.inverseAnalyze:
+                self.switchColor()
+                self.printColor()
+            print >> self.engine, "analyze"
+            self.analyzing = True

@@ -100,6 +100,8 @@ class BoardPreview (gtk.Alignment):
             result = result.replace("1/2","½")
             self.list.get_model().append (names+[result])
         
+        self.widgets["posLabel"].set_text("0...")
+        
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
     

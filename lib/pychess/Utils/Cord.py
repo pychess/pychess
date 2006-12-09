@@ -43,7 +43,13 @@ class Cord:
     cords = property(_get_cords, _set_cords)
     
     def __cmp__ (self, other):
-        return self.__eq__(other)
+        if other == None:
+            return 1
+        if cmp (self.x, other.x):
+            return cmp (self.x, other.x)
+        if cmp (self.y, other.y):
+            return cmp (self.y, other.y)
+        return 0
     
     def __eq__ (self, other):
         return other != None and other.x == self.x and other.y == self.y

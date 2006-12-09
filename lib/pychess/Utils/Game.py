@@ -100,8 +100,8 @@ class Game (GObject):
             thread.start_new(do,())
     
     def _run (self):
-        self.run = True
-        while self.run:
+        self.running = True
+        while self.running:
             player, no = { WHITE: (self.player1, 0),
                            BLACK: (self.player2, 1)} [self.history.curCol()]
             
@@ -126,11 +126,11 @@ class Game (GObject):
                 raise
                 
             except EngineDead:
-                self.gmwidg.status(_("A player has died"))
+                #self.gmwidg.status(_("A player has died"))
                 self.kill()
                 break
             
-            if not self.run:
+            if not self.running:
                 self.kill()
                 break
             
@@ -143,7 +143,7 @@ class Game (GObject):
                 
     def kill (self):
         self.gmwidg.setTabReady(False)
-        self.run = False
+        self.running = False
         if self.player1: self.player1.__del__()
         if self.player2: self.player2.__del__()
         for analyzer in self.analyzers:
@@ -158,6 +158,7 @@ class Game (GObject):
             BLACKWON: _("Black player won the game")
         }[stat]
         m2 = {
+            DRAW_INSUFFICIENT: _("caused by insufficient material"),
             DRAW_REPITITION: _("as the same position was repeated three times in a row"),
             DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
             DRAW_STALEMATE: _("because of stalemate"),

@@ -23,7 +23,7 @@ width = pango.PIXELS(metrics.get_approximate_char_width())*80
 height = pango.PIXELS(metrics.get_ascent()+metrics.get_descent())*24
 
 task2book = {}
-def newMessage (log, task, message, type):
+def newMessage (task, message, type):
     if not task in task2book:
         view = gtk.TextView ()
         view.set_editable(False)
@@ -47,7 +47,10 @@ def newMessage (log, task, message, type):
     textbuffer.insert_with_tags_by_name(textbuffer.get_end_iter(), message, str(type))
 
 from gobject import idle_add
-log.connect ("logged", lambda *a: idle_add(newMessage,*a))
+for task, message, type in log.messages:
+	idle_add(newMessage, task, message, type)
+log.connect ("logged", lambda log, task, message, type: \
+		idle_add(newMessage, task, message, type))
 
 def show ():
     w.show_all()
