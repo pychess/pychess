@@ -17,7 +17,7 @@ profile = True
 profile = False
 
 class Game (GObject):
-
+    
     def __init__(   self, gmwidg, history, analyzers,
                     p1, p2, cc = None, seconds = 0, plus = 0):
         
@@ -171,20 +171,20 @@ class Game (GObject):
         
     def _action (self, player, action):
         
-        if action == player.RESIGNATION:
+        if action == RESIGNATION:
             p = player == self.player1 and BLACKWON or WHITEWON
             self.gameEnded(p, WON_RESIGN)
             
-        elif action == player.DRAW_OFFER:
+        elif action == DRAW_OFFER:
             self.gmwidg.status(_("Draw offer has been sent"), True)
             otherPlayer = player == self.player1 and self.player2 or self.player1
             otherPlayer.offerDraw()
             
-        elif action == player.DRAW_ACCEPTION:
+        elif action == DRAW_ACCEPTION:
             #FIXME: Test if draw is (still) valid
             self.gameEnded(DRAW, DRAW_AGREE)
             
-        elif action == player.FLAG_CALL:
+        elif action == FLAG_CALL:
             if not self.chessclock:
                 self.gmwidg.status(_("Couldn't call flag in game with no timecontrols"), True)
                 return

@@ -4,19 +4,25 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from time import time
 import sys, os
 import thread
+from threading import Lock
 
 from Engine import Engine
 from pychess.Utils.History import hisPool
-from pychess.Utils.Move import movePool, parseSAN, parseAN, toAN
+from pychess.Utils.Move import movePool, parseSAN, parseAN, toAN, ParsingError
 from pychess.Utils import eval
 from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.validator import findMoves2, isCheck
 from pychess.Utils.History import History
 from pychess.System.ThreadPool import pool
-from pychess.System.LimitedDict import LimitedDict
+from pychess.Utils.TranspositionTable import TranspositionTable
+from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT
+from sys import maxint
 
-#from pychess.Savers import epd
+from pychess.Utils.const import prefix
+import gettext
+gettext.install("pychess", localedir=prefix("lang"), unicode=1)
+from pychess.Savers import epd
 from cStringIO import StringIO
 
 import random
@@ -31,31 +37,78 @@ def getBestOpening (board):
     return move
 
 last = 0
+nodes = 0
+searching = False
+searchLock = Lock()
 
 def alphaBeta (table, board, depth, alpha, beta, capture=False):
-    global last
+    """ This is a alphabeta/negamax/quiscent/iterativedeepend search algorithm
+        Based on moves found by the validator.py findmoves2 function and
+        evaluated by eval.py.
+        
+        The function recalls itself "depth" times. If the last move in range
+        depth was a capture, it will continue calling itelf, only searching for
+        captures.
+        
+        It returns a tuple of
+        *   a list of the path it found through the search tree (last item being
+            the deepest)
+        *   a score of your standing the the last possition. """
+    
+    global last, nodes, searching
     foundPv = False
+    hashf = hashfALPHA
     amove = []
     
-    if table.has_key(board):
-        last = -1; return table[board]
+    probe = table.probe (board, max(depth,1), alpha, beta)
+    if probe: last = -1; return probe
     
-    if (depth <= 0 and not capture) or depth < -2:
-        last = 1; return [], eval.evaluateComplete(board, board.color)
+    if (depth <= 0 and not capture) or depth < -2 or not searching:
+        last = 1; result = [], eval.evaluateComplete(board, board.color)
+        table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
+        return result
+    
+    lowerDepthMove = None
+    i = -1
+    while depth+i >= 1:
+        probe = table.probe (board, max(depth-1,1), alpha, beta)
+        if probe and probe[0]:
+            lowerDepthMove = probe[0][0]
+            break
+        i -= 1
+    
+    used = set()
+    def nextedIterator (*items):
+        for item in items:
+            for i in item:
+                try:
+                    if not i in used:
+                        used.add(i)
+                        yield i
+                except:
+                    print items, item, i
+                    raise
+    
+    # TODO: Use the killer move method.
+    # *  Create a LimitedDict for each call (not the recursive ones)
+    # *  Save [depth] = [move,] for each recursive call
+    # *  Test each best move from other paths, before generating your own.
+    # *  Remember to validate
+    # *  Remember to test if this actually makes a difference (in best case alphabeta should only test a squareroot of the moves)
+    
+    # Would sorting moves by a simple evaluation (only piecevalue and location) help?
+    
+    pureCaptures = depth <= 0
+    if lowerDepthMove:
+        iterator = nextedIterator([lowerDepthMove],
+                findMoves2(board, pureCaptures=pureCaptures))
+    else: iterator = findMoves2(board, pureCaptures=pureCaptures)
     
     move = None
-    for move in findMoves2(board):
-        if depth == 2: print move
+    for move in iterator:
+        #if depth == 2: print move
         
-        # TODO: We could use some sort of moveordering here, to make alphaBeta
-        # more efficient. The killer move method might be applyable
-        
-        # If we do order the moves, it will require that we find all moves of
-        # the board, instead of only iterating. If we do that, we might also be
-        # able to use the validator status function, to test for draws. It'll
-        # only require a history object... (treefold)
-        
-        # The question is wheter it would require much more generating...
+        nodes += 1
         
         board2 = board.move(move)
         
@@ -78,13 +131,14 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
             val = -val
         
         if val >= beta:
-            table[board] = ([move]+mvs, beta)
+            table.record (board, [move]+mvs, len(mvs)+1, beta, hashfBETA)
             last = 3; return [move]+mvs, beta
 
         if val > alpha:
             map(movePool.add, amove)
             alpha = val
             amove = [move]+mvs
+            hashf = hashfEXACT
             foundPv = True
         else:
             map(movePool.add, mvs)
@@ -94,23 +148,24 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         # If not moves were found, this must be a mate or stalemate
         lastn = 5
         if isCheck (board, board.color):
-            result = ([], -9999)
+            result = ([], -maxint)
         else: result = ([], 0)
     else:
         # If not move made it through alphabeta (should not be possible)
         # We simply pick the last the best, whith th lowest score...
         last = 6; result = ([move], alpha)
-    table[board] = result
+    table.record (board, result[0], len(result[0]), result[1], hashf)
     return result
 
 sd = 1
-moves = 0
-seconds = 0
-increment = 0
+moves = None
+seconds = None
+increment = None
 forced = False
+analyzing = False
 
 history = History()
-transpositionTable = LimitedDict(5000)
+table = TranspositionTable(50000)
 
 features = {
     "setboard": 1,
@@ -121,21 +176,69 @@ features = {
     "myname": "PyChess %s" % VERSION
 }
 
-def go ():
-    # TODO: Must be threaded. Python threading is ok
+def analyze2 ():
+    from profile import runctx
+    runctx ("analyze2()", locals(), globals(), "/tmp/pychessprofile")
+    from pstats import Stats
+    s = Stats("/tmp/pychessprofile")
+    s.sort_stats("time")
+    s.print_stats()
+
+def analyze ():
+    global searching, nodes
+    searching = True
+    start = time()
+    searchLock.acquire()
+    for depth in range (1, 10):
+        if not searching: break
+        mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
+        
+        smvs = []
+        board = history[-1]
+        for move in mvs:
+            smvs.append(toAN (board, move))
+            board = board.move(move)
+        smvs = " ".join(smvs)
+        
+        print depth,"\t", "%0.2f" % (time()-start),"\t", scr,"\t", nodes,"\t", smvs
+        nodes = 0
+    searchLock.release()
     
-    # TODO: Length info should be put in the book
-    if len(history) < 10:
+def go ():
+    # TODO: Length info should be put in the book.
+    # Btw. 10 is not enough. Try 20
+    if len(history) < 14:
         movestr = getBestOpening(history[-1])
         if movestr:
             move = parseSAN(history[-1], movestr)
         
-    if len(history) >= 10 or not movestr:
-        mvs, scr = alphaBeta (transpositionTable, history[-1], sd, -9999, 9999)
-        move = mvs[0]
-        print "moves were", mvs, "color is", history[-1].color, history.curCol()
-        print "last", last
-    
+    if len(history) >= 14 or not movestr:
+        
+        searchLock.acquire()
+        global searching, nodes
+        searching = True
+        
+        if seconds == None:
+            mvs, scr = alphaBeta (table, history[-1], sd, -maxint, maxint)
+            move = mvs[0]
+            print "moves were", mvs, "color is", history[-1].color, history.curCol()
+            print "last", last
+        
+        else:
+            # We bet that the game will be about 30 moves. That gives us
+            # starttime / 30 seconds per turn + the incremnt.
+            # TODO: Create more sophisticated method.
+            usetime = seconds / 30. + increment
+            endtime = time() + usetime
+            for depth in range(sd):
+                mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
+                if time() > endtime: break
+            move = mvs[0]
+        
+        nodes = 0
+        searching = False
+        searchLock.release()
+        
     history.add(move, mvlist=False)
     print "move", toAN(history[-2], move)
 
@@ -149,6 +252,11 @@ while True:
     
     elif lines[0] == "usermove":
         
+        if analyzing:
+            searching = False
+            searchLock.acquire()
+            searchLock.release()
+        
         try:
             move = parseAN (history[-1], lines[1])
         except ParsingError:
@@ -157,8 +265,12 @@ while True:
             
         history.add(move, mvlist=False)
         
-        thread.start_new(go,())
-    
+        if not forced and not analyzing:
+            thread.start_new(go,())
+        
+        if analyzing:
+            thread.start_new(analyze,())
+        
     elif lines[0] == "sd" and lines[1].isdigit():
         sd = int(lines[1])
         if sd < 4: sd = 1
@@ -167,31 +279,46 @@ while True:
         
     elif lines[0] == "level" and len(lines) == 4 and \
             [s.isdigit() for s in lines[1:]] == [True,True,True]:
-        moves, seconds, increment = map(int, liens[1:])
+        moves, seconds, increment = map(int, lines[1:])
         
     elif lines[0] == "quit":
         sys.exit()
     
     elif lines[0] == "force":
-        forced = not forced
+        forced = True
         
     elif lines[0] == "go":
+        forced = False
         thread.start_new(go,())
         
-    elif lines[0] == "black":
-        pass
-    elif lines[0] == "white":
-        pass
+    elif lines[0] in ("black", "white"):
+        searching = False
+        searchLock.acquire()
+        newColor = lines[0] == "black" and BLACK or WHITE
+        if history.curCol() != newColor:
+            history.setStartingColor(1-history[0].color)
+        searchLock.release()
+        if analyzing:
+            thread.start_new(analyze,())
     
+    elif lines[0] == "analyze":
+        analyzing = True
+        thread.start_new(analyze,())
+        
     elif lines[0] == "draw":
         print "offer draw"
     
     elif lines[0] == "setboard":
+        searching = False
         io = StringIO()
-        io.write(lines[1]+"\n")
+        io.write(" ".join(lines[1:])+"\n")
         io.seek(0)
         epdfile = epd.load(io)
         io.close()
+        searchLock.acquire()
         history = epdfile.loadToHistory(0,-1)
+        searchLock.release()
+        if analyzing:
+            thread.start_new(analyze,())
     
-    else: print "Illegal move", line
+    else: print "Unknown command", line

@@ -134,13 +134,33 @@ endking = array('b', [
     -5, -3, -1,  0,  0, -1, -3, -5
 ])
 
+# Init KingTropism table
+# Sjeng uses max instead of min..
+
+tropismTable = []
+for px in range(8):
+    pxrow = []
+    for py in range(8):
+        pyrow = []
+        for kx in range(8):
+            kxrow = []
+            for ky in range(8):
+                dic = {}
+                dic[KNIGHT] = abs(ky-py) + abs(kx-px) -5
+                dic[ROOK] = min(abs(ky-py), abs(kx-px)) *2
+                dic[QUEEN] = min(abs(ky-py), abs(kx-px))
+                kxrow.append(dic)
+            pyrow.append(kxrow)
+        pxrow.append(pyrow)
+    tropismTable.append(pxrow)
+
 from pychess.System.LimitedDict import LimitedDict
-hashmap = LimitedDict(10**3)
+hashmap = LimitedDict(5*10**3)
 
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
         several positional factors """
-
+    
     if board in hashmap:
         s = hashmap[board]
     else:
@@ -159,7 +179,7 @@ def evaluateComplete (board, color=WHITE):
             s = 9999
         else: s = -9999
         hashmap[board] = s
-
+    
     return (color == WHITE and [s] or [-s])[0]
 
 def evalMaterial (board):
@@ -200,10 +220,6 @@ def evalKingTropism (board):
     """ All other things being equal, having your Knights, Queens and Rooks close
         to the opponent's king is a good thing """
     
-    # Sjeng uses a [64][64] array for KingTropism.
-    # This way the calcualtions will only have to be made once.
-    # Sjeng also uses max instead of min..
-    
     score = 0
     
     try:
@@ -216,19 +232,19 @@ def evalKingTropism (board):
         for px, piece in enumerate(row):
             if piece and piece.color == WHITE:
                 if piece.sign == KNIGHT:
-                    score -= abs( bky - py ) + abs( bkx - px ) -5
+                    score -= tropismTable[px][py][bkx][bky][KNIGHT]
                 elif piece.sign == ROOK:
-                    score -= min(abs( bky - py ), abs( bkx - px )) *2
+                    score -= tropismTable[px][py][bkx][bky][ROOK]
                 elif piece.sign == QUEEN:
-                    score -= min(abs( bky - py ), abs( bkx - px ))
+                    score -= tropismTable[px][py][bkx][bky][QUEEN]
 
             elif piece and piece.color == BLACK:
                 if piece.sign == KNIGHT:
-                    score += abs( wky - py ) + abs( wkx - px ) -5
+                    score -= tropismTable[px][py][wkx][wky][KNIGHT]
                 elif piece.sign == ROOK:
-                    score += min(abs( wky - py ), abs( wkx - px )) *2
+                    score -= tropismTable[px][py][wkx][wky][ROOK]
                 elif piece.sign == QUEEN:
-                    score += min(abs( wky - py ), abs( wkx - px ))
+                    score -= tropismTable[px][py][wkx][wky][QUEEN]
     
     return score
 
@@ -268,7 +284,7 @@ def evalDevelopment (board):
     score = 0
     
     # Test endgame
-    if pieceCount <= 6:
+    if pieceCount <= 8:
         for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
                 if piece and piece.sign == KING:

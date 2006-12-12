@@ -17,7 +17,9 @@ class LimitedDict (UserDict):
     	self.lock.acquire()
         if not key in self:
             if len(self) >= self.maxSize:
-                del self[self.krono[0]]
+                try:
+                    del self[self.krono[0]]
+                except KeyError: pass # Overwritten
                 del self.krono[0]
         self.data[key] = item
         self.krono.append(key)

@@ -15,16 +15,7 @@ def fixList (list, xalign=0):
     list.set_model(gtk.ListStore(str))
     renderer = gtk.CellRendererText()
     renderer.set_property("xalign",xalign)
-    #import pango
-    #renderer.set_property("alignment", "left")
     list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-
-def idle_add(proc, *args):
-    """Makes sure function is only called once"""
-    def proc_star():
-        proc(*args)
-        return False
-    gobject.idle_add(proc_star)
 
 class Sidepanel:
 
@@ -58,6 +49,19 @@ class Sidepanel:
         self.board.history.connect("changed", self.history_changed)
         self.board.connect("shown_changed", self.shown_changed)
         
+        scrollwin = widgets.get_widget("panel")
+        
+        def changed (vadjust):
+            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
+                vadjust.set_value(vadjust.upper-vadjust.page_size)
+                vadjust.need_scroll = True
+        scrollwin.get_vadjustment().connect("changed", changed)
+        
+        def value_changed (vadjust):
+            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
+            		vadjust.upper) < vadjust.step_increment
+        scrollwin.get_vadjustment().connect("value-changed", value_changed)
+        
         return __widget__
     
     def select_cursor_row (self, tree, col):
@@ -78,7 +82,7 @@ class Sidepanel:
         def todo():
             w.set_cursor((row,))
             w.grab_focus()
-        idle_add(todo)
+        gobject.idle_add(todo)
 
     def new_history_object (self, history):
         def helper():
@@ -93,7 +97,8 @@ class Sidepanel:
     
         if len(history) % 2 == 0:
             num = str(int(len(history)/2))+"."
-            idle_add(self.numbers.get_model().append, [num])
+            def do(): self.numbers.get_model().append([num])
+            gobject.idle_add (do)
     
         view = len(history) & 1 and self.right or self.left
         notat = toSAN(history[-2], history[-1], history.moves[-1])
@@ -108,19 +113,14 @@ class Sidepanel:
             other = shown & 1 and right or left
             other.get_selection().unselect_all()
     
-        idle_add(todo)
-        
-        if self.board.shown < len(history):
-            return
-        idle_add(widgets.get_widget("panel").get_vscrollbar().set_value,
-                self.numbers.get_allocation().height)
+        gobject.idle_add(todo)
 
     def shown_changed (self, board, shown):
         if shown <= 0:
             def todo():
                 self.left.get_selection().unselect_all()
                 self.right.get_selection().unselect_all()
-            idle_add(todo)
+            gobject.idle_add(todo)
             return
         
         col = shown & 1 and self.left or self.right
@@ -128,6 +128,5 @@ class Sidepanel:
         row = int((shown-1) / 2)
         def todo():
             col.get_selection().select_iter(col.get_model().get_iter(row))
-            self.numbers.scroll_to_cell((row,))
             other.get_selection().unselect_all()
-        idle_add(todo)
+        gobject.idle_add(todo)
