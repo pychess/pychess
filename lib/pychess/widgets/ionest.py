@@ -253,8 +253,7 @@ def newGame ():
     game, gmwidg = runNewGameDialog()
     if game:
         game.run()
-        return game, gmwidg
-    return None, None
+        handler.emit("game_started", gmwidg, game)
 
 def loadGame (uri = None):
     
@@ -274,9 +273,7 @@ def loadGame (uri = None):
         game.load (uri, loadSidePanel.get_gameno(),
                    loadSidePanel.get_position(), loader)
         game.run()
-        return game, gmwidg
-        
-    return None, None
+        handler.emit("game_started", gmwidg, game)
 
 def saveGame (game):
     # TODO: used "do-overwrite-confirmation" property
@@ -380,3 +377,21 @@ def closeGame (gmwidg, game):
     if saveGameBeforeClose (game, _("you close it")) != gtk.RESPONSE_CANCEL:
         game.kill()
         gamewidget.delGameWidget (gmwidg)
+        handler.emit("game_closed", gmwidg, game)
+
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+
+class Handler (GObject):
+    """ The goal of this class, is to provide signal handling for the ionest
+        module """
+        
+    __gsignals__ = {
+        'game_started': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT)),
+        'game_closed': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT)),
+#        'game_saved': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT))
+    }
+    
+    def __init__ (self):
+        GObject.__init__(self)
+
+handler = Handler()
