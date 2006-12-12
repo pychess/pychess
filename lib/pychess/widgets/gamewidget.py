@@ -155,9 +155,7 @@ def delGameWidget (gmwidg):
         global background
         vbox.pack_end(background)
         vbox.show_all()
-    
-    handler.emit("page_removed", gmwidg)
-        
+            
 def createGameWidget (title):
     vbox = widgets["mainvbox"]
     if len(vbox.get_children()) == 2:
@@ -315,7 +313,6 @@ def createGameWidget (title):
     headbook.set_current_page(-1)
     mainbook.set_current_page(-1)
     
-    handler.emit("page_added", gmwidg)
     return gmwidg 
     
 def setCurrent (gmwidg):
@@ -329,19 +326,3 @@ def cur_gmwidg ():
 
 def _headbook ():
     return widgets["mainvbox"].get_children()[1].child
-
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
-
-class Handler (gobject.GObject):
-    """ The goal of this class, is to provide signal handling for the gamewidget
-        module """
-        
-    __gsignals__ = {
-        'page_added': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
-        'page_removed': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,))
-    }
-    
-    def __init__ (self):
-        gobject.GObject.__init__(self)
-        
-handler = Handler()

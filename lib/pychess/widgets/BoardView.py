@@ -12,7 +12,7 @@ from math import floor, ceil
 from pychess.Utils.validator import validate
 from pychess.Utils import validator
 import pango
-from time import time
+from time import time, sleep
 from pychess.Utils.const import *
 
 def intersects (r0, r1):
@@ -720,3 +720,15 @@ class BoardView (gtk.DrawingArea):
     def isLight (self, cord):
         x, y = cord.cords
         return x % 2 + y % 2 == 1
+    
+    def runWhenReady (self, func, *args):
+        """ As some pieces of pychess are quite eager to set the attributes of
+        BoardView, we can't always be sure, that BoardView has been painted once
+        before, and therefore self.sqaure has been set.
+        This might be doable in a smarter way... """
+        def do():
+            if not self.square:
+                sleep(0.05)
+                return True
+            func(*args)
+        idle_add(do)
