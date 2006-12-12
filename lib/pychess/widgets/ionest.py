@@ -180,7 +180,7 @@ def runNewGameDialog (hideFC=True):
     
     if widgets["useTimeCB"].get_active():
         ccalign.show()
-        clock = widgets["ChessClock"]
+        clock = gmwidg.widgets["cclock"]
         secs = widgets["spinbuttonH"].get_value()*3600
         secs += widgets["spinbuttonM"].get_value()*60
         secs += widgets["spinbuttonS"].get_value()
@@ -190,7 +190,7 @@ def runNewGameDialog (hideFC=True):
         clock = None
         secs = 0
         gain = 0
-        
+    
     for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
         if hasattr(widgets[widget], "get_active"):
             v = widgets[widget].get_active()
@@ -218,9 +218,9 @@ def runNewGameDialog (hideFC=True):
     if len(anaengines) > 1:
         # We assume that the Pychess engine is the last of the list (engines.py
         # puts it there)
-        #engine, args = random.choice(anaengines[:-1])
-        engine0, args0 = anaengines[-2]
-        engine1, args1 = anaengines[-3]
+        engine0, args0 = engine1, args1 = random.choice(anaengines)
+        #engine0, args0 = anaengines[-2]
+        #engine1, args1 = anaengines[-1]
     else:
         engine0, args0 = engine1, args1 = anaengines[0]
     
