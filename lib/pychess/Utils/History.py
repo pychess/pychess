@@ -28,7 +28,7 @@ class HistoryPool:
 hisPool = HistoryPool()
 
 from Piece import Piece
-from Board import Board
+from Board import Board, MoveError
 from pychess.Utils.const import *
 
 def startBoard ():
@@ -109,7 +109,10 @@ class History (GObject):
             #print "move", move
             pass
         
-        board = self.boards[-1].move(move, mvlist)
+        try:
+            board = self.boards[-1].move(move, mvlist)
+        except MoveError: return self
+        
         self.moves.append(move)
         self.boards.append(board)
         

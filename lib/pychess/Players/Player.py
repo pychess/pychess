@@ -2,7 +2,6 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Player (GObject):
     
-    RESIGNATION, FLAG_CALL, DRAW_OFFER, DRAW_ACCEPTION = range(4)
     __gsignals__ = {
         "action": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "dead": (SIGNAL_RUN_FIRST, TYPE_NONE, ())

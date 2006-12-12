@@ -116,6 +116,17 @@ class Sidepanel:
         self.history.connect("cleared", self.history_cleared)
         self.history.connect("changed", self.history_changed)
         
+        def changed (vadjust):
+            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
+                vadjust.set_value(vadjust.upper-vadjust.page_size)
+                vadjust.need_scroll = True
+        __widget__.get_vadjustment().connect("changed", changed)
+        
+        def value_changed (vadjust):
+            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
+            		vadjust.upper) < vadjust.step_increment
+        __widget__.get_vadjustment().connect("value-changed", value_changed)
+        
         return __widget__
     
     def history_cleared (self, history):

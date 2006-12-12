@@ -14,9 +14,11 @@ from pychess.Utils.History import History
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from pychess.System.Log import log
+from pychess.Utils.Board import MoveError
 
 def isdigits (strings):
     for s in strings:
+        s = s.replace(".","")
         if s.startswith("-"):
             if not s[1:].isdigit():
                 return False
@@ -246,7 +248,7 @@ class CECProtocol (GObject):
         # The XBoard/CECP doc says 2 seconds, but it is acually quite a long time.
         # Perhaps we could measure how long it normaly takes,
         # and then scale it down for later calls.
-        self.timeout = 2
+        self.timeout = 5
         self.start = time.time()
         
         while self.connected:
@@ -328,13 +330,15 @@ class CECProtocol (GObject):
                   	parsedMove = self.parseMove(m, board)
                    	moves.append(parsedMove)
                    	board = board.move(parsedMove, mvlist=False)
+                # We skip parsing and move-errors, as they are probably caused
+                # by old analyze strings (sent before engine got the newest move)
                 except ParsingError:
+                    break
+                except MoveError:
                     break
                	
             if moves:
-            #    print "emitting", moves
                 self.emit("analyze", moves)
-            #else: print "not emitting", self.features["myname"]
             
             firstboard.movelist = movelist
             
@@ -435,7 +439,6 @@ class CECProtocol (GObject):
         else: print >> self.engine, toAN(history[-2], history.moves[-1])
         
         if self.inverseAnalyze:
-            #self.switchColor()
             self.printColor()
         
         if self.forced and not self.analyzing:
@@ -513,7 +516,6 @@ class CECProtocol (GObject):
         print >> self.engine, "hint"
     
     def switchColor (self):
-        #FIXME!! This bugs if we are waiting for the engine to move
         if self.history:
             self.history.setStartingColor (1 - self.history.curColModi)
     

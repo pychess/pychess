@@ -62,7 +62,7 @@ def valiBishop (move, board, cancapture=False):
             return False
     return True
 
-def genBishop (cord, board):
+def genBishop (cord, board, pureCaptures=False):
     """ Generate bishop moves. Bishop is located at cord """
     for dx, dy in (1,1),(-1,1),(-1,-1),(1,-1):
         x, y = cord.x, cord.y
@@ -77,7 +77,8 @@ def genBishop (cord, board):
                 else:
                     yield x,y
                     break
-            yield x,y
+            if not pureCaptures:
+                yield x,y
 
 def _isclear (board, cols, rows):
     """ Test if cords in cols and rows are empty """
@@ -123,15 +124,20 @@ def valiKing (move, board, cancapture=False):
            abs(move.cord0.y - move.cord1.y) <= 1
 
 kingPlaces = (1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1),(0,1),(1,1)
-def genKing (cord, board):
+def genKing (cord, board, pureCaptures=False):
     """ Generate king moves. King is located at cord """
     for dx, dy in kingPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
             continue
-        if not board.data[y][x] or board.data[y][x].color != board.color:
+        if board.data[y][x]:
+            if board.data[y][x].color != board.color:
+                yield x,y
+        elif not pureCaptures:
             yield x,y
-            
+    
+    if pureCaptures: return
+    
     if board.color == WHITE:
         if board.castling & WHITE_OO and board.data[0][7] != None:
             if _isclear (board, (5,6), (0,)) and \
@@ -159,13 +165,16 @@ def valiKnight (move, board, cancapture=False):
             abs(move.cord0.y - move.cord1.y) == 1)
 
 knightPlaces = (1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2)
-def genKnight (cord, board):
+def genKnight (cord, board, pureCaptures=False):
     """ Generate knight moves. Knight is located at cord """
     for dx, dy in knightPlaces:
         x, y = cord.x+dx, cord.y+dy
         if not (0 <= x <= 7 and 0 <= y <= 7):
             continue
-        if not board.data[y][x] or board.data[y][x].color != board.color:
+        if board.data[y][x]:
+            if board.data[y][x].color != board.color:
+                yield x,y
+        elif not pureCaptures:
             yield x,y
 
 def valiPawn (move, board, cancapture=False):
@@ -213,11 +222,20 @@ def valiPawn (move, board, cancapture=False):
         
     return False
 
-def genPawn (cord, board):
+def genPawn (cord, board, pureCaptures=False):
     """ Generate pawn moves. Pawn is located at cord """
     
     direction = board.color == WHITE and 1 or -1
     x, y = cord.x, cord.y
+    
+    for side in (1,-1):
+        if not 0 <= x+side <= 7: continue
+        if board.data[y+direction][x+side] and \
+           board.data[y+direction][x+side].color != board.color:
+            yield x+side, y+direction
+    
+    if pureCaptures: return
+    
     if not board.data[y+direction][x]:
         yield x, y+direction
         
@@ -226,12 +244,6 @@ def genPawn (cord, board):
         if not board.data[y+direction*2][x] and \
            not board.data[y+direction][x]:
             yield x, y+direction*2
-    
-    for side in (1,-1):
-        if not 0 <= x+side <= 7: continue
-        if board.data[y+direction][x+side] and \
-           board.data[y+direction][x+side].color != board.color:
-            yield x+side, y+direction
     
     if board.enpassant and abs(board.enpassant.x - cord.x) == 1:
         if (board.enpassant.y == 5 and board.color == WHITE and cord.y == 4) or \
@@ -263,7 +275,7 @@ def valiRook (move, board, cancapture=False):
             return False
     return True
 
-def genRook (cord, board):
+def genRook (cord, board, pureCaptures=False):
     """ Generate rook moves. Rook is located at cord """
     
     for dx, dy in (1,0),(0,-1),(-1,0),(0,1):
@@ -279,7 +291,8 @@ def genRook (cord, board):
                 else:
                     yield x,y
                     break
-            yield x,y
+            if not pureCaptures:
+                yield x,y
 
 def valiQueen (move, board, cancapture=False):
     """ Validate queen move """
@@ -287,15 +300,15 @@ def valiQueen (move, board, cancapture=False):
     return valiRook (move, board, cancapture) or \
            valiBishop (move, board, cancapture)
 
-def genQueen (cord, board):
+def genQueen (cord, board, pureCaptures=False):
     """ Generate queen moves. Queen is located at cord """
     
-    for move in genRook (cord, board):
+    for move in genRook (cord, board, pureCaptures):
         yield move
-    for move in genBishop (cord, board):
+    for move in genBishop (cord, board, pureCaptures):
         yield move
 
-def findMoves2 (board, testCheck=True):
+def findMoves2 (board, testCheck=True, pureCaptures=False):
     """ Generate all possible moves for current player (board.color) """
     
     for y in range8:
@@ -404,8 +417,9 @@ def genMovesPointingAt (board, cols, rows, color, testCheck=False):
     """ Returns a move that legaly attack a cord with the specified color
         in one of the specified columns or rows """
     
-    for y, row in enumerate(board.data):
-        for x, piece in enumerate(row):
+    for y in range8:
+        for x in range8:
+            piece = board.data[y][x]
             if piece == None: continue
             if piece.color != color: continue
             cord0 = Cord(x,y)
