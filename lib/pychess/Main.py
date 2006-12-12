@@ -52,7 +52,8 @@ def setMode (gmwidg, mode, activated):
     board = gmwidg.widgets["board"]
     history = board.view.history
     analyzer = game.analyzers[mode]
-    set_arrow = mode == HINT and board.view._set_greenarrow or board.view._set_redarrow
+    arrow = mode == HINT and board.view._set_greenarrow or board.view._set_redarrow
+    set_arrow = lambda x: board.view.runWhenReady(arrow, x)
     
     if activated:
         if len(analyzer.analyzeMoves) >= 1:
@@ -106,7 +107,7 @@ class GladeHandlers:
         windowSize = window["window1"].get_size()
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
-    def on_page_added (handler, gmwidg):
+    def on_game_started (handler, gmwidg, game):
         for widget in ("save_game1", "save_game_as1", "properties1",
                        "close1", "action1", "vis1"):
             window[widget].set_property('sensitive', True)
@@ -114,10 +115,15 @@ class GladeHandlers:
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
         
+        gameDic[gmwidg] = game
+        
+        for player in game.players:
+                player.connect("dead", engineDead, gmwidg)
+        
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
-    def on_page_removed (handler, gmwidg):
+    def on_game_closed (handler, gmwidg, game):
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
@@ -129,27 +135,18 @@ class GladeHandlers:
     
     def on_drag_received (wi, context, x, y, selection, target_type, timestamp):
         uri = selection.data.strip()
-        uri = uri.split()[0] # we may have more than one file dropped
-        game, gmwidg = loadGame (uri)
-        if game:
-            gameDic[gmwidg] = game
-            GladeHandlers.__dict__["on_page_added"](None, gmwidg)
+        # We may have more than one file dropped. We choose only to care about
+        # the first.
+        uri = uri.split()[0]
+        loadGame (uri)
     
     #          Game Menu          #
 
     def on_new_game1_activate (widget):
-        game, gmwidg = newGame ()
-        if game:
-            for player in game.players:
-                player.connect("dead", engineDead, gmwidg)
-            gameDic[gmwidg] = game
+        newGame ()
         
     def on_load_game1_activate (widget):
-        game, gmwidg = loadGame ()
-        if game:
-            for player in game.players:
-                player.connect("dead", engineDead, gmwidg)
-            gameDic[gmwidg] = game
+        loadGame ()
     
     def on_save_game1_activate (widget):
         saveGame (gameDic[gamewidget.cur_gmwidg()])
@@ -302,10 +299,10 @@ class PyChess:
         makeLogDialogReady()
         makeAboutDialogReady()
         gamewidget.set_widgets(self)
-        gamewidget.handler.connect("page_added",
-            GladeHandlers.__dict__["on_page_added"])
-        gamewidget.handler.connect("page_removed",
-            GladeHandlers.__dict__["on_page_removed"])
+        ionest.handler.connect("game_started",
+            GladeHandlers.__dict__["on_game_started"])
+        ionest.handler.connect("game_closed",
+            GladeHandlers.__dict__["on_game_closed"])
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)

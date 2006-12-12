@@ -122,16 +122,11 @@ class BoardPreview (gtk.Alignment):
         self.chessfile.loadToHistory(sel, -1, self.widgets["BoardView"].history)
         
         self.widgets["BoardView"].autoUpdateShown = True
-        # As the event might have been sent before everything in the dialog was
-        # painted, we have to wait for self.widgets["BoardView"].square to
-        # initialize. Ugly? - sure
+        
         def do():
-            if not self.widgets["BoardView"].square:
-                sleep(0.05)
-                return True
             self.widgets["BoardView"].shown = \
                     len(self.widgets["BoardView"].history)-1
-        idle_add(do)
+        self.widgets["BoardView"].runWhenReady (do)
         
     def on_first_button (self, button):
         self.widgets["BoardView"].shown = 0
