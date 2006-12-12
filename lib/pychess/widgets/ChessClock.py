@@ -150,8 +150,10 @@ class ChessClock (gtk.DrawingArea):
                 elif not all and self.player == 1:
                     rect = gdk.Rectangle(a.width/2, 0, a.width/2, a.height)
                 else: rect = gdk.Rectangle(0, 0, a.width, a.height)
-                self.window.invalidate_rect(rect, True)
-                self.window.process_updates(True)
+                if self.window:
+                    # We have to test again, as the function is called idle
+                    self.window.invalidate_rect(rect, True)
+                    self.window.process_updates(True)
             gobject.idle_add(func)
 
     emited = False

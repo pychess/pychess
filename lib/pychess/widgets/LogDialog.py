@@ -1,4 +1,4 @@
-import gtk, pango, os.path
+import gtk, pango, gobject, os.path
 
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
@@ -34,23 +34,34 @@ def newMessage (task, message, type):
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.set_size_request(width, height)
         scroll.add(vp)
-
+        
+        def changed (vadjust):
+            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
+                vadjust.set_value(vadjust.upper-vadjust.page_size)
+                vadjust.need_scroll = True
+        scroll.get_vadjustment().connect("changed", changed)
+        
+        def value_changed (vadjust):
+            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
+            		vadjust.upper) < vadjust.step_increment
+        scroll.get_vadjustment().connect("value-changed", value_changed)
+        
         notebook.append_page (scroll, gtk.Label(task))
         textbuffer = view.get_buffer()
         textbuffer.create_tag(str(DEBUG), family='Monospace')
         textbuffer.create_tag(str(LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
         textbuffer.create_tag(str(WARNING), family='Monospace', foreground="red")
-        textbuffer.create_tag(str(ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red") 
+        textbuffer.create_tag(str(ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
         task2book[task] = textbuffer
     else: textbuffer = task2book[task]
     
     textbuffer.insert_with_tags_by_name(textbuffer.get_end_iter(), message, str(type))
 
-from gobject import idle_add
+from gobject import idle_add, PRIORITY_LOW
 for task, message, type in log.messages:
 	idle_add(newMessage, task, message, type)
 log.connect ("logged", lambda log, task, message, type: \
-		idle_add(newMessage, task, message, type))
+		idle_add(newMessage, task, message, type, priority=PRIORITY_LOW))
 
 def show ():
     w.show_all()
