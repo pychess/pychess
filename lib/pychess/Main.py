@@ -45,6 +45,55 @@ def makeAboutDialogReady ():
     clb.connect("clicked", callback)
     window["aboutdialog1"].connect("delete-event", callback)
 
+def setMode (gmwidg, mode, activated):
+    if not gameDic: return
+    
+    game = gameDic[gmwidg]
+    board = gmwidg.widgets["board"]
+    history = board.view.history
+    analyzer = game.analyzers[mode]
+    set_arrow = mode == HINT and board.view._set_greenarrow or board.view._set_redarrow
+    
+    if activated:
+        if len(analyzer.analyzeMoves) >= 1:
+            player = board.view.history.curCol() and game.player2 or game.player1
+            if player.__type__ == LOCAL:
+                set_arrow (analyzer.analyzeMoves[0].cords)
+            else: set_arrow (None)
+        
+        if not hasattr (game, "anacons"):
+            game.anacons = [[],[]]
+        if not hasattr (game, "hiscons"):
+            game.hiscons = []
+        
+        def on_analyze (analyzer, moves):
+            player = history.curCol() and game.player2 or game.player1
+            if player.__type__ == LOCAL:
+               set_arrow (moves[0].cords)
+            else: set_arrow (None)
+            
+        def on_clear (history):
+            set_arrow (None)
+            
+        def on_reset (history):
+            on_clear (history)
+            window[reprMode[mode]+"_mode"].set_active(False)
+        
+        game.anacons[mode].append ( analyzer.connect("analyze", on_analyze) )
+        game.hiscons.append ( history.connect("changed", on_clear) )
+        game.hiscons.append ( history.connect("cleared", on_reset) )
+    
+    else:
+        if hasattr (game, "anacons"):
+            for conid in game.anacons[mode]:
+                analyzer.disconnect(conid)
+            del game.anacons[mode][:]
+        if hasattr (game, "hiscons"):
+            for conid in game.hiscons:
+                history.disconnect(conid)
+            del game.hiscons[:]
+        set_arrow (None)
+
 class GladeHandlers:
     
     def on_ccalign_show (widget):
@@ -58,15 +107,22 @@ class GladeHandlers:
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
     def on_page_added (handler, gmwidg):
-        for widget in ("save_game1", "save_game_as1", "properties1", "close1", "action1", "vis1"):
+        for widget in ("save_game1", "save_game_as1", "properties1",
+                       "close1", "action1", "vis1"):
             window[widget].set_property('sensitive', True)
+        
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
         
+        setMode(gmwidg, HINT, window["hint_mode"].get_active())
+        setMode(gmwidg, SPY, window["spy_mode"].get_active())
+        
     def on_page_removed (handler, gmwidg):
         del gameDic[gmwidg]
+        
         if len (gameDic) == 0:
-            for widget in ("save_game1", "save_game_as1", "properties1", "close1", "action1", "vis1"):
+            for widget in ("save_game1", "save_game_as1", "properties1",
+                           "close1", "action1", "vis1"):
                 window[widget].set_property('sensitive', False)
     
     #          Drag 'n' Drop          #
@@ -158,69 +214,12 @@ class GladeHandlers:
         else: LogDialog.hide()
     
     def on_hint_mode_activate (widget):
-        if not gameDic: return
-
-        def on_analyze (analyzer, moves, board, game):
-            #player = board.view.history.curCol() and game.player2 or game.player1
-            #if player.__type__ == LOCAL:
-            board.view.greenarrow = moves[0].cords
-            #else: board.view.greenarrow = None
-        def on_clear (history, board):
-            board.view.greenarrow = None
-        def on_reset (history, board):
-            on_clear (history, board)
-            window["hint_mode"].set_active(False)
-        
         for gmwidg in gameDic.keys():
-            game = gameDic[gmwidg]
-            board = gmwidg.widgets["board"]
-            history = board.view.history
-            hintanalyzer = game.analyzers[0]
-            
-            if widget.get_active():
-                if len(hintanalyzer.analyzeMoves) >= 1:
-                    #if player.__type__ == LOCAL:
-                    board.view.greenarrow = hintanalyzer.analyzeMoves[0].cords
-                game.hintconid0 = hintanalyzer.connect("analyze", on_analyze, board, game)
-                game.hintconid1 = history.connect("changed", on_clear, board)
-                game.hintconid2 = history.connect("cleared", on_reset, board)
-            else:
-                hintanalyzer.disconnect(game.hintconid0)
-                history.disconnect(game.hintconid1)
-                history.disconnect(game.hintconid2)
-                board.view.greenarrow = None
+            setMode(gmwidg, HINT, widget.get_active())
     
     def on_spy_mode_activate (widget):
-        if not gameDic: return
-        
-        def on_analyze (analyzer, moves, board, game):
-            #player = board.view.history.curCol() and game.player1 or game.player2
-            #if player.__type__ == LOCAL:
-            board.view.redarrow = moves[0].cords
-            #else: board.view.redarrow = None
-        def on_clear (history, board):
-            board.view.redarrow = None
-        def on_reset (history, board):
-            on_clear (history, board)
-            window["spy_mode"].set_active(False)
-        
         for gmwidg in gameDic.keys():
-            game = gameDic[gmwidg]
-            board = gmwidg.widgets["board"]
-            history = board.view.history
-            spyanalyzer = game.analyzers[1]
-            
-            if widget.get_active():
-                if len(spyanalyzer.analyzeMoves) >= 1:
-                    board.view.redarrow = spyanalyzer.analyzeMoves[0].cords
-                game.spyconid0 = spyanalyzer.connect("analyze", on_analyze, board, game)
-                game.spyconid1 = history.connect("changed", on_clear, board)
-                game.spyconid2 = history.connect("cleared", on_reset, board)
-            else:
-                spyanalyzer.disconnect(game.spyconid0)
-                board.view.history.disconnect(game.spyconid1)
-                board.view.history.disconnect(game.spyconid2)
-                board.view.redarrow = None
+            setMode(gmwidg, SPY, widget.get_active())
     
     #          Action menu          #
     

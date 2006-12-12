@@ -25,6 +25,9 @@ def prefix (subpath):
 
 ###
 
+HINT, SPY = range(2)
+reprMode = ["hint", "spy"]
+
 LOCAL, ARTIFICIAL, REMOTE = range(3)
 
 SAN, LAN, FAN, AN = range(4)
@@ -33,7 +36,11 @@ WHITE, BLACK = range(2)
 
 reprColor = ["White", "Black"]
 
+hashfALPHA, hashfBETA, hashfEXACT = range(3)
+
 RUNNING, DRAW, WHITEWON, BLACKWON = range(4)
+
+RESIGNATION, FLAG_CALL, DRAW_OFFER, DRAW_ACCEPTION = range(4)
 
 reprResult = ["*", "1/2-1/2", "1-0", "0-1"]
 

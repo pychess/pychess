@@ -28,6 +28,8 @@ h1 = Cord('h1'); f1 = Cord('f1')
 a8 = Cord('a8'); d8 = Cord('d8')
 h8 = Cord('h8'); f8 = Cord('f8')
 
+class MoveError (Exception): pass
+
 class Board:
     def __init__ (self, array, ar_hash=-1):
         self.data = array
@@ -63,13 +65,13 @@ class Board:
         cord0, cord1 = move.cords
         
         if self[cord1] and self[cord1].sign == KING:
-            raise Exception, "Trying to capture king in %s %s %s\n%s" % \
+            raise MoveError, "Trying to capture king in %s %s %s\n%s" % \
                     (str(move), cord1, self[cord1], str(self))
         
         p = board[cord0]
         
         if not p:
-            print board, move, cord0
+            raise MoveError, "%s%s %s" % (board, move, cord0)
         
         if p.sign == KING:
             if cord0.y == 0:
@@ -206,4 +208,4 @@ class Board:
         return b
     
     def __hash__ (self):
-        return int((self.myhash>>33)-1)
+        return int((self.myhash>>33)-2) + self.color

@@ -98,7 +98,10 @@ class Move:
             return other.cord0 == self.cord0 and \
                 other.cord1 == self.cord1 and \
                 other.promotion == self.promotion
-
+    
+    def __hash__ (self):
+        return hash(self.cords)
+    
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
     
@@ -114,7 +117,11 @@ def parseSAN (board, san):
     if notat != "o-o":
         if notat != "o-o-o":
             notat = notat.replace("-","")
-    c = notat[-1].lower()
+    try:
+        c = notat[-1].lower()
+    except:
+        print "c = notat[-1].lower()", repr(notat)
+        raise
     if c in ("q", "r", "b", "n"):
         promotion = chr2Sign[c]
         notat = notat[:-1]
@@ -212,7 +219,7 @@ def parseAN (board, an):
         raise ParsingError, "Bad an move, %s" % an
         
     if len(an) == 5:
-        return movePool.pop(c0, c1, chr2Sign[an[4]])
+        return movePool.pop(c0, c1, chr2Sign[an[4].lower()])
     return movePool.pop(c0, c1)
 
 fandic = [

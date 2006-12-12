@@ -6,7 +6,7 @@ from gobject import GObject
 from Player import Player
 #TODO: This should be PlayerDead or something
 from Engine import EngineDead
-from pychess.Utils.const import LOCAL
+from pychess.Utils.const import LOCAL, DRAW_OFFER, RESIGNATION, FLAG_CALL
 
 class Human (Player):
     __type__ = LOCAL
@@ -19,9 +19,12 @@ class Human (Player):
         self.color = color
         self.board = board
         self.conid = [board.connect("piece_moved", self.piece_moved)]
-        self.conid.append(board.connect("call_flag", lambda b: self.emit_action(self.FLAG_CALL)))
-        self.conid.append(board.connect("draw", lambda b: self.emit_action(self.DRAW_OFFER)))
-        self.conid.append(board.connect("resign", lambda b: self.emit_action(self.RESIGNATION)))
+        self.conid.append(board.connect("call_flag",
+                lambda b: self.emit_action(FLAG_CALL)))
+        self.conid.append(board.connect("draw",
+                lambda b: self.emit_action(DRAW_OFFER)))
+        self.conid.append(board.connect("resign",
+                lambda b: self.emit_action(RESIGNATION)))
         self.name = "Human"
     
     def piece_moved (self, board, move):

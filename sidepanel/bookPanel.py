@@ -82,7 +82,8 @@ class Sidepanel:
         movePool.add(move)
     
     def row_activated (self, widget, *args):
-    	arrow = self.board.bluearrow
-    	if arrow:
-    		self.boardcontrol.emit_move_signal(*arrow)
-    
+        arrow = self.board.bluearrow
+        if arrow:
+            self.board.bluearrow = None
+            self.boardcontrol.emit_move_signal(*arrow)
+            
