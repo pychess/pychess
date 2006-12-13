@@ -59,7 +59,10 @@ class EngineConnection (gobject.GObject):
         self.pid, self.fd = os.forkpty()
         if self.pid == CHILD:
             os.nice(15)
-            os.execve(executable, [""], {"PYTHONPATH":"/home/thomas/Programmering/python/skak/svn/lib/"})
+            environ = {}
+            if "PYTHONPATH" in os.environ:
+                environ["PYTHONPATH"] = os.path.abspath(os.environ["PYTHONPATH"])
+            os.execve(executable, [""], environ)
         
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
