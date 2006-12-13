@@ -40,12 +40,10 @@ import os, imp
 path = os.environ["PYTHONPATH"]
 if path:
     path = os.path.join(os.path.abspath(path), "pychess/Players/PyChess.py")
+    os.system("chmod +x "+path)
 else:
     path = os.dirname(imp.find_module("os")[1])
     path = os.path.join(path, "pychess/Players/PyChess.py")
-    
-if os.system("chmod +x "+path) != 0:
-    print "ERROR: THIS HAS TO BE FIXED (CAN*T DO THIS WHEN INSTALLED"
 
 availableEngines.append((CECPEngine,(path,)))
 

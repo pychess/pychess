@@ -59,7 +59,11 @@ DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 
 # Main modules
-#DATA_FILES += [("", glob("*.py"))]
+
+if os.system("chmod +x lib/pychess/Players/PyChess.py") != 0:
+    print "Couldn't set execution flag for PyChess Engine. try if you can do it\
+            yourself (with root access"
+    # TODO: Is this a good way to handle the problem?
 
 # Language
 
