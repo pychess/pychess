@@ -35,7 +35,15 @@ for e,p in knownEngines:
 # Other engines
 #from PyChess import PyChessEngine
 #availableEngines.append((PyChessEngine,()))
-availableEngines.append((CECPEngine,("/home/thomas/Programmering/python/skak/svn/lib/pychess/Players/PyChess.py",)))
+
+import os, imp
+path = os.environ["PYTHONPATH"]
+if path:
+    path = os.path.join(os.path.abspath(path), "pychess/Players/PyChess.py")
+else:
+    path = os.dirname(imp.find_module("os")[1])
+    path = os.path.join(path, "pychess/Players/PyChess.py")
+availableEngines.append((CECPEngine,(path,)))
 
 ###################
 
