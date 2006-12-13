@@ -430,6 +430,9 @@ class CECProtocol (GObject):
             self.switchColor()
             self.printColor()
         
+        print "time N"
+        print "otim N"
+        
         if self.features["usermove"]:
             self.engine.write("usermove ")
         

@@ -159,8 +159,9 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
 
 sd = 1
 moves = None
-seconds = None
 increment = None
+mytime = None
+#optime = None
 forced = False
 analyzing = False
 
@@ -215,10 +216,10 @@ def go ():
     if len(history) >= 14 or not movestr:
         
         searchLock.acquire()
-        global searching, nodes
+        global searching, nodes, mytime
         searching = True
         
-        if seconds == None:
+        if mytime == None:
             mvs, scr = alphaBeta (table, history[-1], sd, -maxint, maxint)
             move = mvs[0]
             print "moves were", mvs, "color is", history[-1].color, history.curCol()
@@ -228,13 +229,17 @@ def go ():
             # We bet that the game will be about 30 moves. That gives us
             # starttime / 30 seconds per turn + the incremnt.
             # TODO: Create more sophisticated method.
-            usetime = seconds / 30. + increment
-            endtime = time() + usetime
+            usetime = float(mytime) / max((30-len(history)),3) + increment
+            starttime = time()
+            endtime = starttime + usetime
+            print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
             for depth in range(sd):
                 mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
                 if time() > endtime: break
             move = mvs[0]
-        
+            mytime -= time() - starttime
+            mytime += increment
+            
         nodes = 0
         searching = False
         searchLock.release()
@@ -279,8 +284,20 @@ while True:
         
     elif lines[0] == "level" and len(lines) == 4 and \
             [s.isdigit() for s in lines[1:]] == [True,True,True]:
-        moves, seconds, increment = map(int, lines[1:])
-        
+        moves = int(lines[1])
+        increment = int(lines[3])
+        minutes = lines[2].split(":")
+        mytime = int(minutes[0])*60
+        if len(minutes) > 1:
+            mytime += int(minutes[1])
+        print "Playing %d moves in %d seconds + %d increment" % (moves, mytime, increment)
+    
+    elif lines[0] == "time":
+        mytime = int(lines[1])
+    
+    #elif lines[0] == "otim":
+    #   optime = int(lines[1])
+    
     elif lines[0] == "quit":
         sys.exit()
     
