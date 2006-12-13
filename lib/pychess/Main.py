@@ -284,7 +284,7 @@ class PyChess:
         global window
         window = self
     
-        os.chdir(os.path.abspath(os.path.dirname(__file__)))
+        #os.chdir(os.path.abspath(os.path.dirname(__file__)))
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML(prefix("glade/PyChess.glade"))
         
