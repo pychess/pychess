@@ -338,4 +338,4 @@ while True:
         if analyzing:
             thread.start_new(analyze,())
     
-    else: print "Unknown command", line
+    else: print "Error (unknown command):", line
