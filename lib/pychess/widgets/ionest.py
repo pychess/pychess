@@ -28,19 +28,18 @@ widgets = WidgetDic (widgets)
 enddir = {}
 types = []
 
-savers = Savers.__all__
-for saver in [getattr(Savers, s) for s in savers]:
+savers = [getattr(Savers, s) for s in Savers.__all__]
+for saver in savers:
     for ending in saver.__endings__:
         enddir[ending] = saver
-    l = saver.__label__ + " (."+", .".join(saver.__endings__)+")"
-    types.append((l, saver.__endings__))
+    types.append((saver.__label__, saver.__endings__))
 
 savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE,
     (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
 opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
     (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
 savedialog.set_current_folder(os.environ["HOME"])
-#opendialog.set_current_folder(os.environ["HOME"])
+saveformats = gtk.ListStore(str, str)
 
 # TODO: Working with mime-types might gennerelly be a better idea.
 
@@ -48,28 +47,35 @@ star = gtk.FileFilter()
 star.set_name(_("All Files"))
 star.add_pattern("*")
 opendialog.add_filter(star)
+saveformats.append([_("Detect type automatically"), ""])
 
 all = gtk.FileFilter()
 all.set_name(_("All Chess Files"))
 opendialog.add_filter(all)
 opendialog.set_filter(all)
 
-custom = gtk.FileFilter()
-custom.set_name(_("Detect type automatically"))
-custom.add_pattern("*")
-savedialog.add_filter(custom)
-
 for label, endings in types:
+    endstr = "(%s)" % ", ".join(endings)
     f = gtk.FileFilter()
-    f.set_name(label)
+    f.set_name(label+" "+endstr)
     for ending in endings:
         f.add_pattern("*."+ending)
         all.add_pattern("*."+ending)
-    savedialog.add_filter(f)
     opendialog.add_filter(f)
+    saveformats.append([label, endstr])
+
+savecombo = gtk.ComboBox()
+savecombo.set_model(saveformats)
+crt = gtk.CellRendererText()
+savecombo.pack_start(crt, True)
+savecombo.add_attribute(crt, 'text', 0)
+crt = gtk.CellRendererText()
+savecombo.pack_start(crt, False)
+savecombo.add_attribute(crt, 'text', 1)
+savecombo.set_active(0)
+savedialog.set_extra_widget(savecombo)
 
 filechooserbutton = gtk.FileChooserButton(opendialog)
-#filechooserbutton = opendialog
 loadSidePanel = BoardPreview.BoardPreview()
 loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
 filechooserbutton.show()
@@ -276,14 +282,11 @@ def loadGame (uri = None):
         handler.emit("game_started", gmwidg, game)
 
 def saveGame (game):
-    # TODO: used "do-overwrite-confirmation" property
-    if not game.isChanged:
+    if not game.isChanged():
         return
     if game.lastSave[1]:
         saveGameSimple (game.lastSave[1], game)
     else:
-        # When we do "Save as", user has a button to "Cancel"
-        # If he do so, game should not be closed
         return saveGameAs (game)
 
 def saveGameSimple (path, game):
@@ -294,50 +297,54 @@ def saveGameSimple (path, game):
 
 def saveGameAs (game):
     
-    def response (savedialog, r):
-        pass #TODO
-    savedialog.connect("response", response)
-    savedialog.show_all()
-    
-    #FIXME: If file exists or has wrong filetype, the window is hidden..
-    #       And the user has to reopen it to type a new name
-    res = savedialog.run()
-    if res != gtk.RESPONSE_ACCEPT: return False
-    uri = savedialog.get_uri()[7:]
-    ending = os.path.splitext(uri)[1]
-    
-    if savedialog.get_filter().filter((None,None,"foo",None)):
-        if not ending in enddir:
-            d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-            folder, file = os.path.split(uri)
-            d.set_markup(_("<big><b>Unknown filetype '%s'</b></big>") % ending)
-            d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
-            d.run()
-            d.hide()
-            return
-        saver = enddir[ending]
-    else:
-        for e,sr in enddir.iteritems():
-            if savedialog.get_filter().filter((None,None,"."+e,None)):
-                if not ending in sr.__endings__:
-                    uri += "." + e
-                break
-                
-    if os.path.isfile(uri):
-        d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
-        d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"), gtk.RESPONSE_ACCEPT)
-        d.set_title(_("File exists"))
-        folder, file = os.path.split(uri)
-        d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
-        d.format_secondary_text(_("The file alredy exists in '%s'. If you replace it, its content will be overwritten.") % folder)
-        res = d.run()
-        d.hide()
+    def response (savedialog, res):
         if res != gtk.RESPONSE_ACCEPT:
+            savedialog.disconnect(conid)
             savedialog.hide()
             return
-    savedialog.hide()
-    saver = enddir[ending]
-    game.save(uri, saver)
+        
+        uri = savedialog.get_uri()[7:]
+        print uri
+        ending = os.path.splitext(uri)[1]
+        if ending.startswith("."): ending = ending[1:]
+        
+        if savecombo.get_active() == 0:
+            if not ending in enddir:
+                d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+                folder, file = os.path.split(uri)
+                d.set_markup(_("<big><b>Unknown filetype '%s'</b></big>") % ending)
+                d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
+                d.run()
+                d.hide()
+                return
+            else:
+                saver = enddir[ending]
+        else:
+            saver = savers[savecombo.get_active()-1]
+            if not ending in enddir or not saver == enddir[ending]:
+                uri += ".%s" % saver.__endings__[0]
+        
+        if os.path.isfile(uri):
+            d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
+            d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"),
+                        gtk.RESPONSE_ACCEPT)
+            d.set_title(_("File exists"))
+            folder, file = os.path.split(uri)
+            d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you " + \
+                        "like to replace it?</b></big>") % file)
+            d.format_secondary_text(_("The file alredy exists in '%s'. If you " + \
+                        "replace it, its content will be overwritten.") % folder)
+            res = d.run()
+            d.hide()
+            
+            if res != gtk.RESPONSE_ACCEPT:
+                return
+        
+        savedialog.hide()
+        game.save(uri, saver)
+    
+    conid = savedialog.connect("response", response)
+    savedialog.show_all()
 
 def saveGameBeforeClose (game, action):
     
