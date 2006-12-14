@@ -1,6 +1,6 @@
 import os, thread
 import datetime
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, idle_add
 
 from pychess.Utils.History import History
 import pychess.Utils.Move
@@ -50,8 +50,11 @@ class Game (GObject):
             self.chessclock.setTime(seconds*10)
             self.chessclock.setGain(plus*10)
         
-        self.player1.connect("action", self._action)
-        self.player2.connect("action", self._action)
+        def callback (player, action):
+            idle_add(lambda: self._action(player, action))
+        
+        self.player1.connect("action", callback)
+        self.player2.connect("action", callback)
     
     def load (self, uri, gameno, position, loader):
         self.lastSave = (self.history.clone(), uri)
@@ -76,9 +79,11 @@ class Game (GObject):
         self.year, self.month, self.day = chessfile.get_date(gameno)
     
     def save (self, path, saver):
-        saver.save(open(path,"w"), self)
+        fileobj = open(path, "w")
+        saver.save(fileobj, self)
         lastSave = (self.history.clone(), path)
-    
+        fileobj.close()
+        
     def isChanged (self):
         if len(self.history) <= 1: return False
         return not os.path.isfile(self.lastSave[1]) or \
@@ -112,19 +117,12 @@ class Game (GObject):
                 self.gmwidg.setTabReady(True)
             else: self.gmwidg.setTabReady(False)
             
+            if no == WHITE:
+                player.updateTime (self.chessclock.p0time/10., self.chessclock.p1time/10.)
+            else: player.updateTime (self.chessclock.p1time/10., self.chessclock.p0time/10.)
+            
             try:
                 move = player.makeMove(self.history)
-            
-            except pychess.Utils.Move.ParsingError:
-                #Mostly debugging really
-                import traceback
-                print traceback.format_exc()
-                print "Player 1 board:"
-                self.player1.showBoard()
-                print "Player 2 board:"
-                self.player2.showBoard()
-                raise
-                
             except EngineDead:
                 #self.gmwidg.status(_("A player has died"))
                 self.kill()

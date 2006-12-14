@@ -5,7 +5,6 @@
 
 import sys, os, time, thread
 from threading import Condition, Lock
-
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineDead, EngineConnection
@@ -29,12 +28,6 @@ def isdigits (strings):
 
 class CECPEngine (Engine):
     
-    __gsignals__ = {
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
-        'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
-    }
-
     def __init__ (self, args, color):
         GObject.__init__(self)
         self.proto = CECProtocol (args[0], color)
@@ -45,8 +38,8 @@ class CECPEngine (Engine):
         self.movecond = Condition()
         self.move = None
         self.analyzeMoves = []
-        self.proto.connect("draw_offer", lambda w:self.emit("draw_offer"))
-        self.proto.connect("resign", lambda w:self.emit("resign"))
+        self.proto.connect("draw_offer", lambda w:self.emit("action",DRAW_OFFER))
+        self.proto.connect("resign", lambda w:self.emit("action",RESIGNATION))
         self.proto.connect("move", self.onMove)
         self.proto.connect("analyze", self.onAnalyze)
         def dead (engine):
@@ -155,6 +148,9 @@ class CECPEngine (Engine):
     def analyze (self, inverse=False):
         self.runWhenReady(self.proto.analyze, inverse)
     
+    def updateTime (self, secs, opsecs):
+        self.runWhenReady(self.proto.time, secs, opsecs)
+    
     def __repr__ (self):
         self._wait()
         return self.proto.features["myname"]
@@ -248,7 +244,11 @@ class CECProtocol (GObject):
         # The XBoard/CECP doc says 2 seconds, but it is acually quite a long time.
         # Perhaps we could measure how long it normaly takes,
         # and then scale it down for later calls.
-        self.timeout = 5
+        # 
+        # Engine could take an argument with lines to write just when it started.
+        # Then engines.py and later an xml document could make "features done=1"
+        # Be called on non protover 2 engines.
+        self.timeout = 2
         self.start = time.time()
         
         while self.connected:
@@ -356,7 +356,7 @@ class CECProtocol (GObject):
             
         #Tell User Error
         if parts[0] in ("tellusererror", "Error"):
-            print "Tell User Error", repr(" ".join(parts[1:]))
+            #print "Tell User Error", repr(" ".join(parts[1:]))
             return
             
         # Tell Somebody
@@ -430,9 +430,6 @@ class CECProtocol (GObject):
             self.switchColor()
             self.printColor()
         
-        print "time N"
-        print "otim N"
-        
         if self.features["usermove"]:
             self.engine.write("usermove ")
         
@@ -489,16 +486,11 @@ class CECProtocol (GObject):
         assert self.ready, "Still waiting for done=1"
         print >> self.engine, "result 1/2-1/2 {%s}" % comment
     
-    def time (self, whitetime, blacktime):
+    def time (self, engine, opponent):
         assert self.ready, "Still waiting for done=1"
         
-        if self.features["time"]:
-            if self.color == WHITE:
-                print >> self.engine, "time", whitetime
-                print >> self.engine, "otim", blacktime
-            else:
-                print >> self.engine, "time", blacktime
-                print >> self.engine, "otim", whitetime
+        print >> self.engine, "time", int(engine)
+        print >> self.engine, "otim", int(opponent)
     
     def offerDraw (self):
         assert self.ready, "Still waiting for done=1"

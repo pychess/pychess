@@ -32,3 +32,7 @@ class Player (GObject):
     def hurry (self):
         """ Forces engines to move now, and sends a hurry message to nonlocal human players """
         pass #Optional
+    
+    def updateTime (self, secs, opsecs):
+        """ Updates the player with the current remaining time as a float of seconds """
+        pass #Optional

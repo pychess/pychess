@@ -1,5 +1,19 @@
 #!/usr/bin/python
 
+from pychess.Utils.const import *
+
+features = {
+    "setboard": 1,
+    "analyze": 1,
+    "usermove": 1,
+    "reuse": 0,
+    "draw": 1,
+    "myname": "PyChess %s" % VERSION
+}
+
+print "feature %s done=0" % \
+            " ".join(["=".join([k,repr(v)]) for k,v in features.iteritems()])
+
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from time import time
 import sys, os
@@ -10,13 +24,11 @@ from Engine import Engine
 from pychess.Utils.History import hisPool
 from pychess.Utils.Move import movePool, parseSAN, parseAN, toAN, ParsingError
 from pychess.Utils import eval
-from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.validator import findMoves2, isCheck
 from pychess.Utils.History import History
 from pychess.System.ThreadPool import pool
 from pychess.Utils.TranspositionTable import TranspositionTable
-from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT
 from sys import maxint
 
 from pychess.Utils.const import prefix
@@ -168,15 +180,6 @@ analyzing = False
 history = History()
 table = TranspositionTable(50000)
 
-features = {
-    "setboard": 1,
-    "analyze": 1,
-    "usermove": 1,
-    "reuse": 0,
-    "draw": 1,
-    "myname": "PyChess %s" % VERSION
-}
-
 def analyze2 ():
     from profile import runctx
     runctx ("analyze2()", locals(), globals(), "/tmp/pychessprofile")
@@ -216,7 +219,7 @@ def go ():
     if len(history) >= 14 or not movestr:
         
         searchLock.acquire()
-        global searching, nodes, mytime
+        global searching, nodes, mytime, increment
         searching = True
         
         if mytime == None:
@@ -229,7 +232,7 @@ def go ():
             # We bet that the game will be about 30 moves. That gives us
             # starttime / 30 seconds per turn + the incremnt.
             # TODO: Create more sophisticated method.
-            usetime = float(mytime) / max((30-len(history)),3) + increment
+            usetime = float(mytime) / max((30-len(history)),3)
             starttime = time()
             endtime = starttime + usetime
             print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
@@ -252,8 +255,7 @@ while True:
     lines = line.split()
     
     if lines[0] == "protover":
-        print "feature %s done=1" % \
-            " ".join(["=".join([k,repr(v)]) for k,v in features.iteritems()])
+        print "features done=1"
     
     elif lines[0] == "usermove":
         
@@ -276,14 +278,13 @@ while True:
         if analyzing:
             thread.start_new(analyze,())
         
-    elif lines[0] == "sd" and lines[1].isdigit():
+    elif lines[0] == "sd":
         sd = int(lines[1])
         if sd < 4: sd = 1
         if 4 <= sd <= 7: sd = 2
         if 7 < sd: sd = 3
         
-    elif lines[0] == "level" and len(lines) == 4 and \
-            [s.isdigit() for s in lines[1:]] == [True,True,True]:
+    elif lines[0] == "level":
         moves = int(lines[1])
         increment = int(lines[3])
         minutes = lines[2].split(":")
@@ -337,5 +338,8 @@ while True:
         searchLock.release()
         if analyzing:
             thread.start_new(analyze,())
+    
+    elif lines[0] in ("xboard", "otim", "hard", "easy" "nopost", "post"):
+        pass
     
     else: print "Error (unknown command):", line
