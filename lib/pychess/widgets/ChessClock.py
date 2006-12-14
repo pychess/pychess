@@ -164,7 +164,7 @@ class ChessClock (gtk.DrawingArea):
         if self.ptemp[self.player] <= 0 and not self.emited:
             self.emit_time_out_signal(self.player)
             self.emited = True
-
+        
         return True
     
     def reset (self):
@@ -248,5 +248,5 @@ class ChessClock (gtk.DrawingArea):
 
     def _get_playerTime (self, player):
         return self.ptemp[player]
-    p0time = property(lambda: self._get_playerTime(0))
-    p1time = property(lambda: self._get_playerTime(1))
+    p0time = property(lambda self: self._get_playerTime(0))
+    p1time = property(lambda self: self._get_playerTime(1))
