@@ -12,7 +12,9 @@ __endings__ = "epd", "fen"
 def save (file, game):
     """Saves game to file in fen format"""
     
-    history = game.history
+    if isinstance (game, Game):
+        history = game.history
+    else: history = game
     
     pieces = history[-1].data
     sign = lambda p: p.color == WHITE and reprSign[p.sign][0] or reprSign[p.sign][0].lower()
