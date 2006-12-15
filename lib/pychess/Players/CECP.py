@@ -269,7 +269,7 @@ class CECProtocol (GObject):
             line = self.engine.readline()
             if line:
                 self.parseLine(line)
-            
+                
     ######################## FROM ENGINE ########################
     
     def parseMove (self, movestr, board=None):
@@ -403,6 +403,7 @@ class CECProtocol (GObject):
         print >> self.engine, "random"
     
     def __del__ (self):
+        assert self.connected
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"
@@ -410,7 +411,7 @@ class CECProtocol (GObject):
             if self.features["sigterm"]:
                 self.engine.sigterm()
             else: self.engine.sigkill()
-        self.engine.wait4exit()
+        #thread.start_new(self.engine.wait4exit,())
     
     def moveNow (self):
         assert self.ready, "Still waiting for done=1"

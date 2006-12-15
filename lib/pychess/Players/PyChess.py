@@ -8,6 +8,7 @@ features = {
     "usermove": 1,
     "reuse": 0,
     "draw": 1,
+    "sigterm": 1,
     "myname": "PyChess %s" % VERSION
 }
 

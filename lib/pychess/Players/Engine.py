@@ -48,7 +48,7 @@ class Engine (Player):
 
 from time import time
 from pychess.System.Log import log
-import os, select, signal, errno, tty
+import os, select, signal, errno, tty, sys
 import gobject
 from random import randint, choice
 CHILD = 0
@@ -62,14 +62,15 @@ class EngineConnection (gobject.GObject):
     def __init__(self, executable):
         gobject.GObject.__init__(self)
         self.pid, self.fd = os.forkpty()
+        
         if self.pid == CHILD:
             os.nice(15)
             print "executable", executable
             os.system(executable)
-        
+            sys.exit()
+            
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
-        
         
         # Add a random number to each connection, to distinct between different
         # connection to same engine. This can be done smarter, when an

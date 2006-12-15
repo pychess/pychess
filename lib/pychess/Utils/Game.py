@@ -33,6 +33,9 @@ class Game (GObject):
         self.history.connect("game_ended", lambda h,s,c: self.gameEnded(s,c))
         self.analyzers = analyzers
         
+        # FIXME: Draw offers should be unset after perhaps 2 moves
+        self.drawState = None
+        
         self.lastSave = (None, "")
         
         #Event: the name of the tournament or match event.
@@ -124,16 +127,12 @@ class Game (GObject):
             try:
                 move = player.makeMove(self.history)
             except EngineDead:
-                #self.gmwidg.status(_("A player has died"))
-                self.kill()
                 break
             
             if not self.running:
-                self.kill()
                 break
             
             if not self.history.add(move,True):
-                self.kill()
                 break
             
             for analyzer in self.analyzers:
@@ -174,13 +173,13 @@ class Game (GObject):
             self.gameEnded(p, WON_RESIGN)
             
         elif action == DRAW_OFFER:
-            self.gmwidg.status(_("Draw offer has been sent"), True)
             otherPlayer = player == self.player1 and self.player2 or self.player1
-            otherPlayer.offerDraw()
-            
-        elif action == DRAW_ACCEPTION:
-            #FIXME: Test if draw is (still) valid
-            self.gameEnded(DRAW, DRAW_AGREE)
+            if self.drawState == otherPlayer:
+                self.gameEnded(DRAW, DRAW_AGREE)
+            else:
+                self.gmwidg.status(_("Draw offer has been sent"), True)
+                self.drawState = player
+                otherPlayer.offerDraw()
             
         elif action == FLAG_CALL:
             if not self.chessclock:
