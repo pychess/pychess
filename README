@@ -1,3 +1,1 @@
-Run
-$ python setup.py
-$ python PyChess.py
+To create po files use xgettext. Compile to mo with msgfmt, merge with msgmerge
