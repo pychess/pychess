@@ -9,7 +9,7 @@
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.widgets.html"><font color="#ffffff">widgets</font></a>.BoardPreview</strong></big></big></font></td
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/widgets/BoardPreview.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/widgets/BoardPreview.py</a></font></td></tr></table>
-    <p></p>
+    <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;UTF-8&nbsp;-*-</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -17,9 +17,8 @@
 <font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cairo.html">cairo</a><br>
-</td><td width="25%" valign=top><a href="gtk.html">gtk</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="gtk.html">gtk</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -27,7 +26,7 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial">gobject.DrawingArea(gobject.Widget)
+<dt><font face="helvetica, arial"><a href="gtk.html#Alignment">gtk.Alignment</a>(<a href="gtk.html#Bin">gtk.Bin</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="pychess.widgets.BoardPreview.html#BoardPreview">BoardPreview</a>
@@ -38,14 +37,16 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="BoardPreview">class <strong>BoardPreview</strong></a>(gobject.DrawingArea)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="BoardPreview">class <strong>BoardPreview</strong></a>(<a href="gtk.html#Alignment">gtk.Alignment</a>)</font></td></tr>
     
 <tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="pychess.widgets.BoardPreview.html#BoardPreview">BoardPreview</a></dd>
-<dd>gobject.DrawingArea</dd>
-<dd>gobject.Widget</dd>
-<dd>gobject.Object</dd>
+<dd><a href="gtk.html#Alignment">gtk.Alignment</a></dd>
+<dd><a href="gtk.html#Bin">gtk.Bin</a></dd>
+<dd><a href="gtk.html#Container">gtk.Container</a></dd>
+<dd><a href="gtk.html#Widget">gtk.Widget</a></dd>
+<dd><a href="gtk.html#Object">gtk.Object</a></dd>
 <dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
 <dd><a href="atk.html#ImplementorIface">atk.ImplementorIface</a></dd>
 <dd><a href="gobject.html#GInterface">gobject.GInterface</a></dd>
@@ -55,16 +56,151 @@
 Methods defined here:<br>
 <dl><dt><a name="BoardPreview-__init__"><strong>__init__</strong></a>(self)</dt></dl>
 
-<hr>
-Methods inherited from gobject.DrawingArea:<br>
-<dl><dt><a name="BoardPreview-size"><strong>size</strong></a>(...)</dt></dl>
+<dl><dt><a name="BoardPreview-addFileChooserButton"><strong>addFileChooserButton</strong></a>(self, fcbutton, opendialog, enddir)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_gameno"><strong>get_gameno</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_position"><strong>get_position</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_uri"><strong>get_uri</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_back_button"><strong>on_back_button</strong></a>(self, button)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_file_activated"><strong>on_file_activated</strong></a>(self, dialog, enddir)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_first_button"><strong>on_first_button</strong></a>(self, button)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_forward_button"><strong>on_forward_button</strong></a>(self, button)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_last_button"><strong>on_last_button</strong></a>(self, button)</dt></dl>
+
+<dl><dt><a name="BoardPreview-on_selection_changed"><strong>on_selection_changed</strong></a>(self, selection)</dt></dl>
+
+<dl><dt><a name="BoardPreview-shown_changed"><strong>shown_changed</strong></a>(self, boardView, shown)</dt></dl>
+
+<dl><dt><a name="BoardPreview-widgetHandler"><strong>widgetHandler</strong></a>(self, glade, functionName, widgetName, s1, s2, i1, i2)</dt><dd><tt>Returns&nbsp;the&nbsp;custom&nbsp;widget&nbsp;of&nbsp;the&nbsp;glade&nbsp;file.<br>
+It&nbsp;could&nbsp;be&nbsp;done&nbsp;more&nbsp;fancy,&nbsp;but&nbsp;we&nbsp;do&nbsp;only&nbsp;have&nbsp;one&nbsp;custom&nbsp;widget</tt></dd></dl>
 
 <hr>
-Data and other attributes inherited from gobject.DrawingArea:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType GtkDrawingArea (166881200)&gt;</dl>
+Methods inherited from <a href="gtk.html#Alignment">gtk.Alignment</a>:<br>
+<dl><dt><a name="BoardPreview-get_padding"><strong>get_padding</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set"><strong>set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_padding"><strong>set_padding</strong></a>(...)</dt></dl>
 
 <hr>
-Methods inherited from gobject.Widget:<br>
+Data and other attributes inherited from <a href="gtk.html#Alignment">gtk.Alignment</a>:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType GtkAlignment (153795304)&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Bin">gtk.Bin</a>:<br>
+<dl><dt><a name="BoardPreview-get_child"><strong>get_child</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gtk.html#Bin">gtk.Bin</a>:<br>
+<dl><dt><strong>child</strong> = &lt;attribute 'child' of 'gtk.Bin' objects&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Container">gtk.Container</a>:<br>
+<dl><dt><a name="BoardPreview-__iter__"><strong>__iter__</strong></a>(...)</dt><dd><tt>x.<a href="#BoardPreview-__iter__">__iter__</a>()&nbsp;&lt;==&gt;&nbsp;iter(x)</tt></dd></dl>
+
+<dl><dt><a name="BoardPreview-__len__"><strong>__len__</strong></a>(...)</dt><dd><tt>x.<a href="#BoardPreview-__len__">__len__</a>()&nbsp;&lt;==&gt;&nbsp;len(x)</tt></dd></dl>
+
+<dl><dt><a name="BoardPreview-__nonzero__"><strong>__nonzero__</strong></a>(...)</dt><dd><tt>x.<a href="#BoardPreview-__nonzero__">__nonzero__</a>()&nbsp;&lt;==&gt;&nbsp;x&nbsp;!=&nbsp;0</tt></dd></dl>
+
+<dl><dt><a name="BoardPreview-add"><strong>add</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-add_with_properties"><strong>add_with_properties</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-check_resize"><strong>check_resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-child_get"><strong>child_get</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-child_get_property"><strong>child_get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-child_set"><strong>child_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-child_set_property"><strong>child_set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-child_type"><strong>child_type</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-children"><strong>children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-forall"><strong>forall</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-foreach"><strong>foreach</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_border_width"><strong>get_border_width</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_children"><strong>get_children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_focus_chain"><strong>get_focus_chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_focus_hadjustment"><strong>get_focus_hadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_focus_vadjustment"><strong>get_focus_vadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-get_resize_mode"><strong>get_resize_mode</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-propagate_expose"><strong>propagate_expose</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-remove"><strong>remove</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-resize_children"><strong>resize_children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_border_width"><strong>set_border_width</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_focus_chain"><strong>set_focus_chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_focus_child"><strong>set_focus_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_focus_hadjustment"><strong>set_focus_hadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_focus_vadjustment"><strong>set_focus_vadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_reallocate_redraws"><strong>set_reallocate_redraws</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-set_resize_mode"><strong>set_resize_mode</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="BoardPreview-unset_focus_chain"><strong>unset_focus_chain</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gtk.html#Container">gtk.Container</a>:<br>
+<dl><dt><strong>border_width</strong> = &lt;attribute 'border_width' of 'gtk.Container' objects&gt;</dl>
+
+<dl><dt><strong>do_add</strong> = &lt;built-in method do_add of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_check_resize</strong> = &lt;built-in method do_check_resize of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_child_type</strong> = &lt;built-in method do_child_type of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_composite_name</strong> = &lt;built-in method do_composite_name of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_get_child_property</strong> = &lt;built-in method do_get_child_property of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_remove</strong> = &lt;built-in method do_remove of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_set_child_property</strong> = &lt;built-in method do_set_child_property of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>do_set_focus_child</strong> = &lt;built-in method do_set_focus_child of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>focus_child</strong> = &lt;attribute 'focus_child' of 'gtk.Container' objects&gt;</dl>
+
+<dl><dt><strong>has_focus_chain</strong> = &lt;attribute 'has_focus_chain' of 'gtk.Container' objects&gt;</dl>
+
+<dl><dt><strong>install_child_property</strong> = &lt;built-in method install_child_property of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>list_child_properties</strong> = &lt;built-in method list_child_properties of GObjectMeta object&gt;</dl>
+
+<dl><dt><strong>need_resize</strong> = &lt;attribute 'need_resize' of 'gtk.Container' objects&gt;</dl>
+
+<dl><dt><strong>reallocate_redraws</strong> = &lt;attribute 'reallocate_redraws' of 'gtk.Container' objects&gt;</dl>
+
+<dl><dt><strong>resize_mode</strong> = &lt;attribute 'resize_mode' of 'gtk.Container' objects&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
 <dl><dt><a name="BoardPreview-activate"><strong>activate</strong></a>(...)</dt></dl>
 
 <dl><dt><a name="BoardPreview-add_accelerator"><strong>add_accelerator</strong></a>(...)</dt></dl>
@@ -362,7 +498,7 @@ Methods inherited from gobject.Widget:<br>
 <dl><dt><a name="BoardPreview-unrealize"><strong>unrealize</strong></a>(...)</dt></dl>
 
 <hr>
-Data and other attributes inherited from gobject.Widget:<br>
+Data and other attributes inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
 <dl><dt><strong>allocation</strong> = &lt;attribute 'allocation' of 'gtk.Widget' objects&gt;</dl>
 
 <dl><dt><strong>do_button_press_event</strong> = &lt;built-in method do_button_press_event of GObjectMeta object&gt;</dl>
@@ -510,7 +646,7 @@ Data and other attributes inherited from gobject.Widget:<br>
 <dl><dt><strong>window</strong> = &lt;attribute 'window' of 'gtk.Widget' objects&gt;</dl>
 
 <hr>
-Methods inherited from gobject.Object:<br>
+Methods inherited from <a href="gtk.html#Object">gtk.Object</a>:<br>
 <dl><dt><a name="BoardPreview-flags"><strong>flags</strong></a>(...)</dt></dl>
 
 <dl><dt><a name="BoardPreview-remove_data"><strong>remove_data</strong></a>(...)</dt></dl>
@@ -522,7 +658,7 @@ Methods inherited from gobject.Object:<br>
 <dl><dt><a name="BoardPreview-unset_flags"><strong>unset_flags</strong></a>(...)</dt></dl>
 
 <hr>
-Data and other attributes inherited from gobject.Object:<br>
+Data and other attributes inherited from <a href="gtk.html#Object">gtk.Object</a>:<br>
 <dl><dt><strong>do_destroy</strong> = &lt;built-in method do_destroy of GObjectMeta object&gt;</dl>
 
 <hr>
@@ -585,7 +721,7 @@ Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 <dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
 
-<dl><dt><strong>__gdoc__</strong> = 'Object GtkDrawingArea<font color="#c040c0">\n\n</font>Signals from GtkWidget:<font color="#c040c0">\n</font> ...-peger<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+<dl><dt><strong>__gdoc__</strong> = 'Object GtkAlignment<font color="#c040c0">\n\n</font>Properties from GtkAlignmen...-peger<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
 
 <dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
 
@@ -597,5 +733,26 @@ Data and other attributes inherited from <a href="gobject.html#GObject">gobject.
 Methods inherited from <a href="atk.html#ImplementorIface">atk.ImplementorIface</a>:<br>
 <dl><dt><a name="BoardPreview-ref_accessible"><strong>ref_accessible</strong></a>(...)</dt></dl>
 
-</td></tr></table></td></tr></table>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-ellipsize"><strong>ellipsize</strong></a>(string, maxlen)</dt></dl>
+ <dl><dt><a name="-idle_add"><strong>idle_add</strong></a>(...)</dt></dl>
+ <dl><dt><a name="-sleep"><strong>sleep</strong></a>(...)</dt><dd><tt><a href="#-sleep">sleep</a>(seconds)<br>
+&nbsp;<br>
+Delay&nbsp;execution&nbsp;for&nbsp;a&nbsp;given&nbsp;number&nbsp;of&nbsp;seconds.&nbsp;&nbsp;The&nbsp;argument&nbsp;may&nbsp;be<br>
+a&nbsp;floating&nbsp;point&nbsp;number&nbsp;for&nbsp;subsecond&nbsp;precision.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>BLACK</strong> = 1<br>
+<strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']</td></tr></table>
 </body></html>

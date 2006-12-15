@@ -72,7 +72,7 @@ Only&nbsp;most&nbsp;important&nbsp;stuff&nbsp;is&nbsp;tested</tt></dd></dl>
 
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Utils+History+History (144067512)&gt;</dl>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Utils+History+History (142792128)&gt;</dl>
 
 <hr>
 Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
@@ -176,7 +176,8 @@ Create&nbsp;a&nbsp;new&nbsp;lock&nbsp;object.&nbsp;&nbsp;See&nbsp;LockType.__doc
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>ARTIFICIAL</strong> = 1<br>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ARTIFICIAL</strong> = 1<br>
 <strong>BISHOP</strong> = 3<br>
 <strong>BLACK</strong> = 1<br>
 <strong>BLACKWON</strong> = 3<br>
@@ -185,36 +186,50 @@ Create&nbsp;a&nbsp;new&nbsp;lock&nbsp;object.&nbsp;&nbsp;See&nbsp;LockType.__doc
 <strong>BLACK_OOO</strong> = 8<br>
 <strong>DRAW</strong> = 1<br>
 <strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
 <strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
 <strong>DRAW_REPITITION</strong> = 0<br>
 <strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
 <strong>KING</strong> = 0<br>
 <strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
 <strong>LOCAL</strong> = 0<br>
 <strong>NAME</strong> = 'PyChess'<br>
 <strong>PAWN</strong> = 5<br>
 <strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
 <strong>QUEEN</strong> = 1<br>
 <strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
 <strong>ROOK</strong> = 2<br>
 <strong>RUNNING</strong> = 0<br>
+<strong>SAN</strong> = 0<br>
 <strong>SIGNAL_RUN_FIRST</strong> = 1<br>
+<strong>SPY</strong> = 1<br>
 <strong>TYPE_NONE</strong> = &lt;GType void (4)&gt;<br>
-<strong>VERSION</strong> = '0.5.2'<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
 <strong>WHITE</strong> = 0<br>
 <strong>WHITEWON</strong> = 2<br>
 <strong>WHITE_CASTLED</strong> = 16<br>
 <strong>WHITE_OO</strong> = 1<br>
 <strong>WHITE_OOO</strong> = 2<br>
-<strong>WON_CALLFLAG</strong> = 5<br>
-<strong>WON_MATE</strong> = 6<br>
-<strong>WON_RESIGN</strong> = 4<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
 <strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
 <strong>hisPool</strong> = &lt;pychess.Utils.History.HistoryPool instance&gt;<br>
 <strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
 <strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;<br>
 <strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
 <strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
 <strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
 <strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
 <strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>

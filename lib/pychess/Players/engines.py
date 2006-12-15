@@ -25,6 +25,9 @@ def _testEngine (engine):
     return False
 
 availableEngines = []
+# availableEngines is a list of [(EngineClass, (extra, arguments ...)), ...]
+# the CECPEngine class takes one argument - the path of the executable
+
 for e,p in knownEngines:
     path = _testEngine(e)
     if path:
@@ -32,21 +35,19 @@ for e,p in knownEngines:
 
 ###################
 
-# Other engines
-#from PyChess import PyChessEngine
-#availableEngines.append((PyChessEngine,()))
+# PyChess Engine
 
 import os, imp
 
 if "PYTHONPATH" in os.environ:
     path = os.path.abspath(os.environ["PYTHONPATH"])
     path = os.path.join(path, "pychess/Players/PyChess.py")
-    os.system("chmod +x "+path)
 else:
     path = os.path.dirname(imp.find_module("os")[1])
     path = os.path.join(path, "site-packages/pychess/Players/PyChess.py")
 
-availableEngines.append((CECPEngine,(path,)))
+path = "env python "+path
+availableEngines.append( (CECPEngine, (path,)) )
 
 ###################
 

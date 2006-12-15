@@ -73,6 +73,9 @@ Methods defined here:<br>
 
 <dl><dt><a name="Engine-setBoard"><strong>setBoard</strong></a>(self, history)</dt></dl>
 
+<dl><dt><a name="Engine-setDepth"><strong>setDepth</strong></a>(self, depth)</dt><dd><tt>Sets&nbsp;the&nbsp;depth&nbsp;of&nbsp;the&nbsp;engine.&nbsp;Should&nbsp;only&nbsp;be&nbsp;used&nbsp;for&nbsp;analyze&nbsp;engines.<br>
+Other&nbsp;engines&nbsp;will&nbsp;use&nbsp;the&nbsp;setStrength&nbsp;method.</tt></dd></dl>
+
 <dl><dt><a name="Engine-setStrength"><strong>setStrength</strong></a>(self, strength)</dt><dd><tt>Takes&nbsp;strength&nbsp;0,&nbsp;1,&nbsp;2&nbsp;(higher&nbsp;is&nbsp;better)</tt></dd></dl>
 
 <dl><dt><a name="Engine-setTime"><strong>setTime</strong></a>(self, seconds, gain)</dt></dl>
@@ -83,6 +86,8 @@ Methods defined here:<br>
 
 <hr>
 Data and other attributes defined here:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+Engine+Engine (147425376)&gt;</dl>
+
 <dl><dt><strong>__type__</strong> = 1</dl>
 
 <hr>
@@ -102,17 +107,7 @@ or&nbsp;simply&nbsp;do&nbsp;nothing</tt></dd></dl>
 
 <dl><dt><a name="Engine-showBoard"><strong>showBoard</strong></a>(self)</dt><dd><tt>Print&nbsp;the&nbsp;board&nbsp;as&nbsp;it&nbsp;the&nbsp;players&nbsp;sees&nbsp;it,&nbsp;e.g.&nbsp;in&nbsp;fen.&nbsp;Used&nbsp;for&nbsp;debugging&nbsp;only</tt></dd></dl>
 
-<hr>
-Data and other attributes inherited from <a href="pychess.Players.Player.html#Player">pychess.Players.Player.Player</a>:<br>
-<dl><dt><strong>DRAW_ACCEPTION</strong> = 3</dl>
-
-<dl><dt><strong>DRAW_OFFER</strong> = 2</dl>
-
-<dl><dt><strong>FLAG_CALL</strong> = 1</dl>
-
-<dl><dt><strong>RESIGNATION</strong> = 0</dl>
-
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+Player+Player (142266496)&gt;</dl>
+<dl><dt><a name="Engine-updateTime"><strong>updateTime</strong></a>(self, secs, opsecs)</dt><dd><tt>Updates&nbsp;the&nbsp;player&nbsp;with&nbsp;the&nbsp;current&nbsp;remaining&nbsp;time&nbsp;as&nbsp;a&nbsp;float&nbsp;of&nbsp;seconds</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
@@ -174,7 +169,7 @@ Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
 <dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
 
-<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Players+Player+Player<font color="#c040c0">\n\n</font>Signals fr...ead ()<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Players+Engine+Engine<font color="#c040c0">\n\n</font>Signals fr...ead ()<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
 
 <dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
 
@@ -214,7 +209,7 @@ Methods defined here:<br>
 
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+Engine+EngineConnection (142348376)&gt;</dl>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Players+Engine+EngineConnection (147425056)&gt;</dl>
 
 <hr>
 Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
@@ -318,5 +313,8 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>ARTIFICIAL</strong> = 1<br>
 <strong>CHILD</strong> = 0<br>
+<strong>SIGNAL_RUN_FIRST</strong> = 1<br>
+<strong>TYPE_NONE</strong> = &lt;GType void (4)&gt;<br>
+<strong>TYPE_PYOBJECT</strong> = &lt;GType PyObject (147390800)&gt;<br>
 <strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;</td></tr></table>
 </body></html>

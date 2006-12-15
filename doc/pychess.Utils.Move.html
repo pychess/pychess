@@ -37,6 +37,8 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="Move-__eq__"><strong>__eq__</strong></a>(self, other)</dt></dl>
 
+<dl><dt><a name="Move-__hash__"><strong>__hash__</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="Move-__init__"><strong>__init__</strong></a>(self, cord0, cord1, promotion<font color="#909090">=1</font>)</dt><dd><tt>(cord0,&nbsp;cord1,&nbsp;[promotion])</tt></dd></dl>
 
 <dl><dt><a name="Move-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
@@ -89,9 +91,11 @@ Create&nbsp;a&nbsp;new&nbsp;lock&nbsp;object.&nbsp;&nbsp;See&nbsp;LockType.__doc
  <dl><dt><a name="-parseAN"><strong>parseAN</strong></a>(board, an)</dt><dd><tt>Parse&nbsp;an&nbsp;Algebraic&nbsp;Notation&nbsp;string</tt></dd></dl>
  <dl><dt><a name="-parseLAN"><strong>parseLAN</strong></a>(board, lan)</dt><dd><tt>Parse&nbsp;a&nbsp;Long/Expanded&nbsp;Algebraic&nbsp;Notation&nbsp;string</tt></dd></dl>
  <dl><dt><a name="-parseSAN"><strong>parseSAN</strong></a>(board, san)</dt><dd><tt>Parse&nbsp;a&nbsp;Short/Abbreviated&nbsp;Algebraic&nbsp;Notation&nbsp;string</tt></dd></dl>
- <dl><dt><a name="-toAN"><strong>toAN</strong></a>(board, move)</dt><dd><tt>Returns&nbsp;a&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-toAN"><strong>toAN</strong></a>(board, move)</dt><dd><tt>Returns&nbsp;a&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move<br>
+board&nbsp;should&nbsp;be&nbsp;prior&nbsp;to&nbsp;the&nbsp;move</tt></dd></dl>
  <dl><dt><a name="-toFAN"><strong>toFAN</strong></a>(board, board2, move)</dt><dd><tt>Returns&nbsp;a&nbsp;Figurine&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move</tt></dd></dl>
- <dl><dt><a name="-toLAN"><strong>toLAN</strong></a>(board, move)</dt><dd><tt>Returns&nbsp;a&nbsp;Long/Expanded&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-toLAN"><strong>toLAN</strong></a>(board, move)</dt><dd><tt>Returns&nbsp;a&nbsp;Long/Expanded&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move<br>
+board&nbsp;should&nbsp;be&nbsp;prior&nbsp;to&nbsp;the&nbsp;move</tt></dd></dl>
  <dl><dt><a name="-toSAN"><strong>toSAN</strong></a>(board, board2, move, fan<font color="#909090">=False</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;Short/Abbreviated&nbsp;Algebraic&nbsp;Notation&nbsp;string&nbsp;of&nbsp;a&nbsp;move&nbsp;<br>
 The&nbsp;board&nbsp;should&nbsp;be&nbsp;prior&nbsp;to&nbsp;the&nbsp;move,&nbsp;board2&nbsp;past.<br>
 If&nbsp;not&nbsp;board2,&nbsp;toSAN&nbsp;will&nbsp;not&nbsp;test&nbsp;mate</tt></dd></dl>
@@ -102,7 +106,8 @@ If&nbsp;not&nbsp;board2,&nbsp;toSAN&nbsp;will&nbsp;not&nbsp;test&nbsp;mate</tt><
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>ARTIFICIAL</strong> = 1<br>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ARTIFICIAL</strong> = 1<br>
 <strong>BISHOP</strong> = 3<br>
 <strong>BLACK</strong> = 1<br>
 <strong>BLACKWON</strong> = 3<br>
@@ -111,35 +116,49 @@ If&nbsp;not&nbsp;board2,&nbsp;toSAN&nbsp;will&nbsp;not&nbsp;test&nbsp;mate</tt><
 <strong>BLACK_OOO</strong> = 8<br>
 <strong>DRAW</strong> = 1<br>
 <strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
 <strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
 <strong>DRAW_REPITITION</strong> = 0<br>
 <strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
 <strong>KING</strong> = 0<br>
 <strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
 <strong>LOCAL</strong> = 0<br>
 <strong>NAME</strong> = 'PyChess'<br>
 <strong>PAWN</strong> = 5<br>
 <strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
 <strong>QUEEN</strong> = 1<br>
 <strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
 <strong>ROOK</strong> = 2<br>
 <strong>RUNNING</strong> = 0<br>
-<strong>VERSION</strong> = '0.5.2'<br>
+<strong>SAN</strong> = 0<br>
+<strong>SPY</strong> = 1<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
 <strong>WHITE</strong> = 0<br>
 <strong>WHITEWON</strong> = 2<br>
 <strong>WHITE_CASTLED</strong> = 16<br>
 <strong>WHITE_OO</strong> = 1<br>
 <strong>WHITE_OOO</strong> = 2<br>
-<strong>WON_CALLFLAG</strong> = 5<br>
-<strong>WON_MATE</strong> = 6<br>
-<strong>WON_RESIGN</strong> = 4<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
 <strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
 <strong>fandic</strong> = [['<font color="#c040c0">\xe2\x99\x94</font>', '<font color="#c040c0">\xe2\x99\x95</font>', '<font color="#c040c0">\xe2\x99\x96</font>', '<font color="#c040c0">\xe2\x99\x97</font>', '<font color="#c040c0">\xe2\x99\x98</font>', '<font color="#c040c0">\xe2\x99\x99</font>'], ['<font color="#c040c0">\xe2\x99\x9a</font>', '<font color="#c040c0">\xe2\x99\x9b</font>', '<font color="#c040c0">\xe2\x99\x9c</font>', '<font color="#c040c0">\xe2\x99\x9d</font>', '<font color="#c040c0">\xe2\x99\x9e</font>', '<font color="#c040c0">\xe2\x99\x9f</font>']]<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
 <strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
 <strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;<br>
 <strong>movePool</strong> = &lt;pychess.Utils.Move.MovePool instance&gt;<br>
 <strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
 <strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
 <strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
 <strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
 <strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>

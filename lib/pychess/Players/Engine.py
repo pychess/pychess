@@ -64,17 +64,18 @@ class EngineConnection (gobject.GObject):
         self.pid, self.fd = os.forkpty()
         if self.pid == CHILD:
             os.nice(15)
-            environ = {}
-            if "PYTHONPATH" in os.environ:
-                environ["PYTHONPATH"] = os.path.abspath(os.environ["PYTHONPATH"])
-            os.execve(executable, [""], environ)
+            print "executable", executable
+            os.system(executable)
         
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
         
-        # This can be done smarter, when an enginepool is written
-        #chars = [(ord("a"), ord("z")), (ord("A"), ord("Z"))]
-        #self.defname  = self.defname+"#"+chr(randint(*choice(chars)))
+        
+        # Add a random number to each connection, to distinct between different
+        # connection to same engine. This can be done smarter, when an
+        # enginepool is written
+        # chars = [(ord("a"), ord("z")), (ord("A"), ord("Z"))]
+        # self.defname  = self.defname+"#"+chr(randint(*choice(chars)))
         
         log.debug(executable+"\n", self.defname)
         

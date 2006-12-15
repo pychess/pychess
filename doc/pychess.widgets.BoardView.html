@@ -17,10 +17,10 @@
 <font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="gtk.html">gtk</a><br>
-<a href="pango.html">pango</a><br>
-</td><td width="25%" valign=top><a href="pygtk.html">pygtk</a><br>
-<a href="re.html">re</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cairo.html">cairo</a><br>
+<a href="gtk.html">gtk</a><br>
+</td><td width="25%" valign=top><a href="pango.html">pango</a><br>
+<a href="pygtk.html">pygtk</a><br>
 </td><td width="25%" valign=top><a href="pychess.Utils.validator.html">pychess.Utils.validator</a><br>
 </td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -30,7 +30,7 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial">gobject.DrawingArea(gobject.Widget)
+<dt><font face="helvetica, arial"><a href="gtk.html#DrawingArea">gtk.DrawingArea</a>(<a href="gtk.html#Widget">gtk.Widget</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="pychess.widgets.BoardView.html#BoardView">BoardView</a>
@@ -41,14 +41,14 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="BoardView">class <strong>BoardView</strong></a>(gobject.DrawingArea)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="BoardView">class <strong>BoardView</strong></a>(<a href="gtk.html#DrawingArea">gtk.DrawingArea</a>)</font></td></tr>
     
 <tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="pychess.widgets.BoardView.html#BoardView">BoardView</a></dd>
-<dd>gobject.DrawingArea</dd>
-<dd>gobject.Widget</dd>
-<dd>gobject.Object</dd>
+<dd><a href="gtk.html#DrawingArea">gtk.DrawingArea</a></dd>
+<dd><a href="gtk.html#Widget">gtk.Widget</a></dd>
+<dd><a href="gtk.html#Object">gtk.Object</a></dd>
 <dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
 <dd><a href="atk.html#ImplementorIface">atk.ImplementorIface</a></dd>
 <dd><a href="gobject.html#GInterface">gobject.GInterface</a></dd>
@@ -66,15 +66,15 @@ Methods defined here:<br>
 
 <dl><dt><a name="BoardView-drawArrows"><strong>drawArrows</strong></a>(self, context)</dt></dl>
 
-<dl><dt><a name="BoardView-drawBoard"><strong>drawBoard</strong></a>(self, context)</dt></dl>
+<dl><dt><a name="BoardView-drawBoard"><strong>drawBoard</strong></a>(self, context, r)</dt></dl>
 
-<dl><dt><a name="BoardView-drawCords"><strong>drawCords</strong></a>(self, context)</dt></dl>
+<dl><dt><a name="BoardView-drawCords"><strong>drawCords</strong></a>(self, context, r)</dt></dl>
 
-<dl><dt><a name="BoardView-drawLastMove"><strong>drawLastMove</strong></a>(self, context)</dt></dl>
+<dl><dt><a name="BoardView-drawLastMove"><strong>drawLastMove</strong></a>(self, context, redrawn)</dt></dl>
 
 <dl><dt><a name="BoardView-drawPieces"><strong>drawPieces</strong></a>(self, context, pieces, r)</dt></dl>
 
-<dl><dt><a name="BoardView-drawSpecial"><strong>drawSpecial</strong></a>(self, context)</dt></dl>
+<dl><dt><a name="BoardView-drawSpecial"><strong>drawSpecial</strong></a>(self, context, redrawn)</dt></dl>
 
 <dl><dt><a name="BoardView-expose"><strong>expose</strong></a>(self, widget, event)</dt></dl>
 
@@ -88,7 +88,13 @@ Methods defined here:<br>
 
 <dl><dt><a name="BoardView-reset"><strong>reset</strong></a>(self, history)</dt></dl>
 
-<dl><dt><a name="BoardView-runAnimation"><strong>runAnimation</strong></a>(self, redrawMisc<font color="#909090">=False</font>)</dt></dl>
+<dl><dt><a name="BoardView-runAnimation"><strong>runAnimation</strong></a>(self, redrawMisc<font color="#909090">=False</font>)</dt><dd><tt>The&nbsp;animationsystem&nbsp;in&nbsp;pychess&nbsp;is&nbsp;very&nbsp;loosely&nbsp;inspired&nbsp;by&nbsp;the&nbsp;one&nbsp;of&nbsp;chessmonk.&nbsp;The&nbsp;idea&nbsp;is,&nbsp;that&nbsp;every&nbsp;piece&nbsp;has&nbsp;a&nbsp;place&nbsp;in&nbsp;an&nbsp;array&nbsp;(the&nbsp;board.data&nbsp;one)&nbsp;for&nbsp;where&nbsp;to&nbsp;be&nbsp;drawn.&nbsp;If&nbsp;a&nbsp;piece&nbsp;is&nbsp;to&nbsp;be&nbsp;animated,&nbsp;it&nbsp;can&nbsp;set&nbsp;its&nbsp;x&nbsp;and&nbsp;y&nbsp;properties,&nbsp;to&nbsp;some&nbsp;cord&nbsp;(or&nbsp;part&nbsp;cord&nbsp;like&nbsp;0.42&nbsp;for&nbsp;42%&nbsp;right&nbsp;to&nbsp;file&nbsp;0).&nbsp;Each&nbsp;time&nbsp;runAnimation&nbsp;is&nbsp;run,&nbsp;it&nbsp;will&nbsp;set&nbsp;those&nbsp;x&nbsp;and&nbsp;y&nbsp;properties&nbsp;a&nbsp;little&nbsp;closer&nbsp;to&nbsp;the&nbsp;location&nbsp;in&nbsp;the&nbsp;array.&nbsp;When&nbsp;it&nbsp;has&nbsp;reached&nbsp;its&nbsp;final&nbsp;location,&nbsp;x&nbsp;and&nbsp;y&nbsp;will&nbsp;be&nbsp;set&nbsp;to&nbsp;None.<br>
+_set_shown,&nbsp;which&nbsp;starts&nbsp;the&nbsp;animation,&nbsp;also&nbsp;sets&nbsp;a&nbsp;timestamp&nbsp;for&nbsp;the&nbsp;acceleration&nbsp;to&nbsp;work&nbsp;properply.</tt></dd></dl>
+
+<dl><dt><a name="BoardView-runWhenReady"><strong>runWhenReady</strong></a>(self, func, *args)</dt><dd><tt>As&nbsp;some&nbsp;pieces&nbsp;of&nbsp;pychess&nbsp;are&nbsp;quite&nbsp;eager&nbsp;to&nbsp;set&nbsp;the&nbsp;attributes&nbsp;of<br>
+<a href="#BoardView">BoardView</a>,&nbsp;we&nbsp;can't&nbsp;always&nbsp;be&nbsp;sure,&nbsp;that&nbsp;<a href="#BoardView">BoardView</a>&nbsp;has&nbsp;been&nbsp;painted&nbsp;once<br>
+before,&nbsp;and&nbsp;therefore&nbsp;self.<strong>sqaure</strong>&nbsp;has&nbsp;been&nbsp;set.<br>
+This&nbsp;might&nbsp;be&nbsp;doable&nbsp;in&nbsp;a&nbsp;smarter&nbsp;way...</tt></dd></dl>
 
 <dl><dt><a name="BoardView-startAnimation"><strong>startAnimation</strong></a>(self)</dt></dl>
 
@@ -150,14 +156,14 @@ Properties defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+widgets+BoardView+BoardView (157337792)&gt;</dl>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+widgets+BoardView+BoardView (151976376)&gt;</dl>
 
 <hr>
-Methods inherited from gobject.DrawingArea:<br>
+Methods inherited from <a href="gtk.html#DrawingArea">gtk.DrawingArea</a>:<br>
 <dl><dt><a name="BoardView-size"><strong>size</strong></a>(...)</dt></dl>
 
 <hr>
-Methods inherited from gobject.Widget:<br>
+Methods inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
 <dl><dt><a name="BoardView-activate"><strong>activate</strong></a>(...)</dt></dl>
 
 <dl><dt><a name="BoardView-add_accelerator"><strong>add_accelerator</strong></a>(...)</dt></dl>
@@ -453,7 +459,7 @@ Methods inherited from gobject.Widget:<br>
 <dl><dt><a name="BoardView-unrealize"><strong>unrealize</strong></a>(...)</dt></dl>
 
 <hr>
-Data and other attributes inherited from gobject.Widget:<br>
+Data and other attributes inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
 <dl><dt><strong>allocation</strong> = &lt;attribute 'allocation' of 'gtk.Widget' objects&gt;</dl>
 
 <dl><dt><strong>do_button_press_event</strong> = &lt;built-in method do_button_press_event of GObjectMeta object&gt;</dl>
@@ -601,7 +607,7 @@ Data and other attributes inherited from gobject.Widget:<br>
 <dl><dt><strong>window</strong> = &lt;attribute 'window' of 'gtk.Widget' objects&gt;</dl>
 
 <hr>
-Methods inherited from gobject.Object:<br>
+Methods inherited from <a href="gtk.html#Object">gtk.Object</a>:<br>
 <dl><dt><a name="BoardView-flags"><strong>flags</strong></a>(...)</dt></dl>
 
 <dl><dt><a name="BoardView-remove_data"><strong>remove_data</strong></a>(...)</dt></dl>
@@ -613,7 +619,7 @@ Methods inherited from gobject.Object:<br>
 <dl><dt><a name="BoardView-unset_flags"><strong>unset_flags</strong></a>(...)</dt></dl>
 
 <hr>
-Data and other attributes inherited from gobject.Object:<br>
+Data and other attributes inherited from <a href="gtk.html#Object">gtk.Object</a>:<br>
 <dl><dt><strong>do_destroy</strong> = &lt;built-in method do_destroy of GObjectMeta object&gt;</dl>
 
 <hr>
@@ -701,6 +707,7 @@ Methods inherited from <a href="atk.html#ImplementorIface">atk.ImplementorIface<
 Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;a&nbsp;float.<br>
 This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integral&nbsp;value&nbsp;&gt;=&nbsp;x.</tt></dd></dl>
  <dl><dt><a name="-child_watch_add"><strong>child_watch_add</strong></a>(...)</dt></dl>
+ <dl><dt><a name="-contains"><strong>contains</strong></a>(r0, r1)</dt></dl>
  <dl><dt><a name="-filename_display_basename"><strong>filename_display_basename</strong></a>(...)</dt></dl>
  <dl><dt><a name="-filename_display_name"><strong>filename_display_name</strong></a>(...)</dt></dl>
  <dl><dt><a name="-filename_from_utf8"><strong>filename_from_utf8</strong></a>(...)</dt></dl>
@@ -727,6 +734,10 @@ This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integral&nbsp;value&nbsp;&lt;=&nbsp;x.</
  <dl><dt><a name="-signal_name"><strong>signal_name</strong></a>(...)</dt></dl>
  <dl><dt><a name="-signal_new"><strong>signal_new</strong></a>(...)</dt></dl>
  <dl><dt><a name="-signal_query"><strong>signal_query</strong></a>(...)</dt></dl>
+ <dl><dt><a name="-sleep"><strong>sleep</strong></a>(...)</dt><dd><tt><a href="#-sleep">sleep</a>(seconds)<br>
+&nbsp;<br>
+Delay&nbsp;execution&nbsp;for&nbsp;a&nbsp;given&nbsp;number&nbsp;of&nbsp;seconds.&nbsp;&nbsp;The&nbsp;argument&nbsp;may&nbsp;be<br>
+a&nbsp;floating&nbsp;point&nbsp;number&nbsp;for&nbsp;subsecond&nbsp;precision.</tt></dd></dl>
  <dl><dt><a name="-source_remove"><strong>source_remove</strong></a>(...)</dt></dl>
  <dl><dt><a name="-spawn_async"><strong>spawn_async</strong></a>(...)</dt></dl>
  <dl><dt><a name="-threads_init"><strong>threads_init</strong></a>(...)</dt></dl>
@@ -749,7 +760,8 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>ANIMATION_TIME</strong> = 0.5<br>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ANIMATION_TIME</strong> = 0.5<br>
 <strong>ARTIFICIAL</strong> = 1<br>
 <strong>BISHOP</strong> = 3<br>
 <strong>BLACK</strong> = 1<br>
@@ -759,9 +771,15 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>BLACK_OOO</strong> = 8<br>
 <strong>DRAW</strong> = 1<br>
 <strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
 <strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
 <strong>DRAW_REPITITION</strong> = 0<br>
 <strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
 <strong>IO_ERR</strong> = 8<br>
 <strong>IO_FLAG_APPEND</strong> = 1<br>
 <strong>IO_FLAG_GET_MASK</strong> = 31<br>
@@ -782,6 +800,7 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>IO_STATUS_NORMAL</strong> = 1<br>
 <strong>KING</strong> = 0<br>
 <strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
 <strong>LOCAL</strong> = 0<br>
 <strong>NAME</strong> = 'PyChess'<br>
 <strong>OPTION_ERROR_BAD_VALUE</strong> = 1<br>
@@ -810,8 +829,10 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>PRIORITY_LOW</strong> = 300<br>
 <strong>QUEEN</strong> = 1<br>
 <strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
 <strong>ROOK</strong> = 2<br>
 <strong>RUNNING</strong> = 0<br>
+<strong>SAN</strong> = 0<br>
 <strong>SIGNAL_ACTION</strong> = 32<br>
 <strong>SIGNAL_DETAILED</strong> = 16<br>
 <strong>SIGNAL_NO_HOOKS</strong> = 64<br>
@@ -826,6 +847,7 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>SPAWN_SEARCH_PATH</strong> = 4<br>
 <strong>SPAWN_STDERR_TO_DEV_NULL</strong> = 16<br>
 <strong>SPAWN_STDOUT_TO_DEV_NULL</strong> = 8<br>
+<strong>SPY</strong> = 1<br>
 <strong>TYPE_BOOLEAN</strong> = &lt;GType gboolean (20)&gt;<br>
 <strong>TYPE_BOXED</strong> = &lt;GType GBoxed (72)&gt;<br>
 <strong>TYPE_CHAR</strong> = &lt;GType gchar (12)&gt;<br>
@@ -833,7 +855,7 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>TYPE_ENUM</strong> = &lt;GType GEnum (48)&gt;<br>
 <strong>TYPE_FLAGS</strong> = &lt;GType GFlags (52)&gt;<br>
 <strong>TYPE_FLOAT</strong> = &lt;GType gfloat (56)&gt;<br>
-<strong>TYPE_GSTRING</strong> = &lt;GType GString (157265968)&gt;<br>
+<strong>TYPE_GSTRING</strong> = &lt;GType GString (151107840)&gt;<br>
 <strong>TYPE_INT</strong> = &lt;GType gint (24)&gt;<br>
 <strong>TYPE_INT64</strong> = &lt;GType gint64 (40)&gt;<br>
 <strong>TYPE_INTERFACE</strong> = &lt;GType GInterface (8)&gt;<br>
@@ -843,30 +865,34 @@ Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;
 <strong>TYPE_OBJECT</strong> = &lt;GType GObject (80)&gt;<br>
 <strong>TYPE_PARAM</strong> = &lt;GType GParam (76)&gt;<br>
 <strong>TYPE_POINTER</strong> = &lt;GType gpointer (68)&gt;<br>
-<strong>TYPE_PYOBJECT</strong> = &lt;GType PyObject (157365080)&gt;<br>
+<strong>TYPE_PYOBJECT</strong> = &lt;GType PyObject (151107896)&gt;<br>
 <strong>TYPE_STRING</strong> = &lt;GType gchararray (64)&gt;<br>
 <strong>TYPE_UCHAR</strong> = &lt;GType guchar (16)&gt;<br>
 <strong>TYPE_UINT</strong> = &lt;GType guint (28)&gt;<br>
 <strong>TYPE_UINT64</strong> = &lt;GType guint64 (44)&gt;<br>
 <strong>TYPE_ULONG</strong> = &lt;GType gulong (36)&gt;<br>
 <strong>TYPE_UNICHAR</strong> = &lt;GType guint (28)&gt;<br>
-<strong>VERSION</strong> = '0.5.2'<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
 <strong>WHITE</strong> = 0<br>
 <strong>WHITEWON</strong> = 2<br>
 <strong>WHITE_CASTLED</strong> = 16<br>
 <strong>WHITE_OO</strong> = 1<br>
 <strong>WHITE_OOO</strong> = 2<br>
-<strong>WON_CALLFLAG</strong> = 5<br>
-<strong>WON_MATE</strong> = 6<br>
-<strong>WON_RESIGN</strong> = 4<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
 <strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
 <strong>glib_version</strong> = (2, 12, 3)<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
 <strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
 <strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
-<strong>pygobject_version</strong> = (2, 12, 2)<br>
-<strong>pygtk_version</strong> = (2, 12, 2)<br>
+<strong>pygobject_version</strong> = (2, 12, 3)<br>
+<strong>pygtk_version</strong> = (2, 12, 3)<br>
 <strong>range8</strong> = [0, 1, 2, 3, 4, 5, 6, 7]<br>
 <strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
 <strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
 <strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
 <strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>
