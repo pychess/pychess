@@ -37,13 +37,14 @@ for e,p in knownEngines:
 #availableEngines.append((PyChessEngine,()))
 
 import os, imp
-path = os.environ["PYTHONPATH"]
-if path:
-    path = os.path.join(os.path.abspath(path), "pychess/Players/PyChess.py")
+
+if "PYTHONPATH" in os.environ:
+    path = os.path.abspath(os.environ["PYTHONPATH"])
+    path = os.path.join(path, "pychess/Players/PyChess.py")
     os.system("chmod +x "+path)
 else:
-    path = os.dirname(imp.find_module("os")[1])
-    path = os.path.join(path, "pychess/Players/PyChess.py")
+    path = os.path.dirname(imp.find_module("os")[1])
+    path = os.path.join(path, "site-packages/pychess/Players/PyChess.py")
 
 availableEngines.append((CECPEngine,(path,)))
 
