@@ -18,7 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: glade/gamepreview.glade:114
-#, fuzzy
 msgid "<b>Open game</b>"
 msgstr "<b>Partie öffnen<b>"
 
@@ -31,7 +30,6 @@ msgid "<b>Initial position</b>"
 msgstr "<b>Grundstellung</b>"
 
 #: glade/newInOut.glade:12 lib/pychess/widgets/ionest.py:37
-#, fuzzy
 msgid "Save Game"
 msgstr "Partie speichern"
 
@@ -148,7 +146,6 @@ msgid "_Resign"
 msgstr "_Aufgeben"
 
 #: glade/PyChess.glade:232
-#, fuzzy
 msgid "_Force to move"
 msgstr "Zug _Erzwingen"
 
@@ -165,9 +162,8 @@ msgid "_Side Panel"
 msgstr "_Seitenleiste"
 
 #: glade/PyChess.glade:300
-#, fuzzy
 msgid "_Log Viewer"
-msgstr "_Protokoll-Ansicht"
+msgstr "_Protokoll"
 
 #: glade/PyChess.glade:317
 msgid "Show _cords"
@@ -224,7 +220,6 @@ msgstr "Partiedaten"
 
 # In the chessclock
 #: glade/PyChess.glade:597
-#, fuzzy
 msgid "Site:"
 msgstr "Ort:"
 
@@ -237,7 +232,6 @@ msgid "Event:"
 msgstr "Ereignis"
 
 #: glade/PyChess.glade:753
-#, fuzzy
 msgid "<b>Game data</b>"
 msgstr "<b>Patiedaten</b>"
 
@@ -352,7 +346,6 @@ msgstr ""
 "überschrieben."
 
 #: lib/pychess/widgets/ionest.py:356
-#, fuzzy
 msgid "<b><big>Save the current game before you close it?</big></b>"
 msgstr "<b><big>Die Partie vor der Schliessen abspeichern?</big></b>"
 
@@ -365,7 +358,6 @@ msgstr ""
 "wenn Sie sie jetzt nicht abspeichern."
 
 #: lib/pychess/widgets/ionest.py:375
-#, fuzzy, python-format
 msgid "<big><b>There are %d games with unsaved changes:</b></big>"
 msgstr "<big><b>Es gibt %d Partien mit ungespeicherten Änderungen:</b></big>"
 
@@ -448,7 +440,6 @@ msgid "Chess Position"
 msgstr "Schachstellung"
 
 #: lib/pychess/Savers/pgn.py:7
-#, fuzzy
 msgid "Chess Game"
 msgstr "Schachpartie"
 
