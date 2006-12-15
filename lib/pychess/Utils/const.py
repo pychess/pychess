@@ -41,7 +41,7 @@ hashfALPHA, hashfBETA, hashfEXACT = range(3)
 
 RUNNING, DRAW, WHITEWON, BLACKWON = range(4)
 
-RESIGNATION, FLAG_CALL, DRAW_OFFER, DRAW_ACCEPTION = range(4)
+RESIGNATION, FLAG_CALL, DRAW_OFFER = range(3)
 
 reprResult = ["*", "1/2-1/2", "1-0", "0-1"]
 
