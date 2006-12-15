@@ -1,11 +1,12 @@
-VERSION = "0.5.4"
+VERSION = "0.6.0_beta"
 
 NAME = "PyChess"
 
 ###
 
 from os.path import isdir, join, dirname, abspath
-prefixes = ("/usr/share", "/usr/local/share", "/usr/share/games", "/usr/local/share/games")
+prefixes = ("/usr/share", "/usr/local/share",
+    "/usr/share/games", "/usr/local/share/games")
 # TODO: Locale is not located in the lang files
 localePrefixes = ("/usr/share/locale", "/usr/local/share/locale")
 PREFIX = ""

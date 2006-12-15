@@ -54,19 +54,16 @@ DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.py'))]
 
 # Data
-
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 
 # Main modules
-
 if os.system("chmod +x lib/pychess/Players/PyChess.py") != 0:
     print "Couldn't set execution flag for PyChess Engine. try if you can do it\
             yourself (with root access"
     # TODO: Is this a good way to handle the problem?
 
 # Language
-
 langdirs = []
 for dir in [os.path.join("lang",f) for f in listdir("lang")]:
     if dir.find(".svn") == -1 and isdir(dir):

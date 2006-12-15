@@ -330,10 +330,8 @@ def saveGameAs (game):
                         gtk.RESPONSE_ACCEPT)
             d.set_title(_("File exists"))
             folder, file = os.path.split(uri)
-            d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you " + \
-                        "like to replace it?</b></big>") % file)
-            d.format_secondary_text(_("The file alredy exists in '%s'. If you " + \
-                        "replace it, its content will be overwritten.") % folder)
+            d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
+            d.format_secondary_text(_("The file alredy exists in '%s'. If you replace it, its content will be overwritten.") % folder)
             res = d.run()
             d.hide()
             
@@ -346,7 +344,7 @@ def saveGameAs (game):
     conid = savedialog.connect("response", response)
     savedialog.show_all()
 
-def saveGameBeforeClose (game, action):
+def saveGameBeforeClose (game):
     
     if not game.isChanged(): return
 
@@ -355,7 +353,7 @@ def saveGameBeforeClose (game, action):
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
     d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
 
-    d.set_markup(_("<b><big>Save the current game before %s?</big></b>") % action)
+    d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
     d.format_secondary_text (_(
         "It is not possible later to continue the game,\nif do don't save it."))
     response = d.run()
@@ -381,7 +379,7 @@ def closeAllGames (games):
     return response
 
 def closeGame (gmwidg, game):
-    if saveGameBeforeClose (game, _("you close it")) != gtk.RESPONSE_CANCEL:
+    if saveGameBeforeClose (game) != gtk.RESPONSE_CANCEL:
         game.kill()
         gamewidget.delGameWidget (gmwidg)
         handler.emit("game_closed", gmwidg, game)
