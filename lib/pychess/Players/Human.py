@@ -61,7 +61,7 @@ class Human (Player):
         result = d.run()
         d.hide()
         if result == gtk.RESPONSE_YES:
-            self.emit("action", self.DRAW_ACCEPTION)
+            self.emit("action", DRAW_OFFER)
 
     def setName (self, name):
         self.name = name
