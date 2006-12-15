@@ -15,7 +15,7 @@ if __file__.find("site-packages") >= 0:
     # We are installed?
     for prefix in prefixes:
         if isdir (join (prefix, "pychess")):
-            PREFIX = prefix
+            PREFIX = join (prefix, "pychess")
             break
 if not PREFIX:
     # We are local
