@@ -366,10 +366,10 @@ class CECProtocol (GObject):
             #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
         
         # Error
-        if parts[0].lower() in ("illegal", "error"):
-            self.__del__()
-            self.emit('dead')
-            return
+        # if parts[0].lower() in ("illegal", "error"):
+        #     self.__del__()
+        #     self.emit('dead')
+        #     return
             
         # Features
         if "feature" in parts:
@@ -403,14 +403,14 @@ class CECProtocol (GObject):
         print >> self.engine, "random"
     
     def __del__ (self):
-        assert self.connected
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"
         else:
-            if self.features["sigterm"]:
-                self.engine.sigterm()
-            else: self.engine.sigkill()
+            pass
+            # Suporting sigterm seams (ironicaly) to cause engine killing to hang
+            #if self.features["sigterm"]:
+            #    self.engine.sigterm()
         #thread.start_new(self.engine.wait4exit,())
     
     def moveNow (self):

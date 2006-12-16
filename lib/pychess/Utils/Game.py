@@ -11,8 +11,6 @@ from pychess.Players.Engine import EngineDead
 from pychess.Utils.const import *
 from pychess.System.protoopen import protoopen
 
-from pychess.widgets import gamewidget
-
 profile = True
 profile = False
 
@@ -69,17 +67,23 @@ class Game (GObject):
         self.gmwidg.widgets["board"].view.autoUpdateShown = True
         self.gmwidg.widgets["board"].view.shown = len(self.history)-1
         
-        for player in self.players:
-            if hasattr(player, "setBoard"):
-                player.setBoard(self.history)
-        
-        for analyzer in self.analyzers:
-            analyzer.setBoard(self.history)
-        
         self.event = chessfile.get_event(gameno)
         self.site = chessfile.get_site(gameno)
         self.round = chessfile.get_round(gameno)
         self.year, self.month, self.day = chessfile.get_date(gameno)
+        
+        if self.history[-1].status == RUNNING:
+            for player in self.players:
+                if hasattr(player, "setBoard"):
+                    player.setBoard(self.history)
+            
+            for analyzer in self.analyzers:
+                analyzer.setBoard(self.history)
+            
+            self.run()
+            
+        else:
+            self.kill()
     
     def save (self, path, saver):
         fileobj = open(path, "w")
@@ -144,8 +148,8 @@ class Game (GObject):
     def kill (self):
         self.gmwidg.setTabReady(False)
         self.running = False
-        if self.player1: self.player1.__del__()
-        if self.player2: self.player2.__del__()
+        self.player1.__del__()
+        self.player2.__del__()
         for analyzer in self.analyzers:
             analyzer.__del__()
         if self.chessclock: self.chessclock.stop()

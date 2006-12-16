@@ -109,6 +109,8 @@ class EngineConnection (gobject.GObject):
                 except select.error, error: 
                     if error.args[0] == 4: #Interupt
                         continue
+                    if error.args[0] == 9: #Bad filedescriptor (probably closed)
+                        return None
                     raise
                 break
                 

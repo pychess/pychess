@@ -3,6 +3,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
+from pychess.Utils.Game import Game
 from pychess.Utils import validator
 from pychess.Utils.const import *
 

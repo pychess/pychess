@@ -237,17 +237,13 @@ def runNewGameDialog (hideFC=True):
     spyanalyzer = engine1 (args1, WHITE)
     spyanalyzer.analyze(inverse=True)
     log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
-
+    
     history = gmwidg.widgets["board"].view.history
     game = Game( gmwidg, history, (hintanalyzer, spyanalyzer),
                  players[0], players[1], clock, secs, gain )
     
     gmwidg.connect("closed", closeGame, game)
     
-    #game.connect("game_ended", GladeHandlers.__dict__["game_ended"])
-    
-    #TODO: enable this for tabs
-    #widgets["properties1"].set_sensitive(True)
     return game, gmwidg
 
 #
@@ -278,7 +274,6 @@ def loadGame (uri = None):
         loader = enddir[uri[uri.rfind(".")+1:]]
         game.load (uri, loadSidePanel.get_gameno(),
                    loadSidePanel.get_position(), loader)
-        game.run()
         handler.emit("game_started", gmwidg, game)
 
 def saveGame (game):
