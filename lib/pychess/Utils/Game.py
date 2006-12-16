@@ -120,9 +120,12 @@ class Game (GObject):
                 self.gmwidg.setTabReady(True)
             else: self.gmwidg.setTabReady(False)
             
-            if no == WHITE:
-                player.updateTime (self.chessclock.p0time/10., self.chessclock.p1time/10.)
-            else: player.updateTime (self.chessclock.p1time/10., self.chessclock.p0time/10.)
+            if self.chessclock:
+                if no == WHITE:
+                    player.updateTime (self.chessclock.p0time/10.,
+                                       self.chessclock.p1time/10.)
+                else: player.updateTime (self.chessclock.p1time/10.,
+                                         self.chessclock.p0time/10.)
             
             try:
                 move = player.makeMove(self.history)
