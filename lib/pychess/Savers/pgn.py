@@ -1,6 +1,7 @@
 from pychess.Utils.History import History
 from pychess.Utils.Move import *
 from pychess.Utils.const import *
+from pychess.Utils import validator
 from pychess.System.Log import log
 import datetime
 
@@ -133,7 +134,10 @@ class PGNFile (ChessFile):
                 history.add(m, False)
             else: history.add(m, True)
         
-        assert history[-1].movelist
+        # If no moves, thee last board hasn't got a movelist, which is important
+        # so that boardview can highlight legal cords
+        if not history[-1].movelist:
+            movelist = validator.findMoves(history[-1])
         
         return history
     
