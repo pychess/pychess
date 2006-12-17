@@ -287,8 +287,8 @@ def saveGame (game):
 def saveGameSimple (path, game):
     ending = os.path.splitext(path)[1]
     if not ending: return
-    saver = enddir[ending]
-    game.save(uri, saver)
+    saver = enddir[ending[1:]]
+    game.save(path[len("file://"):], saver)
 
 def saveGameAs (game):
     
@@ -333,6 +333,7 @@ def saveGameAs (game):
             if res != gtk.RESPONSE_ACCEPT:
                 return
         
+        savedialog.disconnect(conid)
         savedialog.hide()
         game.save(uri, saver)
     

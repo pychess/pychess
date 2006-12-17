@@ -58,7 +58,6 @@ class Game (GObject):
         self.player2.connect("action", callback)
     
     def load (self, uri, gameno, position, loader):
-        self.lastSave = (self.history.clone(), uri)
         ending = uri[uri.rfind(".")+1:]
         chessfile = loader.load(protoopen(uri))
         
@@ -66,6 +65,8 @@ class Game (GObject):
         chessfile.loadToHistory(gameno, position, self.history)
         self.gmwidg.widgets["board"].view.autoUpdateShown = True
         self.gmwidg.widgets["board"].view.shown = len(self.history)-1
+        
+        self.lastSave = (self.history.clone(), uri)
         
         self.event = chessfile.get_event(gameno)
         self.site = chessfile.get_site(gameno)
@@ -92,9 +93,10 @@ class Game (GObject):
         fileobj.close()
         
     def isChanged (self):
+    	if not os.path.isfile(self.lastSave[1][7:]): return True
         if len(self.history) <= 1: return False
-        return not os.path.isfile(self.lastSave[1]) or \
-                self.lastSave[0] != self.history
+        if self.lastSave[0] == self.history: return False
+        return True
     
     def run (self):
         if not profile:
