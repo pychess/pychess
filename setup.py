@@ -52,6 +52,10 @@ DATA_FILES += [("share/games/pychess/glade", glob('glade/*.png'))]
 # Sidepanel (not a package)
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.py'))]
+os.system("rm sidepanel/*.pyc")
+os.system("rm sidepanel/*.pyo")
+DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyc'))]
+DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 
 # Data
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
