@@ -135,12 +135,12 @@ class History (GObject):
         if not isinstance(other, History):
             return False
         
-        if len(self) != len(other) or \
-                self.curColModi != other.curColModi:
+        if len(self) != len(other) or self.curColModi != other.curColModi:
             return False
         
         if self.boards[-1].__eq__(other.boards[-1]):
             return True
+            
         return False
 
     def clone (self):
