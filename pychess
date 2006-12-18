@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import pygtk
+pygtk.require("2.0")
+
 try:
     from pychess.Utils.const import prefix
 except ImportError:
