@@ -85,7 +85,7 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.Players", "pychess.Savers",
 # Setup
 
 setup (
-    name             = 'PyChess',
+    name             = 'pychess',
     version          = VERSION,
     classifiers      = CLASSIFIERS,
     description      = DESC,
