@@ -43,7 +43,7 @@ CLASSIFIERS = [
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 DATA_FILES = [("share/games/pychess/",
-    ["README", "AUTHORS", "LICENSE", "INSTALL", "open.db"])]
+    ["README", "AUTHORS", "LICENSE", "open.db"])]
 
 # UI
 DATA_FILES += [("share/games/pychess/glade", glob('glade/*.glade'))]
@@ -52,8 +52,6 @@ DATA_FILES += [("share/games/pychess/glade", glob('glade/*.png'))]
 # Sidepanel (not a package)
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.py'))]
-os.system("rm sidepanel/*.pyc")
-os.system("rm sidepanel/*.pyo")
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyc'))]
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 
@@ -61,28 +59,19 @@ DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 
-# Main modules
-if os.system("chmod +x lib/pychess/Players/PyChess.py") != 0:
-    print "Couldn't set execution flag for PyChess Engine. try if you can do it\
-            yourself (with root access"
-    # TODO: Is this a good way to handle the problem?
-
 # Language
-langdirs = []
-for dir in [os.path.join("lang",f) for f in listdir("lang")]:
-    if dir.find(".svn") == -1 and isdir(dir):
-        langdirs.append(dir)
-
-pofile = "LC_MESSAGES/pychess.po"
-DATA_FILES += [(dir, [dir+"/"+pofile]) for dir in langdirs]
+pofile = "LC_MESSAGES/pychess"
+for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
+    os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
+    DATA_FILES += [("/usr/share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
 
 if isfile ("MANIFEST.in"):
     notlanglines = [l for l in open("MANIFEST.in") if not l.rstrip().endswith(".po")]
     file = open ("MANIFEST.in", "w")
     for line in notlanglines:
         print >> file, line[:-1]
-    for dir in langdirs:
-        print >> file, "include %s/%s" % (dir, pofile)
+    for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
+        print >> file, "include lang/%s/%s.po" % (dir, pofile)
     file.close()
 
 if isfile ("MANIFEST"):

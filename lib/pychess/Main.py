@@ -1,15 +1,8 @@
-
-import os, sys
-
-import pygtk
-pygtk.require("2.0")
-import sys, gtk, gtk.glade, os
+import sys, gtk
 import pango, gobject
-
 import webbrowser
 import atexit
 
-from pychess.widgets import ionest
 from pychess.System import myconf
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
@@ -17,9 +10,8 @@ from pychess.System.Log import log
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
+from pychess.widgets import ionest
 from pychess.widgets.Background import Background
-
-from pychess.widgets.ionest import loadGame, newGame, saveGame, saveGameAs
 
 gameDic = {}
 
@@ -138,21 +130,21 @@ class GladeHandlers:
         # We may have more than one file dropped. We choose only to care about
         # the first.
         uri = uri.split()[0]
-        loadGame (uri)
+        ionest.loadGame (uri)
     
     #          Game Menu          #
 
     def on_new_game1_activate (widget):
-        newGame ()
+        ionest.newGame ()
         
     def on_load_game1_activate (widget):
-        loadGame ()
+        ionest.loadGame ()
     
     def on_save_game1_activate (widget):
-        saveGame (gameDic[gamewidget.cur_gmwidg()])
+        ionest.saveGame (gameDic[gamewidget.cur_gmwidg()])
         
     def on_save_game_as1_activate (widget):
-        saveGameAs (gameDic[gamewidget.cur_gmwidg()])
+        ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
     
     def on_properties1_activate (widget):
         game = gameDic[gamewidget.cur_gmwidg()]
@@ -284,7 +276,6 @@ class PyChess:
         global window
         window = self
     
-        #os.chdir(os.path.abspath(os.path.dirname(__file__)))
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML(prefix("glade/PyChess.glade"))
         
