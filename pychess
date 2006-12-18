@@ -13,8 +13,12 @@ except ImportError:
     sys.exit(1)
     
 import gettext, gtk.glade
-gettext.install("pychess", localedir=prefix("lang"), unicode=1)
-gtk.glade.bindtextdomain("pychess", prefix("lang"))
+if "/bin/" in __file__:
+    gettext.install("pychess", unicode=1)
+    gtk.glade.bindtextdomain("pychess")
+else:
+    gettext.install("pychess", localedir=prefix("lang"), unicode=1)
+    gtk.glade.bindtextdomain("pychess", prefix("lang"))
 gtk.glade.textdomain("pychess")
 
 import pychess.Main
