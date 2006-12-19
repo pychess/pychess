@@ -34,7 +34,7 @@ class Game (GObject):
         # FIXME: Draw offers should be unset after perhaps 2 moves
         self.drawState = None
         
-        self.lastSave = (None, "")
+        self.lastSave = (None, "", True)
         
         #Event: the name of the tournament or match event.
         self.event = _("Local Event")
@@ -66,7 +66,8 @@ class Game (GObject):
         self.gmwidg.widgets["board"].view.autoUpdateShown = True
         self.gmwidg.widgets["board"].view.shown = len(self.history)-1
         
-        self.lastSave = (self.history.clone(), uri)
+        writeable = len(chessfile) == 1 and os.access (uri[7:], os.W_OK)
+        self.lastSave = (self.history.clone(), uri[7:], writeable)
         
         self.event = chessfile.get_event(gameno)
         self.site = chessfile.get_site(gameno)
@@ -86,15 +87,19 @@ class Game (GObject):
         else:
             self.kill()
     
-    def save (self, path, saver):
-        fileobj = open(path, "w")
+    def save (self, uri, saver, append=False):
+        if append:
+            fileobj = open(uri[7:], "a")
+        else: fileobj = open(uri[7:], "w")
         saver.save(fileobj, self)
-        lastSave = (self.history.clone(), path)
+        self.gmwidg.status("Saved game %s" % uri[7:])
+        writeable = not append
+        self.lastSave = (self.history.clone(), uri, writeable)
         fileobj.close()
         
     def isChanged (self):
+    	if len(self.history) <= 1: return False
     	if not os.path.isfile(self.lastSave[1][7:]): return True
-        if len(self.history) <= 1: return False
         if self.lastSave[0] == self.history: return False
         return True
     

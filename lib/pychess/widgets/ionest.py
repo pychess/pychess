@@ -279,16 +279,16 @@ def loadGame (uri = None):
 def saveGame (game):
     if not game.isChanged():
         return
-    if game.lastSave[1]:
+    if game.lastSave[1] and game.lastSave[2]:
         saveGameSimple (game.lastSave[1], game)
     else:
         return saveGameAs (game)
 
-def saveGameSimple (path, game):
-    ending = os.path.splitext(path)[1]
+def saveGameSimple (uri, game):
+    ending = os.path.splitext(uri)[1]
     if not ending: return
     saver = enddir[ending[1:]]
-    game.save(path[len("file://"):], saver)
+    game.save(uri, saver)
 
 def saveGameAs (game):
     
@@ -299,9 +299,11 @@ def saveGameAs (game):
             return
         
         uri = savedialog.get_uri()[7:]
-        print uri
+        print "Saving", uri
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
+        
+        append = False
         
         if savecombo.get_active() == 0:
             if not ending in enddir:
@@ -319,10 +321,22 @@ def saveGameAs (game):
             if not ending in enddir or not saver == enddir[ending]:
                 uri += ".%s" % saver.__endings__[0]
         
+        if os.path.isfile(uri) and not os.access (uri, os.W_OK):
+            d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+            d.set_markup(_("<big><b>Unable to save file '%s'</b></big>") % uri)
+            d.format_secondary_text(
+                _("You don't have the necessary rights to save the file.\n\
+Please ensure that you have given the right path and try again."))
+            d.run()
+            d.hide()
+            return
+        
         if os.path.isfile(uri):
             d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
             d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"),
                         gtk.RESPONSE_ACCEPT)
+            if saver.__append__ == True:
+                d.add_buttons(gtk.STOCK_ADD, 1)
             d.set_title(_("File exists"))
             folder, file = os.path.split(uri)
             d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
@@ -330,12 +344,14 @@ def saveGameAs (game):
             res = d.run()
             d.hide()
             
-            if res != gtk.RESPONSE_ACCEPT:
+            if res == 1:
+                append = True
+            elif res != gtk.RESPONSE_ACCEPT:
                 return
         
         savedialog.disconnect(conid)
         savedialog.hide()
-        game.save(uri, saver)
+        game.save("file://"+uri, saver, append)
     
     conid = savedialog.connect("response", response)
     savedialog.show_all()

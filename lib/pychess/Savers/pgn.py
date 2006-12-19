@@ -7,6 +7,7 @@ import datetime
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
+__append__ = True
 
 def save (file, game):
     history = game.history
