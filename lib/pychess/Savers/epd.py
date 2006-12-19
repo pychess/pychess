@@ -9,6 +9,7 @@ from pychess.Utils.const import *
 
 __label__ = _("Chess Position")
 __endings__ = "epd", "fen"
+__append__ = True
 
 def save (file, game):
     """Saves game to file in fen format"""

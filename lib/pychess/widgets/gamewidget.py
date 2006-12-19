@@ -15,8 +15,12 @@ from ToggleComboBox import ToggleComboBox
 from Background import Background
 
 icons = gtk.icon_theme_get_default()
-light_on = icons.load_icon("stock_3d-light-on", 16, ICON_LOOKUP_USE_BUILTIN)
-light_off = icons.load_icon("stock_3d-light-off", 16, ICON_LOOKUP_USE_BUILTIN)
+try:
+    light_on = icons.load_icon("stock_3d-light-on", 16, ICON_LOOKUP_USE_BUILTIN)
+    light_off = icons.load_icon("stock_3d-light-off", 16, ICON_LOOKUP_USE_BUILTIN)
+except:
+    light_on = icons.load_icon("weather-clear", 16, ICON_LOOKUP_USE_BUILTIN)
+    light_off = icons.load_icon("weather-clear-night", 16, ICON_LOOKUP_USE_BUILTIN)
 gtk_close = icons.load_icon("gtk-close", 16, ICON_LOOKUP_USE_BUILTIN)
 gtk_close20 = icons.load_icon("gtk-close", 20, ICON_LOOKUP_USE_BUILTIN)
 
