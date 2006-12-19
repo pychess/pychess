@@ -7,4 +7,5 @@ include pychess.desktop pychess.svg
 include lang/nl_NL/LC_MESSAGES/pychess.po
 include lang/az/LC_MESSAGES/pychess.po
 include lang/da/LC_MESSAGES/pychess.po
+include lang/tr/LC_MESSAGES/pychess.po
 include lang/de_DE/LC_MESSAGES/pychess.po
