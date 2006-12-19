@@ -459,13 +459,16 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="website_label" translatable="yes">http://code.google.com/p/pychess/</property>
   <property name="authors">Thomas Dybdahl Ahle
 Norbert Fabritius
-Thijs Vermeir</property>
-  <property name="documenters">Nobody :O</property>
+Thijs Vermeir
+Wojciech Halicki-Piszko</property>
+  <property name="documenters"></property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits">Danish (da) - Thomas Dybdahl Ahle
 English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
-German (de_DE) - Norbert Fabritius</property>
+German (de_DE) - Norbert Fabritius
+Polish (pl) - Wojciech Halicki-Piszko
+Turkish (tr) - Ertugrul Harman</property>
   <property name="logo">pychess.png</property>
 </widget>
 
