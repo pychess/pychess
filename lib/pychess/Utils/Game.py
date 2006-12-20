@@ -11,6 +11,7 @@ from pychess.Players.Engine import EngineDead
 from pychess.Utils.const import *
 from pychess.System.protoopen import protoopen
 
+#nori: what's this? why not just "profile = True"?
 profile = True
 profile = False
 
