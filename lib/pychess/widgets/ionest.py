@@ -258,7 +258,6 @@ def newGame ():
         handler.emit("game_started", gmwidg, game)
 
 def loadGame (uri = None):
-    
     if uri:
         opendialog.set_uri(uri)
     
@@ -411,4 +410,5 @@ class Handler (GObject):
     def __init__ (self):
         GObject.__init__(self)
 
+#nori: ugly?
 handler = Handler()
