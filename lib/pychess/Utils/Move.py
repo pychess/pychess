@@ -117,11 +117,10 @@ def parseSAN (board, san):
     if notat != "o-o":
         if notat != "o-o-o":
             notat = notat.replace("-","")
-    try:
-        c = notat[-1].lower()
-    except:
-        print "c = notat[-1].lower()", repr(notat)
-        raise
+    
+    if not notat: raise ParsingError, "Unable to parse sanmove '%s'" % san
+    
+    c = notat[-1].lower()
     if c in ("q", "r", "b", "n"):
         promotion = chr2Sign[c]
         notat = notat[:-1]
@@ -172,6 +171,8 @@ def parseSAN (board, san):
 def parseLAN (board, lan):
     """ Parse a Long/Expanded Algebraic Notation string """
     
+    if not lan: raise ParsingError, "Unable to parse lanmove '%s'" % lan
+    
     lan = lan.lower()
     if lan.startswith("o-o"):
         color = board.color
@@ -211,7 +212,7 @@ def parseLAN (board, lan):
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
     if not 4 <= len(an) <= 5:
-        raise ParsingError, "Bad an move, %s. Too short" % an
+        raise ParsingError, "Bad an move, %s. Wrong size" % an
     try:
         c0 = Cord(an[:2])
         c1 = Cord(an[2:4])
