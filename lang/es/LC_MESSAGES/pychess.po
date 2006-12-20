@@ -1,0 +1,492 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PyChess 0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-19 18:39+0100\n"
+"PO-Revision-Date: 2006-12-20 11:36+0100\n"
+"Last-Translator: Enrique López Melgar <enrique@netandmagic.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: glade/gamepreview.glade:114
+msgid "<b>Open game</b>"
+msgstr "<b>Abrir partida</b>"
+
+#: glade/gamepreview.glade:129
+#: lib/pychess/widgets/ionest.py:39
+msgid "Open Game"
+msgstr "Abrir partida"
+
+#: glade/gamepreview.glade:453
+msgid "<b>Initial position</b>"
+msgstr "<b>Posición inicial</b>"
+
+#: glade/newInOut.glade:12
+#: lib/pychess/widgets/ionest.py:37
+msgid "Save Game"
+msgstr "Guardar partida"
+
+#: glade/newInOut.glade:107
+msgid "Choose filetype (By extension)"
+msgstr "Tipo de archivo (por extensión)"
+
+#: glade/newInOut.glade:139
+msgid "New Game"
+msgstr "Nueva partida"
+
+#: glade/newInOut.glade:228
+msgid "_Start Game"
+msgstr "_Empezar partida"
+
+#: glade/newInOut.glade:338
+#: glade/newInOut.glade:491
+msgid "White Player:"
+msgstr "Blancas:"
+
+#: glade/newInOut.glade:366
+#: glade/newInOut.glade:519
+msgid "Black Player:"
+msgstr "Negras:"
+
+#: glade/newInOut.glade:420
+msgid "<b>Players</b>"
+msgstr "<b>Jugadores</b>"
+
+#: glade/newInOut.glade:593
+msgid "<b>Difficulty</b>"
+msgstr "<b>Dificultad</b>"
+
+#: glade/newInOut.glade:662
+msgid "Game has time"
+msgstr "Partida con tiempo"
+
+#: glade/newInOut.glade:707
+msgid "Hours:"
+msgstr "Horas:"
+
+#: glade/newInOut.glade:735
+msgid "Minutes: "
+msgstr "Minutos:"
+
+#: glade/newInOut.glade:763
+msgid "Seconds: "
+msgstr "Segundos:"
+
+# "Gain" as in "gain per move"
+#: glade/newInOut.glade:791
+msgid "Gain:"
+msgstr "Incremento:"
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/newInOut.glade:928
+msgid "<b>Alarm</b>"
+msgstr "<b>Tiempo</b>"
+
+#: glade/promotion.glade:9
+msgid "Promotion"
+msgstr "Coronar"
+
+#: glade/promotion.glade:40
+msgid "Queen"
+msgstr "Dama"
+
+#: glade/promotion.glade:54
+msgid "Rook"
+msgstr "Torre"
+
+#: glade/promotion.glade:67
+msgid "Bishop"
+msgstr "Alfil"
+
+#: glade/promotion.glade:80
+msgid "Knight"
+msgstr "Caballo"
+
+#: glade/promotion.glade:99
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>Coronar peón como</big></b>"
+
+#: glade/PyChess.glade:39
+msgid "_Game"
+msgstr "_Partida"
+
+#: glade/PyChess.glade:48
+msgid "_New Game"
+msgstr "_Nueva partida"
+
+#: glade/PyChess.glade:70
+msgid "_Load Game"
+msgstr "_Abrir partida"
+
+#: glade/PyChess.glade:99
+msgid "_Save Game"
+msgstr "_Guardar partida"
+
+#: glade/PyChess.glade:122
+msgid "Save Game _As"
+msgstr "Guardar partida _como"
+
+#: glade/PyChess.glade:190
+msgid "_Actions"
+msgstr "Acc_iones"
+
+# Lets you win the game, if opponent is out of time
+#: glade/PyChess.glade:199
+msgid "_Call Flag"
+msgstr "_Reclamar bandera"
+
+# Offer Draw
+#: glade/PyChess.glade:208
+msgid "_Draw"
+msgstr "_Ofrecer tablas"
+
+#: glade/PyChess.glade:217
+msgid "_Resign"
+msgstr "_Abandonar"
+
+# Makes the computer engine move instantly (and might send a network player a "wink" in a later version)
+#: glade/PyChess.glade:232
+msgid "_Force to move"
+msgstr "_Forzar movimiento"
+
+#: glade/PyChess.glade:259
+msgid "_View"
+msgstr "_Ver"
+
+#: glade/PyChess.glade:268
+msgid "_Rotate Board"
+msgstr "_Girar el tablero"
+
+#: glade/PyChess.glade:289
+msgid "_Side Panel"
+msgstr "_Panel lateral"
+
+#: glade/PyChess.glade:300
+msgid "_Log Viewer"
+msgstr "_Visor de sucesos"
+
+#: glade/PyChess.glade:317
+msgid "Show _cords"
+msgstr "Mostrar _coordenadas"
+
+#: glade/PyChess.glade:327
+msgid "_Hint mode"
+msgstr "_Modo ayuda"
+
+#: glade/PyChess.glade:338
+msgid "Sp_y mode"
+msgstr "Modo _espía"
+
+#: glade/PyChess.glade:353
+msgid "_Help"
+msgstr "A_yuda"
+
+#: glade/PyChess.glade:362
+msgid "About Chess"
+msgstr "Sobre ajedrez"
+
+#: glade/PyChess.glade:383
+msgid "How to play"
+msgstr "Cómo jugar"
+
+#: glade/PyChess.glade:443
+msgid "Chessclient for the Gnome desktop"
+msgstr "Cliente de ajedrez para el escritorio Gnome"
+
+# You might be able to find this one on the web.
+# You might also skip translating it.
+#: glade/PyChess.glade:444
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+
+# No need for translating this one :)
+# I just wasn't able to convince glade that the string was not translateable
+#: glade/PyChess.glade:459
+msgid "http://code.google.com/p/pychess/"
+msgstr ""
+
+#: glade/PyChess.glade:477
+msgid "Game information"
+msgstr "Información de la partida"
+
+#: glade/PyChess.glade:600
+msgid "Site:"
+msgstr "Lugar:"
+
+#: glade/PyChess.glade:628
+msgid "Round:"
+msgstr "Ronda:"
+
+#: glade/PyChess.glade:719
+msgid "Event:"
+msgstr "Evento:"
+
+#: glade/PyChess.glade:756
+msgid "<b>Game data</b>"
+msgstr "<b>Datos de la partida</b>"
+
+#: glade/PyChess.glade:833
+msgid "<b>Date of game</b>"
+msgstr "<b>Fecha de la partida</b>"
+
+#: lib/pychess/Main.py:22
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>El motor %s ha muerto</b></big>"
+
+#: lib/pychess/Main.py:23
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against another one."
+msgstr ""
+"Pychess ha perdido la conexión con el motor de ajedrez, probablemente porque ha muerto.\n"
+"\n"
+"Puedes intentar empezar una nueva partida con el motor, o probar a jugar contra otro."
+
+# This page is opened by the "About chess" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:244
+msgid "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://es.wikipedia.org/wiki/Ajedrez"
+
+# This page is opened by the "How to play" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:247
+msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr ""
+
+#: lib/pychess/Players/Human.py:59
+msgid "<big><b>You've got a draw offer. Accept?</b></big>"
+msgstr "<big><b>Tienes una oferta de tablas. ¿Aceptas?</b></big>"
+
+#: lib/pychess/Players/Human.py:60
+msgid "Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."
+msgstr "Tu oponente ha ofrecido tablas. Si las aceptas, la partida terminará con el resultado 1/2 - 1/2."
+
+#: lib/pychess/Savers/epd.py:10
+msgid "Chess Position"
+msgstr "Posición"
+
+#: lib/pychess/Savers/pgn.py:8
+msgid "Chess Game"
+msgstr "Partida"
+
+# The event at which the game was played
+#: lib/pychess/Utils/Game.py:40
+msgid "Local Event"
+msgstr "Evento local"
+
+# The location at witch the game was played
+#: lib/pychess/Utils/Game.py:42
+msgid "Local site"
+msgstr "Lugar local"
+
+#: lib/pychess/Utils/Game.py:167
+msgid "The game ended in a draw"
+msgstr "La partida terminó en tablas"
+
+#: lib/pychess/Utils/Game.py:168
+msgid "White player won the game"
+msgstr "Las blancas ganaron la partida"
+
+#: lib/pychess/Utils/Game.py:169
+msgid "Black player won the game"
+msgstr "Las negras ganaron la partida"
+
+# The the context: The game ended in a draw...
+#: lib/pychess/Utils/Game.py:172
+msgid "caused by insufficient material"
+msgstr "por material insuficiente"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:173
+msgid "as the same position was repeated three times in a row"
+msgstr "porque la posición se ha repetido tres veces"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:174
+msgid "as the last 50 moves brought nothing new"
+msgstr "porque en las últimas 50 jugadas no se ha capturado nada"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:175
+msgid "because of stalemate"
+msgstr "porque es ahogado"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:176
+msgid "as the players agreed to"
+msgstr "porque los jugadores lo han acordado"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:177
+msgid "as opponent resigned"
+msgstr "porque el oponente abandonó"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:178
+msgid "as opponent ran out of time"
+msgstr "porque el oponente se quedó sin tiempo"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:179
+msgid "on a mate"
+msgstr "por mate"
+
+#: lib/pychess/Utils/Game.py:194
+msgid "Draw offer has been sent"
+msgstr "Se ha enviado una petición de tablas"
+
+#: lib/pychess/Utils/Game.py:200
+msgid "Couldn't call flag in game with no timecontrols"
+msgstr "No se puede reclamar bandera en una partida sin control de tiempo"
+
+#: lib/pychess/Utils/Game.py:207
+msgid "Couldn't call flag on player not out of time"
+msgstr "No se puede reclamar bandera cuando el rival tiene tiempo"
+
+# In the chessclock
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "White"
+msgstr "Blancas"
+
+# In the chessclock
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "Black"
+msgstr "Negras"
+
+# Means that the filechooser shows all files
+#: lib/pychess/widgets/ionest.py:47
+msgid "All Files"
+msgstr "Todos los archivos"
+
+# Means that the savedialog tries to figure out the fileformat based on its extension.
+#: lib/pychess/widgets/ionest.py:50
+msgid "Detect type automatically"
+msgstr "Detectar formato automáticamente"
+
+# Means that the filechooser shows all chessfiles
+#: lib/pychess/widgets/ionest.py:53
+msgid "All Chess Files"
+msgstr "Archivos de ajedrez"
+
+#: lib/pychess/widgets/ionest.py:115
+msgid "Beginner"
+msgstr "Principiante"
+
+#: lib/pychess/widgets/ionest.py:116
+msgid "Intermediate"
+msgstr "Intermedio"
+
+#: lib/pychess/widgets/ionest.py:117
+msgid "Expert"
+msgstr "Experto"
+
+#: lib/pychess/widgets/ionest.py:131
+msgid "Human Being"
+msgstr "Humano"
+
+#: lib/pychess/widgets/ionest.py:312
+#, python-format
+msgid "<big><b>Unknown filetype '%s'</b></big>"
+msgstr "<big><b>Formato desconocido: '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:313
+#, python-format
+msgid "Wasn't able to save '%s' as pychess doesn't know the format '%s'."
+msgstr "No se puede guardar '%s' porque pychess no reconoce el formato '%s'."
+
+#: lib/pychess/widgets/ionest.py:326
+#, python-format
+msgid "<big><b>Unable to save file '%s'</b></big>"
+msgstr "<big><b>No se puede guardar el archivo '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:328
+msgid ""
+"You don't have the necessary rights to save the file.\n"
+"Please ensure that you have given the right path and try again."
+msgstr ""
+"No tienes los permisos necesarios para guardar el archivo.\n"
+"Por favor, asegúrate que has indicado bien la ruta y prueba otra vez."
+
+#: lib/pychess/widgets/ionest.py:336
+msgid "_Replace"
+msgstr "_Reemplazar"
+
+#: lib/pychess/widgets/ionest.py:340
+msgid "File exists"
+msgstr "El archivo existe"
+
+#: lib/pychess/widgets/ionest.py:342
+#, python-format
+msgid "<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>"
+msgstr "<big><b>Existe un archivo llamado '%s'. ¿Quieres reemplazarlo?</b></big>"
+
+#: lib/pychess/widgets/ionest.py:343
+#, python-format
+msgid "The file alredy exists in '%s'. If you replace it, its content will be overwritten."
+msgstr "El archivo '%s' existe. Si lo reemplazas, su contenido será sobreescrito."
+
+#: lib/pychess/widgets/ionest.py:368
+msgid "<b><big>Save the current game before you close it?</big></b>"
+msgstr "<b><big>¿Guardar la partida actual antes de cerrarla?</big></b>"
+
+#: lib/pychess/widgets/ionest.py:370
+msgid ""
+"It is not possible later to continue the game,\n"
+"if do don't save it."
+msgstr ""
+"No es posible continuar posteriormente la partida\n"
+"si no la guardas."
+
+#: lib/pychess/widgets/ionest.py:387
+#, python-format
+msgid "<big><b>There are %d games with unsaved changes:</b></big>"
+msgstr "<big><b>Hay %d partidas con cambios no guardados:</b></big>"
+
+#: sidepanel/bookPanel.py:7
+msgid "Opening Book"
+msgstr "Libro de aperturas"
+
+# This string shouldn't be to wide, as it is placed in the sidepanel, when no moves are found in the book.
+#: sidepanel/bookPanel.py:50
+msgid ""
+"In this position,\n"
+"there is no book move."
+msgstr ""
+"Con esta posición\n"
+"no hay movimientos\n"
+"en el libro."
+
+#: sidepanel/historyPanel.py:11
+msgid "Move History"
+msgstr "Movimientos"
+
+# This is the sidepanel tab showing the score-graph
+#: sidepanel/scorePanel.py:94
+msgid "Score"
+msgstr "Puntuación"
+

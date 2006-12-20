@@ -468,7 +468,9 @@ English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
 German (de_DE) - Norbert Fabritius
 Polish (pl) - Wojciech Halicki-Piszko
-Turkish (tr) - Ertugrul Harman</property>
+Turkish (tr) - Ertugrul Harman
+Hungarian (hu) - Bajusz Tamás
+Spanish (es) - 	Enrique</property>
   <property name="logo">pychess.png</property>
 </widget>
 
