@@ -24,10 +24,10 @@ except:
 gtk_close = icons.load_icon("gtk-close", 16, ICON_LOOKUP_USE_BUILTIN)
 gtk_close20 = icons.load_icon("gtk-close", 20, ICON_LOOKUP_USE_BUILTIN)
 
-media_previous = icons.load_icon("media-skip-backward", 16, ICON_LOOKUP_USE_BUILTIN)
-media_rewind = icons.load_icon("media-seek-backward", 16, ICON_LOOKUP_USE_BUILTIN)
-media_forward = icons.load_icon("media-seek-forward", 16, ICON_LOOKUP_USE_BUILTIN)
-media_next = icons.load_icon("media-skip-forward", 16, ICON_LOOKUP_USE_BUILTIN)
+media_previous = icons.load_icon("stock_media-prev", 16, ICON_LOOKUP_USE_BUILTIN)
+media_rewind = icons.load_icon("stock_media-rew", 16, ICON_LOOKUP_USE_BUILTIN)
+media_forward = icons.load_icon("stock_media-fwd", 16, ICON_LOOKUP_USE_BUILTIN)
+media_next = icons.load_icon("stock_media-next", 16, ICON_LOOKUP_USE_BUILTIN)
 
 def createImage (pixbuf):
     image = gtk.Image()
