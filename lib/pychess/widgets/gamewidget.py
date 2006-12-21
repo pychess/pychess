@@ -178,9 +178,13 @@ def createGameWidget (title):
         def callback (widget, page, page_num):
             mainbook.set_current_page(page_num)
         headbook.connect("switch_page", callback)
-        def page_reordered (widget, child, new_page_num):
-            mainbook.reorder_child(head2mainDic[child], new_page_num)
-        headbook.connect("page-reordered", page_reordered)
+        try:
+            def page_reordered (widget, child, new_page_num):
+                mainbook.reorder_child(head2mainDic[child], new_page_num)
+            headbook.connect("page-reordered", page_reordered)
+        except TypeError:
+            # Unknow signal name is raised by gtk < 2.10
+            pass
         
         vbox.pack_start(align, expand=False)
         vbox.pack_start(mainbook)
@@ -204,7 +208,11 @@ def createGameWidget (title):
     headchild = gtk.HSeparator()
     hbox.show_all() # Gtk doesn't show tab labels when the rest is show_all'ed
     headbook.append_page(headchild, hbox)
-    headbook.set_tab_reorderable(headchild, True)
+    try:
+        headbook.set_tab_reorderable (headchild, True)
+    except AttributeError:
+        # Object has no attribute 'set_tab_reorderable' is raised by gtk < 2.10
+        pass
     
     mainbook = vbox.get_children()[2]
     
