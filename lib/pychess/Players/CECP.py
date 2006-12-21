@@ -406,6 +406,7 @@ class CECProtocol (GObject):
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"
+            self.emit("analyze", [])
         else:
             pass
             # Suporting sigterm seams (ironicaly) to cause engine killing to hang
