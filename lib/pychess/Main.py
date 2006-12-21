@@ -61,7 +61,7 @@ def setMode (gmwidg, mode, activated):
         
         def on_analyze (analyzer, moves):
             player = history.curCol() and game.player2 or game.player1
-            if player.__type__ == LOCAL:
+            if player.__type__ == LOCAL and moves:
                set_arrow (moves[0].cords)
             else: set_arrow (None)
             
