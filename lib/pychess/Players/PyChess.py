@@ -226,8 +226,6 @@ def go ():
         if mytime == None:
             mvs, scr = alphaBeta (table, history[-1], sd, -maxint, maxint)
             move = mvs[0]
-            print "moves were", mvs, "color is", history[-1].color, history.curCol()
-            print "last", last
         
         else:
             # We bet that the game will be about 30 moves. That gives us
@@ -244,7 +242,11 @@ def go ():
             move = mvs[0]
             mytime -= time() - starttime
             mytime += increment
-            
+        
+        print "moves were", mvs, \
+              "color is", history[-1].color, history.curCol(), \
+              "last", last
+        
         nodes = 0
         searching = False
         searchLock.release()
