@@ -59,6 +59,9 @@ DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 
+# Manpages
+DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
+
 # Language
 pofile = "LC_MESSAGES/pychess"
 for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
