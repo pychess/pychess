@@ -73,6 +73,12 @@ class BoardControl (gtk.EventBox):
         
         # If we are dealing with two cords (a piece select)
         if basiscord and basiscord != cord:
+            
+            # If some fast mouse trickery was used to make a cord active with no
+            # piece, we can't continue
+            if not self.view.history[-1][basiscord]:
+                return False
+            
             # If the tocords list, is not relative to our basiscord, we have to
             # create a new list.
             if self.fromcord != basiscord:
