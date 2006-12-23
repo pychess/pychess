@@ -1,6 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
-import gtk, os, random
+import gtk, os, random, pango
 
 from pychess.Utils.Game import Game
 from pychess.System.Log import log
@@ -100,15 +100,18 @@ def makeNewGameDialogReady ():
         for icon, label in data:
             ls.append([icon, label])
         combo.clear()
+        
         combo.set_model(ls)
         crp = gtk.CellRendererPixbuf()
         crp.set_property('xalign',0)
         combo.pack_start(crp, False)
         combo.add_attribute(crp, 'pixbuf', 0)
+        
         crt = gtk.CellRendererText()
         crt.set_property('xalign',0)
-        combo.pack_start(crt, False)
+        combo.pack_start(crt, True)
         combo.add_attribute(crt, 'text', 1)
+        crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
 
     it = gtk.icon_theme_get_default()
 
