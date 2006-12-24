@@ -128,7 +128,7 @@ class Board:
                 if cord0 == a8: board.castling = rm(board.castling, BLACK_OOO)
                 elif cord0 == h8: board.castling = rm(board.castling, BLACK_OO)
         
-        elif board[cord1].sign == PAWN and abs(cord0.y - cord1.y) == 2:
+        if board[cord1].sign == PAWN and abs(cord0.y - cord1.y) == 2:
             board.enpassant = Cord(cord0.x, (cord0.y+cord1.y)/2)
         
         else: board.enpassant = None
