@@ -64,7 +64,7 @@ def save (file, game):
     file.write(str(history[-1].fifty))
     file.write(" ")
     
-    fullmove = len(history)/2+1
+    fullmove = (len(history)+1)/2
     file.write(str(fullmove))
     
     #Closing the file prevents us from using StringIO
