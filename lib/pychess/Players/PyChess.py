@@ -194,12 +194,13 @@ def analyze ():
     searching = True
     start = time()
     searchLock.acquire()
+    board = history[-1]
     for depth in range (1, 10):
         if not searching: break
-        mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
+        mvs, scr = alphaBeta (table, board, depth, -maxint, maxint)
         
         smvs = []
-        board = history[-1]
+        board = board
         for move in mvs:
             smvs.append(toAN (board, move))
             board = board.move(move)

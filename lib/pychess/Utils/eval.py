@@ -154,31 +154,24 @@ for px in range(8):
         pxrow.append(pyrow)
     tropismTable.append(pxrow)
 
-from pychess.System.LimitedDict import LimitedDict
-hashmap = LimitedDict(5*10**3)
-
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
         several positional factors """
     
-    if board in hashmap:
-        s = hashmap[board]
-    else:
-        if board.status == RUNNING:
-            analyzePawnStructure (board)
-            s = evalMaterial (board) + \
-                evalPawnStructure (board) + \
-                evalBadBishops (board) + \
-                evalDevelopment (board) + \
-                evalCastling (board) + \
-                evalRookBonus (board) + \
-                evalKingTropism (board)
-        elif board.status == DRAW:
-            s = 0
-        elif board.status == WHITEWON:
-            s = 9999
-        else: s = -9999
-        hashmap[board] = s
+    if board.status == RUNNING:
+        analyzePawnStructure (board)
+        s = evalMaterial (board) + \
+            evalPawnStructure (board) + \
+            evalBadBishops (board) + \
+            evalDevelopment (board) + \
+            evalCastling (board) + \
+            evalRookBonus (board) + \
+            evalKingTropism (board)
+    elif board.status == DRAW:
+        s = 0
+    elif board.status == WHITEWON:
+        s = 9999
+    else: s = -9999
     
     return (color == WHITE and [s] or [-s])[0]
 
@@ -232,12 +225,12 @@ def evalKingTropism (board):
         for px, piece in enumerate(row):
             if piece and piece.color == WHITE:
                 if piece.sign == KNIGHT:
-                    score -= tropismTable[px][py][bkx][bky][KNIGHT]
+                    score += tropismTable[px][py][bkx][bky][KNIGHT]
                 elif piece.sign == ROOK:
-                    score -= tropismTable[px][py][bkx][bky][ROOK]
+                    score += tropismTable[px][py][bkx][bky][ROOK]
                 elif piece.sign == QUEEN:
-                    score -= tropismTable[px][py][bkx][bky][QUEEN]
-
+                    score += tropismTable[px][py][bkx][bky][QUEEN]
+            
             elif piece and piece.color == BLACK:
                 if piece.sign == KNIGHT:
                     score -= tropismTable[px][py][wkx][wky][KNIGHT]
@@ -292,14 +285,15 @@ def evalDevelopment (board):
                         score += endking[y*8+x]
                     else: score -= endking[y*8+x]
         return score
-        
+    
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if not piece: continue
             s = pos[piece.sign][piece.color][y*8+x]
             if piece.color == WHITE:
                 score += s
-            else: score -= s
+            else:
+                score -= s
     
     return score
 
@@ -442,7 +436,9 @@ def analyzePawnStructure (board):
 
                 # Look for a "pawn ram", i.e., a situation where a black pawn
                 # is located in the square immediately ahead of this one.
-                ahead = data[y+1][x]
+                if piece.color == WHITE:
+                    ahead = data[y+1][x]
+                else: ahead = data[y-1][x]
                 if ahead and ahead.sign == PAWN and ahead.color == piece.color:
                     if piece.color == WHITE:
                         pawnRams += 1
