@@ -1,7 +1,3 @@
-""" This is a dictionary, that supports a max of items.
-    This is good for the transportation table, as some old entries might not
-    be useable any more, as the position has totally changed """
-
 from UserDict import UserDict
 from const import hashfALPHA, hashfBETA, hashfEXACT
 
@@ -28,7 +24,10 @@ class TranspositionTable (UserDict):
         entries = self[board]
         for d in xrange(self.maxdepth, depth-1, -1):
             if not d in entries: continue
-            moves, score, hashf = entries[d]
+            recboard, moves, score, hashf = entries[d]
+            if not (board == recboard):
+                print "NOT (board == recboard)"
+                continue
             if hashf == hashfEXACT:
                 return moves, score
             if hashf == hashfALPHA and score <= alpha:
@@ -39,6 +38,6 @@ class TranspositionTable (UserDict):
         
     def record (self, board, moves, depth, score, hashf):
         if board in self:
-            self[board][depth] = (moves, score, hashf)
-        else: self[board] = {depth:(moves, score, hashf)}
+            self[board][depth] = (board, moves, score, hashf)
+        else: self[board] = {depth:(board, moves, score, hashf)}
         if depth > self.maxdepth: self.maxdepth = depth
