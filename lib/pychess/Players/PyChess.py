@@ -170,7 +170,7 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
     table.record (board, result[0], len(result[0]), result[1], hashf)
     return result
 
-sd = 1
+sd = 4
 moves = None
 increment = None
 mytime = None
