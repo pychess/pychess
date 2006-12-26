@@ -329,7 +329,6 @@ def toAN (board, move):
         return s + reprSign[move.promotion]
     return s
 
-
 def toFAN (board, board2, move):
     """ Returns a Figurine Algebraic Notation string of a move """
     return toSAN(board, board2, move, fan=True)

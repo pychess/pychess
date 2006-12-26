@@ -208,4 +208,4 @@ class Board:
         return b
     
     def __hash__ (self):
-        return int((self.myhash>>33)-2) + self.color
+        return hash(self.myhash) -1 + self.color
