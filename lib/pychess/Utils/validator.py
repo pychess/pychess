@@ -62,9 +62,10 @@ def valiBishop (move, board, cancapture=False):
             return False
     return True
 
+bishopDirections = (1,1),(-1,1),(-1,-1),(1,-1)
 def genBishop (cord, board, pureCaptures=False):
     """ Generate bishop moves. Bishop is located at cord """
-    for dx, dy in (1,1),(-1,1),(-1,-1),(1,-1):
+    for dx, dy in bishopDirections:
         x, y = cord.x, cord.y
         while True:
             x += dx
@@ -275,10 +276,11 @@ def valiRook (move, board, cancapture=False):
             return False
     return True
 
+rookDirections = (1,0),(0,-1),(-1,0),(0,1)
 def genRook (cord, board, pureCaptures=False):
     """ Generate rook moves. Rook is located at cord """
     
-    for dx, dy in (1,0),(0,-1),(-1,0),(0,1):
+    for dx, dy in rookDirections:
         x, y = cord.x, cord.y
         while True:
             x += dx
