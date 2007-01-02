@@ -49,9 +49,11 @@ class BoardControl (gtk.EventBox):
             res = int(self.promotionDialog.run())
             self.promotionDialog.hide()
             if res == int(gtk.RESPONSE_DELETE_EVENT):
+                # Put back pawn moved be d'n'd
+                self.view.runAnimation(redrawMisc = False)
                 return
             promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
-            
+        
         move = Move(cord0, cord1, promotion)
         self.emit("piece_moved", move)
     
