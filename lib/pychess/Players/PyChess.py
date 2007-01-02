@@ -49,6 +49,14 @@ def getBestOpening (board):
             score = s
     return move
 
+def nextedIterator (*items):
+    used = set()
+    for item in items:
+       for i in item:
+            if not i in used:
+                used.add(i)
+                yield i
+
 last = 0
 nodes = 0
 searching = False
@@ -81,26 +89,15 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
         return result
     
-    lowerDepthMove = None
-    i = -1
-    while depth+i >= 1:
-        probe = table.probe (board, max(depth-1,1), alpha, beta)
-        if probe and probe[0]:
-            lowerDepthMove = probe[0][0]
-            break
-        i -= 1
-    
-    used = set()
-    def nextedIterator (*items):
-        for item in items:
-            for i in item:
-                try:
-                    if not i in used:
-                        used.add(i)
-                        yield i
-                except:
-                    print items, item, i
-                    raise
+    # TODO: This doesn't work. Gives illegal moves. What should be changed?
+    #lowerDepthMove = None
+    #i = -1
+    #while depth+i >= 1:
+    #    probe = table.probe (board, depth+i, alpha, beta)
+    #    if probe and probe[0]:
+    #        lowerDepthMove = probe[0][0]
+    #        break
+    #    i -= 1
     
     # TODO: Use the killer move method.
     # *  Create a LimitedDict for each call (not the recursive ones)
@@ -112,19 +109,18 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
     # Would sorting moves by a simple evaluation (only piecevalue and location) help?
     
     pureCaptures = depth <= 0
-    if lowerDepthMove:
-        iterator = nextedIterator([lowerDepthMove],
-                findMoves2(board, pureCaptures=pureCaptures))
-    else: iterator = findMoves2(board, pureCaptures=pureCaptures)
+    #if lowerDepthMove:
+    #    iterator = nextedIterator([lowerDepthMove],
+    #            findMoves2(board, pureCaptures=pureCaptures))
+    #else: iterator = findMoves2(board, pureCaptures=pureCaptures)
     
     move = None
-    for move in iterator:
-        #if depth == 2: print move
-        
+    for move in findMoves2(board, pureCaptures=pureCaptures):
+
         nodes += 1
         
         board2 = board.move(move)
-        
+            
         if board[move.cord1] != None:
             tempcapture = True
         else: tempcapture = False
@@ -199,11 +195,11 @@ def analyze ():
         if not searching: break
         mvs, scr = alphaBeta (table, board, depth, -maxint, maxint)
         
+        tempboard = board
         smvs = []
-        board = board
         for move in mvs:
-            smvs.append(toAN (board, move))
-            board = board.move(move)
+            smvs.append(toAN (tempboard, move))
+            tempboard = tempboard.move(move)
         smvs = " ".join(smvs)
         
         print depth,"\t", "%0.2f" % (time()-start),"\t", scr,"\t", nodes,"\t", smvs
