@@ -11,6 +11,12 @@ except ImportError:
     print "Please try to run pychess as stated in the INSTALL file"
     import sys
     sys.exit(1)
+
+import os
+from pychess.Utils.const import PREFIX
+# This is an ugly hack needed becayse of a pygtk bug:
+# http://bugzilla.gnome.org/show_bug.cgi?id=393483
+os.environ["XDG_DATA_DIRS"] = "/home/thomas/Desktop/0.5:/usr/share/"
     
 import gettext, gtk.glade
 if "/bin/" in __file__:

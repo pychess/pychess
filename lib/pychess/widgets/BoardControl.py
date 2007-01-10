@@ -96,6 +96,10 @@ class BoardControl (gtk.EventBox):
         if self.view.history[-1][cord] == None:
             return False
         
+        # We also don't won't to select friendly pieces while dragging
+        if self.view.active and self.pressed:
+            return False
+        
         # We should not be able to select an opponent piece
         color = self.view.history.curCol()
         if self.view.history[-1][cord].color != color:

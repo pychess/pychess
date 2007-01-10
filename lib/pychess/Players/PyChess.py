@@ -26,7 +26,7 @@ from pychess.Utils.History import hisPool
 from pychess.Utils.Move import movePool, parseSAN, parseAN, toAN, ParsingError
 from pychess.Utils import eval
 from pychess.Utils.book import getOpenings
-from pychess.Utils.validator import findMoves2, isCheck
+from pychess.Utils.validator import findMoves2, isCheck, validate
 from pychess.Utils.History import History
 from pychess.System.ThreadPool import pool
 from pychess.Utils.TranspositionTable import TranspositionTable
@@ -59,6 +59,9 @@ def nextedIterator (*items):
 
 last = 0
 nodes = 0
+alphaCutoffs = 0
+betaCutoffs = 0
+movesearches = 0
 searching = False
 searchLock = Lock()
 
@@ -76,7 +79,7 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
             the deepest)
         *   a score of your standing the the last possition. """
     
-    global last, nodes, searching
+    global last, searching, alphaCutoffs, betaCutoffs, nodes, movesearches
     foundPv = False
     hashf = hashfALPHA
     amove = []
@@ -89,38 +92,40 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
         return result
     
-    # TODO: This doesn't work. Gives illegal moves. What should be changed?
-    #lowerDepthMove = None
-    #i = -1
-    #while depth+i >= 1:
-    #    probe = table.probe (board, depth+i, alpha, beta)
-    #    if probe and probe[0]:
-    #        lowerDepthMove = probe[0][0]
-    #        break
-    #    i -= 1
-    
-    # TODO: Use the killer move method.
-    # *  Create a LimitedDict for each call (not the recursive ones)
-    # *  Save [depth] = [move,] for each recursive call
-    # *  Test each best move from other paths, before generating your own.
-    # *  Remember to validate
-    # *  Remember to test if this actually makes a difference (in best case alphabeta should only test a squareroot of the moves)
-    
-    # Would sorting moves by a simple evaluation (only piecevalue and location) help?
+    # This killer move method could be made even stronger by recording the best
+    # moves of other nodes at same depth, and trying those out too.
+    lowerDepthMove = None
+    i = -1
+    while depth+i >= 1:
+        probe = table.probe (board, depth+i, alpha, beta)
+        if probe and probe[0]:
+            lowerDepthMove = probe[0][0]
+            if not validate(lowerDepthMove, board):
+                lowerDepthMove = None
+                continue
+            break
+        i -= 1
     
     pureCaptures = depth <= 0
-    #if lowerDepthMove:
-    #    iterator = nextedIterator([lowerDepthMove],
-    #            findMoves2(board, pureCaptures=pureCaptures))
-    #else: iterator = findMoves2(board, pureCaptures=pureCaptures)
+    if lowerDepthMove:
+        iterator = nextedIterator([lowerDepthMove],
+                findMoves2(board, testCheck=False, pureCaptures=pureCaptures))
+    else: iterator = findMoves2(board, testCheck=False, pureCaptures=pureCaptures)
+    
+    #moves = [move for move in iterator]
+    #moves = table.sortMoves(moves, board.color)
+    
+    movesearches += 1
     
     move = None
-    for move in findMoves2(board, pureCaptures=pureCaptures):
-
+    for move in iterator:
+        #print "    "*(4-depth), move
         nodes += 1
         
         board2 = board.move(move)
-            
+        if isCheck(board2, board.color):
+            continue
+        
         if board[move.cord1] != None:
             tempcapture = True
         else: tempcapture = False
@@ -140,11 +145,14 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
             val = -val
         
         if val >= beta:
+            betaCutoffs += 1
+            table.addBetaCutter(board.color, move.cords)
             table.record (board, [move]+mvs, len(mvs)+1, beta, hashfBETA)
             last = 3; return [move]+mvs, beta
 
         if val > alpha:
             map(movePool.add, amove)
+            alphaCutoffs += 1
             alpha = val
             amove = [move]+mvs
             hashf = hashfEXACT
@@ -182,28 +190,33 @@ def analyze2 ():
     runctx ("analyze2()", locals(), globals(), "/tmp/pychessprofile")
     from pstats import Stats
     s = Stats("/tmp/pychessprofile")
-    s.sort_stats("time")
+    #s.sort_stats("time")
+    s.sort_stats("cumulative")
     s.print_stats()
 
 def analyze ():
-    global searching, nodes
+    global searching, nodes, movesearches
     searching = True
     start = time()
     searchLock.acquire()
     board = history[-1]
-    for depth in range (1, 10):
+    for depth in range (1, 5):
         if not searching: break
+        t = time()
         mvs, scr = alphaBeta (table, board, depth, -maxint, maxint)
         
         tempboard = board
         smvs = []
+        
         for move in mvs:
             smvs.append(toAN (tempboard, move))
             tempboard = tempboard.move(move)
         smvs = " ".join(smvs)
         
         print depth,"\t", "%0.2f" % (time()-start),"\t", scr,"\t", nodes,"\t", smvs
+        print "%0.1f moves/position; %0.1f n/s" % (nodes/float(movesearches), nodes/(time()-t))
         nodes = 0
+        movesearches = 0
     searchLock.release()
     
 def go ():
@@ -253,6 +266,7 @@ def go ():
 
 while True:
     line = raw_input()
+    if not line.strip(): continue
     lines = line.split()
     
     if lines[0] == "protover":
@@ -322,7 +336,8 @@ while True:
     
     elif lines[0] == "analyze":
         analyzing = True
-        thread.start_new(analyze,())
+        analyze()
+        #thread.start_new(analyze,())
         
     elif lines[0] == "draw":
         print "offer draw"

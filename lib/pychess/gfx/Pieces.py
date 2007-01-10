@@ -4,11 +4,7 @@ from pychess.Utils.const import *
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
 spaceExpr = re.compile(r"[\s,]+")
 
-def drawPiece (piece, cc, psize):
-    if not psize in parsedPieces[piece.color][piece.sign]:
-        list = [(cmd, [(p*psize/size) for p in points])
-                for cmd, points in parsedPieces[piece.color][piece.sign][size]]
-        parsedPieces[piece.color][piece.sign][psize] = list
+def drawPieceReal (piece, cc, psize):
     for cmd, points in parsedPieces[piece.color][piece.sign][psize]:
         if cmd == 'M':
             cc.rel_move_to(*points)
@@ -16,6 +12,48 @@ def drawPiece (piece, cc, psize):
             cc.rel_line_to(*points)
         else:
             cc.rel_curve_to(*points)
+
+def drawPiece (piece, cc, x, y, psize):
+    cc.save()
+    cc.move_to(x,y)
+    if not psize in parsedPieces[piece.color][piece.sign]:
+        list = [(cmd, [(p*psize/size) for p in points])
+                for cmd, points in parsedPieces[piece.color][piece.sign][size]]
+        parsedPieces[piece.color][piece.sign][psize] = list
+    
+    drawPieceReal (piece, cc, psize)
+    cc.fill()
+    cc.restore()
+
+# This version has proven itself nearly three times as slow as the "draw each time" method. At least when drawing one path only. Might be useful when drawing svg    
+import cairo
+def drawPiece2 (piece, cc, x, y, psize):
+    if not piece in surfaceCache:
+        s = cc.get_target().create_similar(cairo.CONTENT_COLOR_ALPHA, int(size), int(size))
+        ctx = cairo.Context(s)
+        ctx.move_to(0,0)
+        drawPieceReal (piece, ctx, size)
+        ctx.set_source_rgb(0,0,0)
+        ctx.fill()
+        surfaceCache[piece] = s
+    
+    cc.save()
+    
+    cc.set_source_rgb(0,0,0)
+    cc.scale(psize/size, psize/size)
+    cc.translate(x*size/psize, y*size/psize)
+    cc.rectangle (0, 0, int(size), int(size))
+    
+    # TODO: DOes this give any performance boost?
+    # From cairo thread:
+    # Or paint() instead of fill().  fill() needs a path, so you should do a
+    # rectangle() first.
+    
+    
+    cc.set_source_surface(surfaceCache[piece], 0, 0)
+    cc.fill()
+    cc.restore()
+surfaceCache = {}
 
 size = 800.0
 pieces = {

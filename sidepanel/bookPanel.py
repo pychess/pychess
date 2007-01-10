@@ -23,7 +23,7 @@ class Sidepanel:
         r.set_property("xalign", 1)
         self.tv.append_column(gtk.TreeViewColumn("Games", r, text=1))
         self.tv.append_column(gtk.TreeViewColumn(
-                "Win/Draw/Loss", window.BookCellRenderer(), data=2))
+                "Win/Draw/Loss", BookCellRenderer(), data=2))
         
         self.boardcontrol = gmwidg.widgets["board"]
         self.board = self.boardcontrol.view
@@ -67,7 +67,6 @@ class Sidepanel:
 
     def selection_changed (self, widget):
         if len(self.board.history) != self.board.shown+1:
-            # History/moveparsing model, sucks, sucks, sucks
             self.board.bluearrow = None
             return
         
@@ -86,4 +85,86 @@ class Sidepanel:
         if arrow:
             self.board.bluearrow = None
             self.boardcontrol.emit_move_signal(*arrow)
+
+################################################################################
+# BookCellRenderer                                                             #
+################################################################################
+
+width, height = 80, 23
+class BookCellRenderer (gtk.GenericCellRenderer):
+    __gproperties__ = {
+        "data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE),
+    }
+    
+    def __init__(self):
+        self.__gobject_init__()
+        self.data = None
+        
+    def do_set_property(self, pspec, value):
+        setattr(self, pspec.name, value)
+        
+    def do_get_property(self, pspec):
+        return getattr(self, pspec.name)
+        
+    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
+        if not self.data: return
+        cairo = window.cairo_create()
+        w,d,l = self.data
+        paintGraph(cairo, w, d, l, cell_area)
+       
+    def on_get_size(self, widget, cell_area=None):
+        return (0, 0, width, height)
             
+gobject.type_register(BookCellRenderer)
+
+################################################################################
+# BookCellRenderer functions                                                   #
+################################################################################
+
+from math import ceil
+
+def paintGraph (cairo,win,draw,loss,rect):
+    x,y,w,h = rect.x, rect.y, rect.width, rect.height
+
+    cairo.save()
+    cairo.rectangle(x,y,ceil(win*w),h)
+    cairo.clip()
+    pathBlock(cairo, x,y,w,h)
+    cairo.set_source_rgb(0.9,0.9,0.9)
+    cairo.fill()
+    cairo.restore()
+    
+    cairo.save()
+    cairo.rectangle(x+win*w,y,ceil(draw*w),h)
+    cairo.clip()
+    pathBlock(cairo, x,y,w,h)
+    cairo.set_source_rgb(0.45,0.45,0.45)
+    cairo.fill()
+    cairo.restore()
+    
+    cairo.save()
+    cairo.rectangle(x+win*w+draw*w,y,loss*w,h)
+    cairo.clip()
+    pathBlock(cairo, x,y,w,h)
+    cairo.set_source_rgb(0,0,0)
+    cairo.fill()
+    cairo.restore()
+    
+    cairo.save()
+    cairo.rectangle(x,y,w,h)
+    cairo.clip()
+    pathBlock(cairo, x,y,w,h)
+    cairo.set_source_rgb(1,1,1)
+    cairo.stroke()
+    cairo.restore()
+
+def pathBlock (cairo, x,y,w,h):
+    cairo.move_to(x+10, y)
+    cairo.rel_line_to(w-20, 0)
+    cairo.rel_curve_to(10, 0, 10, 0, 10, 10)
+    cairo.rel_line_to(0, 3)
+    cairo.rel_curve_to(0, 10, 0, 10, -10, 10)
+    cairo.rel_line_to(-w+20, 0)
+    cairo.rel_curve_to(-10, 0, -10, 0, -10, -10)
+    cairo.rel_line_to(0, -3)
+    cairo.rel_curve_to(0, -10, 0, -10, 10, -10)

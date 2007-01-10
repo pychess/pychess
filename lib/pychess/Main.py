@@ -12,6 +12,7 @@ from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
 from pychess.widgets import ionest
 from pychess.widgets.Background import Background
+from pychess.widgets import preferencesDialog
 
 gameDic = {}
 
@@ -140,6 +141,12 @@ class GladeHandlers:
     def on_load_game1_activate (widget):
         ionest.loadGame ()
     
+    def on_set_up_position_activate (widget):
+        ionest.setUpPosition ()
+    
+    def on_enter_game_notation_activate (widget):
+        ionest.enterGameNotation ()
+    
     def on_save_game1_activate (widget):
         ionest.saveGame (gameDic[gamewidget.cur_gmwidg()])
         
@@ -230,13 +237,8 @@ class GladeHandlers:
     
     #          Settings menu          #
     
-    def on_preferences2_activate (widget):
-        window["preferences"].show()
-        def hide_window(button, *args):
-            window["preferences"].hide()
-            return True
-        window["preferences"].connect("delete-event", hide_window)
-        window["preferences_close_button"].connect("clicked", hide_window)
+    def on_preferences_activate (widget):
+        preferencesDialog.run()
     
     #          Help menu          #
     
@@ -253,7 +255,7 @@ class GladeHandlers:
     
     def on_notebook2_switch_page (widget, page, page_num):
         window["notebook3"].set_current_page(page_num)
-
+        
 TARGET_TYPE_URI_LIST = 80
 dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
@@ -281,11 +283,6 @@ class PyChess:
         
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         self["window1"].show_all()
-        
-        #Very ugly hack, needed because of pygtk bug 357022
-        #http://bugzilla.gnome.org/show_bug.cgi?id=357022
-        from widgets.BookCellRenderer import BookCellRenderer
-        self.BookCellRenderer = BookCellRenderer
         
         makeLogDialogReady()
         makeAboutDialogReady()

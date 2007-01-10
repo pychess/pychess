@@ -6,6 +6,129 @@ from pychess.Utils.const import *
 # these tables will be used for positional bonuses: #
 
 from array import array
+
+whiteknight = array('b', [
+            -20, -35,-10, -10, -10,-10, -35, -20,
+            -10,   0,  0,   3,   3,  0,   0, -10,
+            -10,   0, 15,  15,  15, 15,   0, -10,
+            -10,   0, 20,  20,  20, 20,   0, -10,
+            -10,  10, 25,  20,  25, 25,  10, -10,
+            -10,  15, 25,  35,  35, 35,  15, -10,
+            -10,  15, 25,  25,  25, 25,  15, -10,
+            -20, -10,-10, -10, -10,-10, -10, -20 ])
+
+blackknight = array('b', [
+            -20,-10,-10,-10,-10, -10,-10,-20,
+            -10, 15, 25, 25, 25,  25, 15,-10,
+            -10, 15, 25, 35, 35 , 35, 15,-10,
+            -10, 10, 25, 20, 25,  25, 10,-10,
+            -10, 0,  20, 20, 20,  20,  0,-10,
+            -10, 0,  15, 15, 15,  15,  0,-10,
+            -10, 0,   0,  3,  3,   0,  0,-10,
+            -20,-35,-10,-10,-10, -10,-35,-20 ])
+
+whitepawn = array('b', [
+             0,  0,   0, 0,  0,  0,  0,  0,
+            25, 25, 35,  5,  5, 50, 45, 30,
+             0,  0,  0,  7,  7,  5,  5,  0,
+             0,  0,  0, 14, 14,  0,  0,  0,
+             0,  0, 10, 20, 20, 10,  5,  5,
+            12, 18, 18, 27, 27, 18, 18, 18,
+            25, 30, 30, 35, 35, 35, 30, 25,
+             0,  0,  0,  0,  0,  0,  0,  0 ])
+
+blackpawn = array('b', [
+              0,  0,  0,  0,  0,  0,  0,  0,
+             30, 30, 30, 35, 35, 35, 30, 25,
+             12, 18, 18, 27, 27, 18, 18, 18,
+              0,  0, 10, 20, 20, 10,  5,  5,
+              0,  0,  0, 14, 14,  0,  0,  0,
+              0,  0,  0,  7,  7,  5,  5,  0,
+             25, 25, 35,  5,  5, 50, 45, 30,
+              0,   0,  0,  0,  0,  0,  0, 0])
+
+whiteking = array('h', [
+            -100,   15,   15,  -20,   10,    4,   15, -100,
+            -250, -200, -150, -100, -100, -150, -200, -250,
+            -350, -300, -300, -250, -250, -300, -300, -350,
+            -400, -400, -400, -350, -350, -400, -400, -400,
+            -450, -450, -450, -450, -450, -450, -450, -450,
+            -500, -500, -500, -500, -500, -500, -500, -500,
+            -500, -500, -500, -500, -500, -500, -500, -500,
+            -500, -500, -500, -500, -500, -500, -500, -500 ])
+
+blackking = array('h', [
+            -500, -500, -500, -500, -500, -500, -500, -500,
+            -500, -500, -500, -500, -500, -500, -500, -500,
+            -500, -500, -500, -500, -500, -500, -500, -500,
+            -450, -450, -450, -450, -450, -450, -450, -450,
+            -400, -400, -400, -350, -350, -400, -400, -400,
+            -350, -300, -300, -250, -250, -300, -300, -350,
+            -250, -200, -150, -100, -100, -150, -200, -250,
+            -100,    7,   15,  -20,   10,    4,   15, -100 ])
+
+whitequeen = array('b', [
+              0,   0,   0,   5,   0,   0,   0,   0,
+              0,   0,   0,   7,  10,   5,   0,   0,
+            -15, -15, -15, -10, -10, -15, -15, -15,
+            -40, -40, -40, -40, -40, -40, -40, -40,
+            -60, -40, -40, -60, -60, -40, -40, -60,
+            -30, -30, -30, -30, -30, -30, -30, -30,
+              0,   0,   3,   3,   3,   3,   3,   0,
+              5,   5,   5,  10,  10,   7,   5,   5 ])
+
+blackqueen = array('b', [
+              5,   5,   5,  10,  10,   7,   5,   5,
+              0,   0,   3,   3,   3,   3,   3,   0,
+            -30, -30, -30, -30, -30, -30, -30, -30,
+            -60, -40, -40, -60, -60, -40, -40, -60,
+            -40, -40, -40, -40, -40, -40, -40, -40,
+            -15, -15, -15, -10, -10, -15, -15, -15,
+              0,   0,   0,   7,  10,   5,   0,   0,
+              0,   0,   0,   5,   0,   0,   0,   0 ])
+
+whiterook = array('b', [
+              2,   2,   2,   2,   2,   2,   2,   2,
+              0,   0,   0,   7,  10,   0,   0,   0,
+            -15, -15, -15, -10, -10, -15, -15, -15,
+            -20, -20, -20, -20, -20, -20, -20, -20,
+            -20, -20, -20, -30, -30, -20, -20, -20,
+            -20, -20, -20, -20, -20, -20, -20, -20,
+              0,  10,  15,  20,  20,  15,  10,   0,
+             10,  15,  20,  25,  25,  20,  15,  10 ])
+
+blackrook = array('b', [
+             10 , 15,  20,  25,  25,  20,  15,  10,
+              0 , 10,  15,  20,  20,  15,  10,   0,
+            -20 ,-20, -20, -20, -20, -20, -20, -20,
+            -20, -20, -20, -30, -30, -20, -20, -20,
+            -20, -20, -20, -20, -20, -20, -20, -20,
+            -15, -15, -15, -10, -10, -15, -15, -15,
+              0,   0,   0,   7,  10,   0,   0,   0,
+              2,   2,   2,   2,   2,   2,   2,   2 ])
+
+whitebishop = array('b', [
+            -5, -5, -10, -5, -5, -10, -5, -5,
+            -5, 10,   5, 10, 10,   5, 10, -5,
+            -5,  5,   6, 15, 15,   6,  5, -5,
+            -5,  3,  15, 10, 10,  15,  3, -5,
+            -5,  3,  15, 10, 10,  15,  3, -5,
+            -5,  5,   6, 15, 15,   6,  5, -5,
+            -5, 10,   5, 10, 10,   5, 10, -5,
+            -5, -5, -10, -5, -5, -10, -5, -5 ])
+
+blackbishop = array('b', [
+            -5, -5, -10, -5, -5, -10, -5, -5,
+            -5, 10,   5, 10, 10,   5, 10, -5,
+            -5,  5,   6, 15, 15,   6,  5, -5,
+            -5,  3,  15, 10, 10,  15,  3, -5,
+            -5,  3,  15, 10, 10,  15,  3, -5,
+            -5,  5,   6, 15, 15,   6,  5, -5,
+            -5, 10,   5, 10, 10,   5, 10, -5,
+            -5, -5, -10, -5, -5, -10, -5, -5 ])
+
+
+
 pos = {
     KNIGHT: {
         BLACK: array('b', [
@@ -63,7 +186,7 @@ pos = {
             -400, -400, -400, -350, -350, -400, -400, -400,
             -350, -300, -300, -250, -250, -300, -300, -350,
             -250, -200, -150, -100, -100, -150, -200, -250,
-            -100,   7,    15,    -20,   10,    4,   15, -100 ]) },
+            -100,    7,   15,  -20,   10,    4,   15, -100 ]) },
     QUEEN: {
         BLACK: array('b', [
               5,   5,   5,  10,  10,   7,   5,   5,
@@ -139,20 +262,25 @@ endking = array('b', [
 
 tropismTable = []
 for px in range(8):
-    pxrow = []
     for py in range(8):
-        pyrow = []
         for kx in range(8):
-            kxrow = []
             for ky in range(8):
-                dic = {}
-                dic[KNIGHT] = abs(ky-py) + abs(kx-px) -5
-                dic[ROOK] = min(abs(ky-py), abs(kx-px)) *2
-                dic[QUEEN] = min(abs(ky-py), abs(kx-px))
-                kxrow.append(dic)
-            pyrow.append(kxrow)
-        pxrow.append(pyrow)
-    tropismTable.append(pxrow)
+                knight = abs(ky-py) + abs(kx-px)
+                rook = min(abs(ky-py), abs(kx-px)) *2 +5
+                queen = min(abs(ky-py), abs(kx-px)) +5
+                tropismTable.append(knight + rook*20 + queen*20*20)
+tropismArray = array('I',tropismTable)
+
+def lookUpTropism (px, py, kx, ky, piece):
+	value = tropismArray[ky + kx*8 + py*8*8 + px*8*8*8]
+	knight = value % 20
+	rook = (value-knight)/20 % 20
+	queen = (value-knight-rook*20)/20/20
+	if piece == knight:
+	    return knight-5
+	if piece == rook:
+	    return rook-5
+	return queen-5
 
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
@@ -208,7 +336,7 @@ def evalMaterial (board):
                 / ( 6400 * ( numPawns[WHITE] + 1 ) )
         return val
 
-from validator import _findKing
+from validator import findKings
 def evalKingTropism (board):
     """ All other things being equal, having your Knights, Queens and Rooks close
         to the opponent's king is a good thing """
@@ -216,8 +344,9 @@ def evalKingTropism (board):
     score = 0
     
     try:
-        wky, wkx = _findKing(board, WHITE).cords
-        bky, bkx = _findKing(board, BLACK).cords
+        wking, bking = findKings(board)
+        wky, wkx = wking.cords
+        bky, bkx = bking.cords
     except:
         return 0
         
@@ -225,19 +354,19 @@ def evalKingTropism (board):
         for px, piece in enumerate(row):
             if piece and piece.color == WHITE:
                 if piece.sign == KNIGHT:
-                    score += tropismTable[px][py][bkx][bky][KNIGHT]
+                    score += lookUpTropism(px,py,bkx,bky,KNIGHT)
                 elif piece.sign == ROOK:
-                    score += tropismTable[px][py][bkx][bky][ROOK]
+                    score += lookUpTropism(px,py,bkx,bky,ROOK)
                 elif piece.sign == QUEEN:
-                    score += tropismTable[px][py][bkx][bky][QUEEN]
+                    score += lookUpTropism(px,py,bkx,bky,QUEEN)
             
             elif piece and piece.color == BLACK:
                 if piece.sign == KNIGHT:
-                    score -= tropismTable[px][py][wkx][wky][KNIGHT]
+                    score -= lookUpTropism(px,py,wkx,wky,KNIGHT)
                 elif piece.sign == ROOK:
-                    score -= tropismTable[px][py][wkx][wky][ROOK]
+                    score -= lookUpTropism(px,py,wkx,wky,ROOK)
                 elif piece.sign == QUEEN:
-                    score -= tropismTable[px][py][wkx][wky][QUEEN]
+                    score -= lookUpTropism(px,py,wkx,wky,QUEEN)
     
     return score
 
@@ -278,22 +407,41 @@ def evalDevelopment (board):
     
     # Test endgame
     if pieceCount <= 8:
-        for y, row in enumerate(board.data):
-            for x, piece in enumerate(row):
-                if piece and piece.sign == KING:
-                    if piece.color == WHITE:
-                        score += endking[y*8+x]
-                    else: score -= endking[y*8+x]
+        wking, bking = findKings(board)
+        score += endking[wking.y*8+wking.x]
+        score -= endking[bking.y*8+bking.x]
         return score
     
     for y, row in enumerate(board.data):
         for x, piece in enumerate(row):
             if not piece: continue
-            s = pos[piece.sign][piece.color][y*8+x]
+            #s = pos[piece.sign][piece.color][y*8+x]
             if piece.color == WHITE:
-                score += s
+                if piece.sign == PAWN:
+                    score += whitepawn[x+y*8]
+                elif piece.sign == KNIGHT:
+                    score += whiteknight[x+y*8]
+                elif piece.sign == BISHOP:
+                    score += whitebishop[x+y*8]
+                elif piece.sign == ROOK:
+                    score += whiterook[x+y*8]
+                elif piece.sign == QUEEN:
+                    score += whitequeen[x+y*8]
+                elif piece.sign == KING:
+                    score += whiteking[x+y*8]
             else:
-                score -= s
+                if piece.sign == PAWN:
+                    score -= blackpawn[x+y*8]
+                elif piece.sign == KNIGHT:
+                    score -= blackknight[x+y*8]
+                elif piece.sign == BISHOP:
+                    score -= blackbishop[x+y*8]
+                elif piece.sign == ROOK:
+                    score -= blackrook[x+y*8]
+                elif piece.sign == QUEEN:
+                    score -= blackqueen[x+y*8]
+                elif piece.sign == KING:
+                    score -= blackking[x+y*8]
     
     return score
 

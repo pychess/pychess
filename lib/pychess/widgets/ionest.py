@@ -5,13 +5,16 @@ import gtk, os, random, pango
 from pychess.Utils.Game import Game
 from pychess.System.Log import log
 from pychess.System import myconf
-from pychess.Utils.const import prefix, WHITE, BLACK
+from pychess.Utils.const import *
+from pychess.Utils.Piece import Piece
+from pychess.Utils.Cord import Cord
 from pychess.Players import engines
 from pychess.Players.Human import Human
 from pychess.Savers import *
 from pychess import Savers
 from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
+from pychess.widgets.SetupBoard import SetupBoard
 
 widgets = gtk.glade.XML(prefix("glade/newInOut.glade"))
 class WidgetDic:
@@ -21,9 +24,9 @@ class WidgetDic:
         return self.widgets.get_widget(key)
 widgets = WidgetDic (widgets)
 
-#
-# Initing Load/Save dialogs
-#
+################################################################################
+# Initing Load/Save dialogs                                                    #
+################################################################################
 
 enddir = {}
 types = []
@@ -75,25 +78,197 @@ savecombo.add_attribute(crt, 'text', 1)
 savecombo.set_active(0)
 savedialog.set_extra_widget(savecombo)
 
+################################################################################
+# Initing sidepanels                                                           #
+################################################################################
+
+panels = ["loadsidepanel", "enterGameNotationSidePanel", "setUpPositionSidePanel"]
+
+def setActiveSidePanel (panelname):
+    """ Set to None to hide all panels """
+    for panel in panels:
+        if panel != panelname:
+            widgets[panel].hide()
+    if panelname:
+        widgets[panelname].show()
+
+################################################################################
+# Initing Load sidepanel                                                       #
+################################################################################
+
 filechooserbutton = gtk.FileChooserButton(opendialog)
 loadSidePanel = BoardPreview.BoardPreview()
 loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
 filechooserbutton.show()
 widgets["loadsidepanel"].add(loadSidePanel)
 
-#
-# Initing newGame dialog
-#
+################################################################################
+# Initing enter notation sidepanel                                             #
+################################################################################
 
-isMakeNewGameDialogReady = False
-def makeNewGameDialogReady ():
+from gtksourceview import *
+buffer = SourceBuffer()
+sourceview = SourceView(buffer)
+widgets["scrolledwindow6"].add(sourceview)
+sourceview.show()
+
+# Pgn does not allow tabs
+sourceview.set_insert_spaces_instead_of_tabs(True)
+sourceview.set_wrap_mode(gtk.WRAP_WORD)
+
+man = SourceLanguagesManager()
+lang = [l for l in man.get_available_languages() if l.get_name() == "PGN"][0]
+buffer.set_language(lang)
+
+buffer.set_highlight(True)
+
+################################################################################
+# Initing set up position sidepanel                                            #
+################################################################################
+
+    ############################################################################
+    # Buttons                                                                  #
+    ############################################################################
+
+def invertOther (button, other):
+    other.set_active(not button.get_active())
+widgets["togglebutton2"].connect("toggled", invertOther, widgets["togglebutton5"])
+widgets["togglebutton5"].connect("toggled", invertOther, widgets["togglebutton2"])
+
+    ############################################################################
+    # Board                                                                    #
+    ############################################################################
+
+setupBoard = SetupBoard()
+widgets["boardSpace"].add(setupBoard)
+setupBoard.show_all()
+
+def cord_clicked (setupBoard, cord):
+    store0, treeiter0 = widgets["treeview0"].get_selection().get_selected()
+    store1, treeiter1 = widgets["treeview1"].get_selection().get_selected()
+    if treeiter0 != None or treeiter1 != None:
+        brush = PIECE
+        if treeiter0 != None:
+            color = WHITE
+            sign = store0.get_path(treeiter0)[0]
+        else:
+            color = BLACK
+            sign = store1.get_path(treeiter1)[0]
+    else:
+        store2, treeiter2 = widgets["treeview2"].get_selection().get_selected()
+        if treeiter2 != None:
+            brush = CLEAR
+        else: brush = ENPAS
+    
+    if brush == ENPAS:
+        if setupBoard.view.history[-1].enpassant:
+            setupBoard.view.showEnpassant = False
+        setupBoard.view.history[-1].enpassant = cord
+        setupBoard.view.showEnpassant = True
+        
+    else:
+        board = setupBoard.view.history[-1].clone()
+        if brush == CLEAR:
+            board[cord] = None
+            if board.enpassant == cord:
+                board.enpassant = None
+            cords = setupBoard.getLegalCords()
+            cords.remove(cord)
+            setupBoard.setLegalCords(cords)
+        else:
+            board[cord] = Piece(color, sign)
+        
+        enpascords = []
+        for y in (3,4):
+            for x in range(8):
+                piece = board.data[y][x]
+                if piece and piece.sign == PAWN:
+                    if y == 3 and piece.color == WHITE and \
+                            not board.data[2][x] and not board.data[1][x]:
+                        enpascords.append(Cord(x,2))
+                    elif y == 4 and piece.color == BLACK and \
+                            not board.data[5][x] and not board.data[6][x]:
+                        enpascords.append(Cord(x,5))
+        if not setupBoard.view.history[-1].enpassant in enpascords:
+            print "hiding"
+            setupBoard.view.showEnpassant = False
+            board.enpassant = None
+        
+        setupBoard.view.history.moves.append(None)
+        setupBoard.view.history.boards.append(board)
+        setupBoard.view.history.emit("changed")
+
+setupBoard.connect("cord_clicked", cord_clicked)
+
+    ############################################################################
+    # Lists                                                                    #
+    ############################################################################
+    
+def selected (selection, viewno):
+    liststore, treeiter = selection.get_selected()
+    if treeiter == None:
+        return # We don't unselect others, if we have been unselected
+    
+    for i in range(4):
+        if i == viewno: continue
+        widgets["treeview%d"%i].get_selection().unselect_all()
+    
+    treepath = liststore.get_path(treeiter)
+    row = treepath[0]
+    
+    if liststore in [widgets["treeview%d"%i].get_model() for i in range(2)]:
+        setupBoard.setLegalCords()
+    elif liststore == widgets["treeview2"].get_model():
+        legalCords = []
+        for y in range(8):
+            for x in range(8):
+                if setupBoard.view.history[-1].data[y][x]:
+                    legalCords.append(Cord(x,y))
+        if setupBoard.view.history[-1].enpassant:
+            legalCords += [setupBoard.view.history[-1].enpassant]
+        setupBoard.setLegalCords(legalCords)
+    else:
+        legalCords = []
+        for y in (3,4):
+            for x in range(8):
+                piece = setupBoard.view.history[-1].data[y][x]
+                if piece and piece.sign == PAWN:
+                    if y == 3 and piece.color == WHITE:
+                        legalCords.append(Cord(x,2))
+                    elif y == 4 and piece.color == BLACK:
+                        legalCords.append(Cord(x,5))
+        setupBoard.setLegalCords(legalCords)
+    
+for i in range(4):
+    widgets["treeview%d"%i].set_model(gtk.ListStore(str))
+    widgets["treeview%d"%i].append_column(gtk.TreeViewColumn(
+            None, gtk.CellRendererText(), text=0))
+    widgets["treeview%d"%i].get_selection().set_mode(gtk.SELECTION_BROWSE)
+    widgets["treeview%d"%i].get_selection().connect_after('changed', selected, i)
+    
+widgets["treeview0"].set_model(gtk.ListStore(str))
+widgets["treeview1"].set_model(gtk.ListStore(str))
+
+for piece in reprPiece:
+    widgets["treeview0"].get_model().append([piece])
+    widgets["treeview1"].get_model().append([piece])
+            
+widgets["treeview2"].get_model().append(["Clear"])
+widgets["treeview3"].get_model().append(["En pas"])
+
+################################################################################
+# Initing newGame dialog                                                       #
+################################################################################
+
+isNewGameDialogReady = False
+def ensureNewGameDialogReady ():
     
     # makeNewGameDialogReady uses lazy initializing to let the
     # engines have as much time as possible to figuere out there names.
-    global isMakeNewGameDialogReady
-    if isMakeNewGameDialogReady:
+    global isNewGameDialogReady
+    if isNewGameDialogReady:
         return
-    isMakeNewGameDialogReady = True
+    isNewGameDialogReady = True
     
     def createCombo (combo, data):
         ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
@@ -168,22 +343,19 @@ def makeNewGameDialogReady ():
                 widgets[key].set_active(v)
             else: widgets[key].set_value(v)
 
-#
-# runNewGameDialog
-#
+################################################################################
+# runNewGameDialog                                                             #
+################################################################################
 
-def runNewGameDialog (hideFC=True):
-    makeNewGameDialogReady ()
-    
-    #If the dialog should show or hide the filechooser button
-    if hideFC:
-        widgets["loadsidepanel"].hide()
-    else: widgets["loadsidepanel"].show()
-    
+def runNewGameDialog ():
+    ensureNewGameDialogReady ()
+        
     res = widgets["newgamedialog"].run()
     widgets["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
     
+    # We don't know the name of the players yet, as some of them (Human)
+    # requires a gmwidg in __init__, so we just create a tab with no name
     gmwidg = gamewidget.createGameWidget("")
     ccalign = gmwidg.widgets["ccalign"]
     
@@ -249,16 +421,21 @@ def runNewGameDialog (hideFC=True):
     
     return game, gmwidg
 
-#
-# For the user
-#
+################################################################################
+# newGame                                                                      #
+################################################################################
 
 def newGame ():
-    widgets["newgamedialog"].set_title("New Game")
+    setActiveSidePanel(None)
+    widgets["newgamedialog"].set_title(_("New Game"))
     game, gmwidg = runNewGameDialog()
     if game:
         game.run()
         handler.emit("game_started", gmwidg, game)
+
+################################################################################
+# loadGame                                                                     #
+################################################################################
 
 def loadGame (uri = None):
     if uri:
@@ -268,8 +445,9 @@ def loadGame (uri = None):
     opendialog.hide()
     if res != gtk.RESPONSE_ACCEPT: return None, None
     
-    widgets["newgamedialog"].set_title("Open Game")
-    game, gmwidg = runNewGameDialog(hideFC=False)
+    setActiveSidePanel("loadsidepanel")
+    widgets["newgamedialog"].set_title(_("Open Game"))
+    game, gmwidg = runNewGameDialog()
     
     if game:
         uri = loadSidePanel.get_uri()
@@ -277,6 +455,40 @@ def loadGame (uri = None):
         game.load (uri, loadSidePanel.get_gameno(),
                    loadSidePanel.get_position(), loader)
         handler.emit("game_started", gmwidg, game)
+
+################################################################################
+# setUpPosition                                                                #
+################################################################################
+
+def setUpPosition ():
+    setActiveSidePanel("setUpPositionSidePanel")
+    widgets["newgamedialog"].set_title(_("Set up Game"))
+    game, gmwidg = runNewGameDialog()
+    if game:
+        game.__del__()
+    
+################################################################################
+# enterGameNotation                                                            #
+################################################################################
+
+from cStringIO import StringIO
+
+def enterGameNotation ():
+    setActiveSidePanel("enterGameNotationSidePanel")
+    widgets["newgamedialog"].set_title(_("Enter Game"))
+    game, gmwidg = runNewGameDialog()
+    
+    if game:
+        buf = sourceview.get_buffer()
+        text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+        file = StringIO(text)
+        loader = enddir["pgn"]
+        game.load (file, 0, -1, loader)
+        handler.emit("game_started", gmwidg, game)
+        
+################################################################################
+# saveGame                                                                     #
+################################################################################
 
 def saveGame (game):
     if not game.isChanged():
@@ -292,6 +504,10 @@ def saveGameSimple (uri, game):
     saver = enddir[ending[1:]]
     game.save(uri, saver)
 
+################################################################################
+# saveGameAs                                                                   #
+################################################################################
+
 def saveGameAs (game):
     
     def response (savedialog, res):
@@ -301,7 +517,6 @@ def saveGameAs (game):
             return
         
         uri = savedialog.get_uri()[7:]
-        print "Saving", uri
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
         
@@ -358,6 +573,10 @@ Please ensure that you have given the right path and try again."))
     conid = savedialog.connect("response", response)
     savedialog.show_all()
 
+################################################################################
+# saveGameBeforeClose                                                          #
+################################################################################
+
 def saveGameBeforeClose (game):
     
     if not game.isChanged(): return
@@ -378,6 +597,10 @@ def saveGameBeforeClose (game):
             return gtk.RESPONSE_CANCEL
     return response
 
+################################################################################
+# closeAllGames                                                                #
+################################################################################
+
 def closeAllGames (games):
     names = ["%s vs %s" % (g.player1, g.player2) for g in games if g.isChanged]
     if len(names) == 0:
@@ -392,11 +615,19 @@ def closeAllGames (games):
     d.hide()
     return response
 
+################################################################################
+# closeGames                                                                   #
+################################################################################
+
 def closeGame (gmwidg, game):
     if saveGameBeforeClose (game) != gtk.RESPONSE_CANCEL:
         game.kill()
         gamewidget.delGameWidget (gmwidg)
         handler.emit("game_closed", gmwidg, game)
+
+################################################################################
+# signal handler                                                               #
+################################################################################
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
