@@ -98,7 +98,20 @@ class Board:
             board[cord0] = Piece(q.color, move.promotion)
             q = board[cord0]
             board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
+        
+        if cord1 == a8:
+            board.castling = rm(board.castling, BLACK_OOO)
+        elif cord1 == h8:
+            board.castling = rm(board.castling, BLACK_OO)
+        elif cord1 == a1:
+            board.castling = rm(board.castling, WHITE_OOO)
+        elif cord1 == h1:
+            board.castling = rm(board.castling, WHITE_OO)
             
+        ########################################################################
+        # The move is here                                                     #
+        ########################################################################
+        
         board._move(cord0, cord1)
         board.color = 1 - self.color
         
