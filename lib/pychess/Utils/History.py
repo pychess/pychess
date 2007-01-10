@@ -25,6 +25,7 @@ class HistoryPool:
         import gobject
         print gobject.signal_list_ids(history)
         self.objects.append(history)
+        
 hisPool = HistoryPool()
 
 from Piece import Piece
@@ -51,6 +52,26 @@ def startBoard ():
             Piece(BLACK, KNIGHT), Piece(BLACK, ROOK)]
     ])
 
+def startBoard2 ():
+    return Board ([
+        [   Piece(WHITE, ROOK), None, None,
+            None, Piece(WHITE, KING), None,
+            None, Piece(WHITE, ROOK)],
+        [   Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN),
+            Piece(WHITE, PAWN), Piece(WHITE, PAWN), Piece(WHITE, PAWN),
+            Piece(WHITE, PAWN), Piece(WHITE, PAWN)],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   None,None,None,None,None,None,None,None],
+        [   Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN),
+            Piece(BLACK, PAWN), Piece(BLACK, PAWN), Piece(BLACK, PAWN),
+            Piece(BLACK, PAWN), Piece(BLACK, PAWN)],
+        [   Piece(BLACK, ROOK), None, None,
+            None, Piece(BLACK, KING), None,
+            None, Piece(BLACK, ROOK)]
+    ])
+
 from pychess.System.Log import log
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from pychess.Utils import validator
@@ -71,10 +92,9 @@ class History (GObject):
         'game_ended': (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int))
     }
     
-    def __init__ (self, mvlist=False, special=False):
+    def __init__ (self, mvlist=False):
         GObject.__init__(self)
         self.reset(mvlist)
-        self.special = special
         
     def reset (self, mvlist=False):
         GObject.__init__(self)
@@ -105,9 +125,6 @@ class History (GObject):
         assert self[-1].color == self.curCol()
         
     def add (self, move, mvlist=False):
-        if self.special:
-            #print "move", move
-            pass
         
         try:
             board = self.boards[-1].move(move, mvlist)

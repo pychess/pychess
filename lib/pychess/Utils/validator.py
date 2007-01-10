@@ -116,7 +116,7 @@ def valiKing (move, board, cancapture=False):
             
             cols.append(4)
             opcolor = 1 - board.color
-            if genMovesPointingAt (board, cols, rows, opcolor):
+            if areAttacked (board, cols, rows, opcolor):
                 return False
             
             return True
@@ -142,20 +142,20 @@ def genKing (cord, board, pureCaptures=False):
     if board.color == WHITE:
         if board.castling & WHITE_OO and board.data[0][7] != None:
             if _isclear (board, (5,6), (0,)) and \
-               not genMovesPointingAt (board, (4,5), (0,), BLACK):
+               not areAttacked (board, (4,5), (0,), BLACK):
                 yield 6,0
         if board.castling & WHITE_OOO and board.data[0][0] != None:
             if _isclear (board, (1,2,3), (0,)) and \
-               not genMovesPointingAt (board, (3,4), (0,), BLACK):
+               not areAttacked (board, (3,4), (0,), BLACK):
                 yield 2,0
     if board.color == BLACK:
         if board.castling & BLACK_OO and board.data[7][7] != None:
             if _isclear (board, (5,6), (7,)) and \
-               not genMovesPointingAt (board, (4,5), (7,), WHITE):
+               not areAttacked (board, (4,5), (7,), WHITE):
                 yield 6,7
         if board.castling & BLACK_OOO and board.data[7][0] != None:
             if _isclear (board, (1,2,3), (7,)) and \
-               not genMovesPointingAt (board, (3,4), (7,), WHITE):
+               not areAttacked (board, (3,4), (7,), WHITE):
                 yield 2,7
 
 def valiKnight (move, board, cancapture=False):
@@ -414,23 +414,16 @@ def getMovePointingAt (board, cord, color=None, sign=None, r=None, c=None):
             
         else: return None
 
-def genMovesPointingAt (board, cols, rows, color, testCheck=False):
+def areAttacked (board, cols, rows, bycolor):
     
-    """ Returns a move that legaly attack a cord with the specified color
+    """ Returns true if any cord of the columns*rows are attacked by color
         in one of the specified columns or rows """
     
-    for y in range8:
-        for x in range8:
-            piece = board.data[y][x]
-            if piece == None: continue
-            if piece.color != color: continue
-            cord0 = Cord(x,y)
-            for r in rows:
-                for c in cols:
-                    move = movePool.pop(cord0, Cord(c,r))
-                    if validate (move, board, testCheck, cancapture=True):
-                        return move
-                    movePool.add(move)
+    for r in rows:
+        for c in cols:
+            if isAttacked(board, Cord(c,r), bycolor):
+                return True
+    return False
 
 def willCheck (board, move):
     """ Returns True if the move will cause the player
@@ -438,30 +431,114 @@ def willCheck (board, move):
     board2 = board.move(move)
     return isCheck(board2, board.color)
 
-from pychess.System.LimitedDict import LimitedDict
-checkDic = LimitedDict(5000)
-
 def isCheck (board, who):  
     """ Returns True if "who" is in check in the specified possition """
-    
-    # TODO: Does this make a difference? I Guess not.
-    #if board in checkDic:
-    #    r = checkDic[board][who]
-    #    if r != None:
-    #        return r
-    
-    cord = _findKing(board, who)
-    if genMovesPointingAt(board, (cord.x,), (cord.y,), 1-who):
-        r = True
-    else: r = False
-    
-    #if not board in checkDic:
-    #    checkDic[board] = [None,None]
-    #checkDic[board][who] = r
-    
-    return r
+    return isAttacked(board, findKing(board, who), 1-who)
 
-def _findKing (board, color):
+def isAttacked (board, tocord, bycolor):
+    
+    x, y = tocord.cords
+    data = board.data
+    row = data[y]
+    who = 1 - bycolor
+    
+    #E
+    for i in xrange (x+1, 8):
+        piece = row[i]
+        if piece:
+            if piece.color != who and piece.sign in (ROOK, QUEEN):
+                return True
+            break
+    
+    #W
+    for i in xrange (x-1, -1, -1):
+        piece = row[i]
+        if piece:
+            if piece.color != who and piece.sign in (ROOK, QUEEN):
+                return True
+            break
+    
+    #N
+    for i in xrange (y+1, 8):
+        piece = data[i][x]
+        if piece:
+            if piece.color != who and piece.sign in (ROOK, QUEEN):
+                return True
+            break
+    
+    #S
+    for i in xrange (y-1, -1, -1):
+        piece = data[i][x]
+        if piece:
+            if piece.color != who and piece.sign in (ROOK, QUEEN):
+                return True
+            break
+    
+    #NE
+    for i in xrange (1, min(8-x,8-y)):
+        piece = data[y+i][x+i]
+        if piece:
+            if piece.color != who:
+                if who == WHITE and i == 1 and piece.sign == PAWN:
+                    return True
+                if piece.sign in (BISHOP, QUEEN):
+                    return True
+            break
+    
+    #NW
+    for i in xrange (1, min(1+x,8-y)):
+        piece = data[y+i][x-i]
+        if piece:
+            if piece.color != who:
+                if who == WHITE and i == 1 and piece.sign == PAWN:
+                    return True
+                if piece.sign in (BISHOP, QUEEN):
+                    return True
+            break
+    
+    #SW
+    for i in xrange (1, min(1+x,1+y)):
+        piece = data[y-i][x-i]
+        if piece:
+            if piece.color != who:
+                if who == BLACK and i == 1 and piece.sign == PAWN:
+                    return True
+                if piece.sign in (BISHOP, QUEEN):
+                    return True
+            break
+    
+    #SE
+    for i in xrange (1, min(8-x,1+y)):
+        piece = data[y-i][x+i]
+        if piece:
+            if piece.color != who:
+                if who == BLACK and i == 1 and piece.sign == PAWN:
+                    return True
+                if piece.sign in (BISHOP, QUEEN):
+                    return True
+            break
+    
+    #Knight
+    for dx, dy in knightPlaces:
+        a = x+dx
+        b = y+dy
+        if 0 <= a <= 7 and 0 <= b <= 7:
+            piece = data[b][a]
+            if piece and piece.color != who and piece.sign == KNIGHT:
+                return True
+    
+    #King
+    for dx, dy in kingPlaces:
+        a = x+dx
+        b = y+dy
+        if 0 <= a <= 7 and 0 <= b <= 7:
+            piece = data[b][a]
+            if piece and piece.color != who and piece.sign == KING:
+                return True
+    
+    return False
+
+def findKing (board, color):
     """ Returns the cord of the king of the specified color """
     for x in range8:
         for y in range8:
@@ -470,6 +547,19 @@ def _findKing (board, color):
                 return Cord(x,y)
     raise Exception, "Could not find %s king on board ?!\n%s" % \
             (reprColor[color], repr(board))
+
+def findKings (board):
+    """ Returns the cords of the kings """
+    kings = [None,None]
+    for x in range8:
+        for y in range8:
+            piece = board.data[y][x]
+            if piece and piece.sign == KING:
+                if piece.color == WHITE:
+                    kings[0] = Cord(x,y)
+                else: kings[1] = Cord(x,y)
+                if kings[0] != None and kings[1] != None:
+                    return kings
 
 def status (history):
     """ Returns a tuple of (the current status of the game, a comment of the reason)

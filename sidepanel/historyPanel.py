@@ -16,9 +16,10 @@ def fixList (list, xalign=0):
     renderer = gtk.CellRendererText()
     renderer.set_property("xalign",xalign)
     list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-
+    list.get_selection().set_mode(gtk.SELECTION_BROWSE)
+    
 class Sidepanel:
-
+    
     def load (self, window, gmwidg):
         
         widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
@@ -35,10 +36,12 @@ class Sidepanel:
         map(fixList, (self.left, self.right))
         self.numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
         
+        self.left.get_selection().connect_after(
+                'changed', self.select_cursor_row, self.left, 2)
+        self.right.get_selection().connect_after(
+                'changed', self.select_cursor_row, self.right, 3)
+        
         widgets.signal_autoconnect ({
-            "treeview1_selection_changed": lambda w:self.select_cursor_row(w,1), 
-            "treeview2_selection_changed": lambda w:self.select_cursor_row(w,2), 
-            "treeview3_selection_changed": lambda w:self.select_cursor_row(w,3),
             "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
             "on_treeview3_key_press_event":lambda w,e:self.key_press_event(2,e)
         })
@@ -64,10 +67,10 @@ class Sidepanel:
         
         return __widget__
     
-    def select_cursor_row (self, tree, col):
-        iter = tree.get_selection().get_selected()[1]
+    def select_cursor_row (self, selection, tree, col):
+        iter = selection.get_selected()[1]
         if iter == None: return
-        else: sel = tree.get_model().get_path(iter)[0]
+        sel = tree.get_model().get_path(iter)[0]
         self.board.shown = sel*2+col-1
 
     def key_press_event (self, col, event):

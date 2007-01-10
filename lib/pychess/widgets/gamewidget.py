@@ -218,7 +218,7 @@ def createGameWidget (title):
     
     mvbox = gtk.VBox()
     
-    align = createAlignment (4, 2, 4, 2)
+    align = createAlignment (3, 2, 4, 2)
     
     hbox = gtk.HBox()
     hbox.set_spacing(4)

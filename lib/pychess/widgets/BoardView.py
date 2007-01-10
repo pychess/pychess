@@ -72,7 +72,7 @@ class BoardView (gtk.DrawingArea):
     
     def __init__(self):
         gtk.DrawingArea.__init__(self)
-        self.history = History(special=True)
+        self.history = History()
         self.connect("expose_event", self.expose)
         self.history.connect_after("changed", self.move)
         self.history.connect("cleared", self.reset)
@@ -97,7 +97,11 @@ class BoardView (gtk.DrawingArea):
         self._shown = 0
         self._fromWhite = True
         self._showCords = False
+        self._showEnpassant = False
         self.lastMove = None
+        
+        self.drawcount = 0
+        self.drawtime = 0
         
     def move (self, history):
         # Updating can be disabled. Useful for loading games.
@@ -274,7 +278,6 @@ class BoardView (gtk.DrawingArea):
         
         if paintBox:
             self.redraw_canvas(rect(paintBox))
-            #self.redraw_canvas()
         
         return paintBox and True or False
     
@@ -291,9 +294,9 @@ class BoardView (gtk.DrawingArea):
     
     def expose(self, widget, event):
         context = widget.window.cairo_create()
-        r = (event.area.x, event.area.y, event.area.width, event.area.height)
-        context.rectangle(r[0]-.5, r[1]-.5, r[2]+1, r[3]+1)
-        context.clip()
+        #r = (event.area.x, event.area.y, event.area.width, event.area.height)
+        #context.rectangle(r[0]-.5, r[1]-.5, r[2]+1, r[3]+1)
+        #context.clip()
         
         if False:
             import profile
@@ -303,13 +306,22 @@ class BoardView (gtk.DrawingArea):
             s.sort_stats('cumulative')
             s.print_stats()
         else:
+            self.drawcount += 1
+            start = time()
             self.draw(context, event.area)
-        
+            self.drawtime += time() - start
+            if self.drawcount % 100 == 0:
+                print "Average FPS: %0.3f - %d / %d" % (self.drawcount/self.drawtime, self.drawcount, self.drawtime)
+            
         return False
     
-    def draw(self, context, r):
-        #context.set_antialias (cairo.ANTIALIAS_NONE)
+    ###############################
+    #            draw             #
+    ###############################
     
+    def draw (self, context, r):
+        #context.set_antialias (cairo.ANTIALIAS_NONE)
+        
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -323,15 +335,34 @@ class BoardView (gtk.DrawingArea):
         if not self.history: return
         pieces = self.history[self.shown]
         self.drawSpecial (context, r)
+        self.drawEnpassant (context, r)
         self.drawArrows (context)
         self.drawPieces (context, pieces, r)
         self.drawLastMove (context, r)
-        
+                
         # Unselect to mark redrawn areas - for debugging purposes
-        #context.rectangle(r.x,r.y,r.width,r.height)
-        #context.set_source_rgb(1,0,0)
-        #context.stroke()
-        
+        context.rectangle(r.x,r.y,r.width,r.height)
+        dc = self.drawcount*50
+        dc = dc % 1536
+        c = dc % 256 / 255.
+        if dc < 256:
+            context.set_source_rgb(1,c,0)
+        elif dc < 512:
+            context.set_source_rgb(1-c,1,0)
+        elif dc < 768:
+            context.set_source_rgb(0,1,c)
+        elif dc < 1024:
+            context.set_source_rgb(0,1-c,1)
+        elif dc < 1280:
+            context.set_source_rgb(c,0,1)
+        elif dc < 1536:
+            context.set_source_rgb(1,0,1-c)
+        context.stroke()
+    
+    ###############################
+    #          drawCords          #
+    ###############################
+    
     def drawCords (self, context, r):
         thickness = 0.01
         signsize = 0.04
@@ -381,6 +412,10 @@ class BoardView (gtk.DrawingArea):
             context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
             context.show_layout(layout)
     
+    ###############################
+    #          drawBoard          #
+    ###############################
+    
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
         for x in range8:
@@ -392,6 +427,10 @@ class BoardView (gtk.DrawingArea):
         context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
         context.fill()
     
+    ###############################
+    #         drawPieces          #
+    ###############################
+    
     def drawPieces(self, context, pieces, r):
         xc, yc, square, s = self.square
         
@@ -400,20 +439,20 @@ class BoardView (gtk.DrawingArea):
         for piece, x, y in self.deadlist:
             x = (self.fromWhite and [x] or [7-x])[0]
             y = (self.fromWhite and [7-y] or [y])[0]
-            context.move_to(xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER)
             context.set_source_rgba(0,0,0,piece.opacity)
-            drawPiece(piece, context, s-CORD_BORDER*2)
-            context.fill()
+            drawPiece(  piece, context,
+                        xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER,
+                        s-CORD_BORDER*2)
             
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
                 if not piece or piece.opacity == 1:
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
-                context.move_to(cx+CORD_BORDER, cy+CORD_BORDER)
                 context.set_source_rgba(0,0,0,piece.opacity)
-                drawPiece(piece, context, s-CORD_BORDER*2)
-                context.fill()
+                drawPiece(  piece, context,
+                            cx+CORD_BORDER, cy+CORD_BORDER,
+                            s-CORD_BORDER*2)
                 
         context.set_source_rgb(0,0,0)
         
@@ -424,8 +463,9 @@ class BoardView (gtk.DrawingArea):
                 if not intersects(rect(self.cord2Rect(Cord(x,y))), r):
                     continue
                 cx, cy = self.cord2Point(Cord(x,y))
-                context.move_to(cx+CORD_BORDER, cy+CORD_BORDER)
-                drawPiece(piece, context, s-CORD_BORDER*2)
+                drawPiece(  piece, context,
+                            cx+CORD_BORDER, cy+CORD_BORDER,
+                            s-CORD_BORDER*2)
         
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
@@ -433,10 +473,13 @@ class BoardView (gtk.DrawingArea):
                     continue
                 x = (self.fromWhite and [piece.x] or [7-piece.x])[0]
                 y = (self.fromWhite and [7-piece.y] or [piece.y])[0]
-                context.move_to(xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER)
-                drawPiece(piece, context, s-CORD_BORDER*2)
-        
-        context.fill()
+                drawPiece(  piece, context,
+                            xc+x*s+CORD_BORDER, yc+y*s+CORD_BORDER,
+                            s-CORD_BORDER*2)
+    
+    ###############################
+    #         drawSpecial         #
+    ###############################
     
     def drawSpecial (self, context, redrawn):
         used = []
@@ -445,6 +488,8 @@ class BoardView (gtk.DrawingArea):
                             (self.hover, gtk.STATE_PRELIGHT)):
             if not cord: continue
             if cord in used: continue
+            # Ensure that same cord, if having multiple "tasks", doesn't get
+            # painted more than once
             used += [cord]
             xc, yc, square, s = self.square
             x, y = self.cord2Point(cord)
@@ -453,6 +498,10 @@ class BoardView (gtk.DrawingArea):
             style = self.isLight(cord) and self.get_style().bg or self.get_style().dark
             context.set_source_color(style[state])
             context.fill()
+    
+    ###############################
+    #        drawLastMove         #
+    ###############################
     
     def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
@@ -520,7 +569,11 @@ class BoardView (gtk.DrawingArea):
                 context.fill_preserve()
                 context.set_source_rgba(*dark_yellow)
                 context.stroke()
-                
+    
+    ###############################
+    #         drawArrows          #
+    ###############################
+    
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         
@@ -577,6 +630,35 @@ class BoardView (gtk.DrawingArea):
             drawArrow(self.redarrow, (.937,.16,.16,0.9), (.643,0,0,1))
         if self.bluearrow:
             drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
+    
+    ###############################
+    #        drawEnpassant        #
+    ###############################
+    
+    def drawEnpassant (self, context, redrawn):
+        if not self.showEnpassant: return
+        enpassant = self.history[-1].enpassant
+        if not enpassant: return
+        
+        context.set_source_rgb(0, 0, 0)
+        xc, yc, square, s = self.square
+        x, y = self.cord2Point(enpassant)
+        if not intersects(rect((x, y, s, s)), redrawn): return
+        
+        x, y = self.cord2Point(enpassant)
+        cr = context
+        cr.set_font_size(s/2.)
+        fascent, fdescent, fheight, fxadvance, fyadvance = cr.font_extents()
+        chars = "en"
+        xbearing, ybearing, width, height, xadvance, yadvance = \
+                cr.text_extents(chars)
+        cr.move_to(x + s / 2. - xbearing - width / 2.-1,
+                   s / 2. + y - fdescent + fheight / 2.)
+        cr.show_text(chars)
+        
+    ###############################
+    #        redraw_canvas        #
+    ###############################
     
     def redraw_canvas(self, r=None):
         if self.window:
@@ -694,7 +776,19 @@ class BoardView (gtk.DrawingArea):
     def _get_showCords (self):
         return self._showCords
     showCords = property(_get_showCords, _set_showCords)
-        
+    
+    def _set_showEnpassant (self, showEnpassant):
+        if self._showEnpassant == showEnpassant: return
+        enpascord = self.history[-1].enpassant
+        if enpascord:
+            r = rect(self.cord2Rect(enpascord))
+            print "redrawing tha cord"
+            self.redraw_canvas(r)
+        self._showEnpassant = showEnpassant
+    def _get_showEnpassant (self):
+        return self._showEnpassant
+    showEnpassant = property(_get_showEnpassant, _set_showEnpassant)
+    
     ###########################
     #          Other          #
     ###########################

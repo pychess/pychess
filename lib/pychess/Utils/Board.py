@@ -2,21 +2,22 @@ import sys
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
 from pychess.System.Log import log
+from pychess.System.MultiArray import MultiArray
 from pychess.Utils.const import *
 from pychess.Utils import validator
 
 # We use 64 bit for comparing, but only 32 for __hash__
-zobritMax = 2**64
+#zobritMax = 2**64
+zobritMax = sys.maxint
 from random import randint
-zobrit = []
-for piece in (WHITE, BLACK):
-    zobrit.append([])
-    for color in (KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN):
-        zobrit[-1].append([])
+zobritOnline = []
+for color in range(2):
+    for piece in range(8):
         for x in range(8):
-            zobrit[-1][-1].append([])
             for y in range(8):
-                zobrit[-1][-1][-1].append(randint(0,zobritMax))
+                n = randint(0,zobritMax)
+                zobritOnline.append(n)
+zobrit = MultiArray('I',8,zobritOnline)
 
 def rm (var, opp):
     if var & opp:
@@ -44,17 +45,13 @@ class Board:
             for y, row in enumerate(self.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
-                    try:
-                        self.myhash ^= zobrit[piece.color][piece.sign][x][y]
-                    except: print [piece.color,piece.sign,x,y]
+                    self.myhash ^= zobrit.get(piece.color,piece.sign,x,y)
         else: self.myhash = ar_hash
     
     def _move (self, cord0, cord1):
     	p = self[cord0]
-    	if not p:
-    		print cord0, cord1, self
-    	self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
-        self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
+    	self.myhash = self.myhash ^ zobrit.get(p.color,p.sign,cord0.x,cord0.y)
+        self.myhash = self.myhash ^ zobrit.get(p.color,p.sign,cord1.x,cord1.y)
     	self[cord1] = p
         self[cord0] = None
     
@@ -89,15 +86,15 @@ class Board:
             if cord0.x != cord1.x and board[cord1] == None:
                 q = board.data[cord0.y][cord1.x]
                 if q:
-                    board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
+                    board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord1.x,cord0.y)
                     board.data[cord0.y][cord1.x] = None
         
         elif p.sign == PAWN and cord1.y in (0,7):
             q = board[cord0]
-            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
+            board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord0.x,cord0.y)
             board[cord0] = Piece(q.color, move.promotion)
             q = board[cord0]
-            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord0.x][cord0.y]
+            board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord0.x,cord0.y)
         
         if cord1 == a8:
             board.castling = rm(board.castling, BLACK_OOO)
@@ -221,4 +218,7 @@ class Board:
         return b
     
     def __hash__ (self):
-        return hash(self.myhash) -1 + self.color
+        v = int(self.myhash)
+        if v > sys.maxint:
+            v  = v >> 1
+        return v -1 + self.color
