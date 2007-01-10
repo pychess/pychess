@@ -11,14 +11,7 @@ __append__ = True
 
 def save (file, game):
     history = game.history
-
-    #from pwd import getpwuid
-    #from os import getuid
-    #userdata = getpwuid(getuid())
-    #name = userdata.pw_gecos
-    #if not name:
-    #    name = userdata.pw_name
-    
+        
     #result = reprResult[history.status]
     game_status = reprResult[game.history.boards[-1].status]
 

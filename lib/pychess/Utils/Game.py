@@ -59,16 +59,22 @@ class Game (GObject):
         self.player2.connect("action", callback)
     
     def load (self, uri, gameno, position, loader):
-        ending = uri[uri.rfind(".")+1:]
-        chessfile = loader.load(protoopen(uri))
+        uriIsFile = type(uri) != str
+        if uriIsFile:
+            chessfile = loader.load(uri)
+        else:
+            chessfile = loader.load(protoopen(uri))
         
         self.gmwidg.widgets["board"].view.autoUpdateShown = False
         chessfile.loadToHistory(gameno, position, self.history)
         self.gmwidg.widgets["board"].view.autoUpdateShown = True
         self.gmwidg.widgets["board"].view.shown = len(self.history)-1
         
-        writeable = len(chessfile) == 1 and os.access (uri[7:], os.W_OK)
-        self.lastSave = (self.history.clone(), uri[7:], writeable)
+        if not uriIsFile:
+            writeable = len(chessfile) == 1 and os.access (uri[7:], os.W_OK)
+            self.lastSave = (self.history.clone(), uri[7:], writeable)
+        else:
+            self.lastSave = (self.history.clone(), "", False)
         
         self.event = chessfile.get_event(gameno)
         self.site = chessfile.get_site(gameno)

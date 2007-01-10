@@ -49,6 +49,14 @@ else:
 path = "env python "+path
 availableEngines.append( (CECPEngine, (path,)) )
 
+from ProtocolEngine import ProtocolEngine
+from UCIProtocol import UCIProtocol
+path = "/home/thomas/Programmering/python/skak/ShredderClassic/engines/ShredderClassicLinux"
+availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
+
+path = "/home/thomas/Programmering/python/skak/fruit_21_linux/fruit_21_static"
+availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
+
 ###################
 
 infoFound = False
@@ -67,6 +75,10 @@ def _addToDic (key, value):
         infoFound = True
         infocond.notify()
         infocond.release()
+    gotthose = [os.path.split(k[1][-1])[1] for k in engineDic.keys()]
+    needthose = [os.path.split(a[-1])[1] for e,a in availableEngines if not (e,a) in engineDic]
+    print "got %d engines. %s; Needs %s" % (
+        len(engineDic), " ".join(gotthose), " ".join(needthose))
     diclock.release()
 
 import thread

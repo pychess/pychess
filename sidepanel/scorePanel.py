@@ -58,15 +58,27 @@ class ScorePlot (gtk.DrawingArea):
         width = self.get_allocation().width
         height = (len(self.scores)-1)*self.moveHeight
         
+        ########################################
+        # Draw background                      #
+        ########################################
+        
         cr.set_source_rgb (1, 1, 1)
         cr.rectangle(0, 0, width, height)
         cr.fill()
+        
+        ########################################
+        # Draw dark middle line                #
+        ########################################
         
         cr.set_source_rgb (0, 0, 0)
         cr.move_to(width/2., 0)
         cr.line_to(width/2., height)
         cr.set_line_width(0.15)
         cr.stroke()
+        
+        ########################################
+        # Draw the actual plot (dark area)     #
+        ########################################
         
         cr.set_source_rgb (0, 0, 0)
         cr.move_to(width, 0)
@@ -77,7 +89,24 @@ class ScorePlot (gtk.DrawingArea):
             y = i * self.moveHeight
             cr.line_to(x, y)
         cr.line_to(width, height)
-        cr.fill()
+        cr.fill_preserve()
+        
+        ########################################
+        # Draw light middle line               #
+        ########################################
+        
+        cr.save()
+        cr.clip()
+        cr.set_source_rgb (1, 1, 1)
+        cr.move_to(width/2., 0)
+        cr.line_to(width/2., height)
+        cr.set_line_width(0.15)
+        cr.stroke()
+        cr.restore()
+        
+        ########################################
+        # Draw selection                       #
+        ########################################
         
         if self.selected >= 1:
             lw = 2.
