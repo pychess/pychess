@@ -233,7 +233,7 @@ def go ():
             starttime = time()
             endtime = starttime + usetime
             print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
-            for depth in range(sd):
+            for depth in range(1,sd+1):
                 mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
                 if time() > endtime: break
             move = mvs[0]
