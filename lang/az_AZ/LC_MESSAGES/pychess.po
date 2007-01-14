@@ -1,0 +1,494 @@
+# translation of PyChess.
+# Copyright (C) 2006 THE PyChess'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PyChess package.
+# Thomas Dybdahl Ahle <thomas@ahle.dk>, 2006.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PyChess 0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-14 22:34+0100\n"
+"PO-Revision-Date: 2006-12-15 23:22+0400\n"
+"Last-Translator: Elxan İsmayılov <elxan.i@gmail.com>\n"
+"Language-Team:\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/gamepreview.glade:114
+msgid "<b>Open game</b>"
+msgstr "<b>Oyun Aç</b>"
+
+#: glade/gamepreview.glade:129
+#: lib/pychess/widgets/ionest.py:39
+msgid "Open Game"
+msgstr "Oyunu Aç"
+
+#: glade/gamepreview.glade:453
+msgid "<b>Initial position</b>"
+msgstr "<b>Başlanğıc vəziyyət</b>"
+
+#: glade/newInOut.glade:12
+#: lib/pychess/widgets/ionest.py:37
+msgid "Save Game"
+msgstr "Oyunu Qeyd Et"
+
+#: glade/newInOut.glade:107
+msgid "Choose filetype (By extension)"
+msgstr "Fayl tipinə görə seç (Genişlənmə ilə)"
+
+#: glade/newInOut.glade:139
+msgid "New Game"
+msgstr "Yeni Oyun"
+
+#: glade/newInOut.glade:228
+msgid "_Start Game"
+msgstr "Oyuna _Başla"
+
+#: glade/newInOut.glade:338
+#: glade/newInOut.glade:491
+msgid "White Player:"
+msgstr "Ağ Oyunçu:"
+
+#: glade/newInOut.glade:366
+#: glade/newInOut.glade:519
+msgid "Black Player:"
+msgstr "Qara oyunçu:"
+
+#: glade/newInOut.glade:420
+msgid "<b>Players</b>"
+msgstr "<b>Oyunçular</b>"
+
+#: glade/newInOut.glade:593
+msgid "<b>Difficulty</b>"
+msgstr "<b>Çətinlik</b>"
+
+#: glade/newInOut.glade:662
+msgid "Game has time"
+msgstr "Vaxtlı oyun"
+
+#: glade/newInOut.glade:707
+msgid "Hours:"
+msgstr "Saat:"
+
+#: glade/newInOut.glade:735
+msgid "Minutes: "
+msgstr "Dəqiqə:"
+
+#: glade/newInOut.glade:763
+msgid "Seconds: "
+msgstr "Saniyə:"
+
+# "Gain" as in "gain per move"
+#: glade/newInOut.glade:791
+msgid "Gain:"
+msgstr "Nəaliyyət:"
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/newInOut.glade:928
+msgid "<b>Alarm</b>"
+msgstr "<b>Xəbərdarlıq</b>"
+
+#: glade/promotion.glade:9
+msgid "Promotion"
+msgstr "Çevirmə"
+
+#: glade/promotion.glade:40
+msgid "Queen"
+msgstr "Vəzir"
+
+#: glade/promotion.glade:54
+msgid "Rook"
+msgstr "Top"
+
+#: glade/promotion.glade:67
+msgid "Bishop"
+msgstr "Fil"
+
+#: glade/promotion.glade:80
+msgid "Knight"
+msgstr "At"
+
+#: glade/promotion.glade:99
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>Piyadanı nəyə çevirəcəksiniz?</big></b>"
+
+#: glade/PyChess.glade:39
+msgid "_Game"
+msgstr "_Oyun"
+
+#: glade/PyChess.glade:48
+msgid "_New Game"
+msgstr "_Yeni Oyun"
+
+#: glade/PyChess.glade:70
+msgid "_Load Game"
+msgstr "Oyun _Yüklə"
+
+#: glade/PyChess.glade:99
+msgid "_Save Game"
+msgstr "_Oyunu Qeyd Et"
+
+#: glade/PyChess.glade:122
+msgid "Save Game _As"
+msgstr "Oyunu _Fərqli Qeyd Et"
+
+#: glade/PyChess.glade:190
+msgid "_Actions"
+msgstr "_Əməliyyatlar"
+
+# Lets you win the game, if opponent is out of time
+#: glade/PyChess.glade:199
+msgid "_Call Flag"
+msgstr "_Bayrağı Endir"
+
+# Offer Draw
+#: glade/PyChess.glade:208
+msgid "_Draw"
+msgstr "_Bərabərə"
+
+#: glade/PyChess.glade:217
+msgid "_Resign"
+msgstr "_Təslim ol"
+
+# Makes the computer engine move instantly (and might send a network player a "wink" in a later version)
+#: glade/PyChess.glade:232
+msgid "_Force to move"
+msgstr "Oynamağa _məcbur et"
+
+#: glade/PyChess.glade:259
+msgid "_View"
+msgstr "_Görünüş"
+
+#: glade/PyChess.glade:268
+msgid "_Rotate Board"
+msgstr "Taxtanı _Çevir"
+
+#: glade/PyChess.glade:289
+msgid "_Side Panel"
+msgstr "_Yan Panel"
+
+#: glade/PyChess.glade:300
+msgid "_Log Viewer"
+msgstr "_Qeyd İzləyicisi"
+
+#: glade/PyChess.glade:317
+msgid "Show _cords"
+msgstr "_Kordinatları göstər"
+
+#: glade/PyChess.glade:327
+msgid "_Hint mode"
+msgstr "_Kömək modu"
+
+#: glade/PyChess.glade:338
+msgid "Sp_y mode"
+msgstr "_Şpion modu"
+
+#: glade/PyChess.glade:353
+msgid "_Help"
+msgstr "_Yardım"
+
+#: glade/PyChess.glade:362
+msgid "About Chess"
+msgstr "Şahmat Haqqında"
+
+#: glade/PyChess.glade:383
+msgid "How to play"
+msgstr "Necə oynamalı"
+
+#: glade/PyChess.glade:443
+msgid "Chessclient for the Gnome desktop"
+msgstr "Gnome masaüstü üçün şahmat"
+
+# You might be able to find this one on the web.
+# You might also skip translating it.
+#: glade/PyChess.glade:444
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+
+# No need for translating this one :)
+# I just wasn't able to convince glade that the string was not translateable
+#: glade/PyChess.glade:459
+msgid "http://code.google.com/p/pychess/"
+msgstr "http://code.google.com/p/pychess/"
+
+#: glade/PyChess.glade:474
+msgid "Game information"
+msgstr "Oyun haqda məlumat"
+
+# In the chessclock
+#: glade/PyChess.glade:597
+msgid "Site:"
+msgstr "Veb Saytı:"
+
+#: glade/PyChess.glade:625
+msgid "Round:"
+msgstr "Raund:"
+
+#: glade/PyChess.glade:716
+msgid "Event:"
+msgstr "Hadisə:"
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/PyChess.glade:753
+msgid "<b>Game data</b>"
+msgstr "<b>Oyun </b>"
+
+#: glade/PyChess.glade:830
+msgid "<b>Date of game</b>"
+msgstr "<b>Oyunun tarixi</b>"
+
+#: lib/pychess/Main.py:30
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>%s mühərriki öldü</b></big>"
+
+#: lib/pychess/Main.py:31
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against another one."
+msgstr ""
+"PyChess mühərriklə əlaqəni itirdi, çox yəqin ki, o öldü.\n"
+"\n"
+"Siz mühərriklə yeni başalamağı və ya başqasına qarşı oynamağı yoxlaya bilərsiniz."
+
+# This page is opened by the "About chess" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:252
+msgid "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://en.wikipedia.org/wiki/Chess"
+
+# This page is opened by the "How to play" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:255
+msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr "http://en.wikipedia.org/wiki/Rules_of_chess"
+
+# In the chessclock
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "White"
+msgstr "Ağ"
+
+# In the chessclock
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "Black"
+msgstr "Qara"
+
+#: lib/pychess/widgets/ionest.py:47
+msgid "All Files"
+msgstr "Bütün Fayllar"
+
+#: lib/pychess/widgets/ionest.py:50
+msgid "Detect type automatically"
+msgstr "Növü avtomatik təyin et"
+
+#: lib/pychess/widgets/ionest.py:53
+msgid "All Chess Files"
+msgstr "Bütün Şahmat Faylları"
+
+#: lib/pychess/widgets/ionest.py:115
+msgid "Beginner"
+msgstr "Təzə başlayan"
+
+#: lib/pychess/widgets/ionest.py:116
+msgid "Intermediate"
+msgstr "Orta səviyyəli"
+
+#: lib/pychess/widgets/ionest.py:117
+msgid "Expert"
+msgstr "Ekspert"
+
+#: lib/pychess/widgets/ionest.py:131
+msgid "Human Being"
+msgstr "İnsan"
+
+#: lib/pychess/widgets/ionest.py:315
+#, python-format
+msgid "<big><b>Unknown filetype '%s'</b></big>"
+msgstr "<big><b>Naməlum '%s' fayl tipi</b></big>"
+
+#: lib/pychess/widgets/ionest.py:316
+#, python-format
+msgid "Wasn't able to save '%s' as pychess doesn't know the format '%s'."
+msgstr "'%s' qeyd oluna bilmədi, çünkü pychess '%s' formatını tanımır."
+
+#: lib/pychess/widgets/ionest.py:329
+msgid "_Replace"
+msgstr "Ə_vəz et"
+
+#: lib/pychess/widgets/ionest.py:331
+msgid "File exists"
+msgstr "Fayl mövcuddur"
+
+#: lib/pychess/widgets/ionest.py:333
+#, python-format
+msgid "<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>"
+msgstr "<big><b>'%s' adlı fayl artıq mövcuddur. Onu əvəz etmək istəyirsinizmi?</b></big>"
+
+#: lib/pychess/widgets/ionest.py:334
+#, python-format
+msgid "The file alredy exists in '%s'. If you replace it, its content will be overwritten."
+msgstr "'%s' qovluğunda eyni adlı fayla mövcuddur. Əgər siz onu əvəz etsəniz, onun tərkibi dəyişəcək."
+
+#: lib/pychess/widgets/ionest.py:356
+msgid "<b><big>Save the current game before you close it?</big></b>"
+msgstr "<b><big>Hal-hazırkı oyun bağlanmadan öncə qeyd edilsin?</big></b>"
+
+#: lib/pychess/widgets/ionest.py:358
+msgid ""
+"It is not possible later to continue the game,\n"
+"if do don't save it."
+msgstr ""
+"Əgər siz oyunu yadda saxlamasanız,\n"
+"daha sonra oynu davam ettirmək olmayacaq."
+
+#: lib/pychess/widgets/ionest.py:375
+#, python-format
+msgid "<big><b>There are %d games with unsaved changes:</b></big>"
+msgstr "<big><b>%d sayda qeyd edilməmiş dəyişikliyi olan oyun var:</b></big>"
+
+# The event at which the game was played
+#: lib/pychess/Utils/Game.py:39
+msgid "Local Event"
+msgstr "Yerli Hadisə"
+
+# The location at witch the game was played
+#: lib/pychess/Utils/Game.py:41
+msgid "Local site"
+msgstr "Yerli "
+
+#: lib/pychess/Utils/Game.py:154
+msgid "The game ended in a draw"
+msgstr "Oyun bərabərə qurtardı."
+
+#: lib/pychess/Utils/Game.py:155
+msgid "White player won the game"
+msgstr "Oyunu ağlar uddu."
+
+#: lib/pychess/Utils/Game.py:156
+msgid "Black player won the game"
+msgstr "Oyunu qaralar uddu."
+
+# The the context: The game ended in a draw...
+#: lib/pychess/Utils/Game.py:159
+msgid "caused by insufficient material"
+msgstr "qeyri-kafi materiala görə oldu"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:160
+msgid "as the same position was repeated three times in a row"
+msgstr "Eyni vəziyyət üç dəfə təkrarlandı."
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:161
+msgid "as the last 50 moves brought nothing new"
+msgstr "Son 50 gediş heç nəyi dəyişmədiyinə görə"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:162
+msgid "because of stalemate"
+msgstr "Pat olduğu üçün"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:163
+msgid "as the players agreed to"
+msgstr "Oyunçular razılaşdı"
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:164
+msgid "as opponent resigned"
+msgstr "Rəqib təslim oldu."
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:165
+msgid "as opponent ran out of time"
+msgstr "Rəqibin vaxtı qurtardı."
+
+# In the sentence "The game has (e.g. ended) ..."
+#: lib/pychess/Utils/Game.py:166
+msgid "on a mate"
+msgstr "Mat oldu."
+
+#: lib/pychess/Utils/Game.py:177
+msgid "Draw offer has been sent"
+msgstr "Bərabərlik təklif olundu"
+
+#: lib/pychess/Utils/Game.py:187
+msgid "Couldn't call flag in game with no timecontrols"
+msgstr "Bayrağı endirmək mümkün olmadı. Heç bir vaxt idarəsi yoxdur"
+
+#: lib/pychess/Utils/Game.py:194
+msgid "Couldn't call flag on player not out of time"
+msgstr "Bayrağı endirmək mümkün olmadı. Oyunçunun vaxtı qurtarmayıb"
+
+#: lib/pychess/Savers/epd.py:9
+msgid "Chess Position"
+msgstr "Şahmat vəziyyəti"
+
+#: lib/pychess/Savers/pgn.py:7
+msgid "Chess Game"
+msgstr "Şahmat Oyunu"
+
+#: lib/pychess/Players/Human.py:59
+msgid "<big><b>You've got a draw offer. Accept?</b></big>"
+msgstr "<big><b>Sizə bərabərlik təklif olunur. Qəbul edirsinizmi?</b></big>"
+
+#: lib/pychess/Players/Human.py:60
+msgid "Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."
+msgstr "Rəqibiniz sizə bərabərlik təklif edib. Əgər qəbul etsəniz, oyun 1/2 - 1/2 hesabı ilə bitəcək."
+
+#: sidepanel/bookPanel.py:7
+msgid "Opening Book"
+msgstr "Açılış"
+
+#: sidepanel/bookPanel.py:50
+msgid ""
+"In this position,\n"
+"there is no book move."
+msgstr ""
+"Bu vəziyyətdə,\n"
+"heç bir nəzəri gediş yoxdur."
+
+#: sidepanel/historyPanel.py:11
+msgid "Move History"
+msgstr "Gedişlərin Siyahısı"
+
+#: sidepanel/scorePanel.py:94
+msgid "Score"
+msgstr "Hesab"
+
+#~ msgid "You are not currently playing any game pychess can save for you."
+#~ msgstr ""
+#~ "Siz hal-hazırda pychess-in qeyd edə biləcəyi heç bir oyun oynamırsınız."
+

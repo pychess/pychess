@@ -1,0 +1,479 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Pychess 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-14 22:34+0100\n"
+"PO-Revision-Date: 2006-12-14 22:51+0100\n"
+"Last-Translator: Thomas Dybdahl Ahle <thomas@ahle.dk>\n"
+"Language-Team: Danish <thomas@ahle.dk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: glade/gamepreview.glade:114
+msgid "<b>Open game</b>"
+msgstr "<b>Åben spil</b>"
+
+#: glade/gamepreview.glade:129
+#: lib/pychess/widgets/ionest.py:39
+msgid "Open Game"
+msgstr "_Åbn Spil"
+
+#: glade/gamepreview.glade:453
+msgid "<b>Initial position</b>"
+msgstr "<b>Ugangsposition</b>"
+
+#: glade/newInOut.glade:12
+#: lib/pychess/widgets/ionest.py:37
+msgid "Save Game"
+msgstr "_Gem spil"
+
+#: glade/newInOut.glade:107
+msgid "Choose filetype (By extension)"
+msgstr "Vælg filtype"
+
+#: glade/newInOut.glade:139
+msgid "New Game"
+msgstr "Nyt spil"
+
+#: glade/newInOut.glade:228
+msgid "_Start Game"
+msgstr "_Start spil"
+
+#: glade/newInOut.glade:338
+#: glade/newInOut.glade:491
+msgid "White Player:"
+msgstr "Hvid spiller"
+
+#: glade/newInOut.glade:366
+#: glade/newInOut.glade:519
+msgid "Black Player:"
+msgstr "Sort spiller"
+
+#: glade/newInOut.glade:420
+msgid "<b>Players</b>"
+msgstr "<b>Spillere</b>"
+
+#: glade/newInOut.glade:593
+msgid "<b>Difficulty</b>"
+msgstr "<b>Sværhedsgrad</b>"
+
+#: glade/newInOut.glade:662
+msgid "Game has time"
+msgstr "Spil med tid"
+
+#: glade/newInOut.glade:707
+msgid "Hours:"
+msgstr "Timer"
+
+#: glade/newInOut.glade:735
+msgid "Minutes: "
+msgstr "Minutter"
+
+#: glade/newInOut.glade:763
+msgid "Seconds: "
+msgstr "Sekunder"
+
+#: glade/newInOut.glade:791
+msgid "Gain:"
+msgstr "Ekstra"
+
+#: glade/newInOut.glade:928
+msgid "<b>Alarm</b>"
+msgstr "<b>Alarm</b>"
+
+#: glade/promotion.glade:9
+msgid "Promotion"
+msgstr "Udskiftelse"
+
+#: glade/promotion.glade:40
+msgid "Queen"
+msgstr "Dronning"
+
+#: glade/promotion.glade:54
+msgid "Rook"
+msgstr "Tårn"
+
+#: glade/promotion.glade:67
+msgid "Bishop"
+msgstr "Løber"
+
+#: glade/promotion.glade:80
+msgid "Knight"
+msgstr "Springer"
+
+#: glade/promotion.glade:99
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>Udskift bonde med hvad?</big></b>"
+
+#: glade/PyChess.glade:39
+msgid "_Game"
+msgstr "_Spil"
+
+#: glade/PyChess.glade:48
+msgid "_New Game"
+msgstr "_Nyt spil"
+
+#: glade/PyChess.glade:70
+msgid "_Load Game"
+msgstr "_Åbn spil"
+
+#: glade/PyChess.glade:99
+msgid "_Save Game"
+msgstr "_Gem spil"
+
+#: glade/PyChess.glade:122
+msgid "Save Game _As"
+msgstr "Gem spil _som"
+
+#: glade/PyChess.glade:190
+msgid "_Actions"
+msgstr "_Handlinger"
+
+#: glade/PyChess.glade:199
+msgid "_Call Flag"
+msgstr "_Kræv sejr ved tid"
+
+#: glade/PyChess.glade:208
+msgid "_Draw"
+msgstr "_Tilbyd remis"
+
+#: glade/PyChess.glade:217
+msgid "_Resign"
+msgstr "_Opgiv"
+
+#: glade/PyChess.glade:232
+msgid "_Force to move"
+msgstr "_Ryk nu"
+
+#: glade/PyChess.glade:259
+msgid "_View"
+msgstr "_Vis"
+
+#: glade/PyChess.glade:268
+msgid "_Rotate Board"
+msgstr "_Rotér brædt"
+
+#: glade/PyChess.glade:289
+msgid "_Side Panel"
+msgstr "_Side Panel"
+
+#: glade/PyChess.glade:300
+msgid "_Log Viewer"
+msgstr "_Logviser"
+
+#: glade/PyChess.glade:317
+msgid "Show _cords"
+msgstr "Vis _koordinater"
+
+#: glade/PyChess.glade:327
+msgid "_Hint mode"
+msgstr "_Hint mode"
+
+#: glade/PyChess.glade:338
+msgid "Sp_y mode"
+msgstr "S_pion mode"
+
+#: glade/PyChess.glade:353
+msgid "_Help"
+msgstr "_Hjælp"
+
+#: glade/PyChess.glade:362
+msgid "About Chess"
+msgstr "Om skak"
+
+#: glade/PyChess.glade:383
+msgid "How to play"
+msgstr "Spilleregler"
+
+#: glade/PyChess.glade:443
+msgid "Chessclient for the Gnome desktop"
+msgstr "Skakprogram for Gnome"
+
+#: glade/PyChess.glade:444
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+"PyChess fri software; du må redistribuere det og/eller modificere\n"
+"det under betingelserne givet i GNU General Public License som publiceret af\n"
+"Free Software Foundation; enten version 2, eller (efter dit valg) en senere\n"
+"version.\n"
+"\n"
+"PyChess distribueres i håbet om, at det vil være nyttigt, men UDEN\n"
+"NOGEN GARANTI; end ikke en underforstået garanti for SALGBARHED eller\n"
+"ANVENDELIGHED TIL ET GIVET FORMÅL.  Se GNU General Public License for\n"
+"flere detaljer.\n"
+"\n"
+"Du skulle have modtaget en kopi af GNU General Public License sammen med\n"
+"PyChess; hvis ikke, så skriv til Free Software Foundation, Inc.,\n"
+"59 Temple Place - Suite 330, Boston, MA 02111-1307, USA."
+
+#: glade/PyChess.glade:459
+msgid "http://code.google.com/p/pychess/"
+msgstr "http://code.google.com/p/pychess/"
+
+#: glade/PyChess.glade:474
+msgid "Game information"
+msgstr "Spil information"
+
+#: glade/PyChess.glade:597
+msgid "Site:"
+msgstr "Sted:"
+
+#: glade/PyChess.glade:625
+msgid "Round:"
+msgstr "Runde:"
+
+#: glade/PyChess.glade:716
+msgid "Event:"
+msgstr "Sammenhæng:"
+
+#: glade/PyChess.glade:753
+msgid "<b>Game data</b>"
+msgstr "<b>Spil data</b>"
+
+#: glade/PyChess.glade:830
+msgid "<b>Date of game</b>"
+msgstr "<b>Spil dato</b>"
+
+#: lib/pychess/Main.py:30
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>Skakprogrammet, %s, er gået ned</b></big>"
+
+#: lib/pychess/Main.py:31
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against another one."
+msgstr ""
+"PyChess har mistet forbindelsen til skakprogrammet, formenligt fordi det er gået ned.\n"
+"\n"
+"Du kan prøve at starte et nyt spil mod programmet, eller spille mod et andet program."
+
+# This page is opened by the "About chess" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:252
+msgid "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://da.wikipedia.org/wiki/Skak"
+
+# This page is opened by the "How to play" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+# If not possible, simply leave it.
+#: lib/pychess/Main.py:255
+msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr "http://da.wikipedia.org/wiki/Skak#Spilleregler"
+
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "White"
+msgstr "Hvid"
+
+#: lib/pychess/widgets/ChessClock.py:15
+msgid "Black"
+msgstr "Sort"
+
+#: lib/pychess/widgets/ionest.py:47
+msgid "All Files"
+msgstr "Alle filer"
+
+#: lib/pychess/widgets/ionest.py:50
+msgid "Detect type automatically"
+msgstr "Find type automatisk"
+
+#: lib/pychess/widgets/ionest.py:53
+msgid "All Chess Files"
+msgstr "Alle skakfiler"
+
+#: lib/pychess/widgets/ionest.py:115
+msgid "Beginner"
+msgstr "Begynder"
+
+#: lib/pychess/widgets/ionest.py:116
+msgid "Intermediate"
+msgstr "Øvet"
+
+#: lib/pychess/widgets/ionest.py:117
+msgid "Expert"
+msgstr "Ekspert"
+
+#: lib/pychess/widgets/ionest.py:131
+msgid "Human Being"
+msgstr "Menneske"
+
+#: lib/pychess/widgets/ionest.py:315
+#, python-format
+msgid "<big><b>Unknown filetype '%s'</b></big>"
+msgstr "<big><b>Ukendt filtype '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:316
+#, python-format
+msgid "Wasn't able to save '%s' as pychess doesn't know the format '%s'."
+msgstr "Kunne ikke gemme '%s' da PyChess ikke kender formatet '%s'."
+
+#: lib/pychess/widgets/ionest.py:329
+msgid "_Replace"
+msgstr "_Overskriv"
+
+#: lib/pychess/widgets/ionest.py:331
+msgid "File exists"
+msgstr "Filen eksisterer"
+
+#: lib/pychess/widgets/ionest.py:333
+#, python-format
+msgid "<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>"
+msgstr "<big><b>En fil ved navnet '%s' findes allerede. Vil du overskrive den?</b></big>"
+
+#: lib/pychess/widgets/ionest.py:334
+#, python-format
+msgid "The file alredy exists in '%s'. If you replace it, its content will be overwritten."
+msgstr "Filen finders allerede i '%s'. Hvis du overskrive den, vil dens indhold blive slettet"
+
+#: lib/pychess/widgets/ionest.py:356
+msgid "<b><big>Save the current game before you close it?</big></b>"
+msgstr "<b><big>Gem nuværende spil før du lukker det?</big></b>"
+
+#: lib/pychess/widgets/ionest.py:358
+msgid ""
+"It is not possible later to continue the game,\n"
+"if do don't save it."
+msgstr "Det er ikke muligt senere at fortsætte spillet, hvis ikke spillet gemmes"
+
+#: lib/pychess/widgets/ionest.py:375
+#, python-format
+msgid "<big><b>There are %d games with unsaved changes:</b></big>"
+msgstr "<big><b>Der er %d spil med ugemte ændringer:</b></big>"
+
+# The event at which the game was played
+#: lib/pychess/Utils/Game.py:39
+msgid "Local Event"
+msgstr "Lokalt spil"
+
+# The location at witch the game was played
+#: lib/pychess/Utils/Game.py:41
+msgid "Local site"
+msgstr "Lokalt"
+
+#: lib/pychess/Utils/Game.py:154
+msgid "The game ended in a draw"
+msgstr "Spillet endte uafgjort"
+
+#: lib/pychess/Utils/Game.py:155
+msgid "White player won the game"
+msgstr "Hvid spiller vandt spillet"
+
+#: lib/pychess/Utils/Game.py:156
+msgid "Black player won the game"
+msgstr "Sort spiller vandt spillet"
+
+# The the context: The game ended in a draw...
+#: lib/pychess/Utils/Game.py:159
+msgid "caused by insufficient material"
+msgstr "på grund af for få brikker"
+
+#: lib/pychess/Utils/Game.py:160
+msgid "as the same position was repeated three times in a row"
+msgstr "da den samme stilling var gentaget tre gange i træk"
+
+#: lib/pychess/Utils/Game.py:161
+msgid "as the last 50 moves brought nothing new"
+msgstr "da de sidste 50 træk ikke bragte noget nyt"
+
+#: lib/pychess/Utils/Game.py:162
+msgid "because of stalemate"
+msgstr "på grund af pat (en spiller havde ingen gyldige træk)"
+
+#: lib/pychess/Utils/Game.py:163
+msgid "as the players agreed to"
+msgstr "da spillerne blev enige om det"
+
+#: lib/pychess/Utils/Game.py:164
+msgid "as opponent resigned"
+msgstr "da modstanderen gav op"
+
+#: lib/pychess/Utils/Game.py:165
+msgid "as opponent ran out of time"
+msgstr "da modstanderen løb tør for tid"
+
+#: lib/pychess/Utils/Game.py:166
+msgid "on a mate"
+msgstr "ved skakmat"
+
+#: lib/pychess/Utils/Game.py:177
+msgid "Draw offer has been sent"
+msgstr "Du har opfordret modstanderen til remi"
+
+#: lib/pychess/Utils/Game.py:187
+msgid "Couldn't call flag in game with no timecontrols"
+msgstr "Spillet har ingen tidskontrol"
+
+#: lib/pychess/Utils/Game.py:194
+msgid "Couldn't call flag on player not out of time"
+msgstr "Din modstander har stadig tid tilbage"
+
+#: lib/pychess/Savers/epd.py:9
+msgid "Chess Position"
+msgstr "Skak Position"
+
+#: lib/pychess/Savers/pgn.py:7
+msgid "Chess Game"
+msgstr "Skakspil"
+
+#: lib/pychess/Players/Human.py:59
+msgid "<big><b>You've got a draw offer. Accept?</b></big>"
+msgstr "<big><b>Du bliver opfordret til remi. Vil de acceptere?</b></big>"
+
+#: lib/pychess/Players/Human.py:60
+msgid "Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."
+msgstr "Din modstander har tilbudt at ende kampen uafgjort. Hvis du accepterer vil kampen ende med pointtallet 1/2 - 1/2."
+
+#: sidepanel/bookPanel.py:7
+msgid "Opening Book"
+msgstr "Åbningsbog"
+
+#: sidepanel/bookPanel.py:50
+msgid ""
+"In this position,\n"
+"there is no book move."
+msgstr ""
+"I denne position,\n"
+"er der ingen bogtræk"
+
+#: sidepanel/historyPanel.py:11
+msgid "Move History"
+msgstr "Notation"
+
+#: sidepanel/scorePanel.py:94
+msgid "Score"
+msgstr "Forløb"
+
+#~ msgid "You are not currently playing any game pychess can save for you."
+#~ msgstr "Du er ikke i gang med et spil pychess kan gemme for dig."
+#~ msgid "a new game starts"
+#~ msgstr "et nyt spil starter"
+#~ msgid "you open a new game"
+#~ msgstr "du åbner et nyt spil"
+#~ msgid "exit"
+#~ msgstr "lukning"
+#~ msgid "_Don't save"
+#~ msgstr "Gem _ikke"
+#~ msgid "Player info"
+#~ msgstr "Spiller info"
+
