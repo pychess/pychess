@@ -63,12 +63,12 @@ searching = False
 searchLock = Lock()
 
 def alphaBeta (table, board, depth, alpha, beta, capture=False):
-    """ This is a alphabeta/negamax/quiscent/iterativedeepend search algorithm
+    """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
         Based on moves found by the validator.py findmoves2 function and
         evaluated by eval.py.
         
         The function recalls itself "depth" times. If the last move in range
-        depth was a capture, it will continue calling itelf, only searching for
+        depth was a capture, it will continue calling itself, only searching for
         captures.
         
         It returns a tuple of
