@@ -56,9 +56,9 @@ def save (file, game):
     file.write(" ")
     
     if history[-1].enpassant:
-    	file.write(repr(history[-1].enpassant))
+        file.write(repr(history[-1].enpassant))
     else:
-	    file.write("-")
+        file.write("-")
     file.write(" ")
     
     file.write(str(history[-1].fifty))
@@ -133,14 +133,15 @@ class EpdFile (ChessFile):
         else:
             history.setStartingColor(WHITE)
         
-        history[-1].movelist = validator.findMoves(history[-1])
-        
+        history[-1].castling = 0
         dic = {"K": WHITE_OO, "Q": WHITE_OOO, "k": BLACK_OO, "q": BLACK_OOO}
         for char in data[2]:
             if char in dic:
                 history[-1].castling |= dic[char]
         
         history[-1].fifty = int(data[4])
+
+        history[-1].movelist = validator.findMoves(history[-1])
         
         if len(history) > 1:
             history.emit("changed")
