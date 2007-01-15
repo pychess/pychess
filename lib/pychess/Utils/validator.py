@@ -102,21 +102,22 @@ def valiKing (move, board, cancapture=False):
             
             rows = board.color == BLACK and (7,) or (0,)
             if move.cord0.x < move.cord1.x:
-                cols = [5,6]
+                colsIsClear = [5,6]
+                colsPointingAt = [4,5]
                 rookx = 7
             else:
-                cols = [1,2,3]
+                colsIsClear = [1,2,3]
+                colsPointingAt = [3,4]
                 rookx = 0
         
             if board.data[rows[0]][rookx] == None:
                 return False
             
-            if not _isclear(board, cols, rows):
+            if not _isclear(board, colsIsClear, rows):
                 return False
             
-            cols.append(4)
             opcolor = 1 - board.color
-            if genMovesPointingAt (board, cols, rows, opcolor):
+            if genMovesPointingAt (board, colsPointingAt, rows, opcolor):
                 return False
             
             return True
