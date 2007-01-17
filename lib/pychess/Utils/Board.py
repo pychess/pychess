@@ -10,14 +10,16 @@ from pychess.Utils import validator
 #zobritMax = 2**64
 zobritMax = sys.maxint
 from random import randint
-zobritOnline = []
+zobrit = []
 for color in range(2):
+    zobrit.append([])
     for piece in range(8):
+        zobrit[-1].append([])
         for x in range(8):
+            zobrit[-1][-1].append([])
             for y in range(8):
                 n = randint(0,zobritMax)
-                zobritOnline.append(n)
-zobrit = MultiArray('I',8,zobritOnline)
+                zobrit[-1][-1][-1].append(n)
 
 def rm (var, opp):
     if var & opp:
@@ -45,13 +47,13 @@ class Board:
             for y, row in enumerate(self.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
-                    self.myhash ^= zobrit.get(piece.color,piece.sign,x,y)
+                    self.myhash ^= zobrit[piece.color][piece.sign][x][y]
         else: self.myhash = ar_hash
     
     def _move (self, cord0, cord1):
     	p = self[cord0]
-    	self.myhash = self.myhash ^ zobrit.get(p.color,p.sign,cord0.x,cord0.y)
-        self.myhash = self.myhash ^ zobrit.get(p.color,p.sign,cord1.x,cord1.y)
+    	self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord0.x][cord0.y]
+        self.myhash = self.myhash ^ zobrit[p.color][p.sign][cord1.x][cord1.y]
     	self[cord1] = p
         self[cord0] = None
     
@@ -86,15 +88,15 @@ class Board:
             if cord0.x != cord1.x and board[cord1] == None:
                 q = board.data[cord0.y][cord1.x]
                 if q:
-                    board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord1.x,cord0.y)
+                    board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
                     board.data[cord0.y][cord1.x] = None
         
         elif p.sign == PAWN and cord1.y in (0,7):
             q = board[cord0]
-            board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord0.x,cord0.y)
+            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
             board[cord0] = Piece(q.color, move.promotion)
             q = board[cord0]
-            board.myhash = board.myhash ^ zobrit.get(q.color,q.sign,cord0.x,cord0.y)
+            board.myhash = board.myhash ^ zobrit[q.color][q.sign][cord1.x][cord0.y]
         
         if cord1 == a8:
             board.castling = rm(board.castling, BLACK_OOO)
