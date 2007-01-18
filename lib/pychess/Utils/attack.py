@@ -1,6 +1,12 @@
 from bitboard import *
 from const import *
 
+#
+# Caveat: Many functions in this module has very similar code. If you fix a
+# bug, or write a perforance enchace, please update all functions. Apologies
+# for the inconvenience
+#
+
 def isAttacked (board, cord, color):
     """ To determine if cord is attacked by any pieces from color. """
     pboards = board.boards[color]
@@ -13,27 +19,27 @@ def isAttacked (board, cord, color):
     blocker = board.blocker
     
     # Bishops & Queens
-    bisque = pboards[BISHOP] | pboards[QUEEN] & moveArray[BISHOP][cord]
+    bisque = (pboards[BISHOP] | pboards[QUEEN]) & moveArray[BISHOP][cord]
     others = ~bisque & blocker
-    while bisque:
-        t = firstBit (bisque)
-        # If no other piece stand in our way, return True
-        if not rayto[t] & others:
+    for t in iterBits(bisque):
+        # If there is a path and no other piece stand in our way
+        ray = rayto[t]
+        if ray and not ray & others:
             return True
-        bisque = clearBit (bisque, t)
 
     # Rooks & Queens
-    rooque = pboards[ROOK] | pboards[QUEEN] & moveArray[BISHOP][cord]
+    rooque = (pboards[ROOK] | pboards[QUEEN]) & moveArray[ROOK][cord]
     d = ~b & blocker
-    while rooque:
-        t = firstBit (bisque)
-        # If no other piece stand in our way, return True
-        if not rayto[t] & others:
+    for t in iterBits(rooque):
+        # If there is a path and no other piece stand in our way
+        ray = rayto[t]
+        if ray and not ray & others:
             return True
-        bisque = clearBit (bisque, t)
     
-    # Pawns 
-    ptype = color == WHITE and PAWN or BPAWN
+    # Pawns
+    # Would a pawn of the opposite color, standing at out kings cord, be able
+    # to attack any of our pawns?
+    ptype = color == WHITE and BPAWN or PAWN
     if pboards[PAWN] & moveArray[ptype][cord]:
         return True
     
@@ -55,71 +61,70 @@ def getAttacks (board, cord, color):
     bits |= pieces[KING] & moveArray[KING][CORD]
     
     # Pawns
-    bits |= pieces[PAWN] & moveArray[color == WHITE and PAWN or BPAWN][CORD]
+    bits |= pieces[PAWN] & moveArray[color == WHITE and BPAWN or PAWN][CORD]
     
-    ray = fromToRay[cord]
+    rayto = fromToRay[cord]
     blocker = board.blocker
     
     # Bishops and Queens
     bisque = (pieces[BISHOP] | pieces[QUEEN]) & moveArray[BISHOP][cord]
-    while bisque:
-       c = firstBit(bisque)
-       bisque = clearBit(bisque, c)
-       if not clearBit(ray[c] & blocker, c):
-           e |= bitPosArray[c]
+    for c in iterBits(bisque):
+        ray = rayto[c]
+        if ray and not clearBit(ray & blocker, c):
+            e |= bitPosArray[c]
     
     # Rooks and queens
     rooque = (pieces[ROOK] | pieces[QUEEN]) & moveArray[ROOK][cord]
-    while rooque:
-        c = firstBit(rooque)
-        rooque = clearBit(rooque, c)
-        if not clearBit(ray[c] & blocker, c):
+    for c in iterBits(rooque):
+        ray = rayto[c]
+        if ray and not clearBit(ray & blocker, c):
             e |= bitPosArray[c]
     
     return e
 
 def getPieceAttacks (board, cord, color, piece):
+    """ Like getAttacks, but only return attacks from a certain type of
+        piece """
+    
     color = board.color
+    pieces = board.boards[color]
     
     if piece == KNIGHT:
-        return board.boards[KNIGHT] & moveArray[KNIGHT][cord]
+        return pieces[KNIGHT] & moveArray[KNIGHT][cord]
     
-    ray = fromToRay[cord]
+    rayto = fromToRay[cord]
     blocker = board.blocker
     
     if piece == BISHOP or piece == QUEEN:
-        bisque = board.boards[piece] & moveArray[piece][cord]
+        bisque = pieces[piece] & moveArray[piece][cord]
         bits = 0
-        while bisque:
-           c = firstBit(bisque)
-           bisque = clearBit(bisque, c)
-           if not clearBit(ray[c] & blocker, c):
-               bits |= bitPosArray[c]
+        for c in iterBits(bisque):
+            ray = rayto[c]
+            if ray and not clearBit(ray & blocker, c):
+                bits |= bitPosArray[c]
         return bits
     
     if piece == ROOK or piece == QUEEN:
-        rooque = board.boards[piece] & moveArray[piece][cord]
+        rooque = pieces[piece] & moveArray[piece][cord]
         bits = 0
-        while rooque:
-           c = firstBit(rooque)
-           rooque = clearBit(rooque, c)
-           if not clearBit(ray[c] & blocker, c):
-               bits |= bitPosArray[c]
+        for c in iterBits(rooque):
+            ray = rayto[c]
+            if ray and not clearBit(ray & blocker, c):
+                bits |= bitPosArray[c]
         return bits
     
     if piece == KING:
-        return board.boards[KING] & moveArray[KING][cord]
+        return pieces[KING] & moveArray[KING][cord]
     
     if piece == PAWN:
-        return board.boards[PAWN] & \
-                moveArray[color == WHITE and PAWN or BPAWN][cord]
+        return pieces[PAWN] & moveArray[color == WHITE and BPAWN or PAWN][cord]
     
 def getPieceRFAttacks (board, cord, color, piece, rank=None, file=None):
     """ Returns first cord containing a piece - with the correct color, type,
         file and rank - that can attack the specified cord. Checking will be
         tested """
     
-    bits = getCordsAttacking (board, cord, color, piece)
+    bits = getPieceAttacks (board, cord, color, piece)
     if rank != None:
         bits &= rankBits[rank]
     if file != None:
