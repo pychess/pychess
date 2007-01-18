@@ -197,11 +197,11 @@ def genAllMoves (board):
         while movedpawns:
             cord = firstBit (movedpawns)
             movedpawns = clearBit (movedpawns, cord)
-            if cord < 56:
-                yield newMove (cord-8, cord)
-            else:
+            if cord >= 56:
                 for move in newPromotes (cord-8, cord):
                     yield move
+            else:
+                yield newMove (cord-8, cord)
         
         # Two steps
         
@@ -220,13 +220,13 @@ def genAllMoves (board):
         while capLeftPawns:
             cord = firstBit (capLeftPawns)
             capLeftPawns = clearBit (capLeftPawns, cord)
-            if cord < 56:
-                yield newMove (cord-7, cord)
+            if cord >= 56:
+                for move in newPromotes (cord-7, cord):
+                    yield move
             elif cord == enpassant:
                 yield newMove (cord-7, cord, S_ENPASSANT)
             else:
-                for move in newPromotes (cord-7, cord):
-                    yield move
+                yield newMove (cord-7, cord)
         
         # Capture right
         
@@ -235,13 +235,13 @@ def genAllMoves (board):
         while capLeftPawns:
             cord = firstBit (capRightPawns)
             capRightPawns = clearBit (capRightPawns, cord)
-            if cord < 56:
-                yield newMove (cord-9, cord)
+            if cord >= 56:
+                for move in newPromotes (cord-9, cord):
+                    yield move
             elif cord == enpassant:
                 yield newMove (cord-9, cord, S_ENPASSANT)
             else:
-                for move in newPromotes (cord-9, cord):
-                    yield move
+                yield newMove (cord-9, cord)
     
     # Black pawns
     else:
@@ -250,15 +250,16 @@ def genAllMoves (board):
         
         movedpawns = (pawns << 8) & notblocker # Move all pawns one step forward
         if movedpawns > 1<<64:
+            print board
             print toString(pawns)
         while movedpawns:
             cord = firstBit (movedpawns)
             movedpawns = clearBit (movedpawns, cord)
-            if cord < 8:
-                yield newMove (cord+8, cord)
-            else:
+            if cord <= 7:
                 for move in newPromotes (cord+8, cord):
                     yield move
+            else:
+                yield newMove (cord+8, cord)
         
         # Two steps
         
@@ -277,13 +278,13 @@ def genAllMoves (board):
         while capLeftPawns:
             cord = firstBit (capLeftPawns)
             capLeftPawns = clearBit (capLeftPawns, cord)
-            if cord < 8:
-                yield newMove (cord+7, cord)
+            if cord <= 7:
+                for move in newPromotes (cord+7, cord):
+                    yield move
             elif cord == enpassant:
                 yield newMove (cord+7, cord, S_ENPASSANT)
             else:
-               for move in newPromotes (cord+7, cord):
-                    yield move
+               yield newMove (cord+7, cord)
         
         # Capture right
         
@@ -292,13 +293,13 @@ def genAllMoves (board):
         while capLeftPawns:
             cord = firstBit (capRightPawns)
             capRightPawns = clearBit (capRightPawns, cord)
-            if cord < 8:
-                yield newMove (cord+9, cord)
+            if cord <= 7:
+                for move in newPromotes (cord+9, cord):
+                    yield move
             elif cord == enpassant:
                 yield newMove (cord+9, cord, S_ENPASSANT)
             else:
-                for move in newPromotes (cord+9, cord):
-                    yield move
+                yield newMove (cord+9, cord)
     
     # Castling
     
@@ -410,8 +411,11 @@ def genCheckEvasions (board):
 
 def willCheck (board, move):
     """ Returns true if move will leave moving player in check """
-    kingcord = board.kings[board.color]
     board.applyMove (move)
-    isCheck = isAttacked (board, kingcord, 1-board.color)
+    checked = isCheck (board, 1-board.color)
     board.popMove()
-    return isCheck
+    return checked
+
+def isCheck (board, color):
+    kingcord = board.kings[color]
+    return isAttacked (board, kingcord, 1-color)

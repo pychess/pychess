@@ -205,40 +205,9 @@ class LBoard:
         
         # Parse fullmove number
         
-        # Well.. Do we need this for anything?
+        # TODO: Should be set by adding emty items to self.history
         
         self.updateBoard()
-        
-    def setUpPosition (self):
-        self._addPiece(E4, ROOK, WHITE)
-        
-        self._addPiece(A1, ROOK, WHITE)
-        self._addPiece(B1, KNIGHT, WHITE)
-        self._addPiece(C1, BISHOP, WHITE)
-        self._addPiece(D1, KING, WHITE)
-        self._addPiece(E1, QUEEN, WHITE)
-        self._addPiece(F1, BISHOP, WHITE)
-        self._addPiece(G1, KNIGHT, WHITE)
-        self._addPiece(H1, ROOK, WHITE)
-        
-        for i in range(A2,H2+1):
-            self._addPiece(i, PAWN, WHITE)
-            
-        for i in range(A7,H7+1):
-            self._addPiece(i, PAWN, BLACK)
-            
-        self._addPiece(A8, ROOK, BLACK)
-        self._addPiece(B8, KNIGHT, BLACK)
-        self._addPiece(C8, BISHOP, BLACK)
-        self._addPiece(D8, QUEEN, BLACK)
-        self._addPiece(E8, KING, BLACK)
-        self._addPiece(F8, BISHOP, BLACK)
-        self._addPiece(G8, KNIGHT, BLACK)
-        self._addPiece(H8, ROOK, BLACK)
-        
-        self.friends[WHITE] = sum(self.boards[WHITE])
-        self.friends[BLACK] = sum(self.boards[BLACK])
-        self.blocker = self.friends[WHITE] | self.friends[BLACK]
         
     def _addPiece (self, cord, piece, color):
         self.boards[color][piece] = \
@@ -480,6 +449,9 @@ class LBoard:
                 rookt = fcord + 1
             self._move (rookt, rookf, ROOK, self.color)
         
+        self.setColor(color)
+        self.updateBoard ()
+        
         self.enpassant = enpassant
         self.castling = castling
         self.hash = hash
@@ -487,3 +459,21 @@ class LBoard:
         
     def __hash__ (self):
         return self.hash
+    
+    def __repr__ (self):
+        b = reprColor[self.color] + " "
+        b += (str(self.castling) or "-") + " "
+        b += self.enpassant != None and reprCord[self.enpassant] or "-"
+        b += "\n"
+        for cord, piece in [(i,p) for i,p in enumerate(self.arBoard)][::-1]:
+            if piece != EMPTY:
+                sign = reprSign[piece]
+                if bitPosArray[cord] & self.friends[WHITE]:
+                    sign = sign.upper()
+                else: sign = sign.lower()
+                b += sign
+            else: b += "."
+            if cord != 0 and cord % 8 == 0:
+                b += "\n"
+            else: b += " "
+        return b
