@@ -7,6 +7,7 @@ from pychess.Utils.lmovegen import genAllMoves, isCheck
 from pychess.Utils.LBoard import LBoard
 
 from pychess.Utils.bitboard import toString
+from pychess.Utils.Move import ltoSAN
 from pychess.Utils.const import WHITE, PAWN, reprCord
 
 MAXDEPTH = 3
@@ -30,7 +31,9 @@ class FindMovesTestCase(unittest.TestCase):
             if isCheck(board, 1-board.color):
                 board.popMove()
                 continue
-            #print " "*3*depth, move >> 12, reprCord[(move >> 6) & 63], reprCord[move & 63]
+            board.popMove()
+            print " "*3*depth, ltoSAN (board, move)
+            board.applyMove(move)
             self.perft(board, depth-1)
             board.popMove()
     
@@ -44,7 +47,7 @@ class FindMovesTestCase(unittest.TestCase):
     def testMovegen(self):
         """Testing move generator with several positions"""
         board = LBoard ()
-        for i, (pos, depths) in enumerate(self.positions):
+        for i, (pos, depths) in enumerate(self.positions[1:]):
             print i+1, "/", len(self.positions)
             
             board.applyFen(pos)
@@ -60,7 +63,6 @@ class FindMovesTestCase(unittest.TestCase):
                 self.assertEqual(board.hash, hash)
                 #print self.count
                 self.assertEqual(self.count, suposedMoveCount)
-            
             
             break
             
