@@ -68,7 +68,7 @@ RESIGNATION, FLAG_CALL, DRAW_OFFER = range(3)
 
 # Piece types
 #KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN = range(6)
-reprPiece = ["King", "Queen", "Rook", "Bishop", "Knight", "Pawn"]
+reprPiece = ["Empty", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King", "BPawn"]
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
@@ -82,7 +82,7 @@ A6, B6, C6, D6, E6, F6, G6, H6, \
 A7, B7, C7, D7, E7, F7, G7, H7, \
 A8, B8, C8, D8, E8, F8, G8, H8 = range (64)
 
-cordRepr = [
+reprCord = [
     "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
     "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
     "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
@@ -93,8 +93,12 @@ cordRepr = [
     "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"
 ]
 
+cordDic = {}
+for cord, name in enumerate(reprCord):
+    cordDic[name] = cord
+
 # Piece signs
-reprSign = ["K", "Q", "R", "B", "N", "P"]
+reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
 
 # Sound settings

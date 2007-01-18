@@ -224,8 +224,6 @@ for piece in BISHOP, ROOK:
                 fromToRay[f][t] = setBit (fromToRay[f][t], t)
                 fromToRay[f][t] |= b
 
-assert testLists(fromToRay)
-
 ################################################################################
 #  These tables are used to calculate rook, queen and bishop moves             #
 ################################################################################
