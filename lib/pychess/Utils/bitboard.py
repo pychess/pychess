@@ -46,9 +46,8 @@ def toString (board):
     while len(s) < 64: s.append(" -")
     
     s2 = ""
-    for i in range(0,64,8):
-        a = s[i:i+8]
-        a.reverse()
+    for i in range(64,0,-8):
+        a = s[i-8:i]
         s2 += "".join(a) + "\n"
     return s2
 
@@ -56,7 +55,7 @@ def toString (board):
 # Leftmost is 0, rightmost is 63
 
 NBITS = 16
-lzArray = [0]*65536
+lzArray = [0]* (1 << NBITS)
 
 s = n = 1
 for i in range(NBITS):

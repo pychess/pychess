@@ -158,16 +158,16 @@ class LBoard:
         
         # Parse piece placement field
         
-        cord = 63
-        for rank in pieceChrs.split("/"):
+        for r, rank in enumerate(pieceChrs.split("/")):
+            cord = (7-r)*8
             for char in rank:
                 if char.isdigit():
-                    cord -= int(char)
+                    cord += int(char)
                 else:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
-                    cord -= 1
+                    cord += 1
         
         # Parse active color field
         
@@ -218,6 +218,8 @@ class LBoard:
         
         if piece == PAWN:
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
+        elif piece == KING:
+            self.kings[color] = cord
         
         self.hash ^= pieceHashes[color][piece][cord]
         self.arBoard[cord] = piece
@@ -302,9 +304,6 @@ class LBoard:
         if fpiece == PAWN and abs(fcord-tcord) == 16:
             self.setEnpassant ((fcord + tcord) / 2)
         else: self.setEnpassant (None)
-        
-        if fpiece == KING:
-            self.kings[self.color] = tcord
         
         if flag in (KING_CASTLE, QUEEN_CASTLE):
             if flag == QUEEN_CASTLE:
@@ -465,15 +464,16 @@ class LBoard:
         b += (str(self.castling) or "-") + " "
         b += self.enpassant != None and reprCord[self.enpassant] or "-"
         b += "\n"
-        for cord, piece in [(i,p) for i,p in enumerate(self.arBoard)][::-1]:
-            if piece != EMPTY:
-                sign = reprSign[piece]
-                if bitPosArray[cord] & self.friends[WHITE]:
-                    sign = sign.upper()
-                else: sign = sign.lower()
-                b += sign
-            else: b += "."
-            if cord != 0 and cord % 8 == 0:
-                b += "\n"
-            else: b += " "
+        rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
+        for r, row in enumerate(rows):
+            for i, piece in enumerate(row):
+                if piece != EMPTY:
+                    sign = reprSign[piece]
+                    if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
+                        sign = sign.upper()
+                    else: sign = sign.lower()
+                    b += sign
+                else: b += "."
+                b += " "
+            b += "\n"
         return b
