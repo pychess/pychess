@@ -83,8 +83,7 @@ def getAttacks (board, cord, color):
     return e
 
 def getPieceAttacks (board, cord, color, piece):
-    """ Like getAttacks, but only return attacks from a certain type of
-        piece """
+    """ To create a bitboard of specifid piece of color, which attacks cord """
     
     color = board.color
     pieces = board.boards[color]
