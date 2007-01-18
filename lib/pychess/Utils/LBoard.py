@@ -1,6 +1,10 @@
 
+from array import array
+
 from pychess.Utils.const import *
 from bitboard import *
+from lmovegen import NORMAL_MOVE, QUEEN_CASTLE,KING_CASTLE, CAPTURE,ENPASSANT, \
+             KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION
 
 r90 = [
     A8, A7, A6, A5, A4, A3, A2, A1,
@@ -64,14 +68,20 @@ colorHash = randint(0, maxint)
 # our transposition table.
 
 ################################################################################
-# LBoard                                                                       #
+# FEN                                                                          #
 ################################################################################
 
-from array import array
-emptyBoard = array("b", [0]*64).tostring()
+# This will cause applyFen to raise an exception, if halfmove clock and fullmove
+# number is not specified
+STRICT_FEN = True
 
-# hash(array.tostring()) tager 1.5e-06 sekunder. Så måske er den forlangsom til
-# hash? Måske kan den bruges til at slå op i book?
+# A few nice to have boards
+FEN_EMPTY = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
+FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+################################################################################
+# LBoard                                                                       #
+################################################################################
 
 class LBoard:
     def __init__ (self):
@@ -89,14 +99,116 @@ class LBoard:
         self.castling = B_OOO | B_OO | W_OOO | W_OO
         self.fifty = 0
         
-        self.arBoard = array("b")
-        self.arBoard.fromstring(emptyBoard)
+        self.arBoard = array("b", [0]*64)
         
         self.hash = 0
         self.pawnhash = 0
         
         self.history = []
     
+    def applyFen (self, fenstr):
+        """ Applies the fenstring to the board.
+            If the string is not properly
+            written a SyntaxError will be raised, having its message ending in
+            Pos(%d) specifying the string index of the problem.
+            if an error is found, no changes will be made to the board. """
+        
+        # Get information
+        
+        parts = fenstr.split()
+        
+        if len(parts) > 6:
+            raise SyntaxError, "Can't have more than 6 fields in fenstr. "+ \
+                               "Pos(%d)" % fenstr.find(parts[6])
+        
+        if STRICT_FEN and len(parts) != 6:
+            raise SyntaxError, "Needs 6 fields in fenstr. Pos(%d)" % len(fenstr)
+        
+        elif len(parts) < 4:
+            raise SyntaxError, "Needs at least 6 fields in fenstr. Pos(%d)" % \
+                                                                     len(fenstr)
+        
+        elif len(parts) >= 6:
+            pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
+        
+        elif len(parts) == 5:
+            pieceChrs, colChr, castChr, epChr, fiftyChr == parts
+            moveNoChr = "1"
+        
+        else:
+            pieceChrs, colChr, castChr, epChr = parts
+            fiftyChr = "0"
+            moveNoChr = "1"
+        
+        # Try to validate some information
+        # This should be expanded and perhaps moved
+        
+        slashes = len([c for c in pieceChrs if c == "/"])
+        if slashes != 7:
+            raise SyntaxError, "Needs 7 slashes in piece placement field. "+ \
+                               "Pos(%d)" % fenstr.rfind("/")
+        
+        if not colChr.lower() in ("w", "b"):
+            raise SyntaxError, "Active color field must be one of w or b. "+ \
+                               "Pos(%d)" % fenstr.find(len(pieceChrs), colChr)
+        
+        if epChr != "-" and not epChr.upper() in cordDic:
+            raise SyntaxError, "En passant cord is not legal. "+ \
+                               "Pos(%d)" %  fenstr.rfind(epChr)
+        
+        # Parse piece placement field
+        
+        cord = 63
+        for rank in pieceChrs.split("/"):
+            for char in rank:
+                if char.isdigit():
+                    cord -= int(char)
+                else:
+                    color = char.islower() and BLACK or WHITE
+                    piece = reprSign.index(char.upper())
+                    self._addPiece(cord, piece, color)
+                    cord -= 1
+        
+        # Parse active color field
+        
+        if colChr.lower() == "w":
+            self.setColor (WHITE)
+        else: self.setColor (BLACK)
+        
+        # Parse castling availability
+        
+        castling = 0
+        for char in castChr:
+            if char == "K":
+                castling |= W_OO
+            elif char == "Q":
+                castling |= W_OOO
+            elif char == "k":
+                castling |= B_OO
+            elif char == "q":
+                castling |= B_OOO
+        self.setCastling(castling)
+        
+        # Parse en passant target sqaure
+        
+        if epChr == "-":
+            self.setEnpassant (None) 
+        else: self.setEnpassant(cordDic[epChr.upper()])
+        
+        # Parse halfmove clock field
+        
+        self.fifty = int(fiftyChr)
+        
+        # Parse halfmove clock field
+        
+        self.fifty = int(fiftyChr)
+        
+        # Parse fullmove number
+        
+        # Well.. Do we need this for anything?
+        
+        self.updateBoard()
+        
     def setUpPosition (self):
         self._addPiece(E4, ROOK, WHITE)
         
@@ -154,7 +266,7 @@ class LBoard:
         self.hash ^= pieceHashes[color][piece][cord]
         self.arBoard[cord] = EMPTY
     
-    def _move (fcord, tcord, piece, color):
+    def _move (self, fcord, tcord, piece, color):
         self._removePiece(fcord, piece, color)
         self._addPiece(tcord, piece, color)
     
@@ -167,6 +279,28 @@ class LBoard:
         if color == self.color: return
         self.color = color
         self.hash ^= colorHash
+    
+    def setCastling (self, castling):
+        if self.castling == castling: return
+        
+        if castling & W_OO != self.castling & W_OO:
+            self.hash ^= W_OOHash
+        if castling & W_OOO != self.castling & W_OOO:
+            self.hash ^= W_OOOHash
+        if castling & B_OO != self.castling & B_OO:
+            self.hash ^= B_OOHash
+        if castling & B_OOO != self.castling & B_OOO:
+            self.hash ^= B_OOOHash
+            
+        self.castling = castling
+    
+    def setEnpassant (self, epcord):
+        if self.enpassant == epcord: return
+        if self.enpassant != None:
+            self.hash ^= epHashes[self.enpassant]
+        if epcord != None:
+            self.hash ^= epHashes[epcord]
+        self.enpassant = epcord
     
     def applyMove (self, move):
         flag = move >> 12
@@ -197,8 +331,8 @@ class LBoard:
                 self._addPiece(tcord, piece, self.color)
         
         if fpiece == PAWN and abs(fcord-tcord) == 16:
-            self.enpassant = (fcord + tcord) / 2
-        else: self.enpassant = None
+            self.setEnpassant ((fcord + tcord) / 2)
+        else: self.setEnpassant (None)
         
         if fpiece == KING:
             self.kings[self.color] = tcord
@@ -289,7 +423,10 @@ class LBoard:
                         self.hash ^= W_OOOHash
                         self.castling &= ~W_OOO
         
-        self._move(fcord, tcord, fpiece, self.color)
+        if not flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            self._move(fcord, tcord, fpiece, self.color)
+        
         self.setColor(opcolor)
         self.updateBoard ()
         
@@ -311,7 +448,7 @@ class LBoard:
         
         tpiece = self.arBoard[tcord]
         
-        self.removePiece (tcord, tpiece, color)
+        self._removePiece (tcord, tpiece, color)
         
         # Put back captured piece
         if cpiece != EMPTY:
