@@ -29,7 +29,7 @@ def isAttacked (board, cord, color):
 
     # Rooks & Queens
     rooque = (pboards[ROOK] | pboards[QUEEN]) & moveArray[ROOK][cord]
-    d = ~b & blocker
+    others = ~rooque & blocker
     for t in iterBits(rooque):
         # If there is a path and no other piece stand in our way
         ray = rayto[t]
