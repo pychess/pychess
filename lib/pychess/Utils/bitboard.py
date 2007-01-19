@@ -108,6 +108,8 @@ fileBits = []
 for i in range (8):
     rankBits.append (255 << i*8)
     fileBits.append (0x0101010101010101 << i)
+rankBits.reverse()
+fileBits.reverse()
 
 ################################################################################
 #  Generate the move bitboards.  For e.g. the bitboard for all                 #
@@ -244,7 +246,7 @@ for cord in range (A1, H1+1):
         cord1 = cord2 = cord
         while cord1 > 0:
             cord1 -= 1
-            if cmap[cord] & map: break
+            if cmap[cord1] & map: break
         while cord2 < 7:
             cord2 += 1
             if cmap[cord2] & map: break
@@ -265,7 +267,7 @@ def itranges (range1, range2):
     for i in range(len(range1)):
         yield (range1[i], range2[i])
 
-maxLen = (1<<64)-1
+MAXBITBOARD = (1<<64)-1
 
 for map in range (256):
     # Run through all cords except the 1st rank
@@ -281,13 +283,14 @@ for map in range (256):
     for cord1, cord2 in itranges (range(B1, H1+1,  1),
                                   range(H7, H1-1, -8)):
         for cord in range(cord1, cord2+1, 9):
-            bishop45Attack[cord][map] = (bishop45Attack[cord+8][map] << 8 & maxLen)
+            bishop45Attack[cord][map] = \
+                    bishop45Attack[cord+8][map] << 8 & MAXBITBOARD
                 
     for cord1, cord2 in itranges (range(A2, A8+1,  8),
                                   range(G8, A8-1, -1)):
         for cord in range(cord1, cord2+1, 9):
             bishop45Attack[cord][map] = \
-                    clearBit (bishop45Attack[cord+1][map], cord1-8) << 1
+              clearBit (bishop45Attack[cord+1][map], cord1-8) << 1 & MAXBITBOARD
                 
     for cord1, cord2 in itranges (range(H2, H8+1,  8),
                                   range(B8, H8+1,  1)):
@@ -298,4 +301,4 @@ for map in range (256):
                                   range(A7, A1-1, -8)):
         for cord in range(cord1, cord2+1, 7):
             bishop315Attack[cord][map] = \
-                    clearBit (bishop315Attack[cord+1][map], cord2+8) << 1
+             clearBit (bishop315Attack[cord+1][map], cord2+8) << 1 & MAXBITBOARD

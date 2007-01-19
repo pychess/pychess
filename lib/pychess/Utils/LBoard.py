@@ -85,6 +85,9 @@ FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 class LBoard:
     def __init__ (self):
+        self._reset()
+    
+    def _reset (self):
         self.blocker45 = 0
         self.blocker315 = 0
         self.blocker = 0
@@ -155,6 +158,10 @@ class LBoard:
         if epChr != "-" and not epChr.upper() in cordDic:
             raise SyntaxError, "En passant cord is not legal. "+ \
                                "Pos(%d)" %  fenstr.rfind(epChr)
+        
+        # Reset this board
+        
+        self._reset()
         
         # Parse piece placement field
         
@@ -297,7 +304,7 @@ class LBoard:
                 
             elif flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                           BISHOP_PROMOTION, KNIGHT_PROMOTION):
-                piece = flag - 2 # The flags has values: 4, 5, 6, 7
+                piece = flag - 3 # The flags has values: 8, 7, 6, 5
                 self._removePiece(fcord, PAWN, self.color)
                 self._addPiece(tcord, piece, self.color)
         
