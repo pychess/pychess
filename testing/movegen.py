@@ -3,14 +3,14 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
-from pychess.Utils.lmovegen import genAllMoves, isCheck
+from pychess.Utils.lmovegen import genAllMoves, isCheck, QUEEN_PROMOTION
 from pychess.Utils.LBoard import LBoard
 
 from pychess.Utils.bitboard import toString
 from pychess.Utils.Move import ltoSAN
 from pychess.Utils.const import WHITE, PAWN, reprCord
 
-MAXDEPTH = 3
+MAXDEPTH = 1
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
@@ -29,10 +29,12 @@ class FindMovesTestCase(unittest.TestCase):
                 #return
             board.applyMove(move)
             if isCheck(board, 1-board.color):
+                if move >> 12 == QUEEN_PROMOTION: print "PROM QUEEN CHECK"
                 board.popMove()
                 continue
             board.popMove()
-            print " "*3*depth, ltoSAN (board, move)
+            #print " "*3*depth, 
+            print ltoSAN (board, move)
             board.applyMove(move)
             self.perft(board, depth-1)
             board.popMove()
@@ -47,13 +49,13 @@ class FindMovesTestCase(unittest.TestCase):
     def testMovegen(self):
         """Testing move generator with several positions"""
         board = LBoard ()
-        for i, (pos, depths) in enumerate(self.positions[1:]):
+        for i, (pos, depths) in enumerate(self.positions):
             print i+1, "/", len(self.positions)
             
             board.applyFen(pos)
             hash = board.hash
+            print pos
             print board
-            self.assertFalse(isCheck(board, board.color))
             
             for depth, suposedMoveCount in enumerate(depths):
                 if depth+1 > MAXDEPTH: break
@@ -63,8 +65,6 @@ class FindMovesTestCase(unittest.TestCase):
                 self.assertEqual(board.hash, hash)
                 #print self.count
                 self.assertEqual(self.count, suposedMoveCount)
-            
-            break
-            
+            print
 if __name__ == '__main__':
     unittest.main()
