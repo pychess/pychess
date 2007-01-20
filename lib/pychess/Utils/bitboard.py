@@ -142,9 +142,6 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-# Is sliding piece
-sliders = [ False, False, False, True, True, True, False, False ]
-
 moveArray = [[0]*64 for i in range(8)] # moveArray[8][64]
 
 for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
@@ -180,7 +177,7 @@ for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
 #  the index into Ray[f] array allow us to find the ray in that direction.
 ################################################################################
 
-directions = [[0]*64 for i in range(64)] # directions[64][64]
+directions = [[-1]*64 for i in range(64)] # directions[64][64]
 rays = [[0]*8 for i in range(64)] # rays[64][8]
 
 for fcord in range(120):
