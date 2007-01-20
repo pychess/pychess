@@ -3,14 +3,14 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
-from pychess.Utils.lmovegen import genAllMoves, isCheck, QUEEN_PROMOTION
+from pychess.Utils.lmovegen import genAllMoves, genCheckEvasions, isCheck
 from pychess.Utils.LBoard import LBoard
 
 from pychess.Utils.bitboard import toString
 from pychess.Utils.Move import ltoSAN
-from pychess.Utils.const import WHITE, PAWN, reprCord
+from pychess.Utils.const import *
 
-MAXDEPTH = 1
+MAXDEPTH = 3
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
@@ -20,24 +20,48 @@ class FindMovesTestCase(unittest.TestCase):
         if depth == 0:
             self.count += 1
             return
-        #print "\n".join([" "*3*depth+l for l in repr(board).split("\n")])
-        for move in genAllMoves(board):
-            # use this only if test failes
-            #print move
-            #if not validate(move, board):
-                #print board, move
-                #return
-            board.applyMove(move)
-            if isCheck(board, 1-board.color):
-                if move >> 12 == QUEEN_PROMOTION: print "PROM QUEEN CHECK"
+        
+        if isCheck(board, board.color):
+            nmoves = []
+            for nmove in genAllMoves(board):
+                board.applyMove(nmove)
+                if isCheck(board, 1-board.color):
+                    board.popMove()
+                    continue
+                nmoves.append(nmove)
                 board.popMove()
-                continue
-            board.popMove()
-            #print " "*3*depth, 
-            print ltoSAN (board, move)
-            board.applyMove(move)
-            self.perft(board, depth-1)
-            board.popMove()
+            
+            cmoves = [m for m in genCheckEvasions(board)]
+            
+            nmoves.sort()
+            cmoves.sort()
+            
+            if nmoves == cmoves:
+                for move in cmoves:
+                    board.applyMove(move)
+                    self.perft(board, depth-1)
+                    board.popMove()
+            else:
+                print board
+                print "nmoves"
+                for move in nmoves:
+                    print ltoSAN (board, move)
+                print "cmoves"
+                for move in cmoves:
+                    print ltoSAN (board, move)
+                self.assertEqual(nmoves, cmoves)
+        else:
+            for move in genAllMoves(board):
+                board.applyMove(move)
+                if isCheck(board, 1-board.color):
+                    board.popMove()
+                    continue
+                #if depth == 5:
+                #board.popMove()
+                #print "   "*(2-depth)+ltoSAN (board, move)
+                #board.applyMove(move)
+                self.perft(board, depth-1)
+                board.popMove()
     
     def setUp(self):
         self.positions = []
@@ -61,10 +85,11 @@ class FindMovesTestCase(unittest.TestCase):
                 if depth+1 > MAXDEPTH: break
                 self.count = 0
                 print "searching depth %d for %d moves" % (depth+1, suposedMoveCount)
+                #print board
                 self.perft (board, depth+1)
                 self.assertEqual(board.hash, hash)
-                #print self.count
                 self.assertEqual(self.count, suposedMoveCount)
             print
+            
 if __name__ == '__main__':
     unittest.main()
