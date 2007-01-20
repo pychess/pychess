@@ -102,11 +102,20 @@ class LBoard:
         self.castling = B_OOO | B_OO | W_OOO | W_OO
         self.fifty = 0
         
-        self.arBoard = array("b", [0]*64)
+        self.arBoard = array("B", [0]*64)
         
         self.hash = 0
         self.pawnhash = 0
         
+        ########################################################################
+        #  The format of history is a list of tupples of the following fields  #
+        #  move:       The move that was applied to get the position           #
+        #  tpiece:     The piece the move captured, == EMPTY for normal moves  #
+        #  enpassant:  cord which can be captured by enpassant or None         #
+        #  castling:   The castling availability in the position               #
+        #  hash:       The hash of the position                                #
+        #  fifty:      A counter for the fifty moves rule                      #
+        ########################################################################
         self.history = []
     
     def applyFen (self, fenstr):
@@ -212,7 +221,7 @@ class LBoard:
         
         # Parse fullmove number
         
-        # TODO: Should be set by adding emty items to self.history
+        self.history = [None]*int(moveNoChr)
         
         self.updateBoard()
         
@@ -296,6 +305,10 @@ class LBoard:
             self.castling, self.hash, self.fifty)
         )
         
+        # Capture
+        if tpiece != EMPTY:
+            self._removePiece(tcord, tpiece, opcolor)
+        
         if fpiece == PAWN:
 
             if flag == ENPASSANT:
@@ -330,10 +343,6 @@ class LBoard:
         else:
             self.fifty = 0
         
-        # Capture
-        if tpiece != EMPTY:
-            self._removePiece(tcord, tpiece, opcolor)
-        
         # Clear castle flags
         if self.color == WHITE:
             if fpiece == KING:
@@ -357,12 +366,12 @@ class LBoard:
                         self.castling &= ~W_OOO
             
             if tpiece == ROOK:
-                if fcord == H8:
+                if tcord == H8:
                     if self.castling & B_OO:
                         self.hash ^= B_OOHash
                         self.castling &= ~B_OO
-                    
-                elif fcord == A8:
+            
+                elif tcord == A8:
                     if self.castling & B_OOO:
                         self.hash ^= B_OOOHash
                         self.castling &= ~B_OOO
@@ -375,25 +384,25 @@ class LBoard:
                 if self.castling & B_OO:
                     self.hash ^= B_OOHash
                     self.castling &= ~B_OO
-                    
+            
             if fpiece == ROOK:
                 if fcord == H8:
                     if self.castling & B_OO:
                         self.hash ^= B_OOHash
                         self.castling &= ~B_OO
-                    
+            
                 elif fcord == A8:
                     if self.castling & B_OOO:
                         self.hash ^= B_OOOHash
                         self.castling &= ~B_OOO
             
             if tpiece == ROOK:
-                if fcord == H1:
+                if tcord == H1:
                     if self.castling & W_OO:
                         self.hash ^= W_OOHash
                         self.castling &= ~W_OO
                     
-                elif fcord == A1:
+                elif tcord == A1:
                     if self.castling & W_OOO:
                         self.hash ^= W_OOOHash
                         self.castling &= ~W_OOO
@@ -428,7 +437,10 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
-       	    self._addPiece (fcord, tpiece, color)
+       	    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+                self._addPiece (fcord, PAWN, color)
+       	    else: self._addPiece (fcord, tpiece, color)
        	
        	# Put back piece captured by enpassant
        	elif flag == ENPASSANT:
@@ -453,7 +465,7 @@ class LBoard:
             else:
                 rookf = fcord + 3
                 rookt = fcord + 1
-            self._move (rookt, rookf, ROOK, self.color)
+            self._move (rookt, rookf, ROOK, color)
         
         self.setColor(color)
         self.updateBoard ()

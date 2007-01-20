@@ -51,17 +51,17 @@ def isAttacked (board, cord, color):
     
 def getAttacks (board, cord, color):
     """ To create a bitboard of pieces of color, which attacks cord """
-    color = board.color
+    
     pieces = board.boards[color]
     
     # Knights
-    bits = pieces[KNIGHT] & moveArray[KNIGHT][CORD]
+    bits = pieces[KNIGHT] & moveArray[KNIGHT][cord]
     
     # Kings
-    bits |= pieces[KING] & moveArray[KING][CORD]
+    bits |= pieces[KING] & moveArray[KING][cord]
     
     # Pawns
-    bits |= pieces[PAWN] & moveArray[color == WHITE and BPAWN or PAWN][CORD]
+    bits |= pieces[PAWN] & moveArray[color == WHITE and BPAWN or PAWN][cord]
     
     rayto = fromToRay[cord]
     blocker = board.blocker
@@ -71,16 +71,16 @@ def getAttacks (board, cord, color):
     for c in iterBits(bisque):
         ray = rayto[c]
         if ray and not clearBit(ray & blocker, c):
-            e |= bitPosArray[c]
+            bits |= bitPosArray[c]
     
     # Rooks and queens
     rooque = (pieces[ROOK] | pieces[QUEEN]) & moveArray[ROOK][cord]
     for c in iterBits(rooque):
         ray = rayto[c]
         if ray and not clearBit(ray & blocker, c):
-            e |= bitPosArray[c]
+            bits |= bitPosArray[c]
     
-    return e
+    return bits
 
 def getPieceAttacks (board, cord, color, piece):
     """ To create a bitboard of specifid piece of color, which attacks cord """
@@ -146,7 +146,6 @@ def pinnedOnKing (board, cord, color):
     # capture.
     # Caveat: pinnedOnKing should only be called by genCheckEvasions().
     
-    color = board.color
     kingCord = board.kings[color]
     
     dir = directions[kingCord][cord]
@@ -167,12 +166,11 @@ def pinnedOnKing (board, cord, color):
     #  If diagonal
     if dir <= 3 and	bitPosArray[cord1] & \
             (board.boards[opcolor][QUEEN] | board.boards[opcolor][BISHOP]):
-      return True
+        return True
    
     #  Rank / file
     if dir >= 4 and bitPosArray[cord1] & \
             (board.boards[opcolor][QUEEN] | board.boards[opcolor][ROOK]):
-      return True
+        return True
 
     return False
-    

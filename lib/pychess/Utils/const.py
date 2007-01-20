@@ -73,6 +73,9 @@ reprPiece = ["Empty", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King", "BPaw
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
 
+# Is sliding piece
+sliders = [ False, False, False, True, True, True, False, False ]
+
 A1, B1, C1, D1, E1, F1, G1, H1, \
 A2, B2, C2, D2, E2, F2, G2, H2, \
 A3, B3, C3, D3, E3, F3, G3, H3, \
