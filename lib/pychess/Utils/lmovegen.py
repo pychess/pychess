@@ -1,6 +1,6 @@
 
 from bitboard import *
-from attack import isAttacked
+from attack import *
 from const import *
 
 shift00 = [
@@ -306,20 +306,18 @@ def genCheckEvasions (board):
     color = board.color
     opcolor = 1-color
     
-    kingsq = board.king[color]
+    kcord = board.kings[color]
     kings = board.boards[color][KING]
     pawns = board.boards[color][PAWN]
-    checkers = getAttacks (board, kingsq, color)
+    checkers = getAttacks (board, kcord, opcolor)
     
     arBoard = board.arBoard
-    
     if bitLength(checkers) == 1:
+
         # Captures of checking pieces (except by king, which we will test later)
         chkcord = firstBit (checkers)
-        b = getAttacks (chksq, color) & ~kings
-        while b:
-            cord = firstBit (b)
-            b = clearBit (b, cord)
+        b = getAttacks (board, chkcord, color) & ~kings
+        for cord in iterBits(b):
             if not pinnedOnKing (board, cord, color):
                 if arBoard[cord] == PAWN and \
                         (chkcord <= H1 or chkcord >= A8):
@@ -332,54 +330,57 @@ def genCheckEvasions (board):
         if board.enpassant:
             ep = board.enpassant
             if ep + (color == WHITE and -8 or 8) == chkcord:
-                bits = moveArray[color == WHITE and PAWN or BPAWN][ep] & pawns
+                bits = moveArray[color == WHITE and BPAWN or PAWN][ep] & pawns
                 for cord in iterBits (bits):
                     if not pinnedOnKing (board, cord, color):
                         yield newMove (cord, ep, S_ENPASSANT)
         
         # Lets block/capture the checking piece
-        if slider[arBoard[chkcord]]:
-            bits = clearBit(fromToRay[kingcord][chkcord], chkcord)
+        if sliders[arBoard[chkcord]]:
+            bits = clearBit(fromToRay[kcord][chkcord], chkcord)
+            
             for cord in iterBits (bits):
-                b = getAttacks (cord, color)
+                b = getAttacks (board, cord, color)
                 b &= ~(kings | pawns)
                 
+                # Add in pawn advances
                 if color == WHITE and cord > H2:
                     if bitPosArray[cord-8] & pawns:
                         b |= bitPosArray[cord-8]
                     if cord >> 3 == 3 and arBoard[cord-8] == EMPTY and \
-                            bitPosArray[cord-16] and pawns:
+                            bitPosArray[cord-16] & pawns:
                         b |= bitPosArray[cord-16]
                 
                 elif color == BLACK and cord < H7:
-                    if bitPosArray[cord88] & pawns:
-                        b |= bitPosArray[cord88]
-                    if cord >> 3 == 4 and arBoard[cord88] == EMPTY and \
-                            bitPosArray[cord+16] and pawns:
+                    if bitPosArray[cord+8] & pawns:
+                        b |= bitPosArray[cord+8]
+                    if cord >> 3 == 4 and arBoard[cord+8] == EMPTY and \
+                            bitPosArray[cord+16] & pawns:
                         b |= bitPosArray[cord+16]
                 
-                for cord1 in iterBits (b):
-                    if pinnedOnKing (board, cord1, color):
+                for fcord in iterBits (b):
+                    # If the piece is blocking another attack, we cannot move it
+                    if pinnedOnKing (board, fcord, color):
                         continue
-                    if arBoard[cord1] == PAWN and (cord > H7 or cord < A2):
-                        for move in newPromotes (cord1, cord):
+                    if arBoard[fcord] == PAWN and (cord > H7 or cord < A2):
+                        for move in newPromotes (fcord, cord):
                             yield move
                     else:
-                        yield newMove (cord1, cord)
+                        yield newMove (fcord, cord)
     
     # If more than one checkers, move king to get out of check
     if checkers:
-        escapes = moveArray[KING][kingcord] & ~board.friends[color]
-    else: escaped = 0
+        escapes = moveArray[KING][kcord] & ~board.friends[color]
+    else: escapes = 0
     
-    for chkcord in iterBits (chekers):
-        dir = directions[chkcord][kingcord]
-        if slider[arBoard[chkcord]]:
-            escapes &= ray[chkcord][dir]
+    for chkcord in iterBits (checkers):
+        dir = directions[chkcord][kcord]
+        if sliders[arBoard[chkcord]]:
+            escapes &= ~rays[chkcord][dir]
             
     for cord in iterBits (escapes):
-        if not isAttacked (board, cord, color):
-            yield newMove (kingcord, cord)
+        if not isAttacked (board, cord, opcolor):
+            yield newMove (kcord, cord)
 
 def willCheck (board, move):
     """ Returns true if move will leave moving player in check """
