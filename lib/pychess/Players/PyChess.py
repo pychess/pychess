@@ -22,11 +22,7 @@ import thread
 from threading import Lock
 
 from Engine import Engine
-from pychess.Utils.History import hisPool
-from pychess.Utils.Move import movePool, parseSAN, parseAN, toAN, ParsingError
-from pychess.Utils import eval
 from pychess.Utils.book import getOpenings
-from pychess.Utils.validator import findMoves2, isCheck, validate
 from pychess.Utils.History import History
 from pychess.System.ThreadPool import pool
 from pychess.Utils.TranspositionTable import TranspositionTable
@@ -57,122 +53,8 @@ def nextedIterator (*items):
                 used.add(i)
                 yield i
 
-last = 0
-nodes = 0
-alphaCutoffs = 0
-betaCutoffs = 0
-movesearches = 0
 searching = False
 searchLock = Lock()
-
-def alphaBeta (table, board, depth, alpha, beta, capture=False):
-    """ This is a alphabeta/negamax/quiscent/iterativedeepend search algorithm
-        Based on moves found by the validator.py findmoves2 function and
-        evaluated by eval.py.
-        
-        The function recalls itself "depth" times. If the last move in range
-        depth was a capture, it will continue calling itelf, only searching for
-        captures.
-        
-        It returns a tuple of
-        *   a list of the path it found through the search tree (last item being
-            the deepest)
-        *   a score of your standing the the last possition. """
-    
-    global last, searching, alphaCutoffs, betaCutoffs, nodes, movesearches
-    foundPv = False
-    hashf = hashfALPHA
-    amove = []
-    
-    probe = table.probe (board, max(depth,1), alpha, beta)
-    if probe: last = -1; return probe
-    
-    if (depth <= 0 and not capture) or depth < -2 or not searching:
-        last = 1; result = [], eval.evaluateComplete(board, board.color)
-        table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
-        return result
-    
-    # This killer move method could be made even stronger by recording the best
-    # moves of other nodes at same depth, and trying those out too.
-    lowerDepthMove = None
-    i = -1
-    while depth+i >= 1:
-        probe = table.probe (board, depth+i, alpha, beta)
-        if probe and probe[0]:
-            lowerDepthMove = probe[0][0]
-            if not validate(lowerDepthMove, board):
-                lowerDepthMove = None
-                continue
-            break
-        i -= 1
-    
-    pureCaptures = depth <= 0
-    if lowerDepthMove:
-        iterator = nextedIterator([lowerDepthMove],
-                findMoves2(board, testCheck=False, pureCaptures=pureCaptures))
-    else: iterator = findMoves2(board, testCheck=False, pureCaptures=pureCaptures)
-    
-    #moves = [move for move in iterator]
-    #moves = table.sortMoves(moves, board.color)
-    
-    movesearches += 1
-    
-    move = None
-    for move in iterator:
-        #print "    "*(4-depth), move
-        nodes += 1
-        
-        board2 = board.move(move)
-        if isCheck(board2, board.color):
-            continue
-        
-        if board[move.cord1] != None:
-            tempcapture = True
-        else: tempcapture = False
-        
-        if foundPv:
-            mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -alpha-1, -alpha, tempcapture)
-            val = -val
-            if val > alpha and val < beta:
-                map(movePool.add, mvs)
-                mvs, val = alphaBeta ( table, board2, depth-1,
-                                       -beta, -alpha, tempcapture)
-                val = -val
-        else:
-            mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -beta, -alpha, tempcapture)
-            val = -val
-        
-        if val >= beta:
-            betaCutoffs += 1
-            table.addBetaCutter(board.color, move.cords)
-            table.record (board, [move]+mvs, len(mvs)+1, beta, hashfBETA)
-            last = 3; return [move]+mvs, beta
-
-        if val > alpha:
-            map(movePool.add, amove)
-            alphaCutoffs += 1
-            alpha = val
-            amove = [move]+mvs
-            hashf = hashfEXACT
-            foundPv = True
-        else:
-            map(movePool.add, mvs)
-    
-    if amove: last = 4; result = (amove, alpha)
-    elif not move:
-        # If not moves were found, this must be a mate or stalemate
-        lastn = 5
-        if isCheck (board, board.color):
-            result = ([], -maxint)
-        else: result = ([], 0)
-    else:
-        # If not move made it through alphabeta (should not be possible)
-        # We simply pick the last the best, whith th lowest score...
-        last = 6; result = ([move], alpha)
-    table.record (board, result[0], len(result[0]), result[1], hashf)
-    return result
 
 sd = 4
 moves = None
