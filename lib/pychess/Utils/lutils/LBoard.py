@@ -2,42 +2,9 @@
 from array import array
 
 from pychess.Utils.const import *
+from ldata import *
+from attack import isAttacked
 from bitboard import *
-from lmovegen import NORMAL_MOVE, QUEEN_CASTLE,KING_CASTLE, CAPTURE,ENPASSANT, \
-             KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION
-
-r90 = [
-    A8, A7, A6, A5, A4, A3, A2, A1,
-    B8, B7, B6, B5, B4, B3, B2, B1,
-    C8, C7, C6, C5, C4, C3, C2, C1,
-    D8, D7, D6, D5, D4, D3, D2, D1,
-    E8, E7, E6, E5, E4, E3, E2, E1,
-    F8, F7, F6, F5, F4, F3, F2, F1,
-    G8, G7, G6, G5, G4, G3, G2, G1,
-    H8, H7, H6, H5, H4, H3, H2, H1
-]
-
-r45 = [
-    E4, F3, H2, C2, G1, D1, B1, A1,
-    E5, F4, G3, A3, D2, H1, E1, C1,
-    D6, F5, G4, H3, B3, E2, A2, F1, 
-    B7, E6, G5, H4, A4, C3, F2, B2,
-    G7, C7, F6, H5, A5, B4, D3, G2, 
-    C8, H7, D7, G6, A6, B5, C4, E3, 
-    F8, D8, A8, E7, H6, B6, C5, D4, 
-    H8, G8, E8, B8, F7, A7, C6, D5
-]
-
-r315 = [
-    A1, C1, F1, B2, G2, E3, D4, D5,
-    B1, E1, A2, F2, D3, C4, C5, C6,
-    D1, H1, E2, C3, B4, B5, B6, A7,
-    G1, D2, B3, A4, A5, A6, H6, F7,
-    C2, A3, H3, H4, H5, G6, E7, B8,
-    H2, G3, G4, G5, F6, D7, A8, E8,
-    F3, F4, F5, E6, C7, H7, D8, G8,
-    E4, E5, D6, B7, G7, C8, F8, H8
-]
 
 ################################################################################
 # Zobrit hashing 32 bit implementation                                         #
@@ -101,6 +68,9 @@ class LBoard:
         self.color = WHITE
         self.castling = B_OOO | B_OO | W_OOO | W_OO
         self.fifty = 0
+        
+        self.checked = None
+        self.opchecked = None
         
         self.arBoard = array("B", [0]*64)
         
@@ -224,6 +194,18 @@ class LBoard:
         self.history = [None]*int(moveNoChr)
         
         self.updateBoard()
+    
+    def isChecked (self):
+        if self.checked == None:
+            kingcord = self.kings[self.color]
+            self.checked = isAttacked (self, kingcord, 1-self.color)
+        return self.checked
+    
+    def opIsChecked (self):
+        if self.opchecked == None:
+            kingcord = self.kings[1-self.color]
+            self.opchecked = isAttacked (self, kingcord, self.color)
+        return self.opchecked
         
     def _addPiece (self, cord, piece, color):
         self.boards[color][piece] = \
@@ -301,9 +283,12 @@ class LBoard:
         
         # Update history
         self.history.append (
-            (move, tpiece, self.enpassant,
-            self.castling, self.hash, self.fifty)
+            (move, tpiece, self.enpassant, self.castling,
+            self.hash, self.fifty, self.checked, self.opchecked)
         )
+        
+        self.opchecked = None
+        self.checked = None
         
         # Capture
         if tpiece != EMPTY:
@@ -424,7 +409,8 @@ class LBoard:
         opcolor = self.color
         
         # Get information from history
-        move, cpiece, enpassant, castling, hash, fifty = self.history.pop()
+        move, cpiece, enpassant, castling, \
+        hash, fifty, checked, opchecked = self.history.pop()
         
         flag = move >> 12
         fcord = (move >> 6) & 63
@@ -470,6 +456,8 @@ class LBoard:
         self.setColor(color)
         self.updateBoard ()
         
+        self.checked = checked
+        self.opchecked = opchecked
         self.enpassant = enpassant
         self.castling = castling
         self.hash = hash
