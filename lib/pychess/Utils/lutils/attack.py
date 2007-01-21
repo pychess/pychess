@@ -1,5 +1,6 @@
 from bitboard import *
-from const import *
+from ldata import *
+from pychess.Utils.const import *
 
 #
 # Caveat: Many functions in this module has very similar code. If you fix a

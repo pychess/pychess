@@ -1,99 +1,152 @@
-from const import *
-
-def setBit (board, i):
-    return board | bitPosArray[i]
-
-def clearBit (board, i):
-    return board & notBitPosArray[i]
-
-def moveBit (board, i, j):
-    board = clearBit(board,i)
-    return setBit(board, j)
-
-def firstBit (board):
-    """ Returns the index of the first non-zero bit from left """
-    if (board >> 48): return lzArray[board >> 48]
-    if (board >> 32): return lzArray[board >> 32] + 16
-    if (board >> 16): return lzArray[board >> 16] + 32
-    return lzArray[board] + 48
-
-def lastBit (board):
-    return firstBit (board & ((~board)+1))
-
-def bitLength (board):
-    return bitCount [   board >> 48 ] + \
-           bitCount [ ( board >> 32) & 0xffff] + \
-           bitCount [ ( board >> 16) & 0xffff] + \
-           bitCount [   board & 0xffff ]
-
-def iterBits (board):
-    while board:
-        cord = firstBit(board)
-        board = clearBit(board, cord)
-        yield cord
-
-def toString (board):
-    s = []
-    last = -1
-    
-    while board:
-        cord = firstBit (board)
-        board = clearBit (board, cord)
-        for c in range(cord-last-1):
-            s.append(" -")
-        s.append(" #")
-        last = cord
-    while len(s) < 64: s.append(" -")
-    
-    s2 = ""
-    for i in range(64,0,-8):
-        a = s[i-8:i]
-        s2 += "".join(a) + "\n"
-    return s2
-
-# This array is used when the position of the leading non-zero bit is required.
-# Leftmost is 0, rightmost is 63
-
-NBITS = 16
-lzArray = [0]* (1 << NBITS)
-
-s = n = 1
-for i in range(NBITS):
-    for j in range (s, s + n):
-        lzArray[j] = NBITS - 1 - i
-    s += n
-    n += n
-
-# BitPosArray[i] returns the bitboard whose ith bit (FROM LEFT) is set to 1 and
-# every other bits 0. This is about double speed compared to do shifting all the
-# time (On my computer). It also computes the NotBitPosArray = ~BitPosArray.
-
-notBitPosArray = [None]*64
-bitPosArray = [None]*64
-
-b = 1
-for i in range(63,-1,-1):
-    bitPosArray[i] = b
-    notBitPosArray[i] = ~b
-    b <<= 1
-
-# The bitCount array returns the no. of bits present in the 16 bit
-# input argument. This is use for counting the number of bits set
-# in a BitBoard (e.g. for mobility count).
-
-bitCount = [None]*65536
-bitCount[0] = 0
-bitCount[1] = 1
-
-i = 1
-for n in range(2,17):
-    i <<= 1
-    for j in range (i, i*2):
-        bitCount[j] = 1 + bitCount[j-i]
+from pychess.Utils.const import *
+from bitboard import *
+from sys import maxint
 
 ################################################################################
-#  Other boards                                                                #
 ################################################################################
+##   Evaluating constants                                                     ##
+################################################################################
+################################################################################
+
+PAWN_VALUE = 100
+KNIGHT_VALUE = 300
+BISHOP_VALUE = 330
+ROOK_VALUE = 500
+QUEEN_VALUE = 900
+KING_VALUE = maxint
+PIECE_VALUES = (None, PAWN_VALUE, KNIGHT_VALUE,
+				BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE)
+
+# How many points does it give to have the piece standing i cords from the
+# opponent king
+pawnTScale = [0, 40, 20, 12, 9, 6, 4, 2, 1, 0]
+bishopTScale = [0, 50, 25, 15, 7, 5, 3, 2, 2, 1]
+knightTScale = [0, 50, 70, 35, 10, 3, 2, 2, 1, 1]
+rookTScale = [0, 50, 40, 15, 5, 2, 1, 1, 1, 0]
+queenTScale = [0, 100, 60, 20, 10, 7, 5, 4, 3, 2]
+
+from math import sqrt
+
+distance = [[0]*64 for i in range(64)]
+for fcord in range(64):
+    for tcord in range(64):
+        fx = fcord >> 3
+        fy = fcord & 7
+        tx = tcord >> 3
+        ty = tcord & 7
+        distance[fcord][tcord] = int(sqrt((fx-tx)**2+(fy-ty)**2))
+
+################################################################################
+################################################################################
+##   Array boards                                                             ##
+################################################################################
+################################################################################
+
+shift00 = [
+    56, 56, 56, 56, 56, 56, 56, 56,
+    48, 48, 48, 48, 48, 48, 48, 48,
+    40, 40, 40, 40, 40, 40, 40, 40,
+    32, 32, 32, 32, 32, 32, 32, 32,
+    24, 24, 24, 24, 24, 24, 24, 24,
+    16, 16, 16, 16, 16, 16, 16, 16,
+     8,  8,  8,  8,  8,  8,  8,  8,
+     0,  0,  0,  0,  0,  0,  0,  0
+]
+
+r90 = [
+    A8, A7, A6, A5, A4, A3, A2, A1,
+    B8, B7, B6, B5, B4, B3, B2, B1,
+    C8, C7, C6, C5, C4, C3, C2, C1,
+    D8, D7, D6, D5, D4, D3, D2, D1,
+    E8, E7, E6, E5, E4, E3, E2, E1,
+    F8, F7, F6, F5, F4, F3, F2, F1,
+    G8, G7, G6, G5, G4, G3, G2, G1,
+    H8, H7, H6, H5, H4, H3, H2, H1
+]
+
+shift90 = [
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56,
+    0, 8, 16, 24, 32, 40, 48, 56
+]
+
+r45 = [
+    E4, F3, H2, C2, G1, D1, B1, A1,
+    E5, F4, G3, A3, D2, H1, E1, C1,
+    D6, F5, G4, H3, B3, E2, A2, F1, 
+    B7, E6, G5, H4, A4, C3, F2, B2,
+    G7, C7, F6, H5, A5, B4, D3, G2, 
+    C8, H7, D7, G6, A6, B5, C4, E3, 
+    F8, D8, A8, E7, H6, B6, C5, D4, 
+    H8, G8, E8, B8, F7, A7, C6, D5
+]
+
+shift45 = [
+    28, 36, 43, 49, 54, 58, 61, 63,
+    21, 28, 36, 43, 49, 54, 58, 61,
+    15, 21, 28, 36, 43, 49, 54, 58,
+    10, 15, 21, 28, 36, 43, 49, 54,
+     6, 10, 15, 21, 28, 36, 43, 49,
+     3,  6, 10, 15, 21, 28, 36, 43,
+     1,  3,  6, 10, 15, 21, 28, 36,
+     0,  1,  3,  6, 10, 15, 21, 28
+]
+
+mask45 = [
+    0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01,
+    0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 
+    0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 
+    0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 
+    0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 
+    0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 
+    0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 
+    0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF
+]
+
+r315 = [
+    A1, C1, F1, B2, G2, E3, D4, D5,
+    B1, E1, A2, F2, D3, C4, C5, C6,
+    D1, H1, E2, C3, B4, B5, B6, A7,
+    G1, D2, B3, A4, A5, A6, H6, F7,
+    C2, A3, H3, H4, H5, G6, E7, B8,
+    H2, G3, G4, G5, F6, D7, A8, E8,
+    F3, F4, F5, E6, C7, H7, D8, G8,
+    E4, E5, D6, B7, G7, C8, F8, H8
+]
+
+shift315 = [
+    63, 61, 58, 54, 49, 43, 36, 28,
+    61, 58, 54, 49, 43, 36, 28, 21,
+    58, 54, 49, 43, 36, 28, 21, 15,
+    54, 49, 43, 36, 28, 21, 15, 10,
+    49, 43, 36, 28, 21, 15, 10,  6,
+    43, 36, 28, 21, 15, 10,  6,  3,
+    36, 28, 21, 15, 10,  6,  3,  1,
+    28, 21, 15, 10,  6,  3,  1,  0
+]
+
+mask315 = [
+    0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF,
+    0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F,
+    0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F,
+    0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F,
+    0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F,
+    0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07,
+    0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03,
+    0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01
+]
+
+################################################################################
+################################################################################
+##   Bit boards                                                               ##
+################################################################################
+################################################################################
+
 NULLBITBOARD = 0x0000000000000000
 WHITE_SQUARES = 0x55AA55AA55AA55AA
 BLACK_SQUARES = 0xAA55AA55AA55AA55
@@ -115,6 +168,8 @@ fileBits.reverse()
 #  Generate the move bitboards.  For e.g. the bitboard for all                 #
 #  the moves of a knight on f3 is given by MoveArray[knight][21].              #
 ################################################################################
+
+from bitboard import setBit, clearBit, moveBit, firstBit, lastBit, iterBits
 
 dir = [
     None,
@@ -169,12 +224,12 @@ for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
         moveArray[piece][f] = b
         
 ################################################################################
-#  For each square, there are 8 rays.  The first 4 rays are diagonals 
-#  for the bishops and the next 4  are file/rank for the rooks.  
-#  The queen uses all 8 rays.
-#  These rays are used for move generation rather than MoveArray[].
-#  Also initialize the directions[][] array.  directions[f][t] returns
-#  the index into Ray[f] array allow us to find the ray in that direction.
+#  For each square, there are 8 rays.  The first 4 rays are diagonals          #
+#  for the bishops and the next 4  are file/rank for the rooks.                #
+#  The queen uses all 8 rays.                                                  #
+#  These rays are used for move generation rather than MoveArray[].            #
+#  Also initialize the directions[][] array.  directions[f][t] returns         #
+#  the index into Ray[f] array allow us to find the ray in that direction.     #
 ################################################################################
 
 directions = [[-1]*64 for i in range(64)] # directions[64][64]
@@ -282,13 +337,13 @@ for map in range (256):
         for cord in range(cord1, cord2+1, 9):
             bishop45Attack[cord][map] = \
                     bishop45Attack[cord+8][map] << 8 & MAXBITBOARD
-                
+    
     for cord1, cord2 in itranges (range(A2, A8+1,  8),
                                   range(G8, A8-1, -1)):
         for cord in range(cord1, cord2+1, 9):
             bishop45Attack[cord][map] = \
-              clearBit (bishop45Attack[cord+1][map], cord1-8) << 1 & MAXBITBOARD
-                
+              clearBit (bishop45Attack[cord+1][map], cord1-8) << 1
+    
     for cord1, cord2 in itranges (range(H2, H8+1,  8),
                                   range(B8, H8+1,  1)):
         for cord in range(cord1, cord2+1, 7):
@@ -298,4 +353,4 @@ for map in range (256):
                                   range(A7, A1-1, -8)):
         for cord in range(cord1, cord2+1, 7):
             bishop315Attack[cord][map] = \
-             clearBit (bishop315Attack[cord+1][map], cord2+8) << 1 & MAXBITBOARD
+             clearBit (bishop315Attack[cord+1][map], cord2+8) << 1
