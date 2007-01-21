@@ -1,7 +1,7 @@
 import unittest
 
 def suite():
-    modules_to_test = ("hash", "movegen") 
+    modules_to_test = ("movegen",) 
     tests = unittest.TestSuite()
     for module in map(__import__, modules_to_test):
         tests.addTest(unittest.findTestCases(module))
