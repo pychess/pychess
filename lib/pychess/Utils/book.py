@@ -9,8 +9,10 @@ import atexit
 atexit.register(tsqlite.close)
 
 def getOpenings (board):
+    print fen(board)
     return tsqlite.execSQL (
-        "select move,wins,draws,loses from openings where fen = '%s'" % fen(board))
+        "select move,wins,draws,loses from openings where fen = '%s'" % \
+                                                                 fen(board))
 
 #	#	#	CREATION	#	#	#
 
@@ -110,28 +112,9 @@ def load (file):
 
 # We can't use boardhash for dbkeys, as the boardhashes vary for each time Board.py is loaded.
 def fen (board):
-    r = ""
-
-    sign = lambda p: p.color == WHITE and reprSign[p.sign] or reprSign[p.sign].lower()
-    for y, row in enumerate(board.data[::-1]):
-        empty = 0
-        for x, piece in enumerate(row):
-            if piece == None:
-                empty += 1
-                if x == 7:
-                    r += str(empty)
-            else:
-                if empty > 0:
-                    r += str(empty)
-                    empty = 0
-                r += sign(piece)
-        if y != 7:
-            r += "/"
-    r += " "
-    
-    r += reprColor[board.color][0].lower()
-    
-    return r
+    """ Returns a fenstring, only containing the two first fields, as the book
+    is build in a such way. In next book this should probably be changed. """
+    return " ".join(board.asFen().split(" ")[:2])
 
 def remake ():
     tsqlite.execSQL("drop table if exists openings")

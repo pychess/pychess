@@ -1,19 +1,28 @@
 class CordFormatException(Exception): pass
 
-#TODO: In like 6 moves, more than 25000 Cords are inited. Perhaps it should be pooled..
 class Cord:
-    def __init__ (self, x, y = None):
+    def __init__ (self, var1, var2 = None):
+        """ Inits a new highlevel cord object.
+            The cord B3 can be inited in the folowing ways:
+                Cord(17), Cord("b3"), Cord(2,3), Cord("b",3) """
+                
         if y == None:
-            x = x.strip()
-            y = int(x[1]) - 1
-            x = self.charToInt(x[0])
-    
-        #assert 0 <= y <= 7
-        if type(x) == str:
-            x = self.charToInt(x)
-        #assert 0 <= x <= 7
+            if type(var1) == int:
+                x = FILE(var1)
+                y = RANK(var1)
+            else:
+                x = self.charToInt(var[0])
+                y = int(var[1]) - 1
+        else:
+            if type(x) == str:
+                x = self.charToInt(x)
         
-        self.x, self.y = int(x), int(y)
+        self.x = x
+        self.y = y
+    
+    def _get_cord (self):
+        return (7-y)*8+x
+    cord = property(_get_cord)
     
     def _get_cx (self):
         return self.intToChar(self.x)

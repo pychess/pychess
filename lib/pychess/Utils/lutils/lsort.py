@@ -159,16 +159,14 @@ def getMoveValue (move):
     fpiece = arBoard[fcord]
     tpiece = arBoard[tcord]
     
-    score = 0
     if tpiece != EMPTY:
         # We add some extra to ensure also bad captures will be searched early
-        score += PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
+        return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        score += PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
-    return score
+        return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
-    if gtable.isKiller(gboard.color, len(gboard.history), move):
+    if gtable.isKiller(gply, move):
         return 1000
     
     # King tropism - a move makeing us nearer to the enemy king, is probably a
