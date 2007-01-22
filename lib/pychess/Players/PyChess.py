@@ -15,6 +15,10 @@ features = {
 print "feature %s done=0" % \
             " ".join(["=".join([k,repr(v)]) for k,v in features.iteritems()])
 
+################################################################################
+# Import                                                                       #
+################################################################################
+
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from time import time
 import sys, os
@@ -23,16 +27,26 @@ from threading import Lock
 
 from Engine import Engine
 from pychess.Utils.book import getOpenings
-from pychess.Utils.History import History
 from pychess.System.ThreadPool import pool
-from pychess.Utils.TranspositionTable import TranspositionTable
-from sys import maxint
+from pychess.Utils.lutils.lsearch import alphaBeta
+from pychess.Utils.lutils import lsearch
+from pychess.Utils.lutils.lmove import toSAN, parseSAN
+from pychess.Utils.lutils.LBoard import LBoard, FEN_START
+
+try:
+    import psyco
+    psyco.bind(alphaBeta)
+except ImportError:
+    pass
 
 from pychess.Utils.const import prefix
 import gettext
 gettext.install("pychess", localedir=prefix("lang"), unicode=1)
-from pychess.Savers import epd
 from cStringIO import StringIO
+
+################################################################################
+# getBestOpening                                                               #
+################################################################################
 
 import random
 def getBestOpening (board):
@@ -45,15 +59,10 @@ def getBestOpening (board):
             score = s
     return move
 
-def nextedIterator (*items):
-    used = set()
-    for item in items:
-       for i in item:
-            if not i in used:
-                used.add(i)
-                yield i
+################################################################################
+# global variables                                                             #
+################################################################################
 
-searching = False
 searchLock = Lock()
 
 sd = 4
@@ -64,59 +73,69 @@ mytime = None
 forced = False
 analyzing = False
 
-history = History()
-table = TranspositionTable(50000)
+board = LBoard()
+board.applyFen(FEN_START)
 
-def analyze2 ():
-    from profile import runctx
-    runctx ("analyze2()", locals(), globals(), "/tmp/pychessprofile")
-    from pstats import Stats
-    s = Stats("/tmp/pychessprofile")
-    #s.sort_stats("time")
-    s.sort_stats("cumulative")
-    s.print_stats()
+################################################################################
+# analyze()                                                                    #
+################################################################################
 
 def analyze ():
-    global searching, nodes, movesearches
-    searching = True
+    """ Searches, and prints info from, the position as stated in the cecp
+        protocol """
+        
+    lsearch.searching = True
     start = time()
     searchLock.acquire()
-    board = history[-1]
-    for depth in range (1, 5):
-        if not searching: break
+    
+    for depth in range (1, 10):
+        if not lsearch.searching: break
         t = time()
-        mvs, scr = alphaBeta (table, board, depth, -maxint, maxint)
+        mvs, scr = alphaBeta (board, depth)
         
-        tempboard = board
         smvs = []
         
         for move in mvs:
-            smvs.append(toAN (tempboard, move))
-            tempboard = tempboard.move(move)
+            smvs.append(toSAN (board, move))
+            board.applyMove(move)
+        for move in mvs:
+            board.popMove()
+            
         smvs = " ".join(smvs)
         
-        print depth,"\t", "%0.2f" % (time()-start),"\t", scr,"\t", nodes,"\t", smvs
-        print "%0.1f moves/position; %0.1f n/s" % (nodes/float(movesearches), nodes/(time()-t))
-        nodes = 0
-        movesearches = 0
+        print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
+              lsearch.nodes, "\t", smvs
+              
+        print "%0.1f moves/position; %0.1f n/s" % \
+               (lsearch.nodes/float(lsearch.movesearches), lsearch.nodes/(time()-t))
+               
+        lsearch.nodes = 0
+        lsearch.movesearches = 0
+        
     searchLock.release()
-    
+
+################################################################################
+# analyze()                                                                    #
+################################################################################
+
 def go ():
+    """ Finds and prints the best move from the current position """
+    
     # TODO: Length info should be put in the book.
     # Btw. 10 is not enough. Try 20
-    if len(history) < 14:
-        movestr = getBestOpening(history[-1])
+    if len(board.history) < 14:
+        movestr = getBestOpening(board)
         if movestr:
-            move = parseSAN(history[-1], movestr)
+            move = parseSAN(board, movestr)
         
-    if len(history) >= 14 or not movestr:
+    if len(board.history) >= 14 or not movestr:
         
         searchLock.acquire()
-        global searching, nodes, mytime, increment
-        searching = True
+        global mytime, increment
+        lsearch.searching = True
         
         if mytime == None:
-            mvs, scr = alphaBeta (table, history[-1], sd, -maxint, maxint)
+            mvs, scr = alphaBeta (board, sd)
             move = mvs[0]
         
         else:
@@ -127,24 +146,24 @@ def go ():
             usetime = max (usetime, 5) # We don't wan't to search for e.g. 0 secs
             starttime = time()
             endtime = starttime + usetime
-            print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
+            print "Time left: %d seconds; Thinking for %d seconds" % \
+                   (mytime, usetime)
             for depth in range(1,sd+1):
-                mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
+                mvs, scr = alphaBeta (board, depth)
                 if time() > endtime: break
             move = mvs[0]
             mytime -= time() - starttime
             mytime += increment
         
-        print "moves were", mvs, \
-              "color is", history[-1].color, history.curCol(), \
-              "last", last
+        print "moves were", mvs
         
-        nodes = 0
-        searching = False
+        lsearch.movesearches = 0
+        lsearch.nodes = 0
+        lsearch.searching = False
         searchLock.release()
         
-    history.add(move, mvlist=False)
-    print "move", toAN(history[-2], move)
+    print "move", toSAN(board, move)
+    board.applyMove(move)
 
 while True:
     line = raw_input()
@@ -157,17 +176,18 @@ while True:
     elif lines[0] == "usermove":
         
         if analyzing:
-            searching = False
+            lsearch.searching = False
             searchLock.acquire()
             searchLock.release()
         
-        try:
-            move = parseAN (history[-1], lines[1])
-        except ParsingError:
-            print "Illegal move:", repr(lines[1])
-            sys.exit(os.EX_PROTOCOL)
+        #try:
+        move = parseSAN (board, lines[1])
+        board.applyMove(move)
+        #except ParsingError:
+        #    print "Illegal move:", repr(lines[1])
+        #    sys.exit(os.EX_PROTOCOL)
             
-        history.add(move, mvlist=False)
+        #history.add(move, mvlist=False)
         
         if not forced and not analyzing:
             thread.start_new(go,())
@@ -201,13 +221,13 @@ while True:
     
     elif lines[0] == "force":
         forced = True
-        
+    
     elif lines[0] == "go":
         forced = False
         thread.start_new(go,())
-        
+    
     elif lines[0] in ("black", "white"):
-        searching = False
+        lsearch.searching = False
         searchLock.acquire()
         newColor = lines[0] == "black" and BLACK or WHITE
         if history.curCol() != newColor:
@@ -218,14 +238,13 @@ while True:
     
     elif lines[0] == "analyze":
         analyzing = True
-        analyze()
-        #thread.start_new(analyze,())
+        pool.start(analyze)
         
     elif lines[0] == "draw":
         print "offer draw"
     
     elif lines[0] == "setboard":
-        searching = False
+        lsearch.searching = False
         io = StringIO()
         io.write(" ".join(lines[1:])+"\n")
         io.seek(0)

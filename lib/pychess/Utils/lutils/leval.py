@@ -89,38 +89,10 @@ def evalKingTropism (board):
         to the opponent's king is a good thing """
     
     score = 0
-    
     whiteKing, blackKing = board.kings
-    arBoard = board.arBoard
     
     wpieces = board.boards[WHITE]
     
-    #for cord in iterBits(board.friends[WHITE]):
-    #    piece = arBoard[cord]
-    #    if piece == PAWN:
-    #        score += pawnTropism[cord][blackKing]
-    #    elif piece == KNIGHT:
-    #        score += knightTropism[cord][blackKing]
-    #    elif piece == BISHOP:
-    #        score += bishopTropism[cord][blackKing]
-    #    elif piece == ROOK:
-    #        score += rookTropism[cord][blackKing]
-    #    elif piece == QUEEN:
-    #        score += queenTropism[cord][blackKing]
-    
-    #for cord in iterBits(board.friends[BLACK]):
-    #    piece = arBoard[cord]
-    #    if piece == PAWN:
-    #        score -= pawnTropism[cord][whiteKing]
-    #    elif piece == KNIGHT:
-    #        score -= knightTropism[cord][whiteKing]
-    #    elif piece == BISHOP:
-    #        score -= bishopTropism[cord][whiteKing]
-    #    elif piece == ROOK:
-    #        score -= rookTropism[cord][whiteKing]
-    #    elif piece == QUEEN:
-    #        score -= queenTropism[cord][whiteKing]
-            
     for cord in iterBits(wpieces[PAWN]):
         score += pawnTropism[cord][blackKing]
     

@@ -8,13 +8,13 @@ from TranspositionTable import TranspositionTable
 
 from sys import maxint
 
-table = TranspositionTable(1000)
+table = TranspositionTable(5000)
 searching = True
 movesearches = 0
 nodes = 0
 last = 0
 
-def alphaBeta (board, depth, alpha, beta, ply=0):
+def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
         Based on moves found by the validator.py findmoves2 function and
         evaluated by eval.py.
@@ -107,7 +107,8 @@ def alphaBeta (board, depth, alpha, beta, ply=0):
         if val > alpha:
             if val >= beta:
                 table.record (board.hash, move, beta, hashfBETA)
-                table.addKiller (ply, move)
+                if board.arBoard[move&63] == EMPTY:
+                    table.addKiller (ply, move)
                 last = 3
                 return [move]+mvs, beta
                 
@@ -123,7 +124,8 @@ def alphaBeta (board, depth, alpha, beta, ply=0):
     if amove:
         last = 4
         table.record (board, amove[0], alpha, hashf)
-        table.addKiller (ply, amove[0])
+        if board.arBoard[amove[0]&63] == EMPTY:
+            table.addKiller (ply, amove[0])
         return amove, alpha
         
     elif moves:

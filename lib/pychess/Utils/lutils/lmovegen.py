@@ -2,30 +2,11 @@
 from bitboard import *
 from attack import *
 from pychess.Utils.const import *
-
-################################################################################
-#   The format of a move is as follows - from left:                            #
-#   4 bits:  Descriping the type of the move                                   #
-#   6 bits:  cord to move from                                                 #
-#   6 bits:  cord to move to                                                   #
-################################################################################
-
-S_NORMAL_MOVE, S_QUEEN_CASTLE, S_KING_CASTLE, S_CAPTURE, S_ENPASSANT, \
-S_KNIGHT_PROMOTION, S_BISHOP_PROMOTION, S_ROOK_PROMOTION, S_QUEEN_PROMOTION = \
-                                                     [v << 12 for v in range(9)]
-
-# To unmake moves, we need to know which piece has been captured
-
-shiftedFromCords = []
-for i in range(64):
-    shiftedFromCords.append(i << 6)
-
-def newMove (fromcord, tocord, type = S_NORMAL_MOVE):
-    return type + shiftedFromCords[fromcord] + tocord
+from lmove import newMove
 
 def newPromotes (fromcord, tocord):
-    for p in S_KNIGHT_PROMOTION, S_BISHOP_PROMOTION, \
-             S_ROOK_PROMOTION, S_QUEEN_PROMOTION:
+    for p in KNIGHT_PROMOTION, BISHOP_PROMOTION, \
+             ROOK_PROMOTION, QUEEN_PROMOTION:
         yield newMove(fromcord, tocord, p)
 
 ################################################################################
@@ -137,7 +118,7 @@ def genAllMoves (board):
                 for move in newPromotes (cord-7, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord-7, cord, S_ENPASSANT)
+                yield newMove (cord-7, cord, ENPASSANT)
             else:
                 yield newMove (cord-7, cord)
         
@@ -150,7 +131,7 @@ def genAllMoves (board):
                 for move in newPromotes (cord-9, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord-9, cord, S_ENPASSANT)
+                yield newMove (cord-9, cord, ENPASSANT)
             else:
                 yield newMove (cord-9, cord)
     
@@ -185,7 +166,7 @@ def genAllMoves (board):
                 for move in newPromotes (cord+7, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord+7, cord, S_ENPASSANT)
+                yield newMove (cord+7, cord, ENPASSANT)
             else:
                yield newMove (cord+7, cord)
         
@@ -198,7 +179,7 @@ def genAllMoves (board):
                 for move in newPromotes (cord+9, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord+9, cord, S_ENPASSANT)
+                yield newMove (cord+9, cord, ENPASSANT)
             else:
                 yield newMove (cord+9, cord)
     
@@ -209,26 +190,26 @@ def genAllMoves (board):
             not isAttacked (board, E1, BLACK) and \
             not isAttacked (board, F1, BLACK) and \
             not isAttacked (board, G1, BLACK):
-                yield newMove (E1, G1, S_KING_CASTLE)
+                yield newMove (E1, G1, KING_CASTLE)
         
         if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
             not isAttacked (board, E1, BLACK) and \
             not isAttacked (board, D1, BLACK) and \
             not isAttacked (board, C1, BLACK):
-                yield newMove (E1, C1, S_QUEEN_CASTLE)
+                yield newMove (E1, C1, QUEEN_CASTLE)
     
     else:
         if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
             not isAttacked (board, E8, WHITE) and \
             not isAttacked (board, F8, WHITE) and \
             not isAttacked (board, G8, WHITE):
-                yield newMove (E8, G8, S_KING_CASTLE)
+                yield newMove (E8, G8, KING_CASTLE)
                 
         if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
             not isAttacked (board, E8, WHITE) and \
             not isAttacked (board, D8, WHITE) and \
             not isAttacked (board, C8, WHITE):
-                yield newMove (E8, C8, S_QUEEN_CASTLE)
+                yield newMove (E8, C8, QUEEN_CASTLE)
 
 ################################################################################
 #   Generate capturing moves                                                   #
@@ -302,7 +283,7 @@ def genCaptures (board):
                 for move in newPromotes (cord-7, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord-7, cord, S_ENPASSANT)
+                yield newMove (cord-7, cord, ENPASSANT)
             else:
                 yield newMove (cord-7, cord)
         
@@ -315,7 +296,7 @@ def genCaptures (board):
                 for move in newPromotes (cord-9, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord-9, cord, S_ENPASSANT)
+                yield newMove (cord-9, cord, ENPASSANT)
             else:
                 yield newMove (cord-9, cord)
     
@@ -338,7 +319,7 @@ def genCaptures (board):
                 for move in newPromotes (cord+7, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord+7, cord, S_ENPASSANT)
+                yield newMove (cord+7, cord, ENPASSANT)
             else:
                yield newMove (cord+7, cord)
         
@@ -351,7 +332,7 @@ def genCaptures (board):
                 for move in newPromotes (cord+9, cord):
                     yield move
             elif cord == enpassant:
-                yield newMove (cord+9, cord, S_ENPASSANT)
+                yield newMove (cord+9, cord, ENPASSANT)
             else:
                 yield newMove (cord+9, cord)
 
@@ -448,26 +429,26 @@ def genNonCaptures (board):
             not isAttacked (board, E1, BLACK) and \
             not isAttacked (board, F1, BLACK) and \
             not isAttacked (board, G1, BLACK):
-                yield newMove (E1, G1, S_KING_CASTLE)
+                yield newMove (E1, G1, KING_CASTLE)
         
         if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
             not isAttacked (board, E1, BLACK) and \
             not isAttacked (board, D1, BLACK) and \
             not isAttacked (board, C1, BLACK):
-                yield newMove (E1, C1, S_QUEEN_CASTLE)
+                yield newMove (E1, C1, QUEEN_CASTLE)
     
     else:
         if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
             not isAttacked (board, E8, WHITE) and \
             not isAttacked (board, F8, WHITE) and \
             not isAttacked (board, G8, WHITE):
-                yield newMove (E8, G8, S_KING_CASTLE)
+                yield newMove (E8, G8, KING_CASTLE)
                 
         if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
             not isAttacked (board, E8, WHITE) and \
             not isAttacked (board, D8, WHITE) and \
             not isAttacked (board, C8, WHITE):
-                yield newMove (E8, C8, S_QUEEN_CASTLE)
+                yield newMove (E8, C8, QUEEN_CASTLE)
 
 ################################################################################
 #   Generate escapes from check                                                #
@@ -505,7 +486,7 @@ def genCheckEvasions (board):
                 bits = moveArray[color == WHITE and BPAWN or PAWN][ep] & pawns
                 for cord in iterBits (bits):
                     if not pinnedOnKing (board, cord, color):
-                        yield newMove (cord, ep, S_ENPASSANT)
+                        yield newMove (cord, ep, ENPASSANT)
         
         # Lets block/capture the checking piece
         if sliders[arBoard[chkcord]]:

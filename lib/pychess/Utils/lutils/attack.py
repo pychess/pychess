@@ -83,48 +83,42 @@ def getAttacks (board, cord, color):
     
     return bits
 
-def getPieceAttacks (board, cord, color, piece):
-    """ To create a bitboard of specifid piece of color, which attacks cord """
+def getPieceMoves (board, cord, color, piece):
+    """ To create a bitboard of specified pieces of color, which can move to
+        cord """
     
     color = board.color
     pieces = board.boards[color]
     
-    if piece == KNIGHT:
-        return pieces[KNIGHT] & moveArray[KNIGHT][cord]
+    if piece == KNIGHT or piece == KING:
+        return pieces[piece] & moveArray[piece][cord]
     
     rayto = fromToRay[cord]
     blocker = board.blocker
     
-    if piece == BISHOP or piece == QUEEN:
-        bisque = pieces[piece] & moveArray[piece][cord]
+    if sliders[piece]:
+        cords = pieces[piece] & moveArray[piece][cord]
         bits = 0
-        for c in iterBits(bisque):
+        for c in iterBits(cords):
             ray = rayto[c]
             if ray and not clearBit(ray & blocker, c):
                 bits |= bitPosArray[c]
         return bits
-    
-    if piece == ROOK or piece == QUEEN:
-        rooque = pieces[piece] & moveArray[piece][cord]
-        bits = 0
-        for c in iterBits(rooque):
-            ray = rayto[c]
-            if ray and not clearBit(ray & blocker, c):
-                bits |= bitPosArray[c]
-        return bits
-    
-    if piece == KING:
-        return pieces[KING] & moveArray[KING][cord]
     
     if piece == PAWN:
-        return pieces[PAWN] & moveArray[color == WHITE and BPAWN or PAWN][cord]
+        pawns = pieces[PAWN]
+        bits = pawns & moveArray[color == WHITE and BPAWN or PAWN][cord]
+        bits |= pawns & bitPosArray[cord + (color == WHITE and -8 or 8)]
+        if not blocker & bitPosArray[cord + (color == WHITE and -8 or 8)]:
+            bits |= pawns & rankBits[color == WHITE and 1 or 6]
+        return bits
     
-def getPieceRFAttacks (board, cord, color, piece, rank=None, file=None):
+def getPieceRFMoves (board, cord, color, piece, rank=None, file=None):
     """ Returns first cord containing a piece - with the correct color, type,
-        file and rank - that can attack the specified cord. Checking will be
-        tested """
+        file and rank - that can move/attack the specified cord. Checking will
+        be tested """
     
-    bits = getPieceAttacks (board, cord, color, piece)
+    bits = getPieceMoves (board, cord, color, piece)
     if rank != None:
         bits &= rankBits[rank]
     if file != None:
@@ -133,7 +127,12 @@ def getPieceRFAttacks (board, cord, color, piece, rank=None, file=None):
     if bitLength(bits) == 1:
         return firstBit(bits)
     else:
+        from lmove import RANK, newMove
         for c in iterBits (bits):
+            if piece == PAWN and board.arBoard[cord] == EMPTY and \
+                                                          RANK(c) != RANK(cord):
+                flag = ENPASSANT
+            else: flag = NORMAL_MOVE
             board.applyMove(newMove(cord, c))
             if not isAttacked (board, board.kings[board.color], 1-board.color):
                 board.popMove()
