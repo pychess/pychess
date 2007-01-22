@@ -15,15 +15,25 @@ from sys import maxint
 board = LBoard()
 board.applyFen (FEN_START)
 
-if False:
+try:
+    import psyco
+    psyco.bind(alphaBeta)
+except ImportError:
+    print "You do not have psyco installed. \n\
+    If you do so, pychessengine can calculate moves at nearly the double speed"
+    
+if 0:
     from profile import runctx
-    runctx ("mvs, scr = alphaBeta (board, 4, -maxint, maxint)", locals(), globals(), "/tmp/pychessprofile")
+    runctx ("mvs, scr = alphaBeta (board, 5, -maxint, maxint)", locals(), globals(), "/tmp/pychessprofile")
     from pstats import Stats
     s = Stats("/tmp/pychessprofile")
     s.sort_stats("cumulative")
     s.print_stats()
-
-mvs, scr = alphaBeta (board, 5, -maxint, maxint)
+else:
+    from time import time
+    t = time()
+    mvs, scr = alphaBeta (board, 5, -maxint, maxint)
+    print time()-t
 
 from pychess.Utils.lutils import lsearch
 print lsearch.nodes

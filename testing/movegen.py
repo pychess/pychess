@@ -3,12 +3,12 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
-from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions, isCheck
+from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.bitboard import toString
 from pychess.Utils.lutils.ldata import *
 
-from pychess.Utils.Move import ltoSAN
+from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.const import *
 
 MAXDEPTH = 2
@@ -22,11 +22,14 @@ class FindMovesTestCase(unittest.TestCase):
             self.count += 1
             return
         
-        if False and isCheck(board, board.color):
+        if board.isChecked():
+            # If we are checked we can use the genCheckEvasions function as well
+            # as genAllMoves. Here we try both functions to ensure they return
+            # the same result.
             nmoves = []
             for nmove in genAllMoves(board):
                 board.applyMove(nmove)
-                if isCheck(board, 1-board.color):
+                if board.opIsChecked():
                     board.popMove()
                     continue
                 nmoves.append(nmove)
@@ -34,6 +37,13 @@ class FindMovesTestCase(unittest.TestCase):
             
             cmoves = []
             
+            for move in genCheckEvasions(board):
+                board.applyMove(move)
+                cmoves.append(move)
+                board.popMove()
+            
+            # This is not any kind of alphaBeta sort. Only int sorting, to make
+            # comparison possible
             nmoves.sort()
             cmoves.sort()
             
@@ -46,21 +56,21 @@ class FindMovesTestCase(unittest.TestCase):
                 print board
                 print "nmoves"
                 for move in nmoves:
-                    print ltoSAN (board, move)
+                    print toSAN (board, move)
                 print "cmoves"
                 for move in cmoves:
-                    print ltoSAN (board, move)
+                    print toSAN (board, move)
                 self.assertEqual(nmoves, cmoves)
                 
-        if isCheck(board, board.color):
-            for move in genCheckEvasions(board):
-                board.applyMove(move)
-                self.perft(board, depth-1)
-                board.popMove()
+        #if isCheck(board, board.color):
+        #    for move in genCheckEvasions(board):
+        #        board.applyMove(move)
+        #        self.perft(board, depth-1)
+        #        board.popMove()
         else:
             for move in genAllMoves(board):
                 board.applyMove(move)
-                if isCheck(board, 1-board.color):
+                if board.opIsChecked():
                     board.popMove()
                     continue
                 #if depth == 5:
