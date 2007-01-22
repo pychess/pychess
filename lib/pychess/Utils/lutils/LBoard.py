@@ -236,8 +236,40 @@ class LBoard:
         self.arBoard[cord] = EMPTY
     
     def _move (self, fcord, tcord, piece, color):
-        self._removePiece(fcord, piece, color)
-        self._addPiece(tcord, piece, color)
+        """ Moves the piece at fcord to tcord.
+            Notice: The reason why we doesn't just do calls to _removePiece and
+            _addPiece, is that we want to override this method in Board. To make
+            animation work Board needs to know if it is dealing with a new
+            Piece, like from promotion, or it is just dealing with a piece being
+            moved. """
+        
+        # Remove piece
+        self.boards[color][piece] = \
+                clearBit(self.boards[color][piece], fcord)
+        self.blocker90 = clearBit(self.blocker90, r90[fcord])
+        self.blocker45 = clearBit(self.blocker45, r45[fcord])
+        self.blocker315 = clearBit(self.blocker315, r315[fcord])
+        
+        if piece == PAWN:
+            self.pawnhash ^= pieceHashes[color][PAWN][fcord]
+        
+        self.hash ^= pieceHashes[color][piece][fcord]
+        self.arBoard[fcord] = EMPTY
+        
+        # Add piece
+        self.boards[color][piece] = \
+                setBit(self.boards[color][piece], tcord)
+        self.blocker90 = setBit(self.blocker90, r90[tcord])
+        self.blocker45 = setBit(self.blocker45, r45[tcord])
+        self.blocker315 = setBit(self.blocker315, r315[tcord])
+        
+        if piece == PAWN:
+            self.pawnhash ^= pieceHashes[color][PAWN][tcord]
+        elif piece == KING:
+            self.kings[color] = tcord
+        
+        self.hash ^= pieceHashes[color][piece][tcord]
+        self.arBoard[tcord] = piece
     
     def updateBoard (self):
         self.friends[WHITE] = sum(self.boards[WHITE])
@@ -484,3 +516,58 @@ class LBoard:
                 b += " "
             b += "\n"
         return b
+    
+    def asFen (self):
+        fenstr = []
+        
+        rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
+        for r, row in enumerate(rows):
+            empty = 0
+            for i, piece in enumerate(row):
+                if piece != EMPTY:
+                    if empty > 0:
+                        fenstr.append(str(empty))
+                        empty = 0
+                    sign = reprSign[piece]
+                    if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
+                        sign = sign.upper()
+                    else: sign = sign.lower()
+                    fenstr.append(sign)
+                else:
+                    empty += 1
+            if empty > 0:
+                fenstr.append(str(empty))
+            if r != 7:
+                fenstr.append("/")
+        
+        fenstr.append(" ")
+    
+        fenstr.append(self.color == WHITE and "w" or "b")
+        fenstr.append(" ")
+        
+        if not self.castling:
+            fenstr.append("-")
+        else:
+            if self.castling & W_OO:
+                fenstr.append("K")
+            if self.castling & W_OOO:
+                fenstr.append("Q")
+            if self.castling & B_OO:
+                fenstr.append("k")
+            if self.castling & B_OOO:
+                fenstr.append("q")
+        fenstr.append(" ")
+        
+        if not self.enpassant:
+            fenstr.append("-")
+        else:
+            fenstr.append(reprCord[self.enpassant])
+        fenstr.append(" ")
+        
+        fenstr.append(str(self.fifty))
+        fenstr.append(" ")
+        
+        fullmove = (len(self.history)+1)/2
+        fenstr.append(str(fullmove))
+        
+        return "".join(fenstr)

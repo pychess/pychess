@@ -1,94 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
-from threading import Lock
-
-#import gtk.glade
-#widgets = gtk.glade.XML("glade/moveerror.glade")
-#dialog = widgets.get_widget("moveerror")
-
-#def doDialog (move, stacktrace):
-#    hlabel = widgets.get_widget("hlabel")
-#    origtext = hlabel.get_label()
-#    hlabel.set_markup(origtext % str(move))
-#    textview = widgets.get_widget("trace")
-#    textview.get_buffer().set_text(stacktrace)
-#    response = dialog.run()
-#    dialog.hide()
-#    hlabel.set_markup(origtext)
-#    if response != gtk.RESPONSE_OK:
-#        return None
-#    cbs = [widgets.get_widget("combobox%d"%i) for i in range(4)]
-#    v = [cb.get_active() for cb in cbs if cb.get_active() >= 0]
-#    if len(v) != 4:
-#        return None
-#    return (Cord(v[0], v[1]), Cord(v[2], v[3]))
-
-#try:
-
-#except Exception, e:
-#    log.error(str(e))
-#    import traceback
-#    r = doDialog (move, traceback.format_exc())
-#    if not r:
-#        log.error("Could not parse %s. User did not specify" % str(move))
-#        import sys; sys.exit()
-#    self.cord0, self.cord1 = r
-#    self.promotion = "q"
 
 class ParsingError (Exception): pass
 
-class MovePool:
-    def __init__ (self):
-        self.objects = []
-        self.lock = Lock()
-        
-    def pop (self, cord0, cord1, promotion=QUEEN):
-        return Move(cord0, cord1, promotion)
-        self.lock.acquire()
-        
-        if len(self.objects) <= 0:
-            self.lock.release()
-            return Move(cord0, cord1, promotion)
-        
-        assert cord0
-        assert cord1
-        
-        mv = self.objects.pop()
-        mv.cord0 = cord0
-        mv.cord1 = cord1
-        mv.promotion = promotion
-        
-        self.lock.release()
-        return mv
-        
-    def add (self, move):
-        return
-        if not move: return
-        move.promotion = None
-        move.cord0 = None
-        move.cord1 = None
-        self.objects.append(move)
-movePool = MovePool()
-
 class Move:
-
+    
+    def __init__ (self, cord0, cord1=None, promotion=QUEEN):
+        """ Inits a new highlevel Move object.
+            The object can be initialized in the follow ways:
+                Move(cord0, cord1, [promotion])
+                Move(lovLevelMoveInt) """
+        
+        if not cord1:
+            move = cord1
+            flag = move >> 12
+            if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+                self.promotion = PROMOTE_PIECE (move)
+            else: self.promotion = QUEEN
+            self.cord0 = Cord(move >> 6  & 63)
+            self.cord1 = Cord(move & 63)
+        
+        else:
+            self.cord0 = cord0
+            self.cord1 = cord1
+            self.promotion = promotion
+    
     def _get_cords (self):
         return (self.cord0, self.cord1)
     cords = property(_get_cords)
-    
-    def __init__ (self, cord0, cord1, promotion=QUEEN):
-        """(cord0, cord1, [promotion])"""
-        
-        assert cord0
-        assert cord1
-        
-        self.cord0 = cord0
-        self.cord1 = cord1
-        self.promotion = promotion
     
     def __repr__ (self):
         return str(self.cord0) + str(self.cord1)
@@ -161,12 +104,12 @@ def parseSAN (board, san):
             cord1 = Cord(notat)
         except: raise ParsingError, "Unable to parse sanmove %s" % san
     
-    from pychess.Utils.validator import getMovePointingAt
-    cord0 = getMovePointingAt(board, cord1, color, sign, row, col)
+    bits = getPieceRFAttacks (board, cord1.cord, color, sign, row, col)
+    cord0 = firstBit(bits)
     if not cord0:
         raise ParsingError, "Unable to parse sanmove %s" % san
     
-    return movePool.pop (cord0, cord1, promotion)
+    return movePool.pop (Cord(cord0), cord1, promotion)
     
 def parseLAN (board, lan):
     """ Parse a Long/Expanded Algebraic Notation string """

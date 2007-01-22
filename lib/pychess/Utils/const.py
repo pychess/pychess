@@ -124,7 +124,8 @@ reprCord = [
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
 ]
 
-reprRank = ["a", "b", "c", "d", "e", "f", "g", "h"]
+reprFile = ["a", "b", "c", "d", "e", "f", "g", "h"]
+reprRank = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
 cordDic = {}
 for cord, name in enumerate(reprCord):
