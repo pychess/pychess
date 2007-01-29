@@ -181,7 +181,7 @@ def genKnight (cord, board, pureCaptures=False):
 
 def valiPawn (move, board, cancapture=False):
     """ Validate pawn move """
-    dr = board.color == WHITE and 1 or -1
+    dr = board.data[move.cord0.y][move.cord0.x].color == WHITE and 1 or -1
     
     #Leaves only 1 and 2 cords difference - ahead
     if not 0 < (move.cord1.y - move.cord0.y)*dr <= 2:
