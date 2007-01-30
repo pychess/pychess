@@ -48,8 +48,7 @@ class Sidepanel:
         
         self.board = gmwidg.widgets["board"].view
         
-        self.board.history.connect("cleared", self.new_history_object)
-        self.board.history.connect("changed", self.history_changed)
+        self.board.model.connect("game_changed", self.game_changed)
         self.board.connect("shown_changed", self.shown_changed)
         
         scrollwin = widgets.get_widget("panel")
@@ -87,30 +86,21 @@ class Sidepanel:
             w.grab_focus()
         gobject.idle_add(todo)
 
-    def new_history_object (self, history):
-        def helper():
-            self.left.get_model().clear()
-            self.right.get_model().clear()
-            self.numbers.get_model().clear()
-        gobject.idle_add(helper)
-
-    def history_changed (self, history):
+    def game_changed (self, game):
         
-        if not history.moves: return
-    
-        if len(history) % 2 == 0:
-            num = str(int(len(history)/2))+"."
-            def do(): self.numbers.get_model().append([num])
-            gobject.idle_add (do)
-    
-        view = len(history) & 1 and self.right or self.left
-        notat = toSAN(history[-2], history[-1], history.moves[-1])
+        view = len(game.boards) & 1 and self.right or self.left
+        notat = toSAN(game.boards[-2], game.moves[-1])
     
         def todo():
+            if len(game.boards) % 2 == 0:
+                num = str(len(game.boards)/2)+"."
+                self.numbers.get_model().append([num])
+                
             view.get_model().append([notat])
-            if self.board.shown < len(history):
+            if self.board.shown < len(game.boards):
                 return
-            shown = len(history)-1
+                
+            shown = len(game.boards)-1
             row = int((shown-1) / 2)
             view.get_selection().select_iter(view.get_model().get_iter(row))
             other = shown & 1 and right or left
@@ -126,9 +116,15 @@ class Sidepanel:
             gobject.idle_add(todo)
             return
         
-        col = shown & 1 and self.left or self.right
-        other = shown & 1 and self.right or self.left
-        row = int((shown-1) / 2)
+        col = shown % 2 == 0 and self.left or self.right
+        other = shown % 2 == 0 and self.right or self.left
+        row = shown/2
+        
+        # If game is changed, we can't expect the treeviews to be updated yet.
+        # Further more when game_changed is called, it will select stuff it self
+        if row >= len(col):
+            return
+            
         def todo():
             col.get_selection().select_iter(col.get_model().get_iter(row))
             other.get_selection().unselect_all()

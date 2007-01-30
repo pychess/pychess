@@ -1,13 +1,12 @@
 from threading import Condition
-from cStringIO import StringIO
 import thread
 
 from Protocol import Protocol
 
-from pychess.Savers import epd
 from pychess.Utils.Move import parseAN
-from pychess.Utils.History import History
+from pychess.Utils.Board import Board
 from pychess.Utils.const import *
+from pychess.Utils.GameModel import GameModel
 
 # Chess Engine Communication Protocol
 class UCIProtocol (Protocol):
@@ -20,18 +19,20 @@ class UCIProtocol (Protocol):
         self.btime = 60000
         self.incr = 0
         
-        self.fen = None
         self.pondermove = None
         self.ignoreNext = False
-        
         self.started = False
+        
+        thread.start_new(self.run,())
         
     def run (self):
         print >> self.engine, "uci"
         
         while self.connected:
-            line = self.engine.readline()
-            #print repr(line)
+            line = self.engine.readline(5)
+            # If timed out
+            if line == None:
+                break
             self.parseLine(line)
             if line.find("uciok") >= 0:
                 break
@@ -104,20 +105,21 @@ class UCIProtocol (Protocol):
             
             if self._getOption('Ponder'):
                 if len(parts) == 4 and self.fen:
-                    self.pondermove = parseAN(None, parts[3])
-                    print >> self.engine, "position fen", self.fen, "moves", parts[1], parts[3]
-                    print >> self.engine, "go ponder wtime", self.wtime, "btime", self.btime, \
-                                            "winc", self.incr, "binc", self.incr
+                    self.pondermove = parseAN(self.board, parts[3])
+                    print >> self.engine, "position fen", self.board.asFen(), \
+                                                     "moves", parts[1], parts[3]
+                    print >> self.engine, "go ponder wtime", self.wtime, \
+                       "btime", self.btime, "winc", self.incr, "binc", self.incr
                 else:
                     self.pondermove = None
                 
-            move = parseAN(None, parts[1])
+            move = parseAN(self.board, parts[1])
             self.emit("move", move)
             return
         
         if "pv" in parts and self.mode != NORMAL:
             movstrs = parts[parts.index("pv")+1:]
-            moves = [parseAN(None, movestr) for movestr in movstrs]
+            moves = [parseAN(self.board, movestr) for movestr in movstrs]
             self.emit("analyze", moves)
         
     ######################## TO ENGINE ########################
@@ -132,43 +134,35 @@ class UCIProtocol (Protocol):
     def moveNow (self):
         print >> self.engine, "stop"
     
-    def move (self, history):
+    def move (self, gamemodel):
         if not self.started:
             self.startGame()
+        
+        self.board = gamemodel.boards[-1]
         
         if self.mode != NORMAL:
             print >> self.engine, "stop"
             if self.mode == INVERSE_ANALYZING:
-                history = history.clone() # Don't ever fuck up the main history object! :O
-                history.setStartingColor(1-history[0].color)
-                history[-1].enpassant = None
-                
-        io = StringIO()
-        epd.save(io, history)
-        fen = io.getvalue()
-        
-        if self.mode != NORMAL:
-            print >> self.engine, "position fen", fen
+                self.board = self.board.switchColor()
+            print >> self.engine, "position fen", self.board.asFen()
             print >> self.engine, "go infinite"
             return
         
-        self.fen = fen # Saving position for pondering
-        
         if self._getOption('Ponder'):
             if self.pondermove:
-                if history.moves and history.moves[-1] == self.pondermove:
+                if gamemodel.moves and gamemodel.moves[-1] == self.pondermove:
                     print >> self.engine, "ponderhit"
                 return
             else:
                 print >> self.engine, "stop"
                 self.ignoreNext = True
         
-        print >> self.engine, "position fen", fen
+        print >> self.engine, "position fen", self.board.asFen()
         
         if self._getOption('UCI_LimitStrength') or self.strength == EXPERT:
             print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
                                      "winc", self.incr, "binc", self.incr
-                                     
+        
         elif self.strength == INTERMEDIATE:
             print >> self.engine, "go depth 4"
             
@@ -220,7 +214,7 @@ class UCIProtocol (Protocol):
             self.mode = ANALYZING
         else: self.mode = INVERSE_ANALYZING
         self._setOption('Ponder', False)
-        self.move(History())
+        self.move(GameModel())
         
     def canAnalyze (self):
         return True

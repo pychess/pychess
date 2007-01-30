@@ -5,12 +5,10 @@ pygtk.require("2.0")
 import gtk, gtk.gdk, cairo
 from gobject import *
 from pychess.gfx.Pieces import drawPiece
-from pychess.Utils.History import History
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
+from pychess.Utils.GameModel import GameModel
 from math import floor, ceil
-from pychess.Utils.validator import validate
-from pychess.Utils import validator
 import pango
 from time import time, sleep
 from pychess.Utils.const import *
@@ -70,12 +68,14 @@ class BoardView (gtk.DrawingArea):
         'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
     }
     
-    def __init__(self):
+    def __init__(self, gamemodel=None):
         gtk.DrawingArea.__init__(self)
-        self.history = History()
+        
+        if gamemodel == None:
+            gamemodel = GameModel()
+        self.model = gamemodel
+        self.model.connect("game_changed", self.game_changed)
         self.connect("expose_event", self.expose)
-        self.history.connect_after("changed", self.move)
-        self.history.connect("cleared", self.reset)
         self.set_size_request(300,300)
         
         self.animationID = -1
@@ -102,17 +102,13 @@ class BoardView (gtk.DrawingArea):
         
         self.drawcount = 0
         self.drawtime = 0
-        
-    def move (self, history):
+    
+    def game_changed (self, model):
         # Updating can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
-        if self.autoUpdateShown and self.shown+2 >= len(history):
-            self.shown = len(history)-1
-    
-    def reset (self, history):
-        self.shown = 0
-        self.lastMove = None
+        if self.autoUpdateShown and self.shown+1 >= model.ply:
+            self.shown = model.ply
     
     ###############################
     #          Animation          #
@@ -120,18 +116,26 @@ class BoardView (gtk.DrawingArea):
     
     def _get_shown(self):
         return self._shown
-        
+    
     def _set_shown(self, shown):
         
-        # TODO: This might be faster and be able to support fade at promotion,
+        # TODO: This should be faster and be able to support fade at promotion,
         # if it is rewritten to be based on <Move>s instead of boards. Perhaps
         # it would share code with the Board .move method
         
-        if not self.history or shown == self._shown or\
-                not 0 <= shown < len(self.history):
+        # If shown value is illegal, we don't even set it
+        # FIXME: this might be quite nonintuitive when setting
+        # boardview.shown = 10 and then baordview.shown is still == 5...
+        if not 0 <= shown <= self.model.ply:
             return
         
-        if len(self.history) == 1 and shown == 0:
+        # We don't do anything if we are already showing the right ply
+        if shown == self._shown:
+            return
+        
+        # If there is only one board, we don't do any animation, but simply
+        # redraw the entire board
+        if len(self.model.boards) == 1:
             self._shown = shown
             idle_add(self.redraw_canvas)
             return
@@ -140,8 +144,8 @@ class BoardView (gtk.DrawingArea):
         
         deadset = set()
         for i in range(self.shown, shown, step):
-            board0 = self.history[i]
-            board1 = self.history[i+step]
+            board0 = self.model.boards[i]
+            board1 = self.model.boards[i+step]
             
             for y, row in enumerate(board0.data):
                 for x, piece in enumerate(row):
@@ -159,8 +163,8 @@ class BoardView (gtk.DrawingArea):
                         
                         dir = board0.color == WHITE and 1 or -1
                         if step > 0 and board1.data[y][x] != None or \
-                                0 < y < 7 and board0.enpassant == Cord(x,y+dir) \
-                                and board1[board0.enpassant] != None:
+                                0 < y < 7 and board0.epcord == Cord(x,y+dir) \
+                                and board1[board0.epcord] != None:
                                 
                             # A piece is dying
                             deadset.add(piece)
@@ -176,8 +180,8 @@ class BoardView (gtk.DrawingArea):
                             piece.y = y
         
         self.deadlist = []
-        for y,row in enumerate(self.history[self.shown].data):
-            for x,piece in enumerate(row):
+        for y, row in enumerate(self.model.boards[self.shown].data):
+            for x, piece in enumerate(row):
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
         
@@ -195,7 +199,7 @@ class BoardView (gtk.DrawingArea):
                 self.lastMove = None
                 self.redraw_canvas(rect(paintBox))
             if self.shown != 0:
-                self.lastMove = self.history.moves[self.shown-1]
+                self.lastMove = self.model.moves[self.shown-1]
             else: self.lastMove = None
             self.runAnimation(redrawMisc = True)
             self.animationID = idle_add(self.runAnimation)
@@ -209,7 +213,7 @@ class BoardView (gtk.DrawingArea):
         _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
         
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
-        board = self.history[self.shown]
+        board = self.model.boards[self.shown]
 
         paintBox = None
         
@@ -263,7 +267,7 @@ class BoardView (gtk.DrawingArea):
             if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
                 del self.deadlist[i]
             else: piece.opacity = newOp
-            
+        
         if redrawMisc:
             for cord in (self.selected, self.hover, self.active):
                 if cord:
@@ -315,6 +319,23 @@ class BoardView (gtk.DrawingArea):
             
         return False
     
+    ############################################################################
+    #                            drawing functions                             #
+    ############################################################################
+    
+    ###############################
+    #        redraw_canvas        #
+    ###############################
+    
+    def redraw_canvas(self, r=None):
+        if self.window:
+            if not r:
+                alloc = self.get_allocation()
+                r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
+            assert type(r[2]) == int
+            self.window.invalidate_rect(r, True)
+            self.window.process_updates(True)
+    
     ###############################
     #            draw             #
     ###############################
@@ -332,14 +353,16 @@ class BoardView (gtk.DrawingArea):
         
         self.drawBoard (context, r)
         self.drawCords (context, r)
-        if not self.history: return
-        pieces = self.history[self.shown]
+        pieces = self.model.boards[self.shown]
         self.drawSpecial (context, r)
         self.drawEnpassant (context, r)
         self.drawArrows (context)
         self.drawPieces (context, pieces, r)
         self.drawLastMove (context, r)
-                
+        
+        if self.model.status == KILLED:
+            self.drawCross (context, r)
+        
         # Unselect to mark redrawn areas - for debugging purposes
         context.rectangle(r.x,r.y,r.width,r.height)
         dc = self.drawcount*50
@@ -495,7 +518,9 @@ class BoardView (gtk.DrawingArea):
             x, y = self.cord2Point(cord)
             if not intersects(rect((x, y, s, s)), redrawn): continue
             context.rectangle(x, y, s, s)
-            style = self.isLight(cord) and self.get_style().bg or self.get_style().dark
+            if self.isLight(cord):
+                style = self.get_style().bg
+            else: style = self.get_style().dark
             context.set_source_color(style[state])
             context.fill()
     
@@ -559,7 +584,7 @@ class BoardView (gtk.DrawingArea):
                     -wh*r[2]*m[0], wh*r[2]*m[1])
                 context.close_path()
             
-            if self.history[self.shown-1][self.lastMove.cord1]:
+            if self.model.boards[self.shown-1][self.lastMove.cord1]:
                 context.set_source_rgba(*light_orange)
                 context.fill_preserve()
                 context.set_source_rgba(*dark_orange)
@@ -577,7 +602,7 @@ class BoardView (gtk.DrawingArea):
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         
-        if self.shown != len(self.history.moves):
+        if self.shown != len(self.model.moves):
             return
     
         aw = 0.3 # Arrow width
@@ -637,7 +662,7 @@ class BoardView (gtk.DrawingArea):
     
     def drawEnpassant (self, context, redrawn):
         if not self.showEnpassant: return
-        enpassant = self.history[-1].enpassant
+        enpassant = self.model.boards[-1].epcord
         if not enpassant: return
         
         context.set_source_rgb(0, 0, 0)
@@ -657,18 +682,28 @@ class BoardView (gtk.DrawingArea):
         cr.show_text(chars)
         
     ###############################
-    #        redraw_canvas        #
+    #          drawCross          #
     ###############################
+   
+    def drawCross (self, context, redrawn):
+        xc, yc, square, s = self.square
+        context.move_to(xc, yc)
+        context.rel_line_to(square, square)
+        context.move_to(xc+square, yc)
+        context.rel_line_to(-square, square)
+        
+        context.set_source_rgba(0,0,0,0.5)
+        context.set_line_width(s/2.)
+        context.stroke_preserve()
+        
+        context.set_source_rgba(1,0,0,0.8)
+        context.set_line_width(s/4.)
+        context.stroke()
+        
+    ############################################################################
+    #                                Attributes                                #
+    ############################################################################
     
-    def redraw_canvas(self, r=None):
-        if self.window:
-            if not r:
-                alloc = self.get_allocation()
-                r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
-            assert type(r[2]) == int
-            self.window.invalidate_rect(r, True)
-            self.window.process_updates(True)
-
     ###############################
     #          Cord vars          #
     ###############################
@@ -779,11 +814,12 @@ class BoardView (gtk.DrawingArea):
     
     def _set_showEnpassant (self, showEnpassant):
         if self._showEnpassant == showEnpassant: return
-        enpascord = self.history[-1].enpassant
-        if enpascord:
-            r = rect(self.cord2Rect(enpascord))
-            print "redrawing tha cord"
-            self.redraw_canvas(r)
+        if self.model:
+            enpascord = self.model.boards[-1].epcord
+            if enpascord:
+                r = rect(self.cord2Rect(enpascord))
+                print "redrawing tha cord"
+                self.redraw_canvas(r)
         self._showEnpassant = showEnpassant
     def _get_showEnpassant (self):
         return self._showEnpassant

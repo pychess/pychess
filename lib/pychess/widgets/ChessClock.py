@@ -7,8 +7,7 @@ from threading import Thread
 import cairo
 
 class ChessClock (gtk.DrawingArea):
-    __gsignals__ = {'time_out' : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_INT,))}
-
+    
     def __init__(self):
         super(ChessClock, self).__init__()
         self.connect("expose_event", self.expose)
@@ -22,7 +21,7 @@ class ChessClock (gtk.DrawingArea):
         context.clip()
         self.draw(context)
         return False
-
+    
     def draw(self, context):
         self.dark = self.get_style().dark[gtk.STATE_NORMAL]
         self.light = self.get_style().light[gtk.STATE_NORMAL]
@@ -105,7 +104,7 @@ class ChessClock (gtk.DrawingArea):
                     radial.add_color_stop_rgb(1, 0, 0, 0)
                 context.set_source(radial)
                 context.fill()
-            
+                
                 x = cx - cos((used-0.25)*2*pi)*(r-1)
                 y = cy + sin((used-0.25)*2*pi)*(r-1)
                 context.move_to(cx,cy-r+1)
@@ -138,7 +137,7 @@ class ChessClock (gtk.DrawingArea):
                                - layout1.get_extents()[0][1]/pangoScale
             context.move_to(rect.width/2. + rect.height-7, y)
             context.show_layout(layout1)
-
+    
     redrawingAll = True
     def redraw_canvas(self, all=True):
         self.redrawingAll = all

@@ -1,9 +1,6 @@
-from pychess.Utils.History import History
 from pychess.Utils.Move import *
 from pychess.Utils.const import *
-from pychess.Utils import validator
 from pychess.System.Log import log
-import datetime
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",

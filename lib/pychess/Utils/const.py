@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 ################################################################################
 # PyChess information                                                          #
 ################################################################################
@@ -49,8 +51,11 @@ reprColor = ["White", "Black"]
 ################################################################################
 
 # Game states
-RUNNING, DRAW, WHITEWON, BLACKWON = range(4)
+WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED = range(7)
 reprResult = ["*", "1/2-1/2", "1-0", "0-1"]
+
+# Time calling errors
+NO_TIME_SETTINGS, NOT_OUT_OF_TIME = range(2)
 
 # Extended game states
 DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, DRAW_INSUFFICIENT, \
@@ -58,6 +63,10 @@ DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, DRAW_INSUFFICIENT, \
 
 # Player actions
 RESIGNATION, FLAG_CALL, DRAW_OFFER = range(3)
+
+# A few nice to have boards
+FEN_EMPTY = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
+FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 ################################################################################
 # Search values                                                                #
@@ -94,6 +103,11 @@ KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION = range(9)
 
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
+
+FAN_PIECES = [
+    ["♔", "♕", "♖", "♗", "♘", "♙"],
+    ["♚", "♛", "♜", "♝", "♞", "♟"]
+]
 
 ################################################################################
 # Castling values                                                              #

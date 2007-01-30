@@ -1,27 +1,34 @@
+from lutils.lmove import FILE, RANK
+
 class CordFormatException(Exception): pass
 
 class Cord:
     def __init__ (self, var1, var2 = None):
         """ Inits a new highlevel cord object.
             The cord B3 can be inited in the folowing ways:
-                Cord(17), Cord("b3"), Cord(2,3), Cord("b",3) """
+                Cord(17), Cord("b3"), Cord(1,2), Cord("b",3) """
                 
-        if y == None:
+        if var2 == None:
             if type(var1) == int:
-                x = FILE(var1)
-                y = RANK(var1)
+                # We assume the format Cord(17)
+                self.x = FILE(var1)
+                self.y = RANK(var1)
             else:
-                x = self.charToInt(var[0])
-                y = int(var[1]) - 1
+                # We assume the format Cord("b3")
+                self.x = self.charToInt(var1[0])
+                self.y = int(var1[1]) - 1
         else:
-            if type(x) == str:
-                x = self.charToInt(x)
-        
-        self.x = x
-        self.y = y
+            if type(var1) == str:
+                # We assume the format Cord("b",3)
+                self.x = self.charToInt(var1)
+                self.y = var2 -1
+            else:
+                # We assume the format Cord(1,2)
+                self.x = var1
+                self.y = var2
     
     def _get_cord (self):
-        return (7-y)*8+x
+        return self.y*8+self.x
     cord = property(_get_cord)
     
     def _get_cx (self):
