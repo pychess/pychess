@@ -1,7 +1,6 @@
 from UserDict import UserDict
 from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, WHITE
 from pychess.System.LimitedDict import LimitedDict
-from pychess.Utils.Move import Move
 
 class TranspositionTable (UserDict):
     def __init__ (self, maxSize):

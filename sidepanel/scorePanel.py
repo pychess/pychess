@@ -123,7 +123,7 @@ class ScorePlot (gtk.DrawingArea):
 __title__ = _("Score")
 
 from pychess.widgets import gamewidget
-from pychess.Utils.eval import evaluateComplete
+from pychess.Utils.lutils import leval
 
 class Sidepanel:
     
@@ -138,12 +138,10 @@ class Sidepanel:
         __widget__.show_all()
 
         self.boardview = gmwidg.widgets["board"].view
-        self.history = self.boardview.history
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
-        self.history.connect("cleared", self.history_cleared)
-        self.history.connect("changed", self.history_changed)
+        self.boardview.model.connect("game_changed", self.game_changed)
         
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
@@ -158,13 +156,9 @@ class Sidepanel:
         
         return __widget__
     
-    def history_cleared (self, history):
-        self.plot.clear()
-        self.history_changed(history)
-        self.shown_changed(None,0)
-    
-    def history_changed (self, history):
-        points = evaluateComplete(history[-1])
+    def game_changed (self, model):
+        points = leval.evaluateComplete(
+                                       model.boards[-1], model.boards[-1].color)
         self.plot.addScore(points)
     
     def shown_changed (self, boardview, shown):

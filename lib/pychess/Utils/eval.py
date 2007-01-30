@@ -1,4 +1,7 @@
 
+### DEPRECATED
+### SHOULD ONLY BE USED AS A REFERENCE TO MAKE leval
+
 pieceValues = [0, 900, 500, 350, 300, 100]
 
 from pychess.Utils.const import *

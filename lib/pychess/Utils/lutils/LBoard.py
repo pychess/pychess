@@ -42,10 +42,6 @@ colorHash = randint(0, maxint)
 # number is not specified
 STRICT_FEN = True
 
-# A few nice to have boards
-FEN_EMPTY = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
-FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
 ################################################################################
 # LBoard                                                                       #
 ################################################################################
@@ -123,7 +119,7 @@ class LBoard:
             moveNoChr = "1"
         
         # Try to validate some information
-        # This should be expanded and perhaps moved
+        # TODO: This should be expanded and perhaps moved
         
         slashes = len([c for c in pieceChrs if c == "/"])
         if slashes != 7:
@@ -134,9 +130,9 @@ class LBoard:
             raise SyntaxError, "Active color field must be one of w or b. "+ \
                                "Pos(%d)" % fenstr.find(len(pieceChrs), colChr)
         
-        if epChr != "-" and not epChr.upper() in cordDic:
-            raise SyntaxError, "En passant cord is not legal. "+ \
-                               "Pos(%d)" %  fenstr.rfind(epChr)
+        if epChr != "-" and not epChr in cordDic:
+            raise SyntaxError, ("En passant cord %s is not legal. "+ \
+                               "Pos(%d)") % (epChr, fenstr.rfind(epChr))
         
         # Reset this board
         
@@ -179,7 +175,7 @@ class LBoard:
         
         if epChr == "-":
             self.setEnpassant (None) 
-        else: self.setEnpassant(cordDic[epChr.upper()])
+        else: self.setEnpassant(cordDic[epChr])
         
         # Parse halfmove clock field
         
@@ -191,7 +187,7 @@ class LBoard:
         
         # Parse fullmove number
         
-        self.history = [None]*int(moveNoChr)
+        self.history = [None]*int(moveNoChr)*2
         
         self.updateBoard()
     

@@ -32,7 +32,7 @@ def newMove (fromcord, tocord, flag=NORMAL_MOVE):
 # toSan                                                                        #
 ################################################################################
 
-def toSAN (board, move, fan=False):
+def toSAN (board, move):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move """
     
@@ -52,9 +52,7 @@ def toSAN (board, move, fan=False):
     part0 = ""
     part1 = ""
     
-    if fan:
-        part0 += fandic[board.color][fpiece]
-    elif fpiece != PAWN:
+    if fpiece != PAWN:
     	part0 += reprSign[fpiece]
     
     part1 = reprCord[tcord]
@@ -156,13 +154,13 @@ def parseSAN (board, san):
     
     if "x" in notat:
         notat, tcord = notat.split("x")
-        tcord = cordDic[tcord.upper()]
+        tcord = cordDic[tcord]
         if piece == PAWN:
             # If a pawn is attacking an empty cord, we assue it an enpassant
             if board.arBoard[tcord] == EMPTY:
                 flag = ENPASSANT
     else:
-        tcord = cordDic[notat[-2:].lower()]
+        tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
     
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
@@ -199,3 +197,102 @@ def parseSAN (board, san):
         board.popMove()
         
         return move
+    
+    raise ParsingError, "Bad SAN move '%s'. No piece is able to move to %s" % \
+                        (san, reprCord[tcord])
+    
+################################################################################
+# toLan                                                                        #
+################################################################################
+
+def toLAN (board, move):
+    """ Returns a Long/Expanded Algebraic Notation string of a move
+        board should be prior to the move """
+    
+    fcord = FCORD(move)
+    tcord = TCORD(move)
+    
+    s = ""
+    if board.arBoard[fcord] != PAWN:
+        s = reprSign[board.arBoard[fcord]]
+    s += reprCord[FCORD(move)]
+    
+    if board.arBoard[tcord] == EMPTY:
+        s += "-"
+    else: s += "x"
+    
+    s += reprCord[tcord]
+    
+    flag = FLAG(move)
+    
+    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                      BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        s += "=" + reprSign[flag-3]
+    
+    return s
+
+################################################################################
+# parseLan                                                                     #
+################################################################################
+
+def parseLAN (board, lan):
+    """ Parse a Long/Expanded Algebraic Notation string """
+    
+    # To parse LAN pawn moves like "e2-e4" as SAN moves, we have to remove a few
+    # fields
+    if len(lan) == 5:
+        if "x" in lan:
+            # e4xd5 -> exd5
+            return parseSAN (board, lan[0]+lan[3:])
+        else:
+            # e2-e4 -> e4
+            return parseSAN (board, lan[3:])
+    
+    # We want to use the SAN parser for LAN moves like "Nb1-c3" or "Rd3xd7"
+    # The san parser should be able to handle most stuff, as long as we remove
+    # the slash
+    return parseSAN (board, lan.replace("-",""))
+
+################################################################################
+# toAN                                                                         #
+################################################################################
+
+def toAN (board, move):
+    """ Returns a Algebraic Notation string of a move
+        board should be prior to the move """
+    
+    s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
+    if FLAG(move) in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                      BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        s += reprSign[FLAG(move)-3]
+    return s
+
+################################################################################
+# parseAN                                                                      #
+################################################################################
+
+def parseAN (board, an):
+    """ Parse an Algebraic Notation string """
+    if not 4 <= len(an) <= 5:
+        raise ParsingError, "Bad an move, %s. Wrong size" % an
+    
+    try:
+        fcord = cordDic[an[:2]]
+        tcord = cordDic[an[2:4]]
+    except KeyError:
+        raise ParsingError, "Bad an move, %s" % an
+    
+    if len(an) == 5:
+        flag = chr2Sign[an[4].lower()] + 3
+    elif board.arBoard[fcord] == KING and fcord - tcord == 2:
+        flag = QUEEN_CASTLE
+    elif board.arBoard[fcord] == KING and fcord - tcord == -2:
+        flag = KING_CASTLE
+    elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
+            FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
+        flag = ENPASSANT
+    elif board.arBoard[tcord] != EMPTY:
+        flag = CAPTURE
+    else: flag = NORMAL_MOVE
+    
+    return newMove (fcord, tcord, flag)

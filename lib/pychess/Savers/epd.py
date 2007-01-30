@@ -1,10 +1,7 @@
-from pychess.Utils.History import History, startBoard
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
-from pychess.Utils.Game import Game
-from pychess.Utils import validator
 from pychess.Utils.const import *
 
 __label__ = _("Chess Position")
@@ -118,7 +115,7 @@ class EpdFile (ChessFile):
             oldboard = Board(data)
             
             history.boards = [oldboard, board]
-            history.moves = [Move(c0,c1)]
+            history.moves = [Move(c0,c1,oldboard)]
         else:
             history.boards = [board]
         

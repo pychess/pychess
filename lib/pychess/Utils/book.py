@@ -9,7 +9,6 @@ import atexit
 atexit.register(tsqlite.close)
 
 def getOpenings (board):
-    print fen(board)
     return tsqlite.execSQL (
         "select move,wins,draws,loses from openings where fen = '%s'" % \
                                                                  fen(board))

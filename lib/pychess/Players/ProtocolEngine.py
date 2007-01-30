@@ -3,13 +3,12 @@ import sys, os, time, thread
 from threading import Condition, Lock
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
-from Engine import Engine, EngineDead, EngineConnection
-from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN, ParsingError
-from pychess.Utils.History import History
+from Engine import Engine, EngineConnection
+from Player import PlayerIsDead
+from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from pychess.System.Log import log
-from pychess.Utils.Board import MoveError
 
 class ProtocolEngine (Engine):
     
@@ -68,9 +67,9 @@ class ProtocolEngine (Engine):
     def offerDraw (self):
         self.runWhenReady(self.proto.offerDraw)
     
-    def makeMove (self, history):
+    def makeMove (self, gamemodel):
         self.movecond.acquire()
-        self.runWhenReady(self.proto.move, history)
+        self.runWhenReady(self.proto.move, gamemodel)
         
         if self.proto.isAnalyzing():
             del self.analyzeMoves[:]
@@ -81,7 +80,7 @@ class ProtocolEngine (Engine):
             self.movecond.wait()
         if not self.move:
             self.movecond.release()
-            raise EngineDead
+            raise PlayerIsDead
         move = self.move
         self.move = None
         self.movecond.release()

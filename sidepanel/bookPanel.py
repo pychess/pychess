@@ -1,7 +1,7 @@
 import gtk, gobject, cairo
 from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
-from pychess.Utils.Move import parseSAN, movePool
+from pychess.Utils.Move import parseSAN
 from pychess.Utils.const import prefix
 
 __title__ = _("Opening Book")
@@ -37,7 +37,7 @@ class Sidepanel:
         return self.sw
     
     def shown_changed (self, board, shown):
-        self.openings = getOpenings(self.board.history[-1])
+        self.openings = getOpenings(self.board.model.boards[-1])
         self.openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
         
         self.board.bluearrow = None
@@ -66,7 +66,7 @@ class Sidepanel:
         gobject.idle_add(helper)
 
     def selection_changed (self, widget):
-        if len(self.board.history) != self.board.shown+1:
+        if len(self.board.model.boards) != self.board.shown+1:
             self.board.bluearrow = None
             return
         
@@ -76,9 +76,8 @@ class Sidepanel:
             return
         else: sel = self.tv.get_model().get_path(iter)[0]
         
-        move = parseSAN(self.board.history[-1], self.openings[sel][0])
+        move = parseSAN(self.board.model.boards[-1], self.openings[sel][0])
         self.board.bluearrow = move.cords
-        movePool.add(move)
     
     def row_activated (self, widget, *args):
         arrow = self.board.bluearrow

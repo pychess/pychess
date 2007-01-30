@@ -1,5 +1,7 @@
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
+class PlayerIsDead (Exception): pass
+
 class Player (GObject):
     
     __gsignals__ = {
@@ -36,3 +38,15 @@ class Player (GObject):
     def updateTime (self, secs, opsecs):
         """ Updates the player with the current remaining time as a float of seconds """
         pass #Optional
+    
+    def pause (self):
+        """ Should stop the player from thinking until resume is called """
+        raise NotImplementedError #Optional
+        
+    def resume (self):
+        """ Should resume player to think if he's paused """
+        pass #Optional
+    
+    def undo (self):
+        """ Should push back one full move """
+        pass
