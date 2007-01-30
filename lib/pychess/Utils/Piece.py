@@ -10,6 +10,13 @@ class Piece:
     	self.x = None
     	self.y = None
     
+    # Sign is a deprecated synonym for piece
+    def _set_sign (self, sign):
+        self.piece = sign
+    def _get_sign (self):
+        return self.piece
+    sign = property(_get_sign, _set_sign)
+    
     def __repr__ (self):
         represen = "<%s %s" % (reprColor[self.color], reprPiece[self.piece])
         if self.opacity != 1.0:

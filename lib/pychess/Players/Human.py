@@ -3,9 +3,7 @@ import gtk
 from threading import Condition
 from gobject import GObject
 
-from Player import Player
-#TODO: This should be PlayerDead or something
-from Engine import EngineDead
+from Player import Player, PlayerIsDead
 from pychess.Utils.const import LOCAL, DRAW_OFFER, RESIGNATION, FLAG_CALL
 
 class Human (Player):
@@ -14,7 +12,7 @@ class Human (Player):
         GObject.__init__(self)
         
         self.move = None
-        self.history = board.view.history
+        self.gamemodel = board.view.model
         self.cond = Condition()
         self.color = color
         self.board = board
@@ -28,7 +26,7 @@ class Human (Player):
         self.name = "Human"
     
     def piece_moved (self, board, move):
-        if self.history.curCol() != self.color:
+        if self.gamemodel.boards[-1].color != self.color:
             return
         self.cond.acquire()
         self.move = move
@@ -36,11 +34,11 @@ class Human (Player):
         self.cond.release()
     
     def emit_action (self, action):
-        if self.history.curCol() != self.color:
+        if self.gamemodel.boards[-1].color != self.color:
             return
         self.emit("action", action)
     
-    def makeMove (self, history):
+    def makeMove (self, gamemodel):
         self.board.locked = False
         self.cond.acquire()
         while not self.move:
@@ -48,7 +46,7 @@ class Human (Player):
         self.board.locked = True
         if self.move == "del":
             self.cond.release()
-            raise EngineDead
+            raise PlayerIsDead
         move = self.move
         self.move = None
         self.cond.release()

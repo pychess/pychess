@@ -1,15 +1,15 @@
+""" This module handles CECP/XBoard protocol engines
+    It should be used together with the ProtocolEngine class, which extends
+    Engine """
 
-import sys, os, time, thread
-from threading import Condition, Lock
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+import time, thread
 
-from Engine import Engine, EngineDead, EngineConnection
-from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN, ParsingError
-from pychess.Utils.History import History
+from Protocol import Protocol
+from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError
 from pychess.Utils.Cord import Cord
+from pychess.Utils.Board import Board
 from pychess.Utils.const import *
-from pychess.System.Log import log
-from pychess.Utils.Board import MoveError
+from pychess.Utils.logic import validate
 
 def isdigits (strings):
     for s in strings:
@@ -21,165 +21,18 @@ def isdigits (strings):
             if not s.isdigit():
                 return False
     return True
-
-class CECPEngine (Engine):
-    
-    def __init__ (self, args, color):
-        GObject.__init__(self)
-        self.proto = CECProtocol (args[0], color)
-        
-        self.readycon = Condition()
-        self.readylist = []
-        
-        self.movecond = Condition()
-        self.move = None
-        self.analyzeMoves = []
-        self.proto.connect("draw_offer", lambda w:self.emit("action",DRAW_OFFER))
-        self.proto.connect("resign", lambda w:self.emit("action",RESIGNATION))
-        self.proto.connect("move", self.onMove)
-        self.proto.connect("analyze", self.onAnalyze)
-        def dead (engine):
-            self.movecond.acquire()
-            self.move = None
-            self.movecond.notifyAll()
-            self.movecond.release()
-            self.emit("dead")
-        self.proto.connect("dead", dead)
-        
-        self.proto.connect("ready", self.onReady)
-        
-    def setStrength (self, strength):
-        def todo():
-            if strength == 0:
-                self.proto.setPonder (False)
-                self.proto.setDepth (1)
-            elif strength == 1:
-                self.proto.setPonder (False)
-                self.proto.setDepth (4)
-            elif strength == 2:
-                self.proto.setPonder (True)
-                self.proto.setDepth (9)
-        self.runWhenReady(todo)
-    
-    def setDepth (self, depth):
-        self.runWhenReady(lambda: self.proto.setDepth (depth))
-    
-    def runWhenReady (self, method, *args):
-        self.readycon.acquire()
-        if self.proto.ready:
-            method(*args)
-        else:
-            self.readylist.append((method,args))
-        self.readycon.release()
-    
-    def onReady (self, proto):
-        self.readycon.acquire()
-        if self.readylist:
-            for method, args in self.readylist:
-                method(*args)
-        self.readycon.notifyAll()
-        self.readycon.release()
-    
-    def setTime (self, secs, gain):
-        self.runWhenReady(self.proto.setTimeControls, secs, gain)
-    
-    def setBoard (self, fen):
-        self.runWhenReady(self.proto.setBoard, fen)
-    
-    def hurry (self):
-        self.runWhenReady(self.proto.moveNow)
-    
-    def offerDraw (self):
-        self.runWhenReady(self.proto.offerDraw)
-    
-    def makeMove (self, history):
-        self.movecond.acquire()
-        self.runWhenReady(self.proto.move, history)
-        
-        if self.proto.forced:
-            del self.analyzeMoves[:]
-            self.movecond.release()
-            return
-        
-        while not self.move:
-            self.movecond.wait()
-        if not self.move:
-            self.movecond.release()
-            raise EngineDead
-        move = self.move
-        self.move = None
-        self.movecond.release()
-        return move
-    
-    def onMove (self, proto, move):
-        self.movecond.acquire()
-        self.move = move
-        self.movecond.notifyAll()
-        self.movecond.release()
-        
-    def _wait (self):
-        if self.proto.ready:
-            return
-        self.readycon.acquire()
-        while not self.proto.ready and self.proto.connected:
-            self.readycon.wait()
-        self.readycon.release()
-        if not self.proto.connected:
-            return False
-        return True
-    
-    def onAnalyze (self, proto, moves):
-        # TODO: Sometimes lines may look like:
-        # 2. 58 0 1259	 Qxf5 Bh4+ Kd2 exd4
-        # 3. 35 0 3791	 Qxf5
-        # In these cases we should not skip the more moves
-        self.analyzeMoves = moves
-        self.emit ("analyze", moves)
-    
-    def canAnalyze (self):
-        self._wait()
-        assert self.proto.ready
-        return self.proto.features["analyze"]
-    
-    def analyze (self, inverse=False):
-        self.runWhenReady(self.proto.analyze, inverse)
-    
-    def updateTime (self, secs, opsecs):
-        self.runWhenReady(self.proto.time, secs, opsecs)
-    
-    def __repr__ (self):
-        self._wait()
-        return self.proto.features["myname"]
-    
-    def __del__ (self):
-        self.proto.__del__()
-    
+   
 import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
 multiWs = re.compile(r"\s+")
 
-from pychess.Savers import epd
-from cStringIO import StringIO
-
 # Chess Engine Communication Protocol
-class CECProtocol (GObject):
-    
-    __gsignals__ = {
-        'move': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
-        'draw_offer': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'dead': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'ready': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
-    }
+class CECPProtocol (Protocol):
     
     def __init__ (self, executable, color):
-        GObject.__init__(self)
+        Protocol.__init__(self, executable, color)
         
-        defname = os.path.split(executable)[1]
-        defname = defname[:1].upper() + defname[1:].lower()
-    
         self.features = {
             "ping":      0,
             "setboard":  0,
@@ -192,42 +45,18 @@ class CECProtocol (GObject):
             "sigterm":   1,
             "reuse":     1,
             "analyze":   0,
-            "myname":    defname,
+            "myname":    self.defname,
             "colors":    1,
             "ics":       0,
             "name":      0,
             "pause":     0
         }
         
-        self.color = color
-        self.executable = executable
-        
-        self.history = History()
+        self.board = Board()
         self.forced = False
         self.gonext = False
-        self.analyzing = False
         self.sd = True
         self.st = True
-        
-        self.inverseAnalyze = False
-        self.colMod = 0
-        
-        self.readycon = Condition()
-        self.lock = Lock()
-        self.ready = False
-        self.engine = EngineConnection (self.executable)
-        self.connected = True
-        
-        log.debug(reprColor[color]+"\n", defname)
-        
-        def callback (engine):
-            if self.connected:
-                self.__del__()
-                if not self.ready:
-                    self.ready = True
-                    self.emit("ready")
-                self.emit('dead')
-        self.engine.connect("hungup", callback)
         
         thread.start_new(self.run,())
         
@@ -255,6 +84,7 @@ class CECProtocol (GObject):
             if line.find("done=1") >= 0:
                 break
             elif line.find("done=0") >= 0:
+                print "WARNING: Giving 10 minutes for loading engine", repr(self)
                 # This'll buy you 10 more minutes
                 self.timeout = 60*10
 
@@ -266,20 +96,11 @@ class CECProtocol (GObject):
             if line:
                 self.parseLine(line)
                 
-    ######################## FROM ENGINE ########################
-    
-    def parseMove (self, movestr, board=None):
-        board = board or self.history[-1]
-        if self.features["san"]:
-            return parseSAN(board, movestr)
-        else:
-            try: return parseAN(board, movestr)
-            except:
-                try: return parseLAN(board, movestr)
-                except: return parseSAN(board, movestr)
+    ############################################################################
+    #   FROM ENGINE                                                              #
+    ############################################################################
     
     def parseLine (self, line):
-        #self.lock.acquire()
     
         parts = multiWs.split(line.strip())
         if self.features["sigint"]:
@@ -291,9 +112,9 @@ class CECProtocol (GObject):
                 self.sd = False
                 self.setDepth (int(parts[-1]))
             return
-            
+        
         # A Move
-        if self.history:
+        if self.board:
             if parts[0] == "move":
                 movestr = parts[1]
             # Old Variation
@@ -303,8 +124,8 @@ class CECProtocol (GObject):
                 movestr = False
             
             if movestr:
-                move = self.parseMove(movestr)
-                self.history = None
+                move = parseAny(self.board, movestr)
+                self.board = None
                 self.emit("move", move)
                 return
         
@@ -315,28 +136,23 @@ class CECProtocol (GObject):
                 print >> self.engine, "book off"
                 return
                 
-            board = firstboard = self.history[-1]
-            movelist = firstboard.movelist
-            firstboard.movelist = None
-            
+            board = firstboard = self.board
             moves = []
 
-            for m in movre.findall(" ".join(parts[4:])+" "):
+            for movestr in movre.findall(" ".join(parts[4:])+" "):
                 try:
-                  	parsedMove = self.parseMove(m, board)
-                   	moves.append(parsedMove)
-                   	board = board.move(parsedMove, mvlist=False)
-                # We skip parsing and move-errors, as they are probably caused
-                # by old analyze strings (sent before engine got the newest move)
+                  	parsedMove = parseAny(board, movestr)
                 except ParsingError:
                     break
-                except MoveError:
-                    break
+                # We skip parsing and move-errors, as they are probably caused
+                # by old analyze strings (sent before engine got the newest move)
+                if not validate (board, parsedMove):
+                  	break
+                moves.append(parsedMove)
+                board = board.move(parsedMove, mvlist=False)
                	
             if moves:
                 self.emit("analyze", moves)
-            
-            firstboard.movelist = movelist
             
             return
             
@@ -389,9 +205,10 @@ class CECProtocol (GObject):
                 
                 self.features[key] = value
             return
-        #self.lock.release()
         
-    ######################## TO ENGINE ########################
+    ############################################################################
+    #   TO ENGINE                                                              #
+    ############################################################################
     
     def newGame (self):
         assert self.ready, "Still waiting for done=1"
@@ -410,16 +227,29 @@ class CECProtocol (GObject):
             #    self.engine.sigterm()
         #thread.start_new(self.engine.wait4exit,())
     
+    def setStrength (self, strength):
+        assert self.ready, "Still waiting for done=1"
+        
+        if strength == 0:
+            self.setPonder (False)
+            self.setDepth (1)
+        elif strength == 1:
+            self.setPonder (False)
+            self.setDepth (4)
+        elif strength == 2:
+            self.setPonder (True)
+            self.setDepth (9)
+    
     def moveNow (self):
         assert self.ready, "Still waiting for done=1"
         print >> self.engine, "?"
     
-    def move (self, history):
+    def move (self, gamemodel):
         assert self.ready, "Still waiting for done=1"
         
-        self.history = history.clone()
+        self.board = gamemodel.boards[-1]
         
-        if not history.moves or self.gonext and not self.analyzing:
+        if not self.board.history or self.gonext and not self.analyzing:
             self.go()
             self.gonext = False
             return
@@ -431,10 +261,10 @@ class CECProtocol (GObject):
         if self.features["usermove"]:
             self.engine.write("usermove ")
         
-        move = history.moves[-1]
+        move = gamemodel.moves[-1]
         if self.features["san"]:
-            print >> self.engine, toSAN(history[-2], history[-1], history.moves[-1])
-        else: print >> self.engine, toAN(history[-2], history.moves[-1])
+            print >> self.engine, toSAN(gamemodel.boards[-2], move)
+        else: print >> self.engine, toAN(gamemodel.boards[-2], move)
         
         if self.inverseAnalyze:
             self.printColor()
@@ -509,37 +339,34 @@ class CECProtocol (GObject):
         print >> self.engine, "hint"
     
     def switchColor (self):
-        if self.history:
-            self.history.setStartingColor (1 - self.history.curColModi)
+        if self.board:
+            self.board.switchColor()
     
     def printColor (self):
         #if self.features["colors"]:
-        if self.history.curCol() == 0:
+        if self.board.color == WHITE:
             print >> self.engine, "white"
         else: print >> self.engine, "black"
         if self.forced: print >> self.engine, "force"
         #elif self.features["playother"]:
         #    print >> self.engine, "playother"
     
-    def setBoard (self, history):
+    def setBoard (self, gamemodel):
         assert self.ready, "Still waiting for done=1"
         
         if self.features["setboard"]:
-            io = StringIO()
-            epd.save(io, history)
-            fen = io.getvalue()
             self.force()
-            print >> self.engine, "setboard", fen
+            print >> self.engine, "setboard", gamemodel.boards[-1].asFen()
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
             self.force()
-            if history.curCol() == BLACK:
+            if gamemodel.boards[-1].color == BLACK:
                 print >> self.engine, "a2a3"
             print >> self.engine, "edit"
             print >> self.engine, "#"
             for color in WHITE, BLACK:
-                for y, row in enumerate(history[-1].data):
+                for y, row in enumerate(gamemodel.boards[-1].data):
                     for x, piece in enumerate(row):
                         if not piece or piece.color != color:
                             continue
@@ -549,12 +376,13 @@ class CECProtocol (GObject):
                 print >> self.engine, "c"
             print >> self.engine, "."
         
-        self.history = history.clone()
+        # HERE I AM
+        self.board = gamemodel.boards[-1].clone()
         
         if self.analyzing:
             self.analyze(self.inverseAnalyze)
         
-        elif history.curCol() == self.color:
+        elif self.board.color == self.color:
             self.gonext = True
     
     def setDepth (self, depth):
@@ -587,3 +415,16 @@ class CECProtocol (GObject):
                 self.printColor()
             print >> self.engine, "analyze"
             self.analyzing = True
+    
+    ############################################################################
+    #   DIRECT METHODS                                                         #
+    ############################################################################
+    
+    def canAnalyze (self):
+        return self.features["analyze"]
+    
+    def isAnalyzing (self):
+        return self.analyzing
+    
+    def __repr__ (self):
+        return self.features["myname"]

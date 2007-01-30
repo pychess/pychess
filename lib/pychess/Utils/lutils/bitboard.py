@@ -85,13 +85,80 @@ for i in range(63,-1,-1):
     b <<= 1
 
 # This array is used when the position of the bits are required
-# An array object is used to lower ram usage
+
+import os, time
 from array import array
-bitsArray0 = [array("B") for i in range (65536)]
-bitsArray1 = [array("B") for i in range (65536)]
-bitsArray2 = [array("B") for i in range (65536)]
-bitsArray3 = [array("B") for i in range (65536)]
-for bits in range(65536):
+
+# FIXME:
+# This is a try to make pychess catche bitsArray information, to save a few
+# secconds on startup time. While the global locking works fine, the actual
+# reading from file to arrays seems to not work.
+while False:
+    pidpath = os.path.expanduser("~/.pychess/bitsArray.pid")
+    try:
+        os.mkdir(pidpath)
+    except OSError:
+        time.sleep(0.1)
+        continue
+    
+    path = os.path.expanduser("~/.pychess/bitsArray.pickle")
+    if os.path.isfile(path):
+        f = open(path)
+        try:
+            t = time.time()
+            bitsArray0 = []
+            bitsArray1 = []
+            bitsArray2 = []
+            bitsArray3 = []
+            d = f.read()
+            last = -1
+            for j in range(4):
+                bitsArray = locals()["bitsArray%d"%j]
+                for i in xrange(65536):
+                    cur = d.find("@", last)+1
+                    ar = array("B")
+                    f.seek(last+1)
+                    ar.fromfile(f, cur-last-1)
+                    bitsArray.append(ar)
+                    last = cur
+            f.close()
+        except:
+            f.close()
+            os.remove(path)
+    
+    if not os.path.isfile(path):
+
+        bitsArray0 = [array("B") for i in xrange (65536)]
+        bitsArray1 = [array("B") for i in xrange (65536)]
+        bitsArray2 = [array("B") for i in xrange (65536)]
+        bitsArray3 = [array("B") for i in xrange (65536)]
+    
+        for bits in xrange(65536):
+            origbits = bits
+            while bits:
+                b = firstBit(bits)
+                bits = clearBit(bits, b)
+                bitsArray0[origbits].append(b-48)
+                bitsArray1[origbits].append(b-32)
+                bitsArray2[origbits].append(b-16)
+                bitsArray3[origbits].append(b)
+        
+        f = open(path, "w")
+        for bitsArray in (bitsArray0, bitsArray1, bitsArray2, bitsArray3):
+            for ar in bitsArray:
+                ar.tofile(f)
+                f.write("@")
+        f.close()
+    
+    os.rmdir(pidpath)
+    break
+
+bitsArray0 = [array("B") for i in xrange (65536)]
+bitsArray1 = [array("B") for i in xrange (65536)]
+bitsArray2 = [array("B") for i in xrange (65536)]
+bitsArray3 = [array("B") for i in xrange (65536)]
+
+for bits in xrange(65536):
     origbits = bits
     while bits:
         b = firstBit(bits)

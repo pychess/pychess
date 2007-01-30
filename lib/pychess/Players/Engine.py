@@ -2,8 +2,6 @@ from Player import Player
 from pychess.Utils.const import ARTIFICIAL
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
-class EngineDead (Exception): pass
-
 class Engine (Player):
    
     __type__ = ARTIFICIAL

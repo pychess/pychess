@@ -562,6 +562,8 @@ def validate (board, move):
     if bitPosArray[tcord] & board.friends[color]:
         return False
     
+    flag = move >> 12
+    
     # If promotion move, piece must be pawn 
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
                 KNIGHT_PROMOTION, ENPASSANT) and piece != PAWN:

@@ -2,7 +2,8 @@
 
 import gtk, os, random, pango
 
-from pychess.Utils.Game import Game
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
 from pychess.System.Log import log
 from pychess.System import myconf
 from pychess.Utils.const import *
@@ -349,30 +350,36 @@ def ensureNewGameDialogReady ():
 
 def runNewGameDialog ():
     ensureNewGameDialogReady ()
-        
     res = widgets["newgamedialog"].run()
     widgets["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
-    
-    # We don't know the name of the players yet, as some of them (Human)
-    # requires a gmwidg in __init__, so we just create a tab with no name
-    gmwidg = gamewidget.createGameWidget("")
-    ccalign = gmwidg.widgets["ccalign"]
+
+    # Init time model
     
     if widgets["useTimeCB"].get_active():
-        ccalign.show()
-        clock = gmwidg.widgets["cclock"]
         secs = widgets["spinbuttonH"].get_value()*3600
         secs += widgets["spinbuttonM"].get_value()*60
         secs += widgets["spinbuttonS"].get_value()
         gain = widgets["spinbuttonG"].get_value()
+        timemodel = TimeModel (secs, gain)
     else:
-        ccalign.hide()
-        clock = None
         secs = 0
         gain = 0
+        timemodel = None
     
-    for widget in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty", "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
+    # Init game model
+    
+    game = GameModel (timemodel)
+    
+    # Init game widget
+    
+    # We don't know the name of the players yet, as some of them (Human)
+    # requires a gmwidg in __init__, so we just create a tab with no name
+    gmwidg = gamewidget.createGameWidget(game)
+    
+    for widget in ("whitePlayerCombobox", "blackPlayerCombobox",
+                   "whiteDifficulty", "blackDifficulty", "spinbuttonH",
+                   "spinbuttonM", "spinbuttonS", "spinbuttonG", "useTimeCB"):
         if hasattr(widgets[widget], "get_active"):
             v = widgets[widget].get_active()
         else: v = widgets[widget].get_value()
@@ -399,7 +406,7 @@ def runNewGameDialog ():
     if len(anaengines) > 1:
         # We assume that the Pychess engine is the last of the list (engines.py
         # puts it there)
-        engine0, args0 = engine1, args1 = random.choice(anaengines)
+        engine0, args0 = engine1, args1 = random.choice(anaengines[1:])
         #engine0, args0 = anaengines[-2]
         #engine1, args1 = anaengines[-1]
     else:
@@ -413,12 +420,9 @@ def runNewGameDialog ():
     spyanalyzer.analyze(inverse=True)
     log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
-    history = gmwidg.widgets["board"].view.history
-    game = Game( gmwidg, history, (hintanalyzer, spyanalyzer),
-                 players[0], players[1], clock, secs, gain )
-    
+    game.setPlayers(players)
+    game.setSpectactors((hintanalyzer, spyanalyzer))
     gmwidg.connect("closed", closeGame, game)
-    
     return game, gmwidg
 
 ################################################################################
@@ -430,7 +434,7 @@ def newGame ():
     widgets["newgamedialog"].set_title(_("New Game"))
     game, gmwidg = runNewGameDialog()
     if game:
-        game.run()
+        game.start()
         handler.emit("game_started", gmwidg, game)
 
 ################################################################################
@@ -524,9 +528,11 @@ def saveGameAs (game):
         
         if savecombo.get_active() == 0:
             if not ending in enddir:
-                d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+                d = gtk.MessageDialog(
+                        type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
                 folder, file = os.path.split(uri)
-                d.set_markup(_("<big><b>Unknown filetype '%s'</b></big>") % ending)
+                d.set_markup(
+                          _("<big><b>Unknown filetype '%s'</b></big>") % ending)
                 d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
                 d.run()
                 d.hide()
@@ -602,7 +608,7 @@ def saveGameBeforeClose (game):
 ################################################################################
 
 def closeAllGames (games):
-    names = ["%s vs %s" % (g.player1, g.player2) for g in games if g.isChanged]
+    names = ["%s vs %s" % tuple(g.players) for g in games if g.isChanged()]
     if len(names) == 0:
         return gtk.RESPONSE_OK
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)

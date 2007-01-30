@@ -160,7 +160,7 @@ def delGameWidget (gmwidg):
         vbox.pack_end(background)
         vbox.show_all()
             
-def createGameWidget (title):
+def createGameWidget (gamemodel):
     vbox = widgets["mainvbox"]
     if len(vbox.get_children()) == 2:
         global background
@@ -203,7 +203,7 @@ def createGameWidget (title):
     close_button.set_relief(gtk.RELIEF_NONE)
     close_button.set_size_request(19,18)
     hbox.pack_end(close_button, expand=False)
-    hbox.pack_end(gtk.Label(title))
+    hbox.pack_end(gtk.Label(""))
     
     headchild = gtk.HSeparator()
     hbox.show_all() # Gtk doesn't show tab labels when the rest is show_all'ed
@@ -230,7 +230,7 @@ def createGameWidget (title):
     cclock = ChessClock()
     ccalign.add(cclock)
     ccalign.set_size_request(-1, 32)
-    board = BoardControl()
+    board = BoardControl(gamemodel)
     
     lvbox.pack_start(ccalign, expand=False)
     lvbox.pack_start(board)

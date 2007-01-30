@@ -14,6 +14,9 @@ from pychess.widgets import ionest
 from pychess.widgets.Background import Background
 from pychess.widgets import preferencesDialog
 
+################################################################################
+# gameDic - containing the gamewidget:gamemodel of all open games              #
+################################################################################
 gameDic = {}
 
 def engineDead (engine, gmwidg):
@@ -41,51 +44,51 @@ def makeAboutDialogReady ():
 def setMode (gmwidg, mode, activated):
     if not gameDic: return
     
-    game = gameDic[gmwidg]
+    gamemodel = gameDic[gmwidg]
     board = gmwidg.widgets["board"]
-    history = board.view.history
-    analyzer = game.analyzers[mode]
-    arrow = mode == HINT and board.view._set_greenarrow or board.view._set_redarrow
+    analyzer = gamemodel.spectactors[mode]
+    
+    if mode == HINT:
+        arrow = board.view._set_greenarrow
+    else: arrow = board.view._set_redarrow
     set_arrow = lambda x: board.view.runWhenReady(arrow, x)
     
     if activated:
         if len(analyzer.analyzeMoves) >= 1:
-            player = board.view.history.curCol() and game.player2 or game.player1
-            if player.__type__ == LOCAL:
+            if gamemodel.curplayer.__type__ == LOCAL:
                 set_arrow (analyzer.analyzeMoves[0].cords)
             else: set_arrow (None)
         
-        if not hasattr (game, "anacons"):
-            game.anacons = [[],[]]
-        if not hasattr (game, "hiscons"):
-            game.hiscons = []
+        # This is a kludge using pythons ability to asign attributes to an
+        # object, even if those attributes are nowhere mentioned in the objects
+        # class. So don't go looking for it ;)
+        if not hasattr (gamemodel, "anacons"):
+            gamemodel.anacons = [[],[]]
+        if not hasattr (gamemodel, "hiscons"):
+            gamemodel.hiscons = []
         
         def on_analyze (analyzer, moves):
-            player = history.curCol() and game.player2 or game.player1
-            if player.__type__ == LOCAL and moves:
+            if gamemodel.curplayer.__type__ == LOCAL and moves:
                set_arrow (moves[0].cords)
             else: set_arrow (None)
             
-        def on_clear (history):
+        def on_game_change (gamemodel):
             set_arrow (None)
-            
-        def on_reset (history):
-            on_clear (history)
-            window[reprMode[mode]+"_mode"].set_active(False)
         
-        game.anacons[mode].append ( analyzer.connect("analyze", on_analyze) )
-        game.hiscons.append ( history.connect("changed", on_clear) )
-        game.hiscons.append ( history.connect("cleared", on_reset) )
+        gamemodel.anacons[mode].append(
+                analyzer.connect("analyze", on_analyze))
+        gamemodel.hiscons.append(
+                gamemodel.connect("game_changed", on_game_change))
     
     else:
-        if hasattr (game, "anacons"):
-            for conid in game.anacons[mode]:
+        if hasattr (gamemodel, "anacons"):
+            for conid in gamemodel.anacons[mode]:
                 analyzer.disconnect(conid)
-            del game.anacons[mode][:]
-        if hasattr (game, "hiscons"):
-            for conid in game.hiscons:
-                history.disconnect(conid)
-            del game.hiscons[:]
+            del gamemodel.anacons[mode][:]
+        if hasattr (gamemodel, "hiscons"):
+            for conid in gamemodel.hiscons:
+                gamemodel.disconnect(conid)
+            del gamemodel.hiscons[:]
         set_arrow (None)
 
 class GladeHandlers:
@@ -100,7 +103,7 @@ class GladeHandlers:
         windowSize = window["window1"].get_size()
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
-    def on_game_started (handler, gmwidg, game):
+    def on_game_started (handler, gmwidg, gamemodel):
         for widget in ("save_game1", "save_game_as1", "properties1",
                        "close1", "action1", "vis1"):
             window[widget].set_property('sensitive', True)
@@ -108,15 +111,58 @@ class GladeHandlers:
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
         
-        gameDic[gmwidg] = game
+        if gamemodel.timemodel != None:
+            gmwidg.widgets["ccalign"].show()
+        else: gmwidg.widgets["ccalign"].hide()
         
-        for player in game.players:
-                player.connect("dead", engineDead, gmwidg)
+        gameDic[gmwidg] = gamemodel
+        
+        for player in gamemodel.players:
+            player.connect("dead", engineDead, gmwidg)
         
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
-    def on_game_closed (handler, gmwidg, game):
+        def game_loaded (gamemodel, uri):
+            gmwidg.status("%s: %s." % (_("Loaded game"), str(uri)), True)
+        gamemodel.connect("game_loaded", game_loaded)
+        
+        def game_ended (gamemodel, reason):
+            m1 = {
+                DRAW: _("The game ended in a draw"),
+                WHITEWON: _("White player won the game"),
+                BLACKWON: _("Black player won the game")
+            }[gamemodel.status]
+            m2 = {
+                DRAW_INSUFFICIENT: _("caused by insufficient material"),
+                DRAW_REPITITION: _("as the same position was repeated three" + \
+                                   " times in a row"),
+                DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
+                DRAW_STALEMATE: _("because of stalemate"),
+                DRAW_AGREE: _("as the players agreed to"),
+                WON_RESIGN: _("as opponent resigned"),
+                WON_CALLFLAG: _("as opponent ran out of time"),
+                WON_MATE: _("on a mate")
+            }[reason]
+            gmwidg.status("%s %s." % (m1,m2), idle_add=True)
+        gamemodel.connect("game_ended", game_ended)
+        
+        def draw_sent (gamemodel, player):
+            if player.__type__ == LOCAL:
+                gmwidg.status(_("You sent a draw offer"), idle_add=True)
+        gamemodel.connect("draw_sent", draw_sent)
+        
+        def flag_call_error (gamemodel, player, error):
+            if player.__type__ == LOCAL:
+                if error == NO_TIME_SETTINGS:
+                    gmwidg.status(_("You can't call flag in a game without" + \
+                                    " time settings"), idle_add=True)
+                elif error == NOT_OUT_OF_TIME:
+                    gmwidg.status(_("You can't call flag when your opponent" + \
+                                    " is not out of time"), idle_add=True)
+        gamemodel.connect("flag_call_error", flag_call_error)
+        
+    def on_game_closed (handler, gmwidg, gamemodel):
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
@@ -154,26 +200,35 @@ class GladeHandlers:
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
     
     def on_properties1_activate (widget):
-        game = gameDic[gamewidget.cur_gmwidg()]
-        window["event_entry"].set_text(game.event)
-        window["site_entry"].set_text(game.site)
-        window["round_spinbutton"].set_value(game.round)
-        #TODO set the date
+        gamemodel = gameDic[gamewidget.cur_gmwidg()]
+        window["event_entry"].set_text(gamemodel["Event"])
+        window["site_entry"].set_text(gamemodel["Site"])
+        window["round_spinbutton"].set_value(gamemodel["Round"])
+        
+        # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
+        # 1 to 12
+        window["game_info_calendar"].clear_marks()
+        window["game_info_calendar"].select_month(
+                                        gamemodel["Month"]-1, gamemodel["Year"])
+        window["game_info_calendar"].select_day(gamemodel["Day"])
+        
         window["game_info"].show()
+        
         def hide_window(button, *args):
             window["game_info"].hide()
             return True
+        
         def accept_new_properties(button, *args):
-            game = gameDic[gamewidget.cur_gmwidg()]
-            game.event = window["event_entry"].get_text()
-            game.site = window["site_entry"].get_text()
-            game.round = window["round_spinbutton"].get_value()
-            game.year = window["game_info_calendar"].get_date()[0]
-            # GtkCalender month goes from 0 to 11
-            game.month = window["game_info_calendar"].get_date()[1] + 1
-            game.day = window["game_info_calendar"].get_date()[2]
+            gamemodel = gameDic[gamewidget.cur_gmwidg()]
+            gamemodel["Event"] = window["event_entry"].get_text()
+            gamemodel["Site"] = window["site_entry"].get_text()
+            gamemodel["Round"] = window["round_spinbutton"].get_value()
+            gamemodel["Year"] = window["game_info_calendar"].get_date()[0]
+            gamemodel["Month"] = window["game_info_calendar"].get_date()[1] + 1
+            gamemodel["Day"] = window["game_info_calendar"].get_date()[2]
             window["game_info"].hide()
             return True
+        
         window["game_info"].connect("delete-event", hide_window)
         window["game_info_cancel_button"].connect("clicked", hide_window)
         window["game_info_ok_button"].connect("clicked", accept_new_properties)

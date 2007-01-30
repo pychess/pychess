@@ -1,6 +1,8 @@
 # engines.py takes care of getting name of, and initializing engines
 
-from CECP import CECPEngine
+from CECPProtocol import CECPProtocol
+from ProtocolEngine import ProtocolEngine
+from UCIProtocol import UCIProtocol
 
 # TODO: Use xml, like glchess.
 # Will be needed when more info is needed for the preferences:
@@ -8,11 +10,13 @@ from CECP import CECPEngine
 # * "uses to send feature" (should let us start earlier)
 
 knownEngines = (
-    ("gnuchess", CECPEngine),
-    ("crafty", CECPEngine),
-    ("faile", CECPEngine),
-    ("phalanx", CECPEngine),
-    ("sjeng", CECPEngine),
+    ("gnuchess", CECPProtocol),
+    ("crafty", CECPProtocol),
+    ("faile", CECPProtocol),
+    ("phalanx", CECPProtocol),
+    ("sjeng", CECPProtocol),
+    ("fruit", UCIProtocol),
+    ("ShredderClassicLinux", UCIProtocol)
 )
 
 import os
@@ -28,10 +32,10 @@ availableEngines = []
 # availableEngines is a list of [(EngineClass, (extra, arguments ...)), ...]
 # the CECPEngine class takes one argument - the path of the executable
 
-for e,p in knownEngines:
-    path = _testEngine(e)
+for binary, protocol in knownEngines:
+    path = _testEngine(binary)
     if path:
-        availableEngines.append((p,(path,)))
+        availableEngines.append( (ProtocolEngine,(protocol, path)) )
 
 ###################
 
@@ -47,10 +51,9 @@ else:
     path = os.path.join(path, "site-packages/pychess/Players/PyChess.py")
 
 path = "env python "+path
-availableEngines.append( (CECPEngine, (path,)) )
+availableEngines.append( (ProtocolEngine, (CECPProtocol, path)) )
 
-from ProtocolEngine import ProtocolEngine
-from UCIProtocol import UCIProtocol
+
 path = "/home/thomas/Programmering/python/skak/ShredderClassic/engines/ShredderClassicLinux"
 availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
 
