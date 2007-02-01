@@ -68,19 +68,25 @@ class ProtocolEngine (Engine):
         self.runWhenReady(self.proto.offerDraw)
     
     def makeMove (self, gamemodel):
+        print "a", self
         self.movecond.acquire()
+        print "b", self
         self.runWhenReady(self.proto.move, gamemodel)
         
+        print "c", self
         if self.proto.isAnalyzing():
+            print "d", self
             del self.analyzeMoves[:]
             self.movecond.release()
             return
         
         while not self.move:
             self.movecond.wait()
+        print "e", self
         if not self.move:
             self.movecond.release()
             raise PlayerIsDead
+        print "d", self
         move = self.move
         self.move = None
         self.movecond.release()
@@ -125,5 +131,5 @@ class ProtocolEngine (Engine):
         self._wait()
         return repr(self.proto)
     
-    def __del__ (self):
-        self.proto.__del__()
+    def kill (self):
+        self.proto.kill()

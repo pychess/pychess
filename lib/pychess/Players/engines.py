@@ -91,7 +91,7 @@ def _getInfo (engine, args):
     en = engine(args, WHITE)
     info = {"name":repr(en), "canAnalyze":en.canAnalyze()}
     _addToDic((engine,args), info)
-    en.__del__()
+    en.kill()
 
 for engine, args in availableEngines:
     thread.start_new(_getInfo, (engine,args))

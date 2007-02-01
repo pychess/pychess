@@ -41,7 +41,7 @@ class Protocol (GObject):
         
         def callback (engine):
             if self.connected:
-                self.__del__()
+                self.kill()
                 if not self.ready:
                     self.ready = True
                     self.emit("ready")
@@ -51,7 +51,7 @@ class Protocol (GObject):
     def run (self):
         pass
     
-    def __del__ (self):
+    def kill (self):
         pass
     
     def moveNow (self):

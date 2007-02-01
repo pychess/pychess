@@ -40,7 +40,7 @@ colorHash = randint(0, maxint)
 
 # This will cause applyFen to raise an exception, if halfmove clock and fullmove
 # number is not specified
-STRICT_FEN = True
+STRICT_FEN = False
 
 ################################################################################
 # LBoard                                                                       #
@@ -110,7 +110,7 @@ class LBoard:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
         
         elif len(parts) == 5:
-            pieceChrs, colChr, castChr, epChr, fiftyChr == parts
+            pieceChrs, colChr, castChr, epChr, fiftyChr = parts
             moveNoChr = "1"
         
         else:

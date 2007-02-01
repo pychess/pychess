@@ -14,7 +14,7 @@ BISHOP_VALUE = 330
 ROOK_VALUE = 500
 QUEEN_VALUE = 900
 KING_VALUE = maxint
-PIECE_VALUES = (None, PAWN_VALUE, KNIGHT_VALUE,
+PIECE_VALUES = (0, PAWN_VALUE, KNIGHT_VALUE,
 				BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE)
 
 # How many points does it give to have the piece standing i cords from the
