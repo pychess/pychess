@@ -69,7 +69,7 @@ class Human (Player):
         #(probably preferences, as accountname would give problems in pvp games)
         return self.name
 
-    def __del__ (self):
+    def kill (self):
         self.cond.acquire()
         for id in self.conid:
             if self.board.handler_is_connected(id):

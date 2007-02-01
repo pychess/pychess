@@ -13,8 +13,8 @@ class Player (GObject):
         abstract
 
     def makeMove (self, history):
-        """ Takes a history object, concidering the last move as an opponent move,
-            and returns a new moveobject with the players answer."""
+        """ Takes a history object, concidering the last move as an opponent
+            move, and returns a new moveobject with the players answer. """
         abstract
 
     def offerDraw (self):
@@ -22,21 +22,24 @@ class Player (GObject):
             or simply do nothing"""
         abstract
 
-    def __del__ (self):
-        """ Called in the end of the game, or when the engines is otherwise ment to die.
-            Use for closing connections etc."""
+    def kill (self):
+        """ Called in the end of the game, or when the engines is otherwise ment
+            to die. Use for closing connections etc. """
         pass #Optional
     
     def showBoard (self):
-        """ Print the board as it the players sees it, e.g. in fen. Used for debugging only """
+        """ Print the board as it the players sees it, e.g. in fen. Used for
+            debugging only """
         pass #Optional
     
     def hurry (self):
-        """ Forces engines to move now, and sends a hurry message to nonlocal human players """
+        """ Forces engines to move now, and sends a hurry message to nonlocal
+            human players """
         pass #Optional
     
     def updateTime (self, secs, opsecs):
-        """ Updates the player with the current remaining time as a float of seconds """
+        """ Updates the player with the current remaining time as a float of
+            seconds """
         pass #Optional
     
     def pause (self):

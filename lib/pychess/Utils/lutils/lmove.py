@@ -28,6 +28,41 @@ for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, CAPTURE, ENPASSANT, \
 def newMove (fromcord, tocord, flag=NORMAL_MOVE):
     return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
+class ParsingError (Exception): pass
+
+################################################################################
+# parseAny                                                                     #
+################################################################################
+
+def parseAny (board, algnot):
+    type = determineAlgebraicNotation (algnot)
+    if type == SAN:
+        return parseSAN (board, algnot)
+    if type == AN:
+        return parseAN (board, algnot)
+    if type == LAN:
+        return parseLAN (board, algnot)
+    return parseFAN (board, algnot)
+
+def determineAlgebraicNotation (algnot):
+    
+    upnot = algnot.upper()
+    
+    if upnot in ("O-O-O", "O-O"):
+        return SAN
+    
+    if "-" in algnot:
+        return LAN
+    
+    if (len(algnot) == 4 or (len(algnot) == 5 and upnot[4] in reprSign)) and \
+            algnot[:2] in cordDic and algnot[2:4] in cordDic:
+        return AN
+    
+    if algnot[0] in FAN_PIECES[WHITE] or algnot[0] in FAN_PIECES[BLACK]:
+        return FAN
+    
+    return SAN
+
 ################################################################################
 # toSan                                                                        #
 ################################################################################
@@ -35,6 +70,9 @@ def newMove (fromcord, tocord, flag=NORMAL_MOVE):
 def toSAN (board, move):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move """
+    
+    # Has to be importet at calltime, as lmovegen imports lmove
+    from lmovegen import genAllMoves
     
     flag = move >> 12
     
@@ -61,51 +99,58 @@ def toSAN (board, move):
         xs = []
         ys = []
         
-        from lmovegen import genAllMoves
         for move in genAllMoves(board):
-            f = FCORD(move)
-            if board.arBoard[f] == fpiece and f != fcord and \
+            movefcord = FCORD(move)
+            if board.arBoard[movefcord] == fpiece and \
+                    movefcord != fcord and \
                     TCORD(move) == tcord:
                 board.applyMove(move)
                 if not board.opIsChecked():
-                    xs.append(FILE(f))
-                    ys.append(RANK(f))
+                    xs.append(FILE(movefcord))
+                    ys.append(RANK(movefcord))
                 board.popMove()
         
         x = FILE(fcord)
         y = RANK(fcord)
-    
+        
         if ys or xs:
             if y in ys and not x in xs:
                 # If we share rank with another piece, but not file
-                part0 += reprFile(x)
+                part0 += reprFile[x]
             elif x in xs and not y in ys:
                 # If we share file with another piece, but not rank
                 part0 += reprRank[y]
-            else:
+            elif x in xs and y in ys:
                 # If we share both file and rank with other pieces
-                part0 += reprFile(x) + reprRank[y]
-        
+                part0 += reprFile[x] + reprRank[y]
+            else:
+                # If we doesn't share anything, it is standard to put file
+                part0 += reprFile[x]
+    
     if tpiece != EMPTY:
         part1 = "x" + part1
         if fpiece == PAWN:
-            part0 += reprRank[fcord >> 3]
+            part0 += reprFile[FILE(fcord)]
     
     notat = part0 + part1
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         notat += "="+reprSign[flag-3]
     
+    board.applyMove(move)
     if board.isChecked():
-        notat += "+"
+        try:
+            moves = genAllMoves (board).next()
+            notat += "+"
+        except StopIteration:
+            notat += "#"
+    board.popMove()
     
     return notat
 
 ################################################################################
 # parseSan                                                                     #
 ################################################################################
-
-class ParsingError (Exception): pass
 
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
@@ -119,7 +164,7 @@ def parseSAN (board, san):
     flag = NORMAL_MOVE
     
     # If last char is a piece char, we assue it the promote char
-    c = notat[-1].upper()
+    c = notat[-1].lower()
     if c in chr2Sign:
         flag = chr2Sign[c] + 3
         if notat[-2] == "=":
@@ -132,18 +177,18 @@ def parseSAN (board, san):
             fcord = E1
             if notat == "O-O":
                 flag == KING_CASTLE
-                tcord = C1
+                tcord = G1
             else:
                 flag = QUEEN_CASTLE
-                tcord = G1
+                tcord = C1
         else:
             fcord = E8
             if notat == "O-O":
                 flag == KING_CASTLE
-                tcord = C8
+                tcord = G8
             else:
                 flag = QUEEN_CASTLE
-                tcord = G8
+                tcord = C8
         return newMove (fcord, tcord, flag)
     
     if notat[0] in ("Q", "R", "B", "K", "N"):
@@ -296,3 +341,44 @@ def parseAN (board, an):
     else: flag = NORMAL_MOVE
     
     return newMove (fcord, tcord, flag)
+
+################################################################################
+# toFAN                                                                        #
+################################################################################
+
+def toFAN (board, move):
+    """ Returns a Figurine Algebraic Notation string of a move """
+    
+    fans = FAN_PIECES[board.color]
+    san = toSAN (board, san)
+    
+    lan = san
+    if "K" in lan or "Q" in lan or "R" in lan or "B" in lan or "N" in lan:
+        lan = lan.replace("K", fans[KING])
+        lan = lan.replace("Q", fans[QUEEN])
+        lan = lan.replace("R", fans[ROOK])
+        lan = lan.replace("B", fans[BISHOP])
+        lan = lan.replace("N", fans[KNIGHT])
+    else:
+        lan = fans[PAWN] + lan
+    
+    return lan
+
+################################################################################
+# parseFAN                                                                     #
+################################################################################
+
+def parseFAN (board, lan):
+    """ Parse a Long/Expanded Algebraic Notation string """
+    
+    fans = FAN_PIECES[board.color]
+    
+    san = lan
+    san = san.replace(fans[KING], "K")
+    san = san.replace(fans[QUEEN], "Q")
+    san = san.replace(fans[ROOK], "R")
+    san = san.replace(fans[BISHOP], "B")
+    san = san.replace(fans[KNIGHT], "N")
+    san = san.replace(fans[PAWN])
+    
+    return parseSAN (board, san)

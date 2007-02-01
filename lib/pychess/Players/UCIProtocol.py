@@ -58,6 +58,9 @@ class UCIProtocol (Protocol):
         def loop():
             while self.connected:
                 line = self.engine.readline()
+                if line == None:
+                    # We get time out after 10 minutes, but we don't care
+                    continue
                 self.parseLine(line)
         thread.start_new(loop,())
                 
@@ -124,7 +127,7 @@ class UCIProtocol (Protocol):
         
     ######################## TO ENGINE ########################
     
-    def __del__ (self):
+    def kill (self):
         if self.connected:
             self.connected = False
             print >> self.engine, "stop"
@@ -143,7 +146,7 @@ class UCIProtocol (Protocol):
         if self.mode != NORMAL:
             print >> self.engine, "stop"
             if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.switchColor()
+                self.board = self.board.setColor(1-self.color)
             print >> self.engine, "position fen", self.board.asFen()
             print >> self.engine, "go infinite"
             return
@@ -218,7 +221,10 @@ class UCIProtocol (Protocol):
         
     def canAnalyze (self):
         return True
-    
+        
+    def isAnalyzing (self):
+    	return self.mode in (ANALYZING, INVERSE_ANALYZING)
+    	
     def __repr__ (self):
         if "name" in self.ids:
             return self.ids["name"]

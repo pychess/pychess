@@ -19,18 +19,19 @@ print "feature %s done=0" % \
 # Import                                                                       #
 ################################################################################
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from time import time
 import sys, os
-import thread
 from threading import Lock
+
+from pychess.System.ThreadPool import pool
+import thread
 
 from Engine import Engine
 from pychess.Utils.book import getOpenings
-from pychess.System.ThreadPool import pool
+
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.lmove import toSAN, parseSAN
+from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN
 from pychess.Utils.lutils.LBoard import LBoard, FEN_START
 
 try:
@@ -121,6 +122,8 @@ def analyze ():
 def go ():
     """ Finds and prints the best move from the current position """
     
+    searchLock.acquire()
+    
     # TODO: Length info should be put in the book.
     # Btw. 10 is not enough. Try 20
     if len(board.history) < 14:
@@ -129,8 +132,7 @@ def go ():
             move = parseSAN(board, movestr)
         
     if len(board.history) >= 14 or not movestr:
-        
-        searchLock.acquire()
+
         global mytime, increment
         lsearch.searching = True
         
@@ -160,10 +162,11 @@ def go ():
         lsearch.movesearches = 0
         lsearch.nodes = 0
         lsearch.searching = False
-        searchLock.release()
         
     print "move", toSAN(board, move)
     board.applyMove(move)
+    
+    searchLock.release()
 
 while True:
     line = raw_input()
@@ -175,25 +178,18 @@ while True:
     
     elif lines[0] == "usermove":
         
-        if analyzing:
-            lsearch.searching = False
-            searchLock.acquire()
-            searchLock.release()
+        lsearch.searching = False
+        searchLock.acquire()
+        searchLock.release()
         
-        #try:
-        move = parseSAN (board, lines[1])
+        move = parseAny (board, lines[1])
         board.applyMove(move)
-        #except ParsingError:
-        #    print "Illegal move:", repr(lines[1])
-        #    sys.exit(os.EX_PROTOCOL)
-            
-        #history.add(move, mvlist=False)
-        
+                
         if not forced and not analyzing:
-            thread.start_new(go,())
+            thread.start_new(go, ())
         
         if analyzing:
-            thread.start_new(analyze,())
+            thread.start_new(analyze, ())
         
     elif lines[0] == "sd":
         sd = int(lines[1])
@@ -224,21 +220,21 @@ while True:
     
     elif lines[0] == "go":
         forced = False
-        thread.start_new(go,())
+        thread.start_new(go, ())
     
     elif lines[0] in ("black", "white"):
         lsearch.searching = False
         searchLock.acquire()
         newColor = lines[0] == "black" and BLACK or WHITE
-        if history.curCol() != newColor:
-            history.setStartingColor(1-history[0].color)
+        if board.color != newColor:
+            board.setColor(newColor)
         searchLock.release()
         if analyzing:
-            thread.start_new(analyze,())
+            thread.start_new(analyze, ())
     
     elif lines[0] == "analyze":
         analyzing = True
-        pool.start(analyze)
+        thread.start_new(analyze, ())
         
     elif lines[0] == "draw":
         print "offer draw"
@@ -254,7 +250,7 @@ while True:
         history = epdfile.loadToHistory(0,-1)
         searchLock.release()
         if analyzing:
-            thread.start_new(analyze,())
+            thread.start_new(analyze, ())
     
     elif lines[0] in ("xboard", "otim", "hard", "easy" "nopost", "post"):
         pass

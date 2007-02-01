@@ -25,7 +25,7 @@ class GameModel (GObject):
     def __init__ (self, timemodel=None):
         GObject.__init__(self)
         
-        self.boards = [Board()]
+        self.boards = [Board(setup=True)]
         self.moves = []
         
         self.status = WAITING_TO_START
@@ -73,13 +73,6 @@ class GameModel (GObject):
         newBoard = self.boards[-1].fromFen(fenstr)
         self.boards = [newBoard]
         self.moves = []
-        if not self.freezed:
-            self.emit("game_changed")
-    
-    def applyMove (self, move):
-        newBoard = self.boards[-1].move(move)
-        self.boards.append(newBoard)
-        self.moves.append(move)
         if not self.freezed:
             self.emit("game_changed")
     
@@ -186,30 +179,41 @@ class GameModel (GObject):
                 curPlayer.updateTime(self.timemodel.getPlayerTime(curColor))
             
             try:
+            	print "Waiting for", curPlayer
                 move = curPlayer.makeMove(self)
             except PlayerIsDead:
                 # The user of pychess will be informed by an eventhandler in the
                 # player object itself, so we just need to break the game loop.
                 break
             
+            print 1
             self.applyingMoveLock.acquire()
             
-            self.applyMove(move)
+            print 2
+            newBoard = self.boards[-1].move(move)
+            self.boards.append(newBoard)
+            self.moves.append(move)
+            if not self.freezed:
+                self.emit("game_changed")
+            
             if self.timemodel:
                 self.timemodel.setMovingColor(1-curColor)
             
+            print 3
             status = getStatus(self.boards[-1])
             if status != RUNNING:
                 self.status, reason = status
                 self.emit("game_ended", reason)
                 self.applyingMoveLock.release()
+                print 4
                 break
             
+            print 5
             for spectactor in self.spectactors:
                 spectactor.makeMove(self)
             
             self.applyingMoveLock.release()
-            
+            print 6
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """

@@ -404,11 +404,8 @@ def runNewGameDialog ():
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
-        # We assume that the Pychess engine is the last of the list (engines.py
-        # puts it there)
-        engine0, args0 = engine1, args1 = random.choice(anaengines[1:])
-        #engine0, args0 = anaengines[-2]
-        #engine1, args1 = anaengines[-1]
+        engine0, args0 = engine1, args1 = random.choice(anaengines)
+        #engine0, args0 = engine1, args1 = anaengines[4]
     else:
         engine0, args0 = engine1, args1 = anaengines[0]
     
@@ -469,7 +466,7 @@ def setUpPosition ():
     widgets["newgamedialog"].set_title(_("Set up Game"))
     game, gmwidg = runNewGameDialog()
     if game:
-        game.__del__()
+        game.kill()
     
 ################################################################################
 # enterGameNotation                                                            #
