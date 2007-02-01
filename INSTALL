@@ -1,13 +1,16 @@
 PyChess does not have to be compiled/installed to run.
 
-To run excute the following in this directory:
+To run: Excute the following in this directory:
 $ PYTHONPATH=lib/ ./pychess
 
-To install to disk
+To install to disk: Run following as root
 # python setup.py install
 
 To see other install options/formats:
 $ python setup.py --help-commands
 
-To run unittest for pychess run
+To run the pychess engine in text based mode
+$ PYTHONPATH=lib/ python lib/Players/PyChess.py
+
+To run unittest for pychess:
 $ PYTHONPATH=lib/ testing/unittest.py

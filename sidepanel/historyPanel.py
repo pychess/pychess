@@ -97,13 +97,13 @@ class Sidepanel:
                 self.numbers.get_model().append([num])
                 
             view.get_model().append([notat])
-            if self.board.shown < len(game.boards):
+            if self.board.shown < game.ply:
                 return
                 
             shown = len(game.boards)-1
-            row = int((shown-1) / 2)
+            row = (shown-1)/2
             view.get_selection().select_iter(view.get_model().get_iter(row))
-            other = shown & 1 and right or left
+            other = shown & 1 and self.right or self.left
             other.get_selection().unselect_all()
     
         gobject.idle_add(todo)
@@ -116,13 +116,13 @@ class Sidepanel:
             gobject.idle_add(todo)
             return
         
-        col = shown % 2 == 0 and self.left or self.right
-        other = shown % 2 == 0 and self.right or self.left
-        row = shown/2
+        col = shown % 2 == 0 and self.right or self.left
+        other = shown % 2 == 0 and self.left or self.right
+        row = (shown-1)/2
         
         # If game is changed, we can't expect the treeviews to be updated yet.
         # Further more when game_changed is called, it will select stuff it self
-        if row >= len(col):
+        if row >= len(col.get_model()):
             return
             
         def todo():

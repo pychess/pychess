@@ -10,7 +10,7 @@ from const import reprCord
 
 def getDestinationCords (board, cord):
     tcords = []
-    for move in lmovegen.genAllMoves (board):
+    for move in lmovegen.genAllMoves (board.board):
         if FCORD(move) == cord.cord:
             if not board.willLeaveInCheck (Move(move)):
                 tcords.append(Cord(TCORD(move)))
@@ -22,21 +22,21 @@ from const import *
 def getStatus (board):
     
     # Test draw by insufficient material
-    if ldraw.testMaterial (board):
+    if ldraw.testMaterial (board.board):
         return DRAW, DRAW_INSUFFICIENT
     
-    if ldraw.testRepetition (board):
+    if ldraw.testRepetition (board.board):
         return DRAW, DRAW_REPITITION
     
-    if ldraw.testFifty (board):
+    if ldraw.testFifty (board.board):
         return DRAW, DRAW_50MOVES
     
-    moves = [move for move in lmovegen.genAllMoves (board)]
+    moves = [move for move in lmovegen.genAllMoves (board.board)]
     
     if moves:
         return RUNNING
     
-    if board.isChecked():
+    if board.board.isChecked():
         if board.color == WHITE:
             reason = BLACKWON
         else: reason = WHITEWON
@@ -45,4 +45,4 @@ def getStatus (board):
     return DRAW, DRAW_STALEMATE
 
 def validate (board, move):
-	return lmovegen.validate(board, move.move)
+    return lmovegen.validate(board.board, move.move)

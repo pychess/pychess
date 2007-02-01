@@ -163,8 +163,8 @@ class BoardView (gtk.DrawingArea):
                         
                         dir = board0.color == WHITE and 1 or -1
                         if step > 0 and board1.data[y][x] != None or \
-                                0 < y < 7 and board0.epcord == Cord(x,y+dir) \
-                                and board1[board0.epcord] != None:
+                                0 < y < 7 and board0.enpassant == Cord(x,y+dir)\
+                                and board1[board0.enpassant] != None:
                                 
                             # A piece is dying
                             deadset.add(piece)
@@ -364,23 +364,23 @@ class BoardView (gtk.DrawingArea):
             self.drawCross (context, r)
         
         # Unselect to mark redrawn areas - for debugging purposes
-        context.rectangle(r.x,r.y,r.width,r.height)
-        dc = self.drawcount*50
-        dc = dc % 1536
-        c = dc % 256 / 255.
-        if dc < 256:
-            context.set_source_rgb(1,c,0)
-        elif dc < 512:
-            context.set_source_rgb(1-c,1,0)
-        elif dc < 768:
-            context.set_source_rgb(0,1,c)
-        elif dc < 1024:
-            context.set_source_rgb(0,1-c,1)
-        elif dc < 1280:
-            context.set_source_rgb(c,0,1)
-        elif dc < 1536:
-            context.set_source_rgb(1,0,1-c)
-        context.stroke()
+        #context.rectangle(r.x,r.y,r.width,r.height)
+        #dc = self.drawcount*50
+        #dc = dc % 1536
+        #c = dc % 256 / 255.
+        #if dc < 256:
+        #    context.set_source_rgb(1,c,0)
+        #elif dc < 512:
+        #    context.set_source_rgb(1-c,1,0)
+        #elif dc < 768:
+        #    context.set_source_rgb(0,1,c)
+        #elif dc < 1024:
+        #    context.set_source_rgb(0,1-c,1)
+        #elif dc < 1280:
+        #    context.set_source_rgb(c,0,1)
+        #elif dc < 1536:
+        #    context.set_source_rgb(1,0,1-c)
+        #context.stroke()
     
     ###############################
     #          drawCords          #
@@ -662,7 +662,7 @@ class BoardView (gtk.DrawingArea):
     
     def drawEnpassant (self, context, redrawn):
         if not self.showEnpassant: return
-        enpassant = self.model.boards[-1].epcord
+        enpassant = self.model.boards[-1].enpassant
         if not enpassant: return
         
         context.set_source_rgb(0, 0, 0)
@@ -815,7 +815,7 @@ class BoardView (gtk.DrawingArea):
     def _set_showEnpassant (self, showEnpassant):
         if self._showEnpassant == showEnpassant: return
         if self.model:
-            enpascord = self.model.boards[-1].epcord
+            enpascord = self.model.boards[-1].enpassant
             if enpascord:
                 r = rect(self.cord2Rect(enpascord))
                 print "redrawing tha cord"

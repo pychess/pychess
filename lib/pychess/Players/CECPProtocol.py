@@ -21,7 +21,7 @@ def isdigits (strings):
             if not s.isdigit():
                 return False
     return True
-   
+
 import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
@@ -52,7 +52,7 @@ class CECPProtocol (Protocol):
             "pause":     0
         }
         
-        self.board = Board()
+        self.board = Board(setup=True)
         self.forced = False
         self.gonext = False
         self.sd = True
@@ -97,7 +97,7 @@ class CECPProtocol (Protocol):
                 self.parseLine(line)
                 
     ############################################################################
-    #   FROM ENGINE                                                              #
+    #   FROM ENGINE                                                            #
     ############################################################################
     
     def parseLine (self, line):
@@ -136,7 +136,7 @@ class CECPProtocol (Protocol):
                 print >> self.engine, "book off"
                 return
                 
-            board = firstboard = self.board
+            board = self.board
             moves = []
 
             for movestr in movre.findall(" ".join(parts[4:])+" "):
@@ -149,7 +149,7 @@ class CECPProtocol (Protocol):
                 if not validate (board, parsedMove):
                   	break
                 moves.append(parsedMove)
-                board = board.move(parsedMove, mvlist=False)
+                board = board.move(parsedMove)
                	
             if moves:
                 self.emit("analyze", moves)
@@ -215,7 +215,7 @@ class CECPProtocol (Protocol):
         print >> self.engine, "new"
         print >> self.engine, "random"
     
-    def __del__ (self):
+    def kill (self):
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"
@@ -249,13 +249,14 @@ class CECPProtocol (Protocol):
         
         self.board = gamemodel.boards[-1]
         
-        if not self.board.history or self.gonext and not self.analyzing:
+        if gamemodel.ply == 0 or self.gonext and \
+        		not self.mode in (ANALYZING, INVERSE_ANALYZING):
             self.go()
             self.gonext = False
             return
         
-        if self.inverseAnalyze:
-            self.switchColor()
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.board.setColor(1-self.color)
             self.printColor()
         
         if self.features["usermove"]:
@@ -266,10 +267,10 @@ class CECPProtocol (Protocol):
             print >> self.engine, toSAN(gamemodel.boards[-2], move)
         else: print >> self.engine, toAN(gamemodel.boards[-2], move)
         
-        if self.inverseAnalyze:
+        if self.mode == INVERSE_ANALYZING:
             self.printColor()
         
-        if self.forced and not self.analyzing:
+        if self.forced and not self.mode in (ANALYZING, INVERSE_ANALYZING):
             self.go()
         
     def pause (self):
@@ -338,10 +339,6 @@ class CECPProtocol (Protocol):
         assert self.ready, "Still waiting for done=1"
         print >> self.engine, "hint"
     
-    def switchColor (self):
-        if self.board:
-            self.board.switchColor()
-    
     def printColor (self):
         #if self.features["colors"]:
         if self.board.color == WHITE:
@@ -376,12 +373,14 @@ class CECPProtocol (Protocol):
                 print >> self.engine, "c"
             print >> self.engine, "."
         
-        # HERE I AM
-        self.board = gamemodel.boards[-1].clone()
+        self.board = gamemodel.boards[-1]
         
-        if self.analyzing:
-            self.analyze(self.inverseAnalyze)
-        
+        if self.mode == ANALYZING:
+            self.analyze()
+            
+        elif self.mode == INVERSE_ANALYZING:
+        	self.analyze(inverse=True)
+        	
         elif self.board.color == self.color:
             self.gonext = True
     
@@ -406,15 +405,16 @@ class CECPProtocol (Protocol):
         print >> self.engine, "level %d %s %d" % (moves, s, increment)
     
     def analyze (self, inverse=False):
-        if self.features["analyze"]:
-            self.force()
-            self.post()
-            self.inverseAnalyze = inverse
-            if self.inverseAnalyze:
-                self.switchColor()
-                self.printColor()
-            print >> self.engine, "analyze"
-            self.analyzing = True
+        self.force()
+        self.post()
+        if inverse:
+            self.board = self.board.setColor(1-self.color)
+            self.printColor()
+            self.mode == INVERSE_ANALYZING
+        else:
+            self.mode = ANALYZING
+        
+        print >> self.engine, "analyze"
     
     ############################################################################
     #   DIRECT METHODS                                                         #
@@ -424,7 +424,7 @@ class CECPProtocol (Protocol):
         return self.features["analyze"]
     
     def isAnalyzing (self):
-        return self.analyzing
+    	return self.mode in (ANALYZING, INVERSE_ANALYZING)
     
     def __repr__ (self):
         return self.features["myname"]
