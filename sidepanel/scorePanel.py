@@ -5,6 +5,7 @@ from math import e
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
 from random import randint
 from sys import maxint
+from pychess.Utils.const import WHITE
 
 class ScorePlot (gtk.DrawingArea):
     
@@ -83,7 +84,6 @@ class ScorePlot (gtk.DrawingArea):
         cr.set_source_rgb (0, 0, 0)
         cr.move_to(width, 0)
         for i, score in enumerate(self.scores):
-            print i, score
             score2 = -1+e**(-1./1000*abs(score/2.))
             if score > 0: score2 = -score2
             x = width/2 + score2*width/2
@@ -144,6 +144,9 @@ class Sidepanel:
         self.boardview.connect('shown_changed', self.shown_changed)
         self.boardview.model.connect("game_changed", self.game_changed)
         
+        # Add the initial board
+        self.game_changed (self.boardview.model)
+        
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
                 vadjust.set_value(vadjust.upper-vadjust.page_size)
@@ -158,8 +161,7 @@ class Sidepanel:
         return __widget__
     
     def game_changed (self, model):
-        points = leval.evaluateComplete(
-                model.boards[-1].board, model.boards[-1].color)
+        points = leval.evaluateComplete(model.boards[-1].board, WHITE)
         self.plot.addScore(points)
     
     def shown_changed (self, boardview, shown):

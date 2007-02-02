@@ -6,6 +6,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.System.Log import log
 from pychess.System import myconf
+from pychess.System.protoopen import protosave, isWriteable
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
@@ -494,8 +495,8 @@ def enterGameNotation ():
 def saveGame (game):
     if not game.isChanged():
         return
-    if game.lastSave[1] and game.lastSave[2]:
-        saveGameSimple (game.lastSave[1], game)
+    if game.uri and isWriteable (game.uri):
+        saveGameSimple (game.uri, game)
     else:
         return saveGameAs (game)
 
@@ -503,7 +504,7 @@ def saveGameSimple (uri, game):
     ending = os.path.splitext(uri)[1]
     if not ending: return
     saver = enddir[ending[1:]]
-    game.save(uri, saver)
+    game.save(uri, saver, append=False)
 
 ################################################################################
 # saveGameAs                                                                   #
