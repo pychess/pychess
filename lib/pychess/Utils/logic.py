@@ -32,7 +32,6 @@ def getStatus (board):
         return DRAW, DRAW_50MOVES
     
     moves = [move for move in lmovegen.genAllMoves (board.board)]
-    
     if moves:
         return RUNNING
     

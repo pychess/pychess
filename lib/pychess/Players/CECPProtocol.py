@@ -410,7 +410,7 @@ class CECPProtocol (Protocol):
         if inverse:
             self.board = self.board.setColor(1-self.color)
             self.printColor()
-            self.mode == INVERSE_ANALYZING
+            self.mode = INVERSE_ANALYZING
         else:
             self.mode = ANALYZING
         

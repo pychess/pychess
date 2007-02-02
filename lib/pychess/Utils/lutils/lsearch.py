@@ -136,6 +136,7 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
     last = 5
     if board.isChecked():
         return [], -maxint
+    
     return [], 0
 
 def quiescent (board, alpha, beta):

@@ -31,7 +31,7 @@ from pychess.Utils.book import getOpenings
 
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN
+from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
 from pychess.Utils.lutils.LBoard import LBoard, FEN_START
 
 try:
@@ -108,7 +108,8 @@ def analyze ():
               lsearch.nodes, "\t", smvs
               
         print "%0.1f moves/position; %0.1f n/s" % \
-               (lsearch.nodes/float(lsearch.movesearches), lsearch.nodes/(time()-t))
+                (lsearch.nodes/float(lsearch.movesearches),
+                lsearch.nodes/(time()-t))
                
         lsearch.nodes = 0
         lsearch.movesearches = 0
@@ -157,13 +158,13 @@ def go ():
             mytime -= time() - starttime
             mytime += increment
         
-        print "moves were", mvs
+        print "moves were", listToSan(board, mvs)
         
         lsearch.movesearches = 0
         lsearch.nodes = 0
         lsearch.searching = False
         
-    print "move", toSAN(board, move)
+    print "move", toSAN(board, move), FLAG(move)
     board.applyMove(move)
     
     searchLock.release()
