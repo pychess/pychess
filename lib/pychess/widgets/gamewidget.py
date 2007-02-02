@@ -289,7 +289,7 @@ def createGameWidget (gamemodel):
     startbut.connect("clicked", lambda w: setshown(0))
     backbut.connect("clicked", lambda w: setshown(board.view.shown-1))
     forwbut.connect("clicked", lambda w: setshown(board.view.shown+1))
-    endbut.connect("clicked", lambda w: setshown(len(board.view.history)-1))
+    endbut.connect("clicked", lambda w: setshown(board.view.model.ply))
     
     page_hbox.pack_start(startbut)
     page_hbox.pack_start(backbut)

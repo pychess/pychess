@@ -3,6 +3,7 @@ import urllib, os
 def splitUri (uri):
     uri = urllib.url2pathname(uri) # escape special chars
     uri = uri.strip('\r\n\x00') # remove \r\n and NULL
+    print "uri", repr(uri)
     return uri.split("://")
 
 def protoopen (uri):
@@ -17,12 +18,14 @@ def protoopen (uri):
     
     raise IOError, "Protocol isn't supported by pychess"
 
-def protosave (uri):
+def protosave (uri, append=False):
     """ Function for saving many things """
     
     protocol, path = splitUri(uri)
     
     if protocol == "file":
+        if append:
+            return file(path, "a")
         return file(path, "w")
     
     raise IOError, "PyChess doesn't support writing to protocol"

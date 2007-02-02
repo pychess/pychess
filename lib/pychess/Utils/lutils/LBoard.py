@@ -132,7 +132,8 @@ class LBoard:
         
         if epChr != "-" and not epChr in cordDic:
             raise SyntaxError, ("En passant cord %s is not legal. "+ \
-                               "Pos(%d)") % (epChr, fenstr.rfind(epChr))
+                                "Pos(%d) - %s") % (epChr, fenstr.rfind(epChr), \
+                                 fenstr)
         
         # Reset this board
         

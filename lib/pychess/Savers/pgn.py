@@ -1,43 +1,48 @@
 from pychess.Utils.Move import *
 from pychess.Utils.const import *
 from pychess.System.Log import log
+from pychess.Utils.logic import getStatus
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
 __append__ = True
 
-def save (file, game):
-    history = game.history
-        
-    #result = reprResult[history.status]
-    game_status = reprResult[game.history.boards[-1].status]
+def wrap (string, length):
+    lines = []
+    last = 0
+    while True:
+        if len(string)-last <= length:
+            lines.append(string[last:])
+            break
+        i = string[last:length+last].rfind(" ")
+        lines.append(string[last:i+last])
+        last += i + 1
+    return "\n".join(lines)
 
-    print >> file, '[Event "%s"]' % game.event 
-    print >> file, '[Site "%s"]' % game.site
-    print >> file, '[Date "%04d.%02d.%02d"]' % (game.year, game.month, game.day)
-    print >> file, '[Round "%d"]' % game.round
-    print >> file, '[White "White Player"]'
-    print >> file, '[Black "Black Player"]'
-    print >> file, '[Result "%s"]' % game_status
+def save (file, model):
+    
+    status = reprResult[getStatus(model.boards[-1])]
+    
+    print >> file, '[Event "%s"]' % model.tags["Event"]
+    print >> file, '[Site "%s"]' % model.tags["Site"]
+    print >> file, '[Round "%d"]' % model.tags["Round"]
+    print >> file, '[Date "%04d.%02d.%02d"]' % \
+            (model.tags["Year"], model.tags["Month"], model.tags["Day"])
+    print >> file, '[White "%s"]' % repr(model.players[WHITE])
+    print >> file, '[Black "%s"]' % repr(model.players[BLACK])
+    print >> file, '[Result "%s"]' % status
     print >> file
-
-    halfMoves = 0
-    temphis = History()
-    result = ''
-    for move in history.moves:
-        if halfMoves % 2 == 0:
-            result += str((halfMoves / 2) + 1)
-            result += '. '
-        temphis.add(move)
-        result += toSAN(temphis[-2], temphis[-1], temphis.moves[-1])
-        result += ' '
-        if len(result) >= 80:
-            result += '\n'
-            file.write(result)
-            result = ''
-        halfMoves += 1
-    result += game_status + '\n'
-    file.write(result)
+    
+    result = []
+    sanmvs = listToSan(model.boards[0], model.moves)
+    for i in range(0, len(sanmvs), 2):
+        if i+1 < len(sanmvs):
+            result.append("%d. %s %s" % (i/2+1, sanmvs[i], sanmvs[i+1]))
+        else: result.append("%d. %s" % (i/2+1, sanmvs[i]))
+    result = " ".join(result)
+    result = wrap(result, 80)
+    
+    print >> file, result, status
     file.close()
 
 def stripBrackets (string):

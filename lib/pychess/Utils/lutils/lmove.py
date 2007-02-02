@@ -64,6 +64,23 @@ def determineAlgebraicNotation (algnot):
     return SAN
 
 ################################################################################
+# listToSan                                                                    #
+################################################################################
+
+def listToSan (board, moves):
+    sanmoves = []
+    
+    for move in moves:
+        san = toSAN (board, move)
+        sanmoves.append(san)
+        board.applyMove(move)
+        
+    for move in moves:
+        board.popMove()
+    
+    return sanmoves
+
+################################################################################
 # toSan                                                                        #
 ################################################################################
 

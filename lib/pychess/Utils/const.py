@@ -52,7 +52,7 @@ reprColor = ["White", "Black"]
 
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED = range(7)
-reprResult = ["*", "1/2-1/2", "1-0", "0-1"]
+reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*"]
 
 # Time calling errors
 NO_TIME_SETTINGS, NOT_OUT_OF_TIME = range(2)

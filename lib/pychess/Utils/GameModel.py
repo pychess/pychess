@@ -6,7 +6,7 @@ import datetime
 from Board import Board
 from pychess.Players.Player import PlayerIsDead
 from pychess.System.ThreadPool import pool
-from pychess.System.protoopen import protoopen, isWriteable
+from pychess.System.protoopen import protoopen, protosave, isWriteable
 from logic import getStatus
 
 class GameModel (GObject):
@@ -155,12 +155,23 @@ class GameModel (GObject):
         self.needSave = False
         if not uriIsFile:
             self.uri = uri
+        else: self.uri = None
         
         for player in self.players:
             player.setBoard(self)
         for spectactor in self.spectactors:
             spectactor.setBoard(self)
     
+    def save (self, uri, saver, append):
+        if type(uri) == str:
+            fileobj = protosave(uri, append)
+            self.uri = uri
+        else:
+            fileobj = uri
+            self.uri = None
+        saver.save(fileobj, self)
+        self.needSave = False
+        
     ############################################################################
     # Run stuff                                                                #
     ############################################################################
@@ -214,6 +225,7 @@ class GameModel (GObject):
             
             self.applyingMoveLock.release()
             print 6
+            
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """
@@ -283,7 +295,9 @@ class GameModel (GObject):
         self.freezed = False
     
     def isChanged (self):
-        if self.needsSave:
+        if self.ply == 0:
+            return False
+        if not self.needsSave:
             return True
         if not self.uri or not isWriteable (self.uri):
             return True
