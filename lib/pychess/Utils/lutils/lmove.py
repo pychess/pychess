@@ -282,7 +282,7 @@ def parseSAN (board, san):
     # Printing the moves seams to sometimes fuck the board up, as it applies a
     # lot of illegal moves. At least we better make a clone.
     board2 = LBoard()
-    board2.applyFen (baord.asFen())
+    board2.applyFen (board.asFen())
     
     errstring += " available moves: %s" % " ".join(listToSan(board2, moves))
     errstring += board.asFen()
