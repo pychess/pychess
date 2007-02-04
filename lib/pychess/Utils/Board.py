@@ -96,9 +96,11 @@ class Board:
         return newBoard
     
     def willLeaveInCheck (self, move):
+        self.board.lock.acquire()
         self.board.applyMove(move.move)
         result = self.board.opIsChecked()
         self.board.popMove()
+        self.board.lock.release()
         return result
     
     def switchColor (self):
@@ -152,4 +154,3 @@ class Board:
                 newBoard.data[y][x] = piece
         
         return newBoard
-    
