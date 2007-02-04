@@ -8,16 +8,16 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.bitboard import toString
 from pychess.Utils.lutils.ldata import *
 
-from pychess.Utils.lutils.lmove import toSAN
+from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 2
+MAXDEPTH = 4
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
        http://www.albert.nu/programs/sharper/perft.htm"""
     
-    def perft(self, board, depth):
+    def perft(self, board, depth, prevmoves):
         if depth == 0:
             self.count += 1
             return
@@ -49,8 +49,9 @@ class FindMovesTestCase(unittest.TestCase):
             
             if nmoves == cmoves:
                 for move in cmoves:
+                    prevmoves.append(toSAN (board, move))
                     board.applyMove(move)
-                    self.perft(board, depth-1)
+                    self.perft(board, depth-1, prevmoves)
                     board.popMove()
             else:
                 print board
@@ -69,15 +70,30 @@ class FindMovesTestCase(unittest.TestCase):
         #        board.popMove()
         else:
             for move in genAllMoves(board):
+                
                 board.applyMove(move)
                 if board.opIsChecked():
                     board.popMove()
                     continue
+                
+                board.popMove()
+                san = toSAN (board, move)
+                try:
+                    move2 = parseSAN(board, san)
+                except ParsingError, e:
+                    print prevmoves
+                    raise ParsingError, e
+                #san2 = toSAN (board, move2)
+                #self.assertEqual((san,move), (san2,move2))
+                prevmoves.append(toSAN (board, move))
+                board.applyMove(move)
+                
                 #if depth == 5:
                 #board.popMove()
                 #print "   "*(2-depth)+ltoSAN (board, move)
                 #board.applyMove(move)
-                self.perft(board, depth-1)
+                
+                self.perft(board, depth-1, prevmoves)
                 board.popMove()
     
     def setUp(self):
@@ -91,7 +107,7 @@ class FindMovesTestCase(unittest.TestCase):
         """Testing move generator with several positions"""
         print
         board = LBoard ()
-        for i, (pos, depths) in enumerate(self.positions):
+        for i, (pos, depths) in enumerate(self.positions[1:]):
             print i+1, "/", len(self.positions), "-", pos
             
             board.applyFen(pos)
@@ -100,8 +116,9 @@ class FindMovesTestCase(unittest.TestCase):
             for depth, suposedMoveCount in enumerate(depths):
                 if depth+1 > MAXDEPTH: break
                 self.count = 0
-                print "searching depth %d for %d moves" % (depth+1, suposedMoveCount)
-                self.perft (board, depth+1)
+                print "searching depth %d for %d moves" % \
+               	        (depth+1, suposedMoveCount)
+                self.perft (board, depth+1, [])
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
             
