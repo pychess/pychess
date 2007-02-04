@@ -314,8 +314,9 @@ class BoardView (gtk.DrawingArea):
             start = time()
             self.draw(context, event.area)
             self.drawtime += time() - start
-            if self.drawcount % 100 == 0:
-                print "Average FPS: %0.3f - %d / %d" % (self.drawcount/self.drawtime, self.drawcount, self.drawtime)
+            #if self.drawcount % 100 == 0:
+            #    print "Average FPS: %0.3f - %d / %d" % \
+            #      (self.drawcount/self.drawtime, self.drawcount, self.drawtime)
             
         return False
     

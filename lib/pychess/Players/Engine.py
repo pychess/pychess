@@ -135,11 +135,11 @@ class EngineConnection (gobject.GObject):
                 return line
     
     def write (self, data):
-        try:
-            log.log(data, self.defname)
-            os.write(self.fd, data)
-        except:
-            pass
+        #try:
+        log.log(data, self.defname)
+        os.write(self.fd, data)
+        #except:
+        #    pass
 
     def wait4exit (self):
         try:

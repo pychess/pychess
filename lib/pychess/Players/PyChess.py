@@ -94,15 +94,7 @@ def analyze ():
         t = time()
         mvs, scr = alphaBeta (board, depth)
         
-        smvs = []
-        
-        for move in mvs:
-            smvs.append(toSAN (board, move))
-            board.applyMove(move)
-        for move in mvs:
-            board.popMove()
-            
-        smvs = " ".join(smvs)
+        smvs = " ".join(listToSan(board, mvs))
         
         print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
               lsearch.nodes, "\t", smvs
@@ -130,16 +122,15 @@ def go ():
     if len(board.history) < 14:
         movestr = getBestOpening(board)
         if movestr:
-            move = parseSAN(board, movestr)
+            mvs = [parseSAN(board, movestr)]
         
     if len(board.history) >= 14 or not movestr:
-
+        
         global mytime, increment
         lsearch.searching = True
         
         if mytime == None:
             mvs, scr = alphaBeta (board, sd)
-            move = mvs[0]
         
         else:
             # We bet that the game will be about 30 moves. That gives us
@@ -154,16 +145,29 @@ def go ():
             for depth in range(1,sd+1):
                 mvs, scr = alphaBeta (board, depth)
                 if time() > endtime: break
-            move = mvs[0]
             mytime -= time() - starttime
             mytime += increment
         
-        print "moves were", listToSan(board, mvs)
+        if not mvs:
+            if scr == 0:
+                print "result", reprResult[DRAW]
+            elif scr < 0:
+                if board.color == WHITE:
+                    print "result", reprResult[BLACKWON]
+                else: print "result", reprResult[WHITEWON]
+            else:
+                if board.color == WHITE:
+                    print "result", reprResult[WHITEWON]
+                else: print "result", reprResult[BLACKWON]
+            return
+        
+        print "moves were:", " ".join(listToSan(board, mvs))
         
         lsearch.movesearches = 0
         lsearch.nodes = 0
         lsearch.searching = False
-        
+    
+    move = mvs[0]
     print "move", toSAN(board, move), FLAG(move)
     board.applyMove(move)
     

@@ -31,7 +31,6 @@ class Protocol (GObject):
         defname = os.path.split(self.executable)[1]
         self.defname = defname[:1].upper() + defname[1:].lower()
 
-        self.readycon = Condition()
         self.ready = False
         self.engine = EngineConnection (self.executable)
         self.connected = True
