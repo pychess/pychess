@@ -3,9 +3,9 @@ from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
 def testRepetition (board):
-    if len(board.history) >= 5:
-        if board.history[-2] != None and board.history[-4] != None and \
-                board.hash == board.history[-2][4] == board.history[-4][4]:
+    if len(board.history) >= 9:
+        if board.history[-4] != None and board.history[-8] != None and \
+                board.hash == board.history[-4][4] == board.history[-8][4]:
             return True
     return False
 
@@ -46,4 +46,5 @@ def testMaterial (board):
                 (blackBoards[BISHOP] & BLACK_SQUARES and BLACK or WHITE):
             return True
 
-# This could be expanded by the fruit kpk draw function
+# This could be expanded by the fruit kpk draw function, which can test if a
+# certain king verus king and pawn posistion is winable.
