@@ -7,6 +7,8 @@ from Piece import Piece
 from Cord import Cord
 from const import *
 
+from copy import copy
+
 class Board:
     """ Board is a thin layer above LBoard, adding the Piece objects, which are
         needed for animation in BoardView.
@@ -146,6 +148,7 @@ class Board:
         fenstr = self.asFen()
         lboard = LBoard()
         lboard.applyFen (fenstr)
+        lboard.history = copy(self.board.history)
         
         newBoard = Board()
         newBoard.board = lboard
