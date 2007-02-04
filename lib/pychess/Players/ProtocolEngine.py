@@ -1,6 +1,6 @@
 
 import sys, os, time, thread
-from threading import Condition, Lock
+from threading import Condition, Lock, RLock
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
 from Engine import Engine, EngineConnection
@@ -17,6 +17,7 @@ class ProtocolEngine (Engine):
         self.proto = args[0] (args[1:], color)
         
         self.readycon = Condition()
+        self.runWhenReadyLock = RLock()
         self.readylist = []
         
         self.movecond = Condition()
@@ -40,12 +41,12 @@ class ProtocolEngine (Engine):
         self.runWhenReady(self.proto.setStrength, strength)
     
     def runWhenReady (self, method, *args):
-        self.readycon.acquire()
+        self.runWhenReadyLock.acquire()
         if self.proto.ready:
             method(*args)
         else:
             self.readylist.append((method,args))
-        self.readycon.release()
+        self.runWhenReadyLock.release()
     
     def onReady (self, proto):
         self.readycon.acquire()
@@ -68,25 +69,21 @@ class ProtocolEngine (Engine):
         self.runWhenReady(self.proto.offerDraw)
     
     def makeMove (self, gamemodel):
-        print "a", self
         self.movecond.acquire()
-        print "b", self
         self.runWhenReady(self.proto.move, gamemodel)
         
-        print "c", self
         if self.proto.isAnalyzing():
-            print "d", self
             del self.analyzeMoves[:]
             self.movecond.release()
             return
         
         while not self.move:
             self.movecond.wait()
-        print "e", self
+
         if not self.move:
             self.movecond.release()
             raise PlayerIsDead
-        print "d", self
+
         move = self.move
         self.move = None
         self.movecond.release()

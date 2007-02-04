@@ -17,6 +17,7 @@ class GameModel (GObject):
     __gsignals__ = {
         "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        "game_saved":     (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":      (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "draw_sent":       (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "flag_call_error": (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
@@ -170,6 +171,7 @@ class GameModel (GObject):
             fileobj = uri
             self.uri = None
         saver.save(fileobj, self)
+        self.emit("game_saved", uri)
         self.needSave = False
         
     ############################################################################
@@ -197,10 +199,8 @@ class GameModel (GObject):
                 # player object itself, so we just need to break the game loop.
                 break
             
-            print 1
             self.applyingMoveLock.acquire()
             
-            print 2
             newBoard = self.boards[-1].move(move)
             self.boards.append(newBoard)
             self.moves.append(move)
@@ -210,22 +210,18 @@ class GameModel (GObject):
             if self.timemodel:
                 self.timemodel.setMovingColor(1-curColor)
             
-            print 3
             status = getStatus(self.boards[-1])
             if status != RUNNING:
                 self.status, reason = status
                 self.emit("game_ended", reason)
                 self.applyingMoveLock.release()
-                print 4
                 break
             
-            print 5
             for spectactor in self.spectactors:
                 spectactor.makeMove(self)
             
             self.applyingMoveLock.release()
-            print 6
-            
+    
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """

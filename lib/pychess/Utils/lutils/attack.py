@@ -112,32 +112,6 @@ def getPieceMoves (board, cord, color, piece):
         if not blocker & bitPosArray[cord + (color == WHITE and -8 or 8)]:
             bits |= pawns & rankBits[color == WHITE and 1 or 6]
         return bits
-    
-def getPieceRFMoves (board, cord, color, piece, rank=None, file=None):
-    """ Returns first cord containing a piece - with the correct color, type,
-        file and rank - that can move/attack the specified cord. Checking will
-        be tested """
-    
-    bits = getPieceMoves (board, cord, color, piece)
-    if rank != None:
-        bits &= rankBits[rank]
-    if file != None:
-        bits &= fileBits[rank]
-    
-    if bitLength(bits) == 1:
-        return firstBit(bits)
-    else:
-        from lmove import RANK, newMove
-        for c in iterBits (bits):
-            if piece == PAWN and board.arBoard[cord] == EMPTY and \
-                                                          RANK(c) != RANK(cord):
-                flag = ENPASSANT
-            else: flag = NORMAL_MOVE
-            board.applyMove(newMove(cord, c))
-            if not isAttacked (board, board.kings[board.color], 1-board.color):
-                board.popMove()
-                return c
-            board.popMove()
 
 def pinnedOnKing (board, cord, color):
     # Determine if the piece on cord is pinned against its colors king.
