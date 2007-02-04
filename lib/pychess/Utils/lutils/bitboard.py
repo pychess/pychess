@@ -25,12 +25,22 @@ def bitLength (bitboard):
            bitCount [ ( bitboard >> 16) & 0xffff] + \
            bitCount [   bitboard & 0xffff ]
 
-def iterBits (bitboard):
+def iterBits2 (bitboard):
     return bitsArray0[bitboard >> 48] + \
            bitsArray1[bitboard >> 32 & 0xffff] + \
            bitsArray2[bitboard >> 16 & 0xffff] + \
            bitsArray3[bitboard & 0xffff]
-    
+
+def iterBits (bitboard):
+    for cord in bitsArray0[bitboard >> 48]:
+        yield cord
+    for cord in bitsArray0[bitboard >> 32 & 0xffff]:
+        yield cord + 16
+    for cord in bitsArray0[bitboard >> 16 & 0xffff]:
+        yield cord + 32
+    for cord in bitsArray0[bitboard & 0xffff]:
+        yield cord + 48
+
     # Gnuchess uses this version, but it is about 7 times slower
     #while bitboard:
     #    cord = firstBit(bitboard)
@@ -154,9 +164,9 @@ while False:
     break
 
 bitsArray0 = [array("B") for i in xrange (65536)]
-bitsArray1 = [array("B") for i in xrange (65536)]
-bitsArray2 = [array("B") for i in xrange (65536)]
-bitsArray3 = [array("B") for i in xrange (65536)]
+#bitsArray1 = [array("B") for i in xrange (65536)]
+#bitsArray2 = [array("B") for i in xrange (65536)]
+#bitsArray3 = [array("B") for i in xrange (65536)]
 
 for bits in xrange(65536):
     origbits = bits
@@ -164,9 +174,9 @@ for bits in xrange(65536):
         b = firstBit(bits)
         bits = clearBit(bits, b)
         bitsArray0[origbits].append(b-48)
-        bitsArray1[origbits].append(b-32)
-        bitsArray2[origbits].append(b-16)
-        bitsArray3[origbits].append(b)
+        #bitsArray1[origbits].append(b-32)
+        #bitsArray2[origbits].append(b-16)
+        #bitsArray3[origbits].append(b)
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set

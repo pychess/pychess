@@ -140,7 +140,7 @@ def genAllMoves (board):
         
         # One step
         
-        movedpawns = pawns << 8 & notblocker
+        movedpawns = (pawns << 8) & notblocker
         for cord in iterBits(movedpawns):
             if cord <= 7:
                 for move in newPromotes (cord+8, cord):
