@@ -505,7 +505,7 @@ def saveGameSimple (uri, game):
     if not ending: return
     saver = enddir[ending[1:]]
     game.save(uri, saver, append=False)
-
+    
 ################################################################################
 # saveGameAs                                                                   #
 ################################################################################
@@ -573,7 +573,7 @@ Please ensure that you have given the right path and try again."))
         savedialog.disconnect(conid)
         savedialog.hide()
         game.save("file://"+uri, saver, append)
-    
+        
     conid = savedialog.connect("response", response)
     savedialog.show_all()
 
@@ -633,16 +633,15 @@ def closeGame (gmwidg, game):
 # signal handler                                                               #
 ################################################################################
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Handler (GObject):
     """ The goal of this class, is to provide signal handling for the ionest
         module """
         
     __gsignals__ = {
-        'game_started': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT)),
-        'game_closed': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT)),
-#        'game_saved': (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT, TYPE_PYOBJECT))
+        'game_started': (SIGNAL_RUN_FIRST, TYPE_NONE, (object, object)),
+        'game_closed': (SIGNAL_RUN_FIRST, TYPE_NONE, (object, object))
     }
     
     def __init__ (self):

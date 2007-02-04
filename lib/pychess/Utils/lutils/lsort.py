@@ -32,8 +32,6 @@ def staticExchangeEvaluate (board, move):
     if xray[pieces[f]]:
         ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
     
-    d = board.boards[color]
-    e = board.boards[opcolor]
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         swaplist[0] = PIECE_VALUES[flag-3] - PAWN_VALUE
@@ -43,6 +41,8 @@ def staticExchangeEvaluate (board, move):
                                             PIECE_VALUES[pieces[tcord]]
         lastval = -PIECE_VALUES[pieces[fcord]]
     
+    d = board.boards[color]
+    e = board.boards[opcolor]
     n = 1
     while theirs:
         for piece in range(PAWN, KING+1):
@@ -111,26 +111,23 @@ def addXrayPiece (board, tcord, fcord, color, ours, theirs):
 from sys import maxint
 from ldata import *
 
-def getCaptureValue (move):
-    global gboard
-    arBoard = gboard.arBoard
-    mpV = PIECE_VALUES[arBoard[move>>6 & 63]]
-    cpV = PIECE_VALUES[arBoard[move & 63]]
+def getCaptureValue (board, move):
+    mpV = PIECE_VALUES[board.arBoard[move>>6 & 63]]
+    cpV = PIECE_VALUES[board.arBoard[move & 63]]
     if mpV < cpV:
         return cpV - mpV
     else:
-        temp = staticExchangeEvaluate (gboard, move)
+        temp = staticExchangeEvaluate (board, move)
         return temp < 0 and -maxint or temp
 
 def sortCaptures (board, moves):
-    global gboard
-    gboard = board
-    moves.sort(key=getCaptureValue, reverse=True)
+    f = lambda move: getCaptureValue (board, move)
+    moves.sort(key=f, reverse=True)
     return moves
 
 from sys import maxint
 
-def getMoveValue (move):
+def getMoveValue (board, table, ply, move):
     """ Sort criteria is as follows.
         1.  The move from the hash table
         2.  Captures as above.
@@ -138,11 +135,9 @@ def getMoveValue (move):
         4.  History.
         5.  Moves to the centre. """
     
-    global gboard, gtable, gply
-    
-    color = gboard.color
+    color = board.color
     opcolor = 1-color
-    enemyPawns = gboard.boards[opcolor][PAWN]
+    enemyPawns = board.boards[opcolor][PAWN]
     
     score = -maxint
     
@@ -152,10 +147,10 @@ def getMoveValue (move):
     
     # As we only return directly from transposition table if hashf == hashfEXACT
     # There will be a very promising move we could test
-    if gtable.isHashMove(gply, move):
+    if table.isHashMove(ply, move):
         return maxint
     
-    arBoard = gboard.arBoard
+    arBoard = board.arBoard
     fpiece = arBoard[fcord]
     tpiece = arBoard[tcord]
     
@@ -166,18 +161,15 @@ def getMoveValue (move):
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
-    if gtable.isKiller(gply, move):
+    if table.isKiller(ply, move):
         return 1000
     
-    # King tropism - a move makeing us nearer to the enemy king, is probably a
+    # King tropism - a move bringing us nearer to the enemy king, is probably a
     # good move
-    opking = gboard.kings[opcolor]
+    opking = board.kings[opcolor]
     return 10-distance[tcord][opking]
 
 def sortMoves (board, table, ply, moves):
-    global gboard, gtable, gply
-    gboard = board
-    gtable = table
-    gply = ply
-    moves.sort(key=getMoveValue, reverse=True)
+    f = lambda move: getMoveValue (board, table, ply, move)
+    moves.sort(key=f, reverse=True)
     return moves

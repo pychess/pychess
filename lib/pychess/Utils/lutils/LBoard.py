@@ -5,6 +5,7 @@ from pychess.Utils.const import *
 from ldata import *
 from attack import isAttacked
 from bitboard import *
+from threading import RLock
 
 ################################################################################
 # Zobrit hashing 32 bit implementation                                         #
@@ -63,12 +64,19 @@ class LBoard:
         self.enpassant = -1
         self.color = WHITE
         self.castling = B_OOO | B_OO | W_OOO | W_OO
+        self.hasCastled = 0
         self.fifty = 0
         
         self.checked = None
         self.opchecked = None
         
         self.arBoard = array("B", [0]*64)
+        
+        # This lock is intended to be used anywhere you need to first add some
+        # moves and then pop them, to be sure the board is in the correct state
+        # if another thread looks at it at the same time.
+        # Examples are printing a list of sanmoves or checking for check.
+        self.lock = RLock()
         
         self.hash = 0
         self.pawnhash = 0
@@ -233,46 +241,16 @@ class LBoard:
         self.arBoard[cord] = EMPTY
     
     def _move (self, fcord, tcord, piece, color):
-        """ Moves the piece at fcord to tcord.
-            Notice: The reason why we doesn't just do calls to _removePiece and
-            _addPiece, is that we want to override this method in Board. To make
-            animation work Board needs to know if it is dealing with a new
-            Piece, like from promotion, or it is just dealing with a piece being
-            moved. """
+        """ Moves the piece at fcord to tcord. """
         
-        # Remove piece
-        self.boards[color][piece] = \
-                clearBit(self.boards[color][piece], fcord)
-        self.blocker90 = clearBit(self.blocker90, r90[fcord])
-        self.blocker45 = clearBit(self.blocker45, r45[fcord])
-        self.blocker315 = clearBit(self.blocker315, r315[fcord])
-        
-        if piece == PAWN:
-            self.pawnhash ^= pieceHashes[color][PAWN][fcord]
-        
-        self.hash ^= pieceHashes[color][piece][fcord]
-        self.arBoard[fcord] = EMPTY
-        
-        # Add piece
-        self.boards[color][piece] = \
-                setBit(self.boards[color][piece], tcord)
-        self.blocker90 = setBit(self.blocker90, r90[tcord])
-        self.blocker45 = setBit(self.blocker45, r45[tcord])
-        self.blocker315 = setBit(self.blocker315, r315[tcord])
-        
-        if piece == PAWN:
-            self.pawnhash ^= pieceHashes[color][PAWN][tcord]
-        elif piece == KING:
-            self.kings[color] = tcord
-        
-        self.hash ^= pieceHashes[color][piece][tcord]
-        self.arBoard[tcord] = piece
+        self._removePiece(fcord, piece, color)
+        self._addPiece(tcord, piece, color)
     
     def updateBoard (self):
         self.friends[WHITE] = sum(self.boards[WHITE])
         self.friends[BLACK] = sum(self.boards[BLACK])
         self.blocker = self.friends[WHITE] | self.friends[BLACK]
-    
+        
     def setColor (self, color):
         if color == self.color: return
         self.color = color
@@ -334,7 +312,7 @@ class LBoard:
                 piece = flag - 3 # The flags has values: 8, 7, 6, 5
                 self._removePiece(fcord, PAWN, self.color)
                 self._addPiece(tcord, piece, self.color)
-        
+                
         if fpiece == PAWN and abs(fcord-tcord) == 16:
             self.setEnpassant ((fcord + tcord) / 2)
         else: self.setEnpassant (None)
@@ -348,8 +326,8 @@ class LBoard:
                 rookt = fcord + 1
             self._move (rookf, rookt, ROOK, self.color)
             if self.color == WHITE:
-                self.castling |= W_CASTLED
-            else: self.castling |= B_CASTLED
+                self.hasCastled |= W_CASTLED
+            else: self.hasCastled |= B_CASTLED
         
         if tpiece == EMPTY and fpiece != PAWN and \
                 not flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -467,7 +445,6 @@ class LBoard:
        	elif flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                     BISHOP_PROMOTION, KNIGHT_PROMOTION):
             self._addPiece (fcord, PAWN, color)
-        
         # Put back moved piece
         else:
             self._addPiece (fcord, tpiece, color)
