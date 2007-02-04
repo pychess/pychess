@@ -1,4 +1,5 @@
 from ldata import *
+from LBoard import LBoard
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -70,6 +71,7 @@ def determineAlgebraicNotation (algnot):
 def listToSan (board, moves):
     sanmoves = []
     
+    board.lock.acquire()
     for move in moves:
         san = toSAN (board, move)
         sanmoves.append(san)
@@ -77,6 +79,7 @@ def listToSan (board, moves):
         
     for move in moves:
         board.popMove()
+    board.lock.release()
     
     return sanmoves
 
@@ -108,7 +111,7 @@ def toSAN (board, move):
     part1 = ""
     
     if fpiece != PAWN:
-    	part0 += reprSign[fpiece]
+        part0 += reprSign[fpiece]
     
     part1 = reprCord[tcord]
     
@@ -116,6 +119,7 @@ def toSAN (board, move):
         xs = []
         ys = []
         
+        board.lock.acquire()
         for move in genAllMoves(board):
             movefcord = FCORD(move)
             if board.arBoard[movefcord] == fpiece and \
@@ -126,6 +130,7 @@ def toSAN (board, move):
                     xs.append(FILE(movefcord))
                     ys.append(RANK(movefcord))
                 board.popMove()
+        board.lock.release()
         
         x = FILE(fcord)
         y = RANK(fcord)
@@ -154,6 +159,7 @@ def toSAN (board, move):
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         notat += "="+reprSign[flag-3]
     
+    board.lock.acquire()
     board.applyMove(move)
     if board.isChecked():
         try:
@@ -162,6 +168,7 @@ def toSAN (board, move):
         except StopIteration:
             notat += "#"
     board.popMove()
+    board.lock.release()
     
     return notat
 
@@ -193,7 +200,7 @@ def parseSAN (board, san):
         if color == WHITE:
             fcord = E1
             if notat == "O-O":
-                flag == KING_CASTLE
+                flag = KING_CASTLE
                 tcord = G1
             else:
                 flag = QUEEN_CASTLE
@@ -201,11 +208,12 @@ def parseSAN (board, san):
         else:
             fcord = E8
             if notat == "O-O":
-                flag == KING_CASTLE
+                flag = KING_CASTLE
                 tcord = G8
             else:
                 flag = QUEEN_CASTLE
                 tcord = C8
+        
         return newMove (fcord, tcord, flag)
     
     if notat[0] in ("Q", "R", "B", "K", "N"):
@@ -242,26 +250,44 @@ def parseSAN (board, san):
     # We find all pieces who could have done it. (If san was legal, there should
     # never be more than one)
     from lmovegen import genAllMoves
-    for move in genAllMoves(board):
+    moves = [m for m in genAllMoves(board)]
+    for move in moves:
+        if TCORD(move) != tcord:
+            continue
         f = FCORD(move)
-        if TCORD(move) != tcord or board.arBoard[f] != piece:
+        if board.arBoard[f] != piece:
             continue
         if frank != None and frank != RANK(f):
             continue
         if ffile != None and ffile != FILE(f):
             continue
-        if FLAG(move) != flag: continue # This is mostly used for promote
+        if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                    BISHOP_PROMOTION, KNIGHT_PROMOTION) and FLAG(move) != flag:
+            continue
         
+        board.lock.acquire()
         board.applyMove(move)
         if board.opIsChecked():
             board.popMove()
             continue
         board.popMove()
+        board.lock.release()
         
         return move
     
-    raise ParsingError, "Bad SAN move '%s'. No piece is able to move to %s" % \
-                        (san, reprCord[tcord])
+    errstring = "Bad SAN move '%s'." % san
+    errstring += " No piece is able to move to %s." % reprCord[tcord]
+    errstring += " %s %s %s %s " % (ffile, frank, reprPiece[piece], flag)
+    
+    # Printing the moves seams to sometimes fuck the board up, as it applies a
+    # lot of illegal moves. At least we better make a clone.
+    board2 = LBoard()
+    board2.applyFen (baord.asFen())
+    
+    errstring += " available moves: %s" % " ".join(listToSan(board2, moves))
+    errstring += board.asFen()
+    
+    raise ParsingError, errstring
     
 ################################################################################
 # toLan                                                                        #
