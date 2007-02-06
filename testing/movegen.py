@@ -11,7 +11,7 @@ from pychess.Utils.lutils.ldata import *
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 4
+MAXDEPTH = 3
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
@@ -76,17 +76,17 @@ class FindMovesTestCase(unittest.TestCase):
                     board.popMove()
                     continue
                 
-                board.popMove()
-                san = toSAN (board, move)
-                try:
-                    move2 = parseSAN(board, san)
-                except ParsingError, e:
-                    print prevmoves
-                    raise ParsingError, e
+                #board.popMove()
+                #san = toSAN (board, move)
+                #try:
+                #    move2 = parseSAN(board, san)
+                #except ParsingError, e:
+                #    print prevmoves
+                #    raise ParsingError, e
                 #san2 = toSAN (board, move2)
                 #self.assertEqual((san,move), (san2,move2))
-                prevmoves.append(toSAN (board, move))
-                board.applyMove(move)
+                #prevmoves.append(toSAN (board, move))
+                #board.applyMove(move)
                 
                 #if depth == 5:
                 #board.popMove()
