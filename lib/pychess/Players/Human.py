@@ -77,3 +77,7 @@ class Human (Player):
         self.move = "del"
         self.cond.notify()
         self.cond.release()
+        
+    def setBoard (self, fen):
+        # BoardControl, from which we are reciving moves, will be set by others
+        pass

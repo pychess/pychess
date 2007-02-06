@@ -21,25 +21,34 @@ from const import *
 
 def getStatus (board):
     
+    lboard = board.board
+    
     # Test draw by insufficient material
-    if ldraw.testMaterial (board.board):
+    if ldraw.testMaterial (lboard):
         return DRAW, DRAW_INSUFFICIENT
     
-    if ldraw.testRepetition (board.board):
+    if ldraw.testRepetition (lboard):
         return DRAW, DRAW_REPITITION
     
-    if ldraw.testFifty (board.board):
+    if ldraw.testFifty (lboard):
         return DRAW, DRAW_50MOVES
     
-    moves = [move for move in lmovegen.genAllMoves (board.board)]
-    if moves:
-        return RUNNING
+    lboard.lock.acquire()
+    for move in lmovegen.genAllMoves (lboard):
+        lboard.applyMove(move)
+        if lboard.opIsChecked():
+            lboard.popMove()
+            continue
+        lboard.popMove()
+        lboard.lock.release()
+        return RUNNING, UNKNOWN_REASON
+    lboard.lock.release()
     
-    if board.board.isChecked():
+    if lboard.isChecked():
         if board.color == WHITE:
-            reason = BLACKWON
-        else: reason = WHITEWON
-        return MATE, reason
+            status = BLACKWON
+        else: status = WHITEWON
+        return status, WON_MATE
     
     return DRAW, DRAW_STALEMATE
 

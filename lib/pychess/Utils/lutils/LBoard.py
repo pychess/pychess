@@ -190,13 +190,11 @@ class LBoard:
         
         self.fifty = int(fiftyChr)
         
-        # Parse halfmove clock field
-        
-        self.fifty = int(fiftyChr)
-        
         # Parse fullmove number
         
-        self.history = [None]*int(moveNoChr)*2
+        movenumber = int(moveNoChr)*2 -2
+        if self.color == BLACK: movenumber += 1
+        self.history = [None]*movenumber
         
         self.updateBoard()
     
@@ -472,9 +470,24 @@ class LBoard:
     def __hash__ (self):
         return self.hash
     
+    def reprCastling (self):
+        if not self.castling:
+            return "-"
+        else:
+            strs = []
+            if self.castling & W_OO:
+                strs.append("K")
+            if self.castling & W_OOO:
+                strs.append("Q")
+            if self.castling & B_OO:
+                strs.append("k")
+            if self.castling & B_OOO:
+                strs.append("q")
+            return "".join(strs)
+    
     def __repr__ (self):
         b = reprColor[self.color] + " "
-        b += (str(self.castling) or "-") + " "
+        b += self.reprCastling() + " "
         b += self.enpassant != None and reprCord[self.enpassant] or "-"
         b += "\n"
         rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
@@ -519,17 +532,7 @@ class LBoard:
         fenstr.append(self.color == WHITE and "w" or "b")
         fenstr.append(" ")
         
-        if not self.castling:
-            fenstr.append("-")
-        else:
-            if self.castling & W_OO:
-                fenstr.append("K")
-            if self.castling & W_OOO:
-                fenstr.append("Q")
-            if self.castling & B_OO:
-                fenstr.append("k")
-            if self.castling & B_OOO:
-                fenstr.append("q")
+        fenstr.append(self.reprCastling())
         fenstr.append(" ")
         
         if not self.enpassant:
@@ -541,7 +544,7 @@ class LBoard:
         fenstr.append(str(self.fifty))
         fenstr.append(" ")
         
-        fullmove = (len(self.history)+1)/2
+        fullmove = (len(self.history))/2 + 1
         fenstr.append(str(fullmove))
         
         return "".join(fenstr)

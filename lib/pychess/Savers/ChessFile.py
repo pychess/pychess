@@ -1,6 +1,8 @@
 import datetime
 from pychess.Utils.const import RUNNING
 
+class LoadingError (Exception): pass
+
 class ChessFile:
     """ This class descripes an opened chessfile.
         It is lazy in the sense of not parsing any games,
