@@ -5,7 +5,7 @@
 import time, thread
 
 from Protocol import Protocol
-from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError
+from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError, listToMoves
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
