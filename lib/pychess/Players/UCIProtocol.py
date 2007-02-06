@@ -3,7 +3,7 @@ import thread
 
 from Protocol import Protocol
 
-from pychess.Utils.Move import parseAN
+from pychess.Utils.Move import parseAN, listToMoves
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
 from pychess.Utils.GameModel import GameModel
