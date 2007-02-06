@@ -21,7 +21,7 @@ def wrap (string, length):
 
 def save (file, model):
     
-    status = reprResult[getStatus(model.boards[-1])]
+    status = reprResult[getStatus(model.boards[-1])[0]]
     
     print >> file, '[Event "%s"]' % model.tags["Event"]
     print >> file, '[Site "%s"]' % model.tags["Site"]
@@ -31,14 +31,22 @@ def save (file, model):
     print >> file, '[White "%s"]' % repr(model.players[WHITE])
     print >> file, '[Black "%s"]' % repr(model.players[BLACK])
     print >> file, '[Result "%s"]' % status
+    
+    if model.lowply > 0:
+        print >> file, '[SetUp "1"]'
+        print >> file, '[FEN "%s"]' % model.boards[0].asFen()
+    
     print >> file
     
     result = []
     sanmvs = listToSan(model.boards[0], model.moves)
-    for i in range(0, len(sanmvs), 2):
-        if i+1 < len(sanmvs):
-            result.append("%d. %s %s" % (i/2+1, sanmvs[i], sanmvs[i+1]))
-        else: result.append("%d. %s" % (i/2+1, sanmvs[i]))
+    for i in range(0, len(sanmvs)):
+        ply = i + model.lowply
+        if ply % 2 == 0:
+            result.append("%d." % (ply/2+1))
+        elif i == 0:
+            result.append("%d..." % (ply/2+1))
+        result.append(sanmvs[i])
     result = " ".join(result)
     result = wrap(result, 80)
     
@@ -96,7 +104,7 @@ class PGNFile (ChessFile):
         self.expect = None
         self.tagcache = {}
     
-    def _parseMoves (self, gameno):
+    def _getMoves (self, gameno):
         moves = comre.sub("", self.games[gameno][1])
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
@@ -104,78 +112,20 @@ class PGNFile (ChessFile):
             del moves[-1]
         return moves
     
-    def loadToHistory2 (self, gameno, position, history=None):
-        from profile import runctx
-        loc = locals()
-        loc["self"] = self
-        runctx ("self.loadToHistory2(gameno, position, history)",
-                loc, globals(), "/tmp/pychessprofile")
-        from pstats import Stats
-        s = Stats("/tmp/pychessprofile")
-        s.sort_stats("time")
-        s.print_stats()
+    def loadToModel (self, gameno, position, model=None):
+        if not model: model = GameModel()
         
-    def loadToHistory (self, gameno, position, history=None):
-        moves = self._parseMoves (gameno)
-        if not history: history = History()
-                
-        for i, movestr in enumerate(moves):
-            
-            if position != -1 and i >= position: break
-            
-            m = self.parseMove (history[-1], movestr)
-            if not m: continue
-            
-            if i+1 < len(moves) and (position == -1 or i+1 < position):
-                history.add(m, False)
-            else: history.add(m, True)
+        fenstr = self._getTag(gameno, "FEN")
+        if fenstr:
+            model.boards = [model.boards[0].fromFen(fenstr)]
         
-        # If no moves, thee last board hasn't got a movelist, which is important
-        # so that boardview can highlight legal cords
-        if not history[-1].movelist:
-            movelist = validator.findMoves(history[-1])
+        movstrs = self._getMoves (gameno)
+        for mstr in movstrs:
+            move = parseAny (model.boards[-1], mstr)
+            model.moves.append(move)
+            model.boards.append(model.boards[-1].move(move))
         
-        return history
-    
-    def parseMove (self, board, movestr):
-        if self.expect == None or self.expect == SAN:
-            try: return parseSAN (board, movestr)
-            except ParsingError:
-                try:
-                    self.expect = LAN
-                    return parseLAN (board, movestr)
-                except ParsingError:
-                    try:
-                        self.expect = AN
-                        return parseAN (board, movestr)
-                    except ParsingError:
-                        return None
-                        
-        elif self.expect == LAN:
-            try: return parseLAN (board, movestr)
-            except ParsingError:
-                try:
-                    self.expect = SAN
-                    return parseSAN (board, movestr)
-                except ParsingError:
-                    try:
-                        self.expect = AN
-                        return parseAN (board, movestr)
-                    except ParsingError:
-                        return None
-                        
-        elif self.expect == AN:
-            try: return parseAN (board, movestr)
-            except ParsingError:
-                try:
-                    self.expect = LAN
-                    return parseLAN (board, movestr)
-                except ParsingError:
-                    try:
-                        self.expect = SAN
-                        return parseSAN (board, movestr)
-                    except ParsingError:
-                        return None
+        return model
     
     def _getTag (self, gameno, tagkey):
         if gameno in self.tagcache:

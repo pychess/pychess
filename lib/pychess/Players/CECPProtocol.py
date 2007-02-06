@@ -135,22 +135,11 @@ class CECPProtocol (Protocol):
                 # Crafty doesn't analyze untill it is out of book
                 print >> self.engine, "book off"
                 return
-                
+            
             board = self.board
-            moves = []
-
-            for movestr in movre.findall(" ".join(parts[4:])+" "):
-                try:
-                  	parsedMove = parseAny(board, movestr)
-                except ParsingError:
-                    break
-                # We skip parsing and move-errors, as they are probably caused
-                # by old analyze strings (sent before engine got the newest move)
-                if not validate (board, parsedMove):
-                  	break
-                moves.append(parsedMove)
-                board = board.move(parsedMove)
-               	
+            moves = listToMoves (self.board, \
+                            movre.findall(" ".join(parts[4:])+" "))
+            
             if moves:
                 self.emit("analyze", moves)
             

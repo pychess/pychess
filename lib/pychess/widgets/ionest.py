@@ -454,9 +454,12 @@ def loadGame (uri = None):
     if game:
         uri = loadSidePanel.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
-        game.load (uri, loadSidePanel.get_gameno(),
-                   loadSidePanel.get_position(), loader)
+        # As Main.py connects to game, when it recieves the game_started signal,
+        # we have to emit it before loadAndStart is called, which emits signals
+        # Main.py are supposed to recieve.
         handler.emit("game_started", gmwidg, game)
+        game.loadAndStart (uri, loadSidePanel.get_gameno(),
+                           loadSidePanel.get_position(), loader)
 
 ################################################################################
 # setUpPosition                                                                #
@@ -485,7 +488,7 @@ def enterGameNotation ():
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
         file = StringIO(text)
         loader = enddir["pgn"]
-        game.load (file, 0, -1, loader)
+        game.loadAndStart (file, 0, -1, loader)
         handler.emit("game_started", gmwidg, game)
         
 ################################################################################

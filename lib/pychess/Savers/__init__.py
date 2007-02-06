@@ -1,1 +1,1 @@
-__all__ = ["epd", "pgn"]
+__all__ = ["fen", "epd", "pgn"]

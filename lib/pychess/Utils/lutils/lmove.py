@@ -84,6 +84,32 @@ def listToSan (board, moves):
     return sanmoves
 
 ################################################################################
+# listToMoves                                                                  #
+################################################################################
+
+def listToMoves (board, movstrs, type=None):
+    moves = []
+    
+    board.lock.acquire()
+    for mstr in movstrs:
+        if type == None:
+            move = parseAny (board, mstr)
+        elif type == SAN:
+            move = parseSAN (board, mstr)
+        elif type == AN:
+            move = parseAN (board, mstr)
+        elif type == LAN:
+            move = parseLAN (board, mstr)
+        moves.append(move)
+        board.applyMove(move)
+        
+    for mstr in movstrs:
+        board.popMove()
+    board.lock.release()
+    
+    return moves
+
+################################################################################
 # toSan                                                                        #
 ################################################################################
 
@@ -120,15 +146,15 @@ def toSAN (board, move):
         ys = []
         
         board.lock.acquire()
-        for move in genAllMoves(board):
-            movefcord = FCORD(move)
-            if board.arBoard[movefcord] == fpiece and \
-                    movefcord != fcord and \
-                    TCORD(move) == tcord:
-                board.applyMove(move)
+        for altmove in genAllMoves(board):
+            mfcord = FCORD(altmove)
+            if board.arBoard[mfcord] == fpiece and \
+                    mfcord != fcord and \
+                    TCORD(altmove) == tcord:
+                board.applyMove(altmove)
                 if not board.opIsChecked():
-                    xs.append(FILE(movefcord))
-                    ys.append(RANK(movefcord))
+                    xs.append(FILE(mfcord))
+                    ys.append(RANK(mfcord))
                 board.popMove()
         board.lock.release()
         
@@ -162,10 +188,15 @@ def toSAN (board, move):
     board.lock.acquire()
     board.applyMove(move)
     if board.isChecked():
-        try:
-            moves = genAllMoves (board).next()
+        for altmove in genAllMoves (board):
+            board.applyMove(altmove)
+            if board.opIsChecked():
+                board.popMove()
+                continue
+            board.popMove()
             notat += "+"
-        except StopIteration:
+            break
+        else:
             notat += "#"
     board.popMove()
     board.lock.release()

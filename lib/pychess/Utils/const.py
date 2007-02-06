@@ -51,15 +51,16 @@ reprColor = ["White", "Black"]
 ################################################################################
 
 # Game states
-WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED = range(7)
-reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*"]
+WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
+        UNKNOWN_STATE = range(8)
+reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "?"]
 
 # Time calling errors
 NO_TIME_SETTINGS, NOT_OUT_OF_TIME = range(2)
 
-# Extended game states
+# Game state reasons
 DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, DRAW_INSUFFICIENT, \
-    WON_RESIGN, WON_CALLFLAG, WON_MATE = range(8)
+    WON_RESIGN, WON_CALLFLAG, WON_MATE, UNKNOWN_REASON = range(9)
 
 # Player actions
 RESIGNATION, FLAG_CALL, DRAW_OFFER = range(3)

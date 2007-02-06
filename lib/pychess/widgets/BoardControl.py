@@ -65,7 +65,7 @@ class BoardControl (gtk.EventBox):
         if not cord: return False
         if cord.x < 0 or cord.x > 7 or cord.y < 0 or cord.y > 7: return False
         
-        if self.view.shown != len(self.view.model.boards)-1:
+        if self.view.shown != self.view.model.ply:
             return False
         
         # Set the basiscord to the selected or active
@@ -85,7 +85,7 @@ class BoardControl (gtk.EventBox):
             # create a new list.
             if self.fromcord != basiscord:
                 self.tocords = getDestinationCords(
-                                          self.view.model.boards[-1], basiscord)
+                                        self.view.model.boards[-1], basiscord)
                 self.fromcord = basiscord # Remember the basiscord of self.tocords
             
             # If cord is a legal move..
@@ -190,7 +190,8 @@ class BoardControl (gtk.EventBox):
         else: self.view.hover = cord
         
         if self.pressed and self.view.active:
-            piece = self.view.model.boards[self.view.shown][self.view.active]
+            piece = self.view.model.getBoardAtPly (\
+                    self.view.shown)[self.view.active]
             if not piece: return
             if piece.color != self.view.model.boards[-1].color: return
             xc, yc, square, s = self.view.square

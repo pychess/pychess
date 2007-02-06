@@ -122,7 +122,7 @@ class UCIProtocol (Protocol):
         
         if "pv" in parts and self.mode != NORMAL:
             movstrs = parts[parts.index("pv")+1:]
-            moves = [parseAN(self.board, movestr) for movestr in movstrs]
+            moves = listToMoves (self.board, movstrs, AN)
             self.emit("analyze", moves)
         
     ######################## TO ENGINE ########################
