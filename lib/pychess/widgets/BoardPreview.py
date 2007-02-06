@@ -3,7 +3,7 @@
 import gtk, gtk.glade
 from gobject import idle_add
 from time import sleep
-from pychess.Utils.const import prefix, reprResult, BLACK, FEN_EMPTY
+from pychess.Utils.const import prefix, reprResult, BLACK
 from pychess.System.WidgetDic import WidgetDic
 from pychess.System.protoopen import protoopen
 from pychess.widgets.BoardView import BoardView
@@ -34,7 +34,8 @@ class BoardPreview (gtk.Alignment):
         self.list.set_model(gtk.ListStore(str,str,str))
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.list.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        self.list.get_selection().connect_after('changed', self.on_selection_changed)
+        self.list.get_selection().connect_after(
+                'changed', self.on_selection_changed)
         
         # Add columns
         
@@ -58,6 +59,8 @@ class BoardPreview (gtk.Alignment):
         # Connect label showing possition
         
         self.widgets["BoardView"].connect('shown_changed', self.shown_changed)
+        self.widgets["BoardView"].autoUpdateShown = False
+        self.gamemodel = self.widgets["BoardView"].model
         
         # Adding glade widget to self
         
@@ -100,7 +103,9 @@ class BoardPreview (gtk.Alignment):
             result = result.replace("1/2","½")
             self.list.get_model().append (names+[result])
         
-        self.widgets["posLabel"].set_text("0...")
+        #if self.gamemodel.ply == 0:
+        #    print "setting text 0", self.gamemodel.lowply, self.gamemodel.ply
+        #    self.widgets["posLabel"].set_text("1.")
         
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
@@ -109,40 +114,31 @@ class BoardPreview (gtk.Alignment):
         
         iter = selection.get_selected()[1]
         if iter == None or not self.chessfile:
-            self.widgets["BoardView"].model.applyFen(FEN_EMPTY)
+            self.widgets["BoardView"].model.clear()
             return
         
         sel = self.list.get_model().get_path(iter)[0]
         if sel == self.lastSel: return
         self.lastSel = sel
         
-        self.widgets["BoardView"].autoUpdateShown = False
-        self.widgets["BoardView"].model.applyFen(FEN_EMPTY)
-   
-        self.chessfile.loadToModel(sel, -1, self.widgets["BoardView"].model)
-        
-        self.widgets["BoardView"].autoUpdateShown = True
-        
-        def do():
-            self.widgets["BoardView"].shown = self.widgets["BoardView"].ply
-        self.widgets["BoardView"].runWhenReady (do)
+        self.chessfile.loadToModel(sel, -1, self.gamemodel)
+        self.widgets["BoardView"].shown = self.gamemodel.ply
         
     def on_first_button (self, button):
-        self.widgets["BoardView"].shown = 0
+        self.widgets["BoardView"].showFirst()
         
     def on_back_button (self, button):
-        self.widgets["BoardView"].shown -= 1
+        self.widgets["BoardView"].showPrevious()
         
     def on_forward_button (self, button):
-        self.widgets["BoardView"].shown += 1
+        self.widgets["BoardView"].showNext()
         
     def on_last_button (self, button):
-        self.widgets["BoardView"].shown = self.widgets["BoardView"].ply
+        self.widgets["BoardView"].showLast()
     
     def shown_changed (self, boardView, shown):
-        pos = str((shown-1)/2+1) + "."
-        if self.widgets["BoardView"].ply % 2 == shown % 2 and \
-                boardView.model.boards[-1].color != BLACK:
+        pos = "%d." % (shown/2+1)
+        if shown & 1:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
     

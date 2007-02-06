@@ -165,8 +165,8 @@ class Sidepanel:
         self.plot.addScore(points)
     
     def shown_changed (self, boardview, shown):
-        self.plot.select(shown)
+        self.plot.select(shown-self.boardview.model.lowply)
         self.plot.redraw()
     
     def plot_selected (self, plot, selected):
-        self.boardview.shown = selected
+        self.boardview.shown = selected+self.boardview.model.lowply

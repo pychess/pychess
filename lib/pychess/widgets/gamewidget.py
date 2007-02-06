@@ -285,11 +285,10 @@ def createGameWidget (gamemodel):
     endbut.add(createImage(media_next))
     endbut.set_relief(gtk.RELIEF_NONE)
     
-    def setshown (shown): board.view.shown = shown
-    startbut.connect("clicked", lambda w: setshown(0))
-    backbut.connect("clicked", lambda w: setshown(board.view.shown-1))
-    forwbut.connect("clicked", lambda w: setshown(board.view.shown+1))
-    endbut.connect("clicked", lambda w: setshown(board.view.model.ply))
+    startbut.connect("clicked", lambda w: board.view.showFirst())
+    backbut.connect("clicked", lambda w: board.view.showPrevious())
+    forwbut.connect("clicked", lambda w: board.view.showNext())
+    endbut.connect("clicked", lambda w: board.view.showLast())
     
     page_hbox.pack_start(startbut)
     page_hbox.pack_start(backbut)

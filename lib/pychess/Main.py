@@ -124,11 +124,11 @@ class GladeHandlers:
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
         def game_loaded (gamemodel, uri):
-            gmwidg.status("%s: %s." % (_("Loaded game"), str(uri)), True)
+            gmwidg.status("%s: %s" % (_("Loaded game"), str(uri)), True)
         gamemodel.connect("game_loaded", game_loaded)
         
         def game_saved (gamemodel, uri):
-            gmwidg.status("%s: %s." % (_("Saved game"), str(uri)), True)
+            gmwidg.status("%s: %s" % (_("Saved game"), str(uri)), True)
         gamemodel.connect("game_saved", game_saved)
         
         def game_ended (gamemodel, reason):
@@ -146,9 +146,10 @@ class GladeHandlers:
                 DRAW_AGREE: _("as the players agreed to"),
                 WON_RESIGN: _("as opponent resigned"),
                 WON_CALLFLAG: _("as opponent ran out of time"),
-                WON_MATE: _("on a mate")
+                WON_MATE: _("on a mate"),
+                UNKNOWN_REASON: _("by no known reason")
             }[reason]
-            gmwidg.status("%s %s." % (m1,m2), idle_add=True)
+            gmwidg.status("%s %s" % (m1,m2), idle_add=True)
         gamemodel.connect("game_ended", game_ended)
         
         def draw_sent (gamemodel, player):

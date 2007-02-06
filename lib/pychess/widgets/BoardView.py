@@ -65,7 +65,7 @@ ANIMATION_TIME = .5
 class BoardView (gtk.DrawingArea):
     
     __gsignals__ = {
-        'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
+        'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     }
     
     def __init__(self, gamemodel=None):
@@ -75,6 +75,7 @@ class BoardView (gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
         self.model.connect("game_changed", self.game_changed)
+        self.model.connect("game_loaded", self.game_loaded)
         self.connect("expose_event", self.expose)
         self.set_size_request(300,300)
         
@@ -94,7 +95,7 @@ class BoardView (gtk.DrawingArea):
         self._redarrow = None
         self._greenarrow = None
         self._bluearrow = None
-        self._shown = 0
+        self._shown = self.model.ply
         self._fromWhite = True
         self._showCords = False
         self._showEnpassant = False
@@ -110,6 +111,9 @@ class BoardView (gtk.DrawingArea):
         if self.autoUpdateShown and self.shown+1 >= model.ply:
             self.shown = model.ply
     
+    def game_loaded (self, model, uri):
+        self.shown = model.lowply
+    
     ###############################
     #          Animation          #
     ###############################
@@ -119,33 +123,31 @@ class BoardView (gtk.DrawingArea):
     
     def _set_shown(self, shown):
         
-        # TODO: This should be faster and be able to support fade at promotion,
-        # if it is rewritten to be based on <Move>s instead of boards. Perhaps
-        # it would share code with the Board .move method
-        
-        # If shown value is illegal, we don't even set it
-        # FIXME: this might be quite nonintuitive when setting
-        # boardview.shown = 10 and then baordview.shown is still == 5...
-        if not 0 <= shown <= self.model.ply:
-            return
-        
         # We don't do anything if we are already showing the right ply
         if shown == self._shown:
             return
         
+        # This would cause IndexErrors later
+        assert self.model.lowply <= shown <= self.model.ply
+        
         # If there is only one board, we don't do any animation, but simply
-        # redraw the entire board
-        if len(self.model.boards) == 1:
+        # redraw the entire board. Same if we are at first draw.
+        if len(self.model.boards) == 1 or self.shown < self.model.lowply:
             self._shown = shown
+            self.emit("shown_changed", self.shown)
             idle_add(self.redraw_canvas)
             return
+        
+        # TODO: This should be faster and be able to support fade at promotion,
+        # if it is rewritten to be based on <Move>s instead of boards. Perhaps
+        # it would share code with the Board .move method
         
         step = shown > self.shown and 1 or -1
         
         deadset = set()
         for i in range(self.shown, shown, step):
-            board0 = self.model.boards[i]
-            board1 = self.model.boards[i+step]
+            board0 = self.model.getBoardAtPly(i)
+            board1 = self.model.getBoardAtPly(i+step)
             
             for y, row in enumerate(board0.data):
                 for x, piece in enumerate(row):
@@ -180,7 +182,7 @@ class BoardView (gtk.DrawingArea):
                             piece.y = y
         
         self.deadlist = []
-        for y, row in enumerate(self.model.boards[self.shown].data):
+        for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
             for x, piece in enumerate(row):
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
@@ -198,8 +200,8 @@ class BoardView (gtk.DrawingArea):
                 paintBox = join(paintBox, self.cord2Rect(self.lastMove.cord1))
                 self.lastMove = None
                 self.redraw_canvas(rect(paintBox))
-            if self.shown != 0:
-                self.lastMove = self.model.moves[self.shown-1]
+            if self.shown > self.model.lowply:
+                self.lastMove = self.model.getMoveAtPly(self.shown-1)
             else: self.lastMove = None
             self.runAnimation(redrawMisc = True)
             self.animationID = idle_add(self.runAnimation)
@@ -213,7 +215,7 @@ class BoardView (gtk.DrawingArea):
         _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
         
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
-        board = self.model.boards[self.shown]
+        board = self.model.getBoardAtPly(self.shown)
 
         paintBox = None
         
@@ -344,6 +346,10 @@ class BoardView (gtk.DrawingArea):
     def draw (self, context, r):
         #context.set_antialias (cairo.ANTIALIAS_NONE)
         
+        if self.shown < self.model.lowply:
+            print "exiting cause to lowlpy", self.shown, self.model.lowply
+            return
+        
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -354,7 +360,7 @@ class BoardView (gtk.DrawingArea):
         
         self.drawBoard (context, r)
         self.drawCords (context, r)
-        pieces = self.model.boards[self.shown]
+        pieces = self.model.getBoardAtPly(self.shown)
         self.drawSpecial (context, r)
         self.drawEnpassant (context, r)
         self.drawArrows (context)
@@ -585,7 +591,7 @@ class BoardView (gtk.DrawingArea):
                     -wh*r[2]*m[0], wh*r[2]*m[1])
                 context.close_path()
             
-            if self.model.boards[self.shown-1][self.lastMove.cord1]:
+            if self.model.getBoardAtPly(self.shown-1)[self.lastMove.cord1]:
                 context.set_source_rgba(*light_orange)
                 context.fill_preserve()
                 context.set_source_rgba(*dark_orange)
@@ -603,7 +609,7 @@ class BoardView (gtk.DrawingArea):
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         
-        if self.shown != len(self.model.moves):
+        if self.shown != self.model.ply:
             return
     
         aw = 0.3 # Arrow width
@@ -863,3 +869,17 @@ class BoardView (gtk.DrawingArea):
                 return True
             func(*args)
         idle_add(do)
+    
+    def showFirst (self):
+        self.shown = self.model.lowply
+    
+    def showPrevious (self):
+        if self.shown > self.model.lowply:
+            self.shown -= 1
+    
+    def showNext (self):
+        if self.shown < self.model.ply:
+            self.shown += 1
+            
+    def showLast (self):
+        self.shown = self.model.ply

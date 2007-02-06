@@ -30,6 +30,7 @@ class GameModel (GObject):
         self.moves = []
         
         self.status = WAITING_TO_START
+        self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
         if timemodel:
@@ -70,26 +71,35 @@ class GameModel (GObject):
     # Chess stuff                                                              #
     ############################################################################
     
-    def applyFen (self, fenstr):
-        newBoard = self.boards[-1].fromFen(fenstr)
-        self.boards = [newBoard]
+    def clear (self):
+        self.boards = [Board().fromFen(FEN_EMPTY)]
         self.moves = []
         if not self.freezed:
             self.emit("game_changed")
     
-    def clear (self):
-        self.boards = []
-        self.moves = []
-        self.whiteName = ""
-        self.blackName = ""
-    
     def _get_ply (self):
-        return len(self.moves)
+        return self.boards[-1].ply
     ply = property(_get_ply)
+    
+    def _get_lowest_ply (self):
+        return self.boards[0].ply
+    lowply = property(_get_lowest_ply)
     
     def _get_curplayer (self):
         return self.players[self.boards[-1].color]
     curplayer = property(_get_curplayer)
+    
+    def _plyToIndex (self, ply):
+        index = ply - self.boards[0].ply
+        if index < 0:
+            raise IndexError, "%s < %s" % (ply, self.boards[0].ply)
+        return index
+    
+    def getBoardAtPly (self, ply):
+        return self.boards[self._plyToIndex(ply)]
+    
+    def getMoveAtPly (self, ply):
+        return self.moves[self._plyToIndex(ply)]
     
     ############################################################################
     # Player stuff                                                             #
@@ -101,8 +111,9 @@ class GameModel (GObject):
             if player == self.players[WHITE]:
                 self.status = BLACKWON
             else: self.status = WHITEWON
-            
-            self.emit("game_ended", WON_RESIGN)
+            self.reason = WON_RESIGN
+                
+            self.emit("game_ended", self.reason)
         
         elif action == DRAW_OFFER:
             if player == self.players[WHITE]:
@@ -112,6 +123,7 @@ class GameModel (GObject):
             if self.drawSentBy == otherPlayer:
                 # If our opponent has already offered us a draw, the game ends
                 self.status = DRAW
+                self.reason = DRAW_AGREE
                 self.emit("game_ended", DRAW_AGREE)
             else:
                 self.emit("draw_sent", player)
@@ -131,7 +143,8 @@ class GameModel (GObject):
                 if player == self.players[WHITE]:
                     self.status = WHITE_WON
                 else: self.status = BLACK_WON
-                self.emit("game_ended", WON_CALLFLAG)
+                self.reason = WON_CALLFLAG
+                self.emit("game_ended", self.reason)
                 return
             
             self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
@@ -149,7 +162,7 @@ class GameModel (GObject):
         else: chessfile = loader.load(uri)
         
         self.freezeHandlers()
-        chessfile.loadToModel(gameno, position, self.model)
+        chessfile.loadToModel(gameno, position, self)
         self.thawHandlers()
         self.emit("game_loaded", uri)
         
@@ -158,10 +171,26 @@ class GameModel (GObject):
             self.uri = uri
         else: self.uri = None
         
-        for player in self.players:
-            player.setBoard(self)
-        for spectactor in self.spectactors:
-            spectactor.setBoard(self)
+        if self.status == WAITING_TO_START:
+            self.status, self.reason = getStatus(self.boards[-1])
+        
+        if self.status == RUNNING:
+            
+            for player in self.players:
+                player.setBoard(self)
+            for spectactor in self.spectactors:
+                spectactor.setBoard(self)
+            
+            self.start()
+        
+        elif self.status == WHITEWON:
+            self.emit("game_ended", self.reason)
+        
+        elif self.status == BLACKWON:
+            self.emit("game_ended", self.reason)
+        
+        elif self.status == DRAW:
+            self.emit("game_ended", self.reason)
     
     def save (self, uri, saver, append):
         if type(uri) == str:
@@ -210,10 +239,9 @@ class GameModel (GObject):
             if self.timemodel:
                 self.timemodel.setMovingColor(1-curColor)
             
-            status = getStatus(self.boards[-1])
-            if status != RUNNING:
-                self.status, reason = status
-                self.emit("game_ended", reason)
+            self.status, self.reason = getStatus(self.boards[-1])
+            if self.status != RUNNING:
+                self.emit("game_ended", self.reason)
                 self.applyingMoveLock.release()
                 break
             
