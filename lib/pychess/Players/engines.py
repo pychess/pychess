@@ -15,8 +15,8 @@ knownEngines = (
     ("faile", CECPProtocol),
     ("phalanx", CECPProtocol),
     ("sjeng", CECPProtocol),
-    ("fruit", UCIProtocol),
-    ("ShredderClassicLinux", UCIProtocol)
+    ("ShredderClassicLinux", UCIProtocol),
+    ("fruit_21_static", UCIProtocol)
 )
 
 import os
@@ -25,6 +25,12 @@ def _testEngine (engine):
     for dir in os.environ["PATH"].split(":"):
         path = os.path.join(dir, engine)
         if os.path.isfile(path):
+            if not os.access (path, os.R_OK):
+                print "Warning: Could not read", path
+                continue
+            if not os.access (path, os.EX_OK):
+                print "Warning: Could not execute", path
+                continue
             return path
     return False
 
@@ -54,11 +60,11 @@ path = "env python "+path
 availableEngines.append( (ProtocolEngine, (CECPProtocol, path)) )
 
 
-path = "/home/thomas/Programmering/python/skak/ShredderClassic/engines/ShredderClassicLinux"
-availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
+#path = "/home/thomas/Programmering/python/skak/ShredderClassic/engines/#ShredderClassicLinux"
+#availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
 
-path = "/home/thomas/Programmering/python/skak/fruit_21_linux/fruit_21_static"
-availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
+#path = "/home/thomas/Programmering/python/skak/fruit_21_linux/fruit_21_static"
+#availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
 
 ###################
 

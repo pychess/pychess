@@ -56,7 +56,7 @@ class Move:
     cords = property(_get_cords)
     
     def _get_promotion (self):
-        flag = FLAG(self.move)
+        flag = lmove.FLAG(self.move)
         if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                     BISHOP_PROMOTION, KNIGHT_PROMOTION):
             return flag -3
@@ -68,9 +68,7 @@ class Move:
 
     def __eq__ (self, other):
         if isinstance(other, Move):
-            return other.cord0 == self.cord0 and \
-                other.cord1 == self.cord1 and \
-                other.promotion == self.promotion
+            return self.move == other.move
     
     def __hash__ (self):
         return hash(self.cords)
@@ -79,8 +77,9 @@ class Move:
 # Parsers                                                                      #
 ################################################################################
 
-def listToMoves (board, mstrs, type=None):
-	return [Move(move) for move in lmove.listToMoves(board.board, mstrs, type)]
+def listToMoves (board, mstrs, type=None, validate=False):
+	return [Move(move) for move in lmove.listToMoves(
+	                                        board.board, mstrs, type, validate)]
 
 def parseAny (board, algnot):
     return Move(lmove.parseAny (board.board, algnot))

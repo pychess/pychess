@@ -138,7 +138,7 @@ class CECPProtocol (Protocol):
             
             board = self.board
             moves = listToMoves (self.board, \
-                            movre.findall(" ".join(parts[4:])+" "))
+               movre.findall(" ".join(parts[4:])+" "), type=None, validate=True)
             
             if moves:
                 self.emit("analyze", moves)
