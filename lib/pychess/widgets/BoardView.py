@@ -75,6 +75,7 @@ class BoardView (gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
         self.model.connect("game_changed", self.game_changed)
+        self.model.connect("game_loading", self.game_loading)
         self.model.connect("game_loaded", self.game_loaded)
         self.connect("expose_event", self.expose)
         self.set_size_request(300,300)
@@ -111,8 +112,13 @@ class BoardView (gtk.DrawingArea):
         if self.autoUpdateShown and self.shown+1 >= model.ply:
             self.shown = model.ply
     
+    def game_loading (self, model):
+        self.autoUpdateShown = False
+    
     def game_loaded (self, model, uri):
-        self.shown = model.lowply
+        self.autoUpdateShown = True
+        self._shown = -1
+        self.shown = model.ply
     
     ###############################
     #          Animation          #
@@ -134,6 +140,8 @@ class BoardView (gtk.DrawingArea):
         # redraw the entire board. Same if we are at first draw.
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
             self._shown = shown
+            if shown > self.model.lowply:
+                self.lastMove = self.model.getMoveAtPly(shown-1)
             self.emit("shown_changed", self.shown)
             idle_add(self.redraw_canvas)
             return
@@ -202,7 +210,8 @@ class BoardView (gtk.DrawingArea):
                 self.redraw_canvas(rect(paintBox))
             if self.shown > self.model.lowply:
                 self.lastMove = self.model.getMoveAtPly(self.shown-1)
-            else: self.lastMove = None
+            else:
+                self.lastMove = None
             self.runAnimation(redrawMisc = True)
             self.animationID = idle_add(self.runAnimation)
         idle_add(do)

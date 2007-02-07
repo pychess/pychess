@@ -16,8 +16,9 @@ class GameModel (GObject):
     
     __gsignals__ = {
         "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_loading":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        "game_saved":     (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        "game_saved":      (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":      (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "draw_sent":       (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "flag_call_error": (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
@@ -44,8 +45,6 @@ class GameModel (GObject):
             "Day":   today.day
         }
         
-        # True if GameModel should not emit game_changed events
-        self.freezed = False
         # Set to a Player object who has offered his/her opponent a draw
         self.drawSentBy = None
         # True if the game has been changed since last save
@@ -72,8 +71,7 @@ class GameModel (GObject):
     def clear (self):
         self.boards = [Board().fromFen(FEN_EMPTY)]
         self.moves = []
-        if not self.freezed:
-            self.emit("game_changed")
+        self.emit("game_changed")
     
     def _get_ply (self):
         return self.boards[-1].ply
@@ -159,9 +157,8 @@ class GameModel (GObject):
             chessfile = loader.load(protoopen(uri))
         else: chessfile = loader.load(uri)
         
-        self.freezeHandlers()
+        self.emit("game_loading")
         chessfile.loadToModel(gameno, position, self)
-        self.thawHandlers()
         self.emit("game_loaded", uri)
         
         self.needSave = False
@@ -232,8 +229,7 @@ class GameModel (GObject):
             newBoard = self.boards[-1].move(move)
             self.boards.append(newBoard)
             self.moves.append(move)
-            if not self.freezed:
-                self.emit("game_changed")
+            self.emit("game_changed")
             
             if self.timemodel:
                 self.timemodel.setMovingColor(1-curColor)
@@ -310,12 +306,6 @@ class GameModel (GObject):
             self.timemodel.undo()
         
         self.applyingMoveLock.release()
-    
-    def freezeHandlers (self):
-        self.freezed = True
-    
-    def thawHandlers (self):
-        self.freezed = False
     
     def isChanged (self):
         if self.ply == 0:

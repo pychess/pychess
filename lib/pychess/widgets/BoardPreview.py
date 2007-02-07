@@ -122,6 +122,7 @@ class BoardPreview (gtk.Alignment):
         self.lastSel = sel
         
         self.chessfile.loadToModel(sel, -1, self.gamemodel)
+        self.widgets["BoardView"]._shown = -1
         self.widgets["BoardView"].shown = self.gamemodel.ply
         
     def on_first_button (self, button):
