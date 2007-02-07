@@ -2,6 +2,7 @@ from pychess.Utils.Move import *
 from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
+from pychess.Utils.Board import Board
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -118,12 +119,16 @@ class PGNFile (ChessFile):
         fenstr = self._getTag(gameno, "FEN")
         if fenstr:
             model.boards = [model.boards[0].fromFen(fenstr)]
+        else: model.boards = [Board(setup=True)]
         
         movstrs = self._getMoves (gameno)
         for mstr in movstrs:
             move = parseAny (model.boards[-1], mstr)
             model.moves.append(move)
             model.boards.append(model.boards[-1].move(move))
+            model.emit("game_changed")
+            if position != -1 and model.ply >= position:
+                break
         
         return model
     
