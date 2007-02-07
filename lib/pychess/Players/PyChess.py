@@ -84,11 +84,11 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
     probe = table.probe (board, max(depth,1), alpha, beta)
     if probe: last = -1; return probe
     
-    if (depth <= 0 and not capture) or depth < -2 or not searching:
-        last = 1; result = [], eval.evaluateComplete(board, board.color)
+	if not searching:
+		last = 1; result = [], eval.evaluateComplete(board, board.color)
         table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
         return result
-    
+	
     # TODO: This doesn't work. Gives illegal moves. What should be changed?
     #lowerDepthMove = None
     #i = -1
@@ -115,7 +115,7 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
     #else: iterator = findMoves2(board, pureCaptures=pureCaptures)
     
     move = None
-    for move in findMoves2(board, pureCaptures=pureCaptures):
+    for move in findMoves2(board):
 
         nodes += 1
         
@@ -127,16 +127,16 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         
         if foundPv:
             mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -alpha-1, -alpha, tempcapture)
+                                   -alpha-1, -alpha)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
                 mvs, val = alphaBeta ( table, board2, depth-1,
-                                       -beta, -alpha, tempcapture)
+                                       -beta, -alpha)
                 val = -val
         else:
             mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -beta, -alpha, tempcapture)
+                                   -beta, -alpha)
             val = -val
         
         if val >= beta:
@@ -165,6 +165,28 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         last = 6; result = ([move], alpha)
     table.record (board, result[0], len(result[0]), result[1], hashf)
     return result
+
+def quiescent(table, board, alpha, beta):
+    value = eval.evaluateComplete(board, board.color)
+    if value >= beta:
+        return [], value
+    if value > alpha:
+        alpha = value
+    
+    move = None
+    for move in findMoves2(board, pureCaptures=True):
+        board2 = board.move(move)
+        if isCheck(board, board.color):
+            return alphaBeta (table, board2, 1, -beta, -alpha)
+        else:
+            mvs, val = quiescent(table, board2, -beta, -alpha)
+            val = -val
+        
+        if val >= beta:
+            return [move]+mvs, beta
+        if val > alpha:
+            alpha = val
+    return [], alpha
 
 sd = 4
 moves = None
@@ -233,7 +255,7 @@ def go ():
             starttime = time()
             endtime = starttime + usetime
             print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
-            for depth in range(1,sd+1):
+            for depth in range(1, sd+1):
                 mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
                 if time() > endtime: break
             move = mvs[0]

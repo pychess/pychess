@@ -124,6 +124,7 @@ class BoardPreview (gtk.Alignment):
         self.widgets["BoardView"].autoUpdateShown = True
         
         def do():
+            self.widgets["BoardView"]._shown = -1
             self.widgets["BoardView"].shown = \
                     len(self.widgets["BoardView"].history)-1
         self.widgets["BoardView"].runWhenReady (do)
