@@ -293,7 +293,7 @@ class GladeHandlers:
 
     def on_force_to_move_activate (widget):
         if len(gameDic):
-            gameDic[gamewidget.cur_gmwidg()].activePlayer.hurry()
+            gameDic[gamewidget.cur_gmwidg()].curplayer.hurry()
     
     #          Settings menu          #
     
