@@ -33,8 +33,6 @@ class GameModel (GObject):
         self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
-        if timemodel:
-            self.timemodel.connect("timed_out")
         
         today = datetime.date.today()
         self.tags = {
@@ -141,8 +139,8 @@ class GameModel (GObject):
             
             if self.timemodel.getPlayerTime (opcolor) <= 0:
                 if player == self.players[WHITE]:
-                    self.status = WHITE_WON
-                else: self.status = BLACK_WON
+                    self.status = WHITEWON
+                else: self.status = BLACKWON
                 self.reason = WON_CALLFLAG
                 self.emit("game_ended", self.reason)
                 return
@@ -218,7 +216,8 @@ class GameModel (GObject):
             curPlayer = self.players[curColor]
             
             if self.timemodel:
-                curPlayer.updateTime(self.timemodel.getPlayerTime(curColor))
+                curPlayer.updateTime(self.timemodel.getPlayerTime(curColor),
+                                     self.timemodel.getPlayerTime(1-curColor))
             
             try:
             	print "Waiting for", curPlayer

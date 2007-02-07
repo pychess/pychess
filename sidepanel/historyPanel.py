@@ -97,7 +97,6 @@ class Sidepanel:
         
         def todo():
             if len(view.get_model()) == len(self.numbers.get_model()):
-                print game.ply
                 num = str((game.ply+1)/2)+"."
                 self.numbers.get_model().append([num])
             
