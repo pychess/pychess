@@ -427,8 +427,9 @@ def runNewGameDialog ():
     game.setPlayers(players)
     game.setSpectactors((hintanalyzer, spyanalyzer))
     gmwidg.connect("closed", closeGame, game)
-    gmwidg.widgets["ccalign"].show()
-    gmwidg.widgets["cclock"].setModel(timemodel)
+    if timemodel:
+        gmwidg.widgets["ccalign"].show()
+        gmwidg.widgets["cclock"].setModel(timemodel)
     
     return game, gmwidg
 

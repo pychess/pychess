@@ -12,7 +12,11 @@ features = {
     "myname": "PyChess %s" % VERSION
 }
 
-print "feature %s done=0" % \
+# When we set done to 1 before we have imported stuff, it will make the engine
+# start up faster, and there by the entire game.
+# On the down side, the first move of the engine will take some seconds extra
+# which eventualy, in a timed game, will give the engine less time to think
+print "feature %s done=1" % \
             " ".join(["=".join([k,repr(v)]) for k,v in features.iteritems()])
 
 ################################################################################
@@ -178,7 +182,8 @@ while True:
     lines = line.split()
     
     if lines[0] == "protover":
-        print "features done=1"
+        #print "features done=1"
+        pass
     
     elif lines[0] == "usermove":
         
@@ -208,7 +213,8 @@ while True:
         mytime = int(minutes[0])*60
         if len(minutes) > 1:
             mytime += int(minutes[1])
-        print "Playing %d moves in %d seconds + %d increment" % (moves, mytime, increment)
+        print "Playing %d moves in %d seconds + %d increment" % \
+                (moves, mytime, increment)
     
     elif lines[0] == "time":
         mytime = int(lines[1])

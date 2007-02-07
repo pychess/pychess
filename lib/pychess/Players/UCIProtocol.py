@@ -101,13 +101,15 @@ class UCIProtocol (Protocol):
             return
         
         # A Move
+        
         if parts[0] == "bestmove" and self.mode == NORMAL:
+            
             if self.ignoreNext:
                 self.ignoreNext = False
                 return
             
             if self._getOption('Ponder'):
-                if len(parts) == 4 and self.fen:
+                if len(parts) == 4 and self.board:
                     self.pondermove = parseAN(self.board, parts[3])
                     print >> self.engine, "position fen", self.board.asFen(), \
                                                      "moves", parts[1], parts[3]
@@ -115,14 +117,14 @@ class UCIProtocol (Protocol):
                        "btime", self.btime, "winc", self.incr, "binc", self.incr
                 else:
                     self.pondermove = None
-                
+            
             move = parseAN(self.board, parts[1])
             self.emit("move", move)
             return
         
         if "pv" in parts and self.mode != NORMAL:
             movstrs = parts[parts.index("pv")+1:]
-            moves = listToMoves (self.board, movstrs, AN)
+            moves = listToMoves (self.board, movstrs, AN, validate=True)
             self.emit("analyze", moves)
         
     ######################## TO ENGINE ########################
@@ -151,10 +153,10 @@ class UCIProtocol (Protocol):
             print >> self.engine, "go infinite"
             return
         
-        if self._getOption('Ponder'):
-            if self.pondermove:
-                if gamemodel.moves and gamemodel.moves[-1] == self.pondermove:
-                    print >> self.engine, "ponderhit"
+        if gamemodel.ply > gamemodel.lowply+1 and self._getOption('Ponder'):
+            if self.pondermove and gamemodel.moves and \
+                    gamemodel.moves[-1] == self.pondermove:
+                print >> self.engine, "ponderhit"
                 return
             else:
                 print >> self.engine, "stop"
