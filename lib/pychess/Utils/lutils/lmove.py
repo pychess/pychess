@@ -87,7 +87,7 @@ def listToSan (board, moves):
 # listToMoves                                                                  #
 ################################################################################
 
-def listToMoves (board, movstrs, type=None):
+def listToMoves (board, movstrs, type=None, testvalidate=False):
     moves = []
     
     board.lock.acquire()
@@ -103,6 +103,12 @@ def listToMoves (board, movstrs, type=None):
                 move = parseLAN (board, mstr)
         except ParsingError:
             break
+        
+        if testvalidate:
+            from lmovegen import validate
+            if not validate (board, move):
+                break
+        
         moves.append(move)
         board.applyMove(move)
         
@@ -318,7 +324,12 @@ def parseSAN (board, san):
     board2 = LBoard()
     board2.applyFen (board.asFen())
     
-    errstring += " available moves: %s" % " ".join(listToSan(board2, moves))
+    try:
+        errstring += " available moves: %s" % " ".join(listToSan(board2, moves))
+    except Exception:
+        # If even the error tracing moves can't be parsed, we really can't do
+        # any more
+        pass
     errstring += board.asFen()
     
     raise ParsingError, errstring
