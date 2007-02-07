@@ -3,7 +3,6 @@ import urllib, os
 def splitUri (uri):
     uri = urllib.url2pathname(uri) # escape special chars
     uri = uri.strip('\r\n\x00') # remove \r\n and NULL
-    print "uri", repr(uri)
     return uri.split("://")
 
 def protoopen (uri):

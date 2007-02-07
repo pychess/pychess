@@ -20,6 +20,9 @@ def fixList (list, xalign=0):
     
 class Sidepanel:
     
+    def __init__ (self):
+        self.freezed = False
+    
     def load (self, window, gmwidg):
         
         widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
@@ -69,8 +72,10 @@ class Sidepanel:
     def select_cursor_row (self, selection, tree, col):
         iter = selection.get_selected()[1]
         if iter == None: return
-        row = tree.get_model().get_path(iter)[0]
         
+        if self.freezed: return
+        
+        row = tree.get_model().get_path(iter)[0]
         if self.board.model.lowply & 1:
             self.board.shown = self.board.model.lowply + row*2 + col
         else: self.board.shown = self.board.model.lowply + row*2 + col +1
@@ -94,28 +99,30 @@ class Sidepanel:
         view = game.ply & 1 and self.left or self.right
         other = game.ply & 1 and self.right or self.left
         notat = toSAN(game.boards[-2], game.moves[-1])
+        ply = game.ply
         
         def todo():
             if len(view.get_model()) == len(self.numbers.get_model()):
-                num = str((game.ply+1)/2)+"."
+                num = str((ply+1)/2)+"."
                 self.numbers.get_model().append([num])
             
             if view == self.right and \
                     len(view.get_model()) == len(other.get_model()):
                 self.left.get_model().append([""])
-                #cr = self.left.get_column(0).get_cell_renderers()[0]
-                #cr.sensitive = False
             
             view.get_model().append([notat])
-            if self.board.shown < game.ply:
+            if self.board.shown < ply or self.freezed:
                 return
             
             if game.lowply & 1:
-                row = (game.ply-game.lowply)/2
-            else: row = (game.ply-game.lowply-1)/2
+                row = (ply-game.lowply)/2
+            else: row = (ply-game.lowply-1)/2
+            
+            self.freezed = True
             view.get_selection().select_iter(view.get_model().get_iter(row))
             other.get_selection().unselect_all()
-    
+            self.freezed = False
+            
         gobject.idle_add(todo)
     
     def shown_changed (self, board, shown):
