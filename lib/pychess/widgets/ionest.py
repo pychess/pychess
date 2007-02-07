@@ -374,9 +374,9 @@ def runNewGameDialog ():
     
     # Init game widget
     
-    # We don't know the name of the players yet, as some of them (Human)
-    # requires a gmwidg in __init__, so we just create a tab with no name
     gmwidg = gamewidget.createGameWidget(game)
+    
+    # Saving widget states
     
     for widget in ("whitePlayerCombobox", "blackPlayerCombobox",
                    "whiteDifficulty", "blackDifficulty", "spinbuttonH",
@@ -385,6 +385,8 @@ def runNewGameDialog ():
             v = widgets[widget].get_active()
         else: v = widgets[widget].get_value()
         myconf.set(widget, v)
+    
+    # Finding players
     
     players = []
     for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty",WHITE),
@@ -402,6 +404,8 @@ def runNewGameDialog ():
     
     gmwidg.setTabText("%s vs %s" % (repr(players[0]), repr(players[1])))
     
+    # Initing analyze engines
+    
     anaengines = [(e,a) for e,a in engines.availableEngines \
                                         if engines.getInfo((e,a))["canAnalyze"]]
     if len(anaengines) > 1:
@@ -418,9 +422,14 @@ def runNewGameDialog ():
     spyanalyzer.analyze(inverse=True)
     log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
+    # Setting game
+    
     game.setPlayers(players)
     game.setSpectactors((hintanalyzer, spyanalyzer))
     gmwidg.connect("closed", closeGame, game)
+    gmwidg.widgets["ccalign"].show()
+    gmwidg.widgets["cclock"].setModel(timemodel)
+    
     return game, gmwidg
 
 ################################################################################
