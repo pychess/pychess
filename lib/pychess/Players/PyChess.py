@@ -43,7 +43,6 @@ except ImportError:
 from pychess.Utils.const import prefix
 import gettext
 gettext.install("pychess", localedir=prefix("lang"), unicode=1)
-from cStringIO import StringIO
 
 ################################################################################
 # getBestOpening                                                               #
@@ -227,6 +226,11 @@ while True:
         forced = False
         thread.start_new(go, ())
     
+    elif lines[0] == "?":
+        lsearch.searching = False
+        searchLock.acquire()
+        searchLock.release()
+        
     elif lines[0] in ("black", "white"):
         lsearch.searching = False
         searchLock.acquire()
@@ -246,13 +250,8 @@ while True:
     
     elif lines[0] == "setboard":
         lsearch.searching = False
-        io = StringIO()
-        io.write(" ".join(lines[1:])+"\n")
-        io.seek(0)
-        epdfile = epd.load(io)
-        io.close()
         searchLock.acquire()
-        history = epdfile.loadToHistory(0,-1)
+        board.applyFen(" ".join(lines[1:]))
         searchLock.release()
         if analyzing:
             thread.start_new(analyze, ())

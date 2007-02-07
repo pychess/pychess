@@ -79,8 +79,8 @@ class Move:
 # Parsers                                                                      #
 ################################################################################
 
-def listToMoves (board, movstrs, type=None):
-	return [Move(move) for move in lmove.listToMoves(board.board, movstr, type)]
+def listToMoves (board, mstrs, type=None):
+	return [Move(move) for move in lmove.listToMoves(board.board, mstrs, type)]
 
 def parseAny (board, algnot):
     return Move(lmove.parseAny (board.board, algnot))

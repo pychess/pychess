@@ -92,18 +92,21 @@ def listToMoves (board, movstrs, type=None):
     
     board.lock.acquire()
     for mstr in movstrs:
-        if type == None:
-            move = parseAny (board, mstr)
-        elif type == SAN:
-            move = parseSAN (board, mstr)
-        elif type == AN:
-            move = parseAN (board, mstr)
-        elif type == LAN:
-            move = parseLAN (board, mstr)
+        try:
+            if type == None:
+                move = parseAny (board, mstr)
+            elif type == SAN:
+                move = parseSAN (board, mstr)
+            elif type == AN:
+                move = parseAN (board, mstr)
+            elif type == LAN:
+                move = parseLAN (board, mstr)
+        except ParsingError:
+            break
         moves.append(move)
         board.applyMove(move)
         
-    for mstr in movstrs:
+    for move in moves:
         board.popMove()
     board.lock.release()
     
