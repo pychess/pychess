@@ -1,12 +1,12 @@
 from time import time
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+from pychess.Utils.const import WHITE
 
 class TimeModel (GObject):
     
     __gsignals__ = {
-        "timed_out": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int)),
-        "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
     }
     
@@ -15,14 +15,18 @@ class TimeModel (GObject):
     ############################################################################
     
     def __init__ (self, secs, gain):
+        GObject.__init__(self)
+        
         self.intervals = [[secs],[secs]]
         self.gain = gain
         
         self.paused = False
         # The left number of secconds at the time pause was turned on
         self.pauseInterval = 0
-        self.counter = -1
-    
+        self.counter = None
+        
+        self.movingColor = None
+        
     ############################################################################
     # Interacting                                                              #
     ############################################################################
@@ -31,24 +35,25 @@ class TimeModel (GObject):
         if movingColor == self.movingColor:
             return
         
-        if self.counter != -1:
-            t = time() - self.counter
-        else: t = 0
-        t += self.itervals[self.movingColor][-1] + self.gain
+        if self.movingColor != None:
+            t = self.intervals[self.movingColor][-1] + self.gain
+            if self.counter != None:
+                t -= time() - self.counter
+            self.intervals[self.movingColor].append(t)
         
         self.counter = time()
+        self.movingColor = movingColor
         
-        self.itervals[self.movingColor].append(t)
-        self.emit("time_changed", self.movingColor, t)
-        self.emit("player_changed", self.movingColor)
-    
+        self.emit("time_changed")
+        self.emit("player_changed")
+        
     def pause (self):
         if self.paused: return
         self.paused = True
         self.pauseInterval = time()-self.counter
         
         self.counter = -1
-        self.emit("time_changed", self.movingColor, self.pauseInterval)
+        self.emit("time_changed")
         self.emit("pause_changed", True)
     
     def resume (self):
@@ -81,10 +86,8 @@ class TimeModel (GObject):
         
         self.counter = time()
         
-        self.emit("time_changed", 1-self.movingColor,
-                                          self.intervals[0][1-self.movingColor])
-        self.emit("time_changed", self.movingColor,
-                                            self.intervals[0][self.movingColor])
+        self.emit("time_changed")
+        self.emit("time_changed")
     
     ############################################################################
     # Updating                                                                 #
@@ -96,9 +99,16 @@ class TimeModel (GObject):
         if color == self.movingColor:
             self.counter = time() - secs
         else: self.intervals[1-self.movingColor][-1] = secs
-        self.emit("time_changed", color, secs)
-        
+        self.emit("time_changed")
+    
+    ############################################################################
+    # Info                                                                     #
+    ############################################################################
+    
     def getPlayerTime (self, color):
         if color == self.movingColor:
             return self.intervals[color][-1] - (time() - self.counter)
-        return self.intervals[1-color][-1]
+        return self.intervals[color][-1]
+    
+    def getInitialTime (self):
+        return self.intervals[WHITE][0]
