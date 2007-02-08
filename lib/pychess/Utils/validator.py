@@ -314,6 +314,10 @@ def genQueen (cord, board, pureCaptures=False):
 def findMoves2 (board, testCheck=True, pureCaptures=False):
     """ Generate all possible moves for current player (board.color) """
     
+    if pureCaptures:
+        capturesList = []
+        checkList = []
+    
     for y in range8:
         for x in range8:
             piece = board.data[y][x]
@@ -321,10 +325,26 @@ def findMoves2 (board, testCheck=True, pureCaptures=False):
             if piece.color != board.color: continue
             cord0 = Cord(x,y)
             
-            for move in genLegalMoves(board,cord0,testCheck):
-                yield move
+            for move in genLegalMoves(board, cord0, testCheck,
+                                                     pureCaptures=pureCaptures):
+                if pureCaptures:
+                    if willCheck(board, move):
+                        checkList.append(move)
+                    else:
+                        capturesList.append(move)
+                else:
+                     yield move
+    
+    if pureCaptures:
+        # To avoid quiescent search explosion sort captures
+        # (MVV/LVA) Most Valuable Victim/Least Valuable Attacker
+        capturesList.sort(
+            cmp=lambda m1,m2: cmp((board[m2.cord0].sign, board[m1.cord1].sign),\
+                                  (board[m1.cord0].sign, board[m2.cord1].sign)))
+        for move in checkList+capturesList:
+            yield move
 
-def genLegalMoves (board, cord, testCheck):
+def genLegalMoves (board, cord, testCheck, pureCaptures=False):
     """ Generate all legal moves for piece at cord """
     
     piece = board[cord]
@@ -341,7 +361,7 @@ def genLegalMoves (board, cord, testCheck):
     else:
         generator = genKing
     
-    for xy in generator (cord,board):
+    for xy in generator (cord, board, pureCaptures=pureCaptures):
         move = movePool.pop(cord, Cord(*xy))
         try:
             if not testCheck or not willCheck(board, move):
