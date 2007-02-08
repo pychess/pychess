@@ -1,4 +1,4 @@
-VERSION = "0.6.0_beta5"
+VERSION = "0.6"
 
 NAME = "PyChess"
 
