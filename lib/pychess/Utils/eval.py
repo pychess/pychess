@@ -161,9 +161,9 @@ def evaluateComplete (board, color=WHITE):
     if board.status == RUNNING:
         analyzePawnStructure (board)
         s = evalMaterial (board) + \
+            evalDevelopment (board) + \
             evalPawnStructure (board) + \
             evalBadBishops (board) + \
-            evalDevelopment (board) + \
             evalCastling (board) + \
             evalRookBonus (board) + \
             evalKingTropism (board)

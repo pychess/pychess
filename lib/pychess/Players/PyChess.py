@@ -57,12 +57,13 @@ def nextedIterator (*items):
                 used.add(i)
                 yield i
 
+table = TranspositionTable(5000)
 last = 0
 nodes = 0
 searching = False
 searchLock = Lock()
 
-def alphaBeta (table, board, depth, alpha, beta, capture=False):
+def alphaBeta (board, depth, alpha, beta, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
         Based on moves found by the validator.py findmoves2 function and
         evaluated by eval.py.
@@ -81,69 +82,54 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
     hashf = hashfALPHA
     amove = []
     
-    probe = table.probe (board, max(depth,1), alpha, beta)
-    if probe: last = -1; return probe
+    probe = table.probe (board, ply, alpha, beta)
+    if probe:
+        last = 1; return probe
     
-	if not searching:
-		last = 1; result = [], eval.evaluateComplete(board, board.color)
-        table.record (board, result[0], len(result[0]), result[1], hashfEXACT)
-        return result
-	
-    # TODO: This doesn't work. Gives illegal moves. What should be changed?
-    #lowerDepthMove = None
-    #i = -1
-    #while depth+i >= 1:
-    #    probe = table.probe (board, depth+i, alpha, beta)
-    #    if probe and probe[0]:
-    #        lowerDepthMove = probe[0][0]
-    #        break
-    #    i -= 1
+    ############################################################################
+    # Break itereation if interupted                                           #
+    ############################################################################
     
-    # TODO: Use the killer move method.
-    # *  Create a LimitedDict for each call (not the recursive ones)
-    # *  Save [depth] = [move,] for each recursive call
-    # *  Test each best move from other paths, before generating your own.
-    # *  Remember to validate
-    # *  Remember to test if this actually makes a difference (in best case alphabeta should only test a squareroot of the moves)
+    if not searching:
+        last = 2
+        return [], eval.evaluateComplete(board, board.color)
     
-    # Would sorting moves by a simple evaluation (only piecevalue and location) help?
+    ############################################################################
+    # Go for quiescent search                                                  #
+    ############################################################################
+
+    if depth <= 0:
+        last = 3
+        return quiescent(board, alpha, beta)
     
-    pureCaptures = depth <= 0
-    #if lowerDepthMove:
-    #    iterator = nextedIterator([lowerDepthMove],
-    #            findMoves2(board, pureCaptures=pureCaptures))
-    #else: iterator = findMoves2(board, pureCaptures=pureCaptures)
-    
+    ############################################################################
+    # Loop moves                                                               #
+    ############################################################################
+
     move = None
     for move in findMoves2(board):
 
         nodes += 1
         
         board2 = board.move(move)
-            
-        if board[move.cord1] != None:
-            tempcapture = True
-        else: tempcapture = False
         
         if foundPv:
-            mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -alpha-1, -alpha)
+            mvs, val = alphaBeta (board2, depth-1, -alpha-1, -alpha, ply+1)
             val = -val
             if val > alpha and val < beta:
                 map(movePool.add, mvs)
-                mvs, val = alphaBeta ( table, board2, depth-1,
-                                       -beta, -alpha)
+                mvs, val = alphaBeta (board2, depth-1, -beta, -alpha, ply+1)
                 val = -val
         else:
-            mvs, val = alphaBeta ( table, board2, depth-1,
-                                   -beta, -alpha)
+            mvs, val = alphaBeta (board2, depth-1, -beta, -alpha, ply+1)
             val = -val
         
-        if val >= beta:
-            table.record (board, [move]+mvs, len(mvs)+1, beta, hashfBETA)
-            last = 3; return [move]+mvs, beta
-
         if val > alpha:
+            if val >= beta:
+                table.record (board, [move]+mvs, len(mvs)+1, beta, hashfBETA)
+                last = 4
+                return [move]+mvs, beta
+    
             map(movePool.add, amove)
             alpha = val
             amove = [move]+mvs
@@ -152,24 +138,32 @@ def alphaBeta (table, board, depth, alpha, beta, capture=False):
         else:
             map(movePool.add, mvs)
     
-    if amove: last = 4; result = (amove, alpha)
+    ############################################################################
+    # Return                                                                   #
+    ############################################################################
+
+    if amove:
+        last = 5
+        result = (amove, alpha)
+
     elif not move:
         # If not moves were found, this must be a mate or stalemate
-        lastn = 5
+        lastn = 6
         if isCheck (board, board.color):
             result = ([], -maxint)
         else: result = ([], 0)
+    
     else:
-        # If not move made it through alphabeta (should not be possible)
-        # We simply pick the last the best, whith th lowest score...
-        last = 6; result = ([move], alpha)
-    table.record (board, result[0], len(result[0]), result[1], hashf)
+        last = 7
+        return [], 0
+    
+    table.record (board, result[0], ply, result[1], hashf)
     return result
 
-def quiescent(table, board, alpha, beta):
+def quiescent(board, alpha, beta):
     value = eval.evaluateComplete(board, board.color)
     if value >= beta:
-        return [], value
+        return [], beta
     if value > alpha:
         alpha = value
     
@@ -177,9 +171,9 @@ def quiescent(table, board, alpha, beta):
     for move in findMoves2(board, pureCaptures=True):
         board2 = board.move(move)
         if isCheck(board, board.color):
-            return alphaBeta (table, board2, 1, -beta, -alpha)
+            return alphaBeta (board2, 1, -beta, -alpha)
         else:
-            mvs, val = quiescent(table, board2, -beta, -alpha)
+            mvs, val = quiescent(board2, -beta, -alpha)
             val = -val
         
         if val >= beta:
@@ -215,7 +209,7 @@ def analyze ():
     board = history[-1]
     for depth in range (1, 10):
         if not searching: break
-        mvs, scr = alphaBeta (table, board, depth, -maxint, maxint)
+        mvs, scr = alphaBeta (board, depth, -maxint, maxint)
         
         tempboard = board
         smvs = []
@@ -243,7 +237,7 @@ def go ():
         searching = True
         
         if mytime == None:
-            mvs, scr = alphaBeta (table, history[-1], sd, -maxint, maxint)
+            mvs, scr = alphaBeta (history[-1], sd, -maxint, maxint)
             move = mvs[0]
         
         else:
@@ -256,7 +250,7 @@ def go ():
             endtime = starttime + usetime
             print "Time left: %d seconds; Thinking for %d seconds" % (mytime, usetime)
             for depth in range(1, sd+1):
-                mvs, scr = alphaBeta (table, history[-1], depth, -maxint, maxint)
+                mvs, scr = alphaBeta (history[-1], depth, -maxint, maxint)
                 if time() > endtime: break
             move = mvs[0]
             mytime -= time() - starttime

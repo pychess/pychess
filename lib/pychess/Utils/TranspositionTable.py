@@ -8,7 +8,7 @@ class TranspositionTable (UserDict):
         self.maxSize = maxSize
         self.krono = []
         self.maxdepth = 0
-        
+    
     def __setitem__ (self, key, item):
         if not key in self:
             if len(self) >= self.maxSize:
@@ -35,7 +35,7 @@ class TranspositionTable (UserDict):
             if hashf == hashfBETA and score >= beta:
                 return moves, beta
             return
-        
+    
     def record (self, board, moves, depth, score, hashf):
         if board in self:
             self[board][depth] = (board, moves, score, hashf)
