@@ -459,8 +459,13 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="website_label" translatable="yes">http://code.google.com/p/pychess/</property>
   <property name="authors">Thomas Dybdahl Ahle
 Norbert Fabritius
+gbtami
 Thijs Vermeir
-Wojciech Halicki-Piszko</property>
+Wojciech Halicki-Piszko
+Leonardo Gregianin
+Pierre Boulenguez
+Varun Hiremath
+Pierre Boulenguez</property>
   <property name="documenters"></property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits">Danish (da) - Thomas Dybdahl Ahle
@@ -470,7 +475,9 @@ German (de_DE) - Norbert Fabritius
 Polish (pl) - Wojciech Halicki-Piszko
 Turkish (tr) - Ertugrul Harman
 Hungarian (hu) - Bajusz Tamás
-Spanish (es) - 	Enrique</property>
+Spanish (es) - 	Enrique
+French (fr) - Pierre Boulenguez
+Brazilian (pt_BR) - Leonardo Gregianin</property>
   <property name="logo">pychess.png</property>
 </widget>
 
