@@ -5,7 +5,7 @@ from math import e
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
 from random import randint
 from sys import maxint
-from pychess.Utils.const import WHITE
+from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
 
 class ScorePlot (gtk.DrawingArea):
     
@@ -161,9 +161,47 @@ class Sidepanel:
         return __widget__
     
     def game_changed (self, model):
-        points = leval.evaluateComplete(model.boards[-1].board, WHITE)
+        
+        if model.status == DRAW:
+            points = 0
+        elif model.status == WHITEWON:
+            points = maxint
+        elif model.status == BLACKWON:
+            points = -maxint
+        else:
+            points = leval.evaluateComplete(model.boards[-1].board, WHITE, True)
+            
         self.plot.addScore(points)
-    
+        # FIXME: If we are viewing the latest position, shown_changed will also
+        # be called, and plot will be redrawn twice
+        self.plot.redraw()
+        
+        return
+        
+        material, phase = leval.evalMaterial (board)
+        board = model.boards[-1].board
+        opboard = model.boards[-1].clone().board
+        opboard.setColor(1-opboard.color)
+        if board.color == WHITE:
+            print "material", -material
+            print "evaluation:",-leval.evalKingTropism (board)
+            print "pawns:", -leval.evalPawnStructure (board, phase)
+            print "pawns2:", -leval.evalPawnStructure (opboard, phase)
+            print "pawns3:", -leval.evalPawnStructure (board, phase) - \
+                             leval.evalPawnStructure (opboard, phase)
+            print "knights:",-leval.evalKnights (board)
+            print "king:",-leval.evalKing(board,phase)
+        else:
+            print "material", material
+            print "evaluation:",leval.evalKingTropism (board)
+            print "pawns:", leval.evalPawnStructure (board, phase)
+            print "pawns2:", leval.evalPawnStructure (opboard, phase)
+            print "pawns3:", leval.evalPawnStructure (board, phase) + \
+                             leval.evalPawnStructure (opboard, phase)
+            print "knights:",leval.evalKnights (board)
+            print "king:",leval.evalKing(board,phase)
+        print "----------------------"
+        
     def shown_changed (self, boardview, shown):
         self.plot.select(shown-self.boardview.model.lowply)
         self.plot.redraw()

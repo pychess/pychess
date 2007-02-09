@@ -95,6 +95,9 @@ class Board:
                     ROOK_PROMOTION, QUEEN_PROMOTION):
             newBoard[cord1] = Piece(self.color, flag-3)
         
+        elif flag == ENPASSANT:
+            newBoard[Cord(cord1.x, cord0.y)] = None
+        
         return newBoard
     
     def willLeaveInCheck (self, move):

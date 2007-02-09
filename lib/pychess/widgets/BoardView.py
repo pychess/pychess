@@ -134,7 +134,8 @@ class BoardView (gtk.DrawingArea):
             return
         
         # This would cause IndexErrors later
-        assert self.model.lowply <= shown <= self.model.ply
+        if not self.model.lowply <= shown <= self.model.ply:
+            return
         
         # If there is only one board, we don't do any animation, but simply
         # redraw the entire board. Same if we are at first draw.
