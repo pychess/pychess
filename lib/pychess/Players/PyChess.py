@@ -171,7 +171,7 @@ def go ():
         lsearch.searching = False
     
     move = mvs[0]
-    print "move", toSAN(board, move), FLAG(move)
+    print "move", toSAN(board, move)
     board.applyMove(move)
     
     searchLock.release()
