@@ -25,6 +25,16 @@ knightTScale = [0, 50, 70, 35, 10, 3, 2, 2, 1, 1]
 rookTScale = [0, 50, 40, 15, 5, 2, 1, 1, 1, 0]
 queenTScale = [0, 100, 60, 20, 10, 7, 5, 4, 3, 2]
 
+passedScores = (
+	( 0, 48, 48, 120, 144, 192, 240, 0 ),
+	( 0, 240, 192, 144, 120, 48, 48, 0 )
+)
+
+# Penalties for one or more isolated pawns on a given file 
+isolani_normal = ( -8, -10, -12, -14, -14, -12, -10, -8 )
+# Penalties if the file is half-open (i.e. no enemy pawns on it)
+isolani_weaker = ( -22, -24, -26, -28, -28, -26, -24, -22 )
+
 from math import sqrt
 
 distance = [[0]*64 for i in range(64)]
@@ -35,6 +45,81 @@ for fcord in range(64):
         tx = tcord >> 3
         ty = tcord & 7
         distance[fcord][tcord] = int(sqrt((fx-tx)**2+(fy-ty)**2))
+
+pawnScoreBoard = (
+   (0,  0,  0,  0,  0,  0,  0,  0,
+    5,  5,  5,-10,-10,  5,  5,  5,
+   -2, -2, -2,  6,  6, -2, -2, -2,
+    0,  0,  0, 25, 25,  0,  0,  0,
+    2,  2, 12, 16, 16, 12,  2,  2,
+    4,  8, 12, 16, 16, 12,  4,  4,
+    4,  8, 12, 16, 16, 12,  4,  4,
+    0,  0,  0,  0,  0,  0,  0,  0),
+    
+   (0,  0,  0,  0,  0,  0,  0,  0,
+    4,  8, 12, 16, 16, 12,  4,  4,
+    4,  8, 12, 16, 16, 12,  4,  4,
+    2,  2, 12, 16, 16, 12,  2,  2,
+    0,  0,  0, 25, 25,  0,  0,  0,
+   -2, -2, -2,  6,  6, -2, -2, -2,
+    5,  5,  5,-10,-10,  5,  5,  5,
+    0,  0,  0,  0,  0,  0,  0,  0)
+)
+
+d2e2    = ( 0x0018000000000000, 0x0000000000001800 )
+brank7  = ( 0x000000000000FF00, 0x00FF000000000000 )
+brank8  = ( 0x00000000000000FF, 0xFF00000000000000 )
+brank67 = ( 0x0000000000FFFF00, 0x00FFFF0000000000 )
+brank58 = ( 0x00000000FFFFFFFF, 0xFFFFFFFF00000000 )
+
+# Penalties if the file is half-open (i.e. no enemy pawns on it)
+isolani_weaker = (-22, -24, -26, -28, -28, -26, -24, -22)
+
+stonewall = [0,0]
+# D4, E3, F4
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - # - # - -
+# - - - - # - - -
+# - - - - - - - -
+# - - - - - - - -
+stonewall[WHITE] = 0x81400000000
+
+# D5, E6, F5
+# - - - - - - - -
+# - - - - - - - -
+# - - - - # - - -
+# - - - # - # - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+stonewall[BLACK] = 0x14080000
+
+wingpawns = [0,0]
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - # - - - - # -
+# # # - - - - # #
+# - - - - - - - -
+wingpawns[WHITE] = bitPosArray[A2] | bitPosArray[B2] | bitPosArray[B3] | \
+                   bitPosArray[G2] | bitPosArray[G3] | bitPosArray[H2]
+
+# - - - - - - - -
+# # # - - - - # #
+# - # - - - - # -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+wingpawns[BLACK] = bitPosArray[A7] | bitPosArray[B7] | bitPosArray[B6] | \
+                   bitPosArray[G7] | bitPosArray[G6] | bitPosArray[H7]
 
 ################################################################################
 ################################################################################
@@ -142,17 +227,6 @@ mask315 = [
 ]
 
 ################################################################################
-################################################################################
-##   Bit boards                                                               ##
-################################################################################
-################################################################################
-
-NULLBITBOARD = 0x0000000000000000
-WHITE_SQUARES = 0x55AA55AA55AA55AA
-BLACK_SQUARES = 0xAA55AA55AA55AA55
-CENTER_FOUR = 0x0000001818000000
-
-################################################################################
 #  Ranks and files                                                             #
 ################################################################################
 
@@ -163,6 +237,59 @@ for i in range (8):
     fileBits.append (0x0101010101010101 << i)
 rankBits.reverse()
 fileBits.reverse()
+
+################################################################################
+################################################################################
+##   Bit boards                                                               ##
+################################################################################
+################################################################################
+
+WHITE_SQUARES = 0x55AA55AA55AA55AA
+BLACK_SQUARES = 0xAA55AA55AA55AA55
+
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - # # - - -
+# - - - # # - - -
+# - - - - - - - -
+# - - - - - - - -
+# - - - - - - - -
+CENTER_FOUR = 0x0000001818000000
+
+# - - - - - - - -
+# - - - - - - - -
+# - - # # # # - -
+# - - # # # # - -
+# - - # # # # - -
+# - - # # # # - -
+# - - - - - - - -
+# - - - - - - - -
+sbox = 0x00003C3C3C3C0000
+
+# - - - - - - - -
+# - # # # # # # -
+# - # # # # # # -
+# - # # # # # # -
+# - # # # # # # -
+# - # # # # # # -
+# - # # # # # # -
+# - - - - - - - -
+lbox = 0x007E7E7E7E7E7E00
+
+################################################################################
+#  The IsolaniMask variable is used to determine if a pawn is an isolani.      #
+#  This mask is basically all 1's on files beside the file the pawn is on.     #
+#  Other bits will be set to zero.                                             #
+#  E.g. isolaniMask[d-file] = 1's in c-file & e-file, 0 otherwise.             #
+################################################################################
+
+isolaniMask = [0]*8
+
+isolaniMask[0] = fileBits[1]
+isolaniMask[7] = fileBits[6]
+for i in xrange (1, 7):
+    isolaniMask[i] = fileBits[i-1] | fileBits[i+1]
 
 ################################################################################
 #  Generate the move bitboards.  For e.g. the bitboard for all                 #
@@ -229,7 +356,7 @@ for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
 #  The queen uses all 8 rays.                                                  #
 #  These rays are used for move generation rather than MoveArray[].            #
 #  Also initialize the directions[][] array.  directions[f][t] returns         #
-#  the index into Ray[f] array allow us to find the ray in that direction.     #
+#  the index into rays[f] array allow us to find the ray in that direction.    #
 ################################################################################
 
 directions = [[-1]*64 for i in range(64)] # directions[64][64]
@@ -276,6 +403,29 @@ for piece in BISHOP, ROOK:
                     break
                 fromToRay[f][t] = setBit (fromToRay[f][t], t)
                 fromToRay[f][t] |= b
+
+################################################################################
+#  The PassedPawnMask variable is used to determine if a pawn is passed.       #
+#  This mask is basically all 1's from the square in front of the pawn to      #
+#  the promotion square, also duplicated on both files besides the pawn        #
+#  file.  Other bits will be set to zero.                                      #
+#  E.g. PassedPawnMask[white][b3] = 1's in a4-c4-c8-a8 rect, 0 otherwise.      #
+################################################################################
+
+passedPawnMask = [[0]*64, [0]*64]
+
+#  Do for white pawns first
+for cord in xrange(64):
+    passedPawnMask[WHITE][cord] = rays[cord][7]
+    passedPawnMask[BLACK][cord] = rays[cord][4]
+    if cord & 7 != 0:
+        #  If file is not left most
+        passedPawnMask[WHITE][cord] |= rays[cord-1][7]
+        passedPawnMask[BLACK][cord] |= rays[cord-1][4]
+    elif cord & 7 != 7:
+        #  If file is not right most
+        passedPawnMask[WHITE][cord] |= rays[cord+1][7]
+        passedPawnMask[BLACK][cord] |= rays[cord+1][4]
 
 ################################################################################
 #  These tables are used to calculate rook, queen and bishop moves             #

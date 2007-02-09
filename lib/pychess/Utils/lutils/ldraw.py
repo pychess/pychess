@@ -48,3 +48,8 @@ def testMaterial (board):
 
 # This could be expanded by the fruit kpk draw function, which can test if a
 # certain king verus king and pawn posistion is winable.
+
+def test (board):
+    return testRepetition (board) or \
+           testFifty (board) or \
+           testMaterial (board)

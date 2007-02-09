@@ -64,7 +64,7 @@ class LBoard:
         self.enpassant = -1
         self.color = WHITE
         self.castling = B_OOO | B_OO | W_OOO | W_OO
-        self.hasCastled = 0
+        self.hasCastled = [False, False]
         self.fifty = 0
         
         self.checked = None
@@ -253,6 +253,7 @@ class LBoard:
         if color == self.color: return
         self.color = color
         self.hash ^= colorHash
+        self.pawnhash ^= colorHash
     
     def setCastling (self, castling):
         if self.castling == castling: return
@@ -323,9 +324,7 @@ class LBoard:
                 rookf = fcord + 3
                 rookt = fcord + 1
             self._move (rookf, rookt, ROOK, self.color)
-            if self.color == WHITE:
-                self.hasCastled |= W_CASTLED
-            else: self.hasCastled |= B_CASTLED
+            self.hasCastled[self.color] = True
         
         if tpiece == EMPTY and fpiece != PAWN and \
                 not flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -455,6 +454,7 @@ class LBoard:
             else:
                 rookf = fcord + 3
                 rookt = fcord + 1
+            self.hasCastled[color] = False
             self._move (rookt, rookf, ROOK, color)
         
         self.setColor(color)

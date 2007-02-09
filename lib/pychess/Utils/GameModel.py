@@ -241,6 +241,7 @@ class GameModel (GObject):
                 break
             
             for spectactor in self.spectactors:
+                print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)
             
             self.applyingMoveLock.release()

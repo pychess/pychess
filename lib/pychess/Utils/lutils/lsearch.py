@@ -5,11 +5,12 @@ from leval import evaluateComplete
 from lsort import sortCaptures, sortMoves
 from lmove import toSAN
 from TranspositionTable import TranspositionTable
+import ldraw
 
 from sys import maxint
 
 table = TranspositionTable(5000)
-searching = True
+searching = False
 movesearches = 0
 nodes = 0
 last = 0
@@ -53,6 +54,9 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
             
         if alpha >= beta:
             return [move], score
+    
+    if ldraw.test(board):
+        return [], 0
     
     ############################################################################
     # Go for quiescent search                                                  #
@@ -109,7 +113,7 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
                 table.record (board.hash, move, beta, hashfBETA)
                 if board.arBoard[move&63] == EMPTY:
                     table.addKiller (ply, move)
-                last = 3
+                last = 2
                 return [move]+mvs, beta
                 
             alpha = val
@@ -122,14 +126,14 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
     ############################################################################
     
     if amove:
-        last = 4
+        last = 3
         table.record (board, amove[0], alpha, hashf)
         if board.arBoard[amove[0]&63] == EMPTY:
             table.addKiller (ply, amove[0])
         return amove, alpha
         
-    elif moves:
-        last = 6
+    if moves:
+        last = 4
         return [], alpha
 
     # If no moves were found, this must be a mate or stalemate
@@ -137,6 +141,7 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
     if board.isChecked():
         return [], -maxint
     
+    last = 6
     return [], 0
 
 def quiescent (board, alpha, beta):

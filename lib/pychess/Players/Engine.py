@@ -131,7 +131,12 @@ class EngineConnection (gobject.GObject):
             line = self.buffer[:i]
             self.buffer = self.buffer[i+1:]
             if line:
-                log.debug(line+"\n", self.defname)
+                lline = line.lower()
+                if lline.find ("illegal") >= 0 or \
+                       lline.find ("error") >= 0 :
+                    log.warn(line+"\n", self.defname)
+                else:
+                    log.debug(line+"\n", self.defname)
                 return line
     
     def write (self, data):
