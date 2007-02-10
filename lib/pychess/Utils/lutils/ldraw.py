@@ -10,7 +10,7 @@ def testRepetition (board):
     return False
 
 def testFifty (board):
-    if board.fifty >= 50:
+    if board.fifty >= 100:
         return True
     return False
 
