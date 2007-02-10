@@ -236,7 +236,7 @@ while True:
         lsearch.searching = False
         searchLock.acquire()
         searchLock.release()
-        
+    
     elif lines[0] in ("black", "white"):
         lsearch.searching = False
         searchLock.acquire()
