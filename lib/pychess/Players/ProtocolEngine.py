@@ -77,7 +77,7 @@ class ProtocolEngine (Engine):
             self.movecond.release()
             return
         
-        while not self.move:
+        if not self.move:
             self.movecond.wait()
 
         if not self.move:

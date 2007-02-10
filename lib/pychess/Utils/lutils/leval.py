@@ -434,6 +434,8 @@ def evalDev (board):
     if not board.hasCastled[WHITE]:
     
         wboards = board.boards[WHITE]
+        pawns = wboards[PAWN]
+        
         # We don't encourage castling, but it certanly should always be possible
         if not board.castling & W_OOO:
             score -= 40
@@ -444,12 +446,20 @@ def evalDev (board):
         cord = firstBit(wboards[QUEEN])
         if cord != D1: score -= 30
         
-        # Discourage any wing pawn moves
-        score -= 6 * bitLength ( wingpawns[WHITE] & wboards[PAWN] )
+        qpawns = max(qwwingpawns1 & pawns, qwwingpawns2 & pawns) 
+        kpawns = max(kwwingpawns1 & pawns, kwwingpawns2 & pawns) 
+        
+        if qpawns != 2 and kpawns != 2:
+            # Structure destroyed in both sides
+            score -= 35
+        else:
+            # Discourage any wing pawn moves
+            score += (qpawns+kpawns) *6
     
     if not board.hasCastled[BLACK]:
         
         bboards = board.boards[BLACK]
+        pawns = bboards[PAWN]
         
         if not board.castling & B_OOO:
             score += 40
@@ -459,7 +469,15 @@ def evalDev (board):
         cord = firstBit(bboards[QUEEN])
         if cord != D8: score += 30
         
-        score += 6 * bitLength ( wingpawns[BLACK] & bboards[PAWN] )
+        qpawns = max(qbwingpawns1 & pawns, qbwingpawns2 & pawns) 
+        kpawns = max(kbwingpawns1 & pawns, kbwingpawns2 & pawns) 
+        
+        if qpawns != 2 and kpawns != 2:
+            # Structure destroyed in both sides
+            score += 35
+        else:
+            # Discourage any wing pawn moves
+            score -= (qpawns+kpawns) *6
     
     return score
 

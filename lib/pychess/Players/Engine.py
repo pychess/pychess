@@ -50,6 +50,8 @@ import os, select, signal, errno, tty, sys
 import gobject
 from random import randint, choice
 CHILD = 0
+from termios import tcgetattr, tcsetattr
+import termios
 
 class EngineConnection (gobject.GObject):
 
@@ -66,6 +68,12 @@ class EngineConnection (gobject.GObject):
             print "executable", executable
             os.system(executable)
             sys.exit()
+        
+        # Stop our commands being echod back
+        iflag, oflag, cflag, lflag, ispeed, ospeed, cc = tcgetattr(self.fd)
+        lflag &= ~termios.ECHO
+        tcsetattr(self.fd, termios.TCSANOW,
+        		[iflag, oflag, cflag, lflag, ispeed, ospeed, cc])
             
         self.defname = os.path.split(executable)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()

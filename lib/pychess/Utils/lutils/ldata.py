@@ -98,7 +98,6 @@ stonewall[WHITE] = 0x81400000000
 # - - - - - - - -
 stonewall[BLACK] = 0x14080000
 
-wingpawns = [0,0]
 # - - - - - - - -
 # - - - - - - - -
 # - - - - - - - -
@@ -107,8 +106,10 @@ wingpawns = [0,0]
 # - # - - - - # -
 # # # - - - - # #
 # - - - - - - - -
-wingpawns[WHITE] = bitPosArray[A2] | bitPosArray[B2] | bitPosArray[B3] | \
-                   bitPosArray[G2] | bitPosArray[G3] | bitPosArray[H2]
+qwwingpawns1 = bitPosArray[A2] | bitPosArray[B2]
+qwwingpawns2 = bitPosArray[A2] | bitPosArray[B3]
+kwwingpawns1 = bitPosArray[G2] | bitPosArray[H2]
+kwwingpawns2 = bitPosArray[G3] | bitPosArray[H2]
 
 # - - - - - - - -
 # # # - - - - # #
@@ -118,8 +119,10 @@ wingpawns[WHITE] = bitPosArray[A2] | bitPosArray[B2] | bitPosArray[B3] | \
 # - - - - - - - -
 # - - - - - - - -
 # - - - - - - - -
-wingpawns[BLACK] = bitPosArray[A7] | bitPosArray[B7] | bitPosArray[B6] | \
-                   bitPosArray[G7] | bitPosArray[G6] | bitPosArray[H7]
+qbwingpawns1 = bitPosArray[A7] | bitPosArray[B7]
+qbwingpawns2 = bitPosArray[A7] | bitPosArray[B6]
+kbwingpawns1 = bitPosArray[G7] | bitPosArray[H7]
+kbwingpawns2 = bitPosArray[G6] | bitPosArray[H7]
 
 ################################################################################
 ################################################################################
