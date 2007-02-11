@@ -139,7 +139,7 @@ def go ():
             # We bet that the game will be about 30 moves. That gives us
             # starttime / 30 seconds per turn + the incremnt.
             # TODO: Create more sophisticated method.
-            usetime = float(mytime) / max((30-len(history)),3)
+            usetime = float(mytime) / max((30-len(board.history)),3)
             usetime = max (usetime, 5) # We don't wan't to search for e.g. 0 secs
             starttime = time()
             endtime = starttime + usetime
