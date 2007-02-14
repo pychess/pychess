@@ -59,13 +59,6 @@ else:
 path = "env python "+path
 availableEngines.append( (ProtocolEngine, (CECPProtocol, path)) )
 
-
-#path = "/home/thomas/Programmering/python/skak/ShredderClassic/engines/#ShredderClassicLinux"
-#availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
-
-#path = "/home/thomas/Programmering/python/skak/fruit_21_linux/fruit_21_static"
-#availableEngines.append( (ProtocolEngine, (UCIProtocol, path)) )
-
 ###################
 
 infoFound = False
