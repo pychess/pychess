@@ -220,8 +220,7 @@ class GameModel (GObject):
             	print "Waiting for", curPlayer
                 move = curPlayer.makeMove(self)
             except PlayerIsDead:
-                # The user of pychess will be informed by an eventhandler in the
-                # player object itself, so we just need to break the game loop.
+                self.kill()
                 break
             
             self.applyingMoveLock.acquire()
@@ -238,8 +237,10 @@ class GameModel (GObject):
             if self.status != RUNNING:
                 self.emit("game_ended", self.reason)
                 self.applyingMoveLock.release()
+                # FIXME: It would be nicer if we told the engines they had lost
+                self.kill()
                 break
-            
+                
             for spectactor in self.spectactors:
                 print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)
