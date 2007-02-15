@@ -48,7 +48,8 @@ class UCIProtocol (Protocol):
         
         while self.connected:
             line = self.engine.readline()
-            self.parseLine(line)
+            if line:
+                self.parseLine(line)
             if line.find("readyok") >= 0:
                 break
         
@@ -69,35 +70,42 @@ class UCIProtocol (Protocol):
     def parseLine (self, line):
         
         parts = line.split()
+        if not parts:
+            return
         
         if parts[0] == "id":
             self.ids[parts[1]] = " ".join(parts[2:])
             return
         
-        if parts[:2] == ["option", "name"]:
+        if parts[0] == "option":
             
             typedic = {"check":lambda x:x=="true", "spin":int}
             
-            typeindex = parts.index("type")
-            key = " ".join(parts[2:typeindex])
+            keys = ("type", "min", "max", "default", "var")
             
-            vars = parts[typeindex:]
             dic = {}
-            for i in range (0, len(vars), 2):
-                v = vars[i+1]
-                if "type" in dic and dic["type"] in typedic:
-                    v = typedic[dic["type"]](v)
-                
-                k = vars[i]
-                if k == "var":
-                    if not k in dic:
-                        dic["vars"] = []
-                    dic["vars"].append(v)
-                else:
-                    dic [k] = v
+            last = 1
+            varlist = []
+            for i in xrange (2, len(parts)+1):
+                if i == len(parts) or parts[i] in keys:
+                    key = parts[last]
+                    value = " ".join(parts[last+1:i])
+                    if key in typedic:
+                        value = typedic[key](value)
+                        
+                    if key == "var":
+                        varlist.append(value)
+                    else:
+                        dic[key] = value
+                        
+                    last = i
+            if varlist:
+                dic["vars"] = varlist
             
-            self.options[key] = dic
-
+            name = dic["name"]
+            del dic["name"]
+            self.options[name] = dic
+            
             return
         
         # A Move

@@ -365,6 +365,7 @@ class PyChess:
         return self.widgets.get_widget(key)
     
     def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
+        # Background is currently the only widget that uses glades CustomWidget
         return Background()
 
 def run ():

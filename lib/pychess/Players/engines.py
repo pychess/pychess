@@ -3,6 +3,7 @@
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
 from UCIProtocol import UCIProtocol
+import engineNest
 
 # TODO: Use xml, like glchess.
 # Will be needed when more info is needed for the preferences:
@@ -10,13 +11,13 @@ from UCIProtocol import UCIProtocol
 # * "uses to send feature" (should let us start earlier)
 
 knownEngines = (
-    ("gnuchess", CECPProtocol),
-    ("crafty", CECPProtocol),
-    ("faile", CECPProtocol),
-    ("phalanx", CECPProtocol),
-    ("sjeng", CECPProtocol),
-    ("ShredderClassicLinux", UCIProtocol),
-    ("fruit_21_static", UCIProtocol)
+#    ("gnuchess", CECPProtocol),
+#    ("crafty", CECPProtocol),
+#    ("faile", CECPProtocol),
+#    ("phalanx", CECPProtocol),
+#    ("sjeng", CECPProtocol),
+#    ("ShredderClassicLinux", UCIProtocol),
+#    ("fruit_21_static", UCIProtocol)
 )
 
 import os
@@ -78,9 +79,10 @@ def _addToDic (key, value):
         infocond.notify()
         infocond.release()
     gotthose = [os.path.split(k[1][-1])[1] for k in engineDic.keys()]
-    needthose = [os.path.split(a[-1])[1] for e,a in availableEngines if not (e,a) in engineDic]
-    print "got %d engines. %s; Needs %s" % (
-        len(engineDic), " ".join(gotthose), " ".join(needthose))
+    needthose = [e for e in availableEngines if not e in engineDic]
+    needthose = [os.path.split(a[-1])[1] for e,a in needthose]
+    #print "got %d engines. %s; Needs %s" % (
+    #    len(engineDic), " ".join(gotthose), " ".join(needthose))
     diclock.release()
 
 import thread
@@ -89,6 +91,12 @@ from pychess.Utils.const import *
 def _getInfo (engine, args):
     en = engine(args, WHITE)
     info = {"name":repr(en), "canAnalyze":en.canAnalyze()}
+    if False and hasattr(en.proto, "options"):
+        print en._wait()
+        print en.proto.startGame()
+        print repr(en)
+        print en.proto.options
+        print en.proto.ids
     _addToDic((engine,args), info)
     en.kill()
 
