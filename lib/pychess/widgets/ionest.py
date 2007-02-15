@@ -10,13 +10,16 @@ from pychess.System.protoopen import protosave, isWriteable
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
-from pychess.Players import engines
+from pychess.Players import engineNest
 from pychess.Players.Human import Human
 from pychess.Savers import *
 from pychess import Savers
 from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
 from pychess.widgets.SetupBoard import SetupBoard
+
+discoverer = engineNest.EngineDiscoverer()
+discoverer.start()
 
 widgets = gtk.glade.XML(prefix("glade/newInOut.glade"))
 class WidgetDic:
@@ -265,8 +268,6 @@ widgets["treeview3"].get_model().append(["En pas"])
 isNewGameDialogReady = False
 def ensureNewGameDialogReady ():
     
-    # makeNewGameDialogReady uses lazy initializing to let the
-    # engines have as much time as possible to figuere out there names.
     global isNewGameDialogReady
     if isNewGameDialogReady:
         return
@@ -289,9 +290,9 @@ def ensureNewGameDialogReady ():
         combo.pack_start(crt, True)
         combo.add_attribute(crt, 'text', 1)
         crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
-
+    
     it = gtk.icon_theme_get_default()
-
+    
     icons = ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
              (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
              (_("Expert"), "stock_weather-storm", "weather-storm"))
@@ -311,7 +312,7 @@ def ensureNewGameDialogReady ():
     items = [(image, _("Human Being"))]
     image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
     
-    for engine in [engines.getInfo((e,a))["name"] for e,a in engines.availableEngines]:
+    for engine in [discoverer.getName(e) for e in discoverer.getEngines().values()]:
         items += [(image, engine)]
     for combo in (widgets["whitePlayerCombobox"], widgets["blackPlayerCombobox"]):
         createCombo(combo, items)
@@ -333,7 +334,7 @@ def ensureNewGameDialogReady ():
     widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, "black")
     
     widgets["whitePlayerCombobox"].set_active(0)
-    widgets["blackPlayerCombobox"].set_active(min(1,len(engines.availableEngines)))
+    widgets["blackPlayerCombobox"].set_active(min(1,len(discoverer.getEngines())))
     on_playerCombobox_changed (widgets["blackPlayerCombobox"], "black")
     
     for key in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty",
@@ -394,8 +395,8 @@ def runNewGameDialog ():
         choise = widgets[box].get_active()
         dfc = widgets[dfcbox].get_active()
         if choise != 0:
-            engine = engines.availableEngines[choise-1][0]
-            player = engine(engines.availableEngines[choise-1][1],color)
+            engine = discoverer.getEngineN(choise-1)
+            player = discoverer.initEngine(engine, color)
             player.setStrength(dfc)
             if secs:
                 player.setTime(secs, gain)
@@ -406,19 +407,14 @@ def runNewGameDialog ():
     
     # Initing analyze engines
     
-    anaengines = [(e,a) for e,a in engines.availableEngines \
-                                        if engines.getInfo((e,a))["canAnalyze"]]
-    if len(anaengines) > 1:
-        engine0, args0 = engine1, args1 = random.choice(anaengines)
-        #engine0, args0 = engine1, args1 = anaengines[4]
-    else:
-        engine0, args0 = engine1, args1 = anaengines[0]
+    anaengines = discoverer.getAnalyzers()
+    engine0 = engine1 = random.choice(anaengines)
     
-    hintanalyzer = engine0 (args0, WHITE)
+    hintanalyzer = discoverer.initEngine(engine0, WHITE)
     hintanalyzer.analyze(inverse=False)
     log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
-    spyanalyzer = engine1 (args1, WHITE)
+    spyanalyzer = discoverer.initEngine(engine1, WHITE)
     spyanalyzer.analyze(inverse=True)
     log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
