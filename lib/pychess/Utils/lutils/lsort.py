@@ -1,7 +1,6 @@
 
 from attack import getAttacks
 
-MAXPLYDEPTH = 65 # This is the gnuchess value, we might have to set it lower
 xray = (False, True, False, True, True, True, False)
 
 def staticExchangeEvaluate (board, move):
@@ -14,7 +13,7 @@ def staticExchangeEvaluate (board, move):
     as well.  When performing the "captures", we stop if one side is ahead
     and doesn't need to capture, a form of pseudo-minimaxing. """
     
-    swaplist = [0]*MAXPLYDEPTH
+    swaplist = []
     
     flag = move >> 12
     fcord = (move >> 6) & 63
@@ -29,63 +28,60 @@ def staticExchangeEvaluate (board, move):
     ours = clearBit (ours, fcord)
     theirs = getAttacks (board, tcord, opcolor)
     
-    if xray[pieces[f]]:
+    if xray[pieces[fcord]]:
         ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
     
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        swaplist[0] = PIECE_VALUES[flag-3] - PAWN_VALUE
+        swaplist.append(PIECE_VALUES[flag-3] - PAWN_VALUE)
         lastval = -PIECE_VALUES[flag-3]
     else:
-        swaplist[0] = flag == ENPASSANT and PAWN_VALUE or \
-                                            PIECE_VALUES[pieces[tcord]]
+        if flag == ENPASSANT:
+            swaplist.append(PAWN_VALUE)
+        else: swaplist.append(PIECE_VALUES[pieces[tcord]])
         lastval = -PIECE_VALUES[pieces[fcord]]
     
-    d = board.boards[color]
-    e = board.boards[opcolor]
-    n = 1
+    boards = board.boards[color]
+    opboards = board.boards[opcolor]
     while theirs:
         for piece in range(PAWN, KING+1):
-            r = theirs & e[piece]
+            r = theirs & opboards[piece]
             if r:
                 cord = firstBit(r)
                 theirs = clearBit(theirs, cord)
                 if xray[piece]:
-                    ours, theirs = addXrayPiece (board, tcord, fcord,
+                    ours, theirs = addXrayPiece (board, tcord, cord,
                                                  color, ours, theirs)
-                swaplist[n] = swaplist[n-1] + lastval
-                n += 1
+                swaplist.append(swaplist[-1] + lastval)
                 lastval = PIECE_VALUES[piece]
                 break
         
         if not ours: break
         for piece in range(PAWN, KING+1):
-            r = ours & d[piece]
+            r = ours & boards[piece]
             if r:
                 cord = firstBit(r)
                 ours = clearBit(ours, cord)
                 if xray[piece]:
-                    ours, theirs = addXrayPiece (board, tcord, fcord,
+                    ours, theirs = addXrayPiece (board, tcord, cord,
                                                  color, ours, theirs)
-                swaplist[n] = swaplist[n-1] + lastval
-                n += 1
-                lastval = PIECE_VALUES[piece]
+                swaplist.append(swaplist[-1] + lastval)
+                lastval = -PIECE_VALUES[piece]
                 break
-                
-    ############################################################################
-    #  At this stage, we have the swap scores in a list.  We just need to      #
-    #  mini-max the scores from the bottom up to the top of the list.          #
-    ############################################################################
-    n -= 1
-    while n:
+    
+    ########################################################################
+    #  At this stage, we have the swap scores in a list.  We just need to  #
+    #  mini-max the scores from the bottom up to the top of the list.      #
+    ########################################################################
+    
+    for n in range(len(swaplist)-1, -1, -1):
         if n & 1:
             if swaplist[n] <= swaplist[n-1]:
                 swaplist[n-1] = swaplist[n] 
         else:
             if swaplist[n] >= swaplist[n-1]:
                 swaplist[n-1] = swaplist[n] 
-        n -= 1
-
+    
     return swaplist[0]
 
 def addXrayPiece (board, tcord, fcord, color, ours, theirs):
@@ -97,14 +93,18 @@ def addXrayPiece (board, tcord, fcord, color, ours, theirs):
     a = rays[fcord][dir] & board.blocker
     if not a: return ours, theirs
     
-    ncord = tcord < fcord and firstBit(a) or lastBit(a)
+    if tcord < fcord:
+        ncord = firstBit(a)
+    else: ncord = lastBit(a)
+    
     piece = board.arBoard[ncord]
     if piece == QUEEN or (piece == ROOK and dir > 3) or \
                          (piece == BISHOP and dir < 4):
         bit = bitPosArray[ncord]
         if bit & board.friends[color]:
             ours |= bit
-        else: theirs |= bit
+        else:
+            theirs |= bit
     
     return ours, theirs
 
