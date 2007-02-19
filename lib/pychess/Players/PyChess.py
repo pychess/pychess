@@ -85,7 +85,7 @@ def alphaBeta (board, depth, alpha, beta, ply=0):
     probe = table.probe (board, ply, alpha, beta)
     if probe:
         last = 1; return probe
-    
+
     ############################################################################
     # Break itereation if interupted                                           #
     ############################################################################
@@ -99,8 +99,11 @@ def alphaBeta (board, depth, alpha, beta, ply=0):
     ############################################################################
 
     if depth <= 0:
-        last = 3
-        return quiescent(board, alpha, beta)
+        if isCheck(board, board.color):
+            depth += 1
+        else:
+            last = 3
+            return quiescent(board, alpha, beta)
     
     ############################################################################
     # Loop moves                                                               #
@@ -170,11 +173,8 @@ def quiescent(board, alpha, beta):
     move = None
     for move in findMoves2(board, pureCaptures=True):
         board2 = board.move(move)
-        if isCheck(board, board.color):
-            return alphaBeta (board2, 1, -beta, -alpha)
-        else:
-            mvs, val = quiescent(board2, -beta, -alpha)
-            val = -val
+        mvs, val = quiescent(board2, -beta, -alpha)
+        val = -val
         
         if val >= beta:
             return [move]+mvs, beta
