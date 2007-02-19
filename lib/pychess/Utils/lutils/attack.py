@@ -148,3 +148,125 @@ def pinnedOnKing (board, cord, color):
         return True
 
     return False
+
+def swapOff (board, tcord, swaplist = [], lastval = 0, ours = -1, theirs = -1):
+    
+    color = board.color
+    opcolor = 1-color
+    boards = board.boards[color]
+    opboards = board.boards[opcolor]
+    
+    if ours == -1:
+        ours = getAttacks (board, tcord, color)
+    if theirs == -1:
+        theirs = getAttacks (board, tcord, opcolor)
+    
+    while theirs:
+        for piece in range(PAWN, KING+1):
+            r = theirs & opboards[piece]
+            if r:
+                cord = firstBit(r)
+                theirs = clearBit(theirs, cord)
+                if xray[piece]:
+                    ours, theirs = addXrayPiece (board, tcord, cord,
+                                                 color, ours, theirs)
+                swaplist.append(swaplist[-1] + lastval)
+                lastval = PIECE_VALUES[piece]
+                break
+        
+        if not ours: break
+        for piece in range(PAWN, KING+1):
+            r = ours & boards[piece]
+            if r:
+                cord = firstBit(r)
+                ours = clearBit(ours, cord)
+                if xray[piece]:
+                    ours, theirs = addXrayPiece (board, tcord, cord,
+                                                 color, ours, theirs)
+                swaplist.append(swaplist[-1] + lastval)
+                lastval = -PIECE_VALUES[piece]
+                break
+    
+    #  At this stage, we have the swap scores in a list.  We just need to
+    #  mini-max the scores from the bottom up to the top of the list.
+    
+    for n in range(len(swaplist)-1, -1, -1):
+        if n & 1:
+            if swaplist[n] <= swaplist[n-1]:
+                swaplist[n-1] = swaplist[n] 
+        else:
+            if swaplist[n] >= swaplist[n-1]:
+                swaplist[n-1] = swaplist[n] 
+    
+    return swaplist[0]
+
+xray = (False, True, False, True, True, True, False)
+
+def addXrayPiece (board, tcord, fcord, color, ours, theirs):
+    """ This is used by swapOff.
+    The purpose of this routine is to find a piece which attack through
+    another piece (e.g. two rooks, Q+B, B+P, etc.) Color is the side attacking
+    the square where the swapping is to be done. """
+    
+    dir = directions[tcord][fcord]
+    a = rays[fcord][dir] & board.blocker
+    if not a: return ours, theirs
+    
+    if tcord < fcord:
+        ncord = firstBit(a)
+    else: ncord = lastBit(a)
+    
+    piece = board.arBoard[ncord]
+    if piece == QUEEN or (piece == ROOK and dir > 3) or \
+                         (piece == BISHOP and dir < 4):
+        bit = bitPosArray[ncord]
+        if bit & board.friends[color]:
+            ours |= bit
+        else:
+            theirs |= bit
+    
+    return ours, theirs
+
+def defends (board, fcord, tcord):
+    """ Could fcord attack tcord if the piece on tcord wasn't on the team of
+        fcord?
+        Doesn't test check. """
+    
+    if board.friends[WHITE] & bitPosArray[fcord]:
+        color = WHITE
+    else: color = BLACK
+    opcolor = 1-color
+    
+    boards = board.boards[color]
+    opboards = board.boards[opcolor]
+    
+    board.lock.acquire()
+    
+    # To see if we now defend the piece, we have to "give" it to the other team
+    piece = board.arBoard[tcord]
+    
+    backup = boards[piece]
+    opbackup = opboards[piece]
+    
+    boards[piece] &= notBitPosArray[tcord]
+    opboards[piece] |= bitPosArray[tcord]
+    board.friends[color] &= notBitPosArray[tcord]
+    board.friends[opcolor] |= bitPosArray[tcord]
+    
+    # Can we "attack" the piece now?
+    backupColor = board.color
+    board.setColor(color)
+    from lmove import newMove
+    from pychess.Utils.lutils.lmovegen import validate
+    islegal = validate(board, newMove(fcord, tcord))
+    board.setColor(backupColor)
+    
+    # Set board back
+    boards[piece] = backup
+    opboards[piece] = opbackup
+    board.friends[color] |= bitPosArray[tcord]
+    board.friends[opcolor] &= notBitPosArray[tcord]
+    
+    board.lock.release()
+    
+    return islegal

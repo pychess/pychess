@@ -8,7 +8,8 @@ def TCORD (move): return move & 63
 def FCORD (move): return move >> 6 & 63
 def FLAG (move): return move >> 12
 
-def PROMOTE_PIECE (move): return FLAG(move) -3
+def PROMOTE_PIECE (flag): return flag -2
+def FLAG_PIECE (piece): return piece +2
 
 ################################################################################
 #   The format of a move is as follows - from left:                            #
@@ -22,7 +23,7 @@ for i in range(64):
     shiftedFromCords.append(i << 6)
 
 shiftedFlags = []
-for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, CAPTURE, ENPASSANT, \
+for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
             KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION:
     shiftedFlags.append(i << 12)
 
@@ -192,7 +193,7 @@ def toSAN (board, move):
     notat = part0 + part1
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        notat += "="+reprSign[flag-3]
+        notat += "="+reprSign[PROMOTE_PIECE(flag)]
     
     board.lock.acquire()
     board.applyMove(move)
@@ -230,7 +231,7 @@ def parseSAN (board, san):
     # If last char is a piece char, we assue it the promote char
     c = notat[-1].lower()
     if c in chr2Sign:
-        flag = chr2Sign[c] + 3
+        flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
         else: notat = notat[:-1]
@@ -360,7 +361,7 @@ def toLAN (board, move):
     
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                       BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        s += "=" + reprSign[flag-3]
+        s += "=" + reprSign[PROMOTE_PIECE(flag)]
     
     return s
 
@@ -399,7 +400,7 @@ def toAN (board, move):
     s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
     if FLAG(move) in (QUEEN_PROMOTION, ROOK_PROMOTION,
                       BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        s += reprSign[FLAG(move)-3]
+        s += reprSign[PROMOTE_PIECE(FLAG(move))]
     return s
 
 ################################################################################
@@ -418,7 +419,7 @@ def parseAN (board, an):
         raise ParsingError, "Bad an move, %s" % an
     
     if len(an) == 5:
-        flag = chr2Sign[an[4].lower()] + 3
+        flag = chr2Sign[an[4].lower()] + 2
     elif board.arBoard[fcord] == KING and fcord - tcord == 2:
         flag = QUEEN_CASTLE
     elif board.arBoard[fcord] == KING and fcord - tcord == -2:
@@ -426,8 +427,6 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
-    elif board.arBoard[tcord] != EMPTY:
-        flag = CAPTURE
     else: flag = NORMAL_MOVE
     
     return newMove (fcord, tcord, flag)

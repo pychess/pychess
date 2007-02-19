@@ -308,7 +308,7 @@ class LBoard:
                 
             elif flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                           BISHOP_PROMOTION, KNIGHT_PROMOTION):
-                piece = flag - 3 # The flags has values: 8, 7, 6, 5
+                piece = flag - 2 # The flags has values: 7, 6, 5, 4
                 self._removePiece(fcord, PAWN, self.color)
                 self._addPiece(tcord, piece, self.color)
                 

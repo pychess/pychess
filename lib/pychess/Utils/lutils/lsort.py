@@ -1,7 +1,5 @@
 
-from attack import getAttacks
-
-xray = (False, True, False, True, True, True, False)
+from attack import getAttacks, addXrayPiece, swapOff, xray
 
 def staticExchangeEvaluate (board, move):
     """ The GnuChess Static Exchange Evaluator (or SEE for short).
@@ -41,72 +39,7 @@ def staticExchangeEvaluate (board, move):
         else: swaplist.append(PIECE_VALUES[pieces[tcord]])
         lastval = -PIECE_VALUES[pieces[fcord]]
     
-    boards = board.boards[color]
-    opboards = board.boards[opcolor]
-    while theirs:
-        for piece in range(PAWN, KING+1):
-            r = theirs & opboards[piece]
-            if r:
-                cord = firstBit(r)
-                theirs = clearBit(theirs, cord)
-                if xray[piece]:
-                    ours, theirs = addXrayPiece (board, tcord, cord,
-                                                 color, ours, theirs)
-                swaplist.append(swaplist[-1] + lastval)
-                lastval = PIECE_VALUES[piece]
-                break
-        
-        if not ours: break
-        for piece in range(PAWN, KING+1):
-            r = ours & boards[piece]
-            if r:
-                cord = firstBit(r)
-                ours = clearBit(ours, cord)
-                if xray[piece]:
-                    ours, theirs = addXrayPiece (board, tcord, cord,
-                                                 color, ours, theirs)
-                swaplist.append(swaplist[-1] + lastval)
-                lastval = -PIECE_VALUES[piece]
-                break
-    
-    ########################################################################
-    #  At this stage, we have the swap scores in a list.  We just need to  #
-    #  mini-max the scores from the bottom up to the top of the list.      #
-    ########################################################################
-    
-    for n in range(len(swaplist)-1, -1, -1):
-        if n & 1:
-            if swaplist[n] <= swaplist[n-1]:
-                swaplist[n-1] = swaplist[n] 
-        else:
-            if swaplist[n] >= swaplist[n-1]:
-                swaplist[n-1] = swaplist[n] 
-    
-    return swaplist[0]
-
-def addXrayPiece (board, tcord, fcord, color, ours, theirs):
-    """ The purpose of this routine is to find a piece which attack through
-    another piece (e.g. two rooks, Q+B, B+P, etc.) Color is the side attacking
-    the square where the swapping is to be done. """
-    
-    dir = directions[tcord][fcord]
-    a = rays[fcord][dir] & board.blocker
-    if not a: return ours, theirs
-    
-    if tcord < fcord:
-        ncord = firstBit(a)
-    else: ncord = lastBit(a)
-    
-    piece = board.arBoard[ncord]
-    if piece == QUEEN or (piece == ROOK and dir > 3) or \
-                         (piece == BISHOP and dir < 4):
-        bit = bitPosArray[ncord]
-        if bit & board.friends[color]:
-            ours |= bit
-        else:
-            theirs |= bit
-    
-    return ours, theirs
+    return swapOff (board, tcord, swaplist, lastval, ours, theirs)
 
 from sys import maxint
 from ldata import *

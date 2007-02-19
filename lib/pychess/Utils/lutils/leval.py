@@ -8,6 +8,8 @@ from pychess.Utils.const import *
 from ldata import *
 from sys import maxint
 from LBoard import LBoard
+from lsort import staticExchangeEvaluate
+from lmove import newMove
 
 def evaluateComplete (board, color, balanced=False):
     """ A detailed evaluation function, taking into account
@@ -17,6 +19,8 @@ def evaluateComplete (board, color, balanced=False):
     s += evalKingTropism (board)
     s += evalKnights (board)
     s += evalBishops (board)
+    s += evalTrappedBishops (board)
+    s += evalRooks (board, phase)
     s += evalKing (board, phase)
     s += evalDev (board)
     s += evalPawnStructure (board, phase)
@@ -25,9 +29,12 @@ def evaluateComplete (board, color, balanced=False):
         opboard = LBoard()
         opboard.applyFen (board.asFen())
         opboard.setColor(1-board.color)
+        s += evalKingTropism (opboard)
         s += evalPawnStructure (opboard, phase)
         s += evalBishops (opboard)
-    
+        s += evalTrappedBishops (opboard)
+        s += evalRooks (opboard, phase)
+        
     return (color == WHITE and [s] or [-s])[0]
 
 ################################################################################
@@ -89,45 +96,31 @@ for pcord in range(64):
         queenTropism[pcord][kcord] = queenTScale[d]
 
 def evalKingTropism (board):
-    """ All other things being equal, having your Knights, Queens and Rooks close
-        to the opponent's king is a good thing """
+    """ All other things being equal, having your Knights, Queens and Rooks
+        close to the opponent's king is a good thing """
+    
+    opcolor = board.color
+    opking = board.kings[opcolor]
+    
+    color = 1-opcolor
+    pieces = board.boards[color]
     
     score = 0
-    whiteKing, blackKing = board.kings
     
-    wpieces = board.boards[WHITE]
+    for cord in iterBits(pieces[PAWN]):
+        score += pawnTropism[cord][opking]
     
-    for cord in iterBits(wpieces[PAWN]):
-        score += pawnTropism[cord][blackKing]
+    for cord in iterBits(pieces[KNIGHT]):
+        score += knightTropism[cord][opking]
     
-    for cord in iterBits(wpieces[KNIGHT]):
-        score += knightTropism[cord][blackKing]
+    for cord in iterBits(pieces[BISHOP]):
+        score += bishopTropism[cord][opking]
     
-    for cord in iterBits(wpieces[BISHOP]):
-        score += bishopTropism[cord][blackKing]
+    for cord in iterBits(pieces[ROOK]):
+        score += rookTropism[cord][opking]
     
-    for cord in iterBits(wpieces[ROOK]):
-        score += rookTropism[cord][blackKing]
-    
-    for cord in iterBits(wpieces[QUEEN]):
-        score += queenTropism[cord][blackKing]
-    
-    bpieces = board.boards[BLACK]
-    
-    for cord in iterBits(bpieces[PAWN]):
-        score -= pawnTropism[cord][whiteKing]
-    
-    for cord in iterBits(bpieces[KNIGHT]):
-        score -= knightTropism[cord][whiteKing]
-    
-    for cord in iterBits(bpieces[BISHOP]):
-        score -= bishopTropism[cord][whiteKing]
-    
-    for cord in iterBits(bpieces[ROOK]):
-        score -= rookTropism[cord][whiteKing]
-    
-    for cord in iterBits(bpieces[QUEEN]):
-        score -= queenTropism[cord][whiteKing]
+    for cord in iterBits(pieces[QUEEN]):
+        score += queenTropism[cord][opking]
     
     return score
 
@@ -182,14 +175,14 @@ def evalPawnStructure (board, phase):
         for cord in iterBits(pawns):
             score += pScoreBoard[cord] 
             
-            #  Passed pawns
+            # Passed pawns
             if not oppawns & passedPawnMask[color][cord]:
                 if (color == WHITE and not fromToRay[cord][cord|56] & pawns) or\
                    (color == BLACK and not fromToRay[cord][cord&7] & pawns):
                     passed |= bitPosArray[cord]
                     score += (passedScores[color][cord>>3] * phase) / 12
             
-            #  Backward pawns
+            # Backward pawns
             backward = False
             
             if color == WHITE:
@@ -227,9 +220,9 @@ def evalPawnStructure (board, phase):
                moveArray[ptype][cord] & pawns:
                 score += -18
      
-            #  Increment file count for isolani & doubled pawn evaluation
+            # Increment file count for isolani & doubled pawn evaluation
             nfile[cord&7] += 1
-    
+        
         for i in xrange(8):
             # Doubled pawns
             if nfile[i] > 1:
@@ -250,7 +243,7 @@ def evalPawnStructure (board, phase):
             score -= 10
         
         # Detect stonewall formation in enemy
-        if stonewall[opcolor] & pawns == stonewall[opcolor]:
+        if stonewall[opcolor] & oppawns == stonewall[opcolor]:
             score -= 10
         # Detect stonewall formation in our pawns
         if stonewall[color] & pawns == stonewall[color]:
@@ -320,7 +313,7 @@ def evalPawnStructure (board, phase):
     # TODO
 
     # If both colors are castled on different colors, bonus for pawn storms
-    if abs ((king&7) - (opking&7)) >= 4 and phase < 6:
+    if abs ((king>>7) - (opking&7)) >= 4 and phase < 6:
         n1 = opking & 7
         p = (isolaniMask[n1] | fileBits[n1]) & pawns
         
@@ -371,6 +364,17 @@ def evalBateries (board):
 #   else
 #      return (0);
 #}
+
+normalKing = (
+   24, 24, 24, 16, 16,  0, 32, 32,
+   24, 20, 16, 12, 12, 16, 20, 24,
+   16, 12,  8,  4,  4,  8, 12, 16,
+   12,  8,  4,  0,  0,  4,  8, 12,
+   12,  8,  4,  0,  0,  4,  8, 12,
+   16, 12,  8,  4,  4,  8, 12, 16,
+   24, 20, 16, 12, 12, 16, 20, 24,
+   24, 24, 24, 16, 16,  0, 32, 32
+)
 
 endingKing = (
    0,  6, 12, 18, 18, 12,  6,  0,
@@ -483,14 +487,32 @@ def evalDev (board):
 
 def evalBishops (board):
     
-    # Avoid wasted moves
-    
     opcolor = board.color
+    
     color = 1-opcolor
-    oppawns = board.boards[opcolor][PAWN]
+    pawns = board.boards[color][PAWN]
     bishops = board.boards[color][BISHOP]
+    
+    oppawns = board.boards[opcolor][PAWN]
+    
     arBoard = board.arBoard
     score = 0
+    
+    # Avoid having too many pawns on you bishops color
+    
+    if bitLength (bishops) == 1:
+        if bishops & WHITE_SQUARES:
+            s =   bitLength(pawns & WHITE_SQUARES) \
+                + bitLength(oppawns & WHITE_SQUARES)/2
+                
+        else: s =   bitLength(pawns & BLACK_SQUARES) \
+                  + bitLength(oppawns & BLACK_SQUARES)/2
+                  
+        if color == WHITE:
+            score -= s
+        else: score += s
+    
+    # Avoid wasted moves
     
     if color == WHITE:
         if bishops & bitPosArray[B5] and arBoard[C6] == EMPTY and \
@@ -499,7 +521,6 @@ def evalBishops (board):
         if bishops & bitPosArray[G5] and arBoard[F6] == EMPTY and \
                 oppawns & bitPosArray[F7] and oppawns & bitPosArray[G7]:
             score -= 15
-        return score
     
     else:
         if bishops & bitPosArray[B4] and arBoard[C3] == EMPTY and \
@@ -508,4 +529,72 @@ def evalBishops (board):
         if bishops & bitPosArray[G4] and arBoard[F3] == EMPTY and \
                 oppawns & bitPosArray[F2] and oppawns & bitPosArray[G2]:
             score -= 15
-        return score
+    
+    return score
+
+def evalTrappedBishops (board):
+    """ Check for bishops trapped at A2/H2/A7/H7 """
+    
+    opcolor = board.color
+    color = 1-opcolor
+    opbishops = board.boards[opcolor][BISHOP]
+    pawns = board.boards[color][PAWN]
+    score = 0
+    
+    # Don't waste time
+    if not opbishops:
+        return 0
+    
+    if color == WHITE:
+        if opbishops & bitPosArray[A2] and pawns & bitPosArray[B3]:
+            see = staticExchangeEvaluate(board, newMove(A2,B3))
+            if see < 0:
+                score -= see
+        if opbishops & bitPosArray[H2] and pawns & bitPosArray[G3]:
+            see = staticExchangeEvaluate(board, newMove(H2,G3))
+            if see < 0:
+                score -= see
+    
+    else:
+        if opbishops & bitPosArray[A7] and pawns & bitPosArray[B6]:
+            see = staticExchangeEvaluate(board, newMove(A7,B6))
+            if see < 0:
+                score += see
+        if opbishops & bitPosArray[H7] and pawns & bitPosArray[G6]:
+            see = staticExchangeEvaluate(board, newMove(H7,G6))
+            if see < 0:
+                score += see
+
+    
+    return score
+
+def evalRooks (board, phase):
+    """ rooks on open/half-open files """
+
+    opcolor = board.color
+    color = 1-opcolor
+    boards = board.boards[color]
+    rooks = boards[ROOK]
+    
+    if not rooks:
+        return 0
+    
+    opboards = board.boards[opcolor]
+    opking = board.kings[opcolor]
+    
+    score = 0
+    
+    for cord in iterBits(rooks):
+        file = cord & 7
+        if phase < 7:
+            if not boards[PAWN] & fileBits[file]:
+                if file == 5 and opking & 7 >= 4:
+                    score += 40
+                score += 5
+                if not boards[PAWN] & fileBits[file]:
+                    score += 6
+    
+    if color == BLACK:
+        score = -score
+    
+    return score
