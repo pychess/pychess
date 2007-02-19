@@ -6,7 +6,6 @@
 
 from pychess.Utils.const import *
 from ldata import *
-from sys import maxint
 from LBoard import LBoard
 from lsort import staticExchangeEvaluate
 from lmove import newMove

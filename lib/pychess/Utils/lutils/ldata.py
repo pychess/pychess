@@ -1,6 +1,5 @@
 from pychess.Utils.const import *
 from bitboard import *
-from sys import maxint
 
 ################################################################################
 ################################################################################
@@ -13,9 +12,11 @@ KNIGHT_VALUE = 300
 BISHOP_VALUE = 330
 ROOK_VALUE = 500
 QUEEN_VALUE = 900
-KING_VALUE = maxint
+KING_VALUE = 2000
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
 				BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
+
+MATE_VALUE = MAXVAL = 99999
 
 # How many points does it give to have the piece standing i cords from the
 # opponent king

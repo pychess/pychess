@@ -93,7 +93,7 @@ class Board:
         
         if flag in (KNIGHT_PROMOTION, BISHOP_PROMOTION,
                     ROOK_PROMOTION, QUEEN_PROMOTION):
-            newBoard[cord1] = Piece(self.color, flag-3)
+            newBoard[cord1] = Piece(self.color, PROMOTE_PIECE[flag])
         
         elif flag == ENPASSANT:
             newBoard[Cord(cord1.x, cord0.y)] = None

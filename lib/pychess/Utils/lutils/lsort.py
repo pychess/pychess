@@ -58,8 +58,6 @@ def sortCaptures (board, moves):
     moves.sort(key=f, reverse=True)
     return moves
 
-from sys import maxint
-
 def getMoveValue (board, table, ply, move):
     """ Sort criteria is as follows.
         1.  The move from the hash table
@@ -97,8 +95,8 @@ def getMoveValue (board, table, ply, move):
     if table.isKiller(ply, move):
         return 1000
     
-    # King tropism - a move bringing us nearer to the enemy king, is probably a
-    # good move
+    # King tropism - a move that brings us nearer to the enemy king, is probably
+    # a good move
     opking = board.kings[opcolor]
     return 10-distance[tcord][opking]
 
