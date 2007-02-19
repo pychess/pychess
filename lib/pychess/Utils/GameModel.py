@@ -228,12 +228,12 @@ class GameModel (GObject):
             newBoard = self.boards[-1].move(move)
             self.boards.append(newBoard)
             self.moves.append(move)
+            self.status, self.reason = getStatus(self.boards[-1])
             self.emit("game_changed")
             
             if self.timemodel:
                 self.timemodel.setMovingColor(1-curColor)
             
-            self.status, self.reason = getStatus(self.boards[-1])
             if self.status != RUNNING:
                 self.emit("game_ended", self.reason)
                 self.applyingMoveLock.release()

@@ -566,7 +566,7 @@ def validate (board, move):
     
     # If promotion move, piece must be pawn 
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
-                KNIGHT_PROMOTION, ENPASSANT) and piece != PAWN:
+                KNIGHT_PROMOTION, ENPASSANT) and fpiece != PAWN:
         return False
     
     # If enpassant, then the enpassant square must be correct 
@@ -574,16 +574,16 @@ def validate (board, move):
         return False
     
     # If castling, then make sure its the king 
-    if flag in (KING_CASTLE, QUEEN_CASTLE) and piece != KING:
+    if flag in (KING_CASTLE, QUEEN_CASTLE) and fpiece != KING:
         return False 
     
     blocker = board.blocker
     tpiece = board.arBoard[tcord]
     
     # Pawn moves need to be handled specially  
-    if piece == PAWN:
+    if fpiece == PAWN:
         if flag == ENPASSANT:
-            enemies = board.friends[1-color] | bitPosArray[board.ep]
+            enemies = board.friends[1-color] | bitPosArray[board.enpassant]
         else: enemies = board.friends[1-color]
         if color == WHITE:
             if not moveArray[PAWN][fcord] & bitPosArray[tcord] & enemies and \
@@ -592,44 +592,48 @@ def validate (board, move):
                not fromToRay[fcord][tcord] & blocker):
                 return False
         else:
-            if not moveArray[PAWN][fcord] & bitPosArray[tcord] & enemies and \
+            if not moveArray[BPAWN][fcord] & bitPosArray[tcord] & enemies and \
                not (tcord - fcord == 8 and tpiece == EMPTY) and \
                not (tcord - fcord == 16 and fcord >> 3 == 6 and \
                not fromToRay[fcord][tcord] & blocker):
                 return False
-
+    
     # King moves are also special, especially castling  
-    elif piece == KING:
+    elif fpiece == KING:
         if color == WHITE:
-            if not moveArray[piece][fcord] & bitPosArray[tcord] and \
+            if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
                \
                not (fcord == E1 and tcord == G1 and flag == KING_CASTLE and \
                not fromToRay[E1][G1] & blocker and \
-               not isAttacked(E1,BLACK) and not isAttacked(F1,BLACK)) and \
+               not isAttacked (board, E1, BLACK) and \
+               not isAttacked (board, F1, BLACK)) and \
                \
                not (fcord == E1 and tcord == C1 and flag == QUEEN_CASTLE and \
                not fromToRay[E1][B1] & blocker and \
-               not isAttacked (E1,BLACK) and not isAttacked(D1,BLACK)):
+               not isAttacked (board, E1, BLACK) and \
+               not isAttacked (board, D1, BLACK)):
                 return False
         else:
-            if not moveArray[piece][fcord] & bitPosArray[tcord] and \
+            if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
                \
                not (fcord == E8 and tcord == G8 and flag == KING_CASTLE and \
                not fromToRay[E8][G8] & blocker and \
-               not isAttacked(E8,WHITE) and not isAttacked(F8,WHITE)) and \
+               not isAttacked (board, E8, WHITE) and \
+               not isAttacked (board, F8, WHITE)) and \
                \
                not (fcord == E8 and tcord == C8 and flag == QUEEN_CASTLE and \
                not fromToRay[E8][B8] & blocker and \
-               not isAttacked (E8,WHITE) and not isAttacked(D8,WHITE)):
+               not isAttacked (board, E8, WHITE) and \
+               not isAttacked (board, D8, WHITE)):
                 return False
     
     # Other pieces are more easy
-    else :
-        if not moveArray[piece][fcord] & bitPosArray[tcord]:
+    else:
+        if not moveArray[fpiece][fcord] & bitPosArray[tcord]:
             return False
     
     # If there is a blocker on the path from fcord to tcord, illegal move  
-    if sliders [piece]:
+    if sliders [fpiece]:
         if clearBit(fromToRay[fcord][tcord], tcord) & blocker:
             return False
     

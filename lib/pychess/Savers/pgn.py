@@ -92,6 +92,10 @@ def load (file):
         
         else:
             inTags = False
+            if not files:
+                # In rare cases there might not be any tags at all. It's not
+                # legal, but we support it anyways.
+                files.append(["",""])
             files[-1][1] += line
     
     return PGNFile (files)

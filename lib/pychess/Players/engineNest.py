@@ -249,8 +249,8 @@ class EngineDiscoverer (GObject):
             if protocol == "uci":
                 analyzers.append(engine)
             elif protocol == "cecp":
-                for feature in self.dom.getElementsByTagName("feature"):
-                    if feature.getAttribute("name") == "analyze":
+                for feature in engine.getElementsByTagName("feature"):
+                    if feature.getAttribute("command") == "analyze":
                         if feature.getAttribute("supports") == "true":
                             analyzers.append(engine)
                         break

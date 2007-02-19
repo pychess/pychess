@@ -61,8 +61,10 @@ class Sidepanel:
             for move, wins, draws, loses in self.openings:
                 games = wins+draws+loses
                 if not games: continue
-                wins,draws,loses = map(lambda x: x/float(games), (wins,draws,loses))
+                wins, draws, loses = \
+                        map(lambda x: x/float(games), (wins, draws, loses))
                 self.store.append ([move, str(games), (wins,draws,loses)])
+                
         gobject.idle_add(helper)
 
     def selection_changed (self, widget):

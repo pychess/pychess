@@ -88,7 +88,7 @@ class Sidepanel:
             shown = self.board.shown + 1
             w = self.right
         else: return
-        row = (model.lowply-shown) / 2
+        row = (self.board.model.lowply-shown) / 2
         def todo():
             w.set_cursor((row,))
             w.grab_focus()
