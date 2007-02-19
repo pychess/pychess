@@ -32,7 +32,7 @@ class Move:
             
             if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
                 if promotion == None: promotion = QUEEN
-                flag = promotion + 3
+                flag = FLAG_PIECE(promotion)
                 
             elif board[self.cord0].piece == KING:
                 if self.cord0.x - self.cord1.x == 2:
@@ -45,9 +45,6 @@ class Move:
                     self.cord0.x != self.cord1.x and \
                     self.cord0.y != self.cord1.y:
                 flag = ENPASSANT
-                
-            elif board[self.cord1] != None:
-                flag = CAPTURE
             
             self.move = lmove.newMove(self.cord0.cord, self.cord1.cord, flag)
             
@@ -59,7 +56,7 @@ class Move:
         flag = lmove.FLAG(self.move)
         if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                     BISHOP_PROMOTION, KNIGHT_PROMOTION):
-            return flag -3
+            return PROMOTE_PIECE(flag)
         return None
     promotion = property(_get_promotion)
     

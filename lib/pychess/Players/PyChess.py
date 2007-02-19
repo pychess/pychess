@@ -198,9 +198,9 @@ while True:
         
     elif lines[0] == "sd":
         sd = int(lines[1])
-        if sd < 4: sd = 1
-        if 4 <= sd <= 7: sd = 2
-        if 7 < sd: sd = 3
+        if sd >= 7: sd = 3
+        elif sd >= 4: sd = 2
+        else: sd = 1
         
     elif lines[0] == "level":
         moves = int(lines[1])

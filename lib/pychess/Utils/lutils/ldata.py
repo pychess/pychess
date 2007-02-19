@@ -14,8 +14,8 @@ BISHOP_VALUE = 330
 ROOK_VALUE = 500
 QUEEN_VALUE = 900
 KING_VALUE = maxint
-PIECE_VALUES = (0, PAWN_VALUE, KNIGHT_VALUE,
-				BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE)
+PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
+				BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
 # How many points does it give to have the piece standing i cords from the
 # opponent king
@@ -66,11 +66,32 @@ pawnScoreBoard = (
     0,  0,  0,  0,  0,  0,  0,  0)
 )
 
+outpost = (
+   (0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 1, 1, 1, 1, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 1, 1, 1, 1, 0, 0,
+    0, 0, 0, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0),
+    
+   (0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 1, 1, 0, 0, 0,
+    0, 0, 1, 1, 1, 1, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 1, 1, 1, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0)
+)
+
 d2e2    = ( 0x0018000000000000, 0x0000000000001800 )
 brank7  = ( 0x000000000000FF00, 0x00FF000000000000 )
 brank8  = ( 0x00000000000000FF, 0xFF00000000000000 )
 brank67 = ( 0x0000000000FFFF00, 0x00FFFF0000000000 )
 brank58 = ( 0x00000000FFFFFFFF, 0xFFFFFFFF00000000 )
+brank48 = ( 0x000000FFFFFFFFFF, 0xFFFFFFFFFF000000 )
 
 # Penalties if the file is half-open (i.e. no enemy pawns on it)
 isolani_weaker = (-22, -24, -26, -28, -28, -26, -24, -22)
@@ -280,6 +301,26 @@ sbox = 0x00003C3C3C3C0000
 # - - - - - - - -
 lbox = 0x007E7E7E7E7E7E00
 
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+# - - - - - # # #
+right = fileBits[5] | fileBits[6] | fileBits[7]
+
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+# # # # - - - - -
+left = fileBits[0] | fileBits[1] | fileBits[2]
+
 ################################################################################
 #  The IsolaniMask variable is used to determine if a pawn is an isolani.      #
 #  This mask is basically all 1's on files beside the file the pawn is on.     #
@@ -309,8 +350,15 @@ dir = [
     [ -10, -1, 1, 10 ],
     [ -11, -10, -9, -1, 1, 9, 10, 11 ],
     [ -11, -10, -9, -1, 1, 9, 10, 11 ],
-    [ -9, -11 ]
+    [ -9, -11 ],
+    
+    # Following are for front and back walls. Will be removed from list after
+    # the loop
+    [ 9, 10, 11],
+    [ -9, -10, -11]
 ]
+
+sliders += [False, False]
 
 map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -327,9 +375,9 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-moveArray = [[0]*64 for i in range(8)] # moveArray[8][64]
+moveArray = [[0]*64 for i in range(len(dir))] # moveArray[8][64]
 
-for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
+for piece in range(1,len(dir)):
     for fcord in range(120):
         f = map[fcord]
         if f == -1:
@@ -352,7 +400,12 @@ for piece in PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN:
                 	# value once again
                     break
         moveArray[piece][f] = b
-        
+
+frontWall = (moveArray[8], moveArray[9])
+del moveArray[9]; del moveArray[8]
+del dir[9]; del dir[8]
+del sliders[9]; del sliders[8]
+
 ################################################################################
 #  For each square, there are 8 rays.  The first 4 rays are diagonals          #
 #  for the bishops and the next 4  are file/rank for the rooks.                #
@@ -425,7 +478,7 @@ for cord in xrange(64):
         #  If file is not left most
         passedPawnMask[WHITE][cord] |= rays[cord-1][7]
         passedPawnMask[BLACK][cord] |= rays[cord-1][4]
-    elif cord & 7 != 7:
+    if cord & 7 != 7:
         #  If file is not right most
         passedPawnMask[WHITE][cord] |= rays[cord+1][7]
         passedPawnMask[BLACK][cord] |= rays[cord+1][4]
