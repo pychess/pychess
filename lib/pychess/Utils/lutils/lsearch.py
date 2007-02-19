@@ -4,18 +4,17 @@ from pychess.Utils.const import *
 from leval import evaluateComplete
 from lsort import sortCaptures, sortMoves
 from lmove import toSAN
+from ldata import MATE_VALUE
 from TranspositionTable import TranspositionTable
 import ldraw
 
-from sys import maxint
-
-table = TranspositionTable(5000)
+table = TranspositionTable(50000)
 searching = False
 movesearches = 0
 nodes = 0
 last = 0
 
-def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
+def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
         Based on moves found by the validator.py findmoves2 function and
         evaluated by eval.py.
@@ -59,14 +58,6 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
         return [], 0
     
     ############################################################################
-    # Go for quiescent search                                                  #
-    ############################################################################
-    
-    if depth <= 0:
-        last = 0
-        return quiescent(board, alpha, beta)
-    
-    ############################################################################
     # Break itereation if interupted                                           #
     ############################################################################
     
@@ -75,14 +66,28 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
         return [], evaluateComplete(board, board.color)
     
     ############################################################################
+    # Go for quiescent search                                                  #
+    ############################################################################
+    
+    isCheck = board.isChecked()
+    
+    if depth <= 0:
+        if isCheck:
+            depth += 1
+        else:
+            last = 0
+            return quiescent(board, alpha, beta, ply)
+    
+    ############################################################################
     # Find and sort moves                                                      #
     ############################################################################
     
     movesearches += 1
     
-    if board.isChecked():
+    if isCheck:
         moves = [m for m in genCheckEvasions(board)]
-    else: moves = sortMoves(board, table, ply, [m for m in genAllMoves(board)])
+    else: moves = [m for m in genAllMoves(board)]
+    moves = sortMoves(board, table, ply, moves)
     
     anyMoves = False
     
@@ -94,9 +99,10 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
         nodes += 1
         
         board.applyMove(move)
-        if board.opIsChecked():
-            board.popMove()
-            continue
+        if not isCheck:
+            if board.opIsChecked():
+                board.popMove()
+                continue
         
         anyMoves = True
         
@@ -114,7 +120,7 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
         
         if val > alpha:
             if val >= beta:
-                table.record (board.hash, move, beta, hashfBETA)
+                table.record (board.hash, move, beta, hashfBETA, ply)
                 if board.arBoard[move&63] == EMPTY:
                     table.addKiller (ply, move)
                 last = 2
@@ -131,7 +137,7 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
     
     if amove:
         last = 3
-        table.record (board, amove[0], alpha, hashf)
+        table.record (board, amove[0], alpha, hashf, ply)
         if board.arBoard[amove[0]&63] == EMPTY:
             table.addKiller (ply, amove[0])
         return amove, alpha
@@ -142,20 +148,32 @@ def alphaBeta (board, depth, alpha=-maxint, beta=maxint, ply=0):
 
     # If no moves were found, this must be a mate or stalemate
     last = 5
-    if board.isChecked():
-        return [], 9999
+    if isCheck:
+        return [], -MATE_VALUE+ply-2
     
     last = 6
     return [], 0
 
-def quiescent (board, alpha, beta):
+def quiescent (board, alpha, beta, ply):
+    
+    if ldraw.test(board):
+        return [], 0
+    
+    isCheck = board.isChecked()
     
     value = evaluateComplete(board, board.color)
     
-    if value >= beta:
+    if value >= beta and not isCheck:
         return [], beta
     if value > alpha:
         alpha = value
+    
+    if isCheck:
+        for move in genCheckEvasions(board):
+            if value >= beta:
+                return [], beta
+            return [], alpha
+        return [], -MATE_VALUE+ply-2
     
     amove = []
     
@@ -168,7 +186,7 @@ def quiescent (board, alpha, beta):
             board.popMove()
             continue
         
-        mvs, val = quiescent(board, -beta, -alpha)
+        mvs, val = quiescent(board, -beta, -alpha, ply+1)
         val = -val
         
         board.popMove()

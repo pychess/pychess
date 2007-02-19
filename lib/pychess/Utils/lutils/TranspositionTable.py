@@ -1,5 +1,6 @@
 from UserDict import UserDict
 from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, WHITE
+from ldata import MATE_VALUE
 from pychess.System.LimitedDict import LimitedDict
 
 class TranspositionTable (UserDict):
@@ -34,7 +35,11 @@ class TranspositionTable (UserDict):
         if hashf == hashfBETA and score >= beta:
             return move, beta, hashf
     
-    def record (self, hash, move, score, hashf):
+    def record (self, hash, move, score, hashf, ply):
+        #if score > MATE_VALUE-256 or score < -MATE_VALUE+256:
+        #    if score > 0:
+        #        score += ply
+        #    else: score -= ply
         self[hash] = (move, score, hashf)
     
     def addKiller (self, ply, move):
