@@ -2,7 +2,7 @@ import sys
 from lutils.LBoard import LBoard
 from lutils.LBoard import FEN_START
 from lutils.bitboard import iterBits
-from lutils.lmove import RANK, FILE, FLAG
+from lutils.lmove import RANK, FILE, FLAG, PROMOTE_PIECE
 from Piece import Piece
 from Cord import Cord
 from const import *
