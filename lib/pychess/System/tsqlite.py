@@ -15,20 +15,16 @@ or on many packagesystems perhaps under the name python-sqlite2
 import Queue, time, thread, os
 from threading import Thread
 
-_threadex = thread.allocate_lock()
-qthreads = 0
 sqlqueue = Queue.Queue()
 
 SQL_CMD, END_CMD = range(2)
 
 class DbWrapper(Thread):
-    def __init__(self, path, nr):
+    def __init__(self, path):
         Thread.__init__(self)
         self.path = path
-        self.nr = nr
         
     def run(self):
-        global qthreads
         con = sqlite.connect(self.path)
         cur = con.cursor()
         while True:
@@ -49,26 +45,19 @@ class DbWrapper(Thread):
                 if commitneeded: con.commit()
                 resultqueue.put(res)
             else:
-                _threadex.acquire()
-                qthreads -= 1
-                _threadex.release()
                 # allow other threads to stop
                 sqlqueue.put((cmd, queries, resultqueue))
                 resultqueue.put(None)
                 break
 
 def connect (path):
-    global qthreads
-    _threadex.acquire()
-    qthreads += 1
-    _threadex.release()
-    wrap = DbWrapper(path, qthreads)
+    wrap = DbWrapper(path)
     wrap.start()
 
 def close ():
-    sqlqueue.put((END_CMD, [], Queue.Queue()))
-    # leep until all threads are stopped
-    while qthreads > 0: time.sleep(0.1)
+    resultqueue = Queue.Queue()
+    sqlqueue.put((END_CMD, [], resultqueue))
+    resultqueue.get()
 
 def execSQL (*queries):
     resultqueue = Queue.Queue()
