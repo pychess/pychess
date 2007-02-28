@@ -29,6 +29,7 @@
 
       <child>
 	<widget class="GtkMenuBar" id="menubar1">
+	  <property name="visible">True</property>
 	  <property name="pack_direction">GTK_PACK_DIRECTION_LTR</property>
 	  <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
 	  <signal name="drag_data_received" handler="on_drag_received" last_modification_time="Wed, 15 Nov 2006 15:16:27 GMT"/>
@@ -204,7 +205,6 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="action1">
 	      <property name="visible">True</property>
-	      <property name="sensitive">False</property>
 	      <property name="label" translatable="yes">_Actions</property>
 	      <property name="use_underline">True</property>
 
@@ -214,6 +214,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="call_flag">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Call Flag</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_call_flag_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
@@ -223,6 +224,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="draw">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Draw</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_draw_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
@@ -232,6 +234,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="resign">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Resign</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_resign_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
@@ -247,6 +250,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="force_to_move">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Force to move</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_force_to_move_activate" last_modification_time="Tue, 03 Oct 2006 18:38:31 GMT"/>
@@ -273,7 +277,6 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="vis1">
 	      <property name="visible">True</property>
-	      <property name="sensitive">False</property>
 	      <property name="label" translatable="yes">_View</property>
 	      <property name="use_underline">True</property>
 
@@ -283,6 +286,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="rotate_board1">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Rotate Board</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
@@ -304,9 +308,10 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="side_panel1">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Side Panel</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">True</property>
+		      <property name="active">False</property>
 		      <signal name="activate" handler="on_side_panel1_activate" last_modification_time="Thu, 06 Jul 2006 13:25:17 GMT"/>
 		      <accelerator key="i" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
@@ -332,6 +337,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="show_cords">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">Show _cords</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
@@ -342,6 +348,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="hint_mode">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Hint mode</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
@@ -353,6 +360,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="spy_mode">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">Sp_y mode</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>

@@ -104,8 +104,10 @@ class GladeHandlers:
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
     def on_game_started (handler, gmwidg, gamemodel):
-        for widget in ("save_game1", "save_game_as1", "properties1",
-                       "close1", "action1", "vis1"):
+        for widget in ("save_game1", "save_game_as1", "properties1", "close1",
+                       "call_flag", "draw", "resign", "force_to_move",
+                       "rotate_board1", "side_panel1", "show_cords",
+                       "hint_mode", "spy_mode"):
             window[widget].set_property('sensitive', True)
         
         gmwidg.widgets["sidepanel"].connect("hide", \
@@ -171,8 +173,10 @@ class GladeHandlers:
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
-            for widget in ("save_game1", "save_game_as1", "properties1",
-                           "close1", "action1", "vis1"):
+            for widget in ("save_game1", "save_game_as1", "properties1", "close1",
+                       "call_flag", "draw", "resign", "force_to_move",
+                       "rotate_board1", "side_panel1", "show_cords",
+                       "hint_mode", "spy_mode"):
                 window[widget].set_property('sensitive', False)
     
     #          Drag 'n' Drop          #
