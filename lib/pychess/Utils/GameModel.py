@@ -173,7 +173,7 @@ class GameModel (GObject):
             
             for player in self.players:
                 player.setBoard(self)
-            for spectactor in self.spectactors:
+            for spectactor in self.spectactors.values():
                 spectactor.setBoard(self)
             
             self.start()
@@ -241,7 +241,7 @@ class GameModel (GObject):
                 self.kill()
                 break
             
-            for spectactor in self.spectactors:
+            for spectactor in self.spectactors.values():
                 print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)
             
@@ -255,7 +255,7 @@ class GameModel (GObject):
             player.pause()
         
         try:
-            for spectactor in self.spectactors:
+            for spectactor in self.spectactors.values():
                 spectactor.pause()
         except NotImplementedError:
             pass
@@ -274,7 +274,7 @@ class GameModel (GObject):
         for player in self.players:
             player.kill()
             
-        for spectactor in self.spectactors:
+        for spectactor in self.spectactors.values():
             spectactor.kill()
         
         if self.timemodel:
@@ -298,7 +298,7 @@ class GameModel (GObject):
         del self.boards[-2:]
         del self.moves[-2:]
         
-        for player in self.players + self.spectactors:
+        for player in self.players + self.spectactors.values():
             try:
                 player.undo()
             except NotImplementedError:

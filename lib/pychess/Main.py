@@ -46,6 +46,8 @@ def setMode (gmwidg, mode, activated):
     
     gamemodel = gameDic[gmwidg]
     board = gmwidg.widgets["board"]
+    
+    if not mode in gamemodel.spectactors: return
     analyzer = gamemodel.spectactors[mode]
     
     if mode == HINT:
@@ -62,10 +64,12 @@ def setMode (gmwidg, mode, activated):
         # This is a kludge using pythons ability to asign attributes to an
         # object, even if those attributes are nowhere mentioned in the objects
         # class. So don't go looking for it ;)
+        # Code is used to save our connection ids, enabling us to later dis-
+        # connect
         if not hasattr (gamemodel, "anacons"):
-            gamemodel.anacons = [[],[]]
-        if not hasattr (gamemodel, "hiscons"):
-            gamemodel.hiscons = []
+            gamemodel.anacons = {HINT:[], SPY:[]}
+        if not hasattr (gamemodel, "chacons"):
+            gamemodel.chacons = []
         
         def on_analyze (analyzer, moves):
             if gamemodel.curplayer.__type__ == LOCAL and moves:
@@ -77,7 +81,7 @@ def setMode (gmwidg, mode, activated):
         
         gamemodel.anacons[mode].append(
                 analyzer.connect("analyze", on_analyze))
-        gamemodel.hiscons.append(
+        gamemodel.chacons.append(
                 gamemodel.connect("game_changed", on_game_change))
     
     else:
@@ -85,10 +89,10 @@ def setMode (gmwidg, mode, activated):
             for conid in gamemodel.anacons[mode]:
                 analyzer.disconnect(conid)
             del gamemodel.anacons[mode][:]
-        if hasattr (gamemodel, "hiscons"):
-            for conid in gamemodel.hiscons:
+        if hasattr (gamemodel, "chacons"):
+            for conid in gamemodel.chacons:
                 gamemodel.disconnect(conid)
-            del gamemodel.hiscons[:]
+            del gamemodel.chacons[:]
         set_arrow (None)
 
 class GladeHandlers:
@@ -109,6 +113,10 @@ class GladeHandlers:
                        "rotate_board1", "side_panel1", "show_cords",
                        "hint_mode", "spy_mode"):
             window[widget].set_property('sensitive', True)
+        
+        # Disable hint or spy menu, if they are disabled in preferences
+        window["hint_mode"].set_sensitive(myconf.get("analyzer_check"))
+        window["spy_mode"].set_sensitive(myconf.get("inv_analyzer_check"))
         
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
@@ -173,10 +181,11 @@ class GladeHandlers:
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
-            for widget in ("save_game1", "save_game_as1", "properties1", "close1",
-                       "call_flag", "draw", "resign", "force_to_move",
-                       "rotate_board1", "side_panel1", "show_cords",
-                       "hint_mode", "spy_mode"):
+            for widget in ("save_game1", "save_game_as1", "properties1",
+                           "close1",
+                           "call_flag", "draw", "resign", "force_to_move",
+                           "rotate_board1", "side_panel1", "show_cords",
+                           "hint_mode", "spy_mode"):
                 window[widget].set_property('sensitive', False)
     
     #          Drag 'n' Drop          #
