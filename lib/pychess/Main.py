@@ -302,7 +302,7 @@ class GladeHandlers:
     #          Settings menu          #
     
     def on_preferences_activate (widget):
-        preferencesDialog.run()
+        preferencesDialog.run(window)
     
     #          Help menu          #
     

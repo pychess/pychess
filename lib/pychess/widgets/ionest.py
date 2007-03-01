@@ -117,7 +117,7 @@ sourceview = SourceView(buffer)
 widgets["scrolledwindow6"].add(sourceview)
 sourceview.show()
 
-# Pgn does not allow tabs
+# Pgn format does not allow tabulator
 sourceview.set_insert_spaces_instead_of_tabs(True)
 sourceview.set_wrap_mode(gtk.WRAP_WORD)
 
@@ -304,10 +304,10 @@ def ensureNewGameDialogReady ():
         except gobject.GError:
             image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
         items += [(image, level)]
-
+    
     for combo in (widgets["whiteDifficulty"], widgets["blackDifficulty"]):
         createCombo(combo, items)
-
+    
     image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
     items = [(image, _("Human Being"))]
     image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
@@ -355,7 +355,7 @@ def runNewGameDialog ():
     res = widgets["newgamedialog"].run()
     widgets["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
-
+    
     # Init time model
     
     if widgets["useTimeCB"].get_active():
@@ -406,17 +406,24 @@ def runNewGameDialog ():
     gmwidg.setTabText("%s vs %s" % (repr(players[0]), repr(players[1])))
     
     # Initing analyze engines
-    
+
     anaengines = discoverer.getAnalyzers()
     engine0 = engine1 = random.choice(anaengines)
+
     
-    hintanalyzer = discoverer.initEngine(engine0, WHITE)
-    hintanalyzer.analyze(inverse=False)
-    log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
+    if myconf.get("analyzer_check"):
+        engine = discoverer.getEngineByMd5(myconf.get("ana_combobox"))
+        if not engine: engine = discoverer.getAnalyzers()[0]
+        hintanalyzer = discoverer.initEngine(engine, WHITE)
+        hintanalyzer.analyze(inverse=False)
+        log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
-    spyanalyzer = discoverer.initEngine(engine1, WHITE)
-    spyanalyzer.analyze(inverse=True)
-    log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
+    if myconf.get("inv_analyzer_check"):
+        engine = discoverer.getEngineByMd5(myconf.get("inv_ana_combobox"))
+        if not engine: engine = discoverer.getAnalyzers()[0]
+        spyanalyzer = discoverer.initEngine(engine, WHITE)
+        spyanalyzer.analyze(inverse=True)
+        log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
     # Setting game
     

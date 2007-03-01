@@ -1,5 +1,6 @@
 from ldata import *
 from LBoard import LBoard
+from validator import validateMove
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -103,11 +104,12 @@ def listToMoves (board, movstrs, type=None, testvalidate=False):
             elif type == LAN:
                 move = parseLAN (board, mstr)
         except ParsingError:
+            # We expect a ParsingError to be raised when parsing "old" lines
+            # from analyzing engines, which haven't yet noticed their new tasks
             break
         
         if testvalidate:
-            from lmovegen import validate
-            if not validate (board, move):
+            if not validateMove (board, move):
                 break
         
         moves.append(move)

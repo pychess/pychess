@@ -240,7 +240,7 @@ class GameModel (GObject):
                 # FIXME: It would be nicer if we told the engines they had lost
                 self.kill()
                 break
-                
+            
             for spectactor in self.spectactors:
                 print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)

@@ -3,6 +3,7 @@
     therefore not as fast. """
 
 from lutils import lmovegen
+from lutils.validator import validateMove
 from lutils.lmove import FCORD, TCORD
 from Cord import Cord
 from Move import Move
@@ -53,4 +54,4 @@ def getStatus (board):
     return DRAW, DRAW_STALEMATE
 
 def validate (board, move):
-    return lmovegen.validate(board.board, move.move)
+    return validateMove (board.board, move.move)
