@@ -140,7 +140,7 @@ class CECPProtocol (Protocol):
             mvstrs = movre.findall(" ".join(parts[4:])+" ")
             
             moves = listToMoves (self.board, mvstrs, type=None, validate=True)
-            print reprColor[self.board.color], mvstrs, moves
+            
             if moves:
                 self.emit("analyze", moves)
             
