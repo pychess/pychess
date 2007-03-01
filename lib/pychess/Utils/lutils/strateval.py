@@ -158,7 +158,7 @@ def attack_type (model, phase):
             continue
         
         # If we also was able to attack that cord last time, we don't care
-        if validate(oldboard, newMove(FCORD(move), TCORD(ncap))):
+        if validateMove(oldboard, newMove(FCORD(move), TCORD(ncap))):
             continue
         
         # We will always attack first with the lowest valued piece.
