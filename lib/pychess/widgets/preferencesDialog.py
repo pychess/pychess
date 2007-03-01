@@ -5,22 +5,33 @@ from pychess.System import gstreamer
 from pychess.Utils.const import *
 
 firstRun = True
-def run():
+def run(widgets):
     global firstRun
     if firstRun:
-        initialize()
+        initialize(widgets)
         firstRun = False
     widgets["preferences"].show()
 
-def initialize():
-    
-    global widgets
-    class Widgets:
-        def __init__ (self, glades):
-            self.widgets = glades
-        def __getitem__(self, key):
-            return self.widgets.get_widget(key)
-    widgets = Widgets(gtk.glade.XML(prefix("glade/preferences.glade")))
+def createCombo (combo, data):
+        ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        for icon, label in data:
+            ls.append([icon, label])
+        combo.clear()
+        
+        combo.set_model(ls)
+        crp = gtk.CellRendererPixbuf()
+        crp.set_property('xalign',0)
+        crp.set_property('xpad', 2)
+        combo.pack_start(crp, False)
+        combo.add_attribute(crp, 'pixbuf', 0)
+        
+        crt = gtk.CellRendererText()
+        crt.set_property('xalign',0)
+        crt.set_property('xpad', 4)
+        combo.pack_start(crt, True)
+        combo.add_attribute(crt, 'text', 1)
+
+def initialize(widgets):
     
     ############################################################################
     # Window initing                                                           #
@@ -49,29 +60,113 @@ def initialize():
     secondName = myconf.get("secondName")
     if not secondName:
         myconf.set("secondName", _("Guest"))
+        
+    ############################################################################
+    # Engine initing                                                           #
+    ############################################################################
+    
+    from pychess.Players.engineNest import EngineDiscoverer
+    engineDiscoverer = EngineDiscoverer().start()
+    
+        ########################################################################
+        # Put engines in trees and combos                                      #
+        ########################################################################
+    
+    engines = engineDiscoverer.getEngines()
+    allstore = gtk.ListStore(gtk.gdk.Pixbuf, str)
+    for engine in engines.values():
+        c = engineDiscoverer.getCountry(engine)
+        if c:
+            flag = "flags/%s.png" % c
+        else: flag = "flags/unknown.png"
+        flag_icon = gtk.gdk.pixbuf_new_from_file(prefix(flag))
+        allstore.append((flag_icon, engineDiscoverer.getName(engine)))
+    
+    tv = widgets["engines_treeview"]
+    tv.set_model(allstore)
+    tv.append_column(gtk.TreeViewColumn(
+            "Flag", gtk.CellRendererPixbuf(), pixbuf=0))
+    tv.append_column(gtk.TreeViewColumn(
+            "Name", gtk.CellRendererText(), text=1))
+    
+    analyzers = engineDiscoverer.getAnalyzers()
+    ana_data = []
+    invana_data = []
+    for engine in analyzers:
+        name = engineDiscoverer.getName(engine)
+        c = engineDiscoverer.getCountry(engine)
+        if c:
+            flag = "flags/%s.png" % c
+        else: flag = "flags/unknown.png"
+        flag_icon = gtk.gdk.pixbuf_new_from_file(prefix(flag))
+        ana_data.append((flag_icon, name))
+        invana_data.append((flag_icon, name))
+    
+    createCombo(widgets["ana_combobox"], ana_data)
+    createCombo(widgets["inv_ana_combobox"], invana_data)
+    
+        ########################################################################
+        # Save, load and make analyze combos active                            #
+        ########################################################################
+    
+    def on_analyzer_check_toggled (check):
+        widgets["analyzers_vbox"].set_sensitive(check.get_active())
+        widgets["hint_mode"].set_active(check.get_active())
+        widgets["hint_mode"].set_sensitive(check.get_active())
+    widgets["analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+    
+    def on_analyzer_check_toggled (check):
+        widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
+        widgets["spy_mode"].set_active(check.get_active())
+        widgets["spy_mode"].set_sensitive(check.get_active())
+    widgets["inv_analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+    
+        ########################################################################
+        # Put options in trees in add/edit dialog                              #
+        ########################################################################
+        
+    tv = widgets["optionview"]
+    tv.append_column(gtk.TreeViewColumn(
+        "Option", gtk.CellRendererText(), text=0))
+    tv.append_column(gtk.TreeViewColumn(
+        "Value", gtk.CellRendererText(), text=1))
+    
+    #widgets["add_engine_button"].connect("clicked", add)
+    def edit (button):
+        
+        iter = widgets["engines_treeview"].get_selection().get_selected()[1]
+        if iter: row = allstore.get_path(iter)[0]
+        else: return
+        
+        engine = engineDiscoverer.getEngineN(row)
+        optionstags = engine.getElementsByTagName("options")
+        if not optionstags:
+            widgets["engine_options_expander"].hide()
+        else:
+            widgets["engine_options_expander"].show()
+            widgets["engine_options_expander"].set_expanded(False)
+            
+            optionsstore = gtk.ListStore(str, str)
+            tv = widgets["optionview"]
+            tv.set_model(optionsstore)
+            
+            for option in optionstags[0].childNodes:
+                if option.nodeType != option.ELEMENT_NODE: continue
+                optionsstore.append( [option.getAttribute("name"),
+                                      option.getAttribute("default")] )
+            
+        widgets["engine_path_chooser"].set_title(_("Locate Engine"))
+        widgets["engine_path_chooser"].set_uri("file:///usr/bin/gnuchess")
+        
+        dialog = widgets["addconfig_engine"]
+        answer = dialog.run()
+        dialog.hide()
+    widgets["edit_engine_button"].connect("clicked", edit)
+    #widgets["add_engine_button"].connect("remove", remove)
     
     ############################################################################
     # Sound initing                                                            #
     ############################################################################
-    
-    def createCombo (combo, data):
-        ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-        for icon, label in data:
-            ls.append([icon, label])
-        combo.clear()
-        
-        combo.set_model(ls)
-        crp = gtk.CellRendererPixbuf()
-        crp.set_property('xalign',0)
-        crp.set_property('xpad', 2)
-        combo.pack_start(crp, False)
-        combo.add_attribute(crp, 'pixbuf', 0)
-        
-        crt = gtk.CellRendererText()
-        crt.set_property('xalign',0)
-        crt.set_property('xpad', 4)
-        combo.pack_start(crt, True)
-        combo.add_attribute(crt, 'text', 1)
     
     icons = ((_("No sound"), "audio-volume-muted", "audio-volume-muted"),
              (_("Beep"), "stock_bell", "audio-x-generic"), 
@@ -169,22 +264,51 @@ def initialize():
         "figuresInNotation", "hideTabs", "showClockAlways",
         "showLastMove", "animateMoves",
         "useSystemSounds",
+        
+        "analyzer_check", "inv_analyzer_check"
     ]
+    
     easyWidgets += ["soundcombo%d"%i for i in range (10)]
     
+    for combo in ("ana_combobox", "inv_ana_combobox"):
+
+        def get_value (combobox):
+            engine = engineDiscoverer.getAnalyzers()[combobox.get_active()]
+            md5s = engine.getElementsByTagName("md5")
+            if md5s:
+                return md5s[0].childNodes[0].data.strip()
+        
+        def set_value (combobox, value):
+            engine = engineDiscoverer.getEngineByMd5(value)
+            if not engine:
+                combobox.set_active(0)
+            else:
+                index = engineDiscoverer.getAnalyzers().index(engine)
+                combobox.set_active(index)
+        
+        easyWidgets.append( (combo, get_value, set_value) )
+        
     class ConnectionKeeper:
         def __init__ (self, key):
-            self.key = key
-            self.widget = widget = widgets[key]
-            self.get_value = getattr(widget, methodDict[type(widget)][0])
-            self.set_value = getattr(widget, methodDict[type(widget)][1])
+            
+            if type(key) in (tuple, list):
+                self.key, get_value, set_value = key
+                self.widget = widget = widgets[self.key]
+                self.get_value = lambda: get_value(self.widget)
+                self.set_value = lambda v: set_value(self.widget, v)
+            else:
+                self.key = key
+                self.widget = widget = widgets[self.key]
+                self.get_value = getattr(widget, methodDict[type(widget)][0])
+                self.set_value = getattr(widget, methodDict[type(widget)][1])
+            
             self.signal = methodDict[type(widget)][2]
             
-            self.set_value(myconf.get(key))
+            self.set_value(myconf.get(self.key))
             widget.connect(self.signal,
                 lambda *args: myconf.set(self.key, self.get_value()))
             myconf.notify_add(self.key,
                 lambda *args: self.set_value(myconf.get(self.key)))
-            
+    
     for key in easyWidgets:
         ConnectionKeeper(key)

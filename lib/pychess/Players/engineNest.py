@@ -41,8 +41,8 @@ class EngineDiscoverer (GObject):
         
         try:
             self.dom = minidom.parse( self.xmlpath )
-        except ExpatError:
-            self.dom = minidom.parseString( backup )
+        #except ExpatError:
+        #    self.dom = minidom.parseString( backup )
         except IOError:
             self.dom = minidom.parseString( backup )
             
@@ -66,6 +66,21 @@ class EngineDiscoverer (GObject):
         for key, value in args:
             element.setAttribute(key, value)
         return element
+    
+    def _createOrReturn (self, parrent, tagname):
+        tags = parrent.getElementsByTagName(tagname)
+        if not tags:
+            tag = self.dom.createElement(tagname)
+            parrent.appendChild(tag)
+            return tag
+        return tags[0]
+    
+    def _hasChildByTagName (self, parrent, tagname):
+        for c in parrent.childNodes:
+            if c.nodeType == c.ELEMENT_NODE and \
+               c.tagName == tagname:
+                return True
+        return False
     
     ############################################################################
     # Discover methods                                                         #
@@ -95,8 +110,13 @@ class EngineDiscoverer (GObject):
         return False
     
     def _handleUCIOptions (self, engine, options):
-        optnode = self.dom.createElement("uci-options")
+        optnode = self._createOrReturn(engine, "options")
+        used = dict([(child.getAttribute("name"),True) for child in \
+                optnode.childNodes if child.nodeType == child.ELEMENT_NODE])
+        
         for name, dic in options.iteritems():
+            if name in used: continue
+            
             type = dic["type"]
             del dic["type"]
             
@@ -108,6 +128,14 @@ class EngineDiscoverer (GObject):
             if type == "check":
                 node = self._createElement("check-option", args=args)
             elif type == "string":
+                if name == "UCI_EngineAbout":
+                    # I don't know why UCI puts about in the options, but we
+                    # still put it in the meta where it belongs
+                    meta = self._createOrReturn(engine, "meta")
+                    if not self._hasChildByTagName (meta, "about"):
+                        about = self._createElement("about", dic["default"])
+                        meta.appendChild(about)
+                    continue
                 node = self._createElement("string-option", args=args)
             elif type == "combo":
                 node = self._createElement("combo-option", args=args)
@@ -118,6 +146,7 @@ class EngineDiscoverer (GObject):
                 node = self._createElement("spin-option", args=args)
             elif type == "button":
                 node = self._createElement("button-option", args=args)
+            
             optnode.appendChild(node)
         
         engine.appendChild(optnode)
@@ -130,34 +159,52 @@ class EngineDiscoverer (GObject):
         e = ProtocolEngine ((attrToProtocol[protocol], path), WHITE)
         e._wait()
         
+        meta = self._createOrReturn(engine, "meta")
+        
         if protocol == "uci":
             e.proto.startGame()
-            
-            ids = self.dom.createElement("uci-ids")
+
             for key, value in e.proto.ids.iteritems():
-                args = (("name",key), ("value", value))
-                ids.appendChild(self._createElement("id",args=args))
-            engine.appendChild(ids)
+                if key == "name" and not self._hasChildByTagName(meta,"name"):
+                    meta.appendChild(self._createElement("name", value))
+                elif key == "author" and not self._hasChildByTagName(meta,"author"):
+                    meta.appendChild(self._createElement("author", value))
             
             self._handleUCIOptions (engine, e.proto.options)
         
         elif protocol == "cecp":
-            features = self.dom.createElement("cecp-features")
+            features = self._createOrReturn(engine, "cecp-features")
+            
+            used = dict ([(f.getAttribute("command"), True) for f in \
+                                    features.getElementsByTagName("feature")])
             
             for key, value in e.proto.features.iteritems():
+                if key in used: continue
                 command="depth" 
                 args = (("command",key),
                         ("supports", value and "true" or "false"))
                 node = self._createElement("feature",args=args)
                 features.appendChild(node)
             
-            engine.appendChild(features)
-            
-            # TODO: We still don't know if the engine supports "protover 2".
+            # TODO: We still don't know if the engine supports "protover 2" and
+            # some other "Try and fail" based features.
             # This is important for faster loadtimes and to know if an engine
             # supports loading
+            
+            if not self._hasChildByTagName(meta, "name"):
+                meta.appendChild( self._createElement("name", repr(e)) )
+            
+            if not self._hasChildByTagName(engine, "options"):
+                options = self.dom.createElement("options")
+                options.appendChild(self._createElement("check-option", \
+                                 args=(("name","Ponder"), ("default","false"))))
+                options.appendChild(self._createElement("check-option", \
+                                 args=(("name","Random"), ("default","false"))))
+                options.appendChild(self._createElement("spin-option", \
+                                 args=(("name","Depth"), ("min","1"),
+                                       ("max","-1"), ("default","false"))))
+                engine.appendChild(options)
         
-        engine.appendChild( self._createElement("name", repr(e)) )
         e.kill()
         
         self._engines[binname] = engine
@@ -175,12 +222,17 @@ class EngineDiscoverer (GObject):
     
     def start (self):
         thread.start_new(self._start, ())
+        return self
         
     def _start (self):
         toBeDiscovered = []
         
         for engine in self.dom.getElementsByTagName("engine"):
-        
+            
+            if not engine.hasAttribute("protocol") and \
+                   engine.hasAttribute("binname"):
+                continue
+            
             binname = engine.getAttribute("binname")
             path = self._findPath(binname)
             
@@ -257,6 +309,7 @@ class EngineDiscoverer (GObject):
         return analyzers
     
     def getEngines (self):
+        """ Returns {binname: enginexml} """
         if self.lock.locked():
             self.lock.acquire()
             self.lock.release()
@@ -265,8 +318,24 @@ class EngineDiscoverer (GObject):
     def getEngineN (self, index):
         return self.getEngines()[self.getEngines().keys()[index]]
     
+    def getEngineByMd5 (self, md5sum, list=[]):
+        if not list:
+            list = self.getEngines().values()
+        for engine in list:
+            md5s = engine.getElementsByTagName("md5")
+            if not md5s: continue
+            md5 = md5s[0]
+            if md5.childNodes[0].data.strip() == md5sum:
+                return engine
+    
     def getName (self, engine):
         return engine.getElementsByTagName("name")[0].childNodes[0].data.strip()
+    
+    def getCountry (self, engine):
+        c = engine.getElementsByTagName("country")
+        if c:
+            return c[0].childNodes[0].data.strip()
+        return None
     
     def initEngine (self, engine, color):
         protocol = engine.getAttribute("protocol")

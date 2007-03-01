@@ -1,5 +1,115 @@
+from lmove import *
+from pychess.Utils.const import *
+from bitboard import *
+from attack import *
+
+################################################################################
+#   Validate move                                                              #
+################################################################################
+
 def validateMove (board, move):
-    pass
+    
+    fcord = (move >> 6) & 63
+    
+    fpiece = board.arBoard[fcord]
+    
+    # Empty from square  
+    if fpiece == EMPTY:
+        return False
+    
+    color = board.color
+    friends = board.friends[color]
+    
+    # Piece is not right color  
+    if not bitPosArray[fcord] & friends:
+        return False
+    
+    tcord = move & 63
+    
+    # TO square is a friendly piece, so illegal move  
+    if bitPosArray[tcord] & board.friends[color]:
+        return False
+    
+    flag = move >> 12
+    
+    # If promotion move, piece must be pawn 
+    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
+                KNIGHT_PROMOTION, ENPASSANT) and fpiece != PAWN:
+        return False
+    
+    # If enpassant, then the enpassant square must be correct 
+    if flag == ENPASSANT and tcord != board.enpassant:
+        return False
+    
+    # If castling, then make sure its the king 
+    if flag in (KING_CASTLE, QUEEN_CASTLE) and fpiece != KING:
+        return False 
+    
+    blocker = board.blocker
+    tpiece = board.arBoard[tcord]
+    
+    # Pawn moves need to be handled specially  
+    if fpiece == PAWN:
+        if flag == ENPASSANT:
+            enemies = board.friends[1-color] | bitPosArray[board.enpassant]
+        else: enemies = board.friends[1-color]
+        if color == WHITE:
+            if not moveArray[PAWN][fcord] & bitPosArray[tcord] & enemies and \
+               not (tcord - fcord == 8 and tpiece == EMPTY) and \
+               not (tcord - fcord == 16 and fcord >> 3 == 1 and \
+               not fromToRay[fcord][tcord] & blocker):
+                return False
+        else:
+            if not moveArray[BPAWN][fcord] & bitPosArray[tcord] & enemies and \
+               not (tcord - fcord == -8 and tpiece == EMPTY) and \
+               not (tcord - fcord == -16 and fcord >> 3 == 6 and \
+               not fromToRay[fcord][tcord] & blocker):
+                return False
+    
+    # King moves are also special, especially castling  
+    elif fpiece == KING:
+        if color == WHITE:
+            if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
+               \
+               not (fcord == E1 and tcord == G1 and flag == KING_CASTLE and \
+               not fromToRay[E1][G1] & blocker and \
+               not isAttacked (board, E1, BLACK) and \
+               not isAttacked (board, F1, BLACK)) and \
+               \
+               not (fcord == E1 and tcord == C1 and flag == QUEEN_CASTLE and \
+               not fromToRay[E1][B1] & blocker and \
+               not isAttacked (board, E1, BLACK) and \
+               not isAttacked (board, D1, BLACK)):
+                return False
+        else:
+            if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
+               \
+               not (fcord == E8 and tcord == G8 and flag == KING_CASTLE and \
+               not fromToRay[E8][G8] & blocker and \
+               not isAttacked (board, E8, WHITE) and \
+               not isAttacked (board, F8, WHITE)) and \
+               \
+               not (fcord == E8 and tcord == C8 and flag == QUEEN_CASTLE and \
+               not fromToRay[E8][B8] & blocker and \
+               not isAttacked (board, E8, WHITE) and \
+               not isAttacked (board, D8, WHITE)):
+                return False
+    
+    # Other pieces are more easy
+    else:
+        if not moveArray[fpiece][fcord] & bitPosArray[tcord]:
+            return False
+    
+    # If there is a blocker on the path from fcord to tcord, illegal move  
+    if sliders [fpiece]:
+        if clearBit(fromToRay[fcord][tcord], tcord) & blocker:
+            return False
+    
+    return True
+    
+################################################################################
+#   Validate board                                                             #
+################################################################################
 
 def validateBoard (board):
     """ Check the board to make sure that its valid.  Some things to check are
@@ -7,8 +117,6 @@ def validateBoard (board):
         b.  Side not on the move must not be in check.
         c.  If en passant square is set, check it is possible.
         d.  Check if castling status are all correct. """
-    
-    int side, xside, sq;
     
     # You must place both a Black King and White King on the board
     if nbits (board.b[white][king]) != 1:
@@ -37,7 +145,7 @@ def validateBoard (board):
         return False
     
     if board.ep > -1:
-        sq = board.ep + (xside == white ? 8 : -8);
+        sq = board.ep + (xside == white and 8 or -8)
         if not BitPosArray[sq] & board.b[xside][pawn]:
             return False
     

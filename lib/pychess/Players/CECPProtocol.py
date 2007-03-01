@@ -137,9 +137,10 @@ class CECPProtocol (Protocol):
                 return
             
             board = self.board
-            moves = listToMoves (self.board, \
-               movre.findall(" ".join(parts[4:])+" "), type=None, validate=True)
+            mvstrs = movre.findall(" ".join(parts[4:])+" ")
             
+            moves = listToMoves (self.board, mvstrs, type=None, validate=True)
+            print reprColor[self.board.color], mvstrs, moves
             if moves:
                 self.emit("analyze", moves)
             
@@ -245,7 +246,7 @@ class CECPProtocol (Protocol):
             return
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.setColor(1-self.color)
+            self.board = self.board.setColor(1-self.board.color)
             self.printColor()
         
         if self.features["usermove"]:
