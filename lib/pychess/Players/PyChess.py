@@ -159,6 +159,7 @@ def go ():
                 if board.color == WHITE:
                     print "result", reprResult[WHITEWON]
                 else: print "result", reprResult[BLACKWON]
+            print "last:", lsearch.last
             return
         
         print "moves were:", " ".join(listToSan(board, mvs))

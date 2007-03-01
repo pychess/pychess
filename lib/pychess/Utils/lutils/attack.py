@@ -257,8 +257,8 @@ def defends (board, fcord, tcord):
     backupColor = board.color
     board.setColor(color)
     from lmove import newMove
-    from pychess.Utils.lutils.lmovegen import validate
-    islegal = validate(board, newMove(fcord, tcord))
+    from validator import validateMove
+    islegal = validateMove (board, newMove(fcord, tcord))
     board.setColor(backupColor)
     
     # Set board back

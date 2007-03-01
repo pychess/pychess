@@ -12,6 +12,7 @@ from lmove import *
 from lmovegen import *
 from lsort import staticExchangeEvaluate
 from ldata import *
+from validator import validateMove
 
 #
 # Functions can be of types:
