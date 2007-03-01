@@ -1,23 +1,22 @@
 import unittest
 
 from pychess.Utils.const import *
-from pychess.Utils.History import startBoard
-from pychess.Utils.eval import evaluateComplete
-
+from pychess.Utils.lutils.leval import evaluateComplete
+from pychess.Utils.lutils.leval import LBoard
 
 class EvalTestCase(unittest.TestCase):
     
-    def setUp(self):
-        self.board = startBoard()
-        
+    def setUp (self):
+        self.board = LBoard()
+    
     def testStartboardScore_1(self):
         """Testing eval symmetry with startboard (WHITE)"""
-        score = evaluateComplete(self.board, color=WHITE)
+        score = evaluateComplete(self.board, color=WHITE, balanced=True)
         self.assertEqual(score, 0)
-
+    
     def testStartboardScore_2(self):
         """Testing eval symmetry with startboard (BLACK)"""
-        score = evaluateComplete(self.board, color=BLACK)
+        score = evaluateComplete(self.board, color=BLACK, balanced=True)
         self.assertEqual(score, 0)
 
 if __name__ == '__main__':
