@@ -98,14 +98,16 @@ def analyze ():
         
         print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
               lsearch.nodes, "\t", smvs
-              
+        
         print "%0.1f moves/position; %0.1f n/s" % \
                 (lsearch.nodes/float(lsearch.movesearches),
                 lsearch.nodes/(time()-t))
-               
+        
+        print board
+        
         lsearch.nodes = 0
         lsearch.movesearches = 0
-        
+    
     searchLock.release()
 
 ################################################################################
@@ -240,6 +242,7 @@ while True:
         newColor = lines[0] == "black" and BLACK or WHITE
         if board.color != newColor:
             board.setColor(newColor)
+            board.setEnpassant(None)
         searchLock.release()
         if analyzing:
             thread.start_new(analyze, ())
