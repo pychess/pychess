@@ -152,8 +152,7 @@ for cord, name in enumerate(reprCord):
 ################################################################################
 
 # Hint modes
-HINT, SPY = range(2)
-reprMode = ["hint", "spy"]
+HINT, SPY = ["hint", "spy"]
 
 # Sound settings
 MUTE, BEEP, SELECT, URI = range(4)

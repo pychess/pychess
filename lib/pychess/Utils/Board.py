@@ -111,10 +111,7 @@ class Board:
     def switchColor (self):
         """ Switches the current color to move and unsets the enpassant cord.
             Mostly to be used by inversed analyzers """
-        newBoard = self.clone()
-        newBoard.setColor(1-newBoard.color)
-        newBoard.setEnpassant(None)
-        return newBoard
+        return self.setColor(1-self.color)
     
     def _get_enpassant (self):
         if self.board.enpassant != None:
@@ -125,6 +122,7 @@ class Board:
     def setColor (self, color):
         newBoard = self.clone()
         newBoard.board.setColor(color)
+        newBoard.board.setEnpassant(None)
         return newBoard
     
     def _get_color (self):
