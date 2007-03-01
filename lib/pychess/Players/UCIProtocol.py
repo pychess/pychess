@@ -156,7 +156,7 @@ class UCIProtocol (Protocol):
         if self.mode != NORMAL:
             print >> self.engine, "stop"
             if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.setColor(1-self.color)
+                self.board = self.board.switchColor()
             print >> self.engine, "position fen", self.board.asFen()
             print >> self.engine, "go infinite"
             return

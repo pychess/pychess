@@ -408,14 +408,14 @@ def runNewGameDialog ():
     # Initing analyze engines
 
     anaengines = discoverer.getAnalyzers()
-    engine0 = engine1 = random.choice(anaengines)
-
+    specs = {}
     
     if myconf.get("analyzer_check"):
         engine = discoverer.getEngineByMd5(myconf.get("ana_combobox"))
         if not engine: engine = discoverer.getAnalyzers()[0]
         hintanalyzer = discoverer.initEngine(engine, WHITE)
         hintanalyzer.analyze(inverse=False)
+        specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
     if myconf.get("inv_analyzer_check"):
@@ -423,12 +423,13 @@ def runNewGameDialog ():
         if not engine: engine = discoverer.getAnalyzers()[0]
         spyanalyzer = discoverer.initEngine(engine, WHITE)
         spyanalyzer.analyze(inverse=True)
+        specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
     # Setting game
     
     game.setPlayers(players)
-    game.setSpectactors((hintanalyzer, spyanalyzer))
+    game.setSpectactors(specs)
     gmwidg.connect("closed", closeGame, game)
     if timemodel:
         gmwidg.widgets["ccalign"].show()

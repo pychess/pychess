@@ -112,13 +112,17 @@ def initialize(widgets):
     def on_analyzer_check_toggled (check):
         widgets["analyzers_vbox"].set_sensitive(check.get_active())
         widgets["hint_mode"].set_active(check.get_active())
-        widgets["hint_mode"].set_sensitive(check.get_active())
+        from pychess.Main import gameDic
+        if gameDic:
+            widgets["hint_mode"].set_sensitive(check.get_active())
     widgets["analyzer_check"].connect("toggled", on_analyzer_check_toggled)
     
     def on_analyzer_check_toggled (check):
         widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
         widgets["spy_mode"].set_active(check.get_active())
-        widgets["spy_mode"].set_sensitive(check.get_active())
+        from pychess.Main import gameDic
+        if gameDic:
+            widgets["spy_mode"].set_sensitive(check.get_active())
     widgets["inv_analyzer_check"].connect("toggled", on_analyzer_check_toggled)
     
         ########################################################################
