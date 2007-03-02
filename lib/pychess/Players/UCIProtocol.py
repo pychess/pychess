@@ -7,6 +7,7 @@ from pychess.Utils.Move import parseAN, listToMoves
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.logic import getMoveKillingKing
 
 # Chess Engine Communication Protocol
 class UCIProtocol (Protocol):
@@ -157,6 +158,12 @@ class UCIProtocol (Protocol):
             print >> self.engine, "stop"
             if self.mode == INVERSE_ANALYZING:
                 self.board = self.board.switchColor()
+                if self.board.board.opIsChecked():
+                    # Many engines don't like positions able to take down enemy
+                    # king. Therefore we just return the "kill king" move
+                    # automaticaly
+                    self.emit("analyze", [getMoveKillingKing(self.board)])
+                    return
             print >> self.engine, "position fen", self.board.asFen()
             print >> self.engine, "go infinite"
             return

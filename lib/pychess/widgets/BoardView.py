@@ -704,17 +704,18 @@ class BoardView (gtk.DrawingArea):
    
     def drawCross (self, context, redrawn):
         xc, yc, square, s = self.square
+        
         context.move_to(xc, yc)
         context.rel_line_to(square, square)
         context.move_to(xc+square, yc)
         context.rel_line_to(-square, square)
         
-        context.set_source_rgba(0,0,0,0.5)
-        context.set_line_width(s/2.)
+        context.set_source_rgba(0,0,0,0.65)
+        context.set_line_width(s)
         context.stroke_preserve()
         
         context.set_source_rgba(1,0,0,0.8)
-        context.set_line_width(s/4.)
+        context.set_line_width(s/2.)
         context.stroke()
         
     ############################################################################

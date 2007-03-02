@@ -4,7 +4,7 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from lutils import lmove
-from lutils.lmove import ParsingError
+from lutils.lmove import ParsingError, FLAG_PIECE
 
 class Move:
     
@@ -33,13 +33,13 @@ class Move:
             if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
                 if promotion == None: promotion = QUEEN
                 flag = FLAG_PIECE(promotion)
-                
+            
             elif board[self.cord0].piece == KING:
                 if self.cord0.x - self.cord1.x == 2:
                     flag = QUEEN_CASTLE
                 elif self.cord0.x - self.cord1.x == -2:
                     flag = KING_CASTLE
-                
+            
             elif board[self.cord0].piece == PAWN and \
                     board[self.cord1] == None and \
                     self.cord0.x != self.cord1.x and \
