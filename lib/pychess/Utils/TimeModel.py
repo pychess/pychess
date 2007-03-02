@@ -26,7 +26,7 @@ class TimeModel (GObject):
         self.counter = None
         
         self.movingColor = None
-        
+    
     ############################################################################
     # Interacting                                                              #
     ############################################################################
@@ -34,6 +34,8 @@ class TimeModel (GObject):
     def setMovingColor (self, movingColor):
         if movingColor == self.movingColor:
             return
+        
+        if self.paused: return
         
         if self.movingColor != None:
             t = self.intervals[self.movingColor][-1] + self.gain
@@ -50,9 +52,11 @@ class TimeModel (GObject):
     def pause (self):
         if self.paused: return
         self.paused = True
-        self.pauseInterval = time()-self.counter
         
-        self.counter = -1
+        if self.counter != None:
+            self.pauseInterval = time()-self.counter
+        
+        self.counter = None
         self.emit("time_changed")
         self.emit("pause_changed", True)
     
@@ -62,7 +66,7 @@ class TimeModel (GObject):
         self.counter = time() - self.pauseInterval
         
         self.emit("pause_changed", False)
-        
+    
     ############################################################################
     # Undo and redo in TimeModel                                               #
     ############################################################################
@@ -106,7 +110,10 @@ class TimeModel (GObject):
     ############################################################################
     
     def getPlayerTime (self, color):
+        
         if color == self.movingColor:
+            if self.paused:
+                return self.intervals[color][-1] - self.pauseInterval
             return self.intervals[color][-1] - (time() - self.counter)
         return self.intervals[color][-1]
     

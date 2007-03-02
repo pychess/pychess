@@ -103,8 +103,6 @@ def analyze ():
                 (lsearch.nodes/float(lsearch.movesearches),
                 lsearch.nodes/(time()-t))
         
-        print board
-        
         lsearch.nodes = 0
         lsearch.movesearches = 0
     

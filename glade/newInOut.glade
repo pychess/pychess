@@ -289,7 +289,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">2</property>
+		      <property name="top_padding">3</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">0</property>
 		      <property name="right_padding">0</property>
@@ -324,8 +324,8 @@
 			      <property name="n_rows">2</property>
 			      <property name="n_columns">2</property>
 			      <property name="homogeneous">False</property>
-			      <property name="row_spacing">2</property>
-			      <property name="column_spacing">2</property>
+			      <property name="row_spacing">3</property>
+			      <property name="column_spacing">12</property>
 
 			      <child>
 				<widget class="GtkLabel" id="label32">
@@ -473,7 +473,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">2</property>
+		      <property name="top_padding">3</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">0</property>
 		      <property name="right_padding">0</property>
@@ -508,8 +508,8 @@
 			      <property name="n_rows">2</property>
 			      <property name="n_columns">2</property>
 			      <property name="homogeneous">False</property>
-			      <property name="row_spacing">2</property>
-			      <property name="column_spacing">2</property>
+			      <property name="row_spacing">3</property>
+			      <property name="column_spacing">12</property>
 
 			      <child>
 				<widget class="GtkLabel" id="label34">
@@ -660,7 +660,7 @@
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">1</property>
 		      <property name="yscale">1</property>
-		      <property name="top_padding">2</property>
+		      <property name="top_padding">3</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">0</property>
 		      <property name="right_padding">0</property>
@@ -721,7 +721,7 @@
 				  <property name="yalign">0.5</property>
 				  <property name="xscale">1</property>
 				  <property name="yscale">1</property>
-				  <property name="top_padding">0</property>
+				  <property name="top_padding">3</property>
 				  <property name="bottom_padding">0</property>
 				  <property name="left_padding">16</property>
 				  <property name="right_padding">0</property>
@@ -738,8 +738,8 @@
 					  <property name="n_rows">4</property>
 					  <property name="n_columns">2</property>
 					  <property name="homogeneous">False</property>
-					  <property name="row_spacing">2</property>
-					  <property name="column_spacing">2</property>
+					  <property name="row_spacing">3</property>
+					  <property name="column_spacing">12</property>
 
 					  <child>
 					    <widget class="GtkLabel" id="label37">
@@ -772,7 +772,7 @@
 					  <child>
 					    <widget class="GtkLabel" id="label38">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Minutes: </property>
+					      <property name="label" translatable="yes">Minutes:</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -800,7 +800,7 @@
 					  <child>
 					    <widget class="GtkLabel" id="label39">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Seconds: </property>
+					      <property name="label" translatable="yes">Seconds:</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
