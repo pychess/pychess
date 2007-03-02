@@ -111,9 +111,6 @@ class CECPProtocol (Protocol):
             if parts[-2] == "sd" and parts[-1].isdigit():
                 self.sd = False
                 self.setDepth (int(parts[-1]))
-            else:
-                self.__del__()
-                self.emit('dead')
             return
         
         # A Move
