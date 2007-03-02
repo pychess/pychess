@@ -217,7 +217,7 @@ class GameModel (GObject):
                                      self.timemodel.getPlayerTime(1-curColor))
             
             try:
-            	print "Waiting for", curPlayer
+            	#print "Waiting for", curPlayer
                 move = curPlayer.makeMove(self)
             except PlayerIsDead:
                 self.kill()
@@ -242,7 +242,7 @@ class GameModel (GObject):
                 break
             
             for spectactor in self.spectactors.values():
-                print "   Spec - Waiting for", spectactor
+                #print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)
             
             self.applyingMoveLock.release()

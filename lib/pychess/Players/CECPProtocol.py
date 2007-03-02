@@ -9,7 +9,7 @@ from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError, listTo
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
-from pychess.Utils.logic import validate
+from pychess.Utils.logic import validate, getMoveKillingKing
 
 def isdigits (strings):
     for s in strings:
@@ -111,6 +111,9 @@ class CECPProtocol (Protocol):
             if parts[-2] == "sd" and parts[-1].isdigit():
                 self.sd = False
                 self.setDepth (int(parts[-1]))
+            else:
+                self.__del__()
+                self.emit('dead')
             return
         
         # A Move
@@ -167,12 +170,6 @@ class CECPProtocol (Protocol):
             return
             #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
         
-        # Error
-        # if parts[0].lower() in ("illegal", "error"):
-        #     self.__del__()
-        #     self.emit('dead')
-        #     return
-            
         # Features
         if "feature" in parts:
             # Little hack needed en cases of engines responding like this:
@@ -258,6 +255,12 @@ class CECPProtocol (Protocol):
         else: print >> self.engine, toAN(gamemodel.boards[-2], move)
         
         if self.mode == INVERSE_ANALYZING:
+            if self.board.board.opIsChecked():
+                # Many engines don't like positions able to take down enemy
+                # king. Therefore we just return the "kill king" move
+                # automaticaly
+                self.emit("analyze", [getMoveKillingKing(self.board)])
+                return
             self.printColor()
         
         if self.forced and not self.mode in (ANALYZING, INVERSE_ANALYZING):

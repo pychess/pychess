@@ -171,8 +171,7 @@ def attack_type (model, phase):
             if lowest == None or v < lowest:
                 lowest = v
                 cord = fcord
-        assert cord, "How can there not be any attacks, when ncap exists? %s" %\
-                toString(attacks)
+        assert cord != None, "How can there not be any attacks, when ncap exists? %s" % toString(attacks)
         easiestAttack = newMove(cord, TCORD(ncap))
         
         # Now test if we threats our enemy, or they are too strong

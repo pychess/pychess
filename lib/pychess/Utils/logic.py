@@ -5,9 +5,12 @@
 from lutils import lmovegen
 from lutils.validator import validateMove
 from lutils.lmove import FCORD, TCORD
+from lutils import ldraw
 from Cord import Cord
 from Move import Move
-from const import reprCord
+from const import *
+from lutils.bitboard import iterBits
+from lutils.attack import getAttacks
 
 def getDestinationCords (board, cord):
     tcords = []
@@ -17,8 +20,7 @@ def getDestinationCords (board, cord):
                 tcords.append(Cord(TCORD(move)))
     return tcords
 
-from lutils import ldraw
-from const import *
+
 
 def getStatus (board):
     
@@ -55,3 +57,14 @@ def getStatus (board):
 
 def validate (board, move):
     return validateMove (board.board, move.move)
+
+def getMoveKillingKing (board):
+    """ Returns a move from the current color, able to capture the opponent
+        king """
+    
+    lboard = board.board
+    color = lboard.color
+    opking = lboard.kings[1-color]
+    
+    for cord in iterBits (getAttacks(lboard, opking, color)):
+        return Move(Cord(cord), Cord(opking), board)
