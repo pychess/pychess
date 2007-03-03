@@ -363,7 +363,7 @@ def saveGameBeforeClose (game):
     if not game.isChanged(): return
 
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-    d.add_button(gtk.STOCK_DELETE, gtk.RESPONSE_NO)
+    d.add_button(_("Close without saving"), gtk.RESPONSE_NO)
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
     d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
 
@@ -383,7 +383,7 @@ def closeAllGames (games):
     if len(names) == 0:
         return gtk.RESPONSE_OK
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-    d.add_button(gtk.STOCK_DELETE, gtk.RESPONSE_OK)
+    d.add_button(_("Close without saving"), gtk.RESPONSE_OK)
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
     if len(names) == 1:
         d.set_markup(
