@@ -2,11 +2,13 @@
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from pychess.Utils.const import *
 from leval import evaluateComplete
-from lsort import sortCaptures, sortMoves
+from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
 from ldata import MATE_VALUE
 from TranspositionTable import TranspositionTable
 import ldraw
+
+from heapq import heappush, heappop
 
 table = TranspositionTable(50000)
 searching = False
@@ -84,10 +86,13 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     movesearches += 1
     
+    heap = []
     if isCheck:
-        moves = [m for m in genCheckEvasions(board)]
-    else: moves = [m for m in genAllMoves(board)]
-    moves = sortMoves(board, table, ply, moves)
+        for move in genCheckEvasions(board):
+            heappush(heap, (-getMoveValue (board, table, ply, move), move))
+    else:
+        for move in genAllMoves(board):
+            heappush(heap, (-getMoveValue (board, table, ply, move), move))
     
     anyMoves = False
     
@@ -95,8 +100,10 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Loop moves                                                               #
     ############################################################################
     
-    for move in moves:
+    while heap:
         nodes += 1
+        
+        v, move = heappop(heap)
         
         board.applyMove(move)
         if not isCheck:
@@ -121,7 +128,11 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if val > alpha:
             if val >= beta:
                 table.record (board.hash, move, beta, hashfBETA, ply)
-                if board.arBoard[move&63] == EMPTY:
+                # We don't want to use our valuable killer move spaces for
+                # captures and promotions, as these are searched early anyways.
+                if board.arBoard[move&63] == EMPTY and not move>>12 in \
+                        (QUEEN_PROMOTION, ROOK_PROMOTION,
+                         BISHOP_PROMOTION, KNIGHT_PROMOTION):
                     table.addKiller (ply, move)
                 last = 2
                 return [move]+mvs, beta
@@ -156,6 +167,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 
 def quiescent (board, alpha, beta, ply):
     
+    global nodes
+    
     if ldraw.test(board):
         return [], 0
     
@@ -177,9 +190,15 @@ def quiescent (board, alpha, beta, ply):
     
     amove = []
     
-    captures = sortCaptures(board, [cap for cap in genCaptures (board)])
+    heap = []
+    for move in genCaptures (board):
+        heappush(heap, (-getCaptureValue (board, move), move))
     
-    for move in captures:
+    while heap:
+        
+        nodes += 1
+        
+        v, move = heappop(heap)
         
         board.applyMove(move)
         if board.opIsChecked():
