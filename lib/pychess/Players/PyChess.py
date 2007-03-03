@@ -194,17 +194,20 @@ def go ():
             mytime += increment
         
         if not mvs:
-            if scr == 0:
-                print "result", reprResult[DRAW]
-            elif scr < 0:
-                if board.color == WHITE:
-                    print "result", reprResult[BLACKWON]
-                else: print "result", reprResult[WHITEWON]
+            if lsearch.last == 4:
+                print "resign"
             else:
-                if board.color == WHITE:
-                    print "result", reprResult[WHITEWON]
-                else: print "result", reprResult[BLACKWON]
-            print "last:", lsearch.last
+                if scr == 0:
+                    print "result", reprResult[DRAW]
+                elif scr < 0:
+                    if board.color == WHITE:
+                        print "result", reprResult[BLACKWON]
+                    else: print "result", reprResult[WHITEWON]
+                else:
+                    if board.color == WHITE:
+                        print "result", reprResult[WHITEWON]
+                    else: print "result", reprResult[BLACKWON]
+                print "last:", lsearch.last, scr
             return
         
         print "moves were:", " ".join(listToSan(board, mvs))
