@@ -10,6 +10,9 @@ from LBoard import LBoard
 from lsort import staticExchangeEvaluate
 from lmove import newMove
 
+from random import randint
+random = False
+
 def evaluateComplete (board, color, balanced=False):
     """ A detailed evaluation function, taking into account
         several positional factors """
@@ -23,6 +26,10 @@ def evaluateComplete (board, color, balanced=False):
     s += evalKing (board, phase)
     s += evalDev (board)
     s += evalPawnStructure (board, phase)
+    
+    global random
+    if random:
+        s += randint(8,12)/10.
     
     if balanced:
         opboard = LBoard()

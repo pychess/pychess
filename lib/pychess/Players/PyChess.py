@@ -35,6 +35,8 @@ from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
 from pychess.Utils.lutils.LBoard import LBoard, FEN_START
 
+from pychess.Utils.lutils import leval
+
 try:
     import psyco
     psyco.bind(alphaBeta)
@@ -73,6 +75,7 @@ mytime = None
 #optime = None
 forced = False
 analyzing = False
+scr = 0 # The current predicted score. Used when accepting draw offers
 
 board = LBoard()
 board.applyFen(FEN_START)
@@ -154,7 +157,7 @@ def analyze ():
     searchLock.release()
 
 ################################################################################
-# analyze()                                                                    #
+# go()                                                                         #
 ################################################################################
 
 def go ():
@@ -171,7 +174,7 @@ def go ():
         
     if len(board.history) >= 14 or not movestr:
         
-        global mytime, increment
+        global mytime, increment, scr
         lsearch.searching = True
         
         if mytime == None:
@@ -210,7 +213,7 @@ def go ():
                 print "last:", lsearch.last, scr
             return
         
-        print "moves were:", " ".join(listToSan(board, mvs))
+        print "moves were:", " ".join(listToSan(board, mvs)), scr
         
         lsearch.movesearches = 0
         lsearch.nodes = 0
@@ -221,6 +224,10 @@ def go ():
     board.applyMove(move)
     
     searchLock.release()
+
+################################################################################
+# Read raw_input()                                                             #
+################################################################################
 
 while True:
     line = raw_input()
@@ -298,7 +305,11 @@ while True:
         thread.start_new(analyze, ())
         
     elif lines[0] == "draw":
-        print "offer draw"
+        if scr <= 0:
+            print "offer draw"
+        
+    elif lines[0] == "random":
+        leval.random = True
     
     elif lines[0] == "setboard":
         lsearch.searching = False

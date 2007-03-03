@@ -547,7 +547,10 @@ class BoardView (gtk.DrawingArea):
     
     def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
-    
+        ply = self.shown-1
+        if ply < 0: return
+        capture = self.model.getBoardAtPly(ply)[self.lastMove.cord1]
+        
         wh = 0.27 # Width of marker
         p0 = 0.155 # Padding on last cord
         p1 = 0.085 # Padding on current cord
@@ -601,7 +604,7 @@ class BoardView (gtk.DrawingArea):
                     -wh*r[2]*m[0], wh*r[2]*m[1])
                 context.close_path()
             
-            if self.model.getBoardAtPly(self.shown-1)[self.lastMove.cord1]:
+            if capture:
                 context.set_source_rgba(*light_orange)
                 context.fill_preserve()
                 context.set_source_rgba(*dark_orange)
