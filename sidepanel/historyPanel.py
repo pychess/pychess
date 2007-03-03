@@ -81,18 +81,10 @@ class Sidepanel:
         else: self.board.shown = self.board.model.lowply + row*2 + col +1
     
     def key_press_event (self, col, event):
-        if event.keyval in leftkeys and col == 2:
-            shown = self.board.shown - 1
-            w = self.left
-        elif event.keyval in rightkeys and col == 1:
-            shown = self.board.shown + 1
-            w = self.right
-        else: return
-        row = (self.board.model.lowply-shown) / 2
-        def todo():
-            w.set_cursor((row,))
-            w.grab_focus()
-        gobject.idle_add(todo)
+        if event.keyval in leftkeys:
+            self.board.shown -= 1
+        elif event.keyval in rightkeys:
+            self.board.shown += 1
     
     def game_changed (self, game):
         
@@ -120,17 +112,18 @@ class Sidepanel:
             
             self.freezed = True
             view.get_selection().select_iter(view.get_model().get_iter(row))
+            view.set_cursor((row,))
+            if other.is_focus():
+                view.grab_focus()
             other.get_selection().unselect_all()
             self.freezed = False
-            
+        
         gobject.idle_add(todo)
     
     def shown_changed (self, board, shown):
         if shown <= 0:
-            def todo():
-                self.left.get_selection().unselect_all()
-                self.right.get_selection().unselect_all()
-            gobject.idle_add(todo)
+            self.left.get_selection().unselect_all()
+            self.right.get_selection().unselect_all()
             return
         
         col = shown & 1 and self.left or self.right
@@ -144,9 +137,10 @@ class Sidepanel:
         # Further more when game_changed is called, it will select stuff it self
         if row >= len(col.get_model()):
             return
-            
-        def todo():
-            if shown > 0:
-                col.get_selection().select_iter(col.get_model().get_iter(row))
-            other.get_selection().unselect_all()
-        gobject.idle_add(todo)
+        
+        if shown > 0:
+            col.get_selection().select_iter(col.get_model().get_iter(row))
+            col.set_cursor((row,))
+            if other.is_focus():
+                col.grab_focus()
+        other.get_selection().unselect_all()
