@@ -49,12 +49,16 @@ class TranspositionTable (UserDict):
             self.killer2[ply] = move
     
     def isKiller (self, ply, move):
-        if self.killer1[ply] == move or self.killer2[ply] == move:
-            return True
-        if ply > 0 and (self.killer1[ply-1] == move or \
-                        self.killer2[ply-1] == move):
-            return True
-        return False
+        if self.killer1[ply] == move:
+            return 10
+        elif self.killer2[ply] == move:
+            return 8
+        if ply >= 2:
+            if self.killer1[ply-2] == move:
+                return 6
+            elif  self.killer2[ply-2] == move:
+                return 4
+        return 0
     
     def setHashMove (self, ply, move):
         self.hashmove[ply] = move

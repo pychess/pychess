@@ -14,9 +14,7 @@ def newPromotes (fromcord, tocord):
 ################################################################################
 
 def bitsToMoves (fromcord, tobits):
-    while (tobits):
-        c = firstBit (tobits)
-        tobits = clearBit (tobits, c)
+    for c in iterBits(tobits):
         yield newMove(fromcord, c)
 
 ################################################################################

@@ -77,9 +77,54 @@ analyzing = False
 board = LBoard()
 board.applyFen(FEN_START)
 
+#boards = []
+#for i in range(1000):
+#    boards.append(random.randint(0, 2**64-1))
+#
+#import time
+#from pychess.Utils.lutils.bitboard import *
+#
+#t = time.time()
+#for board in boards:
+#    pass
+#t1 = time.time()-t
+#
+#t = time.time()
+#for board in boards:
+#    for cord in iterBits(board):
+#        pass
+#print time.time()-t-t1
+#
+#t = time.time()
+#for board in boards:
+#    for cord in iterBits2(board):
+#        pass
+#print time.time()-t-t1
+#
+#t = time.time()
+#for board in boards:
+#    while (board):
+#        c = firstBit (board)
+#        board = clearBit (board, c)
+#        pass
+#print time.time()-t-t1
+#
+#
+#
+#import sys
+#sys.exit()
+
 ################################################################################
 # analyze()                                                                    #
 ################################################################################
+
+def analyze2 ():
+    import profile
+    profile.runctx("analyze2()", locals(), globals(), "/tmp/pychessprofile")
+    from pstats import Stats
+    s = Stats("/tmp/pychessprofile")
+    s.sort_stats('cumulative')
+    s.print_stats()
 
 def analyze ():
     """ Searches, and prints info from, the position as stated in the cecp
