@@ -92,13 +92,14 @@ def getMoveValue (board, table, ply, move):
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
-    if table.isKiller(ply, move):
-        return 1000
+    killervalue = table.isKiller(ply, move)
+    if killervalue:
+        return 1000 + killervalue
     
     # King tropism - a move that brings us nearer to the enemy king, is probably
     # a good move
     opking = board.kings[opcolor]
-    return 10-distance[tcord][opking]
+    return 10-distance[tcord][opking]*2+distance[fcord][opking]
 
 def sortMoves (board, table, ply, moves):
     f = lambda move: getMoveValue (board, table, ply, move)

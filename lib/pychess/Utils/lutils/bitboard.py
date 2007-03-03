@@ -25,27 +25,21 @@ def bitLength (bitboard):
            bitCount [ ( bitboard >> 16) & 0xffff] + \
            bitCount [   bitboard & 0xffff ]
 
-def iterBits2 (bitboard):
-    return bitsArray0[bitboard >> 48] + \
-           bitsArray1[bitboard >> 32 & 0xffff] + \
-           bitsArray2[bitboard >> 16 & 0xffff] + \
-           bitsArray3[bitboard & 0xffff]
-
 def iterBits (bitboard):
     for cord in bitsArray0[bitboard >> 48]:
-        yield cord
+        yield cord - 48
     for cord in bitsArray0[bitboard >> 32 & 0xffff]:
-        yield cord + 16
+        yield cord - 32
     for cord in bitsArray0[bitboard >> 16 & 0xffff]:
-        yield cord + 32
+        yield cord - 16
     for cord in bitsArray0[bitboard & 0xffff]:
-        yield cord + 48
+        yield cord
 
-    # Gnuchess uses this version, but it is about 7 times slower
-    #while bitboard:
-    #    cord = firstBit(bitboard)
-    #    bitboard = clearBit(bitboard, cord)
-    #    yield cord
+def iterBits2 (bitboard):
+    while bitboard:
+        cord = firstBit(bitboard)
+        bitboard = clearBit(bitboard, cord)
+        yield cord
 
 from pychess.Utils.const import *
 
@@ -106,7 +100,7 @@ for bits in xrange(65536):
     while bits:
         b = firstBit(bits)
         bits = clearBit(bits, b)
-        bitsArray0[origbits].append(b-48)
+        bitsArray0[origbits].append(b)
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set
