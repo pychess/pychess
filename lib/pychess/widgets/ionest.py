@@ -363,7 +363,7 @@ def saveGameBeforeClose (game):
     if not game.isChanged(): return
 
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-    d.add_button(gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_NO)
+    d.add_button(gtk.STOCK_DELETE, gtk.RESPONSE_NO)
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
     d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
 
@@ -383,10 +383,14 @@ def closeAllGames (games):
     if len(names) == 0:
         return gtk.RESPONSE_OK
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-    d.add_button(gtk.STOCK_REVERT_TO_SAVED, gtk.RESPONSE_OK)
+    d.add_button(gtk.STOCK_DELETE, gtk.RESPONSE_OK)
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-    d.set_markup(
-        _("<big><b>There are %d games with unsaved changes:</b></big>") % len(names))
+    if len(names) == 1:
+        d.set_markup(
+            _("<big><b>There is 1 game with unsaved changes:</b></big>"))
+    else:
+        d.set_markup(
+            _("<big><b>There are %d games with unsaved changes:</b></big>") % len(names))
     d.format_secondary_text("\n".join(names))
     response = d.run()
     d.hide()
