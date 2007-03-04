@@ -131,6 +131,8 @@ class GameListManager (GObject):
         gameno, wn, bn, comment = groups
         if "Creating" in comment:
             c, rated, type, m = comment.split()
+            if not type in ("standard", "blitz", "lightning"):
+                return
             game = {"gameno":gameno, "wn":wn, "bn":bn}
             self.emit("addGame", game)
         else:
@@ -139,15 +141,13 @@ class GameListManager (GObject):
     ###
 
 import gtk
-
-#
-# FIXME: The lists are self updating, but because of idle_add's not first in
-# first out structure, we might end up with the "remove" command being executed
-# before the "add" command, in which case it will be ignored and there by leave
-# a game in the list permanently.
-#
+from Queue import Queue
+from Queue import Empty as EmptyError
+from time import sleep
 
 if __name__ == "__main__":
+    
+    queue = Queue()
     
     tv = gtk.TreeView()
     store = gtk.ListStore(str, str, str)
@@ -163,29 +163,31 @@ if __name__ == "__main__":
     seeks = {}
     
     def on_seek_add (manager, seek):
-        def idle ():
+        def call ():
             ti = store.append ([ seek["w"], seek["r"], seek["tp"] ])
             seeks [seek["gameno"]] = ti
-        idle_add(idle)
+        queue.put(call)
     glm.connect("addSeek", on_seek_add)
     
     def on_seek_remove (manager, gameno):
-        def idle ():
+        def call ():
             if not gameno in seeks:
+                # We ignore removes we haven't added, as it seams fics sends a
+                # lot of removes for games it has never told us about
                 return
             ti = seeks [gameno]
             if not store.iter_is_valid(ti):
                 return
             store.remove (ti)
             del seeks[gameno]
-        idle_add(idle)
+        queue.put(call)
     glm.connect("removeSeek", on_seek_remove)
     
     def on_seek_clear (manager):
-        def idle ():
+        def call ():
             store.clear()
             seeks.clear()
-        idle_add(idle)
+        queue.put(call)
     glm.connect("clearSeeks", on_seek_clear)
     
     w = gtk.Window()
@@ -206,14 +208,14 @@ if __name__ == "__main__":
     games = {}
     
     def on_game_add (manager, game):
-        def idle ():
+        def call ():
             ti = gstore.append ([ game["wn"], game["bn"] ])
             seeks [game["gameno"]] = ti
-        idle_add(idle)
+        queue.put(call)
     glm.connect("addGame", on_game_add)
     
     def on_game_remove (manager, gameno):
-        def idle ():
+        def call ():
             if not gameno in games:
                 return
             ti = games [gameno]
@@ -221,7 +223,7 @@ if __name__ == "__main__":
                 return
             gstore.remove (ti)
             del games[gameno]
-        idle_add(idle)
+        queue.put(call)
     glm.connect("removeGame", on_game_remove)
     
     gw = gtk.Window()
@@ -230,6 +232,15 @@ if __name__ == "__main__":
     sw.add(gtv)
     gw.add(sw)
     gw.show_all()
+    
+    def executeQueue ():
+        try:
+            func = queue.get(block=False)
+            func()
+        except EmptyError:
+            sleep(0.01) # Make sure we have no empty loops
+        return True
+    idle_add(executeQueue)
     
     import thread
     thread.start_new (connect, ("freechess.org", 5000, "guest"))
