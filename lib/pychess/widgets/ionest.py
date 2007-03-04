@@ -254,7 +254,7 @@ def runNewGameDialog (hideFC=True):
 #
 
 def newGame ():
-    widgets["newgamedialog"].set_title("New Game")
+    widgets["newgamedialog"].set_title(_("New Game"))
     game, gmwidg = runNewGameDialog()
     if game:
         game.run()
@@ -268,7 +268,7 @@ def loadGame (uri = None):
     opendialog.hide()
     if res != gtk.RESPONSE_ACCEPT: return None, None
     
-    widgets["newgamedialog"].set_title("Open Game")
+    widgets["newgamedialog"].set_title(_("Open Game"))
     game, gmwidg = runNewGameDialog(hideFC=False)
     
     if game:
