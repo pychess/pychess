@@ -71,8 +71,12 @@ class GameListManager (GObject):
         'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         'removeSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'clearSeeks' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        
         'addGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        
+        'addPlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'removePlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
     }
     
     def __init__ (self):
@@ -81,16 +85,28 @@ class GameListManager (GObject):
         
         connectStatus (self.on_connection_change)
         
+        ###
+        
         expect ( "<sc>\n", self.on_seek_clear)
         
         expect ( "<s> (.*?)\n", self.on_seek_add)
         
         expect ( "<sr> (.*?)\n", self.on_seek_remove)
         
+        ###
+        
         expect ( "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(s|b|l)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)" % (ratings, ratings), self.on_game_list)
         
         expect ( "{Game (\d+) \((\w+) vs\. (\w+)\) (.*?)}", self.on_game_addremove)
-    
+        
+        ###
+        
+        expect ( "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s" % (ratings, names, ratings, names, ratings, names), self.on_player_list)
+        
+        expect ( "%s is no longer available for matches." % names, self.on_player_remove)
+        
+        expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
+        
     ###
     
     def on_connection_change (self, client, signal):
@@ -101,6 +117,11 @@ class GameListManager (GObject):
             
             print >> client, "set gin 1"
             print >> client, "games /sbl"
+            
+            print >> client, "who a"
+            print >> client, "set availmax 0"
+            print >> client, "set availmin 0"
+            print >> client, "set availinfo 1"
     
     def on_seek_add (self, client, groups):
         parts = groups[0].split(" ")
@@ -122,6 +143,8 @@ class GameListManager (GObject):
             if not key: continue
             self.emit("removeSeek", key)
     
+    ###
+    
     def on_game_list (self, client, groups):
         gameno, wr, wn, br, bn, private, type, rated, min, inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = groups
         game = {"gameno":gameno, "wn":wn, "bn":bn}
@@ -139,7 +162,22 @@ class GameListManager (GObject):
             self.emit("removeGame", gameno)
     
     ###
-
+    
+    def on_player_list (self, client, groups):
+        p0r, p0s, p0n, p0t, p1r, p1s, p1n, p1t, p2r, p2s, p2n, p2t = groups
+        self.emit("addPlayer", {"r":p0r, "status":p0s, "name":p0n, "title":p0t})
+        self.emit("addPlayer", {"r":p1r, "status":p1s, "name":p1n, "title":p1t})
+        self.emit("addPlayer", {"r":p2r, "status":p2s, "name":p2n, "title":p2t})
+    
+    def on_player_remove (self, client, groups):
+        name, title = groups
+        self.emit("removePlayer", name)
+    
+    def on_player_add (self, client, groups):
+        name, title, blitz, std, wild, light, bug = groups
+        self.emit("addPlayer", \
+            {"name":name, "title":title, "r":blitz, "status": " "})
+    
 import gtk
 from Queue import Queue
 from Queue import Empty as EmptyError
@@ -210,7 +248,7 @@ if __name__ == "__main__":
     def on_game_add (manager, game):
         def call ():
             ti = gstore.append ([ game["wn"], game["bn"] ])
-            seeks [game["gameno"]] = ti
+            games [game["gameno"]] = ti
         queue.put(call)
     glm.connect("addGame", on_game_add)
     
@@ -232,6 +270,46 @@ if __name__ == "__main__":
     sw.add(gtv)
     gw.add(sw)
     gw.show_all()
+    
+    ######
+    
+    ptv = gtk.TreeView()
+    pstore = gtk.ListStore(str, str)
+    ptv.set_model(pstore)
+    ptv.append_column(gtk.TreeViewColumn(
+            "Name", gtk.CellRendererText(), text=0))
+    ptv.append_column(gtk.TreeViewColumn(
+            "Rating", gtk.CellRendererText(), text=1))
+    
+    players = {}
+    
+    def on_player_add (manager, player):
+        def call ():
+            ti = pstore.append ([ player["name"], player["r"] ])
+            players [player["name"]] = ti
+        queue.put(call)
+    glm.connect("addPlayer", on_player_add)
+    
+    def on_player_remove (manager, name):
+        def call ():
+            if not name in players:
+                return
+            ti = players [name]
+            if not pstore.iter_is_valid(ti):
+                return
+            pstore.remove (ti)
+            del players[name]
+        queue.put(call)
+    glm.connect("removePlayer", on_player_remove)
+    
+    pw = gtk.Window()
+    pw.connect("delete_event", gtk.main_quit)
+    sw = gtk.ScrolledWindow()
+    sw.add(ptv)
+    pw.add(sw)
+    pw.show_all()
+    
+    ######
     
     def executeQueue ():
         try:
