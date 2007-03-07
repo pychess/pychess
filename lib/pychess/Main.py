@@ -13,6 +13,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets import ionest
 from pychess.widgets.Background import Background
 from pychess.widgets import preferencesDialog
+from pychess.ic import icLogOn
 
 ################################################################################
 # gameDic - containing the gamewidget:gamemodel of all open games              #
@@ -201,7 +202,10 @@ class GladeHandlers:
 
     def on_new_game1_activate (widget):
         ionest.newGame ()
-        
+    
+    def on_play_internet_chess_activate (widget):
+        icLogOn.run()
+    
     def on_load_game1_activate (widget):
         ionest.loadGame ()
     
