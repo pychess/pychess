@@ -5,15 +5,27 @@ from pychess.System import gstreamer
 from pychess.Utils.const import *
 
 import telnet
+from telnet import LogOnError
 import thread
 import icLounge
 
 firstRun = True
 def run():
+    
+    if telnet.client:
+        icLounge.show()
+        return
+    
     global firstRun
     if firstRun:
         initialize()
         firstRun = False
+        
+        def callback (client, signal):
+            if signal == IC_CONNECTED:
+                widgets["fics_logon"].hide()
+                icLounge.show()
+        telnet.connectStatus(callback)
     
     response = widgets["fics_logon"].run()
     if response != gtk.RESPONSE_OK:
@@ -29,26 +41,20 @@ def run():
         
         widgets["progressbar"].show()
         widgets["mainvbox"].set_sensitive(False)
-        widgets["dialog-action_area"].set_sensitive(False)
+        widgets["connectButton"].set_sensitive(False)
         def callback ():
             widgets["progressbar"].pulse()
             if telnet.connected:
                 widgets["progressbar"].hide()
                 widgets["mainvbox"].set_sensitive(True)
-                widgets["dialog-action_area"].set_sensitive(True)
-                print "return false"
+                widgets["connectButton"].set_sensitive(True)
                 return False
             return True
         gobject.timeout_add(30, callback)
         
-        def callback (client, signal):
-            if signal == IC_CONNECTED:
-                widgets["fics_logon"].hide()
-                icLounge.show()
-        telnet.connectStatus(callback)
-        
         def func ():
             def error (title, text):
+                
                 d = gtk.MessageDialog(
                     type = gtk.MESSAGE_ERROR, buttons = gtk.BUTTONS_OK)
                 d.set_markup("<big><b>%s</b></big>" % _(title))
@@ -56,7 +62,7 @@ def run():
                 def callback (button):
                     d.hide()
                     widgets["mainvbox"].set_sensitive(True)
-                    widgets["dialog-action_area"].set_sensitive(True)
+                    widgets["connectButton"].set_sensitive(True)
                     run()
                 b = d.get_children()[0].get_children()[-1].get_children()[0]
                 b.connect("clicked", callback)
@@ -66,7 +72,7 @@ def run():
                 telnet.connect ("freechess.org", 5000, username, password)
             except IOError, e:
                 gobject.idle_add(error, _("Connection Error"), str(e))
-            except telnet.LogOnError, e:
+            except LogOnError, e:
                 gobject.idle_add(error, _("Log on Error"), str(e))
         thread.start_new(func, ())
 

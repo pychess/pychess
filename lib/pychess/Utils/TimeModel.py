@@ -1,6 +1,6 @@
 from time import time
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
-from pychess.Utils.const import WHITE
+from pychess.Utils.const import WHITE, BLACK
 
 class TimeModel (GObject):
     
@@ -98,11 +98,21 @@ class TimeModel (GObject):
     ############################################################################
     
     def updatePlayer (self, color, secs):
-        """ Syncronize clock to e.g. fics time """
+        
         
         if color == self.movingColor:
             self.counter = time() - secs
         else: self.intervals[1-self.movingColor][-1] = secs
+        self.emit("time_changed")
+    
+    def syncClock (self, wsecs, bsecs):
+        """ Syncronize clock to e.g. fics time """
+        if self.movingColor == WHITE:
+            self.counter = wsecs + time() - self.intervals[WHITE][-1]
+            self.intervals[BLACK][-1] = bsecs
+        else:
+            self.counter = bsecs + time() - self.intervals[BLACK][-1]
+            self.intervals[WHITE][-1] = wsecs
         self.emit("time_changed")
     
     ############################################################################

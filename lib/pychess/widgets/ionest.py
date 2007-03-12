@@ -449,6 +449,10 @@ def newGame ():
         game.start()
         handler.emit("game_started", gmwidg, game)
 
+def simpleNewGame (game, gmwidg):
+    game.start()
+    handler.emit("game_started", gmwidg, game)
+
 ################################################################################
 # loadGame                                                                     #
 ################################################################################
@@ -468,12 +472,15 @@ def loadGame (uri = None):
     if game:
         uri = loadSidePanel.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
-        # As Main.py connects to game, when it recieves the game_started signal,
-        # we have to emit it before loadAndStart is called, which emits signals
-        # Main.py are supposed to recieve.
-        handler.emit("game_started", gmwidg, game)
-        game.loadAndStart (uri, loadSidePanel.get_gameno(),
-                           loadSidePanel.get_position(), loader)
+        simpleLoadGame(game, gmwidg, uri, loader,
+                       loadSidePanel.get_gameno(), loadSidePanel.get_position())
+
+def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
+    # As Main.py connects to game, when it recieves the game_started signal,
+    # we have to emit it before loadAndStart is called, which emits signals
+    # Main.py are supposed to recieve.
+    handler.emit("game_started", gmwidg, game)
+    game.loadAndStart (uri, gameno, position, loader)
 
 ################################################################################
 # setUpPosition                                                                #
