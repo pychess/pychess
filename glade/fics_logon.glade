@@ -6,12 +6,13 @@
 <widget class="GtkDialog" id="fics_logon">
   <property name="border_width">9</property>
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Connect to Internet Chess</property>
+  <property name="title" translatable="yes">PyChess - Connect to Internet Chess</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -33,7 +34,7 @@
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
-	    <widget class="GtkButton" id="button38">
+	    <widget class="GtkButton" id="cancelButton">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -46,10 +47,12 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="button39">
+	    <widget class="GtkButton" id="connectButton">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
+	      <property name="has_default">True</property>
 	      <property name="can_focus">True</property>
+	      <property name="has_focus">True</property>
 	      <property name="label">gtk-connect</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -126,7 +129,7 @@
 			    <widget class="GtkCheckButton" id="logOnAsGuest">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Log on as Guest</property>
+			      <property name="label" translatable="yes">Log on as _Guest</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -164,8 +167,8 @@
 			      <child>
 				<widget class="GtkLabel" id="label99">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Name:</property>
-				  <property name="use_underline">False</property>
+				  <property name="label" translatable="yes">_Name:</property>
+				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
 				  <property name="wrap">False</property>
@@ -174,10 +177,14 @@
 				  <property name="yalign">0.5</property>
 				  <property name="xpad">0</property>
 				  <property name="ypad">0</property>
+				  <property name="mnemonic_widget">nameEntry</property>
 				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
 				  <property name="width_chars">-1</property>
 				  <property name="single_line_mode">False</property>
 				  <property name="angle">0</property>
+				  <accessibility>
+				    <atkrelation target="nameEntry" type="label-for"/>
+				  </accessibility>
 				</widget>
 				<packing>
 				  <property name="left_attach">0</property>
@@ -199,7 +206,7 @@
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
 				  <property name="invisible_char">•</property>
-				  <property name="activates_default">False</property>
+				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
 				  <property name="left_attach">1</property>
@@ -213,8 +220,8 @@
 			      <child>
 				<widget class="GtkLabel" id="label100">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Password:</property>
-				  <property name="use_underline">False</property>
+				  <property name="label" translatable="yes">_Password:</property>
+				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
 				  <property name="wrap">False</property>
@@ -223,10 +230,14 @@
 				  <property name="yalign">0.5</property>
 				  <property name="xpad">0</property>
 				  <property name="ypad">0</property>
+				  <property name="mnemonic_widget">passEntry</property>
 				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
 				  <property name="width_chars">-1</property>
 				  <property name="single_line_mode">False</property>
 				  <property name="angle">0</property>
+				  <accessibility>
+				    <atkrelation target="passEntry" type="label-for"/>
+				  </accessibility>
 				</widget>
 				<packing>
 				  <property name="left_attach">0</property>
@@ -248,7 +259,7 @@
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
 				  <property name="invisible_char">•</property>
-				  <property name="activates_default">False</property>
+				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
 				  <property name="left_attach">1</property>
@@ -263,7 +274,7 @@
 				<widget class="GtkCheckButton" id="checkbutton5">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Remember me on this server</property>
+				  <property name="label" translatable="yes">_Remember me on this server</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">True</property>
@@ -385,7 +396,7 @@
 			    <widget class="GtkLabel" id="label102">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Server:</property>
-			      <property name="use_underline">False</property>
+			      <property name="use_underline">True</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
 			      <property name="wrap">False</property>
@@ -413,7 +424,7 @@
 			    <widget class="GtkLabel" id="label103">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Create user:</property>
-			      <property name="use_underline">False</property>
+			      <property name="use_underline">True</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
 			      <property name="wrap">False</property>
@@ -422,6 +433,7 @@
 			      <property name="yalign">0.5</property>
 			      <property name="xpad">0</property>
 			      <property name="ypad">0</property>
+			      <property name="mnemonic_widget">button40</property>
 			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
 			      <property name="width_chars">-1</property>
 			      <property name="single_line_mode">False</property>
@@ -819,12 +831,27 @@
       </child>
 
       <child>
-	<widget class="GtkProgressBar" id="progressbar">
-	  <property name="orientation">GTK_PROGRESS_LEFT_TO_RIGHT</property>
-	  <property name="fraction">0</property>
-	  <property name="pulse_step">0.0399999991059</property>
-	  <property name="text" translatable="yes">Logging on to Server</property>
-	  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+	<widget class="GtkAlignment" id="alignment26">
+	  <property name="border_width">6</property>
+	  <property name="visible">True</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xscale">1</property>
+	  <property name="yscale">1</property>
+	  <property name="top_padding">0</property>
+	  <property name="bottom_padding">0</property>
+	  <property name="left_padding">0</property>
+	  <property name="right_padding">0</property>
+
+	  <child>
+	    <widget class="GtkProgressBar" id="progressbar">
+	      <property name="orientation">GTK_PROGRESS_LEFT_TO_RIGHT</property>
+	      <property name="fraction">0</property>
+	      <property name="pulse_step">0.0399999991059</property>
+	      <property name="text" translatable="yes">Logging on to Server</property>
+	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+	    </widget>
+	  </child>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>

@@ -8,6 +8,8 @@ ratings = "([\d\+\-]{1,4})"
 names = "(\w+)(?:\(([CUHIFWM])\))?"
 mf = "(?:([mf]{1,2})\s?)?"
 
+typedic = {"b":"Blitz", "s":"Standard", "l":"Lightning"}
+
 from gobject import *
 
 class GameListManager (GObject):
@@ -32,9 +34,9 @@ class GameListManager (GObject):
         
         telnet.expect ( "<sc>\n", self.on_seek_clear)
         
-        telnet.expect ( "<s> (.*?)\n", self.on_seek_add)
+        telnet.expect ( "<s> (.+?)\n", self.on_seek_add)
         
-        telnet.expect ( "<sr> (.*?)\n", self.on_seek_remove)
+        telnet.expect ( "<sr> ([\d ]+?)\n", self.on_seek_remove)
         
         
         
@@ -44,13 +46,16 @@ class GameListManager (GObject):
         
         
         
-        telnet.expect ( "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s" % (ratings, names, ratings, names, ratings, names), self.on_player_list)
+        telnet.expect ( "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s\n" % (ratings, names, ratings, names, ratings, names), self.on_player_list)
         
         telnet.expect ( "%s is no longer available for matches." % names, self.on_player_remove)
         
         telnet.expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
     
+    
+    
     def start (self):
+        
         print >> telnet.client, "iset seekinfo 1"
         print >> telnet.client, "iset seekremove 1"
         print >> telnet.client, "set seek 1"
@@ -82,6 +87,7 @@ class GameListManager (GObject):
             if key == "tp":
                 if not value in ("standard", "lightning", "blitz"):
                     return
+                seek[key] = value[0].upper()+value[1:]
             elif key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
             elif key == "ti":
@@ -104,16 +110,18 @@ class GameListManager (GObject):
     
     def on_game_list (self, client, groups):
         gameno, wr, wn, br, bn, private, type, rated, min, inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = groups
-        game = {"gameno":gameno, "wn":wn, "bn":bn}
+        
+        game = {"gameno":gameno, "wn":wn, "bn":bn, "type":_(typedic[type])}
         self.emit("addGame", game)
     
     def on_game_addremove (self, client, groups):
         gameno, wn, bn, comment = groups
-        if "Creating" in comment:
+        if comment.split()[0] in ("Creating", "Continuing"):
             c, rated, type, m = comment.split()
             if not type in ("standard", "blitz", "lightning"):
                 return
-            game = {"gameno":gameno, "wn":wn, "bn":bn}
+            else: type = _(type[0].upper()+type[1:])
+            game = {"gameno":gameno, "wn":wn, "bn":bn, "type":type}
             self.emit("addGame", game)
         else:
             self.emit("removeGame", gameno)

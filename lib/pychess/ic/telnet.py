@@ -1,14 +1,71 @@
 from telnetlib import Telnet
+from gobject import *
 import socket
+from sys import maxint
 
-IC_CONNECTED, IC_DISCONNECTED = range(2)
+class VerboseTelnet (Telnet, GObject):
+    __gsignals__ = {
+        'newString' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
+    }
+    
+    def __init__ (self):
+        Telnet.__init__(self)
+        GObject.__init__(self)
+    
+    def expect (self, list):
+        """ Modified expect method, which checks ALL regexps for the one which
+        mathces the earliest """
+        
+        re = None
+        list = list[:]
+        indices = range(len(list))
+        for i in indices:
+            if not hasattr(list[i], "search"):
+                if not re: import re
+                list[i] = re.compile(list[i])
+        while 1:
+            self.process_rawq()
+            lowest = []
+            for i in indices:
+                m = list[i].search(self.cookedq)
+                if m:
+                    s = m.start()
+                    if not lowest or s < lowest[0][1]:
+                        lowest = [[m, s, i]]
+                    elif s == lowest[0][1]:
+                        lowest.append( [m, s, i] )
+            maxend = 0
+            for match, start, index in lowest:
+                end = match.end()
+                if end > maxend:
+                    maxend = end
+                yield (index, match.groups())
+            self.cookedq = self.cookedq[maxend:]
+            if lowest:
+                return
+            if self.eof:
+                break
+            self.fill_rawq()
+        text = self.read_very_lazy()
+        if not text and self.eof:
+            raise EOFError
+        yield (-1, [])
+        
+    def process_rawq (self):
+        cooked0 = self.cookedq
+        Telnet.process_rawq (self)
+        cooked1 = self.cookedq
+        if len(cooked1) > len(cooked0):
+            log(cooked1[len(cooked0):].replace("\r", ""))
+    
+from pychess.Utils.const import IC_CONNECTED, IC_DISCONNECTED
 
 f = open("/home/thomas/ficslog", "w")
 #import sys
 def log (data, header=None):
     #sys.stdout.write(data)
     #sys.stdout.flush()
-    f.write(data)
+    f.write(data.replace("\r",""))
     f.flush()
 
 client = None
@@ -20,52 +77,65 @@ def connect (host, port, username="guest", password=""):
     
     global client, connected
     
+    client = VerboseTelnet()
+    def callback (client, string):
+        import sys
+        sys.stdout.write(string)
+        sys.stdout.flush()
+    client.connect("newString", callback)
+    
     try:
-        client = Telnet(host, port)
+        client.open(host, port)
     except socket.gaierror, e:
         raise IOError, e.args[1]
-    
-    log(client.read_until("login: "), host)
+    except EOFError:
+        raise IOError, _("The connection was broken - got end of file message")
+        
+    client.read_until("login: ")
     print >> client, username
     
     if username != "guest":
         r = client.expect(
-            ["password: ", "login: ", "Press return to enter the server as"])
+            ["password: ", "login: ", "Press return to enter the server as"]).next()
         if r[0] < 0:
+            client.close()
             raise IOError, _("The connection was broken - got end of file message")
         elif r[0] == 1:
+            client.close()
             raise LogOnError, _("Names can only consist of lower and upper case letters")
         elif r[0] == 2:
+            client.close()
             raise LogOnError, _("'%s' is not a registered name") % username
         else:
             print >> client, password
     else:
-        log(client.read_until("Press return"), host)
+        client.read_until("Press return"), host
         print >> client
     
-    r = client.expect(["Invalid password", "Starting FICS session"])
-    log(r[2])
+    names = "(\w+)(?:\(([CUHIFWM])\))?"
+    r = client.expect(["Invalid password", "Starting FICS session as %s" % names]).next()
+
     if r[0] == 0:
-        raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by som reason not possible, please email: suppord@freechess.org")
+        client.close()
+        raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by some reason not possible, please email: suppord@freechess.org")
+    elif r[0] == 1:
+        global curname
+        curname = r[1][0]
     
-    log(client.read_until("fics%"), host)
+    client.read_until("fics%")
     
     connected = True
     for handler in connectHandlers:
         handler (client, IC_CONNECTED)
     
-    #regexps.append("\n")
+    EOF = False
     while True:
-        r = client.expect(regexps)
-        log(r[2].replace("\r\n", "\n"), host)
-        
-        if r[0] < 0: break #EOF
-        
-        #log(r[2])
-        
-        #if r[0]+1 < len(regexps):
-        handler = handlers[r[0]]
-        handler (client, r[1].groups())
+        for match in client.expect(regexps):
+            if r[0] < 0:
+                EOF = True
+                break
+            handler = handlers[match[0]]
+            handler (client, match[1])
     
     for handler in connectHandlers:
         # Give handlers a chance no discover that the connection is closed
@@ -74,11 +144,23 @@ def connect (host, port, username="guest", password=""):
 import re
 handlers = []
 regexps = []
-def expect (regexp, func):
-    #if client:
-    #    raise Exception, "Won't add more handlers to a connected client"
+uncompiled = []
+def expect (regexp, func, flag=None):
     handlers.append(func)
-    regexps.append(re.compile(regexp))
+    if flag != None:
+        r = re.compile(regexp, flag)
+    else: r = re.compile(regexp)
+    regexps.append(r)
+    uncompiled.append(regexp)
+
+def unexpect (func):
+    try:
+        i = handlers.index (func)
+    except ValueError:
+        return
+    del handlers[i]
+    del regexps[i]
+    del uncompiled[i]
 
 connectHandlers = []
 def connectStatus (func):

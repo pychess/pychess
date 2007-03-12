@@ -78,6 +78,7 @@ class BoardView (gtk.DrawingArea):
         self.model.connect("game_loading", self.game_loading)
         self.model.connect("game_loaded", self.game_loaded)
         self.connect("expose_event", self.expose)
+        self.connect_after("realize", self.on_realized)
         self.set_size_request(300,300)
         
         self.animationID = -1
@@ -89,7 +90,7 @@ class BoardView (gtk.DrawingArea):
         
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = None # An object global variable with the current board size
-        self.pad = 0.13 # Used when setcords is active
+        self.pad = 0.13 # Padding applied only when setcords is active
         self._selected = None
         self._hover = None
         self._active = None
@@ -307,6 +308,15 @@ class BoardView (gtk.DrawingArea):
     #############################
     #          Drawing          #
     #############################
+    
+    def on_realized (self, widget):
+        p = (1-self.padding)
+        alloc = self.get_allocation()
+        square = float(min(alloc.width, alloc.height))*p
+        xc = alloc.width/2. - square/2
+        yc = alloc.height/2. - square/2
+        s = square/8
+        self.square = (xc, yc, square, s)
     
     def expose(self, widget, event):
         context = widget.window.cairo_create()

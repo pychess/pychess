@@ -17,7 +17,7 @@ class GameModel (GObject):
     __gsignals__ = {
         "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loading":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":      (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":      (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "draw_sent":       (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -51,6 +51,8 @@ class GameModel (GObject):
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
+        
+        self.spectactors = {}
         
         self.applyingMoveLock = Lock()
     
@@ -217,8 +219,9 @@ class GameModel (GObject):
                                      self.timemodel.getPlayerTime(1-curColor))
             
             try:
-            	#print "Waiting for", curPlayer
+            	print "Waiting for", curPlayer
                 move = curPlayer.makeMove(self)
+                print "gamemodel got move", move
             except PlayerIsDead:
                 self.kill()
                 break
@@ -268,12 +271,12 @@ class GameModel (GObject):
         self.status = PAUSED
         
     def kill (self):
-        if not self.status in (DRAW, WHITEWON, BLACKWON):
+        if self.status in (WAITING_TO_START, PAUSED, RUNNING):
             self.status = KILLED
         
         for player in self.players:
             player.kill()
-            
+        
         for spectactor in self.spectactors.values():
             spectactor.kill()
         
@@ -308,6 +311,12 @@ class GameModel (GObject):
             self.timemodel.undo()
         
         self.applyingMoveLock.release()
+    
+    def forceStatus (self, status, reason):
+        self.status = status
+        self.reason = reason
+        self.kill()
+        self.emit("game_ended", self.reason)
     
     def isChanged (self):
         if self.ply == 0:

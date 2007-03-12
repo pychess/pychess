@@ -10,7 +10,7 @@ class Background (gtk.DrawingArea):
         self.connect("expose_event", self.expose)
         self.connect("style-set", self.newtheme)
         self.clearpath = prefix("glade/clear.png")
-        
+    
     def expose (self, widget, event):
         cr = widget.window.cairo_create()
         cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)

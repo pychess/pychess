@@ -11,7 +11,7 @@ dotLarge = 20
 class SpotGraph (gtk.DrawingArea):
     
     __gsignals__ = {
-        'spot_clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
+        'spotClicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
     }
     
     def __init__ (self):
@@ -26,14 +26,25 @@ class SpotGraph (gtk.DrawingArea):
                 color[1] = color[1]/255.
                 color[2] = color[2]/255.
         
-        #self.connect("button_press_event", self.button_press)
-        #self.connect("button_release_event", self.button_release)
-        #self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
-        #self.connect("motion_notify_event", self.motion_notify)
-        #self.connect("leave_notify_event", self.leave_notify)
+        self.add_events( gtk.gdk.LEAVE_NOTIFY_MASK |
+                         gtk.gdk.POINTER_MOTION_MASK |
+                         gtk.gdk.BUTTON_PRESS_MASK |
+                         gtk.gdk.BUTTON_RELEASE_MASK )
         
+        self.connect("button_press_event", self.button_press)
+        self.connect("button_release_event", self.button_release)
+        self.connect("motion_notify_event", self.motion_notify)
+        self.connect("leave_notify_event", self.leave_notify)
+        
+        self.cords = []
+        self.hovered = None
+        self.pressed = False
         self.spots = {}
-        
+    
+    ############################################################################
+    # Drawing                                                                  #
+    ############################################################################
+    
     def redraw_canvas(self, rect=None):
         if self.window:
             if not rect:
@@ -63,45 +74,114 @@ class SpotGraph (gtk.DrawingArea):
         context.set_source_color(self.get_style().dark[gtk.STATE_ACTIVE])
         context.stroke()
         
-        context.set_line_width(dotSmall)
-        for x, y, type in self.spots.values():
-            context.new_path()
+        context.set_line_width(dotSmall/10.)
+        for x, y, type, name in self.spots.values():
             context.set_source_rgb(*self.typeColors[type][0])
+            if self.hovered and name == self.hovered[3]:
+                continue
             x = x*(width-line)+line
             y = y*(height-line)-line
+            
             context.arc(x, y, dotSmall/2., 0, 2 * math.pi)
             context.fill_preserve()
-            context.set_line_width(dotSmall/10.)
             context.set_source_rgb(*self.typeColors[type][1])
             context.stroke()
         
+        context.set_line_width(dotLarge/10.)
+        if self.hovered:
+            x, y, type, name = self.hovered
+            x, y = self.transCords (x, y)
+            if not self.pressed:
+                context.set_source_rgb(*self.typeColors[type][0])
+            else:
+                context.set_source_rgb(*self.typeColors[type][1])
+            context.arc(x, y, dotLarge/2., 0, 2 * math.pi)
+            context.fill_preserve()
+            context.set_source_rgb(*self.typeColors[type][1])
+            context.stroke()
+            
+    ############################################################################
+    # Events                                                                   #
+    ############################################################################
+    
+    def button_press (self, widget, event):
+        self.cords = [event.x, event.y]
+        self.pressed = True
+        if self.hovered:
+            self.redraw_canvas(self.getBounds(self.hovered))
+    
+    def button_release (self, widget, event):
+        self.cords = [event.x, event.y]
+        self.pressed = False
+        if self.hovered:
+            self.redraw_canvas(self.getBounds(self.hovered))
+            if self.pointIsOnSpot (event.x, event.y, self.hovered):
+                self.emit("spotClicked", self.hovered[3])
+    
+    def motion_notify (self, widget, event):
+        self.cords = [event.x, event.y]
+        spot = self.getSpotAtPoint (event.x, event.y)
+        if self.hovered and spot == self.hovered:
+            return
+        if self.hovered:
+            bounds = self.getBounds(self.hovered)
+            self.hovered = None
+            self.redraw_canvas(bounds)
+        if spot:
+            self.hovered = spot
+            self.redraw_canvas(self.getBounds(self.hovered))
+    
+    def leave_notify (self, widget, event):
+        del self.cords[:]
+        if self.hovered:
+            bounds = self.getBounds(self.hovered)
+            self.hovered = None
+            self.redraw_canvas(bounds)
+    
+    ############################################################################
+    # Interaction                                                              #
+    ############################################################################
+    
     def addSpot (self, name, x0, y0, type=0):
         """ x and y are in % from 0 to 1 """
         assert type in range(len(self.typeColors))
         x1, y1 = self.getNearestFreeNeighbour(x0, 1-y0)
-        self.spots[name] = (x1, y1, type)
-        self.redraw_canvas(self.getBounds(x1, y1))
+        spot = (x1, y1, type, name)
+        self.spots[name] = spot
+        if not self.hovered and self.cords and \
+                self.pointIsOnSpot (self.cords[0], self.cords[1], spot):
+            self.hovered = spot
+        self.redraw_canvas(self.getBounds(spot))
     
     def removeSpot (self, name):
         if not name in self.spots:
             return
-        x, y, type = self.spots.pop(name)
-        self.redraw_canvas(self.getBounds(x,y))
+        spot = self.spots.pop(name)
+        bounds = self.getBounds(spot)
+        if spot == self.hovered:
+            self.hovered = None
+        self.redraw_canvas(bounds)
     
     def clearSpots (self):
-        self.spots = {}
+        self.hovered = None
+        self.spots.clear()
         self.redraw_canvas()
         self.redraw_canvas()
     
-    def getBounds (self, x, y):
-        alloc = self.get_allocation()
-        width = alloc.width
-        height = alloc.height
+    ############################################################################
+    # Internal stuff                                                           #
+    ############################################################################
+    
+    def getBounds (self, spot):
         
-        x = x*(width-line)+line
-        y = y*(height-line)-line
+        x, y, type, name = spot
+        x, y = self.transCords (x, y)
         
-        return (x-dotSmall/2-1, y-dotSmall/2-1, x+dotSmall/2+1, y+dotSmall/2+1)
+        if spot == self.hovered:
+            size = dotLarge
+        else: size = dotSmall
+        
+        return (x-size/2-1, y-size/2-1, x+size/2+1, y+size/2+1)
     
     def getNearestFreeNeighbour (self, xorg, yorg):
         
@@ -124,46 +204,40 @@ class SpotGraph (gtk.DrawingArea):
         down = 2
         left = 2
         
-        # To search, we have to translate points for % to px
-        alloc = self.get_allocation()
-        width = float(alloc.width)
-        height = float(alloc.height)
-        
-        x = xorg * width
-        y = yorg * height
+        x, y = self.transCords (xorg, yorg)
         
         # Start by testing current spot
         if self.isEmpty (x, y):
-            return x/width, y/height
+            return self.reTransCords (x, y)
         
         while True:
 
             for i in range(up):
                 y -= dotSmall
                 if self.isEmpty (x, y):
-                    return x/width, y/height
+                    return self.reTransCords (x, y)
 
             for i in range(right):
                 x += dotSmall
                 if self.isEmpty (x, y):
-                    return x/width, y/height
+                    return self.reTransCords (x, y)
 
             for i in range(down):
                 y += dotSmall
                 if self.isEmpty (x, y):
-                    return x/width, y/height
+                    return self.reTransCords (x, y)
 
             for i in range(left):
                 x -= dotSmall
                 if self.isEmpty (x, y):
-                    return x/width, y/height
+                    return self.reTransCords (x, y)
             
             # Grow spiral bounds
             right += 2
             down += 2
             left += 2
             up += 2
-        
+    
     def isEmpty (self, x0, y0):
         
         # Make sure spiral search don't put dots outside the graph
@@ -173,10 +247,48 @@ class SpotGraph (gtk.DrawingArea):
         if not 0 <= x0 <= width or not 0 <= y0 <= height:
             return False
         
-        for x1, y1, type in self.spots.values():
-            x1 = x1*width
-            y1 = y1*height
+        for x1, y1, type, name in self.spots.values():
+            x1, y1 = self.transCords(x1, y1)
             if (x1-x0)**2 + (y1-y0)**2 <= dotSmall**2:
                 return False
         
         return True
+    
+    def pointIsOnSpot (self, x0, y0, spot):
+        if spot == self.hovered:
+            size = dotLarge
+        else: size = dotSmall
+        
+        alloc = self.get_allocation()
+        width = alloc.width
+        height = alloc.height
+        
+        x1, y1, type, name = spot
+        x1, y1 = self.transCords(x1, y1)
+        if (x1-x0)**2 + (y1-y0)**2 <= (size/2.)**2:
+            return True
+        return False
+    
+    def getSpotAtPoint (self, x, y):
+        if self.hovered and self.pointIsOnSpot(x, y, self.hovered):
+            return self.hovered
+        
+        for spot in self.spots.values():
+            if spot == self.hovered:
+                continue
+            if self.pointIsOnSpot(x, y, spot):
+                return spot
+        
+        return None
+    
+    def transCords (self, x, y):
+        alloc = self.get_allocation()
+        width = alloc.width
+        height = alloc.height
+        return x*(width-line)+line,  y*(height-line)-line
+    
+    def reTransCords (self, x, y):
+        alloc = self.get_allocation()
+        width = alloc.width
+        height = alloc.height
+        return (x-line)/(width-line),  (y+line)/(height-line)

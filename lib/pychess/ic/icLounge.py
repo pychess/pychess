@@ -1,4 +1,6 @@
 import gtk
+import pango
+import re
 from Queue import Queue
 from Queue import Empty as EmptyError
 from time import sleep
@@ -6,8 +8,19 @@ import telnet
 from gobject import idle_add
 from pychess.Utils.const import *
 from GameListManager import GameListManager
+from FingerManager import FingerManager
 from SpotGraph import SpotGraph
 from math import e
+from PingLabel import PingLabel
+from NewsManager import NewsManager
+import webbrowser
+from BoardManager import BoardManager
+from pychess.widgets import ionest
+from pychess.widgets import gamewidget
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.GameModel import GameModel
+from pychess.Players.ServerPlayer import ServerPlayer
+from cStringIO import StringIO
 
 firstRun = True
 def show():
@@ -17,8 +30,7 @@ def show():
         initialize()
     
     widgets["fics_lounge"].show()
-    glm.start()
-    
+
 def initialize():
     
     global widgets
@@ -29,31 +41,238 @@ def initialize():
             return self.widgets.get_widget(key)
     widgets = Widgets(gtk.glade.XML(prefix("glade/fics_lounge.glade")))
     
-    global glm
+    def on_window_delete (window, event):
+        pass
+    widgets["fics_lounge"].connect("delete-event", on_window_delete)
+    
+    global glm, fm, nm
     glm = GameListManager()
+    fm = FingerManager()
+    nm = NewsManager()
+    bm = BoardManager()
+    
+    ############################################################################
+    # Initialize User Information Section                                      #
+    ############################################################################
     
     def on_status_changed (client, signal):
         if signal == IC_CONNECTED:
-            glm.start ()
+            fm.finger(telnet.curname)
     telnet.connectStatus (on_status_changed)
     
-    def on_window_delete (window, event):
-        telnet.client.close()
-    widgets["fics_lounge"].connect("delete-event", on_window_delete)
+    def callback (fm, ratings, email, time):
+        
+        widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
+        dock = widgets["fingerTableDock"]
+        dock.remove(dock.get_child()) # Remove placeholder
+        
+        rows = 1
+        if ratings: rows += len(ratings)+1
+        if email: rows += 1
+        if time: rows += 1
+        
+        table = gtk.Table(6, rows)
+        table.props.column_spacing = 12
+        table.props.row_spacing = 4
+        
+        def label(str, xalign=0):
+            label = gtk.Label(str)
+            label.props.xalign = xalign
+            return label
+        
+        row = 0
+        
+        if ratings:
+            for i, item in enumerate(("Rating", "Win", "Loss", "Draw", "Total")):
+                table.attach(label(_(item), xalign=1), i+1,i+2,0,1)
+            
+            row += 1
+            
+            for type, numbers in ratings.iteritems():
+                table.attach(label(_(type)+":"), 0, 1, row, row+1)
+                # Remove RD tag, as we want to be compact
+                numbers = numbers[:1] + numbers[2:]
+                for i, number in enumerate(numbers):
+                    table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
+                row += 1
+            
+            table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
+            row += 1
+        
+        if email:
+            table.attach(label(_("Email")+":"), 0, 1, row, row+1)
+            table.attach(label(email), 1, 6, row, row+1)
+            row += 1
+        
+        if time:
+            table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
+            s = ""
+            if time[0]:
+                if time[0] == "1":
+                    s += "%s day" % time[0]
+                else: s += "%s days" % time[0]
+            if time[1]:
+                if s: s += ", "
+                if time[1] == "1":
+                    s += "%s hour" % time[1]
+                else: s += "%s hrs" % time[1]
+            if time[2]:
+                if s: s += ", "
+                if time[2] == "1":
+                    s += "%s min" % time[2]
+                else: s += "%s mins" % time[2]
+            if time[3]:
+                if s: s += ", "
+                if time[3] == "1":
+                    s += "%s sec" % time[3]
+                else: s += "%s secs" % time[3]
+            s += " "+_("online in total")
+            table.attach(label(s), 1, 6, row, row+1)
+            row += 1
+        
+        table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
+        l = PingLabel()
+        l.props.xalign = 0
+        table.attach(l, 1, 6, row, row+1)
+        
+        dock.add(table)
+        dock.show_all()
     
-    def on_showConsoleButton_clicked (button):
-        widgets["consoleVbox"].show()
-        widgets["showConsoleButton"].hide()
-    widgets["showConsoleButton"].connect(
-            "clicked", on_showConsoleButton_clicked)
+    fm.connect("fingeringFinished", callback)
     
-    def on_consoleCloseButton_clicked (button):
-        width, height = widgets["fics_lounge"].get_size()
-        widgets["consoleVbox"].hide()
-        widgets["showConsoleButton"].show()
-        widgets["fics_lounge"].resize(1, height)
-    widgets["consoleCloseButton"].connect(
-            "clicked", on_consoleCloseButton_clicked)
+    ############################################################################
+    # Initialize News Section                                                  #
+    ############################################################################
+    
+    def on_status_changed (client, signal):
+        if signal == IC_CONNECTED:
+            # Clear old news or placeholder
+            newsVBox = widgets["newsVBox"]
+            for child in newsVBox.get_children():
+                newsVBox.remove(child)
+            nm.start()
+    telnet.connectStatus (on_status_changed)
+    
+    linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
+    emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
+    def callback (nm, news):
+        weekday, month, day, title, details = news
+        
+        dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
+        label = gtk.Label(dtitle)
+        label.props.width_request = 300
+        label.props.xalign = 0
+        label.set_ellipsize(pango.ELLIPSIZE_END)
+        expander = gtk.Expander()
+        expander.set_label_widget(label)
+        gtk.Tooltips().set_tip(expander, title)
+        
+        textview = gtk.TextView ()
+        textview.set_wrap_mode (gtk.WRAP_WORD)
+        textview.set_editable (False)
+        textview.set_cursor_visible (False)
+        textview.props.pixels_above_lines = 4
+        textview.props.pixels_below_lines = 4
+        textview.props.right_margin = 2
+        textview.props.left_margin = 6
+        textbuffer = textview.get_buffer()
+        alignment = gtk.Alignment()
+        alignment.set_padding(3, 6, 12, 0)
+        alignment.props.xscale = 1
+        alignment.add(textview)
+        
+        tags = []
+        
+        while True:
+            linkmatch = linkre.search(details)
+            emailmatch = emailre.search(details)
+            if not linkmatch and not emailmatch:
+                textbuffer.insert (textbuffer.get_end_iter(), details)
+                break
+            
+            if emailmatch and (not linkmatch or \
+                    emailmatch.start() < linkmatch.start()):
+                s = emailmatch.start()
+                e = emailmatch.end()
+                type = "email"
+            else:
+                s = linkmatch.start()
+                e = linkmatch.end()
+                if details[e-1] == ".":
+                    e -= 1
+                type = "link"
+            textbuffer.insert (textbuffer.get_end_iter(), details[:s])
+            
+            tag = textbuffer.create_tag (None, foreground="blue",
+                    underline=pango.UNDERLINE_SINGLE)
+            tags.append([tag, details[s:e], type, textbuffer.get_end_iter()])
+            
+            textbuffer.insert_with_tags (
+                    textbuffer.get_end_iter(), details[s:e], tag)
+            
+            tags[-1].append(textbuffer.get_end_iter())
+            
+            details = details[e:]
+        
+        def on_press_in_textview (textview, event):
+            iter = textview.get_iter_at_location (int(event.x), int(event.y))
+            if not iter: return
+            for tag, link, type, s, e in tags:
+                if iter.has_tag(tag):
+                    tag.props.foreground = "red"
+                    break
+        
+        def on_release_in_textview (textview, event):
+            iter = textview.get_iter_at_location (int(event.x), int(event.y))
+            if not iter: return
+            for tag, link, type, s, e in tags:
+                if iter and iter.has_tag(tag) and \
+                        tag.props.foreground_gdk.red == 65535:
+                    if type == "link":
+                        webbrowser.open(link)
+                    else: webbrowser.open("mailto:"+link)
+                tag.props.foreground = "blue"
+        
+        stcursor = gtk.gdk.Cursor(gtk.gdk.XTERM)
+        linkcursor = gtk.gdk.Cursor(gtk.gdk.HAND2)
+        def on_motion_in_textview(textview, event):
+            textview.window.get_pointer()
+            iter = textview.get_iter_at_location (int(event.x), int(event.y))
+            if not iter: return
+            for tag, link, type, s, e in tags:
+                if iter.has_tag(tag):
+                    textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor (
+                            linkcursor)
+                    break
+            else: textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor(stcursor)
+        textview.connect ("motion-notify-event", on_motion_in_textview)
+        textview.connect ("leave_notify_event", on_motion_in_textview)
+        textview.connect("button_press_event", on_press_in_textview)
+        textview.connect("button_release_event", on_release_in_textview)
+        
+        expander.add(alignment)
+        expander.show_all()
+        widgets["newsVBox"].pack_end(expander)
+    
+    nm.connect("readNews", callback)
+    
+    ############################################################################
+    # Console                                                                  #
+    ############################################################################
+    
+    #def on_showConsoleButton_clicked (button):
+    #    widgets["consoleVbox"].show()
+    #    widgets["showConsoleButton"].hide()
+    #widgets["showConsoleButton"].connect(
+    #        "clicked", on_showConsoleButton_clicked)
+    
+    #def on_consoleCloseButton_clicked (button):
+    #    width, height = widgets["fics_lounge"].get_size()
+    #    widgets["consoleVbox"].hide()
+    #    widgets["showConsoleButton"].show()
+    #    widgets["fics_lounge"].resize(1, height)
+    #widgets["consoleCloseButton"].connect(
+    #        "clicked", on_consoleCloseButton_clicked)
     
     ############################################################################
     # Initialize Lists                                                         #
@@ -70,28 +289,48 @@ def initialize():
         return True
     idle_add (executeQueue)
     
+    def on_status_changed (client, signal):
+        if signal == IC_CONNECTED:
+            glm.start ()
+        else:
+            glm.stop ()
+    telnet.connectStatus (on_status_changed)
+    
         ########################################################################
         # Initialize Seek List                                                 #
         ########################################################################
     
-    def addColumns (treeview, *columns):
+    def addColumns (treeview, *columns, **keyargs):
+        if "hide" in keyargs:
+            hide = keyargs["hide"]
+        else: hide = []
         for i, name in enumerate(columns):
+            if i in hide: continue
             column = gtk.TreeViewColumn(name, gtk.CellRendererText(), text=i)
             column.set_sort_column_id(i)
+            column.set_resizable(True)
+            # We cannot set treeheader reorderable, because of the bug descriped
+            # in this post: http://mail.gnome.org/archives/gtk-app-devel-list/2004-January/msg00056.html
+            # It seems it work work if all idle_add's were switched to
+            # timeout_add's, but that would probably cause other troubles in
+            # form of gui lag.
+            # column.set_reorderable(True)
             treeview.append_column(column)
     
     tv = widgets["seektreeview"]
-    sstore = gtk.ListStore(str, int, str, str, str)
+    sstore = gtk.ListStore(str, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
-    addColumns(tv, "Name", "Rating", "Rated", "Type", "Clock")
+    addColumns (tv, "GameNo", _("Name"), _("Rating"), _("Rated"),
+                              _("Type"), _("Clock"), hide=[0])
     
     seeks = {}
     
     def on_seek_add (manager, seek):
         def call ():
             time = "%s min + %s sec" % (seek["t"], seek["i"])
-            ti = sstore.append (
-                [seek["w"], int(seek["rt"]), seek["r"], seek["tp"], time])
+            rated = seek["r"] == "u" and _("Unrated") or _("Rated")
+            ti = sstore.append ([seek["gameno"], seek["w"], int(seek["rt"]),
+                                 rated, seek["tp"], time])
             seeks [seek["gameno"]] = ti
         listqueue.put(call)
     glm.connect("addSeek", on_seek_add)
@@ -117,6 +356,18 @@ def initialize():
         listqueue.put(call)
     glm.connect("clearSeeks", on_seek_clear)
     
+    def on_selection_changed (selection):
+        anyThingSelected = selection.get_selected()[1] != None
+        widgets["acceptButton"].set_sensitive(anyThingSelected)
+    tv.get_selection().connect_after("changed", on_selection_changed)
+    
+    def on_acceptButton_clicked (button):
+        model, iter = widgets["seektreeview"].get_selection().get_selected()
+        if iter == None: return
+        gamno = model.get(iter, 0)
+        print "Activated game:", gamno[0]
+    widgets["acceptButton"].connect("clicked", on_acceptButton_clicked)
+    
         ########################################################################
         # Initialize Seek Graph                                                #
         ########################################################################
@@ -125,10 +376,14 @@ def initialize():
     widgets["graphDock"].add(graph)
     graph.show()
     
+    def on_spot_clicked (graph, name):
+        print "Activated game:", name
+    graph.connect("spotClicked", on_spot_clicked)
+    
     def on_seek_add (manager, seek):
         def call ():
             # The lower the -8 number, the steeper the acceleration
-            x = e**(-8/(float(seek["t"])+float(seek["i"])/3))
+            x = e**(-8/(float(seek["t"])+float(seek["i"])*2/3))
             y = seek["rt"].isdigit() and float(seek["rt"])/3000 or 0
             type = seek["r"] == "u" and 1 or 0
             graph.addSpot(seek["gameno"], x, y, type)
@@ -152,17 +407,18 @@ def initialize():
         ########################################################################
     
     tv = widgets["playertreeview"]
-    pstore = gtk.ListStore(str, int)
+    pstore = gtk.ListStore(str, str, int)
     tv.set_model(gtk.TreeModelSort(pstore))
-    addColumns(tv, "Name", "Rating")
+    addColumns(tv, "Title", "Name", "Rating")
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
     
     players = {}
     
     def on_player_add (manager, player):
         def call ():
+            if player["name"] in players: return
             rating = player["r"].isdigit() and int(player["r"]) or 0
-            ti = pstore.append ([ player["name"], rating ])
+            ti = pstore.append ([player["title"], player["name"], rating ])
             players [player["name"]] = ti
         listqueue.put(call)
     glm.connect("addPlayer", on_player_add)
@@ -184,15 +440,18 @@ def initialize():
         ########################################################################
     
     tv = widgets["gametreeview"]
-    gstore = gtk.ListStore(str, str)
+    gstore = gtk.ListStore(str, str, str, str)
     tv.set_model(gtk.TreeModelSort(gstore))
-    addColumns(tv, "White", "Black")
+    tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+    addColumns(tv, "GameNo", _("White Player"), _("Black Player"),
+                             _("Game Type"), hide=[0])
     
     games = {}
     
     def on_game_add (manager, game):
         def call ():
-            ti = gstore.append ([ game["wn"], game["bn"] ])
+            ti = gstore.append ([game["gameno"], game["wn"],
+                                 game["bn"], game["type"]])
             games [game["gameno"]] = ti
         listqueue.put(call)
     glm.connect("addGame", on_game_add)
@@ -208,3 +467,47 @@ def initialize():
             del games[gameno]
         listqueue.put(call)
     glm.connect("removeGame", on_game_remove)
+    
+    def observeBoardCreated (bm, gameno, pgn, secs, incr):
+        timemodel = TimeModel (secs, incr)
+        game = GameModel (timemodel)
+        white = ServerPlayer (bm, gameno, WHITE)
+        black = ServerPlayer (bm, gameno, BLACK)
+        game.setPlayers((white,black))
+        
+        def gameEnded (bm, gameno1, status, reason):
+            if gameno == gameno1:
+                print "Lukker spil", gameno
+                game.forceStatus (status, reason)
+        bm.connect("gameEnded", gameEnded)
+        
+        def clockUpdated (bm, gameno1, wsecs, bsecs):
+            if gameno == gameno1:
+                print "Opdaterer tid", wsecs, bsecs
+                timemodel.syncClock(wsecs, bsecs)
+        bm.connect("clockUpdated", clockUpdated)
+        
+        file = StringIO(pgn)
+        
+        def idle ():
+            gmwidg = gamewidget.createGameWidget(game)
+            gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+            gmwidg.connect("closed", ionest.closeGame, game)
+            if timemodel:
+                gmwidg.widgets["ccalign"].show()
+                gmwidg.widgets["cclock"].setModel(timemodel)
+            
+            print "Opening game", pgn
+            ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
+        idle_add(idle)
+        
+    bm.connect("observeBoardCreated", observeBoardCreated)
+    
+    def on_observe_clicked (button):
+        model, paths = widgets["gametreeview"].get_selection().get_selected_rows()
+        for i, path in enumerate(paths):
+            gameno = model.get_value(model.get_iter(path), 0)
+            print "Should observe", gameno
+            bm.observe(gameno)
+    widgets["observeButton"].connect ("clicked", on_observe_clicked)
+    
