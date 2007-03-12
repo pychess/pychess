@@ -135,7 +135,10 @@ class GladeHandlers:
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
         def game_loaded (gamemodel, uri):
-            gmwidg.status("%s: %s" % (_("Loaded game"), str(uri)), True)
+            if type(uri) in (str, unicode):
+                s = "%s: %s" % (_("Loaded game"), str(uri))
+            else: s = _("Loaded game")
+            gmwidg.status(s, True)
         gamemodel.connect("game_loaded", game_loaded)
         
         def game_saved (gamemodel, uri):
@@ -146,18 +149,25 @@ class GladeHandlers:
             m1 = {
                 DRAW: _("The game ended in a draw"),
                 WHITEWON: _("White player won the game"),
-                BLACKWON: _("Black player won the game")
+                BLACKWON: _("Black player won the game"),
+                ADJOURNED: _("The game has been adjourned"),
+                ABORTED: _("The game has been aborted")
             }[gamemodel.status]
             m2 = {
                 DRAW_INSUFFICIENT: _("caused by insufficient material"),
                 DRAW_REPITITION: _("as the same position was repeated three" + \
                                    " times in a row"),
                 DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
+                DRAW_CALLFLAG: _("as both players ran out of time"),
                 DRAW_STALEMATE: _("because of stalemate"),
                 DRAW_AGREE: _("as the players agreed to"),
                 WON_RESIGN: _("as opponent resigned"),
                 WON_CALLFLAG: _("as opponent ran out of time"),
                 WON_MATE: _("on a mate"),
+                WON_DISCONNECTION: _("as opponent disconnected"),
+                ADJOURNED_LOST_CONNECTION: _("as a player lost connection"),
+                ADJOURNED_AGREEMENT: _("as the players agreed to"),
+                REASON_ABORTED: "",
                 UNKNOWN_REASON: _("by no known reason")
             }[reason]
             gmwidg.status("%s %s" % (m1,m2), idle_add=True)

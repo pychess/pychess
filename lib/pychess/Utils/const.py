@@ -52,7 +52,7 @@ reprColor = ["White", "Black"]
 
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
-        UNKNOWN_STATE = range(8)
+    ADJOURNED, ABORTED, UNKNOWN_STATE = range(10)
 reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "?"]
 
 # Time calling errors
@@ -60,7 +60,9 @@ NO_TIME_SETTINGS, NOT_OUT_OF_TIME = range(2)
 
 # Game state reasons
 DRAW_REPITITION, DRAW_50MOVES, DRAW_STALEMATE, DRAW_AGREE, DRAW_INSUFFICIENT, \
-    WON_RESIGN, WON_CALLFLAG, WON_MATE, UNKNOWN_REASON = range(9)
+    DRAW_CALLFLAG, WON_RESIGN, WON_CALLFLAG, WON_MATE, WON_DISCONNECTION, \
+    ADJOURNED_LOST_CONNECTION, ADJOURNED_AGREEMENT, REASON_ABORTED, \
+    UNKNOWN_REASON = range(14)
 
 # Player actions
 RESIGNATION, FLAG_CALL, DRAW_OFFER = range(3)
@@ -152,6 +154,9 @@ for cord, name in enumerate(reprCord):
 ################################################################################
 
 IC_CONNECTED, IC_MATCH, IC_DISCONNECTED = range(3)
+
+IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
+IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING = range(6)
 
 ################################################################################
 # User interface                                                               #
