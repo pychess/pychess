@@ -5,7 +5,7 @@ class PlayerIsDead (Exception): pass
 class Player (GObject):
     
     __gsignals__ = {
-        "action": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "action": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,int)),
         "dead": (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     

@@ -103,7 +103,11 @@ class GameModel (GObject):
     # Player stuff                                                             #
     ############################################################################
     
-    def _actionRecieved (self, player, action):
+    def _actionRecieved (self, player, action, param):
+        
+        if player == self.players[WHITE]:
+            opPlayer = self.players[BLACK]
+        else: opPlayer = self.players[WHITE]
         
         if action == RESIGNATION:
             if player == self.players[WHITE]:
@@ -114,10 +118,6 @@ class GameModel (GObject):
             self.emit("game_ended", self.reason)
         
         elif action == DRAW_OFFER:
-            if player == self.players[WHITE]:
-                opPlayer = self.players[BLACK]
-            else: opPlayer = self.players[WHITE]
-            
             if self.drawSentBy == otherPlayer:
                 # If our opponent has already offered us a draw, the game ends
                 self.status = DRAW
@@ -146,6 +146,16 @@ class GameModel (GObject):
                 return
             
             self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
+        
+        elif action == TAKEBACK_FORCE:
+            for ply in range(self.ply, param, -1):
+                self.undo()
+        
+        elif action == ADJOURNED_OFFER:
+            opPlayer.offerAdjourn()
+        
+        elif actino == ABORT_OFFER:
+            opPlayer.offerAbort()
     
     ############################################################################
     # Data stuff                                                               #
@@ -235,7 +245,10 @@ class GameModel (GObject):
             self.emit("game_changed")
             
             if self.timemodel:
-                self.timemodel.setMovingColor(1-curColor)
+                if self.ply < 2:
+                    self.timemodel.setMovingColor(1-curColor)
+                else:
+                    self.timemodel.tap()
             
             if self.status != RUNNING:
                 self.emit("game_ended", self.reason)

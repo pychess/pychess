@@ -23,7 +23,9 @@ class GameListManager (GObject):
         'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         
         'addPlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'removePlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
+        'removePlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        
+        'addAdjourn' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
     def __init__ (self):
@@ -51,8 +53,8 @@ class GameListManager (GObject):
         telnet.expect ( "%s is no longer available for matches." % names, self.on_player_remove)
         
         telnet.expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
-    
-    
+        
+        telnet.expect ( "\s*\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*?)\n", self.on_adjourn_add)
     
     def start (self):
         
@@ -61,13 +63,16 @@ class GameListManager (GObject):
         print >> telnet.client, "set seek 1"
         
         print >> telnet.client, "set gin 1"
+        print >> telnet.client, "iset allresults 0"
         print >> telnet.client, "games /sbl"
         
         print >> telnet.client, "who a"
         print >> telnet.client, "set availmax 0"
         print >> telnet.client, "set availmin 0"
         print >> telnet.client, "set availinfo 1"
-    
+        
+        print >> telnet.client, "stored"
+        
     def stop (self):
         print >> telnet.client, "iset seekinfo 0"
         print >> telnet.client, "iset seekremove 0"
@@ -142,3 +147,11 @@ class GameListManager (GObject):
         name, title, blitz, std, wild, light, bug = groups
         self.emit("addPlayer", \
             {"name":name, "title":title, "r":blitz, "status": " "})
+    
+    ###
+    
+    def on_adjourn_add (self, client, groups):
+        mycolor, opponent, opponentIsOnline, type, minutes, increment, wscore, bscore, curcolor, moveno, eco, date = groups
+        opstatus = opponentIsOnline == "Y" and "Online" or "Offline"
+        procPlayed = (int(wscore)+int(bscore))*100/79
+        self.emit ("addAdjourn", {"opponent": opponent, "opstatus": opstatus, "date": date, "procPlayed": procPlayed })

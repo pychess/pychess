@@ -23,10 +23,12 @@ class ProtocolEngine (Engine):
         self.movecond = Condition()
         self.move = None
         self.analyzeMoves = []
-        self.proto.connect("draw_offer", lambda w:self.emit("action",DRAW_OFFER))
-        self.proto.connect("resign", lambda w:self.emit("action",RESIGNATION))
-        self.proto.connect("move", self.onMove)
-        self.proto.connect("analyze", self.onAnalyze)
+        self.proto.connect ("draw_offer",
+                lambda w: self.emit("action", DRAW_OFFER, 0))
+        self.proto.connect ("resign",
+                lambda w: self.emit("action", RESIGNATION, 0))
+        self.proto.connect ("move", self.onMove)
+        self.proto.connect ("analyze", self.onAnalyze)
         def dead (engine):
             self.movecond.acquire()
             self.move = None

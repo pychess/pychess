@@ -1,12 +1,13 @@
 
-import telnet
+import telnet, re
 from gobject import *
 from pychess.Utils.const import *
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
+# What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
-ratings = "\(([\d\+\-]{1,4})\)"
+ratings = "\(([0-9\ \-\+]{4})\)"
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
 
 fileToEpcord = (("a3","b3","c3","d3","e3","f3","g3","h3"),
@@ -23,9 +24,10 @@ class BoardManager (GObject):
     
     __gsignals__ = {
         'playBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'observeBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,int,int)),
+        'observeBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,int,int,str,str)),
         'moveRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,str,int)),
         'clockUpdated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int)),
+        'clockUpdatedMs' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int)),
         'gameEnded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int))
     }
     
@@ -35,11 +37,15 @@ class BoardManager (GObject):
         self.observeQueue = []
         self.currentBoard = None
         
-        print >> telnet.client, "style 12"
+        #print >> telnet.client, "style 12"
+        print >> telnet.client, "iset startpos 1"
+        print >> telnet.client, "iset gameinfo 1"
+        print >> telnet.client, "iset compressmove 1"
         
         telnet.expect ( "<12>(.*?)\n", self.onStyle12 )
+        telnet.expect ( "<d1>(.*?)\n", self.onMove )
         
-        telnet.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
+        telnet.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
         
         telnet.expect ( "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % (names, ratings, names, ratings, rated, types), self.observeBoardCreated)
         
@@ -125,18 +131,31 @@ class BoardManager (GObject):
                 ply -= 1 
                 if curcol == BLACK: ply += 1
                 self.currentBoard["moves"][ply] = sanmove
-            self.emit("moveRecieved", fen, sanmove, gameno, 1-curcol)
+            self.emit("moveRecieved", ply, sanmove, gameno, 1-curcol)
         
         # Clock update
         whiteRemainSecs = int(groups[23])
         blackRemainSecs = int(groups[24])
         self.emit ("clockUpdated", gameno, whiteRemainSecs, blackRemainSecs)
     
+    def onMove (self, client, groups):
+        fields = groups[0].split()
+        gameno = fields[0]
+        ply = int(fields[1])
+        color = ply % 2 == 0 and BLACK or WHITE
+        sanmove = fields[2]
+        self.emit("moveRecieved", ply, sanmove, gameno, color)
+        
+        msLeft = int(fields[5])
+        self.emit ("clockUpdatedMs", gameno, int(msLeft), 1-color)
+    
     def playBoardCreated (self, client, groups):
-        wname, wtit, wrat, bname, btit, brat, rated, type, mins, incr = groups
+        print "playBoardCreated", groups
+        wname, wtit, wrat, bname, btit, brat, rt, type, min, incr, gmno = groups
         board = {"wname": wname, "wtitle": wtit, "wrating": wrat,
                  "bname": bname, "btitle": btit, "brating": brat,
-                 "rated": rated, "type": type, "mins": mins, "incr": incr}
+                 "rated": rt, "type": type, "mins": min, "incr": incr,
+                 "gameno": gmno}
         self.emit("playBoardCreated", board)
     
     def observeBoardCreated (self, client, groups):
@@ -170,7 +189,13 @@ class BoardManager (GObject):
             pgn += move + " "
         pgn += "\n"
         
-        self.emit ("observeBoardCreated", gmno, pgn, int(mins)*60, int(incr))
+        if wtit:           wnam += "(%s)" % wtit
+        if wrat.isdigit(): wnam += " %s" % wrat
+        if btit:           bnam += "(%s)" % btit
+        if brat.isdigit(): bnam += " %s" % brat
+
+        self.emit ("observeBoardCreated", gmno, pgn,
+                   int(mins)*60, int(incr), wnam, bnam)
         
         self.currentBoard = None
         if self.observeQueue:
@@ -197,6 +222,8 @@ class BoardManager (GObject):
                 reason = WON_CALLFLAG
             elif "checkmated" in parts:
                 reason = WON_MATE
+            elif "adjudication" in parts:
+                reason = WON_ADJUDICATION
             else:
                 reason = UNKNOWN_REASON
         elif state == "1/2-1/2":
@@ -213,6 +240,11 @@ class BoardManager (GObject):
                 reason = DRAW_STALEMATE
             elif "50" in parts:
                 reason = DRAW_50MOVES
+            elif "length" in parts:
+                # FICS has a max game length on 800 moves
+                reason = DRAW_LENGTH
+            elif "adjudication" in parts:
+                reason = DRAW_ADJUDICATION
             else:
                 reason = UNKNOWN_REASON
         elif "adjourned" in parts:
@@ -221,11 +253,29 @@ class BoardManager (GObject):
                 reason = ADJOURNED_LOST_CONNECTION
             elif "agreement" in parts:
                 reason = ADJOURNED_AGREEMENT
+            elif "shutdown" in parts:
+                reason = ADJOURNED_SERVER_SHUTDOWN
             else:
                 reason = UNKNOWN_REASON
         elif "aborted" in parts:
             status = ABORTED
-            reason = REASON_ABORTED
+            if "agreement" in parts:
+                reason = ABORTED_AGREEMENT
+            elif "move" in parts:
+                # Game aborted on move 1 *
+                reason = ABORTED_EARLY
+            elif "moves" in parts:
+                # lost connection and too few moves; game aborted *
+                reason = ABORTED_EARLY
+            elif "shutdown" in parts:
+                reason = ABORTED_SERVER_SHUTDOWN
+            elif "adjudication" in parts:
+                reason = ABORTED_ADJUDICATION
+            else:
+                reason = UNKNOWN_REASON
+        elif "courtesyaborted" in parts:
+            status = ABORTED
+            reason = ABORTED_COURTESY
         else:
             status = UNKNOWN_STATE
             reason = UNKNOWN_REASON
@@ -247,3 +297,12 @@ class BoardManager (GObject):
     
     def unobserve (self, gameno):
         print >> telnet.client, "unobserve", gameno
+    
+    def play (self, seekno):
+        print >> telnet.client, "play", seekno
+    
+    def accept (self, offerno):
+        print >> telnet.client, "accept", offerno
+    
+    def decline (self, offerno):
+        print >> telnet.client, "decline", offerno
