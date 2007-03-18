@@ -5,7 +5,7 @@ from Queue import Queue
 from Queue import Empty as EmptyError
 from time import sleep
 import telnet
-from gobject import idle_add
+from gobject import idle_add, timeout_add
 from pychess.Utils.const import *
 from GameListManager import GameListManager
 from FingerManager import FingerManager
@@ -21,6 +21,10 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
 from pychess.Players.ServerPlayer import ServerPlayer
 from cStringIO import StringIO
+from OfferManager import OfferManager
+from IcGameModel import IcGameModel
+from pychess.Players.Human import Human
+from gtk.gdk import pixbuf_new_from_file
 
 firstRun = True
 def show():
@@ -50,6 +54,7 @@ def initialize():
     fm = FingerManager()
     nm = NewsManager()
     bm = BoardManager()
+    om = OfferManager()
     
     ############################################################################
     # Initialize User Information Section                                      #
@@ -281,13 +286,15 @@ def initialize():
     listqueue = Queue()
     
     def executeQueue ():
-        try:
-            func = listqueue.get(block=False)
-            func()
-        except EmptyError:
-            sleep(0.01) # Make sure we have no empty loops
+        while True:
+            try:
+                func = listqueue.get(block=False)
+                func()
+            except EmptyError:
+                # Take a break
+                break
         return True
-    idle_add (executeQueue)
+    timeout_add (10, executeQueue)
     
     def on_status_changed (client, signal):
         if signal == IC_CONNECTED:
@@ -301,14 +308,22 @@ def initialize():
         ########################################################################
     
     def addColumns (treeview, *columns, **keyargs):
-        if "hide" in keyargs:
-            hide = keyargs["hide"]
+        if "hide" in keyargs: hide = keyargs["hide"]
         else: hide = []
+        if "pix" in keyargs: pix = keyargs["pix"]
+        else: pix = []
         for i, name in enumerate(columns):
             if i in hide: continue
-            column = gtk.TreeViewColumn(name, gtk.CellRendererText(), text=i)
-            column.set_sort_column_id(i)
-            column.set_resizable(True)
+            if i in pix:
+                crp = gtk.CellRendererPixbuf()
+                crp.props.xalign = 0
+                column = gtk.TreeViewColumn(name, crp, pixbuf=i)
+            else:
+                crt = gtk.CellRendererText()
+                column = gtk.TreeViewColumn(name, crt, text=i)
+                column.set_sort_column_id(i)
+                column.set_resizable(True)
+            
             # We cannot set treeheader reorderable, because of the bug descriped
             # in this post: http://mail.gnome.org/archives/gtk-app-devel-list/2004-January/msg00056.html
             # It seems it work work if all idle_add's were switched to
@@ -318,19 +333,20 @@ def initialize():
             treeview.append_column(column)
     
     tv = widgets["seektreeview"]
-    sstore = gtk.ListStore(str, str, int, str, str, str)
+    sstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
-    addColumns (tv, "GameNo", _("Name"), _("Rating"), _("Rated"),
-                              _("Type"), _("Clock"), hide=[0])
+    addColumns (tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
+                              _("Type"), _("Clock"), hide=[0], pix=[1])
     
     seeks = {}
     
+    seekPix = pixbuf_new_from_file(prefix("glade/pixmaps/seek.png"))
     def on_seek_add (manager, seek):
         def call ():
             time = "%s min + %s sec" % (seek["t"], seek["i"])
             rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-            ti = sstore.append ([seek["gameno"], seek["w"], int(seek["rt"]),
-                                 rated, seek["tp"], time])
+            ti = sstore.append ([seek["gameno"], seekPix, seek["w"],
+                                 int(seek["rt"]), rated, seek["tp"], time])
             seeks [seek["gameno"]] = ti
         listqueue.put(call)
     glm.connect("addSeek", on_seek_add)
@@ -350,6 +366,7 @@ def initialize():
     glm.connect("removeSeek", on_seek_remove)
     
     def on_seek_clear (manager):
+        #FIXME: Shouldn't remove challenges
         def call ():
             sstore.clear()
             seeks.clear()
@@ -364,9 +381,79 @@ def initialize():
     def on_acceptButton_clicked (button):
         model, iter = widgets["seektreeview"].get_selection().get_selected()
         if iter == None: return
-        gamno = model.get(iter, 0)
-        print "Activated game:", gamno[0]
+        gameno = model.get_value(iter, 0)
+        if gameno.startswith("C"):
+            print "Sending", "accept", gameno[1:]
+            print >> telnet.client, "accept", gameno[1:]
+        else:
+            print "Sending", "play", gameno
+            print >> telnet.client, "play", gameno
     widgets["acceptButton"].connect("clicked", on_acceptButton_clicked)
+    
+    def playBoardCreated (bm, board):
+        
+        timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
+        game = IcGameModel (bm, board["gameno"], timemodel)
+        
+        if board["wname"].lower() == telnet.curname.lower():
+            color = WHITE
+            blackp = ServerPlayer (
+                bm, om, board["bname"], False, board["gameno"], BLACK)
+        else:
+            color = BLACK
+            # We want to create the players as quick as possible, so they can
+            # start handling moves sent by quick opponents
+            whitep = ServerPlayer (
+                bm, om, board["wname"], False, board["gameno"], WHITE)
+        
+        def idle ():
+            gmwidg = gamewidget.createGameWidget(game)
+            
+            if color == WHITE:
+                white = Human(gmwidg.widgets["board"], WHITE)
+                black = blackp
+            else:
+                white = whitep
+                black = Human(gmwidg.widgets["board"], BLACK)
+            game.setPlayers((white,black))
+            
+            gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+            gmwidg.connect("closed", ionest.closeGame, game)
+            if timemodel:
+                gmwidg.widgets["ccalign"].show()
+                gmwidg.widgets["cclock"].setModel(timemodel)
+            
+            ionest.simpleNewGame (game, gmwidg)
+            
+        idle_add(idle)
+    bm.connect ("playBoardCreated", playBoardCreated)
+    
+        ########################################################################
+        # Initialize Challenge List                                            #
+        ########################################################################
+    
+    challenges = {}
+    
+    challenPix = pixbuf_new_from_file(prefix("glade/pixmaps/challenge.png"))
+    def onChallengeAdd (om, index, match):
+        def call ():
+            time = "%s min + %s sec" % (match["t"], match["i"])
+            rated = match["r"] == "u" and _("Unrated") or _("Rated")
+            ti = sstore.append (["C"+index, challenPix, match["w"],
+                                 int(match["rt"]), rated, match["tp"], time])
+            challenges [index] = ti
+        listqueue.put(call)
+    om.connect("onChallengeAdd", onChallengeAdd)
+    
+    def onChallengeRemove (om, index):
+        def call ():
+            if not index in challenges: return
+            ti = challenges [index]
+            if not sstore.iter_is_valid(ti): return
+            sstore.remove (ti)
+            del challenges [index]
+        listqueue.put(call)
+    om.connect("onChallengeRemove", onChallengeRemove)
     
         ########################################################################
         # Initialize Seek Graph                                                #
@@ -377,7 +464,8 @@ def initialize():
     graph.show()
     
     def on_spot_clicked (graph, name):
-        print "Activated game:", name
+    	print "sending", "play", name
+        print >> telnet.client, "play", name
     graph.connect("spotClicked", on_spot_clicked)
     
     def on_seek_add (manager, seek):
@@ -468,26 +556,12 @@ def initialize():
         listqueue.put(call)
     glm.connect("removeGame", on_game_remove)
     
-    def observeBoardCreated (bm, gameno, pgn, secs, incr):
+    def observeBoardCreated (bm, gameno, pgn, secs, incr, wname, bname):
         timemodel = TimeModel (secs, incr)
-        game = GameModel (timemodel)
-        white = ServerPlayer (bm, gameno, WHITE)
-        black = ServerPlayer (bm, gameno, BLACK)
+        game = IcGameModel (bm, gameno, timemodel)
+        white = ServerPlayer (bm, om, wname, True, gameno, WHITE)
+        black = ServerPlayer (bm, om, bname, True, gameno, BLACK)
         game.setPlayers((white,black))
-        
-        def gameEnded (bm, gameno1, status, reason):
-            if gameno == gameno1:
-                print "Lukker spil", gameno
-                game.forceStatus (status, reason)
-        bm.connect("gameEnded", gameEnded)
-        
-        def clockUpdated (bm, gameno1, wsecs, bsecs):
-            if gameno == gameno1:
-                print "Opdaterer tid", wsecs, bsecs
-                timemodel.syncClock(wsecs, bsecs)
-        bm.connect("clockUpdated", clockUpdated)
-        
-        file = StringIO(pgn)
         
         def idle ():
             gmwidg = gamewidget.createGameWidget(game)
@@ -497,10 +571,10 @@ def initialize():
                 gmwidg.widgets["ccalign"].show()
                 gmwidg.widgets["cclock"].setModel(timemodel)
             
-            print "Opening game", pgn
+            file = StringIO(pgn)
             ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
         idle_add(idle)
-        
+    
     bm.connect("observeBoardCreated", observeBoardCreated)
     
     def on_observe_clicked (button):
@@ -511,3 +585,21 @@ def initialize():
             bm.observe(gameno)
     widgets["observeButton"].connect ("clicked", on_observe_clicked)
     
+        ########################################################################
+        # Initialize Adjourned List                                            #
+        ########################################################################
+    
+    if not telnet.registered:
+        widgets["notebook"].remove_page(4)
+    else:
+        tv = widgets["adjournedtreeview"]
+        astore = gtk.ListStore (str, str, str, str)
+        tv.set_model (gtk.TreeModelSort (astore))
+        addColumns (tv, _("Opponent"), _("Status"), _("% Played"), _("Date"))
+        
+        def on_adjourn_add (glm, game):
+            def call ():
+                ti = astore.append ([game["opponent"], game["opstatus"],
+                                 "%d %%" % game["procPlayed"], game["date"]])
+            listqueue.put(call)
+        glm.connect("addAdjourn", on_adjourn_add)

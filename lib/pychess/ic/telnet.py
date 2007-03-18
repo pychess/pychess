@@ -70,12 +70,13 @@ def log (data, header=None):
 
 client = None
 connected = False
+registered = False
 
 class LogOnError (Exception): pass
 
 def connect (host, port, username="guest", password=""):
     
-    global client, connected
+    global client, connected, registered
     
     client = VerboseTelnet()
     def callback (client, string):
@@ -90,7 +91,7 @@ def connect (host, port, username="guest", password=""):
         raise IOError, e.args[1]
     except EOFError:
         raise IOError, _("The connection was broken - got end of file message")
-        
+    
     client.read_until("login: ")
     print >> client, username
     
@@ -108,6 +109,7 @@ def connect (host, port, username="guest", password=""):
             raise LogOnError, _("'%s' is not a registered name") % username
         else:
             print >> client, password
+            registered = True
     else:
         client.read_until("Press return"), host
         print >> client

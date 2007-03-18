@@ -36,7 +36,7 @@ class ChessClock (gtk.DrawingArea):
         
         rect = self.get_allocation()
         context.rectangle(
-            rect.width/2. * (self.model.movingColor or WHITE), 0,
+            rect.width/2. * self.model.movingColor, 0,
             rect.width/2., rect.height)
         context.set_source_color(self.dark)
         context.fill_preserve()
@@ -149,13 +149,17 @@ class ChessClock (gtk.DrawingArea):
             self.thread = None
         if model != None:
             self.model.connect("time_changed", self.time_changed)
+            self.model.connect("player_changed", self.player_changed)
             self.thread = gobject.timeout_add(100, self.update)
             
         self.formatedCache = [self.formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
-        
+    
     def time_changed (self, model):
         self.update()
+    
+    def player_changed (self, model):
+        self.redraw_canvas()
     
     def update(self):
         wt = self.formatTime (self.model.getPlayerTime(WHITE))

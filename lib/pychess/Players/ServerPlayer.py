@@ -2,39 +2,92 @@
 from Player import Player
 from Player import PlayerIsDead
 from Queue import Queue
-from pychess.Utils.Move import parseSAN
+from pychess.Utils.Move import parseSAN, toSAN
 from pychess.Utils.const import REMOTE
 
 class ServerPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, boardmanager, gameno, color):
+    def __init__ (self, boardmanager, offermanager,
+                        name, external, gameno, color):
         Player.__init__(self)
         
         self.queue = Queue()
         
+        self.name = name
+        # If we are not playing against a player on the users computer. E.g.
+        # when we observe a game on FICS. In these cases we don't send anything
+        # back to the server.
+        self.external = external 
         self.color = color
         self.gameno = gameno
+        
         self.boardmanager = boardmanager
         self.boardmanager.connect("moveRecieved", self.moveRecieved)
-        #...
+        self.offermanager = offermanager
+        self.offermanager.connect("onOfferAdd", self.onOfferAdd)
+        self.offermanager.connect("onOfferRemove", self.onOfferRemove)
+        
+        self.lastPly = -1
     
-    def moveRecieved (self, bm, fen, sanmove, gameno, curcol):
+    def onOfferAdd (self, om, index, type, params):
+        if type == "draw":
+            self.emit ("action", DRAW_OFFER, 0)
+            
+        elif type == "abort":
+            self.emit ("action", ABORT_OFFER, 0)
+            
+        elif type ==  "adjourn":
+            self.emit ("action", ADJOURNED_OFFER, 0)
+            
+        elif type == "takeback":
+            toPly = self.lastPly - int(params)
+            self.emit ("action", TAKEBACK_OFFER, toPly)
+    
+    def onOfferRemove (self, om, index):
+        pass
+    
+    def offerDraw (self):
+        print >> telnet.client, "draw"
+    
+    def offerAbort (self):
+        print >> telnet.client, "abort"
+    
+    def offerAdjourn (self):
+        print >> telnet.client, "adjourn"
+    
+    def offerTakeback (self, toPly):
+        print >> telnet.clinet, "takeback", toPly
+    
+    def moveRecieved (self, bm, ply, sanmove, gameno, curcol):
         if curcol != self.color or gameno != self.gameno:
             return
         print sanmove
-        self.queue.put(sanmove)
+        self.queue.put((ply,sanmove))
     
     def makeMove (self, gamemodel):
-        sanmove = self.queue.get(block=True)
-        if sanmove == "del":
+        if gamemodel.moves and not self.external:
+            self.boardmanager.sendMove (
+                    toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
+        
+        item = self.queue.get(block=True)
+        if item == "del":
             raise PlayerIsDead
-        move = parseSAN (gamemodel.boards[-1], sanmove)
+        
+        ply, sanmove = item
+        if ply < gamemodel.ply:
+            # This should only happen in an observed game
+            self.emit("action", (TAKEBACK_FORCE, ply))
+        
+        try:
+            move = parseSAN (gamemodel.boards[-1], sanmove)
+        except ParsingError, e:
+            print "Error", e.args[0]
+            raise PlayerIsDead
         return move
     
     def __repr__ (self):
-        #return self.boardmanager.getName(self.color)
-        return "FICSPlayer"
+        return self.name
     
     def setBoard (self, fen):
         # setBoard will currently only be called for ServerPlayer when starting

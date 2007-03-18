@@ -25,30 +25,36 @@ class TimeModel (GObject):
         self.pauseInterval = 0
         self.counter = None
         
-        self.movingColor = None
+        self.started = False
+        
+        self.movingColor = WHITE
     
     ############################################################################
     # Interacting                                                              #
     ############################################################################
     
     def setMovingColor (self, movingColor):
-        if movingColor == self.movingColor:
-            return
+        self.movingColor = movingColor
+        self.emit("player_changed")
+    
+    def tap (self):
         
         if self.paused: return
         
-        if self.movingColor != None:
+        if self.started:
             t = self.intervals[self.movingColor][-1] + self.gain
             if self.counter != None:
                 t -= time() - self.counter
             self.intervals[self.movingColor].append(t)
+        else:
+            self.started = True
         
         self.counter = time()
-        self.movingColor = movingColor
+        self.movingColor = 1-self.movingColor
         
         self.emit("time_changed")
         self.emit("player_changed")
-        
+    
     def pause (self):
         if self.paused: return
         self.paused = True
@@ -98,11 +104,9 @@ class TimeModel (GObject):
     ############################################################################
     
     def updatePlayer (self, color, secs):
-        
-        
         if color == self.movingColor:
-            self.counter = time() - secs
-        else: self.intervals[1-self.movingColor][-1] = secs
+            self.counter = secs + time() - self.intervals[color][-1]
+        else: self.intervals[color][-1] = secs
         self.emit("time_changed")
     
     def syncClock (self, wsecs, bsecs):
@@ -121,7 +125,7 @@ class TimeModel (GObject):
     
     def getPlayerTime (self, color):
         
-        if color == self.movingColor:
+        if color == self.movingColor and self.started:
             if self.paused:
                 return self.intervals[color][-1] - self.pauseInterval
             return self.intervals[color][-1] - (time() - self.counter)
