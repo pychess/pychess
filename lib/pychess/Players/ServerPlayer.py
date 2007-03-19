@@ -95,6 +95,13 @@ class ServerPlayer (Player):
         # should look, and we don't need to set anything
         pass
     
-    def kill (self):
-        self.boardmanager.resign()
+    def kill (self, status, reason):
+        if reason == WON_RESIGN:
+            if self.color == WHITE and status == WHITE_WON or \
+                    self.color == BLACK and status == BLACK_WON:
+                self.boardmanager.resign()
+        
+        if reason == DRAW_FLAG:
+            self.boardmanager.callflag()
+        
         self.queue.put("del")

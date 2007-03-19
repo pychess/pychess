@@ -89,7 +89,7 @@ class Human (Player):
         #(probably preferences, as accountname would give problems in pvp games)
         return self.name
     
-    def kill (self):
+    def kill (self, status, reason):
         for id in self.conid:
             if self.board.handler_is_connected(id):
                 self.board.disconnect(id)

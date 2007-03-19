@@ -292,6 +292,9 @@ class BoardManager (GObject):
     def resign (self):
         print >> telnet.client, "resign"
     
+    def callflag (self):
+        print >> telnet.client, "flag"
+    
     def observe (self, gameno):
         print >> telnet.client, "observe", gameno
     
