@@ -460,6 +460,13 @@ def initialize():
         ########################################################################
     
     graph = SpotGraph()
+    
+    for rating in (600, 1200, 1800, 2400):
+        graph.addYMark(rating/3000., str(rating))
+    
+    for mins in (3, 6, 12, 24):
+        graph.addXMark(e**(-7./mins/1.4), str(mins)+" min")
+    
     widgets["graphDock"].add(graph)
     graph.show()
     
@@ -470,8 +477,9 @@ def initialize():
     
     def on_seek_add (manager, seek):
         def call ():
-            # The lower the -8 number, the steeper the acceleration
-            x = e**(-8/(float(seek["t"])+float(seek["i"])*2/3))
+            # The lower the -7 number, the steeper the acceleration.
+            # 1.4 is opposite
+            x = e**(-7/(float(seek["t"])+float(seek["i"])*2/3)*1.4)
             y = seek["rt"].isdigit() and float(seek["rt"])/3000 or 0
             type = seek["r"] == "u" and 1 or 0
             graph.addSpot(seek["gameno"], x, y, type)
