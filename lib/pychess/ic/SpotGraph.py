@@ -40,6 +40,9 @@ class SpotGraph (gtk.DrawingArea):
         self.hovered = None
         self.pressed = False
         self.spots = {}
+        
+        self.xmarks = []
+        self.ymarks = []
     
     ############################################################################
     # Drawing                                                                  #
@@ -74,14 +77,43 @@ class SpotGraph (gtk.DrawingArea):
         context.set_source_color(self.get_style().dark[gtk.STATE_ACTIVE])
         context.stroke()
         
+        for y, title in self.ymarks:
+            context.set_source_rgba(0, 0, 0, 0.7)
+            context.set_font_size(12)
+            x, y = self.transCords (0, y)
+            context.move_to (x+line/2., y+line/2.)
+            context.show_text(title)
+            
+            context.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            context.move_to (x, y-line/2.)
+            context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
+            context.rel_curve_to (line, 0,  line, 6,  line, 6)
+            context.close_path()
+            context.fill()
+        
+        for x, title in self.xmarks:
+            context.set_source_rgba(0, 0, 0, 0.7)
+            context.set_font_size(12)
+            x, y = self.transCords (x, 1)
+            context.move_to (x+line/2., y)
+            context.rotate(-math.pi/2)
+            context.show_text(title)
+            context.rotate(math.pi/2)
+            
+            context.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            context.move_to (x-line/2., y+line/2.)
+            context.rel_curve_to (6, 0,  6, line,  6, line)
+            context.rel_curve_to (0, -line,  6, -line,  6, -line)
+            context.close_path()
+            context.fill()
+        
         context.set_line_width(dotSmall/10.)
         for x, y, type, name in self.spots.values():
             context.set_source_rgb(*self.typeColors[type][0])
             if self.hovered and name == self.hovered[3]:
                 continue
-            x = x*(width-line)+line
-            y = y*(height-line)-line
             
+            x, y = self.transCords (x, y)
             context.arc(x, y, dotSmall/2., 0, 2 * math.pi)
             context.fill_preserve()
             context.set_source_rgb(*self.typeColors[type][1])
@@ -99,7 +131,7 @@ class SpotGraph (gtk.DrawingArea):
             context.fill_preserve()
             context.set_source_rgb(*self.typeColors[type][1])
             context.stroke()
-            
+    
     ############################################################################
     # Events                                                                   #
     ############################################################################
@@ -167,6 +199,12 @@ class SpotGraph (gtk.DrawingArea):
         self.spots.clear()
         self.redraw_canvas()
         self.redraw_canvas()
+    
+    def addXMark (self, x, title):
+        self.xmarks.append( (x, title) )
+    
+    def addYMark (self, y, title):
+        self.ymarks.append( (1-y, title) )
     
     ############################################################################
     # Internal stuff                                                           #
@@ -285,10 +323,10 @@ class SpotGraph (gtk.DrawingArea):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
-        return x*(width-line)+line,  y*(height-line)-line
+        return x*(width-line*1.5)+line*1.5,  y*(height-line)-line
     
     def reTransCords (self, x, y):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
-        return (x-line)/(width-line),  (y+line)/(height-line)
+        return (x-line*1.5)/(width-line*1.5),  (y+line)/(height-line)
