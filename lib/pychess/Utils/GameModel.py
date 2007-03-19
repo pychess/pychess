@@ -116,6 +116,7 @@ class GameModel (GObject):
             self.reason = WON_RESIGN
                 
             self.emit("game_ended", self.reason)
+            self.kill()
         
         elif action == DRAW_OFFER:
             if self.drawSentBy == otherPlayer:
@@ -123,6 +124,7 @@ class GameModel (GObject):
                 self.status = DRAW
                 self.reason = DRAW_AGREE
                 self.emit("game_ended", DRAW_AGREE)
+                self.kill()
             else:
                 self.emit("draw_sent", player)
                 self.drawSentBy = player
@@ -138,11 +140,16 @@ class GameModel (GObject):
             else: opcolor = WHITE
             
             if self.timemodel.getPlayerTime (opcolor) <= 0:
-                if player == self.players[WHITE]:
-                    self.status = WHITEWON
-                else: self.status = BLACKWON
-                self.reason = WON_CALLFLAG
+                if self.timemodel.getPlayerTime (color) <= 0:
+                    self.status = DRAW
+                    self.reason = DRAW_CALLFLAG
+                else:
+                    if player == self.players[WHITE]:
+                        self.status = WHITEWON
+                    else: self.status = BLACKWON
+                    self.reason = WON_CALLFLAG
                 self.emit("game_ended", self.reason)
+                self.kill()
                 return
             
             self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
@@ -288,7 +295,7 @@ class GameModel (GObject):
             self.status = KILLED
         
         for player in self.players:
-            player.kill()
+            player.kill(self.status, self.reason)
         
         for spectactor in self.spectactors.values():
             spectactor.kill()
@@ -328,8 +335,8 @@ class GameModel (GObject):
     def forceStatus (self, status, reason):
         self.status = status
         self.reason = reason
-        self.kill()
         self.emit("game_ended", self.reason)
+        self.kill()
     
     def isChanged (self):
         if self.ply == 0:
