@@ -3,7 +3,7 @@ from Player import Player
 from Player import PlayerIsDead
 from Queue import Queue
 from pychess.Utils.Move import parseSAN, toSAN
-from pychess.Utils.const import REMOTE
+from pychess.Utils.const import *
 
 class ServerPlayer (Player):
     __type__ = REMOTE
@@ -101,7 +101,7 @@ class ServerPlayer (Player):
                     self.color == BLACK and status == BLACK_WON:
                 self.boardmanager.resign()
         
-        if reason == DRAW_FLAG:
+        if reason == DRAW_CALLFLAG:
             self.boardmanager.callflag()
         
         self.queue.put("del")
