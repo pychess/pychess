@@ -54,8 +54,12 @@ class GameListManager (GObject):
         
         telnet.expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
         
+        
         telnet.expect ( "\s*\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*?)\n", self.on_adjourn_add)
-    
+        
+        
+        telnet.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
+        
     def start (self):
         
         print >> telnet.client, "iset seekinfo 1"
@@ -155,3 +159,9 @@ class GameListManager (GObject):
         opstatus = opponentIsOnline == "Y" and "Online" or "Offline"
         procPlayed = (int(wscore)+int(bscore))*100/79
         self.emit ("addAdjourn", {"opponent": opponent, "opstatus": opstatus, "date": date, "procPlayed": procPlayed })
+    
+    ###
+    
+    def playBoardCreated (self, client, groups):
+        self.emit("clearSeeks")
+    
