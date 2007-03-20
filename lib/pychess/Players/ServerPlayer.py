@@ -97,8 +97,8 @@ class ServerPlayer (Player):
     
     def kill (self, status, reason):
         if reason == WON_RESIGN:
-            if self.color == WHITE and status == WHITE_WON or \
-                    self.color == BLACK and status == BLACK_WON:
+            if self.color == WHITE and status == WHITEWON or \
+                    self.color == BLACK and status == BLACKWON:
                 self.boardmanager.resign()
         
         if reason == DRAW_CALLFLAG:
