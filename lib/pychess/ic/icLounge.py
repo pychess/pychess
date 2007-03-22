@@ -489,7 +489,13 @@ def initialize():
             x = e**(-7/(float(seek["t"])+float(seek["i"])*2/3)*1.4)
             y = seek["rt"].isdigit() and float(seek["rt"])/3000 or 0
             type = seek["r"] == "u" and 1 or 0
-            graph.addSpot(seek["gameno"], x, y, type)
+            
+            text = "%s (%s)" % (seek["w"], seek["rt"])
+            rated = seek["r"] == "u" and _("Unrated") or _("Rated")
+            text += "\n%s %s" % (rated, seek["tp"])
+            text += "\n%s min + %s sec" % (seek["t"], seek["i"])
+            
+            graph.addSpot(seek["gameno"], text, x, y, type)
         listqueue.put(call)
     glm.connect("addSeek", on_seek_add)
     
