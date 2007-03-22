@@ -5,14 +5,15 @@ from pychess.System import gstreamer
 from pychess.Utils.const import *
 
 import telnet
-from telnet import LogOnError
+from telnet import LogOnError, InterruptError
 import thread
 import icLounge
+from socket import SHUT_RDWR
 
 firstRun = True
 def run():
     
-    if telnet.client:
+    if telnet.connected:
         icLounge.show()
         return
     
@@ -26,55 +27,64 @@ def run():
                 widgets["fics_logon"].hide()
                 icLounge.show()
         telnet.connectStatus(callback)
-    
-    response = widgets["fics_logon"].run()
-    if response != gtk.RESPONSE_OK:
-        widgets["fics_logon"].hide()
+
+pulser = None
+def on_connectButton_clicked (button):
+    if widgets["logOnAsGuest"].get_active():
+        username = "guest"
+        password = ""
     else:
+        username = widgets["nameEntry"].get_text()
+        password = widgets["passEntry"].get_text()
+    
+    widgets["progressbar"].show()
+    widgets["mainvbox"].set_sensitive(False)
+    widgets["connectButton"].set_sensitive(False)
+    
+    def callback ():
+        widgets["progressbar"].pulse()
+        if telnet.connected:
+            widgets["progressbar"].hide()
+            widgets["mainvbox"].set_sensitive(True)
+            widgets["connectButton"].set_sensitive(True)
+            return False
+        return True
+    
+    global pulser
+    pulser = gobject.timeout_add(30, callback)
+    
+    thread.start_new(doConnect, (username, password))
+
+def doConnect (username, password):
+    def error (title, text):
+        widgets["mainvbox"].set_sensitive(True)
+        widgets["connectButton"].set_sensitive(True)
+        widgets["progressbar"].hide()
         
-        if widgets["logOnAsGuest"].get_active():
-            username = "guest"
-            password = ""
-        else:
-            username = widgets["nameEntry"].get_text()
-            password = widgets["passEntry"].get_text()
+        widgets["messageTitle"].set_markup("<b>%s</b>" % title)
+        widgets["messageText"].set_text(str(e))
+        widgets["messagePanel"].show_all()
         
-        widgets["progressbar"].show()
-        widgets["mainvbox"].set_sensitive(False)
-        widgets["connectButton"].set_sensitive(False)
-        def callback ():
-            widgets["progressbar"].pulse()
-            if telnet.connected:
-                widgets["progressbar"].hide()
-                widgets["mainvbox"].set_sensitive(True)
-                widgets["connectButton"].set_sensitive(True)
-                return False
-            return True
-        gobject.timeout_add(30, callback)
-        
-        def func ():
-            def error (title, text):
-                
-                d = gtk.MessageDialog(
-                    type = gtk.MESSAGE_ERROR, buttons = gtk.BUTTONS_OK)
-                d.set_markup("<big><b>%s</b></big>" % _(title))
-                d.format_secondary_text(str(e))
-                def callback (button):
-                    d.hide()
-                    widgets["mainvbox"].set_sensitive(True)
-                    widgets["connectButton"].set_sensitive(True)
-                    run()
-                b = d.get_children()[0].get_children()[-1].get_children()[0]
-                b.connect("clicked", callback)
-                widgets["progressbar"].hide()
-                d.show()
-            try:
-                telnet.connect ("freechess.org", 5000, username, password)
-            except IOError, e:
-                gobject.idle_add(error, _("Connection Error"), str(e))
-            except LogOnError, e:
-                gobject.idle_add(error, _("Log on Error"), str(e))
-        thread.start_new(func, ())
+        global pulser
+        if pulser != None:
+            gobject.source_remove(pulser)
+            pulser = None
+    try:
+        telnet.connect ("freechess.org", 5000, username, password)
+    except IOError, e:
+        telnet.client = None
+        gobject.idle_add(error, _("Connection Error"), str(e))
+    except LogOnError, e:
+        telnet.client = None
+        gobject.idle_add(error, _("Log on Error"), str(e))
+    except InterruptError, e:
+        telnet.client = None
+        gobject.idle_add(error, _("Connection was broken"), str(e))
+    except EOFError, e:
+        telnet.client = None
+        gobject.idle_add(error, _("Connection was closed"), str(e))
+
+firstDraw = True
 
 def initialize():
     
@@ -89,6 +99,34 @@ def initialize():
     def on_logOnAsGuest_toggled (check):
         widgets["logOnTable"].set_sensitive(not check.get_active())
     widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
+    
+    def on_cancelButton_clicked (button):
+        if telnet.client:
+            telnet.client.interrupt()
+            widgets["mainvbox"].set_sensitive(True)
+            widgets["connectButton"].set_sensitive(True)
+        else: widgets["fics_logon"].hide()
+    
+    widgets["cancelButton"].connect("clicked", on_cancelButton_clicked)
+    
+    widgets["connectButton"].connect("clicked", on_connectButton_clicked)
+    
+    tooltip = gtk.Tooltips()
+    tooltip.force_window()
+    tooltip.tip_window.ensure_style()
+    tooltipStyle = tooltip.tip_window.get_style()
+    widgets["messagePanel"].set_style(tooltipStyle)
+    
+    def on_messagePanel_expose_event (widget, event):
+        allocation = widget.allocation
+        widget.style.paint_flat_box (widget.window,
+            gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, widget, "tooltip",
+            allocation.x, allocation.y, allocation.width, allocation.height )
+        global firstDraw
+        if firstDraw:
+            firstDraw = False
+            widget.queue_draw()
+    widgets["messagePanel"].connect("expose-event", on_messagePanel_expose_event)
     
     ############################################################################
     # Easy initing                                                             #
