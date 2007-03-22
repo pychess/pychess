@@ -2,6 +2,7 @@ from telnetlib import Telnet
 from gobject import *
 import socket
 from sys import maxint
+from pychess.System.Log import log
 
 class VerboseTelnet (Telnet, GObject):
     __gsignals__ = {
@@ -11,7 +12,8 @@ class VerboseTelnet (Telnet, GObject):
     def __init__ (self):
         Telnet.__init__(self)
         GObject.__init__(self)
-    
+        self.interrupting = False
+        
     def expect (self, list):
         """ Modified expect method, which checks ALL regexps for the one which
         mathces the earliest """
@@ -56,23 +58,60 @@ class VerboseTelnet (Telnet, GObject):
         Telnet.process_rawq (self)
         cooked1 = self.cookedq
         if len(cooked1) > len(cooked0):
-            log(cooked1[len(cooked0):].replace("\r", ""))
+            log.debug (cooked1[len(cooked0):].replace("\r", ""), self.name)
     
+    def write (self, data):
+        log.log(data, self.name)
+        Telnet.write (self, data)
+    
+    def open(self, host, port=0):
+        self.eof = 0
+        if not port:
+            port = TELNET_PORT
+        self.host = host
+        self.port = port
+        msg = "getaddrinfo returns an empty list"
+        for res in socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM):
+            af, socktype, proto, canonname, sa = res
+            try:
+                if self.interrupting:
+                    self.interrupting = False
+                    raise socket.error, "interrupted"
+                self.sock = socket.socket(af, socktype, proto)
+                self.sock.connect(sa)
+            except socket.error, msg:
+                if self.sock:
+                    self.sock.close()
+                self.sock = None
+                continue
+            break
+        if not self.sock:
+            raise socket.error, msg
+        
+        self.name = "%s#%s" % (host, port)
+    
+    def interrupt (self):
+        if self.sock:
+            self.sock.shutdown(socket.SHUT_RDWR)
+        else:
+            self.interrupting = True
+
 from pychess.Utils.const import IC_CONNECTED, IC_DISCONNECTED
 
-f = open("/home/thomas/ficslog", "w")
+#f = open("/home/thomas/ficslog", "w")
 #import sys
-def log (data, header=None):
+#def log2 (data, header=None):
     #sys.stdout.write(data)
     #sys.stdout.flush()
-    f.write(data.replace("\r",""))
-    f.flush()
+    #f.write(data.replace("\r",""))
+    #f.flush()
 
 client = None
 connected = False
 registered = False
 
 class LogOnError (Exception): pass
+class InterruptError (Exception): pass
 
 def connect (host, port, username="guest", password=""):
     
@@ -91,6 +130,10 @@ def connect (host, port, username="guest", password=""):
         raise IOError, e.args[1]
     except EOFError:
         raise IOError, _("The connection was broken - got end of file message")
+    except socket.error, e:
+        raise InterruptError, e.args[1]
+    except Exception, e:
+        raise IOError, str(e)
     
     client.read_until("login: ")
     print >> client, username
@@ -99,13 +142,12 @@ def connect (host, port, username="guest", password=""):
         r = client.expect(
             ["password: ", "login: ", "Press return to enter the server as"]).next()
         if r[0] < 0:
-            client.close()
-            raise IOError, _("The connection was broken - got end of file message")
+            raise IOError, _("The connection was broken - got end of file " +
+                             "message")
         elif r[0] == 1:
-            client.close()
-            raise LogOnError, _("Names can only consist of lower and upper case letters")
+            raise LogOnError, _("Names can only consist of lower and upper " +
+                                "case letters")
         elif r[0] == 2:
-            client.close()
             raise LogOnError, _("'%s' is not a registered name") % username
         else:
             print >> client, password
@@ -116,9 +158,8 @@ def connect (host, port, username="guest", password=""):
     
     names = "(\w+)(?:\(([CUHIFWM])\))?"
     r = client.expect(["Invalid password", "Starting FICS session as %s" % names]).next()
-
+    
     if r[0] == 0:
-        client.close()
         raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by some reason not possible, please email: suppord@freechess.org")
     elif r[0] == 1:
         global curname
