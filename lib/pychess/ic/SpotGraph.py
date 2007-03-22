@@ -1,5 +1,5 @@
 
-import gtk, gtk.gdk, cairo
+import gtk, gtk.gdk, cairo, pango
 from gobject import *
 import math
 
@@ -7,6 +7,15 @@ line = 10
 curve = 60
 dotSmall = 12
 dotLarge = 20
+
+tooltip = gtk.Tooltips()
+tooltip.force_window()
+tooltip.tip_window.ensure_style()
+tooltipStyle = tooltip.tip_window.get_style()
+bg = tooltipStyle.bg[gtk.STATE_NORMAL]
+
+hpadding = 5
+vpadding = 3
 
 class SpotGraph (gtk.DrawingArea):
     
@@ -108,7 +117,7 @@ class SpotGraph (gtk.DrawingArea):
             context.fill()
         
         context.set_line_width(dotSmall/10.)
-        for x, y, type, name in self.spots.values():
+        for x, y, type, name, text in self.spots.values():
             context.set_source_rgb(*self.typeColors[type][0])
             if self.hovered and name == self.hovered[3]:
                 continue
@@ -121,7 +130,7 @@ class SpotGraph (gtk.DrawingArea):
         
         context.set_line_width(dotLarge/10.)
         if self.hovered:
-            x, y, type, name = self.hovered
+            x, y, type, name, text = self.hovered
             x, y = self.transCords (x, y)
             if not self.pressed:
                 context.set_source_rgb(*self.typeColors[type][0])
@@ -131,7 +140,16 @@ class SpotGraph (gtk.DrawingArea):
             context.fill_preserve()
             context.set_source_rgb(*self.typeColors[type][1])
             context.stroke()
-    
+            
+            x, y, width, height = self.getTextBounds(self.hovered)
+            context.rectangle(x-hpadding, y-vpadding,
+                             width+hpadding*2, height+vpadding*2)
+            context.set_source_color(bg)
+            context.fill()
+            context.move_to(x, y)
+            context.set_source_rgb(0,0,0)
+            context.show_layout(self.create_pango_layout(text))
+            
     ############################################################################
     # Events                                                                   #
     ############################################################################
@@ -141,12 +159,14 @@ class SpotGraph (gtk.DrawingArea):
         self.pressed = True
         if self.hovered:
             self.redraw_canvas(self.getBounds(self.hovered))
+            #self.redraw_canvas()
     
     def button_release (self, widget, event):
         self.cords = [event.x, event.y]
         self.pressed = False
         if self.hovered:
             self.redraw_canvas(self.getBounds(self.hovered))
+            #self.redraw_canvas()
             if self.pointIsOnSpot (event.x, event.y, self.hovered):
                 self.emit("spotClicked", self.hovered[3])
     
@@ -158,10 +178,12 @@ class SpotGraph (gtk.DrawingArea):
         if self.hovered:
             bounds = self.getBounds(self.hovered)
             self.hovered = None
+            #self.redraw_canvas()
             self.redraw_canvas(bounds)
         if spot:
             self.hovered = spot
             self.redraw_canvas(self.getBounds(self.hovered))
+            #self.redraw_canvas()
     
     def leave_notify (self, widget, event):
         del self.cords[:]
@@ -169,16 +191,17 @@ class SpotGraph (gtk.DrawingArea):
             bounds = self.getBounds(self.hovered)
             self.hovered = None
             self.redraw_canvas(bounds)
+            #self.redraw_canvas()
     
     ############################################################################
     # Interaction                                                              #
     ############################################################################
     
-    def addSpot (self, name, x0, y0, type=0):
+    def addSpot (self, name, text, x0, y0, type=0):
         """ x and y are in % from 0 to 1 """
         assert type in range(len(self.typeColors))
         x1, y1 = self.getNearestFreeNeighbour(x0, 1-y0)
-        spot = (x1, y1, type, name)
+        spot = (x1, y1, type, name, text)
         self.spots[name] = spot
         if not self.hovered and self.cords and \
                 self.pointIsOnSpot (self.cords[0], self.cords[1], spot):
@@ -210,16 +233,51 @@ class SpotGraph (gtk.DrawingArea):
     # Internal stuff                                                           #
     ############################################################################
     
+    def getTextBounds (self, spot):
+        x, y, type, name, text = spot
+        x, y = self.transCords (x, y)
+        
+        alloc = self.get_allocation()
+        width = alloc.width
+        height = alloc.height
+        
+        extends = self.create_pango_layout(text).get_extents()
+        scale = float(pango.SCALE)
+        x_bearing, y_bearing, twidth, theight = [e/scale for e in extends[1]]
+        tx = x - x_bearing + dotLarge/2.
+        ty = y - y_bearing - theight - dotLarge/2.
+        
+        if tx + twidth > width and x - x_bearing - twidth - dotLarge/2. > 0:
+            tx = x - x_bearing - twidth - dotLarge/2.
+        if ty < 0:
+            ty = y - y_bearing + dotLarge/2.
+        
+        return (tx, ty, twidth, theight)
+    
+    def join (self, r0, r1):
+        x1 = min(r0[0], r1[0])
+        x2 = max(r0[0]+r0[2], r1[0]+r1[2])
+        y1 = min(r0[1], r1[1])
+        y2 = max(r0[1]+r0[3], r1[1]+r1[3])
+        return (x1, y1, x2 - x1, y2 - y1)
+    
     def getBounds (self, spot):
         
-        x, y, type, name = spot
+        x, y, type, name, text = spot
         x, y = self.transCords (x, y)
         
         if spot == self.hovered:
             size = dotLarge
         else: size = dotSmall
         
-        return (x-size/2-1, y-size/2-1, x+size/2+1, y+size/2+1)
+        bounds = (x-size/2-1, y-size/2-1, x+size/2+1, y+size/2+1)
+        
+        if spot == self.hovered:
+            x, y, w, h = self.getTextBounds(spot)
+            tbounds = (x-hpadding, y-vpadding, w+hpadding*2, h+vpadding*2)
+            return self.join(bounds, tbounds)
+        
+        return bounds
     
     def getNearestFreeNeighbour (self, xorg, yorg):
         
@@ -285,7 +343,7 @@ class SpotGraph (gtk.DrawingArea):
         if not 0 <= x0 <= width or not 0 <= y0 <= height:
             return False
         
-        for x1, y1, type, name in self.spots.values():
+        for x1, y1, type, name, text in self.spots.values():
             x1, y1 = self.transCords(x1, y1)
             if (x1-x0)**2 + (y1-y0)**2 <= dotSmall**2:
                 return False
@@ -301,7 +359,7 @@ class SpotGraph (gtk.DrawingArea):
         width = alloc.width
         height = alloc.height
         
-        x1, y1, type, name = spot
+        x1, y1, type, name, text = spot
         x1, y1 = self.transCords(x1, y1)
         if (x1-x0)**2 + (y1-y0)**2 <= (size/2.)**2:
             return True
