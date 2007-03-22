@@ -46,8 +46,15 @@ def initialize():
     widgets = Widgets(gtk.glade.XML(prefix("glade/fics_lounge.glade")))
     
     def on_window_delete (window, event):
-        pass
+        widgets["fics_lounge"].hide()
+        return True
     widgets["fics_lounge"].connect("delete-event", on_window_delete)
+    
+    def on_logoffButton_clicked (button):
+        print >> telnet.client, "quit"
+        telnet.disconnect()
+        widgets["fics_lounge"].hide()
+    widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
     
     global glm, fm, nm
     glm = GameListManager()

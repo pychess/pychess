@@ -172,7 +172,7 @@ def connect (host, port, username="guest", password=""):
         handler (client, IC_CONNECTED)
     
     EOF = False
-    while True:
+    while connected:
         for match in client.expect(regexps):
             if r[0] < 0:
                 EOF = True
@@ -183,6 +183,10 @@ def connect (host, port, username="guest", password=""):
     for handler in connectHandlers:
         # Give handlers a chance no discover that the connection is closed
         handler (client, IC_DISCONNECTED)
+
+def disconnect ():
+    global connected
+    connected = False
 
 import re
 handlers = []
