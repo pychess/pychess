@@ -27,7 +27,9 @@ def run():
                 widgets["fics_logon"].hide()
                 icLounge.show()
         telnet.connectStatus(callback)
-
+    
+    widgets["fics_logon"].show()
+    
 pulser = None
 def on_connectButton_clicked (button):
     if widgets["logOnAsGuest"].get_active():
@@ -84,6 +86,19 @@ def doConnect (username, password):
         telnet.client = None
         gobject.idle_add(error, _("Connection was closed"), str(e))
 
+def cancel (hide=False):
+    if telnet.client:
+        telnet.client.interrupt()
+        widgets["mainvbox"].set_sensitive(True)
+        widgets["connectButton"].set_sensitive(True)
+        if hide:
+            widgets["fics_logon"].hide()
+            return True
+    else:
+        widgets["fics_logon"].hide()
+        if hide:
+            return True
+
 firstDraw = True
 
 def initialize():
@@ -100,14 +115,8 @@ def initialize():
         widgets["logOnTable"].set_sensitive(not check.get_active())
     widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
     
-    def on_cancelButton_clicked (button):
-        if telnet.client:
-            telnet.client.interrupt()
-            widgets["mainvbox"].set_sensitive(True)
-            widgets["connectButton"].set_sensitive(True)
-        else: widgets["fics_logon"].hide()
-    
-    widgets["cancelButton"].connect("clicked", on_cancelButton_clicked)
+    widgets["cancelButton"].connect("clicked", lambda b: cancel())
+    widgets["fics_logon"].connect("delete-event", lambda w, e: cancel(True))
     
     widgets["connectButton"].connect("clicked", on_connectButton_clicked)
     
