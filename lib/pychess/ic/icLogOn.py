@@ -49,6 +49,7 @@ def on_connectButton_clicked (button):
             widgets["progressbar"].hide()
             widgets["mainvbox"].set_sensitive(True)
             widgets["connectButton"].set_sensitive(True)
+            widgets["messagePanel"].hide()
             return False
         return True
     

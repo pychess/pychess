@@ -108,81 +108,88 @@ from pychess.Utils.const import IC_CONNECTED, IC_DISCONNECTED
 
 client = None
 connected = False
+connecting = False
 registered = False
+curname = None
 
 class LogOnError (Exception): pass
 class InterruptError (Exception): pass
 
 def connect (host, port, username="guest", password=""):
     
-    global client, connected, registered
+    global client, connected, connecting, registered, curname
     
-    client = VerboseTelnet()
-    def callback (client, string):
-        import sys
-        sys.stdout.write(string)
-        sys.stdout.flush()
-    client.connect("newString", callback)
+    connecting = True
     
     try:
-        client.open(host, port)
-    except socket.gaierror, e:
-        raise IOError, e.args[1]
-    except EOFError:
-        raise IOError, _("The connection was broken - got end of file message")
-    except socket.error, e:
-        raise InterruptError, e.args[1]
-    except Exception, e:
-        raise IOError, str(e)
-    
-    client.read_until("login: ")
-    print >> client, username
-    
-    if username != "guest":
-        r = client.expect(
-            ["password: ", "login: ", "Press return to enter the server as"]).next()
-        if r[0] < 0:
+        client = VerboseTelnet()
+        
+        try:
+            client.open(host, port)
+        except socket.gaierror, e:
+            raise IOError, e.args[1]
+        except EOFError:
             raise IOError, _("The connection was broken - got end of file " +
                              "message")
-        elif r[0] == 1:
-            raise LogOnError, _("Names can only consist of lower and upper " +
-                                "case letters")
-        elif r[0] == 2:
-            raise LogOnError, _("'%s' is not a registered name") % username
-        else:
-            print >> client, password
-            registered = True
-    else:
-        client.read_until("Press return"), host
-        print >> client
-    
-    names = "(\w+)(?:\(([CUHIFWM])\))?"
-    r = client.expect(["Invalid password", "Starting FICS session as %s" % names]).next()
-    
-    if r[0] == 0:
-        raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by some reason not possible, please email: suppord@freechess.org")
-    elif r[0] == 1:
-        global curname
-        curname = r[1][0]
-    
-    client.read_until("fics%")
-    
-    connected = True
-    for handler in connectHandlers:
-        handler (client, IC_CONNECTED)
-    
-    EOF = False
-    while connected:
-        for match in client.expect(regexps):
+        except socket.error, e:
+            raise InterruptError, e.args[0]
+        except Exception, e:
+            raise IOError, str(e)
+        
+        client.read_until("login: ")
+        print >> client, username
+        
+        if username != "guest":
+            r = client.expect( ["password: ", "login: ",
+                                "Press return to enter the server as"]).next()
             if r[0] < 0:
-                EOF = True
-                break
-            handler = handlers[match[0]]
-            handler (client, match[1])
+                raise IOError, _("The connection was broken - got end of " +
+                                 "file message")
+            elif r[0] == 1:
+                raise LogOnError, _("Names can only consist of lower and " +
+                                    "upper case letters")
+            elif r[0] == 2:
+                raise LogOnError, _("'%s' is not a registered name") % username
+            else:
+                print >> client, password
+                registered = True
+        else:
+            client.read_until("Press return"), host
+            print >> client
+        
+        names = "(\w+)(?:\(([CUHIFWM])\))?"
+        r = client.expect(["Invalid password",
+                           "Starting FICS session as %s" %  names]).next()
+        
+        if r[0] == 0:
+            raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by some reason not possible, please email: suppord@freechess.org")
+        elif r[0] == 1:
+            curname = r[1][0]
+        
+        client.read_until("fics%")
     
-    for handler in connectHandlers:
-        # Give handlers a chance no discover that the connection is closed
-        handler (client, IC_DISCONNECTED)
+        connected = True
+        for handler in connectHandlers:
+            handler (client, IC_CONNECTED)
+        
+        EOF = False
+        while connected:
+            for match in client.expect(regexps):
+                if r[0] < 0:
+                    EOF = True
+                    break
+                handler = handlers[match[0]]
+                handler (client, match[1])
+        
+        for handler in connectHandlers:
+            # Give handlers a chance no discover that the connection is closed
+            handler (client, IC_DISCONNECTED)
+    
+    except Exception, e:
+        connected = False
+        connecting = False
+        client = None
+        raise e
 
 def disconnect ():
     global connected
