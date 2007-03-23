@@ -283,9 +283,8 @@ def toSAN (board, board2, move, fan=False):
             elif move.cord0.x in xs and not move.cord0.y in ys:
                 part0 += move.cord0.cy
             else: part0 += str(move.cord0)
-            
-
-    if board[c1] != None:
+    
+    if board[c1] != None or (board[c0].sign == PAWN and abs(c0.x - c1.x) == 1):
         part1 = "x" + part1
         if board[c0].sign == PAWN:
             part0 += c0.cx
