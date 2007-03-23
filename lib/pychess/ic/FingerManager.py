@@ -40,4 +40,5 @@ class FingerManager (GObject):
         self.lock.release()
     
     def onRatingLine (self, client, groups):
+        if not groups: return
         self.ratings[groups[0]] = groups[1:]
