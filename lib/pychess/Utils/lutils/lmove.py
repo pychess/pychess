@@ -187,7 +187,7 @@ def toSAN (board, move):
                 # If we doesn't share anything, it is standard to put file
                 part0 += reprFile[x]
     
-    if tpiece != EMPTY:
+    if tpiece != EMPTY or flag == ENPASSANT:
         part1 = "x" + part1
         if fpiece == PAWN:
             part0 += reprFile[FILE(fcord)]
