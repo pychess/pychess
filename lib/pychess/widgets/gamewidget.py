@@ -25,6 +25,8 @@ from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
 from Background import Background
 
+from threading import Condition
+
 icons = gtk.icon_theme_get_default()
 try:
     light_on = icons.load_icon("stock_3d-light-on", 16, ICON_LOOKUP_USE_BUILTIN)
@@ -147,9 +149,6 @@ class GameWidget (gobject.GObject):
         side_book.set_show_border(False)
         side_book.set_show_tabs(False)
         
-        toggle_combox.connect("changed",
-                lambda w,i: side_book.set_current_page(i))
-        
         rvbox.pack_start(top_align, expand=False)
         rvbox.pack_start(side_book)
         
@@ -221,8 +220,41 @@ class GameWidget (gobject.GObject):
         w["mvbox"] = mvbox
         w["headchild"] = headchild
         w["tabhbox"] = tabhbox
-        w["side_book"] = side_book
-        w["toggle_combox"] = toggle_combox
+        
+        #
+        # Add sidepanels
+        #
+        
+        condition = Condition()
+        
+        def func ():
+            start = 0
+            
+            path = prefix("sidepanel")
+            pf = "Panel.py"
+            panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
+            panels = \
+                [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
+            
+            for panel in panels:
+                toggle_combox.addItem(panel.__title__)
+                s = panel.Sidepanel()
+                num = side_book.append_page(s.load(self))
+                if hasattr(panel, "__active__") and panel.__active__:
+                    start = num
+            
+            toggle_combox.connect("changed",
+                    lambda w,i: side_book.set_current_page(i))
+            side_book.set_current_page(start)
+            toggle_combox.active = start
+            
+            condition.acquire()
+            condition.notify()
+            condition.release()
+        
+        gobject.idle_add(func, priority=gobject.PRIORITY_HIGH)
+        condition.acquire()
+        condition.wait()
         
     def setTabReady (self, ready):
         tabhbox = self.widgets["tabhbox"]
@@ -339,10 +371,6 @@ def attachGameWidget (gmwidg):
         
         vbox.show_all()
     
-    #
-    # Attach headchild and mvbox
-    #
-    
     headbook = vbox.get_children()[1].child
     headbook.append_page(gmwidg.widgets["headchild"], gmwidg.widgets["tabhbox"])
     try:
@@ -353,34 +381,6 @@ def attachGameWidget (gmwidg):
     
     mainbook = vbox.get_children()[2]
     mainbook.append_page(gmwidg.widgets["mvbox"], None)
-    
-    #
-    # Add sidepanels
-    #
-    
-    side_book = gmwidg.widgets["side_book"]
-    toggle_combox = gmwidg.widgets["toggle_combox"]
-    
-    start = 0
-    
-    path = prefix("sidepanel")
-    pf = "Panel.py"
-    panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
-    panels = [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
-    
-    for panel in panels:
-        toggle_combox.addItem(panel.__title__)
-        s = panel.Sidepanel()
-        num = side_book.append_page(s.load(widgets, gmwidg))
-        if hasattr(panel, "__active__") and panel.__active__:
-            start = num
-    
-    side_book.set_current_page(start)
-    toggle_combox.active = start
-    
-    #
-    # Show stuff
-    #
     
     headbook.show_all()
     gmwidg.widgets["mvbox"].show_all()
