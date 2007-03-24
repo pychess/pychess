@@ -1,3 +1,14 @@
+
+################################################################################
+#                                                                              #
+#   This module handles the tabbed layout in PyChess                           #
+#                                                                              #
+################################################################################
+
+################################################################################
+# Initialize general variables and functions                                   #
+################################################################################
+
 widgets = None
 def set_widgets (w):
     global widgets
@@ -41,37 +52,14 @@ def createAlignment (top, right, bottom, left):
     align.set_property("bottom-padding", bottom)
     align.set_property("left-padding", left)
     return align
-    
-def show_side_panel (show):
-    if len(head2mainDic) == 0: return
-    
-    for gmwidg in widgid2gmwidg.values():
-        sidepanel = gmwidg.widgets["sidepanel"]
-        if show:
-            sidepanel.show()
-        else:
-            alloc = sidepanel.get_allocation().width
-            sidepanel.hide()
-    
-    hbox = widgets["mainvbox"].get_children()[2] \
-            .get_nth_page(0).get_children()[0].child
-    
-    if show:
-        if sidepanel.get_allocation().width > 1:
-            panelWidth = sidepanel.get_allocation().width + hbox.get_spacing()
-        else: panelWidth = sidepanel.get_size_request()[0] + 10
-        widgetsSize = widgets["window1"].get_size()
-        widgets["window1"].resize(widgetsSize[0]+panelWidth,widgetsSize[1])
-        
-    else:
-        panelWidth = alloc + hbox.get_spacing()
-        widgetsSize = widgets["window1"].get_size()
-        widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
+
+################################################################################
+# The holder class for tab releated widgets                                    #
+################################################################################
 
 import imp, gobject
 
 head2mainDic = {}
-widgid2gmwidg = {}
 
 class GameWidget (gobject.GObject):
     
@@ -79,43 +67,179 @@ class GameWidget (gobject.GObject):
         'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
     }
     
-    def __init__ (self, widgid):
+    def __init__ (self, gamemodel):
         gobject.GObject.__init__(self)
         
-        self.widgid = widgid
+        #
+        # Initialize tab label
+        #
+        
+        tabhbox = gtk.HBox()
+        tabhbox.set_spacing(4)
+        tabhbox.pack_start(createImage(light_off), expand=False)
+        
+        close_button = gtk.Button()
+        close_button.set_property("can-focus", False)
+        close_button.add(createImage(gtk_close))
+        close_button.set_relief(gtk.RELIEF_NONE)
+        close_button.set_size_request(19,18)
+        close_button.connect("clicked", lambda w: self.emit("closed"))
+        
+        tabhbox.pack_end(close_button, expand=False)
+        tabhbox.pack_end(gtk.Label(""))
+        tabhbox.show_all() # Gtk doesn't show tab labels when the rest is
+                           # show_all'ed
+        
+        #
+        # Initialize center
+        #
+        
+        mvbox = gtk.VBox()
+        headchild = gtk.HSeparator()
+        global head2mainDic
+        head2mainDic[headchild] = self
+        
+        align = createAlignment (3, 2, 4, 2)
+        
+        hbox = gtk.HBox()
+        hbox.set_spacing(4)
+        
+        lvbox = gtk.VBox()
+        lvbox.set_spacing(4)
+        
+            #
+            # Initialize left center - clock and board
+            #
+        
+        ccalign = createAlignment(0,0,0,0)
+        cclock = ChessClock()
+        ccalign.add(cclock)
+        ccalign.set_size_request(-1, 32)
+        
+        board = BoardControl(gamemodel)
+        
+        lvbox.pack_start(ccalign, expand=False)
+        lvbox.pack_start(board)
+        
+            #
+            # Initialize right box
+            #
+        
+        rvbox = gtk.VBox()
+        rvbox.set_spacing(4)
+        
+        top_align = createAlignment(0,0,0,0)
+        top_align.set_size_request(-1, 32)
+        
+        side_top_hbox = gtk.HBox()
+        
+        toggle_combox = ToggleComboBox()
+        side_closebut = gtk.Button()
+        side_closebut.add(createImage(gtk_close20))
+        side_closebut.connect("clicked", lambda w: show_side_panel(False))
+        side_closebut.set_relief(gtk.RELIEF_NONE)
+        
+        side_top_hbox.pack_start(toggle_combox)
+        side_top_hbox.pack_start(side_closebut, expand=False)
+        top_align.add(side_top_hbox)
+        
+        side_book = gtk.Notebook()
+        side_book.set_show_border(False)
+        side_book.set_show_tabs(False)
+        
+        rvbox.pack_start(top_align, expand=False)
+        rvbox.pack_start(side_book)
+        
+        hbox.pack_start(lvbox)
+        hbox.pack_start(rvbox, expand=False)
+        
+        align.add(hbox)
+        
+            #
+            # Initialize statusbar
+            #
+        
+        stat_hbox = gtk.HBox()
+        
+        page_vbox = gtk.VBox()
+        page_vbox.set_spacing(1)
+        
+        sep = gtk.HSeparator()
+        page_hbox = gtk.HBox()
+        
+        startbut = gtk.Button()
+        startbut.add(createImage(media_previous))
+        startbut.set_relief(gtk.RELIEF_NONE)
+        backbut = gtk.Button()
+        backbut.add(createImage(media_rewind))
+        backbut.set_relief(gtk.RELIEF_NONE)
+        forwbut = gtk.Button()
+        forwbut.add(createImage(media_forward))
+        forwbut.set_relief(gtk.RELIEF_NONE)
+        endbut = gtk.Button()
+        endbut.add(createImage(media_next))
+        endbut.set_relief(gtk.RELIEF_NONE)
+        
+        startbut.connect("clicked", lambda w: board.view.showFirst())
+        backbut.connect("clicked", lambda w: board.view.showPrevious())
+        forwbut.connect("clicked", lambda w: board.view.showNext())
+        endbut.connect("clicked", lambda w: board.view.showLast())
+        
+        page_hbox.pack_start(startbut)
+        page_hbox.pack_start(backbut)
+        page_hbox.pack_start(forwbut)
+        page_hbox.pack_start(endbut)
+        
+        page_vbox.pack_start(sep)
+        page_vbox.pack_start(page_hbox)
+        
+        statusbar = gtk.Statusbar()
+        
+        stat_hbox.pack_start(page_vbox, expand=False)
+        stat_hbox.pack_start(statusbar)
+        
+        mvbox.pack_start(align)
+        mvbox.pack_start(stat_hbox, expand=False)
+        
+        #
+        # Name most common variables
+        #
         
         self.widgets = w = {}
-        headbook = _headbook()
         
-        page_num = headbook.page_num(self.widgid)
-        mvbox = widgets["mainvbox"].get_children()[2].get_nth_page(page_num)
+        w["board"] = board
+        w["ccalign"] = ccalign
+        w["cclock"] = cclock
+        w["sidepanel"] = rvbox
+        w["statusbar"] = statusbar
+        w["tabhbox"] = tabhbox
+        w["close_button"] = close_button
         
-        w["board"] = mvbox.get_children()[0].child.get_children()[0].get_children()[1]
-        w["ccalign"] = mvbox.get_children()[0].child.get_children()[0].get_children()[0]
-        w["cclock"] = w["ccalign"].child
-        w["sidepanel"] = mvbox.get_children()[0].child.get_children()[1]
-        w["statusbar"] = mvbox.get_children()[1].get_children()[1]
+        w["mvbox"] = mvbox
+        w["headchild"] = headchild
+        w["tabhbox"] = tabhbox
         
-        w["tabhbox"] = headbook.get_tab_label(self.widgid)
-        w["close_button"] = w["tabhbox"].get_children()[2]
-
-        w["close_button"].connect("clicked", lambda w: self.emit("closed"))
+        #
+        # Add sidepanels
+        #
         
-    def addSidepanels (self, notebook, toggleComboBox):
         start = 0
-        
+            
         path = prefix("sidepanel")
         pf = "Panel.py"
         panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
         panels = [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
         for panel in panels:
-            toggleComboBox.addItem(panel.__title__)
+            toggle_combox.addItem(panel.__title__)
             s = panel.Sidepanel()
-            num = notebook.append_page(s.load(widgets, self))
+            num = side_book.append_page(s.load(widgets, self))
             if hasattr(panel, "__active__") and panel.__active__:
                 start = num
         
-        return start
+        toggle_combox.connect("changed",
+                lambda w,i: side_book.set_current_page(i))
+        side_book.set_current_page(start)
+        toggle_combox.active = start
     
     def setTabReady (self, ready):
         tabhbox = self.widgets["tabhbox"]
@@ -143,15 +267,49 @@ class GameWidget (gobject.GObject):
             gobject.idle_add(func)
         else: func()
     
+    def setCurrent (self):
+        _headbook().set_current_page (
+                headbook.page_num(self.widgets["headchild"]) )
+
+
+################################################################################
+# General functions related to all gamewidgets                                 #
+################################################################################
+
+def show_side_panel (show):
+    if len(head2mainDic) == 0: return
+    
+    for gmwidg in head2mainDic.values():
+        sidepanel = gmwidg.widgets["sidepanel"]
+        if show:
+            sidepanel.show()
+        else:
+            alloc = sidepanel.get_allocation().width
+            sidepanel.hide()
+    
+    hbox = widgets["mainvbox"].get_children()[2] \
+            .get_nth_page(0).get_children()[0].child
+    
+    if show:
+        if sidepanel.get_allocation().width > 1:
+            panelWidth = sidepanel.get_allocation().width + hbox.get_spacing()
+        else: panelWidth = sidepanel.get_size_request()[0] + 10
+        widgetsSize = widgets["window1"].get_size()
+        widgets["window1"].resize(widgetsSize[0]+panelWidth,widgetsSize[1])
+        
+    else:
+        panelWidth = alloc + hbox.get_spacing()
+        widgetsSize = widgets["window1"].get_size()
+        widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
+
 def delGameWidget (gmwidg):
     headbook = _headbook()
-    page_num = headbook.page_num(gmwidg.widgid)
+    page_num = headbook.page_num(gmwidg.widgets["headchild"])
     headbook.remove_page(page_num)
     vbox = widgets["mainvbox"]
     mainbook = vbox.get_children()[2]
     mainbook.remove_page(page_num)
-    del head2mainDic[gmwidg.widgid]
-    del widgid2gmwidg[gmwidg.widgid]
+    del head2mainDic[gmwidg.widgets["headchild"]]
     
     if headbook.get_n_pages() == 0:
         vbox.remove(vbox.get_children()[1])
@@ -159,9 +317,15 @@ def delGameWidget (gmwidg):
         global background
         vbox.pack_end(background)
         vbox.show_all()
-            
+
 def createGameWidget (gamemodel):
+    gmwidg = GameWidget(gamemodel)
+    attachGameWidget (gmwidg)
+    return gmwidg
+
+def attachGameWidget (gmwidg):
     vbox = widgets["mainvbox"]
+    
     if len(vbox.get_children()) == 2:
         global background
         background = vbox.get_children()[1] 
@@ -180,7 +344,8 @@ def createGameWidget (gamemodel):
         headbook.connect("switch_page", callback)
         try:
             def page_reordered (widget, child, new_page_num):
-                mainbook.reorder_child(head2mainDic[child], new_page_num)
+                mainbook.reorder_child (
+                        head2mainDic[child].widgets["mvbox"], new_page_num )
             headbook.connect("page-reordered", page_reordered)
         except TypeError:
             # Unknow signal name is raised by gtk < 2.10
@@ -190,150 +355,28 @@ def createGameWidget (gamemodel):
         vbox.pack_start(mainbook)
         
         vbox.show_all()
-        
+    
     headbook = vbox.get_children()[1].child
-    page_num = headbook.get_n_pages()
-    
-    hbox = gtk.HBox()
-    hbox.set_spacing(4)
-    hbox.pack_start(createImage(light_off), expand=False)
-    close_button = gtk.Button()
-    close_button.set_property("can-focus", False)
-    close_button.add(createImage(gtk_close))
-    close_button.set_relief(gtk.RELIEF_NONE)
-    close_button.set_size_request(19,18)
-    hbox.pack_end(close_button, expand=False)
-    hbox.pack_end(gtk.Label(""))
-    
-    headchild = gtk.HSeparator()
-    hbox.show_all() # Gtk doesn't show tab labels when the rest is show_all'ed
-    headbook.append_page(headchild, hbox)
+    headbook.append_page(gmwidg.widgets["headchild"], gmwidg.widgets["tabhbox"])
     try:
-        headbook.set_tab_reorderable (headchild, True)
+        headbook.set_tab_reorderable (gmwidg.widgets["headchild"], True)
     except AttributeError:
         # Object has no attribute 'set_tab_reorderable' is raised by gtk < 2.10
         pass
     
     mainbook = vbox.get_children()[2]
-    
-    mvbox = gtk.VBox()
-    
-    align = createAlignment (3, 2, 4, 2)
-    
-    hbox = gtk.HBox()
-    hbox.set_spacing(4)
-    
-    lvbox = gtk.VBox()
-    lvbox.set_spacing(4)
-    
-    ccalign = createAlignment(0,0,0,0)
-    cclock = ChessClock()
-    ccalign.add(cclock)
-    ccalign.set_size_request(-1, 32)
-    board = BoardControl(gamemodel)
-    
-    lvbox.pack_start(ccalign, expand=False)
-    lvbox.pack_start(board)
-    rvbox = gtk.VBox()
-    rvbox.set_spacing(4)
-    
-    top_align = createAlignment(0,0,0,0)
-    top_align.set_size_request(-1, 32)
-    
-    side_top_hbox = gtk.HBox()
-    
-    toggle_combox = ToggleComboBox()
-    side_closebut = gtk.Button()
-    side_closebut.add(createImage(gtk_close20))
-    side_closebut.connect("clicked", lambda w: show_side_panel(False))
-    side_closebut.set_relief(gtk.RELIEF_NONE)
-    
-    side_top_hbox.pack_start(toggle_combox)
-    side_top_hbox.pack_start(side_closebut, expand=False)
-    side_book = gtk.Notebook()
-    side_book.set_show_border(False)
-    side_book.set_show_tabs(False)
-    
-    top_align.add(side_top_hbox)
-    
-    rvbox.pack_start(top_align, expand=False)
-    rvbox.pack_start(side_book)
-    
-    hbox.pack_start(lvbox)
-    hbox.pack_start(rvbox, expand=False)
-    
-    align.add(hbox)
-    
-    stat_hbox = gtk.HBox()
-    
-    page_vbox = gtk.VBox()
-    page_vbox.set_spacing(1)
-    
-    sep = gtk.HSeparator()
-    page_hbox = gtk.HBox()
-    
-    startbut = gtk.Button()
-    startbut.add(createImage(media_previous))
-    startbut.set_relief(gtk.RELIEF_NONE)
-    backbut = gtk.Button()
-    backbut.add(createImage(media_rewind))
-    backbut.set_relief(gtk.RELIEF_NONE)
-    forwbut = gtk.Button()
-    forwbut.add(createImage(media_forward))
-    forwbut.set_relief(gtk.RELIEF_NONE)
-    endbut = gtk.Button()
-    endbut.add(createImage(media_next))
-    endbut.set_relief(gtk.RELIEF_NONE)
-    
-    startbut.connect("clicked", lambda w: board.view.showFirst())
-    backbut.connect("clicked", lambda w: board.view.showPrevious())
-    forwbut.connect("clicked", lambda w: board.view.showNext())
-    endbut.connect("clicked", lambda w: board.view.showLast())
-    
-    page_hbox.pack_start(startbut)
-    page_hbox.pack_start(backbut)
-    page_hbox.pack_start(forwbut)
-    page_hbox.pack_start(endbut)
-    
-    page_vbox.pack_start(sep)
-    page_vbox.pack_start(page_hbox)
-    
-    statusbar = gtk.Statusbar()
-    
-    stat_hbox.pack_start(page_vbox, expand=False)
-    stat_hbox.pack_start(statusbar)
-    
-    mvbox.pack_start(align)
-    mvbox.pack_start(stat_hbox, expand=False)
-    
-    mainbook.append_page(mvbox, None)
-    
-    head2mainDic[headchild] = mvbox
-    widgid = headchild # headchild is used as widgid
-    gmwidg = GameWidget(widgid)
-    widgid2gmwidg[widgid] = gmwidg
-    
-    start = gmwidg.addSidepanels(side_book, toggle_combox)
-    toggle_combox.connect("changed", lambda w,i: side_book.set_current_page(i))
-    side_book.set_current_page(start)
-    toggle_combox.active = start
+    mainbook.append_page(gmwidg.widgets["mvbox"], None)
     
     headbook.show_all()
-    mvbox.show_all()
+    gmwidg.widgets["mvbox"].show_all()
     
     headbook.set_current_page(-1)
     mainbook.set_current_page(-1)
-    
-    return gmwidg 
-    
-def setCurrent (gmwidg):
-    headbook = _headbook()
-    headbook.set_current_page(headbook.page_num(gmwidg.widgid))
 
 def cur_gmwidg ():
     headbook = _headbook()
-    widgid = headbook.get_nth_page(headbook.get_current_page())
-    return widgid2gmwidg[widgid]
+    headchild = headbook.get_nth_page(headbook.get_current_page())
+    return head2mainDic[headchild]
 
 def _headbook ():
     return widgets["mainvbox"].get_children()[1].child
