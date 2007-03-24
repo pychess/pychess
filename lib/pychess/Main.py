@@ -21,7 +21,7 @@ from pychess.ic import icLogOn
 gameDic = {}
 
 def engineDead (engine, gmwidg):
-    gamewidget.setCurrent(gmwidg)
+    gmwidg.setCurrent()
     gameDic[gmwidg].kill()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
@@ -118,6 +118,9 @@ class GladeHandlers:
         # Disable hint or spy menu, if they are disabled in preferences
         window["hint_mode"].set_sensitive(myconf.get("analyzer_check"))
         window["spy_mode"].set_sensitive(myconf.get("inv_analyzer_check"))
+        
+        # Bring playing window to the front
+        window["window1"].present()
         
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
