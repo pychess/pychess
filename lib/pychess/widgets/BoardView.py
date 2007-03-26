@@ -75,6 +75,7 @@ class BoardView (gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
         self.model.connect("game_changed", self.game_changed)
+        self.model.connect("move_undone", self.move_undone)
         self.model.connect("game_loading", self.game_loading)
         self.model.connect("game_loaded", self.game_loaded)
         self.connect("expose_event", self.expose)
@@ -89,7 +90,8 @@ class BoardView (gtk.DrawingArea):
         self.autoUpdateShown = True
         
         self.padding = 0 # Set to self.pad when setcords is active
-        self.square = None # An object global variable with the current board size
+        self.square = 0, 0, 8, 1 # An object global variable with the current
+                                 # board size
         self.pad = 0.13 # Padding applied only when setcords is active
         self._selected = None
         self._hover = None
@@ -112,6 +114,9 @@ class BoardView (gtk.DrawingArea):
         # and we won't like auto updating.
         if self.autoUpdateShown and self.shown+1 >= model.ply:
             self.shown = model.ply
+    
+    def move_undone (self, model):
+        self.shown = model.ply-1
     
     def game_loading (self, model):
         self.autoUpdateShown = False

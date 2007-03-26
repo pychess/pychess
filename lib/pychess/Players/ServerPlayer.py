@@ -2,7 +2,7 @@
 from Player import Player
 from Player import PlayerIsDead
 from Queue import Queue
-from pychess.Utils.Move import parseSAN, toSAN
+from pychess.Utils.Move import parseSAN, toSAN, ParsingError
 from pychess.Utils.const import *
 
 class ServerPlayer (Player):
@@ -64,6 +64,12 @@ class ServerPlayer (Player):
             return
         print sanmove
         self.queue.put((ply,sanmove))
+    
+    def pause (self):
+        pass
+    
+    def resume (self):
+        pass
     
     def makeMove (self, gamemodel):
         if gamemodel.moves and not self.external:

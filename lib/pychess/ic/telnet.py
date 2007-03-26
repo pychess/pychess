@@ -3,6 +3,7 @@ from gobject import *
 import socket
 from sys import maxint
 from pychess.System.Log import log
+import sys
 
 class VerboseTelnet (Telnet, GObject):
     __gsignals__ = {
@@ -93,6 +94,7 @@ class VerboseTelnet (Telnet, GObject):
     def interrupt (self):
         if self.sock:
             self.sock.shutdown(socket.SHUT_RDWR)
+            self.sock.close()
         else:
             self.interrupting = True
 
@@ -189,7 +191,7 @@ def connect (host, port, username="guest", password=""):
         connected = False
         connecting = False
         client = None
-        raise e
+        raise
 
 def disconnect ():
     global connected
