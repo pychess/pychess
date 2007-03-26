@@ -24,20 +24,23 @@ class BoardManager (GObject):
     
     __gsignals__ = {
         'playBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'observeBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,int,int,str,str)),
-        'moveRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,str,int)),
-        'clockUpdated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int)),
-        'clockUpdatedMs' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int)),
-        'gameEnded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int))
+        'observeBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE,
+                (str, str, int, int, str, str)),
+        'moveRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str, str, int)),
+        'boardRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE,
+                (str, int, str, int, int)),
+        'clockUpdatedMs' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, int)),
+        'gameEnded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, int)),
+        'gamePaused' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, bool))
     }
     
     def __init__ (self):
         GObject.__init__(self)
         
-        self.observeQueue = []
-        self.currentBoard = None
+        self.observeQueue = {}
+        self.activeItem = None
         
-        #print >> telnet.client, "style 12"
+        print >> telnet.client, "style 12"
         print >> telnet.client, "iset startpos 1"
         print >> telnet.client, "iset gameinfo 1"
         print >> telnet.client, "iset compressmove 1"
@@ -45,16 +48,29 @@ class BoardManager (GObject):
         telnet.expect ( "<12>(.*?)\n", self.onStyle12 )
         telnet.expect ( "<d1>(.*?)\n", self.onMove )
         
-        telnet.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
+        telnet.expect (
+            "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % \
+            (names, ratings, names, ratings, rated, types),
+            self.playBoardCreated)
         
-        telnet.expect ( "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % (names, ratings, names, ratings, rated, types), self.observeBoardCreated)
+        telnet.expect (
+            "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % \
+            (names, ratings, names, ratings, rated, types),
+            self.observeBoardCreated)
         
-        telnet.expect ("\s*(\d+)\.\s*%s\s+\(\d+:\d+\)\s+?(?:%s\s+\(\d+:\d+\)\s*)?\n" % (sanmove, sanmove), self.moveLine)
+        telnet.expect (
+            "\s*(\d+)\.\s*%s\s+\(\d+:\d+\)\s+?(?:%s\s+\(\d+:\d+\)\s*)?\n" % \
+            (sanmove, sanmove), self.moveLine)
         
         telnet.expect ( "      {Still in progress} *", self.moveListEnd)
         
-        telnet.expect ( "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3})\n", self.onGameEnd)
-    
+        telnet.expect (
+            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3})\n",
+            self.onGameEnd)
+        
+        telnet.expect (
+            "\rGame (\d+): Game clock (paused|resumed).\n", self.onGamePause)
+        
     def _style12ToFenRow (self, row):
         fenrow = []
         spaceCounter = 0
@@ -122,21 +138,23 @@ class BoardManager (GObject):
         wname = groups[16]
         bname = groups[17]
         
-        # Emit
-        if sanmove != "none":
-            if self.currentBoard and self.currentBoard["groups"][0] == gameno:
-                ply = int(moveno)*2-2
-                # We have to subtract 1, as the movenumber of style 12 descripes
-                # the move to be played next and not the move just made
-                ply -= 1 
-                if curcol == BLACK: ply += 1
-                self.currentBoard["moves"][ply] = sanmove
-            self.emit("moveRecieved", ply, sanmove, gameno, 1-curcol)
-        
         # Clock update
-        whiteRemainSecs = int(groups[23])
-        blackRemainSecs = int(groups[24])
-        self.emit ("clockUpdated", gameno, whiteRemainSecs, blackRemainSecs)
+        wsec = int(groups[23])
+        bsec = int(groups[24])
+        
+        # Ply
+        ply = int(moveno)*2-2
+        if curcol == BLACK: ply += 1
+        
+        # Emit
+        f = lambda: self.emit("boardRecieved", gameno, ply, fen, wsec, bsec)
+        if self.activeItem == gameno:
+            for key in self.observeQueue[self.activeItem]["moves"]:
+                if key > ply+1:
+                    del self.observeQueue[self.activeItem]["moves"][key]
+            self.observeQueue[self.activeItem]["queue"].append(f)
+        else:
+            f()
     
     def onMove (self, client, groups):
         fields = groups[0].split()
@@ -144,13 +162,16 @@ class BoardManager (GObject):
         ply = int(fields[1])
         color = ply % 2 == 0 and BLACK or WHITE
         sanmove = fields[2]
+        
+        if self.activeItem == gameno:
+            self.observeQueue[self.activeItem]["moves"][ply] = sanmove
+        
         self.emit("moveRecieved", ply, sanmove, gameno, color)
         
         msLeft = int(fields[5])
-        self.emit ("clockUpdatedMs", gameno, int(msLeft), 1-color)
+        self.emit ("clockUpdatedMs", gameno, int(msLeft), color)
     
     def playBoardCreated (self, client, groups):
-        print "playBoardCreated", groups
         wname, wtit, wrat, bname, btit, brat, rt, type, min, incr, gmno = groups
         board = {"wname": wname, "wtitle": wtit, "wrating": wrat,
                  "bname": bname, "btitle": btit, "brating": brat,
@@ -159,29 +180,32 @@ class BoardManager (GObject):
         self.emit("playBoardCreated", board)
     
     def observeBoardCreated (self, client, groups):
-        if not self.currentBoard:
-            self.currentBoard = {"groups": groups, "moves": {}}
-            print >> telnet.client, "moves", groups[0]
-        else:
-            self.observeQueue.append(groups)
+        gameno = groups[0]
+        item = {"general": groups, "moves": {}, "queue":[]}
+        self.observeQueue[gameno] = item
+        if not self.activeItem:
+            self.activeItem = gameno
+            print >> telnet.client, "moves", gameno
     
     def moveLine (self, client, groups):
+        if not self.activeItem: return
         moveno, wmove, bmove = groups
         ply = int(moveno)*2-2
-        self.currentBoard["moves"][ply] = wmove
+        self.observeQueue[self.activeItem]["moves"][ply] = wmove
         if bmove: 
-            self.currentBoard["moves"][ply+1] = bmove
+            self.observeQueue[self.activeItem]["moves"][ply+1] = bmove
     
     def moveListEnd (self, client, nothing):
-        grps = self.currentBoard["groups"]
-        gmno, wnam, wtit, wrat, bnam, btit, brat, rated, type, mins, incr = grps
+        if not self.activeItem: return
+        stuf = self.observeQueue[self.activeItem]["general"]
+        gmno, wnam, wtit, wrat, bnam, btit, brat, rated, type, mins, incr = stuf
         ficsHeaders = ( ("Event", "Ficsgame"), ("Site", "Internet"),
                 ("White", wnam), ("Black", bnam),
                 ("WhiteElo", wrat), ("BlackElo", brat) )
         pgn = "\n".join (['[%s "%s"]' % keyvalue for keyvalue in ficsHeaders])
         pgn += "\n"
         
-        moves = self.currentBoard["moves"].items()
+        moves = self.observeQueue[self.activeItem]["moves"].items()
         moves.sort()
         for ply, move in moves:
             if ply % 2 == 0:
@@ -197,10 +221,15 @@ class BoardManager (GObject):
         self.emit ("observeBoardCreated", gmno, pgn,
                    int(mins)*60, int(incr), wnam, bnam)
         
-        self.currentBoard = None
+        for function in self.observeQueue[self.activeItem]["queue"]:
+            function()
+        
+        del self.observeQueue[self.activeItem]
+        self.activeItem = None
+        
         if self.observeQueue:
-            self.currentBoard = {"groups": self.observeQueue.pop(), "moves": {}}
-            print >> telnet.client, "moves", self.currentBoard["groups"][0]
+            self.activeItem = self.observeQueue.keys()[0]
+            print >> telnet.client, "moves", self.activeItem
     
     def onGameEnd (self, client, groups):
         gameno, comment, state = groups
@@ -280,7 +309,19 @@ class BoardManager (GObject):
             status = UNKNOWN_STATE
             reason = UNKNOWN_REASON
         
-        self.emit("gameEnded", gameno, status, reason)
+        f = lambda: self.emit("gameEnded", gameno, status, reason)
+        if self.activeItem == gameno:
+            self.observeQueue[self.activeItem]["queue"].append(f)
+        else:
+            f()
+    
+    def onGamePause (self, client, groups):
+        gameno, state = groups
+        f = lambda: self.emit("gamePaused", gameno, state=="paused")
+        if self.activeItem == gameno:
+            self.observeQueue[self.activeItem]["queue"].append(f)
+        else:
+            f()
     
     ############################################################################
     #   Interacting                                                            #

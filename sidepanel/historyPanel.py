@@ -23,7 +23,7 @@ class Sidepanel:
     def __init__ (self):
         self.freezed = False
     
-    def load (self, window, gmwidg):
+    def load (self, gmwidg):
         
         widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
         __widget__ = widgets.get_widget("panel")
@@ -52,6 +52,7 @@ class Sidepanel:
         self.board = gmwidg.widgets["board"].view
         
         self.board.model.connect("game_changed", self.game_changed)
+        self.board.model.connect("move_undone", self.move_undone)
         self.board.connect("shown_changed", self.shown_changed)
         
         scrollwin = widgets.get_widget("panel")
@@ -85,6 +86,16 @@ class Sidepanel:
             self.board.shown -= 1
         elif event.keyval in rightkeys:
             self.board.shown += 1
+    
+    def move_undone (self, game):
+        assert game.ply > 0, "Can't undo when ply <= 0"
+        if game.ply & 1:
+            model = self.left.get_model()
+            nummodel = self.numbers.get_model()
+            nummodel.remove(nummodel.get_iter( (len(nummodel)-1,) ))
+        else:
+            model = self.right.get_model()
+        model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_changed (self, game):
         

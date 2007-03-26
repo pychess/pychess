@@ -94,7 +94,7 @@ class Human (Player):
             if self.board.handler_is_connected(id):
                 self.board.disconnect(id)
         self.queue.put("del")
-        
+    
     def setBoard (self, fen):
         # BoardControl, from which we are reciving moves, will be set by others
         pass

@@ -10,8 +10,9 @@ class IcGameModel (GameModel):
         self.gameno = gameno
         
         boardmanager.connect("clockUpdatedMs", self.onClockUpdatedMs)
-        boardmanager.connect("clockUpdated", self.onClockUpdated)
+        boardmanager.connect("boardRecieved", self.onBoardRecieved)
         boardmanager.connect("gameEnded", self.onGameEnded)
+        boardmanager.connect("gamePaused", self.onGamePaused)
         
         self.inControl = True
     
@@ -19,9 +20,14 @@ class IcGameModel (GameModel):
         if gameno == self.gameno:
             self.timemodel.updatePlayer (color, msecs/1000.)
     
-    def onClockUpdated (self, boardmanager, gameno, wsecs, bsecs):
+    def onBoardRecieved (self, boardmanager, gameno, ply, fen, wsecs, bsecs):
         if gameno == self.gameno:
-            self.timemodel.syncTime (wsecs, bsecs)
+            print "SYNC CLOCK", wsecs, bsecs
+            self.timemodel.syncClock (wsecs, bsecs)
+            if ply < self.ply:
+                print "TAKEBACK", self.ply, ply
+                for i in range(ply, self.ply):
+                    self.undo()
     
     def onGameEnded (self, boardmanager, gameno, status, reason):
         if gameno == self.gameno:
@@ -31,3 +37,8 @@ class IcGameModel (GameModel):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:
             self.inControl = False
         GameModel.setPlayers (self, players)
+    
+    def onGamePaused (self, boardmanager, gameno, paused):
+        if paused:
+            self.pause()
+        else: self.resume()
