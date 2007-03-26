@@ -27,6 +27,9 @@ class ScorePlot (gtk.DrawingArea):
     def addScore (self, score):
         self.scores.append(score)
     
+    def undo (self):
+        del self.scores[-1]
+    
     def select (self, index):
         self.selected = index
     
@@ -128,7 +131,7 @@ from pychess.Utils.lutils import leval
 
 class Sidepanel:
     
-    def load (self, window, gmwidg):
+    def load (self, gmwidg):
         self.plot = ScorePlot()
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -143,6 +146,7 @@ class Sidepanel:
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
         self.boardview.model.connect("game_changed", self.game_changed)
+        self.boardview.model.connect("move_undone", self.move_undone)
         
         # Add the initial board
         self.game_changed (self.boardview.model)
@@ -159,6 +163,10 @@ class Sidepanel:
         __widget__.get_vadjustment().connect("value-changed", value_changed)
         
         return __widget__
+    
+    def move_undone (self, game):
+        self.plot.undo()
+        self.plot.redraw()
     
     def game_changed (self, model):
         

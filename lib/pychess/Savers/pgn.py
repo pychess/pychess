@@ -130,9 +130,19 @@ class PGNFile (ChessFile):
             move = parseAny (model.boards[-1], mstr)
             model.moves.append(move)
             model.boards.append(model.boards[-1].move(move))
+            
             model.emit("game_changed")
             if position != -1 and model.ply >= position:
                 break
+        
+        if model.timemodel:
+            blacks = len(movstrs)/2
+            whites = len(movstrs)-blacks
+            model.timemodel.intervals = [
+                [model.timemodel.intervals[0][0]]*(whites+1),
+                [model.timemodel.intervals[1][0]]*(blacks+1),
+            ]
+            print "intervals", model.timemodel.intervals
         
         return model
     

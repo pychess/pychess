@@ -92,7 +92,7 @@
 			  <property name="sensitive">False</property>
 			  <property name="can_default">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Accept</property>
+			  <property name="label" translatable="yes">_Accept</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
@@ -417,7 +417,7 @@
 				  <child>
 				    <widget class="GtkLabel" id="label12">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Observe</property>
+				      <property name="label" translatable="yes">_Observe</property>
 				      <property name="use_underline">True</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>

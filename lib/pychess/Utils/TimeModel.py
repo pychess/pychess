@@ -47,14 +47,28 @@ class TimeModel (GObject):
                 t -= time() - self.counter
             self.intervals[self.movingColor].append(t)
         else:
-            self.started = True
+            self.intervals[self.movingColor].append (
+                    self.intervals[self.movingColor][-1] )
+            
+            if len(self.intervals[0]) + len(self.intervals[1]) >= 4:
+                self.started = True
         
-        self.counter = time()
         self.movingColor = 1-self.movingColor
         
-        self.emit("time_changed")
+        if self.started:
+            self.counter = time()
+            self.emit("time_changed")
+        
         self.emit("player_changed")
     
+    def start (self):
+        if self.started: return
+        self.started = True
+        print "started"
+        
+        self.counter = time()
+        self.emit("time_changed")
+        
     def pause (self):
         if self.paused: return
         self.paused = True
@@ -68,6 +82,7 @@ class TimeModel (GObject):
     
     def resume (self):
         if not self.paused: return
+        
         self.paused = False
         self.counter = time() - self.pauseInterval
         
@@ -78,33 +93,40 @@ class TimeModel (GObject):
     ############################################################################
     
     def undo (self):
-        """ Sets time to the amount the current player had last time he started
+        """ Sets time and color to move, to the values they were having in the
+            beginning of the ply before the current.
         his move.
         Example:
         White intervals (is thinking): [120, 130, ...]
         Black intervals:               [120, 115]
         Is undoed to:
-        White intervals (is thinking): [120, ...]
-        Black intervals:               [120] """
+        White intervals:               [120, 130]
+        Black intervals (is thinking): [120, ...] """
         
-        assert not self.paused and \
-            len(self.inervals[0]) > 1 and \
-            len(self.inervals[1]) > 1
+        if not self.started:
+            self.start()
         
-        del self.intervals[0][-1]
-        del self.intervals[1][-1]
+        self.movingColor = 1-self.movingColor
+        print "intervals3", self.intervals
+        del self.intervals[self.movingColor][-1]
+        print "intervals2", self.intervals
         
-        self.counter = time()
+        if len(self.intervals[0]) + len(self.intervals[1]) >= 4:
+            self.counter = time()
+        else:
+            self.started = False
+            print "stopped"
+            self.counter = None
         
         self.emit("time_changed")
-        self.emit("time_changed")
+        self.emit("player_changed")
     
     ############################################################################
     # Updating                                                                 #
     ############################################################################
     
     def updatePlayer (self, color, secs):
-        if color == self.movingColor:
+        if color == self.movingColor and self.started:
             self.counter = secs + time() - self.intervals[color][-1]
         else: self.intervals[color][-1] = secs
         self.emit("time_changed")
@@ -112,10 +134,14 @@ class TimeModel (GObject):
     def syncClock (self, wsecs, bsecs):
         """ Syncronize clock to e.g. fics time """
         if self.movingColor == WHITE:
-            self.counter = wsecs + time() - self.intervals[WHITE][-1]
+            if self.started:
+                self.counter = wsecs + time() - self.intervals[WHITE][-1]
+            else: self.intervals[WHITE][-1] = wsecs
             self.intervals[BLACK][-1] = bsecs
         else:
-            self.counter = bsecs + time() - self.intervals[BLACK][-1]
+            if self.started:
+                self.counter = bsecs + time() - self.intervals[BLACK][-1]
+            else: self.intervals[BLACK][-1] = bsecs
             self.intervals[WHITE][-1] = wsecs
         self.emit("time_changed")
     

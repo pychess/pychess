@@ -8,7 +8,7 @@ __title__ = _("Opening Book")
 
 class Sidepanel:
     
-    def load (self, window, gmwidg):
+    def load (self, gmwidg):
         widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
@@ -37,7 +37,7 @@ class Sidepanel:
         return self.sw
     
     def shown_changed (self, board, shown):
-        self.openings = getOpenings(self.board.model.boards[-1])
+        self.openings = getOpenings(self.board.model.boards[shown])
         self.openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
         
         self.board.bluearrow = None
@@ -66,11 +66,8 @@ class Sidepanel:
                 self.store.append ([move, str(games), (wins,draws,loses)])
                 
         gobject.idle_add(helper)
-
+    
     def selection_changed (self, widget):
-        if len(self.board.model.boards) != self.board.shown+1:
-            self.board.bluearrow = None
-            return
         
         iter = self.tv.get_selection().get_selected()[1]
         if iter == None:
@@ -78,10 +75,13 @@ class Sidepanel:
             return
         else: sel = self.tv.get_model().get_path(iter)[0]
         
-        move = parseSAN(self.board.model.boards[-1], self.openings[sel][0])
+        move = parseSAN (
+            self.board.model.boards[self.board.shown], self.openings[sel][0] )
         self.board.bluearrow = move.cords
     
     def row_activated (self, widget, *args):
+        if len(self.board.model.boards) < self.board.shown+1:
+            return
         arrow = self.board.bluearrow
         if arrow:
             self.board.bluearrow = None

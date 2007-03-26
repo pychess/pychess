@@ -16,10 +16,11 @@ class Sidepanel:
     def __init__ (self):
         self.givenTips = {}
         
-    def load (self, window, gmwidg):
+    def load (self, gmwidg):
         
-        gmwidg.widgets["board"].view.model.connect(
-                "game_changed", self.game_changed)
+        game = gmwidg.widgets["board"].view.model
+        game.connect("game_changed", self.game_changed)
+        game.connect("move_undone", self.move_undone)
         
         widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
@@ -51,11 +52,14 @@ class Sidepanel:
         
         self.store.append(["Initial position"])
         
+        self.frozen = False
+        
         return scrollwin
     
     def select_cursor_row (self, selection):
         iter = selection.get_selected()[1]
         if iter == None: return
+        if self.frozen: return
         row = self.tv.get_model().get_path(iter)[0]
         self.boardview.shown = row
     
@@ -66,6 +70,11 @@ class Sidepanel:
     
     def addComment (self, text):
         self.__widget__.set_text(self.__widget__.get_text()+"\n"+text)
+    
+    def move_undone (self, game):
+        assert game.ply > 0, "Can't undo when ply <= 0"
+        model = self.tv.get_model()
+        model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_changed (self, model):
         
@@ -78,6 +87,7 @@ class Sidepanel:
                 if row < self.boardview.shown-1:
                     return
             
+            self.frozen = True
             iter = self.store.get_iter(len(self.store)-1)
             self.tv.get_selection().select_iter(iter)
             self.frozen = False

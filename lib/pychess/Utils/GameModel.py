@@ -16,6 +16,7 @@ class GameModel (GObject):
     
     __gsignals__ = {
         "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "move_undone":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loading":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":      (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
@@ -195,6 +196,11 @@ class GameModel (GObject):
             for spectactor in self.spectactors.values():
                 spectactor.setBoard(self)
             
+            if self.timemodel:
+                self.timemodel.setMovingColor(self.boards[-1].color)
+                if self.ply >= 2:
+                    self.timemodel.start()
+            
             self.start()
         
         elif self.status == WHITEWON:
@@ -236,9 +242,7 @@ class GameModel (GObject):
                                      self.timemodel.getPlayerTime(1-curColor))
             
             try:
-            	print "Waiting for", curPlayer
                 move = curPlayer.makeMove(self)
-                print "gamemodel got move", move
             except PlayerIsDead:
                 self.kill()
                 break
@@ -252,10 +256,7 @@ class GameModel (GObject):
             self.emit("game_changed")
             
             if self.timemodel:
-                if self.ply < 2:
-                    self.timemodel.setMovingColor(1-curColor)
-                else:
-                    self.timemodel.tap()
+                self.timemodel.tap()
             
             if self.status != RUNNING:
                 self.emit("game_ended", self.reason)
@@ -265,7 +266,6 @@ class GameModel (GObject):
                 break
             
             for spectactor in self.spectactors.values():
-                #print "   Spec - Waiting for", spectactor
                 spectactor.makeMove(self)
             
             self.applyingMoveLock.release()
@@ -289,6 +289,23 @@ class GameModel (GObject):
         self.applyingMoveLock.release()
         
         self.status = PAUSED
+    
+    def resume (self):
+        for player in self.players:
+            player.resume()
+        
+        try:
+            for spectactor in self.spectactors.values():
+                spectactor.resume()
+        except NotImplementedError:
+            pass
+        
+        self.applyingMoveLock.acquire()
+        if self.timemodel:
+            self.timemodel.resume()
+        self.applyingMoveLock.release()
+        
+        self.status = RUNNING
         
     def kill (self):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -306,7 +323,7 @@ class GameModel (GObject):
     ############################################################################
     # Other stuff                                                              #
     ############################################################################
-        
+    
     def undo (self):
         """ Will push back one full move by calling the undo methods of players
             and spectactors. If they raise NotImplementedError we'll try to call
@@ -316,12 +333,14 @@ class GameModel (GObject):
         # On the other hand it shouldn't matter to undo a move while a player is
         # thinking, as the player should be smart enough.
         
+        self.emit("move_undone")
+        
         self.applyingMoveLock.acquire()
         
-        del self.boards[-2:]
-        del self.moves[-2:]
+        del self.boards[-1]
+        del self.moves[-1]
         
-        for player in self.players + self.spectactors.values():
+        for player in list(self.players) + list(self.spectactors.values()):
             try:
                 player.undo()
             except NotImplementedError:

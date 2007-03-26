@@ -35,9 +35,11 @@ def show():
     
     widgets["fics_lounge"].show()
 
+icGames = []
+
 def initialize():
     
-    global widgets
+    global widgets, icGames
     class Widgets:
         def __init__ (self, glades):
             self.widgets = glades
@@ -310,10 +312,6 @@ def initialize():
             glm.stop ()
     telnet.connectStatus (on_status_changed)
     
-        ########################################################################
-        # Initialize Seek List                                                 #
-        ########################################################################
-    
     def addColumns (treeview, *columns, **keyargs):
         if "hide" in keyargs: hide = keyargs["hide"]
         else: hide = []
@@ -339,11 +337,24 @@ def initialize():
             # column.set_reorderable(True)
             treeview.append_column(column)
     
+    def lowLeftSearchPosFunc (treeview, search_dialog):
+        x = tv.allocation.x + tv.get_toplevel().window.get_position()[0]
+        y = tv.allocation.y + tv.get_toplevel().window.get_position()[1] + \
+            tv.allocation.height
+        search_dialog.move(x, y)
+        search_dialog.show_all()
+    
+        ########################################################################
+        # Initialize Seek List                                                 #
+        ########################################################################
+    
     tv = widgets["seektreeview"]
     sstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
+    tv.set_search_position_func(lowLeftSearchPosFunc)
     addColumns (tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
                               _("Type"), _("Clock"), hide=[0], pix=[1])
+    tv.set_search_column(2)
     
     seeks = {}
     
@@ -385,7 +396,7 @@ def initialize():
         widgets["acceptButton"].set_sensitive(anyThingSelected)
     tv.get_selection().connect_after("changed", on_selection_changed)
     
-    def on_acceptButton_clicked (button):
+    def on_accept (widget, *args):
         model, iter = widgets["seektreeview"].get_selection().get_selected()
         if iter == None: return
         gameno = model.get_value(iter, 0)
@@ -395,7 +406,8 @@ def initialize():
         else:
             print "Sending", "play", gameno
             print >> telnet.client, "play", gameno
-    widgets["acceptButton"].connect("clicked", on_acceptButton_clicked)
+    widgets["acceptButton"].connect("clicked", on_accept)
+    tv.connect("row-activated", on_accept)
     
     def playBoardCreated (bm, board):
         
@@ -486,7 +498,7 @@ def initialize():
         def call ():
             # The lower the -7 number, the steeper the acceleration.
             # 1.4 is opposite
-            x = e**(-7/(float(seek["t"])+float(seek["i"])*2/3)*1.4)
+            x = e**(-7/(float(seek["t"])+float(seek["i"])*2/3)/1.4)
             y = seek["rt"].isdigit() and float(seek["rt"])/3000 or 0
             type = seek["r"] == "u" and 1 or 0
             
@@ -520,6 +532,8 @@ def initialize():
     tv.set_model(gtk.TreeModelSort(pstore))
     addColumns(tv, "Title", "Name", "Rating")
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+    tv.set_search_column(1)
+    tv.set_search_position_func(lowLeftSearchPosFunc)
     
     players = {}
     
@@ -548,18 +562,30 @@ def initialize():
         # Initialize Games List                                                #
         ########################################################################
     
+    icons = gtk.icon_theme_get_default()
+    recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+    clearpix = pixbuf_new_from_file(prefix("glade/pixmaps/clear.png"))
+    
     tv = widgets["gametreeview"]
-    gstore = gtk.ListStore(str, str, str, str)
+    gstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
     tv.set_model(gtk.TreeModelSort(gstore))
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-    addColumns(tv, "GameNo", _("White Player"), _("Black Player"),
-                             _("Game Type"), hide=[0])
+    tv.set_search_position_func(lowLeftSearchPosFunc)
+    addColumns(tv, "GameNo", "", _("White Player"), _("Black Player"),
+                                 _("Game Type"), hide=[0], pix=[1])
     
     games = {}
     
+    def searchCallback (model, column, key, iter):
+        if model.get_value(iter, 2).lower().startswith(key) or \
+           model.get_value(iter, 3).lower().startswith(key):
+            return False
+        return True
+    tv.set_search_equal_func (searchCallback)
+    
     def on_game_add (manager, game):
         def call ():
-            ti = gstore.append ([game["gameno"], game["wn"],
+            ti = gstore.append ([game["gameno"], clearpix, game["wn"],
                                  game["bn"], game["type"]])
             games [game["gameno"]] = ti
         listqueue.put(call)
@@ -578,33 +604,45 @@ def initialize():
     glm.connect("removeGame", on_game_remove)
     
     def observeBoardCreated (bm, gameno, pgn, secs, incr, wname, bname):
+        
         timemodel = TimeModel (secs, incr)
         game = IcGameModel (bm, gameno, timemodel)
         white = ServerPlayer (bm, om, wname, True, gameno, WHITE)
         black = ServerPlayer (bm, om, bname, True, gameno, BLACK)
         game.setPlayers((white,black))
         
-        def idle ():
-            gmwidg = gamewidget.createGameWidget(game)
-            gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
-            gmwidg.connect("closed", ionest.closeGame, game)
-            if timemodel:
-                gmwidg.widgets["ccalign"].show()
-                gmwidg.widgets["cclock"].setModel(timemodel)
-            
-            file = StringIO(pgn)
-            ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
-        idle_add(idle)
+        gmwidg = gamewidget.GameWidget(game)
+        
+        gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+        gmwidg.connect("closed", ionest.closeGame, game)
+        def onClose (gmwidg):
+            bm.unobserve(gameno)
+            rowiter = games[gameno]
+            idle_add (lambda: \
+                tv.get_model().get_model().set_value(rowiter, 1, clearpix))
+        gmwidg.connect("closed", onClose)
+        
+        if timemodel:
+            gmwidg.widgets["ccalign"].show()
+            gmwidg.widgets["cclock"].setModel(timemodel)
+        
+        file = StringIO(pgn)
+        ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
+        
+        idle_add(lambda: gamewidget.attachGameWidget(gmwidg))
     
     bm.connect("observeBoardCreated", observeBoardCreated)
     
-    def on_observe_clicked (button):
+    def on_observe_clicked (widget, *args):
         model, paths = widgets["gametreeview"].get_selection().get_selected_rows()
         for i, path in enumerate(paths):
-            gameno = model.get_value(model.get_iter(path), 0)
-            print "Should observe", gameno
+            rowiter = model.get_iter(path)
+            idle_add (lambda: model.get_model().set_value (
+                    model.convert_iter_to_child_iter(None,rowiter), 1, recpix) )
+            gameno = model.get_value(rowiter, 0)
             bm.observe(gameno)
     widgets["observeButton"].connect ("clicked", on_observe_clicked)
+    tv.connect("row-activated", on_observe_clicked)
     
         ########################################################################
         # Initialize Adjourned List                                            #
