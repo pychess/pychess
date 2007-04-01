@@ -1,6 +1,58 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
+#!/bin/sh
+#
+# PyChess startup script
+#
 
+
+################################################################################
+# Find path function is grabbed from googleearth                               #
+################################################################################
+
+FindPath()
+{
+    fullpath="`echo $1 | grep /`"
+    if [ "$fullpath" = "" ]; then
+        oIFS="$IFS"
+        IFS=:
+        for path in $PATH
+        do if [ -x "$path/$1" ]; then
+               if [ "$path" = "" ]; then
+                   path="."
+               fi
+               fullpath="$path/$1"
+               break
+           fi
+        done
+        IFS="$oIFS"
+    fi
+    if [ "$fullpath" = "" ]; then
+        fullpath="$1"
+    fi
+
+    # Is the sed/ls magic portable?
+    if [ -L "$fullpath" ]; then
+        fullpath=`ls -l "$fullpath" |sed -e 's/.* -> //' |sed -e 's/\*//'`
+    fi
+    dirname $fullpath
+}
+
+export PYCHESS_DATA_PATH="`FindPath $0`"
+
+################################################################################
+# Workaround for problem with ubuntu/debian kernels and gobject/gtk threading  #
+################################################################################
+
+if [ -f /etc/debian-release ] ; then
+    export LD_ASSUME_KERNEL=2.4.1
+elif [ -f /etc/debian_version ] ; then
+    export LD_ASSUME_KERNEL=2.4.1
+fi
+
+################################################################################
+# Try to import pychess modules and set up gettext                             #
+################################################################################
+
+python -c '
 import pygtk
 pygtk.require("2.0")
 
@@ -11,9 +63,9 @@ except ImportError:
     print "Please try to run pychess as stated in the INSTALL file"
     import sys
     sys.exit(1)
-    
-import gettext, gtk.glade
-if "/bin/" in __file__:
+
+import gettext, gtk.glade, os
+if "/bin/" in os.environ["PYCHESS_DATA_PATH"]:
     gettext.install("pychess", unicode=1)
     gtk.glade.bindtextdomain("pychess")
 else:
@@ -23,3 +75,4 @@ gtk.glade.textdomain("pychess")
 
 import pychess.Main
 pychess.Main.run()
+'
