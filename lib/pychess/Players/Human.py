@@ -17,13 +17,12 @@ class Human (Player):
         self.queue = Queue()
         self.color = color
         self.board = board
-        self.conid = [board.connect("piece_moved", self.piece_moved)]
-        self.conid.append(board.connect("call_flag",
-                lambda b: self.emit_action(FLAG_CALL)))
-        self.conid.append(board.connect("draw",
-                lambda b: self.emit_action(DRAW_OFFER)))
-        self.conid.append(board.connect("resign",
-                lambda b: self.emit_action(RESIGNATION)))
+        self.conid = [
+            board.connect("piece_moved", self.piece_moved),
+            board.connect("call_flag", lambda b: self.emit_action(FLAG_CALL)),
+            board.connect("draw", lambda b: self.emit_action(DRAW_OFFER)),
+            board.connect("resign", lambda b: self.emit_action(RESIGNATION))
+        ]
         self.name = "Human"
     
     def piece_moved (self, board, move):
@@ -52,10 +51,12 @@ class Human (Player):
                 type = gtk.MESSAGE_QUESTION, buttons = gtk.BUTTONS_YES_NO)
         d.set_markup (title)
         d.format_secondary_text (description)
-        result = d.run()
-        d.hide()
-        if result == gtk.RESPONSE_YES:
-            self.emit("action", action, param)
+        def response (dialog, response):
+            if response == gtk.RESPONSE_YES:
+                self.emit("action", action, param)
+            d.hide()
+        d.connect("response", response)
+        d.show_all()
     
     def offerDraw (self):
         self._offer ( DRAW_OFFER, 0,
