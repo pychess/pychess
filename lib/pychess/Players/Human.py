@@ -18,13 +18,12 @@ class Human (Player):
         self.cond = Condition()
         self.color = color
         self.board = board
-        self.conid = [board.connect("piece_moved", self.piece_moved)]
-        self.conid.append(board.connect("call_flag",
-                lambda b: self.emit_action(FLAG_CALL)))
-        self.conid.append(board.connect("draw",
-                lambda b: self.emit_action(DRAW_OFFER)))
-        self.conid.append(board.connect("resign",
-                lambda b: self.emit_action(RESIGNATION)))
+        self.conid = [
+            board.connect("piece_moved", self.piece_moved),
+            board.connect("call_flag", lambda b: self.emit_action(FLAG_CALL)),
+            board.connect("draw", lambda b: self.emit_action(DRAW_OFFER)),
+            board.connect("resign", lambda b: self.emit_action(RESIGNATION))
+        ]
         self.name = "Human"
     
     def piece_moved (self, board, move):
@@ -58,11 +57,13 @@ class Human (Player):
         d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
         d.set_markup(_("<big><b>You've got a draw offer. Accept?</b></big>"))
         d.format_secondary_text(_("Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."))
-        result = d.run()
-        d.hide()
-        if result == gtk.RESPONSE_YES:
-            self.emit("action", DRAW_OFFER)
-
+        def response (dialog, response):
+            if response == gtk.RESPONSE_YES:
+                self.emit("action", DRAW_OFFER)
+            d.hide()
+        d.connect("response", response)
+        d.show_all()
+    
     def setName (self, name):
         self.name = name
 
