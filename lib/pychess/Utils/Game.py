@@ -89,6 +89,8 @@ class Game (GObject):
             self.kill()
     
     def save (self, uri, saver, append=False):
+        if not uri.startswith("file://"):
+            uri = "file://"+uri
         if append:
             fileobj = open(uri[7:], "a")
         else: fileobj = open(uri[7:], "w")
