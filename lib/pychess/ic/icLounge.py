@@ -351,7 +351,11 @@ def initialize():
     tv = widgets["seektreeview"]
     sstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
-    tv.set_search_position_func(lowLeftSearchPosFunc)
+    try:
+        tv.set_search_position_func(lowLeftSearchPosFunc)
+    except AttributeError:
+        # Unknow signal name is raised by gtk < 2.10
+        pass
     addColumns (tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
                               _("Type"), _("Clock"), hide=[0], pix=[1])
     tv.set_search_column(2)
