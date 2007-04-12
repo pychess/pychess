@@ -13,38 +13,75 @@ class ToggleComboBox (gtk.ToggleButton):
         
         self.label = label = gtk.Label()
         label.set_alignment(0, 0.5)
-        hbox = gtk.HBox()
+        self.hbox = hbox = gtk.HBox()
+        self.image = gtk.Image()
+        hbox.pack_start(self.image, False, False)
         hbox.pack_start(label)
-        arrow = gtk.Arrow (gtk.ARROW_DOWN, gtk.SHADOW_NONE);
-        hbox.pack_end(arrow, False, False)
+        arrow = gtk.Arrow (gtk.ARROW_DOWN, gtk.SHADOW_OUT);
+        hbox.pack_start(arrow, False, False)
         self.add(hbox)
         self.show_all()
         
         self.connect("button_press_event", self.button_press)
         self.connect("key_press_event", self.key_press)
-
+        self.connect("scroll_event", self.scroll_event)
+        
         self.menu = menu = gtk.Menu()
         deactivate = lambda w: self.set_active(False)
         menu.connect("deactivate", deactivate)
         menu.attach_to_widget(self, None)
         
+        self.markup = "", ""
+        
         self._active = -1
         self._items = []
-        
+    
     def _get_active(self):
         return self._active
     def _set_active(self, active):
         if active == self._active: return
         self.emit("changed", active)
         self._active = active
-        self.label.set_text(self._items[active])
+        text, iconname = self._items[self.active]
+        self.label.set_markup (self.markup[0] + text + self.markup[1])
+        if iconname != None:
+            self.hbox.set_spacing(6)
+            self.image.set_from_pixbuf(gtk.icon_theme_get_default().load_icon (
+                            iconname, 12, gtk.ICON_LOOKUP_USE_BUILTIN))
+        else:
+            self.hbox.set_spacing(0)
+            self.image.clear()
     active = property(_get_active, _set_active)
     
-    def addItem (self, label):
-        item = gtk.MenuItem(label)
+    def setMarkup(self, start, end):
+        self.markup = (start, end)
+        text = self._items[self.active][0]
+        self.label.set_markup (self.markup[0] + text + self.markup[1])
+        
+    def getMarkup(self):
+        return self.markup
+    
+    def addItem (self, text, stock=None):
+        if stock == None:
+            item = gtk.MenuItem(text)
+        else:
+            item = gtk.MenuItem()
+            label = gtk.Label(text)
+            label.props.xalign = 0
+            pix = gtk.icon_theme_get_default().load_icon(
+                    stock, 12, gtk.ICON_LOOKUP_USE_BUILTIN)
+            image = gtk.Image()
+            image.set_from_pixbuf(pix)
+            hbox = gtk.HBox()
+            hbox.set_spacing(6)
+            hbox.pack_start(image, expand=False, fill=False)
+            hbox.add(label)
+            item.add(hbox)
+            hbox.show_all()
+        
         item.connect("activate", self.menu_item_activate, len(self._items))
         self.menu.append(item)
-        self._items += [label]
+        self._items += [(text, stock)]
         item.show()
         if self.active < 0: self.active = 0
     
@@ -53,6 +90,14 @@ class ToggleComboBox (gtk.ToggleButton):
         x += self.get_allocation().x
         y += self.get_allocation().y + self.get_allocation().height
         return (x,y,False)
+    
+    def scroll_event (self, widget, event):
+        if event.direction == gtk.gdk.SCROLL_UP:
+            if self.active > 0:
+                self.active -= 1
+        else:
+            if self.active < len(self._items)-1:
+                self.active += 1
     
     def button_press (self, widget, event):
         width = self.allocation.width

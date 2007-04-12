@@ -11,7 +11,7 @@ from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
 from pychess.widgets import ionest
-from pychess.widgets.Background import Background
+from pychess.widgets.Background import TaskerManager, NewGameTasker, InternetGameTasker
 from pychess.widgets import preferencesDialog
 from pychess.ic import icLogOn
 
@@ -357,7 +357,13 @@ class GladeHandlers:
     
     def on_notebook2_switch_page (widget, page, page_num):
         window["notebook3"].set_current_page(page_num)
-        
+    
+    #          Taskers        #
+    
+    def on_newGameTasker_started (tasker, color, opponent, difficulty):
+        pass
+        #ionest.startGame (color, opponent, difficulty)
+
 TARGET_TYPE_URI_LIST = 80
 dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
@@ -407,8 +413,18 @@ class PyChess:
         return self.widgets.get_widget(key)
     
     def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
-        # Background is currently the only widget that uses glades CustomWidget
-        return Background()
+        # Tasker is currently the only widget that uses glades CustomWidget
+        tasker = TaskerManager()
+        newGameTasker = NewGameTasker()
+        newGameTasker.connect (
+            "startClicked", GladeHandlers.__dict__["on_newGameTasker_started"])
+        internetGameTasker = InternetGameTasker()
+        #internetGameTasker.connect (
+        #    "listClicked", GladeHandlers.__dict__["on_internetTasker_list"])
+        #internetGameTasker.connect (
+        #    "quickClicked", GladeHandlers.__dict__["on_internetTasker_quick"])
+        tasker.packTaskers ([newGameTasker, internetGameTasker])
+        return tasker
 
 def run ():
     PyChess()
