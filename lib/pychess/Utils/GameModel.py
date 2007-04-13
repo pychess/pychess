@@ -315,7 +315,7 @@ class GameModel (GObject):
             player.kill(self.status, self.reason)
         
         for spectactor in self.spectactors.values():
-            spectactor.kill()
+            spectactor.kill(self.status, self.reason)
         
         if self.timemodel:
             self.timemodel.pause()

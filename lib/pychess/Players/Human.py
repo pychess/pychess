@@ -36,7 +36,6 @@ class Human (Player):
         self.emit("action", action, 0)
     
     def makeMove (self, gamemodel):
-    
         self.board.locked = False
         item = self.queue.get(block=True)
         
