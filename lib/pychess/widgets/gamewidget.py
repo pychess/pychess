@@ -23,7 +23,6 @@ from pychess.Utils.const import prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
-from Background import Background
 
 from threading import Condition
 
