@@ -199,7 +199,7 @@ class CECPProtocol (Protocol):
         print >> self.engine, "new"
         print >> self.engine, "random"
     
-    def kill (self):
+    def kill (self, status, reason):
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"

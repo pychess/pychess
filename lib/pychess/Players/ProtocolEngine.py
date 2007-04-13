@@ -130,5 +130,5 @@ class ProtocolEngine (Engine):
         self._wait()
         return repr(self.proto)
     
-    def kill (self):
-        self.proto.kill()
+    def kill (self, status, reason):
+        self.proto.kill(status, reason)

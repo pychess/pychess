@@ -22,7 +22,7 @@ class Player (GObject):
             or simply do nothing"""
         abstract
 
-    def kill (self):
+    def kill (self, status, reason):
         """ Called in the end of the game, or when the engines is otherwise ment
             to die. Use for closing connections etc. """
         pass #Optional

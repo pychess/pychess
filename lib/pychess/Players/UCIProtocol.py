@@ -138,7 +138,7 @@ class UCIProtocol (Protocol):
         
     ######################## TO ENGINE ########################
     
-    def kill (self):
+    def kill (self, status, reason):
         if self.connected:
             self.connected = False
             print >> self.engine, "stop"
