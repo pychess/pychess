@@ -24,7 +24,7 @@ from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
 
-from threading import Condition
+from threading import Condition, _MainThread, currentThread
 
 icons = gtk.icon_theme_get_default()
 try:
@@ -107,7 +107,7 @@ class GameWidget (gobject.GObject):
         
         lvbox = gtk.VBox()
         lvbox.set_spacing(4)
-        
+        print 13
             #
             # Initialize left center - clock and board
             #
@@ -121,7 +121,7 @@ class GameWidget (gobject.GObject):
         
         lvbox.pack_start(ccalign, expand=False)
         lvbox.pack_start(board)
-        
+        print 14
             #
             # Initialize right box
             #
@@ -155,7 +155,7 @@ class GameWidget (gobject.GObject):
         hbox.pack_start(rvbox, expand=False)
         
         align.add(hbox)
-        
+        print 15
             #
             # Initialize statusbar
             #
@@ -224,11 +224,14 @@ class GameWidget (gobject.GObject):
         # Add sidepanels
         #
         
-        condition = Condition()
+        fromGtkThread = type(currentThread()) == _MainThread
+        
+        if not fromGtkThread:
+            condition = Condition()
         
         def func ():
             start = 0
-            
+            print 22
             path = prefix("sidepanel")
             pf = "Panel.py"
             panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
@@ -247,13 +250,16 @@ class GameWidget (gobject.GObject):
             side_book.set_current_page(start)
             toggle_combox.active = start
             
-            condition.acquire()
-            condition.notify()
-            condition.release()
+            if not fromGtkThread:
+                condition.acquire()
+                condition.notify()
+                condition.release()
         
-        gobject.idle_add(func, priority=gobject.PRIORITY_HIGH)
-        condition.acquire()
-        condition.wait()
+        if not fromGtkThread:
+            gobject.idle_add(func, priority=gobject.PRIORITY_HIGH)
+            condition.acquire()
+            condition.wait()
+        else: func()
         
     def setTabReady (self, ready):
         tabhbox = self.widgets["tabhbox"]
