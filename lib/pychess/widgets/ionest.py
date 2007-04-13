@@ -265,6 +265,33 @@ widgets["treeview3"].get_model().append(["En pas"])
 # Initing newGame dialog                                                       #
 ################################################################################
 
+# Init items for difficulty list
+
+it = gtk.icon_theme_get_default()
+
+difItems = []
+for level, stock, altstock in \
+        ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
+         (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
+         (_("Expert"), "stock_weather-storm", "weather-storm")):
+    try:
+        image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        difItems += [(image, level, stock)]
+    except gobject.GError:
+        image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        difItems += [(image, level, altstock)]
+
+# Init items for player list
+
+image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
+playerItems = [(image, _("Human Being"), "stock_people")]
+image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
+
+for engine in discoverer.getEngines().values():
+    playerItems += [(image, discoverer.getName(engine), "stock_notebook")]
+
+# Init widgets
+
 isNewGameDialogReady = False
 def ensureNewGameDialogReady ():
     
@@ -291,31 +318,11 @@ def ensureNewGameDialogReady ():
         combo.add_attribute(crt, 'text', 1)
         crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
     
-    it = gtk.icon_theme_get_default()
-    
-    icons = ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
-             (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
-             (_("Expert"), "stock_weather-storm", "weather-storm"))
-    
-    items = []
-    for level, stock, altstock in icons:
-        try:
-            image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        except gobject.GError:
-            image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        items += [(image, level)]
-    
     for combo in (widgets["whiteDifficulty"], widgets["blackDifficulty"]):
-        createCombo(combo, items)
+        createCombo(combo, [i[:2] for i in difItems])
     
-    image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-    items = [(image, _("Human Being"))]
-    image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-    
-    for engine in [discoverer.getName(e) for e in discoverer.getEngines().values()]:
-        items += [(image, engine)]
     for combo in (widgets["whitePlayerCombobox"], widgets["blackPlayerCombobox"]):
-        createCombo(combo, items)
+        createCombo(combo, [i[:2] for i in playerItems])
     
     def on_useTimeCB_clicked (widget):
         widgets["table6"].set_sensitive(widget.get_active())
@@ -330,11 +337,13 @@ def ensureNewGameDialogReady ():
             widgets["%sDifficulty" % colorstring].set_sensitive(False)
             widgets["%sDifficulty" % colorstring].set_active(-1)
     
-    widgets["whitePlayerCombobox"].connect("changed", on_playerCombobox_changed, "white")
-    widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, "black")
+    widgets["whitePlayerCombobox"].connect(
+            "changed", on_playerCombobox_changed, "white")
+    widgets["blackPlayerCombobox"].connect(
+            "changed", on_playerCombobox_changed, "black")
     
     widgets["whitePlayerCombobox"].set_active(0)
-    widgets["blackPlayerCombobox"].set_active(min(1,len(discoverer.getEngines())))
+    widgets["blackPlayerCombobox"].set_active(1)
     on_playerCombobox_changed (widgets["blackPlayerCombobox"], "black")
     
     for key in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty",
@@ -356,26 +365,16 @@ def runNewGameDialog ():
     widgets["newgamedialog"].hide()
     if res != gtk.RESPONSE_OK: return None,None
     
-    # Init time model
+    # Finding time
     
     if widgets["useTimeCB"].get_active():
         secs = widgets["spinbuttonH"].get_value()*3600
         secs += widgets["spinbuttonM"].get_value()*60
         secs += widgets["spinbuttonS"].get_value()
-        gain = widgets["spinbuttonG"].get_value()
-        timemodel = TimeModel (secs, gain)
+        incr = widgets["spinbuttonG"].get_value()
     else:
         secs = 0
-        gain = 0
-        timemodel = None
-    
-    # Init game model
-    
-    game = GameModel (timemodel)
-    
-    # Init game widget
-    
-    gmwidg = gamewidget.createGameWidget(game)
+        incr = 0
     
     # Saving widget states
     
@@ -389,17 +388,37 @@ def runNewGameDialog ():
     
     # Finding players
     
+    player0 = widgets["whitePlayerCombobox"].get_active()
+    diffi0 = widgets["whiteDifficulty"].get_active()
+    player1 = widgets["blackPlayerCombobox"].get_active()
+    diffi1 = widgets["blackDifficulty"].get_active()
+    
+    return createGame (player0, player1, diffi0, diffi1, secs, incr)
+
+def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
+    
+    # Init time model
+    
+    if secs:
+        timemodel = TimeModel (secs, incr)
+    else: timemodel = None
+    
+    # Init game model and widget
+    
+    game = GameModel (timemodel)
+    gmwidg = gamewidget.createGameWidget(game)
+    
+    # Finding players
+    
     players = []
-    for box, dfcbox, color in (("whitePlayerCombobox","whiteDifficulty",WHITE),
-                              ("blackPlayerCombobox","blackDifficulty",BLACK)):
-        choise = widgets[box].get_active()
-        dfc = widgets[dfcbox].get_active()
-        if choise != 0:
-            engine = discoverer.getEngineN(choise-1)
-            player = discoverer.initEngine(engine, color)
-            player.setStrength(dfc)
+    for playerno, diffi, color in ((player0, diffi0, WHITE),\
+                                 (player1, diffi1, BLACK)):
+        if playerno > 0:
+            engine = discoverer.getEngineN (playerno-1)
+            player = discoverer.initEngine (engine, color)
+            player.setStrength(diffi)
             if secs:
-                player.setTime(secs, gain)
+                player.setTime(secs, incr)
         else: player = Human(gmwidg.widgets["board"], color)
         players += [player]
     
@@ -412,7 +431,7 @@ def runNewGameDialog ():
     
     if myconf.get("analyzer_check"):
         engine = discoverer.getEngineByMd5(myconf.get("ana_combobox"))
-        if not engine: engine = discoverer.getAnalyzers()[0]
+        if not engine: engine = anaengines[0]
         hintanalyzer = discoverer.initEngine(engine, WHITE)
         hintanalyzer.analyze(inverse=False)
         specs[HINT] = hintanalyzer
@@ -420,7 +439,7 @@ def runNewGameDialog ():
     
     if myconf.get("inv_analyzer_check"):
         engine = discoverer.getEngineByMd5(myconf.get("inv_ana_combobox"))
-        if not engine: engine = discoverer.getAnalyzers()[0]
+        if not engine: engine = anaengines[0]
         spyanalyzer = discoverer.initEngine(engine, WHITE)
         spyanalyzer.analyze(inverse=True)
         specs[SPY] = spyanalyzer

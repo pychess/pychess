@@ -361,8 +361,12 @@ class GladeHandlers:
     #          Taskers        #
     
     def on_newGameTasker_started (tasker, color, opponent, difficulty):
-        pass
-        #ionest.startGame (color, opponent, difficulty)
+        if color == WHITE:
+            game, gmwidg = ionest.createGame (0, opponent, 0, difficulty)
+        else:
+            game, gmwidg = ionest.createGame (opponent, 0, difficulty, 0)
+            gmwidg.widgets["board"].view.fromWhite = False
+        ionest.simpleNewGame (game, gmwidg)
 
 TARGET_TYPE_URI_LIST = 80
 dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]
