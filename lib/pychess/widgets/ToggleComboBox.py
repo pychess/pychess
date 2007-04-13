@@ -38,10 +38,12 @@ class ToggleComboBox (gtk.ToggleButton):
     
     def _get_active(self):
         return self._active
+    
     def _set_active(self, active):
         if active == self._active: return
         self.emit("changed", active)
         self._active = active
+        self.set_sensitive(True)
         text, iconname = self._items[self.active]
         self.label.set_markup (self.markup[0] + text + self.markup[1])
         if iconname != None:

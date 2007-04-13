@@ -5,6 +5,7 @@ from array import array
 import math
 from ToggleComboBox import ToggleComboBox
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+import ionest
 
 class TaskerManager (gtk.Table):
     
@@ -209,6 +210,7 @@ class NewGameTasker (gtk.HBox):
     }
     def __init__ (self):
         gtk.HBox.__init__(self)
+        # Sun
         pix = it.load_icon("stock_weather-sunny", 48, gtk.ICON_LOOKUP_USE_BUILTIN)
         image = gtk.Image()
         image.set_from_pixbuf(pix)
@@ -221,39 +223,54 @@ class NewGameTasker (gtk.HBox):
         vbox.set_size_request(250, -1)
         self.add(vbox)
         table = gtk.Table()
-        label = gtk.Label("Your Color:")
+        # First row
+        label = gtk.Label(_("Your Color")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 0, 1, 0)
-        combo = ToggleComboBox()
-        combo.addItem("White", "stock_draw-rounded-square-unfilled")
-        combo.addItem("Black", "stock_draw-rounded-square")
+        self.colorCombo = combo = ToggleComboBox()
+        combo.addItem(_("White"), "stock_draw-rounded-square-unfilled")
+        combo.addItem(_("Black"), "stock_draw-rounded-square")
         combo.setMarkup("<b>", "</b>")
         table.attach(combo, 1, 2, 0, 1)
-        label = gtk.Label("Opponent:")
+        # Seccond row
+        label = gtk.Label(_("Opponent")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 1, 2, 0)
-        combo = ToggleComboBox()
-        combo.addItem("GnuChess", "stock_notebook")
-        combo.addItem("PyChess", "stock_notebook")
-        combo.addItem("Human", "stock_people")
+        self.playerCombo = combo = ToggleComboBox()
+        for image, name, stock in ionest.playerItems:
+            combo.addItem(name, stock)
+        combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
         table.attach(combo, 1, 2, 1, 2)
-        label = gtk.Label("Difficulty:")
+        # Third row
+        label = gtk.Label(_("Difficulty")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 2, 3, 0)
-        combo = ToggleComboBox()
-        combo.addItem("Easy", "stock_weather-few-clouds")
-        combo.addItem("PyChess", "stock_weather-cloudy")
-        combo.addItem("Human", "stock_weather-storm")
+        self.difCombo = combo = ToggleComboBox()
+        for image, name, stock in ionest.difItems:
+            combo.addItem(name, stock)
         combo.setMarkup("<b>", "</b>")
+        def func (playerCombo, active):
+            self.difCombo.set_sensitive(active > 0)
+        self.playerCombo.connect("changed", func)
+        func(self.playerCombo, self.playerCombo.active)
         table.attach(combo, 1, 2, 2, 3)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
         vbox.add(table)
-        vbox.add(createButton("gtk-ok", "Start Game"))
+        # Start button
+        button = createButton ("gtk-ok", _("Start Game"))
+        vbox.add(button)
+        button.connect ("clicked", self.startClicked)
+    
+    def startClicked (self, button):
+        self.emit ("startClicked",
+                   self.colorCombo.active,
+                   self.playerCombo.active,
+                   self.difCombo.active)
 
 class InternetGameTasker (gtk.HBox):
     __gsignals__ = {
@@ -262,6 +279,7 @@ class InternetGameTasker (gtk.HBox):
     }
     def __init__ (self):
         gtk.HBox.__init__(self)
+        # Image
         pix = it.load_icon("stock_init", 48, gtk.ICON_LOOKUP_USE_BUILTIN)
         image = gtk.Image()
         image.set_from_pixbuf(pix)
@@ -273,6 +291,7 @@ class InternetGameTasker (gtk.HBox):
         vbox.set_spacing(3)
         vbox.set_size_request(250, -1)
         table = gtk.Table()
+        # First row
         label = gtk.Label("Connect to:")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
@@ -283,12 +302,14 @@ class InternetGameTasker (gtk.HBox):
         combo.setMarkup("<b>", "</b>")
         combo.label.set_ellipsize(pango.ELLIPSIZE_END)
         table.attach(combo, 1, 2, 0, 1)
-        label = gtk.Label("Username:")
+        # Seccond row
+        label = gtk.Label(_("Username")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 1, 2, 0)
         table.attach(gtk.Entry(), 1, 2, 1, 2)
-        label = gtk.Label("Password:")
+        # Third row
+        label = gtk.Label(_("Password")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 2, 3, 0)
@@ -299,8 +320,9 @@ class InternetGameTasker (gtk.HBox):
         table.set_col_spacings(3)
         vbox.add(table)
         hb = gtk.HBox()
-        button = createButton("gtk-network", "Game List")
+        # Buttons
+        button = createButton("gtk-network", _("Game List"))
         hb.add(button)
-        hb.add(createButton("gtk-ok", "Quick Game"))
+        hb.add(createButton("gtk-ok", _("Quick Game")))
         vbox.add(hb)
         self.add(vbox)
