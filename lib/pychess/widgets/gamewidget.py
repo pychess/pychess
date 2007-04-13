@@ -107,7 +107,7 @@ class GameWidget (gobject.GObject):
         
         lvbox = gtk.VBox()
         lvbox.set_spacing(4)
-        print 13
+        
             #
             # Initialize left center - clock and board
             #
@@ -121,7 +121,7 @@ class GameWidget (gobject.GObject):
         
         lvbox.pack_start(ccalign, expand=False)
         lvbox.pack_start(board)
-        print 14
+        
             #
             # Initialize right box
             #
@@ -155,7 +155,7 @@ class GameWidget (gobject.GObject):
         hbox.pack_start(rvbox, expand=False)
         
         align.add(hbox)
-        print 15
+        
             #
             # Initialize statusbar
             #
@@ -231,7 +231,6 @@ class GameWidget (gobject.GObject):
         
         def func ():
             start = 0
-            print 22
             path = prefix("sidepanel")
             pf = "Panel.py"
             panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
