@@ -494,7 +494,7 @@ def initialize():
     graph.show()
     
     def on_spot_clicked (graph, name):
-    	print "sending", "play", name
+        print "sending", "play", name
         print >> telnet.client, "play", name
     graph.connect("spotClicked", on_spot_clicked)
     
@@ -537,7 +537,11 @@ def initialize():
     addColumns(tv, "Title", "Name", "Rating")
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
     tv.set_search_column(1)
-    tv.set_search_position_func(lowLeftSearchPosFunc)
+    try:
+        tv.set_search_position_func(lowLeftSearchPosFunc)
+    except AttributeError:
+        # Unknow signal name is raised by gtk < 2.10
+        pass
     
     players = {}
     
@@ -574,7 +578,12 @@ def initialize():
     gstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
     tv.set_model(gtk.TreeModelSort(gstore))
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-    tv.set_search_position_func(lowLeftSearchPosFunc)
+    try:
+        tv.set_search_position_func(lowLeftSearchPosFunc)
+    except AttributeError:
+        # Unknow signal name is raised by gtk < 2.10
+        pass
+
     addColumns(tv, "GameNo", "", _("White Player"), _("Black Player"),
                                  _("Game Type"), hide=[0], pix=[1])
     
