@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import gtk
 import pango
 import re
@@ -321,7 +323,7 @@ def initialize():
             if i in hide: continue
             if i in pix:
                 crp = gtk.CellRendererPixbuf()
-                crp.props.xalign = 0
+                crp.props.xalign = .5
                 column = gtk.TreeViewColumn(name, crp, pixbuf=i)
             else:
                 crt = gtk.CellRendererText()
@@ -370,6 +372,9 @@ def initialize():
             ti = sstore.append ([seek["gameno"], seekPix, seek["w"],
                                  int(seek["rt"]), rated, seek["tp"], time])
             seeks [seek["gameno"]] = ti
+            count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
+            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("addSeek", on_seek_add)
     
@@ -384,6 +389,9 @@ def initialize():
                 return
             sstore.remove (ti)
             del seeks[gameno]
+            count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
+            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("removeSeek", on_seek_remove)
     
@@ -465,6 +473,9 @@ def initialize():
             ti = sstore.append (["C"+index, challenPix, match["w"],
                                  int(match["rt"]), rated, match["tp"], time])
             challenges [index] = ti
+            count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
+            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     om.connect("onChallengeAdd", onChallengeAdd)
     
@@ -475,6 +486,9 @@ def initialize():
             if not sstore.iter_is_valid(ti): return
             sstore.remove (ti)
             del challenges [index]
+            count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
+            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     om.connect("onChallengeRemove", onChallengeRemove)
     
@@ -531,17 +545,34 @@ def initialize():
         # Initialize Players List                                              #
         ########################################################################
     
+    icons = gtk.icon_theme_get_default()
+    l = gtk.ICON_LOOKUP_USE_BUILTIN
+    peoplepix = icons.load_icon("stock_people", 15, l)
+    bookpix = icons.load_icon("stock_book_blue", 15, l)
+    easypix = icons.load_icon("stock_weather-few-clouds", 15, l)
+    advpix = icons.load_icon("stock_weather-cloudy", 15, l)
+    exppix = icons.load_icon("stock_weather-storm", 15, l)
+    cmppix = icons.load_icon("stock_notebook", 15, l)
+    
     tv = widgets["playertreeview"]
-    pstore = gtk.ListStore(str, str, int)
+    pstore = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
     tv.set_model(gtk.TreeModelSort(pstore))
-    addColumns(tv, "Title", "Name", "Rating")
+    addColumns(tv, "", "Name", "Rating", pix=[0])
     tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-    tv.set_search_column(1)
+    tv.get_column(0).set_sort_column_id(0)
     try:
         tv.set_search_position_func(lowLeftSearchPosFunc)
     except AttributeError:
         # Unknow signal name is raised by gtk < 2.10
         pass
+    
+    def comparefunction (treemodel, iter0, iter1):
+        pix0 = treemodel.get_value(iter0, 0)
+        pix1 = treemodel.get_value(iter1, 0)
+        if type(pix0) == gtk.gdk.Pixbuf and type(pix1) == gtk.gdk.Pixbuf:
+            return cmp(pix0.get_pixels(), pix1.get_pixels())
+        return cmp(pix0, pix1)
+    tv.get_model().set_sort_func(0, comparefunction)
     
     players = {}
     
@@ -549,8 +580,25 @@ def initialize():
         def call ():
             if player["name"] in players: return
             rating = player["r"].isdigit() and int(player["r"]) or 0
-            ti = pstore.append ([player["title"], player["name"], rating ])
+            title = player["title"]
+            if title == "C" or title == "TD":
+                title = cmppix
+            elif title == "U":
+                title = peoplepix
+            elif title == None:
+                if rating < 1300:
+                    title = easypix
+                elif rating < 1600:
+                    title = advpix
+                else:
+                    title = exppix
+            else:
+                title = bookpix
+            ti = pstore.append ([title, player["name"], rating ])
             players [player["name"]] = ti
+            count = int(widgets["playersOnlineLabel"].get_text().split()[0])+1
+            postfix = count == 1 and _("Player Ready") or _("Players Ready")
+            widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("addPlayer", on_player_add)
     
@@ -563,6 +611,9 @@ def initialize():
                 return
             pstore.remove (ti)
             del players[name]
+            count = int(widgets["playersOnlineLabel"].get_text().split()[0])-1
+            postfix = count == 1 and _("Player Ready") or _("Players Ready")
+            widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("removePlayer", on_player_remove)
     
@@ -571,7 +622,7 @@ def initialize():
         ########################################################################
     
     icons = gtk.icon_theme_get_default()
-    recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+    recpix = icons.load_icon("media-record", 18, gtk.ICON_LOOKUP_USE_BUILTIN)
     clearpix = pixbuf_new_from_file(prefix("glade/pixmaps/clear.png"))
     
     tv = widgets["gametreeview"]
@@ -601,6 +652,9 @@ def initialize():
             ti = gstore.append ([game["gameno"], clearpix, game["wn"],
                                  game["bn"], game["type"]])
             games [game["gameno"]] = ti
+            count = int(widgets["gamesRunningLabel"].get_text().split()[0])+1
+            postfix = count == 1 and _("Game Running") or _("Games Running")
+            widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("addGame", on_game_add)
     
@@ -613,6 +667,9 @@ def initialize():
                 return
             gstore.remove (ti)
             del games[gameno]
+            count = int(widgets["gamesRunningLabel"].get_text().split()[0])-1
+            postfix = count == 1 and _("Game Running") or _("Games Running")
+            widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
         listqueue.put(call)
     glm.connect("removeGame", on_game_remove)
     
@@ -675,3 +732,71 @@ def initialize():
                                  "%d %%" % game["procPlayed"], game["date"]])
             listqueue.put(call)
         glm.connect("addAdjourn", on_adjourn_add)
+    
+    ############################################################################
+    # Initialize Seeking / Challenging                                         #
+    ############################################################################
+    
+    if not telnet.registered:
+        widgets["ratedGameCheck"].hide()
+    
+    liststore = gtk.ListStore(str, str)
+    liststore.append(["0 → 1300", _("Easy")])
+    liststore.append(["1300 → 1600", _("Advanced")])
+    liststore.append(["1600 → 9999", _("Expert")])
+    widgets["strengthCombobox"].set_model(liststore)
+    cell = gtk.CellRendererText()
+    cell.set_property('xalign',1)
+    widgets["strengthCombobox"].pack_start(cell)
+    widgets["strengthCombobox"].add_attribute(cell, 'text', 1)
+    widgets["strengthCombobox"].set_active(0)
+    
+    liststore = gtk.ListStore(str)
+    liststore.append([_("Don't Care")])
+    liststore.append([_("Wants White")])
+    liststore.append([_("Wants Black")])
+    widgets["colorCombobox"].set_model(liststore)
+    widgets["colorCombobox"].set_active(0)
+    
+    liststore = gtk.ListStore(str, str)
+    liststore.append(["15 min + 10", _("Normal")])
+    liststore.append(["5 min + 2", _("Blitz")])
+    liststore.append(["1 min + 0", _("Lightning")])
+    liststore.append(["", _("New Custom")])
+    widgets["timeCombobox"].set_model(liststore)
+    cell = gtk.CellRendererText()
+    cell.set_property('xalign',1)
+    widgets["timeCombobox"].pack_start(cell)
+    widgets["timeCombobox"].add_attribute(cell, 'text', 1)
+    widgets["timeCombobox"].set_active(0)
+    
+    customTimeDialog = widgets["customTimeDialog"]
+    def timeComboboxChanged (combo):
+        if combo.get_active() == 3:
+            response = customTimeDialog.run()
+            customTimeDialog.hide()
+            if response != gtk.RESPONSE_OK:
+                combo.set_active(combo.old_active)
+                return
+            if len(combo.get_model()) == 5:
+                del combo.get_model()[4]
+            minutes = widgets["minSpinbutton"].get_value()
+            gain = widgets["gainSpinbutton"].get_value()
+            text = "%d min + %d" % (minutes, gain)
+            combo.get_model().append([text, _("Custom")])
+            combo.set_active(4)
+        else: combo.old_active = combo.get_active()
+    widgets["timeCombobox"].old_active = 0
+    widgets["timeCombobox"].connect("changed", timeComboboxChanged)
+    
+    def seekButtonClicked (button):
+        min, incr = map(int, widgets["strengthCombobox"].get_model()[
+                widgets["strengthCombobox"].get_active()][0].split(" → "))
+        rated = widgets["ratedGameCheck"].get_active()
+        color = widgets["colorCombobox"].get_active()-1
+        if color == -1: color = None
+        maxR, minR = map(int, widgets["timeCombobox"].get_model()[
+                widgets["timeCombobox"].get_active()][0].split(" min +"))
+        print min, incr, rated, color, maxR, minR
+    widgets["seekButton"].connect("clicked", seekButtonClicked)
+    
