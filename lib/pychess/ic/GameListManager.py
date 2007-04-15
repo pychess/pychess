@@ -5,7 +5,7 @@ types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\-]{1,4})"
-names = "(\w+)(?:\(([CUHIFWM])\))?"
+names = "(\w+)(?:\((\w+)\))?"
 mf = "(?:([mf]{1,2})\s?)?"
 
 typedic = {"b":"Blitz", "s":"Standard", "l":"Lightning"}
