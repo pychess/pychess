@@ -243,6 +243,7 @@ class NewGameTasker (gtk.HBox):
             combo.addItem(name, stock)
         combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
+        combo.active = 1
         table.attach(combo, 1, 2, 1, 2)
         # Third row
         label = gtk.Label(_("Difficulty")+":")
