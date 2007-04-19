@@ -3,8 +3,8 @@ pygtk.require("2.0")
 from gtk import gdk
 import gtk, time, gobject, pango
 from math import ceil, floor, pi, cos, sin
-from threading import Thread
 import cairo
+from time import sleep
 
 class ChessClock (gtk.DrawingArea):
     __gsignals__ = {'time_out' : (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (gobject.TYPE_INT,))}
@@ -14,6 +14,8 @@ class ChessClock (gtk.DrawingArea):
         self.connect("expose_event", self.expose)
         self.names = [_("White"),_("Black")]
         self.setTime(0)
+        self._doStop = False
+        self.thread = None
     
     def expose(self, widget, event):
         context = widget.window.cairo_create()
@@ -158,6 +160,11 @@ class ChessClock (gtk.DrawingArea):
 
     emited = False
     def update(self):
+        
+        if self._doStop:
+            self._doStop = False
+            return False
+        
         self.ptemp[self.player] -= 1
         self.redraw_canvas(False)
         
@@ -172,6 +179,7 @@ class ChessClock (gtk.DrawingArea):
         self.time = 0
         self.gain = 0
         self.thread = None
+        self._doStop = False
         self.p = [None, None]
         self.ptemp = [None, None]
         self.startTime = None
@@ -210,7 +218,11 @@ class ChessClock (gtk.DrawingArea):
     def stop(self):
         self.redraw_canvas()
         if self.thread:
-            gobject.source_remove(self.thread)
+            self._doStop = True
+            while self._doStop:
+                sleep(0.01)
+                print "sleep"
+            self.thread = None
     
     def switch(self):
         self.player = 1 - self.player

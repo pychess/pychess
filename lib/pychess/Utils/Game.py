@@ -162,7 +162,6 @@ class Game (GObject):
         self.player2.__del__()
         for analyzer in self.analyzers:
             analyzer.__del__()
-        if self.chessclock: self.chessclock.stop()
     
     def gameEnded (self, stat, comment):
         self.kill()
