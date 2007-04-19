@@ -79,6 +79,7 @@ class BoardView (gtk.DrawingArea):
         self.set_size_request(300,300)
         
         self.animationID = -1
+        self._doStop = False
         self.animationStart = time()
         self.lastShown = None
         self.deadlist = []
@@ -181,7 +182,7 @@ class BoardView (gtk.DrawingArea):
         self.emit("shown_changed", self.shown)
         
         if self.animationID != -1:
-            source_remove(self.animationID)
+            self._doStop = True
         
         self.animationStart = time()
         def do():
@@ -203,6 +204,10 @@ class BoardView (gtk.DrawingArea):
         
         """ The animationsystem in pychess is very loosely inspired by the one of chessmonk. The idea is, that every piece has a place in an array (the board.data one) for where to be drawn. If a piece is to be animated, it can set its x and y properties, to some cord (or part cord like 0.42 for 42% right to file 0). Each time runAnimation is run, it will set those x and y properties a little closer to the location in the array. When it has reached its final location, x and y will be set to None.
         _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
+        
+        if self._doStop:
+            self._doStop = False
+            return False
         
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.history[self.shown]
