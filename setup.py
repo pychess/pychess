@@ -22,7 +22,7 @@ import os
 
 DESC = "Gnome chess game"
 
-LONG_DESC = """PyChess is a gtk chessgame for Linux. It is designed to a the same time be easy to use, beautyful to look at and provide advanced functions for advanced players"""
+LONG_DESC = """PyChess is a gtk chessgame for Linux. It is designed to a the same time be easy to use, beautiful to look at and provide advanced functions for advanced players"""
 
 CLASSIFIERS = [
     'License :: OSI-Approved Open Source :: GNU General Public License (GPL)',
