@@ -14,7 +14,7 @@ class ChessClock (gtk.DrawingArea):
         self.names = [_("White"),_("Black")]
         
         self.model = None
-        self.thread = None
+        #self.thread = None
         
     def expose(self, widget, event):
         context = widget.window.cairo_create()
@@ -144,13 +144,14 @@ class ChessClock (gtk.DrawingArea):
     
     def setModel (self, model):
         self.model = model
-        if self.thread != None:
-            gobject.source_remove(self.thread)
-            self.thread = None
+        #if self.thread != None:
+        #    gobject.source_remove(self.thread)
+        #    self.thread = None
         if model != None:
             self.model.connect("time_changed", self.time_changed)
             self.model.connect("player_changed", self.player_changed)
-            self.thread = gobject.timeout_add(100, self.update)
+            #self.thread = gobject.timeout_add(100, self.update)
+            gobject.timeout_add(100, self.update)
             
         self.formatedCache = [self.formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2

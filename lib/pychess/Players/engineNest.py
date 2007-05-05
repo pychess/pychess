@@ -7,7 +7,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
 from UCIProtocol import UCIProtocol
-from pychess.Utils.const import prefix, WHITE
+from pychess.Utils.const import prefix, WHITE, KILLED, UNKNOWN_REASON
 
 attrToProtocol = {
     "uci": UCIProtocol,
@@ -205,7 +205,7 @@ class EngineDiscoverer (GObject):
                                        ("max","-1"), ("default","false"))))
                 engine.appendChild(options)
         
-        e.kill()
+        e.kill(KILLED, UNKNOWN_REASON)
         
         self._engines[binname] = engine
         thread.start_new(self.emit, ("engine_discovered", binname, engine))

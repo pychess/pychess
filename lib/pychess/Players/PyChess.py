@@ -322,4 +322,4 @@ while True:
     elif lines[0] in ("xboard", "otim", "hard", "easy" "nopost", "post"):
         pass
     
-    else: print "Error (unknown command):", line
+    else: print "Warning (unknown command):", line
