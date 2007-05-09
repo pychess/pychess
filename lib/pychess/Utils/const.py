@@ -13,7 +13,7 @@ NAME = "PyChess"
 ################################################################################
 
 from os.path import isdir, join, dirname, abspath
-prefixes = ("/usr/share", "/usr/local/share",
+prefixes = ("/usr/share", "/usr/local/share", "/usr/share/locale",
     "/usr/share/games", "/usr/local/share/games")
 # TODO: Locale is not located in the lang files
 localePrefixes = ("/usr/share/locale", "/usr/local/share/locale")
