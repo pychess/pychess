@@ -82,9 +82,9 @@ if isfile ("MANIFEST"):
 
 # Packages
 
-PACKAGES = ["pychess", "pychess.gfx", "pychess.Players", "pychess.Savers",
-            "pychess.System", "pychess.Utils", "pychess.widgets"]
-
+PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ics",
+            "pychess.Players", "pychess.Savers", "pychess.System",
+            "pychess.Utils", "pychess.Utils.lutils", "pychess.widgets" ]
 # Setup
 
 setup (
