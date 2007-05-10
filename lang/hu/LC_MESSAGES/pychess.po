@@ -183,7 +183,7 @@ msgstr "_Súgás"
 
 #: glade/PyChess.glade:353
 msgid "_Help"
-msgstr "_Segítség"
+msgstr "_Súgó"
 
 #: glade/PyChess.glade:362
 msgid "About Chess"
