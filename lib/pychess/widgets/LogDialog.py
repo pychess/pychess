@@ -5,7 +5,7 @@ from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
 from pychess.Utils.const import prefix
 
 w = gtk.Window()
-w.set_title("Pychess - Log Viewer")
+w.set_title(_("Pychess - Log Viewer"))
 iconpath = prefix("glade/pychess24.png")
 w.set_icon(gtk.gdk.pixbuf_new_from_file(iconpath))
 
