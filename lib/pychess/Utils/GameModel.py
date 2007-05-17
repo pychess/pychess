@@ -120,7 +120,7 @@ class GameModel (GObject):
             self.kill()
         
         elif action == DRAW_OFFER:
-            if self.drawSentBy == otherPlayer:
+            if self.drawSentBy == opPlayer:
                 # If our opponent has already offered us a draw, the game ends
                 self.status = DRAW
                 self.reason = DRAW_AGREE
