@@ -45,7 +45,7 @@ class Human (Player):
         
         return item
     
-    def _offer (self, action, param, title, desciprtion):
+    def _offer (self, action, param, title, description):
         d = gtk.MessageDialog (
                 type = gtk.MESSAGE_QUESTION, buttons = gtk.BUTTONS_YES_NO)
         d.set_markup (title)
