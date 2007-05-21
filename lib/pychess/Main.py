@@ -248,16 +248,16 @@ class GladeHandlers:
     
     def on_properties1_activate (widget):
         gamemodel = gameDic[gamewidget.cur_gmwidg()]
-        window["event_entry"].set_text(gamemodel["Event"])
-        window["site_entry"].set_text(gamemodel["Site"])
-        window["round_spinbutton"].set_value(gamemodel["Round"])
+        window["event_entry"].set_text(gamemodel.tags["Event"])
+        window["site_entry"].set_text(gamemodel.tags["Site"])
+        window["round_spinbutton"].set_value(gamemodel.tags["Round"])
         
         # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
         # 1 to 12
         window["game_info_calendar"].clear_marks()
         window["game_info_calendar"].select_month(
-                                        gamemodel["Month"]-1, gamemodel["Year"])
-        window["game_info_calendar"].select_day(gamemodel["Day"])
+                gamemodel.tags["Month"]-1, gamemodel.tags["Year"])
+        window["game_info_calendar"].select_day(gamemodel.tags["Day"])
         
         window["game_info"].show()
         
@@ -267,12 +267,12 @@ class GladeHandlers:
         
         def accept_new_properties(button, *args):
             gamemodel = gameDic[gamewidget.cur_gmwidg()]
-            gamemodel["Event"] = window["event_entry"].get_text()
-            gamemodel["Site"] = window["site_entry"].get_text()
-            gamemodel["Round"] = window["round_spinbutton"].get_value()
-            gamemodel["Year"] = window["game_info_calendar"].get_date()[0]
-            gamemodel["Month"] = window["game_info_calendar"].get_date()[1] + 1
-            gamemodel["Day"] = window["game_info_calendar"].get_date()[2]
+            gamemodel.tags["Event"] = window["event_entry"].get_text()
+            gamemodel.tags["Site"] = window["site_entry"].get_text()
+            gamemodel.tags["Round"] = window["round_spinbutton"].get_value()
+            gamemodel.tags["Year"] = window["game_info_calendar"].get_date()[0]
+            gamemodel.tags["Month"] = window["game_info_calendar"].get_date()[1] + 1
+            gamemodel.tags["Day"] = window["game_info_calendar"].get_date()[2]
             window["game_info"].hide()
             return True
         
