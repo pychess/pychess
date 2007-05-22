@@ -28,6 +28,7 @@ backup = """
     <engine protocol="cecp" binname="boochess" />
     <engine protocol="uci" binname="glaurung" />
     <engine protocol="uci" binname="ShredderClassicLinux" />
+    <engine protocol="uci" binname="fruit_21_static" />
     <engine protocol="uci" binname="fruit" />
 </engines>
 """
