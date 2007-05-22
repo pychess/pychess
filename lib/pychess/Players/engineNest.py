@@ -14,16 +14,21 @@ attrToProtocol = {
     "cecp": CECPProtocol
 }
 
+# TODO: Diablo, Amy and Amundsen
 backup = """
 <engines>
     <engine protocol="cecp" binname="PyChess.py" />
     <engine protocol="cecp" binname="gnuchess" />
+    <engine protocol="cecp" binname="gnome-gnuchess" />
     <engine protocol="cecp" binname="crafty" />
     <engine protocol="cecp" binname="faile" />
     <engine protocol="cecp" binname="phalanx" />
     <engine protocol="cecp" binname="sjeng" />
+    <engine protocol="cecp" binname="hoichess" />
+    <engine protocol="cecp" binname="boochess" />
+    <engine protocol="uci" binname="glaurung" />
     <engine protocol="uci" binname="ShredderClassicLinux" />
-    <engine protocol="uci" binname="fruit_21_static" />
+    <engine protocol="uci" binname="fruit" />
 </engines>
 """
 
