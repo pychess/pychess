@@ -351,7 +351,7 @@ class GladeHandlers:
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
 
     def translate_this_application_activate(widget):
-        webbrowser.open("https://launchpad.net/pychess/trunk/+pots/pychess")
+        webbrowser.open("http://code.google.com/p/pychess/wiki/RosettaTranslates")
         
     def on_TipOfTheDayMenuItem_activate (widget):
         tipOfTheDay.show()
