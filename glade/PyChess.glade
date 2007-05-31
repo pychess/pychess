@@ -246,6 +246,7 @@
 		      <property name="label" translatable="yes">_Call Flag</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_call_flag_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
+              <accelerator key="A" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -318,6 +319,7 @@
 		      <property name="label" translatable="yes">_Rotate Board</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_rotate_board1_activate" last_modification_time="Sun, 06 Aug 2006 14:25:09 GMT"/>
+              <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
 			<widget class="GtkImage" id="image974">
@@ -341,7 +343,7 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_side_panel1_activate" last_modification_time="Thu, 06 Jul 2006 13:25:17 GMT"/>
-		      <accelerator key="i" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -370,6 +372,7 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_show_cords_activate" last_modification_time="Sat, 23 Sep 2006 15:55:29 GMT"/>
+              <accelerator key="C" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -404,7 +407,7 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="preferences">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Preferences</property>
+	      <property name="label" translatable="yes">_Preferences</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
@@ -475,17 +478,11 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="skillelinje13">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-		  
-		  <child>
 		    <widget class="GtkImageMenuItem" id="translate_this_application">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Translate this Application...</property>
+		      <property name="label" translatable="yes">Translate PyChess...</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="translate_this_application_activate" last_modification_time="Wed, 29 Mai 2007 19:47:02 GMT"/>
+		      <signal name="activate" handler="translate_this_application_activate"/>
 
 		      <child internal-child="image">
 			<widget class="GtkImage" id="image976">
@@ -501,12 +498,11 @@
 		    </widget>
 		  </child>
 
-          <child>
+		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="skillelinje13">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
-
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="about1">
