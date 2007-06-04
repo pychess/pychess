@@ -64,8 +64,10 @@ class BoardPreview (gtk.Alignment):
         
         # Adding glade widget to self
         
-        self.widgets["mainvbox"].unparent()
+        #self.widgets["mainvbox"].unparent()
+        self.widgets["mainvbox"].get_parent().remove(self.widgets["mainvbox"])
         self.add(self.widgets["mainvbox"])
+        #self.widgets["mainvbox"].reparent(self)
         self.show_all()
     
     def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
