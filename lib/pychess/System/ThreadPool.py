@@ -3,35 +3,30 @@
 from threading import Condition, Lock
 from threading import Thread
 from Log import log
+import Queue
 
 maxThreads = 50
 
 class ThreadPool:
     def __init__ (self):
-        self.availables = []
+        self.queue = Queue.Queue()
         self.lock = Lock()
-        self.cond = Condition()
         self.threads = 0
-            
+    
     def start (self, func, *args):
         self.lock.acquire()
-
-        if not self.availables:
-            if not maxThreads or self.threads < maxThreads:
+        
+        try:
+            a = self.queue.get_nowait()
+        except Queue.Empty:
+            if self.threads < maxThreads:
                 self.threads += 1
-                a = self.Worker(self.availables, self.cond)
+                a = self.Worker(self.queue)
                 a.setDaemon(True)
                 a.start()
             else:
-                self.lock.release()
-                self.cond.acquire()
-                while not self.availables:
-                    self.cond.wait()
-                self.cond.release()
-                self.lock.acquire()
-                a = self.availables.pop()
-        else: a = self.availables.pop()
-
+                a = self.queue.get()
+        
         a.func = lambda: func(*args)
         a.wcond.acquire()
         a.wcond.notify()
@@ -40,22 +35,18 @@ class ThreadPool:
         self.lock.release()
     
     class Worker (Thread):
-        def __init__ (self, availables, cond):
+        def __init__ (self, queue):
             Thread.__init__(self)
             self.func = None
             self.wcond = Condition()
-            self.cond = cond
-            self.availables = availables
+            self.queue = queue
         
         def run (self):
             while True:
                 if self.func:
                     self.func()
                     self.func = None
-                    self.availables.append(self)
-                    self.cond.acquire()
-                    self.cond.notifyAll()
-                    self.cond.release()
+                    self.queue.put(self)
                 self.wcond.acquire()
                 self.wcond.wait()
 

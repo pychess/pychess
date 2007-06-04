@@ -26,14 +26,20 @@ def bitLength (bitboard):
            bitCount [   bitboard & 0xffff ]
 
 def iterBits (bitboard):
+    return bitsArray0[bitboard >> 48] + \
+           bitsArray1[bitboard >> 32 & 0xffff] + \
+           bitsArray2[bitboard >> 16 & 0xffff] + \
+           bitsArray3[bitboard & 0xffff]
+
+def iterBits3 (bitboard):
     for cord in bitsArray0[bitboard >> 48]:
-        yield cord - 48
-    for cord in bitsArray0[bitboard >> 32 & 0xffff]:
-        yield cord - 32
-    for cord in bitsArray0[bitboard >> 16 & 0xffff]:
-        yield cord - 16
-    for cord in bitsArray0[bitboard & 0xffff]:
         yield cord
+    for cord in bitsArray0[bitboard >> 32 & 0xffff]:
+        yield cord + 16
+    for cord in bitsArray0[bitboard >> 16 & 0xffff]:
+        yield cord + 32
+    for cord in bitsArray0[bitboard & 0xffff]:
+        yield cord + 48
 
 def iterBits2 (bitboard):
     while bitboard:
@@ -90,17 +96,43 @@ for i in range(63,-1,-1):
 
 # This array is used when the position of the bits are required
 
-import os, time
+import os
+# Pickling and marshaling array objects is not supported before python 2.5
+import marshal
+#import cPickle as marshal
 from array import array
 
-bitsArray0 = [array("B") for i in xrange (65536)]
+bitsArray0, bitsArray1, bitsArray2, bitsArray3 = None, None, None, None
 
-for bits in xrange(65536):
-    origbits = bits
-    while bits:
-        b = firstBit(bits)
-        bits = clearBit(bits, b)
-        bitsArray0[origbits].append(b)
+if os.path.isfile ("/tmp/bitboards"):
+    try:
+        bitsArray0, bitsArray1, bitsArray2, bitsArray3 = \
+                marshal.load (file ("/tmp/bitboards"))
+    except MemoryError:
+        print "Ignoring memory error"
+        pass
+
+if not bitsArray0:
+
+    bitsArray0 = [[] for i in xrange (65536)]
+    bitsArray1 = [[] for i in xrange (65536)]
+    bitsArray2 = [[] for i in xrange (65536)]
+    bitsArray3 = [[] for i in xrange (65536)]
+    
+    for bits in xrange(65536):
+        origbits = bits
+        while bits:
+            b = firstBit(bits)
+            bits = clearBit(bits, b)
+            bitsArray0[origbits].append(b-48)
+            bitsArray1[origbits].append(b-32)
+            bitsArray2[origbits].append(b-16)
+            bitsArray3[origbits].append(b)
+    
+    marshal.dump ((bitsArray0, bitsArray1, bitsArray2, bitsArray3),
+                  file ("/tmp/bitboards", "w"))
+
+#print bitsArray0
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set
