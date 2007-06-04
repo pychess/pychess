@@ -13,7 +13,7 @@ from GameListManager import GameListManager
 from FingerManager import FingerManager
 from SpotGraph import SpotGraph
 from math import e
-from PingLabel import PingLabel
+from pychess.System.ping import Pinger
 from NewsManager import NewsManager
 import webbrowser
 from BoardManager import BoardManager
@@ -147,9 +147,17 @@ def initialize():
             row += 1
         
         table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
-        l = PingLabel()
-        l.props.xalign = 0
-        table.attach(l, 1, 6, row, row+1)
+        pingLabel = gtk.Label(_("Connecting")+"...")
+        pingLabel.set_ellipsize(pango.ELLIPSIZE_END)
+        pingLabel.xalign = 0
+        pinger = Pinger("freechess.org")
+        def callback (pinger, pingtime):
+            if pingtime == -1:
+                pingLabel.set_text(_("Unknown"))
+            else: pingLabel.set_text("%.0f ms" % pingtime)
+        pinger.connect("recieved", callback)
+        pinger.start()
+        table.attach(pingLabel, 1, 6, row, row+1)
         
         dock.add(table)
         dock.show_all()
