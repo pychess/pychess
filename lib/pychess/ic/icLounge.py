@@ -1,32 +1,35 @@
 # -*- coding: utf-8 -*-
 
-import gtk
-import pango
-import re
 from Queue import Queue
 from Queue import Empty as EmptyError
+from cStringIO import StringIO
 from time import sleep
-import telnet
-from gobject import idle_add, timeout_add
-from pychess.Utils.const import *
-from GameListManager import GameListManager
-from FingerManager import FingerManager
-from SpotGraph import SpotGraph
 from math import e
-from pychess.System.ping import Pinger
-from NewsManager import NewsManager
 import webbrowser
-from BoardManager import BoardManager
+
+import gtk, pango, re
+from gtk import gdk
+from gtk.gdk import pixbuf_new_from_file
+
+from pychess.System.GtkWorker import EmitPublisher, Publisher
+from pychess.System.ping import Pinger
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
+from pychess.Utils.const import *
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
 from pychess.Players.ServerPlayer import ServerPlayer
-from cStringIO import StringIO
-from OfferManager import OfferManager
-from IcGameModel import IcGameModel
 from pychess.Players.Human import Human
-from gtk.gdk import pixbuf_new_from_file
+
+from GameListManager import GameListManager
+from FingerManager import FingerManager
+from NewsManager import NewsManager
+from BoardManager import BoardManager
+from OfferManager import OfferManager
+
+from IcGameModel import IcGameModel
+from SpotGraph import SpotGraph
+import telnet
 
 firstRun = True
 def show():
@@ -302,18 +305,11 @@ def initialize():
     # Initialize Lists                                                         #
     ############################################################################
     
-    listqueue = Queue()
-    
-    def executeQueue ():
-        while True:
-            try:
-                func = listqueue.get(block=False)
-                func()
-            except EmptyError:
-                # Take a break
-                break
-        return True
-    timeout_add (10, executeQueue)
+    def updateLists (listFuncs):
+        for func in listFuncs:
+            func()
+    listPublisher = Publisher(updateLists, Publisher.SEND_LIST)
+    listPublisher.start()
     
     def on_status_changed (client, signal):
         if signal == IC_CONNECTED:
@@ -339,12 +335,7 @@ def initialize():
                 column.set_sort_column_id(i)
                 column.set_resizable(True)
             
-            # We cannot set treeheader reorderable, because of the bug descriped
-            # in this post: http://mail.gnome.org/archives/gtk-app-devel-list/2004-January/msg00056.html
-            # It seems it work work if all idle_add's were switched to
-            # timeout_add's, but that would probably cause other troubles in
-            # form of gui lag.
-            # column.set_reorderable(True)
+            column.set_reorderable(True)
             treeview.append_column(column)
     
     def lowLeftSearchPosFunc (treeview, search_dialog):
@@ -383,7 +374,7 @@ def initialize():
             count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
             postfix = count == 1 and _("Active Seek") or _("Active Seeks")
             widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("addSeek", on_seek_add)
     
     def on_seek_remove (manager, gameno):
@@ -400,7 +391,7 @@ def initialize():
             count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
             postfix = count == 1 and _("Active Seek") or _("Active Seeks")
             widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("removeSeek", on_seek_remove)
     
     def on_seek_clear (manager):
@@ -408,7 +399,7 @@ def initialize():
         def call ():
             sstore.clear()
             seeks.clear()
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("clearSeeks", on_seek_clear)
     
     def on_selection_changed (selection):
@@ -445,26 +436,28 @@ def initialize():
             whitep = ServerPlayer (
                 bm, om, board["wname"], False, board["gameno"], WHITE)
         
-        def idle ():
-            gmwidg = gamewidget.createGameWidget(game)
-            
-            if color == WHITE:
-                white = Human(gmwidg.widgets["board"], WHITE)
-                black = blackp
-            else:
-                white = whitep
-                black = Human(gmwidg.widgets["board"], BLACK)
-            game.setPlayers((white,black))
-            
-            gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
-            gmwidg.connect("closed", ionest.closeGame, game)
-            if timemodel:
-                gmwidg.widgets["ccalign"].show()
-                gmwidg.widgets["cclock"].setModel(timemodel)
-            
-            ionest.simpleNewGame (game, gmwidg)
-            
-        idle_add(idle)
+        gmwidg = gamewidget.GameWidget(gamemodel)
+        
+        if color == WHITE:
+            white = Human(gmwidg.widgets["board"], WHITE)
+            black = blackp
+        else:
+            white = whitep
+            black = Human(gmwidg.widgets["board"], BLACK)
+        game.setPlayers((white,black))
+        
+        gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+        gmwidg.connect("closed", ionest.closeGame, game)
+        if timemodel:
+            gmwidg.widgets["ccalign"].show()
+            gmwidg.widgets["cclock"].setModel(timemodel)
+        
+        ionest.simpleNewGame (game, gmwidg)
+        
+        gdk.threads_enter()
+        gamewidget.attachGameWidget (gmwidg)
+        gdk.threads_leave()
+    
     bm.connect ("playBoardCreated", playBoardCreated)
     
         ########################################################################
@@ -484,7 +477,7 @@ def initialize():
             count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
             postfix = count == 1 and _("Active Seek") or _("Active Seeks")
             widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     om.connect("onChallengeAdd", onChallengeAdd)
     
     def onChallengeRemove (om, index):
@@ -497,7 +490,7 @@ def initialize():
             count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
             postfix = count == 1 and _("Active Seek") or _("Active Seeks")
             widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     om.connect("onChallengeRemove", onChallengeRemove)
     
         ########################################################################
@@ -534,19 +527,19 @@ def initialize():
             text += "\n%s min + %s sec" % (seek["t"], seek["i"])
             
             graph.addSpot(seek["gameno"], text, x, y, type)
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("addSeek", on_seek_add)
     
     def on_seek_remove (manager, gameno):
         def call ():
             graph.removeSpot(gameno)
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("removeSeek", on_seek_remove)
     
     def on_seek_clear (manager):
         def call ():
             graph.clearSpots()
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("clearSeeks", on_seek_clear)
     
         ########################################################################
@@ -607,7 +600,7 @@ def initialize():
             count = int(widgets["playersOnlineLabel"].get_text().split()[0])+1
             postfix = count == 1 and _("Player Ready") or _("Players Ready")
             widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("addPlayer", on_player_add)
     
     def on_player_remove (manager, name):
@@ -622,7 +615,7 @@ def initialize():
             count = int(widgets["playersOnlineLabel"].get_text().split()[0])-1
             postfix = count == 1 and _("Player Ready") or _("Players Ready")
             widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("removePlayer", on_player_remove)
     
         ########################################################################
@@ -663,7 +656,7 @@ def initialize():
             count = int(widgets["gamesRunningLabel"].get_text().split()[0])+1
             postfix = count == 1 and _("Game Running") or _("Games Running")
             widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("addGame", on_game_add)
     
     def on_game_remove (manager, gameno):
@@ -678,7 +671,7 @@ def initialize():
             count = int(widgets["gamesRunningLabel"].get_text().split()[0])-1
             postfix = count == 1 and _("Game Running") or _("Games Running")
             widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
-        listqueue.put(call)
+        listPublisher.put(call)
     glm.connect("removeGame", on_game_remove)
     
     def observeBoardCreated (bm, gameno, pgn, secs, incr, wname, bname):
@@ -696,8 +689,7 @@ def initialize():
         def onClose (gmwidg):
             bm.unobserve(gameno)
             rowiter = games[gameno]
-            idle_add (lambda: \
-                tv.get_model().get_model().set_value(rowiter, 1, clearpix))
+            tv.get_model().get_model().set_value(rowiter, 1, clearpix)
         gmwidg.connect("closed", onClose)
         
         if timemodel:
@@ -707,16 +699,17 @@ def initialize():
         file = StringIO(pgn)
         ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
         
-        idle_add(lambda: gamewidget.attachGameWidget(gmwidg))
-    
+        gdk.threads_enter()
+        gamewidget.attachGameWidget(gmwidg)
+        gdk.threads_leave()
     bm.connect("observeBoardCreated", observeBoardCreated)
     
     def on_observe_clicked (widget, *args):
         model, paths = widgets["gametreeview"].get_selection().get_selected_rows()
         for i, path in enumerate(paths):
             rowiter = model.get_iter(path)
-            idle_add (lambda: model.get_model().set_value (
-                    model.convert_iter_to_child_iter(None,rowiter), 1, recpix) )
+            model.get_model().set_value (
+                    model.convert_iter_to_child_iter(None,rowiter), 1, recpix)
             gameno = model.get_value(rowiter, 0)
             bm.observe(gameno)
     widgets["observeButton"].connect ("clicked", on_observe_clicked)
@@ -738,7 +731,7 @@ def initialize():
             def call ():
                 ti = astore.append ([game["opponent"], game["opstatus"],
                                  "%d %%" % game["procPlayed"], game["date"]])
-            listqueue.put(call)
+            listPublisher.put(call)
         glm.connect("addAdjourn", on_adjourn_add)
     
     ############################################################################

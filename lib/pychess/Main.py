@@ -2,6 +2,7 @@ import sys, gtk
 import pango, gobject
 import webbrowser
 import atexit
+from threading import currentThread, _MainThread
 
 from pychess.System import myconf
 from pychess.Utils.const import *
@@ -185,22 +186,22 @@ class GladeHandlers:
                 
                 UNKNOWN_REASON: _("by no known reason")
             }[reason]
-            gmwidg.status("%s %s" % (m1,m2), idle_add=True)
+            gmwidg.status("%s %s" % (m1,m2))
         gamemodel.connect("game_ended", game_ended)
         
         def draw_sent (gamemodel, player):
             if player.__type__ == LOCAL:
-                gmwidg.status(_("You sent a draw offer"), idle_add=True)
+                gmwidg.status(_("You sent a draw offer"))
         gamemodel.connect("draw_sent", draw_sent)
         
         def flag_call_error (gamemodel, player, error):
             if player.__type__ == LOCAL:
                 if error == NO_TIME_SETTINGS:
                     gmwidg.status(_("You can't call flag in a game without" + \
-                                    " time settings"), idle_add=True)
+                                    " time settings"))
                 elif error == NOT_OUT_OF_TIME:
                     gmwidg.status(_("You can't call flag when your opponent" + \
-                                    " is not out of time"), idle_add=True)
+                                    " is not out of time"))
         gamemodel.connect("flag_call_error", flag_call_error)
         
     def on_game_closed (handler, gmwidg, gamemodel):

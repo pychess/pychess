@@ -55,13 +55,26 @@ def newMessage (task, message, type):
         task2book[task] = textbuffer
     else: textbuffer = task2book[task]
     
-    textbuffer.insert_with_tags_by_name(textbuffer.get_end_iter(), message, str(type))
+    textbuffer.insert_with_tags_by_name(
+            textbuffer.get_end_iter(), message, str(type))
 
-from gobject import idle_add, PRIORITY_LOW
-for task, message, type in log.messages:
-	idle_add(newMessage, task, message, type)
-log.connect ("logged", lambda log, task, message, type: \
-		idle_add(newMessage, task, message, type, priority=PRIORITY_LOW))
+#
+# Add early messages and connect for new
+#
+
+def addMessages (messages):
+    for task, message, type in messages:
+        newMessage (task, message, type)
+    
+gtk.gdk.threads_enter()
+addMessages(log.messages)
+gtk.gdk.threads_leave()
+
+log.connect ("logged", lambda log, messages: addMessages(messages))
+
+#
+# External functions
+#
 
 def show ():
     w.show_all()

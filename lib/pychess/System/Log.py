@@ -1,4 +1,7 @@
 import os, sys, time, gobject
+from Queue import Queue
+
+from GtkWorker import EmitPublisher, Publisher
 
 logfile = "~/.pychess.log"
 
@@ -15,37 +18,43 @@ class LogPipe:
         except IOError:
             log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
 
+NEW_FILE, OLD_FILE, NO_FILE = range(3)
 DEBUG, LOG, WARNING, ERROR = range(4)
 labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
 
 class Log (gobject.GObject):
     
     __gsignals__ = {
-        'logged': (gobject.SIGNAL_RUN_FIRST, None, (str, str, int))
-    }
+        "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
+    }                                              # list of (str, str, int)
     
-    def __init__ (self, logpath):
+    def __init__ (self, logpath, storage):
         gobject.GObject.__init__(self)
         
-        #if not os.path.exists (logpath):
-        #    self.file = open (logpath, "w")
-        #else: self.file = open (logpath, "a")
+        if storage == NO_FILE:
+            self.file = None
+        elif storage == NEW_FILE or not os.path.exists (logpath):
+            self.file = open (logpath, "w")
+        else:
+            self.file = open (logpath, "a")
         
-        # As we do not want gigantic logfiles, 
-        # we should probably erase it every time we start.
-        self.file = open (logpath, "w")
-        
+        # We store everything in ram for the sake of the LogViewer.
+        # Not very smart really
         self.messages = []
+        
+        self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
+        self.publisher.start()
 
     def _format (self, task, message, type):
         t = time.strftime ("%F %T")
         return "%s %s %s: %s" % (t, task, labels[type], message)
     
     def _log (self, task, message, type):
-        formated = self._format(task, message, type)
-        print >> self.file, formated
-        self.messages.append ((task, message, type))
-        self.emit ("logged", task, message, type)
+        if self.file:
+            formated = self._format(task, message, type)
+            print >> self.file, formated
+        self.messages.append((task, message, type))
+        self.publisher.put((task, message, type))
         if type == ERROR:
             print formated
     
@@ -61,4 +70,4 @@ class Log (gobject.GObject):
     def error (self, message, task="Default"):
         self._log (task, message, ERROR)
 
-log = Log (os.path.expanduser(logfile))
+log = Log (os.path.expanduser(logfile), NEW_FILE)
