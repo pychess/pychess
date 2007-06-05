@@ -43,6 +43,10 @@ class Pinger (GObject):
                 while True:
                     line = pipe.readline()
                     if not line: break
+                    if not globals:
+                        # If python has been shut down while we were sleeping
+                        # We better stop pinging
+                        return
                     if pipe == popen.stdout:
                         match = self.expression.search(line)
                         if match:

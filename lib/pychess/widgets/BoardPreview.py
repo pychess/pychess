@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 
 import gtk, gtk.glade
-from gobject import idle_add
 from time import sleep
 from pychess.Utils.const import prefix, reprResult, BLACK
 from pychess.System.WidgetDic import WidgetDic

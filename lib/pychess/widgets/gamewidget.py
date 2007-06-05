@@ -224,42 +224,32 @@ class GameWidget (gobject.GObject):
         # Add sidepanels
         #
         
-        fromGtkThread = type(currentThread()) == _MainThread
+        if type(currentThread()) != _MainThread:
+            gtk.gdk.threads_enter()
         
-        if not fromGtkThread:
-            condition = Condition()
+        start = 0
+        path = prefix("sidepanel")
+        pf = "Panel.py"
+        panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
+        panels = \
+            [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
         
-        def func ():
-            start = 0
-            path = prefix("sidepanel")
-            pf = "Panel.py"
-            panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
-            panels = \
-                [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
-            
-            for panel in panels:
-                toggle_combox.addItem(panel.__title__)
-                s = panel.Sidepanel()
-                num = side_book.append_page(s.load(self))
-                if hasattr(panel, "__active__") and panel.__active__:
-                    start = num
-            
-            toggle_combox.connect("changed",
-                    lambda w,i: side_book.set_current_page(i))
-            side_book.set_current_page(start)
-            toggle_combox.active = start
-            
-            if not fromGtkThread:
-                condition.acquire()
-                condition.notify()
-                condition.release()
+        for panel in panels:
+            toggle_combox.addItem(panel.__title__)
+            s = panel.Sidepanel()
+            num = side_book.append_page(s.load(self))
+            if hasattr(panel, "__active__") and panel.__active__:
+                start = num
         
-        if not fromGtkThread:
-            gobject.idle_add(func, priority=gobject.PRIORITY_HIGH)
-            condition.acquire()
-            condition.wait()
-        else: func()
+        toggle_combox.connect("changed",
+                lambda w,i: side_book.set_current_page(i))
+        side_book.set_current_page(start)
+        toggle_combox.active = start
         
+        if type(currentThread()) != _MainThread:
+            gtk.gdk.threads_leave()
+    
+    
     def setTabReady (self, ready):
         tabhbox = self.widgets["tabhbox"]
         tabhbox.remove(tabhbox.get_children()[0])
@@ -276,15 +266,18 @@ class GameWidget (gobject.GObject):
         tabhbox = self.widgets["tabhbox"]
         return tabhbox[1].get_text()
     
-    def status (self, message, idle_add=False):
+    def status (self, message):
         statusbar = self.widgets["statusbar"]
-        def func():
-            statusbar.pop(0)
-            if message:
-                statusbar.push(0,message)
-        if idle_add:
-            gobject.idle_add(func)
-        else: func()
+        
+        if type(currentThread()) != _MainThread:
+            gtk.gdk.threads_enter()
+        
+        statusbar.pop(0)
+        if message:
+            statusbar.push(0,message)
+        
+        if type(currentThread()) != _MainThread:
+            gtk.gdk.threads_leave()
     
     def setCurrent (self):
         _headbook().set_current_page (

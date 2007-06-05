@@ -1,10 +1,13 @@
-import pygtk
-pygtk.require("2.0")
+
+from threading import currentThread, _MainThread
+from math import ceil, pi, cos, sin
+
 from gtk import gdk
 import gtk, time, gobject, pango
-from math import ceil, pi, cos, sin
-from pychess.Utils.const import WHITE, BLACK
 import cairo
+
+from pychess.System.repeat import repeat_sleep
+from pychess.Utils.const import WHITE, BLACK
 
 class ChessClock (gtk.DrawingArea):
     
@@ -133,26 +136,22 @@ class ChessClock (gtk.DrawingArea):
     
     def redraw_canvas(self):
         if self.window:
-            def func():
-                a = self.get_allocation()
-                rect = gdk.Rectangle(0, 0, a.width, a.height)
-                if self.window:
-                    # We have to test again, as the function is called idle
-                    self.window.invalidate_rect(rect, True)
-                    self.window.process_updates(True)
-            gobject.idle_add(func)
+            if type(currentThread()) != _MainThread:
+                gtk.gdk.threads_enter()
+            a = self.get_allocation()
+            rect = gdk.Rectangle(0, 0, a.width, a.height)
+            self.window.invalidate_rect(rect, True)
+            self.window.process_updates(True)
+            if type(currentThread()) != _MainThread:
+                gtk.gdk.threads_leave()
     
     def setModel (self, model):
         self.model = model
-        #if self.thread != None:
-        #    gobject.source_remove(self.thread)
-        #    self.thread = None
         if model != None:
             self.model.connect("time_changed", self.time_changed)
             self.model.connect("player_changed", self.player_changed)
-            #self.thread = gobject.timeout_add(100, self.update)
-            gobject.timeout_add(100, self.update)
-            
+            repeat_sleep(self.update, 0.1)
+        
         self.formatedCache = [self.formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
     
