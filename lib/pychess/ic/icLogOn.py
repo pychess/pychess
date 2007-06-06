@@ -29,7 +29,7 @@ def run():
         telnet.connectStatus(callback)
     
     widgets["fics_logon"].show()
-    
+
 pulser = None
 def on_connectButton_clicked (button):
     if widgets["logOnAsGuest"].get_active():
@@ -131,7 +131,7 @@ def initialize():
         allocation = widget.allocation
         widget.style.paint_flat_box (widget.window,
             gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, widget, "tooltip",
-            allocation.x, allocation.y, allocation.width, allocation.height )
+            allocation.x, allocation.y, allocation.width, allocation.height)
         global firstDraw
         if firstDraw:
             firstDraw = False
@@ -153,6 +153,10 @@ def initialize():
     ]
     
     class ConnectionKeeper:
+        """ This class takes care of easy connecting gconf and widgets.
+            In a future cleanup this should probably be put somewhere more
+            general """
+        
         def __init__ (self, key):
             
             if type(key) in (tuple, list):

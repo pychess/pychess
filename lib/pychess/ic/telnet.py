@@ -65,7 +65,7 @@ class VerboseTelnet (Telnet, GObject):
         log.log(data, self.name)
         Telnet.write (self, data)
     
-    def open(self, host):
+    def open(self, host, port):
         self.eof = 0
         self.host = host
         self.port = port
