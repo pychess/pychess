@@ -79,6 +79,7 @@ class BoardView (gtk.DrawingArea):
         self.model.connect("move_undone", self.move_undone)
         self.model.connect("game_loading", self.game_loading)
         self.model.connect("game_loaded", self.game_loaded)
+        self.model.connect("game_ended", self.game_ended)
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         self.set_size_request(300,300)
@@ -128,6 +129,9 @@ class BoardView (gtk.DrawingArea):
         self.autoUpdateShown = True
         self._shown = -1
         self.shown = model.ply
+    
+    def game_ended (self, model, reason):
+        self.redraw_canvas()
     
     ###############################
     #          Animation          #
