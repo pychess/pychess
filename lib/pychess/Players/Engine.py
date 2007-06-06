@@ -28,7 +28,7 @@ class Engine (Player):
     def canAnalyze (self):
         abstract
     
-    def analyze (self):
+    def analyze (self, inverse=False):
         pass #Won't be used if "canAnalyze" responds false
     
     def undoMoves (self, moves = 1):

@@ -387,7 +387,7 @@ def parseLAN (board, lan):
     # We want to use the SAN parser for LAN moves like "Nb1-c3" or "Rd3xd7"
     # The san parser should be able to handle most stuff, as long as we remove
     # the slash
-    if not notat.upper().startswith("O-O"):
+    if not lan.upper().startswith("O-O"):
         lan = lan.replace("-","")
     return parseSAN (board, lan)
 

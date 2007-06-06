@@ -65,10 +65,8 @@ class VerboseTelnet (Telnet, GObject):
         log.log(data, self.name)
         Telnet.write (self, data)
     
-    def open(self, host, port=0):
+    def open(self, host):
         self.eof = 0
-        if not port:
-            port = TELNET_PORT
         self.host = host
         self.port = port
         msg = "getaddrinfo returns an empty list"
@@ -156,7 +154,7 @@ def connect (host, port, username="guest", password=""):
                 print >> client, password
                 registered = True
         else:
-            client.read_until("Press return"), host
+            client.read_until("Press return")
             print >> client
         
         names = "(\w+)(?:\(([CUHIFWM])\))?"
