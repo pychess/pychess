@@ -118,22 +118,27 @@ def validateBoard (board):
         c.  If en passant square is set, check it is possible.
         d.  Check if castling status are all correct. """
     
+    #
+    # TODO: This functions hasn't yet been translated from C to Python
+    #       Not fully at least
+    #
+    
     # You must place both a Black King and White King on the board
-    if nbits (board.b[white][king]) != 1:
+    if nbits (board.b[WHITE][KING]) != 1:
         return False
-    if nbits (board.b[black][king]) != 1:
+    if nbits (board.b[BLACK][KING]) != 1:
         return False
     
     # You can't place a pawn on the eight rank
-    if board.b[white][pawn] & rankBits[7]:
+    if board.b[WHITE][PAWN] & rankBits[7]:
         return False
-    if board.b[black][pawn] & rankBits[0]:
+    if board.b[BLACK][PAWN] & rankBits[0]:
         return False
     
     # You can't set up a position in which a side has more than eight pawns
-    if nbits(board.b[white][pawn]) > 8:
+    if nbits(board.b[WHITE][PAWN]) > 8:
         return False
-    if nbits(board.b[black][pawn]) > 8:
+    if nbits(board.b[BLACK][PAWN]) > 8:
         return False
     
     # You can't set up a position in which one side's King is in check and the
@@ -145,32 +150,32 @@ def validateBoard (board):
         return False
     
     if board.ep > -1:
-        sq = board.ep + (xside == white and 8 or -8)
-        if not BitPosArray[sq] & board.b[xside][pawn]:
+        sq = board.ep + (xside == WHITE and 8 or -8)
+        if not BitPosArray[sq] & board.b[xside][PAWN]:
             return False
     
     if board.flag & WKINGCASTLE:
-        if not(BitPosArray[E1] & board.b[white][king]):
+        if not(BitPosArray[E1] & board.b[WHITE][KING]):
             return False
-        if not(BitPosArray[H1] & board.b[white][rook]):
+        if not(BitPosArray[H1] & board.b[WHITE][ROOK]):
             return False
     
     if board.flag & WQUEENCASTLE:
-        if not(BitPosArray[E1] & board.b[white][king]):
+        if not(BitPosArray[E1] & board.b[WHITE][KING]):
             return False
-        if not(BitPosArray[A1] & board.b[white][rook]):
+        if not(BitPosArray[A1] & board.b[WHITE][ROOK]):
             return False
     
     if board.flag & BKINGCASTLE:
-        if not(BitPosArray[E8] & board.b[black][king]):
+        if not(BitPosArray[E8] & board.b[BLACK][KING]):
             return False
-        if not(BitPosArray[H8] & board.b[black][rook]):
+        if not(BitPosArray[H8] & board.b[BLACK][ROOK]):
             return False
     
     if board.flag & BQUEENCASTLE:
-        if not(BitPosArray[E8] & board.b[black][king]):
+        if not(BitPosArray[E8] & board.b[BLACK][KING]):
             return False
-        if not(BitPosArray[A8] & board.b[black][rook]):
+        if not(BitPosArray[A8] & board.b[BLACK][ROOK]):
             return False
     
     return True

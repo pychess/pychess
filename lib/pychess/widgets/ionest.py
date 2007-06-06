@@ -1,6 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
-import gtk, os, random, pango
+import gtk, os, random, pango, gobject
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
@@ -599,7 +599,7 @@ Please ensure that you have given the right path and try again."))
             d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
             d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"),
                         gtk.RESPONSE_ACCEPT)
-            if saver.__append__ == True:
+            if saver.__append__:
                 d.add_buttons(gtk.STOCK_ADD, 1)
             d.set_title(_("File exists"))
             folder, file = os.path.split(uri)
@@ -640,7 +640,7 @@ def saveGameBeforeClose (game):
     d.hide()
     
     if response == gtk.RESPONSE_YES:
-        if saveGame(game) == False:
+        if not saveGame(game):
             return gtk.RESPONSE_CANCEL
     return response
 

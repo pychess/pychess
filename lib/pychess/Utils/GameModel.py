@@ -141,7 +141,7 @@ class GameModel (GObject):
             else: opcolor = WHITE
             
             if self.timemodel.getPlayerTime (opcolor) <= 0:
-                if self.timemodel.getPlayerTime (color) <= 0:
+                if self.timemodel.getPlayerTime (1-opcolor) <= 0:
                     self.status = DRAW
                     self.reason = DRAW_CALLFLAG
                 else:
@@ -159,10 +159,10 @@ class GameModel (GObject):
             for ply in range(self.ply, param, -1):
                 self.undo()
         
-        elif action == ADJOURNED_OFFER:
+        elif action == ADJOURN_OFFER:
             opPlayer.offerAdjourn()
         
-        elif actino == ABORT_OFFER:
+        elif action == ABORT_OFFER:
             opPlayer.offerAbort()
     
     ############################################################################
