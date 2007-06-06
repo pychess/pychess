@@ -142,7 +142,7 @@ class GladeHandlers:
             if type(uri) in (str, unicode):
                 s = "%s: %s" % (_("Loaded game"), str(uri))
             else: s = _("Loaded game")
-            gmwidg.status(s, True)
+            gmwidg.status(s)
         gamemodel.connect("game_loaded", game_loaded)
         
         def game_saved (gamemodel, uri):
