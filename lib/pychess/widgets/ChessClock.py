@@ -3,7 +3,7 @@ from threading import currentThread, _MainThread
 from math import ceil, pi, cos, sin
 
 from gtk import gdk
-import gtk, time, gobject, pango
+import gtk, time, pango
 import cairo
 
 from pychess.System.repeat import repeat_sleep

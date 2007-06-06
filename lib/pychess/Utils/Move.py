@@ -56,7 +56,7 @@ class Move:
         flag = lmove.FLAG(self.move)
         if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                     BISHOP_PROMOTION, KNIGHT_PROMOTION):
-            return PROMOTE_PIECE(flag)
+            return lmove.PROMOTE_PIECE(flag)
         return None
     promotion = property(_get_promotion)
     

@@ -1,9 +1,10 @@
 
-from Player import Player
-from Player import PlayerIsDead
 from Queue import Queue
+
+from Player import Player, PlayerIsDead
 from pychess.Utils.Move import parseSAN, toSAN, ParsingError
 from pychess.Utils.const import *
+from pychess.ic import telnet
 
 class ServerPlayer (Player):
     __type__ = REMOTE
@@ -38,7 +39,7 @@ class ServerPlayer (Player):
             self.emit ("action", ABORT_OFFER, 0)
             
         elif type ==  "adjourn":
-            self.emit ("action", ADJOURNED_OFFER, 0)
+            self.emit ("action", ADJOURN_OFFER, 0)
             
         elif type == "takeback":
             toPly = self.lastPly - int(params)

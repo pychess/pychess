@@ -354,9 +354,9 @@ def evalBateries (board):
         brank7 = rank[6]
         brank8 = rank[7]
     
-    if bitLength ((boards[QUEEN] | boards[side][rook]) & brank7) > 1 and \
+    if bitLength ((boards[QUEEN] | boards[color][ROOK]) & brank7) > 1 and \
         (opboards[KING] & brank8) or (opboards[PAWN] & brank7):
-        return ROOKS7RANK
+        return 30
     
     return 0
 
