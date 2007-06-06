@@ -2,7 +2,7 @@
 
 from threading import Thread
 from subprocess import *
-import select, signal, re, os
+import select, signal, re, os, atexit
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 from gtk.gdk import threads_enter, threads_leave
@@ -20,7 +20,9 @@ class Pinger (GObject):
         self.host = host
         self.expression = re.compile("time=([\d\.]+) (m?s)")
         self.pid = None
-    
+        
+        atexit.register(self.stop)
+        
     def start (self):
         thread = Thread(target=self.ping)
         thread.setDaemon(True)
