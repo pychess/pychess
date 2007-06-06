@@ -1,6 +1,9 @@
 """ The task of this module, is to save, load and init new games """
 
-import gtk, os, random, pango, gobject
+import os, random
+from threading import _MainThread, currentThread
+
+import gtk, gobject, pango
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
@@ -498,7 +501,11 @@ def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
     # As Main.py connects to game, when it recieves the game_started signal,
     # we have to emit it before loadAndStart is called, which emits signals
     # Main.py are supposed to recieve.
+    if type(currentThread()) != _MainThread:
+        gtk.gdk.threads_enter()
     handler.emit("game_started", gmwidg, game)
+    if type(currentThread()) != _MainThread:
+        gtk.gdk.threads_leave()
     game.loadAndStart (uri, gameno, position, loader)
 
 ################################################################################
@@ -687,7 +694,8 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Handler (GObject):
     """ The goal of this class, is to provide signal handling for the ionest
-        module """
+        module.
+        Emit objects are gmwidg, gameobject """
         
     __gsignals__ = {
         'game_started': (SIGNAL_RUN_FIRST, TYPE_NONE, (object, object)),
@@ -698,4 +706,5 @@ class Handler (GObject):
         GObject.__init__(self)
 
 #nori: ugly?
+#thomas: very, but how can it be done different?
 handler = Handler()

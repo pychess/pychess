@@ -6,6 +6,7 @@ from cStringIO import StringIO
 from time import sleep
 from math import e
 import webbrowser
+from threading import currentThread
 
 import gtk, pango, re
 from gtk import gdk
@@ -80,6 +81,8 @@ def initialize():
     telnet.connectStatus (on_status_changed)
     
     def callback (fm, ratings, email, time):
+        
+        gdk.threads_enter()
         
         widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
         dock = widgets["fingerTableDock"]
@@ -164,7 +167,9 @@ def initialize():
         
         dock.add(table)
         dock.show_all()
-    
+        
+        gdk.threads_leave()
+        
     fm.connect("fingeringFinished", callback)
     
     ############################################################################
@@ -183,6 +188,8 @@ def initialize():
     linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
     emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
     def callback (nm, news):
+        gdk.threads_enter()
+        
         weekday, month, day, title, details = news
         
         dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
@@ -280,7 +287,9 @@ def initialize():
         expander.add(alignment)
         expander.show_all()
         widgets["newsVBox"].pack_end(expander)
-    
+        
+        gdk.threads_leave()
+        
     nm.connect("readNews", callback)
     
     ############################################################################
@@ -639,6 +648,9 @@ def initialize():
     addColumns(tv, "GameNo", "", _("White Player"), _("Black Player"),
                                  _("Game Type"), hide=[0], pix=[1])
     
+    tv.get_column(0).set_sort_column_id(0)
+    tv.get_model().set_sort_func(0, comparefunction)
+    
     games = {}
     
     def searchCallback (model, column, key, iter):
@@ -675,7 +687,6 @@ def initialize():
     glm.connect("removeGame", on_game_remove)
     
     def observeBoardCreated (bm, gameno, pgn, secs, incr, wname, bname):
-        
         timemodel = TimeModel (secs, incr)
         game = IcGameModel (bm, gameno, timemodel)
         white = ServerPlayer (bm, om, wname, True, gameno, WHITE)
@@ -683,18 +694,19 @@ def initialize():
         game.setPlayers((white,black))
         
         gmwidg = gamewidget.GameWidget(game)
-        
         gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
         gmwidg.connect("closed", ionest.closeGame, game)
-        def onClose (gmwidg):
-            bm.unobserve(gameno)
-            rowiter = games[gameno]
-            tv.get_model().get_model().set_value(rowiter, 1, clearpix)
-        gmwidg.connect("closed", onClose)
         
         if timemodel:
             gmwidg.widgets["ccalign"].show()
             gmwidg.widgets["cclock"].setModel(timemodel)
+        
+        def onClose (handler, closedGmwidg, game):
+            if closedGmwidg == gmwidg:
+                bm.unobserve(gameno)
+                rowiter = games[gameno]
+                tv.get_model().get_model().set_value(rowiter, 1, clearpix)
+        ionest.handler.connect("game_closed", onClose)
         
         file = StringIO(pgn)
         ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
@@ -702,6 +714,7 @@ def initialize():
         gdk.threads_enter()
         gamewidget.attachGameWidget(gmwidg)
         gdk.threads_leave()
+    
     bm.connect("observeBoardCreated", observeBoardCreated)
     
     def on_observe_clicked (widget, *args):
