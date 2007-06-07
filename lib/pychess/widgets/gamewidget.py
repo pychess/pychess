@@ -14,17 +14,18 @@ def set_widgets (w):
     global widgets
     widgets = w
 
+from threading import Condition
+
 import gtk, os, gobject, glob
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
+from pychess.System import glock
 from pychess.System import myconf
 from pychess.Utils.const import prefix
 
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
-
-from threading import Condition, _MainThread, currentThread
 
 icons = gtk.icon_theme_get_default()
 try:
@@ -224,8 +225,7 @@ class GameWidget (gobject.GObject):
         # Add sidepanels
         #
         
-        if type(currentThread()) != _MainThread:
-            gtk.gdk.threads_enter()
+        glock.acquire()
         
         start = 0
         path = prefix("sidepanel")
@@ -246,8 +246,7 @@ class GameWidget (gobject.GObject):
         side_book.set_current_page(start)
         toggle_combox.active = start
         
-        if type(currentThread()) != _MainThread:
-            gtk.gdk.threads_leave()
+        glock.release()
     
     
     def setTabReady (self, ready):
@@ -269,15 +268,13 @@ class GameWidget (gobject.GObject):
     def status (self, message):
         statusbar = self.widgets["statusbar"]
         
-        if type(currentThread()) != _MainThread:
-            gtk.gdk.threads_enter()
+        glock.acquire()
         
         statusbar.pop(0)
         if message:
             statusbar.push(0,message)
         
-        if type(currentThread()) != _MainThread:
-            gtk.gdk.threads_leave()
+        glock.release()
     
     def setCurrent (self):
         _headbook().set_current_page (

@@ -1,12 +1,12 @@
 """ The task of this module, is to save, load and init new games """
 
 import os, random
-from threading import _MainThread, currentThread
 
 import gtk, gobject, pango
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System import myconf
 from pychess.System.protoopen import protosave, isWriteable
@@ -501,11 +501,9 @@ def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
     # As Main.py connects to game, when it recieves the game_started signal,
     # we have to emit it before loadAndStart is called, which emits signals
     # Main.py are supposed to recieve.
-    if type(currentThread()) != _MainThread:
-        gtk.gdk.threads_enter()
+    glock.acquire()
     handler.emit("game_started", gmwidg, game)
-    if type(currentThread()) != _MainThread:
-        gtk.gdk.threads_leave()
+    glock.release()
     game.loadAndStart (uri, gameno, position, loader)
 
 ################################################################################
@@ -682,7 +680,7 @@ def closeAllGames (games):
 
 def closeGame (gmwidg, game):
     if saveGameBeforeClose (game) != gtk.RESPONSE_CANCEL:
-        game.kill()
+        game.end(ABORTED, ABORTED_AGREEMENT)
         gamewidget.delGameWidget (gmwidg)
         handler.emit("game_closed", gmwidg, game)
 

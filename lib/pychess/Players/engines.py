@@ -1,3 +1,9 @@
+################################################################################
+#                                                                              #
+#   DEPRECATED: Use engineNest.py                                              #
+#                                                                              #
+################################################################################
+
 # engines.py takes care of getting name of, and initializing engines
 
 from CECPProtocol import CECPProtocol

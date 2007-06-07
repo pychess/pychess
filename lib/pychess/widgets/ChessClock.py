@@ -1,11 +1,12 @@
+# -*- coding: UTF-8 -*-
 
-from threading import currentThread, _MainThread
 from math import ceil, pi, cos, sin
 
 from gtk import gdk
 import gtk, time, pango
 import cairo
 
+from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.Utils.const import WHITE, BLACK
 
@@ -136,14 +137,12 @@ class ChessClock (gtk.DrawingArea):
     
     def redraw_canvas(self):
         if self.window:
-            if type(currentThread()) != _MainThread:
-                gtk.gdk.threads_enter()
+            glock.acquire()
             a = self.get_allocation()
             rect = gdk.Rectangle(0, 0, a.width, a.height)
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)
-            if type(currentThread()) != _MainThread:
-                gtk.gdk.threads_leave()
+            glock.release()
     
     def setModel (self, model):
         self.model = model

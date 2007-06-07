@@ -50,7 +50,10 @@ class Protocol (GObject):
     def run (self):
         pass
     
-    def kill (self):
+    def kill (self, reason):
+        pass
+    
+    def end (self, status, reason):
         pass
     
     def moveNow (self):

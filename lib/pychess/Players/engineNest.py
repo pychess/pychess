@@ -211,7 +211,7 @@ class EngineDiscoverer (GObject):
                                        ("max","-1"), ("default","false"))))
                 engine.appendChild(options)
         
-        e.kill(KILLED, UNKNOWN_REASON)
+        e.kill(UNKNOWN_REASON)
         
         self._engines[binname] = engine
         thread.start_new(self.emit, ("engine_discovered", binname, engine))

@@ -31,7 +31,7 @@ class IcGameModel (GameModel):
     
     def onGameEnded (self, boardmanager, gameno, status, reason):
         if gameno == self.gameno:
-            self.forceStatus (status, reason)
+            self.end (status, reason)
     
     def setPlayers (self, players):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:

@@ -6,12 +6,12 @@ from cStringIO import StringIO
 from time import sleep
 from math import e
 import webbrowser
-from threading import currentThread
 
 import gtk, pango, re
 from gtk import gdk
 from gtk.gdk import pixbuf_new_from_file
 
+from pychess.System import glock
 from pychess.System.GtkWorker import EmitPublisher, Publisher
 from pychess.System.ping import Pinger
 from pychess.widgets import ionest
@@ -82,7 +82,7 @@ def initialize():
     
     def callback (fm, ratings, email, time):
         
-        gdk.threads_enter()
+        glock.acquire()
         
         widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
         dock = widgets["fingerTableDock"]
@@ -168,7 +168,7 @@ def initialize():
         dock.add(table)
         dock.show_all()
         
-        gdk.threads_leave()
+        glock.release()
         
     fm.connect("fingeringFinished", callback)
     
@@ -188,7 +188,7 @@ def initialize():
     linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
     emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
     def callback (nm, news):
-        gdk.threads_enter()
+        glock.acquire()
         
         weekday, month, day, title, details = news
         
@@ -288,7 +288,7 @@ def initialize():
         expander.show_all()
         widgets["newsVBox"].pack_end(expander)
         
-        gdk.threads_leave()
+        glock.release()
         
     nm.connect("readNews", callback)
     
@@ -463,9 +463,9 @@ def initialize():
         
         ionest.simpleNewGame (game, gmwidg)
         
-        gdk.threads_enter()
+        glock.acquire()
         gamewidget.attachGameWidget (gmwidg)
-        gdk.threads_leave()
+        glock.release()
     
     bm.connect ("playBoardCreated", playBoardCreated)
     
@@ -711,9 +711,9 @@ def initialize():
         file = StringIO(pgn)
         ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
         
-        gdk.threads_enter()
+        glock.acquire()
         gamewidget.attachGameWidget(gmwidg)
-        gdk.threads_leave()
+        glock.release()
     
     bm.connect("observeBoardCreated", observeBoardCreated)
     
