@@ -445,7 +445,7 @@ def initialize():
             whitep = ServerPlayer (
                 bm, om, board["wname"], False, board["gameno"], WHITE)
         
-        gmwidg = gamewidget.GameWidget(gamemodel)
+        gmwidg = gamewidget.GameWidget(game)
         
         if color == WHITE:
             white = Human(gmwidg.widgets["board"], WHITE)

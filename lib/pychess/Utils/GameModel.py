@@ -320,7 +320,7 @@ class GameModel (GObject):
         if self.timemodel:
             self.timemodel.pause()
         
-        self.emit("game_ended", self.UNKNOWN_REASON)
+        self.emit("game_ended", UNKNOWN_REASON)
     
     ############################################################################
     # Other stuff                                                              #
