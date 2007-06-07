@@ -1,5 +1,10 @@
-import gtk, pango, gobject, os.path
+# -*- coding: UTF-8 -*-
 
+import os.path
+
+import gtk, pango, gobject
+
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
 from pychess.Utils.const import prefix
@@ -66,9 +71,9 @@ def addMessages (messages):
     for task, message, type in messages:
         newMessage (task, message, type)
     
-gtk.gdk.threads_enter()
+glock.acquire()
 addMessages(log.messages)
-gtk.gdk.threads_leave()
+glock.release()
 
 log.connect ("logged", lambda log, messages: addMessages(messages))
 

@@ -21,10 +21,15 @@ class Player (GObject):
         """ Offers the player a draw. Should respond emiting a DRAW_ACCEPTION,
             or simply do nothing"""
         abstract
-
-    def kill (self, status, reason):
-        """ Called in the end of the game, or when the engines is otherwise ment
-            to die. Use for closing connections etc. """
+    
+    def end (self, status, reason):
+        """ Called when the game ends in a normal way. Use this for shutting
+            down engines etc. """
+        pass #Optional
+    
+    def kill (self, reason):
+        """ Called when game has too die fast and ugly. Mostly used in case of
+            errors and stuff. Use for closing connections etc. """
         pass #Optional
     
     def showBoard (self):

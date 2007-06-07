@@ -112,20 +112,13 @@ class GameModel (GObject):
         
         if action == RESIGNATION:
             if player == self.players[WHITE]:
-                self.status = BLACKWON
-            else: self.status = WHITEWON
-            self.reason = WON_RESIGN
-                
-            self.emit("game_ended", self.reason)
-            self.kill()
+                self.end(BLACKWON, WON_RESIGN)
+            else: self.end(WHITEWON, WON_RESIGN)
         
         elif action == DRAW_OFFER:
             if self.drawSentBy == opPlayer:
                 # If our opponent has already offered us a draw, the game ends
-                self.status = DRAW
-                self.reason = DRAW_AGREE
-                self.emit("game_ended", DRAW_AGREE)
-                self.kill()
+                self.end(DRAW, DRAW_AGREE)
             else:
                 self.emit("draw_sent", player)
                 self.drawSentBy = player
@@ -142,15 +135,12 @@ class GameModel (GObject):
             
             if self.timemodel.getPlayerTime (opcolor) <= 0:
                 if self.timemodel.getPlayerTime (1-opcolor) <= 0:
-                    self.status = DRAW
-                    self.reason = DRAW_CALLFLAG
+                    self.end(DRAW, DRAW_CALLFLAG)
                 else:
                     if player == self.players[WHITE]:
-                        self.status = WHITEWON
-                    else: self.status = BLACKWON
-                    self.reason = WON_CALLFLAG
-                self.emit("game_ended", self.reason)
-                self.kill()
+                        self.end(WHITEWON, WON_CALLFLAG)
+                    else:
+                        self.end(BLACKWON, WON_CALLFLAG)
                 return
             
             self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
@@ -244,7 +234,7 @@ class GameModel (GObject):
             try:
                 move = curPlayer.makeMove(self)
             except PlayerIsDead:
-                self.kill()
+                self.kill(UNKNOWN_REASON)
                 break
             
             self.applyingMoveLock.acquire()
@@ -252,18 +242,19 @@ class GameModel (GObject):
             newBoard = self.boards[-1].move(move)
             self.boards.append(newBoard)
             self.moves.append(move)
-            self.status, self.reason = getStatus(self.boards[-1])
-            self.emit("game_changed")
+            status, reason = getStatus(self.boards[-1])
             
             if self.timemodel:
                 self.timemodel.tap()
             
-            if self.status != RUNNING:
-                self.emit("game_ended", self.reason)
+            if status != RUNNING:
+                self.status, self.reason = status
+                self.emit("game_changed")
+                self.status = RUNNING # self.end only accepts ending if running
+                self.end(status, reason)
                 self.applyingMoveLock.release()
-                # FIXME: It would be nicer if we told the engines they had lost
-                self.kill()
                 break
+            self.emit("game_changed")
             
             for spectactor in self.spectactors.values():
                 spectactor.makeMove(self)
@@ -306,16 +297,36 @@ class GameModel (GObject):
         self.applyingMoveLock.release()
         
         self.status = RUNNING
+    
+    def end (self, status, reason):
+        if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
+            return
         
-    def kill (self):
-        if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.status = KILLED
+        self.status = status
         
         for player in self.players:
-            player.kill(self.status, self.reason)
+            player.end(self.status, self.reason)
         
         for spectactor in self.spectactors.values():
-            spectactor.kill(self.status, self.reason)
+            spectactor.end(self.status, self.reason)
+        
+        if self.timemodel:
+            self.timemodel.pause()
+        
+        self.emit("game_ended", reason)
+    
+    def kill (self, reason):
+        if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
+            return
+        
+        self.status = KILLED
+        self.reason = reason
+        
+        for player in self.players:
+            player.kill(reason)
+        
+        for spectactor in self.spectactors.values():
+            spectactor.kill(reason)
         
         if self.timemodel:
             self.timemodel.pause()
@@ -352,12 +363,6 @@ class GameModel (GObject):
             self.timemodel.undo()
         
         self.applyingMoveLock.release()
-    
-    def forceStatus (self, status, reason):
-        self.status = status
-        self.reason = reason
-        self.emit("game_ended", self.reason)
-        self.kill()
     
     def isChanged (self):
         if self.ply == 0:

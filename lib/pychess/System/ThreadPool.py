@@ -44,7 +44,14 @@ class ThreadPool:
         def run (self):
             while True:
                 if self.func:
-                    self.func()
+                    try:
+                        self.func()
+                    except Exception, e:
+                        log.error("%s raised %s in threadpool" % (self.func, e))
+                    if not globals:
+                        # If python has been shut down while we were executing
+                        # We better stop running
+                        return
                     self.func = None
                     self.queue.put(self)
                 self.wcond.acquire()

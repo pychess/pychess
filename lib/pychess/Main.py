@@ -23,7 +23,7 @@ gameDic = {}
 
 def engineDead (engine, gmwidg):
     gmwidg.setCurrent()
-    gameDic[gmwidg].kill()
+    gameDic[gmwidg].kill(ABORTED_SERVER_SHUTDOWN)
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
@@ -155,7 +155,8 @@ class GladeHandlers:
                 WHITEWON: _("White player won the game"),
                 BLACKWON: _("Black player won the game"),
                 ADJOURNED: _("The game has been adjourned"),
-                ABORTED: _("The game has been aborted")
+                ABORTED: _("The game has been aborted"),
+                KILLED: _("The game has been killed")
             }[gamemodel.status]
             m2 = {
                 DRAW_INSUFFICIENT: _("caused by insufficient material"),

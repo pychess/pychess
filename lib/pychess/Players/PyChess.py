@@ -247,10 +247,10 @@ while True:
         board.applyMove(move)
                 
         if not forced and not analyzing:
-            thread.start_new(go, ())
+            pool.start(go)
         
         if analyzing:
-            thread.start_new(analyze, ())
+            pool.start(analyze)
         
     elif lines[0] == "sd":
         sd = int(lines[1])
@@ -277,12 +277,16 @@ while True:
     elif lines[0] == "quit":
         sys.exit()
     
+    elif lines[0] == "result":
+        # We don't really care what the result is atm.
+        sys.exit()
+    
     elif lines[0] == "force":
         forced = True
     
     elif lines[0] == "go":
         forced = False
-        thread.start_new(go, ())
+        pool.start(go)
     
     elif lines[0] == "?":
         lsearch.searching = False
@@ -298,11 +302,11 @@ while True:
             board.setEnpassant(None)
         searchLock.release()
         if analyzing:
-            thread.start_new(analyze, ())
+            pool.start(analyze)
     
     elif lines[0] == "analyze":
         analyzing = True
-        thread.start_new(analyze, ())
+        pool.start(analyze)
         
     elif lines[0] == "draw":
         if scr <= 0:
@@ -317,7 +321,7 @@ while True:
         board.applyFen(" ".join(lines[1:]))
         searchLock.release()
         if analyzing:
-            thread.start_new(analyze, ())
+            pool.start(analyze)
     
     elif lines[0] in ("xboard", "otim", "hard", "easy" "nopost", "post"):
         pass

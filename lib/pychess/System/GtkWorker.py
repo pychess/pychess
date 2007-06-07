@@ -1,7 +1,9 @@
 from threading import Lock, RLock, Thread, _MainThread, currentThread
 import Queue
-from gtk.gdk import threads_enter, threads_leave
+
 from gobject import GObject, SIGNAL_RUN_FIRST
+
+import glock
 
 #
 # IDEA: We could implement gdk prioritizing by using a global PriorityQueue
@@ -29,7 +31,7 @@ class Publisher (Thread):
             v = self.queue.get()
             if v == None:
                 break
-            threads_enter()
+            glock.acquire()
             l = [v]
             while True:
                 try:
@@ -43,7 +45,7 @@ class Publisher (Thread):
                 elif self.sendPolicy == self.SEND_LAST:
                     self.func(l[-1])
             finally:
-                threads_leave()
+                glock.release()
     
     def put (self, task):
         self.queue.put(task)
@@ -64,15 +66,7 @@ class GtkWorker (GObject, Thread):
     
     def __init__ (self, func):
         """ Initialize a new GtkWorker around a specific function """
-        
-        # WARNING: This deadlocks if calling code already has the gdk lock and
-        # is not the MainThread
-        if type(currentThread()) != _MainThread:
-            threads_enter()
         GObject.__init__(self)
-        if type(currentThread()) != _MainThread:
-            threads_leave()
-        
         Thread.__init__(self)
         self.setDaemon(True)
         
@@ -150,11 +144,9 @@ class GtkWorker (GObject, Thread):
             gtk.gdk.threads_leave function, everything should be fine."""
         
         if not self.isDone():
-            if type(currentThread()) == _MainThread:
-                threads_leave()
+            glock.release()
             self.join(timeout)
-            if type(currentThread()) == _MainThread:
-                threads_enter()
+            glock.acquire()
             if self.isAlive():
                 return None
             self.done = True
@@ -169,11 +161,11 @@ class GtkWorker (GObject, Thread):
         self.result = self.func(self)
         self.done = True
         if self.connections["done"] >= 1:
-            threads_enter()
+            glock.enter()
             # In python 2.5 we can use self.publishQueue.join() to wait for all
             # publish items to have been processed.
             self.emit("done")
-            threads_leave()
+            glock.relase()
     
     def cancel (self):
         """ Cancel work.

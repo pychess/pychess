@@ -102,7 +102,7 @@ class ServerPlayer (Player):
         # should look, and we don't need to set anything
         pass
     
-    def kill (self, status, reason):
+    def end (self, status, reason):
         if reason == WON_RESIGN:
             if self.color == WHITE and status == WHITEWON or \
                     self.color == BLACK and status == BLACKWON:
@@ -111,4 +111,7 @@ class ServerPlayer (Player):
         if reason == DRAW_CALLFLAG:
             self.boardmanager.callflag()
         
+        self.queue.put("del")
+    
+    def kill (self, reason):
         self.queue.put("del")
