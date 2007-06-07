@@ -130,5 +130,8 @@ class ProtocolEngine (Engine):
         self._wait()
         return repr(self.proto)
     
-    def kill (self, status, reason):
-        self.proto.kill(status, reason)
+    def end (self, status, reason):
+        self.proto.end(status, reason)
+    
+    def kill (self, reason):
+        self.proto.kill(reason)

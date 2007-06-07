@@ -2,9 +2,10 @@
     It should be used together with the ProtocolEngine class, which extends
     Engine """
 
-import time, thread
+import time
 
 from Protocol import Protocol
+from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError, listToMoves
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
@@ -58,7 +59,7 @@ class CECPProtocol (Protocol):
         self.sd = True
         self.st = True
         
-        thread.start_new(self.run,())
+        pool.start(self.run)
         
     def run (self):
 
@@ -199,10 +200,28 @@ class CECPProtocol (Protocol):
         print >> self.engine, "new"
         print >> self.engine, "random"
     
-    def kill (self, status, reason):
+    def end (self, status, reason):
+        if self.connected:
+            # We currently can't fillout the comment "field" as the repr strings
+            # for reasons and statuses lies in Main.py
+            # Creating Status and Reason class would solve this
+            if status == DRAW:
+                print >> self.engine, "result 1/2-1/2 {?}"
+            elif status == WHITEWON:
+                print >> self.engine, "result 1-0 {?}"
+            elif status == BLACKWON:
+                print >> self.engine, "result 0-1 {?}"
+            else:
+                print >> self.engine, "result * {?}"
+            
+            # Make sure the engine exits and do some cleaning
+            self.kill(reason)
+    
+    def kill (self, reason):
         if self.connected:
             self.connected = False
             print >> self.engine, "quit"
+            # Clear the analyzed data, if any
             self.emit("analyze", [])
         else:
             pass

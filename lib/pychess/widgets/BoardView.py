@@ -1,12 +1,14 @@
 # -*- coding: UTF-8 -*-
 
+from math import floor, ceil
+from time import time, sleep
+from threading import RLock
+
 import gtk, gtk.gdk, cairo
 from gobject import *
-from math import floor, ceil
 import pango
-from time import time, sleep
-from threading import currentThread, _MainThread, RLock
 
+from pychess.System import glock
 from pychess.System.repeat import repeat
 from pychess.gfx.Pieces import drawPiece
 from pychess.Utils.Cord import Cord
@@ -364,16 +366,14 @@ class BoardView (gtk.DrawingArea):
     
     def redraw_canvas(self, r=None):
         if self.window:
-            if type(currentThread()) != _MainThread:
-                gtk.gdk.threads_enter()
+            glock.acquire()
             if not r:
                 alloc = self.get_allocation()
                 r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
             assert type(r[2]) == int
             self.window.invalidate_rect(r, True)
             self.window.process_updates(True)
-            if type(currentThread()) != _MainThread:
-                gtk.gdk.threads_leave()
+            glock.release()
     
     ###############################
     #            draw             #

@@ -1,8 +1,6 @@
-from threading import Condition
-import thread
 
 from Protocol import Protocol
-
+from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import parseAN, listToMoves
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
@@ -24,7 +22,7 @@ class UCIProtocol (Protocol):
         self.ignoreNext = False
         self.started = False
         
-        thread.start_new(self.run,())
+        pool.start(self.run)
         
     def run (self):
         print >> self.engine, "uci"
@@ -64,7 +62,7 @@ class UCIProtocol (Protocol):
                     # We get time out after 10 minutes, but we don't care
                     continue
                 self.parseLine(line)
-        thread.start_new(loop,())
+        pool.start(loop)
                 
     ######################## FROM ENGINE ########################
     
@@ -138,7 +136,12 @@ class UCIProtocol (Protocol):
         
     ######################## TO ENGINE ########################
     
-    def kill (self, status, reason):
+    def end (self, status, reason):
+        if self.connected:
+            # UCI seems not to care about reason
+            self.kill(reason)
+    
+    def kill (self, reason):
         if self.connected:
             self.connected = False
             print >> self.engine, "stop"

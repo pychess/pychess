@@ -5,7 +5,8 @@ from subprocess import *
 import select, signal, re, os, atexit
 
 from gobject import GObject, SIGNAL_RUN_FIRST
-from gtk.gdk import threads_enter, threads_leave
+
+from pychess.System import glock
 
 class Pinger (GObject):
     """ The recieved signal contains the time it took to get response from the
@@ -56,13 +57,13 @@ class Pinger (GObject):
                             time = float(time)
                             if unit == "s":
                                 time *= 1000
-                            threads_enter()
+                            glock.acquire()
                             self.emit("recieved", time)
-                            threads_leave()
+                            glock.release()
                     elif pipe == popen.stderr:
-                        threads_enter()
+                        glock.acquire()
                         self.emit("recieved", -1)
-                        threads_leave()
+                        glock.release()
     
     def stop (self):
         os.kill(self.pid, signal.SIGKILL)
