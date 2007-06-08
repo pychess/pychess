@@ -113,7 +113,7 @@ class GameWidget (gobject.GObject):
             # Initialize left center - clock and board
             #
         
-        ccalign = createAlignment(0,0,0,0)
+        ccalign = createAlignment(1,0,0,0)
         cclock = ChessClock()
         ccalign.add(cclock)
         ccalign.set_size_request(-1, 32)
@@ -167,6 +167,7 @@ class GameWidget (gobject.GObject):
         page_vbox.set_spacing(1)
         
         sep = gtk.HSeparator()
+        sep.set_size_request(-1, 2)
         page_hbox = gtk.HBox()
         
         startbut = gtk.Button()
