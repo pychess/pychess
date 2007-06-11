@@ -94,9 +94,9 @@ class EngineConnection (gobject.GObject):
         self.emit("hungup")
         return False
         
-    def readline (self, timeout=-1):
-    	if timeout < 0:
-    		timeout = time()+600
+    def readline (self, timeout=0):
+    	if not timeout:
+    		timeout = 600
     	
         i = self.buffer.find("\n")
         if i >= 0:
@@ -109,9 +109,7 @@ class EngineConnection (gobject.GObject):
         while True:
             while True:
                 try:
-                    t = timeout-time()
-                    if t < 0: t = 0
-                    rlist, _, _ = select.select([self.fd], [], [], t)
+                    rlist, _, _ = select.select([self.fd], [], [], timeout)
                 except select.error, error: 
                     if error.args[0] == 4: #Interupt
                         continue
