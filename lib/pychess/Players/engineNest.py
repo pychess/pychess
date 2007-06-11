@@ -1,13 +1,15 @@
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 import os, md5, imp, thread
-from threading import Lock, Condition
+from threading import Thread, Condition
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
+from pychess.System.ThreadPool import pool
+from pychess.System.Log import log
+from pychess.Utils.const import prefix, WHITE, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
 from UCIProtocol import UCIProtocol
-from pychess.Utils.const import prefix, WHITE, KILLED, UNKNOWN_REASON
 
 attrToProtocol = {
     "uci": UCIProtocol,
@@ -33,7 +35,7 @@ backup = """
 </engines>
 """
 
-class EngineDiscoverer (GObject):
+class EngineDiscoverer (GObject, Thread):
     
     __gsignals__ = {
         "discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -43,19 +45,19 @@ class EngineDiscoverer (GObject):
     
     def __init__ (self):
         GObject.__init__(self)
+        Thread.__init__(self)
         self.xmlpath = prefix("engines.xml")
         
         try:
             self.dom = minidom.parse( self.xmlpath )
-        #except ExpatError:
-        #    self.dom = minidom.parseString( backup )
+        except ExpatError, e:
+            log.warn("engineNest: %s" % e)
+            self.dom = minidom.parseString( backup )
         except IOError:
             self.dom = minidom.parseString( backup )
             
         self._engines = {}
-        self.lock = Lock()
         self.condition = Condition()
-        self.lock.acquire()
 
     ############################################################################
     # XML methods                                                              #
@@ -107,10 +109,10 @@ class EngineDiscoverer (GObject):
                 path = os.path.join(dir, binname)
                 if os.path.isfile(path):
                     if not os.access (path, os.R_OK):
-                        print "Warning: Could not read", path
+                        log.warn("Warning: Could not read", path)
                         continue
                     if not os.access (path, os.EX_OK):
-                        print "Warning: Could not execute", path
+                        log.warn("Warning: Could not execute", path)
                         continue
                     return path, path
         return False
@@ -214,7 +216,7 @@ class EngineDiscoverer (GObject):
         e.kill(UNKNOWN_REASON)
         
         self._engines[binname] = engine
-        thread.start_new(self.emit, ("engine_discovered", binname, engine))
+        self.emit ("engine_discovered", binname, engine)
         
         self.threads -= 1
         if not self.threads:
@@ -226,11 +228,7 @@ class EngineDiscoverer (GObject):
     # Main loop                                                                #
     ############################################################################
     
-    def start (self):
-        thread.start_new(self._start, ())
-        return self
-        
-    def _start (self):
+    def run (self):
         toBeDiscovered = []
         
         for engine in self.dom.getElementsByTagName("engine"):
@@ -280,24 +278,21 @@ class EngineDiscoverer (GObject):
             
             self.threads = len(toBeDiscovered)
             for engine, binname in toBeDiscovered:
-                thread.start_new(self._findOutMore, (engine,binname))
+                pool.start(self._findOutMore, engine, binname)
             
             self.condition.acquire()
             while self.threads:
                 self.condition.wait()
             self.condition.release()
         
-        self.lock.release()
-        thread.start_new(self.emit,("all_engines_discovered",))
-        
+        self.emit("all_engines_discovered")
         f = open(self.xmlpath, "w")
-        lines = self.dom.toprettyxml().split("\n")
-        f.write("\n".join([l for l in lines if l.strip()]))
+        self.dom.writexml(f)
         f.close()
     
-    ####
-    # Interaction
-    ####
+    ############################################################################
+    # Interaction                                                              #
+    ############################################################################
     
     def getAnalyzers (self):
         engines = self.getEngines()
@@ -316,9 +311,7 @@ class EngineDiscoverer (GObject):
     
     def getEngines (self):
         """ Returns {binname: enginexml} """
-        if self.lock.locked():
-            self.lock.acquire()
-            self.lock.release()
+        self.join()
         return self._engines
     
     def getEngineN (self, index):
@@ -334,7 +327,10 @@ class EngineDiscoverer (GObject):
             if md5.childNodes[0].data.strip() == md5sum:
                 return engine
     
-    def getName (self, engine):
+    def getName (self, engine = None):
+        if engine == None:
+            # Ugly yes
+            return Thread.getName(self)
         return engine.getElementsByTagName("name")[0].childNodes[0].data.strip()
     
     def getCountry (self, engine):
@@ -355,24 +351,26 @@ class EngineDiscoverer (GObject):
     def __del__ (self):
         dom.unlink()
 
-#discoverer = EngineDiscoverer()
+if __name__ == "__main__":
 
-#def discovering_started (discoverer, list):
-#    print "discovering_started", list
-#discoverer.connect("discovering_started", discovering_started)
+    discoverer = EngineDiscoverer()
 
-#from threading import RLock
-#rlock = RLock()
+    def discovering_started (discoverer, list):
+        print "discovering_started", list
+    discoverer.connect("discovering_started", discovering_started)
 
-#def engine_discovered (discoverer, str, object):
-#    rlock.acquire()
-#    print "engine_discovered", str, object.toprettyxml()
-#    rlock.release()
-#discoverer.connect("engine_discovered", engine_discovered)
+    from threading import RLock
+    rlock = RLock()
 
-#def all_engines_discovered (discoverer):
-#    print "all_engines_discovered"
-#discoverer.connect("all_engines_discovered", all_engines_discovered)
+    def engine_discovered (discoverer, str, object):
+        rlock.acquire()
+        print "engine_discovered", str, object.toprettyxml()
+        rlock.release()
+    discoverer.connect("engine_discovered", engine_discovered)
 
-#discoverer.start()
-#discoverer.getEngines()
+    def all_engines_discovered (discoverer):
+        print "all_engines_discovered"
+    discoverer.connect("all_engines_discovered", all_engines_discovered)
+
+    discoverer.start()
+    discoverer.getEngines()

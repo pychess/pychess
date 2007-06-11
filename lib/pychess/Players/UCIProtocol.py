@@ -89,8 +89,8 @@ class UCIProtocol (Protocol):
                 if i == len(parts) or parts[i] in keys:
                     key = parts[last]
                     value = " ".join(parts[last+1:i])
-                    if key in typedic:
-                        value = typedic[key](value)
+                    if "type" in dic and dic["type"] in typedic:
+                        value = typedic[dic["type"]](value)
                         
                     if key == "var":
                         varlist.append(value)
@@ -218,7 +218,7 @@ class UCIProtocol (Protocol):
         
         if 'Ponder' in self.options:
             self._setOption('Ponder', strength == EXPERT)
-                
+        
         self.strength = strength
     
     def _setOption (self, option, value):
