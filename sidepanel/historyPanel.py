@@ -1,5 +1,7 @@
 import gtk, gobject
 from gtk import gdk
+
+from pychess.System import glock
 from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN
 from pychess.Utils.const import prefix
@@ -104,32 +106,34 @@ class Sidepanel:
         notat = toSAN(game.boards[-2], game.moves[-1])
         ply = game.ply
         
-        def todo():
-            if len(view.get_model()) == len(self.numbers.get_model()):
-                num = str((ply+1)/2)+"."
-                self.numbers.get_model().append([num])
-            
-            if view == self.right and \
-                    len(view.get_model()) == len(other.get_model()):
-                self.left.get_model().append([""])
-            
-            view.get_model().append([notat])
-            if self.board.shown < ply or self.freezed:
-                return
-            
-            if game.lowply & 1:
-                row = (ply-game.lowply)/2
-            else: row = (ply-game.lowply-1)/2
-            
-            self.freezed = True
-            view.get_selection().select_iter(view.get_model().get_iter(row))
-            view.set_cursor((row,))
-            if other.is_focus():
-                view.grab_focus()
-            other.get_selection().unselect_all()
-            self.freezed = False
+        glock.acquire()
         
-        gobject.idle_add(todo)
+        if len(view.get_model()) == len(self.numbers.get_model()):
+            num = str((ply+1)/2)+"."
+            self.numbers.get_model().append([num])
+        
+        if view == self.right and \
+                len(view.get_model()) == len(other.get_model()):
+            self.left.get_model().append([""])
+        
+        view.get_model().append([notat])
+        if self.board.shown < ply or self.freezed:
+            glock.release()
+            return
+        
+        if game.lowply & 1:
+            row = (ply-game.lowply)/2
+        else: row = (ply-game.lowply-1)/2
+        
+        self.freezed = True
+        view.get_selection().select_iter(view.get_model().get_iter(row))
+        view.set_cursor((row,))
+        if other.is_focus():
+            view.grab_focus()
+        other.get_selection().unselect_all()
+        self.freezed = False
+        
+        glock.release()
     
     def shown_changed (self, board, shown):
         if shown <= 0:
