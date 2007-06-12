@@ -3,6 +3,7 @@ import gtk, gobject, sys
 from pychess.System import myconf
 from pychess.System import gstreamer
 from pychess.Utils.const import *
+from pychess.Players.engineNest import discoverer
 
 firstRun = True
 def run(widgets):
@@ -65,22 +66,19 @@ def initialize(widgets):
     # Engine initing                                                           #
     ############################################################################
     
-    from pychess.Players.engineNest import EngineDiscoverer
-    engineDiscoverer = EngineDiscoverer().start()
-    
         ########################################################################
         # Put engines in trees and combos                                      #
         ########################################################################
     
-    engines = engineDiscoverer.getEngines()
+    engines = discoverer.getEngines()
     allstore = gtk.ListStore(gtk.gdk.Pixbuf, str)
     for engine in engines.values():
-        c = engineDiscoverer.getCountry(engine)
+        c = discoverer.getCountry(engine)
         if c:
             flag = "flags/%s.png" % c
         else: flag = "flags/unknown.png"
         flag_icon = gtk.gdk.pixbuf_new_from_file(prefix(flag))
-        allstore.append((flag_icon, engineDiscoverer.getName(engine)))
+        allstore.append((flag_icon, discoverer.getName(engine)))
     
     tv = widgets["engines_treeview"]
     tv.set_model(allstore)
@@ -89,12 +87,12 @@ def initialize(widgets):
     tv.append_column(gtk.TreeViewColumn(
             "Name", gtk.CellRendererText(), text=1))
     
-    analyzers = engineDiscoverer.getAnalyzers()
+    analyzers = discoverer.getAnalyzers()
     ana_data = []
     invana_data = []
     for engine in analyzers:
-        name = engineDiscoverer.getName(engine)
-        c = engineDiscoverer.getCountry(engine)
+        name = discoverer.getName(engine)
+        c = discoverer.getCountry(engine)
         if c:
             flag = "flags/%s.png" % c
         else: flag = "flags/unknown.png"
@@ -142,7 +140,7 @@ def initialize(widgets):
         if iter: row = allstore.get_path(iter)[0]
         else: return
         
-        engine = engineDiscoverer.getEngineN(row)
+        engine = discoverer.getEngineN(row)
         optionstags = engine.getElementsByTagName("options")
         if not optionstags:
             widgets["engine_options_expander"].hide()
@@ -277,17 +275,17 @@ def initialize(widgets):
     for combo in ("ana_combobox", "inv_ana_combobox"):
 
         def get_value (combobox):
-            engine = engineDiscoverer.getAnalyzers()[combobox.get_active()]
+            engine = discoverer.getAnalyzers()[combobox.get_active()]
             md5s = engine.getElementsByTagName("md5")
             if md5s:
                 return md5s[0].childNodes[0].data.strip()
         
         def set_value (combobox, value):
-            engine = engineDiscoverer.getEngineByMd5(value)
+            engine = discoverer.getEngineByMd5(value)
             if not engine:
                 combobox.set_active(0)
             else:
-                index = engineDiscoverer.getAnalyzers().index(engine)
+                index = discoverer.getAnalyzers().index(engine)
                 combobox.set_active(index)
         
         easyWidgets.append( (combo, get_value, set_value) )

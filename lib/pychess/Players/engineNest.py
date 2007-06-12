@@ -351,6 +351,9 @@ class EngineDiscoverer (GObject, Thread):
     def __del__ (self):
         dom.unlink()
 
+discoverer = EngineDiscoverer()
+discoverer.start()
+
 if __name__ == "__main__":
 
     discoverer = EngineDiscoverer()
