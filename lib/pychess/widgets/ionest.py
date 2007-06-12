@@ -13,16 +13,13 @@ from pychess.System.protoopen import protosave, isWriteable
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
-from pychess.Players import engineNest
+from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.Savers import *
 from pychess import Savers
 from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
 from pychess.widgets.SetupBoard import SetupBoard
-
-discoverer = engineNest.EngineDiscoverer()
-discoverer.start()
 
 widgets = gtk.glade.XML(prefix("glade/newInOut.glade"))
 class WidgetDic:
