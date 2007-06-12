@@ -1,10 +1,12 @@
-#TODO: Add zoom buttons
 
-import gtk, gobject
 from math import e
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_INT
 from random import randint
 from sys import maxint
+
+import gtk, gobject
+from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+
+from pychess.System import glock
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
 
 class ScorePlot (gtk.DrawingArea):
@@ -12,7 +14,7 @@ class ScorePlot (gtk.DrawingArea):
     __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
     
     __gsignals__ = {
-        "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))
+        "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     }
     
     def __init__ (self):
@@ -38,12 +40,12 @@ class ScorePlot (gtk.DrawingArea):
     
     def redraw (self):
         if self.window:
-            def func():
-                a = self.get_allocation()
-                rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-                self.window.invalidate_rect(rect, True)
-                self.window.process_updates(True)
-            gobject.idle_add(func)
+            glock.acquire()
+            a = self.get_allocation()
+            rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
+            self.window.invalidate_rect(rect, True)
+            self.window.process_updates(True)
+            glock.release()
     
     def press (self, widget, event):
         self.emit('selected', event.y/self.moveHeight+1)
