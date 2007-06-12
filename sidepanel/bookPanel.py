@@ -1,4 +1,6 @@
 import gtk, gobject, cairo
+
+from pychess.System import glock
 from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import parseSAN
@@ -40,33 +42,35 @@ class Sidepanel:
         self.openings = getOpenings(self.board.model.boards[shown])
         self.openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
         
-        self.board.bluearrow = None
+        glock.acquire()
         
-        def helper():
-            self.store.clear()
-            
-            if not self.openings and self.sw.get_child() == self.tv:
-                self.sw.remove(self.tv)
-                label = gtk.Label(_("In this position,\nthere is no book move."))
-                label.set_property("yalign",0.1)
-                self.sw.add_with_viewport(label)
-                self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
-                self.sw.show_all()
-                return
-            if self.openings and self.sw.get_child() != self.tv:
-                self.sw.remove(self.sw.get_child())
-                self.sw.add(self.tv)
-            
-            i = 0
-            for move, wins, draws, loses in self.openings:
-                games = wins+draws+loses
-                if not games: continue
-                wins, draws, loses = \
-                        map(lambda x: x/float(games), (wins, draws, loses))
-                self.store.append ([move, str(games), (wins,draws,loses)])
-                
-        gobject.idle_add(helper)
-    
+        self.board.bluearrow = None
+        self.store.clear()
+        
+        if not self.openings and self.sw.get_child() == self.tv:
+            self.sw.remove(self.tv)
+            label = gtk.Label(_("In this position,\nthere is no book move."))
+            label.set_property("yalign",0.1)
+            self.sw.add_with_viewport(label)
+            self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
+            self.sw.show_all()
+            glock.release()
+            return
+        
+        if self.openings and self.sw.get_child() != self.tv:
+            self.sw.remove(self.sw.get_child())
+            self.sw.add(self.tv)
+        
+        i = 0
+        for move, wins, draws, loses in self.openings:
+            games = wins+draws+loses
+            if not games: continue
+            wins, draws, loses = \
+                    map(lambda x: x/float(games), (wins, draws, loses))
+            self.store.append ([move, str(games), (wins,draws,loses)])
+        
+        glock.release()
+        
     def selection_changed (self, widget):
         
         iter = self.tv.get_selection().get_selected()[1]
