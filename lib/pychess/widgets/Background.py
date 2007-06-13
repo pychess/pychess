@@ -16,11 +16,13 @@ class TaskerManager (gtk.Table):
         self.connect("style-set", self.newtheme)
         self.clearpath = prefix("glade/clear.png")
         self.set_homogeneous(True)
-        
+        self.surface = None
+    
     def expose (self, widget, event):
         cr = widget.window.cairo_create()
-        cr.rectangle (event.area.x, event.area.y,
-                      event.area.width, event.area.height)
+        cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)
+        if not self.surface:
+            self.newtheme(self, self.get_style())
         cr.set_source_surface(self.surface, 0, 0)
         pattern = cr.get_source()
         pattern.set_extend(cairo.EXTEND_REPEAT)
@@ -87,7 +89,9 @@ class TaskerManager (gtk.Table):
                 return
         
         surface = cairo.ImageSurface.create_from_png(self.clearpath)
-        buffer = surface.get_data_as_rgba()
+        if hasattr(surface, "get_data_as_rgba"):
+            buffer = surface.get_data_as_rgba()
+        else: buffer = surface.get_data()
         
         data = array ('B', 'a' * surface.get_width() * surface.get_height() * 4)
         surf = cairo.ImageSurface.create_for_data (data, cairo.FORMAT_ARGB32,
