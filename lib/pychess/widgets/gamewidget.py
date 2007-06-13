@@ -278,7 +278,7 @@ class GameWidget (gobject.GObject):
         glock.release()
     
     def setCurrent (self):
-        _headbook().set_current_page (
+        getheadbook().set_current_page (
                 headbook.page_num(self.widgets["headchild"]) )
 
 
@@ -313,7 +313,7 @@ def show_side_panel (show):
         widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
 
 def delGameWidget (gmwidg):
-    headbook = _headbook()
+    headbook = getheadbook()
     page_num = headbook.page_num(gmwidg.widgets["headchild"])
     headbook.remove_page(page_num)
     vbox = widgets["mainvbox"]
@@ -321,12 +321,15 @@ def delGameWidget (gmwidg):
     mainbook.remove_page(page_num)
     del head2mainDic[gmwidg.widgets["headchild"]]
     
+    if headbook.get_n_pages() == 1 and myconf.get("hideTabs"):
+        show_tabs(False)
+    
     if headbook.get_n_pages() == 0:
         vbox.remove(vbox.get_children()[1])
         vbox.remove(mainbook)
         global background
         vbox.pack_end(background)
-        vbox.show_all()
+        background.show()
 
 def createGameWidget (gamemodel):
     gmwidg = GameWidget(gamemodel)
@@ -364,7 +367,10 @@ def attachGameWidget (gmwidg):
         vbox.pack_start(align, expand=False)
         vbox.pack_start(mainbook)
         
-        vbox.show_all()
+        mainbook.show_all()
+        
+        if not myconf.get("hideTabs"):
+            align.show_all()
     
     headbook = vbox.get_children()[1].child
     headbook.append_page(gmwidg.widgets["headchild"], gmwidg.widgets["tabhbox"])
@@ -373,6 +379,10 @@ def attachGameWidget (gmwidg):
     except AttributeError:
         # Object has no attribute 'set_tab_reorderable' is raised by gtk < 2.10
         pass
+    
+    # We should always show tabs if more than one exists
+    if headbook.get_n_pages() == 2:
+        show_tabs(True)
     
     mainbook = vbox.get_children()[2]
     mainbook.append_page(gmwidg.widgets["mvbox"], None)
@@ -384,9 +394,14 @@ def attachGameWidget (gmwidg):
     mainbook.set_current_page(-1)
 
 def cur_gmwidg ():
-    headbook = _headbook()
+    headbook = getheadbook()
     headchild = headbook.get_nth_page(headbook.get_current_page())
     return head2mainDic[headchild]
 
-def _headbook ():
+def getheadbook ():
     return widgets["mainvbox"].get_children()[1].child
+
+def show_tabs (show):
+    if show:
+        widgets["mainvbox"].get_children()[1].show_all()
+    else: widgets["mainvbox"].get_children()[1].hide()
