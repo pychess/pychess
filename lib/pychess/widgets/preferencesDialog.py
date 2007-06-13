@@ -1,9 +1,12 @@
-import gtk, gobject, sys
+import sys
+
+import gtk, gobject
 
 from pychess.System import myconf
 from pychess.System import gstreamer
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
+from pychess.widgets import gamewidget
 
 firstRun = True
 def run(widgets):
@@ -61,7 +64,16 @@ def initialize(widgets):
     secondName = myconf.get("secondName")
     if not secondName:
         myconf.set("secondName", _("Guest"))
-        
+    
+    def tabsCallback (none):
+        if myconf.get("hideTabs") and \
+                gamewidget.getheadbook().get_n_pages() == 1:
+            gamewidget.show_tabs(False)
+        elif not myconf.get("hideTabs") and \
+                gamewidget.getheadbook().get_n_pages() == 1:
+            gamewidget.show_tabs(True)
+    myconf.notify_add("hideTabs", tabsCallback)
+    
     ############################################################################
     # Engine initing                                                           #
     ############################################################################
@@ -263,7 +275,7 @@ def initialize(widgets):
     
     easyWidgets = [
         "firstName", "secondName",
-        "figuresInNotation", "hideTabs", "showClockAlways",
+        "figuresInNotation", "hideTabs",
         "showLastMove", "animateMoves",
         "useSystemSounds",
         
