@@ -1,6 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
-import gtk, os, random, pango
+import gtk, os, random, pango, gobject
 
 from pychess.Utils.Game import Game
 from pychess.System.Log import log
