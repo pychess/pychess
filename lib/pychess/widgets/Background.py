@@ -53,7 +53,9 @@ class Background (gtk.DrawingArea):
                 return
         
         surface = cairo.ImageSurface.create_from_png(self.clearpath)
-        buffer = surface.get_data_as_rgba()
+        if hasattr(surface, "get_data_as_rgba"):
+            buffer = surface.get_data_as_rgba()
+        else: buffer = surface.get_data()
         
         data = array ('B', 'a' * surface.get_width() * surface.get_height() * 4)
         surf = cairo.ImageSurface.create_for_data (data, cairo.FORMAT_ARGB32,
