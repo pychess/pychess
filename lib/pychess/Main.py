@@ -13,7 +13,7 @@ from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
 from pychess.widgets import ionest
 from pychess.widgets.Background import TaskerManager, NewGameTasker, InternetGameTasker
-from pychess.widgets import preferencesDialog
+from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.ic import icLogOn
 
 ################################################################################
@@ -249,38 +249,10 @@ class GladeHandlers:
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
     
     def on_properties1_activate (widget):
-        gamemodel = gameDic[gamewidget.cur_gmwidg()]
-        window["event_entry"].set_text(gamemodel.tags["Event"])
-        window["site_entry"].set_text(gamemodel.tags["Site"])
-        window["round_spinbutton"].set_value(gamemodel.tags["Round"])
-        
-        # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
-        # 1 to 12
-        window["game_info_calendar"].clear_marks()
-        window["game_info_calendar"].select_month(
-                gamemodel.tags["Month"]-1, gamemodel.tags["Year"])
-        window["game_info_calendar"].select_day(gamemodel.tags["Day"])
-        
-        window["game_info"].show()
-        
-        def hide_window(button, *args):
-            window["game_info"].hide()
-            return True
-        
-        def accept_new_properties(button, *args):
-            gamemodel = gameDic[gamewidget.cur_gmwidg()]
-            gamemodel.tags["Event"] = window["event_entry"].get_text()
-            gamemodel.tags["Site"] = window["site_entry"].get_text()
-            gamemodel.tags["Round"] = window["round_spinbutton"].get_value()
-            gamemodel.tags["Year"] = window["game_info_calendar"].get_date()[0]
-            gamemodel.tags["Month"] = window["game_info_calendar"].get_date()[1] + 1
-            gamemodel.tags["Day"] = window["game_info_calendar"].get_date()[2]
-            window["game_info"].hide()
-            return True
-        
-        window["game_info"].connect("delete-event", hide_window)
-        window["game_info_cancel_button"].connect("clicked", hide_window)
-        window["game_info_ok_button"].connect("clicked", accept_new_properties)
+        gameinfoDialog.run(window, gameDic)
+    
+    def on_player_rating1_activate (widget):
+        playerinfoDialog.run(window)
     
     def on_close1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
