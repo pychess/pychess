@@ -42,11 +42,13 @@ export PYCHESS_DATA_PATH="`FindPath $0`"
 # Workaround for problem with ubuntu/debian kernels and gobject/gtk threading  #
 ################################################################################
 
-if [ -f /etc/debian-release ] ; then
-    export LD_ASSUME_KERNEL=2.4.1
-elif [ -f /etc/debian_version ] ; then
-    export LD_ASSUME_KERNEL=2.4.1
-fi
+# Shouldn't be needed any more
+
+#if [ -f /etc/debian-release ] ; then
+#    export LD_ASSUME_KERNEL=2.4.1
+#elif [ -f /etc/debian_version ] ; then
+#    export LD_ASSUME_KERNEL=2.4.1
+#fi
 
 ################################################################################
 # Try to import pychess modules and set up gettext                             #
