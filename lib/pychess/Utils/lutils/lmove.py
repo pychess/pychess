@@ -441,7 +441,7 @@ def toFAN (board, move):
     """ Returns a Figurine Algebraic Notation string of a move """
     
     fans = FAN_PIECES[board.color]
-    san = toSAN (board, san)
+    san = toSAN (board, move)
     
     lan = san
     if "K" in lan or "Q" in lan or "R" in lan or "B" in lan or "N" in lan:
