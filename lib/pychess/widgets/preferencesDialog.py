@@ -65,15 +65,6 @@ def initialize(widgets):
     if not secondName:
         myconf.set("secondName", _("Guest"))
     
-    def tabsCallback (none):
-        if myconf.get("hideTabs") and \
-                gamewidget.getheadbook().get_n_pages() == 1:
-            gamewidget.show_tabs(False)
-        elif not myconf.get("hideTabs") and \
-                gamewidget.getheadbook().get_n_pages() == 1:
-            gamewidget.show_tabs(True)
-    myconf.notify_add("hideTabs", tabsCallback)
-    
     ############################################################################
     # Engine initing                                                           #
     ############################################################################

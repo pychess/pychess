@@ -1,9 +1,9 @@
 import gtk, gobject
 from gtk import gdk
 
-from pychess.System import glock
+from pychess.System import glock, myconf
 from pychess.widgets import gamewidget
-from pychess.Utils.Move import toSAN
+from pychess.Utils.Move import toSAN, toFAN
 from pychess.Utils.const import prefix
 
 from gtk.gdk import keyval_from_name
@@ -70,6 +70,16 @@ class Sidepanel:
             		vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
+        def figuresInNotationCallback (none):
+            game = self.board.model
+            for i, (board, move) in enumerate(zip(game.boards, game.moves)):
+                if myconf.get("figuresInNotation"):
+                    notat = toFAN(board, move)
+                else: notat = toSAN(board, move)
+                row, col, other = self._ply_to_row_col_other(i+1)
+                col.get_model().set(col.get_model().get_iter((row,)), 0, notat)
+        myconf.notify_add("figuresInNotation", figuresInNotationCallback)
+        
         return __widget__
     
     def select_cursor_row (self, selection, tree, col):
@@ -101,9 +111,11 @@ class Sidepanel:
     
     def game_changed (self, game):
         
-        view = game.ply & 1 and self.left or self.right
-        other = game.ply & 1 and self.right or self.left
-        notat = toSAN(game.boards[-2], game.moves[-1])
+        row, view, other = self._ply_to_row_col_other(game.ply)
+        
+        if myconf.get("figuresInNotation"):
+            notat = toFAN(game.boards[-2], game.moves[-1])
+        else: notat = toSAN(game.boards[-2], game.moves[-1])
         ply = game.ply
         
         glock.acquire()
@@ -121,10 +133,6 @@ class Sidepanel:
             glock.release()
             return
         
-        if game.lowply & 1:
-            row = (ply-game.lowply)/2
-        else: row = (ply-game.lowply-1)/2
-        
         self.freezed = True
         view.get_selection().select_iter(view.get_model().get_iter(row))
         view.set_cursor((row,))
@@ -141,12 +149,7 @@ class Sidepanel:
             self.right.get_selection().unselect_all()
             return
         
-        col = shown & 1 and self.left or self.right
-        other = shown & 1 and self.right or self.left
-        
-        if self.board.model.lowply & 1:
-            row = (shown-self.board.model.lowply)/2
-        else: row = (shown-self.board.model.lowply-1)/2
+        row, col, other = self._ply_to_row_col_other(shown)
         
         # If game is changed, we can't expect the treeviews to be updated yet.
         # Further more when game_changed is called, it will select stuff it self
@@ -159,3 +162,11 @@ class Sidepanel:
             if other.is_focus():
                 col.grab_focus()
         other.get_selection().unselect_all()
+    
+    def _ply_to_row_col_other (self, ply):
+        col = ply & 1 and self.left or self.right
+        other = ply & 1 and self.right or self.left
+        if self.board.model.lowply & 1:
+            row = (ply-self.board.model.lowply)/2
+        else: row = (ply-self.board.model.lowply-1)/2
+        return row, col, other
