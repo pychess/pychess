@@ -6,11 +6,13 @@ include MANIFEST.in
 include open.db
 include pychess.desktop pychess.svg
 include lang/nl_NL/LC_MESSAGES/pychess.po
-include lang/az/LC_MESSAGES/pychess.po
-include lang/es/LC_MESSAGES/pychess.po
-include lang/da/LC_MESSAGES/pychess.po
-include lang/tr/LC_MESSAGES/pychess.po
-include lang/hu/LC_MESSAGES/pychess.po
+include lang/az_AZ/LC_MESSAGES/pychess.po
+include lang/hu_HU/LC_MESSAGES/pychess.po
+include lang/da_DA/LC_MESSAGES/pychess.po
+include lang/tr_TR/LC_MESSAGES/pychess.po
+include lang/pt_BR/LC_MESSAGES/pychess.po
+include lang/es_ES/LC_MESSAGES/pychess.po
+include lang/fr_FR/LC_MESSAGES/pychess.po
 include lang/de_DE/LC_MESSAGES/pychess.po
 include lang/pt_BR/LC_MESSAGES/pychess.po
 

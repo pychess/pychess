@@ -1,4 +1,4 @@
-VERSION = "0.6.0.final"
+VERSION = "Grecco 0.6.1"
 
 NAME = "PyChess"
 
