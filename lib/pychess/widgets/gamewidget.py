@@ -55,6 +55,14 @@ def createAlignment (top, right, bottom, left):
     align.set_property("left-padding", left)
     return align
 
+def tabsCallback (none):
+    if getheadbook().get_n_pages() == 1:
+        if myconf.get("hideTabs"):
+            show_tabs(False)
+        else:
+            show_tabs(True)
+myconf.notify_add("hideTabs", tabsCallback)
+
 ################################################################################
 # The holder class for tab releated widgets                                    #
 ################################################################################
