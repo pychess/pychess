@@ -470,6 +470,6 @@ def parseFAN (board, lan):
     san = san.replace(fans[ROOK], "R")
     san = san.replace(fans[BISHOP], "B")
     san = san.replace(fans[KNIGHT], "N")
-    san = san.replace(fans[PAWN])
+    san = san.replace(fans[PAWN], "")
     
     return parseSAN (board, san)

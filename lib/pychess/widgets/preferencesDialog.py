@@ -261,16 +261,16 @@ def initialize(widgets):
     methodDict = {
         gtk.CheckButton: ("get_active", "set_active", "toggled"),
         gtk.Entry: ("get_text", "set_text", "changed"),
-        gtk.ComboBox: ("get_active", "set_active", "changed")
+        gtk.ComboBox: ("get_active", "set_active", "changed"),
+        gtk.RadioButton: ("get_active", "set_active", "toggled")
     }
     
     easyWidgets = [
         "firstName", "secondName",
-        "figuresInNotation", "hideTabs",
-        "showLastMove", "animateMoves",
-        "useSystemSounds",
-        
-        "analyzer_check", "inv_analyzer_check"
+        "hideTabs", "autoRotate", "showCords", "figuresInNotation",  
+        "fullAnimation", "moveAnimation", "noAnimation",
+        "analyzer_check", "inv_analyzer_check",
+        "useSystemSounds"
     ]
     
     easyWidgets += ["soundcombo%d"%i for i in range (10)]
@@ -307,7 +307,10 @@ def initialize(widgets):
                 self.get_value = getattr(widget, methodDict[type(widget)][0])
                 self.set_value = getattr(widget, methodDict[type(widget)][1])
             
-            self.signal = methodDict[type(widget)][2]
+            try:
+                self.signal = methodDict[type(widget)][2]
+            except KeyError:
+                print "Unknown widgettype for", key, widget
             
             self.set_value(myconf.get(self.key))
             widget.connect(self.signal,
