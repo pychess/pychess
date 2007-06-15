@@ -1,9 +1,12 @@
 """ This is a pool for reusing threads """
 
+import sys, traceback, cStringIO
 from threading import Condition, Lock
 from threading import Thread
 from Log import log
 import Queue
+
+import glock
 
 maxThreads = 50
 
@@ -46,8 +49,18 @@ class ThreadPool:
                 if self.func:
                     try:
                         self.func()
-                    except Exception, e:
-                        log.error("%s raised %s in threadpool" % (self.func, e))
+                    except:
+                        if glock._rlock._RLock__owner == self:
+                            # As a service we take care of releasing the gdk
+                            # lock when a thread breaks to avoid freezes
+                            for i in xrange(_rlock._RLock__count):
+                                glock.release()
+                        
+                        stringio = cStringIO.StringIO()
+                        traceback.print_exc(file=stringio)
+                        error = stringio.getvalue()
+                        log.error (("Thread %s in threadpool raised following "+
+                                   "error:\n%s") % (self, error))
                     if not globals:
                         # If python has been shut down while we were executing
                         # We better stop running

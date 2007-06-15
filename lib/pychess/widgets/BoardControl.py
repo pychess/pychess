@@ -111,22 +111,16 @@ class BoardControl (gtk.EventBox):
     def transPoint (self, x, y):
         if not self.view.square: return None
         xc, yc, square, s = self.view.square
+        x, y = self.view.invmatrix.transform_point(x,y)
         y -= yc; x -= xc
         y /= float(s)
         x /= float(s)
-        if self.view.fromWhite:
-            y = 8 - y
-        else: x = 8 - x
-        return x, y
+        return x, 8-y
     
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
-        x = floor(point[0])
-        if self.view.fromWhite:
-            y = floor(point[1])
-        else: y = floor(point[1])
-        return Cord(int(x), int(y))
+        return Cord(int(point[0]), int(point[1]))
     
     def button_press (self, widget, event):
         self.pressed = True
@@ -142,7 +136,7 @@ class BoardControl (gtk.EventBox):
     
     def button_release (self, widget, event):
         self.pressed = False
-
+        
         cord = self.point2Cord (event.x, event.y)
         if self.view.selected == cord or cord == None:
             self.view.selected = None
@@ -195,19 +189,20 @@ class BoardControl (gtk.EventBox):
             if not piece: return
             if piece.color != self.view.model.boards[-1].color: return
             xc, yc, square, s = self.view.square
-            
             if not self.view.square: return
+            
             xc, yc, square, s = self.view.square
-            if self.view.fromWhite:
-                point = self.transPoint(event.x-s/2., event.y+s/2.)
-            else: point = self.transPoint(event.x+s/2., event.y-s/2.)
+            co, si = self.view.matrix[0], self.view.matrix[1]
+            point = self.transPoint(event.x-s*(co+si)/2.,
+                                    event.y+s*(co-si)/2.)
             if not point: return
             x, y = point
+            
             if piece.x != x or piece.y != y:
                 if piece.x:
-                    paintBox = self.view.fcord2Rect(piece.x, piece.y)
-                else: paintBox = self.view.cord2Rect(self.view.active)
-                paintBox = join(paintBox, self.view.fcord2Rect(x, y))
+                    paintBox = self.view.cord2RectRelative(piece.x, piece.y)
+                else: paintBox = self.view.cord2RectRelative(self.view.active)
+                paintBox = join(paintBox, self.view.cord2RectRelative(x, y))
                 piece.x = x
                 piece.y = y
                 self.view.redraw_canvas(rect(paintBox))

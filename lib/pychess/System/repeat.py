@@ -10,7 +10,7 @@ def repeat (func, *args, **kwargs):
             pass
     pool.start(run)
 
-def repeat_sleep (func, sleeptime):
+def repeat_sleep (func, sleeptime, recur=False):
     """ Repeats a function aproximately each time.slepptime.time in a new thread
         until it returns False """
     def run ():
@@ -22,6 +22,8 @@ def repeat_sleep (func, sleeptime):
                 # imported modules will be None
                 return
             last = time.time()
-            v = func()
+            if recur and "v" in locals():
+                v = func(v)
+            else: v = func()
             if not v: break
     pool.start(run)
