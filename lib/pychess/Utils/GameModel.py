@@ -248,7 +248,7 @@ class GameModel (GObject):
                 self.timemodel.tap()
             
             if status != RUNNING:
-                self.status, self.reason = status
+                self.status = status
                 self.emit("game_changed")
                 self.status = RUNNING # self.end only accepts ending if running
                 self.end(status, reason)

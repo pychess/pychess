@@ -1,6 +1,7 @@
 import sys, gtk
 import pango, gobject
 import webbrowser
+import math
 import atexit
 from threading import currentThread, _MainThread
 
@@ -112,8 +113,7 @@ class GladeHandlers:
     def on_game_started (handler, gmwidg, gamemodel):
         for widget in ("save_game1", "save_game_as1", "properties1", "close1",
                        "call_flag", "draw", "resign", "force_to_move",
-                       "rotate_board1", "side_panel1", "show_cords",
-                       "hint_mode", "spy_mode"):
+                       "rotate_board1", "side_panel1", "hint_mode", "spy_mode"):
             window[widget].set_property('sensitive', True)
         
         # Disable hint or spy menu, if they are disabled in preferences
@@ -267,15 +267,10 @@ class GladeHandlers:
     
     def on_rotate_board1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].view.fromWhite = \
-            not gmwidg.widgets["board"].view.fromWhite
+        gmwidg.widgets["board"].view.rotation += math.pi/4.
     
     def on_side_panel1_activate (widget):
         gamewidget.show_side_panel(widget.get_active())
-    
-    def on_show_cords_activate (widget):
-        for gmwidg in gameDic.keys():
-            gmwidg.widgets["board"].view.showCords = widget.get_active()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
@@ -342,7 +337,7 @@ class GladeHandlers:
             game, gmwidg = ionest.createGame (0, opponent, 0, difficulty)
         else:
             game, gmwidg = ionest.createGame (opponent, 0, difficulty, 0)
-            gmwidg.widgets["board"].view.fromWhite = False
+            gmwidg.widgets["board"].view.rotation = math.pi
         ionest.simpleNewGame (game, gmwidg)
 
 TARGET_TYPE_URI_LIST = 80
