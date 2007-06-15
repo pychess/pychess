@@ -522,10 +522,10 @@ class BoardView (gtk.DrawingArea):
     
     def getCordMatrices (self, x, y):
         xc, yc, square, s = self.square
-        s_, rot_ = self.cordMatricesState
-        if s_ != s or rot_ != self.rotation:
+        square_, rot_ = self.cordMatricesState
+        if square != self.square or rot_ != self.rotation:
             self.cordMatrices = [None] * 64
-            self.cordMatricesState = (s, self.rotation)
+            self.cordMatricesState = (self.square, self.rotation)
         c = x * 8 + y
         matrices = self.cordMatrices[c]
         if matrices == None:
