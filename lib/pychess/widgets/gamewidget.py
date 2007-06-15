@@ -56,7 +56,9 @@ def createAlignment (top, right, bottom, left):
     return align
 
 def tabsCallback (none):
-    if getheadbook().get_n_pages() == 1:
+    head = getheadbook()
+    if not head: return
+    if head.get_n_pages() == 1:
         if myconf.get("hideTabs"):
             show_tabs(False)
         else:
@@ -407,6 +409,9 @@ def cur_gmwidg ():
     return head2mainDic[headchild]
 
 def getheadbook ():
+    if len(widgets["mainvbox"].get_children()) == 2:
+        # If the headbook hasn't been added yet
+        return None
     return widgets["mainvbox"].get_children()[1].child
 
 def show_tabs (show):
