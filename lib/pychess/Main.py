@@ -212,7 +212,7 @@ class GladeHandlers:
             for widget in ("save_game1", "save_game_as1", "properties1",
                            "close1",
                            "call_flag", "draw", "resign", "force_to_move",
-                           "rotate_board1", "side_panel1", "show_cords",
+                           "rotate_board1", "side_panel1",
                            "hint_mode", "spy_mode"):
                 window[widget].set_property('sensitive', False)
     
