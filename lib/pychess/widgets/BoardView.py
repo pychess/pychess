@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import sys
 from math import floor, ceil, pi, acos
 from time import time, sleep
 from threading import Lock, RLock
@@ -8,13 +9,14 @@ import gtk, gtk.gdk, cairo
 from gobject import *
 import pango
 
-from pychess.System import glock, myconf
+from pychess.System import glock, myconf, gstreamer
 from pychess.System.repeat import repeat, repeat_sleep
 from pychess.gfx.Pieces import drawPiece
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+import preferencesDialog
 
 def intersects (r0, r1):
     w0 = r0.width + r0.x
@@ -129,6 +131,22 @@ class BoardView (gtk.DrawingArea):
         self.rotationLock = Lock()
     
     def game_changed (self, model):
+        if myconf.get("useSounds"):
+            
+            move = model.moves[-1]
+            if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
+                sound = "aPlayerCaptures"
+            else: sound = "aPlayerMoves"
+            
+            if model.boards[-1].board.isChecked():
+                sound = "aPlayerChecks"
+            
+            if model.players[0].__type__ == REMOTE and \
+                    model.players[1].__type__ == REMOTE:
+                sound = "observedMoves"
+            
+            preferencesDialog.SoundTab.playAction(sound)
+        
         # Updating can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
@@ -148,6 +166,34 @@ class BoardView (gtk.DrawingArea):
     
     def game_ended (self, model, reason):
         self.redraw_canvas()
+        
+        if myconf.get("useSounds"):
+            sound = False
+            
+            if model.status == DRAW:
+                sound = "gameIsDrawn"
+            elif model.status == WHITEWON:
+                if model.players[0].__type__ == LOCAL:
+                    sound = "gameIsWon"
+                elif model.players[1].__type__ == LOCAL:
+                    sound = "gameIsLost"
+            elif model.status == BLACKWON:
+                if model.players[1].__type__ == LOCAL:
+                     sound = "gameIsWon"
+                elif model.players[0].__type__ == LOCAL:
+                    sound = "gameIsLost"
+            elif model.status in (ABORTED, KILLED):
+                sound = "gameIsLost"
+            
+            if model.status in (DRAW, WHITEWON, BLACKWON, KILLED, ABORTED) and \
+                    model.players[0].__type__ == REMOTE and \
+                    model.players[1].__type__ == REMOTE:
+                sound = "oberservedEnds"
+            
+            # This should never be false, unless status is set to UNKNOWN or
+            # something strange
+            if sound:
+                preferencesDialog.SoundTab.playAction(sound)
     
     def on_show_cords (self, *args):
         self.showCords = myconf.get("showCords")

@@ -411,18 +411,36 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
     # Finding players
     
     players = []
-    for playerno, diffi, color in ((player0, diffi0, WHITE),\
-                                 (player1, diffi1, BLACK)):
+    for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
+                                      (1, player1, diffi1, BLACK)):
         if playerno > 0:
             engine = discoverer.getEngineN (playerno-1)
             player = discoverer.initEngine (engine, color)
             player.setStrength(diffi)
             if secs:
                 player.setTime(secs, incr)
-        else: player = Human(gmwidg.widgets["board"], color)
+        else: player = Human(gmwidg.widgets["board"], color, "")
         players += [player]
     
-    gmwidg.setTabText("%s vs %s" % (repr(players[0]), repr(players[1])))
+    def updateTitle (*arsg):
+        gmwidg.setTabText("%s %s %s" %
+                          (repr(players[0]), _("vs"), repr(players[1])))
+    
+    if players[0].__type__ == LOCAL:
+        players[0].setName(myconf.get("firstName"))
+        def callback (*args):
+            players[0].setName(myconf.get("firstName"))
+            updateTitle()
+        myconf.notify_add("firstName", callback)
+    if players[1].__type__ == LOCAL:
+        key = players[0].__type__ == LOCAL and "secondName" or "firstName"
+        players[1].setName(myconf.get(key))
+        def callback (*args):
+            players[1].setName(myconf.get(key))
+            updateTitle()
+        myconf.notify_add(key, callback)
+    
+    updateTitle()
     
     # Initing analyze engines
 

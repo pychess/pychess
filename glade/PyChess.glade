@@ -1065,7 +1065,7 @@ Spanish (es) - 	Enrique</property>
 			<widget class="GtkLabel" id="label4">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">&lt;b&gt;First human players name:&lt;/b&gt;</property>
-			  <property name="use_underline">False</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -1130,7 +1130,7 @@ Spanish (es) - 	Enrique</property>
 			<widget class="GtkLabel" id="label5">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">&lt;b&gt;Second human players name:&lt;/b&gt;</property>
-			  <property name="use_underline">False</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -1191,7 +1191,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="hideTabs">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Hide tabs when only one game is open</property>
+				      <property name="label" translatable="yes">_Hide tabs when only one game is open</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1210,7 +1210,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="autoRotate">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Auto rotate board to current human player</property>
+				      <property name="label" translatable="yes">_Auto rotate board to current human player</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1229,7 +1229,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="showCords">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Show cords</property>
+				      <property name="label" translatable="yes">_Show cords</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1248,7 +1248,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="figuresInNotation">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Prefer figures in notation</property>
+				      <property name="label" translatable="yes">_Prefer figures in notation</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1339,7 +1339,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkRadioButton" id="fullAnimation">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Full board animation</property>
+				      <property name="label" translatable="yes">_Full board animation</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1358,7 +1358,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkRadioButton" id="moveAnimation">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Only animate moves</property>
+				      <property name="label" translatable="yes">_Only animate moves</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -1378,7 +1378,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkRadioButton" id="noAnimation">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">No animation</property>
+				      <property name="label" translatable="yes">_No animation</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -2339,7 +2339,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="analyzer_check">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Use analyzer</property>
+				      <property name="label" translatable="yes">Use _analyzer</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -2436,7 +2436,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkCheckButton" id="inv_analyzer_check">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Use inverted analyzer</property>
+				      <property name="label" translatable="yes">Use _inverted analyzer</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -2620,10 +2620,10 @@ Spanish (es) - 	Enrique</property>
 		      <property name="right_padding">0</property>
 
 		      <child>
-			<widget class="GtkCheckButton" id="useSystemSounds">
+			<widget class="GtkCheckButton" id="useSounds">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Use sounds in PyChess</property>
+			  <property name="label" translatable="yes">_Use sounds in PyChess</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
@@ -3014,7 +3014,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label103">
+				<widget class="GtkLabel" id="soundlabel1">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">A player _checks:</property>
 				  <property name="use_underline">True</property>
@@ -3042,7 +3042,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label115">
+				<widget class="GtkLabel" id="soundlabel0">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">A player _moves:</property>
 				  <property name="use_underline">True</property>
@@ -3058,9 +3058,6 @@ No sound</property>
 				  <property name="width_chars">-1</property>
 				  <property name="single_line_mode">False</property>
 				  <property name="angle">0</property>
-				  <accessibility>
-				    <atkrelation target="soundcombo0" type="controller-for"/>
-				  </accessibility>
 				</widget>
 				<packing>
 				  <property name="left_attach">0</property>
@@ -3073,7 +3070,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label99">
+				<widget class="GtkLabel" id="soundlabel6">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Game is _drawn:</property>
 				  <property name="use_underline">True</property>
@@ -3101,7 +3098,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label98">
+				<widget class="GtkLabel" id="soundlabel5">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Game is _lost:</property>
 				  <property name="use_underline">True</property>
@@ -3129,7 +3126,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label97">
+				<widget class="GtkLabel" id="soundlabel4">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Game is _won:</property>
 				  <property name="use_underline">True</property>
@@ -3157,7 +3154,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label116">
+				<widget class="GtkLabel" id="soundlabel2">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">A player c_aptures:</property>
 				  <property name="use_underline">True</property>
@@ -3200,7 +3197,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label120">
+				<widget class="GtkLabel" id="soundlabel3">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Game is _set-up:</property>
 				  <property name="use_underline">True</property>
@@ -3273,7 +3270,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label121">
+				<widget class="GtkLabel" id="soundlabel7">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">_Observed moves:</property>
 				  <property name="use_underline">True</property>
@@ -3301,7 +3298,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label122">
+				<widget class="GtkLabel" id="soundlabel8">
 				  <property name="visible">True</property>
 				  <property name="label" translatable="yes">Observed _ends:</property>
 				  <property name="use_underline">True</property>

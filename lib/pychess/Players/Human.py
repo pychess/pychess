@@ -10,7 +10,7 @@ from pychess.Utils.const import *
 class Human (Player):
     __type__ = LOCAL
     
-    def __init__ (self, board, color):
+    def __init__ (self, board, color, name):
         GObject.__init__(self)
         
         self.gamemodel = board.view.model
@@ -23,7 +23,7 @@ class Human (Player):
             board.connect("draw", lambda b: self.emit_action(DRAW_OFFER)),
             board.connect("resign", lambda b: self.emit_action(RESIGNATION))
         ]
-        self.name = "Human"
+        self.name = name
     
     def piece_moved (self, board, move):
         if self.gamemodel.boards[-1].color != self.color:
@@ -90,8 +90,6 @@ class Human (Player):
         self.name = name
     
     def __repr__ (self):
-        #TODO: Get name from preferences or accountname
-        #(probably preferences, as accountname would give problems in pvp games)
         return self.name
     
     def end (self, status, reason):
