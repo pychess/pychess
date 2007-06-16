@@ -170,7 +170,7 @@ IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING = range(6)
 HINT, SPY = ["hint", "spy"]
 
 # Sound settings
-MUTE, BEEP, SELECT, URI = range(4)
+SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 
 # Brush types. Send piece object for Piece brush
 CLEAR, ENPAS = range(2)

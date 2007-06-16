@@ -16,9 +16,9 @@ class Move:
         
         if not cord1:
             self.move = cord0
-            flag = self.move >> 12
-            if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            self.flag = self.move >> 12
+            if self.flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                             BISHOP_PROMOTION, KNIGHT_PROMOTION):
                 self.promotion = lmove.PROMOTE_PIECE (self.move)
             else: self.promotion = QUEEN
             self.cord0 = Cord(lmove.FCORD(self.move))
@@ -28,35 +28,34 @@ class Move:
             self.cord0 = cord0
             self.cord1 = cord1
             
-            flag = NORMAL_MOVE
+            self.flag = NORMAL_MOVE
             
             if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
                 if promotion == None: promotion = QUEEN
-                flag = FLAG_PIECE(promotion)
+                self.flag = FLAG_PIECE(promotion)
             
             elif board[self.cord0].piece == KING:
                 if self.cord0.x - self.cord1.x == 2:
-                    flag = QUEEN_CASTLE
+                    self.flag = QUEEN_CASTLE
                 elif self.cord0.x - self.cord1.x == -2:
-                    flag = KING_CASTLE
+                    self.flag = KING_CASTLE
             
             elif board[self.cord0].piece == PAWN and \
                     board[self.cord1] == None and \
                     self.cord0.x != self.cord1.x and \
                     self.cord0.y != self.cord1.y:
-                flag = ENPASSANT
+                self.flag = ENPASSANT
             
-            self.move = lmove.newMove(self.cord0.cord, self.cord1.cord, flag)
+            self.move = lmove.newMove(self.cord0.cord, self.cord1.cord, self.flag)
             
     def _get_cords (self):
         return (self.cord0, self.cord1)
     cords = property(_get_cords)
     
     def _get_promotion (self):
-        flag = lmove.FLAG(self.move)
-        if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                    BISHOP_PROMOTION, KNIGHT_PROMOTION):
-            return lmove.PROMOTE_PIECE(flag)
+        if self.flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
+                         BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            return lmove.PROMOTE_PIECE(self.flag)
         return None
     promotion = property(_get_promotion)
     

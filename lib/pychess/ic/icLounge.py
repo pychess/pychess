@@ -455,7 +455,7 @@ def initialize():
             black = Human(gmwidg.widgets["board"], BLACK)
         game.setPlayers((white,black))
         
-        gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+        gmwidg.setTabText("%s %s %s" % (board["wname"], _("vs"), board["wname"]))
         gmwidg.connect("closed", ionest.closeGame, game)
         if timemodel:
             gmwidg.widgets["ccalign"].show()
@@ -694,7 +694,7 @@ def initialize():
         game.setPlayers((white,black))
         
         gmwidg = gamewidget.GameWidget(game)
-        gmwidg.setTabText("%s vs %s" % (repr(white), repr(black)))
+        gmwidg.setTabText("%s %s %s" % (wname, _("vs"), bname))
         gmwidg.connect("closed", ionest.closeGame, game)
         
         if timemodel:
