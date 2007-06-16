@@ -220,7 +220,9 @@ def initialize(widgets):
                 combobox.set_active(myconf.get("soundcombo%d"%index))
             opendialog.hide()
     
-    for i in range (10):
+    COUNT_OF_SOUNDS = 9
+    
+    for i in range (COUNT_OF_SOUNDS):
         combo = widgets["soundcombo%d"%i]
         createCombo (combo, items)
         combo.set_active(2)
@@ -241,7 +243,7 @@ def initialize(widgets):
             uri = myconf.get("sounduri%d"%index)
             gstreamer.playSound(uri)
     
-    for i in range (10):
+    for i in range (COUNT_OF_SOUNDS):
         button = widgets["soundbutton%d"%i]
         button.connect("clicked", playCallback, i)
     
@@ -273,7 +275,7 @@ def initialize(widgets):
         "useSystemSounds"
     ]
     
-    easyWidgets += ["soundcombo%d"%i for i in range (10)]
+    easyWidgets += ["soundcombo%d" % i for i in xrange(COUNT_OF_SOUNDS)]
     
     for combo in ("ana_combobox", "inv_ana_combobox"):
 
