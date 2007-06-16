@@ -19,13 +19,13 @@ from threading import Condition
 import gtk, os, gobject, glob
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
-from pychess.System import glock
-from pychess.System import myconf
-from pychess.Utils.const import prefix
+from pychess.System import glock, myconf, gstreamer
+from pychess.Utils.const import prefix, SOUND_BEEP, SOUND_URI
 
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
+import preferencesDialog
 
 icons = gtk.icon_theme_get_default()
 try:
@@ -402,6 +402,17 @@ def attachGameWidget (gmwidg):
     
     headbook.set_current_page(-1)
     mainbook.set_current_page(-1)
+    
+    # Play set-up sound
+    if myconf.get("useSounds"):
+        no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
+        type = myconf.get("soundcombo%d" % no)
+        if type == SOUND_BEEP:
+            sys.stdout.write("\a")
+            sys.stdout.flush()
+        elif type == SOUND_URI:
+            uri = myconf.get("sounduri%d" % no)
+            gstreamer.playSound(uri)
 
 def cur_gmwidg ():
     headbook = getheadbook()
