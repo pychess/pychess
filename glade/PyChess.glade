@@ -2388,7 +2388,7 @@ Spanish (es) - 	Enrique</property>
 					  <child>
 					    <widget class="GtkLabel" id="label79">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">The analyzer will run in the background and analyze the game. &lt;b&gt;This is nessesary for the hint mode and the analyze panel to work&lt;/b&gt;</property>
+					      <property name="label" translatable="yes">The analyzer will run in the background and analyze the game. &lt;b&gt;This is nessesary for the hint mode to work&lt;/b&gt;</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">True</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2735,7 +2735,7 @@ Knights</property>
 			  <child>
 			    <widget class="GtkTable" id="table9">
 			      <property name="visible">True</property>
-			      <property name="n_rows">10</property>
+			      <property name="n_rows">11</property>
 			      <property name="n_columns">3</property>
 			      <property name="homogeneous">False</property>
 			      <property name="row_spacing">3</property>
@@ -2792,39 +2792,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkComboBox" id="soundcombo3">
-				  <property name="visible">True</property>
-				  <property name="add_tearoffs">False</property>
-				  <property name="focus_on_click">True</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">1</property>
-				  <property name="right_attach">2</property>
-				  <property name="top_attach">3</property>
-				  <property name="bottom_attach">4</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options">fill</property>
-				</packing>
-			      </child>
-
-			      <child>
 				<widget class="GtkComboBox" id="soundcombo4">
-				  <property name="visible">True</property>
-				  <property name="add_tearoffs">False</property>
-				  <property name="focus_on_click">True</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">1</property>
-				  <property name="right_attach">2</property>
-				  <property name="top_attach">4</property>
-				  <property name="bottom_attach">5</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options">fill</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkComboBox" id="soundcombo5">
 				  <property name="visible">True</property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
@@ -2840,7 +2808,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkComboBox" id="soundcombo6">
+				<widget class="GtkComboBox" id="soundcombo5">
 				  <property name="visible">True</property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
@@ -2856,7 +2824,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkComboBox" id="soundcombo7">
+				<widget class="GtkComboBox" id="soundcombo6">
 				  <property name="visible">True</property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
@@ -2866,38 +2834,6 @@ No sound</property>
 				  <property name="right_attach">2</property>
 				  <property name="top_attach">7</property>
 				  <property name="bottom_attach">8</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options">fill</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkComboBox" id="soundcombo8">
-				  <property name="visible">True</property>
-				  <property name="add_tearoffs">False</property>
-				  <property name="focus_on_click">True</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">1</property>
-				  <property name="right_attach">2</property>
-				  <property name="top_attach">8</property>
-				  <property name="bottom_attach">9</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options">fill</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkComboBox" id="soundcombo9">
-				  <property name="visible">True</property>
-				  <property name="add_tearoffs">False</property>
-				  <property name="focus_on_click">True</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">1</property>
-				  <property name="right_attach">2</property>
-				  <property name="top_attach">9</property>
-				  <property name="bottom_attach">10</property>
 				  <property name="x_options">fill</property>
 				  <property name="y_options">fill</property>
 				</packing>
@@ -2991,65 +2927,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkButton" id="soundbutton3">
-				  <property name="visible">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-
-				  <child>
-				    <widget class="GtkImage" id="image11">
-				      <property name="visible">True</property>
-				      <property name="stock">gtk-media-play</property>
-				      <property name="icon_size">4</property>
-				      <property name="xalign">0.5</property>
-				      <property name="yalign">0.5</property>
-				      <property name="xpad">0</property>
-				      <property name="ypad">0</property>
-				    </widget>
-				  </child>
-				</widget>
-				<packing>
-				  <property name="left_attach">2</property>
-				  <property name="right_attach">3</property>
-				  <property name="top_attach">3</property>
-				  <property name="bottom_attach">4</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
 				<widget class="GtkButton" id="soundbutton4">
-				  <property name="visible">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-
-				  <child>
-				    <widget class="GtkImage" id="image12">
-				      <property name="visible">True</property>
-				      <property name="stock">gtk-media-play</property>
-				      <property name="icon_size">4</property>
-				      <property name="xalign">0.5</property>
-				      <property name="yalign">0.5</property>
-				      <property name="xpad">0</property>
-				      <property name="ypad">0</property>
-				    </widget>
-				  </child>
-				</widget>
-				<packing>
-				  <property name="left_attach">2</property>
-				  <property name="right_attach">3</property>
-				  <property name="top_attach">4</property>
-				  <property name="bottom_attach">5</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkButton" id="soundbutton5">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -3078,7 +2956,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkButton" id="soundbutton6">
+				<widget class="GtkButton" id="soundbutton5">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -3107,7 +2985,7 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkButton" id="soundbutton7">
+				<widget class="GtkButton" id="soundbutton6">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
@@ -3136,67 +3014,9 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkButton" id="soundbutton8">
-				  <property name="visible">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-
-				  <child>
-				    <widget class="GtkImage" id="image16">
-				      <property name="visible">True</property>
-				      <property name="stock">gtk-media-play</property>
-				      <property name="icon_size">4</property>
-				      <property name="xalign">0.5</property>
-				      <property name="yalign">0.5</property>
-				      <property name="xpad">0</property>
-				      <property name="ypad">0</property>
-				    </widget>
-				  </child>
-				</widget>
-				<packing>
-				  <property name="left_attach">2</property>
-				  <property name="right_attach">3</property>
-				  <property name="top_attach">8</property>
-				  <property name="bottom_attach">9</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkButton" id="soundbutton9">
-				  <property name="visible">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="focus_on_click">True</property>
-
-				  <child>
-				    <widget class="GtkImage" id="image17">
-				      <property name="visible">True</property>
-				      <property name="stock">gtk-media-play</property>
-				      <property name="icon_size">4</property>
-				      <property name="xalign">0.5</property>
-				      <property name="yalign">0.5</property>
-				      <property name="xpad">0</property>
-				      <property name="ypad">0</property>
-				    </widget>
-				  </child>
-				</widget>
-				<packing>
-				  <property name="left_attach">2</property>
-				  <property name="right_attach">3</property>
-				  <property name="top_attach">9</property>
-				  <property name="bottom_attach">10</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
 				<widget class="GtkLabel" id="label103">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Opponent Moved</property>
+				  <property name="label" translatable="yes">A player _checks:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3224,7 +3044,7 @@ No sound</property>
 			      <child>
 				<widget class="GtkLabel" id="label115">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_You Moved</property>
+				  <property name="label" translatable="yes">A player _moves:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3238,6 +3058,9 @@ No sound</property>
 				  <property name="width_chars">-1</property>
 				  <property name="single_line_mode">False</property>
 				  <property name="angle">0</property>
+				  <accessibility>
+				    <atkrelation target="soundcombo0" type="controller-for"/>
+				  </accessibility>
 				</widget>
 				<packing>
 				  <property name="left_attach">0</property>
@@ -3250,65 +3073,9 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label101">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Observed Game _Ended</property>
-				  <property name="use_underline">True</property>
-				  <property name="use_markup">False</property>
-				  <property name="justify">GTK_JUSTIFY_LEFT</property>
-				  <property name="wrap">False</property>
-				  <property name="selectable">False</property>
-				  <property name="xalign">0</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-				  <property name="width_chars">-1</property>
-				  <property name="single_line_mode">False</property>
-				  <property name="angle">0</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">0</property>
-				  <property name="right_attach">1</property>
-				  <property name="top_attach">9</property>
-				  <property name="bottom_attach">10</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkLabel" id="label100">
-				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Game _Started</property>
-				  <property name="use_underline">True</property>
-				  <property name="use_markup">False</property>
-				  <property name="justify">GTK_JUSTIFY_LEFT</property>
-				  <property name="wrap">False</property>
-				  <property name="selectable">False</property>
-				  <property name="xalign">0</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-				  <property name="width_chars">-1</property>
-				  <property name="single_line_mode">False</property>
-				  <property name="angle">0</property>
-				</widget>
-				<packing>
-				  <property name="left_attach">0</property>
-				  <property name="right_attach">1</property>
-				  <property name="top_attach">8</property>
-				  <property name="bottom_attach">9</property>
-				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
-				</packing>
-			      </child>
-
-			      <child>
 				<widget class="GtkLabel" id="label99">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Game _Lost</property>
+				  <property name="label" translatable="yes">Game is _drawn:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3336,7 +3103,7 @@ No sound</property>
 			      <child>
 				<widget class="GtkLabel" id="label98">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Game _Won</property>
+				  <property name="label" translatable="yes">Game is _lost:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3364,7 +3131,7 @@ No sound</property>
 			      <child>
 				<widget class="GtkLabel" id="label97">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Time Running Out</property>
+				  <property name="label" translatable="yes">Game is _won:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3390,9 +3157,52 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label95">
+				<widget class="GtkLabel" id="label116">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Private Chat Message</property>
+				  <property name="label" translatable="yes">A player c_aptures:</property>
+				  <property name="use_underline">True</property>
+				  <property name="use_markup">False</property>
+				  <property name="justify">GTK_JUSTIFY_LEFT</property>
+				  <property name="wrap">False</property>
+				  <property name="selectable">False</property>
+				  <property name="xalign">0</property>
+				  <property name="yalign">0.5</property>
+				  <property name="xpad">0</property>
+				  <property name="ypad">0</property>
+				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+				  <property name="width_chars">-1</property>
+				  <property name="single_line_mode">False</property>
+				  <property name="angle">0</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">0</property>
+				  <property name="right_attach">1</property>
+				  <property name="top_attach">2</property>
+				  <property name="bottom_attach">3</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkHSeparator" id="hseparator2">
+				  <property name="visible">True</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">0</property>
+				  <property name="right_attach">3</property>
+				  <property name="top_attach">3</property>
+				  <property name="bottom_attach">4</property>
+				  <property name="y_padding">3</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options">fill</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkLabel" id="label120">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Game is _set-up:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3418,37 +3228,54 @@ No sound</property>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label94">
+				<widget class="GtkComboBox" id="soundcombo3">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Draw Offered to You</property>
-				  <property name="use_underline">True</property>
-				  <property name="use_markup">False</property>
-				  <property name="justify">GTK_JUSTIFY_LEFT</property>
-				  <property name="wrap">False</property>
-				  <property name="selectable">False</property>
-				  <property name="xalign">0</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-				  <property name="width_chars">-1</property>
-				  <property name="single_line_mode">False</property>
-				  <property name="angle">0</property>
+				  <property name="add_tearoffs">False</property>
+				  <property name="focus_on_click">True</property>
 				</widget>
 				<packing>
-				  <property name="left_attach">0</property>
-				  <property name="right_attach">1</property>
-				  <property name="top_attach">3</property>
-				  <property name="bottom_attach">4</property>
+				  <property name="left_attach">1</property>
+				  <property name="right_attach">2</property>
+				  <property name="top_attach">4</property>
+				  <property name="bottom_attach">5</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options">fill</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="soundbutton3">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+
+				  <child>
+				    <widget class="GtkImage" id="image1004">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-media-play</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="left_attach">2</property>
+				  <property name="right_attach">3</property>
+				  <property name="top_attach">4</property>
+				  <property name="bottom_attach">5</property>
 				  <property name="x_options">fill</property>
 				  <property name="y_options"></property>
 				</packing>
 			      </child>
 
 			      <child>
-				<widget class="GtkLabel" id="label116">
+				<widget class="GtkLabel" id="label121">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">_Observed Game Moved</property>
+				  <property name="label" translatable="yes">_Observed moves:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3466,10 +3293,142 @@ No sound</property>
 				<packing>
 				  <property name="left_attach">0</property>
 				  <property name="right_attach">1</property>
-				  <property name="top_attach">2</property>
-				  <property name="bottom_attach">3</property>
+				  <property name="top_attach">9</property>
+				  <property name="bottom_attach">10</property>
 				  <property name="x_options">fill</property>
 				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkLabel" id="label122">
+				  <property name="visible">True</property>
+				  <property name="label" translatable="yes">Observed _ends:</property>
+				  <property name="use_underline">True</property>
+				  <property name="use_markup">False</property>
+				  <property name="justify">GTK_JUSTIFY_LEFT</property>
+				  <property name="wrap">False</property>
+				  <property name="selectable">False</property>
+				  <property name="xalign">0</property>
+				  <property name="yalign">0.5</property>
+				  <property name="xpad">0</property>
+				  <property name="ypad">0</property>
+				  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+				  <property name="width_chars">-1</property>
+				  <property name="single_line_mode">False</property>
+				  <property name="angle">0</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">0</property>
+				  <property name="right_attach">1</property>
+				  <property name="top_attach">10</property>
+				  <property name="bottom_attach">11</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkComboBox" id="soundcombo7">
+				  <property name="visible">True</property>
+				  <property name="add_tearoffs">False</property>
+				  <property name="focus_on_click">True</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">1</property>
+				  <property name="right_attach">2</property>
+				  <property name="top_attach">9</property>
+				  <property name="bottom_attach">10</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options">fill</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkComboBox" id="soundcombo8">
+				  <property name="visible">True</property>
+				  <property name="add_tearoffs">False</property>
+				  <property name="focus_on_click">True</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">1</property>
+				  <property name="right_attach">2</property>
+				  <property name="top_attach">10</property>
+				  <property name="bottom_attach">11</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options">fill</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="soundbutton7">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+
+				  <child>
+				    <widget class="GtkImage" id="image1005">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-media-play</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="left_attach">2</property>
+				  <property name="right_attach">3</property>
+				  <property name="top_attach">9</property>
+				  <property name="bottom_attach">10</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkButton" id="soundbutton8">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="focus_on_click">True</property>
+
+				  <child>
+				    <widget class="GtkImage" id="image1006">
+				      <property name="visible">True</property>
+				      <property name="stock">gtk-media-play</property>
+				      <property name="icon_size">4</property>
+				      <property name="xalign">0.5</property>
+				      <property name="yalign">0.5</property>
+				      <property name="xpad">0</property>
+				      <property name="ypad">0</property>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="left_attach">2</property>
+				  <property name="right_attach">3</property>
+				  <property name="top_attach">10</property>
+				  <property name="bottom_attach">11</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkHSeparator" id="hseparator3">
+				  <property name="visible">True</property>
+				</widget>
+				<packing>
+				  <property name="left_attach">0</property>
+				  <property name="right_attach">3</property>
+				  <property name="top_attach">8</property>
+				  <property name="bottom_attach">9</property>
+				  <property name="y_padding">3</property>
+				  <property name="x_options">fill</property>
 				</packing>
 			      </child>
 			    </widget>
@@ -3480,7 +3439,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkLabel" id="label82">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Details&lt;/b&gt;</property>
+			  <property name="label" translatable="yes">&lt;b&gt;Play Sound When...&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
