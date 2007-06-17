@@ -303,18 +303,23 @@ class BoardView (gtk.DrawingArea):
             self._doStop = False
             return False
         
+        self.animationLock.acquire()
+        
+        paintBox = None
+        
         mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
         board = self.model.getBoardAtPly(self.shown)
         
-        paintBox = None
-        self.animationLock.acquire()
         for y, row in enumerate(board.data):
             for x, piece in enumerate(row):
                 if not piece: continue
                 
                 if piece.x != None:
-                    newx = piece.x + (x-piece.x)*mod
-                    newy = piece.y + (y-piece.y)*mod
+                    if not myconf.get("noAnimation"):
+                        newx = piece.x + (x-piece.x)*mod
+                        newy = piece.y + (y-piece.y)*mod
+                    else:
+                        newx, newy = x, y
                     
                     if not paintBox:
                         paintBox = self.cord2RectRelative(piece.x, piece.y)
@@ -338,12 +343,15 @@ class BoardView (gtk.DrawingArea):
                     else:
                         px = x
                         py = y
-                        
-                    if not paintBox:
-                        paintBox = self.cord2RectRelative(px, py)
-                    else: paintBox = join(paintBox, self.cord2RectRelative(px, py))
                     
-                    newOp = piece.opacity + (1-piece.opacity)*mod
+                    if paintBox:
+                        paintBox = join(paintBox,self.cord2RectRelative(px, py))
+                    else: paintBox = self.cord2RectRelative(px, py)
+                    
+                    if not myconf.get("noAnimation"):
+                        newOp = piece.opacity + (1-piece.opacity)*mod
+                    else:
+                        newOp = 1
                     
                     if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
                         piece.opacity = 1
@@ -355,7 +363,10 @@ class BoardView (gtk.DrawingArea):
                 paintBox = self.cord2RectRelative(x, y)
             else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
             
-            newOp = piece.opacity + (0-piece.opacity)*mod
+            if not myconf.get("noAnimation"):
+                newOp = piece.opacity + (0-piece.opacity)*mod
+            else:
+                newOp = 0
             
             if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
                 del self.deadlist[i]
@@ -370,8 +381,10 @@ class BoardView (gtk.DrawingArea):
                     paintBox = join(paintBox, self.cord2RectRelative(arrow[0]))
                     paintBox = join(paintBox, self.cord2RectRelative(arrow[1]))
             if self.lastMove:
-                paintBox = join(paintBox, self.cord2RectRelative(self.lastMove.cord0))
-                paintBox = join(paintBox, self.cord2RectRelative(self.lastMove.cord1))
+                paintBox = join(paintBox,
+                                self.cord2RectRelative(self.lastMove.cord0))
+                paintBox = join(paintBox,
+                                self.cord2RectRelative(self.lastMove.cord1))
         
         if paintBox:
             self.redraw_canvas(rect(paintBox))
@@ -942,25 +955,33 @@ class BoardView (gtk.DrawingArea):
     ################################
     
     def _set_rotation (self, radians):
-        if hasattr(self, "nextRotation") and self.nextRotation != self.rotation:
-            return
-        self.nextRotation = radians
-        oldr = self.rotation
-        start = time()
-        def callback ():
+        if not myconf.get("fullAnimation"):
             glock.acquire()
-            amount = (time()-start)/ANIMATION_TIME
-            if amount > 1:
-                amount = 1
-                next = False
-            else: next = True
-            
-            self._rotation = new = oldr + amount*(radians-oldr)
-            self.matrix = cairo.Matrix.init_rotate(new)
+            self._rotation = radians
+            self.nextRotation = radians
+            self.matrix = cairo.Matrix.init_rotate(radians)
             self.redraw_canvas()
             glock.release()
-            return next
-        repeat(callback)
+        else:
+            if hasattr(self, "nextRotation") and \
+                    self.nextRotation != self.rotation:
+                return
+            self.nextRotation = radians
+            oldr = self.rotation
+            start = time()
+            def callback ():
+                glock.acquire()
+                amount = (time()-start)/ANIMATION_TIME
+                if amount > 1:
+                    amount = 1
+                    next = False
+                else: next = True
+                self._rotation = new = oldr + amount*(radians-oldr)
+                self.matrix = cairo.Matrix.init_rotate(new)
+                self.redraw_canvas()
+                glock.release()
+                return next
+            repeat(callback)
     
     def _get_rotation (self):
         return self._rotation
