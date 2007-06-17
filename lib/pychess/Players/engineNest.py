@@ -109,10 +109,10 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.join(dir, binname)
                 if os.path.isfile(path):
                     if not os.access (path, os.R_OK):
-                        log.warn("Warning: Could not read", path)
+                        log.warn("Could not read the file %s" % path)
                         continue
                     if not os.access (path, os.EX_OK):
-                        log.warn("Warning: Could not execute", path)
+                        log.warn("Could not execute the file %s" % path)
                         continue
                     return path, path
         return False

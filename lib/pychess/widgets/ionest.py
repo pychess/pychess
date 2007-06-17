@@ -8,7 +8,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.System import glock
 from pychess.System.Log import log
-from pychess.System import myconf
+from pychess.System import myconf, uistuff
 from pychess.System.protoopen import protosave, isWriteable
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
@@ -300,29 +300,11 @@ def ensureNewGameDialogReady ():
         return
     isNewGameDialogReady = True
     
-    def createCombo (combo, data):
-        ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-        for icon, label in data:
-            ls.append([icon, label])
-        combo.clear()
-        
-        combo.set_model(ls)
-        crp = gtk.CellRendererPixbuf()
-        crp.set_property('xalign',0)
-        combo.pack_start(crp, False)
-        combo.add_attribute(crp, 'pixbuf', 0)
-        
-        crt = gtk.CellRendererText()
-        crt.set_property('xalign',0)
-        combo.pack_start(crt, True)
-        combo.add_attribute(crt, 'text', 1)
-        crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
-    
     for combo in (widgets["whiteDifficulty"], widgets["blackDifficulty"]):
-        createCombo(combo, [i[:2] for i in difItems])
+        uistuff.createCombo(combo, [i[:2] for i in difItems])
     
     for combo in (widgets["whitePlayerCombobox"], widgets["blackPlayerCombobox"]):
-        createCombo(combo, [i[:2] for i in playerItems])
+        uistuff.createCombo(combo, [i[:2] for i in playerItems])
     
     def on_useTimeCB_clicked (widget):
         widgets["table6"].set_sensitive(widget.get_active())

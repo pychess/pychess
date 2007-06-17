@@ -5,6 +5,40 @@
 #                                                                              #
 ################################################################################
 
+#------------------------------------------------------------------------------#
+#                                                                              #
+# mainbook(Notebook)                                                           #
+#                                                                              #
+#------------------------------------------------------------------------------#
+#                                                                              #
+# mvbox(VBox)                                                                  #
+#                                                                              #
+#---------------------------------------#--------------------------------------#
+#                                       #                                      #
+# Alignment                             # HBox                                 #
+#                                       #                                      #
+#---------------------------------------#-------------------#------------------#
+#                                       #                   #                  #
+# HBox                                  # VBox              # Statusbar        #
+#                                       #                   #                  #
+#-------------------#-------------------#---------#---------#------------------#
+#                   #                   #         #         #
+# lvbox(VBox)       # rvbox(VBox)       # HSepera # HBox    #
+#                   #                   #         #         #
+#---------#---------#---------#---------#---------#---------#
+#         #         #         #         #         #         #
+# Alignme # BoardCo # Alignme # Noteboo #         # buttons #
+#         #         #         #         #         #         #
+#---------#---------#---------#---------#         #---------#
+#         #         #         #         #
+# ChessCl # BoardVi # HBox    # Panels  #
+#         #         #         #         #
+#---------#---------#----#----#---------#
+                    #pane#clos#
+                    #comb#butt#
+                    #obox#on  #
+                    #----#----#
+
 ################################################################################
 # Initialize general variables and functions                                   #
 ################################################################################
@@ -21,11 +55,9 @@ from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System import glock, myconf, gstreamer
 from pychess.Utils.const import prefix, SOUND_BEEP, SOUND_URI
-
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox
-import preferencesDialog
 
 icons = gtk.icon_theme_get_default()
 try:
@@ -253,7 +285,7 @@ class GameWidget (gobject.GObject):
                 start = num
         
         toggle_combox.connect("changed",
-                lambda w,i: side_book.set_current_page(i))
+                lambda w, oldactive: side_book.set_current_page(w.active))
         side_book.set_current_page(start)
         toggle_combox.active = start
         
@@ -402,17 +434,6 @@ def attachGameWidget (gmwidg):
     
     headbook.set_current_page(-1)
     mainbook.set_current_page(-1)
-    
-    # Play set-up sound
-    if myconf.get("useSounds"):
-        no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
-        type = myconf.get("soundcombo%d" % no)
-        if type == SOUND_BEEP:
-            sys.stdout.write("\a")
-            sys.stdout.flush()
-        elif type == SOUND_URI:
-            uri = myconf.get("sounduri%d" % no)
-            gstreamer.playSound(uri)
 
 def cur_gmwidg ():
     headbook = getheadbook()
