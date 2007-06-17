@@ -174,6 +174,7 @@ class GladeHandlers:
                 DRAW: _("The game ended in a draw"),
                 WHITEWON: _("White player won the game"),
                 BLACKWON: _("Black player won the game"),
+                KILLED: _("The game has been killed"),
                 ADJOURNED: _("The game has been adjourned"),
                 ABORTED: _("The game has been aborted"),
                 KILLED: _("The game has been killed")
