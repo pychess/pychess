@@ -448,11 +448,11 @@ def initialize():
         gmwidg = gamewidget.GameWidget(game)
         
         if color == WHITE:
-            white = Human(gmwidg.widgets["board"], WHITE)
+            white = Human(gmwidg.widgets["board"], WHITE, '')
             black = blackp
         else:
             white = whitep
-            black = Human(gmwidg.widgets["board"], BLACK)
+            black = Human(gmwidg.widgets["board"], BLACK, '')
         game.setPlayers((white,black))
         
         gmwidg.setTabText("%s %s %s" % (board["wname"], _("vs"), board["wname"]))
