@@ -5,16 +5,15 @@ import math
 import atexit
 from threading import currentThread, _MainThread
 
-from pychess.System import myconf
+from pychess.System import myconf, gstreamer
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.System.Log import log
-from pychess.widgets import tipOfTheDay
-from pychess.widgets import LogDialog
-from pychess.widgets import gamewidget
-from pychess.widgets import ionest
-from pychess.widgets.Background import TaskerManager, NewGameTasker, InternetGameTasker
+
+from pychess.widgets import tipOfTheDay, LogDialog, gamewidget, ionest
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
+from pychess.widgets.Background import TaskerManager, NewGameTasker
+from pychess.widgets.Background import InternetGameTasker
 from pychess.ic import icLogOn
 
 ################################################################################
@@ -111,6 +110,10 @@ class GladeHandlers:
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
     def on_game_started (handler, gmwidg, gamemodel):
+        
+        gameDic[gmwidg] = gamemodel
+        
+        # Make sure game dependent menu entries are sensitive
         for widget in ("save_game1", "save_game_as1", "properties1", "close1",
                        "call_flag", "draw", "resign", "force_to_move",
                        "rotate_board1", "side_panel1", "hint_mode", "spy_mode"):
@@ -123,14 +126,31 @@ class GladeHandlers:
         # Bring playing window to the front
         window["window1"].present()
         
+        # Play set-up sound
+        if myconf.get("useSounds"):
+            no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
+            type = myconf.get("soundcombo%d" % no)
+            if type == SOUND_BEEP:
+                sys.stdout.write("\a")
+                sys.stdout.flush()
+            elif type == SOUND_URI:
+                uri = myconf.get("sounduri%d" % no)
+                gstreamer.playSound(uri)
+        
+        # Rotate to human player
+        if myconf.get("autoRotate"):
+            boardview = gmwidg.widgets["board"].view
+            if boardview.model.players[1].__type__ == LOCAL and \
+                    boardview.model.players[0].__type__ != LOCAL:
+                boardview.rotation = math.pi
+        
+        # Connect stuff
         gmwidg.widgets["sidepanel"].connect("hide", \
             lambda w: window["side_panel1"].set_active(False))
         
         if gamemodel.timemodel != None:
             gmwidg.widgets["ccalign"].show()
         else: gmwidg.widgets["ccalign"].hide()
-        
-        gameDic[gmwidg] = gamemodel
         
         for player in gamemodel.players:
             player.connect("dead", engineDead, gmwidg)
@@ -267,7 +287,7 @@ class GladeHandlers:
     
     def on_rotate_board1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].view.rotation += math.pi/4.
+        gmwidg.widgets["board"].view.rotation += math.pi
     
     def on_side_panel1_activate (widget):
         gamewidget.show_side_panel(widget.get_active())
@@ -337,7 +357,6 @@ class GladeHandlers:
             game, gmwidg = ionest.createGame (0, opponent, 0, difficulty)
         else:
             game, gmwidg = ionest.createGame (opponent, 0, difficulty, 0)
-            gmwidg.widgets["board"].view.rotation = math.pi
         ionest.simpleNewGame (game, gmwidg)
 
 TARGET_TYPE_URI_LIST = 80

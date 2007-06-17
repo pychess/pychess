@@ -1,10 +1,14 @@
-import gtk, cairo, pango
+
 from os import path, mkdir
-from pychess.Utils.const import prefix
 from array import array
 import math
-from ToggleComboBox import ToggleComboBox
+
+import gtk, cairo, pango
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+
+from pychess.Utils.const import prefix
+from pychess.System import uistuff
+from ToggleComboBox import ToggleComboBox
 import ionest
 
 class TaskerManager (gtk.Table):
@@ -236,6 +240,7 @@ class NewGameTasker (gtk.HBox):
         combo.addItem(_("White"), "stock_draw-rounded-square-unfilled")
         combo.addItem(_("Black"), "stock_draw-rounded-square")
         combo.setMarkup("<b>", "</b>")
+        uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
         table.attach(combo, 1, 2, 0, 1)
         # Seccond row
         label = gtk.Label(_("Opponent")+":")
@@ -248,6 +253,7 @@ class NewGameTasker (gtk.HBox):
         combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
         combo.active = 1
+        uistuff.keep(self.playerCombo, "newgametasker_playercombo")
         table.attach(combo, 1, 2, 1, 2)
         # Third row
         label = gtk.Label(_("Difficulty")+":")
@@ -258,10 +264,11 @@ class NewGameTasker (gtk.HBox):
         for image, name, stock in ionest.difItems:
             combo.addItem(name, stock)
         combo.setMarkup("<b>", "</b>")
-        def func (playerCombo, active):
-            self.difCombo.set_sensitive(active > 0)
+        def func (playerCombo, oldactive):
+            self.difCombo.set_sensitive(playerCombo.active > 0)
         self.playerCombo.connect("changed", func)
         func(self.playerCombo, self.playerCombo.active)
+        uistuff.keep(self.difCombo, "newgametasker_difcombo")
         table.attach(combo, 1, 2, 2, 3)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
