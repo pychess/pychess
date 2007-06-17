@@ -177,7 +177,6 @@ class GladeHandlers:
                 KILLED: _("The game has been killed"),
                 ADJOURNED: _("The game has been adjourned"),
                 ABORTED: _("The game has been aborted"),
-                KILLED: _("The game has been killed")
             }[gamemodel.status]
             m2 = {
                 DRAW_INSUFFICIENT: _("caused by insufficient material"),
