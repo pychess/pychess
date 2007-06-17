@@ -433,37 +433,29 @@ def initialize():
         
         timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
         game = IcGameModel (bm, board["gameno"], timemodel)
+        gmwidg = gamewidget.GameWidget(game)
         
         if board["wname"].lower() == telnet.curname.lower():
             color = WHITE
-            blackp = ServerPlayer (
+            white = Human(gmwidg.widgets["board"], WHITE, board["wname"])
+            black = ServerPlayer (
                 bm, om, board["bname"], False, board["gameno"], BLACK)
         else:
             color = BLACK
-            # We want to create the players as quick as possible, so they can
-            # start handling moves sent by quick opponents
-            whitep = ServerPlayer (
+            black = Human(gmwidg.widgets["board"], BLACK, board["bname"])
+            white = ServerPlayer (
                 bm, om, board["wname"], False, board["gameno"], WHITE)
         
-        gmwidg = gamewidget.GameWidget(game)
-        
-        if color == WHITE:
-            white = Human(gmwidg.widgets["board"], WHITE, '')
-            black = blackp
-        else:
-            white = whitep
-            black = Human(gmwidg.widgets["board"], BLACK, '')
         game.setPlayers((white,black))
         
-        gmwidg.setTabText("%s %s %s" % (board["wname"], _("vs"), board["wname"]))
+        gmwidg.setTabText("%s %s %s" % (repr(white), _("vs"), repr(black)))
         gmwidg.connect("closed", ionest.closeGame, game)
         if timemodel:
             gmwidg.widgets["ccalign"].show()
             gmwidg.widgets["cclock"].setModel(timemodel)
         
-        ionest.simpleNewGame (game, gmwidg)
-        
         glock.acquire()
+        ionest.simpleNewGame (game, gmwidg)
         gamewidget.attachGameWidget (gmwidg)
         glock.release()
     
