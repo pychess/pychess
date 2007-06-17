@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import sys
-from math import floor, ceil, pi, acos
+from math import floor, ceil, pi
 from time import time, sleep
 from threading import Lock, RLock
 
@@ -76,6 +76,10 @@ def matrixAround (rotatedMatrix, anchorX, anchorY):
 
 ANIMATION_TIME = .5
 
+# If this is true, the board is scaled so that everything fits inside the window
+# even if the board is rotated 45 degrees
+SCALE_ROTATED_BOARD = False
+
 class BoardView (gtk.DrawingArea):
     
     __gsignals__ = {
@@ -131,8 +135,9 @@ class BoardView (gtk.DrawingArea):
         self.rotationLock = Lock()
     
     def game_changed (self, model):
+        
+        # Play sounds
         if myconf.get("useSounds"):
-            
             move = model.moves[-1]
             if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
                 sound = "aPlayerCaptures"
@@ -147,11 +152,16 @@ class BoardView (gtk.DrawingArea):
             
             preferencesDialog.SoundTab.playAction(sound)
         
-        # Updating can be disabled. Useful for loading games.
+        # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
         if self.autoUpdateShown and self.shown+1 >= model.ply:
             self.shown = model.ply
+        
+        # Rotate board
+        if myconf.get("autoRotate"):
+            if self.model.curplayer.__type__ == LOCAL:
+                self.rotation = self.model.boards[-1].color * pi
     
     def move_undone (self, model):
         self.shown = model.ply-1
@@ -471,7 +481,8 @@ class BoardView (gtk.DrawingArea):
         context.transform(self.matrix)
         
         square = float(min(alloc.width, alloc.height))*(1-self.padding)
-        square /= abs(cos_)+abs(sin_)
+        if SCALE_ROTATED_BOARD:
+            square /= abs(cos_)+abs(sin_)
         xc = alloc.width/2. - square/2
         yc = alloc.height/2. - square/2
         s = square/8

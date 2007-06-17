@@ -2,8 +2,7 @@ import sys, os
 
 import gtk, gobject
 
-from pychess.System import myconf
-from pychess.System import gstreamer
+from pychess.System import myconf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
 
@@ -29,57 +28,6 @@ def initialize(widgets):
     widgets["preferences_close_button"].connect("clicked", delete_event)
 
 ################################################################################
-# Gui functions                                                                #
-################################################################################
-
-def createCombo (combo, data):
-    ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-    for icon, label in data:
-        ls.append([icon, label])
-    combo.clear()
-    
-    combo.set_model(ls)
-    crp = gtk.CellRendererPixbuf()
-    crp.set_property('xalign',0)
-    crp.set_property('xpad', 2)
-    combo.pack_start(crp, False)
-    combo.add_attribute(crp, 'pixbuf', 0)
-    
-    crt = gtk.CellRendererText()
-    crt.set_property('xalign',0)
-    crt.set_property('xpad', 4)
-    combo.pack_start(crt, True)
-    combo.add_attribute(crt, 'text', 1)
-
-methodDict = {
-    gtk.CheckButton: ("get_active", "set_active", "toggled"),
-    gtk.Entry: ("get_text", "set_text", "changed"),
-    gtk.ComboBox: ("get_active", "set_active", "changed"),
-    gtk.RadioButton: ("get_active", "set_active", "toggled")
-}
-
-def keep (widgets, key, get_value_=None, set_value_=None):
-    widget = widgets[key]
-    if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % key
-    
-    if get_value_:
-        get_value = lambda: get_value_(widget)
-    else:
-        get_value = getattr(widget, methodDict[type(widget)][0])
-    
-    if set_value_:
-        set_value = lambda v: set_value_(widget, v)
-    else:
-        set_value = getattr(widget, methodDict[type(widget)][1])
-    
-    set_value(myconf.get(key))
-    
-    signal = methodDict[type(widget)][2]
-    widget.connect(signal, lambda *args: myconf.set(key, get_value()))
-    myconf.notify_add(key, lambda *args: set_value(myconf.get(key)))
-
-################################################################################
 # General initing                                                              #
 ################################################################################
 
@@ -100,12 +48,12 @@ class GeneralTab:
         if not secondName:
             myconf.set("secondName", _("Guest"))
         
-        # Give to keeper
+        # Give to uistuff.keeper
         
         for key in ("firstName", "secondName",
                     "hideTabs", "autoRotate", "showCords", "figuresInNotation",  
                     "fullAnimation", "moveAnimation", "noAnimation"):
-            keep(widgets, key)
+            uistuff.keep(widgets[key], key)
 
 ################################################################################
 # Engine initing                                                               #
@@ -147,8 +95,8 @@ class EngineTab:
             ana_data.append((flag_icon, name))
             invana_data.append((flag_icon, name))
         
-        createCombo(widgets["ana_combobox"], ana_data)
-        createCombo(widgets["inv_ana_combobox"], invana_data)
+        uistuff.createCombo(widgets["ana_combobox"], ana_data)
+        uistuff.createCombo(widgets["inv_ana_combobox"], invana_data)
         
         # Save, load and make analyze combos active
     
@@ -227,7 +175,7 @@ class EngineTab:
                     index = discoverer.getAnalyzers().index(engine)
                     combobox.set_active(index)
             
-            keep (widgets, combo, get_value, set_value)
+            uistuff.keep (widgets[combo], combo, get_value, set_value)
         
 ################################################################################
 # Sound initing                                                                #
@@ -321,7 +269,7 @@ class SoundTab:
         
         for i in xrange(self.COUNT_OF_SOUNDS):
             combo = widgets["soundcombo%d"%i]
-            createCombo (combo, items)
+            uistuff.createCombo (combo, items)
             combo.set_active(2)
             combo.connect("changed", callback, i)
             
@@ -358,6 +306,6 @@ class SoundTab:
         
         # Give widgets to auto connecter
         
-        keep(widgets, "useSounds")
+        uistuff.keep(widgets["useSounds"], "useSounds")
         for i in xrange(self.COUNT_OF_SOUNDS):
-            keep(widgets, "soundcombo%d" % i)
+            uistuff.keep(widgets["soundcombo%d" % i], "soundcombo%d" % i)

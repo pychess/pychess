@@ -60,6 +60,8 @@ def newMessage (task, message, type):
         task2book[task] = textbuffer
     else: textbuffer = task2book[task]
     
+    if not message[-1] == "\n":
+        message += "\n"
     textbuffer.insert_with_tags_by_name(
             textbuffer.get_end_iter(), message, str(type))
 
@@ -70,7 +72,7 @@ def newMessage (task, message, type):
 def addMessages (messages):
     for task, message, type in messages:
         newMessage (task, message, type)
-    
+
 glock.acquire()
 addMessages(log.messages)
 glock.release()
