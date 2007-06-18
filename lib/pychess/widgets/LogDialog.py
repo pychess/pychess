@@ -60,7 +60,7 @@ def newMessage (task, message, type):
         task2book[task] = textbuffer
     else: textbuffer = task2book[task]
     
-    if not message[-1] == "\n":
+    if not message.endswith("\n"):
         message += "\n"
     textbuffer.insert_with_tags_by_name(
             textbuffer.get_end_iter(), message, str(type))
