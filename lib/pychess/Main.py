@@ -129,11 +129,11 @@ class GladeHandlers:
         # Play set-up sound
         if myconf.get("useSounds"):
             no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
-            type = myconf.get("soundcombo%d" % no)
-            if type == SOUND_BEEP:
+            soundtype = myconf.get("soundcombo%d" % no)
+            if soundtype == SOUND_BEEP:
                 sys.stdout.write("\a")
                 sys.stdout.flush()
-            elif type == SOUND_URI:
+            elif soundtype == SOUND_URI:
                 uri = myconf.get("sounduri%d" % no)
                 gstreamer.playSound(uri)
         
