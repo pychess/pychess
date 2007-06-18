@@ -91,20 +91,15 @@ class VerboseTelnet (Telnet, GObject):
     
     def interrupt (self):
         if self.sock:
-            self.sock.shutdown(socket.SHUT_RDWR)
-            self.sock.close()
+            try:
+                self.sock.shutdown(socket.SHUT_RDWR)
+                self.sock.close()
+            except socket.error:
+                pass
         else:
             self.interrupting = True
 
 from pychess.Utils.const import IC_CONNECTED, IC_DISCONNECTED
-
-#f = open("/home/thomas/ficslog", "w")
-#import sys
-#def log2 (data, header=None):
-    #sys.stdout.write(data)
-    #sys.stdout.flush()
-    #f.write(data.replace("\r",""))
-    #f.flush()
 
 client = None
 connected = False
