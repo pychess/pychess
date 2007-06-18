@@ -282,6 +282,9 @@ class SoundTab:
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
         
+        for i in xrange(self.COUNT_OF_SOUNDS):
+            uistuff.keep(widgets["soundcombo%d" % i], "soundcombo%d" % i)
+        
         # Init play button
         
         def playCallback (button, index):
@@ -303,9 +306,5 @@ class SoundTab:
             checkbox = widgets["useSounds"]
             widgets["frame23"].set_property("sensitive", checkbox.get_active())
         myconf.notify_add("useSounds", checkCallBack)
-        
-        # Give widgets to auto connecter
-        
         uistuff.keep(widgets["useSounds"], "useSounds")
-        for i in xrange(self.COUNT_OF_SOUNDS):
-            uistuff.keep(widgets["soundcombo%d" % i], "soundcombo%d" % i)
+        checkCallBack()
