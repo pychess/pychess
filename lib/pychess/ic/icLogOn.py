@@ -1,14 +1,15 @@
+from socket import SHUT_RDWR
+import webbrowser
+
 import gtk, gobject, sys
 
-from pychess.System import myconf
-from pychess.System import gstreamer
+from pychess.System.ThreadPool import pool
+from pychess.System import myconf, gstreamer, uistuff
 from pychess.Utils.const import *
 
 import telnet
 from telnet import LogOnError, InterruptError
-import thread
 import icLounge
-from socket import SHUT_RDWR
 
 firstRun = True
 def run():
@@ -56,7 +57,7 @@ def on_connectButton_clicked (button):
     global pulser
     pulser = gobject.timeout_add(30, callback)
     
-    thread.start_new(doConnect, (username, password))
+    pool.start(doConnect, username, password)
 
 def doConnect (username, password):
     def error (title, text):
@@ -87,18 +88,13 @@ def doConnect (username, password):
         telnet.client = None
         gobject.idle_add(error, _("Connection was closed"), str(e))
 
-def cancel (hide=False):
+def cancel ():
     if telnet.client:
         telnet.client.interrupt()
         widgets["mainvbox"].set_sensitive(True)
         widgets["connectButton"].set_sensitive(True)
-        if hide:
-            widgets["fics_logon"].hide()
-            return True
-    else:
-        widgets["fics_logon"].hide()
-        if hide:
-            return True
+    widgets["fics_logon"].hide()
+    return True
 
 firstDraw = True
 
@@ -115,11 +111,15 @@ def initialize():
     def on_logOnAsGuest_toggled (check):
         widgets["logOnTable"].set_sensitive(not check.get_active())
     widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
+    uistuff.keep(widgets["logOnAsGuest"], "logOnAsGuest")
     
     widgets["cancelButton"].connect("clicked", lambda b: cancel())
     widgets["fics_logon"].connect("delete-event", lambda w, e: cancel(True))
-    
+    widgets["createNewButton"].connect("clicked",
+        lambda *a: webbrowser.open("http://freechess.org/Register/index.html"))
     widgets["connectButton"].connect("clicked", on_connectButton_clicked)
+    
+    # Init yellow error box
     
     tooltip = gtk.Tooltips()
     tooltip.force_window()
@@ -137,46 +137,3 @@ def initialize():
             firstDraw = False
             widget.queue_draw()
     widgets["messagePanel"].connect("expose-event", on_messagePanel_expose_event)
-    
-    ############################################################################
-    # Easy initing                                                             #
-    ############################################################################
-    
-    methodDict = {
-        gtk.CheckButton: ("get_active", "set_active", "toggled"),
-        gtk.Entry: ("get_text", "set_text", "changed"),
-        gtk.ComboBox: ("get_active", "set_active", "changed")
-    }
-    
-    easyWidgets = [
-        "logOnAsGuest"
-    ]
-    
-    class ConnectionKeeper:
-        """ This class takes care of easy connecting gconf and widgets.
-            In a future cleanup this should probably be put somewhere more
-            general """
-        
-        def __init__ (self, key):
-            
-            if type(key) in (tuple, list):
-                self.key, get_value, set_value = key
-                self.widget = widget = widgets[self.key]
-                self.get_value = lambda: get_value(self.widget)
-                self.set_value = lambda v: set_value(self.widget, v)
-            else:
-                self.key = key
-                self.widget = widget = widgets[self.key]
-                self.get_value = getattr(widget, methodDict[type(widget)][0])
-                self.set_value = getattr(widget, methodDict[type(widget)][1])
-            
-            self.signal = methodDict[type(widget)][2]
-            
-            self.set_value(myconf.get(self.key))
-            widget.connect(self.signal,
-                lambda *args: myconf.set(self.key, self.get_value()))
-            myconf.notify_add(self.key,
-                lambda *args: self.set_value(myconf.get(self.key)))
-    
-    for key in easyWidgets:
-        ConnectionKeeper(key)
