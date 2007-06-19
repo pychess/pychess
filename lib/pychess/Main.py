@@ -385,7 +385,9 @@ class PyChess:
         self.widgets = gtk.glade.XML(prefix("glade/PyChess.glade"))
         
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
-        self["window1"].show_all()
+        
+        self["window1"].show()
+        self["Background"].show_all()
         
         makeLogDialogReady()
         makeAboutDialogReady()

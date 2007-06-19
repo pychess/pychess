@@ -24,8 +24,11 @@ def createCombo (combo, data):
     combo.add_attribute(crt, 'text', 1)
     crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
 
+
+
 methodDict = {
     gtk.Entry: ("get_text", "set_text", "changed"),
+    gtk.Expander: ("get_expanded", "set_expanded", "notify::expanded"),
     gtk.CheckButton: ("get_active", "set_active", "toggled"),
     gtk.RadioButton: ("get_active", "set_active", "toggled"),
     gtk.ComboBox: ("get_active", "set_active", "changed"),
@@ -51,3 +54,21 @@ def keep (widget, key, get_value_=None, set_value_=None):
     signal = methodDict[type(widget)][2]
     widget.connect(signal, lambda *args: myconf.set(key, get_value()))
     myconf.notify_add(key, lambda *args: set_value(myconf.get(key)))
+
+
+
+tooltip = gtk.Tooltips()
+tooltip.force_window()
+tooltip.tip_window.ensure_style()
+tooltipStyle = tooltip.tip_window.get_style()
+def makeYellow (box):
+    box.set_style(tooltipStyle)
+    def on_box_expose_event (box, event):
+        allocation = box.allocation
+        box.style.paint_flat_box (box.window,
+            gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
+            allocation.x, allocation.y, allocation.width, allocation.height)
+        if not hasattr(box, "hasHadFirstDraw") or not box.hasHadFirstDraw:
+            box.queue_draw()
+            box.hasHadFirstDraw = True
+    box.connect("expose-event", on_box_expose_event)

@@ -11,7 +11,7 @@ import gtk, pango, re
 from gtk import gdk
 from gtk.gdk import pixbuf_new_from_file
 
-from pychess.System import glock
+from pychess.System import glock, uistuff
 from pychess.System.GtkWorker import EmitPublisher, Publisher
 from pychess.System.ping import Pinger
 from pychess.widgets import ionest
@@ -70,6 +70,13 @@ def initialize():
     nm = NewsManager()
     bm = BoardManager()
     om = OfferManager()
+    
+    uistuff.makeYellow(widgets["cautionBox"])
+    uistuff.makeYellow(widgets["cautionHeader"])
+    def on_learn_more_clicked (button, *args):
+        retur = widgets["ficsCautionDialog"].run()
+        widgets["ficsCautionDialog"].hide()
+    widgets["caution_learn_more"].connect("clicked", on_learn_more_clicked)
     
     ############################################################################
     # Initialize User Information Section                                      #
@@ -745,6 +752,8 @@ def initialize():
     
     if not telnet.registered:
         widgets["ratedGameCheck"].hide()
+    
+    uistuff.keep(widgets["seekExpander"], "seekExpander")
     
     liststore = gtk.ListStore(str, str)
     liststore.append(["0 → 1300", _("Easy")])

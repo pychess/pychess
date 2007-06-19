@@ -6,10 +6,7 @@ import gtk, gobject, sys
 from pychess.System.ThreadPool import pool
 from pychess.System import myconf, gstreamer, uistuff
 from pychess.Utils.const import *
-
-import telnet
-from telnet import LogOnError, InterruptError
-import icLounge
+import telnet, icLounge
 
 firstRun = True
 def run():
@@ -78,10 +75,10 @@ def doConnect (username, password):
     except IOError, e:
         telnet.client = None
         gobject.idle_add(error, _("Connection Error"), str(e))
-    except LogOnError, e:
+    except telnet.LogOnError, e:
         telnet.client = None
         gobject.idle_add(error, _("Log on Error"), str(e))
-    except InterruptError, e:
+    except telnet.InterruptError, e:
         telnet.client = None
         gobject.idle_add(error, _("Connection was broken"), str(e))
     except EOFError, e:
@@ -121,19 +118,4 @@ def initialize():
     
     # Init yellow error box
     
-    tooltip = gtk.Tooltips()
-    tooltip.force_window()
-    tooltip.tip_window.ensure_style()
-    tooltipStyle = tooltip.tip_window.get_style()
-    widgets["messagePanel"].set_style(tooltipStyle)
-    
-    def on_messagePanel_expose_event (widget, event):
-        allocation = widget.allocation
-        widget.style.paint_flat_box (widget.window,
-            gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, widget, "tooltip",
-            allocation.x, allocation.y, allocation.width, allocation.height)
-        global firstDraw
-        if firstDraw:
-            firstDraw = False
-            widget.queue_draw()
-    widgets["messagePanel"].connect("expose-event", on_messagePanel_expose_event)
+    uistuff.makeYellow(widgets["messagePanel"])
