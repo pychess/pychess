@@ -117,7 +117,6 @@
 
 		  <child>
 		    <widget class="GtkMenuItem" id="set_up_position1">
-		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Set up Position</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_set_up_position_activate" last_modification_time="Sat, 06 Jan 2007 14:08:19 GMT"/>
@@ -203,7 +202,6 @@
 
 		  <child>
 		    <widget class="GtkMenuItem" id="player_rating1">
-		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Player _Rating</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_player_rating1_activate" last_modification_time="Tue, 12 Jun 2007 10:53:46 GMT"/>

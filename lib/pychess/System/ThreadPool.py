@@ -50,6 +50,11 @@ class ThreadPool:
                     try:
                         self.func()
                     except:
+                        if not globals:
+                            # If python has been shut down while we were executing
+                            # We better stop running
+                            return
+                        
                         if glock._rlock._RLock__owner == self:
                             # As a service we take care of releasing the gdk
                             # lock when a thread breaks to avoid freezes
