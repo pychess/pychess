@@ -49,12 +49,12 @@ class Player (GObject):
     
     def pause (self):
         """ Should stop the player from thinking until resume is called """
-        raise NotImplementedError #Optional
+        abstract
         
     def resume (self):
         """ Should resume player to think if he's paused """
-        raise NotImplementedError #Optional
+        abstract
     
-    def undo (self):
+    def undoMoves (self, moves):
         """ Should push back one full move """
-        pass
+        abstract

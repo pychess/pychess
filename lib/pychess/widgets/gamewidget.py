@@ -319,9 +319,9 @@ class GameWidget (gobject.GObject):
         
         glock.release()
     
-    def setCurrent (self):
+    def bringToFront (self):
         getheadbook().set_current_page (
-                headbook.page_num(self.widgets["headchild"]) )
+                getheadbook().page_num(self.widgets["headchild"]) )
 
 
 ################################################################################

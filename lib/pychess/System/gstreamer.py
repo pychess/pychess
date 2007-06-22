@@ -1,4 +1,6 @@
 
+from threading import Lock
+
 import pygst
 pygst.require('0.10')
 import gst
@@ -26,5 +28,8 @@ class Player (GObject):
         self.player.set_state(gst.STATE_PLAYING)
 
 player = Player()
+lock = Lock()
 def playSound (uri):
+    lock.acquire()
     player.play(uri)
+    lock.release()

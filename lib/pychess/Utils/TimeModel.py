@@ -92,7 +92,7 @@ class TimeModel (GObject):
     # Undo and redo in TimeModel                                               #
     ############################################################################
     
-    def undo (self):
+    def undoMoves (self, moves):
         """ Sets time and color to move, to the values they were having in the
             beginning of the ply before the current.
         his move.
@@ -106,10 +106,9 @@ class TimeModel (GObject):
         if not self.started:
             self.start()
         
-        self.movingColor = 1-self.movingColor
-        print "intervals3", self.intervals
-        del self.intervals[self.movingColor][-1]
-        print "intervals2", self.intervals
+        for i in xrange(moves):
+            self.movingColor = 1-self.movingColor
+            del self.intervals[self.movingColor][-1]
         
         if len(self.intervals[0]) + len(self.intervals[1]) >= 4:
             self.counter = time()

@@ -1,5 +1,6 @@
 
 from Protocol import Protocol
+from pychess.System.SubProcess import SubProcessError, TimeOutError
 from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import parseAN, listToMoves
 from pychess.Utils.Board import Board
@@ -23,14 +24,16 @@ class UCIProtocol (Protocol):
         self.started = False
         
         pool.start(self.run)
-        
+    
     def run (self):
         print >> self.engine, "uci"
         
         while self.connected:
-            line = self.engine.readline(5)
-            # If timed out
-            if line == None:
+            try:
+                line = self.engine.readline(5000)
+            except TimeOutError:
+                break
+            except SubProcessError:
                 break
             self.parseLine(line)
             if line.find("uciok") >= 0:
@@ -46,7 +49,11 @@ class UCIProtocol (Protocol):
         print >> self.engine, "isready"
         
         while self.connected:
-            line = self.engine.readline()
+            try:
+                line = self.engine.readline()
+            except SubProcessError:
+                self.emit("dead")
+                return
             if line:
                 self.parseLine(line)
             if line.find("readyok") >= 0:
@@ -57,13 +64,14 @@ class UCIProtocol (Protocol):
         
         def loop():
             while self.connected:
-                line = self.engine.readline()
-                if line == None:
-                    # We get time out after 10 minutes, but we don't care
-                    continue
+                try:
+                    line = self.engine.readline()
+                except SubProcessError:
+                    self.emit("dead")
+                    return
                 self.parseLine(line)
         pool.start(loop)
-                
+    
     ######################## FROM ENGINE ########################
     
     def parseLine (self, line):
@@ -115,25 +123,29 @@ class UCIProtocol (Protocol):
                 self.ignoreNext = False
                 return
             
+            move = parseAN(self.board, parts[1])
+            self.emit("move", move)
+            
+            self.board = self.board.move(move)
             if self._getOption('Ponder'):
                 if len(parts) == 4 and self.board:
                     self.pondermove = parseAN(self.board, parts[3])
-                    print >> self.engine, "position fen", self.board.asFen(), \
-                                                     "moves", parts[1], parts[3]
-                    print >> self.engine, "go ponder wtime", self.wtime, \
-                       "btime", self.btime, "winc", self.incr, "binc", self.incr
-                else:
-                    self.pondermove = None
+                    self._startPonder()
+                else: self.pondermove = None
             
-            move = parseAN(self.board, parts[1])
-            self.emit("move", move)
             return
         
         if "pv" in parts and self.mode != NORMAL:
             movstrs = parts[parts.index("pv")+1:]
             moves = listToMoves (self.board, movstrs, AN, validate=True)
             self.emit("analyze", moves)
-        
+    
+    def _startPonder (self):
+        print >> self.engine, "position fen", self.board.asFen(), \
+                              "moves", self.pondermove
+        print >> self.engine, "go ponder wtime", self.wtime, \
+            "btime", self.btime, "winc", self.incr, "binc", self.incr
+    
     ######################## TO ENGINE ########################
     
     def end (self, status, reason):
@@ -177,9 +189,12 @@ class UCIProtocol (Protocol):
                 print >> self.engine, "ponderhit"
                 return
             else:
-                print >> self.engine, "stop"
                 self.ignoreNext = True
+                print >> self.engine, "stop"
         
+        self._searchNow()
+        
+    def _searchNow (self):
         print >> self.engine, "position fen", self.board.asFen()
         
         if self._getOption('UCI_LimitStrength') or self.strength == EXPERT:
@@ -191,7 +206,7 @@ class UCIProtocol (Protocol):
             
         elif self.strength == EASY:
             print >> self.engine, "go depth 1"
-        
+    
     def time (self, engine, opponent):
         if self.color == WHITE:
             self.wtime = int(engine*1000)
@@ -232,12 +247,30 @@ class UCIProtocol (Protocol):
             return self.options[option]["default"]
         return None
     
+    def setBoard (self, gamemodel):
+        # UCI always sets the position when searching for a new game, so we
+        # don't actually have to do anything here. However when the new board
+        # is from an entirely different game than the current, there is no need
+        # that the engine still stores the old transposition table
+        print >> self.engine, "ucinewgame"
+    
     def analyze (self, inverse=False):
         if not inverse:
             self.mode = ANALYZING
         else: self.mode = INVERSE_ANALYZING
         self._setOption('Ponder', False)
         self.move(GameModel())
+    
+    def pause (self):
+        if self.board.color == self.color or self._getOption('Ponder'):
+            self.ignoreNext = True
+            print >> self.engine, "stop"
+    
+    def resume (self):
+        if self.board.color == self.color:
+            self._searchNow()
+        elif self._getOption('Ponder') and self.pondermove:
+            self._startPonder()
         
     def canAnalyze (self):
         return True

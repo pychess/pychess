@@ -107,6 +107,7 @@ class EngineTab:
             if gameDic:
                 widgets["hint_mode"].set_sensitive(check.get_active())
         widgets["analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+        uistuff.keep(widgets["analyzer_check"], "analyzer_check")
         
         def on_analyzer_check_toggled (check):
             widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
@@ -115,6 +116,7 @@ class EngineTab:
             if gameDic:
                 widgets["spy_mode"].set_sensitive(check.get_active())
         widgets["inv_analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+        uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
         
         # Put options in trees in add/edit dialog
         
@@ -283,7 +285,10 @@ class SoundTab:
                 combo.set_active(3)
         
         for i in xrange(self.COUNT_OF_SOUNDS):
-            uistuff.keep(widgets["soundcombo%d" % i], "soundcombo%d" % i)
+            if myconf.get("soundcombo%d"%i) == SOUND_URI and \
+                    not os.path.isfile(myconf.get("sounduri%d"%i)[7:]):
+                myconf.set("soundcombo%d"%i, SOUND_MUTE)
+            uistuff.keep(widgets["soundcombo%d"%i], "soundcombo%d"%i)
         
         # Init play button
         

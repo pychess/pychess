@@ -23,6 +23,7 @@ print "feature done=0"
 from time import time
 import sys, os
 from threading import Lock
+from Queue import Queue
 
 from pychess.System.ThreadPool import pool
 import thread
@@ -160,18 +161,17 @@ def analyze ():
 # go()                                                                         #
 ################################################################################
 
-def go ():
+def go (queue):
     """ Finds and prints the best move from the current position """
-    
     searchLock.acquire()
-    
+    queue.put(None)
     # TODO: Length info should be put in the book.
     # Btw. 10 is not enough. Try 20
     if len(board.history) < 14:
         movestr = getBestOpening(board)
         if movestr:
             mvs = [parseSAN(board, movestr)]
-        
+    
     if len(board.history) >= 14 or not movestr:
         
         global mytime, increment, scr
@@ -245,19 +245,21 @@ while True:
         
         move = parseAny (board, lines[1])
         board.applyMove(move)
-                
+        
         if not forced and not analyzing:
-            pool.start(go)
+            q = Queue()
+            pool.start(go, q)
+            q.get()
         
         if analyzing:
             pool.start(analyze)
-        
+    
     elif lines[0] == "sd":
         sd = int(lines[1])
         if sd >= 7: sd = 3
         elif sd >= 4: sd = 2
         else: sd = 1
-        
+    
     elif lines[0] == "level":
         moves = int(lines[1])
         increment = int(lines[3])
@@ -283,10 +285,18 @@ while True:
     
     elif lines[0] == "force":
         forced = True
+        lsearch.searching = False
+        searchLock.acquire()
+        searchLock.release()
     
     elif lines[0] == "go":
         forced = False
-        pool.start(go)
+        q = Queue()
+        pool.start(go, q)
+        q.get()
+    
+    elif lines[0] == "undo":
+        board.popMove()
     
     elif lines[0] == "?":
         lsearch.searching = False
