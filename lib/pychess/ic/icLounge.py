@@ -161,8 +161,7 @@ def initialize():
         
         table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
         pingLabel = gtk.Label(_("Connecting")+"...")
-        pingLabel.set_ellipsize(pango.ELLIPSIZE_END)
-        pingLabel.xalign = 0
+        pingLabel.props.xalign = 0
         pinger = Pinger("freechess.org")
         def callback (pinger, pingtime):
             if pingtime == -1:
