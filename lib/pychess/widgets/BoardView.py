@@ -125,6 +125,7 @@ class BoardView (gtk.DrawingArea):
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
+        self.matrixPi = cairo.Matrix.init_rotate(pi)
         self.cordMatricesState = (0, 0)
         self._rotation = 0
         
@@ -544,31 +545,47 @@ class BoardView (gtk.DrawingArea):
         
         pangoScale = float(pango.SCALE)
         
-        for n in xrange(8):
-            layout = self.create_pango_layout("%d" % (8-n))
-            layout.set_font_description(pango.FontDescription("bold %d" % ss))
-            
-            w = layout.get_extents()[1][2]/pangoScale
-            h = layout.get_extents()[0][3]/pangoScale
-            
-            context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
-            context.show_layout(layout)
-            
-            context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
-            context.show_layout(layout)
-            
-            layout = self.create_pango_layout(chr(n+ord("A")))
-            layout.set_font_description(pango.FontDescription("bold %d" % ss))
-            
-            w = layout.get_pixel_size()[0]
-            h = layout.get_pixel_size()[1]
-            y = layout.get_extents()[1][1]/pangoScale
-            
-            context.move_to(xc+s*n+s/2.-w/2., yc-h-t*1.5)
-            context.show_layout(layout)
-            
-            context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
-            context.show_layout(layout)
+        def paint (inv):
+            for n in xrange(8):
+                rank = inv and n+1 or 8-n
+                layout = self.create_pango_layout("%d" % rank)
+                layout.set_font_description(
+                        pango.FontDescription("bold %d" % ss))
+                
+                w = layout.get_extents()[1][2]/pangoScale
+                h = layout.get_extents()[0][3]/pangoScale
+                
+                # Draw left side
+                #context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
+                #context.show_layout(layout)
+                
+                # Draw right side
+                context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
+                context.show_layout(layout)
+                
+                file = inv and 8-n or n+1
+                layout = self.create_pango_layout(chr(file+ord("A")-1))
+                layout.set_font_description(
+                        pango.FontDescription("bold %d" % ss))
+                
+                w = layout.get_pixel_size()[0]
+                h = layout.get_pixel_size()[1]
+                y = layout.get_extents()[1][1]/pangoScale
+                
+                # Draw top
+                #context.move_to(xc+s*n+s/2.-w/2., yc-h-t*1.5)
+                #context.show_layout(layout)
+                
+                # Draw bottom
+                context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
+                context.show_layout(layout)
+        
+        matrix, invmatrix = matrixAround(
+                self.matrixPi, xc+square/2., yc+square/2.)
+        paint(False)
+        context.transform(matrix)
+        paint(True)
+        context.transform(invmatrix)
     
     ###############################
     #          drawBoard          #
