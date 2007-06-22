@@ -730,20 +730,24 @@ def initialize():
         # Initialize Adjourned List                                            #
         ########################################################################
     
-    if not telnet.registered:
-        widgets["notebook"].remove_page(4)
-    else:
-        tv = widgets["adjournedtreeview"]
-        astore = gtk.ListStore (str, str, str, str)
-        tv.set_model (gtk.TreeModelSort (astore))
-        addColumns (tv, _("Opponent"), _("Status"), _("% Played"), _("Date"))
-        
-        def on_adjourn_add (glm, game):
-            def call ():
-                ti = astore.append ([game["opponent"], game["opstatus"],
-                                 "%d %%" % game["procPlayed"], game["date"]])
-            listPublisher.put(call)
-        glm.connect("addAdjourn", on_adjourn_add)
+    widgets["notebook"].remove_page(4)
+    #########
+    # We skip adjourned games until Staunton
+    ##########
+    #if not telnet.registered:
+    #    widgets["notebook"].remove_page(4)
+    #else:
+    #    tv = widgets["adjournedtreeview"]
+    #    astore = gtk.ListStore (str, str, str, str)
+    #    tv.set_model (gtk.TreeModelSort (astore))
+    #    addColumns (tv, _("Opponent"), _("Status"), _("% Played"), _("Date"))
+    #    
+    #    def on_adjourn_add (glm, game):
+    #        def call ():
+    #            ti = astore.append ([game["opponent"], game["opstatus"],
+    #                             "%d %%" % game["procPlayed"], game["date"]])
+    #        listPublisher.put(call)
+    #    glm.connect("addAdjourn", on_adjourn_add)
     
     ############################################################################
     # Initialize Seeking / Challenging                                         #
