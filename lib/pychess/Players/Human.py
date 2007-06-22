@@ -105,3 +105,14 @@ class Human (Player):
     def setBoard (self, fen):
         # BoardControl, from which we are reciving moves, will be set by others
         pass
+    
+    def undoMoves (self, moves):
+        # We don't have to implement this, just as setBoard
+        pass
+    
+    def pause (self):
+        self.board.locked = True
+    
+    def resume (self):
+        if self.board.view.model.curplayer == self:
+            self.board.locked = False

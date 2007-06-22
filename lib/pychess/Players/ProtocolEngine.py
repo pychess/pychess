@@ -1,10 +1,10 @@
 
 import sys, os, time, thread
 from threading import Condition, Lock, RLock
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
+from Queue import Queue
 
-from Engine import Engine, EngineConnection
-from Player import PlayerIsDead
+from pychess.Players.Player import PlayerIsDead
+from pychess.Players.Engine import Engine
 from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
@@ -13,32 +13,23 @@ from pychess.System.Log import log
 class ProtocolEngine (Engine):
     
     def __init__ (self, args, color):
-        GObject.__init__(self)
+        Engine.__init__(self)
         self.proto = args[0] (args[1:], color)
         
         self.readycon = Condition()
         self.runWhenReadyLock = RLock()
         self.readylist = []
         
-        self.movecond = Condition()
-        self.move = None
+        self.movequeue = Queue()
         self.analyzeMoves = []
-        self.proto.connect ("draw_offer",
-                lambda w: self.emit("action", DRAW_OFFER, 0))
-        self.proto.connect ("resign",
-                lambda w: self.emit("action", RESIGNATION, 0))
-        self.proto.connect ("move", self.onMove)
-        self.proto.connect ("analyze", self.onAnalyze)
-        def dead (engine):
-            self.movecond.acquire()
-            self.move = None
-            self.movecond.notifyAll()
-            self.movecond.release()
-            self.emit("dead")
-        self.proto.connect("dead", dead)
         
+        self.proto.connect("draw_offer", lambda p: self.emit("action",DRAW_OFFER,0))
+        self.proto.connect("resign", lambda p: self.emit("action",RESIGNATION,0))
+        self.proto.connect("move", lambda p, move: self.movequeue.put(move))
+        self.proto.connect("dead", lambda p: self.movequeue.put(None))
+        self.proto.connect("analyze", self.onAnalyze)
         self.proto.connect("ready", self.onReady)
-        
+    
     def setStrength (self, strength):
         self.runWhenReady(self.proto.setStrength, strength)
     
@@ -71,32 +62,18 @@ class ProtocolEngine (Engine):
         self.runWhenReady(self.proto.offerDraw)
     
     def makeMove (self, gamemodel):
-        self.movecond.acquire()
         self.runWhenReady(self.proto.move, gamemodel)
         
         if self.proto.isAnalyzing():
             del self.analyzeMoves[:]
-            self.movecond.release()
             return
         
-        if not self.move:
-            self.movecond.wait()
-
-        if not self.move:
-            self.movecond.release()
+        move = self.movequeue.get()
+        if not move:
             raise PlayerIsDead
-
-        move = self.move
-        self.move = None
-        self.movecond.release()
+        
         return move
     
-    def onMove (self, proto, move):
-        self.movecond.acquire()
-        self.move = move
-        self.movecond.notifyAll()
-        self.movecond.release()
-        
     def _wait (self):
         if self.proto.ready:
             return
@@ -125,6 +102,15 @@ class ProtocolEngine (Engine):
     
     def updateTime (self, secs, opsecs):
         self.runWhenReady(self.proto.time, secs, opsecs)
+    
+    def pause (self):
+        self.runWhenReady(self.proto.pause)
+        
+    def resume (self):
+        self.runWhenReady(self.proto.resume)
+    
+    def undoMoves (self, move):
+        self.runWhenReady(self.proto.undoMoves, move)
     
     def __repr__ (self):
         self._wait()

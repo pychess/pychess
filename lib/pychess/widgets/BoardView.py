@@ -93,7 +93,7 @@ class BoardView (gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
         self.model.connect("game_changed", self.game_changed)
-        self.model.connect("move_undone", self.move_undone)
+        self.model.connect("moves_undoing", self.moves_undoing)
         self.model.connect("game_loading", self.game_loading)
         self.model.connect("game_loaded", self.game_loaded)
         self.model.connect("game_ended", self.game_ended)
@@ -163,8 +163,8 @@ class BoardView (gtk.DrawingArea):
             if self.model.curplayer.__type__ == LOCAL:
                 self.rotation = self.model.boards[-1].color * pi
     
-    def move_undone (self, model):
-        self.shown = model.ply-1
+    def moves_undoing (self, model, moves):
+        self.shown = model.ply-moves
     
     def game_loading (self, model):
         self.autoUpdateShown = False
@@ -862,6 +862,7 @@ class BoardView (gtk.DrawingArea):
         context.move_to(xc+square, yc)
         context.rel_line_to(-square, square)
         
+        context.set_line_cap(cairo.LINE_CAP_SQUARE)
         context.set_source_rgba(0,0,0,0.65)
         context.set_line_width(s)
         context.stroke_preserve()

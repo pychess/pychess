@@ -54,7 +54,7 @@ class Sidepanel:
         self.board = gmwidg.widgets["board"].view
         
         self.board.model.connect("game_changed", self.game_changed)
-        self.board.model.connect("move_undone", self.move_undone)
+        self.board.model.connect("moves_undoing", self.moves_undoing)
         self.board.connect("shown_changed", self.shown_changed)
         
         scrollwin = widgets.get_widget("panel")
@@ -99,15 +99,12 @@ class Sidepanel:
         elif event.keyval in rightkeys:
             self.board.shown += 1
     
-    def move_undone (self, game):
+    def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        if game.ply & 1:
-            model = self.left.get_model()
-            nummodel = self.numbers.get_model()
-            nummodel.remove(nummodel.get_iter( (len(nummodel)-1,) ))
-        else:
-            model = self.right.get_model()
-        model.remove(model.get_iter( (len(model)-1,) ))
+        for i in xrange(moves):
+            row, view, other = self._ply_to_row_col_other(game.ply-i)
+            model = view.get_model()
+            model.remove(model.get_iter((row,)))
     
     def game_changed (self, game):
         
