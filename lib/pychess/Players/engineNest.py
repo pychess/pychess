@@ -327,10 +327,7 @@ class EngineDiscoverer (GObject, Thread):
             if md5.childNodes[0].data.strip() == md5sum:
                 return engine
     
-    def getName (self, engine = None):
-        if engine == None:
-            # Ugly yes
-            return Thread.getName(self)
+    def getName (self, engine):
         return engine.getElementsByTagName("name")[0].childNodes[0].data.strip()
     
     def getCountry (self, engine):

@@ -2,11 +2,11 @@
     It should be used together with the ProtocolEngine class, which extends
     Engine """
 
-import time
-
 from Protocol import Protocol
+from pychess.System.SubProcess import SubProcessError, TimeOutError
 from pychess.System.ThreadPool import pool
-from pychess.Utils.Move import Move, parseAny, toSAN, toAN, ParsingError, listToMoves
+from pychess.Utils.Move import Move
+from pychess.Utils.Move import parseAny, toSAN, toAN, ParsingError, listToMoves
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
@@ -28,8 +28,8 @@ d_plus_dot_expr = re.compile(r"\d+\.")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
 multiWs = re.compile(r"\s+")
 
-# Chess Engine Communication Protocol
 class CECPProtocol (Protocol):
+    """ Chess Engine Communication Protocol """
     
     def __init__ (self, executable, color):
         Protocol.__init__(self, executable, color)
@@ -62,7 +62,7 @@ class CECPProtocol (Protocol):
         pool.start(self.run)
         
     def run (self):
-
+        
         print >> self.engine, "xboard"
         print >> self.engine, "protover 2"
         self.nopost() # Mostly a service to the "Faile" engine
@@ -74,29 +74,35 @@ class CECPProtocol (Protocol):
         # Engine could take an argument with lines to write just when it started.
         # Then engines.py and later an xml document could make "features done=1"
         # Be called on non protover 2 engines.
-        self.timeout = 2
-        self.start = time.time()
+        timeout = 2*1000
         
         while self.connected:
-            line = self.engine.readline(self.start+self.timeout)
-            if line == None:
-                break # We've probably met the select timeout
+            try:
+                line = self.engine.readline(timeout)
+            except SubProcessError:
+                pass # We grab this later
+            except TimeOutError:
+                break
+            
             self.parseLine(line)
             if line.find("done=1") >= 0:
                 break
             elif line.find("done=0") >= 0:
                 print "WARNING: Giving 10 minutes for loading engine", repr(self)
                 # This'll buy you 10 more minutes
-                self.timeout = 60*10
-
+                timeout = 60*10*1000
+        
         self.ready = True
         self.emit("ready")
-            
+        
         while self.connected:
-            line = self.engine.readline()
-            if line:
-                self.parseLine(line)
-                
+            try:
+                line = self.engine.readline()
+            except SubProcessError:
+                self.emit("dead")
+                break
+            self.parseLine(line)
+    
     ############################################################################
     #   FROM ENGINE                                                            #
     ############################################################################
@@ -114,7 +120,7 @@ class CECPProtocol (Protocol):
                 self.setDepth (int(parts[-1]))
             return
         
-        # A Move
+        # A Move (Perhaps)
         if self.board:
             if parts[0] == "move":
                 movestr = parts[1]
@@ -125,9 +131,18 @@ class CECPProtocol (Protocol):
                 movestr = False
             
             if movestr:
+                if self.forced:
+                    # If engine was set in pause just before the engine sent its
+                    # move, we ignore it. However the engine has to know that we
+                    # ignored it, and therefor we step it one back
+                    print >> self.engine, "undo"
+                    return
                 move = parseAny(self.board, movestr)
-                self.board = None
-                self.emit("move", move)
+                if validate(self.board, move):
+                    self.board = None
+                    self.emit("move", move)
+                else:
+                    self.emit("move", None)
                 return
         
         # Analyzing
@@ -283,11 +298,14 @@ class CECPProtocol (Protocol):
             self.go()
         
     def pause (self):
+        """ Pauses engine using the "pause" command if available. Otherwise put
+            engine in force mode. By the specs the engine shouldn't ponder in
+            force mode, but some of them do so anyways. """
         assert self.ready, "Still waiting for done=1"
         
         if self.features["pause"]:
             print >> self.engine, "pause"
-        else:
+        elif self.board:
             self.force()
     
     def resume (self):
@@ -295,7 +313,7 @@ class CECPProtocol (Protocol):
         
         if self.features["pause"]:
             print >> self.engine, "resume"
-        else:
+        elif self.board:
             self.go()
     
     def force (self):
@@ -424,6 +442,17 @@ class CECPProtocol (Protocol):
             self.mode = ANALYZING
         
         print >> self.engine, "analyze"
+    
+    def undoMoves (self, moves):
+        self.force()
+        for i in xrange(moves):
+            print >> self.engine, "undo"
+            self.board.board.popMove()
+        # self.board.board.popMove doesn't update self.board, so we have to do
+        # that ourselves
+        self.board = self.board.fromFen(self.board.board.asFen())
+        if self.board.color == self.color:
+            self.go()
     
     ############################################################################
     #   DIRECT METHODS                                                         #

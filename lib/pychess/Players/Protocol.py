@@ -1,15 +1,16 @@
 
 import sys, os, time
 from threading import Condition, Lock
+
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 
-from Engine import Engine, EngineConnection
-from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN, ParsingError
+from pychess.Utils.Move import Move, parseSAN, parseAN, parseLAN, toSAN, toAN
+from pychess.Utils.Move import ParsingError
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
+from pychess.System.SubProcess import SubProcess
 from pychess.System.Log import log
 
-# Chess Engine Communication Protocol
 class Protocol (GObject):
     
     NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
@@ -30,22 +31,13 @@ class Protocol (GObject):
         self.executable = args[0]
         defname = os.path.split(self.executable)[1]
         self.defname = defname[:1].upper() + defname[1:].lower()
-
+        
         self.ready = False
-        self.engine = EngineConnection (self.executable)
+        self.engine = SubProcess (self.executable, warnwords=("illegal","error"))
         self.connected = True
         self.mode = NORMAL
         
         log.debug(reprColor[color]+"\n", self.defname)
-        
-        def callback (engine):
-            if self.connected:
-                self.kill()
-                if not self.ready:
-                    self.ready = True
-                    self.emit("ready")
-                self.emit('dead')
-        self.engine.connect("hungup", callback)
     
     def run (self):
         pass

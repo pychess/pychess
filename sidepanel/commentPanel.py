@@ -20,7 +20,7 @@ class Sidepanel:
         
         game = gmwidg.widgets["board"].view.model
         game.connect("game_changed", self.game_changed)
-        game.connect("move_undone", self.move_undone)
+        game.connect("moves_undoing", self.moves_undoing)
         
         widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
@@ -71,10 +71,11 @@ class Sidepanel:
     def addComment (self, text):
         self.__widget__.set_text(self.__widget__.get_text()+"\n"+text)
     
-    def move_undone (self, game):
+    def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         model = self.tv.get_model()
-        model.remove(model.get_iter( (len(model)-1,) ))
+        for i in xrange(moves):
+            model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_changed (self, model):
         

@@ -1,13 +1,17 @@
 
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from threading import Lock
-from const import *
 import datetime
-from Board import Board
+
+from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+
 from pychess.Players.Player import PlayerIsDead
 from pychess.System.ThreadPool import pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
+from pychess.System import glock
+
+from Board import Board
 from logic import getStatus
+from const import *
 
 class GameModel (GObject):
     
@@ -16,7 +20,7 @@ class GameModel (GObject):
     
     __gsignals__ = {
         "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "move_undone":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "moves_undoing":   (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_loading":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":      (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
@@ -146,8 +150,7 @@ class GameModel (GObject):
             self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
         
         elif action == TAKEBACK_FORCE:
-            for ply in range(self.ply, param, -1):
-                self.undo()
+            self.undoMoves(self.ply - param)
         
         elif action == ADJOURN_OFFER:
             opPlayer.offerAdjourn()
@@ -234,7 +237,9 @@ class GameModel (GObject):
             try:
                 move = curPlayer.makeMove(self)
             except PlayerIsDead:
-                self.kill(UNKNOWN_REASON)
+                if curColor == WHITE:
+                    self.kill(WHITE_ENGINE_DIED)
+                else: self.kill(BLACK_ENGINE_DIED)
                 break
             
             self.applyingMoveLock.acquire()
@@ -265,6 +270,10 @@ class GameModel (GObject):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """
         
+        glock.release()
+        self.applyingMoveLock.acquire()
+        glock.acquire()
+        
         for player in self.players:
             player.pause()
         
@@ -274,12 +283,13 @@ class GameModel (GObject):
         except NotImplementedError:
             pass
         
-        self.applyingMoveLock.acquire()
         if self.timemodel:
             self.timemodel.pause()
-        self.applyingMoveLock.release()
         
         self.status = PAUSED
+        
+        glock.release()
+        self.applyingMoveLock.release()
     
     def resume (self):
         for player in self.players:
@@ -331,13 +341,13 @@ class GameModel (GObject):
         if self.timemodel:
             self.timemodel.pause()
         
-        self.emit("game_ended", UNKNOWN_REASON)
+        self.emit("game_ended", reason)
     
     ############################################################################
     # Other stuff                                                              #
     ############################################################################
     
-    def undo (self):
+    def undoMoves (self, moves):
         """ Will push back one full move by calling the undo methods of players
             and spectactors. If they raise NotImplementedError we'll try to call
             setBoard instead """
@@ -346,21 +356,23 @@ class GameModel (GObject):
         # On the other hand it shouldn't matter to undo a move while a player is
         # thinking, as the player should be smart enough.
         
-        self.emit("move_undone")
+        self.emit("moves_undoing", moves)
         
         self.applyingMoveLock.acquire()
         
-        del self.boards[-1]
-        del self.moves[-1]
+        del self.boards[-moves:]
+        del self.moves[-moves:]
         
         for player in list(self.players) + list(self.spectactors.values()):
             try:
-                player.undo()
+                player.undoMoves(moves)
             except NotImplementedError:
+                # If the player doesn't support undoing, we might be able to
+                # simply "load" the new last board
                 player.setBoard(self.boards[-1])
         
         if self.timemodel:
-            self.timemodel.undo()
+            self.timemodel.undoMoves(moves)
         
         self.applyingMoveLock.release()
     

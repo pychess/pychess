@@ -1,11 +1,13 @@
 import sys, gtk
-import pango, gobject
 import webbrowser
 import math
 import atexit
+import signal
 from threading import currentThread, _MainThread
 
-from pychess.System import myconf, gstreamer
+import pango, gobject
+
+from pychess.System import myconf, gstreamer, glock
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.System.Log import log
@@ -22,13 +24,14 @@ from pychess.ic import icLogOn
 gameDic = {}
 
 def engineDead (engine, gmwidg):
-    gmwidg.setCurrent()
-    gameDic[gmwidg].kill(ABORTED_SERVER_SHUTDOWN)
+    glock.acquire()
+    gmwidg.bringToFront()
     d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
     d.connect("response", lambda d,r: d.hide())
     d.show_all()
+    glock.release()
 
 def makeLogDialogReady ():
     LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))
@@ -97,6 +100,11 @@ def setMode (gmwidg, mode, activated):
             del gamemodel.chacons[:]
         set_arrow (None)
 
+GAME_MENU_ITEMS = (
+    "save_game1", "save_game_as1", "properties1", "close1",
+    "call_flag", "draw", "resign", "force_to_move", "undo1", "pause1",
+    "rotate_board1", "side_panel1", "hint_mode", "spy_mode" )
+
 class GladeHandlers:
     
     def on_ccalign_show (widget):
@@ -114,9 +122,7 @@ class GladeHandlers:
         gameDic[gmwidg] = gamemodel
         
         # Make sure game dependent menu entries are sensitive
-        for widget in ("save_game1", "save_game_as1", "properties1", "close1",
-                       "call_flag", "draw", "resign", "force_to_move",
-                       "rotate_board1", "side_panel1", "hint_mode", "spy_mode"):
+        for widget in GAME_MENU_ITEMS:
             window[widget].set_property('sensitive', True)
         
         # Disable hint or spy menu, if they are disabled in preferences
@@ -151,9 +157,6 @@ class GladeHandlers:
         if gamemodel.timemodel != None:
             gmwidg.widgets["ccalign"].show()
         else: gmwidg.widgets["ccalign"].hide()
-        
-        for player in gamemodel.players:
-            player.connect("dead", engineDead, gmwidg)
         
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
@@ -205,9 +208,17 @@ class GladeHandlers:
                 ABORTED_EARLY: _("in the early phase of the game"),
                 ABORTED_SERVER_SHUTDOWN: _("as the server was shut down"),
                 
+                WHITE_ENGINE_DIED: _("as the white engine died"),
+                BLACK_ENGINE_DIED: _("as the black engine died"),
                 UNKNOWN_REASON: _("by no known reason")
             }[reason]
             gmwidg.status("%s %s" % (m1,m2))
+            
+            if reason == WHITE_ENGINE_DIED:
+                engineDead(gamemodel.players[0], gmwidg)
+            elif reason == BLACK_ENGINE_DIED:
+                engineDead(gamemodel.players[1], gmwidg)
+        
         gamemodel.connect("game_ended", game_ended)
         
         def draw_sent (gamemodel, player):
@@ -229,11 +240,7 @@ class GladeHandlers:
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
-            for widget in ("save_game1", "save_game_as1", "properties1",
-                           "close1",
-                           "call_flag", "draw", "resign", "force_to_move",
-                           "rotate_board1", "side_panel1",
-                           "hint_mode", "spy_mode"):
+            for widget in GAME_MENU_ITEMS:
                 window[widget].set_property('sensitive', False)
     
     #          Drag 'n' Drop          #
@@ -325,6 +332,15 @@ class GladeHandlers:
     def on_force_to_move_activate (widget):
         if len(gameDic):
             gameDic[gamewidget.cur_gmwidg()].curplayer.hurry()
+    
+    def on_undo1_activate (widget):
+        pass #IMPLEMENT ME
+    
+    def on_pause1_activate (widget):
+        game = gameDic[gamewidget.cur_gmwidg()]
+        if widget.get_active():
+            game.pause()
+        else: game.resume()
     
     #          Settings menu          #
     
@@ -425,7 +441,6 @@ class PyChess:
 
 def run ():
     PyChess()
-    import signal
     signal.signal(signal.SIGINT, gtk.main_quit)
     signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     gtk.gdk.threads_init()
