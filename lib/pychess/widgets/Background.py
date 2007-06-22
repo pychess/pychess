@@ -286,8 +286,7 @@ class NewGameTasker (gtk.HBox):
 
 class InternetGameTasker (gtk.HBox):
     __gsignals__ = {
-        'listClicked': (SIGNAL_RUN_FIRST, TYPE_NONE, (int, str, str)),
-        'quickClicked': (SIGNAL_RUN_FIRST, TYPE_NONE, (int, str, str))
+        'connectClicked': (SIGNAL_RUN_FIRST, TYPE_NONE, (bool, str, str))
     }
     def __init__ (self):
         gtk.HBox.__init__(self)
@@ -302,39 +301,52 @@ class InternetGameTasker (gtk.HBox):
         vbox = gtk.VBox()
         vbox.set_spacing(3)
         vbox.set_size_request(250, -1)
+        # Table
         table = gtk.Table()
-        # First row
-        label = gtk.Label("Connect to:")
-        label.props.xalign = 0
-        labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 0, 1, 0)
-        combo = ToggleComboBox()
-        combo.addItem(_("Free Internet Chess Server"), "gtk-network")
-        combo.addItem(_("Another Internet Chess Server"), "gtk-network")
-        combo.setMarkup("<b>", "</b>")
-        combo.label.set_ellipsize(pango.ELLIPSIZE_END)
-        table.attach(combo, 1, 2, 0, 1)
-        # Seccond row
-        label = gtk.Label(_("Username")+":")
-        label.props.xalign = 0
-        labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 1, 2, 0)
-        table.attach(gtk.Entry(), 1, 2, 1, 2)
-        # Third row
-        label = gtk.Label(_("Password")+":")
-        label.props.xalign = 0
-        labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 2, 3, 0)
-        entry = gtk.Entry()
-        entry.set_visibility(False)
-        table.attach(entry, 1, 2, 2, 3)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
         vbox.add(table)
-        hb = gtk.HBox()
-        # Buttons
-        button = createButton("gtk-network", _("Game List"))
-        hb.add(button)
-        hb.add(createButton("gtk-ok", _("Quick Game")))
-        vbox.add(hb)
         self.add(vbox)
+        # First row
+        self.asGuestCheck = gtk.CheckButton(_("Log on as _Guest"))
+        def asGuestCallback (checkbutton):
+            for widget in (self.usernameLabel, self.usernameEntry,
+                           self.passwordLabel, self.passwordEntry):
+                widget.set_sensitive(not checkbutton.get_active())
+        self.asGuestCheck.connect("toggled", asGuestCallback)
+        table.attach(self.asGuestCheck, 0, 2, 0, 1)
+        # Seccond row
+        self.usernameLabel = gtk.Label(_("Name")+":")
+        self.usernameLabel.props.xalign = 0
+        labelSizeGroup.add_widget(self.usernameLabel)
+        table.attach(self.usernameLabel, 0, 1, 1, 2)
+        self.usernameEntry = gtk.Entry()
+        self.usernameEntry.props.activates_default = True
+        def focusCallback (entry, direction):
+            self.connectButton.grab_default()
+        self.usernameEntry.connect("focus", focusCallback)
+        table.attach(self.usernameEntry, 1, 2, 1, 2)
+        # Third row
+        self.passwordLabel = gtk.Label(_("Password")+":")
+        self.passwordLabel.props.xalign = 0
+        labelSizeGroup.add_widget(self.passwordLabel)
+        table.attach(self.passwordLabel, 0, 1, 2, 3)
+        self.passwordEntry = gtk.Entry()
+        self.passwordEntry.set_visibility(False)
+        self.passwordEntry.props.activates_default = True
+        self.passwordEntry.connect("focus", focusCallback)
+        table.attach(self.passwordEntry, 1, 2, 2, 3)
+        # Button
+        self.connectButton = createButton("gtk-ok", _("Connect to FICS"))
+        vbox.add(self.connectButton)
+        self.connectButton.set_flags(gtk.CAN_DEFAULT)
+        self.connectButton.connect ("clicked", self.connectClicked)
+        # Keep
+        uistuff.keep(self.asGuestCheck, "internettasker_asguest")
+        asGuestCallback(self.asGuestCheck)
+    
+    def connectClicked (self, button):
+        self.emit ("connectClicked",
+                   self.asGuestCheck.get_active(),
+                   self.usernameEntry.get_text(),
+                   self.passwordEntry.get_text())
