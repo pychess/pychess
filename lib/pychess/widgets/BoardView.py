@@ -556,12 +556,12 @@ class BoardView (gtk.DrawingArea):
                 h = layout.get_extents()[0][3]/pangoScale
                 
                 # Draw left side
-                #context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
-                #context.show_layout(layout)
+                context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
+                context.show_layout(layout)
                 
                 # Draw right side
-                context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
-                context.show_layout(layout)
+                #context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
+                #context.show_layout(layout)
                 
                 file = inv and 8-n or n+1
                 layout = self.create_pango_layout(chr(file+ord("A")-1))
