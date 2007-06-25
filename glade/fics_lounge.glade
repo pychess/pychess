@@ -3023,12 +3023,13 @@ Custom</property>
 
 <widget class="GtkDialog" id="ficsCautionDialog">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">dialog2</property>
+  <property name="title" translatable="yes">FICS Warning</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">pychess24.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
