@@ -170,7 +170,7 @@ class GladeHandlers:
         gamemodel.connect("game_loaded", game_loaded)
         
         def game_saved (gamemodel, uri):
-            gmwidg.status("%s: %s" % (_("Saved game"), str(uri)), True)
+            gmwidg.status("%s: %s" % (_("Saved game"), str(uri)))
         gamemodel.connect("game_saved", game_saved)
         
         def game_ended (gamemodel, reason):
