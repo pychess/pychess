@@ -31,7 +31,8 @@ class Pinger (GObject):
     
     def ping (self):
         if self.subproc: return
-        self.subproc = SubProcess(searchPath("ping"), [self.host], {"LANG":"en"})
+        self.subproc = SubProcess(
+                searchPath("ping"), [self.host], env={"LANG":"en"})
         while True:
             line = self.subproc.readline()
             if not globals:

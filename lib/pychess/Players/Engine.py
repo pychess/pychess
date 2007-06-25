@@ -1,7 +1,7 @@
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.Utils.const import ARTIFICIAL
+from pychess.Utils.const import ARTIFICIAL, DRAW_OFFER
 from Player import Player
 
 class Engine (Player):
@@ -31,7 +31,28 @@ class Engine (Player):
         abstract
     
     def analyze (self, inverse=False):
-        pass #Won't be used if "canAnalyze" responds false
+        """ If canAnalyze responds True, this method will be called on the
+            engine, if it is not to play any moves, but rather analyze the game
+            and emit 'analyze' signals now and then """
+        pass
+    
+    def offer (self, offer):
+        if offer.offerType == DRAW_OFFER:
+            self.offerDraw()
+        else:
+            self.emit("accept", offer)
+    
+    def offerDeclined (self, offer):
+        pass #Ignore
+    
+    def offerWithdrawn (self, offer):
+        pass #Ignore
+    
+    def offerError (self, offer, error):
+        pass #Ignore
+    
+    def offerDraw (self):
+        abstract
     
     # Other methods
     

@@ -2,6 +2,8 @@
     It should be used together with the ProtocolEngine class, which extends
     Engine """
 
+from threading import Condition
+
 from Protocol import Protocol
 from pychess.System.SubProcess import SubProcessError, TimeOutError
 from pychess.System.ThreadPool import pool
@@ -53,11 +55,18 @@ class CECPProtocol (Protocol):
             "pause":     0
         }
         
-        self.board = Board(setup=True)
+        if color == WHITE:
+            self.board = Board(setup=True)
+        else: self.board = None
         self.forced = False
         self.gonext = False
         self.sd = True
         self.st = True
+        
+        self.lastping = 0
+        self.lastpong = 0
+        
+        self.movecon = Condition()
         
         pool.start(self.run)
         
@@ -113,6 +122,10 @@ class CECPProtocol (Protocol):
         if self.features["sigint"]:
             self.engine.sigint()
         
+        if parts[0] == "pong":
+            self.lastpong = int(parts[1])
+            return
+        
         # Illegal Move
         if parts[0].lower().find("illegal") >= 0:
             if parts[-2] == "sd" and parts[-1].isdigit():
@@ -136,6 +149,9 @@ class CECPProtocol (Protocol):
                     # move, we ignore it. However the engine has to know that we
                     # ignored it, and therefor we step it one back
                     print >> self.engine, "undo"
+                    self.movecon.acquire()
+                    self.movecon.notify()
+                    self.movecon.release()
                     return
                 move = parseAny(self.board, movestr)
                 if validate(self.board, move):
@@ -302,19 +318,44 @@ class CECPProtocol (Protocol):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         assert self.ready, "Still waiting for done=1"
-        
+        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            return
         if self.features["pause"]:
             print >> self.engine, "pause"
         elif self.board:
             self.force()
+            self.movecon.acquire()
+            self.movecon.wait()
+            self.movecon.release()
     
     def resume (self):
         assert self.ready, "Still waiting for done=1"
-        
+        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            return
         if self.features["pause"]:
             print >> self.engine, "resume"
         elif self.board:
             self.go()
+    
+    def undoMoves (self, moves, gamemodel):
+        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if self.board:
+                self.moveNow()
+                self.force()
+                self.movecon.acquire()
+                self.movecon.wait()
+                self.movecon.release()
+            else: self.force()
+        for i in xrange(moves):
+            print >> self.engine, "undo"
+        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if gamemodel.curplayer.color == self.color:
+                self.board = gamemodel.boards[-1]
+                self.go()
+            else:
+                self.board = None
+        else:
+            self.board = gamemodel.boards[-1]
     
     def force (self):
         print >> self.engine, "force"
@@ -329,18 +370,6 @@ class CECPProtocol (Protocol):
     
     def nopost (self):
         print >> self.engine, "nopost"
-    
-    def resultWhite (self, comment="White Mates"):
-        assert self.ready, "Still waiting for done=1"
-        print >> self.engine, "result 1-0 {%s}" % comment
-    
-    def resultBlack (self, comment="Black Mates"):
-        assert self.ready, "Still waiting for done=1"
-        print >> self.engine, "result 0-1 {%s}" % comment
-    
-    def resultDraw (self, comment="Draw Game"):
-        assert self.ready, "Still waiting for done=1"
-        print >> self.engine, "result 1/2-1/2 {%s}" % comment
     
     def time (self, engine, opponent):
         assert self.ready, "Still waiting for done=1"
@@ -365,6 +394,10 @@ class CECPProtocol (Protocol):
     def hint (self):
         assert self.ready, "Still waiting for done=1"
         print >> self.engine, "hint"
+    
+    def ping (self):
+        self.lastping += 1
+        print >> self.engine, "ping", self.lastping
     
     def printColor (self):
         #if self.features["colors"]:
@@ -442,17 +475,6 @@ class CECPProtocol (Protocol):
             self.mode = ANALYZING
         
         print >> self.engine, "analyze"
-    
-    def undoMoves (self, moves):
-        self.force()
-        for i in xrange(moves):
-            print >> self.engine, "undo"
-            self.board.board.popMove()
-        # self.board.board.popMove doesn't update self.board, so we have to do
-        # that ourselves
-        self.board = self.board.fromFen(self.board.board.asFen())
-        if self.board.color == self.color:
-            self.go()
     
     ############################################################################
     #   DIRECT METHODS                                                         #

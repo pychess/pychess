@@ -22,6 +22,7 @@ class UCIProtocol (Protocol):
         self.pondermove = None
         self.ignoreNext = False
         self.started = False
+        self.board = None
         
         pool.start(self.run)
     
@@ -262,16 +263,20 @@ class UCIProtocol (Protocol):
         self.move(GameModel())
     
     def pause (self):
-        if self.board.color == self.color or self._getOption('Ponder'):
+        if self.board and self.board.color == self.color or \
+                self._getOption('Ponder'):
             self.ignoreNext = True
             print >> self.engine, "stop"
     
     def resume (self):
-        if self.board.color == self.color:
+        if self.board and self.board.color == self.color:
             self._searchNow()
         elif self._getOption('Ponder') and self.pondermove:
             self._startPonder()
-        
+    
+    def undoMoves (self, moves, gamemodel):
+        pass
+    
     def canAnalyze (self):
         return True
         

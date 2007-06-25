@@ -101,10 +101,18 @@ class Sidepanel:
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
+        glock.acquire()
         for i in xrange(moves):
-            row, view, other = self._ply_to_row_col_other(game.ply-i)
-            model = view.get_model()
-            model.remove(model.get_iter((row,)))
+            try:
+                row, view, other = self._ply_to_row_col_other(game.ply-i)
+                model = view.get_model()
+                model.remove(model.get_iter((row,)))
+                if view == self.left:
+                    model = self.numbers.get_model()
+                    model.remove(model.get_iter((row,)))
+            except ValueError:
+                continue
+        glock.release()
     
     def game_changed (self, game):
         

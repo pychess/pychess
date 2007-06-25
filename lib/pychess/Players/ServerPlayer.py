@@ -2,6 +2,7 @@
 from Queue import Queue
 
 from Player import Player, PlayerIsDead
+from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toSAN, ParsingError
 from pychess.Utils.const import *
 from pychess.ic import telnet
@@ -29,50 +30,39 @@ class ServerPlayer (Player):
         self.offermanager.connect("onOfferAdd", self.onOfferAdd)
         self.offermanager.connect("onOfferRemove", self.onOfferRemove)
         
+        self.offerToIndex = {}
+        self.indexToOffer = {}
         self.lastPly = -1
     
-    def onOfferAdd (self, om, index, type, params):
-        if type == "draw":
-            self.emit ("action", DRAW_OFFER, 0)
-            
-        elif type == "abort":
-            self.emit ("action", ABORT_OFFER, 0)
-            
-        elif type ==  "adjourn":
-            self.emit ("action", ADJOURN_OFFER, 0)
-            
-        elif type == "takeback":
-            toPly = self.lastPly - int(params)
-            self.emit ("action", TAKEBACK_OFFER, toPly)
+    def onOfferAdd (self, om, index, offer):
+        self.indexToOffer[index] = offer
+        self.emit ("offer", offer)
     
     def onOfferRemove (self, om, index):
+        if index in self.indexToOffer:
+            self.emit ("withdraw", self.indexToOffer[index])
+    
+    def offer (self, offer):
+        self.offermanager.offer(offer, self.lastPly)
+    
+    def offerDeclined (self, offer):
         pass
     
-    def offerDraw (self):
-        print >> telnet.client, "draw"
+    def offerWithdrawn (self, offer):
+        pass
     
-    def offerAbort (self):
-        print >> telnet.client, "abort"
-    
-    def offerAdjourn (self):
-        print >> telnet.client, "adjourn"
-    
-    def offerTakeback (self, toPly):
-        print >> telnet.clinet, "takeback", toPly
+    def offerError (self, offer, error):
+        pass
     
     def moveRecieved (self, bm, ply, sanmove, gameno, curcol):
+        self.lastPly = int(ply)
         if curcol != self.color or gameno != self.gameno:
             return
         print sanmove
         self.queue.put((ply,sanmove))
     
-    def pause (self):
-        pass
-    
-    def resume (self):
-        pass
-    
     def makeMove (self, gamemodel):
+        self.lastPly = gamemodel.ply
         if gamemodel.moves and not self.external:
             self.boardmanager.sendMove (
                     toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
@@ -84,7 +74,7 @@ class ServerPlayer (Player):
         ply, sanmove = item
         if ply < gamemodel.ply:
             # This should only happen in an observed game
-            self.emit("action", (TAKEBACK_FORCE, ply))
+            self.emit("offer", Offer(TAKEBACK_FORCE, ply))
         
         try:
             move = parseSAN (gamemodel.boards[-1], sanmove)
@@ -96,6 +86,13 @@ class ServerPlayer (Player):
     def __repr__ (self):
         return self.name
     
+    
+    def pause (self):
+        pass
+    
+    def resume (self):
+        pass
+    
     def setBoard (self, fen):
         # setBoard will currently only be called for ServerPlayer when starting
         # to observe some game. In this case FICS already knows how the board
@@ -103,14 +100,6 @@ class ServerPlayer (Player):
         pass
     
     def end (self, status, reason):
-        if reason == WON_RESIGN:
-            if self.color == WHITE and status == WHITEWON or \
-                    self.color == BLACK and status == BLACKWON:
-                self.boardmanager.resign()
-        
-        if reason == DRAW_CALLFLAG:
-            self.boardmanager.callflag()
-        
         self.queue.put("del")
     
     def kill (self, reason):

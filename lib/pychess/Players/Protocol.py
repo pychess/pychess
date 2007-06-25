@@ -24,23 +24,19 @@ class Protocol (GObject):
         'ready': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     
-    def __init__ (self, args, color):
+    def __init__ (self, subprocess, color):
         GObject.__init__(self)
         
         self.color = color
-        self.executable = args[0]
-        defname = os.path.split(self.executable)[1]
-        self.defname = defname[:1].upper() + defname[1:].lower()
+        self.defname = subprocess.defname
         
         self.ready = False
-        self.engine = SubProcess (self.executable, warnwords=("illegal","error"))
+        self.engine = subprocess
         self.connected = True
         self.mode = NORMAL
         
         log.debug(reprColor[color]+"\n", self.defname)
     
-    def run (self):
-        pass
     
     def kill (self, reason):
         pass
@@ -48,10 +44,8 @@ class Protocol (GObject):
     def end (self, status, reason):
         pass
     
-    def moveNow (self):
-        pass
     
-    def move (self, history):
+    def moveNow (self):
         pass
     
     def pause (self):
@@ -60,25 +54,22 @@ class Protocol (GObject):
     def resume (self):
         pass
     
-    def resultWhite (self, comment="White Mates"):
+    def setBoard (self, history):
         pass
     
-    def resultBlack (self, comment="Black Mates"):
-        pass
     
-    def resultDraw (self, comment="Draw Game"):
+    def move (self, history):
         pass
     
     def time (self, engine, opponent):
         pass
     
+    
     def offerDraw (self):
         pass
     
-    def setPonder (self, b):
-        pass
     
-    def setBoard (self, history):
+    def setPonder (self, b):
         pass
     
     def setStrength (self, strength):
@@ -87,16 +78,16 @@ class Protocol (GObject):
     def setTimeControls (self, secs, increment = 0, moves = 0):
         pass
     
+    
     def analyze (self, inverse=False):
         pass
-    
-    #####
     
     def canAnalyze (self):
         pass
     
     def isAnalyzing (self):
         return self.mode != NORMAL
+    
     
     def __repr__ (self):
         return self.defname
