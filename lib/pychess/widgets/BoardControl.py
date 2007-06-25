@@ -17,19 +17,20 @@ from pychess.Utils.logic import getDestinationCords
 class BoardControl (gtk.EventBox):
     
     __gsignals__ = {
-        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
-        'call_flag' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'draw' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'resign' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'lock_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int))
     }
     
-    def __init__(self, gamemodel):
+    def __init__(self, gamemodel, actionMenuItems):
         gtk.EventBox.__init__(self)
         widgets = gtk.glade.XML(prefix("glade/promotion.glade"))
         self.promotionDialog = widgets.get_widget("promotionDialog")
         self.view = BoardView(gamemodel)
         self.add(self.view)
+        
+        self.actionMenuItems = actionMenuItems
+        for key, menuitem in self.actionMenuItems.iteritems():
+            menuitem.connect("activate", self.actionActivate, key)
         
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
@@ -41,7 +42,19 @@ class BoardControl (gtk.EventBox):
         self.tocords = [] # List of cords to which the selected piece can move
         
         self.pressed = False
+        #self._locked = False
         self.locked = True
+    
+    #def _set_locked (self, locked):
+    #    if locked != self.locked:
+    #        self._locked = locked
+    #        for key, menuitem in self.actionMenuItems.iteritems():
+    #            if key == "force_to_move":
+    #                menuitem.set_sensitive(locked)
+    #            else: menuitem.set_sensitive(not locked)
+    #def _get_locked (self):
+    #    return self._locked
+    #locked = property(_get_locked, _set_locked)
     
     def emit_move_signal (self, cord0, cord1):
         promotion = QUEEN
@@ -212,21 +225,18 @@ class BoardControl (gtk.EventBox):
         if not (0 <= event.x < a.width and 0 <= event.y < a.height):
             self.view.hover = None
     
-    def on_call_flag_activate (self, widget):
-        if self.locked:
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
-            return
-        self.emit("call_flag")
-        
-    def on_draw_activate (self, widget):
-        if self.locked:
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
-            return
-        self.emit("draw")
-        
-    def on_resign_activate (self, widget):
-        if self.locked:
-            log.warn("Using locked methodhandler (skipping). Menuitem should have been locked\n")
-            return
-        self.emit("resign")
-    
+    def actionActivate (self, widget, key):
+        if key == "call_flag":
+            self.emit("action", FLAG_CALL, 0)
+        elif key == "draw":
+            self.emit("action", DRAW_OFFER, 0)
+        elif key == "resign":
+            self.emit("action", RESIGNATION, 0)
+        elif key == "force_to_move":
+            self.emit("action", HURRY_REQUEST, 0)
+        elif key == "undo1":
+            self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
+        elif key == "pause1":
+            if widget.get_active():
+                self.emit("action", PAUSE_OFFER, 0)
+            else: self.emit("action", RESUME_OFFER, 0)

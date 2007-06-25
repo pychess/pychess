@@ -100,10 +100,11 @@ def setMode (gmwidg, mode, activated):
             del gamemodel.chacons[:]
         set_arrow (None)
 
-GAME_MENU_ITEMS = (
-    "save_game1", "save_game_as1", "properties1", "close1",
-    "call_flag", "draw", "resign", "force_to_move", "undo1", "pause1",
-    "rotate_board1", "side_panel1", "hint_mode", "spy_mode" )
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+ACTION_MENU_ITEMS = \
+        ("call_flag", "draw", "resign", "force_to_move", "undo1", "pause1")
+VIEW_MENU_ITEMS = ("rotate_board1", "side_panel1", "hint_mode", "spy_mode")
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
 
 class GladeHandlers:
     
@@ -122,7 +123,7 @@ class GladeHandlers:
         gameDic[gmwidg] = gamemodel
         
         # Make sure game dependent menu entries are sensitive
-        for widget in GAME_MENU_ITEMS:
+        for widget in MENU_ITEMS:
             window[widget].set_property('sensitive', True)
         
         # Disable hint or spy menu, if they are disabled in preferences
@@ -221,26 +222,36 @@ class GladeHandlers:
         
         gamemodel.connect("game_ended", game_ended)
         
-        def draw_sent (gamemodel, player):
+        for player in gamemodel.players:
             if player.__type__ == LOCAL:
-                gmwidg.status(_("You sent a draw offer"))
-        gamemodel.connect("draw_sent", draw_sent)
+                def offer_callback (player, offer):
+                    if offer.offerType == DRAW_OFFER:
+                        gmwidg.status(_("You sent a draw offer"))
+                player.connect("offer", offer_callback)
         
-        def flag_call_error (gamemodel, player, error):
-            if player.__type__ == LOCAL:
-                if error == NO_TIME_SETTINGS:
-                    gmwidg.status(_("You can't call flag in a game without" + \
-                                    " time settings"))
-                elif error == NOT_OUT_OF_TIME:
-                    gmwidg.status(_("You can't call flag when your opponent" + \
-                                    " is not out of time"))
-        gamemodel.connect("flag_call_error", flag_call_error)
+        def infront (gmwidg):
+            auto = gamemodel.players[0].__type__ != LOCAL and \
+                    gamemodel.players[1].__type__ != LOCAL
+            for widget in ACTION_MENU_ITEMS:
+                window[widget].props.sensitive = not auto
+        gmwidg.connect("infront", infront)
+        infront(gmwidg)
         
+        #def flag_call_error (gamemodel, player, error):
+        #    if player.__type__ == LOCAL:
+        #        if error == NO_TIME_SETTINGS:
+        #            gmwidg.status(_("You can't call flag in a game without" + \
+        #                            " time settings"))
+        #        elif error == NOT_OUT_OF_TIME:
+        #            gmwidg.status(_("You can't call flag when your opponent" + \
+        #                            " is not out of time"))
+        #gamemodel.connect("flag_call_error", flag_call_error)
+    
     def on_game_closed (handler, gmwidg, gamemodel):
         del gameDic[gmwidg]
         
         if len (gameDic) == 0:
-            for widget in GAME_MENU_ITEMS:
+            for widget in MENU_ITEMS:
                 window[widget].set_property('sensitive', False)
     
     #          Drag 'n' Drop          #
@@ -317,30 +328,30 @@ class GladeHandlers:
     
     #          Action menu          #
     
-    def on_call_flag_activate (widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].on_call_flag_activate (widget)
+    #def on_call_flag_activate (widget):
+    #    gmwidg = gamewidget.cur_gmwidg()
+    #    gmwidg.widgets["board"].on_call_flag_activate (widget)
 
-    def on_draw_activate (widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].on_draw_activate (widget)
+    #def on_draw_activate (widget):
+    #    gmwidg = gamewidget.cur_gmwidg()
+    #    gmwidg.widgets["board"].on_draw_activate (widget)
         
-    def on_resign_activate (widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].on_resign_activate (widget)
+    #def on_resign_activate (widget):
+    #    gmwidg = gamewidget.cur_gmwidg()
+    #    gmwidg.widgets["board"].on_resign_activate (widget)
 
-    def on_force_to_move_activate (widget):
-        if len(gameDic):
-            gameDic[gamewidget.cur_gmwidg()].curplayer.hurry()
+    #def on_force_to_move_activate (widget):
+    #    if len(gameDic):
+    #        gameDic[gamewidget.cur_gmwidg()].curplayer.hurry()
     
-    def on_undo1_activate (widget):
-        pass #IMPLEMENT ME
+    #def on_undo1_activate (widget):
+    #    pass #IMPLEMENT ME
     
-    def on_pause1_activate (widget):
-        game = gameDic[gamewidget.cur_gmwidg()]
-        if widget.get_active():
-            game.pause()
-        else: game.resume()
+    #def on_pause1_activate (widget):
+    #    game = gameDic[gamewidget.cur_gmwidg()]
+    #    if widget.get_active():
+    #        game.pause()
+    #    else: game.resume()
     
     #          Settings menu          #
     

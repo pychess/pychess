@@ -1,6 +1,12 @@
 
-import telnet
+import re
+
 from gobject import *
+
+from pychess.Utils.const import *
+from pychess.Utils.Offer import Offer
+import telnet
+
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -9,7 +15,7 @@ rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "\(([0-9\ \-\+]{4})\)"
 
-import re
+
 matchre = re.compile ("(\w+) %s %s(\w+) %s %s %s (\d+) (\d+)" % \
         (ratings, colors, ratings,rated, types) )
 
@@ -17,19 +23,70 @@ matchre = re.compile ("(\w+) %s %s(\w+) %s %s %s (\d+) (\d+)" % \
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
 
+strToOfferType = {
+    "draw": DRAW_OFFER,
+    "abort": ABORT_OFFER,
+    "adjourn": ADJOURN_OFFER,
+    "takeback": TAKEBACK_OFFER,
+    "pause": PAUSE_OFFER,
+    "unpause": RESUME_OFFER,
+    "switch": SWITCH_OFFER
+}
+
+offerTypeToStr = {}
+for k,v in strToOfferType.iteritems():
+    offerTypeToStr[v] = k
+
 class OfferManager (GObject):
     
     __gsignals__ = {
         'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,str)),
         'onOfferRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'onChallengeAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
-        'onChallengeRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
+        'onChallengeRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'onActionError' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,int))
     }
     
     def __init__ (self):
         GObject.__init__(self)
-        telnet.expect ( "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+?)\n" % names, self.onOfferAdd)
+        telnet.expect ( 
+            "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+?)\n" % names, self.onOfferAdd)
         telnet.expect ( "<pr> (\d+)\n", self.onOfferRemove)
+        
+        for ficsstring, offer, error in (
+                ("You cannot switch sides once a game is underway.", 
+                        Offer(SWITCH_OFFER), ACTION_ERROR_SWITCH_UNDERWAY),
+                ("Opponent is not out of time.",
+                        Offer(FLAG_CALL), ACTION_ERROR_NOT_OUT_OF_TIME),
+                ("The clock is not ticking yet.",
+                        Offer(PAUSE_OFFER), ACTION_ERROR_CLOCK_NOT_STARTED),
+                ("The clock is not ticking.",
+                        Offer(FLAG_CALL), ACTION_ERROR_CLOCK_NOT_STARTED),
+                ("The clock is not paused.",
+                        Offer(RESUME_OFFER), ACTION_ERROR_CLOCK_NOT_PAUSED)):
+            telnet.expect (ficsstring,
+                    lambda c,g: self.emit("onActionError", offer, error))
+        
+        def callback (client, groups):
+            param = groups[0] != "no" and int(groups[0]) or 0
+            offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
+            self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
+        telnet.expect (
+            "There are (?:(no)|only (\d+) half) moves in your game.", callback )
+        
+        def callback (client, groups):
+            offerstr, type = groups
+            if type == "accept":
+                error = ACTION_ERROR_NONE_TO_ACCEPT
+            elif type == "withdraw":
+                error = ACTION_ERROR_NONE_TO_WITHDRAW
+            elif type == "decline":
+                error = ACTION_ERROR_NONE_TO_DECLINE
+            offerType = strToOfferType[offerstr]
+            self.emit("onActionError", Offer(offerType), error)
+        telnet.expect ("There are no ([^ ]+) offers to (accept).", callback)
+        
+        self.lastPly = 0
         self.indexType = {}
         print >> telnet.client, "iset pendinfo 1"
     
@@ -40,30 +97,26 @@ class OfferManager (GObject):
         tofrom, index, type, parameters = groups
         
         if tofrom == "t":
-            # Atm. We don't care about offers sendt by ourselves. This can be
-            # implemented later.
+            # IcGameModel keeps track of the offers we've sent ourselves, so we
+            # don't need this
             return
         
-        if type in ("draw", "abort", "adjourn", "takeback", "match"):
-            self.indexType[index] = type
-            if type == "match":
-                fname, frating, col, tname, trating, rated, type, mins, incr = \
-                        matchre.match(parameters).groups()
-                
-                rating = frating.strip()
-                rating = rating.isdigit() and rating or "0"
-                rated = rated == "unrated" and "u" or "r"
-                match = {"tp": type, "w": fname, "rt": rating,
-                         "r": rated, "t": mins, "i": incr}
-                self.emit("onChallengeAdd", index, match)
-            
-            else:
-                self.emit("onOfferAdd", index, type, parameters)
-            timeout_add(50000, self.decline, index)
-        
-        elif type in ("switch", "pause", "unpause"):
-            print >> client, "decline", index
-        
+        self.indexType[index] = type
+        if type == "match":
+            fname, frating, col, tname, trating, rated, type, mins, incr = \
+                    matchre.match(parameters).groups()
+            rating = frating.strip()
+            rating = rating.isdigit() and rating or "0"
+            rated = rated == "unrated" and "u" or "r"
+            match = {"tp": type, "w": fname, "rt": rating,
+                        "r": rated, "t": mins, "i": incr}
+            self.emit("onChallengeAdd", index, match)
+        elif type in strToOfferType:
+            offerType = strToOfferType[type]
+            if offerType == TAKEBACK_OFFER:
+                offer = Offer(offerType, int(parameters))
+            else: offer = Offer(offerType)
+            self.emit("onOfferAdd", index, offer)
         else:
             print "Warning: Unknown offer type: #", index, type, "whith" + \
                   "parameters:", parameters, ". Declining"
@@ -78,15 +131,24 @@ class OfferManager (GObject):
         else: self.emit("onOfferRemove", index)
         del self.indexType[index]
     
-    def withdraw (self, index):
-        # This method is of no use, before <pt> has been implemented.
-        # (See onOfferAdd)
-        print >> telnet.client, "withdraw", index
+    def offer (self, offer, ply):
+        self.lastPly = ply
+        s = offerTypeToStr[offer.offerType]
+        if offer.offerType == TAKEBACK_OFFER:
+            s += " " + str(ply-offer.param)
+        print >> telnet.client, s
     
-    def accept (self, index):
+    def withdraw (self, type):
+        print >> telnet.client, "withdraw t", offerTypeToStr[type]
+    
+    def accept (self, type):
+        print >> telnet.client, "accept t", offerTypeToStr[type]
+    
+    def decline (self, type):
+        print >> telnet.client, "decline t", offerTypeToStr[type]
+    
+    def acceptIndex (self, index):
         print >> telnet.client, "accept", index
-        self.emit("onOfferRemove", index)
     
-    def decline (self, index):
-        print >> telnet.client, "decline", index
-        self.emit("onOfferRemove", index)
+    def playIndex (self, index):
+        print >> telnet.client, "play", index

@@ -4,7 +4,7 @@ from gobject import *
 from pychess.Utils.const import *
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
-# What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
+# FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 ratings = "\(([0-9\ \-\+]{4})\)"
@@ -70,7 +70,7 @@ class BoardManager (GObject):
         
         telnet.expect (
             "\rGame (\d+): Game clock (paused|resumed).\n", self.onGamePause)
-        
+    
     def _style12ToFenRow (self, row):
         fenrow = []
         spaceCounter = 0
@@ -90,9 +90,6 @@ class BoardManager (GObject):
         curcol = groups[8] == "B" and BLACK or WHITE
         gameno = groups[15]
         relation = relations[groups[18]]
-        
-        if not relation in (IC_POS_OBSERVING, IC_POS_ME_TO_MOVE):
-            return
         
         # Board data
         fen = "".join(map(self._style12ToFenRow, groups[:8]))
