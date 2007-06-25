@@ -52,6 +52,7 @@ def newMessage (task, message, type):
         scroll.get_vadjustment().connect("value-changed", value_changed)
         
         notebook.append_page (scroll, gtk.Label(task))
+        notebook.show_all()
         textbuffer = view.get_buffer()
         textbuffer.create_tag(str(DEBUG), family='Monospace')
         textbuffer.create_tag(str(LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
@@ -60,8 +61,6 @@ def newMessage (task, message, type):
         task2book[task] = textbuffer
     else: textbuffer = task2book[task]
     
-    if not message.endswith("\n"):
-        message += "\n"
     textbuffer.insert_with_tags_by_name(
             textbuffer.get_end_iter(), message, str(type))
 

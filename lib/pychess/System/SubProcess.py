@@ -31,7 +31,10 @@ def searchPath (file):
 class SubProcess:
     """ Pty based communication wrapper """
     
-    def __init__(self, path, args=[], env={}, warnwords=[]):
+    def __init__(self, path, args=[], env=None, warnwords=[]):
+        self.path = path
+        self.args = args
+        
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
         log.debug(path+"\n", self.defname)
@@ -39,7 +42,9 @@ class SubProcess:
         self.pid, self.fd = os.forkpty()
         if self.pid == CHILD:
             os.nice(15)
-            print "path", path
+            print "path", path, "args", args
+            if env == None:
+                env = os.environ
             os.execve(path, [path]+args, env)
             os._exit(-1)
         
@@ -68,7 +73,13 @@ class SubProcess:
                 return line
         
         while True:
-            readies = self.poll.poll(timeout)
+            try:
+                readies = self.poll.poll(timeout)
+            except select.error, e:
+                if e[0] == errno.EINTR:
+                    continue
+                raise
+            
             if not readies:
                 raise TimeOutError, "Reached %d milisec timeout" % timeout
             

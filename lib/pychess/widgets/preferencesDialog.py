@@ -174,7 +174,10 @@ class EngineTab:
                 if not engine:
                     combobox.set_active(0)
                 else:
-                    index = discoverer.getAnalyzers().index(engine)
+                    try:
+                        index = discoverer.getAnalyzers().index(engine)
+                    except ValueError:
+                        index = 0
                     combobox.set_active(index)
             
             uistuff.keep (widgets[combo], combo, get_value, set_value)

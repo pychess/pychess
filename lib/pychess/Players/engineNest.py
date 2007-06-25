@@ -2,10 +2,12 @@ from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 import os, md5, imp, thread
 from threading import Thread, Condition
+
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
+from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.Utils.const import prefix, WHITE, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
@@ -55,10 +57,10 @@ class EngineDiscoverer (GObject, Thread):
             self.dom = minidom.parseString( backup )
         except IOError:
             self.dom = minidom.parseString( backup )
-            
+        
         self._engines = {}
         self.condition = Condition()
-
+    
     ############################################################################
     # XML methods                                                              #
     ############################################################################
@@ -103,7 +105,7 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.dirname(imp.find_module("os")[1])
                 path = os.path.join(path,
                         "site-packages/pychess/Players/PyChess.py")
-            return path, "env python "+path
+            return path, searchPath("python"), [path]
         else:
             for dir in os.environ["PATH"].split(":"):
                 path = os.path.join(dir, binname)
@@ -114,7 +116,7 @@ class EngineDiscoverer (GObject, Thread):
                     if not os.access (path, os.EX_OK):
                         log.warn("Could not execute the file %s" % path)
                         continue
-                    return path, path
+                    return path, path, []
         return False
     
     def _handleUCIOptions (self, engine, options):
@@ -134,7 +136,12 @@ class EngineDiscoverer (GObject, Thread):
                     args.append( (key,value) )
             
             if type == "check":
-                node = self._createElement("check-option", args=args)
+                args2 = []
+                for key, value in args:
+                    if value == True: value = "true"
+                    elif value == False: value = "false"
+                    args2.append( (key,value) )
+                node = self._createElement("check-option", args=args2)
             elif type == "string":
                 if name == "UCI_EngineAbout":
                     # I don't know why UCI puts about in the options, but we
@@ -151,6 +158,7 @@ class EngineDiscoverer (GObject, Thread):
                     varNode = self._createElement("var", args=[("value",value)])
                     node.appendChild( varNode )
             elif type == "spin":
+                args = [(k,str(v)) for k,v in args]
                 node = self._createElement("spin-option", args=args)
             elif type == "button":
                 node = self._createElement("button-option", args=args)
@@ -161,15 +169,13 @@ class EngineDiscoverer (GObject, Thread):
         
     def _findOutMore (self, engine, binname):
         
-        protocol = engine.getAttribute("protocol")
-        path = engine.getElementsByTagName("path")[0].childNodes[0].data
-        
-        e = ProtocolEngine ((attrToProtocol[protocol], path), WHITE)
+        e = self.initEngine (engine, WHITE)
+        protname = engine.getAttribute("protocol")
         e._wait()
         
         meta = self._createOrReturn(engine, "meta")
         
-        if protocol == "uci":
+        if protname == "uci":
             e.proto.startGame()
 
             for key, value in e.proto.ids.iteritems():
@@ -180,7 +186,7 @@ class EngineDiscoverer (GObject, Thread):
             
             self._handleUCIOptions (engine, e.proto.options)
         
-        elif protocol == "cecp":
+        elif protname == "cecp":
             features = self._createOrReturn(engine, "cecp-features")
             
             used = dict ([(f.getAttribute("command"), True) for f in \
@@ -238,21 +244,21 @@ class EngineDiscoverer (GObject, Thread):
                 continue
             
             binname = engine.getAttribute("binname")
-            path = self._findPath(binname)
+            location = self._findPath(binname)
             
-            if not path:
+            if not location:
                 # We ignore engines not available
                 continue
             
-            path, execpath = path
-            md5sum = md5.new(open(path).read()).hexdigest()
+            file, path, args = location
+            md5sum = md5.new(open(file).read()).hexdigest()
             
             checkIt = False
             
-            pathNodes = engine.getElementsByTagName("path")
-            if pathNodes:
-                epath = pathNodes[0].childNodes[0].data.split()[-1]
-                if epath != path:
+            fileNodes = engine.getElementsByTagName("file")
+            if fileNodes:
+                efile = fileNodes[0].childNodes[0].data.split()[-1]
+                if efile != file:
                     self._clearEngine(engine)
                     checkIt = True
                 else:
@@ -265,7 +271,9 @@ class EngineDiscoverer (GObject, Thread):
                 checkIt = True
             
             if checkIt:
-                engine.appendChild( self._createElement("path", execpath) )
+                engine.appendChild( self._createElement("file", file) )
+                engine.appendChild( self._createElement("path", path) )
+                engine.appendChild( self._createElement("args", str(args)) )
                 engine.appendChild( self._createElement("md5", md5sum) )
                 toBeDiscovered.append((engine, binname))
             
@@ -327,7 +335,10 @@ class EngineDiscoverer (GObject, Thread):
             if md5.childNodes[0].data.strip() == md5sum:
                 return engine
     
-    def getName (self, engine):
+    def getName (self, engine=None):
+        # Test if the call was to get the name of the thread
+        if engine == None:
+            return Thread.getName(self)
         return engine.getElementsByTagName("name")[0].childNodes[0].data.strip()
     
     def getCountry (self, engine):
@@ -337,9 +348,12 @@ class EngineDiscoverer (GObject, Thread):
         return None
     
     def initEngine (self, engine, color):
-        protocol = engine.getAttribute("protocol")
+        protocol = attrToProtocol[engine.getAttribute("protocol")]
         path = engine.getElementsByTagName("path")[0].childNodes[0].data.strip()
-        return ProtocolEngine ((attrToProtocol[protocol], path), color)
+        exec("args = %s" % \
+            engine.getElementsByTagName("args")[0].childNodes[0].data.strip())
+        subprocess = SubProcess(path, args, warnwords=("illegal","error"))
+        return ProtocolEngine( protocol(subprocess, color) )
     
     #
     # Other

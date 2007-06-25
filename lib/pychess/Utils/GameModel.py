@@ -19,14 +19,13 @@ class GameModel (GObject):
         It also has the task of controlling players actions and moves """
     
     __gsignals__ = {
-        "game_changed":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "moves_undoing":   (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "game_loading":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "game_loaded":     (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "game_saved":      (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        "game_ended":      (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "draw_sent":       (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "flag_call_error": (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
+        "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
     
     def __init__ (self, timemodel=None):
@@ -50,8 +49,8 @@ class GameModel (GObject):
             "Day":   today.day
         }
         
-        # Set to a Player object who has offered his/her opponent a draw
-        self.drawSentBy = None
+        # Keeps track of offers, so that accepts can be spotted
+        self.offerMap = {}
         # True if the game has been changed since last save
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
@@ -65,7 +64,10 @@ class GameModel (GObject):
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
-           player.connect("action", self._actionRecieved)
+            player.connect("offer", self.offerRecieved)
+            player.connect("withdraw", self.withdrawRecieved)
+            player.connect("decline", self.declineRecieved)
+            player.connect("accept", self.acceptRecieved)
     
     def setSpectactors (self, spectactors):
         assert self.status == WAITING_TO_START
@@ -105,32 +107,25 @@ class GameModel (GObject):
         return self.moves[self._plyToIndex(ply)]
     
     ############################################################################
-    # Player stuff                                                             #
+    # Offer management                                                         #
     ############################################################################
     
-    def _actionRecieved (self, player, action, param):
-        
+    def offerRecieved (self, player, offer):
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if action == RESIGNATION:
+        if offer.offerType == HURRY_REQUEST:
+            opPlayer.hurry()
+        
+        elif offer.offerType == RESIGNATION:
             if player == self.players[WHITE]:
                 self.end(BLACKWON, WON_RESIGN)
             else: self.end(WHITEWON, WON_RESIGN)
         
-        elif action == DRAW_OFFER:
-            if self.drawSentBy == opPlayer:
-                # If our opponent has already offered us a draw, the game ends
-                self.end(DRAW, DRAW_AGREE)
-            else:
-                self.emit("draw_sent", player)
-                self.drawSentBy = player
-                opPlayer.offerDraw()
-        
-        elif action == FLAG_CALL:
+        elif offer.offerType == FLAG_CALL:
             if not self.timemodel:
-                self.emit("flag_call_error", player, NO_TIME_SETTINGS)
+                player.offerError(offer, ACTION_ERROR_NO_CLOCK)
                 return
             
             if player == self.players[WHITE]:
@@ -145,18 +140,60 @@ class GameModel (GObject):
                         self.end(WHITEWON, WON_CALLFLAG)
                     else:
                         self.end(BLACKWON, WON_CALLFLAG)
+            else:
+                player.offerError(offer, ACTION_ERROR_NOT_OUT_OF_TIME)
+        
+        elif offer.offerType in OFFERS:
+            if offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
+                player.offerError(offer, ACTION_ERROR_TO_LARGE_UNDO)
                 return
-            
-            self.emit("flag_call_error", player, NOT_OUT_OF_TIME)
+            if offer not in self.offerMap:
+                self.offerMap[offer] = player
+                opPlayer.offer(offer)
+            # If we updated an older offer, we want to delete the old one
+            for of in self.offerMap.keys():
+                if offer.offerType == of.offerType and offer != of:
+                    del self.offerMap[of]
+    
+    def withdrawRecieved (self, player, offer):
+        if offer in self.offerMap and self.offerMap[offer] == player:
+            del self.offerMap[offer]
+            opPlayer.offerWithdrawn(offer)
+        else:
+            player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
+    
+    def declineRecieved (self, player, offer):
+        if player == self.players[WHITE]:
+            opPlayer = self.players[BLACK]
+        else: opPlayer = self.players[WHITE]
         
-        elif action == TAKEBACK_FORCE:
-            self.undoMoves(self.ply - param)
+        if offer in self.offerMap and self.offerMap(offer) == opPlayer:
+            del self.offerMap[offer]
+            opPlayer.offerDeclined(offer)
+        else:
+            player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
+    
+    def acceptRecieved (self, player, offer):
+        if player == self.players[WHITE]:
+            opPlayer = self.players[BLACK]
+        else: opPlayer = self.players[WHITE]
         
-        elif action == ADJOURN_OFFER:
-            opPlayer.offerAdjourn()
-        
-        elif action == ABORT_OFFER:
-            opPlayer.offerAbort()
+        if offer in self.offerMap and self.offerMap[offer] == opPlayer:
+            if offer.offerType == DRAW_OFFER:
+                self.end(DRAW, DRAW_AGREE)
+            elif offer.offerType == TAKEBACK_OFFER:
+                self.undoMoves(self.ply - offer.param)
+            elif offer.offerType == ADJOURN_OFFER:
+                self.end(ADJOURNED, ADJOURNED_AGREEMENT)
+            elif offer.offerType == ABORT_OFFER:
+                self.end(ABORTED, ABORTED_AGREEMENT)
+            elif offer.offerType == PAUSE_OFFER:
+                self.pause()
+            elif offer.offerType == RESUME_OFFER:
+                self.resume()
+            del self.offerMap[offer]
+        else:
+            player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
     
     ############################################################################
     # Data stuff                                                               #
@@ -253,6 +290,7 @@ class GameModel (GObject):
                 self.timemodel.tap()
             
             if status != RUNNING:
+                # FIXME: On FICS draw by repetition or 50 moves have to be claimed
                 self.status = status
                 self.emit("game_changed")
                 self.status = RUNNING # self.end only accepts ending if running
@@ -292,6 +330,11 @@ class GameModel (GObject):
         self.applyingMoveLock.release()
     
     def resume (self):
+        
+        glock.release()
+        self.applyingMoveLock.acquire()
+        glock.acquire()
+        
         for player in self.players:
             player.resume()
         
@@ -301,12 +344,13 @@ class GameModel (GObject):
         except NotImplementedError:
             pass
         
-        self.applyingMoveLock.acquire()
         if self.timemodel:
             self.timemodel.resume()
-        self.applyingMoveLock.release()
         
         self.status = RUNNING
+        
+        glock.release()
+        self.applyingMoveLock.release()
     
     def end (self, status, reason):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -365,11 +409,11 @@ class GameModel (GObject):
         
         for player in list(self.players) + list(self.spectactors.values()):
             try:
-                player.undoMoves(moves)
+                player.undoMoves(moves, self)
             except NotImplementedError:
                 # If the player doesn't support undoing, we might be able to
                 # simply "load" the new last board
-                player.setBoard(self.boards[-1])
+                player.setBoard(self)
         
         if self.timemodel:
             self.timemodel.undoMoves(moves)

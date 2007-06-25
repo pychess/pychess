@@ -1,17 +1,62 @@
 import gtk
 
-from threading import Condition
-from gobject import GObject
 from Queue import Queue
 
 from Player import Player, PlayerIsDead
 from pychess.Utils.const import *
+from pychess.Utils.Offer import Offer
+
+OFFER_MESSAGES = {
+    DRAW_OFFER:
+        (_("You've got a draw offer. Accept?"),
+         _("Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."), False),
+    ABORT_OFFER:
+        (_("You've got an abort offer. Accept?"),
+         _("Your opponent has offered you to abort the game. If you accept, the game will end with no rating change."), False),
+    ADJOURN_OFFER:
+        (_("You've got an adjourn offer. Accept?"),
+         _("Your opponent has offered you to adjourn the game. If you accept, the game will adjourned, and you can later resume it (If your opponent is online and willing)."), False),
+    TAKEBACK_OFFER:
+        (_("Your opponent wants to undo. Accept?"),
+         _("Your opponent wants to undo back to halfmove %s.. If you accept, the game will continue from the earlier position."), True),
+    PAUSE_OFFER:
+        (_("Your opponent offers you a pause. Accept?"),
+         _("Your opponent wants to make a break. If you accept the game clock will be paused until on of you accept a resume offer"), False),
+    RESUME_OFFER:
+        (_("Your opponent wants to resume. Accept?"),
+         _("Your opponent wants to resume the game. If you accept, the game clock will start counting down from where it was left."), False)
+}
+
+ACTION_NAMES = {
+    RESIGNATION: _("the resignation"),
+    FLAG_CALL: _("the flag call"),
+    DRAW_OFFER: _("the draw offer"),
+    ABORT_OFFER: _("the abort offer"),
+    ADJOURN_OFFER: _("the adjourn offer"),
+    PAUSE_OFFER: _("the pause offer"),
+    RESUME_OFFER: _("the resume offer"),
+    SWITCH_OFFER: _("the offer to swith sides"),
+    TAKEBACK_OFFER: _("the takeback offer")
+}
+
+ERROR_MESSAGES = {
+    ACTION_ERROR_NO_CLOCK:
+        _("The game hasn't got a clock."),
+    ACTION_ERROR_NOT_OUT_OF_TIME:
+        _("Your opponent is not out of time."),
+    ACTION_ERROR_CLOCK_NOT_STARTED:
+        _("The clock hasn't yet been started."),
+    ACTION_ERROR_SWITCH_UNDERWAY:
+        _("You can't switch color during the game."),
+    ACTION_ERROR_TO_LARGE_UNDO:
+        _("You have tried to redo to many moves."),
+}
 
 class Human (Player):
     __type__ = LOCAL
     
     def __init__ (self, board, color, name):
-        GObject.__init__(self)
+        Player.__init__(self)
         
         self.gamemodel = board.view.model
         self.queue = Queue()
@@ -19,78 +64,99 @@ class Human (Player):
         self.board = board
         self.conid = [
             board.connect("piece_moved", self.piece_moved),
-            board.connect("call_flag", lambda b: self.emit_action(FLAG_CALL)),
-            board.connect("draw", lambda b: self.emit_action(DRAW_OFFER)),
-            board.connect("resign", lambda b: self.emit_action(RESIGNATION))
+            board.connect("action", lambda b,ac,pa: self.emit_action(ac,pa))
         ]
         self.name = name
-    
-    def piece_moved (self, board, move):
-        if self.gamemodel.boards[-1].color != self.color:
-            return
-        self.queue.put(move)
-    
-    def emit_action (self, action):
-        if self.gamemodel.boards[-1].color != self.color:
-            return
-        self.emit("action", action, 0)
-    
-    def makeMove (self, gamemodel):
-        self.board.locked = False
-        item = self.queue.get(block=True)
-        
-        self.board.locked = True
-        if item == "del":
-            raise PlayerIsDead
-        
-        return item
-    
-    def _offer (self, action, param, title, description):
-        d = gtk.MessageDialog (
-                type = gtk.MESSAGE_QUESTION, buttons = gtk.BUTTONS_YES_NO)
-        d.set_markup (title)
-        d.format_secondary_text (description)
-        def response (dialog, response):
-            if response == gtk.RESPONSE_YES:
-                self.emit("action", action, param)
-            d.hide()
-        d.connect("response", response)
-        d.show_all()
-    
-    def offerDraw (self):
-        self._offer ( DRAW_OFFER, 0,
-                _("<big><b>You've got a draw offer. Accept?</b></big>"),
-                _("Your opponent has offered you a draw. If you accept it the "+
-                  "game will end with score 1/2 - 1/2.")
-        )
-    
-    def offerAbort (self):
-        self._offer ( ABORT_OFFER, 0,
-                _("<big><b>You've got an abort offer. Accept?</b></big>"),
-                _("Your opponent has offered you to abort the game. If you "+
-                  "accept, the game will end with no rating change.")
-        )
-    
-    def offerAdjourn (self):
-        self._offer ( ADJOURN_OFFER, 0,
-                _("<big><b>You've got an adjourn offer. Accept?</b></big>"),
-                _("Your opponent has offered you to adjourn the game. If you "+
-                  "accept, the game will adjourned, and you can later resume "+
-                  "it (If your opponent is online and willing).")
-        )
-    
-    def offerTakeback (self, toPly):
-        self._offer ( TAKEBACK_OFFER, toPly,
-                _("<big><b>Your opponent wants to undo. Accept?</b></big>"),
-                _("Your opponent wants to undo back to halfmove %s.. If you "+
-                  "accept, the game will continue from the earlier position.")
-        )
     
     def setName (self, name):
         self.name = name
     
     def __repr__ (self):
         return self.name
+    
+    
+    def piece_moved (self, board, move):
+        if self.gamemodel.boards[-1].color != self.color:
+            return
+        self.queue.put(move)
+    
+    def emit_action (self, action, param):
+        # If there are two human players, we have to ensure us that it was us
+        # who did the action, and not the others
+        print "emit_action"
+        if self.gamemodel.players[1-self.color].__type__ == LOCAL:
+            if action == HURRY_REQUEST:
+                if self.gamemodel.boards[-1].color == self.color:
+                    print "return"; return
+            else:
+                if self.gamemodel.boards[-1].color != self.color:
+                    print "return"; return
+        self.emit("offer", Offer(action, param))
+    
+    def makeMove (self, gamemodel):
+        self.board.locked = False
+        item = self.queue.get(block=True)
+        self.board.locked = True
+        if item == "del":
+            raise PlayerIsDead
+        
+        return item
+    
+    
+    def _message (self, title, description, type, buttons, resfunc=None):
+        d = gtk.MessageDialog (type=type, buttons=buttons)
+        d.set_markup ("<big><b>%s</b></big>" % title)
+        d.format_secondary_text (description)
+        def response (dialog, response):
+            if resfunc:
+                resfunc(response)
+            d.hide()
+        d.connect("response", response)
+        d.show()
+    
+    def offer (self, offer):
+        title, description, takesParam = OFFER_MESSAGES[offerType]
+        if takesParam:
+            description = description % offer.param
+        
+        def response (dialog, response):
+            if response == gtk.RESPONSE_YES:
+                self.emit("action", offer)
+            else: self.emit("decline", offer)
+        self._message(title, description,
+                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, response)
+    
+    def offerDeclined (self, offer):
+        if offer.offerType not in ACTION_NAMES:
+            return
+        title = _("%s was declined by you opponent") % ACTION_NAMES[offer.offerType]
+        description = _("You can try to send the to offer your opponent later in the game again")
+        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+    
+    def offerWithdrawn (self, offer):
+        if offer.offerType not in ACTION_NAMES:
+            return
+        title = _("%s was withdrawn by you opponent") % ACTION_NAMES[offer.offerType]
+        description = _("You opponent seams to have changed his or her mind.")
+        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+    
+    def offerError (self, offer, error):
+        if offer.offerType not in ACTION_NAMES:
+            return
+        actionName = ACTION_NAMES[offer.offerType]
+        if error == ACTION_ERROR_NONE_TO_ACCEPT:
+            title = _("Unable to accept %s") % actionName
+            description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn")
+        elif error == ACTION_ERROR_NONE_TO_DECLINE or \
+             error == ACTION_ERROR_NONE_TO_WITHDRAW:
+            # If the offer was not there, it has probably already been either
+            # declined or withdrawn.
+            return
+        else:
+            title = _("%s return an error") % (actionName[0].upper()+actionName[1:])
+            description = ERROR_MESSAGES[error]
+        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+    
     
     def end (self, status, reason):
         # We don't really need to know the status
@@ -102,13 +168,11 @@ class Human (Player):
                 self.board.disconnect(id)
         self.queue.put("del")
     
-    def setBoard (self, fen):
-        # BoardControl, from which we are reciving moves, will be set by others
-        pass
     
-    def undoMoves (self, moves):
-        # We don't have to implement this, just as setBoard
-        pass
+    def hurry (self):
+        title = _("You opponent asks you to hurry!")
+        description = _("Generally this means nothing, as the game is timebased, but if you want to please you opponent, perhaps you should get going.")
+        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def pause (self):
         self.board.locked = True
@@ -116,3 +180,6 @@ class Human (Player):
     def resume (self):
         if self.board.view.model.curplayer == self:
             self.board.locked = False
+    
+    def undoMoves (self, moves, gamemodel):
+        pass

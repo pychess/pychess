@@ -197,6 +197,13 @@ def go (queue):
             mytime += increment
         
         if not mvs:
+            if not lsearch.searching:
+                # We were interupted
+                lsearch.movesearches = 0
+                lsearch.nodes = 0
+                searchLock.release()
+                return
+            
             if lsearch.last == 4:
                 print "resign"
             else:
@@ -296,6 +303,10 @@ while True:
         q.get()
     
     elif lines[0] == "undo":
+        if not forced:
+            lsearch.searching = False
+            searchLock.acquire()
+            searchLock.release()
         board.popMove()
     
     elif lines[0] == "?":

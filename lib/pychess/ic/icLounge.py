@@ -428,19 +428,19 @@ def initialize():
         gameno = model.get_value(iter, 0)
         if gameno.startswith("C"):
             print "Sending", "accept", gameno[1:]
-            print >> telnet.client, "accept", gameno[1:]
+            om.acceptIndex(gameno[1:])
         else:
             print "Sending", "play", gameno
-            print >> telnet.client, "play", gameno
+            om.playIndex(gameno)
     widgets["acceptButton"].connect("clicked", on_accept)
     tv.connect("row-activated", on_accept)
     
     def playBoardCreated (bm, board):
-        
+        print "playBoardCreated"
         timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
-        game = IcGameModel (bm, board["gameno"], timemodel)
+        game = IcGameModel (bm, om, board["gameno"], timemodel)
         gmwidg = gamewidget.GameWidget(game)
-        
+        print "widget and model created"
         if board["wname"].lower() == telnet.curname.lower():
             color = WHITE
             white = Human(gmwidg.widgets["board"], WHITE, board["wname"])
@@ -459,11 +459,12 @@ def initialize():
         if timemodel:
             gmwidg.widgets["ccalign"].show()
             gmwidg.widgets["cclock"].setModel(timemodel)
-        
+        print "attaching"
         glock.acquire()
         ionest.simpleNewGame (game, gmwidg)
         gamewidget.attachGameWidget (gmwidg)
         glock.release()
+        print "attached"
     
     bm.connect ("playBoardCreated", playBoardCreated)
     

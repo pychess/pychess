@@ -108,7 +108,8 @@ head2mainDic = {}
 class GameWidget (gobject.GObject):
     
     __gsignals__ = {
-        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        'infront': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
     
     def __init__ (self, gamemodel):
@@ -160,7 +161,7 @@ class GameWidget (gobject.GObject):
         ccalign.add(cclock)
         ccalign.set_size_request(-1, 32)
         
-        board = BoardControl(gamemodel)
+        board = BoardControl(gamemodel, getActionMenuItems())
         
         lvbox.pack_start(ccalign, expand=False)
         lvbox.pack_start(board)
@@ -422,6 +423,11 @@ def attachGameWidget (gmwidg):
         # Object has no attribute 'set_tab_reorderable' is raised by gtk < 2.10
         pass
     
+    def callback (notebook, gpointer, page_num):
+        if notebook.get_nth_page(page_num) == gmwidg.widgets["headchild"]:
+            gmwidg.emit("infront")
+    headbook.connect("switch-page", callback)
+    
     # We should always show tabs if more than one exists
     if headbook.get_n_pages() == 2:
         show_tabs(True)
@@ -445,6 +451,13 @@ def getheadbook ():
         # If the headbook hasn't been added yet
         return None
     return widgets["mainvbox"].get_children()[1].child
+
+def getActionMenuItems ():
+    dic = {}
+    for item in ("call_flag", "draw", "resign",
+                 "force_to_move", "undo1", "pause1"):
+        dic[item] = widgets[item]
+    return dic
 
 def show_tabs (show):
     if show:
