@@ -115,7 +115,7 @@ class Human (Player):
         d.show()
     
     def offer (self, offer):
-        title, description, takesParam = OFFER_MESSAGES[offerType]
+        title, description, takesParam = OFFER_MESSAGES[offer.offerType]
         if takesParam:
             description = description % offer.param
         
