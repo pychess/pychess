@@ -167,7 +167,7 @@ class GameModel (GObject):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer in self.offerMap and self.offerMap(offer) == opPlayer:
+        if offer in self.offerMap and self.offerMap[offer] == opPlayer:
             del self.offerMap[offer]
             opPlayer.offerDeclined(offer)
         else:
