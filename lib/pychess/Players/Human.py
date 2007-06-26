@@ -109,7 +109,7 @@ class Human (Player):
         d.format_secondary_text (description)
         def response (dialog, response):
             if resfunc:
-                resfunc(response)
+                resfunc(dialog, response)
             d.hide()
         d.connect("response", response)
         d.show()
