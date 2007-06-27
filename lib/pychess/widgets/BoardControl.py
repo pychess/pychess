@@ -18,7 +18,7 @@ class BoardControl (gtk.EventBox):
     
     __gsignals__ = {
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int))
+        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int, object))
     }
     
     def __init__(self, gamemodel, actionMenuItems):
@@ -227,16 +227,16 @@ class BoardControl (gtk.EventBox):
     
     def actionActivate (self, widget, key):
         if key == "call_flag":
-            self.emit("action", FLAG_CALL, 0)
+            self.emit("action", FLAG_CALL, None)
         elif key == "draw":
-            self.emit("action", DRAW_OFFER, 0)
+            self.emit("action", DRAW_OFFER, None)
         elif key == "resign":
-            self.emit("action", RESIGNATION, 0)
+            self.emit("action", RESIGNATION, None)
         elif key == "force_to_move":
-            self.emit("action", HURRY_REQUEST, 0)
+            self.emit("action", HURRY_REQUEST, None)
         elif key == "undo1":
             self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
         elif key == "pause1":
             if widget.get_active():
-                self.emit("action", PAUSE_OFFER, 0)
-            else: self.emit("action", RESUME_OFFER, 0)
+                self.emit("action", PAUSE_OFFER, None)
+            else: self.emit("action", RESUME_OFFER, None)
