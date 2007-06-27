@@ -83,14 +83,13 @@ class Human (Player):
     def emit_action (self, action, param):
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
-        print "emit_action"
         if self.gamemodel.players[1-self.color].__type__ == LOCAL:
             if action == HURRY_REQUEST:
                 if self.gamemodel.boards[-1].color == self.color:
-                    print "return"; return
+                    return
             else:
                 if self.gamemodel.boards[-1].color != self.color:
-                    print "return"; return
+                    return
         self.emit("offer", Offer(action, param))
     
     def makeMove (self, gamemodel):
@@ -121,7 +120,7 @@ class Human (Player):
         
         def response (dialog, response):
             if response == gtk.RESPONSE_YES:
-                self.emit("action", offer)
+                self.emit("offer", offer)
             else: self.emit("decline", offer)
         self._message(title, description,
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, response)
