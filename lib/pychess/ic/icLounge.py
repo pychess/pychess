@@ -687,7 +687,7 @@ def initialize():
     
     def observeBoardCreated (bm, gameno, pgn, secs, incr, wname, bname):
         timemodel = TimeModel (secs, incr)
-        game = IcGameModel (bm, gameno, timemodel)
+        game = IcGameModel (bm, om, gameno, timemodel)
         white = ServerPlayer (bm, om, wname, True, gameno, WHITE)
         black = ServerPlayer (bm, om, bname, True, gameno, BLACK)
         game.setPlayers((white,black))
