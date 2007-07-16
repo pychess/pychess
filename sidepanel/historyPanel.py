@@ -67,7 +67,7 @@ class Sidepanel:
         
         def value_changed (vadjust):
             vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-            		vadjust.upper) < vadjust.step_increment
+                        vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
         def figuresInNotationCallback (none):
@@ -120,7 +120,7 @@ class Sidepanel:
         
         if myconf.get("figuresInNotation"):
             notat = toFAN(game.boards[-2], game.moves[-1])
-        else: notat = toSAN(game.boards[-2], game.moves[-1])
+        else: notat = toSAN(game.boards[-2], game.moves[-1], True)
         ply = game.ply
         
         glock.acquire()
