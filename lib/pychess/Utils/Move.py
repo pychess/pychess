@@ -74,8 +74,8 @@ class Move:
 ################################################################################
 
 def listToMoves (board, mstrs, type=None, validate=False):
-	return [Move(move) for move in lmove.listToMoves(
-	                                        board.board, mstrs, type, validate)]
+    return [Move(move) for move in lmove.listToMoves(
+                                            board.board, mstrs, type, validate)]
 
 def parseAny (board, algnot):
     return Move(lmove.parseAny (board.board, algnot))
@@ -113,12 +113,12 @@ def toAN (board, move):
     
     return lmove.toAN (board.board, move.move)
     
-def toSAN (board, move):
+def toSAN (board, move, localRepr=False):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move, board2 past.
         If not board2, toSAN will not test mate """
     
-    return lmove.toSAN (board.board, move.move)
+    return lmove.toSAN (board.board, move.move, localRepr)
 
 def toLAN (board, move):
     """ Returns a Long/Expanded Algebraic Notation string of a move

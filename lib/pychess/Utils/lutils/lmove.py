@@ -125,7 +125,7 @@ def listToMoves (board, movstrs, type=None, testvalidate=False):
 # toSan                                                                        #
 ################################################################################
 
-def toSAN (board, move):
+def toSAN (board, move, localRepr=False):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move """
     
@@ -149,7 +149,15 @@ def toSAN (board, move):
     part1 = ""
     
     if fpiece != PAWN:
-        part0 += reprSign[fpiece]
+        # Localizable Piece signs used by history panel
+        # TODO: find a way to move this to const.py
+        # TODO: using _() conflicts with wery early imports from const module
+        localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
+        
+        if localRepr:
+            part0 += localReprSign[fpiece]
+        else:
+            part0 += reprSign[fpiece]
     
     part1 = reprCord[tcord]
     
