@@ -32,14 +32,15 @@ class Publisher (Thread):
             if v == None:
                 break
             glock.acquire()
-            l = [v]
-            while True:
-                try:
-                    v = self.queue.get_nowait()
-                except Queue.Empty:
-                    break
-                else: l.append(v)
             try:
+                l = [v]
+                while True:
+                    try:
+                        v = self.queue.get_nowait()
+                    except Queue.Empty:
+                        break
+                    else: l.append(v)
+                
                 if self.sendPolicy == self.SEND_LIST:
                     self.func(l)
                 elif self.sendPolicy == self.SEND_LAST:

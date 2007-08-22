@@ -74,14 +74,16 @@ def listToSan (board, moves):
     sanmoves = []
     
     board.lock.acquire()
-    for move in moves:
-        san = toSAN (board, move)
-        sanmoves.append(san)
-        board.applyMove(move)
-        
-    for move in moves:
-        board.popMove()
-    board.lock.release()
+    try:
+        for move in moves:
+            san = toSAN (board, move)
+            sanmoves.append(san)
+            board.applyMove(move)
+            
+        for move in moves:
+            board.popMove()
+    finally:
+        board.lock.release()
     
     return sanmoves
 

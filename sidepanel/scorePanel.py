@@ -41,11 +41,13 @@ class ScorePlot (gtk.DrawingArea):
     def redraw (self):
         if self.window:
             glock.acquire()
-            a = self.get_allocation()
-            rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
-            glock.release()
+            try:
+                a = self.get_allocation()
+                rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
+                self.window.invalidate_rect(rect, True)
+                self.window.process_updates(True)
+            finally:
+                glock.release()
     
     def press (self, widget, event):
         self.emit('selected', event.y/self.moveHeight+1)

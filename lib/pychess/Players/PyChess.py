@@ -137,25 +137,25 @@ def analyze ():
     lsearch.searching = True
     start = time()
     searchLock.acquire()
-    
-    for depth in range (1, 10):
-        if not lsearch.searching: break
-        t = time()
-        mvs, scr = alphaBeta (board, depth)
-        
-        smvs = " ".join(listToSan(board, mvs))
-        
-        print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
-              lsearch.nodes, "\t", smvs
-        
-        print "%0.1f moves/position; %0.1f n/s" % \
-                (lsearch.nodes/float(lsearch.movesearches),
-                lsearch.nodes/(time()-t))
-        
-        lsearch.nodes = 0
-        lsearch.movesearches = 0
-    
-    searchLock.release()
+    try:
+        for depth in range (1, 10):
+            if not lsearch.searching: break
+            t = time()
+            mvs, scr = alphaBeta (board, depth)
+            
+            smvs = " ".join(listToSan(board, mvs))
+            
+            print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
+                  lsearch.nodes, "\t", smvs
+            
+            print "%0.1f moves/position; %0.1f n/s" % \
+                    (lsearch.nodes/float(lsearch.movesearches),
+                    lsearch.nodes/(time()-t))
+            
+            lsearch.nodes = 0
+            lsearch.movesearches = 0
+    finally:
+        searchLock.release()
 
 ################################################################################
 # go()                                                                         #
@@ -164,73 +164,74 @@ def analyze ():
 def go (queue):
     """ Finds and prints the best move from the current position """
     searchLock.acquire()
-    queue.put(None)
-    # TODO: Length info should be put in the book.
-    # Btw. 10 is not enough. Try 20
-    if len(board.history) < 14:
-        movestr = getBestOpening(board)
-        if movestr:
-            mvs = [parseSAN(board, movestr)]
-    
-    if len(board.history) >= 14 or not movestr:
+    try:
+        queue.put(None)
+        # TODO: Length info should be put in the book.
+        # Btw. 10 is not enough. Try 20
+        if len(board.history) < 14:
+            movestr = getBestOpening(board)
+            if movestr:
+                mvs = [parseSAN(board, movestr)]
         
-        global mytime, increment, scr
-        lsearch.searching = True
-        
-        if mytime == None:
-            mvs, scr = alphaBeta (board, sd)
-        
-        else:
-            # We bet that the game will be about 30 moves. That gives us
-            # starttime / 30 seconds per turn + the incremnt.
-            # TODO: Create more sophisticated method.
-            usetime = float(mytime) / max((30-len(board.history)),3)
-            usetime = max (usetime, 5) # We don't wan't to search for e.g. 0 secs
-            starttime = time()
-            endtime = starttime + usetime
-            print "Time left: %d seconds; Thinking for %d seconds" % \
-                   (mytime, usetime)
-            for depth in range(1,sd+1):
-                mvs, scr = alphaBeta (board, depth)
-                if time() > endtime: break
-            mytime -= time() - starttime
-            mytime += increment
-        
-        if not mvs:
-            if not lsearch.searching:
-                # We were interupted
-                lsearch.movesearches = 0
-                lsearch.nodes = 0
-                searchLock.release()
+        if len(board.history) >= 14 or not movestr:
+            
+            global mytime, increment, scr
+            lsearch.searching = True
+            
+            if mytime == None:
+                mvs, scr = alphaBeta (board, sd)
+            
+            else:
+                # We bet that the game will be about 30 moves. That gives us
+                # starttime / 30 seconds per turn + the incremnt.
+                # TODO: Create more sophisticated method.
+                usetime = float(mytime) / max((30-len(board.history)),3)
+                usetime = max (usetime, 5) # We don't wan't to search for e.g. 0 secs
+                starttime = time()
+                endtime = starttime + usetime
+                print "Time left: %d seconds; Thinking for %d seconds" % \
+                       (mytime, usetime)
+                for depth in range(1,sd+1):
+                    mvs, scr = alphaBeta (board, depth)
+                    if time() > endtime: break
+                mytime -= time() - starttime
+                mytime += increment
+            
+            if not mvs:
+                if not lsearch.searching:
+                    # We were interupted
+                    lsearch.movesearches = 0
+                    lsearch.nodes = 0
+                    searchLock.release()
+                    return
+                
+                if lsearch.last == 4:
+                    print "resign"
+                else:
+                    if scr == 0:
+                        print "result", reprResult[DRAW]
+                    elif scr < 0:
+                        if board.color == WHITE:
+                            print "result", reprResult[BLACKWON]
+                        else: print "result", reprResult[WHITEWON]
+                    else:
+                        if board.color == WHITE:
+                            print "result", reprResult[WHITEWON]
+                        else: print "result", reprResult[BLACKWON]
+                    print "last:", lsearch.last, scr
                 return
             
-            if lsearch.last == 4:
-                print "resign"
-            else:
-                if scr == 0:
-                    print "result", reprResult[DRAW]
-                elif scr < 0:
-                    if board.color == WHITE:
-                        print "result", reprResult[BLACKWON]
-                    else: print "result", reprResult[WHITEWON]
-                else:
-                    if board.color == WHITE:
-                        print "result", reprResult[WHITEWON]
-                    else: print "result", reprResult[BLACKWON]
-                print "last:", lsearch.last, scr
-            return
+            print "moves were:", " ".join(listToSan(board, mvs)), scr
+            
+            lsearch.movesearches = 0
+            lsearch.nodes = 0
+            lsearch.searching = False
         
-        print "moves were:", " ".join(listToSan(board, mvs)), scr
-        
-        lsearch.movesearches = 0
-        lsearch.nodes = 0
-        lsearch.searching = False
-    
-    move = mvs[0]
-    print "move", toSAN(board, move)
-    board.applyMove(move)
-    
-    searchLock.release()
+        move = mvs[0]
+        print "move", toSAN(board, move)
+        board.applyMove(move)
+    finally:
+        searchLock.release()
 
 ################################################################################
 # Read raw_input()                                                             #
@@ -317,11 +318,13 @@ while True:
     elif lines[0] in ("black", "white"):
         lsearch.searching = False
         searchLock.acquire()
-        newColor = lines[0] == "black" and BLACK or WHITE
-        if board.color != newColor:
-            board.setColor(newColor)
-            board.setEnpassant(None)
-        searchLock.release()
+        try:
+            newColor = lines[0] == "black" and BLACK or WHITE
+            if board.color != newColor:
+                board.setColor(newColor)
+                board.setEnpassant(None)
+        finally:
+            searchLock.release()
         if analyzing:
             pool.start(analyze)
     
@@ -339,8 +342,10 @@ while True:
     elif lines[0] == "setboard":
         lsearch.searching = False
         searchLock.acquire()
-        board.applyFen(" ".join(lines[1:]))
-        searchLock.release()
+        try:
+            board.applyFen(" ".join(lines[1:]))
+        finally:
+            searchLock.release()
         if analyzing:
             pool.start(analyze)
     

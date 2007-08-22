@@ -90,91 +90,91 @@ def initialize():
     def callback (fm, ratings, email, time):
         
         glock.acquire()
-        
-        widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
-        dock = widgets["fingerTableDock"]
-        dock.remove(dock.get_child()) # Remove placeholder
-        
-        rows = 1
-        if ratings: rows += len(ratings)+1
-        if email: rows += 1
-        if time: rows += 1
-        
-        table = gtk.Table(6, rows)
-        table.props.column_spacing = 12
-        table.props.row_spacing = 4
-        
-        def label(str, xalign=0):
-            label = gtk.Label(str)
-            label.props.xalign = xalign
-            return label
-        
-        row = 0
-        
-        if ratings:
-            for i, item in enumerate(("Rating", "Win", "Loss", "Draw", "Total")):
-                table.attach(label(_(item), xalign=1), i+1,i+2,0,1)
+        try:
+            widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
+            dock = widgets["fingerTableDock"]
+            dock.remove(dock.get_child()) # Remove placeholder
             
-            row += 1
+            rows = 1
+            if ratings: rows += len(ratings)+1
+            if email: rows += 1
+            if time: rows += 1
             
-            for type, numbers in ratings.iteritems():
-                table.attach(label(_(type)+":"), 0, 1, row, row+1)
-                # Remove RD tag, as we want to be compact
-                numbers = numbers[:1] + numbers[2:]
-                for i, number in enumerate(numbers):
-                    table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
+            table = gtk.Table(6, rows)
+            table.props.column_spacing = 12
+            table.props.row_spacing = 4
+            
+            def label(str, xalign=0):
+                label = gtk.Label(str)
+                label.props.xalign = xalign
+                return label
+            
+            row = 0
+            
+            if ratings:
+                for i, item in enumerate(("Rating", "Win", "Loss", "Draw", "Total")):
+                    table.attach(label(_(item), xalign=1), i+1,i+2,0,1)
+                
+                row += 1
+                
+                for type, numbers in ratings.iteritems():
+                    table.attach(label(_(type)+":"), 0, 1, row, row+1)
+                    # Remove RD tag, as we want to be compact
+                    numbers = numbers[:1] + numbers[2:]
+                    for i, number in enumerate(numbers):
+                        table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
+                    row += 1
+                
+                table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
                 row += 1
             
-            table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
-            row += 1
-        
-        if email:
-            table.attach(label(_("Email")+":"), 0, 1, row, row+1)
-            table.attach(label(email), 1, 6, row, row+1)
-            row += 1
-        
-        if time:
-            table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
-            s = ""
-            if time[0]:
-                if time[0] == "1":
-                    s += "%s day" % time[0]
-                else: s += "%s days" % time[0]
-            if time[1]:
-                if s: s += ", "
-                if time[1] == "1":
-                    s += "%s hour" % time[1]
-                else: s += "%s hrs" % time[1]
-            if time[2]:
-                if s: s += ", "
-                if time[2] == "1":
-                    s += "%s min" % time[2]
-                else: s += "%s mins" % time[2]
-            if time[3]:
-                if s: s += ", "
-                if time[3] == "1":
-                    s += "%s sec" % time[3]
-                else: s += "%s secs" % time[3]
-            s += " "+_("online in total")
-            table.attach(label(s), 1, 6, row, row+1)
-            row += 1
-        
-        table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
-        pingLabel = gtk.Label(_("Connecting")+"...")
-        pingLabel.props.xalign = 0
-        pinger = Pinger("freechess.org")
-        def callback (pinger, pingtime):
-            if pingtime == -1:
-                pingLabel.set_text(_("Unknown"))
-            else: pingLabel.set_text("%.0f ms" % pingtime)
-        pinger.connect("recieved", callback)
-        pinger.start()
-        table.attach(pingLabel, 1, 6, row, row+1)
-        
-        dock.add(table)
-        dock.show_all()
-        
-        glock.release()
+            if email:
+                table.attach(label(_("Email")+":"), 0, 1, row, row+1)
+                table.attach(label(email), 1, 6, row, row+1)
+                row += 1
+            
+            if time:
+                table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
+                s = ""
+                if time[0]:
+                    if time[0] == "1":
+                        s += "%s day" % time[0]
+                    else: s += "%s days" % time[0]
+                if time[1]:
+                    if s: s += ", "
+                    if time[1] == "1":
+                        s += "%s hour" % time[1]
+                    else: s += "%s hrs" % time[1]
+                if time[2]:
+                    if s: s += ", "
+                    if time[2] == "1":
+                        s += "%s min" % time[2]
+                    else: s += "%s mins" % time[2]
+                if time[3]:
+                    if s: s += ", "
+                    if time[3] == "1":
+                        s += "%s sec" % time[3]
+                    else: s += "%s secs" % time[3]
+                s += " "+_("online in total")
+                table.attach(label(s), 1, 6, row, row+1)
+                row += 1
+            
+            table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
+            pingLabel = gtk.Label(_("Connecting")+"...")
+            pingLabel.props.xalign = 0
+            pinger = Pinger("freechess.org")
+            def callback (pinger, pingtime):
+                if pingtime == -1:
+                    pingLabel.set_text(_("Unknown"))
+                else: pingLabel.set_text("%.0f ms" % pingtime)
+            pinger.connect("recieved", callback)
+            pinger.start()
+            table.attach(pingLabel, 1, 6, row, row+1)
+            
+            dock.add(table)
+            dock.show_all()
+        finally:
+            glock.release()
         
     fm.connect("fingeringFinished", callback)
     
@@ -461,9 +461,11 @@ def initialize():
             gmwidg.widgets["cclock"].setModel(timemodel)
         print "attaching"
         glock.acquire()
-        ionest.simpleNewGame (game, gmwidg)
-        gamewidget.attachGameWidget (gmwidg)
-        glock.release()
+        try:
+            ionest.simpleNewGame (game, gmwidg)
+            gamewidget.attachGameWidget (gmwidg)
+        finally:
+            glock.release()
         print "attached"
     
     bm.connect ("playBoardCreated", playBoardCreated)
@@ -711,8 +713,10 @@ def initialize():
         ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
         
         glock.acquire()
-        gamewidget.attachGameWidget(gmwidg)
-        glock.release()
+        try:
+            gamewidget.attachGameWidget(gmwidg)
+        finally:
+            glock.release()
     
     bm.connect("observeBoardCreated", observeBoardCreated)
     

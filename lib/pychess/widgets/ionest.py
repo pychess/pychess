@@ -499,8 +499,10 @@ def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
     # we have to emit it before loadAndStart is called, which emits signals
     # Main.py are supposed to recieve.
     glock.acquire()
-    handler.emit("game_started", gmwidg, game)
-    glock.release()
+    try:
+        handler.emit("game_started", gmwidg, game)
+    finally:
+        glock.release()
     game.loadAndStart (uri, gameno, position, loader)
 
 ################################################################################
