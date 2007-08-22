@@ -15,12 +15,14 @@ class LimitedDict (UserDict):
         
     def __setitem__ (self, key, item):
     	self.lock.acquire()
-        if not key in self:
-            if len(self) >= self.maxSize:
-                try:
-                    del self[self.krono[0]]
-                except KeyError: pass # Overwritten
-                del self.krono[0]
-        self.data[key] = item
-        self.krono.append(key)
-        self.lock.release()
+        try:
+            if not key in self:
+                if len(self) >= self.maxSize:
+                    try:
+                        del self[self.krono[0]]
+                    except KeyError: pass # Overwritten
+                    del self.krono[0]
+            self.data[key] = item
+            self.krono.append(key)
+        finally:
+            self.lock.release()

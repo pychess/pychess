@@ -102,10 +102,12 @@ class Board:
     
     def willLeaveInCheck (self, move):
         self.board.lock.acquire()
-        self.board.applyMove(move.move)
-        result = self.board.opIsChecked()
-        self.board.popMove()
-        self.board.lock.release()
+        try:
+            self.board.applyMove(move.move)
+            result = self.board.opIsChecked()
+            self.board.popMove()
+        finally:
+            self.board.lock.release()
         return result
     
     def switchColor (self):

@@ -138,11 +138,13 @@ class ChessClock (gtk.DrawingArea):
     def redraw_canvas(self):
         if self.window:
             glock.acquire()
-            a = self.get_allocation()
-            rect = gdk.Rectangle(0, 0, a.width, a.height)
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
-            glock.release()
+            try:
+                a = self.get_allocation()
+                rect = gdk.Rectangle(0, 0, a.width, a.height)
+                self.window.invalidate_rect(rect, True)
+                self.window.process_updates(True)
+            finally:
+                glock.release()
     
     def setModel (self, model):
         self.model = model

@@ -31,5 +31,7 @@ player = Player()
 lock = Lock()
 def playSound (uri):
     lock.acquire()
-    player.play(uri)
-    lock.release()
+    try:
+        player.play(uri)
+    finally:
+        lock.release()

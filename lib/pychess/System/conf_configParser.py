@@ -6,9 +6,9 @@ configParser = SafeConfigParser()
 
 path = os.path.join(os.environ["HOME"], ".pychessconf")
 if os.path.isfile(path):
-	configParser.readfp(open(path))
+    configParser.readfp(open(path))
 else:
-	configParser.add_section(section)
+    configParser.add_section(section)
 
 notifiers = {}
 idkeyfuncs = {}
@@ -32,7 +32,7 @@ def get (key):
         try: return func (section, key)
         except: continue
     return 0
-    
+
 def set (key, value):
     configParser.set (section, key, str(value))
     if key in notifiers:

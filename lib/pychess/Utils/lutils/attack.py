@@ -241,32 +241,32 @@ def defends (board, fcord, tcord):
     opboards = board.boards[opcolor]
     
     board.lock.acquire()
-    
-    # To see if we now defend the piece, we have to "give" it to the other team
-    piece = board.arBoard[tcord]
-    
-    backup = boards[piece]
-    opbackup = opboards[piece]
-    
-    boards[piece] &= notBitPosArray[tcord]
-    opboards[piece] |= bitPosArray[tcord]
-    board.friends[color] &= notBitPosArray[tcord]
-    board.friends[opcolor] |= bitPosArray[tcord]
-    
-    # Can we "attack" the piece now?
-    backupColor = board.color
-    board.setColor(color)
-    from lmove import newMove
-    from validator import validateMove
-    islegal = validateMove (board, newMove(fcord, tcord))
-    board.setColor(backupColor)
-    
-    # Set board back
-    boards[piece] = backup
-    opboards[piece] = opbackup
-    board.friends[color] |= bitPosArray[tcord]
-    board.friends[opcolor] &= notBitPosArray[tcord]
-    
-    board.lock.release()
+    try:
+        # To see if we now defend the piece, we have to "give" it to the other team
+        piece = board.arBoard[tcord]
+        
+        backup = boards[piece]
+        opbackup = opboards[piece]
+        
+        boards[piece] &= notBitPosArray[tcord]
+        opboards[piece] |= bitPosArray[tcord]
+        board.friends[color] &= notBitPosArray[tcord]
+        board.friends[opcolor] |= bitPosArray[tcord]
+        
+        # Can we "attack" the piece now?
+        backupColor = board.color
+        board.setColor(color)
+        from lmove import newMove
+        from validator import validateMove
+        islegal = validateMove (board, newMove(fcord, tcord))
+        board.setColor(backupColor)
+        
+        # Set board back
+        boards[piece] = backup
+        opboards[piece] = opbackup
+        board.friends[color] |= bitPosArray[tcord]
+        board.friends[opcolor] &= notBitPosArray[tcord]
+    finally:
+        board.lock.release()
     
     return islegal

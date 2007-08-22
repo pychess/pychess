@@ -25,13 +25,15 @@ gameDic = {}
 
 def engineDead (engine, gmwidg):
     glock.acquire()
-    gmwidg.bringToFront()
-    d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-    d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
-    d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
-    d.connect("response", lambda d,r: d.hide())
-    d.show_all()
-    glock.release()
+    try:
+        gmwidg.bringToFront()
+        d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+        d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
+        d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
+        d.connect("response", lambda d,r: d.hide())
+        d.show_all()
+    finally:
+        glock.release()
 
 def makeLogDialogReady ():
     LogDialog.add_destroy_notify(lambda: window["log_viewer1"].set_active(0))

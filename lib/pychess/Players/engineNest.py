@@ -378,8 +378,10 @@ if __name__ == "__main__":
 
     def engine_discovered (discoverer, str, object):
         rlock.acquire()
-        print "engine_discovered", str, object.toprettyxml()
-        rlock.release()
+        try:
+            print "engine_discovered", str, object.toprettyxml()
+        finally:
+            rlock.release()
     discoverer.connect("engine_discovered", engine_discovered)
 
     def all_engines_discovered (discoverer):
