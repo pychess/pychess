@@ -280,29 +280,29 @@ class GameModel (GObject):
                 break
             
             self.applyingMoveLock.acquire()
-            
-            newBoard = self.boards[-1].move(move)
-            self.boards.append(newBoard)
-            self.moves.append(move)
-            status, reason = getStatus(self.boards[-1])
-            
-            if self.timemodel:
-                self.timemodel.tap()
-            
-            if status != RUNNING:
-                # FIXME: On FICS draw by repetition or 50 moves have to be claimed
-                self.status = status
+            try:
+                newBoard = self.boards[-1].move(move)
+                self.boards.append(newBoard)
+                self.moves.append(move)
+                status, reason = getStatus(self.boards[-1])
+                
+                if self.timemodel:
+                    self.timemodel.tap()
+                
+                if status != RUNNING:
+                    # FIXME: On FICS draw by repetition or 50 moves have to be claimed
+                    self.status = status
+                    self.emit("game_changed")
+                    self.status = RUNNING # self.end only accepts ending if running
+                    self.end(status, reason)
+                    self.applyingMoveLock.release()
+                    break
                 self.emit("game_changed")
-                self.status = RUNNING # self.end only accepts ending if running
-                self.end(status, reason)
+                
+                for spectactor in self.spectactors.values():
+                    spectactor.makeMove(self)
+            finally:
                 self.applyingMoveLock.release()
-                break
-            self.emit("game_changed")
-            
-            for spectactor in self.spectactors.values():
-                spectactor.makeMove(self)
-            
-            self.applyingMoveLock.release()
     
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
@@ -311,46 +311,46 @@ class GameModel (GObject):
         glock.release()
         self.applyingMoveLock.acquire()
         glock.acquire()
-        
-        for player in self.players:
-            player.pause()
-        
         try:
-            for spectactor in self.spectactors.values():
-                spectactor.pause()
-        except NotImplementedError:
-            pass
-        
-        if self.timemodel:
-            self.timemodel.pause()
-        
-        self.status = PAUSED
-        
-        glock.release()
-        self.applyingMoveLock.release()
+            for player in self.players:
+                player.pause()
+            
+            try:
+                for spectactor in self.spectactors.values():
+                    spectactor.pause()
+            except NotImplementedError:
+                pass
+            
+            if self.timemodel:
+                self.timemodel.pause()
+            
+            self.status = PAUSED
+        finally:
+            glock.release()
+            self.applyingMoveLock.release()
     
     def resume (self):
         
         glock.release()
         self.applyingMoveLock.acquire()
         glock.acquire()
-        
-        for player in self.players:
-            player.resume()
-        
         try:
-            for spectactor in self.spectactors.values():
-                spectactor.resume()
-        except NotImplementedError:
-            pass
-        
-        if self.timemodel:
-            self.timemodel.resume()
-        
-        self.status = RUNNING
-        
-        glock.release()
-        self.applyingMoveLock.release()
+            for player in self.players:
+                player.resume()
+            
+            try:
+                for spectactor in self.spectactors.values():
+                    spectactor.resume()
+            except NotImplementedError:
+                pass
+            
+            if self.timemodel:
+                self.timemodel.resume()
+            
+            self.status = RUNNING
+        finally:
+            glock.release()
+            self.applyingMoveLock.release()
     
     def end (self, status, reason):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -403,22 +403,22 @@ class GameModel (GObject):
         self.emit("moves_undoing", moves)
         
         self.applyingMoveLock.acquire()
-        
-        del self.boards[-moves:]
-        del self.moves[-moves:]
-        
-        for player in list(self.players) + list(self.spectactors.values()):
-            try:
-                player.undoMoves(moves, self)
-            except NotImplementedError:
-                # If the player doesn't support undoing, we might be able to
-                # simply "load" the new last board
-                player.setBoard(self)
-        
-        if self.timemodel:
-            self.timemodel.undoMoves(moves)
-        
-        self.applyingMoveLock.release()
+        try:
+            del self.boards[-moves:]
+            del self.moves[-moves:]
+            
+            for player in list(self.players) + list(self.spectactors.values()):
+                try:
+                    player.undoMoves(moves, self)
+                except NotImplementedError:
+                    # If the player doesn't support undoing, we might be able to
+                    # simply "load" the new last board
+                    player.setBoard(self)
+            
+            if self.timemodel:
+                self.timemodel.undoMoves(moves)
+        finally:
+            self.applyingMoveLock.release()
     
     def isChanged (self):
         if self.ply == 0:

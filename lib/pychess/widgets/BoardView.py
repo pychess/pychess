@@ -243,43 +243,45 @@ class BoardView (gtk.DrawingArea):
         step = shown > self.shown and 1 or -1
         
         self.animationLock.acquire()
-        deadset = set()
-        for i in range(self.shown, shown, step):
-            board0 = self.model.getBoardAtPly(i)
-            board1 = self.model.getBoardAtPly(i+step)
-            
-            for y, row in enumerate(board0.data):
-                for x, piece in enumerate(row):
-                    if not piece: continue
-                    
-                    if step < 0 and piece.opacity < 1:
-                        # If piece is fading in, it should not move
-                        continue
+        try:
+            deadset = set()
+            for i in range(self.shown, shown, step):
+                board0 = self.model.getBoardAtPly(i)
+                board1 = self.model.getBoardAtPly(i+step)
+                
+                for y, row in enumerate(board0.data):
+                    for x, piece in enumerate(row):
+                        if not piece: continue
                         
-                    if step > 0 and piece in deadset:
-                        # No need for more testing, if piece is dead
-                        continue
-                        
-                    if piece != board1.data[y][x]:
-                        
-                        dir = board0.color == WHITE and 1 or -1
-                        if step > 0 and board1.data[y][x] != None or \
-                                0 < y < 7 and board0.enpassant == Cord(x,y+dir)\
-                                and board1[board0.enpassant] != None:
+                        if step < 0 and piece.opacity < 1:
+                            # If piece is fading in, it should not move
+                            continue
+                            
+                        if step > 0 and piece in deadset:
+                            # No need for more testing, if piece is dead
+                            continue
+                            
+                        if piece != board1.data[y][x]:
+                            
+                            dir = board0.color == WHITE and 1 or -1
+                            if step > 0 and board1.data[y][x] != None or \
+                                    0 < y < 7 and board0.enpassant == Cord(x,y+dir)\
+                                    and board1[board0.enpassant] != None:
+                                    
+                                # A piece is dying
+                                deadset.add(piece)
                                 
-                            # A piece is dying
-                            deadset.add(piece)
-                            
-                            # If dead pieces as a location, they jump a little
-                            # When they are waken to life
-                            piece.x = None
-                            piece.y = None
-                            
-                        elif piece.x == None:
-                            # It has moved
-                            piece.x = x
-                            piece.y = y
-        self.animationLock.release()
+                                # If dead pieces as a location, they jump a little
+                                # When they are waken to life
+                                piece.x = None
+                                piece.y = None
+                                
+                            elif piece.x == None:
+                                # It has moved
+                                piece.x = x
+                                piece.y = y
+        finally:
+            self.animationLock.release()
         
         self.deadlist = []
         for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
@@ -315,59 +317,60 @@ class BoardView (gtk.DrawingArea):
             return False
         
         self.animationLock.acquire()
-        
-        paintBox = None
-        
-        mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
-        board = self.model.getBoardAtPly(self.shown)
-        
-        for y, row in enumerate(board.data):
-            for x, piece in enumerate(row):
-                if not piece: continue
-                
-                if piece.x != None:
-                    if not myconf.get("noAnimation"):
-                        newx = piece.x + (x-piece.x)*mod
-                        newy = piece.y + (y-piece.y)*mod
-                    else:
-                        newx, newy = x, y
+        try:
+            paintBox = None
+            
+            mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
+            board = self.model.getBoardAtPly(self.shown)
+            
+            for y, row in enumerate(board.data):
+                for x, piece in enumerate(row):
+                    if not piece: continue
                     
-                    if not paintBox:
-                        paintBox = self.cord2RectRelative(piece.x, piece.y)
-                    else: paintBox = join(paintBox,
-                            self.cord2RectRelative(piece.x, piece.y))
-                    paintBox = join(paintBox, self.cord2RectRelative(newx, newy))
-                    
-                    if (newx <= x <= piece.x or newx >= x >= piece.x) and \
-                       (newy <= y <= piece.y or newy >= y >= piece.y) or \
-                       abs(newx-x) < 0.01 and abs(newy-y) < 0.01:
-                        piece.x = None
-                        piece.y = None
-                    else:
-                        piece.x = newx
-                        piece.y = newy
-                
-                if piece.opacity < 1:
                     if piece.x != None:
-                        px = piece.x
-                        py = piece.y
-                    else:
-                        px = x
-                        py = y
+                        if not myconf.get("noAnimation"):
+                            newx = piece.x + (x-piece.x)*mod
+                            newy = piece.y + (y-piece.y)*mod
+                        else:
+                            newx, newy = x, y
+                        
+                        if not paintBox:
+                            paintBox = self.cord2RectRelative(piece.x, piece.y)
+                        else: paintBox = join(paintBox,
+                                self.cord2RectRelative(piece.x, piece.y))
+                        paintBox = join(paintBox, self.cord2RectRelative(newx, newy))
+                        
+                        if (newx <= x <= piece.x or newx >= x >= piece.x) and \
+                           (newy <= y <= piece.y or newy >= y >= piece.y) or \
+                           abs(newx-x) < 0.01 and abs(newy-y) < 0.01:
+                            piece.x = None
+                            piece.y = None
+                        else:
+                            piece.x = newx
+                            piece.y = newy
                     
-                    if paintBox:
-                        paintBox = join(paintBox,self.cord2RectRelative(px, py))
-                    else: paintBox = self.cord2RectRelative(px, py)
-                    
-                    if not myconf.get("noAnimation"):
-                        newOp = piece.opacity + (1-piece.opacity)*mod
-                    else:
-                        newOp = 1
-                    
-                    if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
-                        piece.opacity = 1
-                    else: piece.opacity = newOp
-        self.animationLock.release()
+                    if piece.opacity < 1:
+                        if piece.x != None:
+                            px = piece.x
+                            py = piece.y
+                        else:
+                            px = x
+                            py = y
+                        
+                        if paintBox:
+                            paintBox = join(paintBox,self.cord2RectRelative(px, py))
+                        else: paintBox = self.cord2RectRelative(px, py)
+                        
+                        if not myconf.get("noAnimation"):
+                            newOp = piece.opacity + (1-piece.opacity)*mod
+                        else:
+                            newOp = 1
+                        
+                        if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
+                            piece.opacity = 1
+                        else: piece.opacity = newOp
+        finally:
+            self.animationLock.release()
         
         for i, (piece, x, y) in enumerate(self.deadlist):
             if not paintBox:
@@ -455,13 +458,15 @@ class BoardView (gtk.DrawingArea):
     def redraw_canvas(self, r=None):
         if self.window:
             glock.acquire()
-            if not r:
-                alloc = self.get_allocation()
-                r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
-            assert type(r[2]) == int
-            self.window.invalidate_rect(r, True)
-            self.window.process_updates(True)
-            glock.release()
+            try:
+                if not r:
+                    alloc = self.get_allocation()
+                    r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
+                assert type(r[2]) == int
+                self.window.invalidate_rect(r, True)
+                self.window.process_updates(True)
+            finally:
+                glock.release()
     
     ###############################
     #            draw             #
@@ -986,11 +991,13 @@ class BoardView (gtk.DrawingArea):
     def _set_rotation (self, radians):
         if not myconf.get("fullAnimation"):
             glock.acquire()
-            self._rotation = radians
-            self.nextRotation = radians
-            self.matrix = cairo.Matrix.init_rotate(radians)
-            self.redraw_canvas()
-            glock.release()
+            try:
+                self._rotation = radians
+                self.nextRotation = radians
+                self.matrix = cairo.Matrix.init_rotate(radians)
+                self.redraw_canvas()
+            finally:
+                glock.release()
         else:
             if hasattr(self, "nextRotation") and \
                     self.nextRotation != self.rotation:
@@ -1000,15 +1007,17 @@ class BoardView (gtk.DrawingArea):
             start = time()
             def callback ():
                 glock.acquire()
-                amount = (time()-start)/ANIMATION_TIME
-                if amount > 1:
-                    amount = 1
-                    next = False
-                else: next = True
-                self._rotation = new = oldr + amount*(radians-oldr)
-                self.matrix = cairo.Matrix.init_rotate(new)
-                self.redraw_canvas()
-                glock.release()
+                try:
+                    amount = (time()-start)/ANIMATION_TIME
+                    if amount > 1:
+                        amount = 1
+                        next = False
+                    else: next = True
+                    self._rotation = new = oldr + amount*(radians-oldr)
+                    self.matrix = cairo.Matrix.init_rotate(new)
+                    self.redraw_canvas()
+                finally:
+                    glock.release()
                 return next
             repeat(callback)
     

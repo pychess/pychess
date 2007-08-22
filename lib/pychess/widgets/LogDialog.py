@@ -73,8 +73,10 @@ def addMessages (messages):
         newMessage (task, message, type)
 
 glock.acquire()
-addMessages(log.messages)
-glock.release()
+try:
+    addMessages(log.messages)
+finally:
+    glock.release()
 
 log.connect ("logged", lambda log, messages: addMessages(messages))
 

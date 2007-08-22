@@ -44,33 +44,41 @@ class ProtocolEngine (Engine):
     
     def _setMove (self, move):
         self.movecon.acquire()
-        self.move = move
-        self.movecon.notify()
-        self.movecon.release()
+        try:
+            self.move = move
+            self.movecon.notify()
+        finally:
+            self.movecon.release()
     
     def runWhenReady (self, method, *args):
         self.runWhenReadyLock.acquire()
-        if self.proto.ready:
-            method(*args)
-        else:
-            self.readylist.append((method,args))
-        self.runWhenReadyLock.release()
+        try:
+            if self.proto.ready:
+                method(*args)
+            else:
+                self.readylist.append((method,args))
+        finally:
+            self.runWhenReadyLock.release()
     
     def onReady (self, proto):
         self.readycon.acquire()
-        if self.readylist:
-            for method, args in self.readylist:
-                method(*args)
-        self.readycon.notifyAll()
-        self.readycon.release()
+        try:
+            if self.readylist:
+                for method, args in self.readylist:
+                    method(*args)
+            self.readycon.notifyAll()
+        finally:
+            self.readycon.release()
     
     def _wait (self):
         if self.proto.ready:
             return
         self.readycon.acquire()
-        while not self.proto.ready and self.proto.connected:
-            self.readycon.wait()
-        self.readycon.release()
+        try:
+            while not self.proto.ready and self.proto.connected:
+                self.readycon.wait()
+        finally:
+            self.readycon.release()
         if not self.proto.connected:
             return False
         return True
@@ -87,9 +95,11 @@ class ProtocolEngine (Engine):
             return
         
         self.movecon.acquire()
-        while not self.move:
-            self.movecon.wait()
-        self.movecon.release()
+        try:
+            while not self.move:
+                self.movecon.wait()
+        finally:
+            self.movecon.release()
         
         if self.move == "dead":
             raise PlayerIsDead

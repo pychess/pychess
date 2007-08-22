@@ -46,8 +46,10 @@ class Pinger (GObject):
                 if unit == "s":
                     time *= 1000
                 glock.acquire()
-                self.emit("recieved", time)
-                glock.release()
+                try:
+                    self.emit("recieved", time)
+                finally:
+                    glock.release()
     
     def stop (self):
         if not self.subproc: return

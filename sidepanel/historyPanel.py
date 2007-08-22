@@ -102,17 +102,19 @@ class Sidepanel:
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         glock.acquire()
-        for i in xrange(moves):
-            try:
-                row, view, other = self._ply_to_row_col_other(game.ply-i)
-                model = view.get_model()
-                model.remove(model.get_iter((row,)))
-                if view == self.left:
-                    model = self.numbers.get_model()
+        try:
+            for i in xrange(moves):
+                try:
+                    row, view, other = self._ply_to_row_col_other(game.ply-i)
+                    model = view.get_model()
                     model.remove(model.get_iter((row,)))
-            except ValueError:
-                continue
-        glock.release()
+                    if view == self.left:
+                        model = self.numbers.get_model()
+                        model.remove(model.get_iter((row,)))
+                except ValueError:
+                    continue
+        finally:
+            glock.release()
     
     def game_changed (self, game):
         
@@ -124,29 +126,28 @@ class Sidepanel:
         ply = game.ply
         
         glock.acquire()
-        
-        if len(view.get_model()) == len(self.numbers.get_model()):
-            num = str((ply+1)/2)+"."
-            self.numbers.get_model().append([num])
-        
-        if view == self.right and \
-                len(view.get_model()) == len(other.get_model()):
-            self.left.get_model().append([""])
-        
-        view.get_model().append([notat])
-        if self.board.shown < ply or self.freezed:
+        try:
+            if len(view.get_model()) == len(self.numbers.get_model()):
+                num = str((ply+1)/2)+"."
+                self.numbers.get_model().append([num])
+            
+            if view == self.right and \
+                    len(view.get_model()) == len(other.get_model()):
+                self.left.get_model().append([""])
+            
+            view.get_model().append([notat])
+            if self.board.shown < ply or self.freezed:
+                return
+            
+            self.freezed = True
+            view.get_selection().select_iter(view.get_model().get_iter(row))
+            view.set_cursor((row,))
+            if other.is_focus():
+                view.grab_focus()
+            other.get_selection().unselect_all()
+            self.freezed = False
+        finally:
             glock.release()
-            return
-        
-        self.freezed = True
-        view.get_selection().select_iter(view.get_model().get_iter(row))
-        view.set_cursor((row,))
-        if other.is_focus():
-            view.grab_focus()
-        other.get_selection().unselect_all()
-        self.freezed = False
-        
-        glock.release()
     
     def shown_changed (self, board, shown):
         if shown <= 0:

@@ -270,27 +270,27 @@ class GameWidget (gobject.GObject):
         #
         
         glock.acquire()
-        
-        start = 0
-        path = prefix("sidepanel")
-        pf = "Panel.py"
-        panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
-        panels = \
-            [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
-        
-        for panel in panels:
-            toggle_combox.addItem(panel.__title__)
-            s = panel.Sidepanel()
-            num = side_book.append_page(s.load(self))
-            if hasattr(panel, "__active__") and panel.__active__:
-                start = num
-        
-        toggle_combox.connect("changed",
-                lambda w, oldactive: side_book.set_current_page(w.active))
-        side_book.set_current_page(start)
-        toggle_combox.active = start
-        
-        glock.release()
+        try:
+            start = 0
+            path = prefix("sidepanel")
+            pf = "Panel.py"
+            panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
+            panels = \
+                [imp.load_module(f,*imp.find_module(f,[path])) for f in panels]
+            
+            for panel in panels:
+                toggle_combox.addItem(panel.__title__)
+                s = panel.Sidepanel()
+                num = side_book.append_page(s.load(self))
+                if hasattr(panel, "__active__") and panel.__active__:
+                    start = num
+            
+            toggle_combox.connect("changed",
+                    lambda w, oldactive: side_book.set_current_page(w.active))
+            side_book.set_current_page(start)
+            toggle_combox.active = start
+        finally:
+            glock.release()
     
     
     def setTabReady (self, ready):
@@ -313,12 +313,12 @@ class GameWidget (gobject.GObject):
         statusbar = self.widgets["statusbar"]
         
         glock.acquire()
-        
-        statusbar.pop(0)
-        if message:
-            statusbar.push(0,message)
-        
-        glock.release()
+        try:
+            statusbar.pop(0)
+            if message:
+                statusbar.push(0,message)
+        finally:
+            glock.release()
     
     def bringToFront (self):
         getheadbook().set_current_page (
