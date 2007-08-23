@@ -1,7 +1,7 @@
 import gtk, gobject
 from gtk import gdk
 
-from pychess.System import glock, myconf
+from pychess.System import glock, conf
 from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN, toFAN
 from pychess.Utils.const import prefix
@@ -73,12 +73,12 @@ class Sidepanel:
         def figuresInNotationCallback (none):
             game = self.board.model
             for i, (board, move) in enumerate(zip(game.boards, game.moves)):
-                if myconf.get("figuresInNotation"):
+                if conf.get("figuresInNotation", False):
                     notat = toFAN(board, move)
                 else: notat = toSAN(board, move)
                 row, col, other = self._ply_to_row_col_other(i+1)
                 col.get_model().set(col.get_model().get_iter((row,)), 0, notat)
-        myconf.notify_add("figuresInNotation", figuresInNotationCallback)
+        conf.notify_add("figuresInNotation", figuresInNotationCallback)
         
         return __widget__
     
@@ -120,7 +120,7 @@ class Sidepanel:
         
         row, view, other = self._ply_to_row_col_other(game.ply)
         
-        if myconf.get("figuresInNotation"):
+        if conf.get("figuresInNotation", False):
             notat = toFAN(game.boards[-2], game.moves[-1])
         else: notat = toSAN(game.boards[-2], game.moves[-1], True)
         ply = game.ply

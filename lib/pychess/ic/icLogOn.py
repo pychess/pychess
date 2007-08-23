@@ -4,7 +4,7 @@ import webbrowser
 import gtk, gobject, sys
 
 from pychess.System.ThreadPool import pool
-from pychess.System import myconf, gstreamer, uistuff
+from pychess.System import gstreamer, uistuff
 from pychess.Utils.const import *
 import telnet, icLounge
 

@@ -1,14 +1,14 @@
 import gtk.glade, os
-from pychess.System import myconf
+from pychess.System import conf
 from pychess.System.WidgetDic import WidgetDic
 from pychess.Utils.const import prefix
 from random import randrange
 
 widgets = WidgetDic(gtk.glade.XML(prefix("glade/tipoftheday.glade")))
 
-widgets["checkbutton1"].set_active(myconf.get("show_tip_at_startup"))
+widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup", True))
 widgets["checkbutton1"].connect("toggled",
-    lambda w: myconf.set("show_tip_at_startup", w.get_active()))
+    lambda w: conf.set("show_tip_at_startup", w.get_active()))
 
 widgets["close_button"].connect("clicked",
     lambda w: widgets["window1"].hide())
