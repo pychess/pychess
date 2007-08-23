@@ -1,10 +1,12 @@
-import gtk
-
 from Queue import Queue
 
-from Player import Player, PlayerIsDead
+import gtk
+
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
+from pychess.widgets.gamewidget import cur_gmwidg
+
+from Player import Player, PlayerIsDead
 
 OFFER_MESSAGES = {
     DRAW_OFFER:
@@ -55,16 +57,17 @@ ERROR_MESSAGES = {
 class Human (Player):
     __type__ = LOCAL
     
-    def __init__ (self, board, color, name):
+    def __init__ (self, gmwidg, color, name):
         Player.__init__(self)
         
-        self.gamemodel = board.view.model
+        self.board = gmwidg.widgets["board"]
+        self.gmwidg = gmwidg
+        self.gamemodel = self.board.view.model
         self.queue = Queue()
         self.color = color
-        self.board = board
         self.conid = [
-            board.connect("piece_moved", self.piece_moved),
-            board.connect("action", lambda b,ac,pa: self.emit_action(ac,pa))
+            self.board.connect("piece_moved", self.piece_moved),
+            self.board.connect("action", lambda b,ac,pa: self.emit_action(ac,pa))
         ]
         self.name = name
     
@@ -81,6 +84,10 @@ class Human (Player):
         self.queue.put(move)
     
     def emit_action (self, action, param):
+        # If there are two or more tabs open, we have to ensure us that it is
+        # us who are in the active tab, and not the others
+        if self.gmwidg != cur_gmwidg():
+            return
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
         if self.gamemodel.players[1-self.color].__type__ == LOCAL:

@@ -403,7 +403,7 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
             player.setStrength(diffi)
             if secs:
                 player.setTime(secs, incr)
-        else: player = Human(gmwidg.widgets["board"], color, "")
+        else: player = Human(gmwidg, color, "")
         players += [player]
     
     def updateTitle (*arsg):
