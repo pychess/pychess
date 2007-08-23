@@ -1,18 +1,15 @@
 # -*- coding: UTF-8 -*-
 
-import pygtk
-pygtk.require("2.0")
-import gtk, gtk.gdk, re
+import gtk, gtk.gdk
 from gobject import *
+
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
-from math import floor, ceil
-from BoardView import BoardView, rect
-from pychess.System.Log import log
 from pychess.Utils.const import *
-from BoardView import join
-from time import time
 from pychess.Utils.logic import getDestinationCords
+
+from BoardView import BoardView, rect
+from BoardView import join
 
 class BoardControl (gtk.EventBox):
     
