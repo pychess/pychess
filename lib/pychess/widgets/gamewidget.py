@@ -53,7 +53,7 @@ from threading import Condition
 import gtk, os, gobject, glob
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
-from pychess.System import glock, myconf, gstreamer
+from pychess.System import glock, conf, gstreamer
 from pychess.Utils.const import prefix, SOUND_BEEP, SOUND_URI
 from ChessClock import ChessClock
 from BoardControl import BoardControl
@@ -91,11 +91,11 @@ def tabsCallback (none):
     head = getheadbook()
     if not head: return
     if head.get_n_pages() == 1:
-        if myconf.get("hideTabs"):
+        if conf.get("hideTabs", False):
             show_tabs(False)
         else:
             show_tabs(True)
-myconf.notify_add("hideTabs", tabsCallback)
+conf.notify_add("hideTabs", tabsCallback)
 
 ################################################################################
 # The holder class for tab releated widgets                                    #
@@ -364,7 +364,7 @@ def delGameWidget (gmwidg):
     mainbook.remove_page(page_num)
     del head2mainDic[gmwidg.widgets["headchild"]]
     
-    if headbook.get_n_pages() == 1 and myconf.get("hideTabs"):
+    if headbook.get_n_pages() == 1 and conf.get("hideTabs", False):
         show_tabs(False)
     
     if headbook.get_n_pages() == 0:
@@ -412,7 +412,7 @@ def attachGameWidget (gmwidg):
         
         mainbook.show_all()
         
-        if not myconf.get("hideTabs"):
+        if not conf.get("hideTabs", False):
             align.show_all()
     
     headbook = vbox.get_children()[1].child

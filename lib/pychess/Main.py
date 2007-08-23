@@ -7,7 +7,7 @@ from threading import currentThread, _MainThread
 
 import pango, gobject
 
-from pychess.System import myconf, gstreamer, glock
+from pychess.System import conf, gstreamer, glock
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.System.Log import log
@@ -129,25 +129,25 @@ class GladeHandlers:
             window[widget].set_property('sensitive', True)
         
         # Disable hint or spy menu, if they are disabled in preferences
-        window["hint_mode"].set_sensitive(myconf.get("analyzer_check"))
-        window["spy_mode"].set_sensitive(myconf.get("inv_analyzer_check"))
+        window["hint_mode"].set_sensitive(conf.get("analyzer_check", True))
+        window["spy_mode"].set_sensitive(conf.get("inv_analyzer_check", True))
         
         # Bring playing window to the front
         window["window1"].present()
         
         # Play set-up sound
-        if myconf.get("useSounds"):
+        if conf.get("useSounds", False):
             no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
-            soundtype = myconf.get("soundcombo%d" % no)
+            soundtype = conf.get("soundcombo%d" % no, 0)
             if soundtype == SOUND_BEEP:
                 sys.stdout.write("\a")
                 sys.stdout.flush()
             elif soundtype == SOUND_URI:
-                uri = myconf.get("sounduri%d" % no)
+                uri = conf.getStrict("sounduri%d" % no)
                 gstreamer.playSound(uri)
         
         # Rotate to human player
-        if myconf.get("autoRotate"):
+        if conf.get("autoRotate", True):
             boardview = gmwidg.widgets["board"].view
             if boardview.model.players[1].__type__ == LOCAL and \
                     boardview.model.players[0].__type__ != LOCAL:
@@ -408,11 +408,12 @@ class PyChess:
         
     def mainWindowSize (self, window):
         def savePosition ():
-            myconf.set("window_width", window.get_allocation().width)
-            myconf.set("window_height", window.get_allocation().height)
-        atexit.register( savePosition)
-        width = myconf.get("window_width")
-        height = myconf.get("window_height")
+            conf.set("window_width", window.get_allocation().width)
+            conf.set("window_height", window.get_allocation().height)
+        atexit.register(savePosition)
+        width = conf.get("window_width", 0)
+        height = conf.get("window_height", 0)
+        print width, height
         if width and height:
             window.resize(width, height)
     

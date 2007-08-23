@@ -1,8 +1,10 @@
 import sys, os
+from os import getuid
+from pwd import getpwuid
 
 import gtk, gobject
 
-from pychess.System import myconf, gstreamer, uistuff
+from pychess.System import conf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
 
@@ -34,19 +36,11 @@ def initialize(widgets):
 class GeneralTab:
     
     def __init__ (self, widgets):
-        firstName = myconf.get("firstName")
-        if not firstName:
-            from pwd import getpwuid
-            from os import getuid
-            userdata = getpwuid(getuid())
-            firstName = userdata.pw_gecos
-            if not firstName:
-                firstName = userdata.pw_name
-            myconf.set("firstName", firstName)
         
-        secondName = myconf.get("secondName")
-        if not secondName:
-            myconf.set("secondName", _("Guest"))
+        userdata = getpwuid(getuid())
+        username = userdata.pw_gecos or userdata.pw_name
+        firstName = conf.get("firstName", username)
+        secondName = conf.get("secondName", _("Guest"))
         
         # Give to uistuff.keeper
         
@@ -208,12 +202,12 @@ class SoundTab:
     @classmethod
     def playAction (cls, action):
         no = cls.actionToKeyNo[action]
-        type = myconf.get("soundcombo%d" % no)
+        type = conf.get("soundcombo%d" % no, SOUND_MUTE)
         if type == SOUND_BEEP:
             sys.stdout.write("\a")
             sys.stdout.flush()
         elif type == SOUND_URI:
-            uri = myconf.get("sounduri%d" % no)
+            uri = conf.getStrict("sounduri%d" % no)
             gstreamer.playSound(uri)
     
     def __init__ (self, widgets):
@@ -261,7 +255,7 @@ class SoundTab:
                 if opendialog.run() == gtk.RESPONSE_ACCEPT:
                     uri = opendialog.get_uri()
                     model = combobox.get_model()
-                    myconf.set("sounduri%d"%index, uri)
+                    conf.set("sounduri%d"%index, uri)
                     label = os.path.split(uri)[1]
                     if len(model) == 3:
                         model.append([audioIco, label])
@@ -269,7 +263,7 @@ class SoundTab:
                         model.set(model.get_iter((3,)), 1, label)
                     combobox.set_active(3)
                 else:
-                    combobox.set_active(myconf.get("soundcombo%d"%index))
+                    combobox.set_active(conf.get("soundcombo%d"%index,SOUND_MUTE))
                 opendialog.hide()
         
         for i in xrange(self.COUNT_OF_SOUNDS):
@@ -281,27 +275,27 @@ class SoundTab:
             label = widgets["soundlabel%d"%i]
             label.props.mnemonic_widget = combo
             
-            uri = myconf.get("sounduri%d"%i)
+            uri = conf.getStrict("sounduri%d"%i)
             if uri:
                 model = combo.get_model()
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
         
         for i in xrange(self.COUNT_OF_SOUNDS):
-            if myconf.get("soundcombo%d"%i) == SOUND_URI and \
-                    not os.path.isfile(myconf.get("sounduri%d"%i)[7:]):
-                myconf.set("soundcombo%d"%i, SOUND_MUTE)
+            if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
+                    not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
+                conf.set("soundcombo%d"%i, SOUND_MUTE)
             uistuff.keep(widgets["soundcombo%d"%i], "soundcombo%d"%i)
         
         # Init play button
         
         def playCallback (button, index):
-            value = myconf.get("soundcombo%d"%index)
+            value = conf.get("soundcombo%d"%index, SOUND_MUTE)
             if value == SOUND_BEEP:
                 sys.stdout.write("\a")
                 sys.stdout.flush()
             elif value == SOUND_URI:
-                uri = myconf.get("sounduri%d"%index)
+                uri = conf.getStrict("sounduri%d"%index)
                 gstreamer.playSound(uri)
         
         for i in range (self.COUNT_OF_SOUNDS):
@@ -313,6 +307,6 @@ class SoundTab:
         def checkCallBack (*args):
             checkbox = widgets["useSounds"]
             widgets["frame23"].set_property("sensitive", checkbox.get_active())
-        myconf.notify_add("useSounds", checkCallBack)
+        conf.notify_add("useSounds", checkCallBack)
         uistuff.keep(widgets["useSounds"], "useSounds")
         checkCallBack()
