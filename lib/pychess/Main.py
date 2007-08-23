@@ -413,7 +413,6 @@ class PyChess:
         atexit.register(savePosition)
         width = conf.get("window_width", 0)
         height = conf.get("window_height", 0)
-        print width, height
         if width and height:
             window.resize(width, height)
     
