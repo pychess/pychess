@@ -1,7 +1,7 @@
 
 import gtk, pango
 
-from pychess.System import myconf
+from pychess.System import conf
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 def createCombo (combo, data):
@@ -35,7 +35,7 @@ methodDict = {
     ToggleComboBox: ("_get_active", "_set_active", "changed")
 }
 
-def keep (widget, key, get_value_=None, set_value_=None):
+def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
         raise AttributeError, "key '%s' isn't in widgets" % key
     
@@ -49,13 +49,14 @@ def keep (widget, key, get_value_=None, set_value_=None):
     else:
         set_value = getattr(widget, methodDict[type(widget)][1])
     
-    set_value(myconf.get(key))
+    if first_value != None:
+        conf.set(key, first_value)
+    if conf.hasKey(key):
+        set_value(conf.getStrict(key))
     
     signal = methodDict[type(widget)][2]
-    widget.connect(signal, lambda *args: myconf.set(key, get_value()))
-    myconf.notify_add(key, lambda *args: set_value(myconf.get(key)))
-
-
+    widget.connect(signal, lambda *args: conf.set(key, get_value()))
+    conf.notify_add(key, lambda *args: set_value(conf.getStrict(key)))
 
 tooltip = gtk.Tooltips()
 tooltip.force_window()

@@ -9,7 +9,7 @@ import gtk, gtk.gdk, cairo
 from gobject import *
 import pango
 
-from pychess.System import glock, myconf, gstreamer
+from pychess.System import glock, conf, gstreamer
 from pychess.System.repeat import repeat, repeat_sleep
 from pychess.gfx.Pieces import drawPiece
 from pychess.Utils.Cord import Cord
@@ -99,7 +99,7 @@ class BoardView (gtk.DrawingArea):
         self.model.connect("game_ended", self.game_ended)
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
-        myconf.notify_add("showCords", self.on_show_cords)
+        conf.notify_add("showCords", self.on_show_cords)
         self.set_size_request(300,300)
         
         self._doStop = False
@@ -121,7 +121,7 @@ class BoardView (gtk.DrawingArea):
         self._bluearrow = None
         self._shown = self.model.ply
         self._showCords = False
-        self.showCords = myconf.get("showCords")
+        self.showCords = conf.get("showCords", False)
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -138,7 +138,7 @@ class BoardView (gtk.DrawingArea):
     def game_changed (self, model):
         
         # Play sounds
-        if myconf.get("useSounds"):
+        if conf.get("useSounds", False):
             move = model.moves[-1]
             if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
                 sound = "aPlayerCaptures"
@@ -160,7 +160,7 @@ class BoardView (gtk.DrawingArea):
             self.shown = model.ply
         
         # Rotate board
-        if myconf.get("autoRotate"):
+        if conf.get("autoRotate", True):
             if self.model.curplayer.__type__ == LOCAL:
                 self.rotation = self.model.boards[-1].color * pi
     
@@ -178,7 +178,7 @@ class BoardView (gtk.DrawingArea):
     def game_ended (self, model, reason):
         self.redraw_canvas()
         
-        if myconf.get("useSounds"):
+        if conf.get("useSounds", False):
             sound = False
             
             if model.status == DRAW:
@@ -207,7 +207,7 @@ class BoardView (gtk.DrawingArea):
                 preferencesDialog.SoundTab.playAction(sound)
     
     def on_show_cords (self, *args):
-        self.showCords = myconf.get("showCords")
+        self.showCords = conf.get("showCords", False)
     
     ###############################
     #          Animation          #
@@ -328,7 +328,7 @@ class BoardView (gtk.DrawingArea):
                     if not piece: continue
                     
                     if piece.x != None:
-                        if not myconf.get("noAnimation"):
+                        if not conf.get("noAnimation", False):
                             newx = piece.x + (x-piece.x)*mod
                             newy = piece.y + (y-piece.y)*mod
                         else:
@@ -361,7 +361,7 @@ class BoardView (gtk.DrawingArea):
                             paintBox = join(paintBox,self.cord2RectRelative(px, py))
                         else: paintBox = self.cord2RectRelative(px, py)
                         
-                        if not myconf.get("noAnimation"):
+                        if not conf.get("noAnimation", False):
                             newOp = piece.opacity + (1-piece.opacity)*mod
                         else:
                             newOp = 1
@@ -377,7 +377,7 @@ class BoardView (gtk.DrawingArea):
                 paintBox = self.cord2RectRelative(x, y)
             else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
             
-            if not myconf.get("noAnimation"):
+            if not conf.get("noAnimation", False):
                 newOp = piece.opacity + (0-piece.opacity)*mod
             else:
                 newOp = 0
@@ -989,7 +989,7 @@ class BoardView (gtk.DrawingArea):
     ################################
     
     def _set_rotation (self, radians):
-        if not myconf.get("fullAnimation"):
+        if not conf.get("fullAnimation", False):
             glock.acquire()
             try:
                 self._rotation = radians

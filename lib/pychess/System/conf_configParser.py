@@ -1,18 +1,18 @@
-section = "General"
-
-import os
+import os, atexit
 from ConfigParser import SafeConfigParser
 configParser = SafeConfigParser()
 
+section = "General"
 path = os.path.join(os.environ["HOME"], ".pychessconf")
 if os.path.isfile(path):
     configParser.readfp(open(path))
-else:
-    configParser.add_section(section)
+else: configParser.add_section(section)
+atexit.register(lambda: configParser.write(open(path,"w")))
 
 notifiers = {}
 idkeyfuncs = {}
 conid = 0
+
 def notify_add (key, func):
     global conid
     if key in notifiers:
@@ -28,10 +28,10 @@ def notify_remove (conid):
 
 def get (key):
     cp = configParser
-    for func in (cp.getboolean, cp.getint, cp.getfloat, cp.get):
+    for func in (cp.getboolean, cp.getint, cp.getfloat):
         try: return func (section, key)
-        except: continue
-    return 0
+        except ValueError: continue
+    return cp.get(section, key)
 
 def set (key, value):
     configParser.set (section, key, str(value))
@@ -39,5 +39,5 @@ def set (key, value):
         for key, func in [idkeyfuncs[id] for id in notifiers[key]]:
             func (None)
 
-import atexit
-atexit.register(lambda: configParser.write(open(path,"w")))
+def hasKey (key):
+    return configParser.has_option(section, key)

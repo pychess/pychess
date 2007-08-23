@@ -8,12 +8,6 @@ import imp
 VERSION = imp.load_module("const",
           *imp.find_module("const",["lib/pychess/Utils"])).VERSION
 
-#from pychess.System import myconf
-#from pychess.Utils.const import VERSION
-
-#myconf.set("combobox6", 1)
-#myconf.set("spinbuttonM", 10)
-
 from distutils.core import setup
 from glob import glob
 from os import listdir

@@ -1,6 +1,8 @@
 """ The task of this module, is to save, load and init new games """
 
 import os, random
+from os import getuid
+from pwd import getpwuid
 
 import gtk, gobject, pango
 
@@ -8,7 +10,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.System import glock
 from pychess.System.Log import log
-from pychess.System import myconf, uistuff
+from pychess.System import conf, uistuff
 from pychess.System.protoopen import protosave, isWriteable
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
@@ -331,7 +333,7 @@ def ensureNewGameDialogReady ():
     for key in ("whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty",
             "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS",
             "spinbuttonG", "useTimeCB"):
-        v = myconf.get(key)
+        v = conf.get(key, 0)
         if v != None:
             if hasattr(widgets[key], "set_active"):
                 widgets[key].set_active(v)
@@ -366,7 +368,7 @@ def runNewGameDialog ():
         if hasattr(widgets[widget], "get_active"):
             v = widgets[widget].get_active()
         else: v = widgets[widget].get_value()
-        myconf.set(widget, v)
+        conf.set(widget, v)
     
     # Finding players
     
@@ -408,20 +410,26 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
         gmwidg.setTabText("%s %s %s" %
                           (repr(players[0]), _("vs"), repr(players[1])))
     
+    userdata = getpwuid(getuid())
+    username = userdata.pw_gecos or userdata.pw_name
     if players[0].__type__ == LOCAL:
-        players[0].setName(myconf.get("firstName"))
+        players[0].setName(conf.get("firstName", username))
         def callback (*args):
-            players[0].setName(myconf.get("firstName"))
+            players[0].setName(conf.get("firstName", username))
             updateTitle()
-        myconf.notify_add("firstName", callback)
+        conf.notify_add("firstName", callback)
     if players[1].__type__ == LOCAL:
-        key = players[0].__type__ == LOCAL and "secondName" or "firstName"
-        players[1].setName(myconf.get(key))
+        if players[0].__type__ != LOCAL:
+            key = "firstName"
+            alt = username
+        else:
+            key = "secondName"
+            alt = _("Guest")
+        players[1].setName(conf.get(key, alt))
         def callback (*args):
-            players[1].setName(myconf.get(key))
+            players[1].setName(conf.get(key, alt))
             updateTitle()
-        myconf.notify_add(key, callback)
-    
+        conf.notify_add(key, callback)
     updateTitle()
     
     # Initing analyze engines
@@ -429,16 +437,16 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
     anaengines = discoverer.getAnalyzers()
     specs = {}
     
-    if myconf.get("analyzer_check"):
-        engine = discoverer.getEngineByMd5(myconf.get("ana_combobox"))
+    if conf.get("analyzer_check", True):
+        engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
         if not engine: engine = anaengines[0]
         hintanalyzer = discoverer.initEngine(engine, WHITE)
         hintanalyzer.analyze(inverse=False)
         specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
-    if myconf.get("inv_analyzer_check"):
-        engine = discoverer.getEngineByMd5(myconf.get("inv_ana_combobox"))
+    if conf.get("inv_analyzer_check", True):
+        engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
         if not engine: engine = anaengines[0]
         spyanalyzer = discoverer.initEngine(engine, WHITE)
         spyanalyzer.analyze(inverse=True)
