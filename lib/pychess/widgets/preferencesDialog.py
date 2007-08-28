@@ -4,6 +4,7 @@ from pwd import getpwuid
 
 import gtk, gobject
 
+from pychess.System.prefix import prefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer

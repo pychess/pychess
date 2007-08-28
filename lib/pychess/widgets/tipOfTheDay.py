@@ -1,7 +1,7 @@
 import gtk.glade, os
 from pychess.System import conf
 from pychess.System.WidgetDic import WidgetDic
-from pychess.Utils.const import prefix
+from pychess.System.prefix import prefix
 from random import randrange
 
 widgets = WidgetDic(gtk.glade.XML(prefix("glade/tipoftheday.glade")))

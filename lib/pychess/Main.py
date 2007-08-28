@@ -3,11 +3,11 @@ import webbrowser
 import math
 import atexit
 import signal
-from threading import currentThread, _MainThread
 
 import pango, gobject
 
 from pychess.System import conf, gstreamer, glock
+from pychess.System.prefix import prefix
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.System.Log import log

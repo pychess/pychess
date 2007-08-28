@@ -5,32 +5,7 @@
 ################################################################################
 
 VERSION = "0.8alfa"
-
 NAME = "PyChess"
-
-################################################################################
-# File locating                                                                #
-################################################################################
-
-from os.path import isdir, join, dirname, abspath
-prefixes = ("/usr/share", "/usr/local/share", "/usr/share/locale",
-    "/usr/share/games", "/usr/local/share/games")
-# TODO: Locale is not located in the lang files
-localePrefixes = ("/usr/share/locale", "/usr/local/share/locale")
-PREFIX = ""
-
-if __file__.find("site-packages") >= 0:
-    # We are installed?
-    for prefix in prefixes:
-        if isdir (join (prefix, "pychess")):
-            PREFIX = join (prefix, "pychess")
-            break
-if not PREFIX:
-    # We are local
-    PREFIX = abspath (join (dirname (__file__), "../../.."))
-
-def prefix (subpath):
-    return abspath (join (PREFIX, subpath))
 
 ################################################################################
 # Player info                                                                  #
@@ -105,8 +80,7 @@ sliders = [ False, False, False, True, True, True, False, False ]
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-
-# TODO: localReprSign
+localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 
 ################################################################################
 # Move values                                                                  #
