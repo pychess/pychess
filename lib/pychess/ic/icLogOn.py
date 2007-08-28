@@ -5,6 +5,7 @@ import gtk, gobject, sys
 
 from pychess.System.ThreadPool import pool
 from pychess.System import gstreamer, uistuff
+from pychess.System.prefix import prefix
 from pychess.Utils.const import *
 import telnet, icLounge
 

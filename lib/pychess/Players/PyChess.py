@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import gettext
+from pychess.System.prefix import prefix
+gettext.install("pychess", localedir=prefix("lang"), unicode=1)
 from pychess.Utils.const import *
 
 features = {
@@ -26,8 +29,6 @@ from threading import Lock
 from Queue import Queue
 
 from pychess.System.ThreadPool import pool
-import thread
-
 from Engine import Engine
 from pychess.Utils.book import getOpenings
 
@@ -43,10 +44,6 @@ try:
     psyco.bind(alphaBeta)
 except ImportError:
     pass
-
-from pychess.Utils.const import prefix
-import gettext
-gettext.install("pychess", localedir=prefix("lang"), unicode=1)
 
 ################################################################################
 # getBestOpening                                                               #

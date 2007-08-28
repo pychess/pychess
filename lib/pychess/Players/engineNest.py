@@ -8,7 +8,8 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
-from pychess.Utils.const import prefix, WHITE, KILLED, UNKNOWN_REASON
+from pychess.System.prefix import prefix
+from pychess.Utils.const import WHITE, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
 from UCIProtocol import UCIProtocol

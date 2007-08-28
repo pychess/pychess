@@ -3,6 +3,7 @@
 import gtk, gtk.gdk
 from gobject import *
 
+from pychess.System.prefix import prefix
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *

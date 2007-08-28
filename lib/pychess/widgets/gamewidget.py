@@ -54,7 +54,8 @@ import gtk, os, gobject, glob
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System import glock, conf, gstreamer
-from pychess.Utils.const import prefix, SOUND_BEEP, SOUND_URI
+from pychess.System.prefix import prefix
+from pychess.Utils.const import SOUND_BEEP, SOUND_URI
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from ToggleComboBox import ToggleComboBox

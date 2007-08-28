@@ -1,6 +1,7 @@
 from ldata import *
 from LBoard import LBoard
 from validator import validateMove
+from pychess.Utils.const import localReprSign
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -151,11 +152,6 @@ def toSAN (board, move, localRepr=False):
     part1 = ""
     
     if fpiece != PAWN:
-        # Localizable Piece signs used by history panel
-        # TODO: find a way to move this to const.py
-        # TODO: using _() conflicts with wery early imports from const module
-        localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
-        
         if localRepr:
             part0 += localReprSign[fpiece]
         else:
