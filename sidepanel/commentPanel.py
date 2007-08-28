@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import gtk, pango
+from pychess.System.prefix import prefix
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN

@@ -6,7 +6,7 @@ import math
 import gtk, cairo, pango
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.Utils.const import prefix
+from pychess.System.prefix import prefix
 from pychess.System import uistuff
 from ToggleComboBox import ToggleComboBox
 import ionest

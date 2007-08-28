@@ -13,6 +13,7 @@ from gtk.gdk import pixbuf_new_from_file
 
 from pychess.System import glock, uistuff
 from pychess.System.GtkWorker import EmitPublisher, Publisher
+from pychess.System.prefix import prefix
 from pychess.System.ping import Pinger
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget

@@ -12,6 +12,7 @@ from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System import conf, uistuff
 from pychess.System.protoopen import protosave, isWriteable
+from pychess.System.prefix import prefix
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord

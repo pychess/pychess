@@ -2,7 +2,8 @@
 
 import gtk, gtk.glade
 from time import sleep
-from pychess.Utils.const import prefix, reprResult, BLACK
+from pychess.Utils.const import reprResult, BLACK
+from pychess.System.prefix import prefix
 from pychess.System.WidgetDic import WidgetDic
 from pychess.System.protoopen import protoopen
 from pychess.widgets.BoardView import BoardView

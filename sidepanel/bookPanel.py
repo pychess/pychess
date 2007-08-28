@@ -4,7 +4,7 @@ from pychess.System import glock
 from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import parseSAN
-from pychess.Utils.const import prefix
+from pychess.System.prefix import prefix
 
 __title__ = _("Opening Book")
 

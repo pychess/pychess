@@ -7,7 +7,7 @@ import gtk, pango, gobject
 from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
-from pychess.Utils.const import prefix
+from pychess.System.prefix import prefix
 
 w = gtk.Window()
 w.set_title(_("Pychess - Log Viewer"))
