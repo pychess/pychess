@@ -14,7 +14,8 @@ class Pinger (GObject):
         server in millisecconds. -1 means that some error occurred """
     
     __gsignals__ = {
-        "recieved": (SIGNAL_RUN_FIRST, None, (float,))
+        "recieved": (SIGNAL_RUN_FIRST, None, (float,)),
+        "error": (SIGNAL_RUN_FIRST, None, (str,))
     }
     
     def __init__ (self, host):
@@ -34,10 +35,14 @@ class Pinger (GObject):
         self.subproc = SubProcess(
                 searchPath("ping"), [self.host], env={"LANG":"en"})
         while True:
-            line = self.subproc.readline()
-            if not globals:
-                # If python has been shut down while we were sleeping
-                # We better stop pinging
+            try:
+                line = self.subproc.readline()
+            except SubProcessError, e:
+                glock.acquire()
+                try:
+                    self.emit("error", ", ".join(e[1]))
+                finally:
+                    glock.release()
                 return
             match = self.expression.search(line)
             if match:
