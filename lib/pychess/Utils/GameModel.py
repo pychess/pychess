@@ -4,7 +4,7 @@ import datetime
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
-from pychess.Players.Player import PlayerIsDead
+from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System.ThreadPool import pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System import glock
@@ -156,6 +156,10 @@ class GameModel (GObject):
                     del self.offerMap[of]
     
     def withdrawRecieved (self, player, offer):
+        if player == self.players[WHITE]:
+            opPlayer = self.players[BLACK]
+        else: opPlayer = self.players[WHITE]
+        
         if offer in self.offerMap and self.offerMap[offer] == player:
             del self.offerMap[offer]
             opPlayer.offerWithdrawn(offer)
@@ -278,6 +282,8 @@ class GameModel (GObject):
                     self.kill(WHITE_ENGINE_DIED)
                 else: self.kill(BLACK_ENGINE_DIED)
                 break
+            except TurnInterrupt:
+                continue
             
             self.applyingMoveLock.acquire()
             try:
@@ -295,7 +301,6 @@ class GameModel (GObject):
                     self.emit("game_changed")
                     self.status = RUNNING # self.end only accepts ending if running
                     self.end(status, reason)
-                    self.applyingMoveLock.release()
                     break
                 self.emit("game_changed")
                 
@@ -395,6 +400,8 @@ class GameModel (GObject):
         """ Will push back one full move by calling the undo methods of players
             and spectactors. If they raise NotImplementedError we'll try to call
             setBoard instead """
+        
+        print "Pushing back"
         
         # We really shouldn't do this at the same time we are applying a move
         # On the other hand it shouldn't matter to undo a move while a player is

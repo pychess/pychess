@@ -1,7 +1,7 @@
 
 from Queue import Queue
 
-from Player import Player, PlayerIsDead
+from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toSAN, ParsingError
 from pychess.Utils.const import *
@@ -70,6 +70,8 @@ class ServerPlayer (Player):
         item = self.queue.get(block=True)
         if item == "del":
             raise PlayerIsDead
+        if item == "int":
+            raise TurnInterrupt
         
         ply, sanmove = item
         if ply < gamemodel.ply:
@@ -104,3 +106,9 @@ class ServerPlayer (Player):
     
     def kill (self, reason):
         self.queue.put("del")
+    
+    def undoMoves (self, movecount, gamemodel):
+        # If current player has changed so that it is no longer us to move,
+        # We raise TurnInterruprt in order to let GameModel continue the game
+        if movecount % 2 == 1 and gamemodel.curplayer != self:
+            self.queue.put("int")

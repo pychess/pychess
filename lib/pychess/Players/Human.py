@@ -6,7 +6,7 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.widgets.gamewidget import cur_gmwidg
 
-from Player import Player, PlayerIsDead
+from Player import Player, PlayerIsDead, TurnInterrupt
 
 OFFER_MESSAGES = {
     DRAW_OFFER:
@@ -105,9 +105,9 @@ class Human (Player):
         self.board.locked = True
         if item == "del":
             raise PlayerIsDead
-        
+        if item == "int":
+            raise TurnInterrupt
         return item
-    
     
     def _message (self, title, description, type, buttons, resfunc=None):
         d = gtk.MessageDialog (type=type, buttons=buttons)
@@ -127,7 +127,7 @@ class Human (Player):
         
         def response (dialog, response):
             if response == gtk.RESPONSE_YES:
-                self.emit("offer", offer)
+                self.emit("accept", offer)
             else: self.emit("decline", offer)
         self._message(title, description,
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, response)
@@ -187,5 +187,8 @@ class Human (Player):
         if self.board.view.model.curplayer == self:
             self.board.locked = False
     
-    def undoMoves (self, moves, gamemodel):
-        pass
+    def undoMoves (self, movecount, gamemodel):
+        # If current player has changed so that it is no longer us to move,
+        # We raise TurnInterruprt in order to let GameModel continue the game
+        if movecount % 2 == 1 and gamemodel.curplayer != self:
+            self.queue.put("int")
