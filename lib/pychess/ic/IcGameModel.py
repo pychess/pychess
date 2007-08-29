@@ -64,21 +64,28 @@ class IcGameModel (GameModel):
         
         elif offer.offerType in (RESIGNATION, FLAG_CALL):
             self.offermanager.offer(offer, self.ply)
-                
+        
         elif offer.offerType in OFFERS:
             if offer not in self.offerMap:
                 self.offerMap[offer] = player
                 opPlayer.offer(offer)
-            # If we updated an older offer, we want to delete the old one
+            # If the offer was an update to an old one, like a new takebackvalue
+            # we want to remove the old one from offerMap
             for of in self.offerMap.keys():
                 if offer.offerType == of.offerType and offer != of:
                     del self.offerMap[of]
     
     def acceptRecieved (self, player, offer):
-        # We don't do much here, as we preffer to recieve the results from the
-        # server, rather than calculating them ourselves
-        if offer not in self.offerMap or self.offerMap[offer] == player:
-            player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
+        if player.__type__ == LOCAL:
+            if offer not in self.offerMap or self.offerMap[offer] == player:
+                player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
+            else:
+                self.offermanager.accept(offer.offerType)
+                del self.offerMap[offer]
+        
+        # We don't handle any ServerPlayer calls here, as the fics server will
+        # know automatically if he/she accepts an offer, and will simply send
+        # us the result.
     
     def onActionError (self, offermanager, offer, error):
         self.emit("action_error", offer, error)

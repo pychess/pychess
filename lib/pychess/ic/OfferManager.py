@@ -40,7 +40,7 @@ for k,v in strToOfferType.iteritems():
 class OfferManager (GObject):
     
     __gsignals__ = {
-        'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,str)),
+        'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
         'onOfferRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'onChallengeAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
         'onChallengeRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
