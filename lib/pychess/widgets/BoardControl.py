@@ -40,19 +40,7 @@ class BoardControl (gtk.EventBox):
         self.tocords = [] # List of cords to which the selected piece can move
         
         self.pressed = False
-        #self._locked = False
         self.locked = True
-    
-    #def _set_locked (self, locked):
-    #    if locked != self.locked:
-    #        self._locked = locked
-    #        for key, menuitem in self.actionMenuItems.iteritems():
-    #            if key == "force_to_move":
-    #                menuitem.set_sensitive(locked)
-    #            else: menuitem.set_sensitive(not locked)
-    #def _get_locked (self):
-    #    return self._locked
-    #locked = property(_get_locked, _set_locked)
     
     def emit_move_signal (self, cord0, cord1):
         promotion = QUEEN
