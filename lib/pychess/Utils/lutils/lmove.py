@@ -1,7 +1,11 @@
+# -*- coding: UTF-8 -*-
+
+import re
+
 from ldata import *
 from LBoard import LBoard
 from validator import validateMove
-from pychess.Utils.const import localReprSign
+from pychess.Utils.const import *
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -443,21 +447,77 @@ def parseAN (board, an):
 # toFAN                                                                        #
 ################################################################################
 
+san2WhiteFanDic = {
+    "K": FAN_PIECES[WHITE][KING],
+    "Q": FAN_PIECES[WHITE][QUEEN],
+    "R": FAN_PIECES[WHITE][ROOK],
+    "B": FAN_PIECES[WHITE][BISHOP],
+    "N": FAN_PIECES[WHITE][KNIGHT],
+    "+": "†",
+    "#": "‡"
+}
+san2WhiteFanRegex = re.compile(
+    "(%s)" % "|".join(re.escape(k) for k in san2WhiteFanDic.keys()) )
+san2WhiteFanFunc = lambda match: san2WhiteFanDic[match.group()]
+
+san2BlackFanDic = {
+    "K": FAN_PIECES[BLACK][KING],
+    "Q": FAN_PIECES[BLACK][QUEEN],
+    "R": FAN_PIECES[BLACK][ROOK],
+    "B": FAN_PIECES[BLACK][BISHOP],
+    "N": FAN_PIECES[BLACK][KNIGHT],
+    "+": "†",
+    "#": "‡"
+}
+san2BlackFanRegex = re.compile(
+    "(%s)" % "|".join(re.escape(k) for k in san2BlackFanDic.keys()) )
+san2BlackFanFunc = lambda match: san2BlackFanDic[match.group()]
+
 def toFAN (board, move):
     """ Returns a Figurine Algebraic Notation string of a move """
     
-    fans = FAN_PIECES[board.color]
-    san = toSAN (board, move)
+    lan = toSAN (board, move)
     
-    lan = san
-    if "K" in lan or "Q" in lan or "R" in lan or "B" in lan or "N" in lan:
-        lan = lan.replace("K", fans[KING])
-        lan = lan.replace("Q", fans[QUEEN])
-        lan = lan.replace("R", fans[ROOK])
-        lan = lan.replace("B", fans[BISHOP])
-        lan = lan.replace("N", fans[KNIGHT])
-    else:
-        lan = fans[PAWN] + lan
+    if not lan[0] in ("K", "Q", "R", "B", "N", "O"):
+        
+        # We generally don't want notations like Pexd4, as the from file - in
+        # this case 'e' could be cut out. However in some cases where two pawns
+        # can attack the same cord, we'll still need it.
+        i = lan.find("x")
+        if i >= 0:
+            fcord = FCORD(move)
+            tcord = TCORD(move)
+            fileNecessary = False
+            
+            from lmovegen import genAllMoves
+            board.lock.acquire()
+            for altmove in genAllMoves(board):
+                mfcord = FCORD(altmove)
+                if board.arBoard[mfcord] == PAWN and \
+                        mfcord != fcord and \
+                        TCORD(altmove) == tcord:
+                    board.applyMove(altmove)
+                    if not board.opIsChecked():
+                        fileNecessary = True
+                    board.popMove()
+                    # If we found a pawn, that is not us, which can move to our
+                    # tcord, there is no point in looking further, as we can
+                    # never have more than two pawn pointing at the same cord
+                    break
+            board.lock.release()
+            
+            if not fileNecessary:
+                lan = lan[i:]
+        
+        # We add the pawn sign by appending instead of replacing, as SAN
+        # notation has no equal
+        if board.color == WHITE:
+            lan = FAN_PIECES[WHITE][PAWN] + lan
+        else: lan = FAN_PIECES[BLACK][PAWN] + lan
+    
+    if board.color == WHITE:
+        lan = san2WhiteFanRegex.sub(san2WhiteFanFunc, lan)
+    else: lan = san2BlackFanRegex.sub(san2BlackFanFunc, lan)
     
     return lan
 
@@ -465,17 +525,47 @@ def toFAN (board, move):
 # parseFAN                                                                     #
 ################################################################################
 
-def parseFAN (board, lan):
+fan2SanDic = {}
+for k, v in san2WhiteFanDic.iteritems():
+    fan2SanDic[v] = k
+for k, v in san2BlackFanDic.iteritems():
+    fan2SanDic[v] = k
+
+fan2SanRegex = re.compile(
+    "(%s)" % "|".join(re.escape(k) for k in fan2SanDic.keys()) )
+fan2SanFunc = lambda match: fan2SanDic[match.group()]
+
+def parseFAN (board, fan):
     """ Parse a Long/Expanded Algebraic Notation string """
     
-    fans = FAN_PIECES[board.color]
+    san = fan2SanRegex.sub(fan2SanFunc, fan)
     
-    san = lan
-    san = san.replace(fans[KING], "K")
-    san = san.replace(fans[QUEEN], "Q")
-    san = san.replace(fans[ROOK], "R")
-    san = san.replace(fans[BISHOP], "B")
-    san = san.replace(fans[KNIGHT], "N")
-    san = san.replace(fans[PAWN], "")
+    pawnFan = FAN_PIECES[board.color][PAWN]
+    if san[0] == pawnFan:
+        san = san.replace(pawnFan, "")
+        # If the pawn file has been omitted from a capture fan notation, it
+        # means that there was only one pawn able to move to the end cord. We
+        # just need to find it.
+        if san[0] == "x":
+            # We need to find the endcord ourselves. Can't wait for parseSAN
+            i = san.find("=")
+            if i >= 0:
+                tocord = san[1:i]
+            else: tocord = san[1:]
+            tcord = cordDic[tocord]
+            
+            from lmovegen import genAllMoves
+            board.lock.acquire()
+            for altmove in genAllMoves(board):
+                if board.arBoard[FCORD(altmove)] == PAWN and \
+                        TCORD(altmove) == tcord:
+                    board.applyMove(altmove)
+                    if not board.opIsChecked():
+                        san = reprFile(mfcord) + san
+                    board.popMove()
+                    # We know there is only one pawn which can move to tcord, so
+                    # we stop work here
+                    break
+            board.lock.release()
     
     return parseSAN (board, san)
