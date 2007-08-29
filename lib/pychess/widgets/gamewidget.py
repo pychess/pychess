@@ -293,11 +293,13 @@ class GameWidget (gobject.GObject):
         finally:
             glock.release()
     
-    
-    def setTabReady (self, ready):
+    def setLocked (self, locked):
+        # Set board sensitive
+        self.widgets["board"].locked = locked
+        # Set tab active indicator
         tabhbox = self.widgets["tabhbox"]
         tabhbox.remove(tabhbox.get_children()[0])
-        if ready:
+        if not locked:
             tabhbox.pack_start(createImage(light_on), expand=False)
         else: tabhbox.pack_start(createImage(light_off), expand=False)
         tabhbox.show_all()

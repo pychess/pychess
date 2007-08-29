@@ -100,9 +100,9 @@ class Human (Player):
         self.emit("offer", Offer(action, param))
     
     def makeMove (self, gamemodel):
-        self.board.locked = False
+        self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
-        self.board.locked = True
+        self.gmwidg.setLocked(True)
         if item == "del":
             raise PlayerIsDead
         if item == "int":
@@ -181,11 +181,11 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def pause (self):
-        self.board.locked = True
+        self.gmwidg.setLocked(True)
     
     def resume (self):
         if self.board.view.model.curplayer == self:
-            self.board.locked = False
+            self.gmwidg.setLocked(False)
     
     def undoMoves (self, movecount, gamemodel):
         # If current player has changed so that it is no longer us to move,
