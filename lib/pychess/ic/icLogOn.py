@@ -72,7 +72,7 @@ def doConnect (username, password):
             gobject.source_remove(pulser)
             pulser = None
     try:
-        telnet.connect ("freechess.org", 5000, username, password)
+        telnet.connect ("freechess.org", 23, username, password)
     except IOError, e:
         telnet.client = None
         gobject.idle_add(error, _("Connection Error"), str(e))
