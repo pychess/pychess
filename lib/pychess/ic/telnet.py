@@ -127,7 +127,7 @@ def connect (host, port, username="guest", password=""):
             raise IOError, _("The connection was broken - got end of file " +
                              "message")
         except socket.error, e:
-            raise InterruptError, e.args[0]
+            raise InterruptError, ", ".join(map(str,e.args))
         except Exception, e:
             raise IOError, str(e)
         
@@ -157,7 +157,9 @@ def connect (host, port, username="guest", password=""):
                            "Starting FICS session as %s" %  names]).next()
         
         if r[0] == 0:
-            raise LogOnError, _("The entered password was invalid.\n\nIf you have forgot your password, try logging in as a guest and to chat channel 4 to tell the supporters that you have forgot it.\n\nIf that is by some reason not possible, please email: suppord@freechess.org")
+            raise LogOnError, _("The entered password was invalid.\n\n"+\
+                                "If you have forgot your password, try logging in as a guest and open chat on channel 4. Write \"I've forgotten my password\" to get help.\n\n"+\
+                                "If that is by some reason not possible, please email: support@freechess.org")
         elif r[0] == 1:
             curname = r[1][0]
         
