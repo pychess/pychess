@@ -447,12 +447,12 @@ def initialize():
         print "widget and model created"
         if board["wname"].lower() == telnet.curname.lower():
             color = WHITE
-            white = Human(gmwidg.widgets["board"], WHITE, board["wname"])
+            white = Human(gmwidg, WHITE, board["wname"])
             black = ServerPlayer (
                 bm, om, board["bname"], False, board["gameno"], BLACK)
         else:
             color = BLACK
-            black = Human(gmwidg.widgets["board"], BLACK, board["bname"])
+            black = Human(gmwidg, BLACK, board["bname"])
             white = ServerPlayer (
                 bm, om, board["wname"], False, board["gameno"], WHITE)
         

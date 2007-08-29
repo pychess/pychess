@@ -1,6 +1,15 @@
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
-class PlayerIsDead (Exception): pass
+class PlayerIsDead (Exception):
+    """ Used instead of returning a move,
+        when an engine crashes, or a nonlocal player disconnects """
+    pass
+
+class TurnInterrupt (Exception):
+    """ Used instead of returning a move, when a players turn is interupted.
+        Currently this will only happen when undoMoves changes the current
+        player """
+    pass
 
 class Player (GObject):
     
