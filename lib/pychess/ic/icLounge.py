@@ -118,8 +118,8 @@ def initialize():
                 
                 row += 1
                 
-                for type, numbers in ratings.iteritems():
-                    table.attach(label(_(type)+":"), 0, 1, row, row+1)
+                for typ, numbers in ratings.iteritems():
+                    table.attach(label(_(typ)+":"), 0, 1, row, row+1)
                     # Remove RD tag, as we want to be compact
                     numbers = numbers[:1] + numbers[2:]
                     for i, number in enumerate(numbers):
@@ -165,10 +165,13 @@ def initialize():
             pingLabel.props.xalign = 0
             pinger = Pinger("freechess.org")
             def callback (pinger, pingtime):
-                if pingtime == -1:
+                if type(pingtime) == str:
+                    pingLabel.set_text(pingtime)
+                elif pingtime == -1:
                     pingLabel.set_text(_("Unknown"))
                 else: pingLabel.set_text("%.0f ms" % pingtime)
             pinger.connect("recieved", callback)
+            pinger.connect("error", callback)
             pinger.start()
             table.attach(pingLabel, 1, 6, row, row+1)
             
