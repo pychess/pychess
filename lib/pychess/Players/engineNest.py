@@ -23,18 +23,30 @@ attrToProtocol = {
 backup = """
 <engines>
     <engine protocol="cecp" binname="PyChess.py" />
-    <engine protocol="cecp" binname="gnuchess" />
-    <engine protocol="cecp" binname="gnome-gnuchess" />
-    <engine protocol="cecp" binname="crafty" />
-    <engine protocol="cecp" binname="faile" />
-    <engine protocol="cecp" binname="phalanx" />
-    <engine protocol="cecp" binname="sjeng" />
-    <engine protocol="cecp" binname="hoichess" />
-    <engine protocol="cecp" binname="boochess" />
-    <engine protocol="uci" binname="glaurung" />
-    <engine protocol="uci" binname="ShredderClassicLinux" />
-    <engine protocol="uci" binname="fruit_21_static" />
-    <engine protocol="uci" binname="fruit" />
+    <engine protocol="cecp" binname="gnuchess">
+        <meta><country>us</country></meta></engine>
+    <engine protocol="cecp" binname="gnome-gnuchess">
+        <meta><country>us</country></meta></engine>
+    <engine protocol="cecp" binname="crafty">
+        <meta><country>us</country></meta></engine>
+    <engine protocol="cecp" binname="faile">
+        <meta><country>ca</country></meta></engine>
+    <engine protocol="cecp" binname="phalanx">
+        <meta><country>cz</country></meta></engine>
+    <engine protocol="cecp" binname="sjeng">
+        <meta><country>be</country></meta></engine>
+    <engine protocol="cecp" binname="hoichess">
+        <meta><country>de</country></meta></engine>
+    <engine protocol="cecp" binname="boochess">
+        <meta><country>de</country></meta></engine>
+    <engine protocol="uci" binname="glaurung">
+        <meta><country>no</country></meta></engine>
+    <engine protocol="uci" binname="ShredderClassicLinux">
+        <meta><country>de</country></meta></engine>
+    <engine protocol="uci" binname="fruit_21_static"> 
+        <meta><country>fr</country></meta></engine>
+    <engine protocol="uci" binname="fruit">
+        <meta><country>fr</country></meta></engine>
 </engines>
 """
 
