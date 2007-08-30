@@ -307,9 +307,14 @@ class EngineDiscoverer (GObject, Thread):
             self.condition.release()
         
         self.emit("all_engines_discovered")
-        f = open(self.xmlpath, "w")
-        self.dom.writexml(f)
-        f.close()
+        
+        try:
+            f = open(self.xmlpath, "w")
+            self.dom.writexml(f)
+            f.close()
+        except IOError, e:
+            log.warn("Saving enginexml raised exception: %s" % \
+                    ", ".join(str(a) for a in e.args))
     
     ############################################################################
     # Interaction                                                              #

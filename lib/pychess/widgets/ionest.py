@@ -65,7 +65,8 @@ all.set_name(_("All Chess Files"))
 opendialog.add_filter(all)
 opendialog.set_filter(all)
 
-for label, endings in types:
+default = 0
+for i, (label, endings) in enumerate(types):
     endstr = "(%s)" % ", ".join(endings)
     f = gtk.FileFilter()
     f.set_name(label+" "+endstr)
@@ -74,6 +75,8 @@ for label, endings in types:
         all.add_pattern("*."+ending)
     opendialog.add_filter(f)
     saveformats.append([label, endstr])
+    if "pgn" in endstr:
+        default = i + 1
 
 savecombo = gtk.ComboBox()
 savecombo.set_model(saveformats)
@@ -83,7 +86,7 @@ savecombo.add_attribute(crt, 'text', 0)
 crt = gtk.CellRendererText()
 savecombo.pack_start(crt, False)
 savecombo.add_attribute(crt, 'text', 1)
-savecombo.set_active(0)
+savecombo.set_active(default)
 savedialog.set_extra_widget(savecombo)
 
 ################################################################################
@@ -628,8 +631,19 @@ Please ensure that you have given the right path and try again."))
         
         savedialog.disconnect(conid)
         savedialog.hide()
-        game.save("file://"+uri, saver, append)
         
+        try:
+            game.save("file://"+uri, saver, append)
+        except IOError, e:
+            d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR)
+            d.add_buttons(gtk.STOCK_OK, gtk.RESPONSE_OK)
+            d.set_title(_("Could not save the file"))
+            d.set_markup(_("<big><b>PyChess was not able to save the game</b></big>"))
+            d.format_secondary_text(_("The error was: %s") % ", ".join(str(a) for a in e.args))
+            os.remove(uri)
+            res = d.run()
+            d.hide()
+    
     conid = savedialog.connect("response", response)
     savedialog.show_all()
 

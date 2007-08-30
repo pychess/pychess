@@ -52,7 +52,12 @@ class Log (gobject.GObject):
     def _log (self, task, message, type):
         if self.file:
             formated = self._format(task, message, type)
-            print >> self.file, formated
+            try:
+                print >> self.file, formated
+            except IOError, e:
+                if not type == ERROR:
+                    self.error("Unable to write '%s' to log file because of error: %s" % \
+                            (formated, ", ".join(str(a) for a in e.args)))
         self.messages.append((task, message, type))
         self.publisher.put((task, message, type))
         if type == ERROR:
