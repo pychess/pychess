@@ -40,8 +40,8 @@ class GeneralTab:
         
         userdata = getpwuid(getuid())
         username = userdata.pw_gecos or userdata.pw_name
-        firstName = conf.get("firstName", username)
-        secondName = conf.get("secondName", _("Guest"))
+        conf.set("firstName", conf.get("firstName", username))
+        conf.set("secondName", conf.get("secondName", _("Guest")))
         
         # Give to uistuff.keeper
         
