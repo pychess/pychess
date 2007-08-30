@@ -79,8 +79,6 @@ class Board:
             elif flag == KING_CASTLE:
                 newBoard[Cord(F1)] = newBoard[Cord(H1)]
                 newBoard[Cord(H1)] = None
-            elif flag == ENPASSANT:
-                newBoard[Cord(cord0.x, cord0.y-1)] = None
         else:
             if flag == QUEEN_CASTLE:
                 newBoard[Cord(D8)] = newBoard[Cord(A8)]
@@ -88,8 +86,6 @@ class Board:
             elif flag == KING_CASTLE:
                 newBoard[Cord(F8)] = newBoard[Cord(H8)]
                 newBoard[Cord(H8)] = None
-            elif flag == ENPASSANT:
-                newBoard[Cord(cord0.x, cord0.y+1)] = None
         
         if flag in (KNIGHT_PROMOTION, BISHOP_PROMOTION,
                     ROOK_PROMOTION, QUEEN_PROMOTION):
