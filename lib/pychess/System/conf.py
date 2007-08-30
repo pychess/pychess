@@ -26,7 +26,6 @@ def get (key, alternative):
         return confmodule.get(key)
     if callable(alternative):
         alternative = alternative()
-    set(key, alternative)
     return alternative
 
 def set (key, value):

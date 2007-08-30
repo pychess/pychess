@@ -202,13 +202,18 @@ class SoundTab:
     
     @classmethod
     def playAction (cls, action):
-        no = cls.actionToKeyNo[action]
-        type = conf.get("soundcombo%d" % no, SOUND_MUTE)
-        if type == SOUND_BEEP:
+        if type(action) == str:
+            no = cls.actionToKeyNo[action]
+        else: no = action
+        typ = conf.get("soundcombo%d" % no, SOUND_MUTE)
+        if typ == SOUND_BEEP:
             sys.stdout.write("\a")
             sys.stdout.flush()
-        elif type == SOUND_URI:
-            uri = conf.getStrict("sounduri%d" % no)
+        elif typ == SOUND_URI:
+            uri = conf.get("sounduri%d" % no, "")
+            if not os.path.isfile(uri[7:]):
+                conf.set("soundcombo%d" % no, SOUND_MUTE)
+                return
             gstreamer.playSound(uri)
     
     def __init__ (self, widgets):
@@ -276,12 +281,12 @@ class SoundTab:
             label = widgets["soundlabel%d"%i]
             label.props.mnemonic_widget = combo
             
-            uri = conf.getStrict("sounduri%d"%i)
-            if uri:
+            uri = conf.get("sounduri%d"%i,"")
+            if os.path.isfile(uri[7:]):
                 model = combo.get_model()
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
-        
+            
         for i in xrange(self.COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
@@ -291,13 +296,7 @@ class SoundTab:
         # Init play button
         
         def playCallback (button, index):
-            value = conf.get("soundcombo%d"%index, SOUND_MUTE)
-            if value == SOUND_BEEP:
-                sys.stdout.write("\a")
-                sys.stdout.flush()
-            elif value == SOUND_URI:
-                uri = conf.getStrict("sounduri%d"%index)
-                gstreamer.playSound(uri)
+            SoundTab.playAction(index)
         
         for i in range (self.COUNT_OF_SOUNDS):
             button = widgets["soundbutton%d"%i]

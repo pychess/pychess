@@ -1,4 +1,5 @@
-import os, atexit
+import os, sys, atexit
+from pychess.System.Log import log
 from ConfigParser import SafeConfigParser
 configParser = SafeConfigParser()
 
@@ -6,7 +7,8 @@ section = "General"
 path = os.path.join(os.environ["HOME"], ".pychessconf")
 if os.path.isfile(path):
     configParser.readfp(open(path))
-else: configParser.add_section(section)
+if not configParser.has_section(section):
+    configParser.add_section(section)
 atexit.register(lambda: configParser.write(open(path,"w")))
 
 notifiers = {}
@@ -34,7 +36,11 @@ def get (key):
     return cp.get(section, key)
 
 def set (key, value):
-    configParser.set (section, key, str(value))
+    try:
+        configParser.set (section, key, str(value))
+    except Exception, e:
+        log.error("Unable to save configuration '%s'='%s' because of error: %s %s"%
+                (repr(key), repr(value), e.__class__.__name__, ", ".join(str(a) for a in e.args)))
     if key in notifiers:
         for key, func in [idkeyfuncs[id] for id in notifiers[key]]:
             func (None)
