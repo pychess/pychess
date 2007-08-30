@@ -94,7 +94,10 @@ class EngineTab:
         uistuff.createCombo(widgets["inv_ana_combobox"], invana_data)
         
         # Save, load and make analyze combos active
-    
+        
+        conf.set("ana_combobox", conf.get("ana_combobox", 0))
+        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", 0))
+        
         def on_analyzer_check_toggled (check):
             widgets["analyzers_vbox"].set_sensitive(check.get_active())
             widgets["hint_mode"].set_active(check.get_active())
