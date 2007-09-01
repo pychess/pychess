@@ -48,6 +48,18 @@ export PYCHESS_DATA_PATH="`FindPath $0`"
 #fi
 
 ################################################################################
+# Save arguments in a python readable way. We can't use the bash $* and $@     #
+# special parameters, as they split up double quoted parameters                #
+################################################################################
+
+export PYCHESS_ARGUMENTS="$#"
+i=0
+for arg do
+    export PYCHESS_ARGUMENT$i="$arg"
+    i=$(($i+1))
+done
+
+################################################################################
 # Try to import pychess modules and set up gettext                             #
 ################################################################################
 
@@ -78,5 +90,6 @@ gtk.glade.textdomain("pychess")
 os.environ["XDG_DATA_DIRS"] = PREFIX+":/usr/share/"
 
 import pychess.Main
-pychess.Main.run()
+pychess.Main.run([os.environ["PYCHESS_ARGUMENT%d"%i] for i in \
+        xrange(int(os.environ["PYCHESS_ARGUMENTS"]))])
 '

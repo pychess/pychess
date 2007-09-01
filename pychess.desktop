@@ -7,3 +7,4 @@ Icon=pychess
 Exec=pychess
 Terminal=false
 Categories=Application;Game;BoardGame;
+MimeType=application/x-chess-pgn;

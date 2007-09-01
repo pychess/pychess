@@ -403,9 +403,10 @@ dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 class PyChess:
-    def __init__(self):
+    def __init__(self, args):
         self.initGlade()
-        
+        self.handleArgs(args)
+    
     def mainWindowSize (self, window):
         def savePosition ():
             conf.set("window_width", window.get_allocation().width)
@@ -459,9 +460,13 @@ class PyChess:
             "connectClicked", GladeHandlers.__dict__["on_internetTasker_connect"])
         tasker.packTaskers ([newGameTasker, internetGameTasker])
         return tasker
-
-def run ():
-    PyChess()
+    
+    def handleArgs (self, args):
+        if args:
+            ionest.loadGame(args[0])
+    
+def run (args):
+    PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
     signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     gtk.gdk.threads_init()
