@@ -63,62 +63,57 @@ class TaskerManager (gtk.Table):
             cr.fill()
     
     def newtheme (self, widget, oldstyle):
-        
-        lnew = self.get_style().bg[gtk.STATE_NORMAL]
-        dnew = self.get_style().dark[gtk.STATE_NORMAL]
-        
+        lnewcolor = self.get_style().bg[gtk.STATE_NORMAL]
+        dnewcolor = self.get_style().dark[gtk.STATE_NORMAL]
         if oldstyle:
-            lold = oldstyle.bg[gtk.STATE_NORMAL]
-            dold = oldstyle.dark[gtk.STATE_NORMAL]
-            
-            if lnew.red == lold.red and \
-               lnew.green == lold.green and \
-               lnew.blue == lold.blue and \
-               dnew.red == dold.red and \
-               dnew.green == dold.green and \
-               dnew.blue == dold.blue:
+            loldcolor = oldstyle.bg[gtk.STATE_NORMAL]
+            doldcolor = oldstyle.dark[gtk.STATE_NORMAL]
+            if lnewcolor.red   == loldcolor.red and \
+               lnewcolor.green == loldcolor.green and \
+               lnewcolor.blue  == loldcolor.blue and \
+               dnewcolor.red   == doldcolor.red and \
+               dnewcolor.green == doldcolor.green and \
+               dnewcolor.blue  == doldcolor.blue:
                 return
         
-        dark = array('B',map(lambda x: x/256, (dnew.red, dnew.green, dnew.blue)))
+        colors = (
+            lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
+            dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
+        )
         
+        # Check if a catche has been saved
         pydir = path.expanduser("~/.pychess/")
         temppngdir = path.join(pydir,"temp.png")
         if not path.isdir(pydir):
             mkdir(pydir)
         if path.isfile(temppngdir):
             f = open(temppngdir)
-            b,g,r = [ord(c) for c in f.read(3)]
-            if dark[0] == r and dark[1] == g and dark[2] == b:
+            # Check if the catche was made while using the same theme
+            if [ord(c) for c in f.read(6)] == colors:
                 self.surface = cairo.ImageSurface.create_from_png(f)
                 return
         
-        surface = cairo.ImageSurface.create_from_png(self.clearpath)
-        if hasattr(surface, "get_data_as_rgba"):
-            buffer = surface.get_data_as_rgba()
-        else: buffer = surface.get_data()
+        # Get mostly transparant shadowy image
+        imgsurface = cairo.ImageSurface.create_from_png(self.clearpath)
+        AVGALPHA = 108/255.
         
-        data = array ('B', 'a' * surface.get_width() * surface.get_height() * 4)
-        surf = cairo.ImageSurface.create_for_data (data, cairo.FORMAT_ARGB32,
-                surface.get_width(), surface.get_height(), surface.get_stride())
-        ctx = cairo.Context (surf)
-        ctx.rectangle (0, 0, surface.get_width(), surface.get_height())
-        ctx.set_source_surface(surface, 0, 0)
-        ctx.fill()
+        self.surface = cairo.ImageSurface(cairo.FORMAT_RGB24,
+                imgsurface.get_width(), imgsurface.get_height())
+        ctx = cairo.Context (self.surface)
+        if lnewcolor.blue-dnewcolor.blue > 0:
+            a = dnewcolor.red/(3*(lnewcolor.blue-dnewcolor.blue)*(1-AVGALPHA))
+            ctx.set_source_rgb(
+                lnewcolor.red/65535./2  + dnewcolor.red/65535.*a/2,
+                lnewcolor.green/65535./2 + dnewcolor.green/65535.*a/2,
+                lnewcolor.blue/65535./2  + dnewcolor.blue/65535.*a/2)
+            ctx.paint()
+        ctx.set_source_surface(imgsurface, 0, 0)
+        ctx.paint_with_alpha(.8)
         
-        dark.reverse()
-
-        rang3 = range(3)
-        for s in xrange(0, len(data), 4):
-            for i in rang3:
-                data[s+i] = (dark[i] + data[s+i]) /3
-        
-        self.surface = cairo.ImageSurface.create_for_data (
-            data, cairo.FORMAT_ARGB32,
-            surface.get_width(), surface.get_height(),
-            surface.get_stride())
-        
+        # Save a catche for later use. Save 'newcolor' in the frist three pixels
+        # to check for theme changes between two instances
         f = open(temppngdir, "w")
-        for color in dark:
+        for color in colors:
             f.write(chr(color))
         self.surface.write_to_png(f)
     
