@@ -11,7 +11,7 @@
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">16.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -603,7 +603,7 @@ Polish (pl) - Wojciech Halicki-Piszko
 Turkish (tr) - Ertugrul Harman
 Hungarian (hu) - Bajusz Tamás
 Spanish (es) - 	Enrique</property>
-  <property name="logo">pychess.png</property>
+  <property name="logo">about.png</property>
 </widget>
 
 <widget class="GtkDialog" id="game_info">
@@ -614,7 +614,7 @@ Spanish (es) - 	Enrique</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">True</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">16.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -1011,7 +1011,7 @@ Spanish (es) - 	Enrique</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">16.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -5778,7 +5778,7 @@ UCI</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">pychess24.png</property>
+  <property name="icon">16.png</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
