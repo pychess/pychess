@@ -382,7 +382,7 @@ def initialize():
     
     seeks = {}
     
-    seekPix = pixbuf_new_from_file(prefix("glade/pixmaps/seek.png"))
+    seekPix = pixbuf_new_from_file(prefix("glade/seek.png"))
     def on_seek_add (manager, seek):
         def call ():
             time = "%s min + %s sec" % (seek["t"], seek["i"])
@@ -480,7 +480,7 @@ def initialize():
     
     challenges = {}
     
-    challenPix = pixbuf_new_from_file(prefix("glade/pixmaps/challenge.png"))
+    challenPix = pixbuf_new_from_file(prefix("glade/challenge.png"))
     def onChallengeAdd (om, index, match):
         def call ():
             time = "%s min + %s sec" % (match["t"], match["i"])
@@ -638,7 +638,7 @@ def initialize():
     
     icons = gtk.icon_theme_get_default()
     recpix = icons.load_icon("media-record", 18, gtk.ICON_LOOKUP_USE_BUILTIN)
-    clearpix = pixbuf_new_from_file(prefix("glade/pixmaps/clear.png"))
+    clearpix = pixbuf_new_from_file(prefix("glade/clear.png"))
     
     tv = widgets["gametreeview"]
     gstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)

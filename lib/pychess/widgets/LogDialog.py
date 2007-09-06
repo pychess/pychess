@@ -11,7 +11,7 @@ from pychess.System.prefix import prefix
 
 w = gtk.Window()
 w.set_title(_("Pychess - Log Viewer"))
-iconpath = prefix("glade/pychess24.png")
+iconpath = prefix("glade/16.png")
 w.set_icon(gtk.gdk.pixbuf_new_from_file(iconpath))
 
 notebook = gtk.Notebook()
