@@ -156,6 +156,8 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 # Brush types. Send piece object for Piece brush
 CLEAR, ENPAS = range(2)
 
+from os import getuid
+from pwd import getpwuid
 userdata = getpwuid(getuid())
 i = userdata.pw_gecos.find(',')
 if i >= 0:
