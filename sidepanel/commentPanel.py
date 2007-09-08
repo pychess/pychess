@@ -19,9 +19,9 @@ class Sidepanel:
         
     def load (self, gmwidg):
         
-        game = gmwidg.widgets["board"].view.model
-        game.connect("game_changed", self.game_changed)
-        game.connect("moves_undoing", self.moves_undoing)
+        self.gamemodel = gmwidg.widgets["board"].view.model
+        self.gamemodel.connect("game_changed", self.game_changed)
+        self.gamemodel.connect("moves_undoing", self.moves_undoing)
         
         widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
@@ -62,11 +62,12 @@ class Sidepanel:
         if iter == None: return
         if self.frozen: return
         row = self.tv.get_model().get_path(iter)[0]
-        self.boardview.shown = row
+        self.boardview.shown = self.gamemodel.lowply+row
     
     def shown_changed (self, boardview, shown):
-        if shown >= len(self.store): return
-        iter = self.store.get_iter(boardview.shown)
+        row = shown + self.gamemodel.lowply
+        if row >= len(self.store): return
+        iter = self.store.get_iter(row)
         self.tv.get_selection().select_iter(iter)
     
     def addComment (self, text):

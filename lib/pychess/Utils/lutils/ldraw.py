@@ -3,7 +3,7 @@ from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
 def testRepetition (board):
-    if len(board.history) >= 9:
+    if len(board.history) >= 8:
         if board.history[-4] != None and board.history[-8] != None and \
                 board.hash == board.history[-4][4] == board.history[-8][4]:
             return True

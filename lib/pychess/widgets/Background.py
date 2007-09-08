@@ -76,10 +76,10 @@ class TaskerManager (gtk.Table):
                dnewcolor.blue  == doldcolor.blue:
                 return
         
-        colors = (
+        colors = [
             lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
             dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
-        )
+        ]
         
         # Check if a catche has been saved
         pydir = path.expanduser("~/.pychess/")
@@ -260,7 +260,7 @@ class NewGameTasker (gtk.HBox):
             combo.addItem(name, stock)
         combo.setMarkup("<b>", "</b>")
         def func (playerCombo, oldactive):
-            self.difCombo.set_sensitive(playerCombo.active > 0)
+            self.difCombo.props.sensitive = playerCombo.active > 0
         self.playerCombo.connect("changed", func)
         func(self.playerCombo, self.playerCombo.active)
         uistuff.keep(self.difCombo, "newgametasker_difcombo")

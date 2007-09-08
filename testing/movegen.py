@@ -12,7 +12,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 4
+MAXDEPTH = 1
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from

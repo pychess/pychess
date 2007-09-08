@@ -1,4 +1,9 @@
 
+import os
+from array import array
+
+from pychess.Utils.const import *
+
 def setBit (bitboard, i):
     return bitboard | bitPosArray[i]
 
@@ -26,10 +31,11 @@ def bitLength (bitboard):
            bitCount [   bitboard & 0xffff ]
 
 def iterBits (bitboard):
+    ensureBitArraysLoaded ()
     return bitsArray0[bitboard >> 48] + \
-           bitsArray1[bitboard >> 32 & 0xffff] + \
-           bitsArray2[bitboard >> 16 & 0xffff] + \
-           bitsArray3[bitboard & 0xffff]
+            bitsArray1[bitboard >> 32 & 0xffff] + \
+            bitsArray2[bitboard >> 16 & 0xffff] + \
+            bitsArray3[bitboard & 0xffff]
 
 def iterBits3 (bitboard):
     for cord in bitsArray0[bitboard >> 48]:
@@ -47,7 +53,7 @@ def iterBits2 (bitboard):
         bitboard = clearBit(bitboard, cord)
         yield cord
 
-from pychess.Utils.const import *
+
 
 def toString (bitboard):
     s = []
@@ -68,11 +74,12 @@ def toString (bitboard):
         s2 += "".join(a) + "\n"
     return s2
 
+
 # This array is used when the position of the leading non-zero bit is required.
 # Leftmost is 0, rightmost is 63
 
 NBITS = 16
-lzArray = [0]*65536
+lzArray = array('B',[0]*65536)
 
 s = n = 1
 for i in range(NBITS):
@@ -81,12 +88,13 @@ for i in range(NBITS):
     s += n
     n += n
 
+
 # BitPosArray[i] returns the bitboard whose ith bit (FROM LEFT) is set to 1 and
 # every other bits 0. This is about double speed compared to do shifting all the
 # time (On my computer). It also computes the NotBitPosArray = ~BitPosArray.
 
-notBitPosArray = [None]*64
-bitPosArray = [None]*64
+notBitPosArray = [0]*64
+bitPosArray = [0]*64
 
 b = 1
 for i in range(63,-1,-1):
@@ -94,51 +102,66 @@ for i in range(63,-1,-1):
     notBitPosArray[i] = ~b
     b <<= 1
 
-# This array is used when the position of the bits are required
 
-import os
-# Pickling and marshaling array objects is not supported before python 2.5
-import marshal
-#import cPickle as marshal
-from array import array
-
+# These arrays are used to get the 0-63 position of the bits in a board
+# We init them lazily, as they can take multiple secconds to load/create
 bitsArray0, bitsArray1, bitsArray2, bitsArray3 = None, None, None, None
 
-if os.path.isfile ("/tmp/bitboards"):
-    try:
-        bitsArray0, bitsArray1, bitsArray2, bitsArray3 = \
-                marshal.load (file ("/tmp/bitboards"))
-    except MemoryError:
-        print "Ignoring memory error"
-        pass
-
-if not bitsArray0:
-
-    bitsArray0 = [[] for i in xrange (65536)]
-    bitsArray1 = [[] for i in xrange (65536)]
-    bitsArray2 = [[] for i in xrange (65536)]
-    bitsArray3 = [[] for i in xrange (65536)]
+def ensureBitArraysLoaded ():
+    global bitsArray0
+    if bitsArray0:
+        return
     
-    for bits in xrange(65536):
-        origbits = bits
-        while bits:
-            b = firstBit(bits)
-            bits = clearBit(bits, b)
-            bitsArray0[origbits].append(b-48)
-            bitsArray1[origbits].append(b-32)
-            bitsArray2[origbits].append(b-16)
-            bitsArray3[origbits].append(b)
+    global bitsArray1, bitsArray2, bitsArray3
+    RECREATE = False
     
-    marshal.dump ((bitsArray0, bitsArray1, bitsArray2, bitsArray3),
-                  file ("/tmp/bitboards", "w"))
-
-#print bitsArray0
+    if os.path.isfile ("/tmp/bitboards"):
+        try:
+            f = file ("/tmp/bitboards", "r")
+            ord_ = ord
+            
+            bitsArray0 = [array('B') for i in xrange (65536)]
+            bitsArray1 = [array('B') for i in xrange (65536)]
+            bitsArray2 = [array('B') for i in xrange (65536)]
+            bitsArray3 = [array('B') for i in xrange (65536)]
+            for list in (bitsArray0, bitsArray1, bitsArray2, bitsArray3):
+                for ar in list:
+                    l = ord_(f.read(1))
+                    ar.fromfile(f, l)
+        except EOFError:
+            RECREATE = True
+    else: RECREATE = True
+    
+    if RECREATE:
+        
+        bitsArray0 = [array('B') for i in xrange (65536)]
+        bitsArray1 = [array('B') for i in xrange (65536)]
+        bitsArray2 = [array('B') for i in xrange (65536)]
+        bitsArray3 = [array('B') for i in xrange (65536)]
+        
+        for bits in xrange(65536):
+            origbits = bits
+            while bits:
+                b = firstBit(bits)
+                bits = clearBit(bits, b)
+                bitsArray0[origbits].append(b-48)
+                bitsArray1[origbits].append(b-32)
+                bitsArray2[origbits].append(b-16)
+                bitsArray3[origbits].append(b)
+        
+        out = file ("/tmp/bitboards", "w")
+        len_ = len
+        chr_ = chr
+        for ar in bitsArray0 + bitsArray1 + bitsArray2 + bitsArray3:
+            out.write(chr_(len_(ar)))
+            ar.tofile(out)
+        out.close()
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set
 # in a BitBoard (e.g. for mobility count).
 
-bitCount = [None]*65536
+bitCount = array('H',[0]*65536)
 bitCount[0] = 0
 bitCount[1] = 1
 
