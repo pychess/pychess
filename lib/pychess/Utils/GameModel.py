@@ -33,6 +33,7 @@ class GameModel (GObject):
         
         self.boards = [Board(setup=True)]
         self.moves = []
+        self.players = []
         
         self.status = WAITING_TO_START
         self.reason = UNKNOWN_REASON

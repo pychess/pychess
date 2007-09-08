@@ -1,3 +1,4 @@
+from array import array
 from pychess.Utils.const import *
 from bitboard import *
 
@@ -376,10 +377,10 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-moveArray = [[0]*64 for i in range(len(dir))] # moveArray[8][64]
+moveArray = [[0]*64 for i in xrange(len(dir))] # moveArray[8][64]
 
-for piece in range(1,len(dir)):
-    for fcord in range(120):
+for piece in xrange(1,len(dir)):
+    for fcord in xrange(120):
         f = map[fcord]
         if f == -1:
             # We only generate moves for squares inside the board
@@ -416,10 +417,10 @@ del sliders[9]; del sliders[8]
 #  the index into rays[f] array allow us to find the ray in that direction.    #
 ################################################################################
 
-directions = [[-1]*64 for i in range(64)] # directions[64][64]
-rays = [[0]*8 for i in range(64)] # rays[64][8]
+directions = [array('b',[-1]*64) for i in xrange(64)] # directions[64][64]
+rays = [[0]*8 for i in xrange(64)] # rays[64][8]
 
-for fcord in range(120):
+for fcord in xrange(120):
     f = map[fcord]
     if f == -1: continue
     ray = -1
@@ -442,10 +443,10 @@ for fcord in range(120):
 #  ray is possible, then a 0 is returned.                                      #
 ################################################################################
 
-fromToRay = [[0]*64 for i in range(64)] # fromToRay[64][64]
+fromToRay = [[0]*64 for i in xrange(64)] # fromToRay[64][64]
 
 for piece in BISHOP, ROOK:
-    for fcord in range (120):
+    for fcord in xrange (120):
         f = map[fcord]
         if f == -1: continue
         for d in dir[piece]:
@@ -488,10 +489,10 @@ for cord in xrange(64):
 #  These tables are used to calculate rook, queen and bishop moves             #
 ################################################################################
 
-rook00Attack = [[0]*256 for i in range(64)] # rook00Attack[64][256]
-rook90Attack = [[0]*256 for i in range(64)] # rook90Attack[64][256]
-bishop45Attack = [[0]*256 for i in range(64)] # bishop45Attack[64][256]
-bishop315Attack = [[0]*256 for i in range(64)] # bishop315Attack[64][256]
+rook00Attack = [[0]*256 for i in xrange(64)] # rook00Attack[64][256]
+rook90Attack = [[0]*256 for i in xrange(64)] # rook90Attack[64][256]
+bishop45Attack = [[0]*256 for i in xrange(64)] # bishop45Attack[64][256]
+bishop315Attack = [[0]*256 for i in xrange(64)] # bishop315Attack[64][256]
 
 cmap = [ 128, 64, 32, 16, 8, 4, 2, 1 ]
 rot1 = [ A1, A2, A3, A4, A5, A6, A7, A8 ]
@@ -523,41 +524,41 @@ for cord in range (A1, H1+1):
                 fromToRay[rot3[cord]][rot3[cord2]]
 
 def itranges (range1, range2):
-    for i in range(len(range1)):
+    for i in xrange(len(range1)):
         yield (range1[i], range2[i])
 
 MAXBITBOARD = (1<<64)-1
 
-for map in range (256):
+for map in xrange (256):
     # Run through all cords except the 1st rank
-    for cord in range (A2, H8+1):
+    for cord in xrange (A2, H8+1):
         rook00Attack[cord][map] = rook00Attack[cord-8][map] >> 8
     
     # Run through all cords, besides the A file
-    for file in range(B1, H1+1):
-        for rank in range (A1, A8+1, 8):
+    for file in xrange(B1, H1+1):
+        for rank in xrange (A1, A8+1, 8):
             cord = rank + file
             rook90Attack[cord][map] = rook90Attack[cord-1][map] >> 1
     
-    for cord1, cord2 in itranges (range(B1, H1+1,  1),
-                                  range(H7, H1-1, -8)):
-        for cord in range(cord1, cord2+1, 9):
+    for cord1, cord2 in itranges (xrange(B1, H1+1,  1),
+                                  xrange(H7, H1-1, -8)):
+        for cord in xrange(cord1, cord2+1, 9):
             bishop45Attack[cord][map] = \
                     bishop45Attack[cord+8][map] << 8 & MAXBITBOARD
     
-    for cord1, cord2 in itranges (range(A2, A8+1,  8),
-                                  range(G8, A8-1, -1)):
-        for cord in range(cord1, cord2+1, 9):
+    for cord1, cord2 in itranges (xrange(A2, A8+1,  8),
+                                  xrange(G8, A8-1, -1)):
+        for cord in xrange(cord1, cord2+1, 9):
             bishop45Attack[cord][map] = \
               clearBit (bishop45Attack[cord+1][map], cord1-8) << 1
     
-    for cord1, cord2 in itranges (range(H2, H8+1,  8),
-                                  range(B8, H8+1,  1)):
-        for cord in range(cord1, cord2+1, 7):
+    for cord1, cord2 in itranges (xrange(H2, H8+1,  8),
+                                  xrange(B8, H8+1,  1)):
+        for cord in xrange(cord1, cord2+1, 7):
                 bishop315Attack[cord][map] = bishop315Attack[cord-8][map] >> 8
     
-    for cord1, cord2 in itranges (range(G1, A1-1, -1),
-                                  range(A7, A1-1, -8)):
-        for cord in range(cord1, cord2+1, 7):
+    for cord1, cord2 in itranges (xrange(G1, A1-1, -1),
+                                  xrange(A7, A1-1, -8)):
+        for cord in xrange(cord1, cord2+1, 7):
             bishop315Attack[cord][map] = \
              clearBit (bishop315Attack[cord+1][map], cord2+8) << 1

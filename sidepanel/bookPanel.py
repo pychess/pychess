@@ -39,7 +39,7 @@ class Sidepanel:
         return self.sw
     
     def shown_changed (self, board, shown):
-        self.openings = getOpenings(self.board.model.boards[shown])
+        self.openings = getOpenings(self.board.model.getBoardAtPly(shown))
         self.openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
         
         glock.acquire()
@@ -69,7 +69,7 @@ class Sidepanel:
                 self.store.append ([move, str(games), (wins,draws,loses)])
         finally:
             glock.release()
-        
+    
     def selection_changed (self, widget):
         
         iter = self.tv.get_selection().get_selected()[1]

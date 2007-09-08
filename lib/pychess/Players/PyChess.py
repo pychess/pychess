@@ -78,22 +78,49 @@ scr = 0 # The current predicted score. Used when accepting draw offers
 board = LBoard()
 board.applyFen(FEN_START)
 
-#boards = []
-#for i in range(1000):
-#    boards.append(random.randint(0, 2**64-1))
-#
 #import time
 #from pychess.Utils.lutils.bitboard import *
 #
+#def doit ():
+#    a = 0
+#    b = 0
+#    for i in xrange(5000):
+#        board = random.randint(0, 2**64-1)
+#        
+#        t = time.time()
+#        for j in xrange(1):
+#            while (board):
+#                c = firstBit (board)
+#                board = clearBit (board, c)
+#                1+2
+#        a += time.time() - t
+#        
+#        t = time.time()
+#        for j in xrange(1):
+#            for cord in iterBits(board):
+#                1+2
+#        b += time.time() - t
+#    print a, b
+#
+#import profile
+#profile.run("doit()", "/tmp/pychessprofile")
+#from pstats import Stats
+#s = Stats("/tmp/pychessprofile")
+#s.sort_stats("time")
+#s.print_stats()
+#
+#import sys
+#sys.exit()
+#
 #t = time.time()
 #for board in boards:
-#    pass
+#    1+2
 #t1 = time.time()-t
 #
 #t = time.time()
 #for board in boards:
 #    for cord in iterBits(board):
-#        pass
+#        1+2
 #print time.time()-t-t1
 #
 #t = time.time()
@@ -107,13 +134,27 @@ board.applyFen(FEN_START)
 #    while (board):
 #        c = firstBit (board)
 #        board = clearBit (board, c)
-#        pass
+#        1+2
+#print time.time()-t-t1
+#
+#t = time.time()
+#for board in boards:
+#    for cord in iterBits(board):
+#        1+2
+#print time.time()-t-t1
+#
+#t = time.time()
+#for board in boards:
+#    while (board):
+#        c = firstBit (board)
+#        board = clearBit (board, c)
+#        1+2
 #print time.time()-t-t1
 #
 #
 #
-#import sys
-#sys.exit()
+#
+
 
 ################################################################################
 # analyze()                                                                    #
