@@ -1,6 +1,4 @@
 import sys, os
-from os import getuid
-from pwd import getpwuid
 
 import gtk, gobject
 
