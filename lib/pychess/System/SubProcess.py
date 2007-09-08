@@ -92,7 +92,7 @@ class SubProcess:
                     errors.append("Hung up")
                 if event & POLLNVAL:
                     errors.append("Invalid request: descriptor not open")
-                raise SubProcessError, (event, errors)
+                raise SubProcessError (event, errors)
             
             data = os.read(self.fd, 1024)
             self.buffer += data.replace("\r\n","\n").replace("\r","\n")

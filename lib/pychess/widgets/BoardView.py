@@ -989,7 +989,7 @@ class BoardView (gtk.DrawingArea):
     ################################
     
     def _set_rotation (self, radians):
-        if not conf.get("fullAnimation", False):
+        if not conf.get("fullAnimation", True):
             glock.acquire()
             try:
                 self._rotation = radians

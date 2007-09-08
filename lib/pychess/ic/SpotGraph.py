@@ -10,9 +10,12 @@ dotLarge = 20
 
 tooltip = gtk.Tooltips()
 tooltip.force_window()
-tooltip.tip_window.ensure_style()
-tooltipStyle = tooltip.tip_window.get_style()
-bg = tooltipStyle.bg[gtk.STATE_NORMAL]
+if hasattr(tooltip, 'tip_window') and tooltip.tip_window != None:
+    tooltip.tip_window.ensure_style()
+    tooltipStyle = tooltip.tip_window.get_style()
+    bg = tooltipStyle.bg[gtk.STATE_NORMAL]
+else:
+    bg = gtk.Label().get_style().mid[gtk.STATE_NORMAL]
 
 hpadding = 5
 vpadding = 3

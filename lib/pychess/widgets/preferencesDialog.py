@@ -38,8 +38,6 @@ class GeneralTab:
     
     def __init__ (self, widgets):
         
-        userdata = getpwuid(getuid())
-        username = userdata.pw_gecos or userdata.pw_name
         conf.set("firstName", conf.get("firstName", username))
         conf.set("secondName", conf.get("secondName", _("Guest")))
         

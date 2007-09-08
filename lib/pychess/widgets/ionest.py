@@ -414,8 +414,6 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
         gmwidg.setTabText("%s %s %s" %
                           (repr(players[0]), _("vs"), repr(players[1])))
     
-    userdata = getpwuid(getuid())
-    username = userdata.pw_gecos or userdata.pw_name
     if players[0].__type__ == LOCAL:
         players[0].setName(conf.get("firstName", username))
         def callback (*args):

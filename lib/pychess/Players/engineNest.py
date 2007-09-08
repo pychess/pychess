@@ -183,6 +183,16 @@ class EngineDiscoverer (GObject, Thread):
     def _findOutMore (self, engine, binname):
         
         e = self.initEngine (engine, WHITE)
+        
+        def deadcallback ():
+            print 'dead'
+            self.threads -= 1
+            if not self.threads:
+                self.condition.acquire()
+                self.condition.notifyAll()
+                self.condition.release()
+        e.connect('dead', deadcallback)
+        
         protname = engine.getAttribute("protocol")
         e._wait()
         
@@ -378,7 +388,7 @@ class EngineDiscoverer (GObject, Thread):
     #
     
     def __del__ (self):
-        dom.unlink()
+        self.dom.unlink()
 
 discoverer = EngineDiscoverer()
 discoverer.start()
