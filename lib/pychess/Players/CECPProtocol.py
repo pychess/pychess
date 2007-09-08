@@ -88,8 +88,10 @@ class CECPProtocol (Protocol):
         while self.connected:
             try:
                 line = self.engine.readline(timeout)
-            except SubProcessError:
-                pass # We grab this later
+            except SubProcessError, e:
+                # We need to be ready before we can die,
+                # So we wait and emit 'dead' in the next loop
+                break
             except TimeOutError:
                 break
             
