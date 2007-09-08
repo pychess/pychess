@@ -60,10 +60,15 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
 
 tooltip = gtk.Tooltips()
 tooltip.force_window()
-tooltip.tip_window.ensure_style()
-tooltipStyle = tooltip.tip_window.get_style()
+if hasattr(tooltip, 'tip_window') and tooltip.tip_window != None:
+    tooltip.tip_window.ensure_style()
+    tooltipStyle = tooltip.tip_window.get_style()
+else:
+    tooltipStyle = None
+
 def makeYellow (box):
-    box.set_style(tooltipStyle)
+    if tooltipStyle:
+        box.set_style(tooltipStyle)
     def on_box_expose_event (box, event):
         allocation = box.allocation
         box.style.paint_flat_box (box.window,
@@ -73,3 +78,4 @@ def makeYellow (box):
             box.queue_draw()
             box.hasHadFirstDraw = True
     box.connect("expose-event", on_box_expose_event)
+

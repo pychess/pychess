@@ -8,13 +8,17 @@ import pango, gobject
 
 from pychess.System import conf, gstreamer, glock
 from pychess.System.prefix import prefix
-from pychess.Utils.const import *
-from pychess.Players.Human import Human
 from pychess.System.Log import log
-
-from pychess.widgets import tipOfTheDay, LogDialog, gamewidget, ionest
+from pychess.Utils.const import *
+from pychess.Utils import book # Kills pychess if no sqlite available
+from pychess.Players.Human import Human
+from pychess.widgets import tipOfTheDay
+from pychess.widgets import LogDialog
+from pychess.widgets import gamewidget
+from pychess.widgets import ionest
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
-from pychess.widgets.Background import TaskerManager, NewGameTasker
+from pychess.widgets.Background import TaskerManager
+from pychess.widgets.Background import NewGameTasker
 from pychess.widgets.Background import InternetGameTasker
 from pychess.ic import icLogOn, telnet, icLounge
 

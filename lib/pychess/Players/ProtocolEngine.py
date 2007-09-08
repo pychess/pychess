@@ -41,6 +41,9 @@ class ProtocolEngine (Engine):
     def setTime (self, secs, gain):
         self.runWhenReady(self.proto.setTimeControls, secs, gain)
     
+    def onProtoDead (self, proto):
+        self.emit('dead')
+        self._setMove("dead")
     
     def _setMove (self, move):
         self.movecon.acquire()
