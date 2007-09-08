@@ -5,6 +5,7 @@ from os import getuid
 from pwd import getpwuid
 
 import gtk, gobject, pango
+from gtksourceview import *
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
@@ -101,171 +102,187 @@ def setActiveSidePanel (panelname):
         if panel != panelname:
             widgets[panel].hide()
     if panelname:
+        globals()["ensureReady_"+panelname]()
         widgets[panelname].show()
 
 ################################################################################
 # Initing Load sidepanel                                                       #
 ################################################################################
 
-filechooserbutton = gtk.FileChooserButton(opendialog)
-loadSidePanel = BoardPreview.BoardPreview()
-loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
-filechooserbutton.show()
-widgets["loadsidepanel"].add(loadSidePanel)
+loadsidepanel_ready = False
+def ensureReady_loadsidepanel ():
+    global loadsidepanel_ready
+    if loadsidepanel_ready:
+        return
+    else: loadsidepanel_ready = True
+    
+    global loadSidePanel
+    filechooserbutton = gtk.FileChooserButton(opendialog)
+    loadSidePanel = BoardPreview.BoardPreview()
+    loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
+    filechooserbutton.show()
+    widgets["loadsidepanel"].add(loadSidePanel)
 
 ################################################################################
 # Initing enter notation sidepanel                                             #
 ################################################################################
 
-from gtksourceview import *
-buffer = SourceBuffer()
-sourceview = SourceView(buffer)
-widgets["scrolledwindow6"].add(sourceview)
-sourceview.show()
-
-# Pgn format does not allow tabulator
-sourceview.set_insert_spaces_instead_of_tabs(True)
-sourceview.set_wrap_mode(gtk.WRAP_WORD)
-
-man = SourceLanguagesManager()
-lang = [l for l in man.get_available_languages() if l.get_name() == "PGN"][0]
-buffer.set_language(lang)
-
-buffer.set_highlight(True)
-
-################################################################################
-# Initing set up position sidepanel                                            #
-################################################################################
-
-    ############################################################################
-    # Buttons                                                                  #
-    ############################################################################
-
-def invertOther (button, other):
-    other.set_active(not button.get_active())
-widgets["togglebutton2"].connect("toggled", invertOther, widgets["togglebutton5"])
-widgets["togglebutton5"].connect("toggled", invertOther, widgets["togglebutton2"])
-
-    ############################################################################
-    # Board                                                                    #
-    ############################################################################
-
-setupBoard = SetupBoard()
-widgets["boardSpace"].add(setupBoard)
-setupBoard.show_all()
-
-def cord_clicked (setupBoard, cord):
-    store0, treeiter0 = widgets["treeview0"].get_selection().get_selected()
-    store1, treeiter1 = widgets["treeview1"].get_selection().get_selected()
-    if treeiter0 != None or treeiter1 != None:
-        brush = PIECE
-        if treeiter0 != None:
-            color = WHITE
-            sign = store0.get_path(treeiter0)[0]
-        else:
-            color = BLACK
-            sign = store1.get_path(treeiter1)[0]
-    else:
-        store2, treeiter2 = widgets["treeview2"].get_selection().get_selected()
-        if treeiter2 != None:
-            brush = CLEAR
-        else: brush = ENPAS
+enterGameNotationSidePanel_ready = False
+def ensureReady_enterGameNotationSidePanel ():
+    global enterGameNotationSidePanel_ready
+    if enterGameNotationSidePanel_ready:
+        return
+    else: enterGameNotationSidePanel_ready = True
     
-    if brush == ENPAS:
-        if setupBoard.view.history[-1].enpassant:
-            setupBoard.view.showEnpassant = False
-        setupBoard.view.history[-1].enpassant = cord
-        setupBoard.view.showEnpassant = True
-        
-    else:
-        board = setupBoard.view.history[-1].clone()
-        if brush == CLEAR:
-            board[cord] = None
-            if board.enpassant == cord:
-                board.enpassant = None
-            cords = setupBoard.getLegalCords()
-            cords.remove(cord)
-            setupBoard.setLegalCords(cords)
-        else:
-            board[cord] = Piece(color, sign)
-        
-        enpascords = []
-        for y in (3,4):
-            for x in range(8):
-                piece = board.data[y][x]
-                if piece and piece.sign == PAWN:
-                    if y == 3 and piece.color == WHITE and \
-                            not board.data[2][x] and not board.data[1][x]:
-                        enpascords.append(Cord(x,2))
-                    elif y == 4 and piece.color == BLACK and \
-                            not board.data[5][x] and not board.data[6][x]:
-                        enpascords.append(Cord(x,5))
-        if not setupBoard.view.history[-1].enpassant in enpascords:
-            print "hiding"
-            setupBoard.view.showEnpassant = False
-            board.enpassant = None
-        
-        setupBoard.view.history.moves.append(None)
-        setupBoard.view.history.boards.append(board)
-        setupBoard.view.history.emit("changed")
+    global sourceview
+    buffer = SourceBuffer()
+    sourceview = SourceView(buffer)
+    widgets["scrolledwindow6"].add(sourceview)
+    sourceview.show()
+    
+    # Pgn format does not allow tabulator
+    sourceview.set_insert_spaces_instead_of_tabs(True)
+    sourceview.set_wrap_mode(gtk.WRAP_WORD)
+    
+    man = SourceLanguagesManager()
+    lang = [l for l in man.get_available_languages() if l.get_name() == "PGN"][0]
+    buffer.set_language(lang)
+    
+    buffer.set_highlight(True)
 
-setupBoard.connect("cord_clicked", cord_clicked)
-
-    ############################################################################
-    # Lists                                                                    #
-    ############################################################################
-    
-def selected (selection, viewno):
-    liststore, treeiter = selection.get_selected()
-    if treeiter == None:
-        return # We don't unselect others, if we have been unselected
-    
-    for i in range(4):
-        if i == viewno: continue
-        widgets["treeview%d"%i].get_selection().unselect_all()
-    
-    treepath = liststore.get_path(treeiter)
-    row = treepath[0]
-    
-    if liststore in [widgets["treeview%d"%i].get_model() for i in range(2)]:
-        setupBoard.setLegalCords()
-    elif liststore == widgets["treeview2"].get_model():
-        legalCords = []
-        for y in range(8):
-            for x in range(8):
-                if setupBoard.view.history[-1].data[y][x]:
-                    legalCords.append(Cord(x,y))
-        if setupBoard.view.history[-1].enpassant:
-            legalCords += [setupBoard.view.history[-1].enpassant]
-        setupBoard.setLegalCords(legalCords)
-    else:
-        legalCords = []
-        for y in (3,4):
-            for x in range(8):
-                piece = setupBoard.view.history[-1].data[y][x]
-                if piece and piece.sign == PAWN:
-                    if y == 3 and piece.color == WHITE:
-                        legalCords.append(Cord(x,2))
-                    elif y == 4 and piece.color == BLACK:
-                        legalCords.append(Cord(x,5))
-        setupBoard.setLegalCords(legalCords)
-    
-for i in range(4):
-    widgets["treeview%d"%i].set_model(gtk.ListStore(str))
-    widgets["treeview%d"%i].append_column(gtk.TreeViewColumn(
-            None, gtk.CellRendererText(), text=0))
-    widgets["treeview%d"%i].get_selection().set_mode(gtk.SELECTION_BROWSE)
-    widgets["treeview%d"%i].get_selection().connect_after('changed', selected, i)
-    
-widgets["treeview0"].set_model(gtk.ListStore(str))
-widgets["treeview1"].set_model(gtk.ListStore(str))
-
-for piece in reprPiece:
-    widgets["treeview0"].get_model().append([piece])
-    widgets["treeview1"].get_model().append([piece])
-            
-widgets["treeview2"].get_model().append(["Clear"])
-widgets["treeview3"].get_model().append(["En pas"])
+#################################################################################
+## Initing set up position sidepanel (Non finished code)                        #
+#################################################################################
+#
+#    ############################################################################
+#    # Buttons                                                                  #
+#    ############################################################################
+#
+#def invertOther (button, other):
+#    other.set_active(not button.get_active())
+#widgets["togglebutton2"].connect("toggled", invertOther, widgets["togglebutton5"])
+#widgets["togglebutton5"].connect("toggled", invertOther, widgets["togglebutton2"])
+#
+#    ############################################################################
+#    # Board                                                                    #
+#    ############################################################################
+#
+#setupBoard = SetupBoard()
+#widgets["boardSpace"].add(setupBoard)
+#setupBoard.show_all()
+#
+#def cord_clicked (setupBoard, cord):
+#    store0, treeiter0 = widgets["treeview0"].get_selection().get_selected()
+#    store1, treeiter1 = widgets["treeview1"].get_selection().get_selected()
+#    if treeiter0 != None or treeiter1 != None:
+#        brush = PIECE
+#        if treeiter0 != None:
+#            color = WHITE
+#            sign = store0.get_path(treeiter0)[0]
+#        else:
+#            color = BLACK
+#            sign = store1.get_path(treeiter1)[0]
+#    else:
+#        store2, treeiter2 = widgets["treeview2"].get_selection().get_selected()
+#        if treeiter2 != None:
+#            brush = CLEAR
+#        else: brush = ENPAS
+#    
+#    if brush == ENPAS:
+#        if setupBoard.view.history[-1].enpassant:
+#            setupBoard.view.showEnpassant = False
+#        setupBoard.view.history[-1].enpassant = cord
+#        setupBoard.view.showEnpassant = True
+#        
+#    else:
+#        board = setupBoard.view.history[-1].clone()
+#        if brush == CLEAR:
+#            board[cord] = None
+#            if board.enpassant == cord:
+#                board.enpassant = None
+#            cords = setupBoard.getLegalCords()
+#            cords.remove(cord)
+#            setupBoard.setLegalCords(cords)
+#        else:
+#            board[cord] = Piece(color, sign)
+#        
+#        enpascords = []
+#        for y in (3,4):
+#            for x in range(8):
+#                piece = board.data[y][x]
+#                if piece and piece.sign == PAWN:
+#                    if y == 3 and piece.color == WHITE and \
+#                            not board.data[2][x] and not board.data[1][x]:
+#                        enpascords.append(Cord(x,2))
+#                    elif y == 4 and piece.color == BLACK and \
+#                            not board.data[5][x] and not board.data[6][x]:
+#                        enpascords.append(Cord(x,5))
+#        if not setupBoard.view.history[-1].enpassant in enpascords:
+#            print "hiding"
+#            setupBoard.view.showEnpassant = False
+#            board.enpassant = None
+#        
+#        setupBoard.view.history.moves.append(None)
+#        setupBoard.view.history.boards.append(board)
+#        setupBoard.view.history.emit("changed")
+#
+#setupBoard.connect("cord_clicked", cord_clicked)
+#
+#    ############################################################################
+#    # Lists                                                                    #
+#    ############################################################################
+#    
+#def selected (selection, viewno):
+#    liststore, treeiter = selection.get_selected()
+#    if treeiter == None:
+#        return # We don't unselect others, if we have been unselected
+#    
+#    for i in range(4):
+#        if i == viewno: continue
+#        widgets["treeview%d"%i].get_selection().unselect_all()
+#    
+#    treepath = liststore.get_path(treeiter)
+#    row = treepath[0]
+#    
+#    if liststore in [widgets["treeview%d"%i].get_model() for i in range(2)]:
+#        setupBoard.setLegalCords()
+#    elif liststore == widgets["treeview2"].get_model():
+#        legalCords = []
+#        for y in range(8):
+#            for x in range(8):
+#                if setupBoard.view.history[-1].data[y][x]:
+#                    legalCords.append(Cord(x,y))
+#        if setupBoard.view.history[-1].enpassant:
+#            legalCords += [setupBoard.view.history[-1].enpassant]
+#        setupBoard.setLegalCords(legalCords)
+#    else:
+#        legalCords = []
+#        for y in (3,4):
+#            for x in range(8):
+#                piece = setupBoard.view.history[-1].data[y][x]
+#                if piece and piece.sign == PAWN:
+#                    if y == 3 and piece.color == WHITE:
+#                        legalCords.append(Cord(x,2))
+#                    elif y == 4 and piece.color == BLACK:
+#                        legalCords.append(Cord(x,5))
+#        setupBoard.setLegalCords(legalCords)
+#    
+#for i in range(4):
+#    widgets["treeview%d"%i].set_model(gtk.ListStore(str))
+#    widgets["treeview%d"%i].append_column(gtk.TreeViewColumn(
+#            None, gtk.CellRendererText(), text=0))
+#    widgets["treeview%d"%i].get_selection().set_mode(gtk.SELECTION_BROWSE)
+#    widgets["treeview%d"%i].get_selection().connect_after('changed', selected, i)
+#    
+#widgets["treeview0"].set_model(gtk.ListStore(str))
+#widgets["treeview1"].set_model(gtk.ListStore(str))
+#
+#for piece in reprPiece:
+#    widgets["treeview0"].get_model().append([piece])
+#    widgets["treeview1"].get_model().append([piece])
+#            
+#widgets["treeview2"].get_model().append(["Clear"])
+#widgets["treeview3"].get_model().append(["En pas"])
 
 ################################################################################
 # Initing newGame dialog                                                       #

@@ -89,7 +89,21 @@ gtk.glade.textdomain("pychess")
 # http://bugzilla.gnome.org/show_bug.cgi?id=393483
 os.environ["XDG_DATA_DIRS"] = PREFIX+":/usr/share/"
 
-import pychess.Main
-pychess.Main.run([os.environ["PYCHESS_ARGUMENT%d"%i] for i in \
-        xrange(int(os.environ["PYCHESS_ARGUMENTS"]))])
+
+def go():
+    import pychess.Main
+    pychess.Main.run([os.environ["PYCHESS_ARGUMENT%d"%i] for i in \
+            xrange(int(os.environ["PYCHESS_ARGUMENTS"]))])
+go()
+
+# Uncomment to enable profiling
+#import profile
+#profile.runctx("go()", locals(), globals(), "/tmp/pychessprofile")
+#from pstats import Stats
+#s = Stats("/tmp/pychessprofile")
+#s.sort_stats("time")
+#s.print_stats()
+
+
+
 '

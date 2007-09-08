@@ -1,9 +1,4 @@
 
-from threading import Lock
-
-import pygst
-pygst.require('0.10')
-import gst
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Player (GObject):
@@ -27,11 +22,27 @@ class Player (GObject):
         self.player.set_property("uri", uri)
         self.player.set_state(gst.STATE_PLAYING)
 
-player = Player()
-lock = Lock()
+
 def playSound (uri):
+    ensureReady ()
     lock.acquire()
     try:
         player.play(uri)
     finally:
         lock.release()
+
+ready = False
+def ensureReady ():
+    global ready
+    if ready:
+        return
+    else: ready = True
+    
+    import pygst
+    pygst.require('0.10')
+    
+    global player, lock, gst
+    player = Player()
+    from threading import Lock
+    lock = Lock()
+    import gst

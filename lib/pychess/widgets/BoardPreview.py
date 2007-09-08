@@ -79,22 +79,32 @@ class BoardPreview (gtk.Alignment):
         return bv
     
     def addFileChooserButton (self, fcbutton, opendialog, enddir):
+        if self.widgets["ngfcalignment"].get_children():
+            childbut = self.widgets["ngfcalignment"].children()[0]
+            self.widgets["ngfcalignment"].remove(childbut)
         
-        # Well, this will crash if method runned twice...
         self.widgets["ngfcalignment"].add(fcbutton)
         self.opendialog = opendialog
-        opendialog.connect("file-activated", self.on_file_activated, enddir)
-        openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", lambda b:
-            self.on_file_activated(opendialog, enddir))
+        self.enddir = enddir
         
-    def on_file_activated (self, dialog, enddir):
+        # Connect doubleclicking a file to on_file_activated
+        opendialog.connect("file-activated", self.on_file_activated)
+        # Connect the openbutton in the dialog to on_file_activated
+        openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
+        openbut.connect("clicked", lambda b: self.on_file_activated(opendialog))
+        
+        # The first time the button is opened, the player has just opened
+        # his/her file, before we connected the dialog.
+        if opendialog.get_uri():
+            self.on_file_activated(opendialog)
+    
+    def on_file_activated (self, dialog):
         
         uri = self.get_uri()
         if not uri: return
         self.uri = uri
         
-        loader = enddir[uri[uri.rfind(".")+1:]]
+        loader = self.enddir[uri[uri.rfind(".")+1:]]
         ending = uri[uri.rfind(".")+1:]
         self.chessfile = chessfile = loader.load(protoopen(uri))
         

@@ -161,7 +161,7 @@ class BoardView (gtk.DrawingArea):
         
         # Rotate board
         if conf.get("autoRotate", True):
-            if self.model.curplayer.__type__ == LOCAL:
+            if self.model.players and self.model.curplayer.__type__ == LOCAL:
                 self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
@@ -719,7 +719,7 @@ class BoardView (gtk.DrawingArea):
     def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
         ply = self.shown-1
-        if ply < 0: return
+        if ply < self.model.lowply: return
         capture = self.model.getBoardAtPly(ply)[self.lastMove.cord1]
         
         wh = 0.27 # Width of marker
