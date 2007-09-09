@@ -17,12 +17,13 @@ class ServerPlayer (Player):
         self.queue = Queue()
         
         self.name = name
+        self.color = color
+        self.gameno = gameno
+        
         # If we are not playing against a player on the users computer. E.g.
         # when we observe a game on FICS. In these cases we don't send anything
         # back to the server.
-        self.external = external 
-        self.color = color
-        self.gameno = gameno
+        self.external = external
         
         self.boardmanager = boardmanager
         self.boardmanager.connect("moveRecieved", self.moveRecieved)
