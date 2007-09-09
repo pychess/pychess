@@ -343,7 +343,7 @@ def parseSAN (board, san):
         # If even the error tracing moves can't be parsed, we really can't do
         # any more
         pass
-    errstring += board.asFen()
+    errstring += " " + board.asFen()
     
     raise ParsingError, errstring
     
