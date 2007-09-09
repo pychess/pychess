@@ -88,6 +88,24 @@ class GameListManager (GObject):
     
     ###
     
+    def seek (self, startmin, incsec, rated, ratings=(0,9999), color=None):
+        rchar = rated and "r" or "u"
+        if color != None:
+            cchar = color == WHITE and "w" or "b"
+        else: cchar = ""
+        print >> telnet.client, "seek %d %d %s %s %d-%d" % \
+                (startmin, incsec, rchar, cchar, ratings[0], ratings[1])
+    
+    def challenge (self, playerName, startmin, incsec, rated, color=None):
+        rchar = rated and "r" or "u"
+        if color != None:
+            cchar = color == WHITE and "w" or "b"
+        else: cchar = ""
+        print >> telnet.client, "match %s %d %d %s %s" % \
+                (playerName, startmin, incsec, rchar, cchar)
+    
+    ###
+    
     def on_seek_add (self, client, groups):
         parts = groups[0].split(" ")
         seek = {"gameno": parts[0]}

@@ -395,11 +395,6 @@ def initialize():
         # Initialize Seek List                                                 #
         ########################################################################
     
-    def on_status_changed (client, signal):
-        if signal != IC_CONNECTED:
-            widgets["seektreeview"].get_model().clear()
-    telnet.connectStatus (on_status_changed)
-    
     tv = widgets["seektreeview"]
     sstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
@@ -506,6 +501,11 @@ def initialize():
     
     bm.connect ("playBoardCreated", playBoardCreated)
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            sstore.clear()
+    telnet.connectStatus (on_status_changed)
+    
         ########################################################################
         # Initialize Challenge List                                            #
         ########################################################################
@@ -544,11 +544,6 @@ def initialize():
         ########################################################################
     
     graph = SpotGraph()
-    
-    def on_status_changed (client, signal):
-        if signal != IC_CONNECTED:
-            graph.clearSpots
-    telnet.connectStatus (on_status_changed)
     
     for rating in (600, 1200, 1800, 2400):
         graph.addYMark(rating/3000., str(rating))
@@ -593,14 +588,14 @@ def initialize():
         listPublisher.put(call)
     glm.connect("clearSeeks", on_seek_clear)
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            graph.clearSpots
+    telnet.connectStatus (on_status_changed)
+    
         ########################################################################
         # Initialize Players List                                              #
         ########################################################################
-    
-    def on_status_changed (client, signal):
-        if signal != IC_CONNECTED:
-            widgets["playertreeview"].get_model().clear()
-    telnet.connectStatus (on_status_changed)
     
     icons = gtk.icon_theme_get_default()
     l = gtk.ICON_LOOKUP_USE_BUILTIN
@@ -612,10 +607,10 @@ def initialize():
     cmppix = icons.load_icon("stock_notebook", 15, l)
     
     tv = widgets["playertreeview"]
+    playerSelection = tv.get_selection()
     pstore = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
     tv.set_model(gtk.TreeModelSort(pstore))
     addColumns(tv, "", "Name", "Rating", pix=[0])
-    tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
     tv.get_column(0).set_sort_column_id(0)
     try:
         tv.set_search_position_func(lowLeftSearchPosFunc)
@@ -674,14 +669,19 @@ def initialize():
         listPublisher.put(call)
     glm.connect("removePlayer", on_player_remove)
     
-        ########################################################################
-        # Initialize Games List                                                #
-        ########################################################################
+    def on_selection_changed (selection):
+        anyThingSelected = selection.get_selected()[1] != None
+        widgets["challengeButton"].set_sensitive(anyThingSelected)
+    tv.get_selection().connect_after("changed", on_selection_changed)
     
     def on_status_changed (client, signal):
         if signal != IC_CONNECTED:
-            widgets["gametreeview"].get_model().clear()
+            pstore.clear()
     telnet.connectStatus (on_status_changed)
+    
+        ########################################################################
+        # Initialize Games List                                                #
+        ########################################################################
     
     icons = gtk.icon_theme_get_default()
     recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
@@ -782,6 +782,11 @@ def initialize():
     widgets["observeButton"].connect ("clicked", on_observe_clicked)
     tv.connect("row-activated", on_observe_clicked)
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            gstore.clear()
+    telnet.connectStatus (on_status_changed)
+    
         ########################################################################
         # Initialize Adjourned List                                            #
         ########################################################################
@@ -811,8 +816,7 @@ def initialize():
     
     if not telnet.registered:
         widgets["ratedGameCheck"].hide()
-    
-    uistuff.keep(widgets["seekExpander"], "seekExpander")
+        widgets["chaRatedGameCheck"].hide()
     
     liststore = gtk.ListStore(str, str)
     liststore.append(["0 → 1300", _("Easy")])
@@ -831,18 +835,24 @@ def initialize():
     liststore.append([_("Wants Black")])
     widgets["colorCombobox"].set_model(liststore)
     widgets["colorCombobox"].set_active(0)
+    widgets["chaColorCombobox"].set_model(liststore)
+    widgets["chaColorCombobox"].set_active(0)
     
     liststore = gtk.ListStore(str, str)
     liststore.append(["15 min + 10", _("Normal")])
     liststore.append(["5 min + 2", _("Blitz")])
     liststore.append(["1 min + 0", _("Lightning")])
     liststore.append(["", _("New Custom")])
-    widgets["timeCombobox"].set_model(liststore)
     cell = gtk.CellRendererText()
     cell.set_property('xalign',1)
+    widgets["timeCombobox"].set_model(liststore)
     widgets["timeCombobox"].pack_start(cell)
     widgets["timeCombobox"].add_attribute(cell, 'text', 1)
     widgets["timeCombobox"].set_active(0)
+    widgets["chaTimeCombobox"].set_model(liststore)
+    widgets["chaTimeCombobox"].pack_start(cell)
+    widgets["chaTimeCombobox"].add_attribute(cell, 'text', 1)
+    widgets["chaTimeCombobox"].set_active(0)
     
     customTimeDialog = widgets["customTimeDialog"]
     def timeComboboxChanged (combo):
@@ -862,15 +872,28 @@ def initialize():
         else: combo.old_active = combo.get_active()
     widgets["timeCombobox"].old_active = 0
     widgets["timeCombobox"].connect("changed", timeComboboxChanged)
+    widgets["chaTimeCombobox"].old_active = 0
+    widgets["chaTimeCombobox"].connect("changed", timeComboboxChanged)
     
     def seekButtonClicked (button):
-        min, incr = map(int, widgets["strengthCombobox"].get_model()[
+        ratingrange = map(int, widgets["strengthCombobox"].get_model()[
                 widgets["strengthCombobox"].get_active()][0].split(" → "))
         rated = widgets["ratedGameCheck"].get_active()
         color = widgets["colorCombobox"].get_active()-1
         if color == -1: color = None
-        maxR, minR = map(int, widgets["timeCombobox"].get_model()[
+        min, incr = map(int, widgets["timeCombobox"].get_model()[
                 widgets["timeCombobox"].get_active()][0].split(" min +"))
-        print min, incr, rated, color, maxR, minR
+        glm.seek(min, incr, rated, ratingrange, color)
     widgets["seekButton"].connect("clicked", seekButtonClicked)
     
+    def challengeButtonClicked (button):
+        model, iter = playerSelection.get_selected()
+        if iter == None: return
+        playerName = model.get_value(iter, 1)
+        rated = widgets["chaRatedGameCheck"].get_active()
+        color = widgets["chaColorCombobox"].get_active()-1
+        if color == -1: color = None
+        min, incr = map(int, widgets["chaTimeCombobox"].get_model()[
+                widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
+        glm.challenge(playerName, min, incr, rated, color)
+    widgets["challengeButton"].connect("clicked", challengeButtonClicked)
