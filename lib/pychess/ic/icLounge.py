@@ -83,18 +83,21 @@ def initialize():
     # Initialize User Information Section                                      #
     ############################################################################
     
+    widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
+    
     def on_status_changed (client, signal):
         if signal == IC_CONNECTED:
             fm.finger(telnet.curname)
+        else:
+            dock = widgets["fingerTableDock"]
+            dock.remove(dock.get_children()[0])
     telnet.connectStatus (on_status_changed)
     
     def callback (fm, ratings, email, time):
         
         glock.acquire()
         try:
-            widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
             dock = widgets["fingerTableDock"]
-            dock.remove(dock.get_child()) # Remove placeholder
             
             rows = 1
             if ratings: rows += len(ratings)+1
@@ -134,7 +137,7 @@ def initialize():
                 table.attach(label(email), 1, 6, row, row+1)
                 row += 1
             
-            if time:
+            if time and telnet.registered:
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
                 s = ""
                 if time[0]:
@@ -174,6 +177,31 @@ def initialize():
             pinger.connect("error", callback)
             pinger.start()
             table.attach(pingLabel, 1, 6, row, row+1)
+            row += 1
+            
+            if not telnet.registered:
+                vbox = gtk.VBox()
+                table.attach(vbox, 0, 6, row, row+1)
+                label0 = gtk.Label(_("You are currently logged in as a guest.\n"+
+                                        "A guest is not able to play rated games, "+
+                                        "and thus the offer of games is be smaller."))
+                label0.props.xalign = 0
+                label0.props.wrap = True
+                vbox.add(label0)
+                eventbox = gtk.EventBox()
+                label1 = gtk.Label()
+                label1.set_markup("<span color='blue'><u>%s</u></span>" % _("Register now"))
+                eventbox.add(label1)
+                vbox.add(eventbox)
+                def released (eventbox, event):
+                    webbrowser.open("http://freechess.org/Register/index.html")
+                    label1.set_markup("<span color='blue'><u>%s</u></span>" % _("Register now"))
+                eventbox.connect("button_release_event", released)
+                def pressed (eventbox, event):
+                    label1.set_markup("<span color='red'><u>%s</u></span>" % _("Register now"))
+                eventbox.connect("button_press_event", pressed)
+                eventbox.connect_after("realize",
+                    lambda w: w.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2)))
             
             dock.add(table)
             dock.show_all()
@@ -188,11 +216,10 @@ def initialize():
     
     def on_status_changed (client, signal):
         if signal == IC_CONNECTED:
-            # Clear old news or placeholder
-            newsVBox = widgets["newsVBox"]
-            for child in newsVBox.get_children():
-                newsVBox.remove(child)
             nm.start()
+        else:
+            for child in widgets["newsVBox"].get_children():
+                widgets["newsVBox"].remove(child)
     telnet.connectStatus (on_status_changed)
     
     linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
@@ -368,6 +395,11 @@ def initialize():
         # Initialize Seek List                                                 #
         ########################################################################
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            widgets["seektreeview"].get_model().clear()
+    telnet.connectStatus (on_status_changed)
+    
     tv = widgets["seektreeview"]
     sstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
     tv.set_model(gtk.TreeModelSort(sstore))
@@ -513,6 +545,11 @@ def initialize():
     
     graph = SpotGraph()
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            graph.clearSpots
+    telnet.connectStatus (on_status_changed)
+    
     for rating in (600, 1200, 1800, 2400):
         graph.addYMark(rating/3000., str(rating))
     
@@ -559,6 +596,11 @@ def initialize():
         ########################################################################
         # Initialize Players List                                              #
         ########################################################################
+    
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            widgets["playertreeview"].get_model().clear()
+    telnet.connectStatus (on_status_changed)
     
     icons = gtk.icon_theme_get_default()
     l = gtk.ICON_LOOKUP_USE_BUILTIN
@@ -636,9 +678,14 @@ def initialize():
         # Initialize Games List                                                #
         ########################################################################
     
+    def on_status_changed (client, signal):
+        if signal != IC_CONNECTED:
+            widgets["gametreeview"].get_model().clear()
+    telnet.connectStatus (on_status_changed)
+    
     icons = gtk.icon_theme_get_default()
-    recpix = icons.load_icon("media-record", 18, gtk.ICON_LOOKUP_USE_BUILTIN)
-    clearpix = pixbuf_new_from_file(prefix("glade/clear.png"))
+    recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+    clearpix = pixbuf_new_from_file(prefix("glade/board.png"))
     
     tv = widgets["gametreeview"]
     gstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
