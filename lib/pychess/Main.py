@@ -1,10 +1,11 @@
-import sys, gtk
+import sys
+import os
 import webbrowser
 import math
 import atexit
 import signal
 
-import pango, gobject
+import pango, gobject, gtk
 
 from pychess.System import conf, gstreamer, glock
 from pychess.System.prefix import prefix
@@ -148,6 +149,9 @@ class GladeHandlers:
                 sys.stdout.flush()
             elif soundtype == SOUND_URI:
                 uri = conf.getStrict("sounduri%d" % no)
+                if not os.path.isfile(uri[7:]):
+                    conf.set("soundcombo%d" % no, SOUND_MUTE)
+                    return
                 gstreamer.playSound(uri)
         
         # Rotate to human player

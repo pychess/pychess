@@ -56,7 +56,7 @@ def determineAlgebraicNotation (algnot):
     
     upnot = algnot.upper()
     
-    if upnot in ("O-O-O", "O-O"):
+    if upnot in ("O-O", "O-O-O", "0-0", "0-0-0"):
         return SAN
     
     if "-" in algnot:
