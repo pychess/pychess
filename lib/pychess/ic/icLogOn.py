@@ -4,7 +4,7 @@ import webbrowser
 import gtk, gobject, sys
 
 from pychess.System.ThreadPool import pool
-from pychess.System import gstreamer, uistuff
+from pychess.System import gstreamer, uistuff, glock
 from pychess.System.prefix import prefix
 from pychess.Utils.const import *
 import telnet, icLounge
@@ -23,8 +23,12 @@ def run():
         
         def callback (client, signal):
             if signal == IC_CONNECTED:
-                widgets["fics_logon"].hide()
-                icLounge.show()
+                glock.acquire()
+                try:
+                    widgets["fics_logon"].hide()
+                    icLounge.show()
+                finally:
+                    glock.release()
         telnet.connectStatus(callback)
     
     widgets["fics_logon"].show()
