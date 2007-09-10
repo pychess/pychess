@@ -274,7 +274,7 @@ class SoundTab:
         for i in xrange(self.COUNT_OF_SOUNDS):
             combo = widgets["soundcombo%d"%i]
             uistuff.createCombo (combo, items)
-            combo.set_active(2)
+            combo.set_active(0)
             combo.connect("changed", callback, i)
             
             label = widgets["soundlabel%d"%i]
