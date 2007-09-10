@@ -22,7 +22,6 @@ class Player (GObject):
         self.player.set_property("uri", uri)
         self.player.set_state(gst.STATE_PLAYING)
 
-
 def playSound (uri):
     ensureReady ()
     lock.acquire()
@@ -40,9 +39,9 @@ def ensureReady ():
     
     import pygst
     pygst.require('0.10')
-    
     global player, lock, gst
+    import gst
     player = Player()
     from threading import Lock
     lock = Lock()
-    import gst
+    
