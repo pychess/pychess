@@ -138,7 +138,7 @@ class BoardView (gtk.DrawingArea):
     def game_changed (self, model):
         
         # Play sounds
-        if conf.get("useSounds", False):
+        if self.model.players and conf.get("useSounds", False):
             move = model.moves[-1]
             if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
                 sound = "aPlayerCaptures"
@@ -147,7 +147,7 @@ class BoardView (gtk.DrawingArea):
             if model.boards[-1].board.isChecked():
                 sound = "aPlayerChecks"
             
-            if not model.players or model.players[0].__type__ == REMOTE and \
+            if model.players[0].__type__ == REMOTE and \
                     model.players[1].__type__ == REMOTE:
                 sound = "observedMoves"
             
@@ -178,7 +178,7 @@ class BoardView (gtk.DrawingArea):
     def game_ended (self, model, reason):
         self.redraw_canvas()
         
-        if conf.get("useSounds", False):
+        if self.model.players and conf.get("useSounds", False):
             sound = False
             
             if model.status == DRAW:
@@ -280,15 +280,14 @@ class BoardView (gtk.DrawingArea):
                                 # It has moved
                                 piece.x = x
                                 piece.y = y
+        finally:
+            self.animationLock.release()
         
         self.deadlist = []
         for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
             for x, piece in enumerate(row):
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
-        
-        finally:
-            self.animationLock.release()
         
         self._shown = shown
         self.emit("shown_changed", self.shown)
@@ -370,6 +369,8 @@ class BoardView (gtk.DrawingArea):
                         if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
                             piece.opacity = 1
                         else: piece.opacity = newOp
+        finally:
+            self.animationLock.release()
         
         for i, (piece, x, y) in enumerate(self.deadlist):
             if not paintBox:
@@ -384,9 +385,6 @@ class BoardView (gtk.DrawingArea):
             if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
                 del self.deadlist[i]
             else: piece.opacity = newOp
-        
-        finally:
-            self.animationLock.release()
         
         if redrawMisc:
             for cord in (self.selected, self.hover, self.active):
