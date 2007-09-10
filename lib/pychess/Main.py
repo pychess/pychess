@@ -1,5 +1,4 @@
 import sys
-import os
 import webbrowser
 import math
 import atexit
@@ -142,17 +141,7 @@ class GladeHandlers:
         
         # Play set-up sound
         if conf.get("useSounds", False):
-            no = preferencesDialog.SoundTab.actionToKeyNo["gameIsSetup"]
-            soundtype = conf.get("soundcombo%d" % no, 0)
-            if soundtype == SOUND_BEEP:
-                sys.stdout.write("\a")
-                sys.stdout.flush()
-            elif soundtype == SOUND_URI:
-                uri = conf.getStrict("sounduri%d" % no)
-                if not os.path.isfile(uri[7:]):
-                    conf.set("soundcombo%d" % no, SOUND_MUTE)
-                    return
-                gstreamer.playSound(uri)
+            preferencesDialog.SoundTab.playAction("gameIsSetup")
         
         # Rotate to human player
         if conf.get("autoRotate", True):
@@ -471,7 +460,11 @@ class PyChess:
     
     def handleArgs (self, args):
         if args:
-            ionest.loadGame(args[0])
+            glock.acquire()
+            try:
+                ionest.loadGame(args[0])
+            finally:
+                glock.release()
     
 def run (args):
     PyChess(args)
