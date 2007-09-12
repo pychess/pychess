@@ -87,5 +87,12 @@ class IcGameModel (GameModel):
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
     
+    def checkStatus (self):
+        status, reason = getStatus(self.boards[-1])
+        # On FICS we don't want to autodraw on insufficient material
+        if reason == DRAW_INSUFFICIENT:
+            return True
+        return GameModel.checkStatus(self)
+    
     def onActionError (self, offermanager, offer, error):
         self.emit("action_error", offer, error)

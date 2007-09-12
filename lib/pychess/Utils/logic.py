@@ -20,21 +20,26 @@ def getDestinationCords (board, cord):
                 tcords.append(Cord(TCORD(move)))
     return tcords
 
-
+def isClaimableDraw (board):
+    lboard = board.board
+    if ldraw.testRepetition (lboard):
+        return True
+    if ldraw.testFifty (lboard):
+        return True
+    return False
 
 def getStatus (board):
     
     lboard = board.board
     
-    # Test draw by insufficient material
     if ldraw.testMaterial (lboard):
         return DRAW, DRAW_INSUFFICIENT
     
     if ldraw.testRepetition (lboard):
-        return DRAW, DRAW_REPITITION
+        return RUNNING, DRAW_REPITITION
     
     if ldraw.testFifty (lboard):
-        return DRAW, DRAW_50MOVES
+        return RUNNING, DRAW_50MOVES
     
     lboard.lock.acquire()
     try:
