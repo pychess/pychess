@@ -3,6 +3,9 @@
 import os, random
 from os import getuid
 from pwd import getpwuid
+from Queue import Queue
+import thread
+from threading import currentThread
 
 import gtk, gobject, pango
 from gtksourceview import *
@@ -585,12 +588,10 @@ def saveGameSimple (uri, game):
 ################################################################################
 
 def saveGameAs (game):
-    
-    def response (savedialog, res):
+    while True:
+        res = savedialog.run()
         if res != gtk.RESPONSE_ACCEPT:
-            savedialog.disconnect(conid)
-            savedialog.hide()
-            return
+            break
         
         uri = savedialog.get_uri()[7:]
         ending = os.path.splitext(uri)[1]
@@ -608,7 +609,7 @@ def saveGameAs (game):
                 d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
                 d.run()
                 d.hide()
-                return
+                continue
             else:
                 saver = enddir[ending]
         else:
@@ -624,7 +625,7 @@ def saveGameAs (game):
 Please ensure that you have given the right path and try again."))
             d.run()
             d.hide()
-            return
+            continue
         
         if os.path.isfile(uri):
             d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
@@ -636,16 +637,13 @@ Please ensure that you have given the right path and try again."))
             folder, file = os.path.split(uri)
             d.set_markup(_("<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></big>") % file)
             d.format_secondary_text(_("The file alredy exists in '%s'. If you replace it, its content will be overwritten.") % folder)
-            res = d.run()
+            replaceRes = d.run()
             d.hide()
             
-            if res == 1:
+            if replaceRes == 1:
                 append = True
-            elif res != gtk.RESPONSE_ACCEPT:
-                return
-        
-        savedialog.disconnect(conid)
-        savedialog.hide()
+            elif replaceRes == gtk.RESPONSE_CANCEL:
+                continue
         
         try:
             game.save("file://"+uri, saver, append)
@@ -656,11 +654,14 @@ Please ensure that you have given the right path and try again."))
             d.set_markup(_("<big><b>PyChess was not able to save the game</b></big>"))
             d.format_secondary_text(_("The error was: %s") % ", ".join(str(a) for a in e.args))
             os.remove(uri)
-            res = d.run()
+            d.run()
             d.hide()
+            continue
+        
+        break
     
-    conid = savedialog.connect("response", response)
-    savedialog.show_all()
+    savedialog.hide()
+    return res
 
 ################################################################################
 # saveGameBeforeClose                                                          #
@@ -673,8 +674,10 @@ def saveGameBeforeClose (game):
     d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
     d.add_button(_("Close _without Saving"), gtk.RESPONSE_OK)
     d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-    d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
-
+    if game.uri:
+        d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
+    else: d.add_button(gtk.STOCK_SAVE_AS, gtk.RESPONSE_YES)
+    
     d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
     d.format_secondary_text (_(
         "It is not possible later to continue the game,\nif do don't save it."))
@@ -682,7 +685,8 @@ def saveGameBeforeClose (game):
     d.hide()
     
     if response == gtk.RESPONSE_YES:
-        if not saveGame(game):
+        # Test if cancel was pressed in the filedialog
+        if saveGame(game) != gtk.RESPONSE_ACCEPT:
             return gtk.RESPONSE_CANCEL
     return response
 
@@ -691,24 +695,29 @@ def saveGameBeforeClose (game):
 ################################################################################
 
 def closeAllGames (games):
-    if len(games) == 1:
-        return saveGameBeforeClose (games[0])
-    
-    names = ["%s vs %s" % tuple(g.players) for g in games if g.isChanged()]
-    if len(names) == 0:
-        return gtk.RESPONSE_OK
-    d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-    d.add_button(_("Close _without Saving"), gtk.RESPONSE_OK)
-    d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-    if len(names) == 1:
-        d.set_markup(
-            _("<big><b>There is 1 game with unsaved changes:</b></big>"))
+    if len(games) == 0:
+        response = gtk.RESPONSE_OK
+    elif len(games) == 1:
+        response = saveGameBeforeClose(games[0])
     else:
-        d.set_markup(
-            _("<big><b>There are %d games with unsaved changes:</b></big>") % len(names))
-    d.format_secondary_text("\n".join(names))
-    response = d.run()
-    d.hide()
+        names = ["%s vs %s" % tuple(g.players) for g in games if g.isChanged()]
+        d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
+        d.add_button(_("Close _without Saving"), gtk.RESPONSE_OK)
+        d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        if len(names) == 1:
+            d.set_markup(
+                _("<big><b>There is 1 game with unsaved changes:</b></big>"))
+        else:
+            d.set_markup(
+                _("<big><b>There are %d games with unsaved changes:</b></big>") % len(names))
+        d.format_secondary_text("\n".join(names))
+        response = d.run()
+        d.hide()
+    
+    if response != gtk.RESPONSE_CANCEL:
+        for game in games:
+            game.end(ABORTED, ABORTED_AGREEMENT)
+    
     return response
 
 ################################################################################

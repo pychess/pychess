@@ -76,7 +76,7 @@ class GameModel (GObject, Thread):
         self.spectactors = spectactors
     
     ############################################################################
-    # Chess stuff                                                              #
+    # Board stuff                                                              #
     ############################################################################
     
     def clear (self):
@@ -221,7 +221,7 @@ class GameModel (GObject, Thread):
         chessfile.loadToModel(gameno, position, self)
         self.emit("game_loaded", uri)
         
-        self.needSave = False
+        self.needsSave = False
         if not uriIsFile:
             self.uri = uri
         else: self.uri = None
@@ -261,7 +261,7 @@ class GameModel (GObject, Thread):
             self.uri = None
         saver.save(fileobj, self)
         self.emit("game_saved", uri)
-        self.needSave = False
+        self.needsSave = False
         
     ############################################################################
     # Run stuff                                                                #
@@ -290,6 +290,8 @@ class GameModel (GObject, Thread):
             
             self.applyingMoveLock.acquire()
             try:
+                self.needsSave = True
+                
                 newBoard = self.boards[-1].move(move)
                 self.boards.append(newBoard)
                 self.moves.append(move)
@@ -379,6 +381,7 @@ class GameModel (GObject, Thread):
         if self.timemodel:
             self.timemodel.pause()
         
+        self.needsSave = True
         self.emit("game_ended", reason)
     
     def kill (self, reason):
@@ -418,6 +421,8 @@ class GameModel (GObject, Thread):
         
         self.applyingMoveLock.acquire()
         try:
+            self.needsSave = True
+            
             del self.boards[-moves:]
             del self.moves[-moves:]
             
@@ -437,7 +442,7 @@ class GameModel (GObject, Thread):
     def isChanged (self):
         if self.ply == 0:
             return False
-        if not self.needsSave:
+        if self.needsSave:
             return True
         if not self.uri or not isWriteable (self.uri):
             return True
