@@ -1,5 +1,5 @@
 
-from threading import Lock
+from threading import Lock, Thread
 import datetime
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
@@ -10,10 +10,10 @@ from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System import glock
 
 from Board import Board
-from logic import getStatus
+from logic import getStatus, isClaimableDraw
 from const import *
 
-class GameModel (GObject):
+class GameModel (GObject, Thread):
     
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
@@ -30,6 +30,7 @@ class GameModel (GObject):
     
     def __init__ (self, timemodel=None):
         GObject.__init__(self)
+        Thread.__init__(self)
         
         self.boards = [Board(setup=True)]
         self.moves = []
@@ -143,6 +144,10 @@ class GameModel (GObject):
                         self.end(BLACKWON, WON_CALLFLAG)
             else:
                 player.offerError(offer, ACTION_ERROR_NOT_OUT_OF_TIME)
+        
+        elif offer.offerType == DRAW_OFFER and isClaimableDraw(self.boards[-1]):
+            reason = getStatus(self.boards[-1])[1]
+            self.end(DRAW, reason)
         
         elif offer.offerType in OFFERS:
             if offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
@@ -262,10 +267,7 @@ class GameModel (GObject):
     # Run stuff                                                                #
     ############################################################################
     
-    def start (self):
-        pool.start(self._start)
-    
-    def _start (self):
+    def run (self):
         self.status = RUNNING
         
         while self.status in (PAUSED, RUNNING):
@@ -291,24 +293,28 @@ class GameModel (GObject):
                 newBoard = self.boards[-1].move(move)
                 self.boards.append(newBoard)
                 self.moves.append(move)
-                status, reason = getStatus(self.boards[-1])
                 
                 if self.timemodel:
                     self.timemodel.tap()
                 
-                if status != RUNNING:
-                    # FIXME: On FICS draw by repetition or 50 moves have to be claimed
-                    self.status = status
-                    self.emit("game_changed")
-                    self.status = RUNNING # self.end only accepts ending if running
-                    self.end(status, reason)
+                if not self.checkStatus():
                     break
-                self.emit("game_changed")
                 
                 for spectactor in self.spectactors.values():
                     spectactor.makeMove(self)
             finally:
                 self.applyingMoveLock.release()
+    
+    def checkStatus (self):
+        status, reason = getStatus(self.boards[-1])
+        if status != RUNNING:
+            self.status = status
+            self.emit("game_changed")
+            self.status = RUNNING # self.end only accepts ending if running
+            self.end(status, reason)
+            return False
+        self.emit("game_changed")
+        return True
     
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support

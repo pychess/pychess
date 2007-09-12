@@ -225,6 +225,10 @@ class GladeHandlers:
             if player.__type__ == LOCAL:
                 def offer_callback (player, offer):
                     if offer.offerType == DRAW_OFFER:
+                        if gamemodel.status != RUNNING:
+                            return # If the offer has already been handled by
+                                   # Gamemodel and the game was drawn, we need
+                                   # to do nothing
                         gmwidg.status(_("You sent a draw offer"))
                 player.connect("offer", offer_callback)
         
