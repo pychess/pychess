@@ -829,8 +829,8 @@ def initialize():
     
     liststore = gtk.ListStore(str)
     liststore.append([_("Don't Care")])
-    liststore.append([_("Wants White")])
-    liststore.append([_("Wants Black")])
+    liststore.append([_("Want White")])
+    liststore.append([_("Want Black")])
     widgets["colorCombobox"].set_model(liststore)
     widgets["colorCombobox"].set_active(0)
     widgets["chaColorCombobox"].set_model(liststore)

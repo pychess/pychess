@@ -203,7 +203,7 @@ class GladeHandlers:
                 
                 ABORTED_ADJUDICATION: _("as decided by an admin"),
                 ABORTED_AGREEMENT: _("as the players agreed to"),
-                ABORTED_COURTESY: _("courtesy by a player"),
+                ABORTED_COURTESY: _("by courtesy by a player"),
                 ABORTED_EARLY: _("in the early phase of the game"),
                 ABORTED_SERVER_SHUTDOWN: _("as the server was shut down"),
                 
