@@ -42,6 +42,7 @@ DATA_FILES = [("share/games/pychess/",
 # UI
 DATA_FILES += [("share/games/pychess/glade", glob('glade/*.glade'))]
 DATA_FILES += [("share/games/pychess/glade", glob('glade/*.png'))]
+DATA_FILES += [("share/games/pychess/flags", glob('flags/*.png'))]
 
 # Sidepanel (not a package)
 DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
@@ -76,7 +77,7 @@ if isfile ("MANIFEST"):
 
 # Packages
 
-PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ics",
+PACKAGES = ["pychess", "pychess.gfx", "pychess.ic",
             "pychess.Players", "pychess.Savers", "pychess.System",
             "pychess.Utils", "pychess.Utils.lutils", "pychess.widgets" ]
 # Setup
