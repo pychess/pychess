@@ -605,8 +605,8 @@ def saveGameAs (game):
                         type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
                 folder, file = os.path.split(uri)
                 d.set_markup(
-                          _("<big><b>Unknown filetype '%s'</b></big>") % ending)
-                d.format_secondary_text(_("Wasn't able to save '%s' as pychess doesn't know the format '%s'.") % (uri,ending))
+                          _("<big><b>Unknown file type '%s'</b></big>") % ending)
+                d.format_secondary_text(_("Was unable to save '%s' as PyChess doesn't know the format '%s'.") % (uri,ending))
                 d.run()
                 d.hide()
                 continue
