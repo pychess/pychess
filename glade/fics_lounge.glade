@@ -323,8 +323,8 @@
 				    <widget class="GtkComboBox" id="colorCombobox">
 				      <property name="visible">True</property>
 				      <property name="items" translatable="yes">Don't Care
-Wants White
-Wants Black</property>
+Want White
+Want Black</property>
 				      <property name="add_tearoffs">False</property>
 				      <property name="focus_on_click">True</property>
 				    </widget>
@@ -923,8 +923,8 @@ Custom</property>
 				    <widget class="GtkComboBox" id="chaColorCombobox">
 				      <property name="visible">True</property>
 				      <property name="items" translatable="yes">Don't Care
-Wants White
-Wants Black</property>
+Want White
+Want Black</property>
 				      <property name="add_tearoffs">False</property>
 				      <property name="focus_on_click">True</property>
 				    </widget>
@@ -1358,7 +1358,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label57">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">_Resume</property>
+					  <property name="label">_Resume</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1438,7 +1438,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label58">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">R_esign</property>
+					  <property name="label">R_esign</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1501,7 +1501,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label60">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">_Draw</property>
+					  <property name="label">_Draw</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1564,7 +1564,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label59">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">_Abort</property>
+					  <property name="label">_Abort</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1644,7 +1644,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label61">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">_Preview</property>
+					  <property name="label">_Preview</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>

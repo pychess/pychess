@@ -159,7 +159,7 @@ class Human (Player):
             # declined or withdrawn.
             return
         else:
-            title = _("%s return an error") % (actionName[0].upper()+actionName[1:])
+            title = _("%s returns an error") % (actionName[0].upper()+actionName[1:])
             description = ERROR_MESSAGES[error]
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     

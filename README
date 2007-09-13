@@ -18,8 +18,7 @@ lobais@gmail.com
 WORKING WITH PO FILES
 
 To create po files from glade and python files, use
-$ xgettext glade/gamepreview.glade glade/newInOut.glade glade/promotion.glade
-glade/PyChess.glade lib/pychess/Main.py lib/pychess/*/*.py sidepanel/*.py
+$ xgettext glade/*.glade lib/pychess/Main.py lib/pychess/*/*.py sidepanel/*.py
 sidepanel/*.glade
 To merge to files for like to update your old translation to a new PyChess
 version, use
