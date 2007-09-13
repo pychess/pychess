@@ -183,8 +183,7 @@ class GladeHandlers:
             }[gamemodel.status]
             m2 = {
                 DRAW_INSUFFICIENT: _("caused by insufficient material"),
-                DRAW_REPITITION: _("as the same position was repeated three" + \
-                                   " times in a row"),
+                DRAW_REPITITION: _("as the same position was repeated three times in a row"),
                 DRAW_50MOVES: _("as the last 50 moves brought nothing new"),
                 DRAW_CALLFLAG: _("as both players ran out of time"),
                 DRAW_STALEMATE: _("because of stalemate"),
