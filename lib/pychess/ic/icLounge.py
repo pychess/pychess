@@ -837,23 +837,25 @@ def initialize():
     widgets["chaColorCombobox"].set_active(0)
     
     liststore = gtk.ListStore(str, str)
-    liststore.append(["15 min + 10", _("Normal")])
-    liststore.append(["5 min + 2", _("Blitz")])
-    liststore.append(["1 min + 0", _("Lightning")])
-    liststore.append(["", _("New Custom")])
+    chaliststore = gtk.ListStore(str, str)
+    for store in (liststore, chaliststore):
+        store.append(["15 min + 10", _("Normal")])
+        store.append(["5 min + 2", _("Blitz")])
+        store.append(["1 min + 0", _("Lightning")])
+        store.append(["", _("New Custom")])
     cell = gtk.CellRendererText()
     cell.set_property('xalign',1)
     widgets["timeCombobox"].set_model(liststore)
     widgets["timeCombobox"].pack_start(cell)
     widgets["timeCombobox"].add_attribute(cell, 'text', 1)
     widgets["timeCombobox"].set_active(0)
-    widgets["chaTimeCombobox"].set_model(liststore)
+    widgets["chaTimeCombobox"].set_model(chaliststore)
     widgets["chaTimeCombobox"].pack_start(cell)
     widgets["chaTimeCombobox"].add_attribute(cell, 'text', 1)
     widgets["chaTimeCombobox"].set_active(0)
     
     customTimeDialog = widgets["customTimeDialog"]
-    def timeComboboxChanged (combo):
+    def timeComboboxChanged (combo, othercombo):
         if combo.get_active() == 3:
             response = customTimeDialog.run()
             customTimeDialog.hide()
@@ -869,9 +871,9 @@ def initialize():
             combo.set_active(4)
         else: combo.old_active = combo.get_active()
     widgets["timeCombobox"].old_active = 0
-    widgets["timeCombobox"].connect("changed", timeComboboxChanged)
+    widgets["timeCombobox"].connect("changed", timeComboboxChanged, widgets["chaTimeCombobox"])
     widgets["chaTimeCombobox"].old_active = 0
-    widgets["chaTimeCombobox"].connect("changed", timeComboboxChanged)
+    widgets["chaTimeCombobox"].connect("changed", timeComboboxChanged, widgets["timeCombobox"])
     
     def seekButtonClicked (button):
         ratingrange = map(int, widgets["strengthCombobox"].get_model()[
