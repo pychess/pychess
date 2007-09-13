@@ -135,15 +135,15 @@ class Human (Player):
     def offerDeclined (self, offer):
         if offer.offerType not in ACTION_NAMES:
             return
-        title = _("%s was declined by you opponent") % ACTION_NAMES[offer.offerType]
-        description = _("You can try to send the to offer your opponent later in the game again")
+        title = _("%s was declined by your opponent") % ACTION_NAMES[offer.offerType]
+        description = _("You can try to send the offer to your opponent later in the game again.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerWithdrawn (self, offer):
         if offer.offerType not in ACTION_NAMES:
             return
-        title = _("%s was withdrawn by you opponent") % ACTION_NAMES[offer.offerType]
-        description = _("You opponent seams to have changed his or her mind.")
+        title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.offerType]
+        description = _("Your opponent seams to have changed his or her mind.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerError (self, offer, error):
@@ -152,7 +152,7 @@ class Human (Player):
         actionName = ACTION_NAMES[offer.offerType]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
             title = _("Unable to accept %s") % actionName
-            description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn")
+            description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
              error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either
@@ -176,8 +176,8 @@ class Human (Player):
     
     
     def hurry (self):
-        title = _("You opponent asks you to hurry!")
-        description = _("Generally this means nothing, as the game is timebased, but if you want to please you opponent, perhaps you should get going.")
+        title = _("Your opponent asks you to hurry!")
+        description = _("Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def pause (self):

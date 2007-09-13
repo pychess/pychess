@@ -124,8 +124,7 @@ def connect (host, port, username="guest", password=""):
         except socket.gaierror, e:
             raise IOError, e.args[1]
         except EOFError:
-            raise IOError, _("The connection was broken - got end of file " +
-                             "message")
+            raise IOError, _("The connection was broken - got \"end of file\" message")
         except socket.error, e:
             raise InterruptError, ", ".join(map(str,e.args))
         except Exception, e:
@@ -138,11 +137,9 @@ def connect (host, port, username="guest", password=""):
             r = client.expect( ["password: ", "login: ",
                                 "Press return to enter the server as"]).next()
             if r[0] < 0:
-                raise IOError, _("The connection was broken - got end of " +
-                                 "file message")
+                raise IOError, _("The connection was broken - got \"end of file\" message")
             elif r[0] == 1:
-                raise LogOnError, _("Names can only consist of lower and " +
-                                    "upper case letters")
+                raise LogOnError, _("Names can only consist of lower and upper case letters")
             elif r[0] == 2:
                 raise LogOnError, _("'%s' is not a registered name") % username
             else:

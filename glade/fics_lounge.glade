@@ -6,7 +6,7 @@
 <widget class="GtkWindow" id="fics_lounge">
   <property name="border_width">12</property>
   <property name="visible">True</property>
-  <property name="title" translatable="yes">PyChess - Internet Chess: FICS - Sun Mar 11 09:56 PDT</property>
+  <property name="title" translatable="yes">PyChess - Internet Chess: FICS</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -166,7 +166,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="activeSeeksLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">0 Active Seeks</property>
+			      <property name="label">0 Active Seeks</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -741,7 +741,7 @@ Custom</property>
 			  <child>
 			    <widget class="GtkLabel" id="playersOnlineLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">0 Players Ready</property>
+			      <property name="label">0 Players Ready</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1147,7 +1147,7 @@ Custom</property>
 			  <child>
 			    <widget class="GtkLabel" id="gamesRunningLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">0 Games Running</property>
+			      <property name="label">0 Games Running</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1693,7 +1693,7 @@ Custom</property>
 
 		  <child>
 		    <widget class="GtkLabel" id="label55">
-		      <property name="label" translatable="yes">Adjourned</property>
+		      <property name="label">Adjourned</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2058,7 +2058,7 @@ Custom</property>
 
 <widget class="GtkDialog" id="customTimeDialog">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Custom TIme Setting</property>
+  <property name="title" translatable="yes">Custom Time Setting</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
@@ -2431,7 +2431,7 @@ Custom</property>
 		      <child>
 			<widget class="GtkLabel" id="label68">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;big&gt;PyChess FICS intercompleteness&lt;/big&gt;</property>
+			  <property name="label" translatable="yes">&lt;big&gt;PyChess FICS incompleteness&lt;/big&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>

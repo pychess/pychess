@@ -6,7 +6,7 @@
 
 <widget class="GtkWindow" id="window1">
   <property name="border_width">12</property>
-  <property name="title" translatable="yes">Tip Of The day</property>
+  <property name="title">Tip Of The day</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -91,7 +91,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="label1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">&lt;b&gt;Tip of the Day:&lt;/b&gt;</property>
+	      <property name="label">&lt;b&gt;Tip of the Day:&lt;/b&gt;</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -122,7 +122,7 @@
 	<widget class="GtkCheckButton" id="checkbutton1">
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
-	  <property name="label" translatable="yes">Show tips at startup</property>
+	  <property name="label">Show tips at startup</property>
 	  <property name="use_underline">True</property>
 	  <property name="relief">GTK_RELIEF_NORMAL</property>
 	  <property name="focus_on_click">True</property>

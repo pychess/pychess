@@ -27,7 +27,7 @@ def ensureReady ():
     
     global w
     w = gtk.Window()
-    w.set_title(_("Pychess - Log Viewer"))
+    w.set_title(_("PyChess - Log Viewer"))
     iconpath = prefix("glade/16.png")
     w.set_icon(gtk.gdk.pixbuf_new_from_file(iconpath))
     
