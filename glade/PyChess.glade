@@ -573,7 +573,7 @@
   <property name="destroy_with_parent">False</property>
   <property name="name">PyChess</property>
   <property name="copyright">Copyright © 2006</property>
-  <property name="comments" translatable="yes">Chessclient for the Gnome desktop</property>
+  <property name="comments" translatable="yes">Chess client for the Gnome desktop</property>
   <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
 the Free Software Foundation; either version 2 of the License, or 
@@ -1094,7 +1094,7 @@ Spanish (es) - 	Enrique</property>
 		      <child>
 			<widget class="GtkLabel" id="label4">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;First human players name:&lt;/b&gt;</property>
+			  <property name="label" translatable="yes">&lt;b&gt;Name of first human player:&lt;/b&gt;</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1159,7 +1159,7 @@ Spanish (es) - 	Enrique</property>
 		      <child>
 			<widget class="GtkLabel" id="label5">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Second human players name:&lt;/b&gt;</property>
+			  <property name="label" translatable="yes">&lt;b&gt;Name of second human player:&lt;/b&gt;</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1543,6 +1543,7 @@ Spanish (es) - 	Enrique</property>
 			      <child>
 				<widget class="GtkComboBox" id="combobox2">
 				  <property name="visible">True</property>
+				  <property name="items"></property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
 				</widget>
@@ -1566,7 +1567,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label23">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">1.0</property>
+				      <property name="label">1.0</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1595,7 +1596,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label24">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Bastian Salmela &lt;bastian.salmela@hel.fi&gt;</property>
+				      <property name="label">Bastian Salmela &lt;bastian.salmela@hel.fi&gt;</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1623,7 +1624,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label25">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">http://www.lib.hel.fi/~basse</property>
+				      <property name="label">http://www.lib.hel.fi/~basse</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1651,7 +1652,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label22">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author's Website:</property>
+				      <property name="label">Author's Website:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1679,7 +1680,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label35">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">This is Tux the penguin -chessmen theme for Knights (I great opportunity to see Tux with long curly hair..).</property>
+				      <property name="label">This is Tux the penguin -chessmen theme for Knights (I great opportunity to see Tux with long curly hair..).</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1707,7 +1708,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label34">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author's Notes:</property>
+				      <property name="label">Author's Notes:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1735,7 +1736,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label21">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author:</property>
+				      <property name="label">Author:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1763,7 +1764,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label20">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Version:</property>
+				      <property name="label">Version:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1802,7 +1803,7 @@ Spanish (es) - 	Enrique</property>
 		      <child>
 			<widget class="GtkLabel" id="label8">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Piece Theme&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;Piece Theme&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1857,6 +1858,7 @@ Spanish (es) - 	Enrique</property>
 			      <child>
 				<widget class="GtkComboBox" id="combobox1">
 				  <property name="visible">True</property>
+				  <property name="items"></property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
 				</widget>
@@ -1880,7 +1882,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label28">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">1.0</property>
+				      <property name="label">1.0</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1909,7 +1911,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label29">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Asif Ali Rizwaan &lt;maarizwan@hotmail.com&gt;</property>
+				      <property name="label">Asif Ali Rizwaan &lt;maarizwan@hotmail.com&gt;</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1938,7 +1940,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label30">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes"></property>
+				      <property name="label"></property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1967,7 +1969,7 @@ Spanish (es) - 	Enrique</property>
 				    <widget class="GtkLabel" id="label32">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes"></property>
+				      <property name="label"></property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1995,7 +1997,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label26">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Version:</property>
+				      <property name="label">Version:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2023,7 +2025,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label27">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author:</property>
+				      <property name="label">Author:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2051,7 +2053,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label33">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author's Website:</property>
+				      <property name="label">Author's Website:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2079,7 +2081,7 @@ Spanish (es) - 	Enrique</property>
 				  <child>
 				    <widget class="GtkLabel" id="label31">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Author's Notes:</property>
+				      <property name="label">Author's Notes:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2118,7 +2120,7 @@ Spanish (es) - 	Enrique</property>
 		      <child>
 			<widget class="GtkLabel" id="label6">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Board Theme&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;Board Theme&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2155,7 +2157,7 @@ Spanish (es) - 	Enrique</property>
 
 	  <child>
 	    <widget class="GtkLabel" id="label2">
-	      <property name="label" translatable="yes">Themes</property>
+	      <property name="label">Themes</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2697,7 +2699,7 @@ Spanish (es) - 	Enrique</property>
 			      <child>
 				<widget class="GtkComboBox" id="combobox22">
 				  <property name="visible">True</property>
-				  <property name="items" translatable="yes">Default
+				  <property name="items">Default
 Knights</property>
 				  <property name="add_tearoffs">False</property>
 				  <property name="focus_on_click">True</property>
@@ -2716,7 +2718,7 @@ Knights</property>
 		      <child>
 			<widget class="GtkLabel" id="label83">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Sound Theme&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;Sound Theme&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3577,6 +3579,7 @@ No sound</property>
 				  <child>
 				    <widget class="GtkComboBox" id="combobox7">
 				      <property name="visible">True</property>
+				      <property name="items"></property>
 				      <property name="add_tearoffs">False</property>
 				      <property name="focus_on_click">True</property>
 				    </widget>
@@ -3590,7 +3593,7 @@ No sound</property>
 				  <child>
 				    <widget class="GtkLabel" id="label78">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">&lt;i&gt;Count: 1829 known opening variants&lt;/i&gt;</property>
+				      <property name="label">&lt;i&gt;Count: 1829 known opening variants&lt;/i&gt;</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">True</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3629,7 +3632,7 @@ No sound</property>
 				    <widget class="GtkCheckButton" id="checkbutton8">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Only Openings by Chosen Players:</property>
+				      <property name="label">Only Openings by Chosen Players:</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -3706,7 +3709,7 @@ No sound</property>
 				    <widget class="GtkCheckButton" id="checkbutton9">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Only Openings from Years:</property>
+				      <property name="label">Only Openings from Years:</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -3762,7 +3765,7 @@ No sound</property>
 					  <child>
 					    <widget class="GtkLabel" id="label77">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">≤ Year ≤</property>
+					      <property name="label">≤ Year ≤</property>
 					      <property name="use_underline">False</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -3826,7 +3829,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkLabel" id="label52">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Opening book&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;Opening book&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4038,7 +4041,7 @@ No sound</property>
 					      <child>
 						<widget class="GtkLabel" id="label57">
 						  <property name="visible">True</property>
-						  <property name="label" translatable="yes">Merge</property>
+						  <property name="label">Merge</property>
 						  <property name="use_underline">True</property>
 						  <property name="use_markup">False</property>
 						  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4085,7 +4088,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkLabel" id="label53">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Manage books&lt;/b&gt;</property>
+			  <property name="label">&lt;b&gt;Manage books&lt;/b&gt;</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4122,7 +4125,7 @@ No sound</property>
 
 	  <child>
 	    <widget class="GtkLabel" id="label51">
-	      <property name="label" translatable="yes">Opening book</property>
+	      <property name="label">Opening book</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4261,7 +4264,7 @@ No sound</property>
 					  <child>
 					    <widget class="GtkLabel" id="label16">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Install new</property>
+					      <property name="label">Install new</property>
 					      <property name="use_underline">True</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4341,7 +4344,7 @@ No sound</property>
 					  <child>
 					    <widget class="GtkLabel" id="label15">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Disable</property>
+					      <property name="label">Disable</property>
 					      <property name="use_underline">True</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4419,7 +4422,7 @@ No sound</property>
 					  <child>
 					    <widget class="GtkLabel" id="label14">
 					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Uninstall</property>
+					      <property name="label">Uninstall</property>
 					      <property name="use_underline">True</property>
 					      <property name="use_markup">False</property>
 					      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4482,7 +4485,7 @@ No sound</property>
 		  <child>
 		    <widget class="GtkLabel" id="label13">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;Installed Sidepanels&lt;/b&gt;</property>
+		      <property name="label">&lt;b&gt;Installed Sidepanels&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4512,7 +4515,7 @@ No sound</property>
 
 	  <child>
 	    <widget class="GtkLabel" id="label12">
-	      <property name="label" translatable="yes">Sidepanels</property>
+	      <property name="label">Sidepanels</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4569,7 +4572,7 @@ No sound</property>
 
 <widget class="GtkDialog" id="addconfig_engine">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Add/Edit Engine</property>
+  <property name="title">Add/Edit Engine</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>
@@ -4643,7 +4646,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkLabel" id="label102">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Default Options</property>
+			  <property name="label">Default Options</property>
 			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4732,7 +4735,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkFileChooserButton" id="engine_path_chooser">
 			  <property name="visible">True</property>
-			  <property name="title" translatable="yes">Vælg en fil</property>
+			  <property name="title"></property>
 			  <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>
 			  <property name="local_only">True</property>
 			  <property name="show_hidden">False</property>
@@ -4746,7 +4749,7 @@ No sound</property>
 		  <child>
 		    <widget class="GtkLabel" id="label107">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;Engine Path&lt;/b&gt;</property>
+		      <property name="label">&lt;b&gt;Engine Path&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4805,7 +4808,7 @@ No sound</property>
 			    <widget class="GtkRadioButton" id="radiobutton7">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Default:</property>
+			      <property name="label">Default:</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -4827,7 +4830,7 @@ No sound</property>
 			    <widget class="GtkRadioButton" id="radiobutton8">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Custom:</property>
+			      <property name="label">Custom:</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -4849,7 +4852,7 @@ No sound</property>
 			  <child>
 			    <widget class="GtkLabel" id="label109">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">GNU Chess 5.01</property>
+			      <property name="label">GNU Chess 5.01</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4903,7 +4906,7 @@ No sound</property>
 		  <child>
 		    <widget class="GtkLabel" id="label110">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;Engine Name&lt;/b&gt;</property>
+		      <property name="label">&lt;b&gt;Engine Name&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4952,7 +4955,7 @@ No sound</property>
 		      <child>
 			<widget class="GtkComboBox" id="combobox23">
 			  <property name="visible">True</property>
-			  <property name="items" translatable="yes">CECP
+			  <property name="items">CECP
 UCI</property>
 			  <property name="add_tearoffs">False</property>
 			  <property name="focus_on_click">True</property>
@@ -4964,7 +4967,7 @@ UCI</property>
 		  <child>
 		    <widget class="GtkLabel" id="label108">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;Engine Protocol&lt;/b&gt;</property>
+		      <property name="label">&lt;b&gt;Engine Protocol&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5050,7 +5053,7 @@ UCI</property>
 			      <child>
 				<widget class="GtkLabel" id="label114">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">BookFile</property>
+				  <property name="label">BookFile</property>
 				  <property name="use_underline">False</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5079,7 +5082,7 @@ UCI</property>
 				  <property name="editable">True</property>
 				  <property name="visibility">True</property>
 				  <property name="max_length">0</property>
-				  <property name="text" translatable="yes">book.bin</property>
+				  <property name="text">book.bin</property>
 				  <property name="has_frame">True</property>
 				  <property name="invisible_char">•</property>
 				  <property name="activates_default">False</property>
@@ -5255,7 +5258,7 @@ UCI</property>
 				      <child>
 					<widget class="GtkLabel" id="label111">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">Best Choise</property>
+					  <property name="label">Best Choise</property>
 					  <property name="use_underline">False</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5281,7 +5284,7 @@ UCI</property>
 					<widget class="GtkToggleButton" id="togglebutton2">
 					  <property name="visible">True</property>
 					  <property name="can_focus">True</property>
-					  <property name="label" translatable="yes">On</property>
+					  <property name="label">On</property>
 					  <property name="use_underline">True</property>
 					  <property name="relief">GTK_RELIEF_NORMAL</property>
 					  <property name="focus_on_click">True</property>
@@ -5460,7 +5463,7 @@ UCI</property>
 				      <child>
 					<widget class="GtkLabel" id="label112">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">Hash</property>
+					  <property name="label">Hash</property>
 					  <property name="use_underline">False</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5665,7 +5668,7 @@ UCI</property>
 				      <child>
 					<widget class="GtkLabel" id="label113">
 					  <property name="visible">True</property>
-					  <property name="label" translatable="yes">Playing Style</property>
+					  <property name="label">Playing Style</property>
 					  <property name="use_underline">False</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5690,7 +5693,7 @@ UCI</property>
 				      <child>
 					<widget class="GtkComboBox" id="combobox24">
 					  <property name="visible">True</property>
-					  <property name="items" translatable="yes">Normal</property>
+					  <property name="items">Normal</property>
 					  <property name="add_tearoffs">False</property>
 					  <property name="focus_on_click">True</property>
 					</widget>
@@ -5734,7 +5737,7 @@ UCI</property>
 		  <child>
 		    <widget class="GtkLabel" id="label113">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Engine Options</property>
+		      <property name="label">Engine Options</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>

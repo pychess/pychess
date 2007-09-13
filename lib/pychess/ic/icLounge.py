@@ -182,9 +182,7 @@ def initialize():
             if not telnet.registered:
                 vbox = gtk.VBox()
                 table.attach(vbox, 0, 6, row, row+1)
-                label0 = gtk.Label(_("You are currently logged in as a guest.\n"+
-                                        "A guest is not able to play rated games, "+
-                                        "and thus the offer of games is be smaller."))
+                label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games is be smaller."))
                 label0.props.xalign = 0
                 label0.props.wrap = True
                 vbox.add(label0)
