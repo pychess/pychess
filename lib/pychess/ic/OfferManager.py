@@ -31,7 +31,8 @@ strToOfferType = {
     "pause": PAUSE_OFFER,
     "unpause": RESUME_OFFER,
     "switch": SWITCH_OFFER,
-    "resign": RESIGNATION
+    "resign": RESIGNATION,
+    "flag": FLAG_CALL,
 }
 
 offerTypeToStr = {}
