@@ -44,7 +44,7 @@ def makeLogDialogReady ():
 
 def makeAboutDialogReady ():
     clb = window["aboutdialog1"].get_child().get_children()[1].get_children()[2]
-    window["aboutdialog1"].set_version(VERSION)
+    window["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
     def callback(button, *args):
         window["aboutdialog1"].hide()
         return True
