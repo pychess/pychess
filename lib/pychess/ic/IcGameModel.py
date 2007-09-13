@@ -1,4 +1,5 @@
 
+from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 
