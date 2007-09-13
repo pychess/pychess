@@ -10,7 +10,7 @@ from pychess.Utils.lutils.leval import evalMaterial
 from pychess.Utils.lutils import ldata
 from pychess.Utils.lutils import strateval
 
-__title__ = _("Coments")
+__title__ = _("Comments")
 
 class Sidepanel:
     
