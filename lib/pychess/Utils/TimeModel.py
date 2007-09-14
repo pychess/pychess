@@ -153,7 +153,8 @@ class TimeModel (GObject):
         if color == self.movingColor and self.started:
             if self.paused:
                 return self.intervals[color][-1] - self.pauseInterval
-            return self.intervals[color][-1] - (time() - self.counter)
+            elif self.counter:
+                return self.intervals[color][-1] - (time() - self.counter)
         return self.intervals[color][-1]
     
     def getInitialTime (self):

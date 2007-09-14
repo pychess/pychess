@@ -25,9 +25,7 @@ class IcGameModel (GameModel):
             self.timemodel.updatePlayer (color, msecs/1000.)
     
     def onBoardRecieved (self, boardmanager, gameno, ply, fen, wsecs, bsecs):
-        print "recieved board", gameno, self.gameno, ply, self.ply
         if gameno == self.gameno:
-            print "SYNC CLOCK", wsecs, bsecs
             self.timemodel.syncClock (wsecs, bsecs)
             if ply < self.ply:
                 print "TAKEBACK", self.ply, ply

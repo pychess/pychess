@@ -154,19 +154,15 @@ class BoardManager (GObject):
             f()
     
     def onMove (self, client, groups):
-        fields = groups[0].split()
-        gameno = fields[0]
-        ply = int(fields[1])
-        color = ply % 2 == 0 and BLACK or WHITE
-        sanmove = fields[2]
+        gameno, curply, sanmove, _, _, remainingMs = groups[0].split()[:6]
+        moveply = int(curply)-1
         
         if self.activeItem == gameno:
-            self.observeQueue[self.activeItem]["moves"][ply] = sanmove
-        
-        self.emit("moveRecieved", ply, sanmove, gameno, color)
-        
-        msLeft = int(fields[5])
-        self.emit ("clockUpdatedMs", gameno, int(msLeft), color)
+            self.observeQueue[self.activeItem]["moves"][moveply] = sanmove
+        else:
+            movecolor = moveply % 2 == 1 and BLACK or WHITE
+            self.emit("moveRecieved", moveply, sanmove, gameno, movecolor)
+            self.emit("clockUpdatedMs", gameno, int(remainingMs), movecolor)
     
     def playBoardCreated (self, client, groups):
         wname, wtit, wrat, bname, btit, brat, rt, type, min, incr, gmno = groups
@@ -189,7 +185,7 @@ class BoardManager (GObject):
         moveno, wmove, bmove = groups
         ply = int(moveno)*2-2
         self.observeQueue[self.activeItem]["moves"][ply] = wmove
-        if bmove: 
+        if bmove:
             self.observeQueue[self.activeItem]["moves"][ply+1] = bmove
     
     def moveListEnd (self, client, nothing):

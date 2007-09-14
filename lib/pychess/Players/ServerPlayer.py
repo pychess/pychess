@@ -3,7 +3,7 @@ from Queue import Queue
 
 from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Offer import Offer
-from pychess.Utils.Move import parseSAN, toSAN, ParsingError
+from pychess.Utils.Move import parseSAN, toSAN, ParsingError, listToSan
 from pychess.Utils.const import *
 from pychess.ic import telnet
 
@@ -55,12 +55,12 @@ class ServerPlayer (Player):
     def offerError (self, offer, error):
         pass
     
-    def moveRecieved (self, bm, ply, sanmove, gameno, curcol):
-        self.lastPly = int(ply)
-        if curcol != self.color or gameno != self.gameno:
-            return
-        print sanmove
-        self.queue.put((ply,sanmove))
+    def moveRecieved (self, bm, moveply, sanmove, gameno, movecol):
+        if gameno == self.gameno:
+            # We want the current ply rather than the moveply, so we add one
+            self.lastPly = int(moveply)+1
+            if movecol == self.color:
+                self.queue.put((self.lastPly,sanmove))
     
     def makeMove (self, gamemodel):
         self.lastPly = gamemodel.ply
@@ -83,6 +83,7 @@ class ServerPlayer (Player):
             move = parseSAN (gamemodel.boards[-1], sanmove)
         except ParsingError, e:
             print "Error", e.args[0]
+            print "moves are", listToSan(gamemodel.boards[0], gamemodel.moves)
             raise PlayerIsDead
         return move
     
