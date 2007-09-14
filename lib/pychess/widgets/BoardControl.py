@@ -221,6 +221,7 @@ class BoardControl (gtk.EventBox):
         elif key == "force_to_move":
             self.emit("action", HURRY_REQUEST, None)
         elif key == "undo1":
+            print self.view.model.ply, "self.view.model.ply"
             self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
         elif key == "pause1":
             if widget.get_active():

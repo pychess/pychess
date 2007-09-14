@@ -99,6 +99,7 @@ def addMessages (messages):
 glock.acquire()
 try:
     addMessages(log.messages)
+    log.messages = None
 finally:
     glock.release()
 

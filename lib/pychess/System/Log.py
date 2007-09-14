@@ -1,9 +1,8 @@
 import os, sys, time, gobject
 from Queue import Queue
-
 from GtkWorker import EmitPublisher, Publisher
 
-logfile = "~/.pychess.log"
+logfile = "~/.pychess_%s.log" % time.strftime("%Y-%m-%d_%H-%M-%S")
 
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -11,14 +10,13 @@ class LogPipe:
         self.flag = flag
     
     def write (self, data):
-        if data.strip():
-            log.debug (self.flag+data.strip())
+        log.debug (data, self.flag)
         try:
             self.to.write(data)
         except IOError:
             log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
 
-NEW_FILE, OLD_FILE, NO_FILE = range(3)
+MAXFILES = 10
 DEBUG, LOG, WARNING, ERROR = range(4)
 labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
 
@@ -28,18 +26,19 @@ class Log (gobject.GObject):
         "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
     }                                              # list of (str, str, int)
     
-    def __init__ (self, logpath, storage):
+    def __init__ (self, logpath):
         gobject.GObject.__init__(self)
         
-        if storage == NO_FILE:
-            self.file = None
-        elif storage == NEW_FILE or not os.path.exists (logpath):
-            self.file = open (logpath, "w")
-        else:
-            self.file = open (logpath, "a")
+        oldlogs = [l for l in os.listdir(os.environ["HOME"]) if l.startswith(".pychess_")]
+        if len(oldlogs) > MAXFILES:
+            oldlogs.sort()
+            os.remove(os.path.join(os.environ["HOME"], oldlogs[0]))
+        self.file = open (logpath, "w")
         
-        # We store everything in ram for the sake of the LogViewer.
-        # Not very smart really
+        # We store everything in this list, so that the LogDialog, which is
+        # imported a little later, will have all data ever given to Log.
+        # When Dialog inits, it will set this list to None, and we will stop
+        # appending data to it. Ugly? Somewhat I guess.
         self.messages = []
         
         self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
@@ -58,9 +57,10 @@ class Log (gobject.GObject):
                 if not type == ERROR:
                     self.error("Unable to write '%s' to log file because of error: %s" % \
                             (formated, ", ".join(str(a) for a in e.args)))
-        self.messages.append((task, message, type))
+        if self.messages != None:
+            self.messages.append((task, message, type))
         self.publisher.put((task, message, type))
-        if type == ERROR:
+        if type == ERROR and task != "stdout":
             print formated
     
     def debug (self, message, task="Default"):
@@ -75,4 +75,7 @@ class Log (gobject.GObject):
     def error (self, message, task="Default"):
         self._log (task, message, ERROR)
 
-log = Log (os.path.expanduser(logfile), NEW_FILE)
+log = Log (os.path.expanduser(logfile))
+
+sys.stdout = LogPipe(sys.stdout, "stdout")
+sys.stderr = LogPipe(sys.stderr, "stdout")
