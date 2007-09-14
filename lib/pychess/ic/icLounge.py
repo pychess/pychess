@@ -469,7 +469,7 @@ def initialize():
         timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
         game = IcGameModel (bm, om, board["gameno"], timemodel)
         gmwidg = gamewidget.GameWidget(game)
-        print "widget and model created"
+        
         if board["wname"].lower() == telnet.curname.lower():
             color = WHITE
             white = Human(gmwidg, WHITE, board["wname"])
@@ -488,14 +488,13 @@ def initialize():
         if timemodel:
             gmwidg.widgets["ccalign"].show()
             gmwidg.widgets["cclock"].setModel(timemodel)
-        print "attaching"
+        
         glock.acquire()
         try:
             ionest.simpleNewGame (game, gmwidg)
             gamewidget.attachGameWidget (gmwidg)
         finally:
             glock.release()
-        print "attached"
     
     bm.connect ("playBoardCreated", playBoardCreated)
     

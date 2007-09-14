@@ -126,8 +126,12 @@ class PGNFile (ChessFile):
         else: model.boards = [Board(setup=True)]
         
         movstrs = self._getMoves (gameno)
-        for mstr in movstrs:
-            move = parseAny (model.boards[-1], mstr)
+        for i, mstr in enumerate(movstrs):
+            try:
+                move = parseAny (model.boards[-1], mstr)
+            except ParsingError, e:
+                raise ValueError, ("Unable to parse PGN: %s\nat move %d\n" +
+                        "Gave error: %s") % (" ".join(movstrs), i, e.args)
             model.moves.append(move)
             model.boards.append(model.boards[-1].move(move))
             
