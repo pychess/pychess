@@ -2,25 +2,251 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Bajusz Tamás <btami@freemail.hu>, 2006.
+# Bajusz Tamás <btami@freemail.hu>, 2006, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-19 18:39+0100\n"
-"PO-Revision-Date: 2006-12-20 09:43+0100\n"
-"Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
-"Language-Team: \n"
+"POT-Creation-Date: 2007-09-13 19:34+0200\n"
+"PO-Revision-Date: 2007-09-14 19:51+0200\n"
+"Last-Translator: \n"
+"Language-Team:  <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.2\n"
 
+#: glade/fics_logon.glade:9
+msgid "PyChess - Connect to Internet Chess"
+msgstr "PyChess - Kapcsolodós a FICS-hez"
+
+#: glade/fics_logon.glade:84
+msgid "Create New"
+msgstr "Regisztrálok"
+
+#: glade/fics_logon.glade:315 lib/pychess/widgets/Background.py:306
+msgid "Log on as _Guest"
+msgstr "Bejelentkezés _vendégként"
+
+#: glade/fics_logon.glade:353
+msgid "_Name:"
+msgstr "_Név:"
+
+#: glade/fics_logon.glade:403
+msgid "_Password:"
+msgstr "_Jelszó:"
+
+#: glade/fics_logon.glade:471
+msgid "<b>Log On</b>"
+msgstr "<b>Bejelentkezés</b>"
+
+#: glade/fics_logon.glade:523
+msgid "Logging on to Server"
+msgstr "Bejelentkezés a szerverre"
+
+#: glade/fics_lounge.glade:9
+msgid "PyChess - Internet Chess: FICS"
+msgstr "PyChess - Internet sakk: FICS"
+
+#: glade/fics_lounge.glade:64
+msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
+msgstr "<b>Figyelem</b> A PyChess FICS támogatása még nem teljes!"
+
+#: glade/fics_lounge.glade:98
+msgid "<u>Learn more</u>"
+msgstr "<b>Részletek</b>"
+
+#: glade/fics_lounge.glade:205
+msgid "_Accept"
+msgstr "_Elfogadás"
+
+#: glade/fics_lounge.glade:297
+msgid "Opp Strength:"
+msgstr "Ellenfél erőssége:"
+
+#: glade/fics_lounge.glade:325 glade/fics_lounge.glade:925
+msgid ""
+"Don't Care\n"
+"Want White\n"
+"Want Black"
+msgstr ""
+"Mindegy\n"
+"Világos\n"
+"Sötét"
+
+#: glade/fics_lounge.glade:344 glade/fics_lounge.glade:869
+msgid "Your Color:"
+msgstr "A te színed:"
+
+#: glade/fics_lounge.glade:372 glade/fics_lounge.glade:897
+msgid "Game Time:"
+msgstr "Időbeosztás:"
+
+# Please change only the actual text
+#: glade/fics_lounge.glade:400 glade/fics_lounge.glade:944
+msgid ""
+"15 min + 10\tNormal\n"
+"5 min + 2\tBlitz\n"
+"1 min + 0\tLightning\n"
+"Custom"
+msgstr ""
+"15 min + 10\tRapidl\n"
+"5 min + 2\tSchnell\n"
+"1 min + 0\tVillám\n"
+"Egyéni"
+
+# Please only change the actual text
+#: glade/fics_lounge.glade:420
+msgid ""
+"0 → 1300\t\tEasy\n"
+"1300 → 1600\tAdvanced\n"
+"1600 → 9999\tExpert"
+msgstr ""
+"0 → 1300\t\tKezdő\n"
+"1300 → 1600\tHaladó\n"
+"1600 → 9999\tProfi"
+
+#: glade/fics_lounge.glade:440 glade/fics_lounge.glade:965
+msgid "Rated Game"
+msgstr "Értékelt játszma"
+
+#: glade/fics_lounge.glade:509
+msgid "Send seek"
+msgstr "Keresés elküldése"
+
+#: glade/fics_lounge.glade:553
+msgid "Seek Panel"
+msgstr "Keresés panel"
+
+#: glade/fics_lounge.glade:589
+msgid "Seeks / Challenges"
+msgstr "Keresések / Kihívások"
+
+#: glade/fics_lounge.glade:622 lib/pychess/ic/icLounge.py:404
+msgid "Rating"
+msgstr "Értékszám"
+
+# Column header in the seeks table
+#: glade/fics_lounge.glade:674
+msgid "Time"
+msgstr "Idő"
+
+#: glade/fics_lounge.glade:708
+msgid "Seek Graph"
+msgstr "Keresések"
+
+#: glade/fics_lounge.glade:777
+msgid "Show Info Window"
+msgstr "Információk ablak mutatása"
+
+#: glade/fics_lounge.glade:1035
+msgid "Send challenge"
+msgstr "Kihívás elküldése"
+
+#: glade/fics_lounge.glade:1078
+msgid "Challenge Panel"
+msgstr "Kihívás panel"
+
+#: glade/fics_lounge.glade:1114
+msgid "Player List"
+msgstr "Játékoslista"
+
+#: glade/fics_lounge.glade:1182
+msgid "_Observe"
+msgstr "_Megnéz"
+
+#: glade/fics_lounge.glade:1252
+msgid "Game List"
+msgstr "Játszmalista"
+
+#: glade/fics_lounge.glade:1844
+msgid "<b>News</b>"
+msgstr "<b>Hírek</b>"
+
+#: glade/fics_lounge.glade:1901
+msgid "Show Chat"
+msgstr "Csevegés mutatása"
+
+#: glade/fics_lounge.glade:1918
+msgid "Show Console"
+msgstr "Konzol mutatása"
+
+#: glade/fics_lounge.glade:1975
+msgid "Log Off"
+msgstr "Kijelentkezés"
+
+#: glade/fics_lounge.glade:2015
+msgid "<b>Tools</b>"
+msgstr "<b>Eszközök</b>"
+
+#: glade/fics_lounge.glade:2061
+msgid "Custom Time Setting"
+msgstr "Egyéni időbeállítás"
+
+#: glade/fics_lounge.glade:2196 glade/newInOut.glade:644
+msgid "Minutes:"
+msgstr "Perc:"
+
+# "Gain" as in "gain per move"
+#: glade/fics_lounge.glade:2224 glade/newInOut.glade:700
+msgid "Gain:"
+msgstr "Plusz idő:"
+
+#: glade/fics_lounge.glade:2328
+msgid "FICS Warning"
+msgstr "FICS figyelmeztetés"
+
+# Header in the "Warning FICS implementation is incomplete" dialog
+#: glade/fics_lounge.glade:2434
+msgid "<big>PyChess FICS incompleteness</big>"
+msgstr "<big>A PyChess FICS támogatás hiányosságai</big>"
+
+#: glade/fics_lounge.glade:2490
+msgid ""
+"PyChess 0.8 Phillidor comes with an incomplete implementation of the FICS "
+"protocol, which enables you to play against other people on the web.\n"
+"Unfortunatly not all of the protocol has yet been implemented, why you need "
+"to take a little caution when using this implementation."
+msgstr ""
+"A PyChess0.8 Philidor FICS támogatása lehetőséget ad internetes játszmákat játszani más személyek ellen. "
+"Sajnos a FICS protokol támogatás még nem teljes, ezért használata egy kis óvatosságot kíván."
+
+#: glade/fics_lounge.glade:2513
+msgid "<b>General</b>"
+msgstr "<b>Általános</b>"
+
+#: glade/fics_lounge.glade:2563
+msgid ""
+"People on FICS chat a lot. However as this is not yet available in PyChess "
+"you will appear mute.\n"
+"Some people might findt this offensive."
+msgstr "Az emberek általában sokat csevegnek a FICS-en. Sajnos a PyChess-ben ez a lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni.Egyesek ezt agresszívnek találhatják majd."
+
+#: glade/fics_lounge.glade:2586
+msgid "<b>Chatting</b>"
+msgstr "<b>Csevegés</b>"
+
+#: glade/fics_lounge.glade:2636
+msgid ""
+"FICS uses the idea of Adjourning, which is a way to save the game on the "
+"server to later continue the play.\n"
+"This version of PyChess doesn't support this feature, and will auto decline "
+"requests from opponents who wants to use this feature."
+msgstr ""
+"A FICS-en lehetőség van egy játszma folytatásának elhalasztására, ami azt jelenti, hogy a szerver elmenti a játszmát, és azt később folytatni lehet.\n"
+"A PyChess jelenleg még nem támogatja ezt a funkciót, és automatikusan elutasítja az ellenfél ilyen kéréseit."
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/fics_lounge.glade:2659
+msgid "<b>Adjourning</b>"
+msgstr "<b>Elhalasztás</b>"
+
 #: glade/gamepreview.glade:114
 msgid "<b>Open game</b>"
 msgstr "<b>Játszma megnyitása</b>"
 
-#: glade/gamepreview.glade:129 lib/pychess/widgets/ionest.py:39
+#: glade/gamepreview.glade:129 lib/pychess/widgets/ionest.py:54
+#: lib/pychess/widgets/ionest.py:518
 msgid "Open Game"
 msgstr "Játszma megnyitása"
 
@@ -28,178 +254,193 @@ msgstr "Játszma megnyitása"
 msgid "<b>Initial position</b>"
 msgstr "<b>Kezdőállás</b>"
 
-#: glade/newInOut.glade:12 lib/pychess/widgets/ionest.py:37
-msgid "Save Game"
-msgstr "Játszma mentése"
-
-#: glade/newInOut.glade:107
-msgid "Choose filetype (By extension)"
-msgstr "Fájltípus választás (Kiterjesztés alapján)"
-
-#: glade/newInOut.glade:139
+#: glade/newInOut.glade:8 lib/pychess/widgets/ionest.py:495
 msgid "New Game"
 msgstr "Új játszma"
 
-#: glade/newInOut.glade:228
+#: glade/newInOut.glade:97
 msgid "_Start Game"
 msgstr "_Játszma indítása"
 
-#: glade/newInOut.glade:338 glade/newInOut.glade:491
+#: glade/newInOut.glade:203 glade/newInOut.glade:386
 msgid "White Player:"
 msgstr "Világos:"
 
-#: glade/newInOut.glade:366 glade/newInOut.glade:519
+#: glade/newInOut.glade:231 glade/newInOut.glade:414
 msgid "Black Player:"
 msgstr "Sötét:"
 
-#: glade/newInOut.glade:420
+#: glade/newInOut.glade:303
 msgid "<b>Players</b>"
 msgstr "<b>Játékosok</b>"
 
-#: glade/newInOut.glade:593
+#: glade/newInOut.glade:490
 msgid "<b>Difficulty</b>"
 msgstr "<b>Erősség</b>"
 
-#: glade/newInOut.glade:662
+#: glade/newInOut.glade:571
 msgid "Game has time"
 msgstr "Időbeosztás"
 
-#: glade/newInOut.glade:707
+#: glade/newInOut.glade:616
 msgid "Hours:"
 msgstr "Óra:"
 
-#: glade/newInOut.glade:735
-msgid "Minutes: "
-msgstr "Perc: "
-
-#: glade/newInOut.glade:763
-msgid "Seconds: "
-msgstr "Másodperc: "
-
-# "Gain" as in "gain per move"
-#: glade/newInOut.glade:791
-msgid "Gain:"
-msgstr "Előny:"
+#: glade/newInOut.glade:672
+msgid "Seconds:"
+msgstr "Másodperc:"
 
 # The heading for the "time controls" part of the new-game dialog
-#: glade/newInOut.glade:928
+#: glade/newInOut.glade:839
 msgid "<b>Alarm</b>"
 msgstr "<b>Óra</b>"
+
+#: glade/newInOut.glade:951
+msgid "<b>Enter Game Notation</b>"
+msgstr "<b>Játszma megjegyzések</b>"
 
 #: glade/promotion.glade:9
 msgid "Promotion"
 msgstr "Átváltozás"
 
-#: glade/promotion.glade:40
+#: glade/promotion.glade:41
 msgid "Queen"
-msgstr "Királynő"
+msgstr "Vezér"
 
-#: glade/promotion.glade:54
+#: glade/promotion.glade:55
 msgid "Rook"
 msgstr "Bástya"
 
-#: glade/promotion.glade:67
+#: glade/promotion.glade:68
 msgid "Bishop"
 msgstr "Futó"
 
-#: glade/promotion.glade:80
+#: glade/promotion.glade:81
 msgid "Knight"
 msgstr "Huszár"
 
-#: glade/promotion.glade:99
+#: glade/promotion.glade:100
 msgid "<b><big>Promote pawn to what?</big></b>"
 msgstr "<b><big>Mire változzon a gyalog?</big></b>"
 
-#: glade/PyChess.glade:39
+#: glade/PyChess.glade:40
 msgid "_Game"
 msgstr "_Játszma"
 
-#: glade/PyChess.glade:48
+#: glade/PyChess.glade:49
 msgid "_New Game"
 msgstr "_Új játszma"
 
-#: glade/PyChess.glade:70
+#: glade/PyChess.glade:71
+msgid "_Play Internet Chess"
+msgstr "_Internet sakk"
+
+#: glade/PyChess.glade:99
 msgid "_Load Game"
 msgstr "_Játszma betöltése"
 
-#: glade/PyChess.glade:99
+#: glade/PyChess.glade:120
+msgid "Set up Position"
+msgstr "Pozíció felállítása"
+
+#: glade/PyChess.glade:129
+msgid "Enter game notation"
+msgstr "Játszma megjegyzések"
+
+#: glade/PyChess.glade:145
 msgid "_Save Game"
 msgstr "_Játszma mentése"
 
-#: glade/PyChess.glade:122
+#: glade/PyChess.glade:168
 msgid "Save Game _As"
 msgstr "_Játszma mentése másként"
 
-#: glade/PyChess.glade:190
+#: glade/PyChess.glade:205
+msgid "Player _Rating"
+msgstr "Játékos értékszáma"
+
+#: glade/PyChess.glade:243
 msgid "_Actions"
 msgstr "_Műveletek"
 
 # Lets you win the game, if opponent is out of time
-#: glade/PyChess.glade:199
+#: glade/PyChess.glade:253
 msgid "_Call Flag"
 msgstr "_Időtúllépés bejelentése"
 
 # Offer Draw
-#: glade/PyChess.glade:208
-msgid "_Draw"
-msgstr "_Döntetlen"
+#: glade/PyChess.glade:263
+msgid "Offer _Draw"
+msgstr "_Döntetlen ajánlása"
 
-#: glade/PyChess.glade:217
+#: glade/PyChess.glade:273
 msgid "_Resign"
 msgstr "_Feladás"
 
 # Makes the computer engine move instantly (and might send a network player a "wink" in a later version)
-#: glade/PyChess.glade:232
+#: glade/PyChess.glade:289
 msgid "_Force to move"
 msgstr "_Azonnali lépés"
 
-#: glade/PyChess.glade:259
+#: glade/PyChess.glade:311
+msgid "Undo"
+msgstr "Visszavonás"
+
+#: glade/PyChess.glade:334
+msgid "_Pause"
+msgstr "_Megállítás"
+
+#: glade/PyChess.glade:349
 msgid "_View"
 msgstr "_Nézet"
 
-#: glade/PyChess.glade:268
+#: glade/PyChess.glade:359
 msgid "_Rotate Board"
 msgstr "_Tábla elforgatása"
 
-#: glade/PyChess.glade:289
+#: glade/PyChess.glade:382
 msgid "_Side Panel"
 msgstr "_Oldalpanel"
 
-#: glade/PyChess.glade:300
+#: glade/PyChess.glade:392
 msgid "_Log Viewer"
 msgstr "_Napló"
 
-#: glade/PyChess.glade:317
-msgid "Show _cords"
-msgstr "_Kordináták mutatása"
-
-#: glade/PyChess.glade:327
+#: glade/PyChess.glade:409
 msgid "_Hint mode"
 msgstr "_Javaslat"
 
-#: glade/PyChess.glade:338
+#: glade/PyChess.glade:421
 msgid "Sp_y mode"
 msgstr "_Súgás"
 
-#: glade/PyChess.glade:353
+#: glade/PyChess.glade:436
+msgid "_Preferences"
+msgstr "_Beállítások"
+
+#: glade/PyChess.glade:458
 msgid "_Help"
 msgstr "_Súgó"
 
-#: glade/PyChess.glade:362
+#: glade/PyChess.glade:467
 msgid "About Chess"
 msgstr "A sakkról"
 
-#: glade/PyChess.glade:383
+#: glade/PyChess.glade:488
 msgid "How to play"
 msgstr "Hogyan játsszunk"
 
-#: glade/PyChess.glade:443
-msgid "Chessclient for the Gnome desktop"
-msgstr "Gnome Sakkprogram"
+#: glade/PyChess.glade:509
+msgid "Translate PyChess..."
+msgstr "A PyChess nyelvi fordításai..."
+
+#: glade/PyChess.glade:576
+msgid "Chess client for the Gnome desktop"
+msgstr "Gnome sakkprogram"
 
 # You might be able to find this one on the web.
 # You might also skip translating it.
-#: glade/PyChess.glade:444
+#: glade/PyChess.glade:577
 msgid ""
 "PyChess is free software; you can redistribute it and/or modify \n"
 "it under the terms of the GNU General Public License as published by \n"
@@ -229,42 +470,191 @@ msgstr ""
 "along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
 "51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 
-# No need for translating this one :)
-# I just wasn't able to convince glade that the string was not translateable
-#: glade/PyChess.glade:459
-msgid "http://code.google.com/p/pychess/"
-msgstr "http://code.google.com/p/pychess/"
-
-#: glade/PyChess.glade:477
+#: glade/PyChess.glade:612
 msgid "Game information"
 msgstr "Játszma információk"
 
-#: glade/PyChess.glade:600
+#: glade/PyChess.glade:735
 msgid "Site:"
 msgstr "Hely:"
 
-#: glade/PyChess.glade:628
+#: glade/PyChess.glade:763
 msgid "Round:"
 msgstr "Forduló:"
 
-#: glade/PyChess.glade:719
+#: glade/PyChess.glade:854
 msgid "Event:"
 msgstr "Esemény:"
 
-#: glade/PyChess.glade:756
+#: glade/PyChess.glade:891
 msgid "<b>Game data</b>"
-msgstr "<b>Játszma adatok</b>"
+msgstr "<b>Játszma adatai</b>"
 
-#: glade/PyChess.glade:833
+#: glade/PyChess.glade:968
 msgid "<b>Date of game</b>"
 msgstr "<b>Játszma időpontja</b>"
 
-#: lib/pychess/Main.py:22
+#: glade/PyChess.glade:1009
+msgid "Preferences"
+msgstr "Beállítások"
+
+#: glade/PyChess.glade:1097
+msgid "<b>Name of first human player:</b>"
+msgstr "<b>Első játékos neve:</b>"
+
+#: glade/PyChess.glade:1162
+msgid "<b>Name of second human player:</b>"
+msgstr "<b>Második játékos neve:</b>"
+
+#: glade/PyChess.glade:1224
+msgid "_Hide tabs when only one game is open"
+msgstr "_Fülek elrejtése 1 játszma esetén"
+
+#: glade/PyChess.glade:1243
+msgid "_Auto rotate board to current human player"
+msgstr "_Automatikus táblaforgatás a lépésre következő személy felé"
+
+#: glade/PyChess.glade:1262
+msgid "_Show cords"
+msgstr "_Koordináták mutatása"
+
+#: glade/PyChess.glade:1281
+msgid "_Prefer figures in notation"
+msgstr "_Figurák jeleinek használata a játszmalapon"
+
+#: glade/PyChess.glade:1310
+msgid "<b>General Display Options</b>"
+msgstr "<b>Általános képernyőbeállítások</b>"
+
+#: glade/PyChess.glade:1372
+msgid "_Full board animation"
+msgstr "_Teljes animálás"
+
+#: glade/PyChess.glade:1391
+msgid "_Only animate moves"
+msgstr "_Csak a lépések animálása"
+
+#: glade/PyChess.glade:1411
+msgid "_No animation"
+msgstr "_Semmilyen animálás"
+
+#: glade/PyChess.glade:1441
+msgid "<b>Animation</b>"
+msgstr "<b>Animálás</b>"
+
+# Header in preferences tab
+#: glade/PyChess.glade:1479
+msgid "General"
+msgstr "Általános"
+
+#: glade/PyChess.glade:2312
+msgid "<b>Chess Engines</b>"
+msgstr "<b>Sakkmotor</b>"
+
+#: glade/PyChess.glade:2374
+msgid "Use _analyzer"
+msgstr "_Elemző használata"
+
+#: glade/PyChess.glade:2423
+msgid ""
+"The analyzer will run in the background and analyze the game. <b>This is "
+"nessesary for the hint mode to work</b>"
+msgstr "Az elemző sakkmotor a háttérben fog futni mialatt elemzi az állást.<b>Szükséges a javaslat módhoz.</b>"
+
+#: glade/PyChess.glade:2471
+msgid "Use _inverted analyzer"
+msgstr "_Ellenfél elemző használata"
+
+#: glade/PyChess.glade:2520
+msgid ""
+"The inverse analyzer will analyze the game as if your opponent was to move. "
+"<b>This is nessesary for the spy mode to work</b>"
+msgstr "Az ellenfél elemző sakkmotor a játszmát az ellenfél szempontjából elemzi.<b>Szükséges a súgás módhoz.</b>"
+
+# The heading for the "time controls" part of the new-game dialog
+#: glade/PyChess.glade:2565
+msgid "<b>Analyzing</b>"
+msgstr "<b>Elemzés</b>"
+
+#: glade/PyChess.glade:2603
+msgid "Computer Opponents"
+msgstr "Gépi ellenfelek"
+
+#: glade/PyChess.glade:2658
+msgid "_Use sounds in PyChess"
+msgstr "_Hangok hsználata a PyChess-ben"
+
+# Please preserve the \n's
+#: glade/PyChess.glade:2779
+msgid ""
+"Beep\n"
+"Select sound file...\n"
+"No sound"
+msgstr ""
+"Csipogás\n"
+"Hangfájl kiválasztása\n"
+"Nincs hang"
+
+#: glade/PyChess.glade:3051
+msgid "A player _checks:"
+msgstr "_Sakkadás:"
+
+#: glade/PyChess.glade:3079
+msgid "A player _moves:"
+msgstr "_Lépés:"
+
+#: glade/PyChess.glade:3107
+msgid "Game is _drawn:"
+msgstr "_Döntetlen:"
+
+#: glade/PyChess.glade:3135
+msgid "Game is _lost:"
+msgstr "_Vesztés:"
+
+#: glade/PyChess.glade:3163
+msgid "Game is _won:"
+msgstr "_Győzelem:"
+
+#: glade/PyChess.glade:3191
+msgid "A player c_aptures:"
+msgstr "_Ütés:"
+
+#: glade/PyChess.glade:3234
+msgid "Game is _set-up:"
+msgstr "_Tábla felállítás:"
+
+#: glade/PyChess.glade:3307
+msgid "_Observed moves:"
+msgstr "_Megtekintett lépések:"
+
+#: glade/PyChess.glade:3335
+msgid "Observed _ends:"
+msgstr "Megtekintett _játszmavégződések:"
+
+#: glade/PyChess.glade:3471
+msgid "<b>Play Sound When...</b>"
+msgstr "<b>Hang lejátszása ekkor...</b>"
+
+#: glade/PyChess.glade:3509
+msgid "Sounds"
+msgstr "Hangok"
+
+#: glade/PyChess.glade:5780
+msgid "Player Rating"
+msgstr "Értékszám"
+
+#: glade/PyChess.glade:5805
+msgid ""
+"While you fight different local chessengines, PyChess keeps track of your "
+"results."
+msgstr "Mialatt különféle sakkmotorokkal játszol, a PyChess megjegyzi az eredményeidet."
+
+#: lib/pychess/Main.py:35
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr "<big><b>A(z)  %s sakkmotor leállt</b></big>"
+msgstr "<big><b>A(z) %s sakkmotor lehalt.</b></big>"
 
-#: lib/pychess/Main.py:23
+#: lib/pychess/Main.py:36
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -276,211 +666,761 @@ msgstr ""
 "Magpróbálhatsz indítani egy új játszmát ezzel a sakkmotorral, vagy "
 "kipróbálhatsz egy másikat."
 
-#: lib/pychess/Main.py:244
+#: lib/pychess/Main.py:166 lib/pychess/Main.py:167
+msgid "Loaded game"
+msgstr "Betöltött játszma"
+
+#: lib/pychess/Main.py:172
+msgid "Saved game"
+msgstr "Mentett játszma"
+
+#: lib/pychess/Main.py:177
+msgid "The game ended in a draw"
+msgstr "A játék döntetlennel ért véget"
+
+#: lib/pychess/Main.py:178
+msgid "White player won the game"
+msgstr "Világos győzött"
+
+#: lib/pychess/Main.py:179
+msgid "Black player won the game"
+msgstr "Sötét győzött"
+
+#: lib/pychess/Main.py:180
+msgid "The game has been killed"
+msgstr "A játszmát lelőtték"
+
+#: lib/pychess/Main.py:181
+msgid "The game has been adjourned"
+msgstr "A játszmát elhalasztották"
+
+#: lib/pychess/Main.py:182
+msgid "The game has been aborted"
+msgstr "A játszmát megszakították"
+
+#: lib/pychess/Main.py:185
+msgid "caused by insufficient material"
+msgstr "kevés anyag miatt"
+
+#: lib/pychess/Main.py:186
+msgid "as the same position was repeated three times in a row"
+msgstr "háromszori állásismétlés miatt"
+
+#: lib/pychess/Main.py:187
+msgid "as the last 50 moves brought nothing new"
+msgstr "50 lépéses szabály miatt"
+
+#: lib/pychess/Main.py:188
+msgid "as both players ran out of time"
+msgstr "mindkét fél időtúllépése miatt"
+
+#: lib/pychess/Main.py:189
+msgid "because of stalemate"
+msgstr "patt miatt"
+
+#: lib/pychess/Main.py:190 lib/pychess/Main.py:201 lib/pychess/Main.py:205
+msgid "as the players agreed to"
+msgstr "a játékosok megegyezése miatt"
+
+#: lib/pychess/Main.py:191 lib/pychess/Main.py:198 lib/pychess/Main.py:204
+msgid "as decided by an admin"
+msgstr "egy adminisztrátor döntése miatt"
+
+#: lib/pychess/Main.py:192
+msgid "as game exceed the max length"
+msgstr "túl hosszú játszma miatt"
+
+#: lib/pychess/Main.py:194
+msgid "as opponent resigned"
+msgstr "az ellenfél feladása miatt"
+
+#: lib/pychess/Main.py:195
+msgid "as opponent ran out of time"
+msgstr "az ellenfél időtúllépése miatt"
+
+#: lib/pychess/Main.py:196
+msgid "on a mate"
+msgstr "mattal"
+
+#: lib/pychess/Main.py:197
+msgid "as opponent disconnected"
+msgstr "az ellenféllel kapcsolatának megszakadása miatt"
+
+#: lib/pychess/Main.py:200
+msgid "as a player lost connection"
+msgstr "egy játékos kapcsolatának megszakadása miatt"
+
+#: lib/pychess/Main.py:202 lib/pychess/Main.py:208
+msgid "as the server was shut down"
+msgstr "a szerver leállása miatt"
+
+# In FICS admins have right to decide how a game ends.
+# In the sentence (The game has been aborted) "by courtesy by a player"
+#: lib/pychess/Main.py:206
+msgid "by courtesy by a player"
+msgstr "a játékos engedélyével"
+
+#: lib/pychess/Main.py:207
+msgid "in the early phase of the game"
+msgstr "a játszma kezdeti szakaszában"
+
+#: lib/pychess/Main.py:210
+msgid "as the white engine died"
+msgstr "a világos sakkmotor leálláas miatt"
+
+#: lib/pychess/Main.py:211
+msgid "as the black engine died"
+msgstr "a sötét sakkmotor leálláas miatt"
+
+#: lib/pychess/Main.py:212
+msgid "by no known reason"
+msgstr "ismeretlen ok miatt"
+
+#: lib/pychess/Main.py:231
+msgid "You sent a draw offer"
+msgstr "Döntetlen ajánlat elküldve."
+
+#: lib/pychess/Main.py:366
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr "http://en.wikipedia.org/wiki/Chess"
 
-#: lib/pychess/Main.py:247
+#: lib/pychess/Main.py:369
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr "http://en.wikipedia.org/wiki/Rules_of_chess"
 
-#: lib/pychess/Players/Human.py:59
-msgid "<big><b>You've got a draw offer. Accept?</b></big>"
-msgstr "<big><b>Döntetlent ajánlatot kaptál. Elfogadod?</b></big>"
+#: lib/pychess/ic/icLogOn.py:82
+msgid "Connection Error"
+msgstr "Kapcsolódási hiba"
 
-#: lib/pychess/Players/Human.py:60
+#: lib/pychess/ic/icLogOn.py:85
+msgid "Log on Error"
+msgstr "Bejelebntkezési hiba"
+
+#: lib/pychess/ic/icLogOn.py:88
+msgid "Connection was broken"
+msgstr "A kapcsolat megszakadt"
+
+#: lib/pychess/ic/icLogOn.py:91
+msgid "Connection was closed"
+msgstr "A kapcsolatot lezárták"
+
+#: lib/pychess/ic/icLounge.py:136
+msgid "Email"
+msgstr "E-mail"
+
+# In context: Spent %s online in total
+#: lib/pychess/ic/icLounge.py:141
+msgid "Spent"
+msgstr "Eltelt"
+
+# In context: Spent %s online in total
+#: lib/pychess/ic/icLounge.py:162
+msgid "online in total"
+msgstr "összesen a kapcsolatban"
+
+#: lib/pychess/ic/icLounge.py:166
+msgid "Ping"
+msgstr "Ping"
+
+#: lib/pychess/ic/icLounge.py:167
+msgid "Connecting"
+msgstr "Kapcsolódás"
+
+#: lib/pychess/ic/icLounge.py:174 lib/pychess/Savers/epd.py:134
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+# Please preserve \n's
+#: lib/pychess/ic/icLounge.py:185
+msgid ""
+"You are currently logged in as a guest.\n"
+"A guest is not able to play rated games, and thus the offer of games is be "
+"smaller."
+msgstr ""
+"Jelenleg vendégként vagy bejelentkezve.\n"
+"A vendégek nem játszhatnak értékelt\n"
+"játszmákat, ezért a választható játszmák\n"
+"száma kevesebb lesz."
+
+#: lib/pychess/ic/icLounge.py:191 lib/pychess/ic/icLounge.py:196
+#: lib/pychess/ic/icLounge.py:199
+msgid "Register now"
+msgstr "Regisztrálj most!"
+
+#: lib/pychess/ic/icLounge.py:404 lib/pychess/widgets/Background.py:314
+msgid "Name"
+msgstr "Név"
+
+#: lib/pychess/ic/icLounge.py:404 lib/pychess/ic/icLounge.py:414
+#: lib/pychess/ic/icLounge.py:517 lib/pychess/ic/icLounge.py:569
+msgid "Rated"
+msgstr "Értékelt"
+
+#: lib/pychess/ic/icLounge.py:405
+msgid "Type"
+msgstr "Típus"
+
+#: lib/pychess/ic/icLounge.py:405
+msgid "Clock"
+msgstr "Idő"
+
+#: lib/pychess/ic/icLounge.py:414 lib/pychess/ic/icLounge.py:517
+#: lib/pychess/ic/icLounge.py:569
+msgid "Unrated"
+msgstr "Nem értékelt"
+
+#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:522 lib/pychess/ic/icLounge.py:535
+msgid "Active Seek"
+msgstr "Aktív keresés"
+
+#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:522 lib/pychess/ic/icLounge.py:535
+msgid "Active Seeks"
+msgstr "Aktív keresések"
+
+# Seperator in tabs between player names
+#: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:747
+#: lib/pychess/widgets/ionest.py:435
+msgid "vs"
+msgstr "-"
+
+# In context "1 Player Ready"
+#: lib/pychess/ic/icLounge.py:650 lib/pychess/ic/icLounge.py:665
+msgid "Player Ready"
+msgstr "Készen álló játékos"
+
+# In context "x Players Ready" where x > 1
+#: lib/pychess/ic/icLounge.py:650 lib/pychess/ic/icLounge.py:665
+msgid "Players Ready"
+msgstr "Készen álló játékosok"
+
+#: lib/pychess/ic/icLounge.py:698
+msgid "White Player"
+msgstr "Világos"
+
+#: lib/pychess/ic/icLounge.py:698
+msgid "Black Player"
+msgstr "Sötét"
+
+#: lib/pychess/ic/icLounge.py:699
+msgid "Game Type"
+msgstr "Játszma típusa"
+
+#: lib/pychess/ic/icLounge.py:719 lib/pychess/ic/icLounge.py:734
+msgid "Game Running"
+msgstr "játszma"
+
+#: lib/pychess/ic/icLounge.py:719 lib/pychess/ic/icLounge.py:734
+msgid "Games Running"
+msgstr "játszma"
+
+#: lib/pychess/ic/icLounge.py:820
+msgid "Easy"
+msgstr "Kezdő"
+
+#: lib/pychess/ic/icLounge.py:821
+msgid "Advanced"
+msgstr "Haladó"
+
+#: lib/pychess/ic/icLounge.py:822 lib/pychess/widgets/ionest.py:302
+msgid "Expert"
+msgstr "Profi"
+
+# In context: Your color: "Don't Care"
+#: lib/pychess/ic/icLounge.py:831
+msgid "Don't Care"
+msgstr "Mindegy"
+
+#: lib/pychess/ic/icLounge.py:832
+msgid "Want White"
+msgstr "Világos"
+
+#: lib/pychess/ic/icLounge.py:833
+msgid "Want Black"
+msgstr "Sötét"
+
+# Chess clock setting
+#: lib/pychess/ic/icLounge.py:842
+msgid "Normal"
+msgstr "Rapid"
+
+# Chess clock setting
+#: lib/pychess/ic/icLounge.py:843
+msgid "Blitz"
+msgstr "Schnell"
+
+# Chess clock setting
+#: lib/pychess/ic/icLounge.py:844
+msgid "Lightning"
+msgstr "Villám"
+
+# Combo item to create a new custom time setting
+#: lib/pychess/ic/icLounge.py:845
+msgid "New Custom"
+msgstr "Új egyéni"
+
+# Label for a custom time setting
+#: lib/pychess/ic/icLounge.py:870
+msgid "Custom"
+msgstr "Egyéni"
+
+#: lib/pychess/ic/telnet.py:127 lib/pychess/ic/telnet.py:140
+msgid "The connection was broken - got \"end of file\" message"
+msgstr "A kapcsolat megszakadt - \"fájl vége\" üzenet érkezett."
+
+#: lib/pychess/ic/telnet.py:142
+msgid "Names can only consist of lower and upper case letters"
+msgstr "A nevekben csak kis és nagy betűk lehetnek."
+
+#: lib/pychess/ic/telnet.py:144
+#, python-format
+msgid "'%s' is not a registered name"
+msgstr "A(z) '%s' nem egy regisztrált név."
+
+#: lib/pychess/ic/telnet.py:157
+msgid ""
+"The entered password was invalid.\n"
+"\n"
+msgstr ""
+"Érvénytelen jelszó.\n"
+"\n"
+
+#: lib/pychess/ic/telnet.py:158
+msgid ""
+"If you have forgot your password, try logging in as a guest and open chat on "
+"channel 4. Write \"I've forgotten my password\" to get help.\n"
+"\n"
+msgstr ""
+"Ha elfelejtetted a jelszavadat, akkor próbálj meg bejelentkezni guest-ként, majd nyiss egy csevegést a 4-es csatornán. Írd be ezt: I'v forgotten my password.\n"
+"\n"
+
+#: lib/pychess/ic/telnet.py:159
+msgid "If that is by some reason not possible, please email: support@freechess.org"
+msgstr "Ha ez valamilyen ok miatt nem sikerülne, írj ide: support@freechess.org"
+
+#: lib/pychess/Players/Human.py:13
+msgid "You've got a draw offer. Accept?"
+msgstr "Döntetlent ajánlatot kaptál. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:14
 msgid ""
 "Your opponent has offered you a draw. If you accept it the game will end "
 "with score 1/2 - 1/2."
 msgstr "Az ellenfeled döntetlent ajánlott."
 
-#: lib/pychess/Savers/epd.py:10
+#: lib/pychess/Players/Human.py:16
+msgid "You've got an abort offer. Accept?"
+msgstr "Megszakítás ajánlatot kaptál. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:17
+msgid ""
+"Your opponent has offered you to abort the game. If you accept, the game "
+"will end with no rating change."
+msgstr "Az ellenfeled a játszma megszakítását ajánlja, ha elfogadod, az értékszámod nem változik."
+
+#: lib/pychess/Players/Human.py:19
+msgid "You've got an adjourn offer. Accept?"
+msgstr "Elhalasztás ajánlatot kaptál. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:20
+msgid ""
+"Your opponent has offered you to adjourn the game. If you accept, the game "
+"will adjourned, and you can later resume it (If your opponent is online and "
+"willing)."
+msgstr "Az ellenfeled a játszma elhalasztását ajánlotta."
+
+#: lib/pychess/Players/Human.py:22
+msgid "Your opponent wants to undo. Accept?"
+msgstr "Az ellenfeled szeretné visszavenni az utolsó lépését. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:23
+#, python-format
+msgid ""
+"Your opponent wants to undo back to halfmove %s.. If you accept, the game "
+"will continue from the earlier position."
+msgstr "Az ellenfeled szeretné visszavenni az utolsó %s lépését."
+
+#: lib/pychess/Players/Human.py:25
+msgid "Your opponent offers you a pause. Accept?"
+msgstr "Az ellenfeled szünetet ajánlott. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:26
+msgid ""
+"Your opponent wants to make a break. If you accept the game clock will be "
+"paused until on of you accept a resume offer"
+msgstr "Az ellenfeled szünetet ajánlott."
+
+#: lib/pychess/Players/Human.py:28
+msgid "Your opponent wants to resume. Accept?"
+msgstr "Az ellenfeled folytatni szeretné. Elfogadod?"
+
+#: lib/pychess/Players/Human.py:29
+msgid ""
+"Your opponent wants to resume the game. If you accept, the game clock will "
+"start counting down from where it was left."
+msgstr "Az ellenfeled folytatni szeretné."
+
+#: lib/pychess/Players/Human.py:33
+msgid "the resignation"
+msgstr "a feladás"
+
+#: lib/pychess/Players/Human.py:34
+msgid "the flag call"
+msgstr "az időtúllépés bejelentés"
+
+#: lib/pychess/Players/Human.py:35
+msgid "the draw offer"
+msgstr "a döntetlen ajánlat"
+
+#: lib/pychess/Players/Human.py:36
+msgid "the abort offer"
+msgstr "a megszakítás ajánlat"
+
+#: lib/pychess/Players/Human.py:37
+msgid "the adjourn offer"
+msgstr "az elhalasztás ajánlat"
+
+#: lib/pychess/Players/Human.py:38
+msgid "the pause offer"
+msgstr "a szünet ajánlat"
+
+#: lib/pychess/Players/Human.py:39
+msgid "the resume offer"
+msgstr "a folytatás ajánlat"
+
+#: lib/pychess/Players/Human.py:40
+msgid "the offer to swith sides"
+msgstr "a színcsere ajánlat"
+
+#: lib/pychess/Players/Human.py:41
+msgid "the takeback offer"
+msgstr "a lépés visszavétel ajánlat"
+
+#: lib/pychess/Players/Human.py:46
+msgid "The game hasn't got a clock."
+msgstr "A játszma nem időkontroll alatt folyik."
+
+#: lib/pychess/Players/Human.py:48
+msgid "Your opponent is not out of time."
+msgstr "Az ellenfeled nem lépte még túl a gondolkodási időt."
+
+#: lib/pychess/Players/Human.py:50
+msgid "The clock hasn't yet been started."
+msgstr "Az óra még nem indult el."
+
+#: lib/pychess/Players/Human.py:52
+msgid "You can't switch color during the game."
+msgstr "Játszma közben nem lehet színt váltani."
+
+#: lib/pychess/Players/Human.py:54
+msgid "You have tried to redo to many moves."
+msgstr "Túl sok lépést próbáltál visszavonni."
+
+# Some offer was decline by your opponent
+#: lib/pychess/Players/Human.py:138
+#, python-format
+msgid "%s was declined by your opponent"
+msgstr "%s elutasítva az ellenfél által"
+
+#: lib/pychess/Players/Human.py:139
+msgid "You can try to send the offer to your opponent later in the game again."
+msgstr "Később újra megteheted az ajánlhatodat."
+
+# Some offer sent to you was withdrawn by your opponent
+#: lib/pychess/Players/Human.py:145
+#, python-format
+msgid "%s was withdrawn by your opponent"
+msgstr "%s visszavonva az ellenfél által"
+
+#: lib/pychess/Players/Human.py:146
+msgid "Your opponent seams to have changed his or her mind."
+msgstr "Úgy tűnik az ellenfeled meggondolta magát."
+
+#: lib/pychess/Players/Human.py:154
+#, python-format
+msgid "Unable to accept %s"
+msgstr "Nem elfogadható a(z) %s"
+
+#: lib/pychess/Players/Human.py:155
+#, python-format
+msgid ""
+"PyChess was unable to get the %s offer accepted. Probably because it has "
+"been withdrawn."
+msgstr "A PyChess nem tudja elfogadni a %s ajánlatot. Valószínűleg azt már visszavonták."
+
+# In context: The resignation "returns an error"
+#: lib/pychess/Players/Human.py:162
+#, python-format
+msgid "%s returns an error"
+msgstr "%s hibát adott vissza"
+
+#: lib/pychess/Players/Human.py:179
+msgid "Your opponent asks you to hurry!"
+msgstr "Az ellenfeled szeretné, hogy egy kicsit gyorsabban lépj!"
+
+#: lib/pychess/Players/Human.py:180
+msgid ""
+"Generally this means nothing, as the game is timebased, but if you want to "
+"please your opponent, perhaps you should get going."
+msgstr "Általában ez nem jelent semmi különöset, mivel a játszma időkontrol alatt folyik, de ha kedves akarsz lenni hozzá, léphetsz gyorsabban is."
+
+#: lib/pychess/Savers/epd.py:8
 msgid "Chess Position"
 msgstr "Állás"
 
-#: lib/pychess/Savers/pgn.py:8
+#: lib/pychess/Savers/fen.py:7
+msgid "Simple Chess Position"
+msgstr "Egyszerű állás"
+
+#: lib/pychess/Savers/pgn.py:7
 msgid "Chess Game"
 msgstr "Sakkjátszma"
 
-#: lib/pychess/Utils/Game.py:40
+# Chess pawn letter
+#: lib/pychess/Utils/const.py:83
+msgid "P"
+msgstr " "
+
+# Chess knight letter
+#: lib/pychess/Utils/const.py:83
+msgid "N"
+msgstr "H"
+
+# Chess bishop letter
+#: lib/pychess/Utils/const.py:83
+msgid "B"
+msgstr "F"
+
+# Chess rook letter
+#: lib/pychess/Utils/const.py:83
+msgid "R"
+msgstr "B"
+
+# Chess queen letter
+#: lib/pychess/Utils/const.py:83
+msgid "Q"
+msgstr "V"
+
+# Chess king letter
+#: lib/pychess/Utils/const.py:83
+msgid "K"
+msgstr "K"
+
+#: lib/pychess/Utils/GameModel.py:46
 msgid "Local Event"
 msgstr "Helyi esemény"
 
-#: lib/pychess/Utils/Game.py:42
-msgid "Local site"
+#: lib/pychess/Utils/GameModel.py:47
+msgid "Local Site"
 msgstr "Helyben"
 
-#: lib/pychess/Utils/Game.py:167
-msgid "The game ended in a draw"
-msgstr "A játék döntetlennel ért véget"
+#: lib/pychess/widgets/Background.py:230
+msgid "Your Color"
+msgstr "Szín"
 
-#: lib/pychess/Utils/Game.py:168
-msgid "White player won the game"
-msgstr "Világos győzött"
-
-#: lib/pychess/Utils/Game.py:169
-msgid "Black player won the game"
-msgstr "Sötét győzött"
-
-#: lib/pychess/Utils/Game.py:172
-msgid "caused by insufficient material"
-msgstr "kevés anyag miatt"
-
-#: lib/pychess/Utils/Game.py:173
-msgid "as the same position was repeated three times in a row"
-msgstr "háromszori állásismétlés miatt"
-
-#: lib/pychess/Utils/Game.py:174
-msgid "as the last 50 moves brought nothing new"
-msgstr "50 lépéses szabály miatt"
-
-#: lib/pychess/Utils/Game.py:175
-msgid "because of stalemate"
-msgstr "patt miatt"
-
-#: lib/pychess/Utils/Game.py:176
-msgid "as the players agreed to"
-msgstr "a játékosok megegyezése miatt"
-
-#: lib/pychess/Utils/Game.py:177
-msgid "as opponent resigned"
-msgstr "mivel az ellenfél feladta"
-
-#: lib/pychess/Utils/Game.py:178
-msgid "as opponent ran out of time"
-msgstr "az ellenfél időtúllépése miatt"
-
-#: lib/pychess/Utils/Game.py:179
-msgid "on a mate"
-msgstr "mattal"
-
-#: lib/pychess/Utils/Game.py:194
-msgid "Draw offer has been sent"
-msgstr "Döntetlenajánlat elküldve"
-
-#: lib/pychess/Utils/Game.py:200
-msgid "Couldn't call flag in game with no timecontrols"
-msgstr "Nem lehet időtúllépést bejelenteni, mert nincs idő beállítva"
-
-#: lib/pychess/Utils/Game.py:207
-msgid "Couldn't call flag on player not out of time"
-msgstr "Még nem lehet időtúllépést bejelenteni"
-
-#: lib/pychess/widgets/ChessClock.py:15
+#: lib/pychess/widgets/Background.py:235 lib/pychess/widgets/ChessClock.py:18
 msgid "White"
 msgstr "Világos"
 
-#: lib/pychess/widgets/ChessClock.py:15
+#: lib/pychess/widgets/Background.py:236 lib/pychess/widgets/ChessClock.py:18
 msgid "Black"
 msgstr "Sötét"
 
-#: lib/pychess/widgets/ionest.py:47
+#: lib/pychess/widgets/Background.py:241
+msgid "Opponent"
+msgstr "Ellenfél"
+
+#: lib/pychess/widgets/Background.py:254
+msgid "Difficulty"
+msgstr "Erősség"
+
+#: lib/pychess/widgets/Background.py:272
+msgid "Start Game"
+msgstr "Játszma indítása"
+
+#: lib/pychess/widgets/Background.py:325
+msgid "Password"
+msgstr "Jelszó"
+
+#: lib/pychess/widgets/Background.py:335
+msgid "Connect to FICS"
+msgstr "Kapcsolódás a FICS-hez"
+
+#: lib/pychess/widgets/ionest.py:52
+msgid "Save Game"
+msgstr "Játszma mentése"
+
+#: lib/pychess/widgets/ionest.py:62
 msgid "All Files"
 msgstr "Minden fájl"
 
-#: lib/pychess/widgets/ionest.py:50
+#: lib/pychess/widgets/ionest.py:65
 msgid "Detect type automatically"
 msgstr "Automatikus típusdetektálás"
 
-#: lib/pychess/widgets/ionest.py:53
+#: lib/pychess/widgets/ionest.py:68
 msgid "All Chess Files"
-msgstr "Minden sakk fájl"
+msgstr "Minden sakkfájl"
 
-#: lib/pychess/widgets/ionest.py:115
+#: lib/pychess/widgets/ionest.py:300
 msgid "Beginner"
 msgstr "Kezdő"
 
-#: lib/pychess/widgets/ionest.py:116
+#: lib/pychess/widgets/ionest.py:301
 msgid "Intermediate"
 msgstr "Haladó"
 
-#: lib/pychess/widgets/ionest.py:117
-msgid "Expert"
-msgstr "Profi"
-
-#: lib/pychess/widgets/ionest.py:131
+#: lib/pychess/widgets/ionest.py:313
 msgid "Human Being"
 msgstr "Ember"
 
-#: lib/pychess/widgets/ionest.py:312
+#: lib/pychess/widgets/ionest.py:449
+#: lib/pychess/widgets/preferencesDialog.py:40
+msgid "Guest"
+msgstr "Vendég"
+
+#: lib/pychess/widgets/ionest.py:544
+msgid "Set up Game"
+msgstr "Pozíció felállítása"
+
+#: lib/pychess/widgets/ionest.py:557
+msgid "Enter Game"
+msgstr "Játszma rögzítése"
+
+#: lib/pychess/widgets/ionest.py:608
 #, python-format
-msgid "<big><b>Unknown filetype '%s'</b></big>"
+msgid "<big><b>Unknown file type '%s'</b></big>"
 msgstr "<big><b>Ismeretlen fájltípus '%s'</b></big>"
 
-#: lib/pychess/widgets/ionest.py:313
+#: lib/pychess/widgets/ionest.py:609
 #, python-format
-msgid "Wasn't able to save '%s' as pychess doesn't know the format '%s'."
-msgstr "Nem lehet menteni '%s' -be, mert a pychess nem ismeri a '%s' formátumot."
+msgid "Was unable to save '%s' as PyChess doesn't know the format '%s'."
+msgstr "Nem lehet menteni '%s' -be, mert a PyChess nem ismeri a '%s' formátumot."
 
-#: lib/pychess/widgets/ionest.py:326
+#: lib/pychess/widgets/ionest.py:622
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
 msgstr "<big><b>Nem lehet menteni a '%s' fájlt</b></big>"
 
-#: lib/pychess/widgets/ionest.py:328
+#: lib/pychess/widgets/ionest.py:624
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr ""
-"Nincs elég jogosultság a fájl mentéséhez.\n"
-"Győződön meg róla, hogy jó útvonalat adott meg, és próbálja újra."
+"Nincs elég jogosultságod a fájl mentéséhez.\n"
+"Győződj meg róla, hogy jó útvonalat adtál meg, és próbáld újra."
 
-#: lib/pychess/widgets/ionest.py:336
+#: lib/pychess/widgets/ionest.py:632
 msgid "_Replace"
-msgstr "_Csere"
+msgstr "_Cserél"
 
-#: lib/pychess/widgets/ionest.py:340
+#: lib/pychess/widgets/ionest.py:636
 msgid "File exists"
 msgstr "A fájl már létezik"
 
-#: lib/pychess/widgets/ionest.py:342
+#: lib/pychess/widgets/ionest.py:638
 #, python-format
 msgid ""
-"<big><b>A file named '%s' alredy exists. Would you like to replace it?</b></"
+"<big><b>A file named '%s' already exists. Would you like to replace it?</b></"
 "big>"
-msgstr ""
-"<big><b>A '%s' fájl már létezik. Fölül akarja írni?</b></"
-"big>"
+msgstr "<big><b>A '%s' fájl már létezik. Fölül akarja írni?</b></big>"
 
-#: lib/pychess/widgets/ionest.py:343
+#: lib/pychess/widgets/ionest.py:639
 #, python-format
 msgid ""
-"The file alredy exists in '%s'. If you replace it, its content will be "
+"The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr "A(z) '%s' fájl már létezik. Ha lecseréli, a tartalma felülíródik."
 
-#: lib/pychess/widgets/ionest.py:368
+#: lib/pychess/widgets/ionest.py:653
+msgid "Could not save the file"
+msgstr "Nem lehet menteni a fájlt."
+
+#: lib/pychess/widgets/ionest.py:654
+msgid "<big><b>PyChess was not able to save the game</b></big>"
+msgstr "<big><b>A PyChess nem tudta menteni a játszmát.</b></big>"
+
+#: lib/pychess/widgets/ionest.py:655
+#, python-format
+msgid "The error was: %s"
+msgstr "A hiba: %s"
+
+#: lib/pychess/widgets/ionest.py:675 lib/pychess/widgets/ionest.py:705
+msgid "Close _without Saving"
+msgstr "Bezárás mentés nélkül"
+
+#: lib/pychess/widgets/ionest.py:681
 msgid "<b><big>Save the current game before you close it?</big></b>"
 msgstr "<b><big>Akarod menteni a játszmát mielőtt bezárod?</big></b>"
 
-#: lib/pychess/widgets/ionest.py:370
+#: lib/pychess/widgets/ionest.py:683
 msgid ""
 "It is not possible later to continue the game,\n"
 "if do don't save it."
-msgstr ""
-"A játszmát nem lehet később folytatni,\n"
-"ha nem mented el."
+msgstr "A játszmát nem tudod később folytatni ha nem mented el."
 
-#: lib/pychess/widgets/ionest.py:387
+#: lib/pychess/widgets/ionest.py:709
+msgid "<big><b>There is 1 game with unsaved changes:</b></big>"
+msgstr "<big><b>1 játszma még nincs mentve:</b></big>"
+
+#: lib/pychess/widgets/ionest.py:712
 #, python-format
 msgid "<big><b>There are %d games with unsaved changes:</b></big>"
-msgstr "<big><b> %d játszma nincs mentve:</b></big>"
+msgstr "<big><b> %d játszma még nincs mentve:</b></big>"
 
-#: sidepanel/bookPanel.py:7
+#: lib/pychess/widgets/LogDialog.py:30
+msgid "PyChess - Log Viewer"
+msgstr "PyChess - Napló"
+
+#: lib/pychess/widgets/preferencesDialog.py:146
+msgid "Locate Engine"
+msgstr "Helyi sakkmotor"
+
+#: lib/pychess/widgets/preferencesDialog.py:223
+msgid "Open Sound File"
+msgstr "Hangfájl megnyitása"
+
+# When an event should emit any sound
+#: lib/pychess/widgets/preferencesDialog.py:240
+msgid "No sound"
+msgstr "Nincs hang"
+
+#: lib/pychess/widgets/preferencesDialog.py:241
+msgid "Beep"
+msgstr "Csipogás"
+
+#: lib/pychess/widgets/preferencesDialog.py:242
+msgid "Select sound file..."
+msgstr "Hangfájl kiválasztása"
+
+#: sidepanel/bookPanel.py:9
 msgid "Opening Book"
 msgstr "Megnyitástár"
 
-#: sidepanel/bookPanel.py:50
+#: sidepanel/bookPanel.py:52
 msgid ""
 "In this position,\n"
 "there is no book move."
-msgstr "Ehhez az álláshoz nincsen lépés a megnyitástárban."
+msgstr ""
+"Ehhez az álláshoz nincs\n"
+"lépés a megnyitástárban."
 
-#: sidepanel/historyPanel.py:11
+#: sidepanel/commentPanel.py:13
+msgid "Comments"
+msgstr "Megjegyzések"
+
+# In context: White moves a knight to e4
+#: sidepanel/commentPanel.py:227
+#, python-format
+msgid "%s moves a %s to %s"
+msgstr "%s lép a %s-el %s-re"
+
+#: sidepanel/historyPanel.py:13
 msgid "Move History"
 msgstr "Játszmalap"
 
-#: sidepanel/scorePanel.py:94
+#: sidepanel/scorePanel.py:131
 msgid "Score"
 msgstr "Érték"
 
