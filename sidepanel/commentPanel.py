@@ -51,7 +51,7 @@ class Sidepanel:
             		vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
-        self.store.append(["Initial position"])
+        self.store.append([_("Initial position")])
         
         self.frozen = False
         
