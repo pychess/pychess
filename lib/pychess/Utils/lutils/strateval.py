@@ -27,13 +27,13 @@ from validator import validateMove
 
 def final_status (model, phase):
     if model.status == DRAW:
-        yield "draws"
+        yield _("draws")
     elif model.status in (WHITEWON,BLACKWON):
-        yield "mates"
+        yield _("mates")
 
 def moves_check (model, phase):
     if model.boards[-1].board.isChecked():
-        yield "puts opponent in check"
+        yield _("puts opponent in check")
 
 def moves_safety (model, phase):
     
@@ -102,10 +102,10 @@ def prefix_type (model, phase):
     
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        yield "promotes a Pawn to a %s" % reprPiece[flag-3]
+        yield _("promotes a Pawn to a %s" % reprPiece[flag-3])
                     
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
-        yield "castles"
+        yield _("castles")
 
 def attack_type (model, phase):
     
@@ -126,15 +126,15 @@ def attack_type (model, phase):
     if oldboard.arBoard[tcord] != EMPTY:
         if oldmove and oldboard3.arBoard[TCORD(oldmove)] != EMPTY and \
                 TCORD(oldmove) == tcord:
-            yield "takes back material"
+            yield _("takes back material")
         else:
             see = staticExchangeEvaluate(oldboard, move)
             if see == 0:
-                yield "exchanges material"
+                yield _("exchanges material")
             elif see > 0:
-                yield "captures material"
+                yield _("captures material")
             elif see < 0:
-                yield "sacrifies material"
+                yield _("sacrifies material")
     
     # ------------------------------------------------------------------------ #
     # Test if we threats something, or at least puts more preassure on it      #
@@ -178,11 +178,11 @@ def attack_type (model, phase):
         see = staticExchangeEvaluate(board, easiestAttack)
         if see > 0:
             # If a new winning capture has been created
-            yield "threatens to win material %s"%toSAN(board, easiestAttack)
+            yield _("threatens to win material %s"%toSAN(board, easiestAttack))
         elif bitLength(attacks) > 1:
             # Even though we might not yet be strong enough, we might still
             # have strengthened another friendly attack
-            yield "increases the pressure on %s" % reprCord[TCORD(ncap)]
+            yield _("increases the pressure on %s" % reprCord[TCORD(ncap)])
     board.setColor(1-board.color)
     
     # ------------------------------------------------------------------------ #
@@ -226,7 +226,7 @@ def attack_type (model, phase):
         # if newsee <= see: continue
         
         if v:
-            yield "defends %s" % reprCord[TCORD(ncap)]
+            yield _("defends %s" % reprCord[TCORD(ncap)])
             
     PIECE_VALUES[BISHOP] = bishopBackup
     
