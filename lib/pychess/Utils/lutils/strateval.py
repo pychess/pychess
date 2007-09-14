@@ -102,7 +102,7 @@ def prefix_type (model, phase):
     
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        yield _("promotes a Pawn to a %s" % reprPiece[flag-3])
+        yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
                     
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
         yield _("castles")
@@ -178,11 +178,11 @@ def attack_type (model, phase):
         see = staticExchangeEvaluate(board, easiestAttack)
         if see > 0:
             # If a new winning capture has been created
-            yield _("threatens to win material %s"%toSAN(board, easiestAttack))
+            yield _("threatens to win material %s") % toSAN(board,easiestAttack)
         elif bitLength(attacks) > 1:
             # Even though we might not yet be strong enough, we might still
             # have strengthened another friendly attack
-            yield _("increases the pressure on %s" % reprCord[TCORD(ncap)])
+            yield _("increases the pressure on %s") % reprCord[TCORD(ncap)]
     board.setColor(1-board.color)
     
     # ------------------------------------------------------------------------ #
@@ -226,7 +226,7 @@ def attack_type (model, phase):
         # if newsee <= see: continue
         
         if v:
-            yield _("defends %s" % reprCord[TCORD(ncap)])
+            yield _("defends %s") % reprCord[TCORD(ncap)]
             
     PIECE_VALUES[BISHOP] = bishopBackup
     
