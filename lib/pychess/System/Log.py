@@ -2,7 +2,9 @@ import os, sys, time, gobject
 from Queue import Queue
 from GtkWorker import EmitPublisher, Publisher
 
-logfile = "~/.pychess_%s.log" % time.strftime("%Y-%m-%d_%H-%M-%S")
+MAXFILES = 10
+DEBUG, LOG, WARNING, ERROR = range(4)
+labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
 
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -10,15 +12,12 @@ class LogPipe:
         self.flag = flag
     
     def write (self, data):
-        log.debug (data, self.flag)
         try:
             self.to.write(data)
         except IOError:
             log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
+        log.debug (data, self.flag)
 
-MAXFILES = 10
-DEBUG, LOG, WARNING, ERROR = range(4)
-labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
 
 class Log (gobject.GObject):
     
@@ -29,11 +28,7 @@ class Log (gobject.GObject):
     def __init__ (self, logpath):
         gobject.GObject.__init__(self)
         
-        oldlogs = [l for l in os.listdir(os.environ["HOME"]) if l.startswith(".pychess_")]
-        if len(oldlogs) > MAXFILES:
-            oldlogs.sort()
-            os.remove(os.path.join(os.environ["HOME"], oldlogs[0]))
-        self.file = open (logpath, "w")
+        self.file = open(logpath, "w")
         
         # We store everything in this list, so that the LogDialog, which is
         # imported a little later, will have all data ever given to Log.
@@ -75,7 +70,17 @@ class Log (gobject.GObject):
     def error (self, message, task="Default"):
         self._log (task, message, ERROR)
 
-log = Log (os.path.expanduser(logfile))
+
+pychessDir = os.path.join(os.environ["HOME"], ".pychess")
+if not os.path.isdir(pychessDir):
+    os.mkdir(pychessDir)
+oldlogs = [l for l in os.listdir(pychessDir) if l.endswith(".log")]
+if len(oldlogs) >= MAXFILES:
+    oldlogs.sort()
+    os.remove(os.path.join(pychessDir, oldlogs[0]))
+newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+
+log = Log (os.path.join(pychessDir, newName))
 
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")
