@@ -52,7 +52,9 @@ DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 
 # Data
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
+DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
+DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
 
 # Manpages
 DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
