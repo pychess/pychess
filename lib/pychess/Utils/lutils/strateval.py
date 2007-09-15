@@ -88,14 +88,14 @@ def moves_fianchetto (model, phase):
     
     if movingcolor == WHITE:
         if board.castling & W_OO and tcord == G2:
-            yield _("moves bishop into fianchetto: %s" % "g2")
+            yield _("moves bishop into fianchetto: %s") % "g2"
         if board.castling & W_OOO and tcord == B2:
-            yield _("moves bishop into fianchetto: %s" % "b2")
+            yield _("moves bishop into fianchetto: %s") % "b2"
     else:
         if board.castling & B_OO and tcord == G7:
-            yield _("moves bishop into fianchetto: %s" % "g7")
+            yield _("moves bishop into fianchetto: %s") % "g7"
         if board.castling & B_OOO and tcord == B7:
-            yield _("moves bishop into fianchetto: %s" % "b7")
+            yield _("moves bishop into fianchetto: %s") % "b7"
 
 def prefix_type (model, phase):
     flag = FLAG(model.moves[-1].move)
