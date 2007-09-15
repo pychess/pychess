@@ -4,7 +4,7 @@ include sidepanel/*.py sidepanel/*.glade sidepanel/*.pyc sidepanel/*.pyo
 include manpages/pychess.1.gz
 include MANIFEST.in
 include open.db
-include pychess.desktop pychess.svg
+include pychess.desktop pychess.svg pychess.png
 include lang/nl_NL/LC_MESSAGES/pychess.po
 include lang/az/LC_MESSAGES/pychess.po
 include lang/pt_BR/LC_MESSAGES/pychess.po
