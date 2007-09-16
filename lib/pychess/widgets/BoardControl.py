@@ -43,6 +43,9 @@ class BoardControl (gtk.EventBox):
         self.locked = True
     
     def emit_move_signal (self, cord0, cord1):
+        # Help that user won't be able to move twice in cases of lag
+        self.locked = True
+        
         promotion = QUEEN
         if self.view.model.boards[-1][cord0].sign == PAWN and cord1.y in (0,7):
             res = int(self.promotionDialog.run())
@@ -50,6 +53,7 @@ class BoardControl (gtk.EventBox):
             if res == int(gtk.RESPONSE_DELETE_EVENT):
                 # Put back pawn moved be d'n'd
                 self.view.runAnimation(redrawMisc = False)
+                self.locked = False
                 return
             promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
         
