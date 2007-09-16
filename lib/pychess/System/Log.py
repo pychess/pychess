@@ -17,7 +17,10 @@ class LogPipe:
         except IOError:
             log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
         log.debug (data, self.flag)
-
+    
+    def flush (self):
+        self.to.flush()
+        log.debug (".flush()", self.flag)
 
 class Log (gobject.GObject):
     
