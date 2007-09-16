@@ -152,7 +152,9 @@ class GladeHandlers:
         
         # Connect stuff
         gmwidg.widgets["sidepanel"].connect("hide", \
-            lambda w: window["side_panel1"].set_active(False))
+               lambda w: window["side_panel1"].set_active(False))
+        if not window["side_panel1"].get_active():
+            gmwidg.widgets["sidepanel"].hide()
         
         if gamemodel.timemodel != None:
             gmwidg.widgets["ccalign"].show()
