@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import gtk, pango
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
@@ -23,7 +23,7 @@ class Sidepanel:
         self.gamemodel.connect("game_changed", self.game_changed)
         self.gamemodel.connect("moves_undoing", self.moves_undoing)
         
-        widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
+        widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         scrollwin = widgets.get_widget("scrolledwindow")
         scrollwin.unparent()

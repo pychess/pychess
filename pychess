@@ -69,7 +69,7 @@ pygtk.require("2.0")
 import os
 
 try:
-    from pychess.System.prefix import prefix, PREFIX
+    from pychess.System.prefix import addDataPrefix, getDataPrefix
 except ImportError:
     print "ERROR: Could not import modules."
     print "Please try to run pychess as stated in the INSTALL file"
@@ -81,13 +81,13 @@ if "/bin/" in os.environ["PYCHESS_DATA_PATH"]:
     gettext.install("pychess", unicode=1)
     gtk.glade.bindtextdomain("pychess")
 else:
-    gettext.install("pychess", localedir=prefix("lang"), unicode=1)
-    gtk.glade.bindtextdomain("pychess", prefix("lang"))
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+    gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
 
 # This is an ugly hack needed becayse of a pygtk bug:
 # http://bugzilla.gnome.org/show_bug.cgi?id=393483
-os.environ["XDG_DATA_DIRS"] = PREFIX+":/usr/share/"
+os.environ["XDG_DATA_DIRS"] = getDataPrefix()+":/usr/share/"
 
 
 def go():

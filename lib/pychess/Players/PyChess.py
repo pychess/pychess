@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import gettext
-from pychess.System.prefix import prefix
-gettext.install("pychess", localedir=prefix("lang"), unicode=1)
+from pychess.System.prefix import addDataPrefix
+gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 from pychess.Utils.const import *
 
 features = {

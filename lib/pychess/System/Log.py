@@ -1,6 +1,8 @@
 import os, sys, time, gobject
 from Queue import Queue
+
 from GtkWorker import EmitPublisher, Publisher
+from prefix import getHomePrefix, addHomePrefix
 
 MAXFILES = 10
 DEBUG, LOG, WARNING, ERROR = range(4)
@@ -74,16 +76,13 @@ class Log (gobject.GObject):
         self._log (task, message, ERROR)
 
 
-pychessDir = os.path.join(os.environ["HOME"], ".pychess")
-if not os.path.isdir(pychessDir):
-    os.mkdir(pychessDir)
-oldlogs = [l for l in os.listdir(pychessDir) if l.endswith(".log")]
+oldlogs = [l for l in os.listdir(getHomePrefix()) if l.endswith(".log")]
 if len(oldlogs) >= MAXFILES:
     oldlogs.sort()
-    os.remove(os.path.join(pychessDir, oldlogs[0]))
+    os.remove(addHomePrefix(oldlogs[0]))
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 
-log = Log (os.path.join(pychessDir, newName))
+log = Log (addHomePrefix(newName))
 
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")

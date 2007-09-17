@@ -16,7 +16,7 @@ from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System import conf, uistuff
 from pychess.System.protoopen import protosave, isWriteable
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
@@ -28,7 +28,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
 from pychess.widgets.SetupBoard import SetupBoard
 
-widgets = gtk.glade.XML(prefix("glade/newInOut.glade"))
+widgets = gtk.glade.XML(addDataPrefix("glade/newInOut.glade"))
 class WidgetDic:
     def __init__ (self, widgets):
         self.widgets = widgets

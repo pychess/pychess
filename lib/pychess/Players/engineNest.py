@@ -8,7 +8,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addHomePrefix
 from pychess.Utils.const import WHITE, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
@@ -61,7 +61,7 @@ class EngineDiscoverer (GObject, Thread):
     def __init__ (self):
         GObject.__init__(self)
         Thread.__init__(self)
-        self.xmlpath = os.path.join(os.environ["HOME"], ".pychess/engines.xml")
+        self.xmlpath = addHomePrefix("engines.xml")
         
         try:
             self.dom = minidom.parse( self.xmlpath )

@@ -7,7 +7,7 @@ import gtk, pango, gobject
 from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 
 notebook = gtk.Notebook()
 task2book = {}
@@ -28,7 +28,7 @@ def ensureReady ():
     global w
     w = gtk.Window()
     w.set_title(_("PyChess - Log Viewer"))
-    iconpath = prefix("glade/16.png")
+    iconpath = addDataPrefix("glade/16.png")
     w.set_icon(gtk.gdk.pixbuf_new_from_file(iconpath))
     
     notebook.show()

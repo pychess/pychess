@@ -1,10 +1,10 @@
 import gtk.glade, os
 from pychess.System import conf
 from pychess.System.WidgetDic import WidgetDic
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from random import randrange
 
-widgets = WidgetDic(gtk.glade.XML(prefix("glade/tipoftheday.glade")))
+widgets = WidgetDic(gtk.glade.XML(addDataPrefix("glade/tipoftheday.glade")))
 
 widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup", True))
 widgets["checkbutton1"].connect("toggled",

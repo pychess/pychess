@@ -1,23 +1,44 @@
+"""
+This module provides some basic functions for accessing pychess datefiles in
+system or user space
+"""
+
+import os
+from os import mkdir
+from os.path import isdir, join, dirname, abspath
+
 ################################################################################
-# File locating                                                                #
+# Locate files in system space                                                 #
 ################################################################################
 
-from os.path import isdir, join, dirname, abspath
 prefixes = ("/usr/share", "/usr/local/share", "/usr/share/locale",
     "/usr/share/games", "/usr/local/share/games")
-# TODO: Locale is not located in the lang files
-localePrefixes = ("/usr/share/locale", "/usr/local/share/locale")
-PREFIX = ""
 
-if __file__.find("site-packages") >= 0:
-    # We are installed?
+# Test if we are installed on the system, or are being run from tar/svn
+if "site-packages" in __file__:
     for prefix in prefixes:
         if isdir (join (prefix, "pychess")):
-            PREFIX = join (prefix, "pychess")
+            _prefix = join (prefix, "pychess")
             break
-if not PREFIX:
-    # We are local
-    PREFIX = abspath (join (dirname (__file__), "../../.."))
+else:
+    _prefix = abspath (join (dirname (__file__), "../../.."))
 
-def prefix (subpath):
-    return abspath (join (PREFIX, subpath))
+def addDataPrefix (subpath):
+    return abspath (join (_prefix, subpath))
+
+def getDataPrefix ():
+    return _prefix
+
+################################################################################
+# Locate files in user space                                                   #
+################################################################################
+
+pychessdir = join(os.environ["HOME"], ".pychess")
+if not isdir(pychessdir):
+    mkdir(pychessdir)
+
+def addHomePrefix (subpath):
+    return join(pychessdir, subpath)
+
+def getHomePrefix ():
+    return pychessdir

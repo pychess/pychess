@@ -2,7 +2,7 @@ import sys, os
 
 import gtk, gobject
 
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
@@ -63,7 +63,7 @@ class EngineTab:
             if c:
                 flag = "flags/%s.png" % c
             else: flag = "flags/unknown.png"
-            flag_icon = gtk.gdk.pixbuf_new_from_file(prefix(flag))
+            flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
             allstore.append((flag_icon, discoverer.getName(engine)))
         
         tv = widgets["engines_treeview"]
@@ -82,7 +82,7 @@ class EngineTab:
             if c:
                 flag = "flags/%s.png" % c
             else: flag = "flags/unknown.png"
-            flag_icon = gtk.gdk.pixbuf_new_from_file(prefix(flag))
+            flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
             ana_data.append((flag_icon, name))
             invana_data.append((flag_icon, name))
         
