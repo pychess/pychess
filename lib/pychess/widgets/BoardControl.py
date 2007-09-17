@@ -3,7 +3,7 @@
 import gtk, gtk.gdk
 from gobject import *
 
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
@@ -21,7 +21,7 @@ class BoardControl (gtk.EventBox):
     
     def __init__(self, gamemodel, actionMenuItems):
         gtk.EventBox.__init__(self)
-        widgets = gtk.glade.XML(prefix("glade/promotion.glade"))
+        widgets = gtk.glade.XML(addDataPrefix("glade/promotion.glade"))
         self.promotionDialog = widgets.get_widget("promotionDialog")
         self.view = BoardView(gamemodel)
         self.add(self.view)

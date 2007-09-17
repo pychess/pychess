@@ -4,14 +4,14 @@ from pychess.System import glock
 from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import parseSAN
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 
 __title__ = _("Opening Book")
 
 class Sidepanel:
     
     def load (self, gmwidg):
-        widgets = gtk.glade.XML(prefix("sidepanel/book.glade"))
+        widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
         self.sw.unparent()

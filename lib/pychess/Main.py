@@ -7,7 +7,7 @@ import signal
 import pango, gobject, gtk
 
 from pychess.System import conf, gstreamer, glock
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.Utils.const import *
 from pychess.Utils import book # Kills pychess if no sqlite available
@@ -424,7 +424,7 @@ class PyChess:
         window = self
     
         gtk.glade.set_custom_handler(self.widgetHandler)
-        self.widgets = gtk.glade.XML(prefix("glade/PyChess.glade"))
+        self.widgets = gtk.glade.XML(addDataPrefix("glade/PyChess.glade"))
         
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
         

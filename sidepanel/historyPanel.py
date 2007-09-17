@@ -4,7 +4,7 @@ from gtk import gdk
 from pychess.System import glock, conf
 from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN, toFAN
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 
 from gtk.gdk import keyval_from_name
 leftkeys = map(keyval_from_name,("Left", "KP_Left"))
@@ -27,7 +27,7 @@ class Sidepanel:
     
     def load (self, gmwidg):
         
-        widgets = gtk.glade.XML(prefix("sidepanel/history.glade"))
+        widgets = gtk.glade.XML(addDataPrefix("sidepanel/history.glade"))
         __widget__ = widgets.get_widget("panel")
         __widget__.unparent()
         

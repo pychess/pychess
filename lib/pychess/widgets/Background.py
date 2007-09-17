@@ -6,7 +6,7 @@ import math
 import gtk, cairo, pango
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.System import uistuff
 from ToggleComboBox import ToggleComboBox
 import ionest
@@ -18,7 +18,7 @@ class TaskerManager (gtk.Table):
         self.border = 20
         self.connect("expose_event", self.expose)
         self.connect("style-set", self.newtheme)
-        self.clearpath = prefix("glade/clear.png")
+        self.clearpath = addDataPrefix("glade/clear.png")
         self.set_homogeneous(True)
         self.surface = None
     

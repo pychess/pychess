@@ -13,7 +13,7 @@ from gtk.gdk import pixbuf_new_from_file
 
 from pychess.System import glock, uistuff
 from pychess.System.GtkWorker import EmitPublisher, Publisher
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
@@ -52,7 +52,7 @@ def initialize():
             self.widgets = glades
         def __getitem__(self, key):
             return self.widgets.get_widget(key)
-    widgets = Widgets(gtk.glade.XML(prefix("glade/fics_lounge.glade")))
+    widgets = Widgets(gtk.glade.XML(addDataPrefix("glade/fics_lounge.glade")))
     
     def on_window_delete (window, event):
         widgets["fics_lounge"].hide()
@@ -407,7 +407,7 @@ def initialize():
     
     seeks = {}
     
-    seekPix = pixbuf_new_from_file(prefix("glade/seek.png"))
+    seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
     def on_seek_add (manager, seek):
         def call ():
             time = "%s min + %s sec" % (seek["t"], seek["i"])
@@ -509,7 +509,7 @@ def initialize():
     
     challenges = {}
     
-    challenPix = pixbuf_new_from_file(prefix("glade/challenge.png"))
+    challenPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
     def onChallengeAdd (om, index, match):
         def call ():
             time = "%s min + %s sec" % (match["t"], match["i"])
@@ -682,7 +682,7 @@ def initialize():
     
     icons = gtk.icon_theme_get_default()
     recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-    clearpix = pixbuf_new_from_file(prefix("glade/board.png"))
+    clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
     
     tv = widgets["gametreeview"]
     gstore = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)

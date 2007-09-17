@@ -54,7 +54,7 @@ import gtk, os, gobject, glob
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System import glock, conf, gstreamer
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import SOUND_BEEP, SOUND_URI
 from ChessClock import ChessClock
 from BoardControl import BoardControl
@@ -273,7 +273,7 @@ class GameWidget (gobject.GObject):
         glock.acquire()
         try:
             start = 0
-            path = prefix("sidepanel")
+            path = addDataPrefix("sidepanel")
             pf = "Panel.py"
             panels = [f[:-3] for f in os.listdir(path) if f.endswith(pf)]
             panels = \
