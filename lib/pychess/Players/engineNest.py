@@ -61,7 +61,7 @@ class EngineDiscoverer (GObject, Thread):
     def __init__ (self):
         GObject.__init__(self)
         Thread.__init__(self)
-        self.xmlpath = prefix("engines.xml")
+        self.xmlpath = os.path.join(os.environ["HOME"], ".pychess/engines.xml")
         
         try:
             self.dom = minidom.parse( self.xmlpath )
