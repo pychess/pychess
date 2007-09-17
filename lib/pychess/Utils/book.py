@@ -2,9 +2,9 @@ import os.path
 
 from pychess.Utils.const import *
 from pychess.System import tsqlite
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 
-path = os.path.join(prefix("open.db"))
+path = os.path.join(addDataPrefix("open.db"))
 tsqlite.connect(path)
 
 import atexit

@@ -5,7 +5,7 @@ import gtk, gobject, sys
 
 from pychess.System.ThreadPool import pool
 from pychess.System import gstreamer, uistuff, glock
-from pychess.System.prefix import prefix
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
 import telnet, icLounge
 
@@ -108,7 +108,7 @@ def initialize():
             self.widgets = glades
         def __getitem__(self, key):
             return self.widgets.get_widget(key)
-    widgets = Widgets(gtk.glade.XML(prefix("glade/fics_logon.glade")))
+    widgets = Widgets(gtk.glade.XML(addDataPrefix("glade/fics_logon.glade")))
     
     def on_logOnAsGuest_toggled (check):
         widgets["logOnTable"].set_sensitive(not check.get_active())
