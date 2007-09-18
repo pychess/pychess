@@ -1,5 +1,4 @@
-
-import os
+import os, fcntl
 from array import array
 
 from pychess.Utils.const import *
@@ -36,24 +35,6 @@ def iterBits (bitboard):
             bitsArray1[bitboard >> 32 & 0xffff] + \
             bitsArray2[bitboard >> 16 & 0xffff] + \
             bitsArray3[bitboard & 0xffff]
-
-def iterBits3 (bitboard):
-    for cord in bitsArray0[bitboard >> 48]:
-        yield cord
-    for cord in bitsArray0[bitboard >> 32 & 0xffff]:
-        yield cord + 16
-    for cord in bitsArray0[bitboard >> 16 & 0xffff]:
-        yield cord + 32
-    for cord in bitsArray0[bitboard & 0xffff]:
-        yield cord + 48
-
-def iterBits2 (bitboard):
-    while bitboard:
-        cord = firstBit(bitboard)
-        bitboard = clearBit(bitboard, cord)
-        yield cord
-
-
 
 def toString (bitboard):
     s = []
@@ -102,38 +83,43 @@ for i in range(63,-1,-1):
     notBitPosArray[i] = ~b
     b <<= 1
 
-
 # These arrays are used to get the 0-63 position of the bits in a board
 # We init them lazily, as they can take multiple secconds to load/create
 bitsArray0, bitsArray1, bitsArray2, bitsArray3 = None, None, None, None
 
+BITS_DONE = False
 def ensureBitArraysLoaded ():
-    global bitsArray0
-    if bitsArray0:
+    global BITS_DONE
+    if BITS_DONE:
         return
     
-    global bitsArray1, bitsArray2, bitsArray3
-    RECREATE = False
+    global bitsArray0, bitsArray1, bitsArray2, bitsArray3
     
     if os.path.isfile ("/tmp/bitboards"):
+        f = file ("/tmp/bitboards", "r")
+        fcntl.flock(f, fcntl.LOCK_EX)
+        
         try:
-            f = file ("/tmp/bitboards", "r")
-            ord_ = ord
-            
             bitsArray0 = [array('B') for i in xrange (65536)]
             bitsArray1 = [array('B') for i in xrange (65536)]
             bitsArray2 = [array('B') for i in xrange (65536)]
             bitsArray3 = [array('B') for i in xrange (65536)]
+            
+            ord_ = ord
             for list in (bitsArray0, bitsArray1, bitsArray2, bitsArray3):
                 for ar in list:
                     l = ord_(f.read(1))
                     ar.fromfile(f, l)
-        except EOFError:
-            RECREATE = True
-    else: RECREATE = True
-    
-    if RECREATE:
+            BITS_DONE = True
         
+        except EOFError:
+            pass
+        
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
+            f.close()
+    
+    if not BITS_DONE:
         bitsArray0 = [array('B') for i in xrange (65536)]
         bitsArray1 = [array('B') for i in xrange (65536)]
         bitsArray2 = [array('B') for i in xrange (65536)]
@@ -149,13 +135,16 @@ def ensureBitArraysLoaded ():
                 bitsArray2[origbits].append(b-16)
                 bitsArray3[origbits].append(b)
         
-        out = file ("/tmp/bitboards", "w")
-        len_ = len
-        chr_ = chr
-        for ar in bitsArray0 + bitsArray1 + bitsArray2 + bitsArray3:
-            out.write(chr_(len_(ar)))
-            ar.tofile(out)
-        out.close()
+        if not os.path.isfile ("/tmp/bitboards"):
+            out = file ("/tmp/bitboards", "w")
+            fcntl.flock(out, fcntl.LOCK_EX)
+            len_ = len
+            chr_ = chr
+            for ar in bitsArray0 + bitsArray1 + bitsArray2 + bitsArray3:
+                out.write(chr_(len_(ar)))
+                ar.tofile(out)
+            fcntl.flock(out, fcntl.LOCK_UN)
+            out.close()
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set

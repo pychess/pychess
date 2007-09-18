@@ -89,7 +89,8 @@ gtk.glade.textdomain("pychess")
 # http://bugzilla.gnome.org/show_bug.cgi?id=393483
 os.environ["XDG_DATA_DIRS"] = getDataPrefix()+":/usr/share/"
 
-
+from pychess.System.Log import log
+log.debug("Started")
 def go():
     import pychess.Main
     pychess.Main.run([os.environ["PYCHESS_ARGUMENT%d"%i] for i in \
