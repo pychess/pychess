@@ -2,6 +2,7 @@ import os, fcntl
 from array import array
 
 from pychess.Utils.const import *
+from pychess.System.prefix import addHomePrefix
 
 def setBit (bitboard, i):
     return bitboard | bitPosArray[i]
@@ -88,6 +89,7 @@ for i in range(63,-1,-1):
 bitsArray0, bitsArray1, bitsArray2, bitsArray3 = None, None, None, None
 
 BITS_DONE = False
+location = addHomePrefix("bitboards")
 def ensureBitArraysLoaded ():
     global BITS_DONE
     if BITS_DONE:
@@ -95,8 +97,8 @@ def ensureBitArraysLoaded ():
     
     global bitsArray0, bitsArray1, bitsArray2, bitsArray3
     
-    if os.path.isfile ("/tmp/bitboards"):
-        f = file ("/tmp/bitboards", "r")
+    if os.path.isfile (location):
+        f = file (location, "r")
         fcntl.flock(f, fcntl.LOCK_EX)
         
         try:
@@ -135,16 +137,18 @@ def ensureBitArraysLoaded ():
                 bitsArray2[origbits].append(b-16)
                 bitsArray3[origbits].append(b)
         
-        if not os.path.isfile ("/tmp/bitboards"):
-            out = file ("/tmp/bitboards", "w")
+        if not os.path.isfile (location):
+            out = file (location, "w")
             fcntl.flock(out, fcntl.LOCK_EX)
+            fcntl.flock(out, fcntl.LOCK_UN)
             len_ = len
             chr_ = chr
             for ar in bitsArray0 + bitsArray1 + bitsArray2 + bitsArray3:
                 out.write(chr_(len_(ar)))
                 ar.tofile(out)
-            fcntl.flock(out, fcntl.LOCK_UN)
             out.close()
+        
+        BITS_DONE = True
 
 # The bitCount array returns the no. of bits present in the 16 bit
 # input argument. This is use for counting the number of bits set
