@@ -100,21 +100,21 @@ def ensureBitArraysLoaded ():
         fcntl.flock(f, fcntl.LOCK_EX)
         
         try:
-            bitsArray0 = [array('B') for i in xrange (65536)]
-            bitsArray1 = [array('B') for i in xrange (65536)]
-            bitsArray2 = [array('B') for i in xrange (65536)]
-            bitsArray3 = [array('B') for i in xrange (65536)]
+            try:
+                bitsArray0 = [array('B') for i in xrange (65536)]
+                bitsArray1 = [array('B') for i in xrange (65536)]
+                bitsArray2 = [array('B') for i in xrange (65536)]
+                bitsArray3 = [array('B') for i in xrange (65536)]
+                
+                ord_ = ord
+                for list in (bitsArray0, bitsArray1, bitsArray2, bitsArray3):
+                    for ar in list:
+                        l = ord_(f.read(1))
+                        ar.fromfile(f, l)
+                BITS_DONE = True
             
-            ord_ = ord
-            for list in (bitsArray0, bitsArray1, bitsArray2, bitsArray3):
-                for ar in list:
-                    l = ord_(f.read(1))
-                    ar.fromfile(f, l)
-            BITS_DONE = True
-        
-        except EOFError:
-            pass
-        
+            except EOFError:
+                pass
         finally:
             fcntl.flock(f, fcntl.LOCK_UN)
             f.close()
