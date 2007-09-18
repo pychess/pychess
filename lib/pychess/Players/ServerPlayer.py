@@ -34,6 +34,7 @@ class ServerPlayer (Player):
         self.offerToIndex = {}
         self.indexToOffer = {}
         self.lastPly = -1
+        self.gamemodel = None
     
     def onOfferAdd (self, om, index, offer):
         self.indexToOffer[index] = offer
@@ -58,11 +59,16 @@ class ServerPlayer (Player):
     def moveRecieved (self, bm, moveply, sanmove, gameno, movecol):
         if gameno == self.gameno:
             # We want the current ply rather than the moveply, so we add one
-            self.lastPly = int(moveply)+1
+            curply = int(moveply) +1
+            # In some cases (like lost on time) the last move is resent
+            if curply <= self.lastPly:
+                return
+            self.lastPly = curply
             if movecol == self.color:
                 self.queue.put((self.lastPly,sanmove))
     
     def makeMove (self, gamemodel):
+        self.gamemodel = gamemodel
         self.lastPly = gamemodel.ply
         if gamemodel.moves and not self.external:
             self.boardmanager.sendMove (
@@ -107,6 +113,9 @@ class ServerPlayer (Player):
         self.queue.put("del")
     
     def kill (self, reason):
+        p = self.gamemodel.players
+        if p[0].__type__ != REMOTE or p[1].__type__ != REMOTE:
+            self.offermanager.offer(Offer(RESIGNATION), self.lastPly)
         self.queue.put("del")
     
     def undoMoves (self, movecount, gamemodel):

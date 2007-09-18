@@ -65,7 +65,7 @@ class BoardManager (GObject):
         telnet.expect ( "      {Still in progress} *", self.moveListEnd)
         
         telnet.expect (
-            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3})\n",
+            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)\n",
             self.onGameEnd)
         
         telnet.expect (
