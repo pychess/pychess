@@ -9,7 +9,7 @@ from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.System.prefix import addHomePrefix
-from pychess.Utils.const import WHITE, KILLED, UNKNOWN_REASON
+from pychess.Utils.const import BLACK, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
 from ProtocolEngine import ProtocolEngine
 from UCIProtocol import UCIProtocol
@@ -182,7 +182,7 @@ class EngineDiscoverer (GObject, Thread):
         
     def _findOutMore (self, engine, binname):
         
-        e = self.initEngine (engine, WHITE)
+        e = self.initEngine (engine, BLACK)
         
         def deadcallback ():
             print 'dead'
