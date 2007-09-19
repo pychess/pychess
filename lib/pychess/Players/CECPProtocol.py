@@ -2,17 +2,23 @@
     It should be used together with the ProtocolEngine class, which extends
     Engine """
 
+import re
+import select
 from threading import Condition
 
-from Protocol import Protocol
+import gobject
+
 from pychess.System.SubProcess import SubProcessError, TimeOutError
 from pychess.System.ThreadPool import pool
+from pychess.System.Log import log
 from pychess.Utils.Move import Move
 from pychess.Utils.Move import parseAny, toSAN, toAN, ParsingError, listToMoves
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate, getMoveKillingKing
+
+from Protocol import Protocol
 
 def isdigits (strings):
     for s in strings:
@@ -25,7 +31,6 @@ def isdigits (strings):
                 return False
     return True
 
-import re, gobject, select
 d_plus_dot_expr = re.compile(r"\d+\.")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
 multiWs = re.compile(r"\s+")
@@ -33,8 +38,8 @@ multiWs = re.compile(r"\s+")
 class CECPProtocol (Protocol):
     """ Chess Engine Communication Protocol """
     
-    def __init__ (self, executable, color):
-        Protocol.__init__(self, executable, color)
+    def __init__ (self, executable, color, protover):
+        Protocol.__init__(self, executable, color, protover)
         
         self.features = {
             "ping":      0,
@@ -72,36 +77,40 @@ class CECPProtocol (Protocol):
         
     def run (self):
         
+        # Sets engines in xboard mode
         print >> self.engine, "xboard"
-        print >> self.engine, "protover 2"
-        self.nopost() # Mostly a service to the "Faile" engine
         
-        # The XBoard/CECP doc says 2 seconds, but it is acually quite a long time.
-        # Perhaps we could measure how long it normaly takes,
-        # and then scale it down for later calls.
-        # 
-        # Engine could take an argument with lines to write just when it started.
-        # Then engines.py and later an xml document could make "features done=1"
-        # Be called on non protover 2 engines.
-        timeout = 2*1000
+        # Some engines has the 'post' option enabled by default, and posts a lot
+        # of debug information. Generelly this only help to increase the log
+        # file size, and we don't really need it.
+        print >> self.engine, "nopost" 
         
-        while self.connected:
-            try:
-                line = self.engine.readline(timeout)
-            except SubProcessError, e:
-                # We need to be ready before we can die,
-                # So we wait and emit 'dead' in the next loop
-                break
-            except TimeOutError:
-                break
+        if self.protover >= 2:
+            print >> self.engine, "protover 2"
+            # XBoard will only give 2 secconds, but as we are quite sure that
+            # the engines support the protocol, we can add more.
+            # We can't add infinit time, both for the sake of bugs, but also
+            # to make sure old versions of the engines, which perhaps doens't
+            # support protover 2, don't hang us.
+            timeout = 10*1000
             
-            self.parseLine(line)
-            if line.find("done=1") >= 0:
-                break
-            elif line.find("done=0") >= 0:
-                print "WARNING: Giving 10 minutes for loading engine", repr(self)
-                # This'll buy you 10 more minutes
-                timeout = 60*10*1000
+            while self.connected:
+                try:
+                    line = self.engine.readline(timeout)
+                except SubProcessError, e:
+                    # We need to be ready before we can die,
+                    # So we wait and emit 'dead' in the next loop
+                    break
+                except TimeOutError:
+                    break
+                
+                self.parseLine(line)
+                if line.find("done=1") >= 0:
+                    break
+                elif line.find("done=0") >= 0:
+                    log.warn("Giving 10 minutes for loading engine", repr(self))
+                    # This'll buy you 10 more minutes
+                    timeout = 60*10*1000
         
         self.ready = True
         self.emit("ready")
@@ -369,9 +378,6 @@ class CECPProtocol (Protocol):
     
     def post (self):
         print >> self.engine, "post"
-    
-    def nopost (self):
-        print >> self.engine, "nopost"
     
     def time (self, engine, opponent):
         assert self.ready, "Still waiting for done=1"

@@ -11,8 +11,8 @@ from pychess.Utils.logic import getMoveKillingKing
 # Chess Engine Communication Protocol
 class UCIProtocol (Protocol):
     
-    def __init__ (self, executable, color):
-        Protocol.__init__(self, executable, color)
+    def __init__ (self, executable, color, protover):
+        Protocol.__init__(self, executable, color, protover)
         self.ids = {}
         self.options = {}
         self.wtime = 60000

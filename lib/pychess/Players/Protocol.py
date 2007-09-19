@@ -24,11 +24,12 @@ class Protocol (GObject):
         'ready': (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
     
-    def __init__ (self, subprocess, color):
+    def __init__ (self, subprocess, color, protover):
         GObject.__init__(self)
         
         self.color = color
         self.defname = subprocess.defname
+        self.protover = protover
         
         self.ready = False
         self.engine = subprocess
