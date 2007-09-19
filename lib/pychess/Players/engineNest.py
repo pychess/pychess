@@ -22,30 +22,30 @@ attrToProtocol = {
 # TODO: Diablo, Amy and Amundsen
 backup = """
 <engines>
-    <engine protocol="cecp" binname="PyChess.py" />
-    <engine protocol="cecp" binname="gnuchess">
+    <engine protocol="cecp" protover="2" binname="PyChess.py" />
+    <engine protocol="cecp" protover="2" binname="gnuchess">
         <meta><country>us</country></meta></engine>
-    <engine protocol="cecp" binname="gnome-gnuchess">
+    <engine protocol="cecp" protover="2" binname="gnome-gnuchess">
         <meta><country>us</country></meta></engine>
-    <engine protocol="cecp" binname="crafty">
+    <engine protocol="cecp" protover="2" binname="crafty">
         <meta><country>us</country></meta></engine>
-    <engine protocol="cecp" binname="faile">
+    <engine protocol="cecp" protover="1" binname="faile">
         <meta><country>ca</country></meta></engine>
-    <engine protocol="cecp" binname="phalanx">
+    <engine protocol="cecp" protover="1" binname="phalanx">
         <meta><country>cz</country></meta></engine>
-    <engine protocol="cecp" binname="sjeng">
+    <engine protocol="cecp" protover="2" binname="sjeng">
         <meta><country>be</country></meta></engine>
-    <engine protocol="cecp" binname="hoichess">
+    <engine protocol="cecp" protover="2" binname="hoichess">
         <meta><country>de</country></meta></engine>
-    <engine protocol="cecp" binname="boochess">
+    <engine protocol="cecp" protover="1" binname="boochess">
         <meta><country>de</country></meta></engine>
-    <engine protocol="uci" binname="glaurung">
+    <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
-    <engine protocol="uci" binname="ShredderClassicLinux">
+    <engine protocol="uci" protover="1" binname="ShredderClassicLinux">
         <meta><country>de</country></meta></engine>
-    <engine protocol="uci" binname="fruit_21_static"> 
+    <engine protocol="uci" protover="1" binname="fruit_21_static"> 
         <meta><country>fr</country></meta></engine>
-    <engine protocol="uci" binname="fruit">
+    <engine protocol="uci" protover="1" binname="fruit">
         <meta><country>fr</country></meta></engine>
 </engines>
 """
@@ -377,11 +377,12 @@ class EngineDiscoverer (GObject, Thread):
     
     def initEngine (self, engine, color):
         protocol = attrToProtocol[engine.getAttribute("protocol")]
+        protover = int(engine.getAttribute("protover"))
         path = engine.getElementsByTagName("path")[0].childNodes[0].data.strip()
         exec("args = %s" % \
             engine.getElementsByTagName("args")[0].childNodes[0].data.strip())
         subprocess = SubProcess(path, args, warnwords=("illegal","error"))
-        return ProtocolEngine( protocol(subprocess, color) )
+        return ProtocolEngine( protocol(subprocess, color, protover) )
     
     #
     # Other
