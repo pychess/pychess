@@ -186,9 +186,10 @@ def analyze ():
             print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
                   lsearch.nodes, "\t", smvs
             
-            print "%0.1f moves/position; %0.1f n/s" % \
-                    (lsearch.nodes/float(lsearch.movesearches),
-                    lsearch.nodes/(time()-t))
+            if lsearch.movesearches:
+                print "%0.1f moves/position; %0.1f n/s" % (
+                        lsearch.nodes/float(lsearch.movesearches),
+                        lsearch.nodes/(time()-t) )
             
             lsearch.nodes = 0
             lsearch.movesearches = 0
