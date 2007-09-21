@@ -70,7 +70,7 @@ class Sidepanel:
         finally:
             glock.release()
     
-    def selection_changed (self, widget):
+    def selection_changed (self, widget, *args):
         
         iter = self.tv.get_selection().get_selected()[1]
         if iter == None:
@@ -86,7 +86,7 @@ class Sidepanel:
         if len(self.board.model.boards) < self.board.shown+1:
             return
         arrow = self.board.bluearrow
-        if arrow:
+        if arrow and self.board.model.ply == self.board.shown:
             self.board.bluearrow = None
             self.boardcontrol.emit_move_signal(*arrow)
 
