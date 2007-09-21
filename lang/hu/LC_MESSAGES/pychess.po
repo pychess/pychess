@@ -1,5 +1,4 @@
 # Translation of pychess.po to Hungarian
-# translation of pychess.po to
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
@@ -9,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-09-15 17:50+0200\n"
-"PO-Revision-Date: 2007-09-21 13:41+0200\n"
+"PO-Revision-Date: 2007-09-21 22:15+0200\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <btami@freemail.hu>\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +51,7 @@ msgstr "PyChess - Internet sakk: FICS"
 
 #: glade/fics_lounge.glade:64
 msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
-msgstr "<b>Figyelem!</b> A PyChess FICS támogatása még nem teljes!"
+msgstr "<b>Figyelem!</b> A PyChess FICS támogatása még nem teljes."
 
 #: glade/fics_lounge.glade:98
 msgid "<u>Learn more</u>"
@@ -569,7 +568,7 @@ msgid ""
 "nessesary for the hint mode to work</b>"
 msgstr ""
 "Az elemző sakkmotor a háttérben fog futni mialatt elemzi az állást."
-"<b>Szükséges a javaslat módhoz.</b>"
+" <b>A javaslat módhoz szükséges.</b>"
 
 #: glade/PyChess.glade:2471
 msgid "Use _inverted analyzer"
@@ -581,7 +580,7 @@ msgid ""
 "<b>This is nessesary for the spy mode to work</b>"
 msgstr ""
 "Az ellenfél elemző sakkmotor a játszmát az ellenfél szempontjából elemzi."
-"<b>Szükséges a súgás módhoz.</b>"
+" <b>A súgás módhoz szükséges.</b>"
 
 # The heading for the "time controls" part of the new-game dialog
 #: glade/PyChess.glade:2565
@@ -981,7 +980,7 @@ msgstr "Egyéni"
 
 #: lib/pychess/ic/telnet.py:127 lib/pychess/ic/telnet.py:140
 msgid "The connection was broken - got \"end of file\" message"
-msgstr "A kapcsolat megszakadt - \"fájl vége\" üzenet érkezett."
+msgstr "A kapcsolat megszakadt - fájl vége üzenet érkezett."
 
 #: lib/pychess/ic/telnet.py:142
 msgid "Names can only consist of lower and upper case letters"
@@ -1399,7 +1398,7 @@ msgstr "Csipogás"
 
 #: lib/pychess/widgets/preferencesDialog.py:242
 msgid "Select sound file..."
-msgstr "Hangfájl kiválasztása"
+msgstr "Hangfájl kiválasztása..."
 
 #: lib/pychess/Utils/lutils/strateval.py:30
 msgid "draws"
@@ -1435,7 +1434,7 @@ msgstr "bástya elfoglalja a félig nyílt vonalat"
 #: lib/pychess/Utils/lutils/strateval.py:98
 #, python-format
 msgid "moves bishop into fianchetto: %s"
-msgstr "a futóját fianchetto fejleszti:"
+msgstr "a futóját fianchetto fejleszti: %s"
 
 # In context: White moves a knight to e4
 #: lib/pychess/Utils/lutils/strateval.py:105
@@ -1538,14 +1537,14 @@ msgstr "Sötét ezután nem sáncolhat a rövid oldalra"
 #: lib/pychess/Utils/lutils/strateval.py:417
 #, python-format
 msgid "%s has a new trapped bishop on %s"
-msgstr "%s futója csapdába esett: "
+msgstr "%s futója csapdába esett: %s"
 
 # In context: White moves a knight to e4
 #: lib/pychess/Utils/lutils/strateval.py:441
 #: lib/pychess/Utils/lutils/strateval.py:454
 #, python-format
 msgid "develops a %s: %s"
-msgstr "%s %s lép: %s"
+msgstr "%s lép: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:442
 #, python-format
