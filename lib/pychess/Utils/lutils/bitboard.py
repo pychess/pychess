@@ -100,6 +100,7 @@ def ensureBitArraysLoaded ():
     if os.path.isfile (location):
         f = file (location, "r")
         fcntl.flock(f, fcntl.LOCK_EX)
+        fcntl.flock(f, fcntl.LOCK_UN)
         
         try:
             try:
@@ -118,7 +119,6 @@ def ensureBitArraysLoaded ():
             except EOFError:
                 pass
         finally:
-            fcntl.flock(f, fcntl.LOCK_UN)
             f.close()
     
     if not BITS_DONE:
@@ -140,12 +140,12 @@ def ensureBitArraysLoaded ():
         if not os.path.isfile (location):
             out = file (location, "w")
             fcntl.flock(out, fcntl.LOCK_EX)
-            fcntl.flock(out, fcntl.LOCK_UN)
             len_ = len
             chr_ = chr
             for ar in bitsArray0 + bitsArray1 + bitsArray2 + bitsArray3:
                 out.write(chr_(len_(ar)))
                 ar.tofile(out)
+            fcntl.flock(out, fcntl.LOCK_UN)
             out.close()
         
         BITS_DONE = True
