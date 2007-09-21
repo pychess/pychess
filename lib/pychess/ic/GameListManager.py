@@ -11,6 +11,7 @@ mf = "(?:([mf]{1,2})\s?)?"
 typedic = {"b":"Blitz", "s":"Standard", "l":"Lightning"}
 
 from gobject import *
+from pychess.Utils.const import WHITE
 
 class GameListManager (GObject):
     
