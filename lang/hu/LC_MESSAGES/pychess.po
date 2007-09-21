@@ -1,3 +1,4 @@
+# Translation of pychess.po to Hungarian
 # translation of pychess.po to
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -5,16 +6,17 @@
 # Bajusz Tamás <btami@freemail.hu>, 2006, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: pychess\n"
+"Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-13 19:34+0200\n"
-"PO-Revision-Date: 2007-09-14 19:51+0200\n"
-"Last-Translator: \n"
-"Language-Team:  <hu@li.org>\n"
+"POT-Creation-Date: 2007-09-15 17:50+0200\n"
+"PO-Revision-Date: 2007-09-21 13:41+0200\n"
+"Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
+"Language-Team: Hungarian <btami@freemail.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.2\n"
+"Plural-Forms:  nplurals=1; plural=0;\n"
 
 #: glade/fics_logon.glade:9
 msgid "PyChess - Connect to Internet Chess"
@@ -50,7 +52,7 @@ msgstr "PyChess - Internet sakk: FICS"
 
 #: glade/fics_lounge.glade:64
 msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
-msgstr "<b>Figyelem</b> A PyChess FICS támogatása még nem teljes!"
+msgstr "<b>Figyelem!</b> A PyChess FICS támogatása még nem teljes!"
 
 #: glade/fics_lounge.glade:98
 msgid "<u>Learn more</u>"
@@ -133,11 +135,11 @@ msgstr "Idő"
 
 #: glade/fics_lounge.glade:708
 msgid "Seek Graph"
-msgstr "Keresések"
+msgstr "Grafikus keresés"
 
 #: glade/fics_lounge.glade:777
 msgid "Show Info Window"
-msgstr "Információk ablak mutatása"
+msgstr "Információs ablak mutatása"
 
 #: glade/fics_lounge.glade:1035
 msgid "Send challenge"
@@ -208,8 +210,9 @@ msgid ""
 "Unfortunatly not all of the protocol has yet been implemented, why you need "
 "to take a little caution when using this implementation."
 msgstr ""
-"A PyChess0.8 Philidor FICS támogatása lehetőséget ad internetes játszmákat játszani más személyek ellen. "
-"Sajnos a FICS protokol támogatás még nem teljes, ezért használata egy kis óvatosságot kíván."
+"A PyChess0.8 Philidor FICS támogatása lehetőséget ad internetes játszmákat "
+"játszani más személyek ellen. Sajnos a FICS protokol támogatás még nem "
+"teljes, ezért használata egy kis óvatosságot kíván."
 
 #: glade/fics_lounge.glade:2513
 msgid "<b>General</b>"
@@ -220,7 +223,10 @@ msgid ""
 "People on FICS chat a lot. However as this is not yet available in PyChess "
 "you will appear mute.\n"
 "Some people might findt this offensive."
-msgstr "Az emberek általában sokat csevegnek a FICS-en. Sajnos a PyChess-ben ez a lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni.Egyesek ezt agresszívnek találhatják majd."
+msgstr ""
+"Az emberek általában sokat csevegnek a FICS-en. Sajnos a PyChess-ben ez a "
+"lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni."
+"Egyesek ezt agresszívnek találhatják majd."
 
 #: glade/fics_lounge.glade:2586
 msgid "<b>Chatting</b>"
@@ -233,8 +239,10 @@ msgid ""
 "This version of PyChess doesn't support this feature, and will auto decline "
 "requests from opponents who wants to use this feature."
 msgstr ""
-"A FICS-en lehetőség van egy játszma folytatásának elhalasztására, ami azt jelenti, hogy a szerver elmenti a játszmát, és azt később folytatni lehet.\n"
-"A PyChess jelenleg még nem támogatja ezt a funkciót, és automatikusan elutasítja az ellenfél ilyen kéréseit."
+"A FICS-en lehetőség van egy játszma folytatásának elhalasztására, ami azt "
+"jelenti, hogy a szerver elmenti a játszmát, és azt később folytatni lehet.\n"
+"A PyChess jelenleg még nem támogatja ezt a funkciót, és automatikusan "
+"elutasítja az ellenfél ilyen kéréseit."
 
 # The heading for the "time controls" part of the new-game dialog
 #: glade/fics_lounge.glade:2659
@@ -559,7 +567,9 @@ msgstr "_Elemző használata"
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "nessesary for the hint mode to work</b>"
-msgstr "Az elemző sakkmotor a háttérben fog futni mialatt elemzi az állást.<b>Szükséges a javaslat módhoz.</b>"
+msgstr ""
+"Az elemző sakkmotor a háttérben fog futni mialatt elemzi az állást."
+"<b>Szükséges a javaslat módhoz.</b>"
 
 #: glade/PyChess.glade:2471
 msgid "Use _inverted analyzer"
@@ -569,7 +579,9 @@ msgstr "_Ellenfél elemző használata"
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is nessesary for the spy mode to work</b>"
-msgstr "Az ellenfél elemző sakkmotor a játszmát az ellenfél szempontjából elemzi.<b>Szükséges a súgás módhoz.</b>"
+msgstr ""
+"Az ellenfél elemző sakkmotor a játszmát az ellenfél szempontjából elemzi."
+"<b>Szükséges a súgás módhoz.</b>"
 
 # The heading for the "time controls" part of the new-game dialog
 #: glade/PyChess.glade:2565
@@ -647,7 +659,9 @@ msgstr "Értékszám"
 msgid ""
 "While you fight different local chessengines, PyChess keeps track of your "
 "results."
-msgstr "Mialatt különféle sakkmotorokkal játszol, a PyChess megjegyzi az eredményeidet."
+msgstr ""
+"Mialatt különféle sakkmotorokkal játszol, a PyChess megjegyzi az "
+"eredményeidet."
 
 #: lib/pychess/Main.py:35
 #, python-format
@@ -852,7 +866,7 @@ msgid "Name"
 msgstr "Név"
 
 #: lib/pychess/ic/icLounge.py:404 lib/pychess/ic/icLounge.py:414
-#: lib/pychess/ic/icLounge.py:517 lib/pychess/ic/icLounge.py:569
+#: lib/pychess/ic/icLounge.py:516 lib/pychess/ic/icLounge.py:568
 msgid "Rated"
 msgstr "Értékelt"
 
@@ -864,104 +878,104 @@ msgstr "Típus"
 msgid "Clock"
 msgstr "Idő"
 
-#: lib/pychess/ic/icLounge.py:414 lib/pychess/ic/icLounge.py:517
-#: lib/pychess/ic/icLounge.py:569
+#: lib/pychess/ic/icLounge.py:414 lib/pychess/ic/icLounge.py:516
+#: lib/pychess/ic/icLounge.py:568
 msgid "Unrated"
 msgstr "Nem értékelt"
 
 #: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
-#: lib/pychess/ic/icLounge.py:522 lib/pychess/ic/icLounge.py:535
+#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
 msgid "Active Seek"
 msgstr "Aktív keresés"
 
 #: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
-#: lib/pychess/ic/icLounge.py:522 lib/pychess/ic/icLounge.py:535
+#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
 msgid "Active Seeks"
 msgstr "Aktív keresések"
 
 # Seperator in tabs between player names
-#: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:747
+#: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:746
 #: lib/pychess/widgets/ionest.py:435
 msgid "vs"
 msgstr "-"
 
 # In context "1 Player Ready"
-#: lib/pychess/ic/icLounge.py:650 lib/pychess/ic/icLounge.py:665
+#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
 msgid "Player Ready"
 msgstr "Készen álló játékos"
 
 # In context "x Players Ready" where x > 1
-#: lib/pychess/ic/icLounge.py:650 lib/pychess/ic/icLounge.py:665
+#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
 msgid "Players Ready"
 msgstr "Készen álló játékosok"
 
-#: lib/pychess/ic/icLounge.py:698
+#: lib/pychess/ic/icLounge.py:697
 msgid "White Player"
 msgstr "Világos"
 
-#: lib/pychess/ic/icLounge.py:698
+#: lib/pychess/ic/icLounge.py:697
 msgid "Black Player"
 msgstr "Sötét"
 
-#: lib/pychess/ic/icLounge.py:699
+#: lib/pychess/ic/icLounge.py:698
 msgid "Game Type"
 msgstr "Játszma típusa"
 
-#: lib/pychess/ic/icLounge.py:719 lib/pychess/ic/icLounge.py:734
+#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
 msgid "Game Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/icLounge.py:719 lib/pychess/ic/icLounge.py:734
+#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
 msgid "Games Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/icLounge.py:820
+#: lib/pychess/ic/icLounge.py:819
 msgid "Easy"
 msgstr "Kezdő"
 
-#: lib/pychess/ic/icLounge.py:821
+#: lib/pychess/ic/icLounge.py:820
 msgid "Advanced"
 msgstr "Haladó"
 
-#: lib/pychess/ic/icLounge.py:822 lib/pychess/widgets/ionest.py:302
+#: lib/pychess/ic/icLounge.py:821 lib/pychess/widgets/ionest.py:302
 msgid "Expert"
 msgstr "Profi"
 
 # In context: Your color: "Don't Care"
-#: lib/pychess/ic/icLounge.py:831
+#: lib/pychess/ic/icLounge.py:830
 msgid "Don't Care"
 msgstr "Mindegy"
 
-#: lib/pychess/ic/icLounge.py:832
+#: lib/pychess/ic/icLounge.py:831
 msgid "Want White"
 msgstr "Világos"
 
-#: lib/pychess/ic/icLounge.py:833
+#: lib/pychess/ic/icLounge.py:832
 msgid "Want Black"
 msgstr "Sötét"
 
 # Chess clock setting
-#: lib/pychess/ic/icLounge.py:842
+#: lib/pychess/ic/icLounge.py:841
 msgid "Normal"
 msgstr "Rapid"
 
 # Chess clock setting
-#: lib/pychess/ic/icLounge.py:843
+#: lib/pychess/ic/icLounge.py:842
 msgid "Blitz"
 msgstr "Schnell"
 
 # Chess clock setting
-#: lib/pychess/ic/icLounge.py:844
+#: lib/pychess/ic/icLounge.py:843
 msgid "Lightning"
 msgstr "Villám"
 
 # Combo item to create a new custom time setting
-#: lib/pychess/ic/icLounge.py:845
+#: lib/pychess/ic/icLounge.py:844
 msgid "New Custom"
 msgstr "Új egyéni"
 
 # Label for a custom time setting
-#: lib/pychess/ic/icLounge.py:870
+#: lib/pychess/ic/icLounge.py:869
 msgid "Custom"
 msgstr "Egyéni"
 
@@ -986,19 +1000,6 @@ msgstr ""
 "Érvénytelen jelszó.\n"
 "\n"
 
-#: lib/pychess/ic/telnet.py:158
-msgid ""
-"If you have forgot your password, try logging in as a guest and open chat on "
-"channel 4. Write \"I've forgotten my password\" to get help.\n"
-"\n"
-msgstr ""
-"Ha elfelejtetted a jelszavadat, akkor próbálj meg bejelentkezni guest-ként, majd nyiss egy csevegést a 4-es csatornán. Írd be ezt: I'v forgotten my password.\n"
-"\n"
-
-#: lib/pychess/ic/telnet.py:159
-msgid "If that is by some reason not possible, please email: support@freechess.org"
-msgstr "Ha ez valamilyen ok miatt nem sikerülne, írj ide: support@freechess.org"
-
 #: lib/pychess/Players/Human.py:13
 msgid "You've got a draw offer. Accept?"
 msgstr "Döntetlent ajánlatot kaptál. Elfogadod?"
@@ -1017,7 +1018,9 @@ msgstr "Megszakítás ajánlatot kaptál. Elfogadod?"
 msgid ""
 "Your opponent has offered you to abort the game. If you accept, the game "
 "will end with no rating change."
-msgstr "Az ellenfeled a játszma megszakítását ajánlja, ha elfogadod, az értékszámod nem változik."
+msgstr ""
+"Az ellenfeled a játszma megszakítását ajánlja, ha elfogadod, az értékszámod "
+"nem változik."
 
 #: lib/pychess/Players/Human.py:19
 msgid "You've got an adjourn offer. Accept?"
@@ -1147,7 +1150,9 @@ msgstr "Nem elfogadható a(z) %s"
 msgid ""
 "PyChess was unable to get the %s offer accepted. Probably because it has "
 "been withdrawn."
-msgstr "A PyChess nem tudja elfogadni a %s ajánlatot. Valószínűleg azt már visszavonták."
+msgstr ""
+"A PyChess nem tudja elfogadni a %s ajánlatot. Valószínűleg azt már "
+"visszavonták."
 
 # In context: The resignation "returns an error"
 #: lib/pychess/Players/Human.py:162
@@ -1163,7 +1168,9 @@ msgstr "Az ellenfeled szeretné, hogy egy kicsit gyorsabban lépj!"
 msgid ""
 "Generally this means nothing, as the game is timebased, but if you want to "
 "please your opponent, perhaps you should get going."
-msgstr "Általában ez nem jelent semmi különöset, mivel a játszma időkontrol alatt folyik, de ha kedves akarsz lenni hozzá, léphetsz gyorsabban is."
+msgstr ""
+"Általában ez nem jelent semmi különöset, mivel a játszma időkontrol alatt "
+"folyik, de ha kedves akarsz lenni hozzá, léphetsz gyorsabban is."
 
 #: lib/pychess/Savers/epd.py:8
 msgid "Chess Position"
@@ -1178,32 +1185,32 @@ msgid "Chess Game"
 msgstr "Sakkjátszma"
 
 # Chess pawn letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "P"
 msgstr " "
 
 # Chess knight letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "N"
 msgstr "H"
 
 # Chess bishop letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "B"
 msgstr "F"
 
 # Chess rook letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "R"
 msgstr "B"
 
 # Chess queen letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "Q"
 msgstr "V"
 
 # Chess king letter
-#: lib/pychess/Utils/const.py:83
+#: lib/pychess/Utils/const.py:84
 msgid "K"
 msgstr "K"
 
@@ -1394,6 +1401,199 @@ msgstr "Csipogás"
 msgid "Select sound file..."
 msgstr "Hangfájl kiválasztása"
 
+#: lib/pychess/Utils/lutils/strateval.py:30
+msgid "draws"
+msgstr "döntetlent ér el"
+
+#: lib/pychess/Utils/lutils/strateval.py:32
+msgid "mates"
+msgstr "mattot ad"
+
+#: lib/pychess/Utils/lutils/strateval.py:36
+msgid "puts opponent in check"
+msgstr "sakkot ad"
+
+#: lib/pychess/Utils/lutils/strateval.py:57
+msgid "improves king safety"
+msgstr "növeli a királya biztonságát"
+
+#: lib/pychess/Utils/lutils/strateval.py:59
+msgid "slightly improves king safety"
+msgstr "erősen növeli a királya biztonságát"
+
+#: lib/pychess/Utils/lutils/strateval.py:80
+msgid "moves a rook to an open file"
+msgstr "bástyája elfoglalja a nyílt vonalat"
+
+#: lib/pychess/Utils/lutils/strateval.py:81
+msgid "moves an rook to a half-open file"
+msgstr "bástya elfoglalja a félig nyílt vonalat"
+
+#: lib/pychess/Utils/lutils/strateval.py:91
+#: lib/pychess/Utils/lutils/strateval.py:93
+#: lib/pychess/Utils/lutils/strateval.py:96
+#: lib/pychess/Utils/lutils/strateval.py:98
+#, python-format
+msgid "moves bishop into fianchetto: %s"
+msgstr "a futóját fianchetto fejleszti:"
+
+# In context: White moves a knight to e4
+#: lib/pychess/Utils/lutils/strateval.py:105
+#, python-format
+msgid "promotes a Pawn to a %s"
+msgstr "átváltoztatja agyalogot %s-re"
+
+#: lib/pychess/Utils/lutils/strateval.py:108
+msgid "castles"
+msgstr "besáncol"
+
+#: lib/pychess/Utils/lutils/strateval.py:129
+msgid "takes back material"
+msgstr "visszaveszi az anyagot"
+
+#: lib/pychess/Utils/lutils/strateval.py:133
+msgid "exchanges material"
+msgstr "megváltoztatja az anyagot"
+
+#: lib/pychess/Utils/lutils/strateval.py:135
+msgid "captures material"
+msgstr "anyagot nyer"
+
+#: lib/pychess/Utils/lutils/strateval.py:137
+msgid "sacrifies material"
+msgstr "anyagot veszít"
+
+#: lib/pychess/Utils/lutils/strateval.py:181
+#, python-format
+msgid "threatens to win material %s"
+msgstr "%s lenyerésével fenyeget"
+
+#: lib/pychess/Utils/lutils/strateval.py:185
+#, python-format
+msgid "increases the pressure on %s"
+msgstr "fokozza a nyomást erre: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:229
+#, python-format
+msgid "defends %s"
+msgstr "megvédi ezt: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:260
+#, python-format
+msgid "White has a new piece in outpost: %s"
+msgstr "Világosnak új előörse van: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:268
+#, python-format
+msgid "Black has a new piece in outpost: %s"
+msgstr "Sötétnek új előörse van: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:307
+#, python-format
+msgid "%s has a new passed pawn on %s"
+msgstr "%s nek új szabad gyalogja keletkezett: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:323
+#, python-format
+msgid "%s has a new double pawn in the half-open %s file"
+msgstr "%s nek új dupla gyalogja keletkezett a félig nyílt %s vonalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:326
+#, python-format
+msgid "%s has a new double pawn in the %s file"
+msgstr "%s nek új dupla gyalogja keletkezett a(z)  %s vonalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:331
+#, python-format
+msgid "%s has an double pawn in the half-open %s file"
+msgstr "%s nek dupla gyalogja van a félig nyílt  %s vonalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:348
+#: lib/pychess/Utils/lutils/strateval.py:353
+#, python-format
+msgid "%s has a new isolated pawn in the %s file"
+msgstr "%s nek új izolált gyalogja keletkezett a(z)  %s vonalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:359
+#, python-format
+msgid "%s moves pawns into stonewall formation"
+msgstr "%s kőfal formára mozgatja a gyalogjait"
+
+#: lib/pychess/Utils/lutils/strateval.py:374
+msgid "White can no longer castle in queenside"
+msgstr "Világos ezután nem sáncolhat a hosszú oldalra"
+
+#: lib/pychess/Utils/lutils/strateval.py:376
+msgid "White can no longer castle in kingside"
+msgstr "Világos ezután nem sáncolhat a rövid oldalra"
+
+#: lib/pychess/Utils/lutils/strateval.py:379
+msgid "Black can no longer castle in queenside"
+msgstr "Sötét ezután nem sáncolhat a hosszú oldalra"
+
+#: lib/pychess/Utils/lutils/strateval.py:381
+msgid "Black can no longer castle in kingside"
+msgstr "Sötét ezután nem sáncolhat a rövid oldalra"
+
+#: lib/pychess/Utils/lutils/strateval.py:417
+#, python-format
+msgid "%s has a new trapped bishop on %s"
+msgstr "%s futója csapdába esett: "
+
+# In context: White moves a knight to e4
+#: lib/pychess/Utils/lutils/strateval.py:441
+#: lib/pychess/Utils/lutils/strateval.py:454
+#, python-format
+msgid "develops a %s: %s"
+msgstr "%s %s lép: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:442
+#, python-format
+msgid "brings a pawn closer to the backrow: %s"
+msgstr "a gyalogját közelíti az átváltozáshoz: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:451
+#, python-format
+msgid "brings a %s closer to enemy king: %s"
+msgstr "közelebb viszi a %s-t az ellenfél királyához: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:472
+#, python-format
+msgid "places a %s more active: %s"
+msgstr "aktívabb helyre viszi a %s-t: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:498
+msgid "White should do pawn storm in right"
+msgstr "Világos gyalogrohamot indíthatna a jobb oldalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:500
+msgid "Black should do pawn storm in left"
+msgstr "Sötét gyalogrohamot indíthatna a bal oldalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:503
+msgid "White should do pawn storm in left"
+msgstr "Világos gyalogrohamot indíthatna a bal oldalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:505
+msgid "Black should do pawn storm in right"
+msgstr "Sötét gyalogrohamot indíthatna a jobb oldalon"
+
+#: lib/pychess/Utils/lutils/strateval.py:538
+msgid "Black has a rather cramped position"
+msgstr "Sötét állása meglehetősen kényelmetlen"
+
+#: lib/pychess/Utils/lutils/strateval.py:540
+msgid "Black has a slightly cramped position"
+msgstr "Sötét állása nagyon kényelmetlen"
+
+#: lib/pychess/Utils/lutils/strateval.py:542
+msgid "White has a rather cramped position"
+msgstr "Világos állása meglehetősen kényelmetlen"
+
+#: lib/pychess/Utils/lutils/strateval.py:544
+msgid "White has a slightly cramped position"
+msgstr "Sötét állása nagyon kényelmetlen"
+
 #: sidepanel/bookPanel.py:9
 msgid "Opening Book"
 msgstr "Megnyitástár"
@@ -1410,11 +1610,15 @@ msgstr ""
 msgid "Comments"
 msgstr "Megjegyzések"
 
+#: sidepanel/commentPanel.py:54
+msgid "Initial position"
+msgstr "Kezdőállás"
+
 # In context: White moves a knight to e4
 #: sidepanel/commentPanel.py:227
 #, python-format
 msgid "%s moves a %s to %s"
-msgstr "%s lép a %s-el %s-re"
+msgstr "%s  %s lép: %s"
 
 #: sidepanel/historyPanel.py:13
 msgid "Move History"
