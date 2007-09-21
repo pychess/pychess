@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-15 17:50+0200\n"
+"POT-Creation-Date: 2007-09-21 23:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -617,124 +617,136 @@ msgid ""
 "another one."
 msgstr ""
 
-#: lib/pychess/Main.py:166 lib/pychess/Main.py:167
+#: lib/pychess/Main.py:168 lib/pychess/Main.py:169
 msgid "Loaded game"
 msgstr ""
 
-#: lib/pychess/Main.py:172
+#: lib/pychess/Main.py:174
 msgid "Saved game"
 msgstr ""
 
-#: lib/pychess/Main.py:177
+#: lib/pychess/Main.py:179
 msgid "The game ended in a draw"
 msgstr ""
 
-#: lib/pychess/Main.py:178
+#: lib/pychess/Main.py:180
 msgid "White player won the game"
 msgstr ""
 
-#: lib/pychess/Main.py:179
+#: lib/pychess/Main.py:181
 msgid "Black player won the game"
 msgstr ""
 
-#: lib/pychess/Main.py:180
+#: lib/pychess/Main.py:182
 msgid "The game has been killed"
 msgstr ""
 
-#: lib/pychess/Main.py:181
+#: lib/pychess/Main.py:183
 msgid "The game has been adjourned"
 msgstr ""
 
-#: lib/pychess/Main.py:182
+#: lib/pychess/Main.py:184
 msgid "The game has been aborted"
 msgstr ""
 
-#: lib/pychess/Main.py:185
+#: lib/pychess/Main.py:187
 msgid "caused by insufficient material"
 msgstr ""
 
-#: lib/pychess/Main.py:186
+#: lib/pychess/Main.py:188
 msgid "as the same position was repeated three times in a row"
 msgstr ""
 
-#: lib/pychess/Main.py:187
+#: lib/pychess/Main.py:189
 msgid "as the last 50 moves brought nothing new"
 msgstr ""
 
-#: lib/pychess/Main.py:188
+#: lib/pychess/Main.py:190
 msgid "as both players ran out of time"
 msgstr ""
 
-#: lib/pychess/Main.py:189
+#: lib/pychess/Main.py:191
 msgid "because of stalemate"
 msgstr ""
 
-#: lib/pychess/Main.py:190 lib/pychess/Main.py:201 lib/pychess/Main.py:205
+#: lib/pychess/Main.py:192 lib/pychess/Main.py:203 lib/pychess/Main.py:207
 msgid "as the players agreed to"
 msgstr ""
 
-#: lib/pychess/Main.py:191 lib/pychess/Main.py:198 lib/pychess/Main.py:204
+#: lib/pychess/Main.py:193 lib/pychess/Main.py:200 lib/pychess/Main.py:206
 msgid "as decided by an admin"
 msgstr ""
 
-#: lib/pychess/Main.py:192
+#: lib/pychess/Main.py:194
 msgid "as game exceed the max length"
 msgstr ""
 
-#: lib/pychess/Main.py:194
+#: lib/pychess/Main.py:196
 msgid "as opponent resigned"
 msgstr ""
 
-#: lib/pychess/Main.py:195
+#: lib/pychess/Main.py:197
 msgid "as opponent ran out of time"
 msgstr ""
 
-#: lib/pychess/Main.py:196
+#: lib/pychess/Main.py:198
 msgid "on a mate"
 msgstr ""
 
-#: lib/pychess/Main.py:197
+#: lib/pychess/Main.py:199
 msgid "as opponent disconnected"
 msgstr ""
 
-#: lib/pychess/Main.py:200
+#: lib/pychess/Main.py:202
 msgid "as a player lost connection"
 msgstr ""
 
-#: lib/pychess/Main.py:202 lib/pychess/Main.py:208
+#: lib/pychess/Main.py:204 lib/pychess/Main.py:210
 msgid "as the server was shut down"
 msgstr ""
 
-#: lib/pychess/Main.py:206
+#: lib/pychess/Main.py:208
 msgid "by courtesy by a player"
 msgstr ""
 
-#: lib/pychess/Main.py:207
+#: lib/pychess/Main.py:209
 msgid "in the early phase of the game"
 msgstr ""
 
-#: lib/pychess/Main.py:210
+#: lib/pychess/Main.py:212
 msgid "as the white engine died"
 msgstr ""
 
-#: lib/pychess/Main.py:211
+#: lib/pychess/Main.py:213
 msgid "as the black engine died"
 msgstr ""
 
-#: lib/pychess/Main.py:212
+#: lib/pychess/Main.py:214
 msgid "by no known reason"
 msgstr ""
 
-#: lib/pychess/Main.py:231
+#: lib/pychess/Main.py:233
 msgid "You sent a draw offer"
 msgstr ""
 
-#: lib/pychess/Main.py:366
+#: lib/pychess/Main.py:373
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr ""
 
-#: lib/pychess/Main.py:369
+#: lib/pychess/Main.py:376
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr ""
+
+#: lib/pychess/ic/GameListManager.py:11 lib/pychess/ic/icLounge.py:842
+msgid "Blitz"
+msgstr ""
+
+#: lib/pychess/ic/GameListManager.py:11
+msgid "Standard"
+msgstr ""
+
+#: lib/pychess/ic/GameListManager.py:11 lib/pychess/ic/icLounge.py:843
+msgid "Lightning"
 msgstr ""
 
 #: lib/pychess/ic/icLogOn.py:82
@@ -880,14 +892,6 @@ msgstr ""
 
 #: lib/pychess/ic/icLounge.py:841
 msgid "Normal"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:842
-msgid "Blitz"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:843
-msgid "Lightning"
 msgstr ""
 
 #: lib/pychess/ic/icLounge.py:844
@@ -1417,77 +1421,77 @@ msgstr ""
 msgid "%s moves pawns into stonewall formation"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:374
+#: lib/pychess/Utils/lutils/strateval.py:373
 msgid "White can no longer castle in queenside"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:376
+#: lib/pychess/Utils/lutils/strateval.py:375
 msgid "White can no longer castle in kingside"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:379
+#: lib/pychess/Utils/lutils/strateval.py:378
 msgid "Black can no longer castle in queenside"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:381
+#: lib/pychess/Utils/lutils/strateval.py:380
 msgid "Black can no longer castle in kingside"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:417
+#: lib/pychess/Utils/lutils/strateval.py:416
 #, python-format
 msgid "%s has a new trapped bishop on %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:441
-#: lib/pychess/Utils/lutils/strateval.py:454
+#: lib/pychess/Utils/lutils/strateval.py:440
+#: lib/pychess/Utils/lutils/strateval.py:453
 #, python-format
 msgid "develops a %s: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:442
+#: lib/pychess/Utils/lutils/strateval.py:441
 #, python-format
 msgid "brings a pawn closer to the backrow: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:451
+#: lib/pychess/Utils/lutils/strateval.py:450
 #, python-format
 msgid "brings a %s closer to enemy king: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:472
+#: lib/pychess/Utils/lutils/strateval.py:471
 #, python-format
 msgid "places a %s more active: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:498
+#: lib/pychess/Utils/lutils/strateval.py:497
 msgid "White should do pawn storm in right"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:500
+#: lib/pychess/Utils/lutils/strateval.py:499
 msgid "Black should do pawn storm in left"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:503
+#: lib/pychess/Utils/lutils/strateval.py:502
 msgid "White should do pawn storm in left"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:505
+#: lib/pychess/Utils/lutils/strateval.py:504
 msgid "Black should do pawn storm in right"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:538
+#: lib/pychess/Utils/lutils/strateval.py:537
 msgid "Black has a rather cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:540
+#: lib/pychess/Utils/lutils/strateval.py:539
 msgid "Black has a slightly cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:542
+#: lib/pychess/Utils/lutils/strateval.py:541
 msgid "White has a rather cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:544
+#: lib/pychess/Utils/lutils/strateval.py:543
 msgid "White has a slightly cramped position"
 msgstr ""
 
