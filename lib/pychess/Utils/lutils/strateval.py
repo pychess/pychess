@@ -257,7 +257,7 @@ def state_outpost (model, phase):
         if outpost[WHITE][cord] and not bpawns & sides & front and \
                 (not oldwpieces & bitPosArray[cord] or \
                  oldbpawns & sides & front):
-            yield 35, _("White has a new piece in outpost: %s" %reprCord[cord])
+            yield 35, _("White has a new piece in outpost: %s") % reprCord[cord]
     
     for cord in iterBits(bpieces):
         sides = isolaniMask[FILE(cord)]
@@ -265,7 +265,7 @@ def state_outpost (model, phase):
         if outpost[BLACK][cord] and not wpawns & sides & front and \
                 (not oldbpieces & bitPosArray[cord] or \
                  oldwpawns & sides & front):
-            yield 35, _("Black has a new piece in outpost: %s" %reprCord[cord])
+            yield 35, _("Black has a new piece in outpost: %s") % reprCord[cord]
     
 def state_pawn (model, phase):
     
@@ -304,8 +304,8 @@ def state_pawn (model, phase):
                     continue
             
             score = (passedScores[color][cord>>3] * phase)
-            yield score, _("%s has a new passed pawn on %s" % \
-                    (reprColor[color], reprCord[cord]))
+            yield score, _("%s has a new passed pawn on %s") % \
+                    (reprColor[color], reprCord[cord])
     
     # Double pawns
     for file in range(8):
@@ -320,16 +320,16 @@ def state_pawn (model, phase):
         if count > oldcount >= 1:
             if not opcount:
                 yield (8+phase)*2, \
-                    _("%s has a new double pawn in the half-open %s file" % \
-                            (reprColor[color], reprFile[file]))
+                    _("%s has a new double pawn in the half-open %s file") % \
+                            (reprColor[color], reprFile[file])
             else:
-                yield 8+phase, _("%s has a new double pawn in the %s file" % \
-                        (reprColor[color], reprFile[file]))
+                yield 8+phase, _("%s has a new double pawn in the %s file") % \
+                        (reprColor[color], reprFile[file])
                         
         elif count > 1 and opcount == 0 and oldopcount > 0:
             yield (8+phase)*2, \
-                _("%s has an double pawn in the half-open %s file" % \
-                            (reprColor[color], reprFile[file]))
+                _("%s has an double pawn in the half-open %s file") % \
+                            (reprColor[color], reprFile[file])
         
         # Isolated pawns
         if color == WHITE:
@@ -345,19 +345,18 @@ def state_pawn (model, phase):
         
         if wpawns & bits and not wpawns & isolaniMask[file] and \
                 (not oldwpawns & bits or oldwpawns & isolaniMask[file]):
-            yield 20, _("%s has a new isolated pawn in the %s file" % \
-                            (reprColor[WHITE], reprFile[file]))
+            yield 20, _("%s has a new isolated pawn in the %s file") % \
+                            (reprColor[WHITE], reprFile[file])
         
         if bpawns & bits and not bpawns & isolaniMask[file] and \
                 (not oldbpawns & bits or oldbpawns & isolaniMask[file]):
-            yield 20, _("%s has a new isolated pawn in the %s file" % \
-                            (reprColor[BLACK], reprFile[file]))
+            yield 20, _("%s has a new isolated pawn in the %s file") % \
+                            (reprColor[BLACK], reprFile[file])
     
     # Stone wall
     if stonewall[color] & pawns == stonewall[color] and \
        stonewall[color] & oldpawns != stonewall[color]:
-        yield 10, _("%s moves pawns into stonewall formation" % \
-                reprColor[color])
+        yield 10, _("%s moves pawns into stonewall formation") % reprColor[color]
 
 def state_destroysCastling (model, phase):
     """ Does the move destroy the castling ability of the opponent """
@@ -414,8 +413,8 @@ def state_trappedBishops (model, phase):
     
     # We have got more points -> We have trapped a bishop
     if s > olds:
-        yield 300/phase, _("%s has a new trapped bishop on %s" % \
-                                           (reprColor[opcolor], reprCord[cord]))
+        yield 300/phase, _("%s has a new trapped bishop on %s") % \
+                            (reprColor[opcolor], reprCord[cord])
 
 def simple_tropism (model, phase):
     
@@ -438,7 +437,7 @@ def simple_tropism (model, phase):
             rank23 = brank67[BLACK]
         else: rank23 = brank67[WHITE]
         if bitPosArray[fcord] & rank23:
-            yield 2, _("develops a %s: %s" % (reprPiece[PAWN], reprCord[tcord]))
+            yield 2, _("develops a %s: %s") % (reprPiece[PAWN], reprCord[tcord])
         else: yield 1, _("brings a pawn closer to the backrow: %s") % \
                                                                  reprCord[tcord]
         return
@@ -448,11 +447,11 @@ def simple_tropism (model, phase):
     
     if score > oldscore:
         if phase >= 5 or distance[fcord][opking] < distance[fcord][king]:
-            yield score-oldscore, _("brings a %s closer to enemy king: %s" % \
-                    (reprPiece[arBoard[tcord]], reprCord[tcord]))
+            yield score-oldscore, _("brings a %s closer to enemy king: %s") % \
+                    (reprPiece[arBoard[tcord]], reprCord[tcord])
         else:
-            yield (score-oldscore)*2, _("develops a %s: %s" % \
-                    (reprPiece[arBoard[tcord]], reprCord[tcord]))
+            yield (score-oldscore)*2, _("develops a %s: %s") % \
+                    (reprPiece[arBoard[tcord]], reprCord[tcord])
 
 def simple_activity (model, phase):
     
@@ -469,8 +468,8 @@ def simple_activity (model, phase):
     oldmoves = len([m for m in genAllMoves(oldboard) if FCORD(m) == fcord])
     
     if moves > oldmoves:
-        yield (moves-oldmoves)/2, _("places a %s more active: %s" % \
-                (reprPiece[board.arBoard[tcord]], reprCord[tcord]))
+        yield (moves-oldmoves)/2, _("places a %s more active: %s") % \
+                (reprPiece[board.arBoard[tcord]], reprCord[tcord])
 
 def tip_pawnStorm (model, phase):
     """ If players are castled in different directions we should storm in
