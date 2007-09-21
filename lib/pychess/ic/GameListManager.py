@@ -8,7 +8,7 @@ ratings = "([\d\+\-]{1,4})"
 names = "(\w+)(?:\((\w+)\))?"
 mf = "(?:([mf]{1,2})\s?)?"
 
-typedic = {"b":"Blitz", "s":"Standard", "l":"Lightning"}
+typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
 from gobject import *
 from pychess.Utils.const import WHITE
@@ -115,7 +115,7 @@ class GameListManager (GObject):
             if key == "tp":
                 if not value in ("standard", "lightning", "blitz"):
                     return
-                seek[key] = value[0].upper()+value[1:]
+                seek[key] = typedic[value[0]]
             elif key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
             elif key == "ti":
@@ -139,7 +139,7 @@ class GameListManager (GObject):
     def on_game_list (self, client, groups):
         gameno, wr, wn, br, bn, private, type, rated, min, inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = groups
         
-        game = {"gameno":gameno, "wn":wn, "bn":bn, "type":_(typedic[type])}
+        game = {"gameno":gameno, "wn":wn, "bn":bn, "type":typedic[type]}
         self.emit("addGame", game)
     
     def on_game_addremove (self, client, groups):
@@ -148,7 +148,8 @@ class GameListManager (GObject):
             c, rated, type, m = comment.split()
             if not type in ("standard", "blitz", "lightning"):
                 return
-            else: type = _(type[0].upper()+type[1:])
+            else:
+                type = typedic[type[0]]
             game = {"gameno":gameno, "wn":wn, "bn":bn, "type":type}
             self.emit("addGame", game)
         else:
