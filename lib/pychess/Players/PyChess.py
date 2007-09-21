@@ -3,40 +3,21 @@
 import gettext
 from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-from pychess.Utils.const import *
-
-features = {
-    "setboard": 1,
-    "analyze": 1,
-    "usermove": 1,
-    "reuse": 0,
-    "draw": 1,
-    "sigterm": 1,
-    "myname": "PyChess %s" % VERSION
-}
-
-stringPairs = ["=".join([k,repr(v)]) for k,v in features.iteritems()]
-print "feature", " ".join(stringPairs)
-print "feature done=0"
-
-################################################################################
-# Import                                                                       #
-################################################################################
 
 from time import time
 import sys, os
 from threading import Lock
 from Queue import Queue
 
-from pychess.System.ThreadPool import pool
 from Engine import Engine
-from pychess.Utils.book import getOpenings
 
+from pychess.System.ThreadPool import pool
+from pychess.Utils.book import getOpenings
+from pychess.Utils.const import *
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
 from pychess.Utils.lutils.LBoard import LBoard, FEN_START
-
 from pychess.Utils.lutils import leval
 
 try:
@@ -63,6 +44,16 @@ def getBestOpening (board):
 ################################################################################
 # global variables                                                             #
 ################################################################################
+
+features = {
+    "setboard": 1,
+    "analyze": 1,
+    "usermove": 1,
+    "reuse": 0,
+    "draw": 1,
+    "sigterm": 1,
+    "myname": "PyChess %s" % VERSION
+}
 
 searchLock = Lock()
 
@@ -282,7 +273,8 @@ while True:
     lines = line.split()
     
     if lines[0] == "protover":
-        print "features done=1"
+        stringPairs = ["=".join([k,repr(v)]) for k,v in features.iteritems()]
+        print "feature %s done=1" % " ".join(stringPairs)
     
     elif lines[0] == "usermove":
         

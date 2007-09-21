@@ -796,9 +796,6 @@ class BoardView (gtk.DrawingArea):
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         
-        if self.shown != self.model.ply:
-            return
-    
         aw = 0.3 # Arrow width
         ahw = 0.72 # Arrow head width
         ahh = 0.64 # Arrow head height
@@ -839,13 +836,17 @@ class BoardView (gtk.DrawingArea):
             context.set_source_rgba(*strkc)
             context.stroke()
             context.restore()
-            
+        
+        if self.bluearrow:
+            drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
+        
+        if self.shown != self.model.ply:
+            return
+        
         if self.greenarrow:
             drawArrow(self.greenarrow, (.54,.886,.2,0.9), (.306,.604,.024,1))
         if self.redarrow:
             drawArrow(self.redarrow, (.937,.16,.16,0.9), (.643,0,0,1))
-        if self.bluearrow:
-            drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
     
     ###############################
     #        drawEnpassant        #
