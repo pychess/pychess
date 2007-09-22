@@ -162,8 +162,8 @@ class UserInfoSection(Section):
                 row = 0
                 
                 if ratings:
-                    for i, item in enumerate(("Rating", "Win", "Loss", "Draw", "Total")):
-                        table.attach(label(_(item), xalign=1), i+1,i+2,0,1)
+                    for i, item in enumerate((_("Rating"), _("Win"), _("Loss"), _("Draw"), _("Total"))):
+                        table.attach(label(item, xalign=1), i+1,i+2,0,1)
                     
                     row += 1
                     
@@ -609,7 +609,7 @@ class PlayerTabSection (ParrentListSection):
             self.tv = widgets["playertreeview"]
             self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
             self.tv.set_model(gtk.TreeModelSort(self.store))
-            self.addColumns(self.tv, "", "Name", "Rating", pix=[0])
+            self.addColumns(self.tv, "", _("Name"), _("Rating"), pix=[0])
             self.tv.get_column(0).set_sort_column_id(0)
             self.tv.get_model().set_sort_func(0, self.pixCompareFunction)
             try:
