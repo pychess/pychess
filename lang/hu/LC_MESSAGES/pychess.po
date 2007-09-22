@@ -23,7 +23,7 @@ msgstr "PyChess - Kapcsolodós a FICS-hez"
 
 #: glade/fics_logon.glade:84
 msgid "Create New"
-msgstr "Új létrehozása"
+msgstr "Regisztrálok"
 
 #: glade/fics_logon.glade:315 lib/pychess/widgets/Background.py:306
 msgid "Log on as _Guest"
