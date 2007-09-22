@@ -1,4 +1,6 @@
 
+import re
+
 import gtk, pango
 
 from pychess.System import conf
@@ -66,6 +68,8 @@ if hasattr(tooltip, 'tip_window') and tooltip.tip_window != None:
 else:
     tooltipStyle = None
 
+
+
 def makeYellow (box):
     if tooltipStyle:
         box.set_style(tooltipStyle)
@@ -79,3 +83,101 @@ def makeYellow (box):
             box.hasHadFirstDraw = True
     box.connect("expose-event", on_box_expose_event)
 
+
+
+linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
+emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
+def initTexviewLinks (textview, text):
+    tags = []
+    textbuffer = textview.get_buffer()
+    
+    while True:
+        linkmatch = linkre.search(text)
+        emailmatch = emailre.search(text)
+        if not linkmatch and not emailmatch:
+            textbuffer.insert (textbuffer.get_end_iter(), text)
+            break
+        
+        if emailmatch and (not linkmatch or \
+                emailmatch.start() < linkmatch.start()):
+            s = emailmatch.start()
+            e = emailmatch.end()
+            type = "email"
+        else:
+            s = linkmatch.start()
+            e = linkmatch.end()
+            if text[e-1] == ".":
+                e -= 1
+            type = "link"
+        textbuffer.insert (textbuffer.get_end_iter(), text[:s])
+        
+        tag = textbuffer.create_tag (None, foreground="blue",
+                underline=pango.UNDERLINE_SINGLE)
+        tags.append([tag, text[s:e], type, textbuffer.get_end_iter()])
+        
+        textbuffer.insert_with_tags (
+                textbuffer.get_end_iter(), text[s:e], tag)
+        
+        tags[-1].append(textbuffer.get_end_iter())
+        
+        text = text[e:]
+    
+    def on_press_in_textview (textview, event):
+        iter = textview.get_iter_at_location (int(event.x), int(event.y))
+        if not iter: return
+        for tag, link, type, s, e in tags:
+            if iter.has_tag(tag):
+                tag.props.foreground = "red"
+                break
+    
+    def on_release_in_textview (textview, event):
+        iter = textview.get_iter_at_location (int(event.x), int(event.y))
+        if not iter: return
+        for tag, link, type, s, e in tags:
+            if iter and iter.has_tag(tag) and \
+                    tag.props.foreground_gdk.red == 65535:
+                if type == "link":
+                    webbrowser.open(link)
+                else: webbrowser.open("mailto:"+link)
+            tag.props.foreground = "blue"
+    
+    stcursor = gtk.gdk.Cursor(gtk.gdk.XTERM)
+    linkcursor = gtk.gdk.Cursor(gtk.gdk.HAND2)
+    def on_motion_in_textview(textview, event):
+        textview.window.get_pointer()
+        iter = textview.get_iter_at_location (int(event.x), int(event.y))
+        if not iter: return
+        for tag, link, type, s, e in tags:
+            if iter.has_tag(tag):
+                textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor (
+                        linkcursor)
+                break
+        else: textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor(stcursor)
+    
+    textview.connect ("motion-notify-event", on_motion_in_textview)
+    textview.connect ("leave_notify_event", on_motion_in_textview)
+    textview.connect("button_press_event", on_press_in_textview)
+    textview.connect("button_release_event", on_release_in_textview)
+
+
+
+def initLabelLinks (text, url):
+    label = gtk.Label()
+    
+    eventbox = gtk.EventBox()
+    label.set_markup("<span color='blue'><u>%s</u></span>" % text)
+    eventbox.add(label)
+    
+    def released (eventbox, event):
+        webbrowser.open(url)
+        label.set_markup("<span color='blue'><u>%s</u></span>" % text)
+    eventbox.connect("button_release_event", released)
+    
+    def pressed (eventbox, event):
+        label.set_markup("<span color='red'><u>%s</u></span>" % text)
+    eventbox.connect("button_press_event", pressed)
+    
+    eventbox.connect_after("realize",
+        lambda w: w.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2)))
+    
+    return eventbox

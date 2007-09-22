@@ -1,9 +1,11 @@
-from telnetlib import Telnet
-from gobject import *
 import socket
+import re, sys
 from sys import maxint
+
+from gobject import *
+
+from telnetlib import Telnet
 from pychess.System.Log import log
-import sys
 
 class VerboseTelnet (Telnet, GObject):
     __gsignals__ = {
@@ -14,35 +16,35 @@ class VerboseTelnet (Telnet, GObject):
         Telnet.__init__(self)
         GObject.__init__(self)
         self.interrupting = False
-        
-    def expect (self, list):
+    
+    def expectList (self, regexps):
+        d = {}
+        for i, regexp in enumerate(regexps):
+            compiled = re.compile(regexp)
+            d[compiled] = i
+        return self.expect(d)
+    
+    def expect (self, regexps):
         """ Modified expect method, which checks ALL regexps for the one which
         mathces the earliest """
         
-        re = None
-        list = list[:]
-        indices = range(len(list))
-        for i in indices:
-            if not hasattr(list[i], "search"):
-                if not re: import re
-                list[i] = re.compile(list[i])
         while 1:
             self.process_rawq()
             lowest = []
-            for i in indices:
-                m = list[i].search(self.cookedq)
+            for regexp in regexps.iterkeys():
+                m = regexp.search(self.cookedq)
                 if m:
                     s = m.start()
                     if not lowest or s < lowest[0][1]:
-                        lowest = [[m, s, i]]
+                        lowest = [(m, s, regexps[regexp])]
                     elif s == lowest[0][1]:
-                        lowest.append( [m, s, i] )
+                        lowest.append((m, s, regexps[regexp]))
             maxend = 0
-            for match, start, index in lowest:
+            for match, start, val in lowest:
                 end = match.end()
                 if end > maxend:
                     maxend = end
-                yield (index, match.groups())
+                yield (val, match.groups())
             self.cookedq = self.cookedq[maxend:]
             if lowest:
                 return
@@ -134,8 +136,8 @@ def connect (host, port, username="guest", password=""):
         print >> client, username
         
         if username != "guest":
-            r = client.expect( ["password: ", "login: ",
-                                "Press return to enter the server as"]).next()
+            r = client.expectList( ["password: ", "login: ",
+                    "Press return to enter the server as"]).next()
             if r[0] < 0:
                 raise IOError, _("The connection was broken - got \"end of file\" message")
             elif r[0] == 1:
@@ -150,8 +152,8 @@ def connect (host, port, username="guest", password=""):
             print >> client
         
         names = "(\w+)(?:\(([CUHIFWM])\))?"
-        r = client.expect(["Invalid password",
-                           "Starting FICS session as %s" %  names]).next()
+        r = client.expectList( ["Invalid password",
+                "Starting FICS session as %s" %  names]).next()
         
         if r[0] == 0:
             raise LogOnError, _("The entered password was invalid.\n\n"+\
@@ -161,7 +163,7 @@ def connect (host, port, username="guest", password=""):
             curname = r[1][0]
         
         client.read_until("fics%")
-    
+        
         connected = True
         for handler in connectHandlers:
             handler (client, IC_CONNECTED)
@@ -172,8 +174,13 @@ def connect (host, port, username="guest", password=""):
                 if r[0] < 0:
                     EOF = True
                     break
-                handler = handlers[match[0]]
-                handler (client, match[1])
+                funcs, groups = match
+                try:
+                    for func in funcs:
+                        func(client, groups)
+                except TypeError:
+                    print funcs
+                    raise
         
         for handler in connectHandlers:
             # Give handlers a chance no discover that the connection is closed
@@ -189,26 +196,27 @@ def disconnect ():
     global connected
     connected = False
 
-import re
-handlers = []
-regexps = []
-uncompiled = []
+regexps = {}
 def expect (regexp, func, flag=None):
-    handlers.append(func)
     if flag != None:
         r = re.compile(regexp, flag)
     else: r = re.compile(regexp)
-    regexps.append(r)
-    uncompiled.append(regexp)
+    
+    if r in regexps:
+        regexps[r].append(func)
+    else:
+        regexps[r] = [func]
 
 def unexpect (func):
-    try:
-        i = handlers.index (func)
-    except ValueError:
-        return
-    del handlers[i]
-    del regexps[i]
-    del uncompiled[i]
+    for regexp, funcs in regexps.items():
+        try:
+            index = funcs.index(func)
+            if len(funcs) <= 1:
+                del regexps[regexp]
+            else:
+                del funcs[index]
+        except ValueError:
+            pass
 
 connectHandlers = []
 def connectStatus (func):

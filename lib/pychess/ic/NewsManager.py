@@ -1,20 +1,21 @@
 
-import telnet
-from gobject import *
 import re
+from gobject import *
+import telnet
+from ICManager import ICManager
 
 types = "(Blitz|Lightning|Standard)"
 days = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
 months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
 
-class NewsManager (GObject):
+class NewsManager (ICManager):
     
     __gsignals__ = {
         'readNews' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        ICManager.__init__(self)
         
         self.news = {}
     
@@ -45,3 +46,5 @@ class NewsManager (GObject):
         
         telnet.expect ( "%s[\s\n]+(.+?)[\s\n]+Posted by" % re.escape(title), callback, re.DOTALL)
         print >> telnet.client, "news", no
+
+nm = NewsManager()

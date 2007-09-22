@@ -5,13 +5,13 @@ from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toSAN, ParsingError, listToSan
 from pychess.Utils.const import *
-from pychess.ic import telnet
+from pychess.ic.BoardManager import bm
+from pychess.ic.OfferManager import om
 
 class ServerPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, boardmanager, offermanager,
-                        name, external, gameno, color):
+    def __init__ (self, gamemodel, name, external, gameno, color):
         Player.__init__(self)
         
         self.queue = Queue()
@@ -19,22 +19,20 @@ class ServerPlayer (Player):
         self.name = name
         self.color = color
         self.gameno = gameno
+        self.gamemodel = gamemodel
         
         # If we are not playing against a player on the users computer. E.g.
         # when we observe a game on FICS. In these cases we don't send anything
         # back to the server.
         self.external = external
         
-        self.boardmanager = boardmanager
-        self.boardmanager.connect("moveRecieved", self.moveRecieved)
-        self.offermanager = offermanager
-        self.offermanager.connect("onOfferAdd", self.onOfferAdd)
-        self.offermanager.connect("onOfferRemove", self.onOfferRemove)
+        bm.connect("moveRecieved", self.moveRecieved)
+        om.connect("onOfferAdd", self.onOfferAdd)
+        om.connect("onOfferRemove", self.onOfferRemove)
         
         self.offerToIndex = {}
         self.indexToOffer = {}
         self.lastPly = -1
-        self.gamemodel = None
     
     def onOfferAdd (self, om, index, offer):
         self.indexToOffer[index] = offer
@@ -45,7 +43,7 @@ class ServerPlayer (Player):
             self.emit ("withdraw", self.indexToOffer[index])
     
     def offer (self, offer):
-        self.offermanager.offer(offer, self.lastPly)
+        om.offer(offer, self.lastPly)
     
     def offerDeclined (self, offer):
         pass
@@ -71,7 +69,7 @@ class ServerPlayer (Player):
         self.gamemodel = gamemodel
         self.lastPly = gamemodel.ply
         if gamemodel.moves and not self.external:
-            self.boardmanager.sendMove (
+            bm.sendMove (
                     toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
         
         item = self.queue.get(block=True)
@@ -115,7 +113,7 @@ class ServerPlayer (Player):
     def kill (self, reason):
         p = self.gamemodel.players
         if p[0].__type__ != REMOTE or p[1].__type__ != REMOTE:
-            self.offermanager.offer(Offer(RESIGNATION), self.lastPly)
+            om.offer(Offer(RESIGNATION), self.lastPly)
         self.queue.put("del")
     
     def undoMoves (self, movecount, gamemodel):
