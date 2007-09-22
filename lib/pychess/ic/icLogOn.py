@@ -7,6 +7,7 @@ from pychess.System.ThreadPool import pool
 from pychess.System import gstreamer, uistuff, glock
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
+
 import telnet, icLounge
 
 firstRun = True

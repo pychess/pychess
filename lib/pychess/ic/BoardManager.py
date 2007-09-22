@@ -1,7 +1,10 @@
 
-import telnet, re
+import re
 from gobject import *
+
 from pychess.Utils.const import *
+import telnet
+from ICManager import ICManager
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
 # FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
@@ -20,30 +23,36 @@ relations = { "-3": IC_POS_ISOLATED,
                "1": IC_POS_ME_TO_MOVE,
                "0": IC_POS_OBSERVING }
 
-class BoardManager (GObject):
+class BoardManager (ICManager):
     
     __gsignals__ = {
-        'playBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'observeBoardCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE,
-                (str, str, int, int, str, str)),
-        'moveRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str, str, int)),
-        'boardRecieved' : (SIGNAL_RUN_FIRST, TYPE_NONE,
-                (str, int, str, int, int)),
-        'clockUpdatedMs' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, int)),
-        'gameEnded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, int)),
-        'gamePaused' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, bool))
+        'playBoardCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
+        'observeBoardCreated' : (SIGNAL_RUN_FIRST, None, (str, str, int, int, str, str)),
+        'moveRecieved'        : (SIGNAL_RUN_FIRST, None, (str, str, str, int)),
+        'boardRecieved'       : (SIGNAL_RUN_FIRST, None, (str, int, str, int, int)),
+        'clockUpdatedMs'      : (SIGNAL_RUN_FIRST, None, (str, int, int)),
+        'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (str, int, int)),
+        'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (str, int, int)),
+        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (str,)),
+        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (str, bool))
     }
     
-    def __init__ (self):
-        GObject.__init__(self)
-        
-        self.observeQueue = {}
-        self.activeItem = None
-        
+    def start (self):
         print >> telnet.client, "style 12"
         print >> telnet.client, "iset startpos 1"
         print >> telnet.client, "iset gameinfo 1"
         print >> telnet.client, "iset compressmove 1"
+    
+    def __init__ (self):
+        ICManager.__init__(self)
+        
+        self.observeQueue = {}
+        # activeItem is the gameno of the observed game of which we are
+        # currently parsing the history
+        self.activeItem = None
+        # playedItem is the gameno of the game in which we are currenly taking
+        # part
+        self.playedItem = None
         
         telnet.expect ( "<12>(.*?)\n", self.onStyle12 )
         telnet.expect ( "<d1>(.*?)\n", self.onMove )
@@ -170,6 +179,7 @@ class BoardManager (GObject):
                  "bname": bname, "btitle": btit, "brating": brat,
                  "rated": rt, "type": type, "mins": min, "incr": incr,
                  "gameno": gmno}
+        self.playedItem = gmno
         self.emit("playBoardCreated", board)
     
     def observeBoardCreated (self, client, groups):
@@ -302,11 +312,14 @@ class BoardManager (GObject):
             status = UNKNOWN_STATE
             reason = UNKNOWN_REASON
         
-        f = lambda: self.emit("gameEnded", gameno, status, reason)
-        if self.activeItem == gameno:
-            self.observeQueue[self.activeItem]["queue"].append(f)
+        if gameno == self.playedItem:
+            self.emit("curGameEnded", gameno, status, reason)
         else:
-            f()
+            f = lambda: self.emit("obsGameEnded", gameno, status, reason)
+            if self.activeItem == gameno:
+                self.observeQueue[self.activeItem]["queue"].append(f)
+            else:
+                f()
     
     def onGamePause (self, client, groups):
         gameno, state = groups
@@ -334,6 +347,7 @@ class BoardManager (GObject):
     
     def unobserve (self, gameno):
         print >> telnet.client, "unobserve", gameno
+        self.emit("obsGameUnobserved", gameno)
     
     def play (self, seekno):
         print >> telnet.client, "play", seekno
@@ -343,3 +357,6 @@ class BoardManager (GObject):
     
     def decline (self, offerno):
         print >> telnet.client, "decline", offerno
+
+
+bm = BoardManager()

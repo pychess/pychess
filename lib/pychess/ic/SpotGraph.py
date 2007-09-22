@@ -86,17 +86,18 @@ class SpotGraph (gtk.DrawingArea):
         
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
-        context.set_source_color(self.get_style().dark[gtk.STATE_ACTIVE])
+        context.set_source_color(self.get_style().dark[self.state])
         context.stroke()
         
         for y, title in self.ymarks:
-            context.set_source_rgba(0, 0, 0, 0.7)
+            context.set_source_color(self.get_style().fg[self.state])
+            #context.set_source_rgba(0, 0, 0, 0.7)
             context.set_font_size(12)
             x, y = self.transCords (0, y)
             context.move_to (x+line/2., y+line/2.)
             context.show_text(title)
             
-            context.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            context.set_source_color(self.get_style().bg[self.state])
             context.move_to (x, y-line/2.)
             context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
             context.rel_curve_to (line, 0,  line, 6,  line, 6)
@@ -104,7 +105,8 @@ class SpotGraph (gtk.DrawingArea):
             context.fill()
         
         for x, title in self.xmarks:
-            context.set_source_rgba(0, 0, 0, 0.7)
+            context.set_source_color(self.get_style().fg[self.state])
+            #context.set_source_rgba(0, 0, 0, 0.7)
             context.set_font_size(12)
             x, y = self.transCords (x, 1)
             context.move_to (x+line/2., y)
@@ -112,7 +114,7 @@ class SpotGraph (gtk.DrawingArea):
             context.show_text(title)
             context.rotate(math.pi/2)
             
-            context.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            context.set_source_color(self.get_style().bg[self.state])
             context.move_to (x-line/2., y+line/2.)
             context.rel_curve_to (6, 0,  6, line,  6, line)
             context.rel_curve_to (0, -line,  6, -line,  6, -line)

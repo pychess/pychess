@@ -5,6 +5,8 @@ from gobject import *
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
+
+from ICManager import ICManager
 import telnet
 
 
@@ -39,7 +41,7 @@ offerTypeToStr = {}
 for k,v in strToOfferType.iteritems():
     offerTypeToStr[v] = k
 
-class OfferManager (GObject):
+class OfferManager (ICManager):
     
     __gsignals__ = {
         'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
@@ -50,7 +52,7 @@ class OfferManager (GObject):
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        ICManager.__init__(self)
         telnet.expect ( 
             "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+?)\n" % names, self.onOfferAdd)
         telnet.expect ( "<pr> (\d+)\n", self.onOfferRemove)
@@ -69,31 +71,34 @@ class OfferManager (GObject):
             telnet.expect (ficsstring,
                     lambda c,g: self.emit("onActionError", offer, error))
         
-        def callback (client, groups):
-            param = groups[0] != "no" and int(groups[0]) or 0
-            offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
-            self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
-        telnet.expect (
-            "There are (?:(no)|only (\d+) half) moves in your game.", callback )
+        telnet.expect ("There are (?:(no)|only (\d+) half) moves in your game.", self.notEnoughMovesToUndo)
         
-        def callback (client, groups):
-            offerstr, type = groups
-            if type == "accept":
-                error = ACTION_ERROR_NONE_TO_ACCEPT
-            elif type == "withdraw":
-                error = ACTION_ERROR_NONE_TO_WITHDRAW
-            elif type == "decline":
-                error = ACTION_ERROR_NONE_TO_DECLINE
-            offerType = strToOfferType[offerstr]
-            self.emit("onActionError", Offer(offerType), error)
-        telnet.expect ("There are no ([^ ]+) offers to (accept).", callback)
+        telnet.expect ("There are no ([^ ]+) offers to (accept).", self.noOffersToAccept)
         
         self.lastPly = 0
         self.indexType = {}
+    
+    def start (self):
         print >> telnet.client, "iset pendinfo 1"
     
     def stop (self):
         print >> telnet.client, "iset pendinfo 0"
+    
+    def noOffersToAccept (self, client, groups):
+        offerstr, type = groups
+        if type == "accept":
+            error = ACTION_ERROR_NONE_TO_ACCEPT
+        elif type == "withdraw":
+            error = ACTION_ERROR_NONE_TO_WITHDRAW
+        elif type == "decline":
+            error = ACTION_ERROR_NONE_TO_DECLINE
+        offerType = strToOfferType[offerstr]
+        self.emit("onActionError", Offer(offerType), error)
+    
+    def notEnoughMovesToUndo (self, client, groups):
+        param = groups[0] != "no" and groups[0] or 0
+        offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
+        self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
     
     def onOfferAdd (self, client, groups):
         tofrom, index, type, parameters = groups
@@ -113,12 +118,14 @@ class OfferManager (GObject):
             match = {"tp": type, "w": fname, "rt": rating,
                         "r": rated, "t": mins, "i": incr}
             self.emit("onChallengeAdd", index, match)
+        
         elif type in strToOfferType:
             offerType = strToOfferType[type]
             if offerType == TAKEBACK_OFFER:
                 offer = Offer(offerType, int(parameters))
             else: offer = Offer(offerType)
             self.emit("onOfferAdd", index, offer)
+        
         else:
             print "Warning: Unknown offer type: #", index, type, "whith" + \
                   "parameters:", parameters, ". Declining"
@@ -154,3 +161,5 @@ class OfferManager (GObject):
     
     def playIndex (self, index):
         print >> telnet.client, "play", index
+
+om = OfferManager()

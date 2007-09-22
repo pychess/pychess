@@ -10,7 +10,7 @@ import glock
 #
 
 class Publisher (Thread):
-    """ Publisher can be used when a thread is oftenly spitting out result,
+    """ Publisher can be used when a thread is oftenly spitting out results,
         and you want to process these results in gtk as soon as possible.
         While waiting for gdk access, results will be stored, and depending on
         the send policy, either the entire list, or only the last item will be

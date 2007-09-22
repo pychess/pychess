@@ -64,7 +64,6 @@ class TimeModel (GObject):
     def start (self):
         if self.started: return
         self.started = True
-        print "started"
         
         self.counter = time()
         self.emit("time_changed")

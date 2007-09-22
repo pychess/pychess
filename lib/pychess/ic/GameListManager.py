@@ -1,5 +1,8 @@
 
+from gobject import *
+
 import telnet
+from ICManager import ICManager
 
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
@@ -10,10 +13,9 @@ mf = "(?:([mf]{1,2})\s?)?"
 
 typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
-from gobject import *
 from pychess.Utils.const import WHITE
 
-class GameListManager (GObject):
+class GameListManager (ICManager):
     
     __gsignals__ = {
         'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -31,7 +33,7 @@ class GameListManager (GObject):
     
     def __init__ (self):
         
-        GObject.__init__(self)
+        ICManager.__init__(self)
         
         
         
@@ -105,6 +107,9 @@ class GameListManager (GObject):
         print >> telnet.client, "match %s %d %d %s %s" % \
                 (playerName, startmin, incsec, rchar, cchar)
     
+    def refreshSeeks (self):
+        print >> telnet.client, "iset seekinfo 1"
+    
     ###
     
     def on_seek_add (self, client, groups):
@@ -126,7 +131,7 @@ class GameListManager (GObject):
         
         self.emit("addSeek", seek)
     
-    def on_seek_clear (self, client, groups):
+    def on_seek_clear (self, *args):
         self.emit("clearSeeks")
     
     def on_seek_remove (self, client, groups):
@@ -184,4 +189,6 @@ class GameListManager (GObject):
     
     def playBoardCreated (self, client, groups):
         self.emit("clearSeeks")
-    
+
+
+glm = GameListManager()
