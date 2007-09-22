@@ -1,9 +1,9 @@
 import gtk, gobject, cairo
 
-from pychess.System import glock
+from pychess.System import glock, conf
 from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
-from pychess.Utils.Move import parseSAN
+from pychess.Utils.Move import parseSAN, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
 
 __title__ = _("Opening Book")
@@ -66,6 +66,11 @@ class Sidepanel:
                 if not games: continue
                 wins, draws, loses = \
                         map(lambda x: x/float(games), (wins, draws, loses))
+                b = self.board.model.getBoardAtPly(shown)
+                if conf.get("figuresInNotation", False):
+                    move = toFAN(b, parseSAN(b, move))
+                else:
+                    move = toSAN(b, parseSAN(b, move), True)
                 self.store.append ([move, str(games), (wins,draws,loses)])
         finally:
             glock.release()
