@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-21 23:22+0200\n"
+"POT-Creation-Date: 2007-09-22 19:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,7 +110,8 @@ msgstr ""
 msgid "Seeks / Challenges"
 msgstr ""
 
-#: glade/fics_lounge.glade:622 lib/pychess/ic/icLounge.py:404
+#: glade/fics_lounge.glade:622 lib/pychess/ic/icLounge.py:165
+#: lib/pychess/ic/icLounge.py:359 lib/pychess/ic/icLounge.py:612
 msgid "Rating"
 msgstr ""
 
@@ -737,185 +738,202 @@ msgstr ""
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr ""
 
-#: lib/pychess/ic/GameListManager.py:11 lib/pychess/ic/icLounge.py:842
+#: lib/pychess/ic/GameListManager.py:14 lib/pychess/ic/icLounge.py:849
 msgid "Blitz"
 msgstr ""
 
-#: lib/pychess/ic/GameListManager.py:11
+#: lib/pychess/ic/GameListManager.py:14
 msgid "Standard"
 msgstr ""
 
-#: lib/pychess/ic/GameListManager.py:11 lib/pychess/ic/icLounge.py:843
+#: lib/pychess/ic/GameListManager.py:14 lib/pychess/ic/icLounge.py:850
 msgid "Lightning"
 msgstr ""
 
-#: lib/pychess/ic/icLogOn.py:82
+#: lib/pychess/ic/icLogOn.py:83
 msgid "Connection Error"
 msgstr ""
 
-#: lib/pychess/ic/icLogOn.py:85
+#: lib/pychess/ic/icLogOn.py:86
 msgid "Log on Error"
 msgstr ""
 
-#: lib/pychess/ic/icLogOn.py:88
+#: lib/pychess/ic/icLogOn.py:89
 msgid "Connection was broken"
 msgstr ""
 
-#: lib/pychess/ic/icLogOn.py:91
+#: lib/pychess/ic/icLogOn.py:92
 msgid "Connection was closed"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:136
+#: lib/pychess/ic/icLounge.py:165
+msgid "Win"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:165
+msgid "Loss"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:165
+msgid "Draw"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:165
+msgid "Total"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:182
 msgid "Email"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:141
+#: lib/pychess/ic/icLounge.py:187
 msgid "Spent"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:162
+#: lib/pychess/ic/icLounge.py:208
 msgid "online in total"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:166
+#: lib/pychess/ic/icLounge.py:212
 msgid "Ping"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:167
+#: lib/pychess/ic/icLounge.py:213
 msgid "Connecting"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:174 lib/pychess/Savers/epd.py:134
+#: lib/pychess/ic/icLounge.py:220 lib/pychess/Savers/epd.py:134
 msgid "Unknown"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:185
+#: lib/pychess/ic/icLounge.py:231
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest is not able to play rated games, and thus the offer of games is be "
 "smaller."
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:191 lib/pychess/ic/icLounge.py:196
-#: lib/pychess/ic/icLounge.py:199
+#: lib/pychess/ic/icLounge.py:235
 msgid "Register now"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:404 lib/pychess/widgets/Background.py:314
+#: lib/pychess/ic/icLounge.py:359 lib/pychess/ic/icLounge.py:612
+#: lib/pychess/widgets/Background.py:314
 msgid "Name"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:404 lib/pychess/ic/icLounge.py:414
-#: lib/pychess/ic/icLounge.py:516 lib/pychess/ic/icLounge.py:568
+#: lib/pychess/ic/icLounge.py:359 lib/pychess/ic/icLounge.py:382
+#: lib/pychess/ic/icLounge.py:469 lib/pychess/ic/icLounge.py:543
 msgid "Rated"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:405
+#: lib/pychess/ic/icLounge.py:360
 msgid "Type"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:405
+#: lib/pychess/ic/icLounge.py:360
 msgid "Clock"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:414 lib/pychess/ic/icLounge.py:516
-#: lib/pychess/ic/icLounge.py:568
+#: lib/pychess/ic/icLounge.py:382 lib/pychess/ic/icLounge.py:469
+#: lib/pychess/ic/icLounge.py:543
 msgid "Unrated"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
-#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
+#: lib/pychess/ic/icLounge.py:387 lib/pychess/ic/icLounge.py:406
+#: lib/pychess/ic/icLounge.py:474 lib/pychess/ic/icLounge.py:488
 msgid "Active Seek"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
-#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
+#: lib/pychess/ic/icLounge.py:387 lib/pychess/ic/icLounge.py:406
+#: lib/pychess/ic/icLounge.py:417 lib/pychess/ic/icLounge.py:474
+#: lib/pychess/ic/icLounge.py:488
 msgid "Active Seeks"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:746
+#: lib/pychess/ic/icLounge.py:646 lib/pychess/ic/icLounge.py:663
+msgid "Player Ready"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:646 lib/pychess/ic/icLounge.py:663
+msgid "Players Ready"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:700
+msgid "White Player"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:700
+msgid "Black Player"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:701
+msgid "Game Type"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:726 lib/pychess/ic/icLounge.py:743
+msgid "Game Running"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:726 lib/pychess/ic/icLounge.py:743
+msgid "Games Running"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:826
+msgid "Easy"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:827
+msgid "Advanced"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:828 lib/pychess/widgets/ionest.py:302
+msgid "Expert"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:837
+msgid "Don't Care"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:838
+msgid "Want White"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:839
+msgid "Want Black"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:848
+msgid "Normal"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:851
+msgid "New Custom"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:878
+msgid "Custom"
+msgstr ""
+
+#: lib/pychess/ic/icLounge.py:935 lib/pychess/ic/icLounge.py:957
 #: lib/pychess/widgets/ionest.py:435
 msgid "vs"
 msgstr ""
 
-#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
-msgid "Player Ready"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
-msgid "Players Ready"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:697
-msgid "White Player"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:697
-msgid "Black Player"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:698
-msgid "Game Type"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
-msgid "Game Running"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
-msgid "Games Running"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:819
-msgid "Easy"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:820
-msgid "Advanced"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:821 lib/pychess/widgets/ionest.py:302
-msgid "Expert"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:830
-msgid "Don't Care"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:831
-msgid "Want White"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:832
-msgid "Want Black"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:841
-msgid "Normal"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:844
-msgid "New Custom"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:869
-msgid "Custom"
-msgstr ""
-
-#: lib/pychess/ic/telnet.py:127 lib/pychess/ic/telnet.py:140
+#: lib/pychess/ic/telnet.py:129 lib/pychess/ic/telnet.py:142
 msgid "The connection was broken - got \"end of file\" message"
 msgstr ""
 
-#: lib/pychess/ic/telnet.py:142
+#: lib/pychess/ic/telnet.py:144
 msgid "Names can only consist of lower and upper case letters"
 msgstr ""
 
-#: lib/pychess/ic/telnet.py:144
+#: lib/pychess/ic/telnet.py:146
 #, python-format
 msgid "'%s' is not a registered name"
 msgstr ""
 
-#: lib/pychess/ic/telnet.py:157
+#: lib/pychess/ic/telnet.py:159
 msgid ""
 "The entered password was invalid.\n"
 "\n"
