@@ -1,37 +1,40 @@
 
+from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 
+from BoardManager import bm
+from OfferManager import om
+
 class IcGameModel (GameModel):
     
-    def __init__ (self, boardmanager, offermanager, gameno, timemodel):
+    def __init__ (self, gameno, timemodel):
         GameModel.__init__(self, timemodel)
-        self.boardmanager = boardmanager
-        self.offermanager = offermanager
         self.gameno = gameno
         
-        boardmanager.connect("clockUpdatedMs", self.onClockUpdatedMs)
-        boardmanager.connect("boardRecieved", self.onBoardRecieved)
-        boardmanager.connect("gameEnded", self.onGameEnded)
-        boardmanager.connect("gamePaused", self.onGamePaused)
+        bm.connect("clockUpdatedMs", self.onClockUpdatedMs)
+        bm.connect("boardRecieved", self.onBoardRecieved)
+        bm.connect("obsGameEnded", self.onGameEnded)
+        bm.connect("curGameEnded", self.onGameEnded)
+        bm.connect("gamePaused", self.onGamePaused)
         
-        offermanager.connect("onActionError", self.onActionError)
+        om.connect("onActionError", self.onActionError)
         
         self.inControl = True
     
-    def onClockUpdatedMs (self, boardmanager, gameno, msecs, color):
+    def onClockUpdatedMs (self, bm, gameno, msecs, color):
         if gameno == self.gameno:
             self.timemodel.updatePlayer (color, msecs/1000.)
     
-    def onBoardRecieved (self, boardmanager, gameno, ply, fen, wsecs, bsecs):
+    def onBoardRecieved (self, bm, gameno, ply, fen, wsecs, bsecs):
         if gameno == self.gameno:
             self.timemodel.syncClock (wsecs, bsecs)
             if ply < self.ply:
-                print "TAKEBACK", self.ply, ply
+                log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
                 self.undoMoves(self.ply-ply)
     
-    def onGameEnded (self, boardmanager, gameno, status, reason):
+    def onGameEnded (self, bm, gameno, status, reason):
         if gameno == self.gameno:
             self.end (status, reason)
     
@@ -40,7 +43,7 @@ class IcGameModel (GameModel):
             self.inControl = False
         GameModel.setPlayers (self, players)
     
-    def onGamePaused (self, boardmanager, gameno, paused):
+    def onGamePaused (self, bm, gameno, paused):
         if paused:
             self.pause()
         else: self.resume()
@@ -62,7 +65,7 @@ class IcGameModel (GameModel):
             self.undoMoves(self.ply - offer.param)
         
         elif offer.offerType in (RESIGNATION, FLAG_CALL):
-            self.offermanager.offer(offer, self.ply)
+            om.offer(offer, self.ply)
         
         elif offer.offerType in OFFERS:
             if offer not in self.offerMap:
@@ -79,7 +82,7 @@ class IcGameModel (GameModel):
             if offer not in self.offerMap or self.offerMap[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                self.offermanager.accept(offer.offerType)
+                om.accept(offer.offerType)
                 del self.offerMap[offer]
         
         # We don't handle any ServerPlayer calls here, as the fics server will
@@ -93,5 +96,5 @@ class IcGameModel (GameModel):
             return True
         return GameModel.checkStatus(self)
     
-    def onActionError (self, offermanager, offer, error):
+    def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)

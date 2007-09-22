@@ -1,18 +1,22 @@
 
-import telnet
-from gobject import *
 from threading import RLock
+
+from gobject import *
+
+import telnet
+from ICManager import ICManager
+
 
 types = "(Blitz|Lightning|Standard)"
 
-class FingerManager (GObject):
+class FingerManager (ICManager):
     
     __gsignals__ = {
         'fingeringFinished' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, str, object)),
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        ICManager.__init__(self)
         
         self.ratings = {}
         self.email = ""
@@ -42,3 +46,5 @@ class FingerManager (GObject):
     def onRatingLine (self, client, groups):
         if not groups: return
         self.ratings[groups[0]] = groups[1:]
+
+fm = FingerManager()

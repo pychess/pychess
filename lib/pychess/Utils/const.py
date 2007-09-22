@@ -139,7 +139,7 @@ for cord, name in enumerate(reprCord):
 # Internet Chess                                                               #
 ################################################################################
 
-IC_CONNECTED, IC_MATCH, IC_DISCONNECTED = range(3)
+IC_CONNECTED, IC_DISCONNECTED = range(2)
 
 IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
 IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING = range(6)

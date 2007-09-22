@@ -146,7 +146,7 @@ class PGNFile (ChessFile):
                 [model.timemodel.intervals[0][0]]*(whites+1),
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
-            print "intervals", model.timemodel.intervals
+            log.debug("intervals %s" % model.timemodel.intervals)
         
         return model
     
