@@ -1,83 +1,27 @@
-#!/bin/sh
+#!/usr/bin/python
 #
 # PyChess startup script
 #
 
-################################################################################
-# Find path function is grabbed from googleearth                               #
-################################################################################
-
-FindPath()
-{
-    fullpath="`echo $1 | grep /`"
-    if [ "$fullpath" = "" ]; then
-        oIFS="$IFS"
-        IFS=:
-        for path in $PATH
-        do if [ -x "$path/$1" ]; then
-               if [ "$path" = "" ]; then
-                   path="."
-               fi
-               fullpath="$path/$1"
-               break
-           fi
-        done
-        IFS="$oIFS"
-    fi
-    if [ "$fullpath" = "" ]; then
-        fullpath="$1"
-    fi
-
-    # Is the sed/ls magic portable?
-    if [ -L "$fullpath" ]; then
-        fullpath=`ls -l "$fullpath" |sed -e 's/.* -> //' |sed -e 's/\*//'`
-    fi
-    dirname $fullpath
-}
-
-export PYCHESS_DATA_PATH="`FindPath $0`"
-
-################################################################################
-# Workaround for problem with ubuntu/debian kernels and gobject/gtk threading  #
-################################################################################
-
-#if [ -f /etc/debian-release ] ; then
-#    export LD_ASSUME_KERNEL=2.4.1
-#elif [ -f /etc/debian_version ] ; then
-#    export LD_ASSUME_KERNEL=2.4.1
-#fi
-
-################################################################################
-# Save arguments in a python readable way. We can't use the bash $* and $@     #
-# special parameters, as they split up double quoted parameters                #
-################################################################################
-
-export PYCHESS_ARGUMENTS="$#"
-i=0
-for arg do
-    export PYCHESS_ARGUMENT$i="$arg"
-    i=$(($i+1))
-done
-
-################################################################################
-# Try to import pychess modules and set up gettext                             #
-################################################################################
-
-python -c '
+import os, sys
 import pygtk
 pygtk.require("2.0")
-import os
 
+# Import datalocation functions and ensure access to codebase
 try:
-    from pychess.System.prefix import addDataPrefix, getDataPrefix
+    from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 except ImportError:
     print "ERROR: Could not import modules."
     print "Please try to run pychess as stated in the INSTALL file"
-    import sys
     sys.exit(1)
 
+# Start logging
+from pychess.System.Log import log
+log.debug("Started")
+
+# Set up translations
 import gettext, gtk.glade
-if "/bin/" in os.environ["PYCHESS_DATA_PATH"]:
+if isInstalled():
     gettext.install("pychess", unicode=1)
     gtk.glade.bindtextdomain("pychess")
 else:
@@ -85,26 +29,10 @@ else:
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
 
-# This is an ugly hack needed becayse of a pygtk bug:
+# This is an ugly hack needed prior to gtkSourceView2 because of a pygtk bug:
 # http://bugzilla.gnome.org/show_bug.cgi?id=393483
 os.environ["XDG_DATA_DIRS"] = getDataPrefix()+":/usr/share/"
 
-from pychess.System.Log import log
-log.debug("Started")
-def go():
-    import pychess.Main
-    pychess.Main.run([os.environ["PYCHESS_ARGUMENT%d"%i] for i in \
-            xrange(int(os.environ["PYCHESS_ARGUMENTS"]))])
-go()
-
-# Uncomment to enable profiling
-#import profile
-#profile.runctx("go()", locals(), globals(), "/tmp/pychessprofile")
-#from pstats import Stats
-#s = Stats("/tmp/pychessprofile")
-#s.sort_stats("time")
-#s.print_stats()
-
-
-
-'
+# Let's rumble!
+import pychess.Main
+pychess.Main.run(sys.argv[1:])
