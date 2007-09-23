@@ -305,7 +305,7 @@ msgstr "<b>Óra</b>"
 
 #: glade/newInOut.glade:951
 msgid "<b>Enter Game Notation</b>"
-msgstr "<b>Játszma megjegyzések</b>"
+msgstr "<b>Játszma beírása</b>"
 
 #: glade/promotion.glade:9
 msgid "Promotion"
@@ -353,7 +353,7 @@ msgstr "Pozíció felállítása"
 
 #: glade/PyChess.glade:129
 msgid "Enter game notation"
-msgstr "Játszma megjegyzések"
+msgstr "Játszma beírása"
 
 #: glade/PyChess.glade:145
 msgid "_Save Game"
