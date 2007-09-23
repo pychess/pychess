@@ -19,15 +19,20 @@ if "site-packages" in __file__:
     for prefix in prefixes:
         if isdir (join (prefix, "pychess")):
             _prefix = join (prefix, "pychess")
+            _installed = True
             break
 else:
     _prefix = abspath (join (dirname (__file__), "../../.."))
+    _installed = False
 
 def addDataPrefix (subpath):
     return abspath (join (_prefix, subpath))
 
 def getDataPrefix ():
     return _prefix
+
+def isInstalled ():
+    return _installed
 
 ################################################################################
 # Locate files in user space                                                   #
