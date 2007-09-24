@@ -163,10 +163,13 @@ class GameListManager (ICManager):
     ###
     
     def on_player_list (self, client, groups):
-        p0r, p0s, p0n, p0t, p1r, p1s, p1n, p1t, p2r, p2s, p2n, p2t = groups
-        self.emit("addPlayer", {"r":p0r, "status":p0s, "name":p0n, "title":p0t})
-        self.emit("addPlayer", {"r":p1r, "status":p1s, "name":p1n, "title":p1t})
-        self.emit("addPlayer", {"r":p2r, "status":p2s, "name":p2n, "title":p2t})
+        for i in xrange(0, len(groups), 4):
+            self.emit("addPlayer", {
+                "rating": groups[i],
+                "status": groups[i+1],
+                "name": groups[i+2],
+                "title": groups[i+3]
+            })
     
     def on_player_remove (self, client, groups):
         name, title = groups
@@ -175,7 +178,7 @@ class GameListManager (ICManager):
     def on_player_add (self, client, groups):
         name, title, blitz, std, wild, light, bug = groups
         self.emit("addPlayer", \
-            {"name":name, "title":title, "r":blitz, "status": " "})
+            {"name":name, "title":title, "rating":blitz, "status": " "})
     
     ###
     

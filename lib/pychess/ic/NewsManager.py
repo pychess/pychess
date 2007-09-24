@@ -8,6 +8,8 @@ types = "(Blitz|Lightning|Standard)"
 days = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
 months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
 
+AMOUNT_OF_NEWSITEMS = 5
+
 class NewsManager (ICManager):
     
     __gsignals__ = {
@@ -16,11 +18,9 @@ class NewsManager (ICManager):
     
     def __init__ (self):
         ICManager.__init__(self)
-        
-        self.news = {}
     
-    def start (self, noItems=5):
-        self.noItems = noItems
+    def start (self):
+        self.news = {}
         telnet.expect ("(\d+) \(%s, %s +(\d+)\) (.*?)\n" % (days, months), self.onNewsItem )
         print >> telnet.client, "news"
     
@@ -29,7 +29,7 @@ class NewsManager (ICManager):
         no, weekday, month, day, title = groups
         self.news[no] = [_(weekday), _(month), day, title, ""]
         
-        if len(self.news) <= self.noItems:
+        if len(self.news) <= AMOUNT_OF_NEWSITEMS:
             # the "news" command, gives us the latest 10 news items from the
             # oldest to the newest.
             # We only want the 5 newest, so we skip the first 5 entries.

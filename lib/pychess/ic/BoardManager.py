@@ -38,14 +38,6 @@ class BoardManager (ICManager):
     }
     
     def start (self):
-        print >> telnet.client, "style 12"
-        print >> telnet.client, "iset startpos 1"
-        print >> telnet.client, "iset gameinfo 1"
-        print >> telnet.client, "iset compressmove 1"
-    
-    def __init__ (self):
-        ICManager.__init__(self)
-        
         self.observeQueue = {}
         # activeItem is the gameno of the observed game of which we are
         # currently parsing the history
@@ -53,6 +45,14 @@ class BoardManager (ICManager):
         # playedItem is the gameno of the game in which we are currenly taking
         # part
         self.playedItem = None
+        
+        print >> telnet.client, "style 12"
+        print >> telnet.client, "iset startpos 1"
+        print >> telnet.client, "iset gameinfo 1"
+        print >> telnet.client, "iset compressmove 1"
+    
+    def __init__ (self):
+        ICManager.__init__(self)
         
         telnet.expect ( "<12>(.*?)\n", self.onStyle12 )
         telnet.expect ( "<d1>(.*?)\n", self.onMove )
