@@ -895,7 +895,7 @@ class SeekChallengeSection (ParrentListSection):
         widgets["seekButton"].connect("clicked", seekButtonClicked)
         
         def challengeButtonClicked (button):
-            model, iter = playerSelection.get_selected()
+            model, iter = widgets["playertreeview"].get_selection().get_selected()
             if iter == None: return
             playerName = model.get_value(iter, 1)
             rated = widgets["chaRatedGameCheck"].get_active()
