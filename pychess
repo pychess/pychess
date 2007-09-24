@@ -17,7 +17,7 @@ except ImportError:
 
 # Start logging
 from pychess.System.Log import log
-log.debug("Started")
+log.debug("Started\n")
 
 # Set up translations
 import gettext, gtk.glade
