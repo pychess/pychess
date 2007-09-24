@@ -129,119 +129,117 @@ class UserInfoSection(Section):
     
     def onConnect (self):
         fm.finger(telnet.curname)
-    
-    def onDisconnect (self):
-        widgets["fingerTableDock"].remove(self.dock.get_children()[0])
-    
-    def __init__ (self):
         glock.acquire()
         try:
             widgets["usernameLabel"].set_markup("<b>%s</b>" % telnet.curname)
         finally:
             glock.release()
-        
+    
+    def onDisconnect (self):
+        widgets["fingerTableDock"].remove(self.dock.get_children()[0])
+    
+    def __init__ (self):
         self.dock = widgets["fingerTableDock"]
-        
-        def callback (fm, ratings, email, time):
-            glock.acquire()
-            try:
-                rows = 1
-                if ratings: rows += len(ratings)+1
-                if email: rows += 1
-                if time: rows += 1
+        fm.connect("fingeringFinished", self.onFinger)
+    
+    def onFinger (self, fm, ratings, email, time):
+        glock.acquire()
+        try:
+            rows = 1
+            if ratings: rows += len(ratings)+1
+            if email: rows += 1
+            if time: rows += 1
+            
+            table = gtk.Table(6, rows)
+            table.props.column_spacing = 12
+            table.props.row_spacing = 4
+            
+            def label(str, xalign=0):
+                label = gtk.Label(str)
+                label.props.xalign = xalign
+                return label
+            
+            row = 0
+            
+            if ratings:
+                for i, item in enumerate((_("Rating"), _("Win"), _("Loss"), _("Draw"), _("Total"))):
+                    table.attach(label(item, xalign=1), i+1,i+2,0,1)
                 
-                table = gtk.Table(6, rows)
-                table.props.column_spacing = 12
-                table.props.row_spacing = 4
-                
-                def label(str, xalign=0):
-                    label = gtk.Label(str)
-                    label.props.xalign = xalign
-                    return label
-                
-                row = 0
-                
-                if ratings:
-                    for i, item in enumerate((_("Rating"), _("Win"), _("Loss"), _("Draw"), _("Total"))):
-                        table.attach(label(item, xalign=1), i+1,i+2,0,1)
-                    
-                    row += 1
-                    
-                    for typ, numbers in ratings.iteritems():
-                        table.attach(label(_(typ)+":"), 0, 1, row, row+1)
-                        # Remove RD tag, as we want to be compact
-                        numbers = numbers[:1] + numbers[2:]
-                        for i, number in enumerate(numbers):
-                            table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
-                        row += 1
-                    
-                    table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
-                    row += 1
-                
-                if email:
-                    table.attach(label(_("Email")+":"), 0, 1, row, row+1)
-                    table.attach(label(email), 1, 6, row, row+1)
-                    row += 1
-                
-                if time and telnet.registered:
-                    table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
-                    s = ""
-                    if time[0]:
-                        if time[0] == "1":
-                            s += "%s day" % time[0]
-                        else: s += "%s days" % time[0]
-                    if time[1]:
-                        if s: s += ", "
-                        if time[1] == "1":
-                            s += "%s hour" % time[1]
-                        else: s += "%s hrs" % time[1]
-                    if time[2]:
-                        if s: s += ", "
-                        if time[2] == "1":
-                            s += "%s min" % time[2]
-                        else: s += "%s mins" % time[2]
-                    if time[3]:
-                        if s: s += ", "
-                        if time[3] == "1":
-                            s += "%s sec" % time[3]
-                        else: s += "%s secs" % time[3]
-                    s += " "+_("online in total")
-                    table.attach(label(s), 1, 6, row, row+1)
-                    row += 1
-                
-                table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
-                pingLabel = gtk.Label(_("Connecting")+"...")
-                pingLabel.props.xalign = 0
-                pinger = Pinger("freechess.org")
-                def callback (pinger, pingtime):
-                    if type(pingtime) == str:
-                        pingLabel.set_text(pingtime)
-                    elif pingtime == -1:
-                        pingLabel.set_text(_("Unknown"))
-                    else: pingLabel.set_text("%.0f ms" % pingtime)
-                pinger.connect("recieved", callback)
-                pinger.connect("error", callback)
-                pinger.start()
-                table.attach(pingLabel, 1, 6, row, row+1)
                 row += 1
                 
-                if not telnet.registered:
-                    vbox = gtk.VBox()
-                    table.attach(vbox, 0, 6, row, row+1)
-                    label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games is be smaller."))
-                    label0.props.xalign = 0
-                    label0.props.wrap = True
-                    vbox.add(label0)
-                    eventbox = uistuff.initLabelLinks(_("Register now"),
-                            "http://freechess.org/Register/index.html")
-                    vbox.add(eventbox)
+                for typ, numbers in ratings.iteritems():
+                    table.attach(label(_(typ)+":"), 0, 1, row, row+1)
+                    # Remove RD tag, as we want to be compact
+                    numbers = numbers[:1] + numbers[2:]
+                    for i, number in enumerate(numbers):
+                        table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
+                    row += 1
                 
-                self.dock.add(table)
-                self.dock.show_all()
-            finally:
-                glock.release()
-        
-        fm.connect("fingeringFinished", callback)
+                table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
+                row += 1
+            
+            if email:
+                table.attach(label(_("Email")+":"), 0, 1, row, row+1)
+                table.attach(label(email), 1, 6, row, row+1)
+                row += 1
+            
+            if time and telnet.registered:
+                table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
+                s = ""
+                if time[0]:
+                    if time[0] == "1":
+                        s += "%s day" % time[0]
+                    else: s += "%s days" % time[0]
+                if time[1]:
+                    if s: s += ", "
+                    if time[1] == "1":
+                        s += "%s hour" % time[1]
+                    else: s += "%s hrs" % time[1]
+                if time[2]:
+                    if s: s += ", "
+                    if time[2] == "1":
+                        s += "%s min" % time[2]
+                    else: s += "%s mins" % time[2]
+                if time[3]:
+                    if s: s += ", "
+                    if time[3] == "1":
+                        s += "%s sec" % time[3]
+                    else: s += "%s secs" % time[3]
+                s += " "+_("online in total")
+                table.attach(label(s), 1, 6, row, row+1)
+                row += 1
+            
+            table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
+            pingLabel = gtk.Label(_("Connecting")+"...")
+            pingLabel.props.xalign = 0
+            pinger = Pinger("freechess.org")
+            def callback (pinger, pingtime):
+                if type(pingtime) == str:
+                    pingLabel.set_text(pingtime)
+                elif pingtime == -1:
+                    pingLabel.set_text(_("Unknown"))
+                else: pingLabel.set_text("%.0f ms" % pingtime)
+            pinger.connect("recieved", callback)
+            pinger.connect("error", callback)
+            pinger.start()
+            table.attach(pingLabel, 1, 6, row, row+1)
+            row += 1
+            
+            if not telnet.registered:
+                vbox = gtk.VBox()
+                table.attach(vbox, 0, 6, row, row+1)
+                label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games is be smaller."))
+                label0.props.xalign = 0
+                label0.props.wrap = True
+                vbox.add(label0)
+                eventbox = uistuff.initLabelLinks(_("Register now"),
+                        "http://freechess.org/Register/index.html")
+                vbox.add(eventbox)
+            
+            self.dock.add(table)
+            self.dock.show_all()
+        finally:
+            glock.release()
 
 ############################################################################
 # Initialize News Section                                                  #
@@ -254,42 +252,43 @@ class NewsSection(Section):
             widgets["newsVBox"].remove(child)
     
     def __init__(self):
-        def callback (nm, news):
-            glock.acquire()
-            try:
-                weekday, month, day, title, details = news
-                
-                dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
-                label = gtk.Label(dtitle)
-                label.props.width_request = 300
-                label.props.xalign = 0
-                label.set_ellipsize(pango.ELLIPSIZE_END)
-                expander = gtk.Expander()
-                expander.set_label_widget(label)
-                gtk.Tooltips().set_tip(expander, title)
-                
-                textview = gtk.TextView ()
-                textview.set_wrap_mode (gtk.WRAP_WORD)
-                textview.set_editable (False)
-                textview.set_cursor_visible (False)
-                textview.props.pixels_above_lines = 4
-                textview.props.pixels_below_lines = 4
-                textview.props.right_margin = 2
-                textview.props.left_margin = 6
-                uistuff.initTexviewLinks(textview, details)
-                
-                alignment = gtk.Alignment()
-                alignment.set_padding(3, 6, 12, 0)
-                alignment.props.xscale = 1
-                alignment.add(textview)
-                
-                expander.add(alignment)
-                expander.show_all()
-                widgets["newsVBox"].pack_end(expander)
-            finally:
-                glock.release()
-        nm.connect("readNews", callback)
-
+        nm.connect("readNews", self.onNewsItem)
+    
+    def onNewsItem (self, nm, news):
+        glock.acquire()
+        try:
+            weekday, month, day, title, details = news
+            
+            dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
+            label = gtk.Label(dtitle)
+            label.props.width_request = 300
+            label.props.xalign = 0
+            label.set_ellipsize(pango.ELLIPSIZE_END)
+            expander = gtk.Expander()
+            expander.set_label_widget(label)
+            gtk.Tooltips().set_tip(expander, title)
+            
+            textview = gtk.TextView ()
+            textview.set_wrap_mode (gtk.WRAP_WORD)
+            textview.set_editable (False)
+            textview.set_cursor_visible (False)
+            textview.props.pixels_above_lines = 4
+            textview.props.pixels_below_lines = 4
+            textview.props.right_margin = 2
+            textview.props.left_margin = 6
+            uistuff.initTexviewLinks(textview, details)
+            
+            alignment = gtk.Alignment()
+            alignment.set_padding(3, 6, 12, 0)
+            alignment.props.xscale = 1
+            alignment.add(textview)
+            
+            expander.add(alignment)
+            expander.show_all()
+            widgets["newsVBox"].pack_end(expander)
+        finally:
+            glock.release()
+    
 ############################################################################
 # Initialize Lists                                                         #
 ############################################################################
@@ -345,10 +344,20 @@ class ParrentListSection (Section):
 class SeekTabSection (ParrentListSection):
     
     def onDisconnect (self):
-        self.store.clear()
+        glock.acquire()
+        try:
+            self.store.clear()
+            widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
+        finally:
+            glock.release()
+    
+    def onConnect (self):
+        self.seeks = {}
     
     def __init__ (self):
         ParrentListSection.__init__(self)
+        
+        self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
         
         glock.acquire()
         try:
@@ -367,89 +376,71 @@ class SeekTabSection (ParrentListSection):
         finally:
             glock.release()
         
+        glm.connect("addSeek", lambda glm, seek:
+                self.listPublisher.put((self.onAddSeek, seek)) )
+        
+        glm.connect("removeSeek", lambda glm, gameno:
+                self.listPublisher.put((self.onRemoveSeek, gameno)) )
+        
+        glm.connect("clearSeeks", lambda glm:
+                self.listPublisher.put((self.onClearSeeks,)) )
+        
+        widgets["acceptButton"].connect("clicked", self.onAccept)
+        self.tv.connect("row-activated", self.onAccept)
+        
+        bm.connect("playBoardCreated", lambda bm, board:
+                self.listPublisher.put((self.onPlayingGame,)) )
+        
+        bm.connect("curGameEnded", lambda bm, gameno, status, reason:
+                self.listPublisher.put((self.onCurGameEnded,)) )
+    
+    def onAddSeek (self, seek):
+        time = "%s min + %s sec" % (seek["t"], seek["i"])
+        rated = seek["r"] == "u" and _("Unrated") or _("Rated")
+        ti = self.store.append ([seek["gameno"], self.seekPix, seek["w"],
+                                int(seek["rt"]), rated, seek["tp"], time])
+        self.seeks [seek["gameno"]] = ti
+        count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
+        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+        widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        
+    def onRemoveSeek (self, gameno):
+        if not gameno in self.seeks:
+            # We ignore removes we haven't added, as it seams fics sends a
+            # lot of removes for games it has never told us about
+            return
+        treeiter = self.seeks [gameno]
+        if not self.store.iter_is_valid(treeiter):
+            return
+        self.store.remove (treeiter)
+        del self.seeks[gameno]
+        count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
+        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+        widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        
+    def onClearSeeks (self):
+        self.store.clear()
         self.seeks = {}
+        widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
         
-        
-        def on_selection_changed (selection):
-            anyThingSelected = selection.get_selected()[1] != None
-            widgets["acceptButton"].set_sensitive(anyThingSelected)
-        self.tv.get_selection().connect_after("changed", on_selection_changed)
-        
-        
-        seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
-        def addSeekCall (seek):
-            time = "%s min + %s sec" % (seek["t"], seek["i"])
-            rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-            ti = self.store.append ([seek["gameno"], seekPix, seek["w"],
-                                    int(seek["rt"]), rated, seek["tp"], time])
-            self.seeks [seek["gameno"]] = ti
-            count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
-            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        
-        def on_seek_add (manager, seek):
-            self.listPublisher.put((addSeekCall, seek))
-        glm.connect("addSeek", on_seek_add)
-        
-        
-        def removeSeekCall (gameno):
-            if not gameno in self.seeks:
-                # We ignore removes we haven't added, as it seams fics sends a
-                # lot of removes for games it has never told us about
-                return
-            treeiter = self.seeks [gameno]
-            if not self.store.iter_is_valid(treeiter):
-                return
-            self.store.remove (treeiter)
-            del self.seeks[gameno]
-            count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
-            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        
-        def on_seek_remove (manager, gameno):
-            self.listPublisher.put((removeSeekCall, gameno))
-        glm.connect("removeSeek", on_seek_remove)
-        
-        
-        def clearSeeksCall ():
-            self.store.clear()
-            self.seeks.clear()
-            widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
-        def on_seek_clear (manager):
-            self.listPublisher.put((clearSeeksCall,))
-        glm.connect("clearSeeks", on_seek_clear)
-        
-        
-        def on_accept (widget, *args):
-            model, iter = widgets["seektreeview"].get_selection().get_selected()
-            if iter == None: return
-            gameno = model.get_value(iter, 0)
-            if gameno.startswith("C"):
-                om.acceptIndex(gameno[1:])
-            else:
-                om.playIndex(gameno)
-        widgets["acceptButton"].connect("clicked", on_accept)
-        self.tv.connect("row-activated", on_accept)
-        
-        
-        def onPlayingGameCall (*args):
-            widgets["seekListContent"].set_sensitive(False)
-            widgets["challengePanel"].set_sensitive(False)
-            self.store.clear()
-        
-        def on_play_board_created (*args):
-            self.listPublisher.put((onPlayingGameCall,))
-        bm.connect("playBoardCreated", on_play_board_created)
-        
-        
-        def onCurGameEndedCall (*args):
-            widgets["seekListContent"].set_sensitive(True)
-            widgets["challengePanel"].set_sensitive(True)
-            glm.refreshSeeks()
-        
-        def on_cur_game_ended (*args):
-            self.listPublisher.put((onCurGameEndedCall,))
-        bm.connect("curGameEnded", on_cur_game_ended)
+    def onAccept (self, widget, *args):
+        model, iter = widgets["seektreeview"].get_selection().get_selected()
+        if iter == None: return
+        gameno = model.get_value(iter, 0)
+        if gameno.startswith("C"):
+            om.acceptIndex(gameno[1:])
+        else:
+            om.playIndex(gameno)
+    
+    def onPlayingGame (self):
+        widgets["seekListContent"].set_sensitive(False)
+        widgets["challengePanel"].set_sensitive(False)
+        self.store.clear()
+    
+    def onCurGameEnded (self):
+        widgets["seekListContent"].set_sensitive(True)
+        widgets["challengePanel"].set_sensitive(True)
+        glm.refreshSeeks()
 
 ########################################################################
 # Initialize Challenge List                                            #
@@ -457,62 +448,65 @@ class SeekTabSection (ParrentListSection):
 
 class ChallengeTabSection (ParrentListSection):
     
+    def onConnect (self):
+        self.challenges = {}
+    
     def __init__ (self):
         ParrentListSection.__init__(self)
-        self.challenges = {}
-        
         self.store = widgets["seektreeview"].get_model().get_model()
+        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
         
-        challenPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
-        def challengeAddCall (index, match):
-            time = "%s min + %s sec" % (match["t"], match["i"])
-            rated = match["r"] == "u" and _("Unrated") or _("Rated")
-            ti = self.store.append (["C"+index, challenPix, match["w"],
-                                    int(match["rt"]), rated, match["tp"], time])
-            self.challenges [index] = ti
-            count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
-            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        om.connect("onChallengeAdd", lambda om, index, match:
+                self.listPublisher.put((self.onChallengeAdd, index, match)) )
         
-        def on_challenge_add (om, index, match):
-            self.listPublisher.put((challengeAddCall, index, match))
-        om.connect("onChallengeAdd", on_challenge_add)
-        
-        def challengeRemoveCall (index):
-            if not index in self.challenges: return
-            ti = self.challenges [index]
-            if not self.store.iter_is_valid(ti): return
-            self.store.remove (ti)
-            del self.challenges [index]
-            count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
-            postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-            widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        
-        def on_challenge_remove (om, index):
-            self.listPublisher.put((challengeRemoveCall, index))
-        om.connect("onChallengeRemove", on_challenge_remove)
+        om.connect("onChallengeRemove", lambda om, index:
+                self.listPublisher.put((self.onChallengeRemove, index)) )
+    
+    def onChallengeAdd (self, index, match):
+        time = "%s min + %s sec" % (match["t"], match["i"])
+        rated = match["r"] == "u" and _("Unrated") or _("Rated")
+        ti = self.store.append (["C"+index, self.chaPix, match["w"],
+                                int(match["rt"]), rated, match["tp"], time])
+        self.challenges [index] = ti
+        count = int(widgets["activeSeeksLabel"].get_text().split()[0])+1
+        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+        widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+    
+    def onChallengeRemove (self, index):
+        if not index in self.challenges: return
+        ti = self.challenges [index]
+        if not self.store.iter_is_valid(ti): return
+        self.store.remove (ti)
+        del self.challenges [index]
+        count = int(widgets["activeSeeksLabel"].get_text().split()[0])-1
+        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
+        widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
 
 ########################################################################
 # Initialize Seek Graph                                                #
 ########################################################################
 
+YMARKS = (600, 1200, 1800, 2400)
+YLOCATION = lambda y: y/3000.
+XMARKS = (3, 6, 12, 24)
+XLOCATION = lambda x: e**(-5./x)
+
+# This is used to convert increment time to minutes. With a GAME_LENGTH on
+# 40, a game on two minutes and twelve secconds will be placed at the same
+# X location as a game on 2+12*40/60 = 10 minutes
+GAME_LENGTH = 40
+
 class SeekGraphSection (ParrentListSection):
     
     def onDisconnect (self):
-        self.graph.clearSpots()
+        glock.acquire()
+        try:
+            self.graph.clearSpots()
+        finally:
+            glock.release()
     
     def __init__ (self):
         ParrentListSection.__init__(self)
-        
-        YMARKS = (600, 1200, 1800, 2400)
-        YLOCATION = lambda y: y/3000.
-        XMARKS = (3, 6, 12, 24)
-        XLOCATION = lambda x: e**(-5./x)
-        
-        # This is used to convert increment time to minutes. With a GAME_LENGTH on
-        # 40, a game on two minutes and twelve secconds will be placed at the same
-        # X location as a game on 2+12*40/60 = 10 minutes
-        GAME_LENGTH = 40
         
         glock.acquire()
         try:
@@ -528,60 +522,50 @@ class SeekGraphSection (ParrentListSection):
         finally:
             glock.release()
         
+        self.graph.connect("spotClicked", self.onSpotClicked)
         
-        def on_spot_clicked (graph, name):
-            bm.play(name)
-        self.graph.connect("spotClicked", on_spot_clicked)
+        glm.connect("addSeek", lambda glm, seek:
+                self.listPublisher.put((self.onSeekAdd, seek)) )
         
+        glm.connect("removeSeek", lambda glm, gameno:
+                self.listPublisher.put((self.onSeekRemove, gameno)) )
         
-        def seekAddCall (seek):
-            x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
-            y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
-            type = seek["r"] == "u" and 1 or 0
-            
-            text = "%s (%s)" % (seek["w"], seek["rt"])
-            rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-            text += "\n%s %s" % (rated, seek["tp"])
-            text += "\n%s min + %s sec" % (seek["t"], seek["i"])
-            
-            self.graph.addSpot(seek["gameno"], text, x, y, type)
+        glm.connect("clearSeeks", lambda glm:
+                self.listPublisher.put((self.onSeekClear,)) )
         
-        def on_seek_add (manager, seek):
-            self.listPublisher.put((seekAddCall, seek))
-        glm.connect("addSeek", on_seek_add)
+        bm.connect("playBoardCreated", lambda bm, board:
+                self.listPublisher.put((self.onPlayingGame,)) )
         
+        bm.connect("curGameEnded", lambda bm, gameno, status, reason:
+                self.listPublisher.put((self.onCurGameEnded,)) )
         
-        def seekRemoveCall (gameno):
-            self.graph.removeSpot(gameno)
+    def onSpotClicked (self, graph, name):
+        bm.play(name)
+    
+    def onSeekAdd (self, seek):
+        x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
+        y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
+        type = seek["r"] == "u" and 1 or 0
         
-        def on_seek_remove (manager, gameno):
-            self.listPublisher.put((seekRemoveCall, gameno))
-        glm.connect("removeSeek", on_seek_remove)
+        text = "%s (%s)" % (seek["w"], seek["rt"])
+        rated = seek["r"] == "u" and _("Unrated") or _("Rated")
+        text += "\n%s %s" % (rated, seek["tp"])
+        text += "\n%s min + %s sec" % (seek["t"], seek["i"])
         
+        self.graph.addSpot(seek["gameno"], text, x, y, type)
         
-        def seekClearCall ():
-            self.graph.clearSpots()
+    def onSeekRemove (self, gameno):
+        self.graph.removeSpot(gameno)
         
-        def on_seek_clear (manager):
-            self.listPublisher.put((seekClearCall,))
-        glm.connect("clearSeeks", on_seek_clear)
+    def onSeekClear (self):
+        self.graph.clearSpots()
         
+    def onPlayingGame (self):
+        widgets["seekGraphContent"].set_sensitive(False)
+        self.graph.clearSpots()
         
-        def onPlayingGameCall (*args):
-            widgets["seekGraphContent"].set_sensitive(False)
-            self.graph.clearSpots()
-        
-        def on_play_board_created (*args):
-            self.listPublisher.put((onPlayingGameCall,))
-        bm.connect("playBoardCreated", on_play_board_created)
-        
-        
-        def onCurGameEndedCall (*args):
-            widgets["seekGraphContent"].set_sensitive(True)
-        
-        def on_cur_game_ended (*args):
-            self.listPublisher.put((onCurGameEndedCall,))
-        bm.connect("curGameEnded", on_cur_game_ended)
+    def onCurGameEnded (self):
+        widgets["seekGraphContent"].set_sensitive(True)
 
 ########################################################################
 # Initialize Players List                                              #
@@ -589,20 +573,28 @@ class SeekGraphSection (ParrentListSection):
 
 class PlayerTabSection (ParrentListSection):
     
+    icons = gtk.icon_theme_get_default()
+    l = gtk.ICON_LOOKUP_USE_BUILTIN
+    peoplepix = icons.load_icon("stock_people", 15, l)
+    bookpix = icons.load_icon("stock_book_blue", 15, l)
+    easypix = icons.load_icon("stock_weather-few-clouds", 15, l)
+    advpix = icons.load_icon("stock_weather-cloudy", 15, l)
+    exppix = icons.load_icon("stock_weather-storm", 15, l)
+    cmppix = icons.load_icon("stock_notebook", 15, l)
+    
     def onDisconnect (self):
-        self.store.clear
+        glock.acquire()
+        try:
+            self.store.clear()
+            widgets["playersOnlineLabel"].set_text("0 %s" % _("Players Ready"))
+        finally:
+            glock.release()
+    
+    def onConnect (self):
+        self.players = {}
     
     def __init__ (self):
         ParrentListSection.__init__(self)
-        
-        icons = gtk.icon_theme_get_default()
-        l = gtk.ICON_LOOKUP_USE_BUILTIN
-        peoplepix = icons.load_icon("stock_people", 15, l)
-        bookpix = icons.load_icon("stock_book_blue", 15, l)
-        easypix = icons.load_icon("stock_weather-few-clouds", 15, l)
-        advpix = icons.load_icon("stock_weather-cloudy", 15, l)
-        exppix = icons.load_icon("stock_weather-storm", 15, l)
-        cmppix = icons.load_icon("stock_notebook", 15, l)
         
         glock.acquire()
         try:
@@ -620,59 +612,47 @@ class PlayerTabSection (ParrentListSection):
         finally:
             glock.release()
         
-        self.players = {}
+        glm.connect("addPlayer", lambda glm, player:
+                self.listPublisher.put((self.onPlayerAdd, player)) )
         
-        
-        def playerAddCall (player):
-            if player["name"] in self.players: return
-            rating = player["r"].isdigit() and int(player["r"]) or 0
-            title = player["title"]
-            if title == "C" or title == "TD":
-                title = cmppix
-            elif title == "U":
-                title = peoplepix
-            elif title == None:
-                if rating < 1300:
-                    title = easypix
-                elif rating < 1600:
-                    title = advpix
-                else:
-                    title = exppix
+        glm.connect("removePlayer", lambda glm, name:
+                self.listPublisher.put((self.onPlayerRemove, name)) )
+    
+    def onPlayerAdd (self, player):
+        if player["name"] in self.players: return
+        rating = player["rating"].isdigit() and int(player["rating"]) or 0
+        title = player["title"]
+        if title == "C" or title == "TD":
+            title = PlayerTabSection.cmppix
+        elif title == "U":
+            title = PlayerTabSection.peoplepix
+        elif title == None:
+            if rating < 1300:
+                title = PlayerTabSection.easypix
+            elif rating < 1600:
+                title = PlayerTabSection.advpix
             else:
-                title = bookpix
-            ti = self.store.append ([title, player["name"], rating])
-            self.players [player["name"]] = ti
-            count = int(widgets["playersOnlineLabel"].get_text().split()[0])+1
-            postfix = count == 1 and _("Player Ready") or _("Players Ready")
-            widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
+                title = PlayerTabSection.exppix
+        else:
+            # Admins gets a book picture
+            title = PlayerTabSection.bookpix
+        ti = self.store.append ([title, player["name"], rating])
+        self.players [player["name"]] = ti
+        count = int(widgets["playersOnlineLabel"].get_text().split()[0])+1
+        postfix = count == 1 and _("Player Ready") or _("Players Ready")
+        widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
         
-        def on_player_add (manager, player):
-            self.listPublisher.put((playerAddCall, player))
-        glm.connect("addPlayer", on_player_add)
-        
-        
-        def playerRemoveCall (name):
-            if not name in self.players:
-                return
-            ti = self.players [name]
-            if not self.store.iter_is_valid(ti):
-                return
-            self.store.remove (ti)
-            del self.players[name]
-            count = int(widgets["playersOnlineLabel"].get_text().split()[0])-1
-            postfix = count == 1 and _("Player Ready") or _("Players Ready")
-            widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
-        
-        def on_player_remove (manager, name):
-            self.listPublisher.put((playerRemoveCall, name))
-        glm.connect("removePlayer", on_player_remove)
-        
-        
-        selection = self.tv.get_selection()
-        def on_selection_changed (selection):
-            anyThingSelected = selection.get_selected()[1] != None
-            widgets["challengeButton"].set_sensitive(anyThingSelected)
-        self.tv.get_selection().connect_after("changed", on_selection_changed)
+    def onPlayerRemove (self, name):
+        if not name in self.players:
+            return
+        ti = self.players [name]
+        if not self.store.iter_is_valid(ti):
+            return
+        self.store.remove (ti)
+        del self.players[name]
+        count = int(widgets["playersOnlineLabel"].get_text().split()[0])-1
+        postfix = count == 1 and _("Player Ready") or _("Players Ready")
+        widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
 
 ########################################################################
 # Initialize Games List                                                #
@@ -681,14 +661,22 @@ class PlayerTabSection (ParrentListSection):
 class GameTabSection (ParrentListSection):
     
     def onDisconnect (self):
-        self.store.clear()
+        glock.acquire()
+        try:
+            self.store.clear()
+            widgets["gamesRunningLabel"].set_text("0 %s" % _("Games Running"))
+        finally:
+            glock.release()
+    
+    def onConnect (self):
+        self.games = {}
     
     def __init__ (self):
         ParrentListSection.__init__(self)
         
         icons = gtk.icon_theme_get_default()
-        recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
+        self.recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
         
         glock.acquire()
         try:
@@ -715,65 +703,55 @@ class GameTabSection (ParrentListSection):
         finally:
             glock.release()
         
-        self.games = {}
+        glm.connect("addGame", lambda glm, game:
+                self.listPublisher.put((self.onGameAdd, game)) )
         
+        glm.connect("removeGame", lambda glm, gameno:
+                self.listPublisher.put((self.onGameRemove, gameno)) )
         
-        def gameAddCall (game):
-            ti = self.store.append ([game["gameno"], clearpix, game["wn"],
-                                    game["bn"], game["type"]])
-            self.games[game["gameno"]] = ti
-            count = int(widgets["gamesRunningLabel"].get_text().split()[0])+1
-            postfix = count == 1 and _("Game Running") or _("Games Running")
-            widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+        widgets["observeButton"].connect ("clicked", self.onObserveClicked)
+        self.tv.connect("row-activated", self.onObserveClicked)
         
-        def on_game_add (manager, game):
-            self.listPublisher.put((gameAddCall, game))
-        glm.connect("addGame", on_game_add)
+        bm.connect("observeBoardCreated", lambda bm, gameno, *args:
+                self.listPublisher.put((self.onGameObserved, gameno)) )
         
-        
-        def gameRemoveCall (gameno):
-            if not gameno in self.games:
-                return
-            ti = self.games[gameno]
-            if not self.store.iter_is_valid(ti):
-                return
-            self.store.remove (ti)
-            del self.games[gameno]
-            count = int(widgets["gamesRunningLabel"].get_text().split()[0])-1
-            postfix = count == 1 and _("Game Running") or _("Games Running")
-            widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
-        
-        def on_game_remove (manager, gameno):
-            self.listPublisher.put((gameRemoveCall, gameno))
-        glm.connect("removeGame", on_game_remove)
-        
-        
-        def on_observe_clicked (widget, *args):
-            model, paths = self.tv.get_selection().get_selected_rows()
-            for path in paths:
-                rowiter = model.get_iter(path)
-                gameno = model.get_value(rowiter, 0)
-                bm.observe(gameno)
-        widgets["observeButton"].connect ("clicked", on_observe_clicked)
-        self.tv.connect("row-activated", on_observe_clicked)
-        
-        
-        def gameObservedCall (gameno):
-            threeiter = self.games[gameno]
-            self.store.set_value (threeiter, 1, recpix)
-        
-        def on_game_observed (bm, gameno, *args):
-            self.listPublisher.put((gameObservedCall, gameno))
-        bm.connect("observeBoardCreated", on_game_observed)
-        
-        
-        def gameUnObservedCall (gameno):
-            threeiter = self.games[gameno]
-            self.store.set_value(threeiter, 1, clearpix)
-        
-        def on_game_unobserved (bm, gameno):
-            self.listPublisher.put((gameUnObservedCall, gameno))
-        bm.connect("obsGameUnobserved", on_game_unobserved)
+        bm.connect("obsGameUnobserved", lambda bm, gameno:
+                self.listPublisher.put((self.onGameUnobserved, gameno)) )
+    
+    def onGameAdd (self, game):
+        ti = self.store.append ([game["gameno"], self.clearpix, game["wn"],
+                                game["bn"], game["type"]])
+        self.games[game["gameno"]] = ti
+        count = int(widgets["gamesRunningLabel"].get_text().split()[0])+1
+        postfix = count == 1 and _("Game Running") or _("Games Running")
+        widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+    
+    def onGameRemove (self, gameno):
+        if not gameno in self.games:
+            return
+        ti = self.games[gameno]
+        if not self.store.iter_is_valid(ti):
+            return
+        self.store.remove (ti)
+        del self.games[gameno]
+        count = int(widgets["gamesRunningLabel"].get_text().split()[0])-1
+        postfix = count == 1 and _("Game Running") or _("Games Running")
+        widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+    
+    def onObserveClicked (self, widget, *args):
+        model, paths = self.tv.get_selection().get_selected_rows()
+        for path in paths:
+            rowiter = model.get_iter(path)
+            gameno = model.get_value(rowiter, 0)
+            bm.observe(gameno)
+    
+    def onGameObserved (self, gameno):
+        threeiter = self.games[gameno]
+        self.store.set_value (threeiter, 1, self.recpix)
+    
+    def onGameUnobserved (self, gameno):
+        threeiter = self.games[gameno]
+        self.store.set_value(threeiter, 1, self.clearpix)
 
 ########################################################################
 # Initialize Adjourned List                                            #
@@ -809,13 +787,16 @@ class AdjournedTabSection (ParrentListSection):
 class SeekChallengeSection (ParrentListSection):
     
     def onConnect (self):
-        if not telnet.registered:
-            glock.acquire()
-            try:
+        glock.acquire()
+        try:
+            if not telnet.registered:
                 widgets["ratedGameCheck"].hide()
                 widgets["chaRatedGameCheck"].hide()
-            finally:
-                glock.release()
+            else:
+                widgets["ratedGameCheck"].show()
+                widgets["chaRatedGameCheck"].show()
+        finally:
+            glock.release()
     
     def __init__ (self):
         ParrentListSection.__init__(self)
@@ -859,55 +840,85 @@ class SeekChallengeSection (ParrentListSection):
             widgets["chaTimeCombobox"].pack_start(cell)
             widgets["chaTimeCombobox"].add_attribute(cell, 'text', 1)
             widgets["chaTimeCombobox"].set_active(0)
+            
+            widgets["timeCombobox"].old_active = 0
+            widgets["chaTimeCombobox"].old_active = 0
         finally:
             glock.release()
         
-        customTimeDialog = widgets["customTimeDialog"]
-        def timeComboboxChanged (combo, othercombo):
-            if combo.get_active() == 3:
-                response = customTimeDialog.run()
-                customTimeDialog.hide()
-                if response != gtk.RESPONSE_OK:
-                    combo.set_active(combo.old_active)
-                    return
-                if len(combo.get_model()) == 5:
-                    del combo.get_model()[4]
-                minutes = widgets["minSpinbutton"].get_value()
-                gain = widgets["gainSpinbutton"].get_value()
-                text = "%d min + %d" % (minutes, gain)
-                combo.get_model().append([text, _("Custom")])
-                combo.set_active(4)
-            else: combo.old_active = combo.get_active()
-        widgets["timeCombobox"].old_active = 0
-        widgets["timeCombobox"].connect("changed", timeComboboxChanged, widgets["chaTimeCombobox"])
-        widgets["chaTimeCombobox"].old_active = 0
-        widgets["chaTimeCombobox"].connect("changed", timeComboboxChanged, widgets["timeCombobox"])
+        widgets["timeCombobox"].connect(
+                "changed", self.onTimeComboboxChanged, widgets["chaTimeCombobox"])
+        widgets["chaTimeCombobox"].connect(
+                "changed", self.onTimeComboboxChanged, widgets["timeCombobox"])
         
-        def seekButtonClicked (button):
-            ratingrange = map(int, widgets["strengthCombobox"].get_model()[
-                    widgets["strengthCombobox"].get_active()][0].split(" → "))
-            rated = widgets["ratedGameCheck"].get_active()
-            color = widgets["colorCombobox"].get_active()-1
-            if color == -1: color = None
-            min, incr = map(int, widgets["timeCombobox"].get_model()[
-                    widgets["timeCombobox"].get_active()][0].split(" min +"))
-            glm.seek(min, incr, rated, ratingrange, color)
-        widgets["seekButton"].connect("clicked", seekButtonClicked)
+        widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
+        widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
         
-        def challengeButtonClicked (button):
-            model, iter = widgets["playertreeview"].get_selection().get_selected()
-            if iter == None: return
-            playerName = model.get_value(iter, 1)
-            rated = widgets["chaRatedGameCheck"].get_active()
-            color = widgets["chaColorCombobox"].get_active()-1
-            if color == -1: color = None
-            min, incr = map(int, widgets["chaTimeCombobox"].get_model()[
-                    widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
-            glm.challenge(playerName, min, incr, rated, color)
-        widgets["challengeButton"].connect("clicked", challengeButtonClicked)
+        seekSelection = widgets["seektreeview"].get_selection()
+        seekSelection.connect_after("changed", self.onSeekSelectionChanged)
+        
+        playerSelection = widgets["playertreeview"].get_selection()
+        playerSelection.connect_after("changed", self.onPlayerSelectionChanged)
+    
+    def onTimeComboboxChanged (self, combo, othercombo):
+        if combo.get_active() == 3:
+            response = widgets["customTimeDialog"].run()
+            widgets["customTimeDialog"].hide()
+            if response != gtk.RESPONSE_OK:
+                combo.set_active(combo.old_active)
+                return
+            if len(combo.get_model()) == 5:
+                del combo.get_model()[4]
+            minutes = widgets["minSpinbutton"].get_value()
+            gain = widgets["gainSpinbutton"].get_value()
+            text = "%d min + %d" % (minutes, gain)
+            combo.get_model().append([text, _("Custom")])
+            combo.set_active(4)
+        else:
+            combo.old_active = combo.get_active()
+    
+    def onSeekButtonClicked (self, button):
+        ratingrange = map(int, widgets["strengthCombobox"].get_model()[
+                widgets["strengthCombobox"].get_active()][0].split(" → "))
+        rated = widgets["ratedGameCheck"].get_active()
+        color = widgets["colorCombobox"].get_active()-1
+        if color == -1: color = None
+        min, incr = map(int, widgets["timeCombobox"].get_model()[
+                widgets["timeCombobox"].get_active()][0].split(" min +"))
+        glm.seek(min, incr, rated, ratingrange, color)
+    
+    def onChallengeButtonClicked (self, button):
+        model, iter = widgets["playertreeview"].get_selection().get_selected()
+        if iter == None: return
+        playerName = model.get_value(iter, 1)
+        rated = widgets["chaRatedGameCheck"].get_active()
+        color = widgets["chaColorCombobox"].get_active()-1
+        if color == -1: color = None
+        min, incr = map(int, widgets["chaTimeCombobox"].get_model()[
+                widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
+        glm.challenge(playerName, min, incr, rated, color)
+    
+    def onSeekSelectionChanged (self, selection):
+        # You can't press challengebutton when nobody are selected
+        isAnythingSelected = selection.get_selected()[1] != None
+        widgets["acceptButton"].set_sensitive(isAnyThingSelected)
+    
+    def onPlayerSelectionChanged (self, selection):
+        model, iter = selection.get_selected()
+        
+        # You can't press challengebutton when nobody are selected
+        isAnythingSelected = iter != None
+        widgets["challengeButton"].set_sensitive(isAnythingSelected)
+        
+        if isAnythingSelected:
+            # You can't challenge a guest to a rated game
+            playerTitle = model.get_value(iter, 0)
+            isGuestPlayer = playerTitle == PlayerTabSection.peoplepix
+        widgets["chaRatedGameCheck"].set_sensitive(
+                not isAnythingSelected or not isGuestPlayer)
 
 ############################################################################
-# Initialize seeking-/challengingpanel                                     #
+# Initialize connects for createBoard and createObsBoard                   #
 ############################################################################
 
 class CreatedBoards (Section):
@@ -944,7 +955,6 @@ class CreatedBoards (Section):
             gamewidget.attachGameWidget (gmwidg)
         finally:
             glock.release()
-    
     
     def observeBoardCreated (self, bm, gameno, pgn, secs, incr, wname, bname):
         timemodel = TimeModel (secs, incr)

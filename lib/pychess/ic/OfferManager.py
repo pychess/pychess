@@ -74,11 +74,10 @@ class OfferManager (ICManager):
         telnet.expect ("There are (?:(no)|only (\d+) half) moves in your game.", self.notEnoughMovesToUndo)
         
         telnet.expect ("There are no ([^ ]+) offers to (accept).", self.noOffersToAccept)
-        
-        self.lastPly = 0
-        self.indexType = {}
     
     def start (self):
+        self.lastPly = 0
+        self.indexType = {}
         print >> telnet.client, "iset pendinfo 1"
     
     def stop (self):

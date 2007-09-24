@@ -168,19 +168,14 @@ def connect (host, port, username="guest", password=""):
         for handler in connectHandlers:
             handler (client, IC_CONNECTED)
         
-        EOF = False
         while connected:
             for match in client.expect(regexps):
-                if r[0] < 0:
-                    EOF = True
+                if match[0] < 0:
+                    connected = False
                     break
                 funcs, groups = match
-                try:
-                    for func in funcs:
-                        func(client, groups)
-                except TypeError:
-                    print funcs
-                    raise
+                for func in funcs:
+                    func(client, groups)
         
         for handler in connectHandlers:
             # Give handlers a chance no discover that the connection is closed
