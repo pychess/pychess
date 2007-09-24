@@ -822,7 +822,7 @@ msgstr "Kapcsolódási hiba"
 
 #: lib/pychess/ic/icLogOn.py:86
 msgid "Log on Error"
-msgstr "Bejelebntkezési hiba"
+msgstr "Bejelentkezési hiba"
 
 #: lib/pychess/ic/icLogOn.py:89
 msgid "Connection was broken"
