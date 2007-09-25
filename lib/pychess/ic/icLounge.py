@@ -901,7 +901,7 @@ class SeekChallengeSection (ParrentListSection):
     def onSeekSelectionChanged (self, selection):
         # You can't press challengebutton when nobody are selected
         isAnythingSelected = selection.get_selected()[1] != None
-        widgets["acceptButton"].set_sensitive(isAnyThingSelected)
+        widgets["acceptButton"].set_sensitive(isAnythingSelected)
     
     def onPlayerSelectionChanged (self, selection):
         model, iter = selection.get_selected()
