@@ -135,7 +135,7 @@ msgstr "Idő"
 
 #: glade/fics_lounge.glade:708
 msgid "Seek Graph"
-msgstr "Grafikus keresés"
+msgstr "Keresések grafikusan"
 
 #: glade/fics_lounge.glade:777
 msgid "Show Info Window"
@@ -151,7 +151,7 @@ msgstr "Kihívás panel"
 
 #: glade/fics_lounge.glade:1114
 msgid "Player List"
-msgstr "Játékoslista"
+msgstr "Játékosok"
 
 #: glade/fics_lounge.glade:1182
 msgid "_Observe"
@@ -159,7 +159,7 @@ msgstr "_Megnéz"
 
 #: glade/fics_lounge.glade:1252
 msgid "Game List"
-msgstr "Játszmalista"
+msgstr "Játszmák"
 
 #: glade/fics_lounge.glade:1844
 msgid "<b>News</b>"
@@ -916,23 +916,23 @@ msgstr "Nem értékelt"
 #: lib/pychess/ic/icLounge.py:387 lib/pychess/ic/icLounge.py:406
 #: lib/pychess/ic/icLounge.py:474 lib/pychess/ic/icLounge.py:488
 msgid "Active Seek"
-msgstr "Aktív keresés"
+msgstr "keresés"
 
 #: lib/pychess/ic/icLounge.py:387 lib/pychess/ic/icLounge.py:406
 #: lib/pychess/ic/icLounge.py:417 lib/pychess/ic/icLounge.py:474
 #: lib/pychess/ic/icLounge.py:488
 msgid "Active Seeks"
-msgstr "Aktív keresések"
+msgstr "keresés"
 
 # In context "1 Player Ready"
 #: lib/pychess/ic/icLounge.py:646 lib/pychess/ic/icLounge.py:663
 msgid "Player Ready"
-msgstr "Készen álló játékos"
+msgstr "játékos"
 
 # In context "x Players Ready" where x > 1
 #: lib/pychess/ic/icLounge.py:646 lib/pychess/ic/icLounge.py:663
 msgid "Players Ready"
-msgstr "Készen álló játékosok"
+msgstr "játékos"
 
 #: lib/pychess/ic/icLounge.py:700
 msgid "White Player"
@@ -948,11 +948,11 @@ msgstr "Játszma típusa"
 
 #: lib/pychess/ic/icLounge.py:726 lib/pychess/ic/icLounge.py:743
 msgid "Game Running"
-msgstr "Futó játszma"
+msgstr "játszma"
 
 #: lib/pychess/ic/icLounge.py:726 lib/pychess/ic/icLounge.py:743
 msgid "Games Running"
-msgstr "Futó játszmák"
+msgstr "játszma"
 
 #: lib/pychess/ic/icLounge.py:826
 msgid "Easy"
