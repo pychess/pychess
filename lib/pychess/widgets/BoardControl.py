@@ -4,6 +4,7 @@ import gtk, gtk.gdk
 from gobject import *
 
 from pychess.System.prefix import addDataPrefix
+from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
@@ -45,7 +46,7 @@ class BoardControl (gtk.EventBox):
     def emit_move_signal (self, cord0, cord1):
         # Help that user won't be able to move twice in cases of lag
         self.locked = True
-        log.debug("emit_move_signal %s %s" % (cord0, cord1), "BoardView")
+        log.debug("emit_move_signal %s %s\n" % (cord0, cord1), "BoardControl")
         
         promotion = QUEEN
         if self.view.model.boards[-1][cord0].sign == PAWN and cord1.y in (0,7):
@@ -128,7 +129,7 @@ class BoardControl (gtk.EventBox):
     
     def button_press (self, widget, event):
         self.pressed = True
-        log.debug("press %d %d" % (event.x, event.y), "BoardView")
+        log.debug("press %d %d\n" % (event.x, event.y), "BoardControl")
         
         self.grab_focus()
         cord = self.point2Cord (event.x, event.y)
@@ -141,7 +142,7 @@ class BoardControl (gtk.EventBox):
     
     def button_release (self, widget, event):
         self.pressed = False
-        log.debug("release %d %d" % (event.x, event.y), "BoardView")
+        log.debug("release %d %d\n" % (event.x, event.y), "BoardControl")
         
         cord = self.point2Cord (event.x, event.y)
         if self.view.selected == cord or cord == None:
