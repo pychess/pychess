@@ -142,7 +142,7 @@ class SubProcess:
         self.sendSignal(signal.SIGKILL, True)
     
     def sigterm (self):
-        self.sendSignal(signal.SIGTERN, True)
+        self.sendSignal(signal.SIGTERM, True)
     
     def sigint (self):
         self.sendSignal(signal.SIGINT, False)

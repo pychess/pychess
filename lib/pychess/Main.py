@@ -241,10 +241,10 @@ class GladeHandlers:
         gmwidg.connect("infront", infront)
         infront(gmwidg)
         
-        def whenClosed (gmwidg):
+        def whenClosed (handler, gmwidg, gamemodel):
             for player in gamemodel.players:
                 player.kill(WON_DISCONNECTION)
-        gmwidg.connect("closed", whenClosed)
+        ionest.handler.connect("game_closed", whenClosed)
         
         #def flag_call_error (gamemodel, player, error):
         #    if player.__type__ == LOCAL:

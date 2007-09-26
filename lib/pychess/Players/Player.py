@@ -24,17 +24,17 @@ class Player (GObject):
     
     def setName (self, name):
         """ __repr__ should return this name """
-        abstract
+        raise NotImplementedError
 
     def makeMove (self, history):
         """ Takes a history object, concidering the last move as an opponent
             move, and returns a new moveobject with the players answer. """
-        abstract
+        raise NotImplementedError
     
     def updateTime (self, secs, opsecs):
         """ Updates the player with the current remaining time as a float of
             seconds """
-        pass #Optional
+        #Optional
     
     
     def offer (self, offer):
@@ -42,52 +42,57 @@ class Player (GObject):
             accepts, it should respond by mirroring the offer with
             emit("accept", offer). If it should either ignore the offer or emit
             "decline"."""
-        abstract
+        raise NotImplementedError
     
     def offerDeclined (self, offer):
         """ An offer sent by the player was responded negative by the
             opponent """
+        #Optional
     
     def offerWithdrawn (self, offer):
         """ An offer earlier offered to the player has been withdrawn """
+        #Optional
     
     def offerError (self, offer, error):
         """ An offer, accept or action made by the player has been refused by
             the game model. """
-    
+        #Optional
     
     def end (self, status, reason):
         """ Called when the game ends in a normal way. Use this for shutting
             down engines etc. """
-        pass #Optional
+        raise NotImplementedError
     
     def kill (self, reason):
         """ Called when game has too die fast and ugly. Mostly used in case of
             errors and stuff. Use for closing connections etc. """
-        pass #Optional
+        raise NotImplementedError
     
-        
+    
     def hurry (self):
         """ Forces engines to move now, and sends a hurry message to nonlocal
             human players """
-        pass #Optional
+        #Optional
     
     def pause (self):
         """ Should stop the player from thinking until resume is called """
-        abstract
+        raise NotImplementedError
         
     def resume (self):
         """ Should resume player to think if he's paused """
-        abstract
+        raise NotImplementedError
     
     def setBoard (self, gamemodel):
-        pass
+        """ Sets the latest board in gamemodel as the current. """
+        #Optional
     
-    def undoMoves (self, move, gamemodel):
-        pass
+    def undoMoves (self, moves, gamemodel):
+        """ Undo 'moves' moves and makes the latest board in gamemodel the
+            current """
+        #Optional
     
     
     def showBoard (self):
         """ Print the board as it the players sees it, e.g. in fen. Used for
             debugging only """
-        pass #Optional
+        #Optional

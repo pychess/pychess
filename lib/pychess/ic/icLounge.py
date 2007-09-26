@@ -942,9 +942,8 @@ class CreatedBoards (Section):
             white = ServerPlayer (game, board["wname"], False, board["gameno"], WHITE)
         
         game.setPlayers((white,black))
-        
         gmwidg.setTabText("%s %s %s" % (repr(white), _("vs"), repr(black)))
-        gmwidg.connect("closed", ionest.closeGame, game)
+        
         if timemodel:
             gmwidg.widgets["ccalign"].show()
             gmwidg.widgets["cclock"].setModel(timemodel)
@@ -965,7 +964,6 @@ class CreatedBoards (Section):
         
         gmwidg = gamewidget.GameWidget(game)
         gmwidg.setTabText("%s %s %s" % (wname, _("vs"), bname))
-        gmwidg.connect("closed", ionest.closeGame, game)
         
         if timemodel:
             gmwidg.widgets["ccalign"].show()

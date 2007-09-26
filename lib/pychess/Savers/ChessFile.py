@@ -18,7 +18,7 @@ class ChessFile:
         """ Load the data of game "gameno" into the history object
             If no history object is specified, a clear one
             will be created, loaded and returned """
-        abstract
+        raise NotImplementedError
         
     def __len__ (self):
         return len(self.games)

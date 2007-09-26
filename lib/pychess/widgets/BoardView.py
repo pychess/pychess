@@ -765,7 +765,7 @@ class BoardView (gtk.DrawingArea):
         rel = self.cord2RectRelative(self.lastMove.cord1)
         if intersects(rect(rel), redrawn):
             r = self.cord2Rect(self.lastMove.cord1)
-            redrawAnything = True
+            
             for m in ms:
                 context.move_to(
                     r[0]+d1[m[0]]*r[2],
