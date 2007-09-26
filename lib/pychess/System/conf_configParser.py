@@ -1,4 +1,4 @@
-import os, sys, atexit
+import os, atexit
 from pychess.System.Log import log
 from ConfigParser import SafeConfigParser
 configParser = SafeConfigParser()

@@ -5,6 +5,7 @@ from gobject import *
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
+from pychess.System.Log import log
 
 from ICManager import ICManager
 import telnet
@@ -126,8 +127,8 @@ class OfferManager (ICManager):
             self.emit("onOfferAdd", index, offer)
         
         else:
-            print "Warning: Unknown offer type: #", index, type, "whith" + \
-                  "parameters:", parameters, ". Declining"
+            log.error("Unknown offer type: #", index, type, "whith" + \
+                      "parameters:", parameters, ". Declining")
             print >> client, "decline", index
     
     def onOfferRemove (self, client, groups):

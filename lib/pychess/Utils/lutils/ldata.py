@@ -342,8 +342,6 @@ for i in xrange (1, 7):
 #  the moves of a knight on f3 is given by MoveArray[knight][21].              #
 ################################################################################
 
-from bitboard import setBit, clearBit, moveBit, firstBit, lastBit, iterBits
-
 dir = [
     None,
     [ 9, 11 ], # Only capture moves are included

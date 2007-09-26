@@ -49,8 +49,9 @@ def set_widgets (w):
     widgets = w
 
 from threading import Condition
+import imp, os
 
-import gtk, os, gobject, glob
+import gtk, gobject
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System import glock, conf, gstreamer
@@ -102,14 +103,12 @@ conf.notify_add("hideTabs", tabsCallback)
 # The holder class for tab releated widgets                                    #
 ################################################################################
 
-import imp, gobject
-
 head2mainDic = {}
 
 class GameWidget (gobject.GObject):
     
     __gsignals__ = {
-        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        'close_clicked': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
         'infront': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
     
@@ -129,7 +128,7 @@ class GameWidget (gobject.GObject):
         close_button.add(createImage(gtk_close))
         close_button.set_relief(gtk.RELIEF_NONE)
         close_button.set_size_request(19,18)
-        close_button.connect("clicked", lambda w: self.emit("closed"))
+        close_button.connect("clicked", lambda w: self.emit("close_clicked"))
         
         tabhbox.pack_end(close_button, expand=False)
         tabhbox.pack_end(gtk.Label(""))

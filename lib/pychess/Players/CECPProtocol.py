@@ -3,10 +3,7 @@
     Engine """
 
 import re
-import select
 from threading import Condition
-
-import gobject
 
 from pychess.System.SubProcess import SubProcessError, TimeOutError
 from pychess.System.ThreadPool import pool
@@ -97,7 +94,7 @@ class CECPProtocol (Protocol):
             while self.connected:
                 try:
                     line = self.engine.readline(timeout)
-                except SubProcessError, e:
+                except SubProcessError:
                     # We need to be ready before we can die,
                     # So we wait and emit 'dead' in the next loop
                     break
@@ -179,7 +176,6 @@ class CECPProtocol (Protocol):
                 print >> self.engine, "book off"
                 return
             
-            board = self.board
             mvstrs = movre.findall(" ".join(parts[4:])+" ")
             
             moves = listToMoves (self.board, mvstrs, type=None, validate=True)
@@ -212,27 +208,44 @@ class CECPProtocol (Protocol):
         
         # Features
         if "feature" in parts:
-            # Little hack needed en cases of engines responding like this:
+            
+            # We skip parts before 'feature', as some engines give us lines like
             # White (1) : feature setboard=1 analyze...e="GNU Chess 5.07" done=1
             parts = parts[parts.index("feature"):]
             for i, pair in enumerate(parts[1:]):
+                
+                # As "parts" is split with no thoughs on quotes or double quotes
+                # we need to do some extra handling.
+                
                 if pair.find("=") < 0: continue
-                key, value = pair.split("=")
+                key, value = pair.split("=",1)
+                
                 if value[0] in ('"',"'") and value[-1] in ('"',"'"):
                     value = value[1:-1]
-                elif value[0] in ('"',"'") and not value[-1] in ('"',"'"):
-                    rest = value[1:]+" "+" ".join(parts[2+i:])
+                
+                # If our pair was unfinished, like myname="GNU, we search the
+                # rest of the pairs for a quotating mark.
+                elif value[0] in ('"',"'"):
+                    rest = value[1:] + " " + " ".join(parts[2+i:])
                     i = rest.find('"')
-                    if i < 0:
-                        i = rest.find("'")
-                    if i >= 0:
-                        value = rest[:i]
-                    else: value[1:]
-                else: value = int(value)
+                    j = rest.find("'")
+                    if i + j == -2:
+                        log.warn("Missing endquotation in %s feature", repr(self))
+                        value = rest
+                    elif min(i, j) != -1:
+                        value = rest[:min(i, j)]
+                    else:
+                        l = max(i, j)
+                        value = rest[:l]
+                
+                else:
+                    # All nonquoted values are ints
+                    value = int(value)
                 
                 self.features[key] = value
+            
             return
-        
+    
     ############################################################################
     #   TO ENGINE                                                              #
     ############################################################################

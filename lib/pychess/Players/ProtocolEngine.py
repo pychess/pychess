@@ -1,5 +1,4 @@
 
-import sys, os, time, thread
 from threading import Condition, Lock, RLock
 
 from pychess.Players.Player import PlayerIsDead
@@ -34,6 +33,11 @@ class ProtocolEngine (Engine):
         self.proto.connect("dead", lambda p: self._setMove("dead"))
         self.proto.connect("analyze", self.onAnalyze)
         self.proto.connect("ready", self.onReady)
+        
+        self.name = None
+    
+    def setName (self, name):
+        self.name = name
     
     def setStrength (self, strength):
         self.runWhenReady(self.proto.setStrength, strength)
@@ -111,8 +115,11 @@ class ProtocolEngine (Engine):
         self.move = None
         return move
     
-    def offerDraw (self):
-        self.runWhenReady(self.proto.offerDraw)
+    def offer (self, offer):
+        if offer.offerType == DRAW_OFFER:
+            self.runWhenReady(self.proto.offerDraw)
+        else:
+            self.emit("withdraw", offer)
     
     def offerError (self, offer, error):
         # We don't keep track if engine draws are offers or accepts. We just
@@ -163,5 +170,7 @@ class ProtocolEngine (Engine):
     
     
     def __repr__ (self):
+        if self.name != None:
+            return self.name
         self._wait()
         return repr(self.proto)

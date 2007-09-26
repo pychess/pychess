@@ -22,7 +22,7 @@ def wrap (string, length):
 
 def save (file, model):
     
-    status = reprResult[getStatus(model.boards[-1])[0]]
+    status = reprResult[model.status]
     
     print >> file, '[Event "%s"]' % model.tags["Event"]
     print >> file, '[Site "%s"]' % model.tags["Site"]
