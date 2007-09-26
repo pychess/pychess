@@ -103,13 +103,13 @@ class EngineTab:
         widgets["analyzer_check"].connect("toggled", on_analyzer_check_toggled)
         uistuff.keep(widgets["analyzer_check"], "analyzer_check")
         
-        def on_analyzer_check_toggled (check):
+        def on_invanalyzer_check_toggled (check):
             widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
             widgets["spy_mode"].set_active(check.get_active())
             from pychess.Main import gameDic
             if gameDic:
                 widgets["spy_mode"].set_sensitive(check.get_active())
-        widgets["inv_analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+        widgets["inv_analyzer_check"].connect("toggled", on_invanalyzer_check_toggled)
         uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
         
         # Put options in trees in add/edit dialog

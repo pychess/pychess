@@ -14,33 +14,30 @@ class Engine (Player):
     
     def setStrength (self, strength):
         """ Takes strength 0, 1, 2 (higher is better) """
-        abstract
+        #Optional
     
     def setDepth (self, depth):
         """ Sets the depth of the engine. Should only be used for analyze engines.
             Other engines will use the setStrength method. """
-        pass
+        #Optional
     
     def setTime (self, seconds, gain):
-        abstract
+        raise NotImplementedError
     
     def setBoard (self, history):
-        abstract
+        raise NotImplementedError
     
     def canAnalyze (self):
-        abstract
+        raise NotImplementedError
     
     def analyze (self, inverse=False):
         """ If canAnalyze responds True, this method will be called on the
             engine, if it is not to play any moves, but rather analyze the game
             and emit 'analyze' signals now and then """
-        pass
+        #Optional
     
     def offer (self, offer):
-        if offer.offerType == DRAW_OFFER:
-            self.offerDraw()
-        else:
-            self.emit("accept", offer)
+        raise NotImplementedError
     
     def offerDeclined (self, offer):
         pass #Ignore
@@ -51,14 +48,8 @@ class Engine (Player):
     def offerError (self, offer, error):
         pass #Ignore
     
-    def offerDraw (self):
-        abstract
-    
     # Other methods
     
     def __repr__ (self):
         """For example 'GNU Chess 5.07'"""
-        abstract
-    
-    def wait (self):
-        pass #optional
+        raise NotImplementedError

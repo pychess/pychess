@@ -66,20 +66,13 @@ def getMoveValue (board, table, ply, move):
         4.  History.
         5.  Moves to the centre. """
     
-    color = board.color
-    opcolor = 1-color
-    enemyPawns = board.boards[opcolor][PAWN]
-    
-    score = -maxint
-    
-    flag = move >> 12
-    fcord = (move >> 6) & 63
-    tcord = move & 63
-    
     # As we only return directly from transposition table if hashf == hashfEXACT
-    # There will be a very promising move we could test
+    # There could be a non  hashfEXACT very promising move for us to test
     if table.isHashMove(ply, move):
         return maxint
+    
+    fcord = (move >> 6) & 63
+    tcord = move & 63
     
     arBoard = board.arBoard
     fpiece = arBoard[fcord]
@@ -88,6 +81,9 @@ def getMoveValue (board, table, ply, move):
     if tpiece != EMPTY:
         # We add some extra to ensure also bad captures will be searched early
         return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
+    
+    flag = move >> 12
+    
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
@@ -98,7 +94,7 @@ def getMoveValue (board, table, ply, move):
     
     # King tropism - a move that brings us nearer to the enemy king, is probably
     # a good move
-    opking = board.kings[opcolor]
+    opking = board.kings[1-board.color]
     return 10-distance[tcord][opking]*2+distance[fcord][opking]
 
 def sortMoves (board, table, ply, moves):

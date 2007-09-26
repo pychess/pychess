@@ -371,7 +371,7 @@ def runNewGameDialog ():
     ensureNewGameDialogReady ()
     res = widgets["newgamedialog"].run()
     widgets["newgamedialog"].hide()
-    if res != gtk.RESPONSE_OK: return None,None
+    if res != gtk.RESPONSE_OK: return (gtk.RESPONSE_CANCEL, None)
     
     # Finding time
     
@@ -479,7 +479,6 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
     
     game.setPlayers(players)
     game.setSpectactors(specs)
-    gmwidg.connect("closed", closeGame, game)
     if timemodel:
         gmwidg.widgets["ccalign"].show()
         gmwidg.widgets["cclock"].setModel(timemodel)
@@ -494,11 +493,11 @@ def newGame ():
     setActiveSidePanel(None)
     widgets["newgamedialog"].set_title(_("New Game"))
     game, gmwidg = runNewGameDialog()
-    if game:
-        game.start()
-        handler.emit("game_started", gmwidg, game)
+    if game != gtk.RESPONSE_CANCEL:
+        simpleNewGame (game, gmwidg)
 
 def simpleNewGame (game, gmwidg):
+    gmwidg.connect("close_clicked", closeGame, game)
     game.start()
     handler.emit("game_started", gmwidg, game)
 
@@ -512,13 +511,13 @@ def loadGame (uri = None):
     
     res = opendialog.run()
     opendialog.hide()
-    if res != gtk.RESPONSE_ACCEPT: return None, None
+    if res != gtk.RESPONSE_ACCEPT: return (gtk.RESPONSE_CANCEL, None)
     
     setActiveSidePanel("loadsidepanel")
     widgets["newgamedialog"].set_title(_("Open Game"))
     game, gmwidg = runNewGameDialog()
     
-    if game:
+    if game != gtk.RESPONSE_CANCEL:
         uri = loadSidePanel.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
         simpleLoadGame(game, gmwidg, uri, loader,

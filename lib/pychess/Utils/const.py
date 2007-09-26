@@ -29,7 +29,7 @@ reprColor = ["White", "Black"]
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
     ADJOURNED, ABORTED, UNKNOWN_STATE = range(10)
-reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "?"]
+reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "?", "*", "?", "?"]
 
 # Action errors
 ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \

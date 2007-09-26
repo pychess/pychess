@@ -1,6 +1,6 @@
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
-import os, md5, imp, thread
+import os, md5, imp
 from threading import Thread, Condition
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
@@ -134,11 +134,14 @@ class EngineDiscoverer (GObject, Thread):
     
     def _handleUCIOptions (self, engine, options):
         optnode = self._createOrReturn(engine, "options")
-        used = dict([(child.getAttribute("name"),True) for child in \
+        
+        # We don't want to change preset values, but currently there are none,
+        # so 'preset' should be an empty dict
+        preset = dict([(child.getAttribute("name"),True) for child in \
                 optnode.childNodes if child.nodeType == child.ELEMENT_NODE])
         
         for name, dic in options.iteritems():
-            if name in used: continue
+            if name in preset: continue
             
             type = dic["type"]
             del dic["type"]
@@ -212,12 +215,13 @@ class EngineDiscoverer (GObject, Thread):
         elif protname == "cecp":
             features = self._createOrReturn(engine, "cecp-features")
             
-            used = dict ([(f.getAttribute("command"), True) for f in \
+            # We don't want to change preset values, but currently there are
+            # none, so 'preset' should be an empty dict
+            preset = dict ([(f.getAttribute("command"), True) for f in \
                                     features.getElementsByTagName("feature")])
             
             for key, value in e.proto.features.iteritems():
-                if key in used: continue
-                command="depth" 
+                if key in preset: continue
                 args = (("command",key),
                         ("supports", value and "true" or "false"))
                 node = self._createElement("feature",args=args)
@@ -296,7 +300,11 @@ class EngineDiscoverer (GObject, Thread):
             if checkIt:
                 engine.appendChild( self._createElement("file", file) )
                 engine.appendChild( self._createElement("path", path) )
-                engine.appendChild( self._createElement("args", str(args)) )
+                argselem = engine.appendChild( self._createElement("args") )
+                for arg in args:
+                    typestr = repr(type(arg))[7:-2]
+                    elem = self._createElement("arg", str(arg), (("type", typestr),))
+                    argselem.appendChild(elem)
                 engine.appendChild( self._createElement("md5", md5sum) )
                 toBeDiscovered.append((engine, binname))
             
@@ -375,12 +383,22 @@ class EngineDiscoverer (GObject, Thread):
             return c[0].childNodes[0].data.strip()
         return None
     
+    def getArgs (self, engine):
+        args = []
+        for arg in engine.getElementsByTagName("arg"):
+            type = arg.getAttribute("type")
+            value = arg.childNodes[0].data.strip()
+            if type == "bool":
+                args.append(value.lower() == "true" and True or False)
+            else:
+                args.append(__builtins__[type](value))
+        return args
+   
     def initEngine (self, engine, color):
         protocol = attrToProtocol[engine.getAttribute("protocol")]
         protover = int(engine.getAttribute("protover"))
         path = engine.getElementsByTagName("path")[0].childNodes[0].data.strip()
-        exec("args = %s" % \
-            engine.getElementsByTagName("args")[0].childNodes[0].data.strip())
+        args = self.getArgs(engine)
         subprocess = SubProcess(path, args, warnwords=("illegal","error"))
         return ProtocolEngine( protocol(subprocess, color, protover) )
     

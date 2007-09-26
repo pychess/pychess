@@ -15,6 +15,7 @@ def repeat_sleep (func, sleeptime, recur=False):
         until it returns False """
     def run ():
         last = time.time()
+        val = None
         while True:
             time.sleep(time.time()-last + sleeptime)
             if not time:
@@ -22,8 +23,8 @@ def repeat_sleep (func, sleeptime, recur=False):
                 # imported modules will be None
                 return
             last = time.time()
-            if recur and "v" in locals():
-                v = func(v)
-            else: v = func()
-            if not v: break
+            if recur and val:
+                val = func(val)
+            else: val = func()
+            if not val: break
     pool.start(run)
