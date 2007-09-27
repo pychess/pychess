@@ -75,7 +75,7 @@ class Sidepanel:
             for i, (board, move) in enumerate(zip(game.boards, game.moves)):
                 if conf.get("figuresInNotation", False):
                     notat = toFAN(board, move)
-                else: notat = toSAN(board, move)
+                else: notat = toSAN(board, move, True)
                 row, col, other = self._ply_to_row_col_other(i+1)
                 col.get_model().set(col.get_model().get_iter((row,)), 0, notat)
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
