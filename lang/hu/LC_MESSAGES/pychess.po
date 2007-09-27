@@ -594,7 +594,7 @@ msgstr "Gépi ellenfelek"
 
 #: glade/PyChess.glade:2658
 msgid "_Use sounds in PyChess"
-msgstr "_Hangok hsználata a PyChess-ben"
+msgstr "_Hangok használata a PyChess-ben"
 
 # Please preserve the \n's
 #: glade/PyChess.glade:2779
@@ -633,7 +633,7 @@ msgstr "_Ütés:"
 
 #: glade/PyChess.glade:3234
 msgid "Game is _set-up:"
-msgstr "_Tábla felállítás:"
+msgstr "_Tábla felállítása:"
 
 #: glade/PyChess.glade:3307
 msgid "_Observed moves:"
