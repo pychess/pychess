@@ -524,6 +524,7 @@ def loadGame (uri = None):
                        loadSidePanel.get_gameno(), loadSidePanel.get_position())
 
 def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
+    gmwidg.connect("close_clicked", closeGame, game)
     # As Main.py connects to game, when it recieves the game_started signal,
     # we have to emit it before loadAndStart is called, which emits signals
     # Main.py are supposed to recieve.
