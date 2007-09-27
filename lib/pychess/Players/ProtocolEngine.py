@@ -77,7 +77,7 @@ class ProtocolEngine (Engine):
         finally:
             self.readycon.release()
     
-    def _wait (self):
+    def wait (self):
         if self.proto.ready:
             return
         self.readycon.acquire()
@@ -139,7 +139,7 @@ class ProtocolEngine (Engine):
         self.emit ("analyze", moves)
     
     def canAnalyze (self):
-        self._wait()
+        self.wait()
         return self.proto.canAnalyze()
     
     def analyze (self, inverse=False):
@@ -172,5 +172,5 @@ class ProtocolEngine (Engine):
     def __repr__ (self):
         if self.name != None:
             return self.name
-        self._wait()
+        self.wait()
         return repr(self.proto)
