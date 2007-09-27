@@ -27,6 +27,10 @@ class Engine (Player):
     def setBoard (self, history):
         raise NotImplementedError
     
+    def wait (self):
+        """ Will block until engine is ready """
+        raise NotImplementedError
+    
     def canAnalyze (self):
         raise NotImplementedError
     

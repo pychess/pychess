@@ -6,6 +6,7 @@ from threading import Thread, Condition
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.ThreadPool import pool
+from pychess.System.TaskQueue import TaskQueue
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.System.prefix import addHomePrefix
@@ -72,7 +73,7 @@ class EngineDiscoverer (GObject, Thread):
             self.dom = minidom.parseString( backup )
         
         self._engines = {}
-        self.condition = Condition()
+        self.toBeDiscovered = TaskQueue()
     
     ############################################################################
     # XML methods                                                              #
@@ -132,7 +133,15 @@ class EngineDiscoverer (GObject, Thread):
                     return path, path, []
         return False
     
-    def _handleUCIOptions (self, engine, options):
+    def _handleUCIOptions (self, engine, ids, options):
+        meta = self._createOrReturn(engine, "meta")
+        
+        for key, value in ids.iteritems():
+            if key == "name" and not self._hasChildByTagName(meta,"name"):
+                meta.appendChild(self._createElement("name", value))
+            elif key == "author" and not self._hasChildByTagName(meta,"author"):
+                meta.appendChild(self._createElement("author", value))
+        
         optnode = self._createOrReturn(engine, "options")
         
         # We don't want to change preset values, but currently there are none,
@@ -182,90 +191,70 @@ class EngineDiscoverer (GObject, Thread):
             optnode.appendChild(node)
         
         engine.appendChild(optnode)
-        
-    def _findOutMore (self, engine, binname):
-        
-        e = self.initEngine (engine, BLACK)
-        
-        def deadcallback ():
-            print 'dead'
-            self.threads -= 1
-            if not self.threads:
-                self.condition.acquire()
-                self.condition.notifyAll()
-                self.condition.release()
-        e.connect('dead', deadcallback)
-        
-        protname = engine.getAttribute("protocol")
-        e._wait()
-        
+    
+    def _handleCECPOptions (self, engine, features):
+        feature_node = self._createOrReturn(engine, "cecp-features")
         meta = self._createOrReturn(engine, "meta")
         
-        if protname == "uci":
-            e.proto.startGame()
-
-            for key, value in e.proto.ids.iteritems():
-                if key == "name" and not self._hasChildByTagName(meta,"name"):
-                    meta.appendChild(self._createElement("name", value))
-                elif key == "author" and not self._hasChildByTagName(meta,"author"):
-                    meta.appendChild(self._createElement("author", value))
-            
-            self._handleUCIOptions (engine, e.proto.options)
+        # We don't want to change preset values, but currently there are
+        # none, so 'preset' should be an empty dict
+        preset = dict ([(f.getAttribute("command"), True) for f in \
+                                feature_node.getElementsByTagName("feature")])
         
-        elif protname == "cecp":
-            features = self._createOrReturn(engine, "cecp-features")
+        for key, value in features.iteritems():
+            if key in preset: continue
             
-            # We don't want to change preset values, but currently there are
-            # none, so 'preset' should be an empty dict
-            preset = dict ([(f.getAttribute("command"), True) for f in \
-                                    features.getElementsByTagName("feature")])
+            if key == "myname":
+                meta.appendChild( self._createElement("name", value) )
             
-            for key, value in e.proto.features.iteritems():
-                if key in preset: continue
-                args = (("command",key),
-                        ("supports", value and "true" or "false"))
-                node = self._createElement("feature",args=args)
-                features.appendChild(node)
-            
-            # TODO: We still don't know if the engine supports "protover 2" and
-            # some other "Try and fail" based features.
-            # This is important for faster loadtimes and to know if an engine
-            # supports loading
-            
-            if not self._hasChildByTagName(meta, "name"):
-                meta.appendChild( self._createElement("name", repr(e)) )
-            
-            if not self._hasChildByTagName(engine, "options"):
-                options = self.dom.createElement("options")
-                options.appendChild(self._createElement("check-option", \
-                                 args=(("name","Ponder"), ("default","false"))))
-                options.appendChild(self._createElement("check-option", \
-                                 args=(("name","Random"), ("default","false"))))
-                options.appendChild(self._createElement("spin-option", \
-                                 args=(("name","Depth"), ("min","1"),
-                                       ("max","-1"), ("default","false"))))
-                engine.appendChild(options)
+            args = (("command",key),
+                    ("supports", value and "true" or "false"))
+            node = self._createElement("feature",args=args)
+            feature_node.appendChild(node)
         
-        e.kill(UNKNOWN_REASON)
-        
+        if not self._hasChildByTagName(engine, "options"):
+            options = self.dom.createElement("options")
+            options.appendChild(self._createElement("check-option", \
+                                args=(("name","Ponder"), ("default","false"))))
+            options.appendChild(self._createElement("check-option", \
+                                args=(("name","Random"), ("default","false"))))
+            options.appendChild(self._createElement("spin-option", \
+                                args=(("name","Depth"), ("min","1"),
+                                    ("max","-1"), ("default","false"))))
+            engine.appendChild(options)
+    
+    def _findOutMore (self, toBeDiscovered):
+        engine, binname = toBeDiscovered.get()
         self._engines[binname] = engine
-        self.emit ("engine_discovered", binname, engine)
         
-        self.threads -= 1
-        if not self.threads:
-            self.condition.acquire()
-            self.condition.notifyAll()
-            self.condition.release()
+        try:
+            e = self.initEngine (engine, BLACK)
+            e.wait()
+            
+            protname = engine.getAttribute("protocol")
+            if protname == "uci":
+                e.proto.startGame()
+                self._handleUCIOptions (engine, e.proto.ids, e.proto.options)
+            elif protname == "cecp":
+                self._handleCECPOptions (engine, e.proto.features)
         
+        finally:
+            e.kill(UNKNOWN_REASON)
+            self.emit ("engine_discovered", binname, engine)
+            toBeDiscovered.task_done()
+    
     ############################################################################
     # Main loop                                                                #
     ############################################################################
     
+    def start (self):
+        Thread.start(self)
+    
     def run (self):
-        toBeDiscovered = []
+        
+        toBeDiscovered = self.toBeDiscovered
         
         for engine in self.dom.getElementsByTagName("engine"):
-            
             if not engine.hasAttribute("protocol") and \
                    engine.hasAttribute("binname"):
                 continue
@@ -306,23 +295,17 @@ class EngineDiscoverer (GObject, Thread):
                     elem = self._createElement("arg", str(arg), (("type", typestr),))
                     argselem.appendChild(elem)
                 engine.appendChild( self._createElement("md5", md5sum) )
-                toBeDiscovered.append((engine, binname))
+                toBeDiscovered.put((engine, binname))
             
             else:
                 self._engines[binname] = engine
-            
-        if toBeDiscovered:
+        
+        if not toBeDiscovered.empty():
             self.emit("discovering_started", 
-                [binname for engine, binname in toBeDiscovered])
-            
-            self.threads = len(toBeDiscovered)
-            for engine, binname in toBeDiscovered:
-                pool.start(self._findOutMore, engine, binname)
-            
-            self.condition.acquire()
-            while self.threads:
-                self.condition.wait()
-            self.condition.release()
+                [binname for engine, binname in toBeDiscovered.queue])
+            for i in xrange(toBeDiscovered.qsize()):
+                pool.start(self._findOutMore, toBeDiscovered)
+            toBeDiscovered.join()
         
         self.emit("all_engines_discovered")
         
