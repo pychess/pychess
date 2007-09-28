@@ -557,7 +557,7 @@ def enterGameNotation ():
     widgets["newgamedialog"].set_title(_("Enter Game"))
     game, gmwidg = runNewGameDialog()
     
-    if game:
+    if game != gtk.RESPONSE_CANCEL:
         buf = sourceview.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
         file = StringIO(text)
