@@ -32,7 +32,7 @@
 	<widget class="GtkHButtonBox" id="hbuttonbox1">
 	  <property name="border_width">1</property>
 	  <property name="visible">True</property>
-	  <property name="layout_style">GTK_BUTTONBOX_EDGE</property>
+	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 	  <property name="spacing">6</property>
 
 	  <child>
