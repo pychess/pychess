@@ -129,6 +129,8 @@ class PGNFile (ChessFile):
         
         movstrs = self._getMoves (gameno)
         for i, mstr in enumerate(movstrs):
+            if position != -1 and model.ply >= position:
+                break
             try:
                 move = parseAny (model.boards[-1], mstr)
             except ParsingError, e:
@@ -138,8 +140,6 @@ class PGNFile (ChessFile):
             model.boards.append(model.boards[-1].move(move))
             
             model.emit("game_changed")
-            if position != -1 and model.ply >= position:
-                break
         
         if model.timemodel:
             blacks = len(movstrs)/2
