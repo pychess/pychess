@@ -110,6 +110,8 @@ class PGNFile (ChessFile):
         self.tagcache = {}
     
     def _getMoves (self, gameno):
+        if not self.games:
+            return []
         moves = comre.sub("", self.games[gameno][1])
         moves = stripBrackets(moves)
         moves = movre.findall(moves+" ")
@@ -156,8 +158,11 @@ class PGNFile (ChessFile):
                 return self.tagcache[gameno][tagkey]
             else: return None
         else:
-            self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
-            return self._getTag(gameno, tagkey)
+            if self.games:
+                self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
+                return self._getTag(gameno, tagkey)
+            else:
+                return None
     
     def get_player_names (self, no):
         p1 = self._getTag(no,"White") and self._getTag(no,"White") or "Unknown"
