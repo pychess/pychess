@@ -562,9 +562,8 @@ def enterGameNotation ():
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
         file = StringIO(text)
         loader = enddir["pgn"]
-        game.loadAndStart (file, 0, -1, loader)
-        handler.emit("game_started", gmwidg, game)
-        
+        simpleLoadGame(game, gmwidg, file, loader)
+
 ################################################################################
 # saveGame                                                                     #
 ################################################################################
