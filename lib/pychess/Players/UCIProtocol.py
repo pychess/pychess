@@ -170,21 +170,8 @@ class UCIProtocol (Protocol):
         
         self.board = gamemodel.boards[-1]
         
-        if self.mode != NORMAL:
-            print >> self.engine, "stop"
-            if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.switchColor()
-                if self.board.board.opIsChecked():
-                    # Many engines don't like positions able to take down enemy
-                    # king. Therefore we just return the "kill king" move
-                    # automaticaly
-                    self.emit("analyze", [getMoveKillingKing(self.board)])
-                    return
-            print >> self.engine, "position fen", self.board.asFen()
-            print >> self.engine, "go infinite"
-            return
-        
-        if gamemodel.ply > gamemodel.lowply+1 and self._getOption('Ponder'):
+        if self.mode == NORMAL and \
+                gamemodel.ply > gamemodel.lowply+1 and self._getOption('Ponder'):
             if self.pondermove and gamemodel.moves and \
                     gamemodel.moves[-1] == self.pondermove:
                 print >> self.engine, "ponderhit"
@@ -193,20 +180,36 @@ class UCIProtocol (Protocol):
                 self.ignoreNext = True
                 print >> self.engine, "stop"
         
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.board.switchColor()
+        
         self._searchNow()
-        
+    
     def _searchNow (self):
-        print >> self.engine, "position fen", self.board.asFen()
-        
-        if self._getOption('UCI_LimitStrength') or self.strength == EXPERT:
-            print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
-                                     "winc", self.incr, "binc", self.incr
-        
-        elif self.strength == INTERMEDIATE:
-            print >> self.engine, "go depth 4"
+        if self.mode == NORMAL:
+            print >> self.engine, "position fen", self.board.asFen()
             
-        elif self.strength == EASY:
-            print >> self.engine, "go depth 1"
+            if self._getOption('UCI_LimitStrength') or self.strength == EXPERT:
+                print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
+                                         "winc", self.incr, "binc", self.incr
+            
+            elif self.strength == INTERMEDIATE:
+                print >> self.engine, "go depth 4"
+                
+            elif self.strength == EASY:
+                print >> self.engine, "go depth 1"
+        
+        else:
+            print >> self.engine, "stop"
+            if self.mode == INVERSE_ANALYZING:
+                if self.board.board.opIsChecked():
+                    # Many engines don't like positions able to take down enemy
+                    # king. Therefore we just return the "kill king" move
+                    # automaticaly
+                    self.emit("analyze", [getMoveKillingKing(self.board)])
+                    return
+            print >> self.engine, "position fen", self.board.asFen()
+            print >> self.engine, "go infinite"
     
     def time (self, engine, opponent):
         if self.color == WHITE:
@@ -263,16 +266,20 @@ class UCIProtocol (Protocol):
         self.move(GameModel())
     
     def pause (self):
-        if self.board and self.board.color == self.color or \
+        if self.mode != NORMAL or \
+                self.board and self.board.color == self.color or \
                 self._getOption('Ponder'):
             self.ignoreNext = True
             print >> self.engine, "stop"
     
     def resume (self):
-        if self.board and self.board.color == self.color:
+        if self.mode == NORMAL:
+            if self.board and self.board.color == self.color:
+                self._searchNow()
+            elif self._getOption('Ponder') and self.pondermove:
+                self._startPonder()
+        else:
             self._searchNow()
-        elif self._getOption('Ponder') and self.pondermove:
-            self._startPonder()
     
     def undoMoves (self, moves, gamemodel):
         pass
