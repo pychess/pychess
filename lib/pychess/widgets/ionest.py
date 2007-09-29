@@ -560,6 +560,17 @@ def enterGameNotation ():
     if game != gtk.RESPONSE_CANCEL:
         buf = sourceview.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+        # TODO: connect local_repr to a togglable UI element (flag icon)
+        local_repr = False
+        if local_repr:
+            # 2 step used to avoid backtranslating
+            # (local and english piece letters can overlap)
+            for i, sign in enumerate(localReprSign[1:]):
+                if sign.strip():
+                    text = text.replace(sign, FAN_PIECES[0][i+1])
+            for i, sign in enumerate(FAN_PIECES[0][1:7]):
+                    text = text.replace(sign, reprSign[i+1])
+            text = str(text)
         file = StringIO(text)
         loader = enddir["pgn"]
         simpleLoadGame(game, gmwidg, file, loader)
