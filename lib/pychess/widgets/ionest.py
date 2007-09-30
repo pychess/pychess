@@ -1,5 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
+import locale
 import os, random
 from os import getuid
 from pwd import getpwuid
@@ -363,6 +364,18 @@ def ensureNewGameDialogReady ():
                 widgets[key].set_active(v)
             else: widgets[key].set_value(v)
 
+    def on_islocalBtn_clicked (widget):
+        default_locale = locale.getdefaultlocale()[0][-2:].upper()
+        label = widgets["islocalBtn"].get_label()
+        if label == "EN":
+            label = default_locale
+        else:
+            label = "EN"
+        widgets["islocalBtn"].set_label(label)
+    
+    if widgets["islocalBtn"]:
+        widgets["islocalBtn"].connect("clicked", on_islocalBtn_clicked)
+
 ################################################################################
 # runNewGameDialog                                                             #
 ################################################################################
@@ -560,8 +573,12 @@ def enterGameNotation ():
     if game != gtk.RESPONSE_CANCEL:
         buf = sourceview.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
-        # TODO: connect local_repr to a togglable UI element (flag icon)
-        local_repr = False
+        # TODO: create a new Button widget named islocalBtn with initial label "EN"
+        # TODO: in newInOut.glade next to the label "Enter game notation"
+        if widgets["islocalBtn"]:
+            local_repr = widgets["islocalBtn"].get_label() != "EN"
+        else:
+            local_repr = False
         if local_repr:
             # 2 step used to avoid backtranslating
             # (local and english piece letters can overlap)
