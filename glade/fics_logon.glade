@@ -23,7 +23,6 @@
 
   <child>
     <widget class="GtkVBox" id="dialog-vbox1">
-      <property name="width_request">350</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
       <property name="spacing">6</property>
