@@ -136,7 +136,8 @@ class UserInfoSection(Section):
             glock.release()
     
     def onDisconnect (self):
-        widgets["fingerTableDock"].remove(self.dock.get_children()[0])
+        if self.dock.get_children():
+            widgets["fingerTableDock"].remove(self.dock.get_children()[0])
     
     def __init__ (self):
         self.dock = widgets["fingerTableDock"]
@@ -231,6 +232,7 @@ class UserInfoSection(Section):
                 label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games is be smaller."))
                 label0.props.xalign = 0
                 label0.props.wrap = True
+                label0.props.width_request = 300
                 vbox.add(label0)
                 eventbox = uistuff.initLabelLinks(_("Register now"),
                         "http://freechess.org/Register/index.html")
@@ -436,6 +438,7 @@ class SeekTabSection (ParrentListSection):
         widgets["seekListContent"].set_sensitive(False)
         widgets["challengePanel"].set_sensitive(False)
         self.store.clear()
+        widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
     
     def onCurGameEnded (self):
         widgets["seekListContent"].set_sensitive(True)
