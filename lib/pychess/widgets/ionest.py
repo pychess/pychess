@@ -131,12 +131,51 @@ def ensureReady_loadsidepanel ():
 # Initing enter notation sidepanel                                             #
 ################################################################################
 
+import gtk
+from cairo import ImageSurface
+
+class ImageButton(gtk.DrawingArea):
+    def __init__ (self, imagePaths):
+        gtk.DrawingArea.__init__(self)
+        self.set_events(gtk.gdk.EXPOSURE_MASK |
+                        gtk.gdk.BUTTON_PRESS_MASK)
+        
+        self.connect("expose-event", self.draw)
+        self.connect("button_press_event", self.buttonPress)
+        
+        self.surfaces = [ImageSurface.create_from_png(path) for path in imagePaths]
+        self.current = 0
+        
+        width, height = self.surfaces[0].get_width(), self.surfaces[0].get_height()
+        self.size = gtk.gdk.Rectangle(0, 0, width, height)
+        self.set_size_request(width, height)
+    
+    def draw (self, self_, event):
+        context = self.window.cairo_create()
+        context.rectangle (event.area.x, event.area.y,
+                           event.area.width, event.area.height)
+        context.set_source_surface(self.surfaces[self.current], 0, 0)
+        context.fill()
+    
+    def buttonPress (self, self_, event):
+        self.current = (self.current + 1) % len(self.surfaces)
+        self.window.invalidate_rect(self.size, True)
+        self.window.process_updates(True)
+
 enterGameNotationSidePanel_ready = False
 def ensureReady_enterGameNotationSidePanel ():
+    
+    widgets["enterGameNotationSidePanel"].realize()
+    widgets["enterGameNotationFrame"].set_size_request(223,
+            widgets["enterGameNotationSidePanel"].get_allocation().height-4)
     global enterGameNotationSidePanel_ready
     if enterGameNotationSidePanel_ready:
         return
     else: enterGameNotationSidePanel_ready = True
+    
+    ib = ImageButton([addDataPrefix("flags/ad.png"), addDataPrefix("flags/ae.png")])
+    widgets["imageButtonDock"].add(ib)
+    ib.show()
     
     global sourceview
     buffer = SourceBuffer()
