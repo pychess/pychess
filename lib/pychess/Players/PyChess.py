@@ -380,7 +380,7 @@ while True:
         if analyzing:
             pool.start(analyze)
     
-    elif lines[0] in ("xboard", "otim", "hard", "easy" "nopost", "post"):
+    elif lines[0] in ("xboard", "otim", "hard", "easy", "nopost", "post"):
         pass
     
     else: print "Warning (unknown command):", line
