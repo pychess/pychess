@@ -72,7 +72,7 @@ else:
 
 def makeYellow (box):
     if tooltipStyle:
-        box.set_style(tooltipStyle)we
+        box.set_style(tooltipStyle)
     def on_box_expose_event (box, event):
         allocation = box.allocation
         box.style.paint_flat_box (box.window,
