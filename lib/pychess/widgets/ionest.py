@@ -173,7 +173,8 @@ def ensureReady_enterGameNotationSidePanel ():
         return
     else: enterGameNotationSidePanel_ready = True
     
-    ib = ImageButton([addDataPrefix("flags/ad.png"), addDataPrefix("flags/ae.png")])
+    loc = locale.getdefaultlocale()[0][-2:].lower()
+    ib = ImageButton([addDataPrefix("flags/us.png"), addDataPrefix("flags/%s.png" % loc)])
     widgets["imageButtonDock"].add(ib)
     ib.show()
     
@@ -403,17 +404,6 @@ def ensureNewGameDialogReady ():
                 widgets[key].set_active(v)
             else: widgets[key].set_value(v)
 
-    def on_islocalBtn_clicked (widget):
-        default_locale = locale.getdefaultlocale()[0][-2:].upper()
-        label = widgets["islocalBtn"].get_label()
-        if label == "EN":
-            label = default_locale
-        else:
-            label = "EN"
-        widgets["islocalBtn"].set_label(label)
-    
-    if widgets["islocalBtn"]:
-        widgets["islocalBtn"].connect("clicked", on_islocalBtn_clicked)
 
 ################################################################################
 # runNewGameDialog                                                             #
@@ -612,12 +602,8 @@ def enterGameNotation ():
     if game != gtk.RESPONSE_CANCEL:
         buf = sourceview.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
-        # TODO: create a new Button widget named islocalBtn with initial label "EN"
-        # TODO: in newInOut.glade next to the label "Enter game notation"
-        if widgets["islocalBtn"]:
-            local_repr = widgets["islocalBtn"].get_label() != "EN"
-        else:
-            local_repr = False
+
+        local_repr = widgets["imageButtonDock"].get_child().current == 1
         if local_repr:
             # 2 step used to avoid backtranslating
             # (local and english piece letters can overlap)
@@ -627,6 +613,7 @@ def enterGameNotation ():
             for i, sign in enumerate(FAN_PIECES[0][1:7]):
                     text = text.replace(sign, reprSign[i+1])
             text = str(text)
+
         file = StringIO(text)
         loader = enddir["pgn"]
         simpleLoadGame(game, gmwidg, file, loader)
