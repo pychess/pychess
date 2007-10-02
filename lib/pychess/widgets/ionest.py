@@ -1,5 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
+import gettext
 import locale
 import os, random
 from os import getuid
@@ -9,6 +10,7 @@ import thread
 from threading import currentThread
 
 import gtk, gobject, pango
+from cairo import ImageSurface
 from gtksourceview import *
 
 from pychess.Utils.GameModel import GameModel
@@ -16,6 +18,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System import conf, uistuff
+from pychess.System.prefix import getDataPrefix, isInstalled
 from pychess.System.protoopen import protosave, isWriteable
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
@@ -131,9 +134,6 @@ def ensureReady_loadsidepanel ():
 # Initing enter notation sidepanel                                             #
 ################################################################################
 
-import gtk
-from cairo import ImageSurface
-
 class ImageButton(gtk.DrawingArea):
     def __init__ (self, imagePaths):
         gtk.DrawingArea.__init__(self)
@@ -173,8 +173,18 @@ def ensureReady_enterGameNotationSidePanel ():
         return
     else: enterGameNotationSidePanel_ready = True
     
-    loc = locale.getdefaultlocale()[0][-2:].lower()
-    ib = ImageButton([addDataPrefix("flags/us.png"), addDataPrefix("flags/%s.png" % loc)])
+    flags = []
+    if isInstalled():
+        path = gettext.find("pychess")
+    else:
+        path = gettext.find("pychess", localedir=addDataPrefix("lang"))
+    if path:
+        loc = locale.getdefaultlocale()[0][-2:].lower()
+        flags.append(addDataPrefix("flags/%s.png" % loc))
+
+    flags.append(addDataPrefix("flags/us.png"))
+    
+    ib = ImageButton(flags)
     widgets["imageButtonDock"].add(ib)
     ib.show()
     
@@ -603,7 +613,11 @@ def enterGameNotation ():
         buf = sourceview.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
 
-        local_repr = widgets["imageButtonDock"].get_child().current == 1
+        ib = widgets["imageButtonDock"].get_child()
+        if len(ib.surfaces) == 2:
+            local_repr = ib.current == 0
+        else:
+            local_repr = False
         if local_repr:
             # 2 step used to avoid backtranslating
             # (local and english piece letters can overlap)
