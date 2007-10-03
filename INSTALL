@@ -14,3 +14,12 @@ $ PYTHONPATH=lib/ python lib/pychess/Players/PyChess.py
 
 To run unittest for pychess:
 $ PYTHONPATH=lib/ testing/unittest.py
+
+-------------
+Dependencies:
+pygtk
+pygobject
+pycairo
+pysqlite
+gst-python
+gnome-python-desktop
