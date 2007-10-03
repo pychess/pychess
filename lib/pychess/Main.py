@@ -20,7 +20,7 @@ from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.Background import TaskerManager
 from pychess.widgets.Background import NewGameTasker
 from pychess.widgets.Background import InternetGameTasker
-from pychess.ic import icLogOn, telnet, icLounge
+from pychess.ic import ICLogon
 
 ################################################################################
 # gameDic - containing the gamewidget:gamemodel of all open games              #
@@ -278,7 +278,7 @@ class GladeHandlers:
         ionest.newGame ()
     
     def on_play_internet_chess_activate (widget):
-        icLogOn.run()
+        ICLogon.run()
     
     def on_load_game1_activate (widget):
         ionest.loadGame ()
@@ -396,14 +396,12 @@ class GladeHandlers:
         ionest.simpleNewGame (game, gmwidg)
     
     def on_internetTasker_connect (tasker, asGuest, username, password):
-        if telnet.connected:
-            icLounge.show()
-        else:
-            icLogOn.run()
-            icLogOn.widgets["logOnAsGuest"].set_active(asGuest)
-            icLogOn.widgets["nameEntry"].set_text(username)
-            icLogOn.widgets["passEntry"].set_text(password)
-            icLogOn.widgets["connectButton"].clicked()
+        ICLogon.run()
+        if not ICLogon.dialog.connection:
+            ICLogon.dialog.widgets["logOnAsGuest"].set_active(asGuest)
+            ICLogon.dialog.widgets["nameEntry"].set_text(username)
+            ICLogon.dialog.widgets["passEntry"].set_text(password)
+            ICLogon.dialog.widgets["connectButton"].clicked()
 
 TARGET_TYPE_URI_LIST = 80
 dnd_list = [ ( 'text/plain', 0, TARGET_TYPE_URI_LIST ) ]

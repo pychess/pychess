@@ -7,10 +7,6 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 
-from ICManager import ICManager
-import telnet
-
-
 names = "\w+(?:\([A-Z\*]+\))*"
 
 types = "(blitz|lightning|standard)"
@@ -42,7 +38,7 @@ offerTypeToStr = {}
 for k,v in strToOfferType.iteritems():
     offerTypeToStr[v] = k
 
-class OfferManager (ICManager):
+class OfferManager (GObject):
     
     __gsignals__ = {
         'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
@@ -52,11 +48,14 @@ class OfferManager (ICManager):
         'onActionError' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,int))
     }
     
-    def __init__ (self):
-        ICManager.__init__(self)
-        telnet.expect ( 
+    def __init__ (self, connection):
+        GObject.__init__(self)
+        
+        self.connection = connection
+        
+        self.connection.expect ( 
             "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+?)\n" % names, self.onOfferAdd)
-        telnet.expect ( "<pr> (\d+)\n", self.onOfferRemove)
+        self.connection.expect ( "<pr> (\d+)\n", self.onOfferRemove)
         
         for ficsstring, offer, error in (
                 ("You cannot switch sides once a game is underway.", 
@@ -69,20 +68,21 @@ class OfferManager (ICManager):
                         Offer(FLAG_CALL), ACTION_ERROR_CLOCK_NOT_STARTED),
                 ("The clock is not paused.",
                         Offer(RESUME_OFFER), ACTION_ERROR_CLOCK_NOT_PAUSED)):
-            telnet.expect (ficsstring,
+            self.connection.expect (ficsstring,
                     lambda c,g: self.emit("onActionError", offer, error))
         
-        telnet.expect ("There are (?:(no)|only (\d+) half) moves in your game.", self.notEnoughMovesToUndo)
+        self.connection.expect ("There are (?:(no)|only (\d+) half) moves in your game.", self.notEnoughMovesToUndo)
         
-        telnet.expect ("There are no ([^ ]+) offers to (accept).", self.noOffersToAccept)
-    
-    def start (self):
+        self.connection.expect ("There are no ([^ ]+) offers to (accept).", self.noOffersToAccept)
+        
         self.lastPly = 0
         self.indexType = {}
-        print >> telnet.client, "iset pendinfo 1"
+        print >> self.connection.client, "iset pendinfo 1"
+        
+        self.connection.connect("disconnected", self.stop)
     
-    def stop (self):
-        print >> telnet.client, "iset pendinfo 0"
+    def stop (self, connection):
+        print >> self.connection.client, "iset pendinfo 0"
     
     def noOffersToAccept (self, client, groups):
         offerstr, type = groups
@@ -145,21 +145,19 @@ class OfferManager (ICManager):
         s = offerTypeToStr[offer.offerType]
         if offer.offerType == TAKEBACK_OFFER:
             s += " " + str(ply-offer.param)
-        print >> telnet.client, s
+        print >> self.connection.client, s
     
     def withdraw (self, type):
-        print >> telnet.client, "withdraw t", offerTypeToStr[type]
+        print >> self.connection.client, "withdraw t", offerTypeToStr[type]
     
     def accept (self, type):
-        print >> telnet.client, "accept t", offerTypeToStr[type]
+        print >> self.connection.client, "accept t", offerTypeToStr[type]
     
     def decline (self, type):
-        print >> telnet.client, "decline t", offerTypeToStr[type]
+        print >> self.connection.client, "decline t", offerTypeToStr[type]
     
     def acceptIndex (self, index):
-        print >> telnet.client, "accept", index
+        print >> self.connection.client, "accept", index
     
     def playIndex (self, index):
-        print >> telnet.client, "play", index
-
-om = OfferManager()
+        print >> self.connection.client, "play", index

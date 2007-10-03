@@ -240,6 +240,7 @@ class EngineDiscoverer (GObject, Thread):
         
         finally:
             e.kill(UNKNOWN_REASON)
+            log.debug("Engine finished %s" % self.getName(engine))
             self.emit ("engine_discovered", binname, engine)
             toBeDiscovered.task_done()
     

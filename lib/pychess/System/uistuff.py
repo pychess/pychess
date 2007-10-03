@@ -4,6 +4,7 @@ import re, webbrowser
 import gtk, pango
 
 from pychess.System import conf
+from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 def createCombo (combo, data):
@@ -181,3 +182,15 @@ def initLabelLinks (text, url):
         lambda w: w.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2)))
     
     return eventbox
+
+
+
+class GladeWidgets:
+    """ A simple class that wraps a the glade get_widget function
+        into the python __getitem__ version """
+    def __init__ (self, filename):
+        self.widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+    def __getitem__(self, key):
+        return self.widgets.get_widget(key)
+
+

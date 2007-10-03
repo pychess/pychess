@@ -1,9 +1,8 @@
-import telnet
-from ICManager import ICManager
 
-class DisconnectManager (ICManager):
+class DisconnectManager:
+    def __init__ (self, connection):
+        self.connection = connection
+    
     def disconnect (self):
-        print >> telnet.client, "quit"
-        telnet.disconnect()
-
-dm = DisconnectManager()
+        print >> self.connection.client, "quit"
+        self.connection.disconnect()

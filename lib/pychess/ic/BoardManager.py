@@ -3,8 +3,6 @@ import re
 from gobject import *
 
 from pychess.Utils.const import *
-import telnet
-from ICManager import ICManager
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
 # FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
@@ -23,7 +21,7 @@ relations = { "-3": IC_POS_ISOLATED,
                "1": IC_POS_ME_TO_MOVE,
                "0": IC_POS_OBSERVING }
 
-class BoardManager (ICManager):
+class BoardManager (GObject):
     
     __gsignals__ = {
         'playBoardCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
@@ -37,7 +35,37 @@ class BoardManager (ICManager):
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (str, bool))
     }
     
-    def start (self):
+    def __init__ (self, connection):
+        GObject.__init__(self)
+        
+        self.connection = connection
+        
+        self.connection.expect ( "<12>(.*?)\n", self.onStyle12 )
+        self.connection.expect ( "<d1>(.*?)\n", self.onMove )
+        
+        self.connection.expect (
+            "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % \
+            (names, ratings, names, ratings, rated, types),
+            self.playBoardCreated)
+        
+        self.connection.expect (
+            "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % \
+            (names, ratings, names, ratings, rated, types),
+            self.observeBoardCreated)
+        
+        self.connection.expect (
+            "\s*(\d+)\.\s*%s\s+\(\d+:\d+\)\s+?(?:%s\s+\(\d+:\d+\)\s*)?\n" % \
+            (sanmove, sanmove), self.moveLine)
+        
+        self.connection.expect ( "      {Still in progress} *", self.moveListEnd)
+        
+        self.connection.expect (
+            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)\n",
+            self.onGameEnd)
+        
+        self.connection.expect (
+            "\rGame (\d+): Game clock (paused|resumed).\n", self.onGamePause)
+        
         self.observeQueue = {}
         # activeItem is the gameno of the observed game of which we are
         # currently parsing the history
@@ -46,39 +74,10 @@ class BoardManager (ICManager):
         # part
         self.playedItem = None
         
-        print >> telnet.client, "style 12"
-        print >> telnet.client, "iset startpos 1"
-        print >> telnet.client, "iset gameinfo 1"
-        print >> telnet.client, "iset compressmove 1"
-    
-    def __init__ (self):
-        ICManager.__init__(self)
-        
-        telnet.expect ( "<12>(.*?)\n", self.onStyle12 )
-        telnet.expect ( "<d1>(.*?)\n", self.onMove )
-        
-        telnet.expect (
-            "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % \
-            (names, ratings, names, ratings, rated, types),
-            self.playBoardCreated)
-        
-        telnet.expect (
-            "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % \
-            (names, ratings, names, ratings, rated, types),
-            self.observeBoardCreated)
-        
-        telnet.expect (
-            "\s*(\d+)\.\s*%s\s+\(\d+:\d+\)\s+?(?:%s\s+\(\d+:\d+\)\s*)?\n" % \
-            (sanmove, sanmove), self.moveLine)
-        
-        telnet.expect ( "      {Still in progress} *", self.moveListEnd)
-        
-        telnet.expect (
-            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)\n",
-            self.onGameEnd)
-        
-        telnet.expect (
-            "\rGame (\d+): Game clock (paused|resumed).\n", self.onGamePause)
+        print >> self.connection.client, "style 12"
+        print >> self.connection.client, "iset startpos 1"
+        print >> self.connection.client, "iset gameinfo 1"
+        print >> self.connection.client, "iset compressmove 1"
     
     def _style12ToFenRow (self, row):
         fenrow = []
@@ -188,7 +187,7 @@ class BoardManager (ICManager):
         self.observeQueue[gameno] = item
         if not self.activeItem:
             self.activeItem = gameno
-            print >> telnet.client, "moves", gameno
+            print >> self.connection.client, "moves", gameno
     
     def moveLine (self, client, groups):
         if not self.activeItem: return
@@ -232,7 +231,7 @@ class BoardManager (ICManager):
         
         if self.observeQueue:
             self.activeItem = self.observeQueue.keys()[0]
-            print >> telnet.client, "moves", self.activeItem
+            print >> self.connection.client, "moves", self.activeItem
     
     def onGameEnd (self, client, groups):
         gameno, comment, state = groups
@@ -248,8 +247,8 @@ class BoardManager (ICManager):
                 status = BLACKWON
             if "resigns" in parts:
                 reason = WON_RESIGN
-            elif "disconnection" in parts:
-                reason = WON_DISCONNECTION
+            elif "disself.connection" in parts:
+                reason = WON_DISself.connection
             elif "time" in parts:
                 reason = WON_CALLFLAG
             elif "checkmated" in parts:
@@ -281,8 +280,8 @@ class BoardManager (ICManager):
                 reason = UNKNOWN_REASON
         elif "adjourned" in parts:
             status = ADJOURNED
-            if "connection" in parts:
-                reason = ADJOURNED_LOST_CONNECTION
+            if "self.connection" in parts:
+                reason = ADJOURNED_LOST_self.connection
             elif "agreement" in parts:
                 reason = ADJOURNED_AGREEMENT
             elif "shutdown" in parts:
@@ -297,7 +296,7 @@ class BoardManager (ICManager):
                 # Game aborted on move 1 *
                 reason = ABORTED_EARLY
             elif "moves" in parts:
-                # lost connection and too few moves; game aborted *
+                # lost self.connection and too few moves; game aborted *
                 reason = ABORTED_EARLY
             elif "shutdown" in parts:
                 reason = ABORTED_SERVER_SHUTDOWN
@@ -334,29 +333,26 @@ class BoardManager (ICManager):
     ############################################################################
     
     def sendMove (self, move):
-        print >> telnet.client, move
+        print >> self.connection.client, move
     
     def resign (self):
-        print >> telnet.client, "resign"
+        print >> self.connection.client, "resign"
     
     def callflag (self):
-        print >> telnet.client, "flag"
+        print >> self.connection.client, "flag"
     
     def observe (self, gameno):
-        print >> telnet.client, "observe", gameno
+        print >> self.connection.client, "observe", gameno
     
     def unobserve (self, gameno):
-        print >> telnet.client, "unobserve", gameno
+        print >> self.connection.client, "unobserve", gameno
         self.emit("obsGameUnobserved", gameno)
     
     def play (self, seekno):
-        print >> telnet.client, "play", seekno
+        print >> self.connection.client, "play", seekno
     
     def accept (self, offerno):
-        print >> telnet.client, "accept", offerno
+        print >> self.connection.client, "accept", offerno
     
     def decline (self, offerno):
-        print >> telnet.client, "decline", offerno
-
-
-bm = BoardManager()
+        print >> self.connection.client, "decline", offerno

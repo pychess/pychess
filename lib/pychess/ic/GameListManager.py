@@ -1,9 +1,6 @@
 
 from gobject import *
 
-import telnet
-from ICManager import ICManager
-
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
@@ -15,7 +12,7 @@ typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
 from pychess.Utils.const import WHITE
 
-class GameListManager (ICManager):
+class GameListManager (GObject):
     
     __gsignals__ = {
         'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -31,63 +28,63 @@ class GameListManager (ICManager):
         'addAdjourn' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
-    def __init__ (self):
+    def __init__ (self, connection):
+        GObject.__init__(self)
         
-        ICManager.__init__(self)
+        self.connection = connection
         
+        self.connection.expect ( "<sc>\n", self.on_seek_clear)
         
+        self.connection.expect ( "<s> (.+?)\n", self.on_seek_add)
         
-        telnet.expect ( "<sc>\n", self.on_seek_clear)
-        
-        telnet.expect ( "<s> (.+?)\n", self.on_seek_add)
-        
-        telnet.expect ( "<sr> ([\d ]+?)\n", self.on_seek_remove)
-        
-        
-        
-        telnet.expect ( "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(s|b|l)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)" % (ratings, ratings), self.on_game_list)
-        
-        telnet.expect ( "{Game (\d+) \((\w+) vs\. (\w+)\) (.*?)}", self.on_game_addremove)
+        self.connection.expect ( "<sr> ([\d ]+?)\n", self.on_seek_remove)
         
         
         
-        telnet.expect ( "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s\n" % (ratings, names, ratings, names, ratings, names), self.on_player_list)
+        self.connection.expect ( "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(s|b|l)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)" % (ratings, ratings), self.on_game_list)
         
-        telnet.expect ( "%s is no longer available for matches." % names, self.on_player_remove)
-        
-        telnet.expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
+        self.connection.expect ( "{Game (\d+) \((\w+) vs\. (\w+)\) (.*?)}", self.on_game_addremove)
         
         
-        telnet.expect ( "\s*\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*?)\n", self.on_adjourn_add)
+        
+        self.connection.expect ( "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s\n" % (ratings, names, ratings, names, ratings, names), self.on_player_list)
+        
+        self.connection.expect ( "%s is no longer available for matches." % names, self.on_player_remove)
+        
+        self.connection.expect ( "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." % (names, ratings, ratings, ratings, ratings, ratings), self.on_player_add)
         
         
-        telnet.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
+        self.connection.expect ( "\s*\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*?)\n", self.on_adjourn_add)
         
-    def start (self):
         
-        print >> telnet.client, "iset seekinfo 1"
-        print >> telnet.client, "iset seekremove 1"
-        print >> telnet.client, "set seek 1"
+        self.connection.expect ( "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % (names, ratings, names, ratings, rated, types), self.playBoardCreated)
         
-        print >> telnet.client, "set gin 1"
-        print >> telnet.client, "iset allresults 0"
-        print >> telnet.client, "games /sbl"
         
-        print >> telnet.client, "who a"
-        print >> telnet.client, "set availmax 0"
-        print >> telnet.client, "set availmin 0"
-        print >> telnet.client, "set availinfo 1"
+        print >> self.connection.client, "iset seekinfo 1"
+        print >> self.connection.client, "iset seekremove 1"
+        print >> self.connection.client, "set seek 1"
         
-        print >> telnet.client, "stored"
+        print >> self.connection.client, "set gin 1"
+        print >> self.connection.client, "iset allresults 0"
+        print >> self.connection.client, "games /sbl"
         
-    def stop (self):
-        print >> telnet.client, "iset seekinfo 0"
-        print >> telnet.client, "iset seekremove 0"
-        print >> telnet.client, "set seek 0"
+        print >> self.connection.client, "who a"
+        print >> self.connection.client, "set availmax 0"
+        print >> self.connection.client, "set availmin 0"
+        print >> self.connection.client, "set availinfo 1"
         
-        print >> telnet.client, "set gin 0"
+        print >> self.connection.client, "stored"
         
-        print >> telnet.client, "set availinfo 0"
+        self.connection.connect("disconnected", self.stop)
+        
+    def stop (self, connection):
+        print >> self.connection.client, "iset seekinfo 0"
+        print >> self.connection.client, "iset seekremove 0"
+        print >> self.connection.client, "set seek 0"
+        
+        print >> self.connection.client, "set gin 0"
+        
+        print >> self.connection.client, "set availinfo 0"
     
     ###
     
@@ -96,7 +93,7 @@ class GameListManager (ICManager):
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
-        print >> telnet.client, "seek %d %d %s %s %d-%d" % \
+        print >> self.connection.client, "seek %d %d %s %s %d-%d" % \
                 (startmin, incsec, rchar, cchar, ratings[0], ratings[1])
     
     def challenge (self, playerName, startmin, incsec, rated, color=None):
@@ -104,11 +101,11 @@ class GameListManager (ICManager):
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
-        print >> telnet.client, "match %s %d %d %s %s" % \
+        print >> self.connection.client, "match %s %d %d %s %s" % \
                 (playerName, startmin, incsec, rchar, cchar)
     
     def refreshSeeks (self):
-        print >> telnet.client, "iset seekinfo 1"
+        print >> self.connection.client, "iset seekinfo 1"
     
     ###
     
@@ -192,6 +189,3 @@ class GameListManager (ICManager):
     
     def playBoardCreated (self, client, groups):
         self.emit("clearSeeks")
-
-
-glm = GameListManager()

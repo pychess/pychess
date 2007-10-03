@@ -32,13 +32,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
 from pychess.widgets.SetupBoard import SetupBoard
 
-widgets = gtk.glade.XML(addDataPrefix("glade/newInOut.glade"))
-class WidgetDic:
-    def __init__ (self, widgets):
-        self.widgets = widgets
-    def __getitem__ (self, key):
-        return self.widgets.get_widget(key)
-widgets = WidgetDic (widgets)
+widgets = uistuff.GladeWidgets ("newInOut.glade")
 
 ################################################################################
 # Initing Load/Save dialogs                                                    #

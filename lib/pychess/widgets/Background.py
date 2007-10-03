@@ -344,9 +344,8 @@ class InternetGameTasker (gtk.HBox):
         vbox.add(self.connectButton)
         self.connectButton.set_flags(gtk.CAN_DEFAULT)
         self.connectButton.connect ("clicked", self.connectClicked)
-        self.connectButton.set_size_request(250, -1)
         # Keep
-        uistuff.keep(self.asGuestCheck, "internettasker_asguest")
+        uistuff.keep(self.asGuestCheck, "logOnAsGuest")
         asGuestCallback(self.asGuestCheck)
     
     def connectClicked (self, button):
