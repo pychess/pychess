@@ -1,8 +1,12 @@
+import re
+
 from pychess.Utils.Move import *
 from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
 from pychess.Utils.Board import Board
+
+from ChessFile import ChessFile, LoadingError
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
@@ -70,7 +74,7 @@ def stripBrackets (string):
     result += string[end:]
     return result
 
-import re
+
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
 movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[\?!]*\s")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
@@ -100,7 +104,6 @@ def load (file):
     
     return PGNFile (files)
 
-from ChessFile import ChessFile
 
 class PGNFile (ChessFile):
     
@@ -134,12 +137,17 @@ class PGNFile (ChessFile):
             try:
                 move = parseAny (model.boards[-1], mstr)
             except ParsingError, e:
-                raise ValueError, ("Unable to parse PGN: %s\nat move %d\n" +
-                        "Gave error: %s") % (" ".join(movstrs), i, e.args)
-            model.moves.append(move)
-            model.boards.append(model.boards[-1].move(move))
+                error = LoadingError (("Unable to parse PGN: %s\nat move %d\n" +
+                        "Gave error: %s") % (" ".join(movstrs), i+1, e.args))
+            else:
+                error = None
             
-            model.emit("game_changed")
+            if not error:
+                model.moves.append(move)
+                model.boards.append(model.boards[-1].move(move))
+                model.emit("game_changed")
+            else:
+                break
         
         if model.timemodel:
             blacks = len(movstrs)/2
@@ -149,6 +157,9 @@ class PGNFile (ChessFile):
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
             log.debug("intervals %s" % model.timemodel.intervals)
+        
+        if error:
+            raise error
         
         return model
     
