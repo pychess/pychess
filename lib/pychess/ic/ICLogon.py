@@ -37,8 +37,10 @@ class ICLogon:
         
         uistuff.makeYellow(self.widgets["messagePanel"])
         
-        self.widgets["cancelButton"].connect("clicked", self.onCancel, False)
+        self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
+        self.widgets["stopButton"].connect("clicked", self.onCancel, False)
         self.widgets["fics_logon"].connect("delete-event", self.onClose)
+        
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
         
@@ -51,14 +53,29 @@ class ICLogon:
     def hide (self):
         self.widgets["fics_logon"].hide()
     
+    def showConnecting (self):
+        self.widgets["progressbar"].show()
+        self.widgets["mainvbox"].set_sensitive(False)
+        self.widgets["connectButton"].hide()
+        self.widgets["stopButton"].show()
+        
+        def pulse ():
+            self.widgets["progressbar"].pulse()
+            return not self.connection.isConnected()
+        self.pulser = gobject.timeout_add(30, pulse)
+    
+    def showNormal (self):
+        self.widgets["mainvbox"].set_sensitive(True)
+        self.widgets["connectButton"].show()
+        self.widgets["stopButton"].hide()
+        self.widgets["progressbar"].hide()
+        gobject.source_remove(self.pulser)
+    
     def onCancel (self, widget, hide):
         if self.connection and self.connection.isConnecting():
             self.connection.disconnect()
             self.connection = None
-            self.widgets["mainvbox"].set_sensitive(True)
-            self.widgets["connectButton"].set_sensitive(True)
-            self.widgets["progressbar"].hide()
-            gobject.source_remove(self.pulser)
+            self.showNormal()
         if hide:
             self.widgets["fics_logon"].hide()
         return True
@@ -90,23 +107,19 @@ class ICLogon:
         else:
             title = str(error.__class__)
         
-        self.widgets["mainvbox"].set_sensitive(True)
-        self.widgets["connectButton"].set_sensitive(True)
-        self.widgets["progressbar"].hide()
+        self.showNormal()
         
         self.widgets["messageTitle"].set_markup("<b>%s</b>" % title)
         self.widgets["messageText"].set_text(str(text))
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):
-        self.widgets["progressbar"].hide()
-        self.widgets["mainvbox"].set_sensitive(True)
-        self.widgets["connectButton"].set_sensitive(True)
+        self.showNormal()
         self.widgets["messagePanel"].hide()
         
         self.lounge = ICLounge(connection)
-        self.lounge.show()
         self.hide()
+        self.lounge.show()
     
     def onDisconnected (self, connection):
         global dialog
@@ -120,18 +133,11 @@ class ICLogon:
             username = self.widgets["nameEntry"].get_text()
             password = self.widgets["passEntry"].get_text()
         
-        self.widgets["progressbar"].show()
-        self.widgets["mainvbox"].set_sensitive(False)
-        self.widgets["connectButton"].set_sensitive(False)
+        self.showConnecting()
         
         self.connection = FICSConnection("freechess.org", 23, username, password)
         self.connection.connect("connected", self.onConnected)
         self.connection.connect("disconnected", self.onDisconnected)
         self.connection.connect("error", self.showError)
-        
-        def pulse ():
-            self.widgets["progressbar"].pulse()
-            return not self.connection.isConnected()
-        self.pulser = gobject.timeout_add(30, pulse)
         
         self.connection.start()

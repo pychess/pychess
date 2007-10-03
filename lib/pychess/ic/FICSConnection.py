@@ -17,6 +17,7 @@ class LogOnError (StandardError): pass
 class Connection (GObject, Thread):
     
     __gsignals__ = {
+        'connecting':   (SIGNAL_RUN_FIRST, None, ()),
         'connected':    (SIGNAL_RUN_FIRST, None, ()),
         'disconnected': (SIGNAL_RUN_FIRST, None, ()),
         'error':        (SIGNAL_RUN_FIRST, None, (object,)),
@@ -89,6 +90,7 @@ class FICSConnection (Connection):
     
     def _connect (self):
         self.connecting = True
+        self.emit("connecting")
         try:
             self.client = VerboseTelnet()
             
@@ -161,7 +163,6 @@ class FICSConnection (Connection):
                     funcs, groups = match
                     for func in funcs:
                         func(self.client, groups)
-            self.emit("disconnected")
         
         except Exception, e:
             if self.connected:
@@ -173,6 +174,8 @@ class FICSConnection (Connection):
                         break
                 else:
                     raise
+        
+        self.emit("disconnected")
     
     def disconnect (self):
         self.connected = False
