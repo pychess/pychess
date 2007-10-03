@@ -1,127 +1,137 @@
+import socket
 from socket import SHUT_RDWR
 import webbrowser
 
 import gtk, gobject, sys
 
+from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
 from pychess.System import gstreamer, uistuff, glock
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
 
-import telnet, icLounge
+from VerboseTelnet import VerboseTelnet, InterruptError
+from FICSConnection import FICSConnection, LogOnError
+from ICLounge import ICLounge
 
-firstRun = True
+dialog = None
 def run():
+    global dialog
     
-    if telnet.connected:
-        icLounge.show()
-        return
+    if not dialog:
+        dialog = ICLogon()
     
-    global firstRun
-    if firstRun:
-        initialize()
-        firstRun = False
-        
-        def callback (client, signal):
-            if signal == IC_CONNECTED:
-                glock.acquire()
-                try:
-                    widgets["fics_logon"].hide()
-                    icLounge.show()
-                finally:
-                    glock.release()
-        telnet.connectStatus(callback)
-    
-    widgets["fics_logon"].show()
-
-pulser = None
-def on_connectButton_clicked (button):
-    if widgets["logOnAsGuest"].get_active():
-        username = "guest"
-        password = ""
+    if dialog.lounge:
+        dialog.lounge.show()
     else:
-        username = widgets["nameEntry"].get_text()
-        password = widgets["passEntry"].get_text()
+        dialog.show()
+
+class ICLogon:
+    def __init__ (self):
+        self.widgets = uistuff.GladeWidgets("fics_logon.glade")
+        
+        def on_logOnAsGuest_toggled (check):
+            self.widgets["logOnTable"].set_sensitive(not check.get_active())
+        self.widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
+        uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
+        
+        uistuff.makeYellow(self.widgets["messagePanel"])
+        
+        self.widgets["cancelButton"].connect("clicked", self.onCancel, False)
+        self.widgets["fics_logon"].connect("delete-event", self.onClose)
+        self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
+        self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
+        
+        self.connection = None
+        self.lounge = None
     
-    widgets["progressbar"].show()
-    widgets["mainvbox"].set_sensitive(False)
-    widgets["connectButton"].set_sensitive(False)
+    def show (self):
+        self.widgets["fics_logon"].show()
     
-    def callback ():
-        widgets["progressbar"].pulse()
-        if telnet.connected:
-            widgets["progressbar"].hide()
-            widgets["mainvbox"].set_sensitive(True)
-            widgets["connectButton"].set_sensitive(True)
-            widgets["messagePanel"].hide()
-            return False
+    def hide (self):
+        self.widgets["fics_logon"].hide()
+    
+    def onCancel (self, widget, hide):
+        if self.connection and self.connection.isConnecting():
+            self.connection.disconnect()
+            self.connection = None
+            self.widgets["mainvbox"].set_sensitive(True)
+            self.widgets["connectButton"].set_sensitive(True)
+            self.widgets["progressbar"].hide()
+            gobject.source_remove(self.pulser)
+        if hide:
+            self.widgets["fics_logon"].hide()
         return True
     
-    global pulser
-    pulser = gobject.timeout_add(30, callback)
+    def onClose (self, widget, event):
+        self.onCancel(widget, True)
+        return True
     
-    pool.start(doConnect, username, password)
-
-def doConnect (username, password):
-    def error (title, text):
-        widgets["mainvbox"].set_sensitive(True)
-        widgets["connectButton"].set_sensitive(True)
-        widgets["progressbar"].hide()
+    def onCreateNew (self, button):
+        webbrowser.open("http://freechess.org/Register/index.html")
+    
+    def showError (self, connection, error):
+        text = str(error)
+        if isinstance (error, IOError):
+            title = _("Connection Error")
+        elif isinstance (error, LogOnError):
+            title =_("Log on Error")
+        elif isinstance (error, InterruptError):
+            title = _("Connection was broken")
+        elif isinstance (error, EOFError):
+            title = _("Connection was closed")
+        elif isinstance (error, socket.error):
+            title = _("Connection Error")
+            text = ", ".join(map(str,error.args))
+        elif isinstance (error, socket.gaierror) or \
+                isinstance (error, socket.herror):
+            title = _("Adress Error")
+            text = ", ".join(map(str,error.args))
+        else:
+            title = str(error.__class__)
         
-        widgets["messageTitle"].set_markup("<b>%s</b>" % title)
-        widgets["messageText"].set_text(str(e))
-        widgets["messagePanel"].show_all()
+        self.widgets["mainvbox"].set_sensitive(True)
+        self.widgets["connectButton"].set_sensitive(True)
+        self.widgets["progressbar"].hide()
         
-        global pulser
-        if pulser != None:
-            gobject.source_remove(pulser)
-            pulser = None
-    try:
-        telnet.connect ("freechess.org", 23, username, password)
-    except IOError, e:
-        telnet.client = None
-        gobject.idle_add(error, _("Connection Error"), str(e))
-    except telnet.LogOnError, e:
-        telnet.client = None
-        gobject.idle_add(error, _("Log on Error"), str(e))
-    except telnet.InterruptError, e:
-        telnet.client = None
-        gobject.idle_add(error, _("Connection was broken"), str(e))
-    except EOFError, e:
-        telnet.client = None
-        gobject.idle_add(error, _("Connection was closed"), str(e))
-
-def cancel ():
-    if telnet.client:
-        telnet.client.interrupt()
-        widgets["mainvbox"].set_sensitive(True)
-        widgets["connectButton"].set_sensitive(True)
-    widgets["fics_logon"].hide()
-    return True
-
-firstDraw = True
-
-def initialize():
+        self.widgets["messageTitle"].set_markup("<b>%s</b>" % title)
+        self.widgets["messageText"].set_text(str(text))
+        self.widgets["messagePanel"].show_all()
     
-    global widgets
-    class Widgets:
-        def __init__ (self, glades):
-            self.widgets = glades
-        def __getitem__(self, key):
-            return self.widgets.get_widget(key)
-    widgets = Widgets(gtk.glade.XML(addDataPrefix("glade/fics_logon.glade")))
+    def onConnected (self, connection):
+        self.widgets["progressbar"].hide()
+        self.widgets["mainvbox"].set_sensitive(True)
+        self.widgets["connectButton"].set_sensitive(True)
+        self.widgets["messagePanel"].hide()
+        
+        self.lounge = ICLounge(connection)
+        self.lounge.show()
+        self.hide()
     
-    def on_logOnAsGuest_toggled (check):
-        widgets["logOnTable"].set_sensitive(not check.get_active())
-    widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
-    uistuff.keep(widgets["logOnAsGuest"], "logOnAsGuest")
+    def onDisconnected (self, connection):
+        global dialog
+        dialog = None
     
-    widgets["cancelButton"].connect("clicked", lambda b: cancel())
-    widgets["fics_logon"].connect("delete-event", lambda w, e: cancel(True))
-    widgets["createNewButton"].connect("clicked",
-        lambda *a: webbrowser.open("http://freechess.org/Register/index.html"))
-    widgets["connectButton"].connect("clicked", on_connectButton_clicked)
-    
-    # Init yellow error box
-    
-    uistuff.makeYellow(widgets["messagePanel"])
+    def onConnectClicked (self, button):
+        if self.widgets["logOnAsGuest"].get_active():
+            username = "guest"
+            password = ""
+        else:
+            username = self.widgets["nameEntry"].get_text()
+            password = self.widgets["passEntry"].get_text()
+        
+        self.widgets["progressbar"].show()
+        self.widgets["mainvbox"].set_sensitive(False)
+        self.widgets["connectButton"].set_sensitive(False)
+        
+        self.connection = FICSConnection("freechess.org", 23, username, password)
+        self.connection.connect("connected", self.onConnected)
+        self.connection.connect("disconnected", self.onDisconnected)
+        self.connection.connect("error", self.showError)
+        
+        def pulse ():
+            self.widgets["progressbar"].pulse()
+            return not self.connection.isConnected()
+        self.pulser = gobject.timeout_add(30, pulse)
+        
+        self.connection.start()

@@ -1,8 +1,6 @@
 
 import re
 from gobject import *
-import telnet
-from ICManager import ICManager
 
 types = "(Blitz|Lightning|Standard)"
 days = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
@@ -10,19 +8,18 @@ months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
 
 AMOUNT_OF_NEWSITEMS = 5
 
-class NewsManager (ICManager):
+class NewsManager (GObject):
     
     __gsignals__ = {
         'readNews' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
     }
     
-    def __init__ (self):
-        ICManager.__init__(self)
-    
-    def start (self):
+    def __init__ (self, connection):
+        GObject.__init__(self)
+        self.connection = connection
         self.news = {}
-        telnet.expect ("(\d+) \(%s, %s +(\d+)\) (.*?)\n" % (days, months), self.onNewsItem )
-        print >> telnet.client, "news"
+        self.connection.expect ("(\d+) \(%s, %s +(\d+)\) (.*?)\n" % (days, months), self.onNewsItem )
+        print >> self.connection.client, "news"
     
     def onNewsItem (self, client, groups):
         
@@ -36,15 +33,13 @@ class NewsManager (ICManager):
             return
         elif len(self.news) == 10:
             # No need to check the expression any more
-            telnet.unexpect (self.onNewsItem)
+            self.connection.unexpect (self.onNewsItem)
         
         def callback (client, groups):
-            telnet.unexpect(callback)
+            self.connection.unexpect(callback)
             details = groups[0].replace("\n\r\\   ", " ").replace("  ", " ")
             self.news[no][4] = details
             self.emit("readNews", self.news[no])
         
-        telnet.expect ( "%s[\s\n]+(.+?)[\s\n]+Posted by" % re.escape(title), callback, re.DOTALL)
-        print >> telnet.client, "news", no
-
-nm = NewsManager()
+        self.connection.expect ( "%s[\s\n]+(.+?)[\s\n]+Posted by" % re.escape(title), callback, re.DOTALL)
+        print >> self.connection.client, "news", no

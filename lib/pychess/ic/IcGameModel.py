@@ -4,22 +4,22 @@ from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 
-from BoardManager import bm
-from OfferManager import om
-
 class IcGameModel (GameModel):
     
-    def __init__ (self, gameno, timemodel):
+    def __init__ (self, connection, gameno, timemodel):
         GameModel.__init__(self, timemodel)
+        self.connection = connection
         self.gameno = gameno
         
-        bm.connect("clockUpdatedMs", self.onClockUpdatedMs)
-        bm.connect("boardRecieved", self.onBoardRecieved)
-        bm.connect("obsGameEnded", self.onGameEnded)
-        bm.connect("curGameEnded", self.onGameEnded)
-        bm.connect("gamePaused", self.onGamePaused)
+        self.connection.bm.connect("clockUpdatedMs", self.onClockUpdatedMs)
+        self.connection.bm.connect("boardRecieved", self.onBoardRecieved)
+        self.connection.bm.connect("obsGameEnded", self.onGameEnded)
+        self.connection.bm.connect("curGameEnded", self.onGameEnded)
+        self.connection.bm.connect("gamePaused", self.onGamePaused)
         
-        om.connect("onActionError", self.onActionError)
+        self.connection.om.connect("onActionError", self.onActionError)
+        
+        self.connection.connect("disconnected", self.onDisconnected)
         
         self.inControl = True
     
@@ -48,6 +48,11 @@ class IcGameModel (GameModel):
             self.pause()
         else: self.resume()
     
+    def onDisconnected (self, connection):
+        if not self.inControl and \
+                self.status in (WAITING_TO_START, PAUSED, RUNNING):
+            self.end (KILLED, UNKNOWN_REASON)
+    
     ############################################################################
     # Offer management                                                         #
     ############################################################################
@@ -65,7 +70,7 @@ class IcGameModel (GameModel):
             self.undoMoves(self.ply - offer.param)
         
         elif offer.offerType in (RESIGNATION, FLAG_CALL):
-            om.offer(offer, self.ply)
+            self.connection.om.offer(offer, self.ply)
         
         elif offer.offerType in OFFERS:
             if offer not in self.offerMap:
@@ -82,7 +87,7 @@ class IcGameModel (GameModel):
             if offer not in self.offerMap or self.offerMap[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                om.accept(offer.offerType)
+                self.connection.om.accept(offer.offerType)
                 del self.offerMap[offer]
         
         # We don't handle any ServerPlayer calls here, as the fics server will
