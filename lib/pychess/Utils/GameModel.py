@@ -4,6 +4,7 @@ import datetime
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
+from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System.ThreadPool import pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
@@ -218,7 +219,12 @@ class GameModel (GObject, Thread):
         else: chessfile = loader.load(uri)
         
         self.emit("game_loading")
-        chessfile.loadToModel(gameno, position, self)
+        try:
+            chessfile.loadToModel(gameno, position, self)
+        #Postpone error raising to make games loadable to the point of the error
+        except LoadingError, e:
+            error = e
+        else: error = None
         self.emit("game_loaded", uri)
         
         self.needsSave = False
@@ -251,6 +257,9 @@ class GameModel (GObject, Thread):
         
         elif self.status == DRAW:
             self.emit("game_ended", self.reason)
+        
+        if error:
+            raise error
     
     def save (self, uri, saver, append):
         if type(uri) == str:

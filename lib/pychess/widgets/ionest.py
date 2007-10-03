@@ -1,13 +1,8 @@
 """ The task of this module, is to save, load and init new games """
 
-import gettext
-import locale
-import os, random
-from os import getuid
-from pwd import getpwuid
-from Queue import Queue
-import thread
-from threading import currentThread
+import os
+import gettext, locale
+from cStringIO import StringIO
 
 import gtk, gobject, pango
 from cairo import ImageSurface
@@ -27,6 +22,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.Savers import *
+from pychess.Savers.ChessFile import LoadingError
 from pychess import Savers
 from pychess.widgets import gamewidget
 from pychess.widgets import BoardPreview
@@ -579,7 +575,19 @@ def simpleLoadGame (game, gmwidg, uri, loader, gameno=0, position=-1):
         handler.emit("game_started", gmwidg, game)
     finally:
         glock.release()
-    game.loadAndStart (uri, gameno, position, loader)
+    
+    try:
+        game.loadAndStart (uri, gameno, position, loader)
+    except LoadingError, e:
+        d = gtk.MessageDialog (type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+        d.set_markup ("<big><b>%s</b></big>" % _("Problems parsing PGN"))
+        d.format_secondary_text (str(e))
+        glock.acquire()
+        try:
+            d.run()
+            d.hide()
+        finally:
+            glock.release()
 
 ################################################################################
 # setUpPosition                                                                #
@@ -595,8 +603,6 @@ def setUpPosition ():
 ################################################################################
 # enterGameNotation                                                            #
 ################################################################################
-
-from cStringIO import StringIO
 
 def enterGameNotation ():
     setActiveSidePanel("enterGameNotationSidePanel")
