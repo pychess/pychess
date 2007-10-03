@@ -3,8 +3,7 @@
 import gtk, gtk.glade
 from time import sleep
 from pychess.Utils.const import reprResult, BLACK
-from pychess.System.prefix import addDataPrefix
-from pychess.System.WidgetDic import WidgetDic
+from pychess.System.uistuff import GladeWidgets
 from pychess.System.protoopen import protoopen
 from pychess.widgets.BoardView import BoardView
 
@@ -25,8 +24,7 @@ class BoardPreview (gtk.Alignment):
         # Initing glade
         
         gtk.glade.set_custom_handler(self.widgetHandler)
-        gladexml = gtk.glade.XML(addDataPrefix("glade/gamepreview.glade"))
-        self.widgets = WidgetDic(gladexml)
+        self.widgets = GladeWidgets("gamepreview.glade")
         
         # Treeview
         
