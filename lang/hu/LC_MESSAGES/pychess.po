@@ -1208,7 +1208,7 @@ msgstr "Sakkjátszma"
 # Chess pawn letter
 #: lib/pychess/Utils/const.py:84
 msgid "P"
-msgstr " "
+msgstr "G"
 
 # Chess knight letter
 #: lib/pychess/Utils/const.py:84
