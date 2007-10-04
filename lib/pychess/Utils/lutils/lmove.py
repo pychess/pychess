@@ -205,8 +205,11 @@ def toSAN (board, move, localRepr=False):
     notat = part0 + part1
     if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
                 BISHOP_PROMOTION, KNIGHT_PROMOTION):
-        notat += "="+reprSign[PROMOTE_PIECE(flag)]
-    
+        if localRepr:
+            notat += "="+localReprSign[PROMOTE_PIECE(flag)]
+        else:
+            notat += "="+reprSign[PROMOTE_PIECE(flag)]
+
     board.lock.acquire()
     board.applyMove(move)
     if board.isChecked():
