@@ -76,3 +76,28 @@ class ThreadPool:
                 self.wcond.wait()
 
 pool = ThreadPool()
+
+class PooledThread:
+    def start (self):
+        pool.start(self.run)
+    
+    def run (self):
+        pass
+    
+    def join (self):
+        raise NotImplementedError
+    
+    def setName (self, name):
+        raise NotImplementedError
+    
+    def getName (self):
+        raise NotImplementedError
+    
+    def isAlive (self):
+        raise NotImplementedError
+    
+    def isDaemon (self):
+        return True
+    
+    def setDaemon (self):
+        raise NotImplementedError

@@ -1,7 +1,7 @@
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 import os, md5, imp
-from threading import Thread, Condition
+from threading import Thread
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
@@ -62,6 +62,7 @@ class EngineDiscoverer (GObject, Thread):
     def __init__ (self):
         GObject.__init__(self)
         Thread.__init__(self)
+        self.setDaemon(True)
         self.xmlpath = addHomePrefix("engines.xml")
         
         try:

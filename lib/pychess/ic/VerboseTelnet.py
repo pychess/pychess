@@ -9,7 +9,6 @@ class VerboseTelnet (Telnet):
     
     def __init__ (self):
         Telnet.__init__(self)
-        self.interrupting = False
         self.connected = False
     
     def expectList (self, regexps):
