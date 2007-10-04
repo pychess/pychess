@@ -71,15 +71,13 @@ class Section:
 
 class VariousSection(Section):
     def __init__ (self, widgets, connection):
-        self.dm = connection.dm
-        
         def on_window_delete (window, event):
             widgets["fics_lounge"].hide()
             return True
         widgets["fics_lounge"].connect("delete-event", on_window_delete)
         
         def on_logoffButton_clicked (button):
-            self.dm.disconnect()
+            connection.disconnect()
             widgets["fics_lounge"].hide()
         widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
         
@@ -862,7 +860,11 @@ class CreatedBoards (Section):
         game = IcGameModel (self.connection, board["gameno"], timemodel)
         gmwidg = gamewidget.GameWidget(game)
         
+<<<<<<< .mine
+        if board["wname"].lower() == self.connection.getUsername().lower():
+=======
         if board["wname"].lower() == self.connection.username.lower():
+>>>>>>> .r670
             color = WHITE
             white = Human(gmwidg, WHITE, board["wname"])
             black = ServerPlayer (game, board["bname"], False, board["gameno"], BLACK)

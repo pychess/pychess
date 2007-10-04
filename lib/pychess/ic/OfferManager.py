@@ -79,7 +79,7 @@ class OfferManager (GObject):
         self.indexType = {}
         print >> self.connection.client, "iset pendinfo 1"
         
-        self.connection.connect("disconnected", self.stop)
+        self.connection.connect("disconnecting", self.stop)
     
     def stop (self, connection):
         print >> self.connection.client, "iset pendinfo 0"

@@ -75,7 +75,7 @@ class GameListManager (GObject):
         
         print >> self.connection.client, "stored"
         
-        self.connection.connect("disconnected", self.stop)
+        self.connection.connect("disconnecting", self.stop)
         
     def stop (self, connection):
         print >> self.connection.client, "iset seekinfo 0"
