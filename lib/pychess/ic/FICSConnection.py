@@ -5,7 +5,6 @@ from gobject import GObject, SIGNAL_RUN_FIRST
 
 from VerboseTelnet import VerboseTelnet, InterruptError
 
-from DisconnectManager import DisconnectManager
 from GameListManager import GameListManager
 from FingerManager import FingerManager
 from NewsManager import NewsManager
@@ -17,10 +16,11 @@ class LogOnError (StandardError): pass
 class Connection (GObject, Thread):
     
     __gsignals__ = {
-        'connecting':   (SIGNAL_RUN_FIRST, None, ()),
-        'connected':    (SIGNAL_RUN_FIRST, None, ()),
-        'disconnected': (SIGNAL_RUN_FIRST, None, ()),
-        'error':        (SIGNAL_RUN_FIRST, None, (object,)),
+        'connecting':    (SIGNAL_RUN_FIRST, None, ()),
+        'connected':     (SIGNAL_RUN_FIRST, None, ()),
+        'disconnecting': (SIGNAL_RUN_FIRST, None, ()),
+        'disconnected':  (SIGNAL_RUN_FIRST, None, ()),
+        'error':         (SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, host, port, username, password):
@@ -78,10 +78,13 @@ class Connection (GObject, Thread):
 
 EOF = _("The connection was broken - got \"end of file\" message")
 NOTREG = _("'%s' is not a registered name")
-BADNAM = _("Names can only consist of lower and upper case letters")
 BADPAS = _("The entered password was invalid.\n\n" + \
            "If you have forgot your password, try logging in as a guest and open chat on channel 4. Write \"I've forgotten my password\" to get help.\n\n"+\
            "If that is by some reason not possible, please email: support@freechess.org")
+
+# Some errorstrings for gnugettext to find. Add more as fics spits them out
+_("Sorry, names can only consist of lower and upper case letters.")
+_("Sorry, names may be at most 17 characters long.")
 
 class FICSConnection (Connection):
     def __init__ (self, host, port, username="guest", password=""):
@@ -106,23 +109,26 @@ class FICSConnection (Connection):
                 raise IOError, str(e)
             
             self.client.read_until("login: ")
-            print >> self.client, self.username
             
-            if self.username != "guest":
+            if self.username and self.username != "guest":
+                print >> self.client, self.username
                 r = self.client.expectList([
                     "password: ",
                     "login: ",
+                    "\n(.*?)Try again.",
                     "Press return to enter the server as"]).next()
                 if r[0] < 0:
                     raise IOError, EOF
-                elif r[0] == 1:
-                    raise LogOnError, BADNAM 
-                elif r[0] == 2:
-                    raise LogOnError, NOTREG % username
-                else:
+                elif r[0] == 0:
                     print >> self.client, self.password
                     self.registred = True
+                elif r[0] == 2:
+                    raise LogOnError, _(r[1][0].strip())
+                elif r[0] == 3:
+                    raise LogOnError, NOTREG % self.username
+            
             else:
+                print >> self.client, "guest"
                 self.client.read_until("Press return")
                 print >> self.client
                 self.registred = False
@@ -138,7 +144,6 @@ class FICSConnection (Connection):
             
             self.client.read_until("fics%")
             
-            self.dm = DisconnectManager(self)
             self.glm = GameListManager(self)
             self.fm = FingerManager(self)
             self.nm = NewsManager(self)
@@ -167,18 +172,21 @@ class FICSConnection (Connection):
         except Exception, e:
             if self.connected:
                 self.connected = False
-                for errortype in (IOError, LogOnError, InterruptError, EOFError,
-                                  socket.error, socket.gaierror, socket.herror):
-                    if isinstance(e, errortype):
-                        self.emit("error", e)
-                        break
-                else:
-                    raise
+            for errortype in (IOError, LogOnError, InterruptError, EOFError,
+                                socket.error, socket.gaierror, socket.herror):
+                if isinstance(e, errortype):
+                    self.emit("error", e)
+                    break
+            else:
+                raise
         
         self.emit("disconnected")
     
     def disconnect (self):
-        self.connected = False
+        self.emit("disconnecting")
+        if self.isConnected():
+            print >> self.client, "quit"
+            self.connected = False
         self.client.close()
     
     def isRegistred (self):
