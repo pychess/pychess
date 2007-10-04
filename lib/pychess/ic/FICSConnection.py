@@ -26,6 +26,7 @@ class Connection (GObject, Thread):
     def __init__ (self, host, port, username, password):
         GObject.__init__(self)
         Thread.__init__(self)
+        self.setDaemon(True)
         
         self.host = host
         self.port = port
@@ -97,16 +98,7 @@ class FICSConnection (Connection):
         try:
             self.client = VerboseTelnet()
             
-            try:
-                self.client.open(self.host, self.port)
-            except socket.gaierror, e:
-                raise IOError, e.args[1]
-            except EOFError:
-                raise IOError, EOF
-            except socket.error, e:
-                raise InterruptError, ", ".join(map(str,e.args))
-            except Exception, e:
-                raise IOError, str(e)
+            self.client.open(self.host, self.port)
             
             self.client.read_until("login: ")
             

@@ -12,7 +12,7 @@ or on many packagesystems perhaps under the name python-sqlite2
     import sys
     sys.exit()
     
-import Queue, time, thread, os
+import Queue, time, os
 from threading import Thread
 
 sqlqueue = Queue.Queue()
@@ -22,8 +22,9 @@ SQL_CMD, END_CMD = range(2)
 class DbWrapper(Thread):
     def __init__(self, path):
         Thread.__init__(self)
+        self.setDaemon(True)
         self.path = path
-        
+    
     def run(self):
         con = sqlite.connect(self.path)
         cur = con.cursor()
