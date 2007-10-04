@@ -15,6 +15,8 @@ from pychess.Players.Human import Human
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
+from pychess.widgets.gamewidget import GAME_MENU_ITEMS, ACTION_MENU_ITEMS
+from pychess.widgets.gamewidget import VIEW_MENU_ITEMS, MENU_ITEMS
 from pychess.widgets import ionest
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.Background import TaskerManager
@@ -105,12 +107,6 @@ def setMode (gmwidg, mode, activated):
                 gamemodel.disconnect(conid)
             del gamemodel.chacons[:]
         set_arrow (None)
-
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
-ACTION_MENU_ITEMS = \
-        ("call_flag", "draw", "resign", "force_to_move", "undo1", "pause1")
-VIEW_MENU_ITEMS = ("rotate_board1", "side_panel1", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
 
 class GladeHandlers:
     

@@ -29,6 +29,7 @@ class BoardControl (gtk.EventBox):
         
         self.actionMenuItems = actionMenuItems
         for key, menuitem in self.actionMenuItems.iteritems():
+            if menuitem == None: print key
             menuitem.connect("activate", self.actionActivate, key)
         
         self.connect("button_press_event", self.button_press)
@@ -226,12 +227,12 @@ class BoardControl (gtk.EventBox):
             self.emit("action", DRAW_OFFER, None)
         elif key == "resign":
             self.emit("action", RESIGNATION, None)
-        elif key == "force_to_move":
+        elif key == "ask_to_move":
             self.emit("action", HURRY_REQUEST, None)
         elif key == "undo1":
             print self.view.model.ply, "self.view.model.ply"
             self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
         elif key == "pause1":
-            if widget.get_active():
-                self.emit("action", PAUSE_OFFER, None)
-            else: self.emit("action", RESUME_OFFER, None)
+            self.emit("action", PAUSE_OFFER, None)
+        elif key == "resume1":
+            self.emit("action", RESUME_OFFER, None)

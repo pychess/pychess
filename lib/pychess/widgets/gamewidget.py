@@ -76,6 +76,12 @@ media_rewind = icons.load_icon("stock_media-rew", 16, ICON_LOOKUP_USE_BUILTIN)
 media_forward = icons.load_icon("stock_media-fwd", 16, ICON_LOOKUP_USE_BUILTIN)
 media_next = icons.load_icon("stock_media-next", 16, ICON_LOOKUP_USE_BUILTIN)
 
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+ACTION_MENU_ITEMS = ("draw", "pause1", "resume1", "undo1",
+                     "call_flag", "resign", "ask_to_move")
+VIEW_MENU_ITEMS = ("rotate_board1", "side_panel1", "hint_mode", "spy_mode")
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
+
 def createImage (pixbuf):
     image = gtk.Image()
     image.set_from_pixbuf(pixbuf)
@@ -456,8 +462,7 @@ def getheadbook ():
 
 def getActionMenuItems ():
     dic = {}
-    for item in ("call_flag", "draw", "resign",
-                 "force_to_move", "undo1", "pause1"):
+    for item in ACTION_MENU_ITEMS:
         dic[item] = widgets[item]
     return dic
 
