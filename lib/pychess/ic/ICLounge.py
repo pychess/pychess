@@ -862,7 +862,7 @@ class CreatedBoards (Section):
         game = IcGameModel (self.connection, board["gameno"], timemodel)
         gmwidg = gamewidget.GameWidget(game)
         
-        if board["wname"].lower() == connection.curname.lower():
+        if board["wname"].lower() == self.connection.username.lower():
             color = WHITE
             white = Human(gmwidg, WHITE, board["wname"])
             black = ServerPlayer (game, board["bname"], False, board["gameno"], BLACK)
