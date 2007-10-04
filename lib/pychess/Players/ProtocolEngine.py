@@ -119,7 +119,7 @@ class ProtocolEngine (Engine):
         if offer.offerType == DRAW_OFFER:
             self.runWhenReady(self.proto.offerDraw)
         else:
-            self.emit("withdraw", offer)
+            self.emit("accept", offer)
     
     def offerError (self, offer, error):
         # We don't keep track if engine draws are offers or accepts. We just
