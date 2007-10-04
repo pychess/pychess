@@ -52,7 +52,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1203">
+			<widget class="GtkImage" id="image1344">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -74,7 +74,7 @@
 		      <accelerator key="I" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1204">
+			<widget class="GtkImage" id="image1345">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -102,7 +102,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1205">
+			<widget class="GtkImage" id="image1346">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -148,7 +148,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1206">
+			<widget class="GtkImage" id="image1347">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -171,7 +171,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1207">
+			<widget class="GtkImage" id="image1348">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -247,16 +247,6 @@
 		<widget class="GtkMenu" id="action1_menu">
 
 		  <child>
-		    <widget class="GtkMenuItem" id="call_flag">
-		      <property name="visible">True</property>
-		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">_Call Flag</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_call_flag_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
-		    </widget>
-		  </child>
-
-		  <child>
 		    <widget class="GtkMenuItem" id="draw">
 		      <property name="visible">True</property>
 		      <property name="sensitive">False</property>
@@ -267,40 +257,23 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="resign">
+		    <widget class="GtkMenuItem" id="pause1">
 		      <property name="visible">True</property>
 		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">_Resign</property>
+		      <property name="label" translatable="yes">Offer _Pause</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_resign_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
+		      <signal name="activate" handler="on_pause1_activate" last_modification_time="Wed, 20 Jun 2007 19:47:08 GMT"/>
+		      <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="skillelinje8">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="force_to_move">
+		    <widget class="GtkMenuItem" id="resume1">
 		      <property name="visible">True</property>
 		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">_Force to move</property>
+		      <property name="label" translatable="yes">Offer _Resume</property>
 		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_force_to_move_activate" last_modification_time="Tue, 03 Oct 2006 18:38:31 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image1208">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-go-forward</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
+		      <signal name="activate" handler="on_resume1_activate" last_modification_time="Thu, 04 Oct 2007 21:24:20 GMT"/>
 		    </widget>
 		  </child>
 
@@ -308,13 +281,12 @@
 		    <widget class="GtkImageMenuItem" id="undo1">
 		      <property name="visible">True</property>
 		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">Undo</property>
+		      <property name="label" translatable="yes">Offer _Undo</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_undo1_activate" last_modification_time="Wed, 20 Jun 2007 19:48:54 GMT"/>
-		      <accelerator key="Z" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1209">
+			<widget class="GtkImage" id="image1349">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-undo</property>
 			  <property name="icon_size">1</property>
@@ -328,14 +300,38 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="pause1">
+		    <widget class="GtkSeparatorMenuItem" id="skillelinje8">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="call_flag">
 		      <property name="visible">True</property>
 		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">_Pause</property>
+		      <property name="label" translatable="yes">_Call Flag</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
-		      <signal name="activate" handler="on_pause1_activate" last_modification_time="Wed, 20 Jun 2007 19:47:08 GMT"/>
-		      <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <signal name="activate" handler="on_call_flag_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="resign">
+		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
+		      <property name="label" translatable="yes">R_esign</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_resign_activate" last_modification_time="Tue, 03 Oct 2006 18:29:59 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="ask_to_move">
+		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
+		      <property name="label" translatable="yes">_Ask to move</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_ask_to_move_activate" last_modification_time="Thu, 04 Oct 2007 21:25:58 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -362,7 +358,7 @@
 		      <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1210">
+			<widget class="GtkImage" id="image1350">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -431,13 +427,13 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="preferences">
+	    <widget class="GtkMenuItem" id="settings">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_Preferences</property>
+	      <property name="label" translatable="yes">_Settings</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="preferences_menu">
+		<widget class="GtkMenu" id="settings_menu">
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="preferences">
@@ -469,7 +465,7 @@
 		      <signal name="activate" handler="on_about_chess1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1211">
+			<widget class="GtkImage" id="image1351">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -490,7 +486,7 @@
 		      <signal name="activate" handler="on_how_to_play1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1212">
+			<widget class="GtkImage" id="image1352">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -511,7 +507,7 @@
 		      <signal name="activate" handler="translate_this_application_activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1213">
+			<widget class="GtkImage" id="image1353">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
