@@ -32,6 +32,7 @@ class GameModel (GObject, Thread):
     def __init__ (self, timemodel=None):
         GObject.__init__(self)
         Thread.__init__(self)
+        self.setDaemon(True)
         
         self.boards = [Board(setup=True)]
         self.moves = []
