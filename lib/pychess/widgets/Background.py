@@ -185,7 +185,6 @@ class TaskerManager (gtk.Table):
 
 it = gtk.icon_theme_get_default()
 labelSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
-controlSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
 def createButton (iconname, text):
     button = gtk.Button(None)
@@ -231,19 +230,18 @@ class NewGameTasker (gtk.HBox):
         label = gtk.Label(_("Your Color")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 0, 1, 0)
+        table.attach(label, 0, 1, 0, 1, xoptions=0)
         self.colorCombo = combo = ToggleComboBox()
         combo.addItem(_("White"), "stock_draw-rounded-square-unfilled")
         combo.addItem(_("Black"), "stock_draw-rounded-square")
         combo.setMarkup("<b>", "</b>")
         uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
-        controlSizeGroup.add_widget(combo)
         table.attach(combo, 1, 2, 0, 1)
         # Seccond row
         label = gtk.Label(_("Opponent")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 1, 2, 0)
+        table.attach(label, 0, 1, 1, 2, xoptions=0)
         self.playerCombo = combo = ToggleComboBox()
         for image, name, stock in ionest.playerItems:
             combo.addItem(name, stock)
@@ -251,13 +249,12 @@ class NewGameTasker (gtk.HBox):
         combo.setMarkup("<b>", "</b>")
         combo.active = 1
         uistuff.keep(self.playerCombo, "newgametasker_playercombo")
-        controlSizeGroup.add_widget(combo)
         table.attach(combo, 1, 2, 1, 2)
         # Third row
         label = gtk.Label(_("Difficulty")+":")
         label.props.xalign = 0
         labelSizeGroup.add_widget(label)
-        table.attach(label, 0, 1, 2, 3, 0)
+        table.attach(label, 0, 1, 2, 3, xoptions=0)
         self.difCombo = combo = ToggleComboBox()
         for image, name, stock in ionest.difItems:
             combo.addItem(name, stock)
@@ -267,7 +264,6 @@ class NewGameTasker (gtk.HBox):
         self.playerCombo.connect("changed", func)
         func(self.playerCombo, self.playerCombo.active)
         uistuff.keep(self.difCombo, "newgametasker_difcombo")
-        controlSizeGroup.add_widget(combo)
         table.attach(combo, 1, 2, 2, 3)
         table.set_row_spacings(3)
         table.set_col_spacings(3)
@@ -318,26 +314,20 @@ class InternetGameTasker (gtk.HBox):
         self.usernameLabel = gtk.Label(_("Name")+":")
         self.usernameLabel.props.xalign = 0
         labelSizeGroup.add_widget(self.usernameLabel)
-        table.attach(self.usernameLabel, 0, 1, 1, 2)
+        table.attach(self.usernameLabel, 0, 1, 1, 2, xoptions=0)
         self.usernameEntry = gtk.Entry()
         self.usernameEntry.props.activates_default = True
-        def focusCallback (entry, direction):
-            self.connectButton.grab_default()
-        self.usernameEntry.connect("focus", focusCallback)
         self.usernameEntry.set_width_chars(0)
-        controlSizeGroup.add_widget(self.usernameEntry)
         table.attach(self.usernameEntry, 1, 2, 1, 2)
         # Third row
         self.passwordLabel = gtk.Label(_("Password")+":")
         self.passwordLabel.props.xalign = 0
         labelSizeGroup.add_widget(self.passwordLabel)
-        table.attach(self.passwordLabel, 0, 1, 2, 3)
+        table.attach(self.passwordLabel, 0, 1, 2, 3, xoptions=0)
         self.passwordEntry = gtk.Entry()
         self.passwordEntry.set_visibility(False)
         self.passwordEntry.props.activates_default = True
-        self.passwordEntry.connect("focus", focusCallback)
         self.passwordEntry.set_width_chars(0)
-        controlSizeGroup.add_widget(self.passwordEntry)
         table.attach(self.passwordEntry, 1, 2, 2, 3)
         # Button
         self.connectButton = createButton("gtk-ok", _("Connect to FICS"))
