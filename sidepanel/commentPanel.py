@@ -48,7 +48,7 @@ class Sidepanel:
         
         def value_changed (vadjust):
             vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-            		vadjust.upper) < vadjust.step_increment
+                    vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
         self.store.append([_("Initial position")])
@@ -174,7 +174,7 @@ class Sidepanel:
         for message in messages:
             if not string:
                 string = "%s %s" % (reprColor[color], message)
-            else: string += " and %s" % message
+            else: string += _(" and %s") % message
         
         if string:
             strings.append(string)

@@ -20,7 +20,7 @@ EASY, INTERMEDIATE, EXPERT = range(3)
 
 # Player colors
 WHITE, BLACK = range(2)
-reprColor = ["White", "Black"]
+reprColor = [_("White"), _("Black")]
 
 ################################################################################
 # Game values                                                                  #
@@ -73,7 +73,7 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
-reprPiece = ["Empty", "Pawn", "Knight", "Bishop", "Rook", "Queen", "King", "BPawn"]
+reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
 
 # Is sliding piece
 sliders = [ False, False, False, True, True, True, False, False ]
