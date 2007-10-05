@@ -174,7 +174,7 @@ class Sidepanel:
         for message in messages:
             if not string:
                 string = "%s %s" % (reprColor[color], message)
-            else: string += _(" and %s") % message
+            else: string += " %s %s" % (_("and"), message)
         
         if string:
             strings.append(string)
