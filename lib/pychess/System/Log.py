@@ -1,9 +1,6 @@
 import os, sys, time, gobject
 from Queue import Queue
 
-from GtkWorker import EmitPublisher, Publisher
-from prefix import getHomePrefix, addHomePrefix
-
 MAXFILES = 10
 DEBUG, LOG, WARNING, ERROR = range(4)
 labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
@@ -23,6 +20,9 @@ class LogPipe:
     def flush (self):
         self.to.flush()
         log.debug (".flush()", self.flag)
+    
+    def fileno (self):
+        return self.to.fileno()
 
 class Log (gobject.GObject):
     
@@ -30,7 +30,7 @@ class Log (gobject.GObject):
         "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
     }                                              # list of (str, str, int)
     
-    def __init__ (self, logpath):
+    def __init__ (self, logpath, graphics=False):
         gobject.GObject.__init__(self)
         
         self.file = open(logpath, "w")
@@ -41,9 +41,12 @@ class Log (gobject.GObject):
         # appending data to it. Ugly? Somewhat I guess.
         self.messages = []
         
-        self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
-        self.publisher.start()
-
+        self.graphics = graphics
+        if graphics:
+            from GtkWorker import EmitPublisher, Publisher
+            self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
+            self.publisher.start()
+    
     def _format (self, task, message, type):
         t = time.strftime ("%F %T")
         return "%s %s %s: %s" % (t, task, labels[type], message)
@@ -59,7 +62,8 @@ class Log (gobject.GObject):
                             (formated, ", ".join(str(a) for a in e.args)))
         if self.messages != None:
             self.messages.append((task, message, type))
-        self.publisher.put((task, message, type))
+        if self.graphics:
+            self.publisher.put((task, message, type))
         if type == ERROR and task != "stdout":
             print formated
     
@@ -75,14 +79,7 @@ class Log (gobject.GObject):
     def error (self, message, task="Default"):
         self._log (task, message, ERROR)
 
-
-oldlogs = [l for l in os.listdir(getHomePrefix()) if l.endswith(".log")]
-if len(oldlogs) >= MAXFILES:
-    oldlogs.sort()
-    os.remove(addHomePrefix(oldlogs[0]))
-newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-
-log = Log (addHomePrefix(newName))
+log = Log (time.strftime("%Y-%m-%d_%H-%M-%S") + ".log")
 
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")
