@@ -1,7 +1,8 @@
-from threading import Lock, RLock, Thread, _MainThread, currentThread
+from threading import Thread
 import Queue
 
 from gobject import GObject, SIGNAL_RUN_FIRST
+from ThreadPool import PooledThread
 
 import glock
 
@@ -9,7 +10,7 @@ import glock
 # IDEA: We could implement gdk prioritizing by using a global PriorityQueue
 #
 
-class Publisher (Thread):
+class Publisher (PooledThread):
     """ Publisher can be used when a thread is oftenly spitting out results,
         and you want to process these results in gtk as soon as possible.
         While waiting for gdk access, results will be stored, and depending on
