@@ -53,7 +53,6 @@ class SubProcess:
     
     def initPty (self):
         self.pid, fd = pty.fork()
-        log.debug("forking %d %d" % (self.pid, fd))
         if self.pid == CHILD:
             os.nice(15)
             print "path", self.path, "args", self.args
