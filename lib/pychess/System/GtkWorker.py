@@ -20,8 +20,6 @@ class Publisher (PooledThread):
     SEND_LIST, SEND_LAST = range(2)
     
     def __init__ (self, func, sendPolicy):
-        Thread.__init__(self)
-        self.setDaemon(True)
         self.queue = Queue.Queue()
         
         self.func = func
