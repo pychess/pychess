@@ -83,7 +83,7 @@ class CECPProtocol (Protocol):
         print >> self.engine, "nopost" 
         
         if self.protover >= 2:
-            print >> self.engine, "protover 2"
+            print >> self.engine, "protover 2" + " "*4096
             # XBoard will only give 2 secconds, but as we are quite sure that
             # the engines support the protocol, we can add more.
             # We can't add infinit time, both for the sake of bugs, but also
