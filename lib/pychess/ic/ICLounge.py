@@ -392,6 +392,7 @@ class SeekTabSection (ParrentListSection):
         self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
     
     def onCurGameEnded (self):
+        print "ICLounge got onCurGameEnded. Setting sensitive True"
         self.widgets["seekListContent"].set_sensitive(True)
         self.widgets["challengePanel"].set_sensitive(True)
         self.connection.glm.refreshSeeks()

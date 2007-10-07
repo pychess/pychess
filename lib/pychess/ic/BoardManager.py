@@ -236,6 +236,8 @@ class BoardManager (GObject):
     def onGameEnd (self, client, groups):
         gameno, comment, state = groups
         
+        print "onGameEnd", groups
+        
         parts = comment.split()
         if parts[0] in ("Creating", "Continuing"):
             return
@@ -312,12 +314,15 @@ class BoardManager (GObject):
             reason = UNKNOWN_REASON
         
         if gameno == self.playedItem:
+            print "emit cur game ended"
             self.emit("curGameEnded", gameno, status, reason)
         else:
             f = lambda: self.emit("obsGameEnded", gameno, status, reason)
             if self.activeItem == gameno:
+                print "added observed game ended to queue"
                 self.observeQueue[self.activeItem]["queue"].append(f)
             else:
+                print "emit observedgameended"
                 f()
     
     def onGamePause (self, client, groups):
