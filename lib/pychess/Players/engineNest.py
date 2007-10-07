@@ -228,17 +228,15 @@ class EngineDiscoverer (GObject, Thread):
         engine, binname = toBeDiscovered.get()
         self._engines[binname] = engine
         
+        e = self.initEngine (engine, BLACK)
         try:
-            e = self.initEngine (engine, BLACK)
             e.wait()
-            
             protname = engine.getAttribute("protocol")
             if protname == "uci":
                 e.proto.startGame()
                 self._handleUCIOptions (engine, e.proto.ids, e.proto.options)
             elif protname == "cecp":
                 self._handleCECPOptions (engine, e.proto.features)
-        
         finally:
             e.kill(UNKNOWN_REASON)
             log.debug("Engine finished %s" % self.getName(engine))

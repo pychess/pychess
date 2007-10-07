@@ -45,8 +45,8 @@ class SubProcess:
         self.buffer = ""
         self.poll = select.poll()
         
-        self.initPty()
-        #self.initGlc()
+        #self.initPty()
+        self.initGlc()
         
         self.poll.register(self.fdin,
             POLLIN | POLLPRI | POLLERR | POLLHUP | POLLNVAL)
@@ -79,16 +79,9 @@ class SubProcess:
         self.fdout = toManagerPipe[1]
         self.fdin = fromManagerPipe[0]
         
-        # Catch if the child dies
-        def cDied(sig, stackFrame):
-            try:
-                os.waitpid(-1, os.WNOHANG)
-            except OSError:
-                pass
-        signal.signal(signal.SIGCHLD, cDied)
-        
         # Fork off a child process to manage the engine
-        if os.fork() == 0:
+        self.pid = os.fork()
+        if self.pid == 0:
             # ..
             os.close(toManagerPipe[1])
             os.close(fromManagerPipe[0])
