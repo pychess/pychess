@@ -37,7 +37,7 @@ ACTION_NAMES = {
     ADJOURN_OFFER: _("the adjourn offer"),
     PAUSE_OFFER: _("the pause offer"),
     RESUME_OFFER: _("the resume offer"),
-    SWITCH_OFFER: _("the offer to swith sides"),
+    SWITCH_OFFER: _("the offer to switch sides"),
     TAKEBACK_OFFER: _("the takeback offer")
 }
 
