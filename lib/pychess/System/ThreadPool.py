@@ -63,8 +63,8 @@ class ThreadPool:
                         stringio = cStringIO.StringIO()
                         traceback.print_exc(file=stringio)
                         error = stringio.getvalue()
-                        print "Thread %s in threadpool " + \
-                              "raised following error:\n%s" % (self, error)
+                        print ("Thread %s in threadpool " +
+                               "raised following error:\n%s") % (self, error)
                     if not globals:
                         # If python has been shut down while we were executing
                         # We better stop running
