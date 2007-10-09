@@ -7,19 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-22 19:49+0200\n"
-"PO-Revision-Date: 2007-09-26 15:32-0400\n"
+"POT-Creation-Date: 2007-09-15 17:50+0200\n"
+"PO-Revision-Date: 2007-10-09 07:41-0400\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Portuguese\n"
-"X-Poedit-Country: BRAZIL\n"
 
 #: glade/fics_logon.glade:9
 msgid "PyChess - Connect to Internet Chess"
-msgstr "PyChess - Conecte ao Servidor de Xadrez da Internet"
+msgstr "PyChess - Conectar ao Servidor de Xadrez da Internet"
 
 #: glade/fics_logon.glade:84
 msgid "Create New"
@@ -36,11 +34,11 @@ msgstr "_Nome:"
 
 #: glade/fics_logon.glade:403
 msgid "_Password:"
-msgstr "_Senha"
+msgstr "_Senha:"
 
 #: glade/fics_logon.glade:471
 msgid "<b>Log On</b>"
-msgstr ""
+msgstr "<b>Entrar</b>"
 
 #: glade/fics_logon.glade:523
 msgid "Logging on to Server"
@@ -60,11 +58,11 @@ msgstr "<u>Saiba mais</u>"
 
 #: glade/fics_lounge.glade:205
 msgid "_Accept"
-msgstr "_Aceito"
+msgstr "_Aceitar"
 
 #: glade/fics_lounge.glade:297
 msgid "Opp Strength:"
-msgstr ""
+msgstr "Força:"
 
 #: glade/fics_lounge.glade:325
 #: glade/fics_lounge.glade:925
@@ -73,6 +71,9 @@ msgid ""
 "Want White\n"
 "Want Black"
 msgstr ""
+"Qualquer um\n"
+"Quero as Brancas\n"
+"Quero as Pretas"
 
 #: glade/fics_lounge.glade:344
 #: glade/fics_lounge.glade:869
@@ -92,6 +93,10 @@ msgid ""
 "1 min + 0\tLightning\n"
 "Custom"
 msgstr ""
+"15 min + 10\tPadrão\n"
+"5 min + 2\tRápida\n"
+"1 min + 0\tRelâmpago\n"
+"Habitual"
 
 #: glade/fics_lounge.glade:420
 msgid ""
@@ -99,30 +104,31 @@ msgid ""
 "1300 → 1600\tAdvanced\n"
 "1600 → 9999\tExpert"
 msgstr ""
+"0 → 1300\t\tFácil\n"
+"1300 → 1600\tAvançado\n"
+"1600 → 9999\tExperiente"
 
 #: glade/fics_lounge.glade:440
 #: glade/fics_lounge.glade:965
 msgid "Rated Game"
-msgstr ""
+msgstr "Jogo avaliado"
 
 #: glade/fics_lounge.glade:509
 msgid "Send seek"
-msgstr ""
+msgstr "Enviar busca"
 
 #: glade/fics_lounge.glade:553
 msgid "Seek Panel"
-msgstr ""
+msgstr "Painel de Busca"
 
 #: glade/fics_lounge.glade:589
 msgid "Seeks / Challenges"
-msgstr ""
+msgstr "Buscas / Desafios"
 
 #: glade/fics_lounge.glade:622
-#: lib/pychess/ic/icLounge.py:165
-#: lib/pychess/ic/icLounge.py:359
-#: lib/pychess/ic/icLounge.py:612
+#: lib/pychess/ic/icLounge.py:404
 msgid "Rating"
-msgstr ""
+msgstr "Classificação"
 
 #: glade/fics_lounge.glade:674
 msgid "Time"
@@ -130,19 +136,19 @@ msgstr "Tempo"
 
 #: glade/fics_lounge.glade:708
 msgid "Seek Graph"
-msgstr ""
+msgstr "Gráfico de Buscas"
 
 #: glade/fics_lounge.glade:777
 msgid "Show Info Window"
-msgstr ""
+msgstr "Mostrar Informações"
 
 #: glade/fics_lounge.glade:1035
 msgid "Send challenge"
-msgstr ""
+msgstr "Enviar desafio"
 
 #: glade/fics_lounge.glade:1078
 msgid "Challenge Panel"
-msgstr ""
+msgstr "Painel de Desafio"
 
 #: glade/fics_lounge.glade:1114
 msgid "Player List"
@@ -150,7 +156,7 @@ msgstr "Lista de Jogadores"
 
 #: glade/fics_lounge.glade:1182
 msgid "_Observe"
-msgstr "_Observe"
+msgstr "_Observar"
 
 #: glade/fics_lounge.glade:1252
 msgid "Game List"
@@ -178,7 +184,7 @@ msgstr "<b>Ferramentas</b>"
 
 #: glade/fics_lounge.glade:2061
 msgid "Custom Time Setting"
-msgstr ""
+msgstr "Ajustar configurações de tempo"
 
 #: glade/fics_lounge.glade:2196
 #: glade/newInOut.glade:644
@@ -220,17 +226,19 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2586
 msgid "<b>Chatting</b>"
-msgstr "<b>Conversação</b>"
+msgstr "<b>Conversando</b>"
 
 #: glade/fics_lounge.glade:2636
 msgid ""
 "FICS uses the idea of Adjourning, which is a way to save the game on the server to later continue the play.\n"
 "This version of PyChess doesn't support this feature, and will auto decline requests from opponents who wants to use this feature."
 msgstr ""
+"FICS utiliza da idéia de Agendamento, gravando o jogo no servidor para continuar a jogar mais tarde.\n"
+"Esta versão do PyChess não suporta esta característica, se o oponente pedir para agendar um jogo será automaticamente não aceito."
 
 #: glade/fics_lounge.glade:2659
 msgid "<b>Adjourning</b>"
-msgstr ""
+msgstr "<b>Agendamento</b>"
 
 #: glade/gamepreview.glade:114
 msgid "<b>Open game</b>"
@@ -258,12 +266,12 @@ msgstr "_Iniciar Jogo"
 #: glade/newInOut.glade:203
 #: glade/newInOut.glade:386
 msgid "White Player:"
-msgstr "Jogador das Brancas"
+msgstr "Brancas:"
 
 #: glade/newInOut.glade:231
 #: glade/newInOut.glade:414
 msgid "Black Player:"
-msgstr "Jogador da Pretas:"
+msgstr "Pretas:"
 
 #: glade/newInOut.glade:303
 msgid "<b>Players</b>"
@@ -275,7 +283,7 @@ msgstr "<b>Dificuldade</b>"
 
 #: glade/newInOut.glade:571
 msgid "Game has time"
-msgstr "Jogo com tempo"
+msgstr "Partida com tempo"
 
 #: glade/newInOut.glade:616
 msgid "Hours:"
@@ -311,11 +319,11 @@ msgstr "Bispo"
 
 #: glade/promotion.glade:81
 msgid "Knight"
-msgstr "Rei"
+msgstr "Cavalo"
 
 #: glade/promotion.glade:100
 msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>Promover o Peão a que?</big></b>"
+msgstr "<b><big>Promover o peão para?</big></b>"
 
 #: glade/PyChess.glade:40
 msgid "_Game"
@@ -327,35 +335,35 @@ msgstr "_Novo Jogo"
 
 #: glade/PyChess.glade:71
 msgid "_Play Internet Chess"
-msgstr "_Jogar Play Internet Chess"
+msgstr "_Jogar xadrez na internet"
 
 #: glade/PyChess.glade:99
 msgid "_Load Game"
-msgstr "_Carregar Jogo"
+msgstr "_Abrir Jogo"
 
 #: glade/PyChess.glade:120
 msgid "Set up Position"
-msgstr ""
+msgstr "Ajustar Posição"
 
 #: glade/PyChess.glade:129
 msgid "Enter game notation"
-msgstr "Entre com a Notação do Jogo"
+msgstr "Entre com a notação do jogo"
 
 #: glade/PyChess.glade:145
 msgid "_Save Game"
-msgstr "_Save Game"
+msgstr "_Salvar jogo"
 
 #: glade/PyChess.glade:168
 msgid "Save Game _As"
-msgstr "Gravar Jogo _Como"
+msgstr "Salvar Jogo _Como"
 
 #: glade/PyChess.glade:205
 msgid "Player _Rating"
-msgstr ""
+msgstr "_Avaliação do Jogador"
 
 #: glade/PyChess.glade:243
 msgid "_Actions"
-msgstr "_Ações"
+msgstr "Açõ_es"
 
 #: glade/PyChess.glade:253
 msgid "_Call Flag"
@@ -367,7 +375,7 @@ msgstr "Oferecer _Empate"
 
 #: glade/PyChess.glade:273
 msgid "_Resign"
-msgstr "_Desistir"
+msgstr "Aban_donar"
 
 #: glade/PyChess.glade:289
 msgid "_Force to move"
@@ -375,7 +383,7 @@ msgstr "_Forçar movimento"
 
 #: glade/PyChess.glade:311
 msgid "Undo"
-msgstr "Voltar"
+msgstr "_Desfazer"
 
 #: glade/PyChess.glade:334
 msgid "_Pause"
@@ -383,27 +391,27 @@ msgstr "_Pausar"
 
 #: glade/PyChess.glade:349
 msgid "_View"
-msgstr "_Visualizar"
+msgstr "_Visualização"
 
 #: glade/PyChess.glade:359
 msgid "_Rotate Board"
-msgstr "_Girar Tabuleiro"
+msgstr "_Girar o tabuleiro"
 
 #: glade/PyChess.glade:382
 msgid "_Side Panel"
-msgstr "_Painel Lateral"
+msgstr "_Painel lateral"
 
 #: glade/PyChess.glade:392
 msgid "_Log Viewer"
-msgstr "_Visualizador de Log"
+msgstr "_Visualizador de logs"
 
 #: glade/PyChess.glade:409
 msgid "_Hint mode"
-msgstr "Modo de _Ajuda"
+msgstr "_Modo sugestão"
 
 #: glade/PyChess.glade:421
 msgid "Sp_y mode"
-msgstr "Modo _Espião"
+msgstr "Modo es_pião"
 
 #: glade/PyChess.glade:436
 msgid "_Preferences"
@@ -415,20 +423,21 @@ msgstr "_Ajuda"
 
 #: glade/PyChess.glade:467
 msgid "About Chess"
-msgstr "Sobre Xadrez"
+msgstr "Sobre xadrez"
 
 #: glade/PyChess.glade:488
 msgid "How to play"
-msgstr "Como Jogar"
+msgstr "Como jogar"
 
 #: glade/PyChess.glade:509
 msgid "Translate PyChess..."
-msgstr "Traduza o PyChess"
+msgstr "Traduzir o PyChess"
 
 #: glade/PyChess.glade:576
 msgid "Chess client for the Gnome desktop"
-msgstr "Cliente de Xadrez para o Gnome Desktop"
+msgstr "Jogo de Xadrez para o GNOME desktop"
 
+# You might be able to find this one on the web.
 #: glade/PyChess.glade:577
 msgid ""
 "PyChess is free software; you can redistribute it and/or modify \n"
@@ -461,11 +470,11 @@ msgstr ""
 
 #: glade/PyChess.glade:612
 msgid "Game information"
-msgstr "Informação do Jogo"
+msgstr "Informações do jogo"
 
 #: glade/PyChess.glade:735
 msgid "Site:"
-msgstr "Site:"
+msgstr "Lugar:"
 
 #: glade/PyChess.glade:763
 msgid "Round:"
@@ -477,7 +486,7 @@ msgstr "Evento:"
 
 #: glade/PyChess.glade:891
 msgid "<b>Game data</b>"
-msgstr "<b>Dados do Jogo</b>"
+msgstr "<b>Dados da jogo</b>"
 
 #: glade/PyChess.glade:968
 msgid "<b>Date of game</b>"
@@ -489,7 +498,7 @@ msgstr "Preferências"
 
 #: glade/PyChess.glade:1097
 msgid "<b>Name of first human player:</b>"
-msgstr "<b>Nome do primeiro jogar humano:</b>"
+msgstr "<b>Nome do primeiro jogador humano:</b>"
 
 #: glade/PyChess.glade:1162
 msgid "<b>Name of second human player:</b>"
@@ -501,7 +510,7 @@ msgstr "_Esconder abas quando somente houver um jogo aberto"
 
 #: glade/PyChess.glade:1243
 msgid "_Auto rotate board to current human player"
-msgstr "_Rodar o tabuleiro automático para o jogador humano da vez"
+msgstr "_Rodar o tabuleiro automaticamente para o jogador humano da vez"
 
 #: glade/PyChess.glade:1262
 msgid "_Show cords"
@@ -541,27 +550,27 @@ msgstr "<b>Chess Engines</b>"
 
 #: glade/PyChess.glade:2374
 msgid "Use _analyzer"
-msgstr ""
+msgstr "Usar a_nalisador"
 
 #: glade/PyChess.glade:2423
 msgid "The analyzer will run in the background and analyze the game. <b>This is nessesary for the hint mode to work</b>"
-msgstr ""
+msgstr "O analisador funcionará em segundo plano e analisará o jogo. <b>Isto é nessesário para que o modo de sugestão funcione</b>"
 
 #: glade/PyChess.glade:2471
 msgid "Use _inverted analyzer"
-msgstr ""
+msgstr "Usar analisador _inverso"
 
 #: glade/PyChess.glade:2520
 msgid "The inverse analyzer will analyze the game as if your opponent was to move. <b>This is nessesary for the spy mode to work</b>"
-msgstr ""
+msgstr "O analisador inverso analisará o jogo como se seu oponente moveria as peças. <b>Isto é necessário para que o modo espião funcione</b>"
 
 #: glade/PyChess.glade:2565
 msgid "<b>Analyzing</b>"
-msgstr ""
+msgstr "<b>Analisando</b>"
 
 #: glade/PyChess.glade:2603
 msgid "Computer Opponents"
-msgstr ""
+msgstr "Oponentes controlados pelo computador"
 
 #: glade/PyChess.glade:2658
 msgid "_Use sounds in PyChess"
@@ -579,60 +588,60 @@ msgstr ""
 
 #: glade/PyChess.glade:3051
 msgid "A player _checks:"
-msgstr ""
+msgstr "_Verificações de um jogador:"
 
 #: glade/PyChess.glade:3079
 msgid "A player _moves:"
-msgstr ""
+msgstr "_Movimentos de um jogador:"
 
 #: glade/PyChess.glade:3107
 msgid "Game is _drawn:"
-msgstr ""
+msgstr "O jogo está _empatado:"
 
 #: glade/PyChess.glade:3135
 msgid "Game is _lost:"
-msgstr ""
+msgstr "O jogo está _perdido"
 
 #: glade/PyChess.glade:3163
 msgid "Game is _won:"
-msgstr ""
+msgstr "O jogo está _ganho"
 
 #: glade/PyChess.glade:3191
 msgid "A player c_aptures:"
-msgstr ""
+msgstr "Um jogador _captura:"
 
 #: glade/PyChess.glade:3234
 msgid "Game is _set-up:"
-msgstr ""
+msgstr "O jogo está:"
 
 #: glade/PyChess.glade:3307
 msgid "_Observed moves:"
-msgstr ""
+msgstr "_Movimentos observados:"
 
 #: glade/PyChess.glade:3335
 msgid "Observed _ends:"
-msgstr ""
+msgstr "_Extremidades observadas:"
 
 #: glade/PyChess.glade:3471
 msgid "<b>Play Sound When...</b>"
-msgstr ""
+msgstr "<b>Tocar som quando...</b>"
 
 #: glade/PyChess.glade:3509
 msgid "Sounds"
-msgstr ""
+msgstr "Sons"
 
 #: glade/PyChess.glade:5780
 msgid "Player Rating"
-msgstr ""
+msgstr "Avaliação do Jogador"
 
 #: glade/PyChess.glade:5805
 msgid "While you fight different local chessengines, PyChess keeps track of your results."
-msgstr ""
+msgstr "Quando você jogar com engines em locais diferentes, o PyChess lhe manterá a par dos seus resultados."
 
 #: lib/pychess/Main.py:35
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr ""
+msgstr "<big><b>Engine %s, foi encerrado</b></big>"
 
 #: lib/pychess/Main.py:36
 msgid ""
@@ -640,508 +649,497 @@ msgid ""
 "\n"
 "You can try to start a new game with the engine, or try to play against another one."
 msgstr ""
+"Pychess perdeu a conexão com o engine de xadrez, provavelmente porque está morto.\n"
+"\n"
+"Você pode tentar iniciar um novo jogo com o engine, ou tentar jogar contra outro."
 
-#: lib/pychess/Main.py:168
-#: lib/pychess/Main.py:169
+#: lib/pychess/Main.py:166
+#: lib/pychess/Main.py:167
 msgid "Loaded game"
 msgstr "Jogo carregado"
 
-#: lib/pychess/Main.py:174
+#: lib/pychess/Main.py:172
 msgid "Saved game"
 msgstr "Jogo gravado"
 
-#: lib/pychess/Main.py:179
+#: lib/pychess/Main.py:177
 msgid "The game ended in a draw"
-msgstr "O jogo terminou com empate"
+msgstr "O jogo terminou empatado"
+
+#: lib/pychess/Main.py:178
+msgid "White player won the game"
+msgstr "O jogador das brancas ganhou o jogo"
+
+#: lib/pychess/Main.py:179
+msgid "Black player won the game"
+msgstr "O jogador das pretas ganhou o jogo"
 
 #: lib/pychess/Main.py:180
-msgid "White player won the game"
-msgstr "Jogador das Brancas perdeu o jogo"
+msgid "The game has been killed"
+msgstr "O jogo foi encerrado"
 
 #: lib/pychess/Main.py:181
-msgid "Black player won the game"
-msgstr "Jogador das Pretas perdeu o jogo"
+msgid "The game has been adjourned"
+msgstr "O jogo foi agendado para outra data"
 
 #: lib/pychess/Main.py:182
-msgid "The game has been killed"
-msgstr ""
-
-#: lib/pychess/Main.py:183
-msgid "The game has been adjourned"
-msgstr ""
-
-#: lib/pychess/Main.py:184
 msgid "The game has been aborted"
 msgstr "O jogo foi abortado"
 
-#: lib/pychess/Main.py:187
+#: lib/pychess/Main.py:185
 msgid "caused by insufficient material"
-msgstr "porque não há material suficiente"
+msgstr "por material insuficiente"
+
+#: lib/pychess/Main.py:186
+msgid "as the same position was repeated three times in a row"
+msgstr "porque a posição se repetiu três vezes"
+
+#: lib/pychess/Main.py:187
+msgid "as the last 50 moves brought nothing new"
+msgstr "porque nas últimas 50 jogadas não foi capturado nada"
 
 #: lib/pychess/Main.py:188
-msgid "as the same position was repeated three times in a row"
-msgstr "porque as posições no tabuleiro se repetiram três vezes"
+msgid "as both players ran out of time"
+msgstr "ambos os jogadores ficaram fora do tempo"
 
 #: lib/pychess/Main.py:189
-msgid "as the last 50 moves brought nothing new"
-msgstr "porque os últimos 50 movimentos não houve nada de novo"
+msgid "because of stalemate"
+msgstr "porque ficou empatado"
 
 #: lib/pychess/Main.py:190
-msgid "as both players ran out of time"
-msgstr ""
+#: lib/pychess/Main.py:201
+#: lib/pychess/Main.py:205
+msgid "as the players agreed to"
+msgstr "porque os jogadores entraram em acordo"
 
 #: lib/pychess/Main.py:191
-msgid "because of stalemate"
-msgstr ""
+#: lib/pychess/Main.py:198
+#: lib/pychess/Main.py:204
+msgid "as decided by an admin"
+msgstr "por decisão do administrador"
 
 #: lib/pychess/Main.py:192
-#: lib/pychess/Main.py:203
-#: lib/pychess/Main.py:207
-msgid "as the players agreed to"
-msgstr ""
-
-#: lib/pychess/Main.py:193
-#: lib/pychess/Main.py:200
-#: lib/pychess/Main.py:206
-msgid "as decided by an admin"
-msgstr ""
+msgid "as game exceed the max length"
+msgstr "o jogo excedeu o tamanho máximo"
 
 #: lib/pychess/Main.py:194
-msgid "as game exceed the max length"
-msgstr ""
+msgid "as opponent resigned"
+msgstr "porque o oponente abandonou"
+
+#: lib/pychess/Main.py:195
+msgid "as opponent ran out of time"
+msgstr "porque acabou o tempo do oponente"
 
 #: lib/pychess/Main.py:196
-msgid "as opponent resigned"
-msgstr "porque o oponente resignou"
-
-#: lib/pychess/Main.py:197
-msgid "as opponent ran out of time"
-msgstr ""
-
-#: lib/pychess/Main.py:198
 msgid "on a mate"
 msgstr "por mate"
 
-#: lib/pychess/Main.py:199
+#: lib/pychess/Main.py:197
 msgid "as opponent disconnected"
-msgstr "porque o oponente se desconectou"
+msgstr "o oponente desconectou"
+
+#: lib/pychess/Main.py:200
+msgid "as a player lost connection"
+msgstr "um jogador perdeu a conexão"
 
 #: lib/pychess/Main.py:202
-msgid "as a player lost connection"
-msgstr ""
-
-#: lib/pychess/Main.py:204
-#: lib/pychess/Main.py:210
-msgid "as the server was shut down"
-msgstr ""
-
 #: lib/pychess/Main.py:208
-msgid "by courtesy by a player"
-msgstr ""
+msgid "as the server was shut down"
+msgstr "o servidor parou de funcionar"
 
-#: lib/pychess/Main.py:209
+#: lib/pychess/Main.py:206
+msgid "by courtesy by a player"
+msgstr "por cortesia de um jogador"
+
+#: lib/pychess/Main.py:207
 msgid "in the early phase of the game"
-msgstr ""
+msgstr "na fase inicial do jogo"
+
+#: lib/pychess/Main.py:210
+msgid "as the white engine died"
+msgstr "o engine branco foi encerrado"
+
+#: lib/pychess/Main.py:211
+msgid "as the black engine died"
+msgstr "o engine preto foi encerrado"
 
 #: lib/pychess/Main.py:212
-msgid "as the white engine died"
-msgstr ""
-
-#: lib/pychess/Main.py:213
-msgid "as the black engine died"
-msgstr ""
-
-#: lib/pychess/Main.py:214
 msgid "by no known reason"
-msgstr ""
+msgstr "sem nenhuma razão"
 
-#: lib/pychess/Main.py:233
+#: lib/pychess/Main.py:231
 msgid "You sent a draw offer"
-msgstr ""
+msgstr "Você enviou uma oferta de empate"
 
-#: lib/pychess/Main.py:373
+# This page is opened by the "About chess" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+#: lib/pychess/Main.py:366
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr "http://pt.wikipedia.org/wiki/Xadrez"
 
-#: lib/pychess/Main.py:376
+# This page is opened by the "How to play" menu item.
+# You should be able to find a wikipage in your language, or similar info from a different page.
+#: lib/pychess/Main.py:369
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
-msgstr "http://en.wikipedia.org/wiki/Regras_do_xadrez"
+msgstr "http://pt.wikipedia.org/wiki/Regras_do_xadrez"
 
-#: lib/pychess/ic/GameListManager.py:14
-#: lib/pychess/ic/icLounge.py:849
-msgid "Blitz"
-msgstr ""
-
-#: lib/pychess/ic/GameListManager.py:14
-msgid "Standard"
-msgstr ""
-
-#: lib/pychess/ic/GameListManager.py:14
-#: lib/pychess/ic/icLounge.py:850
-msgid "Lightning"
-msgstr ""
-
-#: lib/pychess/ic/icLogOn.py:83
+#: lib/pychess/ic/icLogOn.py:82
 msgid "Connection Error"
-msgstr ""
+msgstr "Erro de Conexão"
 
-#: lib/pychess/ic/icLogOn.py:86
+#: lib/pychess/ic/icLogOn.py:85
 msgid "Log on Error"
-msgstr ""
+msgstr "Erro na entrada de dados"
 
-#: lib/pychess/ic/icLogOn.py:89
+#: lib/pychess/ic/icLogOn.py:88
 msgid "Connection was broken"
-msgstr ""
+msgstr "Conexão foi perdida"
 
-#: lib/pychess/ic/icLogOn.py:92
+#: lib/pychess/ic/icLogOn.py:91
 msgid "Connection was closed"
-msgstr ""
+msgstr "Conexão foi fechada"
 
-#: lib/pychess/ic/icLounge.py:165
-msgid "Win"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:165
-msgid "Loss"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:165
-msgid "Draw"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:165
-msgid "Total"
-msgstr ""
-
-#: lib/pychess/ic/icLounge.py:182
+#: lib/pychess/ic/icLounge.py:136
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
-#: lib/pychess/ic/icLounge.py:187
+#: lib/pychess/ic/icLounge.py:141
 msgid "Spent"
-msgstr ""
+msgstr "Tempo gasto"
 
-#: lib/pychess/ic/icLounge.py:208
+#: lib/pychess/ic/icLounge.py:162
 msgid "online in total"
-msgstr ""
+msgstr "total online"
 
-#: lib/pychess/ic/icLounge.py:212
+#: lib/pychess/ic/icLounge.py:166
 msgid "Ping"
 msgstr "Ping"
 
-#: lib/pychess/ic/icLounge.py:213
+#: lib/pychess/ic/icLounge.py:167
 msgid "Connecting"
 msgstr "Conectando"
 
-#: lib/pychess/ic/icLounge.py:220
+#: lib/pychess/ic/icLounge.py:174
 #: lib/pychess/Savers/epd.py:134
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: lib/pychess/ic/icLounge.py:231
+#: lib/pychess/ic/icLounge.py:185
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest is not able to play rated games, and thus the offer of games is be smaller."
 msgstr ""
+"Você está conectado como um Convidado.\n"
+"Um convidado não pode jogar jogos avaliados, assim a oferta de jogos é menor."
 
-#: lib/pychess/ic/icLounge.py:235
+#: lib/pychess/ic/icLounge.py:191
+#: lib/pychess/ic/icLounge.py:196
+#: lib/pychess/ic/icLounge.py:199
 msgid "Register now"
 msgstr "Registrar agora"
 
-#: lib/pychess/ic/icLounge.py:359
-#: lib/pychess/ic/icLounge.py:612
+#: lib/pychess/ic/icLounge.py:404
 #: lib/pychess/widgets/Background.py:314
 msgid "Name"
 msgstr "Nome"
 
-#: lib/pychess/ic/icLounge.py:359
-#: lib/pychess/ic/icLounge.py:382
-#: lib/pychess/ic/icLounge.py:469
-#: lib/pychess/ic/icLounge.py:543
+#: lib/pychess/ic/icLounge.py:404
+#: lib/pychess/ic/icLounge.py:414
+#: lib/pychess/ic/icLounge.py:516
+#: lib/pychess/ic/icLounge.py:568
 msgid "Rated"
-msgstr ""
+msgstr "Avaliado"
 
-#: lib/pychess/ic/icLounge.py:360
+#: lib/pychess/ic/icLounge.py:405
 msgid "Type"
 msgstr "Tipo"
 
-#: lib/pychess/ic/icLounge.py:360
+#: lib/pychess/ic/icLounge.py:405
 msgid "Clock"
 msgstr "Relógio"
 
-#: lib/pychess/ic/icLounge.py:382
-#: lib/pychess/ic/icLounge.py:469
-#: lib/pychess/ic/icLounge.py:543
+#: lib/pychess/ic/icLounge.py:414
+#: lib/pychess/ic/icLounge.py:516
+#: lib/pychess/ic/icLounge.py:568
 msgid "Unrated"
-msgstr ""
+msgstr "Não avaliado"
 
-#: lib/pychess/ic/icLounge.py:387
-#: lib/pychess/ic/icLounge.py:406
-#: lib/pychess/ic/icLounge.py:474
-#: lib/pychess/ic/icLounge.py:488
+#: lib/pychess/ic/icLounge.py:419
+#: lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:521
+#: lib/pychess/ic/icLounge.py:534
 msgid "Active Seek"
-msgstr ""
+msgstr "Ativar Busca"
 
-#: lib/pychess/ic/icLounge.py:387
-#: lib/pychess/ic/icLounge.py:406
-#: lib/pychess/ic/icLounge.py:417
-#: lib/pychess/ic/icLounge.py:474
-#: lib/pychess/ic/icLounge.py:488
+#: lib/pychess/ic/icLounge.py:419
+#: lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:521
+#: lib/pychess/ic/icLounge.py:534
 msgid "Active Seeks"
-msgstr ""
+msgstr "Ativar Buscas"
 
-#: lib/pychess/ic/icLounge.py:646
-#: lib/pychess/ic/icLounge.py:663
+#: lib/pychess/ic/icLounge.py:486
+#: lib/pychess/ic/icLounge.py:746
+#: lib/pychess/widgets/ionest.py:435
+msgid "vs"
+msgstr "contra"
+
+#: lib/pychess/ic/icLounge.py:649
+#: lib/pychess/ic/icLounge.py:664
 msgid "Player Ready"
-msgstr ""
+msgstr "Jogador Pronto"
 
-#: lib/pychess/ic/icLounge.py:646
-#: lib/pychess/ic/icLounge.py:663
+#: lib/pychess/ic/icLounge.py:649
+#: lib/pychess/ic/icLounge.py:664
 msgid "Players Ready"
-msgstr ""
+msgstr "Jogadores Prontos"
 
-#: lib/pychess/ic/icLounge.py:700
+#: lib/pychess/ic/icLounge.py:697
 msgid "White Player"
 msgstr "Jogador das Brancas"
 
-#: lib/pychess/ic/icLounge.py:700
+#: lib/pychess/ic/icLounge.py:697
 msgid "Black Player"
 msgstr "Jogador das Pretas"
 
-#: lib/pychess/ic/icLounge.py:701
+#: lib/pychess/ic/icLounge.py:698
 msgid "Game Type"
-msgstr ""
+msgstr "Tipo de jogo"
 
-#: lib/pychess/ic/icLounge.py:726
-#: lib/pychess/ic/icLounge.py:743
+#: lib/pychess/ic/icLounge.py:718
+#: lib/pychess/ic/icLounge.py:733
 msgid "Game Running"
-msgstr ""
+msgstr "Jogo em andamento"
 
-#: lib/pychess/ic/icLounge.py:726
-#: lib/pychess/ic/icLounge.py:743
+#: lib/pychess/ic/icLounge.py:718
+#: lib/pychess/ic/icLounge.py:733
 msgid "Games Running"
-msgstr ""
+msgstr "Jogos em andamento"
 
-#: lib/pychess/ic/icLounge.py:826
+#: lib/pychess/ic/icLounge.py:819
 msgid "Easy"
 msgstr "Fácil"
 
-#: lib/pychess/ic/icLounge.py:827
+#: lib/pychess/ic/icLounge.py:820
 msgid "Advanced"
 msgstr "Avançado"
 
-#: lib/pychess/ic/icLounge.py:828
+#: lib/pychess/ic/icLounge.py:821
 #: lib/pychess/widgets/ionest.py:302
 msgid "Expert"
 msgstr "Experiente"
 
-#: lib/pychess/ic/icLounge.py:837
+#: lib/pychess/ic/icLounge.py:830
 msgid "Don't Care"
-msgstr ""
+msgstr "Não importa"
 
-#: lib/pychess/ic/icLounge.py:838
+#: lib/pychess/ic/icLounge.py:831
 msgid "Want White"
-msgstr ""
+msgstr "Quero Brancas"
 
-#: lib/pychess/ic/icLounge.py:839
+#: lib/pychess/ic/icLounge.py:832
 msgid "Want Black"
-msgstr ""
+msgstr "Quero Pretas"
 
-#: lib/pychess/ic/icLounge.py:848
+#: lib/pychess/ic/icLounge.py:841
 msgid "Normal"
-msgstr "Normal"
+msgstr "Tempo padrão"
 
-#: lib/pychess/ic/icLounge.py:851
+#: lib/pychess/ic/icLounge.py:842
+msgid "Blitz"
+msgstr "Tempo rápido"
+
+#: lib/pychess/ic/icLounge.py:843
+msgid "Lightning"
+msgstr "Tempo relâmpago"
+
+#: lib/pychess/ic/icLounge.py:844
 msgid "New Custom"
-msgstr ""
+msgstr "Nova personalização"
 
-#: lib/pychess/ic/icLounge.py:878
+#: lib/pychess/ic/icLounge.py:869
 msgid "Custom"
-msgstr ""
+msgstr "Personalizar"
 
-#: lib/pychess/ic/icLounge.py:935
-#: lib/pychess/ic/icLounge.py:957
-#: lib/pychess/widgets/ionest.py:435
-msgid "vs"
-msgstr "vs"
-
-#: lib/pychess/ic/telnet.py:129
-#: lib/pychess/ic/telnet.py:142
+#: lib/pychess/ic/telnet.py:127
+#: lib/pychess/ic/telnet.py:140
 msgid "The connection was broken - got \"end of file\" message"
-msgstr ""
+msgstr "A conexão foi perdida"
+
+#: lib/pychess/ic/telnet.py:142
+msgid "Names can only consist of lower and upper case letters"
+msgstr "Nomes só podem consistir em letras maiúsculas e minúsculas"
 
 #: lib/pychess/ic/telnet.py:144
-msgid "Names can only consist of lower and upper case letters"
-msgstr ""
-
-#: lib/pychess/ic/telnet.py:146
 #, python-format
 msgid "'%s' is not a registered name"
-msgstr ""
+msgstr "'%s' não é um nome registrado"
 
-#: lib/pychess/ic/telnet.py:159
+#: lib/pychess/ic/telnet.py:157
 msgid ""
 "The entered password was invalid.\n"
 "\n"
 msgstr ""
+"A senha não é valida.\n"
+"\n"
 
 #: lib/pychess/Players/Human.py:13
 msgid "You've got a draw offer. Accept?"
-msgstr ""
+msgstr "Você recebeu uma oferta de empate. Aceita?"
 
 #: lib/pychess/Players/Human.py:14
 msgid "Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."
-msgstr ""
+msgstr "Seu oponente lhe ofereceu um empate. Se você aceitar, a partida terminará com o resultado 1/2 - 1/2."
 
 #: lib/pychess/Players/Human.py:16
 msgid "You've got an abort offer. Accept?"
-msgstr ""
+msgstr "Você recebeu uma oferta de abortar jogo. Aceita?"
 
 #: lib/pychess/Players/Human.py:17
 msgid "Your opponent has offered you to abort the game. If you accept, the game will end with no rating change."
-msgstr ""
+msgstr "Seu oponente lhe ofereceu que você aborte o jogo. Se você aceitar, o jogo terminará sem nenhuma mudança da avaliação."
 
 #: lib/pychess/Players/Human.py:19
 msgid "You've got an adjourn offer. Accept?"
-msgstr ""
+msgstr "Você recebeu uma oferta de agendamento. Aceita?"
 
 #: lib/pychess/Players/Human.py:20
 msgid "Your opponent has offered you to adjourn the game. If you accept, the game will adjourned, and you can later resume it (If your opponent is online and willing)."
-msgstr ""
+msgstr "Seu oponente lhe ofereceu para agendar o jogo. Se você aceitar, o jogo será agendado, e você poderá jogá-lo em outra data (Se o seu oponente também estiver online)."
 
 #: lib/pychess/Players/Human.py:22
 msgid "Your opponent wants to undo. Accept?"
-msgstr ""
+msgstr "Seu oponente quer voltar jogadas. Aceita?"
 
 #: lib/pychess/Players/Human.py:23
 #, python-format
 msgid "Your opponent wants to undo back to halfmove %s.. If you accept, the game will continue from the earlier position."
-msgstr ""
+msgstr "Seu oponente quer voltar para o movimento %s. Se você aceitar, o jogo seguirá a partir da posição indicada."
 
 #: lib/pychess/Players/Human.py:25
 msgid "Your opponent offers you a pause. Accept?"
-msgstr ""
+msgstr "Seu oponente lhe ofereceu uma pausa. Aceita?"
 
 #: lib/pychess/Players/Human.py:26
 msgid "Your opponent wants to make a break. If you accept the game clock will be paused until on of you accept a resume offer"
-msgstr ""
+msgstr "Seu oponente quer parar o jogo. Se você aceitar o relógio será parado jogo até que você aceite continuar o jogo novamente."
 
 #: lib/pychess/Players/Human.py:28
 msgid "Your opponent wants to resume. Accept?"
-msgstr ""
+msgstr "Seu oponente quer recomeçar o jogo. Aceita?"
 
 #: lib/pychess/Players/Human.py:29
 msgid "Your opponent wants to resume the game. If you accept, the game clock will start counting down from where it was left."
-msgstr ""
+msgstr "Seu oponente quer recomeçar o jogo. Se você aceitar, o relógio do jogo começará a contar de onde foi deixado."
 
 #: lib/pychess/Players/Human.py:33
 msgid "the resignation"
-msgstr ""
+msgstr "renunciou"
 
 #: lib/pychess/Players/Human.py:34
 msgid "the flag call"
-msgstr ""
+msgstr "a chamada da bandeira"
 
 #: lib/pychess/Players/Human.py:35
 msgid "the draw offer"
-msgstr ""
+msgstr "a oferta de empate"
 
 #: lib/pychess/Players/Human.py:36
 msgid "the abort offer"
-msgstr ""
+msgstr "a oferta de abortar o jogo"
 
 #: lib/pychess/Players/Human.py:37
 msgid "the adjourn offer"
-msgstr ""
+msgstr "a oferta de jogar mais tarde"
 
 #: lib/pychess/Players/Human.py:38
 msgid "the pause offer"
-msgstr ""
+msgstr "a oferta de parar o jogo"
 
 #: lib/pychess/Players/Human.py:39
 msgid "the resume offer"
-msgstr ""
+msgstr "a oferta de recomeçar"
 
 #: lib/pychess/Players/Human.py:40
 msgid "the offer to swith sides"
-msgstr ""
+msgstr "a oferta de mudança de lado"
 
 #: lib/pychess/Players/Human.py:41
 msgid "the takeback offer"
-msgstr ""
+msgstr "a oferta de voltar jogadas"
 
 #: lib/pychess/Players/Human.py:46
 msgid "The game hasn't got a clock."
-msgstr ""
+msgstr "O jogo não iniciou o relógio."
 
 #: lib/pychess/Players/Human.py:48
 msgid "Your opponent is not out of time."
-msgstr ""
+msgstr "Seu oponente não está fora do tempo."
 
 #: lib/pychess/Players/Human.py:50
 msgid "The clock hasn't yet been started."
-msgstr ""
+msgstr "O relógio ainda não foi iniciado."
 
 #: lib/pychess/Players/Human.py:52
 msgid "You can't switch color during the game."
-msgstr ""
+msgstr "Você não pode mudar a cor durante o jogo."
 
 #: lib/pychess/Players/Human.py:54
 msgid "You have tried to redo to many moves."
-msgstr ""
+msgstr "Você está tentando voltar muitos movimentos"
 
 #: lib/pychess/Players/Human.py:138
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr ""
+msgstr "%s foi aceito pelo seu oponente"
 
 #: lib/pychess/Players/Human.py:139
 msgid "You can try to send the offer to your opponent later in the game again."
-msgstr ""
+msgstr "Você pode tentar enviar uma oferta mais tarde a seu oponente no jogo outra vez."
 
 #: lib/pychess/Players/Human.py:145
 #, python-format
 msgid "%s was withdrawn by your opponent"
-msgstr ""
+msgstr "%s foi retirado por seu oponente"
 
 #: lib/pychess/Players/Human.py:146
 msgid "Your opponent seams to have changed his or her mind."
-msgstr ""
+msgstr "Seu oponente manipula para mudar sua mente."
 
 #: lib/pychess/Players/Human.py:154
 #, python-format
 msgid "Unable to accept %s"
-msgstr ""
+msgstr "Incapaz de aceitar %s"
 
 #: lib/pychess/Players/Human.py:155
 #, python-format
 msgid "PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn."
-msgstr ""
+msgstr "PyChess é incapaz de começar a oferta de %s aceitada. Provavelmente porque foi retraído."
 
 #: lib/pychess/Players/Human.py:162
 #, python-format
 msgid "%s returns an error"
-msgstr ""
+msgstr "%s retorna um erro"
 
 #: lib/pychess/Players/Human.py:179
 msgid "Your opponent asks you to hurry!"
-msgstr ""
+msgstr "Seu oponente pede que você apresse-se!"
 
 #: lib/pychess/Players/Human.py:180
 msgid "Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going."
-msgstr ""
+msgstr "Geralmente isto não significa nada, porque o jogo é baseado no tempo."
 
 #: lib/pychess/Savers/epd.py:8
 msgid "Chess Position"
-msgstr ""
+msgstr "Posição do Xadrez"
 
 #: lib/pychess/Savers/fen.py:7
 msgid "Simple Chess Position"
-msgstr ""
+msgstr "Posição Simples do Xadrez"
 
 #: lib/pychess/Savers/pgn.py:7
 msgid "Chess Game"
-msgstr ""
+msgstr "Jogo de Xadrez"
 
 #: lib/pychess/Utils/const.py:84
 msgid "P"
@@ -1169,15 +1167,15 @@ msgstr "K"
 
 #: lib/pychess/Utils/GameModel.py:46
 msgid "Local Event"
-msgstr ""
+msgstr "Evento local"
 
 #: lib/pychess/Utils/GameModel.py:47
 msgid "Local Site"
-msgstr ""
+msgstr "Lugar local"
 
 #: lib/pychess/widgets/Background.py:230
 msgid "Your Color"
-msgstr "Sua Cor"
+msgstr "Seu Cor"
 
 #: lib/pychess/widgets/Background.py:235
 #: lib/pychess/widgets/ChessClock.py:18
@@ -1199,7 +1197,7 @@ msgstr "Dificuldade"
 
 #: lib/pychess/widgets/Background.py:272
 msgid "Start Game"
-msgstr ""
+msgstr "Iniciar Jogo"
 
 #: lib/pychess/widgets/Background.py:325
 msgid "Password"
@@ -1207,27 +1205,27 @@ msgstr "Senha"
 
 #: lib/pychess/widgets/Background.py:335
 msgid "Connect to FICS"
-msgstr "Conectar ao FICS"
+msgstr "Conectar no FICS"
 
 #: lib/pychess/widgets/ionest.py:52
 msgid "Save Game"
-msgstr "Gravar Jogo"
+msgstr "Salvar Jogo"
 
 #: lib/pychess/widgets/ionest.py:62
 msgid "All Files"
-msgstr "Todos os Arquivos"
+msgstr "Todos os arquivos"
 
 #: lib/pychess/widgets/ionest.py:65
 msgid "Detect type automatically"
-msgstr "Detectar extensão automaticamente"
+msgstr "Detectar formato automaticamente"
 
 #: lib/pychess/widgets/ionest.py:68
 msgid "All Chess Files"
-msgstr "Todos os Arquivos de Xadrez"
+msgstr "Arquivos de xadrez"
 
 #: lib/pychess/widgets/ionest.py:300
 msgid "Beginner"
-msgstr "Iniciante"
+msgstr "Principiante"
 
 #: lib/pychess/widgets/ionest.py:301
 msgid "Intermediate"
@@ -1235,7 +1233,7 @@ msgstr "Intermediário"
 
 #: lib/pychess/widgets/ionest.py:313
 msgid "Human Being"
-msgstr "Ser Humano"
+msgstr "Ser humano"
 
 #: lib/pychess/widgets/ionest.py:449
 #: lib/pychess/widgets/preferencesDialog.py:40
@@ -1244,87 +1242,91 @@ msgstr "Convidado"
 
 #: lib/pychess/widgets/ionest.py:544
 msgid "Set up Game"
-msgstr ""
+msgstr "Jogo ajustado"
 
 #: lib/pychess/widgets/ionest.py:557
 msgid "Enter Game"
-msgstr ""
+msgstr "Entrar com um jogo"
 
 #: lib/pychess/widgets/ionest.py:608
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
-msgstr "<big><b>Tipo de arquivo desconhecido '%s'</b></big>"
+msgstr "<big><b>Formato de arquivo desconhecido '%s'</b></big>"
 
 #: lib/pychess/widgets/ionest.py:609
 #, python-format
 msgid "Was unable to save '%s' as PyChess doesn't know the format '%s'."
-msgstr ""
+msgstr "Não é possível salvar '%s' porque PyChess não sabe o formato ' %s'."
 
 #: lib/pychess/widgets/ionest.py:622
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
-msgstr ""
+msgstr "<big><b>Não se pode salvar o arquivo '%s'</b></big>"
 
 #: lib/pychess/widgets/ionest.py:624
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr ""
+"Não tem permissão necessária para salvar o arquivo.\n"
+"Por favor, assegure que indicou corretamente a rota e tente novamente."
 
 #: lib/pychess/widgets/ionest.py:632
 msgid "_Replace"
-msgstr ""
+msgstr "_Substituir"
 
 #: lib/pychess/widgets/ionest.py:636
 msgid "File exists"
-msgstr ""
+msgstr "O arquivo existe"
 
 #: lib/pychess/widgets/ionest.py:638
 #, python-format
 msgid "<big><b>A file named '%s' already exists. Would you like to replace it?</b></big>"
-msgstr ""
+msgstr "<big><b>Um arquivo nomeado '%s' já existe. Você deseja sobrescrevê-lo?</b></big>"
 
 #: lib/pychess/widgets/ionest.py:639
 #, python-format
 msgid "The file already exists in '%s'. If you replace it, its content will be overwritten."
-msgstr ""
+msgstr "O arquivo já existe em '%s'. Se você sobrescrevê-lo, o conteúdo também será substituído."
 
 #: lib/pychess/widgets/ionest.py:653
 msgid "Could not save the file"
-msgstr ""
+msgstr "Não é possível gravar o arquivo"
 
 #: lib/pychess/widgets/ionest.py:654
 msgid "<big><b>PyChess was not able to save the game</b></big>"
-msgstr ""
+msgstr "<big><b>PyChess não pode gravar o jogo</b></big>"
 
 #: lib/pychess/widgets/ionest.py:655
 #, python-format
 msgid "The error was: %s"
-msgstr ""
+msgstr "O erro foi: %s"
 
 #: lib/pychess/widgets/ionest.py:675
 #: lib/pychess/widgets/ionest.py:705
 msgid "Close _without Saving"
-msgstr "_Fechar sem gravar"
+msgstr "_Fechar sem salvar"
 
 #: lib/pychess/widgets/ionest.py:681
 msgid "<b><big>Save the current game before you close it?</big></b>"
-msgstr ""
+msgstr "<b><big>Gravar a partida atual antes de fechar?</big></b>"
 
 #: lib/pychess/widgets/ionest.py:683
 msgid ""
 "It is not possible later to continue the game,\n"
 "if do don't save it."
 msgstr ""
+"Não será possível continuar posteriormente a partida, \n"
+"se não salvá-la."
 
 #: lib/pychess/widgets/ionest.py:709
 msgid "<big><b>There is 1 game with unsaved changes:</b></big>"
-msgstr ""
+msgstr "<big><b>Existe 1 jogo com mudanças não salvas:</b></big>"
 
 #: lib/pychess/widgets/ionest.py:712
 #, python-format
 msgid "<big><b>There are %d games with unsaved changes:</b></big>"
-msgstr ""
+msgstr "<big><b>Existem %d partidas com mudanças não salvas:</b></big>"
 
 #: lib/pychess/widgets/LogDialog.py:30
 msgid "PyChess - Log Viewer"
@@ -1332,11 +1334,11 @@ msgstr "PyChess - Visualizador de Log"
 
 #: lib/pychess/widgets/preferencesDialog.py:146
 msgid "Locate Engine"
-msgstr ""
+msgstr "Posição do Engine"
 
 #: lib/pychess/widgets/preferencesDialog.py:223
 msgid "Open Sound File"
-msgstr "Abrir Arquivo de Áudio"
+msgstr "Abrir arquivo de áudio"
 
 #: lib/pychess/widgets/preferencesDialog.py:240
 msgid "No sound"
@@ -1352,31 +1354,31 @@ msgstr "Selecione um arquivo de áudio..."
 
 #: lib/pychess/Utils/lutils/strateval.py:30
 msgid "draws"
-msgstr ""
+msgstr "empates"
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 msgid "mates"
-msgstr ""
+msgstr "mates"
 
 #: lib/pychess/Utils/lutils/strateval.py:36
 msgid "puts opponent in check"
-msgstr ""
+msgstr "colocam o oponente em xeque"
 
 #: lib/pychess/Utils/lutils/strateval.py:57
 msgid "improves king safety"
-msgstr ""
+msgstr "melhoram a segurança do rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:59
 msgid "slightly improves king safety"
-msgstr ""
+msgstr "melhoram ligeiramente a segurança do rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:80
 msgid "moves a rook to an open file"
-msgstr ""
+msgstr "move uma torre para uma coluna aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:81
 msgid "moves an rook to a half-open file"
-msgstr ""
+msgstr "move uma torre para uma coluna meia aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:91
 #: lib/pychess/Utils/lutils/strateval.py:93
@@ -1384,174 +1386,174 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:98
 #, python-format
 msgid "moves bishop into fianchetto: %s"
-msgstr ""
+msgstr "move o bispo no fianchetto: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:105
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr ""
+msgstr "promove um peão para um %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:108
 msgid "castles"
-msgstr ""
+msgstr "fazem um castelo"
 
 #: lib/pychess/Utils/lutils/strateval.py:129
 msgid "takes back material"
-msgstr ""
+msgstr "trocam peças"
 
 #: lib/pychess/Utils/lutils/strateval.py:133
 msgid "exchanges material"
-msgstr ""
+msgstr "troca peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:135
 msgid "captures material"
-msgstr ""
+msgstr "captura peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:137
 msgid "sacrifies material"
-msgstr ""
+msgstr "sacrifica peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:181
 #, python-format
 msgid "threatens to win material %s"
-msgstr ""
+msgstr "ameaça ganhar a peça %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:185
 #, python-format
 msgid "increases the pressure on %s"
-msgstr ""
+msgstr "aumenta a pressão em %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:229
 #, python-format
 msgid "defends %s"
-msgstr ""
+msgstr "defende %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:260
 #, python-format
 msgid "White has a new piece in outpost: %s"
-msgstr ""
+msgstr "Brancas tem uma nova peça em: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:268
 #, python-format
 msgid "Black has a new piece in outpost: %s"
-msgstr ""
+msgstr "Pretas tem uma nova peça em: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:307
 #, python-format
 msgid "%s has a new passed pawn on %s"
-msgstr ""
+msgstr "%s tem um novo peão passado em %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:323
 #, python-format
 msgid "%s has a new double pawn in the half-open %s file"
-msgstr ""
+msgstr "%s tem um novo peão dobrado no meio do tabuleiro: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:326
 #, python-format
 msgid "%s has a new double pawn in the %s file"
-msgstr ""
+msgstr "%s tem um novo peão dobrado na coluna: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:331
 #, python-format
 msgid "%s has an double pawn in the half-open %s file"
-msgstr ""
+msgstr "%s tem dois novos peões no meio do tabuleiro: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:348
 #: lib/pychess/Utils/lutils/strateval.py:353
 #, python-format
 msgid "%s has a new isolated pawn in the %s file"
-msgstr ""
+msgstr "%s tem um peão isolado na posição %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:359
 #, python-format
 msgid "%s moves pawns into stonewall formation"
-msgstr ""
+msgstr "%s move os peões para uma formação de muralha"
 
-#: lib/pychess/Utils/lutils/strateval.py:373
+#: lib/pychess/Utils/lutils/strateval.py:374
 msgid "White can no longer castle in queenside"
-msgstr ""
+msgstr "Brancas não tem mais nenhum castelo ao lado da rainha"
 
-#: lib/pychess/Utils/lutils/strateval.py:375
+#: lib/pychess/Utils/lutils/strateval.py:376
 msgid "White can no longer castle in kingside"
-msgstr ""
+msgstr "Brancas não tem mais nenhum castelo ao lado do rei"
 
-#: lib/pychess/Utils/lutils/strateval.py:378
+#: lib/pychess/Utils/lutils/strateval.py:379
 msgid "Black can no longer castle in queenside"
-msgstr ""
+msgstr "Pretas não tem mais nenhum castelo ao lado da rainha"
 
-#: lib/pychess/Utils/lutils/strateval.py:380
+#: lib/pychess/Utils/lutils/strateval.py:381
 msgid "Black can no longer castle in kingside"
-msgstr ""
+msgstr "Pretas não tem mais nenhum castelo ao lado do rei"
 
-#: lib/pychess/Utils/lutils/strateval.py:416
+#: lib/pychess/Utils/lutils/strateval.py:417
 #, python-format
 msgid "%s has a new trapped bishop on %s"
-msgstr ""
-
-#: lib/pychess/Utils/lutils/strateval.py:440
-#: lib/pychess/Utils/lutils/strateval.py:453
-#, python-format
-msgid "develops a %s: %s"
-msgstr ""
+msgstr "%s tem um bispo preso em %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:441
+#: lib/pychess/Utils/lutils/strateval.py:454
+#, python-format
+msgid "develops a %s: %s"
+msgstr "avançam %s: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:442
 #, python-format
 msgid "brings a pawn closer to the backrow: %s"
-msgstr ""
+msgstr "traz um peão mais perto da última fileira: %s"
 
-#: lib/pychess/Utils/lutils/strateval.py:450
+#: lib/pychess/Utils/lutils/strateval.py:451
 #, python-format
 msgid "brings a %s closer to enemy king: %s"
-msgstr ""
+msgstr "traz um %s mais perto do rei inimigo: %s"
 
-#: lib/pychess/Utils/lutils/strateval.py:471
+#: lib/pychess/Utils/lutils/strateval.py:472
 #, python-format
 msgid "places a %s more active: %s"
-msgstr ""
+msgstr "coloca %s mais ativo: %s"
 
-#: lib/pychess/Utils/lutils/strateval.py:497
+#: lib/pychess/Utils/lutils/strateval.py:498
 msgid "White should do pawn storm in right"
-msgstr ""
+msgstr "Brancas devem fazer uma tempestade com o peão da direita"
 
-#: lib/pychess/Utils/lutils/strateval.py:499
+#: lib/pychess/Utils/lutils/strateval.py:500
 msgid "Black should do pawn storm in left"
-msgstr ""
+msgstr "Pretas devem fazer uma tempestade com o peão da esquerda"
 
-#: lib/pychess/Utils/lutils/strateval.py:502
+#: lib/pychess/Utils/lutils/strateval.py:503
 msgid "White should do pawn storm in left"
-msgstr ""
+msgstr "Brancas devem fazer uma tempestade com o peão da esquerda"
 
-#: lib/pychess/Utils/lutils/strateval.py:504
+#: lib/pychess/Utils/lutils/strateval.py:505
 msgid "Black should do pawn storm in right"
-msgstr ""
+msgstr "Pretas devem fazer uma tempestade com o peão da direita"
 
-#: lib/pychess/Utils/lutils/strateval.py:537
+#: lib/pychess/Utils/lutils/strateval.py:538
 msgid "Black has a rather cramped position"
-msgstr ""
+msgstr "Pretas tem uma posição mais legível no tabuleiro"
 
-#: lib/pychess/Utils/lutils/strateval.py:539
+#: lib/pychess/Utils/lutils/strateval.py:540
 msgid "Black has a slightly cramped position"
-msgstr ""
+msgstr "Pretas estão ligeiramente com as posições em dificuldade"
 
-#: lib/pychess/Utils/lutils/strateval.py:541
+#: lib/pychess/Utils/lutils/strateval.py:542
 msgid "White has a rather cramped position"
-msgstr ""
+msgstr "Brancas tem uma posição mais legível no tabuleiro"
 
-#: lib/pychess/Utils/lutils/strateval.py:543
+#: lib/pychess/Utils/lutils/strateval.py:544
 msgid "White has a slightly cramped position"
-msgstr ""
+msgstr "Brancas estão ligeiramente com as posições em dificuldade"
 
 #: sidepanel/bookPanel.py:9
 msgid "Opening Book"
-msgstr "Livro de Abertura"
+msgstr "Aberturas"
 
 #: sidepanel/bookPanel.py:52
 msgid ""
 "In this position,\n"
 "there is no book move."
 msgstr ""
-"Nesta posição, não há\n"
-"movimentos no livro."
+"Nesta posição, não há \n"
+"nenhum movimento no livro."
 
 #: sidepanel/commentPanel.py:13
 msgid "Comments"
@@ -1564,13 +1566,12 @@ msgstr "Posição inicial"
 #: sidepanel/commentPanel.py:227
 #, python-format
 msgid "%s moves a %s to %s"
-msgstr "%s moveu um %s para %s"
+msgstr "%s move %s para %s"
 
 #: sidepanel/historyPanel.py:13
 msgid "Move History"
-msgstr "Histórico de movimentos"
+msgstr "Movimentos"
 
 #: sidepanel/scorePanel.py:131
 msgid "Score"
 msgstr "Pontuação"
-
