@@ -1148,6 +1148,7 @@ msgstr ""
 msgid "King"
 msgstr ""
 
+# Pawn
 #: lib/pychess/Utils/const.py:84
 msgid "P"
 msgstr ""
@@ -1156,18 +1157,22 @@ msgstr ""
 msgid "N"
 msgstr ""
 
+# Bishop
 #: lib/pychess/Utils/const.py:84
 msgid "B"
 msgstr ""
 
+# Rook
 #: lib/pychess/Utils/const.py:84
 msgid "R"
 msgstr ""
 
+# Queen
 #: lib/pychess/Utils/const.py:84
 msgid "Q"
 msgstr ""
 
+# King
 #: lib/pychess/Utils/const.py:84
 msgid "K"
 msgstr ""
