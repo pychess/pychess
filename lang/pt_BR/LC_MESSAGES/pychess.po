@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-09-15 17:50+0200\n"
-"PO-Revision-Date: 2007-10-09 07:41-0400\n"
+"PO-Revision-Date: 2007-10-10 07:34-0400\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1091,7 +1091,7 @@ msgstr "Você está tentando voltar muitos movimentos"
 #: lib/pychess/Players/Human.py:138
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr "%s foi aceito pelo seu oponente"
+msgstr "%s não foi aceito pelo seu oponente"
 
 #: lib/pychess/Players/Human.py:139
 msgid "You can try to send the offer to your opponent later in the game again."
@@ -1354,11 +1354,11 @@ msgstr "Selecione um arquivo de áudio..."
 
 #: lib/pychess/Utils/lutils/strateval.py:30
 msgid "draws"
-msgstr "empates"
+msgstr "empate"
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 msgid "mates"
-msgstr "mates"
+msgstr "mate"
 
 #: lib/pychess/Utils/lutils/strateval.py:36
 msgid "puts opponent in check"
@@ -1575,3 +1575,4 @@ msgstr "Movimentos"
 #: sidepanel/scorePanel.py:131
 msgid "Score"
 msgstr "Pontuação"
+
