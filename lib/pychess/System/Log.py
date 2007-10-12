@@ -17,11 +17,13 @@ class LogPipe:
             self.to.write(data)
         except IOError:
             log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
-        log.debug (data, self.flag)
+        if log:
+            log.debug (data, self.flag)
+        #self.flush()
     
     def flush (self):
         self.to.flush()
-        log.debug (".flush()", self.flag)
+        #log.debug (".flush()", self.flag)
     
     def fileno (self):
         return self.to.fileno()
@@ -37,6 +39,8 @@ class Log (gobject.GObject):
         
         self.file = open(logpath, "w")
         
+        self.printTime = True
+        
         # We store everything in this list, so that the LogDialog, which is
         # imported a little later, will have all data ever given to Log.
         # When Dialog inits, it will set this list to None, and we will stop
@@ -47,21 +51,26 @@ class Log (gobject.GObject):
         self.publisher.start()
     
     def _format (self, task, message, type):
-        t = time.strftime ("%F %T")
+        t = time.strftime ("%T")
         return "%s %s %s: %s" % (t, task, labels[type], message)
     
     def _log (self, task, message, type):
-        if self.file:
-            formated = self._format(task, message, type)
-            try:
-                print >> self.file, formated
-            except IOError, e:
-                if not type == ERROR:
-                    self.error("Unable to write '%s' to log file because of error: %s" % \
-                            (formated, ", ".join(str(a) for a in e.args)))
+        if self.printTime:
+            message = self._format(task, message, type)
+        self.printTime = message[-1] == ("\n")
+        
+        try:
+            self.file.write(message)
+            self.file.flush()
+        except IOError, e:
+            if not type == ERROR:
+                self.error("Unable to write '%s' to log file because of error: %s" % \
+                        (formated, ", ".join(str(a) for a in e.args)))
+        
         if self.messages != None:
             self.messages.append((task, message, type))
         self.publisher.put((task, message, type))
+        
         if type == ERROR and task != "stdout":
             print formated
     
