@@ -17,8 +17,7 @@ class Player (GObject):
         "offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "dead": (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
     

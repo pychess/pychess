@@ -1,8 +1,8 @@
 """ This is a pool for reusing threads """
 
-import sys, traceback, cStringIO
+import sys, traceback, cStringIO, atexit
 from threading import Condition, Lock
-from threading import Thread
+from threading import Thread, currentThread
 import Queue
 
 import glock
@@ -42,37 +42,40 @@ class ThreadPool:
             self.func = None
             self.wcond = Condition()
             self.queue = queue
+            
+            self.running = True
+            atexit.register(self.__del__)
         
         def run (self):
-            while True:
-                if self.func:
-                    try:
-                        self.func()
-                    except:
-                        if not globals:
-                            # If python has been shut down while we were executing
-                            # We better stop running
-                            return
+            try:
+                while True:
+                    if self.func:
+                        try:
+                            self.func()
+                        except:
+                            if glock._rlock._RLock__owner == self:
+                                # As a service we take care of releasing the gdk
+                                # lock when a thread breaks to avoid freezes
+                                for i in xrange(_rlock._RLock__count):
+                                    glock.release()
+                            
+                            stringio = cStringIO.StringIO()
+                            traceback.print_exc(file=stringio)
+                            error = stringio.getvalue()
+                            print ("Thread %s in threadpool " +
+                                    "raised following error:\n%s") % (self, error)
                         
-                        if glock._rlock._RLock__owner == self:
-                            # As a service we take care of releasing the gdk
-                            # lock when a thread breaks to avoid freezes
-                            for i in xrange(_rlock._RLock__count):
-                                glock.release()
-                        
-                        stringio = cStringIO.StringIO()
-                        traceback.print_exc(file=stringio)
-                        error = stringio.getvalue()
-                        print ("Thread %s in threadpool " +
-                               "raised following error:\n%s") % (self, error)
-                    if not globals:
-                        # If python has been shut down while we were executing
-                        # We better stop running
-                        return
-                    self.func = None
-                    self.queue.put(self)
-                self.wcond.acquire()
-                self.wcond.wait()
+                        self.func = None
+                        self.queue.put(self)
+                    
+                    self.wcond.acquire()
+                    self.wcond.wait()
+            except:
+                if self.running:
+                    raise
+        
+        def __del__ (self):
+            self.running = False
 
 pool = ThreadPool()
 

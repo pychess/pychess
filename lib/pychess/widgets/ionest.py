@@ -466,6 +466,7 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
         if playerno > 0:
             engine = discoverer.getEngineN (playerno-1)
             player = discoverer.initEngine (engine, color)
+            player.start(block=True)
             player.setStrength(diffi)
             if secs:
                 player.setTime(secs, incr)
@@ -505,7 +506,7 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
         engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
         if not engine: engine = anaengines[0]
         hintanalyzer = discoverer.initEngine(engine, WHITE)
-        hintanalyzer.analyze(inverse=False)
+        hintanalyzer.autoAnalyze(inverse=False)
         specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
@@ -513,7 +514,7 @@ def createGame (player0, player1, diffi0, diffi1, secs=300, incr=0):
         engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
         if not engine: engine = anaengines[0]
         spyanalyzer = discoverer.initEngine(engine, WHITE)
-        spyanalyzer.analyze(inverse=True)
+        spyanalyzer.autoAnalyze(inverse=True)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
