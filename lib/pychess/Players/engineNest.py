@@ -6,18 +6,18 @@ from threading import Thread
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.ThreadPool import pool
-from pychess.System.TaskQueue import TaskQueue
+#from pychess.System.TaskQueue import TaskQueue
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.System.prefix import addHomePrefix
 from pychess.Utils.const import BLACK, KILLED, UNKNOWN_REASON
 from CECPProtocol import CECPProtocol
-from ProtocolEngine import ProtocolEngine
-from UCIProtocol import UCIProtocol
+from CECPEngine import CECPEngine
+from UCIEngine import UCIEngine
 
 attrToProtocol = {
-    "uci": UCIProtocol,
-    "cecp": CECPProtocol
+    "uci": UCIEngine,
+    "cecp": CECPEngine
 }
 
 # TODO: Diablo, Amy and Amundsen
@@ -40,6 +40,7 @@ backup = """
         <meta><country>de</country></meta></engine>
     <engine protocol="cecp" protover="1" binname="boochess">
         <meta><country>de</country></meta></engine>
+    
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
     <engine protocol="uci" protover="1" binname="ShredderClassicLinux">
@@ -61,8 +62,6 @@ class EngineDiscoverer (GObject, Thread):
     
     def __init__ (self):
         GObject.__init__(self)
-        Thread.__init__(self)
-        self.setDaemon(True)
         self.xmlpath = addHomePrefix("engines.xml")
         
         try:
@@ -74,7 +73,6 @@ class EngineDiscoverer (GObject, Thread):
             self.dom = minidom.parseString( backup )
         
         self._engines = {}
-        self.toBeDiscovered = TaskQueue()
     
     ############################################################################
     # XML methods                                                              #
@@ -120,7 +118,7 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.dirname(imp.find_module("os")[1])
                 path = os.path.join(path,
                         "site-packages/pychess/Players/PyChess.py")
-            return path, searchPath("python"), [path]
+            return path, searchPath("python"), ["-u", path]
         else:
             for dir in os.environ["PATH"].split(":"):
                 path = os.path.join(dir, binname)
@@ -225,34 +223,26 @@ class EngineDiscoverer (GObject, Thread):
             engine.appendChild(options)
     
     def _findOutMore (self, toBeDiscovered):
-        engine, binname = toBeDiscovered.get()
-        self._engines[binname] = engine
-        
-        e = self.initEngine (engine, BLACK)
-        try:
-            e.wait()
-            protname = engine.getAttribute("protocol")
-            if protname == "uci":
-                e.proto.startGame()
-                self._handleUCIOptions (engine, e.proto.ids, e.proto.options)
-            elif protname == "cecp":
-                self._handleCECPOptions (engine, e.proto.features)
-        finally:
-            e.kill(UNKNOWN_REASON)
-            log.debug("Engine finished %s" % self.getName(engine))
-            self.emit ("engine_discovered", binname, engine)
-            toBeDiscovered.task_done()
+        for xmlengine, binname in toBeDiscovered:
+            engine = self.initEngine (xmlengine, BLACK)
+            try:
+                engine.start(True)
+                protname = xmlengine.getAttribute("protocol")
+                if protname == "uci":
+                    self._handleUCIOptions (xmlengine, engine.ids, engine.options)
+                elif protname == "cecp":
+                    self._handleCECPOptions (xmlengine, engine.features)
+            finally:
+                engine.kill(UNKNOWN_REASON)
+                log.debug("Engine finished %s" % self.getName(xmlengine))
+                self.emit ("engine_discovered", binname, xmlengine)
     
     ############################################################################
     # Main loop                                                                #
     ############################################################################
     
     def start (self):
-        Thread.start(self)
-    
-    def run (self):
-        
-        toBeDiscovered = self.toBeDiscovered
+        toBeDiscovered = []
         
         for engine in self.dom.getElementsByTagName("engine"):
             if not engine.hasAttribute("protocol") and \
@@ -295,17 +285,14 @@ class EngineDiscoverer (GObject, Thread):
                     elem = self._createElement("arg", str(arg), (("type", typestr),))
                     argselem.appendChild(elem)
                 engine.appendChild( self._createElement("md5", md5sum) )
-                toBeDiscovered.put((engine, binname))
+                toBeDiscovered.append((engine, binname))
             
-            else:
-                self._engines[binname] = engine
+            self._engines[binname] = engine
         
-        if not toBeDiscovered.empty():
+        if toBeDiscovered:
             self.emit("discovering_started", 
-                [binname for engine, binname in toBeDiscovered.queue])
-            for i in xrange(toBeDiscovered.qsize()):
-                pool.start(self._findOutMore, toBeDiscovered)
-            toBeDiscovered.join()
+                [binname for engine, binname in toBeDiscovered])
+            self._findOutMore(toBeDiscovered)
         
         self.emit("all_engines_discovered")
         
@@ -338,7 +325,6 @@ class EngineDiscoverer (GObject, Thread):
     
     def getEngines (self):
         """ Returns {binname: enginexml} """
-        self.join()
         return self._engines
     
     def getEngineN (self, index):
@@ -358,7 +344,11 @@ class EngineDiscoverer (GObject, Thread):
         # Test if the call was to get the name of the thread
         if engine == None:
             return Thread.getName(self)
-        return engine.getElementsByTagName("name")[0].childNodes[0].data.strip()
+        names = engine.getElementsByTagName("name")
+        if names:
+            return names[0].childNodes[0].data.strip()
+        else:
+            return engine.getAttribute("binname")
     
     def getCountry (self, engine):
         c = engine.getElementsByTagName("country")
@@ -377,13 +367,16 @@ class EngineDiscoverer (GObject, Thread):
                 args.append(__builtins__[type](value))
         return args
    
-    def initEngine (self, engine, color):
-        protocol = attrToProtocol[engine.getAttribute("protocol")]
-        protover = int(engine.getAttribute("protover"))
-        path = engine.getElementsByTagName("path")[0].childNodes[0].data.strip()
-        args = self.getArgs(engine)
-        subprocess = SubProcess(path, args, warnwords=("illegal","error"))
-        return ProtocolEngine( protocol(subprocess, color, protover) )
+    def initEngine (self, xmlengine, color):
+        protover = int(xmlengine.getAttribute("protover"))
+        protocol = xmlengine.getAttribute("protocol")
+        
+        path = xmlengine.getElementsByTagName("path")[0].childNodes[0].data.strip()
+        args = self.getArgs(xmlengine)
+        type_ = protocol == "cecp" and 1 or 0
+        subprocess = SubProcess(path, args, warnwords=("illegal","error"), type=type_)
+        
+        return attrToProtocol[protocol](subprocess, color, protover)
     
     #
     # Other

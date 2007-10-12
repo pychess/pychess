@@ -1,12 +1,12 @@
 
-from threading import Lock, Thread
+from threading import Lock
 import datetime
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from pychess.System.ThreadPool import pool
+from pychess.System.ThreadPool import pool, PooledThread
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System import glock
 
@@ -14,7 +14,7 @@ from Board import Board
 from logic import getStatus, isClaimableDraw
 from const import *
 
-class GameModel (GObject, Thread):
+class GameModel (GObject, PooledThread):
     
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
@@ -31,8 +31,6 @@ class GameModel (GObject, Thread):
     
     def __init__ (self, timemodel=None):
         GObject.__init__(self)
-        Thread.__init__(self)
-        self.setDaemon(True)
         
         self.boards = [Board(setup=True)]
         self.moves = []
@@ -63,6 +61,18 @@ class GameModel (GObject, Thread):
         self.spectactors = {}
         
         self.applyingMoveLock = Lock()
+        self.conids = []
+    
+    # The following two methods intends to fix exceptions when atexit kills the
+    # engines, asynchronously with the GameModel thread closing
+    def connect (self, signal, func, *args):
+        conid = GObject.connect(self, signal, func, *args)
+        self.conids.append(conid)
+        return conid
+    
+    def __del__ (self):
+        for conid in self.conids:
+            self.disconnect(conid)
     
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
@@ -395,6 +405,7 @@ class GameModel (GObject, Thread):
         self.emit("game_ended", reason)
     
     def kill (self, reason):
+        
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
             return
         
