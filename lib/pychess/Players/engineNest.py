@@ -11,7 +11,6 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.System.prefix import addHomePrefix
 from pychess.Utils.const import BLACK, KILLED, UNKNOWN_REASON
-from CECPProtocol import CECPProtocol
 from CECPEngine import CECPEngine
 from UCIEngine import UCIEngine
 
