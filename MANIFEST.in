@@ -2,11 +2,10 @@ include glade/*.glade glade/*.png flags/*.png
 include README AUTHORS LICENSE INSTALL
 include sidepanel/*.py sidepanel/*.glade sidepanel/*.pyc sidepanel/*.pyo
 include manpages/pychess.1.gz
+include gtksourceview-1.0/language-specs/pgn.lang
 include MANIFEST.in
 include open.db
 include pychess.desktop pychess.svg pychess.png
-include lang/de/LC_MESSAGES/pychess.po
-include lang/nl/LC_MESSAGES/pychess.po
 include lang/da/LC_MESSAGES/pychess.po
 include lang/tr/LC_MESSAGES/pychess.po
 include lang/pt_BR/LC_MESSAGES/pychess.po
