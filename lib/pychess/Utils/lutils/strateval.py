@@ -178,7 +178,7 @@ def attack_type (model, phase):
         see = staticExchangeEvaluate(board, easiestAttack)
         if see > 0:
             # If a new winning capture has been created
-            yield _("threatens to win material %s") % toSAN(board,easiestAttack)
+            yield _("threatens to win material %s") % toSAN(board,easiestAttack, True)
         elif bitLength(attacks) > 1:
             # Even though we might not yet be strong enough, we might still
             # have strengthened another friendly attack
