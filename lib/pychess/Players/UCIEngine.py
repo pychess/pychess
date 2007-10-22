@@ -87,7 +87,6 @@ class UCIEngine (ProtocolEngine):
                 if self.pondermove and gamemodel.moves[-1] == self.pondermove:
                     print >> self.engine, "ponderhit"
                     ponderhit = True
-                    return self.pondermove
                 else:
                     self.ignoreNext = True
                     print >> self.engine, "stop"
