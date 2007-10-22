@@ -83,7 +83,7 @@ class UCIEngine (ProtocolEngine):
         ponderhit = False
         
         if self.mode == NORMAL:
-            if gamemodel.ply > gamemodel.lowply+1 and self.getOption('Ponder'):
+            if gamemodel.ply > gamemodel.lowply+1 and self.pondermove:
                 if self.pondermove and gamemodel.moves[-1] == self.pondermove:
                     print >> self.engine, "ponderhit"
                     ponderhit = True
@@ -203,6 +203,7 @@ class UCIEngine (ProtocolEngine):
         
         # A Move
         if self.mode == NORMAL and parts[0] == "bestmove":
+            
             if self.ignoreNext:
                 self.ignoreNext = False
                 return
@@ -286,7 +287,7 @@ class UCIEngine (ProtocolEngine):
     def pause (self):
         if self.ready:
             if self.board and self.board.color == self.color or \
-                    self.mode != NORMAL or self.getOption('Ponder'):
+                    self.mode != NORMAL or self.pondermove:
                 self.ignoreNext = True
                 print >> self.engine, "stop"
         else:
