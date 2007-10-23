@@ -558,11 +558,7 @@ class CECPEngine (ProtocolEngine):
             try:
                 try:
                     print >> self.engine, "quit"
-                    if not self.engine.wait4exit(timeout=0.5):
-                        self.engine.sigterm()
-                        if not self.engine.wait4exit(timeout=0.25):
-                            self.engine.sigkill()
-                            self.engine.wait4exit()
+                    self.engine.gentleKill()
                 
                 except OSError, e:
                     # No need to raise on a hang up error, as the engine is dead
