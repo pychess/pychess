@@ -10,7 +10,7 @@ from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 from pychess.System.prefix import addHomePrefix
-from pychess.Utils.const import BLACK, KILLED, UNKNOWN_REASON
+from pychess.Utils.const import *
 from CECPEngine import CECPEngine
 from UCIEngine import UCIEngine
 
@@ -372,8 +372,8 @@ class EngineDiscoverer (GObject, Thread):
         
         path = xmlengine.getElementsByTagName("path")[0].childNodes[0].data.strip()
         args = self.getArgs(xmlengine)
-        type_ = protocol == "cecp" and 1 or 0
-        subprocess = SubProcess(path, args, warnwords=("illegal","error"), type=type_)
+        warnwords = ("illegal", "error")
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
         
         return attrToProtocol[protocol](subprocess, color, protover)
     
