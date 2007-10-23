@@ -149,6 +149,8 @@ class SubProcess:
         pool.addDescriptor(self.fdin, self.defname, self.warnwords)
     
     def initPty (self):
+        """ Init the subprocess using a pty """
+        
         self.pid, fd = pty.fork()
         if self.pid == CHILD:
             os.nice(self.priority)
@@ -166,7 +168,9 @@ class SubProcess:
         self.fdout = fd
     
     def initSub (self):
-        """ The subprocess module is not very stable inside threads """
+        """ Init the subprocess using the python subprocess module """
+        
+        # The subprocess module is not very stable inside threads
         assert currentThread().getName() == "MainThread"
         
         p = subprocess.Popen([self.path]+self.args,
@@ -183,6 +187,7 @@ class SubProcess:
         atexit.register(self.sigkill)
     
     def initGlc (self):
+        """ Init the subprocess using fork the same way as glchess """
         
         # Pipe to communicate to engine with
         toManagerPipe = os.pipe()
@@ -317,6 +322,13 @@ class SubProcess:
                 #No such process
                 pass
             else: raise OSError, error
+    
+    def gentleKill (self, first=0.5, second=0.25):
+        if not self.wait4exit(timeout=first):
+            self.sigterm()
+            if not self.wait4exit(timeout=second):
+                self.sigkill()
+                self.wait4exit()
     
     def sigkill (self):
         self.sendSignal(signal.SIGKILL, True)

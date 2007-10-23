@@ -8,8 +8,10 @@ from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.System import glock
 from pychess.System.SubProcess import SubProcess, SubProcessError, searchPath
+from pychess.System.ThreadPool import PooledThread
+from pychess.Utils.const import SUBPROCESS_PTY
 
-class Pinger (GObject):
+class Pinger (GObject, PooledThread):
     """ The recieved signal contains the time it took to get response from the
         server in millisecconds. -1 means that some error occurred """
     
@@ -26,14 +28,11 @@ class Pinger (GObject):
         atexit.register(self.stop)
     
     def start (self):
-        thread = Thread(target=self.ping)
-        thread.setDaemon(True)
-        thread.start()
-    
-    def ping (self):
-        if self.subproc: return
         self.subproc = SubProcess(
-                searchPath("ping"), [self.host], env={"LANG":"en"})
+                searchPath("ping"), [self.host], env={"LANG":"en"}, type=SUBPROCESS_PTY)
+        PooledThread.start(self)
+    
+    def run (self):
         while True:
             try:
                 line = self.subproc.readline()
@@ -58,7 +57,7 @@ class Pinger (GObject):
     
     def stop (self):
         if not self.subproc: return
-        self.subproc.sigkill()
+        self.subproc.gentleKill()
 
 if __name__ == "__main__":
     pinger = Pinger("google.com")
