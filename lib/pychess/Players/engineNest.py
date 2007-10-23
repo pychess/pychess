@@ -222,20 +222,29 @@ class EngineDiscoverer (GObject, Thread):
             engine.appendChild(options)
     
     def _findOutMore (self, toBeDiscovered):
+        # List of engines which fails and must be rechecked another time
+        rechecks = [] 
+        
+        # Test engines
         for xmlengine, binname in toBeDiscovered:
             engine = self.initEngine (xmlengine, BLACK)
             try:
-                engine.start(True)
-                protname = xmlengine.getAttribute("protocol")
-                if protname == "uci":
-                    self._handleUCIOptions (xmlengine, engine.ids, engine.options)
-                elif protname == "cecp":
-                    self._handleCECPOptions (xmlengine, engine.features)
+                try:
+                    engine.start(True)
+                    protname = xmlengine.getAttribute("protocol")
+                    if protname == "uci":
+                        self._handleUCIOptions (xmlengine, engine.ids, engine.options)
+                    elif protname == "cecp":
+                        self._handleCECPOptions (xmlengine, engine.features)
+                except:
+                    rechecks.append(xmlengine)
             finally:
                 engine.kill(UNKNOWN_REASON)
                 log.debug("Engine finished %s" % self.getName(xmlengine))
                 self.emit ("engine_discovered", binname, xmlengine)
-    
+        
+        return rechecks
+        
     ############################################################################
     # Main loop                                                                #
     ############################################################################
@@ -291,7 +300,9 @@ class EngineDiscoverer (GObject, Thread):
         if toBeDiscovered:
             self.emit("discovering_started", 
                 [binname for engine, binname in toBeDiscovered])
-            self._findOutMore(toBeDiscovered)
+            rechecks = self._findOutMore(toBeDiscovered)
+            for xmlengine in rechecks:
+                xmlengine.removeChild("md5")
         
         self.emit("all_engines_discovered")
         
