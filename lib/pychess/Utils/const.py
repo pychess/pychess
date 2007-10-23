@@ -166,3 +166,8 @@ if i >= 0:
 else: username = userdata.pw_name
 del userdata, i
 
+################################################################################
+# Subprocess types                                                             #
+################################################################################
+
+SUBPROCESS_PTY, SUBPROCESS_SUBPROCESS, SUBPROCESS_FORK = range(3)
