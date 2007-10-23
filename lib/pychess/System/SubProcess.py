@@ -1,6 +1,6 @@
 
 from Queue import Queue
-import os, sys, select, signal, errno, termios, atexit
+import os, sys, select, signal, errno, termios, atexit, time
 from select import POLLIN, POLLPRI, POLLOUT, POLLERR, POLLHUP, POLLNVAL
 from threading import currentThread, RLock, Condition
 from termios import tcgetattr, tcsetattr
@@ -332,15 +332,35 @@ class SubProcess:
             if e.errno != 32:
                 raise
     
-    def wait4exit (self):
+    def wait4exit (self, timeout):
+        """ Wait timeout seconds for process to die. Returns true if process
+            is dead (and was reaped), false if alive. """
+        
         try:
-            pid, code = os.waitpid(self.pid, 0)
-            log.debug(os.strerror(code)+"\n", self.defname)
+            if timeout:
+                # Try a few times to reap the process with waitpid:
+                totalwait = timeout
+                deltawait = timeout/1000.0
+                if deltawait < 0.01 and totalwait > 0.01:
+                    deltawait = 0.01
+                while totalwait > 0:
+                    pid, code = os.waitpid(self.pid, os.WNOHANG)
+                    if pid:
+                        ername = os.strerror(code)
+                        log.debug("Exitcode %s\n" % errname, self.defname)
+                        return True
+                    time.sleep(deltawait)
+                    totalwait -= deltawait
+            else:
+                pid, code = os.waitpid(self.pid)
+        
         except OSError, error:
             if error.errno == errno.ECHILD:
                 #No child processes
-                pass
+                return True
             else: raise OSError, error
+       
+        return False
     
     def sendSignal (self, sign, doclose):
         try:
