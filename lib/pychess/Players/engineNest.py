@@ -372,7 +372,8 @@ class EngineDiscoverer (GObject, Thread):
         
         path = xmlengine.getElementsByTagName("path")[0].childNodes[0].data.strip()
         args = self.getArgs(xmlengine)
-        subprocess = SubProcess(path, args, warnwords=("illegal","error"))
+        type_ = protocol == "cecp" and 1 or 0
+        subprocess = SubProcess(path, args, warnwords=("illegal","error"), type=type_)
         
         return attrToProtocol[protocol](subprocess, color, protover)
     
