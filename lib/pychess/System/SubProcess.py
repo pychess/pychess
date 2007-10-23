@@ -352,7 +352,7 @@ class SubProcess:
                     time.sleep(deltawait)
                     totalwait -= deltawait
             else:
-                pid, code = os.waitpid(self.pid)
+                pid, code = os.waitpid(self.pid, 0)
         
         except OSError, error:
             if error.errno == errno.ECHILD:
