@@ -332,7 +332,7 @@ class SubProcess:
             if e.errno != 32:
                 raise
     
-    def wait4exit (self, timeout):
+    def wait4exit (self, timeout=None):
         """ Wait timeout seconds for process to die. Returns true if process
             is dead (and was reaped), false if alive. """
         
@@ -346,8 +346,8 @@ class SubProcess:
                 while totalwait > 0:
                     pid, code = os.waitpid(self.pid, os.WNOHANG)
                     if pid:
-                        ername = os.strerror(code)
-                        log.debug("Exitcode %s\n" % errname, self.defname)
+                        code = (code, os.strerror(code))
+                        log.debug("Exitcode %d %s\n" % code, self.defname)
                         return True
                     time.sleep(deltawait)
                     totalwait -= deltawait
