@@ -78,6 +78,11 @@ class UCIEngine (ProtocolEngine):
         pool.start(autorun)
     
     def makeMove (self, gamemodel):
+        
+        if not self.board:
+            self.isready()
+            self.newGame()
+        
         self.board = gamemodel.boards[-1]
         
         ponderhit = False
@@ -193,13 +198,11 @@ class UCIEngine (ProtocolEngine):
             # set options for
             if "OwnBook" in self.options:
                 self.setOptions({"OwnBook": True})
-            else:
-                self.isready()
-            self.newGame()
+            self.emit("ready")
             return
         
         if parts[0] == "readyok":
-            self.emit("ready")
+            return "ready"
         
         # A Move
         if self.mode == NORMAL and parts[0] == "bestmove":
@@ -236,7 +239,6 @@ class UCIEngine (ProtocolEngine):
                 self.options[option]["default"] = value
                 if type(value) == bool: value = str(value).lower()
                 print >> self.engine, "setoption name", option, "value", str(value)
-        self.isready()
     
     def getOption (self, option):
         if option in self.options:
@@ -244,8 +246,16 @@ class UCIEngine (ProtocolEngine):
         return None
     
     def isready (self):
-        self.ready = False
-        print >> self.engine, "isready"    
+        print >> self.engine, "isready"
+        while True:
+            try:
+                line = self.engine.readline()
+            except SubProcessError:
+                raise PlayerIsDead
+            
+            ready = self.parseLine(line)
+            if ready == "ready":
+                break
     
     def updateTime (self, secs, opsecs):
         if self.color == WHITE:
@@ -256,17 +266,14 @@ class UCIEngine (ProtocolEngine):
             self.wtime = int(opsecs*1000)
     
     def newGame (self):
-        if self.ready:
-            print >> self.engine, "ucinewgame"
-        else:
-            self.runWhenReady(self.newGame)
+        print >> self.engine, "ucinewgame"
     
     def setBoard (self, model):
         # UCI always sets the position when searching for a new game, so we
         # don't actually have to do anything here. However when the new board
         # is from an entirely different game than the current, there is no need
         # that the engine still stores the old transposition table
-        self.newGame
+        self.board = None
     
         ########################################################################
         #   Offer Stuff                                                        #
@@ -279,10 +286,7 @@ class UCIEngine (ProtocolEngine):
             self.emit("accept", offer)
     
     def hurry (self):
-        if self.ready:
-            print >> self.engine, "stop"
-        else:
-            self.runWhenReady(self.hurry)
+        print >> self.engine, "stop"
     
     def pause (self):
         if self.ready:
