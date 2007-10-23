@@ -556,14 +556,24 @@ class CECPEngine (ProtocolEngine):
         if self.connected:
             self.connected = False
             try:
-                print >> self.engine, "quit"
-            except OSError, e:
-                # No need to raise on a hang up error, as the engine is dead anyways
-                if e.errno != 32:
-                    raise
-                else: log.warn("Hung up Error", self.defname)
-            # Clear the analyzed data, if any
-            self.emit("analyze", [])
+                try:
+                    print >> self.engine, "quit"
+                    if not self.engine.wait4exit(timeout=0.5):
+                        self.engine.sigterm()
+                        if not self.engine.wait4exit(timeout=0.25):
+                            self.engine.sigkill()
+                            self.engine.wait4exit()
+                
+                except OSError, e:
+                    # No need to raise on a hang up error, as the engine is dead
+                    # anyways
+                    if e.errno == 32:
+                        log.warn("Hung up Error", self.defname)
+                    else: raise
+            
+            finally:
+                # Clear the analyzed data, if any
+                self.emit("analyze", [])
     
     ############################################################################
     #   Info                                                                   #
