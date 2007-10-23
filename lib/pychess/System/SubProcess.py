@@ -7,6 +7,8 @@ from termios import tcgetattr, tcsetattr
 from random import randint, choice
 import pty, subprocess, glock
 
+from pychess.Utils.const import *
+
 from Log import log
 
 pollErrDic = {
@@ -125,7 +127,7 @@ pool = SubProcessesPool()
 class SubProcess:
     """ Pty based communication wrapper """
     
-    def __init__(self, path, args=[], env=None, warnwords=[], type=0):
+    def __init__(self, path, args=[], warnwords=[], type=SUBPROCESS_SUBPROCESS, env=None):
         self.path = path
         self.args = args
         self.env = env or os.environ
@@ -137,23 +139,14 @@ class SubProcess:
         
         self.priority = 15
         
-        if type == 0:
+        if type == SUBPROCESS_PTY:
             self.initPty()
-        elif type == 1:
+        elif type == SUBPROCESS_SUBPROCESS:
             self.initSub()
-        elif type == 2:
+        elif type == SUBPROCESS_FORK:
             self.initGlc()
         
         pool.addDescriptor(self.fdin, self.defname, self.warnwords)
-        #self.buffer = ""
-        #self.poll = select.poll()
-        #self.poll.register(self.fdin,
-        #    POLLIN | POLLPRI | POLLERR | POLLHUP | POLLNVAL)
-        
-        # This is not nessesary for pty, as the kernel will automatically kill
-        # the childprocesses. Also this is not perfect, as atexit is not called
-        # if we are sigtermed (uncatchable)
-        atexit.register(self.sigkill)
     
     def initPty (self):
         self.pid, fd = pty.fork()
@@ -187,6 +180,7 @@ class SubProcess:
         # but it seams that there are some raceconditions on using too many
         # subprocess calls in a row
         #subprocess.call("/usr/bin/renice %d -p %d" % (self.priority, self.pid))
+        atexit.register(self.sigkill)
     
     def initGlc (self):
         
@@ -267,60 +261,10 @@ class SubProcess:
         
         os.close(toManagerPipe[0])
         os.close(fromManagerPipe[1])
+        atexit.register(self.sigkill)
     
     def readline (self, timeout=None):
         return pool.readline(self.fdin, timeout)
-    
-    def readline2 (self, timeout=None):
-        
-        i = self.buffer.find("\n")
-        if i >= 0:
-            line = self.buffer[:i]
-            self.buffer = self.buffer[i+1:]
-            if line:
-                log.debug(line+"\n", self.defname)
-                return line
-        
-        while True:
-            try:
-                readies = self.poll.poll(timeout)
-            except select.error, e:
-                if e[0] == errno.EINTR:
-                    continue
-                raise
-            
-            if not readies:
-                raise TimeOutError, "Reached %d milisec timeout" % timeout
-            
-            fd, event = readies[0]
-            if event & ERRORS:
-                errors = []
-                if event & POLLERR:
-                    errors.append("Error condition of some sort")
-                if event & POLLHUP:
-                    errors.append("Hung up")
-                if event & POLLNVAL:
-                    errors.append("Invalid request: descriptor not open")
-                raise SubProcessError (event, errors)
-            
-            data = os.read(self.fdin, 4096)
-            self.buffer += data.replace("\r\n","\n").replace("\r","\n")
-            
-            i = self.buffer.find("\n")
-            if i < 0: continue
-            
-            line = self.buffer[:i]
-            self.buffer = self.buffer[i+1:]
-            if line:
-                if self.warnwords:
-                    lline = line.lower()
-                    for word in self.warnwords:
-                        if word in lline:
-                            log.warn(line+"\n", self.defname)
-                            break
-                    else:
-                        log.debug(line+"\n", self.defname)
-                return line
     
     def write (self, data):
         try:
