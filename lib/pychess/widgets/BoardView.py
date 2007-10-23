@@ -369,22 +369,23 @@ class BoardView (gtk.DrawingArea):
                         if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
                             piece.opacity = 1
                         else: piece.opacity = newOp
+            
+            for i, (piece, x, y) in enumerate(self.deadlist):
+                if not paintBox:
+                    paintBox = self.cord2RectRelative(x, y)
+                else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
+                
+                if not conf.get("noAnimation", False):
+                    newOp = piece.opacity + (0-piece.opacity)*mod
+                else:
+                    newOp = 0
+                
+                if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
+                    del self.deadlist[i]
+                else: piece.opacity = newOp
+        
         finally:
             self.animationLock.release()
-        
-        for i, (piece, x, y) in enumerate(self.deadlist):
-            if not paintBox:
-                paintBox = self.cord2RectRelative(x, y)
-            else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
-            
-            if not conf.get("noAnimation", False):
-                newOp = piece.opacity + (0-piece.opacity)*mod
-            else:
-                newOp = 0
-            
-            if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
-                del self.deadlist[i]
-            else: piece.opacity = newOp
         
         if redrawMisc:
             for cord in (self.selected, self.hover, self.active):

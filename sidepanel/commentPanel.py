@@ -88,10 +88,12 @@ class Sidepanel:
                 if row < self.boardview.shown-1:
                     return
             
-            self.frozen = True
-            iter = self.store.get_iter(len(self.store)-1)
-            self.tv.get_selection().select_iter(iter)
-            self.frozen = False
+            # If latest ply is shown, we select the new latest
+            if self.boardview.shown >= model.ply:
+                self.frozen = True
+                iter = self.store.get_iter(len(self.store)-1)
+                self.tv.get_selection().select_iter(iter)
+                self.frozen = False
         
         ########################################################################
         # Set up variables
