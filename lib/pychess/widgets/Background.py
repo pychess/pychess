@@ -334,6 +334,11 @@ class InternetGameTasker (gtk.HBox):
         vbox.add(self.connectButton)
         self.connectButton.set_flags(gtk.CAN_DEFAULT)
         self.connectButton.connect ("clicked", self.connectClicked)
+        # On activate
+        def onActivateCallback (entry):
+            self.connectButton.clicked()
+        self.usernameEntry.connect("activate", onActivateCallback)
+        self.passwordEntry.connect("activate", onActivateCallback)
         # Keep
         uistuff.keep(self.asGuestCheck, "logOnAsGuest")
         asGuestCallback(self.asGuestCheck)
