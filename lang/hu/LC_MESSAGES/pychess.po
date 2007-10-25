@@ -542,15 +542,15 @@ msgstr "<b>Általános képernyőbeállítások</b>"
 
 #: glade/PyChess.glade:1368
 msgid "_Full board animation"
-msgstr "_Teljes animálás"
+msgstr "_Tábla és a lépések"
 
 #: glade/PyChess.glade:1387
 msgid "_Only animate moves"
-msgstr "_Csak a lépések animálása"
+msgstr "_Csak a lépések"
 
 #: glade/PyChess.glade:1407
 msgid "_No animation"
-msgstr "_Semmilyen animálás"
+msgstr "_Nincs"
 
 #: glade/PyChess.glade:1437
 msgid "<b>Animation</b>"
@@ -574,7 +574,7 @@ msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "nessesary for the hint mode to work</b>"
 msgstr ""
-"Az elemző sakkmotor a háttérben fog futni mialatt elemzi az állást. <b>A "
+"Az elemző sakkmotor a háttérben fut, mialatt elemzi az állást. <b>A "
 "javaslat módhoz szükséges.</b>"
 
 #: glade/PyChess.glade:2467
@@ -802,11 +802,11 @@ msgstr "Döntetlen ajánlat elküldve."
 
 #: lib/pychess/Main.py:369
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://hu.wikipedia.org/wiki/Sakk"
 
 #: lib/pychess/Main.py:372
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
-msgstr "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr "http://hu.wikipedia.org/wiki/Sakk#A_sakk_le.C3.ADr.C3.A1sa"
 
 #: lib/pychess/ic/FICSConnection.py:80
 msgid "The connection was broken - got \"end of file\" message"
