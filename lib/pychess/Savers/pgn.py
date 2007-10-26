@@ -131,6 +131,7 @@ class PGNFile (ChessFile):
         else: model.boards = [Board(setup=True)]
         
         movstrs = self._getMoves (gameno)
+        error = None
         for i, mstr in enumerate(movstrs):
             if position != -1 and model.ply >= position:
                 break
@@ -139,8 +140,6 @@ class PGNFile (ChessFile):
             except ParsingError, e:
                 error = LoadingError (("Unable to parse PGN: %s\nat move %d\n" +
                         "Gave error: %s") % (" ".join(movstrs), i+1, e.args))
-            else:
-                error = None
             
             if not error:
                 model.moves.append(move)
