@@ -643,11 +643,11 @@ msgstr "_Tábla felállítása:"
 
 #: glade/PyChess.glade:3303
 msgid "_Observed moves:"
-msgstr "_Megtekintett lépések:"
+msgstr "Lépés (_nézőknek):"
 
 #: glade/PyChess.glade:3331
 msgid "Observed _ends:"
-msgstr "Megtekintett _játszmavégződések:"
+msgstr "_Játszma vége (nézőknek):"
 
 #: glade/PyChess.glade:3467
 msgid "<b>Play Sound When...</b>"
@@ -1414,7 +1414,7 @@ msgstr "<b><big>Akarod menteni a játszmát a bezárás előtt?</big></b>"
 msgid ""
 "It is not possible later to continue the game,\n"
 "if do don't save it."
-msgstr "A játszmát nem tudod később folytatni ha most nem mented el."
+msgstr "A játszmát nem tudod később folytatni, ha most nem mented el."
 
 #: lib/pychess/widgets/ionest.py:777
 msgid "<big><b>There is 1 game with unsaved changes:</b></big>"
