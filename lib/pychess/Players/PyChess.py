@@ -257,9 +257,11 @@ def go (queue):
             lsearch.nodes = 0
             lsearch.searching = False
         
-        move = mvs[0]
-        print "move", toSAN(board, move)
-        board.applyMove(move)
+        if mvs:
+	        print "move", toSAN(board, mvs[0])
+	        board.applyMove(mvs[0])
+	    else:
+	    	print "No moves found"
     finally:
         searchLock.release()
 
