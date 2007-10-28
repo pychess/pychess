@@ -95,11 +95,9 @@ class IcGameModel (GameModel):
         # us the result.
     
     def checkStatus (self):
-        status, reason = getStatus(self.boards[-1])
-        # On FICS we don't want to autodraw on insufficient material
-        if reason == DRAW_INSUFFICIENT:
-            return True
-        return GameModel.checkStatus(self)
+        if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
+            return False
+        return True
     
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)

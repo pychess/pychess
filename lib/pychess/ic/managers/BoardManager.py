@@ -2,14 +2,27 @@
 import re
 from gobject import *
 
+from pychess.System.Log import log
 from pychess.Utils.const import *
+
+from pychess.ic.VerboseTelnet import *
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
 # FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
-ratings = "\(([0-9\ \-\+]{4})\)"
+ratings = "\(([0-9\ \-\+]{4}|UNR)\)"
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
+
+moveListNames = re.compile("%s %s vs. %s %s --- .*" %
+        (names, ratings, names, ratings))
+
+moveListOther = re.compile(
+        "%s %s match, initial time: (\d+) minutes, increment: (\d+) seconds\." %
+        (rated, types), re.IGNORECASE)
+
+moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\) *(?:%s +\(\d+:\d+\))?" %
+        (sanmove, sanmove))
 
 fileToEpcord = (("a3","b3","c3","d3","e3","f3","g3","h3"),
                 ("a6","b6","c6","d6","e6","f6","g6","h6"))
@@ -40,43 +53,32 @@ class BoardManager (GObject):
         
         self.connection = connection
         
-        self.connection.expect ( "<12>(.*?)\n", self.onStyle12 )
-        self.connection.expect ( "<d1>(.*?)\n", self.onMove )
+        self.connection.expect_line (self.onStyle12, "<12>\s*(.+)")
+        self.connection.expect_line (self.onMove, "<d1>\s*(.+)")
         
-        self.connection.expect (
-            "Creating: %s %s %s %s %s %s (\d+) (\d+)\n\r{Game (\d+)\s" % \
-            (names, ratings, names, ratings, rated, types),
-            self.playBoardCreated)
+        self.connection.expect_fromto (self.playBoardCreated,
+                "Creating: %s %s %s %s %s %s (\d+) (\d+)" %
+                    (names, ratings, names, ratings, rated, types),
+                "{Game (\d+)\s")
         
-        self.connection.expect (
-            "Game (\d+): %s %s %s %s %s %s (\d+) (\d+)" % \
-            (names, ratings, names, ratings, rated, types),
-            self.observeBoardCreated)
+        self.connection.expect_fromto (self.onObservedGame,
+            "Movelist for game (\d+):", "{Still in progress} \*")
         
-        self.connection.expect (
-            "\s*(\d+)\.\s*%s\s+\(\d+:\d+\)\s+?(?:%s\s+\(\d+:\d+\)\s*)?\n" % \
-            (sanmove, sanmove), self.moveLine)
+        self.connection.expect_line (self.onGameEnd,
+                "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)")
         
-        self.connection.expect ( "      {Still in progress} *", self.moveListEnd)
+        self.connection.expect_line (self.onGamePause,
+                "Game (\d+): Game clock (paused|resumed).")
         
-        self.connection.expect (
-            "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)\n",
-            self.onGameEnd)
-        
-        self.connection.expect (
-            "\rGame (\d+): Game clock (paused|resumed).\n", self.onGamePause)
-        
-        self.observeQueue = {}
-        # activeItem is the gameno of the observed game of which we are
-        # currently parsing the history
-        self.activeItem = None
-        # playedItem is the gameno of the game in which we are currenly taking
-        # part
-        self.playedItem = None
+        self.queuedMoves = {}
+        self.queuedCalls = {}
+        self.ourGameno = ""
         
         print >> self.connection.client, "style 12"
         print >> self.connection.client, "iset startpos 1"
-        print >> self.connection.client, "iset gameinfo 1"
+        # gameinfo <g1> doesn't really have any interesting info, at least not
+        # until we implement crasyhouse and stuff
+        # print >> self.connection.client, "iset gameinfo 1"
         print >> self.connection.client, "iset compressmove 1"
     
     def _style12ToFenRow (self, row):
@@ -92,8 +94,8 @@ class BoardManager (GObject):
                 fenrow.append(c)
         return "".join(fenrow)
     
-    def onStyle12 (self, client, groups):
-        groups = groups[0].split()
+    def onStyle12 (self, match):
+        groups = match.groups()[0].split()
         
         curcol = groups[8] == "B" and BLACK or WHITE
         gameno = groups[15]
@@ -153,61 +155,72 @@ class BoardManager (GObject):
         
         # Emit
         f = lambda: self.emit("boardRecieved", gameno, ply, fen, wsec, bsec)
-        if self.activeItem == gameno:
-            for key in self.observeQueue[self.activeItem]["moves"]:
-                if key > ply+1:
-                    del self.observeQueue[self.activeItem]["moves"][key]
-            self.observeQueue[self.activeItem]["queue"].append(f)
+        if gameno in self.queuedMoves:
+            for moveply in self.queuedMoves[gameno].keys():
+                if moveply > ply+1:
+                    del self.queuedMoves[gameno][moveply]
+            self.queuedCalls[gameno].append(f)
         else:
             f()
     
-    def onMove (self, client, groups):
-        gameno, curply, sanmove, _, _, remainingMs = groups[0].split()[:6]
+    def onMove (self, match):
+        gameno, curply, sanmove, _, _, remainingMs = match.groups()[0].split()[:6]
         moveply = int(curply)-1
         
-        if self.activeItem == gameno:
-            self.observeQueue[self.activeItem]["moves"][moveply] = sanmove
+        if gameno in self.queuedMoves:
+            self.queuedMoves[moveply] = sanmove
         else:
             movecolor = moveply % 2 == 1 and BLACK or WHITE
             self.emit("moveRecieved", moveply, sanmove, gameno, movecolor)
             self.emit("clockUpdatedMs", gameno, int(remainingMs), movecolor)
     
-    def playBoardCreated (self, client, groups):
-        wname, wtit, wrat, bname, btit, brat, rt, type, min, incr, gmno = groups
+    def playBoardCreated (self, matchlist):
+        gameno = matchlist[1].groups()[0]
+        wname, wtit, wrat, bname, btit, brat, rt, type, min, incr = \
+                matchlist[0].groups()
         board = {"wname": wname, "wtitle": wtit, "wrating": wrat,
                  "bname": bname, "btitle": btit, "brating": brat,
                  "rated": rt, "type": type, "mins": min, "incr": incr,
-                 "gameno": gmno}
-        self.playedItem = gmno
+                 "gameno": gameno}
+        self.ourGameno = gameno
         self.emit("playBoardCreated", board)
     
-    def observeBoardCreated (self, client, groups):
-        gameno = groups[0]
-        item = {"general": groups, "moves": {}, "queue":[]}
-        self.observeQueue[gameno] = item
-        if not self.activeItem:
-            self.activeItem = gameno
-            print >> self.connection.client, "moves", gameno
-    
-    def moveLine (self, client, groups):
-        if not self.activeItem: return
-        moveno, wmove, bmove = groups
-        ply = int(moveno)*2-2
-        self.observeQueue[self.activeItem]["moves"][ply] = wmove
-        if bmove:
-            self.observeQueue[self.activeItem]["moves"][ply+1] = bmove
-    
-    def moveListEnd (self, client, nothing):
-        if not self.activeItem: return
-        stuf = self.observeQueue[self.activeItem]["general"]
-        gmno, wnam, wtit, wrat, bnam, btit, brat, rated, type, mins, incr = stuf
-        ficsHeaders = ( ("Event", "Ficsgame"), ("Site", "Internet"),
-                ("White", wnam), ("Black", bnam),
-                ("WhiteElo", wrat), ("BlackElo", brat) )
-        pgn = "\n".join (['[%s "%s"]' % keyvalue for keyvalue in ficsHeaders])
-        pgn += "\n"
+    def onObservedGame (self, matchlist):
         
-        moves = self.observeQueue[self.activeItem]["moves"].items()
+        # Get info from match
+        gameno = matchlist[0].groups()[0]
+        
+        whitename, whitetitle, whiterating, blackname, blacktitle, blackrating = \
+                moveListNames.match(matchlist[2]).groups()
+        
+        rated, type, minutes, increment = \
+                moveListOther.match(matchlist[3]).groups()
+        
+        moves = self.queuedMoves[gameno]
+        for moveline in matchlist[7:-1]:
+            if not moveListMoves.match(moveline):
+                print repr(moveline)
+            moveno, wmove, bmove = moveListMoves.match(moveline).groups()
+            ply = int(moveno)*2-2
+            moves[ply] = wmove
+            if bmove:
+                moves[ply+1] = bmove
+        
+        # Create game
+        pgnHead = [
+            ("Event", "Ficsgame"),
+            ("Site", "Internet"),
+            ("White", whitename),
+            ("Black", blackname)
+        ]
+        if whiterating not in ("0", "UNR"):
+            ficsHeaders.append(("WhiteElo", whiterating))
+        if blackrating not in ("0", "UNR"):
+            ficsHeaders.append(("BlackElo", blackrating))
+        
+        pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
+        
+        moves = moves.items()
         moves.sort()
         for ply, move in moves:
             if ply % 2 == 0:
@@ -215,28 +228,17 @@ class BoardManager (GObject):
             pgn += move + " "
         pgn += "\n"
         
-        if wtit:           wnam += "(%s)" % wtit
-        if wrat.isdigit(): wnam += " %s" % wrat
-        if btit:           bnam += "(%s)" % btit
-        if brat.isdigit(): bnam += " %s" % brat
-
-        self.emit ("observeBoardCreated", gmno, pgn,
-                   int(mins)*60, int(incr), wnam, bnam)
+        self.emit ("observeBoardCreated", gameno, pgn,
+                   int(minutes)*60, int(increment), whitename, blackname)
         
-        for function in self.observeQueue[self.activeItem]["queue"]:
+        for function in self.queuedCalls[gameno]:
             function()
         
-        del self.observeQueue[self.activeItem]
-        self.activeItem = None
-        
-        if self.observeQueue:
-            self.activeItem = self.observeQueue.keys()[0]
-            print >> self.connection.client, "moves", self.activeItem
+        del self.queuedMoves[gameno]
+        del self.queuedCalls[gameno]
     
-    def onGameEnd (self, client, groups):
-        gameno, comment, state = groups
-        
-        print "onGameEnd", groups
+    def onGameEnd (self, match):
+        gameno, comment, state = match.groups()
         
         parts = comment.split()
         if parts[0] in ("Creating", "Continuing"):
@@ -282,8 +284,8 @@ class BoardManager (GObject):
                 reason = UNKNOWN_REASON
         elif "adjourned" in parts:
             status = ADJOURNED
-            if "self.connection" in parts:
-                reason = ADJOURNED_LOST_self.connection
+            if "connection" in parts:
+                reason = ADJOURNED_LOST_CONNECTION
             elif "agreement" in parts:
                 reason = ADJOURNED_AGREEMENT
             elif "shutdown" in parts:
@@ -294,11 +296,11 @@ class BoardManager (GObject):
             status = ABORTED
             if "agreement" in parts:
                 reason = ABORTED_AGREEMENT
+            elif "moves" in parts:
+                # lost connection and too few moves; game aborted *
+                reason = ABORTED_EARLY
             elif "move" in parts:
                 # Game aborted on move 1 *
-                reason = ABORTED_EARLY
-            elif "moves" in parts:
-                # lost self.connection and too few moves; game aborted *
                 reason = ABORTED_EARLY
             elif "shutdown" in parts:
                 reason = ABORTED_SERVER_SHUTDOWN
@@ -313,23 +315,21 @@ class BoardManager (GObject):
             status = UNKNOWN_STATE
             reason = UNKNOWN_REASON
         
-        if gameno == self.playedItem:
-            print "emit cur game ended"
+        if gameno == self.ourGameno:
             self.emit("curGameEnded", gameno, status, reason)
         else:
             f = lambda: self.emit("obsGameEnded", gameno, status, reason)
-            if self.activeItem == gameno:
-                print "added observed game ended to queue"
-                self.observeQueue[self.activeItem]["queue"].append(f)
+            if gameno in self.queuedCalls:
+                log.debug("added observed game ended to queue")
+                self.queuedCalls[gameno].append(f)
             else:
-                print "emit observedgameended"
                 f()
     
-    def onGamePause (self, client, groups):
-        gameno, state = groups
+    def onGamePause (self, match):
+        gameno, state = match.groups()
         f = lambda: self.emit("gamePaused", gameno, state=="paused")
-        if self.activeItem == gameno:
-            self.observeQueue[self.activeItem]["queue"].append(f)
+        if gameno in self.queuedCalls:
+            self.queuedCalls[gameno].append(f)
         else:
             f()
     
@@ -348,6 +348,9 @@ class BoardManager (GObject):
     
     def observe (self, gameno):
         print >> self.connection.client, "observe", gameno
+        print >> self.connection.client, "moves", gameno
+        self.queuedMoves[gameno] = {}
+        self.queuedCalls[gameno] = []
     
     def unobserve (self, gameno):
         print >> self.connection.client, "unobserve", gameno
