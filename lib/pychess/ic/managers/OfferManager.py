@@ -53,9 +53,9 @@ class OfferManager (GObject):
         
         self.connection = connection
         
-        self.connection.expect ( 
-            "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+?)\n" % names, self.onOfferAdd)
-        self.connection.expect ( "<pr> (\d+)\n", self.onOfferRemove)
+        self.connection.expect_line (self.onOfferAdd,
+                "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+)" % names)
+        self.connection.expect_line (self.onOfferRemove, "<pr> (\d+)")
         
         for ficsstring, offer, error in (
                 ("You cannot switch sides once a game is underway.", 
@@ -68,12 +68,15 @@ class OfferManager (GObject):
                         Offer(FLAG_CALL), ACTION_ERROR_CLOCK_NOT_STARTED),
                 ("The clock is not paused.",
                         Offer(RESUME_OFFER), ACTION_ERROR_CLOCK_NOT_PAUSED)):
-            self.connection.expect (ficsstring,
-                    lambda c,g: self.emit("onActionError", offer, error))
+            self.connection.expect_line (
+                    lambda c,g: self.emit("onActionError", offer, error),
+                    ficsstring)
         
-        self.connection.expect ("There are (?:(no)|only (\d+) half) moves in your game.", self.notEnoughMovesToUndo)
+        self.connection.expect_line (self.notEnoughMovesToUndo,
+                "There are (?:(no)|only (\d+) half) moves in your game.")
         
-        self.connection.expect ("There are no ([^ ]+) offers to (accept).", self.noOffersToAccept)
+        self.connection.expect_line (self.noOffersToAccept,
+                "There are no ([^ ]+) offers to (accept).")
         
         self.lastPly = 0
         self.indexType = {}
@@ -84,8 +87,8 @@ class OfferManager (GObject):
     def stop (self, connection):
         print >> self.connection.client, "iset pendinfo 0"
     
-    def noOffersToAccept (self, client, groups):
-        offerstr, type = groups
+    def noOffersToAccept (self, match):
+        offerstr, type = match.groups()
         if type == "accept":
             error = ACTION_ERROR_NONE_TO_ACCEPT
         elif type == "withdraw":
@@ -95,13 +98,13 @@ class OfferManager (GObject):
         offerType = strToOfferType[offerstr]
         self.emit("onActionError", Offer(offerType), error)
     
-    def notEnoughMovesToUndo (self, client, groups):
-        param = groups[0] != "no" and groups[0] or 0
+    def notEnoughMovesToUndo (self, match):
+        param = match.groups()[0] != "no" and groups[0] or 0
         offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
         self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
     
-    def onOfferAdd (self, client, groups):
-        tofrom, index, type, parameters = groups
+    def onOfferAdd (self, match):
+        tofrom, index, type, parameters = match.groups()
         
         if tofrom == "t":
             # IcGameModel keeps track of the offers we've sent ourselves, so we
@@ -131,8 +134,8 @@ class OfferManager (GObject):
                       "parameters:", parameters, ". Declining")
             print >> client, "decline", index
     
-    def onOfferRemove (self, client, groups):
-        index = groups[0]
+    def onOfferRemove (self, match):
+        index = match.groups()[0]
         if not index in self.indexType:
             return
         if self.indexType[index] == "match":

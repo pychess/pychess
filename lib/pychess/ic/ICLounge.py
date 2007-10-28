@@ -150,27 +150,7 @@ class UserInfoSection(Section):
             
             if time and self.connection.isRegistred():
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
-                s = ""
-                if time[0]:
-                    if time[0] == "1":
-                        s += "%s day" % time[0]
-                    else: s += "%s days" % time[0]
-                if time[1]:
-                    if s: s += ", "
-                    if time[1] == "1":
-                        s += "%s hour" % time[1]
-                    else: s += "%s hrs" % time[1]
-                if time[2]:
-                    if s: s += ", "
-                    if time[2] == "1":
-                        s += "%s min" % time[2]
-                    else: s += "%s mins" % time[2]
-                if time[3]:
-                    if s: s += ", "
-                    if time[3] == "1":
-                        s += "%s sec" % time[3]
-                    else: s += "%s secs" % time[3]
-                s += " "+_("online in total")
+                s = time + " "+_("online in total")
                 table.attach(label(s), 1, 6, row, row+1)
                 row += 1
             

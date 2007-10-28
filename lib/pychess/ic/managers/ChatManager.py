@@ -17,8 +17,8 @@ class ChatManager (GObject):
         GObject.__init__(self)
         self.channel = 4
         
-        telnet.expect ( "%s tells you: (.*?)\n" % names, self.onPrivaetMessage )
-        telnet.expect ( "%s\(\d+): (.*?)\n" % names, self.onChannelMessage )
+        telnet.expect ( "[\r\n]%s tells you: (.*?)\n" % names, self.onPrivaetMessage )
+        telnet.expect ( "[\r\n]%s\(\d+): (.*?)\n" % names, self.onChannelMessage )
     
     def start (self):
         print >> telnet.client, "set shout 0"
