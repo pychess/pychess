@@ -1,19 +1,20 @@
 import re, socket
-from threading import Thread
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
-from VerboseTelnet import VerboseTelnet, InterruptError
+from VerboseTelnet import *
 
-from GameListManager import GameListManager
-from FingerManager import FingerManager
-from NewsManager import NewsManager
-from BoardManager import BoardManager
-from OfferManager import OfferManager
+from managers.GameListManager import GameListManager
+from managers.FingerManager import FingerManager
+from managers.NewsManager import NewsManager
+from managers.BoardManager import BoardManager
+from managers.OfferManager import OfferManager
+
+from pychess.System.ThreadPool import PooledThread
 
 class LogOnError (StandardError): pass
 
-class Connection (GObject, Thread):
+class Connection (GObject, PooledThread):
     
     __gsignals__ = {
         'connecting':    (SIGNAL_RUN_FIRST, None, ()),
@@ -25,8 +26,6 @@ class Connection (GObject, Thread):
     
     def __init__ (self, host, port, username, password):
         GObject.__init__(self)
-        Thread.__init__(self)
-        self.setDaemon(True)
         
         self.host = host
         self.port = port
@@ -36,28 +35,26 @@ class Connection (GObject, Thread):
         self.connected = False
         self.connecting = False
         
-        self.regexps = {}
+        self.predictions = set()
+        self.predictionsDict = {}
     
-    def expect (self, regexp, func, flag=None):
-        if flag != None:
-            r = re.compile(regexp, flag)
-        else: r = re.compile(regexp)
-        
-        if r in self.regexps:
-            self.regexps[r].append(func)
-        else:
-            self.regexps[r] = [func]
+    def expect (self, prediction):
+        self.predictions.add(prediction)
+        self.predictionsDict[prediction.callback] = prediction
     
-    def unexpect (self, func):
-        for regexp, funcs in self.regexps.items():
-            try:
-                index = funcs.index(func)
-                if len(funcs) <= 1:
-                    del self.regexps[regexp]
-                else:
-                    del funcs[index]
-            except ValueError:
-                pass
+    def unexpect (self, callback):
+        self.predictions.remove(self.predictionsDict.pop(callback))
+    
+    def expect_line (self, callback, regexp):
+        self.expect(Prediction(READ_LINE, callback, regexp))
+    
+    def expect_line_plus (self, callback, regexp):
+        self.expect(Prediction(READ_LINE_PLUS, callback, regexp))
+    
+    def expect_fromto (self, callback, regexp0, regexp1):
+        self.expect(Prediction(READ_FROMTO, callback, regexp0, regexp1))
+    
+    
     
     def cancel (self):
         raise NotImplementedError()
@@ -104,19 +101,19 @@ class FICSConnection (Connection):
             
             if self.username and self.username != "guest":
                 print >> self.client, self.username
-                r = self.client.expectList([
-                    "password: ",
-                    "login: ",
-                    "\n(.*?)Try again.",
-                    "Press return to enter the server as"]).next()
-                if r[0] < 0:
+                index, match, text = self.client.expect([
+                        "password: .*",
+                        "login: .*",
+                        "\n(.*?)Try again\..*",
+                        "Press return to enter the server as.*"])
+                if index < 0:
                     raise IOError, EOF
-                elif r[0] == 0:
+                elif index == 0:
                     print >> self.client, self.password
                     self.registred = True
-                elif r[0] == 2:
-                    raise LogOnError, _(r[1][0].strip())
-                elif r[0] == 3:
+                elif index == 2:
+                    raise LogOnError, _(match.groups()[0].strip())
+                elif index == 3:
                     raise LogOnError, NOTREG % self.username
             
             else:
@@ -125,14 +122,14 @@ class FICSConnection (Connection):
                 print >> self.client
                 self.registred = False
             
-            r = self.client.expectList([
-                "Invalid password",
-                "Starting FICS session as (\w+)(?:\(([CUHIFWM])\))?"]).next()
+            index, match, text = self.client.expect([
+                    "Invalid password",
+                    "Starting FICS session as (\w+)(?:\(([CUHIFWM])\))?"])
             
-            if r[0] == 0:
+            if index == 0:
                 raise LogOnError, BADPAS
-            elif r[0] == 1:
-                self.username = r[1][0]
+            elif index == 1:
+                self.username = match.groups()[0]
             
             self.client.read_until("fics%")
             
@@ -153,13 +150,11 @@ class FICSConnection (Connection):
         try:
             self._connect()
             while self.isConnected():
-                for match in self.client.expect(self.regexps):
-                    if match[0] < 0:
+                for match, prediction in self.client.read(self.predictions):
+                    if not match:
                         connected = False
                         break
-                    funcs, groups = match
-                    for func in funcs:
-                        func(self.client, groups)
+                    prediction.callback(match)
         
         except Exception, e:
             if self.connected:

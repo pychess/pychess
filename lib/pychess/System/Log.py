@@ -55,6 +55,8 @@ class Log (gobject.GObject):
         return "%s %s %s: %s" % (t, task, labels[type], message)
     
     def _log (self, task, message, type):
+        if not message: return
+        
         if self.printTime:
             message = self._format(task, message, type)
         self.printTime = message[-1] == ("\n")

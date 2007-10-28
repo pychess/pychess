@@ -321,6 +321,7 @@ class GameModel (GObject, PooledThread):
                 
                 if not self.checkStatus():
                     break
+                self.emit("game_changed")
                 
                 for spectactor in self.spectactors.values():
                     spectactor.makeMove(self)
@@ -328,14 +329,17 @@ class GameModel (GObject, PooledThread):
                 self.applyingMoveLock.release()
     
     def checkStatus (self):
+        if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
+            return False
+        
         status, reason = getStatus(self.boards[-1])
-        if status != RUNNING:
+        if status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.status = status
             self.emit("game_changed")
             self.status = RUNNING # self.end only accepts ending if running
             self.end(status, reason)
             return False
-        self.emit("game_changed")
+        
         return True
     
     def pause (self):
