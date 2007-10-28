@@ -67,6 +67,7 @@ class ICLogon:
     def showNormal (self):
         self.widgets["mainvbox"].set_sensitive(True)
         self.widgets["connectButton"].show()
+        self.widgets["fics_logon"].set_default(self.widgets["connectButton"])
         self.widgets["stopButton"].hide()
         self.widgets["progressbar"].hide()
         gobject.source_remove(self.pulser)
@@ -114,12 +115,13 @@ class ICLogon:
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):
-        self.showNormal()
-        self.widgets["messagePanel"].hide()
+        self.hide()
         
         self.lounge = ICLounge(connection)
-        self.hide()
         self.lounge.show()
+        
+        self.showNormal()
+        self.widgets["messagePanel"].hide()
     
     def onDisconnected (self, connection):
         global dialog
