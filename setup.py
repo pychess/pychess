@@ -8,6 +8,11 @@ import imp
 VERSION = imp.load_module("const",
           *imp.find_module("const",["lib/pychess/Utils"])).VERSION
 
+VERSION_NAME = imp.load_module("const",
+          *imp.find_module("const",["lib/pychess/Utils"])).VERSION_NAME
+
+NAME = "Pychess %s" % VERSION_NAME
+
 from distutils.core import setup
 from glob import glob
 from os import listdir
@@ -19,19 +24,16 @@ DESC = "Gnome chess game"
 LONG_DESC = """PyChess is a gtk chessgame for Linux. It is designed to a the same time be easy to use, beautiful to look at and provide advanced functions for advanced players"""
 
 CLASSIFIERS = [
-    'License :: OSI-Approved Open Source :: GNU General Public License (GPL)',
-    'Intended Audience :: by End-User Class :: End Users/Desktop',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Intended Audience :: End Users/Desktop',
     'Development Status :: 3 - Alpha',
     'Topic :: Desktop Environment :: Gnome',
     'Topic :: Games/Entertainment :: Board Games',
     'Operating System :: POSIX',
-    'User Interface :: Graphical :: Gnome',
-    'User Interface :: Graphical :: Cairo',
-    'User Interface :: Toolkits/Libraries :: GTK+',
-    'Translations :: English',
-    'Translations :: Danish',
-    'Translations :: German',
-    'Translations :: Dutch'
+    'Natural Language :: English',
+    'Natural Language :: Danish',
+    'Natural Language :: Hungarian',
+    'Natural Language :: Portuguese (Brazilian)'
 ]
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
@@ -86,7 +88,7 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
 # Setup
 
 setup (
-    name             = 'pychess',
+    name             = NAME,
     version          = VERSION,
     classifiers      = CLASSIFIERS,
     description      = DESC,
