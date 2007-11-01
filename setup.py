@@ -93,8 +93,6 @@ setup (
     classifiers      = CLASSIFIERS,
     description      = DESC,
     long_description = LONG_DESC,
-    author           = 'Thomas Dybdahl Ahle',
-    author_email     = 'lobais@gmail.com',
     license          = 'GPL2',
     url              = 'http://pychess.googlepages.com/home',
     download_url     = 'http://gnomefiles.org/app.php/pychess',
