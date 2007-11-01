@@ -7,6 +7,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import LBoard
 from pychess.Utils.lutils.lmove import parseAN
 
+FEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
 
 class ZobristTestCase(unittest.TestCase):
 
@@ -14,14 +15,8 @@ class ZobristTestCase(unittest.TestCase):
         self.board.applyMove(parseAN(self.board, an_move))
     
     def setUp(self):
-        self.positions = []
-        for line in open('gamefiles/perftsuite.epd'):
-            semi = line.find(" ;")
-            self.positions.append(line[:semi])
-
         self.board = LBoard()
-        pos = self.positions[2]
-        self.board.applyFen(pos)
+        self.board.applyFen(FEN)
          
     def testZobrist_1(self):
         """Testing zobrist hashing with simple move and take back"""
@@ -67,6 +62,34 @@ class ZobristTestCase(unittest.TestCase):
         self.make_move("h1g1")
         self.make_move("e8c8")
         self.make_move("e1c1")
+        hash2 = self.board.hash
+
+        self.assertEqual(hash1, hash2)
+
+    def testZobrist_4(self):
+        """Testing zobrist hashing with en-passant"""
+        
+        self.make_move("a2a4")
+        self.make_move("b4a3")
+        self.make_move("e1c1")
+        self.make_move("c7c5")
+        self.make_move("d5c6")
+        self.make_move("e8c8")
+        hash1 = self.board.hash
+        
+        self.board.popMove()
+        self.board.popMove()
+        self.board.popMove()
+        self.board.popMove()
+        self.board.popMove()
+        self.board.popMove()
+
+        self.make_move("e1c1")
+        self.make_move("c7c5")
+        self.make_move("d5c6")
+        self.make_move("e8c8")
+        self.make_move("a2a4")
+        self.make_move("b4a3")
         hash2 = self.board.hash
 
         self.assertEqual(hash1, hash2)
