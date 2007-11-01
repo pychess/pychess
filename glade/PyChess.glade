@@ -568,7 +568,7 @@
   <property name="border_width">5</property>
   <property name="destroy_with_parent">False</property>
   <property name="name">PyChess</property>
-  <property name="copyright">Copyright Â© 2006</property>
+  <property name="copyright">Copyright Â© 2006-2007</property>
   <property name="comments" translatable="yes">Chess client for the Gnome desktop</property>
   <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
@@ -589,7 +589,10 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <property name="authors">Thomas Dybdahl Ahle
 Norbert Fabritius
 Thijs Vermeir
-Wojciech Halicki-Piszko</property>
+Wojciech Halicki-Piszko
+Bajusz Tamás
+Pierre Boulenguez
+Leonardo Gregianin</property>
   <property name="documenters"></property>
   <property name="artists">Thomas Dybdahl Ahle</property>
   <property name="translator_credits">Danish (da) - Thomas Dybdahl Ahle
@@ -597,9 +600,22 @@ English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
 German (de_DE) - Norbert Fabritius
 Polish (pl) - Wojciech Halicki-Piszko
+Spanish (es) - Enrique
 Turkish (tr) - Ertugrul Harman
-Hungarian (hu) - Bajusz TamÃ¡s
-Spanish (es) - 	Enrique</property>
+French (fr) - Pierre Boulenguez
+Hungarian (hu) - Bajusz Tamás
+Brazilian (pt_BR) - Leonardo Gregianin
+
+Rosetta Launchpad translators:
+Azerbaijani (az) - Elxan ?smay?lov
+Catalan (ca) - spin_555
+Dutch (nl) - Jan Willems
+Greek (el) - Ioannis Koniaris
+Italian (it) - Clasprea
+Russian (ru) - ssergeje
+Spanish (es) - Manuel Kaufmann
+Brazilian (pt_BR) - George S. Silva
+Turkish (tr) - ryukun</property>
   <property name="logo">about.png</property>
 </widget>
 
