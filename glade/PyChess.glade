@@ -593,8 +593,9 @@ Wojciech Halicki-Piszko
 Bajusz Tamás
 Pierre Boulenguez
 Leonardo Gregianin</property>
-  <property name="documenters"></property>
-  <property name="artists">Thomas Dybdahl Ahle</property>
+  <property name="documenters">Thomas Dybdahl Ahle</property>
+  <property name="artists">Karola Kreńskiego
+Thomas Dybdahl Ahle</property>
   <property name="translator_credits">Danish (da) - Thomas Dybdahl Ahle
 English (en) - Thomas Dybdahl Ahle
 Dutch (nl_NL) - Wouter Stomp
