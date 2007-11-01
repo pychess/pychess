@@ -14,6 +14,7 @@ from pychess.Utils.const import *
 
 MAXDEPTH = 1
 
+
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
        http://www.albert.nu/programs/sharper/perft.htm"""
@@ -111,7 +112,7 @@ class FindMovesTestCase(unittest.TestCase):
                 if depth+1 > MAXDEPTH: break
                 self.count = 0
                 print "searching depth %d for %d moves" % \
-               	        (depth+1, suposedMoveCount)
+                        (depth+1, suposedMoveCount)
                 self.perft (board, depth+1, [])
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
