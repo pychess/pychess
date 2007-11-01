@@ -6,6 +6,7 @@ __builtin__.__dict__['_'] = lambda s: s
 from pychess.Utils.lutils.LBoard import LBoard
 import sys
 
+
 class FenTestCase(unittest.TestCase):
     
     def setUp(self):
@@ -14,7 +15,9 @@ class FenTestCase(unittest.TestCase):
             semi = line.find(" ;")
             self.positions.append(line[:semi])
     
-    def testMovegen(self):
+    def testFEN(self):
+        """Testing board-FEN conversion with several positions"""
+        print
         board = LBoard()
         for i, fenstr in enumerate(self.positions[1:]):
             sys.stdout.write("#")
