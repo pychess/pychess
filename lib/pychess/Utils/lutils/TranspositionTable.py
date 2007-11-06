@@ -26,8 +26,11 @@ class TranspositionTable (UserDict):
         self.krono.append(key)
     
     def probe (self, hash, depth, alpha, beta):
-        if not hash in self: return
-        move, score, hashf = self[hash]
+        if not hash in self:
+            return
+        move, score, hashf, ply = self[hash]
+        if ply < depth:
+            return
         if hashf == hashfEXACT:
             return move, score, hashf
         if hashf == hashfALPHA and score <= alpha:
@@ -40,7 +43,7 @@ class TranspositionTable (UserDict):
         #    if score > 0:
         #        score += ply
         #    else: score -= ply
-        self[hash] = (move, score, hashf)
+        self[hash] = (move, score, hashf, ply)
     
     def addKiller (self, ply, move):
         if self.killer1[ply] == -1:

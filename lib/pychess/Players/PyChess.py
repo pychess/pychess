@@ -212,18 +212,37 @@ def go (queue):
                 mvs, scr = alphaBeta (board, sd)
             
             else:
-                # We bet that the game will be about 30 moves. That gives us
-                # starttime / 30 seconds per turn + the incremnt.
+                # We bet that the game will be about 40 moves. That gives us
+                # starttime / 40 seconds per turn + the incremnt.
                 # TODO: Create more sophisticated method.
-                usetime = float(mytime) / max((30-len(board.history)),3)
-                usetime = max (usetime, 5) # We don't wan't to search for e.g. 0 secs
+                usetime = float(mytime) / max((40-len(board.history)/2), 2)
+                usetime = max (usetime, 0.5) # We don't wan't to search for e.g. 0 secs
                 starttime = time()
-                endtime = starttime + usetime
-                print "Time left: %d seconds; Thinking for %d seconds" % \
-                       (mytime, usetime)
-                for depth in range(1,sd+1):
-                    mvs, scr = alphaBeta (board, depth)
-                    if time() > endtime: break
+                lsearch.endtime = starttime + usetime
+                prevtime = 0
+                print "Time left: %d seconds; Plan to thinking for %d seconds; Endtime at %d" % \
+                       (mytime, usetime, lsearch.endtime)
+                for depth in range(1, sd+1):
+                    # Heuristic time saving
+                    # Don't wase time, if the estimated isn't enough to complete next depth
+                    if usetime > prevtime*4:
+                        print 'Startind depth %s at %0.1f' % (depth, time())
+                        lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
+                        search_result = alphaBeta(board, depth)
+                        if lsearch.searching:
+                            mvs, scr = search_result
+                            if time() > lsearch.endtime:
+                                print 'Endtime occured after depth %s' % depth
+                                break
+                        else:
+                            print 'Endtime occured in depth %s' % depth
+                            break
+                        prevtime = time()-starttime - prevtime
+                    else:
+                        print 'Not enough time for depth %s' % depth
+                        break
+                print 'Move at %0.1f' % time()
+
                 mytime -= time() - starttime
                 mytime += increment
             
@@ -257,11 +276,9 @@ def go (queue):
             lsearch.nodes = 0
             lsearch.searching = False
         
-        if mvs:
-            print "move", toSAN(board, mvs[0])
-            board.applyMove(mvs[0])
-        else:
-            print "No moves found"
+        move = mvs[0]
+        print "move", toSAN(board, move)
+        board.applyMove(move)
     finally:
         searchLock.release()
 
@@ -297,9 +314,12 @@ while True:
     
     elif lines[0] == "sd":
         sd = int(lines[1])
-        if sd >= 7: sd = 3
-        elif sd >= 4: sd = 2
-        else: sd = 1
+        if sd >= 7:
+            sd = 9
+        elif sd >= 4:
+            sd = 3
+        else:
+            sd = 1
     
     elif lines[0] == "level":
         moves = int(lines[1])
