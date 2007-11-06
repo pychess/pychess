@@ -1,3 +1,4 @@
+from time import time
 
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from pychess.Utils.const import *
@@ -9,12 +10,15 @@ from TranspositionTable import TranspositionTable
 import ldraw
 
 from heapq import heappush, heappop
+TIMECHECK_FREQ = 500
 
 table = TranspositionTable(50000)
 searching = False
 movesearches = 0
 nodes = 0
 last = 0
+endtime = 0
+timecheck_counter = TIMECHECK_FREQ
 
 def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
@@ -30,11 +34,22 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             the deepest)
         *   a score of your standing the the last possition. """
     
-    global last, searching, nodes, movesearches, table
+    global last, searching, nodes, movesearches, table, endtime, timecheck_counter
     foundPv = False
     hashf = hashfALPHA
     amove = []
-    
+
+    ############################################################################
+    # Cheking the time                                                         #
+    ############################################################################
+
+    timecheck_counter -= 1
+    if timecheck_counter == 0:
+        if time() > endtime:
+            searching = False
+            return [], 0
+        timecheck_counter = TIMECHECK_FREQ
+
     ############################################################################
     # Look up transposition table                                              #
     ############################################################################
