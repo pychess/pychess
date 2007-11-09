@@ -215,18 +215,21 @@ def go (queue):
                 # We bet that the game will be about 40 moves. That gives us
                 # starttime / 40 seconds per turn + the incremnt.
                 # TODO: Create more sophisticated method.
-                usetime = float(mytime) / max((40-len(board.history)/2), 2)
-                usetime = max (usetime, 0.5) # We don't wan't to search for e.g. 0 secs
+                if mytime <= 60:
+                    usetime = float(mytime) / 30
+                else:
+                    usetime = float(mytime) / max((40-len(board.history)/2), 2)
+                    usetime = max (usetime, 0.5) # We don't wan't to search for e.g. 0 secs
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
-                print "Time left: %d seconds; Plan to thinking for %d seconds; Endtime at %d" % \
+                print "Time left: %3.2f seconds; Plan to thinking for %3.2f seconds; Endtime at %0.2f" % \
                        (mytime, usetime, lsearch.endtime)
                 for depth in range(1, sd+1):
                     # Heuristic time saving
-                    # Don't wase time, if the estimated isn't enough to complete next depth
-                    if usetime > prevtime*4:
-                        print 'Startind depth %s at %0.1f' % (depth, time())
+                    # Don't waste time, if the estimated isn't enough to complete next depth
+                    if usetime > prevtime*4 or usetime <= 1:
+                        print 'Starting depth %s at %0.2f' % (depth, time())
                         lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
                         search_result = alphaBeta(board, depth)
                         if lsearch.searching:
