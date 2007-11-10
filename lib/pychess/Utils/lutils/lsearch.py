@@ -197,11 +197,15 @@ def quiescent (board, alpha, beta, ply):
         alpha = value
     
     if isCheck:
+        noMove = True
         for move in genCheckEvasions(board):
+            noMove = False
             if value >= beta:
                 return [], beta
-            return [], alpha
-        return [], -MATE_VALUE+ply-2
+            else:
+                break
+        if noMove:
+            return [], -MATE_VALUE+ply-2
     
     amove = []
     
