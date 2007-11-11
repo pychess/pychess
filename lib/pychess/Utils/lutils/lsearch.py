@@ -145,9 +145,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 table.record (board.hash, move, beta, hashfBETA, ply)
                 # We don't want to use our valuable killer move spaces for
                 # captures and promotions, as these are searched early anyways.
-                if board.arBoard[move&63] == EMPTY and not move>>12 in \
-                        (QUEEN_PROMOTION, ROOK_PROMOTION,
-                         BISHOP_PROMOTION, KNIGHT_PROMOTION):
+                if board.arBoard[move&63] == EMPTY and \
+                        not move>>12 in PROMOTIONS:
                     table.addKiller (ply, move)
                 last = 2
                 return [move]+mvs, beta
