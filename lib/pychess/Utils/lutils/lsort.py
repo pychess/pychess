@@ -29,8 +29,7 @@ def staticExchangeEvaluate (board, move):
     if xray[pieces[fcord]]:
         ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
     
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if flag in PROMOTIONS:
         swaplist.append(PIECE_VALUES[flag-3] - PAWN_VALUE)
         lastval = -PIECE_VALUES[flag-3]
     else:
@@ -84,8 +83,7 @@ def getMoveValue (board, table, ply, move):
     
     flag = move >> 12
     
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if flag in PROMOTIONS:
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
     killervalue = table.isKiller(ply, move)

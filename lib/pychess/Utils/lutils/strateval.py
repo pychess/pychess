@@ -100,8 +100,7 @@ def moves_fianchetto (model, phase):
 def prefix_type (model, phase):
     flag = FLAG(model.moves[-1].move)
     
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if flag in PROMOTIONS:
         yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
                     
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -145,8 +144,7 @@ def attack_type (model, phase):
     for ncap in genCaptures(board):
         
         # getCaptures also generate promotions
-        if FLAG(ncap) in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                          BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        if FLAG(ncap) in PROMOTIONS:
             continue
         
         # We are only interested in the attacks of the piece we just moved
@@ -194,8 +192,7 @@ def attack_type (model, phase):
     for ncap in genCaptures(board):
         
         # getCaptures also generate promotions
-        if FLAG(ncap) in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                          BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        if FLAG(ncap) in PROMOTIONS:
             continue
         
         # We don't want to know about the same cord more than once

@@ -306,8 +306,7 @@ class LBoard:
                 takenPawnC = self.enpassant + (self.color == WHITE and -8 or 8)
                 self._removePiece (takenPawnC, PAWN, opcolor)
                 
-            elif flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                          BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            elif flag in PROMOTIONS:
                 piece = flag - 2 # The flags has values: 7, 6, 5, 4
                 self._removePiece(fcord, PAWN, self.color)
                 self._addPiece(tcord, piece, self.color)
@@ -396,8 +395,7 @@ class LBoard:
                         self.hash ^= W_OOOHash
                         self.castling &= ~W_OOO
         
-        if not flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        if not flag in PROMOTIONS:
             self._move(fcord, tcord, fpiece, self.color)
         
         self.setColor(opcolor)
@@ -427,20 +425,19 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
-       	    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                        BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            if flag in PROMOTIONS:
                 self._addPiece (fcord, PAWN, color)
-       	    else: self._addPiece (fcord, tpiece, color)
-       	
-       	# Put back piece captured by enpassant
-       	elif flag == ENPASSANT:
+            else:
+                self._addPiece (fcord, tpiece, color)
+        
+        # Put back piece captured by enpassant
+        elif flag == ENPASSANT:
             epcord = color == WHITE and tcord - 8 or tcord + 8
             self._addPiece (epcord, PAWN, opcolor)
             self._addPiece (fcord, PAWN, color)
             
-       	# Put back promoted pawn
-       	elif flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                    BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        # Put back promoted pawn
+        elif flag in PROMOTIONS:
             self._addPiece (fcord, PAWN, color)
         # Put back moved piece
         else:
