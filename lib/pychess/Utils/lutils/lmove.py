@@ -203,8 +203,7 @@ def toSAN (board, move, localRepr=False):
             part0 += reprFile[FILE(fcord)]
     
     notat = part0 + part1
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if flag in PROMOTIONS:
         if localRepr:
             notat += "="+localReprSign[PROMOTE_PIECE(flag)]
         else:
@@ -317,8 +316,7 @@ def parseSAN (board, san):
             continue
         if ffile != None and ffile != FILE(f):
             continue
-        if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                    BISHOP_PROMOTION, KNIGHT_PROMOTION) and FLAG(move) != flag:
+        if flag in PROMOTIONS and FLAG(move) != flag:
             continue
         
         board.lock.acquire()
@@ -374,8 +372,7 @@ def toLAN (board, move):
     
     flag = FLAG(move)
     
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                      BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if flag in PROMOTIONS:
         s += "=" + reprSign[PROMOTE_PIECE(flag)]
     
     return s
@@ -413,8 +410,7 @@ def toAN (board, move):
         board should be prior to the move """
     
     s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
-    if FLAG(move) in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                      BISHOP_PROMOTION, KNIGHT_PROMOTION):
+    if FLAG(move) in PROMOTIONS:
         s += reprSign[PROMOTE_PIECE(FLAG(move))]
     return s
 

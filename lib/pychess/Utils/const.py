@@ -90,6 +90,7 @@ localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
 KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION = range(8)
 
+PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
 

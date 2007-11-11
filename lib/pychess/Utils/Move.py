@@ -17,8 +17,7 @@ class Move:
         if not cord1:
             self.move = cord0
             self.flag = self.move >> 12
-            if self.flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                             BISHOP_PROMOTION, KNIGHT_PROMOTION):
+            if self.flag in PROMOTIONS:
                 self.promotion = lmove.PROMOTE_PIECE (self.move)
             else: self.promotion = QUEEN
             self.cord0 = Cord(lmove.FCORD(self.move))
@@ -53,8 +52,7 @@ class Move:
     cords = property(_get_cords)
     
     def _get_promotion (self):
-        if self.flag in (QUEEN_PROMOTION, ROOK_PROMOTION,
-                         BISHOP_PROMOTION, KNIGHT_PROMOTION):
+        if self.flag in PROMOTIONS:
             return lmove.PROMOTE_PIECE(self.flag)
         return None
     promotion = property(_get_promotion)

@@ -5,8 +5,7 @@ from pychess.Utils.const import *
 from lmove import newMove
 
 def newPromotes (fromcord, tocord):
-    for p in KNIGHT_PROMOTION, BISHOP_PROMOTION, \
-             ROOK_PROMOTION, QUEEN_PROMOTION:
+    for p in PROMOTIONS:
         yield newMove(fromcord, tocord, p)
 
 ################################################################################

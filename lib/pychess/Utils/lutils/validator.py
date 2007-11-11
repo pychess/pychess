@@ -33,8 +33,7 @@ def validateMove (board, move):
     flag = move >> 12
     
     # If promotion move, piece must be pawn 
-    if flag in (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
-                KNIGHT_PROMOTION, ENPASSANT) and fpiece != PAWN:
+    if (flag in PROMOTIONS or flag == ENPASSANT) and fpiece != PAWN:
         return False
     
     # If enpassant, then the enpassant square must be correct 

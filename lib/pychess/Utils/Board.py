@@ -87,8 +87,7 @@ class Board:
                 newBoard[Cord(F8)] = newBoard[Cord(H8)]
                 newBoard[Cord(H8)] = None
         
-        if flag in (KNIGHT_PROMOTION, BISHOP_PROMOTION,
-                    ROOK_PROMOTION, QUEEN_PROMOTION):
+        if flag in PROMOTIONS:
             newBoard[cord1] = Piece(self.color, PROMOTE_PIECE(flag))
         
         elif flag == ENPASSANT:
@@ -142,7 +141,7 @@ class Board:
     
     def __setitem__ (self, cord, piece):
         self.data[cord.y][cord.x] = piece
-	
+    
     def clone (self):
         fenstr = self.asFen()
         lboard = LBoard()
