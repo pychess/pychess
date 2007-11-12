@@ -129,6 +129,7 @@ class BoardControl (gtk.EventBox):
         return Cord(int(point[0]), int(point[1]))
     
     def button_press (self, widget, event):
+        if self.locked: return False
         self.pressed = True
         log.debug("press %d %d\n" % (event.x, event.y), "BoardControl")
         
@@ -142,6 +143,7 @@ class BoardControl (gtk.EventBox):
             self.view.active = cord
     
     def button_release (self, widget, event):
+        if self.locked: return False
         self.pressed = False
         log.debug("release %d %d\n" % (event.x, event.y), "BoardControl")
         

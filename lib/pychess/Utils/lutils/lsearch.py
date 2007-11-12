@@ -40,17 +40,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     amove = []
 
     ############################################################################
-    # Cheking the time                                                         #
-    ############################################################################
-
-    timecheck_counter -= 1
-    if timecheck_counter == 0:
-        if time() > endtime:
-            searching = False
-            return [], 0
-        timecheck_counter = TIMECHECK_FREQ
-
-    ############################################################################
     # Look up transposition table                                              #
     ############################################################################
     
@@ -75,7 +64,17 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         return [], 0
     
     ############################################################################
-    # Break itereation if interupted                                           #
+    # Cheking the time                                                         #
+    ############################################################################
+
+    timecheck_counter -= 1
+    if timecheck_counter == 0:
+        if time() > endtime:
+            searching = False
+        timecheck_counter = TIMECHECK_FREQ
+    
+    ############################################################################
+    # Break itereation if interupted or if times up                            #
     ############################################################################
     
     if not searching:
@@ -90,6 +89,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if depth <= 0:
         if isCheck:
+            # Being in check is that serious, that we want to take a deeper look
             depth += 1
         else:
             last = 0
@@ -100,6 +100,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     movesearches += 1
+    
+    # TODO: Using heap is slower than simply doing a list.sort()
     
     heap = []
     if isCheck:
@@ -188,27 +190,27 @@ def quiescent (board, alpha, beta, ply):
     
     isCheck = board.isChecked()
     
+    # Our quiescent search will evaluate the current board, and if 
     value = evaluateComplete(board, board.color)
-    
     if value >= beta and not isCheck:
         return [], beta
     if value > alpha:
         alpha = value
     
-    if isCheck:
-        noMove = True
-        for move in genCheckEvasions(board):
-            noMove = False
-            if value >= beta:
-                return [], beta
-            else:
-                break
-        if noMove:
-            return [], -MATE_VALUE+ply-2
-    
     amove = []
     
     heap = []
+    
+    if isCheck:
+        aMove = None
+        for move in genCheckEvasions(board):
+            if value >= beta:
+                return [move], beta
+            aMove = move
+        if aMove:
+            return [move], alpha
+        return [], -MATE_VALUE+ply-2
+    
     for move in genCaptures (board):
         heappush(heap, (-getCaptureValue (board, move), move))
     
