@@ -297,19 +297,23 @@ class SubProcess:
                     if pid:
                         code = (code, os.strerror(code))
                         log.debug("Exitcode %d %s\n" % code, self.defname)
-                        return True
+                        return code
                     time.sleep(deltawait)
                     totalwait -= deltawait
             else:
+                # If no timeout, we don't add os.WNOHANG, to block until data
                 pid, code = os.waitpid(self.pid, 0)
+                code = (code, os.strerror(code))
+                log.debug("Exitcode %d %s\n" % code, self.defname)
+                return code
         
         except OSError, error:
             if error.errno == errno.ECHILD:
                 #No child processes
-                return True
+                return (0, os.strerror(0))
             else: raise OSError, error
-       
-        return False
+        
+        return (None, None)
     
     def sendSignal (self, sign, doclose):
         try:
@@ -324,11 +328,15 @@ class SubProcess:
             else: raise OSError, error
     
     def gentleKill (self, first=0.5, second=0.25):
-        if not self.wait4exit(timeout=first):
+        code, string = self.wait4exit(timeout=first)
+        if code == None:
             self.sigterm()
-            if not self.wait4exit(timeout=second):
+            code, string = self.wait4exit(timeout=second)
+            if code == None:
                 self.sigkill()
-                self.wait4exit()
+                return self.wait4exit()[0]
+            return code
+        return code
     
     def sigkill (self):
         self.sendSignal(signal.SIGKILL, True)

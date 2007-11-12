@@ -233,7 +233,7 @@ class UCIEngine (ProtocolEngine):
     ############################################################################
     
     def setOptions (self, dic):
-        assert self.uciok
+        #assert self.uciok
         for option, value in dic.iteritems():
             if self.options[option]["default"] != value:
                 self.options[option]["default"] = value
@@ -347,19 +347,24 @@ class UCIEngine (ProtocolEngine):
             self.kill(reason)
     
     def kill (self, reason):
+        """ Kills the engine, starting with the 'stop' and 'quit' commands, then
+            trying sigterm and eventually sigkill.
+            Returns the exitcode, or if engine have already been killed, the
+            method returns None """
         if self.connected:
             self.connected = False
             try:
                 try:
                     print >> self.engine, "stop"
                     print >> self.engine, "quit"
-                    self.engine.gentleKill()
+                    return self.engine.gentleKill()
                 
                 except OSError, e:
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
                         log.warn("Hung up Error", self.defname)
+                        return e.errno
                     else: raise
             
             finally:
