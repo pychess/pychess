@@ -191,6 +191,20 @@ def analyze ():
 # go()                                                                         #
 ################################################################################
 
+def remainingMovesA (x):
+    # Based on regression of a 180k games pgn
+    return -1.71086*10**(-12)*x**6 \
+           +1.69103*10**(-9)*x**5 \
+           -6.00801*10**(-7)*x**4 \
+           +8.17741*10**(-5)*x**3 \
+           +0.000291858*x**2 \
+           -0.94497*x \
+           +78.8979
+
+def remainingMovesB (x):
+    # We bet a game will be arround 80 moves
+    return max(80-x,4)
+
 def go (queue):
     """ Finds and prints the best move from the current position """
     searchLock.acquire()
@@ -212,14 +226,16 @@ def go (queue):
                 mvs, scr = alphaBeta (board, sd)
             
             else:
-                # We bet that the game will be about 40 moves. That gives us
-                # starttime / 40 seconds per turn + the incremnt.
-                # TODO: Create more sophisticated method.
-                if mytime <= 60:
-                    usetime = float(mytime) / 30
-                else:
-                    usetime = float(mytime) / max((40-len(board.history)/2), 2)
-                    usetime = max (usetime, 0.5) # We don't wan't to search for e.g. 0 secs
+                usetime = mytime / remainingMovesA(len(board.history))
+                if mytime < 6*60+increment*40:
+                    # If game is blitz, we assume 40 moves rather than 80
+                    usetime *= 2
+                # The increment is a constant. We'll use this allways
+                usetime += increment
+                if usetime < 0.5:
+                    # We don't wan't to search for e.g. 0 secs
+                    usetime = 0.5
+                
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
