@@ -202,17 +202,16 @@ def quiescent (board, alpha, beta, ply):
     heap = []
     
     if isCheck:
-        aMove = None
-        for move in genCheckEvasions(board):
-            if value >= beta:
-                return [move], beta
-            aMove = move
-        if aMove:
-            return [move], alpha
-        return [], -MATE_VALUE+ply-2
-    
-    for move in genCaptures (board):
-        heappush(heap, (-getCaptureValue (board, move), move))
+        someMove = False
+    	for move in genCheckEvasions(board):
+    	    someMove = True
+    	    # Heap.append is fine, as we don't really do sorting on the few moves
+    		heap.append((0, move))
+    	if not someMove:
+    	    return [], -MATE_VALUE+ply-2
+    else:
+        for move in genCaptures (board):
+            heappush(heap, (-getCaptureValue (board, move), move))
     
     while heap:
         
