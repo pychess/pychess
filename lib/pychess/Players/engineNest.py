@@ -66,7 +66,7 @@ class EngineDiscoverer (GObject, Thread):
         try:
             self.dom = minidom.parse( self.xmlpath )
         except ExpatError, e:
-            log.warn("engineNest: %s" % e)
+            log.warn("engineNest: %s\n" % e)
             self.dom = minidom.parseString( backup )
         except IOError:
             self.dom = minidom.parseString( backup )
@@ -123,10 +123,10 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.join(dir, binname)
                 if os.path.isfile(path):
                     if not os.access (path, os.R_OK):
-                        log.warn("Could not read the file %s" % path)
+                        log.warn("Could not read the file %s\n" % path)
                         continue
                     if not os.access (path, os.EX_OK):
-                        log.warn("Could not execute the file %s" % path)
+                        log.warn("Could not execute the file %s\n" % path)
                         continue
                     return path, path, []
         return False
@@ -239,8 +239,12 @@ class EngineDiscoverer (GObject, Thread):
                 except:
                     rechecks.append(xmlengine)
             finally:
-                engine.kill(UNKNOWN_REASON)
-                log.debug("Engine finished %s" % self.getName(xmlengine))
+                exitcode = engine.kill(UNKNOWN_REASON)
+                if exitcode:
+                    rechecks.append(xmlengine)
+                    log.debug("Engine failed %s\n" % self.getName(xmlengine))
+                else:
+                    log.debug("Engine finished %s\n" % self.getName(xmlengine))
                 self.emit ("engine_discovered", binname, xmlengine)
         
         return rechecks
@@ -302,7 +306,8 @@ class EngineDiscoverer (GObject, Thread):
                 [binname for engine, binname in toBeDiscovered])
             rechecks = self._findOutMore(toBeDiscovered)
             for xmlengine in rechecks:
-                xmlengine.removeChild("md5")
+                md5Nodes = xmlengine.getElementsByTagName("md5")
+                xmlengine.removeChild(md5Nodes[0])
         
         self.emit("all_engines_discovered")
         
@@ -311,7 +316,7 @@ class EngineDiscoverer (GObject, Thread):
             self.dom.writexml(f)
             f.close()
         except IOError, e:
-            log.warn("Saving enginexml raised exception: %s" % \
+            log.warn("Saving enginexml raised exception: %s\n" % \
                     ", ".join(str(a) for a in e.args))
     
     ############################################################################

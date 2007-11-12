@@ -315,12 +315,9 @@ while True:
     
     elif lines[0] == "sd":
         sd = int(lines[1])
-        if sd >= 7:
-            sd = 9
-        elif sd >= 4:
-            sd = 3
-        else:
-            sd = 1
+        if sd >= 5:
+            print "If the game has no timesettings, you probably don't want\n"+\
+                  "to set a search depth much greater than 4"
     
     elif lines[0] == "level":
         moves = int(lines[1])

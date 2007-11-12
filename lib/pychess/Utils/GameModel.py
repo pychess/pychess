@@ -311,28 +311,26 @@ class GameModel (GObject, PooledThread):
             self.applyingMoveLock.acquire()
             try:
                 self.needsSave = True
-                
                 newBoard = self.boards[-1].move(move)
                 self.boards.append(newBoard)
                 self.moves.append(move)
-                
                 if self.timemodel:
                     self.timemodel.tap()
-                
                 if not self.checkStatus():
                     break
                 self.emit("game_changed")
-                
                 for spectactor in self.spectactors.values():
                     spectactor.makeMove(self)
             finally:
                 self.applyingMoveLock.release()
     
     def checkStatus (self):
+        print 1
         if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
             return False
-        
+        print 2
         status, reason = getStatus(self.boards[-1])
+        print 3, status, reason
         if status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.status = status
             self.emit("game_changed")

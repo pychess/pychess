@@ -36,10 +36,10 @@ def getStatus (board):
         return DRAW, DRAW_INSUFFICIENT
     
     if ldraw.testRepetition (lboard):
-        return RUNNING, DRAW_REPITITION
+        return DRAW, DRAW_REPITITION
     
     if ldraw.testFifty (lboard):
-        return RUNNING, DRAW_50MOVES
+        return DRAW, DRAW_50MOVES
     
     lboard.lock.acquire()
     try:
