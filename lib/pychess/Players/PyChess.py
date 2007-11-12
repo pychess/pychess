@@ -223,28 +223,26 @@ def go (queue):
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
-                print "Time left: %3.2f seconds; Plan to thinking for %3.2f seconds; Endtime at %0.2f" % \
-                       (mytime, usetime, lsearch.endtime)
+                print "Time left: %3.2f seconds; Plan to thinking for %3.2f seconds" % \
+                       (mytime, usetime)
                 for depth in range(1, sd+1):
                     # Heuristic time saving
                     # Don't waste time, if the estimated isn't enough to complete next depth
                     if usetime > prevtime*4 or usetime <= 1:
-                        print 'Starting depth %s at %0.2f' % (depth, time())
                         lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
                         search_result = alphaBeta(board, depth)
                         if lsearch.searching:
                             mvs, scr = search_result
                             if time() > lsearch.endtime:
-                                print 'Endtime occured after depth %s' % depth
+                                # Endtime occured after depth
                                 break
                         else:
-                            print 'Endtime occured in depth %s' % depth
+                            # Endtime occured in depth
                             break
                         prevtime = time()-starttime - prevtime
                     else:
-                        print 'Not enough time for depth %s' % depth
+                        # Not enough time for depth
                         break
-                print 'Move at %0.1f' % time()
 
                 mytime -= time() - starttime
                 mytime += increment
