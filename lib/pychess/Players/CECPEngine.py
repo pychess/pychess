@@ -445,7 +445,7 @@ class CECPEngine (ProtocolEngine):
         if self.ready:
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if self.board:
-                    self.moveNow()
+                    self.hurry()
                     self.force()
                     self.movecon.acquire()
                     self.movecon.wait()
