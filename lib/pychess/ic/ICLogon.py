@@ -115,9 +115,8 @@ class ICLogon:
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):
-        self.hide()
-        
         self.lounge = ICLounge(connection)
+        self.hide()
         self.lounge.show()
         
         self.showNormal()

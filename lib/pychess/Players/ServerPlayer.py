@@ -13,6 +13,7 @@ class ServerPlayer (Player):
         Player.__init__(self)
         
         self.queue = Queue()
+        self.okqueue = Queue()
         
         self.name = name
         self.color = color
@@ -63,32 +64,39 @@ class ServerPlayer (Player):
             self.lastPly = curply
             if movecol == self.color:
                 self.queue.put((self.lastPly,sanmove))
+                # Ensure the fics thread doesn't continue parsing, before the
+                # game/player thread has recieved the move
+                self.okqueue.get(block=True)
     
     def makeMove (self, gamemodel):
         self.gamemodel = gamemodel
         self.lastPly = gamemodel.ply
+        
         if gamemodel.moves and not self.external:
             self.connection.bm.sendMove (
                     toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
         
         item = self.queue.get(block=True)
-        if item == "del":
-            raise PlayerIsDead
-        if item == "int":
-            raise TurnInterrupt
-        
-        ply, sanmove = item
-        if ply < gamemodel.ply:
-            # This should only happen in an observed game
-            self.emit("offer", Offer(TAKEBACK_FORCE, ply))
-        
         try:
-            move = parseSAN (gamemodel.boards[-1], sanmove)
-        except ParsingError, e:
-            print "Error", e.args[0]
-            print "moves are", listToSan(gamemodel.boards[0], gamemodel.moves)
-            raise PlayerIsDead
-        return move
+            if item == "del":
+                raise PlayerIsDead
+            if item == "int":
+                raise TurnInterrupt
+            
+            ply, sanmove = item
+            if ply < gamemodel.ply:
+                # This should only happen in an observed game
+                self.emit("offer", Offer(TAKEBACK_FORCE, ply))
+            
+            try:
+                move = parseSAN (gamemodel.boards[-1], sanmove)
+            except ParsingError, e:
+                print "Error", e.args[0]
+                print "moves are", listToSan(gamemodel.boards[0], gamemodel.moves)
+                raise PlayerIsDead
+            return move
+        finally:
+            self.okqueue.put("ok")
     
     def __repr__ (self):
         return self.name
