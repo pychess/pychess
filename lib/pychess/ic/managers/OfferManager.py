@@ -15,7 +15,7 @@ colors = "(?:\[(white|black)\]\s?)?"
 ratings = "\(([0-9\ \-\+]{4})\)"
 
 
-matchre = re.compile ("(\w+) %s %s(\w+) %s %s %s (\d+) (\d+)" % \
+matchre = re.compile ("(\w+) %s %s(\w+) %s %s %s (\d+) (\d+)\s*(\(adjourned\))?" % \
         (ratings, colors, ratings,rated, types) )
 
 #
@@ -113,8 +113,13 @@ class OfferManager (GObject):
         
         self.indexType[index] = type
         if type == "match":
-            fname, frating, col, tname, trating, rated, type, mins, incr = \
+            fname, frating, col, tname, trating, rated, type, mins, incr, ad = \
                     matchre.match(parameters).groups()
+            
+            # We still don't support adjourned games
+            if ad:
+            	self.decline(type)
+            
             rating = frating.strip()
             rating = rating.isdigit() and rating or "0"
             rated = rated == "unrated" and "u" or "r"
