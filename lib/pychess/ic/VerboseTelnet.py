@@ -12,6 +12,7 @@ class Prediction:
         
         if type == READ_LINE_PLUS:
             regexp1 = r"[^\\].*"
+            self.type = READ_FROMTO
         
         if not regexp1:
             self.hash = hash(regexp0) + self.type
@@ -128,61 +129,3 @@ class VerboseTelnet (Telnet):
     def close (self):
         self.connected = False
         Telnet.close(self)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def expect2 (self, regexps):
-        """ Modified expect method, which checks ALL regexps for the one which
-        mathces the earliest """
-        
-        while True:
-            self.process_rawq()
-            lowest = []
-            for regexp in regexps.iterkeys():
-                m = regexp.search(self.cookedq)
-                if m:
-                    s = m.start()
-                    if not lowest or s < lowest[0][0]:
-                        lowest = [(s, m, regexps[regexp])]
-                    elif s == lowest[0][0]:
-                        lowest.append((s, m, regexps[regexp]))
-            
-            for start, match, val in lowest:
-                if "Lobais" in match.group() or "Qh4#" in match.group():
-                    print match.groups()
-                    print val
-                yield (val, match.groups())
-            
-            if lowest:
-                self.cookedq = self.cookedq[lowest[0][0]+1:]
-                return
-            
-            if self.eof or not self.connected:
-                break
-            self.fill_rawq()
-        
-        text = self.read_very_lazy()
-        if not text and self.eof:
-            raise EOFError
-        yield (None, [])

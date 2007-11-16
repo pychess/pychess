@@ -9,6 +9,7 @@ from managers.FingerManager import FingerManager
 from managers.NewsManager import NewsManager
 from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
+from managers.ChatManager import ChatManager
 
 from pychess.System.ThreadPool import PooledThread
 
@@ -138,6 +139,7 @@ class FICSConnection (Connection):
             self.nm = NewsManager(self)
             self.bm = BoardManager(self)
             self.om = OfferManager(self)
+            self.cm = ChatManager(self)
             
             self.connecting = False
             self.connected = True
