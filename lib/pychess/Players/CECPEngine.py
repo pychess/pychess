@@ -204,6 +204,9 @@ class CECPEngine (ProtocolEngine):
                 movestr = False
             
             if movestr:
+                self.movecon.acquire()
+                self.movecon.notifyAll()
+                self.movecon.release()
                 if self.forced:
                     # If engine was set in pause just before the engine sent its
                     # move, we ignore it. However the engine has to know that we
@@ -211,9 +214,6 @@ class CECPEngine (ProtocolEngine):
                     print >> self.engine, "undo"
                 else:
                     move = parseAny(self.board, movestr)
-                    self.movecon.acquire()
-                    self.movecon.notifyAll()
-                    self.movecon.release()
                     if validate(self.board, move):
                         self.board = None
                         return move
@@ -445,14 +445,19 @@ class CECPEngine (ProtocolEngine):
         if self.ready:
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if self.board:
-                    self.hurry()
-                    self.force()
                     self.movecon.acquire()
-                    self.movecon.wait()
-                    self.movecon.release()
-                else: self.force()
+                    try:
+                        self.hurry()
+                        self.force()
+                        self.movecon.wait()
+                    finally:
+                        self.movecon.release()
+                else:
+                    self.force()
+            
             for i in xrange(moves):
                 print >> self.engine, "undo"
+            
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if gamemodel.curplayer.color == self.color:
                     self.board = gamemodel.boards[-1]
