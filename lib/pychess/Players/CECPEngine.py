@@ -204,20 +204,22 @@ class CECPEngine (ProtocolEngine):
                 movestr = False
             
             if movestr:
-                self.movecon.acquire()
-                self.movecon.notifyAll()
-                self.movecon.release()
-                if self.forced:
-                    # If engine was set in pause just before the engine sent its
-                    # move, we ignore it. However the engine has to know that we
-                    # ignored it, and therefor we step it one back
-                    print >> self.engine, "undo"
-                else:
-                    move = parseAny(self.board, movestr)
-                    if validate(self.board, move):
-                        self.board = None
-                        return move
-                    raise PlayerIsDead
+                try:
+                    if self.forced:
+                        # If engine was set in pause just before the engine sent its
+                        # move, we ignore it. However the engine has to know that we
+                        # ignored it, and therefor we step it one back
+                        print >> self.engine, "undo"
+                    else:
+                        move = parseAny(self.board, movestr)
+                        if validate(self.board, move):
+                            self.board = None
+                            return move
+                        raise PlayerIsDead
+                finally:
+                    self.movecon.acquire()
+                    self.movecon.notifyAll()
+                    self.movecon.release()
         
         # Analyzing
         if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
