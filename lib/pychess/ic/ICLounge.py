@@ -100,9 +100,11 @@ class UserInfoSection(Section):
         self.connection = connection
         
         self.dock = self.widgets["fingerTableDock"]
-        self.connection.fm.connect("fingeringFinished", self.onFinger)
         
+        self.connection.fm.connect("fingeringFinished", self.onFinger)
         self.connection.fm.finger(self.connection.getUsername())
+        self.connection.bm.connect("curGameEnded", lambda *args:
+                self.connection.fm.finger(self.connection.getUsername()))
         
         self.widgets["usernameLabel"].set_markup(
                 "<b>%s</b>" % self.connection.getUsername())
@@ -182,6 +184,8 @@ class UserInfoSection(Section):
                         "http://freechess.org/Register/index.html")
                 vbox.add(eventbox)
             
+            if self.dock.get_children():
+                self.dock.remove(self.dock.get_children()[0])
             self.dock.add(table)
             self.dock.show_all()
         finally:
