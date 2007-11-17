@@ -104,21 +104,21 @@ class OfferManager (GObject):
         self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
     
     def onOfferAdd (self, match):
-        tofrom, index, type, parameters = match.groups()
+        tofrom, index, offertype, parameters = match.groups()
         
         if tofrom == "t":
             # IcGameModel keeps track of the offers we've sent ourselves, so we
             # don't need this
             return
         
-        self.indexType[index] = type
-        if type == "match":
+        self.indexType[index] = offertype
+        if offertype == "match":
             fname, frating, col, tname, trating, rated, type, mins, incr, ad = \
                     matchre.match(parameters).groups()
             
             # We still don't support adjourned games
             if ad:
-            	self.decline(type)
+            	self.decline(offertype)
             
             rating = frating.strip()
             rating = rating.isdigit() and rating or "0"
@@ -127,15 +127,15 @@ class OfferManager (GObject):
                         "r": rated, "t": mins, "i": incr}
             self.emit("onChallengeAdd", index, match)
         
-        elif type in strToOfferType:
-            offerType = strToOfferType[type]
+        elif offertype in strToOfferType:
+            offerType = strToOfferType[offertype]
             if offerType == TAKEBACK_OFFER:
                 offer = Offer(offerType, int(parameters))
             else: offer = Offer(offerType)
             self.emit("onOfferAdd", index, offer)
         
         else:
-            log.error("Unknown offer type: #", index, type, "whith" + \
+            log.error("Unknown offer type: #", index, offertype, "whith" + \
                       "parameters:", parameters, ". Declining")
             print >> client, "decline", index
     
