@@ -19,9 +19,11 @@ class Prediction:
         else: self.hash = hash(regexp0 + regexp1) + self.type
         
         if not hasattr("match", regexp0):
-            regexp0 = re.compile(regexp0)
+            # FICS being fairly case insensitive, we can compile with IGNORECASE
+            # to easy some expressions
+            regexp0 = re.compile(regexp0, re.IGNORECASE)
         if regexp1 and not hasattr("match", regexp1):
-            regexp1 = re.compile(regexp1)
+            regexp1 = re.compile(regexp1, re.IGNORECASE)
         
         self.regexp0 = regexp0
         self.regexp1 = regexp1
