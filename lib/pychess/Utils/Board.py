@@ -63,6 +63,8 @@ class Board:
     
     def move (self, move):
         
+        assert self[move.cord0]
+        
         newBoard = self.clone()
         newBoard.board.applyMove (move.move)
         
