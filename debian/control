@@ -1,0 +1,35 @@
+Source: pychess
+Section: games
+Priority: optional
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+XSBC-Original-Maintainer: Varun Hiremath <varunhiremath@gmail.com>
+Uploaders: Torsten Werner <twerner@debian.org>
+XS-Python-Version: >= 2.3
+Build-Depends: debhelper (>= 5.0.38), cdbs (>= 0.4.43), python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6), quilt 
+Standards-Version: 3.7.2
+XS-X-Vcs-Svn: http://bollin.googlecode.com/svn/pychess/
+
+Package: pychess
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, gnome-icon-theme, python-gtk2, python-pysqlite2, python-glade2
+XB-Python-Version: ${python:Versions}
+Description: chess graphical user interface for several chess engines
+ The goal of pychess, is to provide a fully featured, nice looking,
+ easy to use chess client for the gnome-desktop.
+ .
+ The client should be usable both to those totally new to chess, and
+ those who want to use a computer to further enchance their play.
+ .
+ Features include:
+  Tabbed interface
+  pgn+epd read/write support
+  Hints and spymode
+  xboard/cecp engine support
+  Builtin python based engine
+  Openingbook using sqlite
+  Clean interface and dialogs
+  Builtin move validator
+  Legal move highlighting
+  Supports drag'n'drop.
+ .
+  Homepage: http://pychess.googlepages.com/
