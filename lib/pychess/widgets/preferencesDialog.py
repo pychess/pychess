@@ -199,6 +199,13 @@ class SoundTab:
         "oberservedEnds": 8
     }
     
+    _player = None
+    @classmethod
+    def getPlayer (cls):
+        if not cls._player:
+            cls._player = gstreamer.Player()
+        return cls._player
+    
     @classmethod
     def playAction (cls, action):
         if type(action) == str:
@@ -213,7 +220,7 @@ class SoundTab:
             if not os.path.isfile(uri[7:]):
                 conf.set("soundcombo%d" % no, SOUND_MUTE)
                 return
-            gstreamer.playSound(uri)
+            cls.getPlayer().playSound(uri)
     
     def __init__ (self, widgets):
         
@@ -309,3 +316,9 @@ class SoundTab:
         conf.notify_add("useSounds", checkCallBack)
         uistuff.keep(widgets["useSounds"], "useSounds")
         checkCallBack()
+        
+        def soundError (player, gstmessage):
+            widgets["useSounds"].set_sensitive(False)
+            widgets["useSounds"].set_active(False)
+        self.getPlayer().connect("error", soundError)
+        self.getPlayer().checkSound()
