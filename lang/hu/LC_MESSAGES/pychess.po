@@ -201,7 +201,7 @@ msgstr "FICS figyelmeztetés"
 # Header in the "Warning FICS implementation is incomplete" dialog
 #: glade/fics_lounge.glade:2455
 msgid "<big>PyChess FICS incompleteness</big>"
-msgstr "<big>A PyChess FICS támogatás hiányosságai</big>"
+msgstr "<big>A PyChess FICS támogatásának hiányosságai</big>"
 
 #: glade/fics_lounge.glade:2511
 msgid ""
@@ -225,7 +225,7 @@ msgid ""
 "Some people might findt this offensive."
 msgstr ""
 "Az emberek általában sokat csevegnek a FICS-en. Sajnos a PyChess-ben ez a "
-"lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni."
+"lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni. "
 "Egyesek ezt agresszívnek találhatják majd."
 
 #: glade/fics_lounge.glade:2607
