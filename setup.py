@@ -4,20 +4,17 @@
 import gettext
 gettext.install("pychess", localedir="lang", unicode=1)
 
-import imp
-VERSION = imp.load_module("const",
-          *imp.find_module("const",["lib/pychess/Utils"])).VERSION
-
-VERSION_NAME = imp.load_module("const",
-          *imp.find_module("const",["lib/pychess/Utils"])).VERSION_NAME
-
-NAME = "Pychess %s" % VERSION_NAME
+from imp import load_module, find_module
+const = load_module("const", *find_module("const",["lib/pychess/Utils"]))
 
 from distutils.core import setup
 from glob import glob
 from os import listdir
 from os.path import isdir, isfile
 import os
+
+NAME = "pychess"
+VERSION = "%s%s" % (const.VERSION_NAME.lower(), const.VERSION)
 
 DESC = "Gnome chess game"
 
