@@ -18,21 +18,26 @@ import sys
 
 sys.path.append('')
 
-includes = ['encodings', 'encodings.utf-8',]
+includes = ['encodings', 'encodings.utf-8','email']
 opts = {
     'py2exe': {
-        'includes': 'pango,atk,gobject,cairo,pangocairo,gtk.keysyms,encodings,encodings.*',
-        'dll_excludes': [
-            'iconv.dll','intl.dll','libatk-1.0-0.dll',
-            'libgdk_pixbuf-2.0-0.dll','libgdk-win32-2.0-0.dll',
-            'libglib-2.0-0.dll','libgmodule-2.0-0.dll',
-            'libgobject-2.0-0.dll','libgthread-2.0-0.dll',
-            'libgtk-win32-2.0-0.dll','libpango-1.0-0.dll',
-            'libpangowin32-1.0-0.dll','libcairo-2.dll',
-            'libpangocairo-1.0-0.dll','libpangoft2-1.0-0.dll',
-        ],
+        'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.glade',
+        #'dll_excludes': [
+            #'iconv.dll','intl.dll',
+            #'libatk-1.0-0.dll','libgdk_pixbuf-2.0-0.dll','libgdk-win32-2.0-0.dll',
+            #'libglib-2.0-0.dll','libgmodule-2.0-0.dll',
+            #'libgobject-2.0-0.dll','libgthread-2.0-0.dll',
+            #'libgtk-win32-2.0-0.dll','libpango-1.0-0.dll',
+            #'libpangowin32-1.0-0.dll','libcairo-2.dll',
+            #'libpangocairo-1.0-0.dll',
+            #'libpangoft2-1.0-0.dll',
+        #],
     }
 }
+
+PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
+            "pychess.Players", "pychess.Savers", "pychess.System",
+            "pychess.Utils", "pychess.Utils.lutils", "pychess.widgets" ]
 
 setup(
     name = 'PyChess',
@@ -42,21 +47,20 @@ setup(
     url = 'http://code.google.com/p/pychess',
     download_url = 'http://code.google.com/p/pychess/downloads/list',
     license = 'GPL2',
-
-    windows = [{'script': 'pychess.py'}],
-
+    windows = [{'script': 'lib/pychess/Main.py'}],
     options=opts,
-
+    package_dir = {'': 'lib'},
+    packages = PACKAGES,
     data_files=[('glade', glob.glob('glade/*.*')),
                 ('sidepanel', glob.glob('sidepanel/*.*')),
                 ('flags', glob.glob('flags/*.*')),
                 ('gtksourceview-1.0', glob.glob('gtksourceview-1.0/*.*')),
                 ('gtksourceview-1.0/language-specs', glob.glob('gtksourceview-1.0/language-specs/*.*')),
                 ('lang', glob.glob('lang/*.*')),
-                ('lang/az', glob.glob('lang/az/*.*')),
-                ('lang/az/LC_MESSAGES', glob.glob('lang/az/LC_MESSAGES/*.*')),
+                ('lang/pt_BR/LC_MESSAGES', glob.glob('lang/pt_BR/LC_MESSAGES/*.*')),
                 # more langs
-                ('lib', glob.glob('lib/pychess/*.*')),
+                ('lib', glob.glob('lib/*.*')),
+                ('lib/pychess', glob.glob('lib/pychess/*.*')),
                 ('lib/pychess/gfx', glob.glob('lib/pychess/gfx/*.*')),
                 ('lib/pychess/ic', glob.glob('lib/pychess/ic/*.*')),
                 ('lib/pychess/Players', glob.glob('lib/pychess/Players/*.*')),
