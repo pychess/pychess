@@ -31,7 +31,7 @@ class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
 def searchPath (file):
-    for dir in os.environ["PATH"].split(":"):
+    for dir in os.environ["PATH"].split(os.pathsep):
         path = os.path.join(dir, file)
         if os.path.isfile(path):
             return path
