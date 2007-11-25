@@ -117,7 +117,12 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.dirname(imp.find_module("os")[1])
                 path = os.path.join(path,
                         "site-packages/pychess/Players/PyChess.py")
-            return path, searchPath("python"), ["-u", path]
+            if sys.platform == "win32":
+                from os.path import dirname, abspath
+                python_path = os.path.join(dirname(abspath(sys.executable)), "python")
+            else:
+                python_path = searchPath("python")
+            return path, python_path, ["-u", path]
         else:
             for dir in os.environ["PATH"].split(":"):
                 path = os.path.join(dir, binname)
