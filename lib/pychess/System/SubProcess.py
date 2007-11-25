@@ -1,26 +1,29 @@
-
 from Queue import Queue
-import os, sys, select, signal, errno, termios, atexit, time
-from select import POLLIN, POLLPRI, POLLOUT, POLLERR, POLLHUP, POLLNVAL
+import os, sys, select, signal, errno, atexit, time
 from threading import currentThread, RLock, Condition
-from termios import tcgetattr, tcsetattr
 from random import randint, choice
-import pty, subprocess, glock
+import subprocess, glock
+
+if sys.platform != "win32":
+    import pty
+    import termios
+    from termios import tcgetattr, tcsetattr
+    from select import POLLIN, POLLPRI, POLLOUT, POLLERR, POLLHUP, POLLNVAL
+
+    pollErrDic = {
+        POLLIN: "There is data to read",
+        POLLPRI: "There is urgent data to read",
+        POLLOUT: "Ready for output: writing will not block",
+        POLLERR: "Error condition of some sort",
+        POLLHUP: "Hung up",
+        POLLNVAL: "Invalid request: descriptor not open",
+    }
+
+    ERRORS = POLLERR | POLLHUP | POLLNVAL
 
 from pychess.Utils.const import *
 
 from Log import log
-
-pollErrDic = {
-    POLLIN: "There is data to read",
-    POLLPRI: "There is urgent data to read",
-    POLLOUT: "Ready for output: writing will not block",
-    POLLERR: "Error condition of some sort",
-    POLLHUP: "Hung up",
-    POLLNVAL: "Invalid request: descriptor not open",
-}
-
-ERRORS = POLLERR | POLLHUP | POLLNVAL
 
 CHILD = 0
 
@@ -37,6 +40,7 @@ def searchPath (file):
 
 class SubProcessesPool:
     def __init__ (self):
+        # TODO: no poll on win32...
         self.poll = select.poll()
         self.buffers = {}
         self.names = {}

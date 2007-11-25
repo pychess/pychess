@@ -1,4 +1,6 @@
-import os, fcntl
+import os
+import sys
+
 from array import array
 
 from pychess.Utils.const import *
@@ -96,6 +98,11 @@ def ensureBitArraysLoaded ():
         return
     
     global bitsArray0, bitsArray1, bitsArray2, bitsArray3
+
+    if sys.platform == "win32":
+        print "TODO: no fcntl on win32..."
+    else:
+        import fcntl
     
     if os.path.isfile (location):
         f = file (location, "r")

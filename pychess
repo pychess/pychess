@@ -7,6 +7,9 @@ import os, sys
 import pygtk
 pygtk.require("2.0")
 
+if not "HOME" in os.environ:
+    os.environ["HOME"] = os.path.expanduser("~")
+
 # Import datalocation functions and ensure access to codebase
 try:
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
