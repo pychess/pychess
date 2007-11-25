@@ -12,6 +12,7 @@ from glob import glob
 from os import listdir
 from os.path import isdir, isfile
 import os
+import sys
 
 NAME = "pychess"
 VERSION = "%s%s" % (const.VERSION_NAME.lower(), const.VERSION)
@@ -35,7 +36,7 @@ CLASSIFIERS = [
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
-DATA_FILES = [("share/games/pychess/",
+DATA_FILES = [("share/games/pychess",
     ["README", "AUTHORS", "LICENSE", "open.db"])]
 
 # UI
@@ -61,9 +62,18 @@ DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 
 # Language
 pofile = "LC_MESSAGES/pychess"
+if sys.platform == "win32":
+    argv0_path = os.path.dirname(os.path.abspath(sys.executable))
+    sys.path.append(argv0_path + "\\tools\\i18n")
+    import msgfmt
+
 for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
-    os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
-    DATA_FILES += [("/usr/share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
+    if sys.platform == "win32":
+        file = "lang/%s/%s" % (dir,pofile)
+        msgfmt.make(file+".po", file+".mo")
+    else:
+        os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
+    DATA_FILES += [("share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
 
 if isfile ("MANIFEST.in"):
     notlanglines = [l for l in open("MANIFEST.in") if not l.rstrip().endswith(".po")]
