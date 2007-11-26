@@ -8,7 +8,7 @@
 # pycairo-1.2.6-1.win32-py2.5
 #
 # run:
-# python setup_win32.py py2exe -O2
+# python setup_win32.py py2exe
 #
 
 from distutils.core import setup
@@ -16,24 +16,13 @@ import py2exe
 import glob
 import sys
 
-sys.path.append('')
-
-includes = ['encodings', 'encodings.utf-8','email']
 opts = {
     'py2exe': {
-        'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.glade',
-        #'dll_excludes': [
-            #'iconv.dll','intl.dll',
-            #'libatk-1.0-0.dll','libgdk_pixbuf-2.0-0.dll','libgdk-win32-2.0-0.dll',
-            #'libglib-2.0-0.dll','libgmodule-2.0-0.dll',
-            #'libgobject-2.0-0.dll','libgthread-2.0-0.dll',
-            #'libgtk-win32-2.0-0.dll','libpango-1.0-0.dll',
-            #'libpangowin32-1.0-0.dll','libcairo-2.dll',
-            #'libpangocairo-1.0-0.dll',
-            #'libpangoft2-1.0-0.dll',
-        #],
-    }
-}
+        {'compressed': 1,
+         'optimize': 2,
+         'packages': 'encodings',
+         'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.glade',
+         }}}
 
 PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
             "pychess.Players", "pychess.Savers", "pychess.System",
@@ -47,7 +36,7 @@ setup(
     url = 'http://code.google.com/p/pychess',
     download_url = 'http://code.google.com/p/pychess/downloads/list',
     license = 'GPL2',
-    windows = [{'script': 'lib/pychess/Main.py'}],
+    windows = [{'script': 'pychess'}],
     options=opts,
     package_dir = {'': 'lib'},
     packages = PACKAGES,
