@@ -18,11 +18,12 @@ import sys
 
 opts = {
     'py2exe': {
-        {'compressed': 1,
-         'optimize': 2,
-         'packages': 'encodings',
-         'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.glade',
-         }}}
+        'compressed': 1,
+        'optimize': 2,
+        'packages': 'encodings',
+        'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.glade',
+        },
+    }
 
 PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
             "pychess.Players", "pychess.Savers", "pychess.System",
