@@ -313,7 +313,7 @@ class SubProcess:
         
         except OSError, error:
             if error.errno == errno.ECHILD:
-                #No child processes
+                log.debug("waitpid raised 'No child processes'\n", self.defname)
                 return (0, os.strerror(0))
             else: raise OSError, error
         
@@ -331,7 +331,7 @@ class SubProcess:
                 pass
             else: raise OSError, error
     
-    def gentleKill (self, first=0.5, second=0.25):
+    def gentleKill (self, first=1.0, second=0.5):
         code, string = self.wait4exit(timeout=first)
         if code == None:
             self.sigterm()
