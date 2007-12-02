@@ -69,7 +69,7 @@ class OfferManager (GObject):
                 ("The clock is not paused.",
                         Offer(RESUME_OFFER), ACTION_ERROR_CLOCK_NOT_PAUSED)):
             self.connection.expect_line (
-                    lambda c,g: self.emit("onActionError", offer, error),
+                    lambda match: self.emit("onActionError", offer, error),
                     ficsstring)
         
         self.connection.expect_line (self.notEnoughMovesToUndo,
