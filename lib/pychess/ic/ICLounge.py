@@ -862,8 +862,8 @@ class CreatedBoards (Section):
         
         glock.acquire()
         try:
-            ionest.simpleNewGame (game, gmwidg)
             gamewidget.attachGameWidget (gmwidg)
+            ionest.simpleNewGame (game, gmwidg)
         finally:
             glock.release()
     
