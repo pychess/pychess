@@ -473,6 +473,5 @@ class PyChess:
 def run (args):
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
-    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     gtk.gdk.threads_init()
     gtk.main()
