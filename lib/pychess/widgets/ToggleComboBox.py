@@ -42,9 +42,10 @@ class ToggleComboBox (gtk.ToggleButton):
     def _set_active(self, active):
         if active == self._active: return
         oldactive = self._active
-        self._active = active
+        # take care the case when last used engine was uninstalled
+        self._active = (active < len(self._items) and [active] or [1])[0]
         self.emit("changed", oldactive)
-        text, iconname = self._items[active]
+        text, iconname = self._items[self._active]
         self.label.set_markup (self.markup[0] + text + self.markup[1])
         if iconname != None:
             self.hbox.set_spacing(6)
