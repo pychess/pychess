@@ -60,6 +60,7 @@ class Human (Player):
     def __init__ (self, gmwidg, color, name):
         Player.__init__(self)
         
+        self.defname = "Human"
         self.board = gmwidg.widgets["board"]
         self.gmwidg = gmwidg
         self.gamemodel = self.board.view.model
@@ -104,7 +105,7 @@ class Human (Player):
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
         if item == "del":
-            raise PlayerIsDead
+            raise PlayerIsDead, "Killed by forgin forces"
         if item == "int":
             raise TurnInterrupt
         return item
