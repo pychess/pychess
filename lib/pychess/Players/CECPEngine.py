@@ -171,8 +171,8 @@ class CECPEngine (ProtocolEngine):
         while True:
             try:
                 line = self.engine.readline()
-            except SubProcessError:
-                raise PlayerIsDead
+            except SubProcessError, e:
+                raise PlayerIsDead, e
             
             move = self.parseLine(line)
             if move:
@@ -215,7 +215,7 @@ class CECPEngine (ProtocolEngine):
                         if validate(self.board, move):
                             self.board = None
                             return move
-                        raise PlayerIsDead
+                        raise PlayerIsDead, "Board didn't validate after move"
                 finally:
                     self.movecon.acquire()
                     self.movecon.notifyAll()

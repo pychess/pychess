@@ -67,14 +67,14 @@ class Log (gobject.GObject):
         except IOError, e:
             if not type == ERROR:
                 self.error("Unable to write '%s' to log file because of error: %s" % \
-                        (formated, ", ".join(str(a) for a in e.args)))
+                        (message, ", ".join(str(a) for a in e.args)))
         
         if self.messages != None:
             self.messages.append((task, message, type))
         self.publisher.put((task, message, type))
         
         if type == ERROR and task != "stdout":
-            print formated
+            print message
     
     def debug (self, message, task="Default"):
         self._log (task, message, DEBUG)
