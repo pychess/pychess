@@ -304,13 +304,14 @@ class GameModel (GObject, PooledThread):
             try:
                 move = curPlayer.makeMove(self)
             except PlayerIsDead, e:
-                stringio = cStringIO.StringIO()
-                traceback.print_exc(file=stringio)
-                error = stringio.getvalue()
-                log.error("A Player died:%s\n%s" % (e, error), curPlayer.defname)
-                if curColor == WHITE:
-                    self.kill(WHITE_ENGINE_DIED)
-                else: self.kill(BLACK_ENGINE_DIED)
+                if self.status in (WAITING_TO_START, PAUSED, RUNNING):
+                    stringio = cStringIO.StringIO()
+                    traceback.print_exc(file=stringio)
+                    error = stringio.getvalue()
+                    log.error("A Player died:%s\n%s" % (e, error), curPlayer.defname)
+                    if curColor == WHITE:
+                        self.kill(WHITE_ENGINE_DIED)
+                    else: self.kill(BLACK_ENGINE_DIED)
                 break
             except TurnInterrupt:
                 continue
@@ -396,7 +397,8 @@ class GameModel (GObject, PooledThread):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
             return
         
-        log.debug("Ending a game with status %d for reason %d" % (status, reason))
+        log.debug("Ending a game with status %d for reason %d\n%s" % (status, reason,
+            "".join(traceback.format_list(traceback.extract_stack())).strip()))
         self.status = status
         
         for player in self.players:
@@ -415,6 +417,8 @@ class GameModel (GObject, PooledThread):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
             return
         
+        log.debug("Killing a game for reason %d\n%s" % (reason,
+            "".join(traceback.format_list(traceback.extract_stack())).strip()))
         self.status = KILLED
         self.reason = reason
         
