@@ -1,5 +1,7 @@
 
 from threading import Lock
+import traceback
+import cStringIO
 import datetime
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
@@ -8,6 +10,7 @@ from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System.ThreadPool import pool, PooledThread
 from pychess.System.protoopen import protoopen, protosave, isWriteable
+from pychess.System.Log import log
 from pychess.System import glock
 
 from Board import Board
@@ -300,7 +303,11 @@ class GameModel (GObject, PooledThread):
             
             try:
                 move = curPlayer.makeMove(self)
-            except PlayerIsDead:
+            except PlayerIsDead, e:
+                stringio = cStringIO.StringIO()
+                traceback.print_exc(file=stringio)
+                error = stringio.getvalue()
+                log.error("A Player died:%s\n%s" % (e, error), curPlayer.defname)
                 if curColor == WHITE:
                     self.kill(WHITE_ENGINE_DIED)
                 else: self.kill(BLACK_ENGINE_DIED)
@@ -389,6 +396,7 @@ class GameModel (GObject, PooledThread):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
             return
         
+        log.debug("Ending a game with status %d for reason %d" % (status, reason))
         self.status = status
         
         for player in self.players:

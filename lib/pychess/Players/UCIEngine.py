@@ -111,8 +111,8 @@ class UCIEngine (ProtocolEngine):
         while True:
             try:
                 line = self.engine.readline()
-            except SubProcessError:
-                raise PlayerIsDead
+            except SubProcessError, e:
+                raise PlayerIsDead, e
             
             move = self.parseLine(line)
             if move:
@@ -250,8 +250,8 @@ class UCIEngine (ProtocolEngine):
         while True:
             try:
                 line = self.engine.readline()
-            except SubProcessError:
-                raise PlayerIsDead
+            except SubProcessError, e:
+                raise PlayerIsDead, e
             
             ready = self.parseLine(line)
             if ready == "ready":
