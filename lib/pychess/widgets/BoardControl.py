@@ -47,7 +47,7 @@ class BoardControl (gtk.EventBox):
     def emit_move_signal (self, cord0, cord1):
         # Help that user won't be able to move twice in cases of lag
         self.locked = True
-        log.debug("emit_move_signal %s %s\n" % (cord0, cord1), "BoardControl")
+        log.debug("emit_move_signal %s %s\n" % (cord0, cord1), "Human")
         
         promotion = QUEEN
         if self.view.model.boards[-1][cord0].sign == PAWN and cord1.y in (0,7):
@@ -131,7 +131,7 @@ class BoardControl (gtk.EventBox):
     def button_press (self, widget, event):
         if self.locked: return False
         self.pressed = True
-        log.debug("press %d %d\n" % (event.x, event.y), "BoardControl")
+        log.debug("press %d %d\n" % (event.x, event.y), "Human")
         
         self.grab_focus()
         cord = self.point2Cord (event.x, event.y)
@@ -145,7 +145,7 @@ class BoardControl (gtk.EventBox):
     def button_release (self, widget, event):
         if self.locked: return False
         self.pressed = False
-        log.debug("release %d %d\n" % (event.x, event.y), "BoardControl")
+        log.debug("release %d %d\n" % (event.x, event.y), "Human")
         
         cord = self.point2Cord (event.x, event.y)
         if self.view.selected == cord or cord == None:
