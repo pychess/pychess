@@ -125,7 +125,7 @@ class EngineDiscoverer (GObject, Thread):
                 path = os.path.dirname(imp.find_module("os")[1])
                 path = os.path.join(path,
                         "site-packages/pychess/Players/PyChess.py")
-                if not os.isfile(path) or not os.access(path, os.R_OK):
+                if not os.path.isfile(path) or not os.access(path, os.R_OK):
                     return False
             
             return path, interpreterPath, ["-u", path]
