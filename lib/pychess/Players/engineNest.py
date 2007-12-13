@@ -109,26 +109,32 @@ class EngineDiscoverer (GObject, Thread):
     ############################################################################
     
     def _findPath (self, binname):
+        """ Searches for a readable, executable named 'binname' in the PATH.
+            For the PyChess engine, special handling is taken, and we search
+            PYTHONPATH as well as the directory from where the 'os' module is
+            imported """
+        
         if binname == "PyChess.py":
+            path = None
+            interpreterPath = searchPath("python", access=os.R_OK|os.EX_OK)
+            
             if "PYTHONPATH" in os.environ:
-                path = os.path.abspath(os.environ["PYTHONPATH"])
-                path = os.path.join(path, "pychess/Players/PyChess.py")
-            else:
+                path = searchPath("pychess/Players/PyChess.py", "PYTHONPATH")
+            
+            if not path:
                 path = os.path.dirname(imp.find_module("os")[1])
                 path = os.path.join(path,
                         "site-packages/pychess/Players/PyChess.py")
-            return path, searchPath("python"), ["-u", path]
+                if not os.isfile(path) or not os.access(path, os.R_OK):
+                    return False
+            
+            return path, interpreterPath, ["-u", path]
+        
         else:
-            for dir in os.environ["PATH"].split(":"):
-                path = os.path.join(dir, binname)
-                if os.path.isfile(path):
-                    if not os.access (path, os.R_OK):
-                        log.warn("Could not read the file %s\n" % path)
-                        continue
-                    if not os.access (path, os.EX_OK):
-                        log.warn("Could not execute the file %s\n" % path)
-                        continue
-                    return path, path, []
+            path = searchPath(binname, access=os.R_OK|os.EX_OK)
+            if path:
+                return path, path, []
+        
         return False
     
     def _handleUCIOptions (self, engine, ids, options):
