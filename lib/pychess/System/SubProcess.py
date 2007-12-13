@@ -30,11 +30,16 @@ CHILD = 0
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
-def searchPath (file):
-    for dir in os.environ["PATH"].split(os.pathsep):
+def searchPath (file, pathvar="PATH", access=os.R_OK):
+    for dir in os.environ[pathvar].split(os.pathsep):
+        dir = os.path.abspath(dir)
         path = os.path.join(dir, file)
         if os.path.isfile(path):
-            return path
+            if not os.access (path, access):
+                log.warn("Not enough permissions on %s\n" % path)
+            else:
+                return path
+    return None
 
 
 
