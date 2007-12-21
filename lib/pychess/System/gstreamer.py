@@ -23,7 +23,9 @@ class Player (GObject):
     
     def onMessage(self, bus, message):
         if message.type == gst.MESSAGE_ERROR:
-            self.emit("error", message)
+            # Sound seams sometimes to work, even though errors are dropped.
+            # Therefore we really can't do anything to test.
+            # self.emit("error", message)
             simpleMessage, advMessage = message.parse_error()
             log.warn("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
         elif message.type == gst.MESSAGE_EOS:
