@@ -220,7 +220,7 @@ class SoundTab:
             if not os.path.isfile(uri[7:]):
                 conf.set("soundcombo%d" % no, SOUND_MUTE)
                 return
-            cls.getPlayer().playSound(uri)
+            cls.getPlayer().play(uri)
     
     def __init__ (self, widgets):
         
