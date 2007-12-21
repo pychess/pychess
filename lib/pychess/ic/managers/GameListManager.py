@@ -122,6 +122,12 @@ class GameListManager (GObject):
     
     def on_seek_add (self, match):
         parts = match.groups()[0].split(" ")
+        # The <s> message looks like:
+        # <s> index w=name_from ti=titles rt=rating t=time i=increment
+        #     r=rated('r')/unrated('u') tp=type c=color
+        #     rr=rating_range(lower-upper) a=automatic?('t'/'f')
+        #     f=formula_checked('t'/f')
+        
         seek = {"gameno": parts[0]}
         for key, value in [p.split("=") for p in parts[1:] if p]:
             seek[key] = value
@@ -136,6 +142,8 @@ class GameListManager (GObject):
             elif key == "rt":
                 if value[-1] in (" ", "P", "E"):
                     seek[key] = value[:-1]
+            elif key == "a":
+                seek["manual"] = value == "f"
         
         self.emit("addSeek", seek)
     
