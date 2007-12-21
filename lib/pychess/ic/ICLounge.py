@@ -299,6 +299,7 @@ class SeekTabSection (ParrentListSection):
         self.seeks = {}
         
         self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
+        self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
         self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
@@ -334,7 +335,8 @@ class SeekTabSection (ParrentListSection):
     def onAddSeek (self, seek):
         time = "%s min + %s sec" % (seek["t"], seek["i"])
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-        ti = self.store.append ([seek["gameno"], self.seekPix, seek["w"],
+        pix = seek["manual"] and self.manSeekPix or self.seekPix
+        ti = self.store.append ([seek["gameno"], pix, seek["w"],
                                 int(seek["rt"]), rated, seek["tp"], time])
         self.seeks [seek["gameno"]] = ti
         count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
