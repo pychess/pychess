@@ -464,14 +464,18 @@ class PyChess:
     
     def handleArgs (self, args):
         if args:
-            glock.acquire()
-            try:
+            def do ():
                 ionest.loadGame(args[0])
-            finally:
                 glock.release()
+            # For this once, we need to do an idle_add, as the code is called
+            # before gtk.main. Also notice that the do function ends with an
+            # glock.release
+            gobject.idle_add(do)
     
 def run (args):
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
     gtk.gdk.threads_init()
     gtk.main()
+    
+    
