@@ -6,6 +6,7 @@ from pychess.Utils.const import reprResult, BLACK
 from pychess.System.uistuff import GladeWidgets
 from pychess.System.protoopen import protoopen
 from pychess.widgets.BoardView import BoardView
+from pychess.Savers.ChessFile import LoadingError
 
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
@@ -114,15 +115,10 @@ class BoardPreview (gtk.Alignment):
             result = result.replace("1/2","½")
             self.list.get_model().append (names+[result])
         
-        #if self.gamemodel.ply == 0:
-        #    print "setting text 0", self.gamemodel.lowply, self.gamemodel.ply
-        #    self.widgets["posLabel"].set_text("1.")
-        
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
     
     def on_selection_changed (self, selection):
-        
         iter = selection.get_selected()[1]
         if iter == None or not self.chessfile:
             self.widgets["BoardView"].model.clear()
@@ -132,10 +128,13 @@ class BoardPreview (gtk.Alignment):
         if sel == self.lastSel: return
         self.lastSel = sel
         
-        self.chessfile.loadToModel(sel, -1, self.gamemodel)
-        self.widgets["BoardView"]._shown = -1
-        self.widgets["BoardView"].shown = self.gamemodel.ply
-        
+        try:
+            self.chessfile.loadToModel(sel, -1, self.gamemodel)
+        except LoadingError, e:
+            #TODO: Pressent this a little nicer
+            print e
+        self.widgets["BoardView"].showLast()
+    
     def on_first_button (self, button):
         self.widgets["BoardView"].showFirst()
         
