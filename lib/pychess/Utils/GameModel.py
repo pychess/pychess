@@ -1,5 +1,5 @@
 
-from threading import Lock
+from threading import RLock
 import traceback
 import cStringIO
 import datetime
@@ -63,7 +63,7 @@ class GameModel (GObject, PooledThread):
         
         self.spectactors = {}
         
-        self.applyingMoveLock = Lock()
+        self.applyingMoveLock = RLock()
         self.conids = []
     
     # The following two methods intends to fix exceptions when atexit kills the
@@ -327,6 +327,7 @@ class GameModel (GObject, PooledThread):
                 if not self.checkStatus():
                     break
                 self.emit("game_changed")
+                # This is how long we seam to get in issue 240
                 for spectactor in self.spectactors.values():
                     spectactor.makeMove(self)
             finally:
