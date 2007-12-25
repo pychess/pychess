@@ -13,13 +13,6 @@ rightkeys = map(keyval_from_name,("Right", "KP_Right"))
 __title__ = _("Move History")
 __active__ = True
 
-def fixList (list, xalign=0):
-    list.set_model(gtk.ListStore(str))
-    renderer = gtk.CellRendererText()
-    renderer.set_property("xalign",xalign)
-    list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-    list.get_selection().set_mode(gtk.SELECTION_BROWSE)
-    
 class Sidepanel:
     
     def __init__ (self):
@@ -31,31 +24,40 @@ class Sidepanel:
         __widget__ = widgets.get_widget("panel")
         __widget__.unparent()
         
-        __active__ = True
+        self.board = gmwidg.widgets["board"].view
+        
+        self.board.model.connect("game_changed", self.game_changed)
+        self.board.model.connect("moves_undoing", self.moves_undoing)
+        self.board.connect("shown_changed", self.shown_changed)
+        
+        # Initialize treeviews
         
         self.numbers = widgets.get_widget("treeview1")
         self.left = widgets.get_widget("treeview2")
         self.right = widgets.get_widget("treeview3")
-
+        
+        def fixList (list, xalign=0):
+            list.set_model(gtk.ListStore(str))
+            renderer = gtk.CellRendererText()
+            renderer.set_property("xalign",xalign)
+            list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
+            list.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        
         fixList(self.numbers, 1)
-        map(fixList, (self.left, self.right))
-        self.numbers.modify_fg(gtk.STATE_INSENSITIVE, gtk.gdk.Color(0,0,0))
+        fixList(self.left, 0)
+        fixList(self.right, 0)
         
         self.left.get_selection().connect_after(
-                'changed', self.select_cursor_row, self.left, 0)
+                'changed', self.on_selection_changed, self.left, 0)
         self.right.get_selection().connect_after(
-                'changed', self.select_cursor_row, self.right, 1)
+                'changed', self.on_selection_changed, self.right, 1)
         
         widgets.signal_autoconnect ({
             "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
             "on_treeview3_key_press_event":lambda w,e:self.key_press_event(2,e)
         })
         
-        self.board = gmwidg.widgets["board"].view
-        
-        self.board.model.connect("game_changed", self.game_changed)
-        self.board.model.connect("moves_undoing", self.moves_undoing)
-        self.board.connect("shown_changed", self.shown_changed)
+        # Lock scrolling
         
         scrollwin = widgets.get_widget("panel")
         
@@ -70,6 +72,8 @@ class Sidepanel:
                         vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
+        # Connect to preferences
+        
         def figuresInNotationCallback (none):
             game = self.board.model
             for i, (board, move) in enumerate(zip(game.boards, game.moves)):
@@ -80,9 +84,11 @@ class Sidepanel:
                 col.get_model().set(col.get_model().get_iter((row,)), 0, notat)
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
         
+        # Return
+        
         return __widget__
     
-    def select_cursor_row (self, selection, tree, col):
+    def on_selection_changed (self, selection, tree, col):
         iter = selection.get_selected()[1]
         if iter == None: return
         
@@ -117,28 +123,32 @@ class Sidepanel:
             glock.release()
     
     def game_changed (self, game):
+        ply = game.ply
         
-        row, view, other = self._ply_to_row_col_other(game.ply)
+        row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
-            notat = toFAN(game.boards[-2], game.moves[-1])
-        else: notat = toSAN(game.boards[-2], game.moves[-1], True)
-        ply = game.ply
+            notat = toFAN(game.boards[ply-1], game.moves[ply-1])
+        else: notat = toSAN(game.boards[ply-1], game.moves[ply-1], localRepr=True)
         
         glock.acquire()
         try:
+            # Test if the row is 'filled'
             if len(view.get_model()) == len(self.numbers.get_model()):
                 num = str((ply+1)/2)+"."
                 self.numbers.get_model().append([num])
             
+            # Test if the move is black first move. This will be the case if the
+            # game was loaded from a fen/epd starting at black
             if view == self.right and \
                     len(view.get_model()) == len(other.get_model()):
                 self.left.get_model().append([""])
             
             view.get_model().append([notat])
-            if self.board.shown < ply or self.freezed:
+            if self.board.shown < ply:
                 return
             
+            # Freezes to avoid that select_cursor_row changes board.shown
             self.freezed = True
             view.get_selection().select_iter(view.get_model().get_iter(row))
             view.set_cursor((row,))
