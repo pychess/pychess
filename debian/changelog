@@ -1,3 +1,9 @@
+pychess (0.8-beta3) gutsy; urgency=low
+
+  * Philidor Beta 3 - Christmas time
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Wed, 26 Dec 2007 21:38:58 +0100
+
 pychess (0.8-beta2) gutsy; urgency=low
 
   * PyChess Philidor beta 2
