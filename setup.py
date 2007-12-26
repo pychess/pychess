@@ -15,7 +15,7 @@ import os
 import sys
 
 NAME = "pychess"
-VERSION = "%s%s" % (const.VERSION_NAME.lower(), const.VERSION)
+VERSION = const.VERSION
 
 DESC = "Gnome chess game"
 
