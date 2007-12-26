@@ -378,7 +378,7 @@
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_side_panel1_activate" last_modification_time="Thu, 06 Jul 2006 13:25:17 GMT"/>
-                  <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -618,7 +618,7 @@ Russian (ru) - ssergeje
 Spanish (es) - Manuel Kaufmann
 Brazilian (pt_BR) - George S. Silva
 Turkish (tr) - ryukun</property>
-  <property name="logo">about.png</property>
+  <property name="logo">christmas_about.png</property>
 </widget>
 
 <widget class="GtkDialog" id="game_info">
