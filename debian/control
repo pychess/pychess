@@ -18,15 +18,21 @@ Description: chess graphical user interface for several chess engines
  those who want to use a computer to further enchance their play.
  .
  Features include:
-  Tabbed interface
-  pgn+epd read/write support
-  Hints and spymode
-  xboard/cecp engine support
+  CECP and UCI Engine support
+  Free online play on the FICS chess servers
+  Read and writes the PGN, EPD and FEN chess fileformats
   Builtin python based engine
-  Openingbook using sqlite
-  Clean interface and dialogs
-  Builtin move validator
+  Undo and pause functions
+  Board and piece animation
+  Drag and drop
+  Tabbed interface
+  Hints and spyarrows
+  Openingbook sidepanel using sqlite
+  Scoreplot sidepanel
+  "Enter game" in pgn dialog
+  Internationalised or figure pieces in notation
+  Optional sounds
   Legal move highlighting
-  Supports drag'n'drop.
+  A nice and accesible look.
  .
   Homepage: http://pychess.googlepages.com/
