@@ -18,8 +18,7 @@ lobais@gmail.com
 WORKING WITH PO FILES
 
 To create po files from glade and python files, use
-$ xgettext glade/*.glade lib/pychess/Main.py lib/pychess/*/*.py
-lib/pychess/*/*/*.py sidepanel/*.py sidepanel/*.glade
+$ sh create_template.po.sh
 
 To merge to files for like to update your old translation to a new PyChess
 version, use
