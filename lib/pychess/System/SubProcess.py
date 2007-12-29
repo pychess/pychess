@@ -57,6 +57,8 @@ class SubProcessesPool:
     def addDescriptor (self, fd, defname, warnwords):
         self.buffers[fd] = ""
         self.names[fd] = defname
+        if fd in self.error:
+            del self.error[fd]
         self.warnwords[fd] = warnwords
         self.newDataCondition[fd] = Condition()
         self.poll.register(fd, POLLIN | POLLPRI | POLLERR | POLLHUP | POLLNVAL)
