@@ -128,8 +128,9 @@ class Sidepanel:
         row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
-            notat = toFAN(game.boards[ply-1], game.moves[ply-1])
-        else: notat = toSAN(game.boards[ply-1], game.moves[ply-1], localRepr=True)
+            notat = toFAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
+        else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
+                localRepr=True)
         
         glock.acquire()
         try:
