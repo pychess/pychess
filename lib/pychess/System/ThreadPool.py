@@ -45,6 +45,11 @@ class ThreadPool:
             
             self.running = True
             atexit.register(self.__del__)
+            
+            # We catch the trace from the thread, that created the worker
+            stringio = cStringIO.StringIO()
+            traceback.print_exc(file=stringio)
+            self.trace = stringio.getvalue()
         
         def run (self):
             try:
@@ -62,8 +67,7 @@ class ThreadPool:
                             stringio = cStringIO.StringIO()
                             traceback.print_exc(file=stringio)
                             error = stringio.getvalue()
-                            print ("Thread %s in threadpool " +
-                                    "raised following error:\n%s") % (self, error)
+                            print "From Threadpool: %s\n%s" % (self.trace, error)
                         
                         self.func = None
                         self.queue.put(self)
