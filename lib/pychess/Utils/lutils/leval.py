@@ -128,7 +128,9 @@ def evalKingTropism (board):
     for cord in iterBits(pieces[QUEEN]):
         score += queenTropism[cord][opking]
     
-    return score
+    if color == WHITE:
+        return score
+    else: return -score
 
 ################################################################################
 # evalPawnStructure                                                            #
