@@ -1,7 +1,8 @@
 import gtk, gobject
 from gtk import gdk
 
-from pychess.System import glock, conf
+from pychess.System import conf
+from pychess.System.glock import glock_connect
 from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
@@ -26,8 +27,8 @@ class Sidepanel:
         
         self.board = gmwidg.widgets["board"].view
         
-        self.board.model.connect("game_changed", self.game_changed)
-        self.board.model.connect("moves_undoing", self.moves_undoing)
+        glock_connect(self.board.model, "game_changed", self.game_changed)
+        glock_connect(self.board.model, "moves_undoing", self.moves_undoing)
         self.board.connect("shown_changed", self.shown_changed)
         
         # Initialize treeviews
@@ -107,20 +108,16 @@ class Sidepanel:
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        glock.acquire()
-        try:
-            for i in xrange(moves):
-                try:
-                    row, view, other = self._ply_to_row_col_other(game.ply-i)
-                    model = view.get_model()
+        for i in xrange(moves):
+            try:
+                row, view, other = self._ply_to_row_col_other(game.ply-i)
+                model = view.get_model()
+                model.remove(model.get_iter((row,)))
+                if view == self.left:
+                    model = self.numbers.get_model()
                     model.remove(model.get_iter((row,)))
-                    if view == self.left:
-                        model = self.numbers.get_model()
-                        model.remove(model.get_iter((row,)))
-                except ValueError:
-                    continue
-        finally:
-            glock.release()
+            except ValueError:
+                continue
     
     def game_changed (self, game):
         ply = game.ply
@@ -132,33 +129,29 @@ class Sidepanel:
         else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
                 localRepr=True)
         
-        glock.acquire()
-        try:
-            # Test if the row is 'filled'
-            if len(view.get_model()) == len(self.numbers.get_model()):
-                num = str((ply+1)/2)+"."
-                self.numbers.get_model().append([num])
-            
-            # Test if the move is black first move. This will be the case if the
-            # game was loaded from a fen/epd starting at black
-            if view == self.right and \
-                    len(view.get_model()) == len(other.get_model()):
-                self.left.get_model().append([""])
-            
-            view.get_model().append([notat])
-            if self.board.shown < ply:
-                return
-            
-            # Freezes to avoid that select_cursor_row changes board.shown
-            self.freezed = True
-            view.get_selection().select_iter(view.get_model().get_iter(row))
-            view.set_cursor((row,))
-            if other.is_focus():
-                view.grab_focus()
-            other.get_selection().unselect_all()
-            self.freezed = False
-        finally:
-            glock.release()
+        # Test if the row is 'filled'
+        if len(view.get_model()) == len(self.numbers.get_model()):
+            num = str((ply+1)/2)+"."
+            self.numbers.get_model().append([num])
+        
+        # Test if the move is black first move. This will be the case if the
+        # game was loaded from a fen/epd starting at black
+        if view == self.right and \
+                len(view.get_model()) == len(other.get_model()):
+            self.left.get_model().append([""])
+        
+        view.get_model().append([notat])
+        if self.board.shown < ply:
+            return
+        
+        # Freezes to avoid that select_cursor_row changes board.shown
+        self.freezed = True
+        view.get_selection().select_iter(view.get_model().get_iter(row))
+        view.set_cursor((row,))
+        if other.is_focus():
+            view.grab_focus()
+        other.get_selection().unselect_all()
+        self.freezed = False
     
     def shown_changed (self, board, shown):
         if shown <= 0:

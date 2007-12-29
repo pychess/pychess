@@ -92,11 +92,11 @@ class BoardView (gtk.DrawingArea):
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
-        self.model.connect("game_changed", self.game_changed)
-        self.model.connect("moves_undoing", self.moves_undoing)
-        self.model.connect("game_loading", self.game_loading)
-        self.model.connect("game_loaded", self.game_loaded)
-        self.model.connect("game_ended", self.game_ended)
+        self.model.connect_after("game_changed", self.game_changed)
+        self.model.connect_after("moves_undoing", self.moves_undoing)
+        self.model.connect_after("game_loading", self.game_loading)
+        self.model.connect_after("game_loaded", self.game_loaded)
+        self.model.connect_after("game_ended", self.game_ended)
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)

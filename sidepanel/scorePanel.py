@@ -6,7 +6,7 @@ from sys import maxint
 import gtk, gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.System import glock
+from pychess.System.glock import glock_connect
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
 
 class ScorePlot (gtk.DrawingArea):
@@ -40,17 +40,13 @@ class ScorePlot (gtk.DrawingArea):
     
     def redraw (self):
         if self.window:
-            glock.acquire()
-            try:
-                a = self.get_allocation()
-                rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-                self.window.invalidate_rect(rect, True)
-                self.window.process_updates(True)
-            finally:
-                glock.release()
+            a = self.get_allocation()
+            rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
+            self.window.invalidate_rect(rect, True)
+            self.window.process_updates(True)
     
     def press (self, widget, event):
-        self.emit('selected', event.y/self.moveHeight+1)
+        self.emit('selected', event.y/self.moveHeight)
     
     def expose (self, widget, event):
         context = widget.window.cairo_create()
@@ -58,13 +54,13 @@ class ScorePlot (gtk.DrawingArea):
                           event.area.width, event.area.height)
         context.clip()
         self.draw(context)
-        self.set_size_request(-1, max(0,(len(self.scores)-1)*self.moveHeight))
+        self.set_size_request(-1, (len(self.scores))*self.moveHeight)
         return False
     
     def draw (self, cr):
 
         width = self.get_allocation().width
-        height = (len(self.scores)-1)*self.moveHeight
+        height = len(self.scores)*self.moveHeight
         
         ########################################
         # Draw background                      #
@@ -90,11 +86,12 @@ class ScorePlot (gtk.DrawingArea):
         
         cr.set_source_rgb (0, 0, 0)
         cr.move_to(width, 0)
+        cr.line_to(width/2., 0)
         for i, score in enumerate(self.scores):
             score2 = -1+e**(-1./1000*abs(score/2.))
             if score > 0: score2 = -score2
             x = width/2 + score2*width/2
-            y = i * self.moveHeight
+            y = (i+1) * self.moveHeight
             cr.line_to(x, y)
         cr.line_to(width, height)
         cr.fill_preserve()
@@ -116,17 +113,16 @@ class ScorePlot (gtk.DrawingArea):
         # Draw selection                       #
         ########################################
         
-        if self.selected >= 1:
-            lw = 2.
-            cr.set_line_width(lw)
-            y = (self.selected-1)*self.moveHeight
-            cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
-            col = self.get_style().base[gtk.STATE_SELECTED]
-            r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
-            cr.set_source_rgba (r, g, b, .15)
-            cr.fill_preserve()
-            cr.set_source_rgb (r, g, b)
-            cr.stroke()
+        lw = 2.
+        cr.set_line_width(lw)
+        y = (self.selected)*self.moveHeight
+        cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
+        col = self.get_style().base[gtk.STATE_SELECTED]
+        r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
+        cr.set_source_rgba (r, g, b, .15)
+        cr.fill_preserve()
+        cr.set_source_rgb (r, g, b)
+        cr.stroke()
     
 __title__ = _("Score")
 
@@ -149,8 +145,8 @@ class Sidepanel:
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
-        self.boardview.model.connect("game_changed", self.game_changed)
-        self.boardview.model.connect("moves_undoing", self.moves_undoing)
+        glock_connect(self.boardview.model, "game_changed", self.game_changed)
+        glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
         
         # Add the initial board
         self.game_changed (self.boardview.model)
@@ -168,13 +164,18 @@ class Sidepanel:
         
         return __widget__
     
-    def moves_undoing (self, game, moves):
+    def moves_undoing (self, model, moves):
         for i in xrange(moves):
             self.plot.undo()
+        
+        # As shown_changed will normally be emitted just after game_changed -
+        # if we are viewing the latest position - we can do the selection change
+        # now, and thereby avoid redraw being called twice
+        if self.plot.selected == model.ply-model.lowply:
+            self.plot.select(model.ply-model.lowply - moves)
         self.plot.redraw()
     
     def game_changed (self, model):
-        
         if model.status == DRAW:
             points = 0
         elif model.status == WHITEWON:
@@ -183,25 +184,31 @@ class Sidepanel:
             points = -maxint
         else:
             points = leval.evaluateComplete(model.boards[-1].board, WHITE, True)
-            
+        
         self.plot.addScore(points)
-        # FIXME: If we are viewing the latest position, shown_changed will also
-        # be called, and plot will be redrawn twice
+        
+        # As shown_changed will normally be emitted just after game_changed -
+        # if we are viewing the latest position - we can do the selection change
+        # now, and thereby avoid redraw being called twice
+        if self.plot.selected == model.ply-model.lowply -1:
+            self.plot.select(model.ply-model.lowply)
         self.plot.redraw()
         
+        # Uncomment this to debug eval function
         return
         
-        material, phase = leval.evalMaterial (board)
         board = model.boards[-1].board
         opboard = model.boards[-1].clone().board
         opboard.setColor(1-opboard.color)
+        material, phase = leval.evalMaterial (board)
         if board.color == WHITE:
             print "material", -material
-            print "evaluation:",-leval.evalKingTropism (board)
-            print "pawns:", -leval.evalPawnStructure (board, phase)
-            print "pawns2:", -leval.evalPawnStructure (opboard, phase)
-            print "pawns3:", -leval.evalPawnStructure (board, phase) - \
-                             leval.evalPawnStructure (opboard, phase)
+            e1 = leval.evalKingTropism (board)
+            e2 = leval.evalKingTropism (opboard)
+            print "evaluation: %d + %d = %d " % (e1, e2, e1+e2)
+            p1 = leval.evalPawnStructure (board, phase)
+            p2 = leval.evalPawnStructure (opboard, phase)
+            print "pawns: %d + %d = %d " % (p1, p2, p1+p2)
             print "knights:",-leval.evalKnights (board)
             print "king:",-leval.evalKing(board,phase)
         else:
@@ -216,8 +223,9 @@ class Sidepanel:
         print "----------------------"
         
     def shown_changed (self, boardview, shown):
-        self.plot.select(shown-self.boardview.model.lowply)
-        self.plot.redraw()
+        if self.plot.selected != shown:
+            self.plot.select(shown-self.boardview.model.lowply)
+            self.plot.redraw()
     
     def plot_selected (self, plot, selected):
         self.boardview.shown = selected+self.boardview.model.lowply
