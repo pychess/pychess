@@ -2,6 +2,7 @@
 
 import gtk, pango
 from pychess.System.prefix import addDataPrefix
+from pychess.System.glock import glock_connect
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
@@ -20,9 +21,10 @@ class Sidepanel:
     def load (self, gmwidg):
         
         self.gamemodel = gmwidg.widgets["board"].view.model
-        self.gmhandlers = []
-        self.gmhandlers.append(self.gamemodel.connect("game_changed", self.game_changed))
-        self.gmhandlers.append(self.gamemodel.connect("moves_undoing", self.moves_undoing))
+        self.gmhandlers = [
+            glock_connect(self.gamemodel, "game_changed", self.game_changed),
+            glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
+        ]
         
         widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")

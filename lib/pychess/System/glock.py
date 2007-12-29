@@ -29,6 +29,20 @@ def release():
             threads_leave()
         _rlock.release()
 
+def glock_connect(emitter, signal, function, *args, **kwargs):
+    def handler(emitter, *extra):
+        acquire()
+        try:
+            function(emitter, *extra)
+        finally:
+            release()
+    if "after" in kwargs and kwargs["after"]:
+        return emitter.connect_after(signal, handler, *args)
+    return emitter.connect(signal, handler, *args)
+
+def glock_connect_after(emitter, signal, function, *args):
+    return glock_connect(emitter, signal, function, after=True, *args)
+
 if __name__ == "__main__":
     from threading import Thread
     def do ():
