@@ -1,5 +1,7 @@
 
 import re
+from threading import RLock
+
 from pychess.Players.Player import PlayerIsDead
 from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
@@ -62,6 +64,8 @@ class CECPEngine (ProtocolEngine):
         self.lastping = 0
         self.lastpong = 0
         self.timeout = None
+        
+        self.changeLock = RLock()
     
     ############################################################################
     #   From Engine                                                            #
@@ -126,41 +130,44 @@ class CECPEngine (ProtocolEngine):
         pool.start(autorun)
     
     def makeMove (self, gamemodel):
-        
-        # Make the move
-        self.board = gamemodel.boards[-1]
-        
-        if self.isAnalyzing():
-            del self.analyzeMoves[:]
-        
-        if gamemodel.ply == 0 or self.gonext and \
-        		not self.mode in (ANALYZING, INVERSE_ANALYZING):
-            self.go()
-            self.gonext = False
-        else:
-            if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.setColor(1-self.board.color)
-                self.printColor()
+        self.changeLock.acquire()
+        try:
+            # Make the move
+            self.board = gamemodel.boards[-1]
             
-            if self.features["usermove"]:
-                self.engine.write("usermove ")
+            if self.isAnalyzing():
+                del self.analyzeMoves[:]
             
-            move = gamemodel.moves[-1]
-            if self.features["san"]:
-                print >> self.engine, toSAN(gamemodel.boards[-2], move)
-            else: print >> self.engine, toAN(gamemodel.boards[-2], move)
-            
-            if self.mode == INVERSE_ANALYZING:
-                if self.board.board.opIsChecked():
-                    # Many engines don't like positions able to take down enemy
-                    # king. Therefore we just return the "kill king" move
-                    # automaticaly
-                    self.emit("analyze", [getMoveKillingKing(self.board)])
-                    return
-                self.printColor()
-            
-            if self.forced and not self.mode in (ANALYZING, INVERSE_ANALYZING):
+            if gamemodel.ply == 0 or self.gonext and \
+            		not self.mode in (ANALYZING, INVERSE_ANALYZING):
                 self.go()
+                self.gonext = False
+            else:
+                if self.mode == INVERSE_ANALYZING:
+                    self.board = self.board.setColor(1-self.board.color)
+                    self.printColor()
+                
+                if self.features["usermove"]:
+                    self.engine.write("usermove ")
+                
+                move = gamemodel.moves[-1]
+                if self.features["san"]:
+                    print >> self.engine, toSAN(gamemodel.boards[-2], move)
+                else: print >> self.engine, toAN(gamemodel.boards[-2], move)
+                
+                if self.mode == INVERSE_ANALYZING:
+                    if self.board.board.opIsChecked():
+                        # Many engines don't like positions able to take down enemy
+                        # king. Therefore we just return the "kill king" move
+                        # automaticaly
+                        self.emit("analyze", [getMoveKillingKing(self.board)])
+                        return
+                    self.printColor()
+                
+                if self.forced and not self.mode in (ANALYZING, INVERSE_ANALYZING):
+                    self.go()
+        finally:
+            self.changeLock.release()
         
         # We don't block when analyzing. Instead the readline call is placed in
         # a thread created by autoAnalyze
@@ -178,136 +185,139 @@ class CECPEngine (ProtocolEngine):
             if move:
                 return move
     
-    
     def parseLine (self, line):
-        parts = whitespaces.split(line.strip())
-        
-        if parts[0] == "pong":
-            self.lastpong = int(parts[1])
-            return
-        
-        # Illegal Move
-        if parts[0].lower().find("illegal") >= 0:
-            if parts[-2] == "sd" and parts[-1].isdigit():
-                self.sd = False
-                self.setDepth (int(parts[-1]))
-            return
-        
-        # A Move (Perhaps)
-        if self.board:
-            if parts[0] == "move":
-                movestr = parts[1]
-            # Old Variation
-            elif d_plus_dot_expr.match(parts[0]) and parts[1] == "...":
-                movestr = parts[2]
-            else:
-                movestr = False
+        self.changeLock.acquire()
+        try:
+            parts = whitespaces.split(line.strip())
             
-            if movestr:
-                try:
-                    if self.forced:
-                        # If engine was set in pause just before the engine sent its
-                        # move, we ignore it. However the engine has to know that we
-                        # ignored it, and therefor we step it one back
-                        print >> self.engine, "undo"
-                    else:
-                        move = parseAny(self.board, movestr)
-                        if validate(self.board, move):
-                            self.board = None
-                            return move
-                        raise PlayerIsDead, "Board didn't validate after move"
-                finally:
-                    self.movecon.acquire()
-                    self.movecon.notifyAll()
-                    self.movecon.release()
-        
-        # Analyzing
-        if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
-            if parts[:4] == ["0","0","0","0"]:
-                # Crafty doesn't analyze untill it is out of book
-                print >> self.engine, "book off"
+            if parts[0] == "pong":
+                self.lastpong = int(parts[1])
                 return
             
-            mvstrs = movre.findall(" ".join(parts[4:])+" ")
+            # Illegal Move
+            if parts[0].lower().find("illegal") >= 0:
+                if parts[-2] == "sd" and parts[-1].isdigit():
+                    self.sd = False
+                    self.setDepth (int(parts[-1]))
+                return
             
-            moves = listToMoves (self.board, mvstrs, type=None, validate=True)
-            
-            # Don't emit if we weren't able to parse moves, or if we have a move
-            # to kill the opponent king - as it confuses many engines
-            if moves and not self.board.board.opIsChecked():
-                self.analyzeMoves = moves
-                self.emit("analyze", moves)
-            
-            return
-        
-        # Offers draw
-        if parts[0:2] == ["offer", "draw"]:
-            self.emit("accept", Offer(DRAW_OFFER))
-            return
-        
-        # Resigns
-        if "resign" in parts:
-            self.emit("offer", Offer(RESIGNATION))
-            return
-        
-        #if parts[0].lower() == "error":
-        #    return
-        
-        #Tell User Error
-        if parts[0] == "tellusererror":
-            #print "Tell User Error", repr(" ".join(parts[1:]))
-            return
-        
-        # Tell Somebody
-        if parts[0][:4] == "tell" and \
-                parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-            #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
-            return
-        
-        if "feature" in parts:
-            # We skip parts before 'feature', as some engines give us lines like
-            # White (1) : feature setboard=1 analyze...e="GNU Chess 5.07" done=1
-            parts = parts[parts.index("feature"):]
-            for i, pair in enumerate(parts[1:]):
-                
-                # As "parts" is split with no thoughs on quotes or double quotes
-                # we need to do some extra handling.
-                
-                if pair.find("=") < 0: continue
-                key, value = pair.split("=",1)
-                
-                if value[0] in ('"',"'") and value[-1] in ('"',"'"):
-                    value = value[1:-1]
-                
-                # If our pair was unfinished, like myname="GNU, we search the
-                # rest of the pairs for a quotating mark.
-                elif value[0] in ('"',"'"):
-                    rest = value[1:] + " " + " ".join(parts[2+i:])
-                    i = rest.find('"')
-                    j = rest.find("'")
-                    if i + j == -2:
-                        log.warn("Missing endquotation in %s feature", repr(self))
-                        value = rest
-                    elif min(i, j) != -1:
-                        value = rest[:min(i, j)]
-                    else:
-                        l = max(i, j)
-                        value = rest[:l]
-                
+            # A Move (Perhaps)
+            if self.board:
+                if parts[0] == "move":
+                    movestr = parts[1]
+                # Old Variation
+                elif d_plus_dot_expr.match(parts[0]) and parts[1] == "...":
+                    movestr = parts[2]
                 else:
-                    # All nonquoted values are ints
-                    value = int(value)
+                    movestr = False
                 
-                if key == "done":
-                    if value:
-                        self._beforeReady()
-                    else:
-                        log.warn("Adds 10 minutes timeout", repr(self))
-                        # This'll buy you 10 more minutes
-                        self.timeout = 60*10*1000
+                if movestr:
+                    try:
+                        if self.forced:
+                            # If engine was set in pause just before the engine sent its
+                            # move, we ignore it. However the engine has to know that we
+                            # ignored it, and therefor we step it one back
+                            print >> self.engine, "undo"
+                        else:
+                            move = parseAny(self.board, movestr)
+                            if validate(self.board, move):
+                                self.board = None
+                                return move
+                            raise PlayerIsDead, "Board didn't validate after move"
+                    finally:
+                        self.movecon.acquire()
+                        self.movecon.notifyAll()
+                        self.movecon.release()
+            
+            # Analyzing
+            if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+                if parts[:4] == ["0","0","0","0"]:
+                    # Crafty doesn't analyze untill it is out of book
+                    print >> self.engine, "book off"
                     return
                 
-                self.features[key] = value
+                mvstrs = movre.findall(" ".join(parts[4:])+" ")
+                
+                moves = listToMoves (self.board, mvstrs, type=None, validate=True)
+                
+                # Don't emit if we weren't able to parse moves, or if we have a move
+                # to kill the opponent king - as it confuses many engines
+                if moves and not self.board.board.opIsChecked():
+                    self.analyzeMoves = moves
+                    self.emit("analyze", moves)
+                
+                return
+            
+            # Offers draw
+            if parts[0:2] == ["offer", "draw"]:
+                self.emit("accept", Offer(DRAW_OFFER))
+                return
+            
+            # Resigns
+            if "resign" in parts:
+                self.emit("offer", Offer(RESIGNATION))
+                return
+            
+            #if parts[0].lower() == "error":
+            #    return
+            
+            #Tell User Error
+            if parts[0] == "tellusererror":
+                #print "Tell User Error", repr(" ".join(parts[1:]))
+                return
+            
+            # Tell Somebody
+            if parts[0][:4] == "tell" and \
+                    parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
+                #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
+                return
+            
+            if "feature" in parts:
+                # We skip parts before 'feature', as some engines give us lines like
+                # White (1) : feature setboard=1 analyze...e="GNU Chess 5.07" done=1
+                parts = parts[parts.index("feature"):]
+                for i, pair in enumerate(parts[1:]):
+                    
+                    # As "parts" is split with no thoughs on quotes or double quotes
+                    # we need to do some extra handling.
+                    
+                    if pair.find("=") < 0: continue
+                    key, value = pair.split("=",1)
+                    
+                    if value[0] in ('"',"'") and value[-1] in ('"',"'"):
+                        value = value[1:-1]
+                    
+                    # If our pair was unfinished, like myname="GNU, we search the
+                    # rest of the pairs for a quotating mark.
+                    elif value[0] in ('"',"'"):
+                        rest = value[1:] + " " + " ".join(parts[2+i:])
+                        i = rest.find('"')
+                        j = rest.find("'")
+                        if i + j == -2:
+                            log.warn("Missing endquotation in %s feature", repr(self))
+                            value = rest
+                        elif min(i, j) != -1:
+                            value = rest[:min(i, j)]
+                        else:
+                            l = max(i, j)
+                            value = rest[:l]
+                    
+                    else:
+                        # All nonquoted values are ints
+                        value = int(value)
+                    
+                    if key == "done":
+                        if value:
+                            self._beforeReady()
+                        else:
+                            log.warn("Adds 10 minutes timeout", repr(self))
+                            # This'll buy you 10 more minutes
+                            self.timeout = 60*10*1000
+                        return
+                    
+                    self.features[key] = value
+        finally:
+            self.changeLock.release()
     
     ############################################################################
     #   To Engine                                                              #
@@ -371,42 +381,46 @@ class CECPEngine (ProtocolEngine):
             self.runWhenReady(self.updateTime, secs, opsecs)
     
     def setBoard (self, gamemodel):
-        if self.ready:
-            if self.features["setboard"]:
-                self.force()
-                print >> self.engine, "setboard", gamemodel.boards[-1].asFen()
-            else:
-                # Kludge to set black to move, avoiding the troublesome and now
-                # deprecated "black" command. - Equal to the one xboard uses
-                self.force()
-                if gamemodel.boards[-1].color == BLACK:
-                    print >> self.engine, "a2a3"
-                print >> self.engine, "edit"
-                print >> self.engine, "#"
-                for color in WHITE, BLACK:
-                    for y, row in enumerate(gamemodel.boards[-1].data):
-                        for x, piece in enumerate(row):
-                            if not piece or piece.color != color:
-                                continue
-                            sign = reprSign[piece.sign]
-                            cord = repr(Cord(x,y))
-                            print >> self.engine, sign+cord
-                    print >> self.engine, "c"
-                print >> self.engine, "."
-            
-            self.board = gamemodel.boards[-1]
-            
-            if self.mode == ANALYZING:
-                self.analyze()
+        self.changeLock.acquire()
+        try:
+            if self.ready:
+                if self.features["setboard"]:
+                    self.force()
+                    print >> self.engine, "setboard", gamemodel.boards[-1].asFen()
+                else:
+                    # Kludge to set black to move, avoiding the troublesome and now
+                    # deprecated "black" command. - Equal to the one xboard uses
+                    self.force()
+                    if gamemodel.boards[-1].color == BLACK:
+                        print >> self.engine, "a2a3"
+                    print >> self.engine, "edit"
+                    print >> self.engine, "#"
+                    for color in WHITE, BLACK:
+                        for y, row in enumerate(gamemodel.boards[-1].data):
+                            for x, piece in enumerate(row):
+                                if not piece or piece.color != color:
+                                    continue
+                                sign = reprSign[piece.sign]
+                                cord = repr(Cord(x,y))
+                                print >> self.engine, sign+cord
+                        print >> self.engine, "c"
+                    print >> self.engine, "."
                 
-            elif self.mode == INVERSE_ANALYZING:
-            	self.analyze(inverse=True)
-            	
-            elif self.board.color == self.color:
-                self.gonext = True
-        else:
-            self.runWhenReady(self.setBoard, gamemodel)
-    
+                self.board = gamemodel.boards[-1]
+                
+                if self.mode == ANALYZING:
+                    self.analyze()
+                    
+                elif self.mode == INVERSE_ANALYZING:
+                	self.analyze(inverse=True)
+                	
+                elif self.board.color == self.color:
+                    self.gonext = True
+            else:
+                self.runWhenReady(self.setBoard, gamemodel)
+        finally:
+            self.changeLock.release()
+        
         ########################################################################
         #   Offer Stuff                                                        #
         ########################################################################
@@ -447,7 +461,9 @@ class CECPEngine (ProtocolEngine):
         if self.ready:
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if self.board:
+                    print 1
                     self.movecon.acquire()
+                    print 2
                     try:
                         self.hurry()
                         self.force()
@@ -457,17 +473,22 @@ class CECPEngine (ProtocolEngine):
                 else:
                     self.force()
             
-            for i in xrange(moves):
-                print >> self.engine, "undo"
-            
-            if self.mode not in (ANALYZING, INVERSE_ANALYZING):
-                if gamemodel.curplayer.color == self.color:
-                    self.board = gamemodel.boards[-1]
-                    self.go()
+            self.changeLock.acquire()
+            try:
+                
+                for i in xrange(moves):
+                    print >> self.engine, "undo"
+                
+                if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+                    if gamemodel.curplayer.color == self.color:
+                        self.board = gamemodel.boards[-1]
+                        self.go()
+                    else:
+                        self.board = None
                 else:
-                    self.board = None
-            else:
-                self.board = gamemodel.boards[-1]
+                    self.board = gamemodel.boards[-1]
+            finally:
+                self.changeLock.release()
         else:
             self.runWhenReady(self.undoMoves, moves, gamemodel)
     
