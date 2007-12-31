@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-10-13 20:56+0200\n"
-"PO-Revision-Date: 2007-10-16 09:01-0400\n"
+"PO-Revision-Date: 2007-12-31 08:18-0400\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -659,7 +659,7 @@ msgid ""
 "\n"
 "You can try to start a new game with the engine, or try to play against another one."
 msgstr ""
-"Pychess perdeu a conexão com o engine de xadrez, provavelmente porque está morto.\n"
+"Pychess perdeu a conexão com o engine de xadrez, provavelmente porque ele foi encerrado.\n"
 "\n"
 "Você pode tentar iniciar um novo jogo com o engine, ou tentar jogar contra outro."
 
@@ -1284,7 +1284,7 @@ msgstr "Intermediário"
 
 #: lib/pychess/widgets/ionest.py:354
 msgid "Human Being"
-msgstr "Ser humano"
+msgstr "Humano"
 
 #: lib/pychess/widgets/ionest.py:492
 #: lib/pychess/widgets/preferencesDialog.py:40
@@ -1634,3 +1634,4 @@ msgstr "Movimentos"
 #: sidepanel/scorePanel.py:131
 msgid "Score"
 msgstr "Pontuação"
+
