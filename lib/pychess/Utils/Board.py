@@ -20,46 +20,38 @@ class Board:
     def __init__ (self, setup=False):
         self.data = [[None]*8 for i in xrange(8)]
         self.board = LBoard()
+        
         if setup:
-            self._applyFen (FEN_START)
-        
-    def _applyFen (self, fenstr):
-        
-        self.board.applyFen(fenstr)
-        
-        arBoard = self.board.arBoard
-        wpieces = self.board.boards[WHITE]
-        bpieces = self.board.boards[BLACK]
-        
-        for cord in iterBits(wpieces[PAWN]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, PAWN)
-        for cord in iterBits(wpieces[KNIGHT]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, KNIGHT)
-        for cord in iterBits(wpieces[BISHOP]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, BISHOP)
-        for cord in iterBits(wpieces[ROOK]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, ROOK)
-        for cord in iterBits(wpieces[QUEEN]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, QUEEN)
-        
-        for cord in iterBits(bpieces[PAWN]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, PAWN)
-        for cord in iterBits(bpieces[KNIGHT]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, KNIGHT)
-        for cord in iterBits(bpieces[BISHOP]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, BISHOP)
-        for cord in iterBits(bpieces[ROOK]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, ROOK)
-        for cord in iterBits(bpieces[QUEEN]):
-            self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
-        
-        self[Cord(self.board.kings[WHITE])] = Piece(WHITE, KING)
-        self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
-        
-    def fromFen (self, fenstr):
-        newBoard = Board()
-        newBoard._applyFen(fenstr)
-        return newBoard
+            self.board.applyFen(FEN_START)
+            
+            arBoard = self.board.arBoard
+            wpieces = self.board.boards[WHITE]
+            bpieces = self.board.boards[BLACK]
+            
+            for cord in iterBits(wpieces[PAWN]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, PAWN)
+            for cord in iterBits(wpieces[KNIGHT]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, KNIGHT)
+            for cord in iterBits(wpieces[BISHOP]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, BISHOP)
+            for cord in iterBits(wpieces[ROOK]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, ROOK)
+            for cord in iterBits(wpieces[QUEEN]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, QUEEN)
+            
+            for cord in iterBits(bpieces[PAWN]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, PAWN)
+            for cord in iterBits(bpieces[KNIGHT]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, KNIGHT)
+            for cord in iterBits(bpieces[BISHOP]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, BISHOP)
+            for cord in iterBits(bpieces[ROOK]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, ROOK)
+            for cord in iterBits(bpieces[QUEEN]):
+                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
+            
+            self[Cord(self.board.kings[WHITE])] = Piece(WHITE, KING)
+            self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
     
     def move (self, move):
         
