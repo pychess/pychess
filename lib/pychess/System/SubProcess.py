@@ -2,7 +2,12 @@ from Queue import Queue
 import os, sys, select, signal, errno, atexit, time
 from threading import currentThread, RLock, Condition
 from random import randint, choice
-import subprocess, glock
+import subprocess
+
+# Hack to avoid racecondition: http://bugs.python.org/issue1731717
+subprocess._cleanup = lambda:None
+
+import glock
 
 if sys.platform != "win32":
     import pty
@@ -181,8 +186,9 @@ class SubProcess:
     def initSub (self):
         """ Init the subprocess using the python subprocess module """
         
-        # The subprocess module is not very stable inside threads
-        assert currentThread().getName() == "MainThread"
+        # This is no longer nessesary after the _cleanup = lambda:None hack
+            # The subprocess module is not very stable inside threads
+            # assert currentThread().getName() == "MainThread"
         
         p = subprocess.Popen([self.path]+self.args,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
