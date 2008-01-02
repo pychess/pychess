@@ -21,6 +21,5 @@ pygtk
 pygobject
 pycairo
 pysqlite
-gst-python
 gnome-python-desktop
 gnome-icon-theme
