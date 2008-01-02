@@ -161,11 +161,13 @@ class GtkWorker (GObject, Thread):
         self.result = self.func(self)
         self.done = True
         if self.connections["done"] >= 1:
-            glock.enter()
-            # In python 2.5 we can use self.publishQueue.join() to wait for all
-            # publish items to have been processed.
-            self.emit("done")
-            glock.relase()
+            glock.acquire()
+            try:
+                # In python 2.5 we can use self.publishQueue.join() to wait for
+                # all publish items to have been processed.
+                self.emit("done")
+            finally:
+                glock.release()
     
     def cancel (self):
         """ Cancel work.

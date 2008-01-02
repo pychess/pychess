@@ -33,6 +33,7 @@ methodDict = {
     gtk.Entry: ("get_text", "set_text", "changed"),
     gtk.Expander: ("get_expanded", "set_expanded", "notify::expanded"),
     gtk.CheckButton: ("get_active", "set_active", "toggled"),
+    gtk.CheckMenuItem: ("get_active", "set_active", "toggled"),
     gtk.RadioButton: ("get_active", "set_active", "toggled"),
     gtk.ComboBox: ("get_active", "set_active", "changed"),
     ToggleComboBox: ("_get_active", "_set_active", "changed")
