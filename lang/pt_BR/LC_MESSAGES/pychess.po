@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-10-13 20:56+0200\n"
-"PO-Revision-Date: 2007-12-31 08:18-0400\n"
+"PO-Revision-Date: 2008-01-03 07:52-0400\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: pt_BR <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr "PyChess - Conectar ao Servidor de Xadrez da Internet"
 
 #: glade/fics_logon.glade:83
 msgid "Create New"
-msgstr "Criar Nova"
+msgstr "Criar conta"
 
 #: glade/fics_logon.glade:325
 #: lib/pychess/widgets/Background.py:306
@@ -1034,7 +1034,7 @@ msgstr "Seu oponente lhe ofereceu um empate. Se você aceitar, a partida termina
 
 #: lib/pychess/Players/Human.py:16
 msgid "You've got an abort offer. Accept?"
-msgstr "Você recebeu uma oferta de abortar jogo. Aceita?"
+msgstr "Você recebeu uma oferta de abortar o jogo. Aceita?"
 
 #: lib/pychess/Players/Human.py:17
 msgid "Your opponent has offered you to abort the game. If you accept, the game will end with no rating change."
@@ -1063,7 +1063,7 @@ msgstr "Seu oponente lhe ofereceu uma pausa. Aceita?"
 
 #: lib/pychess/Players/Human.py:26
 msgid "Your opponent wants to make a break. If you accept the game clock will be paused until on of you accept a resume offer"
-msgstr "Seu oponente quer parar o jogo. Se você aceitar o relógio será parado jogo até que você aceite continuar o jogo novamente."
+msgstr "Seu oponente quer parar o jogo. Se você aceitar o relógio será parado até que você aceite continuar o jogo novamente."
 
 #: lib/pychess/Players/Human.py:28
 msgid "Your opponent wants to resume. Accept?"
@@ -1136,7 +1136,7 @@ msgstr "%s não foi aceito pelo seu oponente"
 
 #: lib/pychess/Players/Human.py:139
 msgid "You can try to send the offer to your opponent later in the game again."
-msgstr "Você pode tentar enviar uma oferta mais tarde a seu oponente no jogo outra vez."
+msgstr "Você pode tentar enviar uma oferta a seu oponente no jogo novamente."
 
 #: lib/pychess/Players/Human.py:145
 #, python-format
@@ -1160,11 +1160,11 @@ msgstr "PyChess é incapaz de começar a oferta de %s aceitada. Provavelmente po
 #: lib/pychess/Players/Human.py:162
 #, python-format
 msgid "%s returns an error"
-msgstr "%s retorna um erro"
+msgstr "%s retornou um erro"
 
 #: lib/pychess/Players/Human.py:179
 msgid "Your opponent asks you to hurry!"
-msgstr "Seu oponente pede que você apresse-se!"
+msgstr "Seu oponente pede que você se apresse!"
 
 #: lib/pychess/Players/Human.py:180
 msgid "Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going."
@@ -1311,7 +1311,7 @@ msgstr "<big><b>Formato de arquivo desconhecido '%s'</b></big>"
 #: lib/pychess/widgets/ionest.py:677
 #, python-format
 msgid "Was unable to save '%s' as PyChess doesn't know the format '%s'."
-msgstr "Não é possível salvar '%s' porque PyChess não sabe o formato ' %s'."
+msgstr "Não é possível salvar '%s' porque o PyChess não conhece o formato ' %s'."
 
 #: lib/pychess/widgets/ionest.py:690
 #, python-format

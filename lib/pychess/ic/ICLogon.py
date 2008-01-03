@@ -103,7 +103,7 @@ class ICLogon:
             text = ", ".join(map(str,error.args))
         elif isinstance (error, socket.gaierror) or \
                 isinstance (error, socket.herror):
-            title = _("Adress Error")
+            title = _("Address Error")
             text = ", ".join(map(str,error.args))
         else:
             title = str(error.__class__)
