@@ -77,7 +77,7 @@ class BoardPreview (gtk.Alignment):
         bv.set_size_request(170,170)
         return bv
     
-    def addFileChooserButton (self, fcbutton, opendialog, enddir):
+    def addFileChooserButton (self, fcbutton, opendialog, enddir, uri):
         if self.widgets["ngfcalignment"].get_children():
             childbut = self.widgets["ngfcalignment"].children()[0]
             self.widgets["ngfcalignment"].remove(childbut)
@@ -85,24 +85,28 @@ class BoardPreview (gtk.Alignment):
         self.widgets["ngfcalignment"].add(fcbutton)
         self.opendialog = opendialog
         self.enddir = enddir
+        self.uri = uri
         
         # Connect doubleclicking a file to on_file_activated
         opendialog.connect("file-activated", self.on_file_activated)
         # Connect the openbutton in the dialog to on_file_activated
         openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", lambda b: self.on_file_activated(opendialog))
+        openbut.connect("clicked", lambda b: self.on_file_activated())
         
         # The first time the button is opened, the player has just opened
         # his/her file, before we connected the dialog.
-        if opendialog.get_uri():
-            self.on_file_activated(opendialog)
+        if opendialog.get_uri() or self.uri:
+            self.on_file_activated()
     
-    def on_file_activated (self, dialog):
-        
-        uri = self.get_uri()
-        if not uri: return
-        self.uri = uri
-        
+    def on_file_activated (self):
+        if not self.uri:
+            uri = self.get_uri()
+            if not uri:
+                return
+            self.uri = uri
+        else:
+            uri = self.uri
+
         loader = self.enddir[uri[uri.rfind(".")+1:]]
         ending = uri[uri.rfind(".")+1:]
         self.chessfile = chessfile = loader.load(protoopen(uri))
@@ -158,7 +162,8 @@ class BoardPreview (gtk.Alignment):
             return "file://" + self.opendialog.get_preview_filename()
         elif self.opendialog.get_uri():
             return self.opendialog.get_uri()
-        else: return self.uri
+        else:
+            return self.uri
     
     def get_position (self):
         return self.widgets["BoardView"].shown

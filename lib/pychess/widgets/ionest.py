@@ -93,13 +93,13 @@ savedialog.set_extra_widget(savecombo)
 
 panels = ["loadsidepanel", "enterGameNotationSidePanel", "setUpPositionSidePanel"]
 
-def setActiveSidePanel (panelname):
+def setActiveSidePanel (panelname, uri = None):
     """ Set to None to hide all panels """
     for panel in panels:
         if panel != panelname:
             widgets[panel].hide()
     if panelname:
-        globals()["ensureReady_"+panelname]()
+        globals()["ensureReady_"+panelname](uri)
         widgets[panelname].show()
 
 ################################################################################
@@ -107,7 +107,7 @@ def setActiveSidePanel (panelname):
 ################################################################################
 
 loadsidepanel_ready = False
-def ensureReady_loadsidepanel ():
+def ensureReady_loadsidepanel (uri):
     global loadsidepanel_ready
     if loadsidepanel_ready:
         return
@@ -116,7 +116,7 @@ def ensureReady_loadsidepanel ():
     global loadSidePanel
     filechooserbutton = gtk.FileChooserButton(opendialog)
     loadSidePanel = BoardPreview.BoardPreview()
-    loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir)
+    loadSidePanel.addFileChooserButton(filechooserbutton, opendialog, enddir, uri)
     filechooserbutton.show()
     widgets["loadsidepanel"].add(loadSidePanel)
 
@@ -549,19 +549,19 @@ def simpleNewGame (game, gmwidg):
 ################################################################################
 
 def loadGame (uri = None):
-    if uri:
-        opendialog.set_uri(uri)
-    
-    res = opendialog.run()
-    opendialog.hide()
-    if res != gtk.RESPONSE_ACCEPT: return (gtk.RESPONSE_CANCEL, None)
-    
-    setActiveSidePanel("loadsidepanel")
+    if not uri:
+        res = opendialog.run()
+        opendialog.hide()
+        if res != gtk.RESPONSE_ACCEPT:
+            return (gtk.RESPONSE_CANCEL, None)
+
+    setActiveSidePanel("loadsidepanel", uri)
     widgets["newgamedialog"].set_title(_("Open Game"))
     game, gmwidg = runNewGameDialog()
     
     if game != gtk.RESPONSE_CANCEL:
-        uri = loadSidePanel.get_uri()
+        if not uri:
+            uri = loadSidePanel.get_uri()
         loader = enddir[uri[uri.rfind(".")+1:]]
         simpleLoadGame(game, gmwidg, uri, loader,
                        loadSidePanel.get_gameno(), loadSidePanel.get_position())
