@@ -61,7 +61,7 @@ class GtkWorker (GObject, Thread):
     __gsignals__ = {
         "progressed": (SIGNAL_RUN_FIRST, None, (float,)),
         "published":  (SIGNAL_RUN_FIRST, None, (object,)),
-        "done":       (SIGNAL_RUN_FIRST, None, ())
+        "done":       (SIGNAL_RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, func):
@@ -165,7 +165,7 @@ class GtkWorker (GObject, Thread):
             try:
                 # In python 2.5 we can use self.publishQueue.join() to wait for
                 # all publish items to have been processed.
-                self.emit("done")
+                self.emit("done", self.result)
             finally:
                 glock.release()
     
