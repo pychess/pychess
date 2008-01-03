@@ -36,6 +36,7 @@ methodDict = {
     gtk.CheckMenuItem: ("get_active", "set_active", "toggled"),
     gtk.RadioButton: ("get_active", "set_active", "toggled"),
     gtk.ComboBox: ("get_active", "set_active", "changed"),
+    gtk.SpinButton: ("get_value", "set_value", "value-changed"),
     ToggleComboBox: ("_get_active", "_set_active", "changed")
 }
 
@@ -59,7 +60,10 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
         set_value(conf.getStrict(key))
     
     signal = methodDict[type(widget)][2]
-    widget.connect(signal, lambda *args: conf.set(key, get_value()))
+    def callback(*args):
+        if conf.getStrict(key) != get_value():
+            conf.set(key, get_value())
+    widget.connect(signal, callback)
     conf.notify_add(key, lambda *args: set_value(conf.getStrict(key)))
 
 tooltip = gtk.Tooltips()

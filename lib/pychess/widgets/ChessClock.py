@@ -153,7 +153,7 @@ class ChessClock (gtk.DrawingArea):
             self.model.connect("player_changed", self.player_changed)
             repeat_sleep(self.update, 0.1)
         
-        self.formatedCache = [self.formatTime (
+            self.formatedCache = [self.formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
     
     def time_changed (self, model):
