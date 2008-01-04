@@ -1,11 +1,25 @@
 """ This is a pool for reusing threads """
 
-import sys, traceback, cStringIO, atexit
-from threading import Condition, Lock
-from threading import Thread, currentThread
+import sys as sys_
+import traceback, cStringIO, atexit
+import threading
+from threading import Thread, currentThread, Condition, Lock
 import Queue
 
 import glock
+
+if not hasattr(Thread, "_Thread__bootstrap_inner"):
+    class SafeThread (Thread):
+        def encaps(self):
+            try:
+                self._Thread__bootstrap_inner()
+            except:
+                if self.__daemonic and sys_ is None:
+                    return
+                raise
+    setattr(SafeThread, "_Thread__bootstrap_inner", SafeThread._Thread__bootstrap)
+    setattr(SafeThread, "_Thread__bootstrap", SafeThread.encaps)
+    threading.Thread = SafeThread
 
 maxThreads = 50
 
@@ -65,7 +79,7 @@ class ThreadPool:
                                     glock.release()
                             
                             list = self.tracestack[:-2] + \
-                                    traceback.extract_tb(sys.exc_traceback)[2:]
+                                    traceback.extract_tb(sys_.exc_traceback)[2:]
                             error = "".join(traceback.format_list(list))
                             print error.rstrip()
                             print str(e.__class__), e
