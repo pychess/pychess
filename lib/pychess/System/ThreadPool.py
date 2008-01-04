@@ -48,8 +48,8 @@ class ThreadPool:
             
             # We catch the trace from the thread, that created the worker
             stringio = cStringIO.StringIO()
-            traceback.print_exc(file=stringio)
-            self.trace = stringio.getvalue()
+            traceback.print_stack(file=stringio)
+            self.tracestack = traceback.extract_stack()
         
         def run (self):
             try:
@@ -57,17 +57,18 @@ class ThreadPool:
                     if self.func:
                         try:
                             self.func()
-                        except:
+                        except Exception, e:
                             if glock._rlock._RLock__owner == self:
                                 # As a service we take care of releasing the gdk
                                 # lock when a thread breaks to avoid freezes
                                 for i in xrange(_rlock._RLock__count):
                                     glock.release()
                             
-                            stringio = cStringIO.StringIO()
-                            traceback.print_exc(file=stringio)
-                            error = stringio.getvalue()
-                            print "From Threadpool: %s\n%s" % (self.trace, error)
+                            list = self.tracestack[:-2] + \
+                                    traceback.extract_tb(sys.exc_traceback)[2:]
+                            error = "".join(traceback.format_list(list))
+                            print error.rstrip()
+                            print str(e.__class__), e
                         
                         self.func = None
                         self.queue.put(self)

@@ -399,6 +399,14 @@ class EngineDiscoverer (GObject, Thread):
         
         return attrToProtocol[protocol](subprocess, color, protover)
     
+    def initAndStartEngine (self, xmlengine, color, diffi, secs=0, incr=0):
+        engine = self.initEngine (xmlengine, color)
+        engine.start(block=True)
+        engine.setStrength(diffi)
+        if secs > 0:
+            engine.setTime(secs, incr)
+        return engine
+    
     #
     # Other
     #

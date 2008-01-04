@@ -127,8 +127,11 @@ class PGNFile (ChessFile):
         
         fenstr = self._getTag(gameno, "FEN")
         if fenstr:
-            model.boards = [model.boards[0].fromFen(fenstr)]
+            model.boards = [Board(fenstr)]
+            print model.boards[0]
         else: model.boards = [Board(setup=True)]
+        model.status = WAITING_TO_START
+        model.reason = UNKNOWN_REASON
         
         movstrs = self._getMoves (gameno)
         error = None
@@ -140,13 +143,12 @@ class PGNFile (ChessFile):
             except ParsingError, e:
                 error = LoadingError (("Unable to parse PGN: %s\nat move %d\n" +
                         "Gave error: %s") % (" ".join(movstrs), i+1, e.args))
-            
-            if not error:
-                model.moves.append(move)
-                model.boards.append(model.boards[-1].move(move))
-                model.emit("game_changed")
-            else:
                 break
+            model.moves.append(move)
+            model.boards.append(model.boards[-1].move(move))
+            
+            # This is for the sidepanels
+            model.emit("game_changed")
         
         if model.timemodel:
             blacks = len(movstrs)/2
@@ -156,6 +158,9 @@ class PGNFile (ChessFile):
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
             log.debug("intervals %s" % model.timemodel.intervals)
+        
+        if model.status == WAITING_TO_START:
+            model.status, model.reason = getStatus(model.boards[-1])
         
         if error:
             raise error

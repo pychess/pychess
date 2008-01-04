@@ -22,7 +22,9 @@ class Board:
         self.board = LBoard()
         
         if setup:
-            self.board.applyFen(FEN_START)
+            if setup == True:
+                self.board.applyFen(FEN_START)
+            else: self.board.applyFen(setup)
             
             arBoard = self.board.arBoard
             wpieces = self.board.boards[WHITE]
@@ -128,7 +130,7 @@ class Board:
         return self.board.asFen()
     
     def __repr__ (self):
-        return repr(self.board)
+        return str(self.board)
     
     def __getitem__ (self, cord):
         return self.data[cord.y][cord.x]

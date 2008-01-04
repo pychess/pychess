@@ -23,6 +23,7 @@ class GameModel (GObject, PooledThread):
         It also has the task of controlling players actions and moves """
     
     __gsignals__ = {
+        "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
@@ -64,18 +65,6 @@ class GameModel (GObject, PooledThread):
         self.spectactors = {}
         
         self.applyingMoveLock = RLock()
-        self.conids = []
-    
-    # The following two methods intends to fix exceptions when atexit kills the
-    # engines, asynchronously with the GameModel thread closing
-    def connect (self, signal, func, *args):
-        conid = GObject.connect(self, signal, func, *args)
-        self.conids.append(conid)
-        return conid
-    
-    def __del__ (self):
-        for conid in self.conids:
-            self.disconnect(conid)
     
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
@@ -95,7 +84,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def clear (self):
-        self.boards = [Board().fromFen(FEN_EMPTY)]
+        self.boards = [Board(FEN_EMPTY)]
         self.moves = []
         self.emit("game_changed")
     
@@ -224,7 +213,7 @@ class GameModel (GObject, PooledThread):
     # Data stuff                                                               #
     ############################################################################
     
-    def loadAndStart (self, uri, gameno, position, loader):
+    def loadAndStart (self, uri, loader, gameno, position):
         assert self.status == WAITING_TO_START
         
         uriIsFile = type(uri) != str
@@ -246,11 +235,7 @@ class GameModel (GObject, PooledThread):
             self.uri = uri
         else: self.uri = None
         
-        if self.status == WAITING_TO_START:
-            self.status, self.reason = getStatus(self.boards[-1])
-        
         if self.status == RUNNING:
-            
             for player in self.players:
                 player.setBoard(self)
             for spectactor in self.spectactors.values():
@@ -262,8 +247,10 @@ class GameModel (GObject, PooledThread):
                     self.timemodel.start()
             
             self.start()
+        else:
+            self.emit("game_started")
         
-        elif self.status == WHITEWON:
+        if self.status == WHITEWON:
             self.emit("game_ended", self.reason)
         
         elif self.status == BLACKWON:
@@ -292,6 +279,7 @@ class GameModel (GObject, PooledThread):
     
     def run (self):
         self.status = RUNNING
+        self.emit("game_started")
         
         while self.status in (PAUSED, RUNNING):
             curColor = self.boards[-1].color
@@ -308,7 +296,7 @@ class GameModel (GObject, PooledThread):
                     stringio = cStringIO.StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
-                    log.error("A Player died:%s\n%s" % (e, error), curPlayer.defname)
+                    log.error("A Player died:%s\n%s" % (e, error), curPlayer)
                     if curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)
                     else: self.kill(BLACK_ENGINE_DIED)
@@ -327,9 +315,15 @@ class GameModel (GObject, PooledThread):
                 if not self.checkStatus():
                     break
                 self.emit("game_changed")
-                # This is how long we seam to get in issue 240
+                
                 for spectactor in self.spectactors.values():
-                    spectactor.makeMove(self)
+                    model = GameModel()
+                    model.boards = [board.clone() for board in self.boards]
+                    model.moves = self.moves
+                    model.players = self.players
+                    model.status = self.status
+                    model.reason = self.reason
+                    spectactor.makeMove(model)
             finally:
                 self.applyingMoveLock.release()
     

@@ -4,6 +4,7 @@ from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import evaluateComplete
+from pychess.Utils.logic import getStatus
 
 __label__ = _("Chess Position")
 __endings__ = "epd",
@@ -108,7 +109,8 @@ class EpdFile (ChessFile):
             fen += " " + opcodes["fmvn"]
         else: fen += " 1"
         
-        model.boards = [Board().fromFen(fen)]
+        model.boards = [Board(fen)]
+        model.status = WAITING_TO_START
         
         # rc i kinda broken
         #if "rc" in opcodes:
@@ -119,7 +121,10 @@ class EpdFile (ChessFile):
                 model.status = BLACKWON
             else:
                 model.status = WHITEWON
-            model.reason
+            model.reason = WON_RESIGN
+        
+        if model.status == WAITING_TO_START:
+            model.status, model.reason = getStatus(model.boards[-1])
         
         return model
         

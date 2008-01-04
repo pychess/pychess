@@ -116,6 +116,7 @@ class GameWidget (gobject.GObject):
     __gsignals__ = {
         'close_clicked': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
         'infront': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
     
     def __init__ (self, gamemodel):
@@ -164,6 +165,7 @@ class GameWidget (gobject.GObject):
         
         ccalign = createAlignment(1,0,0,0)
         cclock = ChessClock()
+        cclock.setModel(gamemodel.timemodel)
         ccalign.add(cclock)
         ccalign.set_size_request(-1, 32)
         
@@ -364,6 +366,8 @@ def show_side_panel (show):
         widgets["window1"].resize(widgetsSize[0]-panelWidth,widgetsSize[1])
 
 def delGameWidget (gmwidg):
+    gmwidg.emit("closed")
+    
     headbook = getheadbook()
     page_num = headbook.page_num(gmwidg.widgets["headchild"])
     headbook.remove_page(page_num)
