@@ -246,6 +246,7 @@ class GameModel (GObject, PooledThread):
                 if self.ply >= 2:
                     self.timemodel.start()
             
+            self.status = WAITING_TO_START
             self.start()
         else:
             self.emit("game_started")

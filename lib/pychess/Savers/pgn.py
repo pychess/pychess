@@ -128,8 +128,8 @@ class PGNFile (ChessFile):
         fenstr = self._getTag(gameno, "FEN")
         if fenstr:
             model.boards = [Board(fenstr)]
-            print model.boards[0]
         else: model.boards = [Board(setup=True)]
+        del model.moves[:]
         model.status = WAITING_TO_START
         model.reason = UNKNOWN_REASON
         
