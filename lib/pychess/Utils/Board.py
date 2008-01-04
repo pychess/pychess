@@ -40,6 +40,8 @@ class Board:
                 self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, ROOK)
             for cord in iterBits(wpieces[QUEEN]):
                 self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, QUEEN)
+            if self.board.kings[WHITE] != -1:
+                self[Cord(self.board.kings[WHITE])] = Piece(WHITE, KING)
             
             for cord in iterBits(bpieces[PAWN]):
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, PAWN)
@@ -51,9 +53,8 @@ class Board:
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, ROOK)
             for cord in iterBits(bpieces[QUEEN]):
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
-            
-            self[Cord(self.board.kings[WHITE])] = Piece(WHITE, KING)
-            self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
+            if self.board.kings[BLACK] != -1:
+                self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
     
     def move (self, move):
         

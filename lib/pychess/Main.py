@@ -263,7 +263,9 @@ class GladeHandlers:
         # We may have more than one file dropped. We choose only to care about
         # the first.
         uri = uri.split()[0][7:]
-        newGameDialog.LoadFileExtension.run(uri)
+        startdata = newGameDialog.LoadFileExtension.run(uri)
+        if startdata:
+            ionest.generalStart(*startdata)
     
     #          Game Menu          #
     
@@ -449,8 +451,10 @@ class PyChess:
     def handleArgs (self, args):
         if args:
             def do ():
-                newGameDialog.LoadFileExtension.run(args[0])
+                startdata = newGameDialog.LoadFileExtension.run(args[0])
                 glock.release()
+                if startdata:
+                    ionest.generalStart(*startdata)
             # For this once, we need to do an idle_add, as the code is called
             # before gtk.main. Also notice that the do function ends with an
             # glock.release
