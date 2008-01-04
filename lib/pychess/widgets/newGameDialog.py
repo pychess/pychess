@@ -182,6 +182,9 @@ class LoadFileExtension (_GameInitializationMode):
             if res != gtk.RESPONSE_ACCEPT:
                 return
         else:
+            if not uri[uri.rfind(".")+1:] in ionest.enddir:
+                log.log("Ignoring strange file: %s" % uri)
+                return
             cls.loadSidePanel.set_filename(uri)
             cls.filechooserbutton.emit("file-activated")
             
