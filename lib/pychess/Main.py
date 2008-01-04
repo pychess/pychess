@@ -6,12 +6,17 @@ import signal
 
 import pango, gobject, gtk
 
-from pychess.System import conf, gstreamer, glock
+from pychess.System import conf, gstreamer, glock, uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
+from pychess.System.GtkWorker import GtkWorker
 from pychess.Utils.const import *
 from pychess.Utils import book # Kills pychess if no sqlite available
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
+from pychess.Players.engineNest import discoverer
+from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
 from pychess.widgets import gamewidget
@@ -120,8 +125,7 @@ class GladeHandlers:
         windowSize = window["window1"].get_size()
         window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
     
-    def on_game_started (handler, gmwidg, gamemodel):
-        
+    def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel
         
         # Make sure game dependent menu entries are sensitive
@@ -134,17 +138,6 @@ class GladeHandlers:
         
         # Bring playing window to the front
         window["window1"].present()
-        
-        # Play set-up sound
-        if conf.get("useSounds", False):
-            preferencesDialog.SoundTab.playAction("gameIsSetup")
-        
-        # Rotate to human player
-        if conf.get("autoRotate", True):
-            boardview = gmwidg.widgets["board"].view
-            if boardview.model.players[1].__type__ == LOCAL and \
-                    boardview.model.players[0].__type__ != LOCAL:
-                boardview.rotation = math.pi
         
         # Connect stuff
         gmwidg.widgets["sidepanel"].connect("hide", \
@@ -159,6 +152,7 @@ class GladeHandlers:
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
+        # Connect game_loaded, game_saved and game_ended to statusbar
         def game_loaded (gamemodel, uri):
             if type(uri) in (str, unicode):
                 s = "%s: %s" % (_("Loaded game"), str(uri))
@@ -215,49 +209,52 @@ class GladeHandlers:
                 engineDead(gamemodel.players[0], gmwidg)
             elif reason == BLACK_ENGINE_DIED:
                 engineDead(gamemodel.players[1], gmwidg)
-        
         gamemodel.connect("game_ended", game_ended)
         
-        for player in gamemodel.players:
-            if player.__type__ == LOCAL:
-                def offer_callback (player, offer):
-                    if offer.offerType == DRAW_OFFER:
-                        if gamemodel.status != RUNNING:
-                            return # If the offer has already been handled by
-                                   # Gamemodel and the game was drawn, we need
-                                   # to do nothing
-                        gmwidg.status(_("You sent a draw offer"))
-                player.connect("offer", offer_callback)
-        
-        def infront (gmwidg):
-            auto = gamemodel.players[0].__type__ != LOCAL and \
-                    gamemodel.players[1].__type__ != LOCAL
-            for widget in ACTION_MENU_ITEMS:
-                window[widget].props.sensitive = not auto
-        gmwidg.connect("infront", infront)
-        infront(gmwidg)
-        
-        def whenClosed (handler, gmwidg, gamemodel):
+        def on_game_started (gamemodel):
+            # Rotate to human player
+            boardview = gmwidg.widgets["board"].view
+            if gamemodel.players[1].__type__ == LOCAL:
+                if gamemodel.players[0].__type__ != LOCAL:
+                    boardview.rotation = math.pi
+                elif conf.get("autoRotate", True) and \
+                        gamemodel.curplayer == gamemodel.players[1]:
+                    boardview.rotation = math.pi
+            
+            # Play set-up sound
+            if conf.get("useSounds", False):
+                preferencesDialog.SoundTab.playAction("gameIsSetup")
+            
+            # Connect player offers to statusbar
             for player in gamemodel.players:
-                player.kill(WON_DISCONNECTION)
-        ionest.handler.connect("game_closed", whenClosed)
+                if player.__type__ == LOCAL:
+                    def offer_callback (player, offer):
+                        if offer.offerType == DRAW_OFFER:
+                            if gamemodel.status != RUNNING:
+                                return # If the offer has already been handled by
+                                       # Gamemodel and the game was drawn, we need
+                                       # to do nothing
+                            gmwidg.status(_("You sent a draw offer"))
+                    player.connect("offer", offer_callback)
+            
+            def on_gmwidg_closed (gmwidg):
+                del gameDic[gmwidg]
+                for player in gamemodel.players:
+                    player.kill(WON_DISCONNECTION)
+                for widget in MENU_ITEMS:
+                    window[widget].set_property('sensitive', False)
+            gmwidg.connect("closed", on_gmwidg_closed)
+            
+            # Set right sensitivity states in menubar, when tab is switched
+            def infront (gmwidg):
+                auto = gamemodel.players[0].__type__ != LOCAL and \
+                        gamemodel.players[1].__type__ != LOCAL
+                for widget in ACTION_MENU_ITEMS:
+                    window[widget].props.sensitive = not auto
+            gmwidg.connect("infront", infront)
+            infront(gmwidg)
         
-        #def flag_call_error (gamemodel, player, error):
-        #    if player.__type__ == LOCAL:
-        #        if error == NO_TIME_SETTINGS:
-        #            gmwidg.status(_("You can't call flag in a game without" + \
-        #                            " time settings"))
-        #        elif error == NOT_OUT_OF_TIME:
-        #            gmwidg.status(_("You can't call flag when your opponent" + \
-        #                            " is not out of time"))
-        #gamemodel.connect("flag_call_error", flag_call_error)
-    
-    def on_game_closed (handler, gmwidg, gamemodel):
-        del gameDic[gmwidg]
-        
-        if len (gameDic) == 0:
-            for widget in MENU_ITEMS:
-                window[widget].set_property('sensitive', False)
+        gamemodel.connect("game_started", on_game_started)
     
     #          Drag 'n' Drop          #
     
@@ -269,25 +266,32 @@ class GladeHandlers:
         ionest.loadGame (uri)
     
     #          Game Menu          #
-
+    
     def on_new_game1_activate (widget):
-        ionest.newGame ()
+        startdata = newGameDialog.NewGameMode.run()
+        if startdata:
+            ionest.generalStart(*startdata)
     
     def on_play_internet_chess_activate (widget):
         ICLogon.run()
     
     def on_load_game1_activate (widget):
-        ionest.loadGame ()
+        startdata = newGameDialog.LoadFileExtension.run()
+        if startdata:
+            ionest.generalStart(*startdata)
     
     def on_set_up_position_activate (widget):
-        ionest.setUpPosition ()
+        # Not implemented
+        pass
     
     def on_enter_game_notation_activate (widget):
-        ionest.enterGameNotation ()
+        startdata = newGameDialog.EnterNotationExtension.run()
+        if startdata:
+            ionest.generalStart(*startdata)
     
     def on_save_game1_activate (widget):
         ionest.saveGame (gameDic[gamewidget.cur_gmwidg()])
-        
+    
     def on_save_game_as1_activate (widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
     
@@ -302,7 +306,7 @@ class GladeHandlers:
         ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate (widget, *args):
-        if ionest.closeAllGames (gameDic.values()) == gtk.RESPONSE_OK:
+        if ionest.closeAllGames (gameDic.items()) == gtk.RESPONSE_OK:
             gtk.main_quit()
         else: return True
     
@@ -331,33 +335,6 @@ class GladeHandlers:
         for gmwidg in gameDic.keys():
             setMode(gmwidg, SPY, widget.get_active())
     
-    #          Action menu          #
-    
-    #def on_call_flag_activate (widget):
-    #    gmwidg = gamewidget.cur_gmwidg()
-    #    gmwidg.widgets["board"].on_call_flag_activate (widget)
-
-    #def on_draw_activate (widget):
-    #    gmwidg = gamewidget.cur_gmwidg()
-    #    gmwidg.widgets["board"].on_draw_activate (widget)
-        
-    #def on_resign_activate (widget):
-    #    gmwidg = gamewidget.cur_gmwidg()
-    #    gmwidg.widgets["board"].on_resign_activate (widget)
-
-    #def on_force_to_move_activate (widget):
-    #    if len(gameDic):
-    #        gameDic[gamewidget.cur_gmwidg()].curplayer.hurry()
-    
-    #def on_undo1_activate (widget):
-    #    pass #IMPLEMENT ME
-    
-    #def on_pause1_activate (widget):
-    #    game = gameDic[gamewidget.cur_gmwidg()]
-    #    if widget.get_active():
-    #        game.pause()
-    #    else: game.resume()
-    
     #          Settings menu          #
     
     def on_preferences_activate (widget):
@@ -385,11 +362,18 @@ class GladeHandlers:
     #          Taskers        #
     
     def on_newGameTasker_started (tasker, color, opponent, difficulty):
-        if color == WHITE:
-            game, gmwidg = ionest.createGame (0, opponent, 0, difficulty)
+        gamemodel = GameModel(TimeModel(5*60, 0))
+        
+        player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
+        if opponent == 0:
+            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"))
         else:
-            game, gmwidg = ionest.createGame (opponent, 0, difficulty, 0)
-        ionest.simpleNewGame (game, gmwidg)
+            engine = discoverer.getEngineN (opponent-1)
+            name = discoverer.getName(engine)
+            player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
+                    (engine, color, difficulty, 5*60, 0), name)
+        
+        ionest.generalStart(gamemodel, player0tup, player1tup)
     
     def on_internetTasker_connect (tasker, asGuest, username, password):
         ICLogon.run()
@@ -433,10 +417,9 @@ class PyChess:
         makeLogDialogReady()
         makeAboutDialogReady()
         gamewidget.set_widgets(self)
-        ionest.handler.connect("game_started",
-            GladeHandlers.__dict__["on_game_started"])
-        ionest.handler.connect("game_closed",
-            GladeHandlers.__dict__["on_game_closed"])
+        uistuff.keep(self["side_panel1"], "side_panel1")
+        ionest.handler.connect("gmwidg_created",
+            GladeHandlers.__dict__["on_gmwidg_created"])
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
@@ -471,11 +454,9 @@ class PyChess:
             # before gtk.main. Also notice that the do function ends with an
             # glock.release
             gobject.idle_add(do)
-    
+
 def run (args):
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
     gtk.gdk.threads_init()
     gtk.main()
-    
-    

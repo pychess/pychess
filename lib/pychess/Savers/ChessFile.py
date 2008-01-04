@@ -11,13 +11,16 @@ class ChessFile:
     
     def __init__ (self, games):
         """ Games should be a list of the raw file data,
-            splitted such that games[0] is used for game 0 etc. """
+            splitted such that games[0] is used for game 0 etc.
+            SourceUri must be the
+            """
         self.games = games
-        
-    def loadToHistory (self, gameno, position, history=None):
-        """ Load the data of game "gameno" into the history object
-            If no history object is specified, a clear one
-            will be created, loaded and returned """
+        self.sourceUri = None
+    
+    def loadToModel (self, gameno, position, model=None):
+        """ Load the data of game "gameno" into the gamemodel
+            If no model is specified, a new one will be created, loaded and
+            returned """
         raise NotImplementedError
         
     def __len__ (self):

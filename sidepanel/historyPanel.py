@@ -154,7 +154,7 @@ class Sidepanel:
         self.freezed = False
     
     def shown_changed (self, board, shown):
-        if shown <= 0:
+        if shown <= board.model.lowply:
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
@@ -166,7 +166,7 @@ class Sidepanel:
         if row >= len(col.get_model()):
             return
         
-        if shown > 0:
+        if shown > board.model.lowply:
             col.get_selection().select_iter(col.get_model().get_iter(row))
             col.set_cursor((row,))
             if other.is_focus():

@@ -22,6 +22,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
 from pychess.Players.ServerPlayer import ServerPlayer
 from pychess.Players.Human import Human
+from pychess.Savers import pgn
 
 from IcGameModel import IcGameModel
 from SpotGraph import SpotGraph
@@ -844,55 +845,31 @@ class CreatedBoards (Section):
     def playBoardCreated (self, bm, board):
         timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
         game = IcGameModel (self.connection, board["gameno"], timemodel)
-        gmwidg = gamewidget.GameWidget(game)
         
         if board["wname"].lower() == self.connection.getUsername().lower():
-            color = WHITE
-            white = Human(gmwidg, WHITE, board["wname"])
-            black = ServerPlayer (game, board["bname"], False, board["gameno"], BLACK)
+            player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
+            player1tup = (REMOTE, ServerPlayer,
+                    (game, board["bname"], board["gameno"], BLACK), board["bname"])
         else:
-            color = BLACK
-            black = Human(gmwidg, BLACK, board["bname"])
-            white = ServerPlayer (game, board["wname"], False, board["gameno"], WHITE)
+            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"))
+            # If the remote player is WHITE, we need to init him right now, so
+            # we can catch fast made moves
+            player0 = ServerPlayer(game, board["wname"], board["gameno"], WHITE)
+            player0tup = (REMOTE, lambda:player0, (), board["wname"])
         
-        game.setPlayers((white,black))
-        gmwidg.setTabText("%s %s %s" % (repr(white), _("vs"), repr(black)))
-        
-        if timemodel:
-            gmwidg.widgets["ccalign"].show()
-            gmwidg.widgets["cclock"].setModel(timemodel)
-        
-        glock.acquire()
-        try:
-            gamewidget.attachGameWidget (gmwidg)
-            ionest.simpleNewGame (game, gmwidg)
-        finally:
-            glock.release()
+        ionest.generalStart(game, player0tup, player1tup)
     
-    def observeBoardCreated (self, bm, gameno, pgn, secs, incr, wname, bname):
+    def observeBoardCreated (self, bm, gameno, pgndata, secs, incr, wname, bname):
         timemodel = TimeModel (secs, incr)
         game = IcGameModel (self.connection, gameno, timemodel)
-        white = ServerPlayer (game, wname, True, gameno, WHITE)
-        black = ServerPlayer (game, bname, True, gameno, BLACK)
-        game.setPlayers((white,black))
         
-        gmwidg = gamewidget.GameWidget(game)
-        gmwidg.setTabText("%s %s %s" % (wname, _("vs"), bname))
+        # The players need to start listening for moves IN this method if they
+        # want to be noticed of all moves the FICS server sends us from now on
+        player0 = ServerPlayer(game, wname, gameno, WHITE)
+        player1 = ServerPlayer(game, bname, gameno, BLACK)
         
-        if timemodel:
-            gmwidg.widgets["ccalign"].show()
-            gmwidg.widgets["cclock"].setModel(timemodel)
+        player0tup = (REMOTE, lambda:player0, (), wname)
+        player1tup = (REMOTE, lambda:player1, (), bname)
         
-        def onClose (handler, closedGmwidg, game):
-            if closedGmwidg == gmwidg:
-                self.connection.bm.unobserve(gameno)
-        ionest.handler.connect("game_closed", onClose)
-        
-        file = StringIO(pgn)
-        ionest.simpleLoadGame (game, gmwidg, file, ionest.enddir["pgn"])
-        
-        glock.acquire()
-        try:
-            gamewidget.attachGameWidget(gmwidg)
-        finally:
-            glock.release()
+        ionest.generalStart(
+                game, player0tup, player1tup, (StringIO(pgndata), pgn, 0, -1))

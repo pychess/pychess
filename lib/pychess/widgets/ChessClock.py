@@ -155,6 +155,8 @@ class ChessClock (gtk.DrawingArea):
         
             self.formatedCache = [self.formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
+        else:
+            self.formatedCache = None
     
     def time_changed (self, model):
         self.update()

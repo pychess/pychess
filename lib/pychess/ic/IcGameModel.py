@@ -21,6 +21,8 @@ class IcGameModel (GameModel):
         
         self.connection.connect("disconnected", self.onDisconnected)
         
+        self.connect("game_ended", self.afterGameEnded)
+        
         self.inControl = True
     
     def onClockUpdatedMs (self, bm, gameno, msecs, color):
@@ -37,6 +39,10 @@ class IcGameModel (GameModel):
     def onGameEnded (self, bm, gameno, status, reason):
         if gameno == self.gameno:
             self.end (status, reason)
+    
+    def afterGameEnded (self, self_, reason):
+        if not self.inControl:
+            self.connection.bm.unobserve(self.gameno)
     
     def setPlayers (self, players):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:

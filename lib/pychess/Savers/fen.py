@@ -3,6 +3,7 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
+from pychess.Utils.logic import getStatus
 
 __label__ = _("Simple Chess Position")
 __endings__ = "fen",
@@ -31,6 +32,8 @@ class FenFile (ChessFile):
         #    fen = " ".join(fenlist[:5]) + " 1" 
         fen = self.games[gameno]
         
-        model.boards = [Board().fromFen(fen)]
+        model.boards = [Board(fen)]
+        if model.status == WAITING_TO_START:
+            model.status, model.reason = getStatus(model.boards[-1])
         
         return model

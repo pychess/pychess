@@ -9,7 +9,7 @@ from pychess.Utils.const import *
 class ServerPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, gamemodel, name, external, gameno, color):
+    def __init__ (self, gamemodel, name, gameno, color):
         Player.__init__(self)
         
         self.queue = Queue()
@@ -20,11 +20,6 @@ class ServerPlayer (Player):
         self.gameno = gameno
         self.gamemodel = gamemodel
         self.connection = self.gamemodel.connection
-        
-        # If we are not playing against a player on the users computer. E.g.
-        # when we observe a game on FICS. In these cases we don't send anything
-        # back to the server.
-        self.external = external
         
         self.connection.bm.connect("moveRecieved", self.moveRecieved)
         self.connection.om.connect("onOfferAdd", self.onOfferAdd)
@@ -65,14 +60,16 @@ class ServerPlayer (Player):
             if movecol == self.color:
                 self.queue.put((self.lastPly,sanmove))
                 # Ensure the fics thread doesn't continue parsing, before the
-                # game/player thread has recieved the move
+                # game/player thread has recieved the move.
+                # Specifically this ensures that we aren't killed due to end of
+                # game before our last move is recieved
                 self.okqueue.get(block=True)
     
     def makeMove (self, gamemodel):
         self.gamemodel = gamemodel
         self.lastPly = gamemodel.ply
         
-        if gamemodel.moves and not self.external:
+        if gamemodel.moves and gamemodel.inControl:
             self.connection.bm.sendMove (
                     toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
         
@@ -91,9 +88,9 @@ class ServerPlayer (Player):
             try:
                 move = parseSAN (gamemodel.boards[-1], sanmove)
             except ParsingError, e:
-                print "Error", e.args[0]
-                print "moves are", listToSan(gamemodel.boards[0], gamemodel.moves)
-                raise PlayerIsDead
+                e = "%s\n%s" % (e.args[0],
+                        listToSan(gamemodel.boards[0], gamemodel.moves))
+                raise PlayerIsDead, e
             return move
         finally:
             self.okqueue.put("ok")

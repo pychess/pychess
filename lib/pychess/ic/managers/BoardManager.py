@@ -199,7 +199,7 @@ class BoardManager (GObject):
         moves = self.queuedMoves[gameno]
         for moveline in matchlist[7:-1]:
             if not moveListMoves.match(moveline):
-                print repr(moveline)
+                log.error("Line %s could not be mathed by regexp" % moveline)
             moveno, wmove, bmove = moveListMoves.match(moveline).groups()
             ply = int(moveno)*2-2
             moves[ply] = wmove
@@ -214,9 +214,9 @@ class BoardManager (GObject):
             ("Black", blackname)
         ]
         if whiterating not in ("0", "UNR"):
-            ficsHeaders.append(("WhiteElo", whiterating))
+            pgnHead.append(("WhiteElo", whiterating))
         if blackrating not in ("0", "UNR"):
-            ficsHeaders.append(("BlackElo", blackrating))
+            pgnHead.append(("BlackElo", blackrating))
         
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
