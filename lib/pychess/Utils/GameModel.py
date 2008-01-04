@@ -278,6 +278,10 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def run (self):
+        # Avoid racecondition when self.start is called while we are in self.end
+        if self.status != WAITING_TO_START:
+            return
+        
         self.status = RUNNING
         self.emit("game_started")
         
