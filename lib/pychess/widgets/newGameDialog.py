@@ -167,10 +167,8 @@ class LoadFileExtension (_GameInitializationMode):
     @classmethod
     def _init (cls):
         cls.filechooserbutton = gtk.FileChooserButton(ionest.opendialog)
-        cls.loadSidePanel = BoardPreview.BoardPreview()
-        cls.loadSidePanel.addFileChooserButton(
+        cls.loadSidePanel = BoardPreview.BoardPreview(cls.widgets,
                 cls.filechooserbutton, ionest.opendialog, ionest.enddir)
-        cls.widgets["loadsidepanel"].add(cls.loadSidePanel)
     
     @classmethod
     def run (cls, uri=None):
@@ -196,12 +194,14 @@ class LoadFileExtension (_GameInitializationMode):
         if not startdata:
             return None
         
-        uri = "file://"+cls.loadSidePanel.get_filename()
-        loader = ionest.enddir[uri[uri.rfind(".")+1:]]
-        gameno = cls.loadSidePanel.get_gameno()
-        position = cls.loadSidePanel.get_position()
-        
-        return startdata + ((uri, loader, gameno, position),)
+        if not cls.loadSidePanel.is_empty():
+            uri = "file://"+cls.loadSidePanel.get_filename()
+            loader = ionest.enddir[uri[uri.rfind(".")+1:]]
+            position = cls.loadSidePanel.get_position()
+            gameno = cls.loadSidePanel.get_gameno()
+            return startdata + ((uri, loader, gameno, position),)
+        else:
+            return startdata
 
 ################################################################################
 # EnterNotationExtension                                                       #
