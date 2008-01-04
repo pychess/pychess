@@ -262,8 +262,8 @@ class GladeHandlers:
         uri = selection.data.strip()
         # We may have more than one file dropped. We choose only to care about
         # the first.
-        uri = uri.split()[0]
-        ionest.loadGame (uri)
+        uri = uri.split()[0][7:]
+        newGameDialog.LoadFileExtension.run(uri)
     
     #          Game Menu          #
     
@@ -448,7 +448,7 @@ class PyChess:
     def handleArgs (self, args):
         if args:
             def do ():
-                ionest.loadGame(args[0])
+                newGameDialog.LoadFileExtension.run(args[0])
                 glock.release()
             # For this once, we need to do an idle_add, as the code is called
             # before gtk.main. Also notice that the do function ends with an

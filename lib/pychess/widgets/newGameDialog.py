@@ -49,7 +49,16 @@ for level, stock, altstock in \
 
 class _GameInitializationMode:
     @classmethod
-    def init (cls):
+    def _ensureReady (cls):
+        if not hasattr(_GameInitializationMode, "superhasRunInit"):
+            _GameInitializationMode._init()
+            _GameInitializationMode.superhasRunInit = True
+        if not hasattr(cls, "hasRunInit"):
+            cls._init()
+            cls.hasRunInit = True
+    
+    @classmethod
+    def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
         
         for combo in (cls.widgets["whiteDifficulty"], cls.widgets["blackDifficulty"]):
@@ -86,10 +95,6 @@ class _GameInitializationMode:
     
     @classmethod
     def _generalRun (cls):
-        if not hasattr(cls, "hasRunInit"):
-            cls.init()
-            cls.hasRunInit = True
-        
         res = cls.widgets["newgamedialog"].run()
         cls.widgets["newgamedialog"].hide()
         if res != gtk.RESPONSE_OK:
@@ -136,23 +141,20 @@ class _GameInitializationMode:
                 "enterGameNotationSidePanel", "setUpPositionSidePanel"):
             cls.widgets[extension].hide()
 
-# As _GameInitializationMode is never run, we have to make sure the init method
-# is called manually
-_GameInitializationMode.init()
-
 ################################################################################
 # NewGameMode                                                                  #
 ################################################################################
 
 class NewGameMode (_GameInitializationMode):
     @classmethod
-    def init (cls):
+    def _init (cls):
         # We have to override this, so the GameInitializationMode init method
         # isn't called twice
         pass
     
     @classmethod
     def run (cls):
+        cls._ensureReady()
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
         return cls._generalRun()
@@ -163,22 +165,26 @@ class NewGameMode (_GameInitializationMode):
 
 class LoadFileExtension (_GameInitializationMode):
     @classmethod
-    def init (cls):
-        filechooserbutton = gtk.FileChooserButton(ionest.opendialog)
+    def _init (cls):
+        cls.filechooserbutton = gtk.FileChooserButton(ionest.opendialog)
         cls.loadSidePanel = BoardPreview.BoardPreview()
         cls.loadSidePanel.addFileChooserButton(
-                filechooserbutton, ionest.opendialog, ionest.enddir)
+                cls.filechooserbutton, ionest.opendialog, ionest.enddir)
         cls.widgets["loadsidepanel"].add(cls.loadSidePanel)
     
     @classmethod
     def run (cls, uri=None):
-        if uri:
-            ionest.opendialog.set_uri(uri)
-        res = ionest.opendialog.run()
-        ionest.opendialog.hide()
-        if res != gtk.RESPONSE_ACCEPT:
-            return
+        cls._ensureReady()
         
+        if not uri:
+            res = ionest.opendialog.run()
+            ionest.opendialog.hide()
+            if res != gtk.RESPONSE_ACCEPT:
+                return
+        else:
+            cls.loadSidePanel.set_filename(uri)
+            cls.filechooserbutton.emit("file-activated")
+            
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
@@ -200,7 +206,7 @@ class LoadFileExtension (_GameInitializationMode):
 
 class EnterNotationExtension (_GameInitializationMode):
     @classmethod
-    def init (cls):
+    def _init (cls):
         cls.widgets["enterGameNotationSidePanel"].realize()
         cls.widgets["enterGameNotationFrame"].set_size_request(223,
                 cls.widgets["enterGameNotationSidePanel"].get_allocation().height-4)
@@ -237,6 +243,8 @@ class EnterNotationExtension (_GameInitializationMode):
     
     @classmethod
     def run (cls):
+        cls._ensureReady()
+        
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("Enter Game"))
         cls.widgets["enterGameNotationSidePanel"].show()

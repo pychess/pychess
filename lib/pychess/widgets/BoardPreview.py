@@ -19,7 +19,7 @@ class BoardPreview (gtk.Alignment):
         gtk.Alignment.__init__(self)
         self.position = 0
         self.gameno = 0
-        self.uri = None
+        self.filename = None
         self.chessfile = None
         
         # Initing glade
@@ -84,28 +84,32 @@ class BoardPreview (gtk.Alignment):
         
         self.widgets["ngfcalignment"].add(fcbutton)
         self.widgets["ngfcalignment"].show_all()
-        self.opendialog = opendialog
+        self.fcbutton = fcbutton
         self.enddir = enddir
         
         # Connect doubleclicking a file to on_file_activated
-        opendialog.connect("file-activated", self.on_file_activated)
+        fcbutton.connect("file-activated", self.on_file_activated)
         # Connect the openbutton in the dialog to on_file_activated
         openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", lambda b: self.on_file_activated(opendialog))
+        openbut.connect("clicked", lambda b: self.on_file_activated(openbut))
         
         # The first time the button is opened, the player has just opened
         # his/her file, before we connected the dialog.
-        if opendialog.get_uri():
-            self.on_file_activated(opendialog)
+        if self._retrieve_filename():
+            self.on_file_activated(fcbutton)
     
-    def on_file_activated (self, dialog):
-        uri = self.get_uri()
-        if not uri: return
-        self.uri = uri
+    def on_file_activated (self, fcbutton):
+        filename = self._retrieve_filename()
+        if filename:
+            self.set_filename(filename)
+        elif self.get_filename():
+            filename = self.get_filename()
+        else:
+            return
         
-        loader = self.enddir[uri[uri.rfind(".")+1:]]
-        ending = uri[uri.rfind(".")+1:]
-        self.chessfile = chessfile = loader.load(protoopen(uri))
+        ending = filename[filename.rfind(".")+1:]
+        loader = self.enddir[ending]
+        self.chessfile = chessfile = loader.load(protoopen("file://"+filename))
         
         self.list.get_model().clear()
         for gameno in range(len(chessfile)):
@@ -158,13 +162,21 @@ class BoardPreview (gtk.Alignment):
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
     
-    def get_uri (self):
-        if self.opendialog.get_preview_filename():
-            return "file://" + self.opendialog.get_preview_filename()
-        elif self.opendialog.get_uri():
-            return self.opendialog.get_uri()
-        else:
-            return self.uri
+    def set_filename (self, filename):
+        if filename != self._retrieve_filename():
+            self.fcbutton.set_filename(filename)
+        self.filename = filename
+    
+    def get_filename (self):
+        return self.filename
+    
+    def _retrieve_filename (self):
+        #if self.fcbutton.get_filename():
+        #    return self.fcbutton.get_filename()
+        if self.fcbutton.get_preview_filename():
+            return self.fcbutton.get_preview_filename()
+        elif self.fcbutton.get_uri():
+            return self.fcbutton.get_uri()[7:]
     
     def get_position (self):
         return self.widgets["BoardView"].shown
