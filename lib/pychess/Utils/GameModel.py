@@ -83,11 +83,6 @@ class GameModel (GObject, PooledThread):
     # Board stuff                                                              #
     ############################################################################
     
-    def clear (self):
-        self.boards = [Board(FEN_EMPTY)]
-        self.moves = []
-        self.emit("game_changed")
-    
     def _get_ply (self):
         return self.boards[-1].ply
     ply = property(_get_ply)
@@ -107,7 +102,11 @@ class GameModel (GObject, PooledThread):
         return index
     
     def getBoardAtPly (self, ply):
-        return self.boards[self._plyToIndex(ply)]
+        try:
+            return self.boards[self._plyToIndex(ply)]
+        except:
+            log.debug("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.boards)))
+            raise
     
     def getMoveAtPly (self, ply):
         return self.moves[self._plyToIndex(ply)]
