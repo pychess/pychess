@@ -128,6 +128,8 @@ class BoardPreview (gtk.Alignment):
             self.widgets["BoardView"].model.clear()
             return
         
+        self.widgets["BoardView"]._shown = 0
+        
         sel = self.list.get_model().get_path(iter)[0]
         if sel == self.lastSel: return
         self.lastSel = sel
@@ -137,6 +139,7 @@ class BoardPreview (gtk.Alignment):
         except LoadingError, e:
             #TODO: Pressent this a little nicer
             print e
+        
         self.widgets["BoardView"].showLast()
     
     def on_first_button (self, button):

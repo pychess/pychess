@@ -9,7 +9,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess.System.prefix import addDataPrefix
 from pychess.System import uistuff
 from ToggleComboBox import ToggleComboBox
-import ionest
+import newGameDialog
 
 class TaskerManager (gtk.Table):
     
@@ -243,7 +243,7 @@ class NewGameTasker (gtk.HBox):
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 1, 2, xoptions=0)
         self.playerCombo = combo = ToggleComboBox()
-        for image, name, stock in ionest.playerItems:
+        for image, name, stock in newGameDialog.playerItems:
             combo.addItem(name, stock)
         combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
@@ -256,7 +256,7 @@ class NewGameTasker (gtk.HBox):
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 2, 3, xoptions=0)
         self.difCombo = combo = ToggleComboBox()
-        for image, name, stock in ionest.difItems:
+        for image, name, stock in newGameDialog.difItems:
             combo.addItem(name, stock)
         combo.setMarkup("<b>", "</b>")
         def func (playerCombo, oldactive):

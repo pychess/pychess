@@ -92,6 +92,7 @@ class BoardView (gtk.DrawingArea):
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
+        glock.glock_connect(self.model, "game_started", self.game_started)
         self.model.connect_after("game_changed", self.game_changed)
         self.model.connect_after("moves_undoing", self.moves_undoing)
         self.model.connect_after("game_loading", self.game_loading)
@@ -132,11 +133,24 @@ class BoardView (gtk.DrawingArea):
         self.drawcount = 0
         self.drawtime = 0
         
-        self.animationLock = RLock()
+        self.animationLock = Lock()
         self.rotationLock = Lock()
     
+    def game_started (self, model):
+        if conf.get("noAnimation", False):
+            self.redraw_canvas()
+        else:
+            self.animationLock.acquire()
+            try:
+                for row in self.model.boards[-1].data:
+                    for piece in row:
+                        if piece:
+                            piece.opacity = 0
+            finally:
+                self.animationLock.release()
+            self.startAnimation()
+    
     def game_changed (self, model):
-        
         # Play sounds
         if self.model.players and conf.get("useSounds", False):
             move = model.moves[-1]
@@ -158,11 +172,11 @@ class BoardView (gtk.DrawingArea):
         # and we won't like auto updating.
         if self.autoUpdateShown and self.shown+1 >= model.ply:
             self.shown = model.ply
-        
-        # Rotate board
-        if conf.get("autoRotate", True):
-            if self.model.players and self.model.curplayer.__type__ == LOCAL:
-                self.rotation = self.model.boards[-1].color * pi
+            
+            # Rotate board
+            if conf.get("autoRotate", True):
+                if self.model.players and self.model.curplayer.__type__ == LOCAL:
+                    self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
         self.shown = model.ply-moves
@@ -172,8 +186,8 @@ class BoardView (gtk.DrawingArea):
     
     def game_loaded (self, model, uri):
         self.autoUpdateShown = True
-        self._shown = -1
-        self.shown = model.ply
+        self._shown = model.ply
+        self.emit("shown_changed", self.shown)
     
     def game_ended (self, model, reason):
         self.redraw_canvas()
@@ -497,11 +511,17 @@ class BoardView (gtk.DrawingArea):
         
         self.drawBoard (context, r)
         self.drawCords (context, r)
-        self.drawSpecial (context, r)
-        self.drawEnpassant (context, r)
-        self.drawArrows (context)
-        self.drawPieces (context, r)
-        self.drawLastMove (context, r)
+        
+        if self.model.status != WAITING_TO_START:
+            self.drawSpecial (context, r)
+            self.drawEnpassant (context, r)
+            self.drawArrows (context)
+            self.animationLock.acquire()
+            try:
+                self.drawPieces (context, r)
+            finally:
+                self.animationLock.release()
+            self.drawLastMove (context, r)
         
         if self.model.status == KILLED:
             self.drawCross (context, r)
