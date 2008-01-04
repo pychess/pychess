@@ -210,9 +210,10 @@ class LoadFileExtension (_GameInitializationMode):
 class EnterNotationExtension (_GameInitializationMode):
     @classmethod
     def _init (cls):
-        cls.widgets["enterGameNotationSidePanel"].realize()
-        cls.widgets["enterGameNotationFrame"].set_size_request(223,
-                cls.widgets["enterGameNotationSidePanel"].get_allocation().height-4)
+        def callback (widget, allocation):
+            cls.widgets["enterGameNotationFrame"].set_size_request(
+                    223, allocation.height-4)
+        cls.widgets["enterGameNotationSidePanel"].connect_after("size-allocate", callback)
         
         flags = []
         if isInstalled():
