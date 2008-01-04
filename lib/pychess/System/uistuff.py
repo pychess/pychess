@@ -61,7 +61,7 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     
     signal = methodDict[type(widget)][2]
     def callback(*args):
-        if conf.getStrict(key) != get_value():
+        if not conf.hasKey(key) or conf.getStrict(key) != get_value():
             conf.set(key, get_value())
     widget.connect(signal, callback)
     conf.notify_add(key, lambda *args: set_value(conf.getStrict(key)))
