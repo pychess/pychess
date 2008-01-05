@@ -87,7 +87,8 @@ def makeYellow (box):
         if not hasattr(box, "hasHadFirstDraw") or not box.hasHadFirstDraw:
             box.queue_draw()
             box.hasHadFirstDraw = True
-    box.connect("expose-event", on_box_expose_event)
+    box.connect_after("size-allocate", lambda b,a:
+            box.connect("expose-event", on_box_expose_event))
 
 
 
