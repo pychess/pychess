@@ -267,7 +267,7 @@ Please ensure that you have given the right path and try again."))
                 continue
         
         try:
-            game.save("file://"+uri, saver, append)
+            game.save(uri, saver, append)
         except IOError, e:
             d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR)
             d.add_buttons(gtk.STOCK_OK, gtk.RESPONSE_OK)

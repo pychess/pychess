@@ -195,7 +195,7 @@ class LoadFileExtension (_GameInitializationMode):
             return None
         
         if not cls.loadSidePanel.is_empty():
-            uri = "file://"+cls.loadSidePanel.get_filename()
+            uri =  cls.loadSidePanel.get_filename()
             loader = ionest.enddir[uri[uri.rfind(".")+1:]]
             position = cls.loadSidePanel.get_position()
             gameno = cls.loadSidePanel.get_gameno()
