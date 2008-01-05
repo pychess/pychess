@@ -242,7 +242,7 @@ class NewsSection(Section):
 ############################################################################
 
 class ParrentListSection (Section):
-    
+    """ Parrent for sections mainly consisting of a large treeview """
     def __init__ (self):
         def updateLists (queuedCalls):
             for task in queuedCalls:
@@ -278,9 +278,9 @@ class ParrentListSection (Section):
         search_dialog.move(x, y)
         search_dialog.show_all()
     
-    def pixCompareFunction (self, treemodel, iter0, iter1):
-        pix0 = treemodel.get_value(iter0, 0)
-        pix1 = treemodel.get_value(iter1, 0)
+    def pixCompareFunction (self, treemodel, iter0, iter1, column):
+        pix0 = treemodel.get_value(iter0, column)
+        pix1 = treemodel.get_value(iter1, column)
         if type(pix0) == gtk.gdk.Pixbuf and type(pix1) == gtk.gdk.Pixbuf:
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
@@ -531,7 +531,7 @@ class PlayerTabSection (ParrentListSection):
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "", _("Name"), _("Rating"), pix=[0])
         self.tv.get_column(0).set_sort_column_id(0)
-        self.tv.get_model().set_sort_func(0, self.pixCompareFunction)
+        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 0)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
@@ -598,30 +598,34 @@ class GameTabSection (ParrentListSection):
         self.recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
         
-        glock.acquire()
+        self.tv = self.widgets["gametreeview"]
+        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
+        self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        self.addColumns (
+                self.tv, "GameNo", "", _("White Player"), _("Black Player"),
+                _("Game Type"), hide=[0], pix=[1] )
+        self.tv.get_column(0).set_sort_column_id(0)
+        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
+        
+        #TODO: This is all too ugly. Better use some cosnt values or something
+        speeddic = {_("Lightning"):0, _("Blitz"):1, _("Standard"):2, None:3}
+        def typeCompareFunction (treemodel, iter0, iter1):
+            return cmp (speeddic[treemodel.get_value(iter0, 4)],
+                        speeddic[treemodel.get_value(iter1, 4)])
+        self.tv.get_model().set_sort_func(4, typeCompareFunction)
+        
         try:
-            self.tv = self.widgets["gametreeview"]
-            self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
-            self.tv.set_model(gtk.TreeModelSort(self.store))
-            self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-            self.addColumns (
-                    self.tv, "GameNo", "", _("White Player"), _("Black Player"),
-                    _("Game Type"), hide=[0], pix=[1] )
-            self.tv.get_column(0).set_sort_column_id(0)
-            self.tv.get_model().set_sort_func(0, self.pixCompareFunction)
-            try:
-                self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
-            except AttributeError:
-                # Unknow signal name is raised by gtk < 2.10
-                pass
-            def searchCallback (model, column, key, iter):
-                if model.get_value(iter, 2).lower().startswith(key) or \
-                   model.get_value(iter, 3).lower().startswith(key):
-                    return False
-                return True
-            self.tv.set_search_equal_func (searchCallback)
-        finally:
-            glock.release()
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+        except AttributeError:
+            # Unknow signal name is raised by gtk < 2.10
+            pass
+        def searchCallback (model, column, key, iter):
+            if model.get_value(iter, 2).lower().startswith(key) or \
+                model.get_value(iter, 3).lower().startswith(key):
+                return False
+            return True
+        self.tv.set_search_equal_func (searchCallback)
         
         self.connection.glm.connect("addGame", lambda glm, game:
                 self.listPublisher.put((self.onGameAdd, game)) )
