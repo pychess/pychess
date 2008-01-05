@@ -7,34 +7,43 @@ def splitUri (uri):
 
 def protoopen (uri):
     """ Function for opening many things """
-    
-    protocol, path = splitUri(uri)
-    
-    if protocol == "file":
-        return file(path)
-    if protocol == "http":
+   
+    try:
         return urllib.urlopen(uri)
-    
+    except (IOError, OSError):
+        pass
+
+    try:
+        return open(uri)
+    except (IOError, OSError):
+        pass
+        
     raise IOError, "Protocol isn't supported by pychess"
 
 def protosave (uri, append=False):
     """ Function for saving many things """
     
-    protocol, path = splitUri(uri)
+    splitted = splitUri(uri)
     
-    if protocol == "file":
+    if splitted[0] == "file":
         if append:
-            return file(path, "a")
-        return file(path, "w")
-    
+            return file(splitted[1], "a")
+        return file(splitted[1], "w")
+    elif len(splitted) == 1:
+        if append:
+            return file(splitted[0], "a")
+        return file(splitted[0], "w")
+
     raise IOError, "PyChess doesn't support writing to protocol"
 
 def isWriteable (uri):
     """ Returns true if protoopen can open a write pipe to the uri """
     
-    protocol, path = splitUri(uri)
+    splitted = splitUri(uri)
     
-    if protocol == "file":
-        return os.access (path, os.W_OK)
+    if splitted[0] == "file":
+        return os.access (splitted[1], os.W_OK)
+    elif len(splitted) == 1:
+        return os.access (splitted[0], os.W_OK)
     
     return False

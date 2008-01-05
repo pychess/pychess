@@ -90,7 +90,7 @@ class BoardPreview:
         
         ending = filename[filename.rfind(".")+1:]
         loader = self.enddir[ending]
-        self.chessfile = chessfile = loader.load(protoopen("file://"+filename))
+        self.chessfile = chessfile = loader.load(protoopen(filename))
         
         self.list.get_model().clear()
         for gameno in range(len(chessfile)):
