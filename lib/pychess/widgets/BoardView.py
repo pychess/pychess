@@ -139,6 +139,8 @@ class BoardView (gtk.DrawingArea):
         if conf.get("noAnimation", False):
             self.redraw_canvas()
         else:
+            if model.moves:
+                self.lastMove = model.moves[-1]
             self.animationLock.acquire()
             try:
                 for row in self.model.boards[-1].data:
@@ -151,7 +153,8 @@ class BoardView (gtk.DrawingArea):
     
     def game_changed (self, model):
         # Play sounds
-        if self.model.players and conf.get("useSounds", False):
+        if self.model.players and conf.get("useSounds", False) and \
+                self.model.status != WAITING_TO_START:
             move = model.moves[-1]
             if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
                 sound = "aPlayerCaptures"
