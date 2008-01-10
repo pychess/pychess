@@ -1,4 +1,6 @@
 from time import time
+from random import random
+from heapq import heappush, heappop
 
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from pychess.Utils.const import *
@@ -9,10 +11,10 @@ from ldata import MATE_VALUE
 from TranspositionTable import TranspositionTable
 import ldraw
 
-from heapq import heappush, heappop
 TIMECHECK_FREQ = 500
 
 table = TranspositionTable(50000)
+skipPruneChance = 0
 searching = False
 movesearches = 0
 nodes = 0
@@ -183,6 +185,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     return [], 0
 
 def quiescent (board, alpha, beta, ply):
+    
+    if skipPruneChance and random() < skipPruneChance:
+        return [], (alpha+beta)/2
     
     global nodes
     
