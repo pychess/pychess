@@ -94,51 +94,55 @@ class _GameInitializationMode:
             uistuff.keep(cls.widgets[key], key)
     
     @classmethod
-    def _generalRun (cls):
-        res = cls.widgets["newgamedialog"].run()
-        cls.widgets["newgamedialog"].hide()
-        if res != gtk.RESPONSE_OK:
-            return None
-        
-        # Find time
-        if cls.widgets["useTimeCB"].get_active():
-            secs = cls.widgets["spinbuttonH"].get_value()*3600
-            secs += cls.widgets["spinbuttonM"].get_value()*60
-            secs += cls.widgets["spinbuttonS"].get_value()
-            incr = cls.widgets["spinbuttonG"].get_value()
-        else:
-            secs = 0
-            incr = 0
-        
-        # Find players
-        player0 = cls.widgets["whitePlayerCombobox"].get_active()
-        diffi0 = cls.widgets["whiteDifficulty"].get_active()
-        player1 = cls.widgets["blackPlayerCombobox"].get_active()
-        diffi1 = cls.widgets["blackDifficulty"].get_active()
-        
-        # Prepare players for ionest
-        playertups = []
-        for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
-                                          (1, player1, diffi1, BLACK)):
-            if playerno > 0:
-                engine = discoverer.getEngineN (playerno-1)
-                name = discoverer.getName(engine)
-                playertups.append((ARTIFICIAL, discoverer.initAndStartEngine,
-                        (engine, color, diffi, secs, incr), name))
+    def _generalRun (cls, callback):
+        def onResponse(dialog, res):
+            cls.widgets["newgamedialog"].hide()
+            cls.widgets["newgamedialog"].disconnect(handlerId)
+            if res != gtk.RESPONSE_OK:
+                return None
+            
+            # Find time
+            if cls.widgets["useTimeCB"].get_active():
+                secs = cls.widgets["spinbuttonH"].get_value()*3600
+                secs += cls.widgets["spinbuttonM"].get_value()*60
+                secs += cls.widgets["spinbuttonS"].get_value()
+                incr = cls.widgets["spinbuttonG"].get_value()
             else:
-                playertups.append((LOCAL, Human, (color, ""), _("Human")))
+                secs = 0
+                incr = 0
+            
+            # Find players
+            player0 = cls.widgets["whitePlayerCombobox"].get_active()
+            diffi0 = cls.widgets["whiteDifficulty"].get_active()
+            player1 = cls.widgets["blackPlayerCombobox"].get_active()
+            diffi1 = cls.widgets["blackDifficulty"].get_active()
+            
+            # Prepare players for ionest
+            playertups = []
+            for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
+                                              (1, player1, diffi1, BLACK)):
+                if playerno > 0:
+                    engine = discoverer.getEngineN (playerno-1)
+                    name = discoverer.getName(engine)
+                    playertups.append((ARTIFICIAL, discoverer.initAndStartEngine,
+                            (engine, color, diffi, secs, incr), name))
+                else:
+                    playertups.append((LOCAL, Human, (color, ""), _("Human")))
+            
+            if secs > 0:
+                timemodel = TimeModel (secs, incr)
+            else: timemodel = None
+            gamemodel = GameModel (timemodel)
+            
+            callback((gamemodel, playertups[0], playertups[1]))
         
-        if secs > 0:
-            timemodel = TimeModel (secs, incr)
-        else: timemodel = None
-        gamemodel = GameModel (timemodel)
-        
-        return (gamemodel, playertups[0], playertups[1])
+        handlerId = cls.widgets["newgamedialog"].connect("response", onResponse)
+        cls.widgets["newgamedialog"].show()
     
     @classmethod
     def _hideOthers (cls):
         for extension in ("loadsidepanel", "enterGameNotationSidePanel",
-                "enterGameNotationSidePanel", "setUpPositionSidePanel"):
+                "enterGameNotationSidePanel"):
             cls.widgets[extension].hide()
 
 ################################################################################
@@ -153,11 +157,15 @@ class NewGameMode (_GameInitializationMode):
         pass
     
     @classmethod
-    def run (cls):
+    def run (cls, callback):
         cls._ensureReady()
+        if cls.widgets["newgamedialog"].props.visible:
+            cls.widgets["newgamedialog"].present()
+            return
+        
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
-        return cls._generalRun()
+        cls._generalRun(callback)
 
 ################################################################################
 # LoadFileExtension                                                            #
@@ -171,8 +179,11 @@ class LoadFileExtension (_GameInitializationMode):
                 cls.filechooserbutton, ionest.opendialog, ionest.enddir)
     
     @classmethod
-    def run (cls, uri=None):
+    def run (cls, callback, uri=None):
         cls._ensureReady()
+        if cls.widgets["newgamedialog"].props.visible:
+            cls.widgets["newgamedialog"].present()
+            return
         
         if not uri:
             res = ionest.opendialog.run()
@@ -190,18 +201,16 @@ class LoadFileExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
         
-        startdata = cls._generalRun()
-        if not startdata:
-            return None
-        
-        if not cls.loadSidePanel.is_empty():
-            uri =  cls.loadSidePanel.get_filename()
-            loader = ionest.enddir[uri[uri.rfind(".")+1:]]
-            position = cls.loadSidePanel.get_position()
-            gameno = cls.loadSidePanel.get_gameno()
-            return startdata + ((uri, loader, gameno, position),)
-        else:
-            return startdata
+        def _callback (startdata):
+            if not cls.loadSidePanel.is_empty():
+                uri =  cls.loadSidePanel.get_filename()
+                loader = ionest.enddir[uri[uri.rfind(".")+1:]]
+                position = cls.loadSidePanel.get_position()
+                gameno = cls.loadSidePanel.get_gameno()
+                callback(startdata + ((uri, loader, gameno, position),))
+            else:
+                callback(startdata)
+        cls._generalRun(_callback)
 
 ################################################################################
 # EnterNotationExtension                                                       #
@@ -246,33 +255,33 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.sourcebuffer.set_highlight(True)
     
     @classmethod
-    def run (cls):
+    def run (cls, callback):
         cls._ensureReady()
+        if cls.widgets["newgamedialog"].props.visible:
+            cls.widgets["newgamedialog"].present()
+            return
         
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("Enter Game"))
         cls.widgets["enterGameNotationSidePanel"].show()
         
-        startdata = cls._generalRun()
-        if not startdata:
-            return None
-        
-        text = cls.sourcebuffer.get_text(
-            cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
-        
-        # Test if the ImageButton has two layers and is set on the local language
-        if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
-            # 2 step used to avoid backtranslating
-            # (local and english piece letters can overlap)
-            for i, sign in enumerate(localReprSign[1:]):
-                if sign.strip():
-                    text = text.replace(sign, FAN_PIECES[0][i+1])
-            for i, sign in enumerate(FAN_PIECES[0][1:7]):
-                text = text.replace(sign, reprSign[i+1])
-            text = str(text)
-        
-        return startdata + ((StringIO(text), pgn, 0, -1),)
-
+        def _callback (startdata):
+            text = cls.sourcebuffer.get_text(
+                cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
+            
+            # Test if the ImageButton has two layers and is set on the local language
+            if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
+                # 2 step used to avoid backtranslating
+                # (local and english piece letters can overlap)
+                for i, sign in enumerate(localReprSign[1:]):
+                    if sign.strip():
+                        text = text.replace(sign, FAN_PIECES[0][i+1])
+                for i, sign in enumerate(FAN_PIECES[0][1:7]):
+                    text = text.replace(sign, reprSign[i+1])
+                text = str(text)
+            
+            callback(startdata + ((StringIO(text), pgn, 0, -1),))
+        cls._generalRun(_callback)
 
 class ImageButton(gtk.DrawingArea):
     def __init__ (self, imagePaths):

@@ -263,33 +263,33 @@ class GladeHandlers:
         # We may have more than one file dropped. We choose only to care about
         # the first.
         uri = uri.split()[0][7:]
-        startdata = newGameDialog.LoadFileExtension.run(uri)
-        if startdata:
+        def callback (startdata):
             ionest.generalStart(*startdata)
+        newGameDialog.LoadFileExtension.run(callback, uri)
     
     #          Game Menu          #
     
     def on_new_game1_activate (widget):
-        startdata = newGameDialog.NewGameMode.run()
-        if startdata:
+        def callback (startdata):
             ionest.generalStart(*startdata)
+        newGameDialog.NewGameMode.run(callback)
     
     def on_play_internet_chess_activate (widget):
         ICLogon.run()
     
     def on_load_game1_activate (widget):
-        startdata = newGameDialog.LoadFileExtension.run()
-        if startdata:
+        def callback (startdata):
             ionest.generalStart(*startdata)
+        newGameDialog.LoadFileExtension.run(callback)
     
     def on_set_up_position_activate (widget):
         # Not implemented
         pass
     
     def on_enter_game_notation_activate (widget):
-        startdata = newGameDialog.EnterNotationExtension.run()
-        if startdata:
+        def callback (startdata):
             ionest.generalStart(*startdata)
+        newGameDialog.EnterNotationExtension.run(callback)
     
     def on_save_game1_activate (widget):
         ionest.saveGame (gameDic[gamewidget.cur_gmwidg()])
@@ -451,13 +451,11 @@ class PyChess:
     def handleArgs (self, args):
         if args:
             def do ():
-                startdata = newGameDialog.LoadFileExtension.run(args[0])
-                glock.release()
-                if startdata:
+                def callback (startdata):
                     ionest.generalStart(*startdata)
-            # For this once, we need to do an idle_add, as the code is called
-            # before gtk.main. Also notice that the do function ends with an
-            # glock.release
+                newGameDialog.LoadFileExtension.run(callback, args[0])
+            # For this once we do an idle_add. We do so to ensure the window is
+            # set up before we start doing other things
             gobject.idle_add(do)
 
 def run (args):

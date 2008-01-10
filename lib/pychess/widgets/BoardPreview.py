@@ -55,6 +55,7 @@ class BoardPreview:
         self.boardview = BoardView()
         self.boardview.set_size_request(170,170)
         self.widgets["boardPreviewDock"].add(self.boardview)
+        self.boardview.show()
         self.gamemodel = self.boardview.model
         
         # Connect label showing possition
@@ -68,9 +69,6 @@ class BoardPreview:
         # Connect the openbutton in the dialog to on_file_activated
         openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
         openbut.connect("clicked", lambda b: self.on_file_activated(openbut))
-        
-        # Show it
-        self.widgets["loadsidepanel"].show_all()
         
         # The first time the button is opened, the player has just opened
         # his/her file, before we connected the dialog.
