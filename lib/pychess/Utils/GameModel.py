@@ -323,7 +323,7 @@ class GameModel (GObject, PooledThread):
                 for spectactor in self.spectactors.values():
                     model = GameModel()
                     model.boards = [board.clone() for board in self.boards]
-                    model.moves = self.moves
+                    model.moves = [move for move in self.moves]
                     model.players = self.players
                     model.status = self.status
                     model.reason = self.reason
