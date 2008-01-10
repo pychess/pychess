@@ -111,7 +111,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         for move in genAllMoves(board):
             heappush(heap, (-getMoveValue (board, table, ply, move), move))
     
-    anyMoves = False
+    # This is needed on checkmate
+    catchFailLow = None
     
     ############################################################################
     # Loop moves                                                               #
@@ -128,7 +129,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 board.popMove()
                 continue
         
-        anyMoves = True
+        catchFailLow = move
         
         if foundPv:
             mvs, val = alphaBeta (board, depth-1, -alpha-1, -alpha, ply+1)
@@ -169,9 +170,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             table.addKiller (ply, amove[0])
         return amove, alpha
         
-    if anyMoves:
+    if catchFailLow:
         last = 4
-        return [], alpha
+        return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
     last = 5
