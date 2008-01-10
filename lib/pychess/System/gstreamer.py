@@ -43,8 +43,7 @@ else:
             return True
         
         def checkSound(self):
-            pass
-            #self.player.set_state(gst.STATE_PLAYING)
+            self.player.set_state(gst.STATE_PLAYING)
         
         def play(self, uri):
             self.playLock.acquire()
