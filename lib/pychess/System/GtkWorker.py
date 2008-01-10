@@ -288,7 +288,7 @@ if __name__ == "__main__":
     worker.connect("published", process)
     vbox.add(field)
     
-    def done (worker):
+    def done (worker, result):
         print "Finished, Cancelled:", worker.isCancelled()
     worker.connect("done", done)
     
