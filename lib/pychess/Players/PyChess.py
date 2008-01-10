@@ -58,6 +58,7 @@ features = {
 searchLock = Lock()
 
 sd = 4
+skipPruneChance = 0
 moves = None
 increment = None
 mytime = None
@@ -220,6 +221,7 @@ def go (queue):
         if len(board.history) >= 14 or not movestr:
             
             global mytime, increment, scr
+            lsearch.skipPruneChance = skipPruneChance
             lsearch.searching = True
             
             if mytime == None:
@@ -271,20 +273,20 @@ def go (queue):
                     searchLock.release()
                     return
                 
-                if lsearch.last == 4:
-                    print "resign"
+                #if lsearch.last == 4:
+                #    print "resign"
+                #else:
+                if scr == 0:
+                    print "result", reprResult[DRAW]
+                elif scr < 0:
+                    if board.color == WHITE:
+                        print "result", reprResult[BLACKWON]
+                    else: print "result", reprResult[WHITEWON]
                 else:
-                    if scr == 0:
-                        print "result", reprResult[DRAW]
-                    elif scr < 0:
-                        if board.color == WHITE:
-                            print "result", reprResult[BLACKWON]
-                        else: print "result", reprResult[WHITEWON]
-                    else:
-                        if board.color == WHITE:
-                            print "result", reprResult[WHITEWON]
-                        else: print "result", reprResult[BLACKWON]
-                    print "last:", lsearch.last, scr
+                    if board.color == WHITE:
+                        print "result", reprResult[WHITEWON]
+                    else: print "result", reprResult[BLACKWON]
+                print "last:", lsearch.last, scr
                 return
             
             print "moves were:", " ".join(listToSan(board, mvs)), scr
@@ -331,6 +333,7 @@ while True:
     
     elif lines[0] == "sd":
         sd = int(lines[1])
+        skipPruneChance = max(0, (5-sd)*0.02)
         if sd >= 5:
             print "If the game has no timesettings, you probably don't want\n"+\
                   "to set a search depth much greater than 4"
