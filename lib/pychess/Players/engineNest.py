@@ -131,7 +131,7 @@ class EngineDiscoverer (GObject, Thread):
             return path, interpreterPath, ["-u", path]
         
         else:
-            path = searchPath(binname, access=os.R_OK|os.EX_OK)
+            path = searchPath(binname, access=os.R_OK|os.X_OK)
             if path:
                 return path, path, []
         
