@@ -225,6 +225,7 @@ def go (queue):
             lsearch.searching = True
             
             if mytime == None:
+                lsearch.endtime = sys.maxint
                 mvs, scr = alphaBeta (board, sd)
             
             else:

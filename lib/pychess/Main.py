@@ -366,14 +366,15 @@ class GladeHandlers:
     def on_newGameTasker_started (tasker, color, opponent, difficulty):
         gamemodel = GameModel(TimeModel(5*60, 0))
         
-        player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
+        player0tup = (LOCAL, Human, (color, ""), _("Human"))
         if opponent == 0:
-            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"))
+            player1tup = (LOCAL, Human, (1-color, ""), _("Human"))
         else:
             engine = discoverer.getEngineN (opponent-1)
             name = discoverer.getName(engine)
+            print "farve", color
             player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
-                    (engine, color, difficulty, 5*60, 0), name)
+                    (engine, 1-color, difficulty, 5*60, 0), name)
         
         ionest.generalStart(gamemodel, player0tup, player1tup)
     
