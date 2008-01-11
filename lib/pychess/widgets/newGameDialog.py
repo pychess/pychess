@@ -4,7 +4,11 @@ from cStringIO import StringIO
 
 import gtk
 from cairo import ImageSurface
-from gtksourceview import *
+
+try:
+    from gtksourceview import *
+except ImportError:
+    from gtksourceview2 import *
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
