@@ -10,6 +10,7 @@ from gobject import *
 import pango
 
 from pychess.System import glock, conf, gstreamer
+from pychess.System.glock import glock_connect, glock_connect_after
 from pychess.System.repeat import repeat, repeat_sleep
 from pychess.gfx.Pieces import drawPiece
 from pychess.Utils.Cord import Cord
@@ -92,12 +93,12 @@ class BoardView (gtk.DrawingArea):
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
-        glock.glock_connect(self.model, "game_started", self.game_started)
-        self.model.connect_after("game_changed", self.game_changed)
-        self.model.connect_after("moves_undoing", self.moves_undoing)
-        self.model.connect_after("game_loading", self.game_loading)
-        self.model.connect_after("game_loaded", self.game_loaded)
-        self.model.connect_after("game_ended", self.game_ended)
+        glock_connect(self.model, "game_started", self.game_started)
+        glock_connect_after(self.model, "game_changed", self.game_changed)
+        glock_connect_after(self.model, "moves_undoing", self.moves_undoing)
+        glock_connect_after(self.model, "game_loading", self.game_loading)
+        glock_connect_after(self.model, "game_loaded", self.game_loaded)
+        glock_connect_after(self.model, "game_ended", self.game_ended)
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
@@ -472,12 +473,13 @@ class BoardView (gtk.DrawingArea):
         if self.window:
             glock.acquire()
             try:
-                if not r:
-                    alloc = self.get_allocation()
-                    r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
-                assert type(r[2]) == int
-                self.window.invalidate_rect(r, True)
-                self.window.process_updates(True)
+                if self.window:
+                    if not r:
+                        alloc = self.get_allocation()
+                        r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
+                    assert type(r[2]) == int
+                    self.window.invalidate_rect(r, True)
+                    self.window.process_updates(True)
             finally:
                 glock.release()
     
