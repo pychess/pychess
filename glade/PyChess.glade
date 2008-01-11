@@ -502,7 +502,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="translate_this_application">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Translate PyChess</property>
+		      <property name="label" translatable="yes">Translate PyChess...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="translate_this_application_activate"/>
 
