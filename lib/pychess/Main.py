@@ -372,7 +372,6 @@ class GladeHandlers:
         else:
             engine = discoverer.getEngineN (opponent-1)
             name = discoverer.getName(engine)
-            print "farve", color
             player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
                     (engine, 1-color, difficulty, 5*60, 0), name)
         
