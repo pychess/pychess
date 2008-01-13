@@ -139,10 +139,11 @@ class ChessClock (gtk.DrawingArea):
         if self.window:
             glock.acquire()
             try:
-                a = self.get_allocation()
-                rect = gdk.Rectangle(0, 0, a.width, a.height)
-                self.window.invalidate_rect(rect, True)
-                self.window.process_updates(True)
+                if self.window:
+                    a = self.get_allocation()
+                    rect = gdk.Rectangle(0, 0, a.width, a.height)
+                    self.window.invalidate_rect(rect, True)
+                    self.window.process_updates(True)
             finally:
                 glock.release()
     
