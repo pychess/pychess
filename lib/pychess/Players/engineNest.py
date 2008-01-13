@@ -48,6 +48,8 @@ backup = """
         <meta><country>fr</country></meta></engine>
     <engine protocol="uci" protover="1" binname="fruit">
         <meta><country>fr</country></meta></engine>
+    <engine protocol="uci" protover="1" binname="toga2">
+        <meta><country>de</country></meta></engine>
 </engines>
 """
 
