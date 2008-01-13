@@ -56,7 +56,7 @@ class EmitPublisher (Publisher):
     def __init__ (self, parrent, signal, sendPolicy):
         Publisher.__init__(self, lambda v: parrent.emit(signal, v), sendPolicy)
 
-class GtkWorker (GObject, Thread):
+class GtkWorker (GObject, PooledThread):
     
     __gsignals__ = {
         "progressed": (SIGNAL_RUN_FIRST, None, (float,)),
@@ -67,8 +67,6 @@ class GtkWorker (GObject, Thread):
     def __init__ (self, func):
         """ Initialize a new GtkWorker around a specific function """
         GObject.__init__(self)
-        Thread.__init__(self)
-        self.setDaemon(True)
         
         # By some reason we cannot access __gsignals__, so we have to do a
         # little double work here
