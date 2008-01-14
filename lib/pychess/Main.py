@@ -245,8 +245,9 @@ class GladeHandlers:
                 del gameDic[gmwidg]
                 for player in gamemodel.players:
                     player.kill(WON_DISCONNECTION)
-                for widget in MENU_ITEMS:
-                    window[widget].set_property('sensitive', False)
+                if not gameDic:
+                    for widget in MENU_ITEMS:
+                        window[widget].set_property('sensitive', False)
             gmwidg.connect("closed", on_gmwidg_closed)
             
             # Set right sensitivity states in menubar, when tab is switched
