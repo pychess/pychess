@@ -53,3 +53,6 @@ else:
                 self.player.set_state(gst.STATE_PLAYING)
             finally:
                 self.playLock.release()
+        
+        def __del__ (self):
+            self.player.set_state(gst.STATE_NULL)
