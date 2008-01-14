@@ -96,6 +96,10 @@ class _GameInitializationMode:
                 "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS",
                 "spinbuttonG", "useTimeCB"):
             uistuff.keep(cls.widgets[key], key)
+        
+        # We don't want the dialog to deallocate when closed. Rather we hide
+        # it on respond
+        cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
     
     @classmethod
     def _generalRun (cls, callback):
@@ -103,7 +107,7 @@ class _GameInitializationMode:
             cls.widgets["newgamedialog"].hide()
             cls.widgets["newgamedialog"].disconnect(handlerId)
             if res != gtk.RESPONSE_OK:
-                return None
+                return 
             
             # Find time
             if cls.widgets["useTimeCB"].get_active():
