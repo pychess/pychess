@@ -68,7 +68,7 @@ class BoardPreview:
         fcbutton.connect("file-activated", self.on_file_activated)
         # Connect the openbutton in the dialog to on_file_activated
         openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", lambda b: self.on_file_activated(openbut))
+        openbut.connect("clicked", self.on_file_activated)
         
         # The first time the button is opened, the player has just opened
         # his/her file, before we connected the dialog.
