@@ -139,7 +139,7 @@ class CECPEngine (ProtocolEngine):
                 del self.analyzeMoves[:]
             
             if gamemodel.ply == 0 or self.gonext and \
-            		not self.mode in (ANALYZING, INVERSE_ANALYZING):
+                    not self.mode in (ANALYZING, INVERSE_ANALYZING):
                 self.go()
                 self.gonext = False
             else:
@@ -219,7 +219,10 @@ class CECPEngine (ProtocolEngine):
                             # ignored it, and therefor we step it one back
                             print >> self.engine, "undo"
                         else:
-                            move = parseAny(self.board, movestr)
+                            try:
+                                move = parseAny(self.board, movestr)
+                            except ParsingError, e:
+                                raise PlayerIsDead, e
                             if validate(self.board, move):
                                 self.board = None
                                 return move
@@ -406,15 +409,16 @@ class CECPEngine (ProtocolEngine):
                         print >> self.engine, "c"
                     print >> self.engine, "."
                 
-                self.board = gamemodel.boards[-1]
-                
                 if self.mode == ANALYZING:
+                    self.board = gamemodel.boards[-1]
                     self.analyze()
-                    
+                
                 elif self.mode == INVERSE_ANALYZING:
-                	self.analyze(inverse=True)
-                	
-                elif self.board.color == self.color:
+                    self.board = gamemodel.boards[-1]
+                    self.analyze(inverse=True)
+                    
+                elif gamemodel.boards[-1].color == self.color:
+                    self.board = gamemodel.boards[-1]
                     self.gonext = True
             else:
                 self.runWhenReady(self.setBoard, gamemodel)
@@ -451,8 +455,10 @@ class CECPEngine (ProtocolEngine):
         if self.ready:
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if self.features["pause"]:
+                    print "features resume"
                     print >> self.engine, "resume"
                 elif self.board:
+                    print "go resume"
                     self.go()
         else:
             self.runWhenReady(self.resume)
@@ -616,7 +622,7 @@ class CECPEngine (ProtocolEngine):
         return self.features["analyze"]
     
     def isAnalyzing (self):
-    	return self.mode in (ANALYZING, INVERSE_ANALYZING)
+        return self.mode in (ANALYZING, INVERSE_ANALYZING)
     
     def __repr__ (self):
         if self.name:
