@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 
+import os
 import gtk, gtk.glade
-from time import sleep
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
 from pychess.Utils.Board import Board
 from pychess.System.uistuff import GladeWidgets
-from pychess.System.protoopen import protoopen
+from pychess.System.protoopen import protoopen, splitUri
 from pychess.widgets.BoardView import BoardView
 from pychess.Savers.ChessFile import LoadingError
 
@@ -148,8 +148,14 @@ class BoardPreview:
         self.widgets["posLabel"].set_text(pos)
     
     def set_filename (self, filename):
-        if filename != self._retrieve_filename():
-            self.fcbutton.set_filename(filename)
+        asPath = splitUri(filename)[-1]
+        if os.path.isfile(asPath):
+            self.fcbutton.show()
+            if filename != self._retrieve_filename():
+                self.fcbutton.set_filename(asPath)
+        else:
+            self.fcbutton.set_uri("")
+            self.fcbutton.hide()
         self.filename = filename
     
     def get_filename (self):
