@@ -263,6 +263,7 @@ class GladeHandlers:
         # We may have more than one file dropped. We choose only to care about
         # the first.
         uri = uri.split()[0]
+        print repr(uri)
         def callback (startdata):
             ionest.generalStart(*startdata)
         newGameDialog.LoadFileExtension.run(callback, uri)
