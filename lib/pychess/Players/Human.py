@@ -4,6 +4,7 @@ import gtk
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
+from pychess.System import glock
 from pychess.widgets.gamewidget import cur_gmwidg
 
 from Player import Player, PlayerIsDead, TurnInterrupt
@@ -98,6 +99,7 @@ class Human (Player):
             else:
                 if self.gamemodel.boards[-1].color != self.color:
                     return
+        
         self.emit("offer", Offer(action, param))
     
     def makeMove (self, gamemodel):
@@ -110,6 +112,7 @@ class Human (Player):
             raise TurnInterrupt
         return item
     
+    @glock.glocked
     def _message (self, title, description, type, buttons, resfunc=None):
         d = gtk.MessageDialog (type=type, buttons=buttons)
         d.set_markup ("<big><b>%s</b></big>" % title)
@@ -164,7 +167,6 @@ class Human (Player):
             description = ERROR_MESSAGES[error]
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
-    
     def end (self, status, reason):
         # We don't really need to know the status
         self.kill(reason)
@@ -175,15 +177,16 @@ class Human (Player):
                 self.board.disconnect(id)
         self.queue.put("del")
     
-    
     def hurry (self):
         title = _("Your opponent asks you to hurry!")
         description = _("Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
+    @glock.glocked
     def pause (self):
         self.gmwidg.setLocked(True)
     
+    @glock.glocked
     def resume (self):
         if self.board.view.model.curplayer == self:
             self.gmwidg.setLocked(False)

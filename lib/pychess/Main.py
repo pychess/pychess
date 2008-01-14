@@ -234,7 +234,11 @@ class GladeHandlers:
                                 return # If the offer has already been handled by
                                        # Gamemodel and the game was drawn, we need
                                        # to do nothing
-                            gmwidg.status(_("You sent a draw offer"))
+                            glock.acquire()
+                            try:
+                                gmwidg.status(_("You sent a draw offer"))
+                            finally:
+                                glock.release()
                     player.connect("offer", offer_callback)
             
             def on_gmwidg_closed (gmwidg):
@@ -263,7 +267,6 @@ class GladeHandlers:
         # We may have more than one file dropped. We choose only to care about
         # the first.
         uri = uri.split()[0]
-        print repr(uri)
         def callback (startdata):
             ionest.generalStart(*startdata)
         newGameDialog.LoadFileExtension.run(callback, uri)
