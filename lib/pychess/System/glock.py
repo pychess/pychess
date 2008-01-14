@@ -28,6 +28,8 @@ def release():
         if _rlock._RLock__count == 1:
             threads_leave()
         _rlock.release()
+    else:
+        print "Warning: Releasing nonowned glock has no effect"
 
 def glock_connect(emitter, signal, function, *args, **kwargs):
     def handler(emitter, *extra):
@@ -42,6 +44,15 @@ def glock_connect(emitter, signal, function, *args, **kwargs):
 
 def glock_connect_after(emitter, signal, function, *args):
     return glock_connect(emitter, signal, function, after=True, *args)
+
+def glocked(f):
+    def newFunction(*args, **kw):
+        acquire()
+        try:
+            return f(*args, **kw)
+        finally:
+            release()
+    return newFunction
 
 if __name__ == "__main__":
     from threading import Thread

@@ -368,6 +368,7 @@ class GameModel (GObject, PooledThread):
         finally:
             glock.release()
             self.applyingMoveLock.release()
+            glock.acquire()
     
     def resume (self):
         
