@@ -32,6 +32,7 @@ strToOfferType = {
     "switch": SWITCH_OFFER,
     "resign": RESIGNATION,
     "flag": FLAG_CALL,
+    "match": MATCH_OFFER
 }
 
 offerTypeToStr = {}
@@ -118,7 +119,7 @@ class OfferManager (GObject):
             
             # We still don't support adjourned games
             if ad:
-            	self.decline(offertype)
+            	self.decline(MATCH_OFFER)
             
             rating = frating.strip()
             rating = rating.isdigit() and rating or "0"
