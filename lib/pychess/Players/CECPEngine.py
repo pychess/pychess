@@ -383,48 +383,64 @@ class CECPEngine (ProtocolEngine):
         else:
             self.runWhenReady(self.updateTime, secs, opsecs)
     
+    def _setBoard (self, board):
+        if self.features["setboard"]:
+            self.force()
+            print >> self.engine, "setboard", board.asFen()
+        else:
+            # Kludge to set black to move, avoiding the troublesome and now
+            # deprecated "black" command. - Equal to the one xboard uses
+            self.force()
+            if board.color == BLACK:
+                print >> self.engine, "a2a3"
+            print >> self.engine, "edit"
+            print >> self.engine, "#"
+            for color in WHITE, BLACK:
+                for y, row in enumerate(board.data):
+                    for x, piece in enumerate(row):
+                        if not piece or piece.color != color:
+                            continue
+                        sign = reprSign[piece.sign]
+                        cord = repr(Cord(x,y))
+                        print >> self.engine, sign+cord
+                print >> self.engine, "c"
+            print >> self.engine, "."
+    
     def setBoard (self, gamemodel):
+        # Notice: If this method is to be called while playing, the engine will
+        # need 'new' and an arrangement simmilar to that of 'pause' to avoid
+        # the current thought move to appear
+        
         self.changeLock.acquire()
         try:
             if self.ready:
-                if self.features["setboard"]:
-                    self.force()
-                    print >> self.engine, "setboard", gamemodel.boards[-1].asFen()
-                else:
-                    # Kludge to set black to move, avoiding the troublesome and now
-                    # deprecated "black" command. - Equal to the one xboard uses
-                    self.force()
-                    if gamemodel.boards[-1].color == BLACK:
-                        print >> self.engine, "a2a3"
-                    print >> self.engine, "edit"
-                    print >> self.engine, "#"
-                    for color in WHITE, BLACK:
-                        for y, row in enumerate(gamemodel.boards[-1].data):
-                            for x, piece in enumerate(row):
-                                if not piece or piece.color != color:
-                                    continue
-                                sign = reprSign[piece.sign]
-                                cord = repr(Cord(x,y))
-                                print >> self.engine, sign+cord
-                        print >> self.engine, "c"
-                    print >> self.engine, "."
+                self.force()
+                if gamemodel.boards[0].asFen() != FEN_START:
+                    self._setBoard(gamemodel.boards[0])
                 
-                if self.mode == ANALYZING:
-                    self.board = gamemodel.boards[-1]
-                    self.analyze()
-                
-                elif self.mode == INVERSE_ANALYZING:
-                    self.board = gamemodel.boards[-1]
-                    self.analyze(inverse=True)
+                for board, move in zip(gamemodel.boards[:-1], gamemodel.moves):
+                    if self.features["usermove"]:
+                        self.engine.write("usermove ")
                     
-                elif gamemodel.boards[-1].color == self.color:
+                    if self.features["san"]:
+                        print >> self.engine, toSAN(board, move)
+                    else: print >> self.engine, toAN(board, move)
+                
+                if self.mode in (ANALYZING, INVERSE_ANALYZING) or \
+                        gamemodel.boards[-1].color == self.color:
                     self.board = gamemodel.boards[-1]
-                    self.gonext = True
+                    if self.mode == ANALYZING:
+                        self.analyze()
+                    elif self.mode == INVERSE_ANALYZING:
+                        self.analyze(inverse=True)
+                    else:
+                        self.gonext = True
             else:
                 self.runWhenReady(self.setBoard, gamemodel)
         finally:
             self.changeLock.release()
-        
+    
+    
         ########################################################################
         #   Offer Stuff                                                        #
         ########################################################################
