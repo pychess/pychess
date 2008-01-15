@@ -113,7 +113,6 @@ class TimeModel (GObject):
             self.counter = time()
         else:
             self.started = False
-            print "stopped"
             self.counter = None
         
         self.emit("time_changed")
