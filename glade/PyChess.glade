@@ -618,7 +618,7 @@ Russian (ru) - ssergeje
 Spanish (es) - Manuel Kaufmann
 Brazilian (pt_BR) - George S. Silva
 Turkish (tr) - ryukun</property>
-  <property name="logo">christmas_about.png</property>
+  <property name="logo">about.png</property>
 </widget>
 
 <widget class="GtkDialog" id="game_info">

@@ -459,6 +459,7 @@ class PyChess:
                 def callback (startdata):
                     ionest.generalStart(*startdata)
                 newGameDialog.LoadFileExtension.run(callback, args[0])
+                glock.release()
             # For this once we do an idle_add. We do so to ensure the window is
             # set up before we start doing other things
             gobject.idle_add(do)
