@@ -44,8 +44,8 @@ class NewsManager (GObject):
             self.connection.unexpect(callback)
             details = ""
             for line in matchlist[1:-1]:
-                if line.startswith(r"\   "):
-                    line = line[4:]
+                if line.startswith("\\"):
+                    line = " "+line[1:].strip()
                 details += line.replace("  ", " ")
             self.news[no][4] = details
             self.emit("readNews", self.news[no])
