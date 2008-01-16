@@ -52,7 +52,7 @@ class Log (gobject.GObject):
     
     def _format (self, task, message, type):
         t = time.strftime ("%T")
-        return "%s %s %s: %s" % (t, task, labels[type], message)
+        return "%s %s %s: %s" % (t, task, labels[type], message.decode("latin-1"))
     
     def _log (self, task, message, type):
         if not message: return
