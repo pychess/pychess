@@ -36,7 +36,11 @@ for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
 def newMove (fromcord, tocord, flag=NORMAL_MOVE):
     return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
-class ParsingError (Exception): pass
+class ParsingError (Exception):
+    """ Please raise this with a 3-tupple: (move, reason, board.asFen())
+        The reason should be usable in the context: 'Move was not parseable
+        because %s' % reason """
+    pass
 
 ################################################################################
 # parseAny                                                                     #
@@ -240,6 +244,11 @@ def toSAN (board, move, localRepr=False):
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
     
+    if len(san) < 2:
+        if not san:
+            raise ParsingError, (san, _("the move is an empty string"), board.asFen())
+        raise ParsingError, (san, _("the move is too short"), board.asFen())
+    
     notat = san
     color = board.color
     
@@ -255,6 +264,9 @@ def parseSAN (board, san):
         if notat[-2] == "=":
             notat = notat[:-2]
         else: notat = notat[:-1]
+    
+    if len(notat) < 2:
+        raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
     
     notat = notat.replace("0","O").replace("o","O")
     if notat.startswith("O-O"):
@@ -285,12 +297,20 @@ def parseSAN (board, san):
     
     if "x" in notat:
         notat, tcord = notat.split("x")
+        if not tcord in cordDic:
+            raise ParsingError, (
+                    san, _("the captured cord (%s) is incorrect") % tcord, board.asFen())
+        
         tcord = cordDic[tcord]
         if piece == PAWN:
             # If a pawn is attacking an empty cord, we assue it an enpassant
             if board.arBoard[tcord] == EMPTY:
                 flag = ENPASSANT
     else:
+        if not notat[-2:] in cordDic:
+            raise ParsingError, (
+                    san, "the end cord (%s) is incorrect" % notat[-2:], board.asFen())
+        
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
     
@@ -337,14 +357,8 @@ def parseSAN (board, san):
         
         return move
     
-    errstring = "Bad SAN move '%s'." % san
-    errstring += " No piece is able to move to %s." % reprCord[tcord]
-    errstring += " %s %s %s %s " % (ffile, frank, reprPiece[piece], flag)
-    # We can't really print the moves as SAN, as many of them will be illegal
-    errstring += " available moves: %s" % moves
-    errstring += " " + board.asFen()
-    
-    raise ParsingError, errstring
+    errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
+    raise ParsingError, (san, errstring, board.asFen())
 
 ################################################################################
 # toLan                                                                        #
@@ -419,13 +433,13 @@ def toAN (board, move):
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
     if not 4 <= len(an) <= 5:
-        raise ParsingError, "Bad an move, %s. Wrong size" % an
+        raise ParsingError, (an, "the move must be 4 or 5 chars long", board.asFen())
     
     try:
         fcord = cordDic[an[:2]]
         tcord = cordDic[an[2:4]]
-    except KeyError:
-        raise ParsingError, "Bad an move, %s" % an
+    except KeyError, e:
+        raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     if len(an) == 5:
         flag = chr2Sign[an[4].lower()] + 2

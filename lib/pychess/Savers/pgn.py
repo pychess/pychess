@@ -141,8 +141,14 @@ class PGNFile (ChessFile):
             try:
                 move = parseAny (model.boards[-1], mstr)
             except ParsingError, e:
-                error = LoadingError (("Unable to parse PGN: %s\nat move %d\n" +
-                        "Gave error: %s") % (" ".join(movstrs), i+1, e.args))
+                notation, reason, boardfen = e.args
+                ply = model.boards[-1].ply
+                if ply % 2 == 0:
+                    moveno = "%d." % (i/2+1)
+                else: moveno = "%d..." % (i/2+1)
+                errstr1 = _("The game can't be read to end, because of an error parsing move %s '%s'.") % (moveno, notation)
+                errstr2 = _("The move failed because %s.") % reason
+                error = LoadingError (errstr1, errstr2)
                 break
             model.moves.append(move)
             model.boards.append(model.boards[-1].move(move))

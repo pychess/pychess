@@ -124,10 +124,12 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             uri, loader, gameno, position = loaddata
             gamemodel.loadAndStart (uri, loader, gameno, position)
         except LoadingError, e:
-            d = gtk.MessageDialog (type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-            d.set_markup ("<big><b>%s</b></big>" % _("Problems parsing File"))
-            d.format_secondary_text (str(e))
-            worker.publish(lambda: d.run() or d.hide())
+            d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK)
+            d.set_markup ("<big><b>%s</b></big>" % e.args[0])
+            d.format_secondary_text (e.args[1] + "\n\n" +
+                    _("Correct the move, or start playing with what could be read"))
+            d.connect("response", lambda d,a: d.hide())
+            worker.publish(d.show)
     
     return gmwidg, gamemodel
 
