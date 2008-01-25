@@ -390,9 +390,9 @@ class GladeHandlers:
             ICLogon.dialog.widgets["passEntry"].set_text(password)
             ICLogon.dialog.widgets["connectButton"].clicked()
 
-dnd_list = [ ('application/x-chess-pgn', 0, hash("pychess")),
-             ('application/da-chess-pgn', 0, hash("pychess")),
-             ('text/plain', 0, hash("pychess")) ]
+dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
+             ('application/da-chess-pgn', 0, 0xbadbeef),
+             ('text/plain', 0, 0xbadbeef) ]
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 class PyChess:
