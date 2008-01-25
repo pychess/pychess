@@ -1,10 +1,10 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Application
 Name=PyChess
+Comment=PyChess is a fully featured, nice looking, easy to use chess client for the Gnome desktop
 GenericName=Chess Game
 Icon=pychess
 Exec=pychess
 Terminal=false
-Categories=Application;Game;BoardGame;
+Categories=Game;BoardGame;
 MimeType=application/x-chess-pgn;
