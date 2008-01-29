@@ -21,7 +21,9 @@ class ScorePlot (gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.connect("expose_event", self.expose)
         self.connect("button-press-event", self.press)
-        self.set_events(gtk.gdk.BUTTON_PRESS_MASK)
+        self.connect("key_press_event", self.key_press)
+        self.props.can_focus = True
+        self.set_events(gtk.gdk.BUTTON_PRESS_MASK|gtk.gdk.KEY_PRESS_MASK)
         self.moveHeight = 12
         self.scores = []
         self.selected = 0
@@ -46,7 +48,20 @@ class ScorePlot (gtk.DrawingArea):
             self.window.process_updates(True)
     
     def press (self, widget, event):
+        self.grab_focus()
         self.emit('selected', event.y/self.moveHeight)
+    
+    from gtk.gdk import keyval_from_name
+    ups =   set(map (keyval_from_name, ("KP_Up", "Up")))
+    downs = set(map (keyval_from_name, ("KP_Down", "Down")))
+    def key_press (self, widget, event):
+        if event.keyval in self.ups:
+            if self.selected > 0:
+                self.emit('selected', self.selected-1)
+        elif event.keyval in self.downs:
+            if self.selected+1 < len(self.scores):
+                self.emit('selected', self.selected+1)
+        return True
     
     def expose (self, widget, event):
         context = widget.window.cairo_create()
@@ -159,7 +174,7 @@ class Sidepanel:
         
         def value_changed (vadjust):
             vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-            		vadjust.upper) < vadjust.step_increment
+                    vadjust.upper) < vadjust.step_increment
         __widget__.get_vadjustment().connect("value-changed", value_changed)
         
         return __widget__
