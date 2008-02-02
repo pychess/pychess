@@ -6,9 +6,9 @@ include gtksourceview-1.0/language-specs/pgn.lang
 include MANIFEST.in
 include open.db
 include pychess.desktop pychess.svg pychess.png
-include lang/da/LC_MESSAGES/pychess.po
 include lang/tr/LC_MESSAGES/pychess.po
 include lang/pt_BR/LC_MESSAGES/pychess.po
 include lang/es/LC_MESSAGES/pychess.po
 include lang/az/LC_MESSAGES/pychess.po
 include lang/hu/LC_MESSAGES/pychess.po
+include lang/da/LC_MESSAGES/pychess.po
