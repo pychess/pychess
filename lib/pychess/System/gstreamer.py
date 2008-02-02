@@ -42,13 +42,10 @@ else:
                 self.emit("end")
             return True
         
-        def checkSound(self):
-            self.player.set_state(gst.STATE_PLAYING)
-        
         def play(self, uri):
             self.playLock.acquire()
             try:
-                self.player.set_state(gst.STATE_NULL)
+                self.player.set_state(gst.STATE_READY)
                 self.player.set_property("uri", uri)
                 self.player.set_state(gst.STATE_PLAYING)
             finally:
