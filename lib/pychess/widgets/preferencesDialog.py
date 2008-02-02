@@ -321,4 +321,3 @@ class SoundTab:
             widgets["useSounds"].set_sensitive(False)
             widgets["useSounds"].set_active(False)
         self.getPlayer().connect("error", soundError)
-        self.getPlayer().checkSound()
