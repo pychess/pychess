@@ -271,7 +271,6 @@
 
 			      <child>
 				<widget class="GtkComboBox" id="whitePlayerCombobox">
-				  <property name="width_request">173</property>
 				  <property name="height_request">32</property>
 				  <property name="visible">True</property>
 				  <property name="add_tearoffs">False</property>
@@ -1347,7 +1346,7 @@
 	      <property name="width">225</property>
 	      <property name="height">400</property>
 	      <property name="hadjustment">0 0 225 10 202.5 225</property>
-	      <property name="vadjustment">0 0 400 10 326.7 363</property>
+	      <property name="vadjustment">0 0 400 10 323.1 359</property>
 
 	      <child>
 		<widget class="GtkFrame" id="enterGameNotationFrame">
