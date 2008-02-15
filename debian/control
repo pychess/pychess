@@ -8,7 +8,11 @@ Standards-Version: 3.7.2
 
 Package: pychess
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, gnome-icon-theme, python-gtk2, python-pysqlite2, python-glade2
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
+ gnome-icon-theme (>= 2.20.0), python-gtk2, python-pysqlite2,
+ python-glade2, python-gst0.10, python-gnome2-desktop, python-cairo,
+ python-gobject
+
 XB-Python-Version: ${python:Versions}
 Description: chess graphical user interface for several chess engines
  The goal of pychess, is to provide a fully featured, nice looking,
