@@ -211,8 +211,8 @@ msgid ""
 "to take a little caution when using this implementation."
 msgstr ""
 "A PyChess0.8 Philidor FICS támogatása lehetőséget ad internetes játszmákat "
-"játszani más személyek ellen. Sajnos a FICS protokoll támogatás még nem "
-"teljes, ezért használata egy kis óvatosságot kíván."
+"játszani más személyek ellen. Sajnos a FICS protokoll támogatása jelenleg "
+"még nem teljes, ezért használata egy kis körültekintést kíván."
 
 #: glade/fics_lounge.glade:2534
 msgid "<b>General</b>"
@@ -225,7 +225,7 @@ msgid ""
 "Some people might findt this offensive."
 msgstr ""
 "Az emberek általában sokat csevegnek a FICS-en. Sajnos a PyChess-ben ez a "
-"lehetőség még nincs implementálva, ezért mások számára némának fogsz tűnni. "
+"lehetőség még nincs megvalósítva, ezért mások számára némának fogsz tűnni. "
 "Egyesek ezt agresszívnek találhatják majd."
 
 #: glade/fics_lounge.glade:2607
@@ -574,7 +574,7 @@ msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "nessesary for the hint mode to work</b>"
 msgstr ""
-"Az elemző sakkmotor a háttérben fut, mialatt elemzi az állást. <b>A "
+"Az elemző sakkmotor a háttérben fut, hogy elemezze az állást. <b>A "
 "javaslat módhoz szükséges.</b>"
 
 #: glade/PyChess.glade:2467
@@ -1408,7 +1408,7 @@ msgstr "Bezárás mentés nélkül"
 
 #: lib/pychess/widgets/ionest.py:749
 msgid "<b><big>Save the current game before you close it?</big></b>"
-msgstr "<b><big>Akarod menteni a játszmát a bezárás előtt?</big></b>"
+msgstr "<b><big>Akarod menteni a játszmát bezárás előtt?</big></b>"
 
 #: lib/pychess/widgets/ionest.py:751
 msgid ""
