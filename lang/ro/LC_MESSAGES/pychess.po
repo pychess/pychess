@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2007-09-15 17:50+0200\n"
-"PO-Revision-Date: 2008-01-13 21:49+0000\n"
+"PO-Revision-Date: 2008-02-02 12:38+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Romanian <ro@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2008-01-16 15:08+0000\n"
+"X-Launchpad-Export-Date: 2008-02-17 18:00+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: glade/fics_logon.glade:9
@@ -395,7 +395,7 @@ msgstr "Vizualizator jurnal"
 
 #: glade/PyChess.glade:409
 msgid "_Hint mode"
-msgstr ""
+msgstr "Mod ajutător"
 
 #: glade/PyChess.glade:421
 msgid "Sp_y mode"
@@ -472,11 +472,11 @@ msgstr "Preferinţe"
 
 #: glade/PyChess.glade:1097
 msgid "<b>Name of first human player:</b>"
-msgstr ""
+msgstr "<b>Numele primului jucător uman:</b>"
 
 #: glade/PyChess.glade:1162
 msgid "<b>Name of second human player:</b>"
-msgstr ""
+msgstr "<b>Numele celui de-al doilea jucător uman:</b>"
 
 #: glade/PyChess.glade:1224
 msgid "_Hide tabs when only one game is open"
@@ -548,7 +548,7 @@ msgstr "<b>Se analizează</b>"
 
 #: glade/PyChess.glade:2603
 msgid "Computer Opponents"
-msgstr ""
+msgstr "Adversari"
 
 #: glade/PyChess.glade:2658
 msgid "_Use sounds in PyChess"
@@ -630,6 +630,10 @@ msgid ""
 "You can try to start a new game with the engine, or try to play against "
 "another one."
 msgstr ""
+"PyChess a pierdut legătura cu motorul; probabil acesta s-a oprit.\n"
+"\n"
+"Puteţi incerca să porniţi un joc nou cu motorul sau să jucaţi împotriva "
+"altuia."
 
 #: lib/pychess/Main.py:166 lib/pychess/Main.py:167
 msgid "Loaded game"
@@ -653,7 +657,7 @@ msgstr "Jucătorul negru a câştigat partida"
 
 #: lib/pychess/Main.py:180
 msgid "The game has been killed"
-msgstr ""
+msgstr "Programul a fost terminat"
 
 #: lib/pychess/Main.py:181
 msgid "The game has been adjourned"
@@ -729,11 +733,11 @@ msgstr "în faza incipientă a jocului"
 
 #: lib/pychess/Main.py:210
 msgid "as the white engine died"
-msgstr ""
+msgstr "deoarece motorul alb s-a oprit"
 
 #: lib/pychess/Main.py:211
 msgid "as the black engine died"
-msgstr ""
+msgstr "deoarece motorul negru s-a oprit"
 
 #: lib/pychess/Main.py:212
 msgid "by no known reason"
@@ -773,7 +777,7 @@ msgstr "Email"
 
 #: lib/pychess/ic/icLounge.py:141
 msgid "Spent"
-msgstr ""
+msgstr "Utilizat"
 
 #: lib/pychess/ic/icLounge.py:162
 msgid "online in total"
@@ -828,12 +832,12 @@ msgstr "Neevaluat"
 #: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
 #: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
 msgid "Active Seek"
-msgstr ""
+msgstr "Căutare activă"
 
 #: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
 #: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
 msgid "Active Seeks"
-msgstr ""
+msgstr "Căutari active"
 
 #: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:746
 #: lib/pychess/widgets/ionest.py:435
@@ -935,27 +939,31 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:13
 msgid "You've got a draw offer. Accept?"
-msgstr ""
+msgstr "Ai o propunere de remiză. Accepţi?"
 
 #: lib/pychess/Players/Human.py:14
 msgid ""
 "Your opponent has offered you a draw. If you accept it the game will end "
 "with score 1/2 - 1/2."
 msgstr ""
+"Adversarul ti-a oferit remiză. Dacă accepţi, jocul se va termina cu scorul "
+"de 1/2 la 1/2."
 
 #: lib/pychess/Players/Human.py:16
 msgid "You've got an abort offer. Accept?"
-msgstr ""
+msgstr "Ai o propunere de anulare. Accepţi?"
 
 #: lib/pychess/Players/Human.py:17
 msgid ""
 "Your opponent has offered you to abort the game. If you accept, the game "
 "will end with no rating change."
 msgstr ""
+"Adversarul ţi-a propus anularea jocului. Dacă accepţi, jocul se va termina "
+"fără actualizarea scorului."
 
 #: lib/pychess/Players/Human.py:19
 msgid "You've got an adjourn offer. Accept?"
-msgstr ""
+msgstr "Ai primit o solicitare de suspendare. Accepţi?"
 
 #: lib/pychess/Players/Human.py:20
 msgid ""
@@ -963,10 +971,13 @@ msgid ""
 "will adjourned, and you can later resume it (If your opponent is online and "
 "willing)."
 msgstr ""
+"Adversarul ţi-a solicitat suspendarea jocului. Dacă accepţi, jocul va fi "
+"suspendat şi îl vei putea continua mai târziu (dacă adversarul este online "
+"şi doreşte)"
 
 #: lib/pychess/Players/Human.py:22
 msgid "Your opponent wants to undo. Accept?"
-msgstr ""
+msgstr "Adversarul doreşte să refacă mutarea. Accepţi?"
 
 #: lib/pychess/Players/Human.py:23
 #, python-format
@@ -996,6 +1007,8 @@ msgid ""
 "Your opponent wants to resume the game. If you accept, the game clock will "
 "start counting down from where it was left."
 msgstr ""
+"Adversarul vrea să reia jocul. Dacă accepţi, cronometrul jocului va continua "
+"de unde a fost oprit."
 
 #: lib/pychess/Players/Human.py:33
 msgid "the resignation"
@@ -1007,27 +1020,27 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:35
 msgid "the draw offer"
-msgstr ""
+msgstr "oferta de remiză"
 
 #: lib/pychess/Players/Human.py:36
 msgid "the abort offer"
-msgstr ""
+msgstr "oferta de abandon"
 
 #: lib/pychess/Players/Human.py:37
 msgid "the adjourn offer"
-msgstr ""
+msgstr "solicitarea de întrerupere"
 
 #: lib/pychess/Players/Human.py:38
 msgid "the pause offer"
-msgstr ""
+msgstr "solicitarea de pauză"
 
 #: lib/pychess/Players/Human.py:39
 msgid "the resume offer"
-msgstr ""
+msgstr "solicitarea de reluare"
 
 #: lib/pychess/Players/Human.py:40
 msgid "the offer to swith sides"
-msgstr ""
+msgstr "oferta de a întoarce tabla"
 
 #: lib/pychess/Players/Human.py:41
 msgid "the takeback offer"
@@ -1035,47 +1048,48 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:46
 msgid "The game hasn't got a clock."
-msgstr ""
+msgstr "Jocul nu are ceas."
 
 #: lib/pychess/Players/Human.py:48
 msgid "Your opponent is not out of time."
-msgstr ""
+msgstr "Adversarul nu a depăşit timpul."
 
 #: lib/pychess/Players/Human.py:50
 msgid "The clock hasn't yet been started."
-msgstr ""
+msgstr "Ceasul nu a fost încă pornit."
 
 #: lib/pychess/Players/Human.py:52
 msgid "You can't switch color during the game."
-msgstr ""
+msgstr "Nu poţi schimba culoarea în timpul jocului."
 
 #: lib/pychess/Players/Human.py:54
 msgid "You have tried to redo to many moves."
-msgstr ""
+msgstr "Ai încercat să refaci prea multe mutări."
 
 #: lib/pychess/Players/Human.py:138
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr ""
+msgstr "%s a fost respinsă de adversar."
 
 #: lib/pychess/Players/Human.py:139
 msgid ""
 "You can try to send the offer to your opponent later in the game again."
 msgstr ""
+"Poţi încerca să trimiţi din nou solicitarea către adversarul tău mai târziu."
 
 #: lib/pychess/Players/Human.py:145
 #, python-format
 msgid "%s was withdrawn by your opponent"
-msgstr ""
+msgstr "%s a fost restrasă de către adversar"
 
 #: lib/pychess/Players/Human.py:146
 msgid "Your opponent seams to have changed his or her mind."
-msgstr ""
+msgstr "Adversarul tău pare că s-a răzgândit."
 
 #: lib/pychess/Players/Human.py:154
 #, python-format
 msgid "Unable to accept %s"
-msgstr ""
+msgstr "Nu se poate accepta %s"
 
 #: lib/pychess/Players/Human.py:155
 #, python-format
@@ -1087,11 +1101,11 @@ msgstr ""
 #: lib/pychess/Players/Human.py:162
 #, python-format
 msgid "%s returns an error"
-msgstr ""
+msgstr "%s întoarce o eroare"
 
 #: lib/pychess/Players/Human.py:179
 msgid "Your opponent asks you to hurry!"
-msgstr ""
+msgstr "Adversarul îţi cere să te grăbeşti!"
 
 #: lib/pychess/Players/Human.py:180
 msgid ""
@@ -1109,83 +1123,83 @@ msgstr ""
 
 #: lib/pychess/Savers/pgn.py:7
 msgid "Chess Game"
-msgstr ""
+msgstr "Joc de şah"
 
 #: lib/pychess/Utils/const.py:84
 msgid "P"
-msgstr ""
+msgstr "P"
 
 #: lib/pychess/Utils/const.py:84
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: lib/pychess/Utils/const.py:84
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: lib/pychess/Utils/const.py:84
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: lib/pychess/Utils/const.py:84
 msgid "Q"
-msgstr ""
+msgstr "Q"
 
 #: lib/pychess/Utils/const.py:84
 msgid "K"
-msgstr ""
+msgstr "K"
 
 #: lib/pychess/Utils/GameModel.py:46
 msgid "Local Event"
-msgstr ""
+msgstr "Eveniment local"
 
 #: lib/pychess/Utils/GameModel.py:47
 msgid "Local Site"
-msgstr ""
+msgstr "Site local"
 
 #: lib/pychess/widgets/Background.py:230
 msgid "Your Color"
-msgstr ""
+msgstr "Culoarea ta"
 
 #: lib/pychess/widgets/Background.py:235 lib/pychess/widgets/ChessClock.py:18
 msgid "White"
-msgstr ""
+msgstr "Alb"
 
 #: lib/pychess/widgets/Background.py:236 lib/pychess/widgets/ChessClock.py:18
 msgid "Black"
-msgstr ""
+msgstr "Negru"
 
 #: lib/pychess/widgets/Background.py:241
 msgid "Opponent"
-msgstr ""
+msgstr "Adversar"
 
 #: lib/pychess/widgets/Background.py:254
 msgid "Difficulty"
-msgstr ""
+msgstr "Dificultate"
 
 #: lib/pychess/widgets/Background.py:272
 msgid "Start Game"
-msgstr ""
+msgstr "Începe joc"
 
 #: lib/pychess/widgets/Background.py:325
 msgid "Password"
-msgstr ""
+msgstr "Parolă"
 
 #: lib/pychess/widgets/Background.py:335
 msgid "Connect to FICS"
-msgstr ""
+msgstr "Conectează la FICS"
 
 #: lib/pychess/widgets/ionest.py:52
 msgid "Save Game"
-msgstr ""
+msgstr "Salvează joc"
 
 #: lib/pychess/widgets/ionest.py:62
 msgid "All Files"
-msgstr ""
+msgstr "Toate fişierele"
 
 #: lib/pychess/widgets/ionest.py:65
 msgid "Detect type automatically"
-msgstr ""
+msgstr "Detectează tip automat"
 
 #: lib/pychess/widgets/ionest.py:68
 msgid "All Chess Files"
@@ -1193,15 +1207,15 @@ msgstr ""
 
 #: lib/pychess/widgets/ionest.py:300
 msgid "Beginner"
-msgstr ""
+msgstr "Începător"
 
 #: lib/pychess/widgets/ionest.py:301
 msgid "Intermediate"
-msgstr ""
+msgstr "Intermediar"
 
 #: lib/pychess/widgets/ionest.py:313
 msgid "Human Being"
-msgstr ""
+msgstr "Fiinţă umană"
 
 #: lib/pychess/widgets/ionest.py:449
 #: lib/pychess/widgets/preferencesDialog.py:40
@@ -1214,12 +1228,12 @@ msgstr ""
 
 #: lib/pychess/widgets/ionest.py:557
 msgid "Enter Game"
-msgstr ""
+msgstr "Intra în joc"
 
 #: lib/pychess/widgets/ionest.py:608
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
-msgstr ""
+msgstr "<big><b>Tip de fişier necunoscut '%s'</b></big>"
 
 #: lib/pychess/widgets/ionest.py:609
 #, python-format
@@ -1229,21 +1243,23 @@ msgstr ""
 #: lib/pychess/widgets/ionest.py:622
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
-msgstr ""
+msgstr "<big><b>Nu se poate salva fişierul '%s'</b></big>"
 
 #: lib/pychess/widgets/ionest.py:624
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr ""
+"Nu aveţi drepturile necesare pentru a salva fişierul.\n"
+"Verificaţi dacă aţi introdus calea corectă şi reîncercaţi."
 
 #: lib/pychess/widgets/ionest.py:632
 msgid "_Replace"
-msgstr ""
+msgstr "Înlocuieşte"
 
 #: lib/pychess/widgets/ionest.py:636
 msgid "File exists"
-msgstr ""
+msgstr "Fişierul există"
 
 #: lib/pychess/widgets/ionest.py:638
 #, python-format
@@ -1251,6 +1267,7 @@ msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace "
 "it?</b></big>"
 msgstr ""
+"<big><b>Un fişier numit '%s' există deja. Se doreşte înlocuirea?</b></big>"
 
 #: lib/pychess/widgets/ionest.py:639
 #, python-format
@@ -1258,86 +1275,90 @@ msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr ""
+"Fişierul există deja în '%s'. Dacă îl înlocuiţi, conţinutul său va fi "
+"suprascris."
 
 #: lib/pychess/widgets/ionest.py:653
 msgid "Could not save the file"
-msgstr ""
+msgstr "Nu s-a putut salva fişierul"
 
 #: lib/pychess/widgets/ionest.py:654
 msgid "<big><b>PyChess was not able to save the game</b></big>"
-msgstr ""
+msgstr "<big><b>PyChess nu a fost capabil să salveze jocul</b></big>"
 
 #: lib/pychess/widgets/ionest.py:655
 #, python-format
 msgid "The error was: %s"
-msgstr ""
+msgstr "Eroarea a fost: %s"
 
 #: lib/pychess/widgets/ionest.py:675 lib/pychess/widgets/ionest.py:705
 msgid "Close _without Saving"
-msgstr ""
+msgstr "Închide _fără salvare"
 
 #: lib/pychess/widgets/ionest.py:681
 msgid "<b><big>Save the current game before you close it?</big></b>"
-msgstr ""
+msgstr "<b><big>Salvaţi jocul curent înainte de a-l închide?</big></b>"
 
 #: lib/pychess/widgets/ionest.py:683
 msgid ""
 "It is not possible later to continue the game,\n"
 "if do don't save it."
 msgstr ""
+"Dacă nu salvezi jocul, nu va fi posibil să-l\n"
+"continui mai târziu."
 
 #: lib/pychess/widgets/ionest.py:709
 msgid "<big><b>There is 1 game with unsaved changes:</b></big>"
-msgstr ""
+msgstr "<big><b>Există un joc cu modificări nesalvate:</b></big>"
 
 #: lib/pychess/widgets/ionest.py:712
 #, python-format
 msgid "<big><b>There are %d games with unsaved changes:</b></big>"
-msgstr ""
+msgstr "<big><b>Există %d jocuri cu modificări nesalvate:</b></big>"
 
 #: lib/pychess/widgets/LogDialog.py:30
 msgid "PyChess - Log Viewer"
-msgstr ""
+msgstr "PyChess - Afişaj jurnal"
 
 #: lib/pychess/widgets/preferencesDialog.py:146
 msgid "Locate Engine"
-msgstr ""
+msgstr "Localizează motor"
 
 #: lib/pychess/widgets/preferencesDialog.py:223
 msgid "Open Sound File"
-msgstr ""
+msgstr "Deschide fişier sunet"
 
 #: lib/pychess/widgets/preferencesDialog.py:240
 msgid "No sound"
-msgstr ""
+msgstr "Fără sunet"
 
 #: lib/pychess/widgets/preferencesDialog.py:241
 msgid "Beep"
-msgstr ""
+msgstr "Bip"
 
 #: lib/pychess/widgets/preferencesDialog.py:242
 msgid "Select sound file..."
-msgstr ""
+msgstr "Alege fişier sunet..."
 
 #: lib/pychess/Utils/lutils/strateval.py:30
 msgid "draws"
-msgstr ""
+msgstr "remize"
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 msgid "mates"
-msgstr ""
+msgstr "maturi"
 
 #: lib/pychess/Utils/lutils/strateval.py:36
 msgid "puts opponent in check"
-msgstr ""
+msgstr "pune adversarul în şah"
 
 #: lib/pychess/Utils/lutils/strateval.py:57
 msgid "improves king safety"
-msgstr ""
+msgstr "imbunătăţeşte apărarea regelui"
 
 #: lib/pychess/Utils/lutils/strateval.py:59
 msgid "slightly improves king safety"
-msgstr ""
+msgstr "îmbunătăţeşte uşor apărarea regelui"
 
 #: lib/pychess/Utils/lutils/strateval.py:80
 msgid "moves a rook to an open file"
@@ -1358,7 +1379,7 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:105
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr ""
+msgstr "schimbă un pion în %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:108
 msgid "castles"
@@ -1388,12 +1409,12 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:185
 #, python-format
 msgid "increases the pressure on %s"
-msgstr ""
+msgstr "măreşte presiunea pe %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:229
 #, python-format
 msgid "defends %s"
-msgstr ""
+msgstr "apără %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:260
 #, python-format
@@ -1461,7 +1482,7 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:454
 #, python-format
 msgid "develops a %s: %s"
-msgstr ""
+msgstr "dezvoltă %s: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:442
 #, python-format
@@ -1522,21 +1543,21 @@ msgstr ""
 
 #: sidepanel/commentPanel.py:13
 msgid "Comments"
-msgstr ""
+msgstr "Comentarii"
 
 #: sidepanel/commentPanel.py:54
 msgid "Initial position"
-msgstr ""
+msgstr "Poziţie iniţială"
 
 #: sidepanel/commentPanel.py:227
 #, python-format
 msgid "%s moves a %s to %s"
-msgstr ""
+msgstr "%s mută %s la %s"
 
 #: sidepanel/historyPanel.py:13
 msgid "Move History"
-msgstr ""
+msgstr "Istoric mutări"
 
 #: sidepanel/scorePanel.py:131
 msgid "Score"
-msgstr ""
+msgstr "Scor"
