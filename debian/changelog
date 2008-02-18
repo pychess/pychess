@@ -1,3 +1,9 @@
+pychess (0.8) gutsy; urgency=low
+
+  * Philidor final
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Mon, 18 Feb 2008 15:15:47 +0100
+
 pychess (0.8-beta4) gutsy; urgency=low
 
   * Philidor Beta 4
