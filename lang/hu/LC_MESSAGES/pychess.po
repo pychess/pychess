@@ -337,15 +337,15 @@ msgstr "_Játszma"
 
 #: glade/PyChess.glade:49
 msgid "_New Game"
-msgstr "_Új játszma"
+msgstr "_Új"
 
 #: glade/PyChess.glade:71
 msgid "_Play Internet Chess"
-msgstr "_Internet sakk"
+msgstr "_Internetes sakk"
 
 #: glade/PyChess.glade:99
 msgid "_Load Game"
-msgstr "Játszma _betöltése"
+msgstr "Játszma be_töltése"
 
 #: glade/PyChess.glade:120
 msgid "Set up Position"
@@ -353,15 +353,15 @@ msgstr "Pozíció felállítása"
 
 #: glade/PyChess.glade:129
 msgid "Enter game notation"
-msgstr "Játszma beírása"
+msgstr "Játszma be_írása"
 
 #: glade/PyChess.glade:145
 msgid "_Save Game"
-msgstr "Játszma _mentése"
+msgstr "Menté_s"
 
 #: glade/PyChess.glade:168
 msgid "Save Game _As"
-msgstr "Já_tszma mentése másként"
+msgstr "Mentés m_ásként"
 
 #: glade/PyChess.glade:205
 msgid "Player _Rating"
@@ -379,7 +379,7 @@ msgstr "_Döntetlen ajánlása"
 # Offer Draw
 #: glade/PyChess.glade:263
 msgid "Offer _Pause"
-msgstr "_Szünet ajánlása"
+msgstr "_Szünet kérése"
 
 #: glade/PyChess.glade:274
 msgid "Offer _Resume"
