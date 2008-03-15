@@ -102,7 +102,7 @@ class BoardView (gtk.DrawingArea):
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
-        self.set_size_request(300,300)
+        self.set_size_request(350,350)
         
         self.animationStart = time()
         self.lastShown = None
