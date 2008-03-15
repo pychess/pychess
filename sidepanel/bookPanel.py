@@ -1,7 +1,6 @@
 import gtk, gobject, cairo
 
 from pychess.System import conf
-from pychess.widgets import gamewidget
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import parseSAN, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
@@ -27,7 +26,7 @@ class Sidepanel:
         self.tv.append_column(gtk.TreeViewColumn(
                 "Win/Draw/Loss", BookCellRenderer(), data=2))
         
-        self.boardcontrol = gmwidg.widgets["board"]
+        self.boardcontrol = gmwidg.board
         self.board = self.boardcontrol.view
         self.board.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)

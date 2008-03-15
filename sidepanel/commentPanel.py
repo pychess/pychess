@@ -20,7 +20,7 @@ class Sidepanel:
     
     def load (self, gmwidg):
         
-        self.gamemodel = gmwidg.widgets["board"].view.model
+        self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
             glock_connect(self.gamemodel, "game_changed", self.game_changed),
             glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
@@ -40,7 +40,7 @@ class Sidepanel:
         self.tv.append_column(gtk.TreeViewColumn("Comment", r, text=0))
         
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)
-        self.boardview = gmwidg.widgets["board"].view
+        self.boardview = gmwidg.board.view
         self.boardview.connect("shown_changed", self.shown_changed)
         
         def changed (vadjust):

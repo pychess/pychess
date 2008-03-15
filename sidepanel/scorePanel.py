@@ -8,6 +8,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.glock import glock_connect
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
+from pychess.Utils.lutils import leval
 
 class ScorePlot (gtk.DrawingArea):
     
@@ -141,8 +142,6 @@ class ScorePlot (gtk.DrawingArea):
     
 __title__ = _("Score")
 
-from pychess.widgets import gamewidget
-from pychess.Utils.lutils import leval
 
 class Sidepanel:
     
@@ -156,7 +155,7 @@ class Sidepanel:
         __widget__.add(port)
         __widget__.show_all()
         
-        self.boardview = gmwidg.widgets["board"].view
+        self.boardview = gmwidg.board.view
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
