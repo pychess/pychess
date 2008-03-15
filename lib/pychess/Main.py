@@ -63,7 +63,7 @@ def setMode (gmwidg, mode, activated):
     if not gameDic: return
     
     gamemodel = gameDic[gmwidg]
-    board = gmwidg.widgets["board"]
+    board = gmwidg.board
     
     if not mode in gamemodel.spectactors: return
     analyzer = gamemodel.spectactors[mode]
@@ -115,16 +115,6 @@ def setMode (gmwidg, mode, activated):
 
 class GladeHandlers:
     
-    def on_ccalign_show (widget):
-        clockHeight = window["ccalign"].get_allocation().height
-        windowSize = window["window1"].get_size()
-        window["window1"].resize(windowSize[0],windowSize[1]+clockHeight)
-    
-    def on_ccalign_hide (widget):
-        clockHeight = window["ccalign"].get_allocation().height
-        windowSize = window["window1"].get_size()
-        window["window1"].resize(windowSize[0],windowSize[1]-clockHeight)
-    
     def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel
         
@@ -138,16 +128,6 @@ class GladeHandlers:
         
         # Bring playing window to the front
         window["window1"].present()
-        
-        # Connect stuff
-        gmwidg.widgets["sidepanel"].connect("hide", \
-               lambda w: window["side_panel1"].set_active(False))
-        if not window["side_panel1"].get_active():
-            gmwidg.widgets["sidepanel"].hide()
-        
-        if gamemodel.timemodel != None:
-            gmwidg.widgets["ccalign"].show()
-        else: gmwidg.widgets["ccalign"].hide()
         
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
@@ -213,7 +193,7 @@ class GladeHandlers:
         
         def on_game_started (gamemodel):
             # Rotate to human player
-            boardview = gmwidg.widgets["board"].view
+            boardview = gmwidg.board.view
             if gamemodel.players[1].__type__ == LOCAL:
                 if gamemodel.players[0].__type__ != LOCAL:
                     boardview.rotation = math.pi
@@ -323,8 +303,8 @@ class GladeHandlers:
         gmwidg = gamewidget.cur_gmwidg()
         gmwidg.widgets["board"].view.rotation += math.pi
     
-    def on_side_panel1_activate (widget):
-        gamewidget.show_side_panel(widget.get_active())
+    def on_rearrange_panels_activate (widget):
+        gamewidget.showGrips(widget.get_active())
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
@@ -380,7 +360,9 @@ class GladeHandlers:
             player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
                     (engine, 1-color, difficulty, 5*60, 0), name)
         
-        ionest.generalStart(gamemodel, player0tup, player1tup)
+        if color == WHITE:
+            ionest.generalStart(gamemodel, player0tup, player1tup)
+        else: ionest.generalStart(gamemodel, player1tup, player0tup)
     
     def on_internetTasker_connect (tasker, asGuest, username, password):
         ICLogon.run()
@@ -401,14 +383,32 @@ class PyChess:
         self.handleArgs(args)
     
     def mainWindowSize (self, window):
-        def savePosition ():
-            conf.set("window_width", window.get_allocation().width)
-            conf.set("window_height", window.get_allocation().height)
-        atexit.register(savePosition)
-        width = conf.get("window_width", 0)
-        height = conf.get("window_height", 0)
-        if width and height:
+        def savePosition (window, event):
+            conf.set("window_width",  window.get_size()[0])
+            conf.set("window_height", window.get_size()[1])
+            conf.set("window_x", window.get_position()[0])
+            conf.set("window_y", window.get_position()[1])
+        window.connect("delete-event", savePosition)
+        
+        def loadPosition (window):
+            width = conf.get("window_width", 575)
+            height = conf.get("window_height", 479)
+            assert width > 0
+            assert height > 0
             window.resize(width, height)
+            x = conf.get("window_x", gtk.gdk.screen_width()/2-width/2)
+            # As default, put center on upper golden ratio line
+            y = conf.get("window_y", int(gtk.gdk.screen_height()/2.618)-height/2)
+            window.move(x, y)
+        loadPosition(window)
+        
+        # In rare cases, gtk throws some gtk_size_allocation error, which is
+        # probably a race condition. To avoid the window forgets its size in
+        # these cases, we add this extra hook
+        def callback (*args):
+            window.disconnect(handle_id)
+            loadPosition(window)
+        handle_id = window.connect("size-allocate", callback)
     
     def initGlade(self):
         global window
@@ -418,22 +418,19 @@ class PyChess:
         self.widgets = gtk.glade.XML(addDataPrefix("glade/PyChess.glade"))
         
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
-        
+        self.mainWindowSize(self["window1"])
         self["window1"].show()
         self["Background"].show_all()
         
         makeLogDialogReady()
         makeAboutDialogReady()
-        gamewidget.set_widgets(self)
-        uistuff.keep(self["side_panel1"], "side_panel1")
+        gamewidget.setWidgets(self)
         ionest.handler.connect("gmwidg_created",
             GladeHandlers.__dict__["on_gmwidg_created"])
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         window["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
-        
-        self.mainWindowSize(self["window1"])
         
         #TODO: disabled by default
         #TipOfTheDay.TipOfTheDay()
