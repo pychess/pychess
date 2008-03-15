@@ -81,12 +81,8 @@ class OfferManager (GObject):
         
         self.lastPly = 0
         self.indexType = {}
-        print >> self.connection.client, "iset pendinfo 1"
         
-        self.connection.connect("disconnecting", self.stop)
-    
-    def stop (self, connection):
-        print >> self.connection.client, "iset pendinfo 0"
+        self.connection.lvm.setVariable("pendinfo", True)
     
     def noOffersToAccept (self, match):
         offerstr, type = match.groups()

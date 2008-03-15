@@ -73,6 +73,10 @@ class Player (GObject):
             human players """
         #Optional
     
+    def putMessage (self, message):
+        """ Sends the player a chatmessage """
+        #Optional
+    
     def pause (self):
         """ Should stop the player from thinking until resume is called """
         raise NotImplementedError

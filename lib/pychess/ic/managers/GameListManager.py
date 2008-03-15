@@ -1,5 +1,7 @@
 
 from gobject import *
+import re
+from pychess.Utils import const
 
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
@@ -7,6 +9,16 @@ colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\-]{1,4})"
 names = "(\w+)(?:\((\w+)\))?"
 mf = "(?:([mf]{1,2})\s?)?"
+ratingSplit = re.compile("P|E| ")
+
+#0x1 - unregistered
+#0x2 - computer
+#0x4 - GM
+#0x8 - IM
+#0x10 - FM
+#0x20 - WGM
+#0x40 - WIM
+#0x80 - WFM
 
 typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
@@ -20,7 +32,7 @@ class GameListManager (GObject):
         'clearSeeks' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         
         'addGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,str)),
         
         'addPlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         'removePlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
@@ -33,37 +45,30 @@ class GameListManager (GObject):
         
         self.connection = connection
         
+        self.players = set()
+        
+        
         self.connection.expect_line (self.on_seek_clear, "<sc>")
-        
         self.connection.expect_line (self.on_seek_add, "<s> (.+)")
-        
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
-        
-        
         
         self.connection.expect_line (self.on_game_list,
                 "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(s|b|l)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)" % (ratings, ratings))
-        
-        self.connection.expect_line (self.on_game_addremove,
-                "{Game (\d+) \((\w+) vs\. (\w+)\) (.*?)}")
-        
-        
+        self.connection.expect_line (self.on_game_add,
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) (\S+) match\.\}$")
+        self.connection.expect_line (self.on_game_remove,
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z]+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
         self.connection.expect_line (self.on_player_list,
-                "%s(\.| )%s\s+%s(\.| )%s\s+%s(\.| )%s" %
-                    (ratings, names, ratings, names, ratings, names))
-        
+                "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E])+)")
         self.connection.expect_line (self.on_player_remove,
                 "%s is no longer available for matches." % names)
-        
         self.connection.expect_line (self.on_player_add,
                 "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." %
                     (names, ratings, ratings, ratings, ratings, ratings))
         
-        
         self.connection.expect_line (self.on_adjourn_add,
                 "\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*)")
-        
         
         self.connection.expect_fromto (self.playBoardCreated,
                 "Creating: %s %s %s %s %s %s (\d+) (\d+)" %
@@ -71,31 +76,20 @@ class GameListManager (GObject):
                 "{Game (\d+)\s.*")
         
         
-        print >> self.connection.client, "iset seekinfo 1"
-        print >> self.connection.client, "iset seekremove 1"
-        print >> self.connection.client, "set seek 1"
+        self.connection.lvm.setVariable("seekinfo", True)
+        self.connection.lvm.setVariable("seekremove", True)
+        #self.connection.lvm.setVariable("seek", False)
         
-        print >> self.connection.client, "set gin 1"
-        print >> self.connection.client, "iset allresults 0"
+        self.connection.lvm.setVariable("gin", True)
+        self.connection.lvm.setVariable("allresults", True)
         print >> self.connection.client, "games /sbl"
         
-        print >> self.connection.client, "who a"
-        print >> self.connection.client, "set availmax 0"
-        print >> self.connection.client, "set availmin 0"
-        print >> self.connection.client, "set availinfo 1"
+        print >> self.connection.client, "who Isbla"
+        #self.connection.lvm.setVariable("availmax", True)
+        #self.connection.lvm.setVariable("availmin", True)
+        self.connection.lvm.setVariable("availinfo", True)
         
         print >> self.connection.client, "stored"
-        
-        self.connection.connect("disconnecting", self.stop)
-        
-    def stop (self, connection):
-        print >> self.connection.client, "iset seekinfo 0"
-        print >> self.connection.client, "iset seekremove 0"
-        print >> self.connection.client, "set seek 0"
-        
-        print >> self.connection.client, "set gin 0"
-        
-        print >> self.connection.client, "set availinfo 0"
     
     ###
     
@@ -117,6 +111,9 @@ class GameListManager (GObject):
     
     def refreshSeeks (self):
         print >> self.connection.client, "iset seekinfo 1"
+    
+    def getPlayerlist (self):
+        return self.players
     
     ###
     
@@ -163,39 +160,37 @@ class GameListManager (GObject):
         game = {"gameno":gameno, "wn":wn, "bn":bn, "type":typedic[type]}
         self.emit("addGame", game)
     
-    def on_game_addremove (self, match):
-        gameno, wn, bn, comment = match.groups()
-        if comment.split()[0] in ("Creating", "Continuing"):
-            c, rated, type, m = comment.split()
-            if not type in ("standard", "blitz", "lightning"):
-                return
-            else:
-                type = typedic[type[0]]
-            game = {"gameno":gameno, "wn":wn, "bn":bn, "type":type}
-            self.emit("addGame", game)
-        else:
-            self.emit("removeGame", gameno)
+    def on_game_add (self, match):
+        gameno, wn, bn, rated, type = match.groups()
+        if not type in ("standard", "blitz", "lightning"):
+            return
+        type = typedic[type[0]]
+        self.emit("addGame", {"gameno":gameno, "wn":wn, "bn":bn, "type":type})
+    
+    def on_game_remove (self, match):
+        gameno, wn, bn, person, comment, result = match.groups()
+        result = const.reprResult.index(result)
+        self.emit("removeGame", gameno, result, comment)
     
     ###
     
     def on_player_list (self, match):
-        groups = match.groups()
-        for i in xrange(0, len(groups), 4):
-            self.emit("addPlayer", {
-                "rating": groups[i],
-                "status": groups[i+1],
-                "name": groups[i+2],
-                "title": groups[i+3]
-            })
+        handle, title, ratings = match.groups()
+        mean = sum(int(r) for r in ratingSplit.split(ratings)[:-1] if int(r))/3.
+        self.emit("addPlayer", {"name": handle, "rating": mean, "title":int(title,16)})
+        self.players.add(handle)
     
     def on_player_remove (self, match):
         name, title = match.groups()
         self.emit("removePlayer", name)
+        if name in self.players:
+            self.players.remove(name)
     
     def on_player_add (self, match):
         name, title, blitz, std, wild, light, bug = match.groups()
-        self.emit("addPlayer", \
-            {"name":name, "title":title, "rating":blitz, "status": " "})
+        mean = sum(int(r) for r in (blitz, std, wild, light, bug) if int(r))/5.
+        self.emit("addPlayer", {"name":name, "title":int(title,16), "rating":mean})
+        self.players.add(name)
     
     ###
     
@@ -209,3 +204,4 @@ class GameListManager (GObject):
     
     def playBoardCreated (self, match):
         self.emit("clearSeeks")
+    

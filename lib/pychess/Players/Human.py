@@ -1,6 +1,6 @@
 from Queue import Queue
 
-import gtk
+import gtk, gobject
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
@@ -58,11 +58,15 @@ ERROR_MESSAGES = {
 class Human (Player):
     __type__ = LOCAL
     
+    __gsignals__ = {
+        "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
+    }
+    
     def __init__ (self, gmwidg, color, name):
         Player.__init__(self)
         
         self.defname = "Human"
-        self.board = gmwidg.widgets["board"]
+        self.board = gmwidg.board
         self.gmwidg = gmwidg
         self.gamemodel = self.board.view.model
         self.queue = Queue()
@@ -93,7 +97,7 @@ class Human (Player):
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
         if self.gamemodel.players[1-self.color].__type__ == LOCAL:
-            if action == HURRY_REQUEST:
+            if action == HURRY_ACTION:
                 if self.gamemodel.boards[-1].color == self.color:
                     return
             else:
@@ -181,6 +185,12 @@ class Human (Player):
         title = _("Your opponent asks you to hurry!")
         description = _("Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+    
+    def putMessage (self, text):
+        self.emit("messageRecieved", text)
+    
+    def sendMessage (self, text):
+        self.emit("offer", Offer(CHAT_ACTION, text))
     
     @glock.glocked
     def pause (self):

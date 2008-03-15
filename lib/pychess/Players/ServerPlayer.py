@@ -3,7 +3,7 @@ from Queue import Queue
 
 from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Offer import Offer
-from pychess.Utils.Move import parseSAN, toSAN, ParsingError, listToSan
+from pychess.Utils.Move import parseSAN, toAN, ParsingError, listToSan
 from pychess.Utils.const import *
 
 class ServerPlayer (Player):
@@ -24,6 +24,7 @@ class ServerPlayer (Player):
         self.connection.bm.connect("moveRecieved", self.moveRecieved)
         self.connection.om.connect("onOfferAdd", self.onOfferAdd)
         self.connection.om.connect("onOfferRemove", self.onOfferRemove)
+        self.connection.cm.connect("privateMessage", self.onPrivateMessage)
         
         self.offerToIndex = {}
         self.indexToOffer = {}
@@ -36,6 +37,13 @@ class ServerPlayer (Player):
     def onOfferRemove (self, om, index):
         if index in self.indexToOffer:
             self.emit ("withdraw", self.indexToOffer[index])
+    
+    def onPrivateMessage (self, cm, name, title, isadmin, text):
+        if name == self.name:
+            self.emit("offer", Offer(CHAT_ACTION, text))
+    
+    def putMessage (self, text):
+        self.connection.cm.tellPlayer (self.name, text)
     
     def offer (self, offer):
         self.connection.om.offer(offer, self.lastPly)
@@ -71,7 +79,7 @@ class ServerPlayer (Player):
         
         if gamemodel.moves and gamemodel.inControl:
             self.connection.bm.sendMove (
-                    toSAN (gamemodel.boards[-2], gamemodel.moves[-1]))
+                    toAN (gamemodel.boards[-2], gamemodel.moves[-1]))
         
         item = self.queue.get(block=True)
         try:

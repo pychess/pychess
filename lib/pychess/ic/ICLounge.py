@@ -3,7 +3,7 @@
 from Queue import Queue
 from Queue import Empty as EmptyError
 from cStringIO import StringIO
-from time import sleep
+from time import sleep, strftime, localtime
 from math import e
 import webbrowser
 
@@ -17,6 +17,8 @@ from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
+from pychess.widgets.ChatWindow import ChatWindow
+from pychess.widgets.SpotGraph import SpotGraph
 from pychess.Utils.const import *
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
@@ -25,7 +27,6 @@ from pychess.Players.Human import Human
 from pychess.Savers import pgn
 
 from IcGameModel import IcGameModel
-from SpotGraph import SpotGraph
 
 class ICLounge:
     def __init__ (self, c):
@@ -45,6 +46,9 @@ class ICLounge:
                 PlayerTabSection(w,c),
                 GameTabSection(w,c),
                 AdjournedTabSection(w,c),
+                
+                ChatWindow(w,c),
+                #ConsoleWindow(w,c),
                 
                 SeekChallengeSection(w,c),
                 
@@ -81,6 +85,10 @@ class VariousSection(Section):
             connection.disconnect()
             widgets["fics_lounge"].hide()
         widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
+        sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        #sizeGroup.add_widget(widgets["show_chat_label"])
+        #sizeGroup.add_widget(widgets["show_console_label"])
+        #sizeGroup.add_widget(widgets["log_off_label"])
         
         uistuff.makeYellow(widgets["cautionBox"])
         uistuff.makeYellow(widgets["cautionHeader"])
@@ -110,50 +118,55 @@ class UserInfoSection(Section):
         self.widgets["usernameLabel"].set_markup(
                 "<b>%s</b>" % self.connection.getUsername())
     
-    def onFinger (self, fm, ratings, email, time):
+    def onFinger (self, fm, finger):
+        if finger.getName().lower() != self.connection.getUsername().lower():
+            print finger.getName(), self.connection.getUsername()
+            return
         glock.acquire()
         try:
             rows = 1
-            if ratings: rows += len(ratings)+1
-            if email: rows += 1
-            if time: rows += 1
+            if finger.getRating(): rows += len(finger.getRating())+1
+            if finger.getEmail(): rows += 1
+            if finger.getCreated(): rows += 1
             
             table = gtk.Table(6, rows)
             table.props.column_spacing = 12
             table.props.row_spacing = 4
             
-            def label(str, xalign=0):
-                label = gtk.Label(str)
+            def label(value, xalign=0):
+                if type(value) == float:
+                    value = str(int(value))
+                label = gtk.Label(value)
                 label.props.xalign = xalign
                 return label
             
             row = 0
             
-            if ratings:
-                for i, item in enumerate((_("Rating"), _("Win"), _("Loss"), _("Draw"), _("Total"))):
+            if finger.getRating():
+                for i, item in enumerate((_("Rating"), _("Win"), _("Draw"), _("Loss"))):
                     table.attach(label(item, xalign=1), i+1,i+2,0,1)
-                
                 row += 1
                 
-                for typ, numbers in ratings.iteritems():
-                    table.attach(label(_(typ)+":"), 0, 1, row, row+1)
-                    # Remove RD tag, as we want to be compact
-                    numbers = numbers[:1] + numbers[2:]
-                    for i, number in enumerate(numbers):
-                        table.attach(label(_(number), xalign=1), i+1, i+2, row, row+1)
+                for type_, rating in finger.getRating().iteritems():
+                    table.attach(label(typeName[type_]+":"), 0, 1, row, row+1)
+                    table.attach(label(rating.elo, xalign=1), 1, 2, row, row+1)
+                    table.attach(label(rating.wins, xalign=1), 2, 3, row, row+1)
+                    table.attach(label(rating.draws, xalign=1), 3, 4, row, row+1)
+                    table.attach(label(rating.losses, xalign=1), 4, 5, row, row+1)
                     row += 1
                 
                 table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
                 row += 1
             
-            if email:
+            if finger.getEmail():
                 table.attach(label(_("Email")+":"), 0, 1, row, row+1)
-                table.attach(label(email), 1, 6, row, row+1)
+                table.attach(label(finger.getEmail()), 1, 6, row, row+1)
                 row += 1
             
-            if time and self.connection.isRegistred():
+            if finger.getCreated():
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
-                s = time + " "+_("online in total")
+                s = time.strftime("%Y %B %d ", time.localtime(time.time()))
+                s += _("online in total")
                 table.attach(label(s), 1, 6, row, row+1)
                 row += 1
             
@@ -546,22 +559,22 @@ class PlayerTabSection (ParrentListSection):
     
     def onPlayerAdd (self, player):
         if player["name"] in self.players: return
-        rating = player["rating"].isdigit() and int(player["rating"]) or 0
+        rating = player["rating"]
         title = player["title"]
-        if title == "C" or title == "TD":
+        if title & 0x02:
             title = PlayerTabSection.cmppix
-        elif title == "U":
+        elif not rating:
             title = PlayerTabSection.peoplepix
-        elif title == None:
+        else:
             if rating < 1300:
                 title = PlayerTabSection.easypix
             elif rating < 1600:
                 title = PlayerTabSection.advpix
             else:
                 title = PlayerTabSection.exppix
-        else:
-            # Admins gets a book picture
-            title = PlayerTabSection.bookpix
+        #else:
+        #    # Admins gets a book picture
+        #    title = PlayerTabSection.bookpix
         ti = self.store.append ([title, player["name"], rating])
         self.players [player["name"]] = ti
         count = int(self.widgets["playersOnlineLabel"].get_text().split()[0])+1
@@ -630,7 +643,7 @@ class GameTabSection (ParrentListSection):
         self.connection.glm.connect("addGame", lambda glm, game:
                 self.listPublisher.put((self.onGameAdd, game)) )
         
-        self.connection.glm.connect("removeGame", lambda glm, gameno:
+        self.connection.glm.connect("removeGame", lambda glm, gameno, res, com:
                 self.listPublisher.put((self.onGameRemove, gameno)) )
         
         self.widgets["observeButton"].connect ("clicked", self.onObserveClicked)
@@ -834,6 +847,10 @@ class SeekChallengeSection (ParrentListSection):
             isGuestPlayer = playerTitle == PlayerTabSection.peoplepix
         self.widgets["chaRatedGameCheck"].set_sensitive(
                 not isAnythingSelected or not isGuestPlayer)
+
+class ConsoleWindow:
+    def __init__ (self, widgets, connection):
+        pass
 
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #
