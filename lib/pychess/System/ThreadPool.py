@@ -14,7 +14,7 @@ if not hasattr(Thread, "_Thread__bootstrap_inner"):
             try:
                 self._Thread__bootstrap_inner()
             except:
-                if self.__daemonic and sys_ is None:
+                if self.__daemonic and (sys_ is None or sys_.__doc__ is None):
                     return
                 raise
     setattr(SafeThread, "_Thread__bootstrap_inner", SafeThread._Thread__bootstrap)
@@ -50,7 +50,7 @@ class ThreadPool:
         
         self.lock.release()
     
-    class Worker (Thread):
+    class Worker (threading.Thread):
         def __init__ (self, queue):
             Thread.__init__(self)
             self.func = None
