@@ -1,22 +1,18 @@
-import socket, re
+import socket
+import re, sre_constants
 from copy import copy
 from telnetlib import Telnet
 
 from pychess.System.Log import log
+import timeseal
 
-READ_LINE, READ_LINE_PLUS, READ_FROMTO = range(3)
 class Prediction:
-    def __init__ (self, type, callback, regexp0, regexp1=None):
-        self.type = type
+    def __init__ (self, callback, regexp0, regexp1=None):
         self.callback = callback
         
-        if type == READ_LINE_PLUS:
-            regexp1 = r"[^\\].*"
-            self.type = READ_FROMTO
-        
         if not regexp1:
-            self.hash = hash(regexp0) + self.type
-        else: self.hash = hash(regexp0 + regexp1) + self.type
+            self.hash = hash(regexp0) ^ hash(callback)
+        else: self.hash = hash(regexp0) ^ hash(regexp1) ^ hash(callback)
         
         if not hasattr("match", regexp0):
             # FICS being fairly case insensitive, we can compile with IGNORECASE
@@ -37,64 +33,115 @@ class Prediction:
                self.regexp1 == other.regexp1
     
     def __repr__ (self):
-        return "<Prediction to %s>" % self.callback
+        return "<Prediction to %s>" % self.callback.__name__
 
-class InterruptError (StandardError): pass
+RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
+
+class LinePrediction (Prediction):
+    def __init__ (self, callback, regexp0):
+        Prediction.__init__(self, callback, regexp0)
+    
+    def handle(self, line):
+        match = self.regexp0.match(line)
+        if match:
+            self.callback(match)
+            return RETURN_MATCH
+        return RETURN_NO_MATCH
+
+class ManyLinesPrediction (Prediction):
+    def __init__ (self, callback, regexp0):
+        Prediction.__init__(self, callback, regexp0)
+        self.matchlist = []
+    
+    def handle(self, line):
+        match = self.regexp0.match(line)
+        if match:
+            self.matchlist.append(match)
+            return RETURN_NEED_MORE
+        if self.matchlist:
+            self.callback(self.matchlist)
+        return RETURN_NO_MATCH
+
+class FromPlusPrediction (Prediction):
+    def __init__ (self, callback, regexp0, regexp1):
+        Prediction.__init__(self, callback, regexp0, regexp1)
+        self.matchlist = []
+    
+    def handle (self, line):
+        if not self.matchlist:
+            match = self.regexp0.match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+        else:
+            match = self.regexp1.match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+            else:
+                self.callback(self.matchlist)
+                del self.matchlist[:]
+                return RETURN_NO_MATCH
+        return RETURN_NO_MATCH
+
+class FromToPrediction (Prediction):
+    def __init__ (self, callback, regexp0, regexp1):
+        Prediction.__init__(self, callback, regexp0, regexp1)
+        self.matchlist = []
+    
+    def handle (self, line):
+        if not self.matchlist:
+            match = self.regexp0.match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+        else:
+            match = self.regexp1.match(line)
+            if match:
+                self.matchlist.append(match)
+                self.callback(self.matchlist)
+                del self.matchlist[:]
+                return RETURN_MATCH
+            else:
+                self.matchlist.append(line)
+                return RETURN_NEED_MORE
+        return RETURN_NO_MATCH
 
 class VerboseTelnet (Telnet):
     
     def __init__ (self):
         Telnet.__init__(self)
         self.connected = False
-        self.inbetweens = {}
+        self.state = None
         self.buffer = ""
     
-    def read (self, predictions):
-        while True:
-            # The prediations list may be changed at any time, so to avoid
-            # "changed size during iteration" errors, we make a shallow copy
-            temppreds = copy(predictions)
-            
-            line = self.readline().strip()
-            if line.startswith("fics% "):
-                line = line[6:]
-            amatch = False
-            
-            if self.inbetweens:
-                for prediction in self.inbetweens.keys():
-                    match = prediction.regexp1.match(line)
-                    if match:
-                        #print "GOOUT", repr(line), self.inbetweens[prediction]
-                        amatch = True
-                        linelist = self.inbetweens[prediction]
-                        linelist.append(match)
-                        del self.inbetweens[prediction]
-                        yield linelist, prediction
-            
-            else:
-                for prediction in temppreds:
-                    if prediction in self.inbetweens:
-                        continue
-                    match = prediction.regexp0.match(line)
-                    if match:
-                        amatch = True
-                        if prediction.type == READ_FROMTO:
-                            #print "GOIN", repr(line)
-                            self.inbetweens[prediction] = [match]
-                        else:
-                            yield match, prediction
-            
-            if not amatch and self.inbetweens:
-                for linelist in self.inbetweens.values():
-                    linelist.append(line)
-            
-            if self.eof or not self.connected:
-                break
+    def handleSomeText (self, predictions):
+        # The prediations list may be changed at any time, so to avoid
+        # "changed size during iteration" errors, we make a shallow copy
+        temppreds = copy(predictions)
         
-        text = self.read_very_lazy()
-        if not text and self.eof:
-            raise EOFError
-        yield (None, None)
+        line = self.readline().strip()
+        if line.startswith("fics% "):
+            line = line[6:]
+        elif line == "fics%":
+            line = ""
+        
+        if self.state:
+            answer = self.state.handle(line)
+            if answer != RETURN_NEED_MORE:
+                self.state = None
+            if answer != RETURN_NO_MATCH:
+                return
+        #print "line", line
+        if not self.state:
+            for prediction in temppreds:
+                answer = prediction.handle(line)
+                if answer == RETURN_NEED_MORE:
+                    self.state = prediction
+                if answer != RETURN_NO_MATCH:
+                    break
+            else:
+                log.debug(line+"\n", "nonmatched")
     
     def readline (self):
         while True:

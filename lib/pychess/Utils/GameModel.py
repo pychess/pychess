@@ -120,8 +120,11 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer.offerType == HURRY_REQUEST:
+        if offer.offerType == HURRY_ACTION:
             opPlayer.hurry()
+        
+        elif offer.offerType == CHAT_ACTION:
+            opPlayer.putMessage(offer.param)
         
         elif offer.offerType == RESIGNATION:
             if player == self.players[WHITE]:

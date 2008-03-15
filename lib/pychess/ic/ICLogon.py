@@ -10,7 +10,6 @@ from pychess.System import gstreamer, uistuff, glock
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import *
 
-from VerboseTelnet import VerboseTelnet, InterruptError
 from FICSConnection import FICSConnection, LogOnError
 from ICLounge import ICLounge
 
@@ -70,7 +69,11 @@ class ICLogon:
         self.widgets["fics_logon"].set_default(self.widgets["connectButton"])
         self.widgets["stopButton"].hide()
         self.widgets["progressbar"].hide()
+        self.widgets["progressbar"].set_text("")
         gobject.source_remove(self.pulser)
+    
+    def showMessage (self, connection, message):
+        self.widgets["progressbar"].set_text(message)
     
     def onCancel (self, widget, hide):
         if self.connection and self.connection.isConnecting():
@@ -94,8 +97,6 @@ class ICLogon:
             title = _("Connection Error")
         elif isinstance (error, LogOnError):
             title =_("Log on Error")
-        elif isinstance (error, InterruptError):
-            title = _("Connection was broken")
         elif isinstance (error, EOFError):
             title = _("Connection was closed")
         elif isinstance (error, socket.error):
@@ -140,5 +141,6 @@ class ICLogon:
         self.connection.connect("connected", self.onConnected)
         self.connection.connect("disconnected", self.onDisconnected)
         self.connection.connect("error", self.showError)
+        self.connection.connect("connectingMsg", self.showMessage)
         
         self.connection.start()

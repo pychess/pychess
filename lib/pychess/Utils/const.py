@@ -5,8 +5,8 @@
 ################################################################################
 
 NAME = "PyChess"
-VERSION = "0.8"
-VERSION_NAME = "Philidor"
+VERSION = "0.9"
+VERSION_NAME = "Staunton"
 
 ################################################################################
 # Player info                                                                  #
@@ -31,6 +31,15 @@ WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
     ADJOURNED, ABORTED, UNKNOWN_STATE = range(10)
 reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "?", "*", "?", "?"]
 
+# Game types
+TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE, \
+    TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC = range(9)
+isLightning = lambda secs, incr: secs + incr * 40 < 3*60
+isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
+
+typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
+            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
+
 # Action errors
 ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \
     ACTION_ERROR_CLOCK_NOT_STARTED, ACTION_ERROR_SWITCH_UNDERWAY, \
@@ -50,7 +59,7 @@ WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, UNKNOWN_REASON = range(24)
 # Player actions
 RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, PAUSE_OFFER, \
     RESUME_OFFER, SWITCH_OFFER, TAKEBACK_OFFER, TAKEBACK_FORCE, MATCH_OFFER, \
-    HURRY_REQUEST = range(12)
+    HURRY_ACTION, CHAT_ACTION = range(13)
 OFFERS = set([DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, PAUSE_OFFER, \
     RESUME_OFFER, SWITCH_OFFER, TAKEBACK_OFFER, MATCH_OFFER])
 
@@ -144,6 +153,9 @@ IC_CONNECTED, IC_DISCONNECTED = range(2)
 
 IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
 IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING = range(6)
+
+IC_STATUS_PLAYING, IC_STATUS_ACTIVE, IC_STATUS_BUSY, \
+    IC_STATUS_OFFLINE = range(4)
 
 ################################################################################
 # User interface                                                               #

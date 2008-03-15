@@ -2,7 +2,11 @@ import re, socket
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
-from VerboseTelnet import *
+from VerboseTelnet import LinePrediction
+from VerboseTelnet import ManyLinesPrediction
+from VerboseTelnet import FromPlusPrediction
+from VerboseTelnet import FromToPrediction
+from VerboseTelnet import VerboseTelnet
 
 from managers.GameListManager import GameListManager
 from managers.FingerManager import FingerManager
@@ -10,6 +14,7 @@ from managers.NewsManager import NewsManager
 from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
 from managers.ChatManager import ChatManager
+from managers.ListAndVarManager import ListAndVarManager
 
 from pychess.System.ThreadPool import PooledThread
 
@@ -19,6 +24,7 @@ class Connection (GObject, PooledThread):
     
     __gsignals__ = {
         'connecting':    (SIGNAL_RUN_FIRST, None, ()),
+        'connectingMsg': (SIGNAL_RUN_FIRST, None, (str,)),
         'connected':     (SIGNAL_RUN_FIRST, None, ()),
         'disconnecting': (SIGNAL_RUN_FIRST, None, ()),
         'disconnected':  (SIGNAL_RUN_FIRST, None, ()),
@@ -47,14 +53,21 @@ class Connection (GObject, PooledThread):
         self.predictions.remove(self.predictionsDict.pop(callback))
     
     def expect_line (self, callback, regexp):
-        self.expect(Prediction(READ_LINE, callback, regexp))
+        self.expect(LinePrediction(callback, regexp))
+    
+    def expect_many_lines (self, callback, regexp):
+        self.expect(ManyLinesPrediction(callback, regexp))
     
     def expect_line_plus (self, callback, regexp):
-        self.expect(Prediction(READ_LINE_PLUS, callback, regexp))
+        def callback_decorator (matchlist):
+            callback([matchlist[0]]+[m.group(0) for m in matchlist[1:]])
+        self.expect(FromPlusPrediction(callback_decorator, regexp, "\   (.*)"))
+    
+    def expect_fromplus (self, callback, regexp0, regexp1):
+        self.expect(FromPlusPrediction(callback, regexp0, regexp1))
     
     def expect_fromto (self, callback, regexp0, regexp1):
-        self.expect(Prediction(READ_FROMTO, callback, regexp0, regexp1))
-    
+        self.expect(FromToPrediction(callback, regexp0, regexp1))
     
     
     def cancel (self):
@@ -64,16 +77,17 @@ class Connection (GObject, PooledThread):
         raise NotImplementedError()
     
     def getUsername (self):
-        raise NotImplementedError()
+        return self.username
     
     def isRegistred (self):
-        raise NotImplementedError()
+        return self.password
     
     def isConnected (self):
         return self.connected
     
     def isConnecting (self):
         return self.connecting
+
 
 EOF = _("The connection was broken - got \"end of file\" message")
 NOTREG = _("'%s' is not a registered name")
@@ -96,9 +110,11 @@ class FICSConnection (Connection):
         try:
             self.client = VerboseTelnet()
             
+            self.emit('connectingMsg', _("Connecting to server"))
             self.client.open(self.host, self.port)
             
             self.client.read_until("login: ")
+            self.emit('connectingMsg', _("Logging on to server"))
             
             if self.username and self.username != "guest":
                 print >> self.client, self.username
@@ -125,7 +141,7 @@ class FICSConnection (Connection):
             
             index, match, text = self.client.expect([
                     "Invalid password",
-                    "Starting FICS session as (\w+)(?:\(([CUHIFWM])\))?"])
+                    "\*\*\*\* Starting FICS session as (\w+)(?:\(([CUHIFWM])\))? \*\*\*\*"])
             
             if index == 0:
                 raise LogOnError, BADPAS
@@ -134,10 +150,23 @@ class FICSConnection (Connection):
             
             self.client.read_until("fics%")
             
+            self.emit('connectingMsg', _("Setting up enviroment"))
+            # Important: As the other managers use ListAndVarManager, we need it
+            # to be instantiated first. We might decide that the purpose of this
+            # manager is different - used by different parts of the code - so it
+            # should be implemented into the FICSConnection somehow.
+            self.lvm = ListAndVarManager(self)
+            while not self.lvm.isReady():
+                self.client.handleSomeText(self.predictions)
+            
+            # FIXME: Some managers use each other to avoid regexp collapse. To
+            # avoid having to init the in a specific order, connect calls should
+            # be moved to a "start" function, so all managers would be in
+            # the connection object when they are called
             self.glm = GameListManager(self)
+            self.bm = BoardManager(self)
             self.fm = FingerManager(self)
             self.nm = NewsManager(self)
-            self.bm = BoardManager(self)
             self.om = OfferManager(self)
             self.cm = ChatManager(self)
             
@@ -152,17 +181,13 @@ class FICSConnection (Connection):
         try:
             self._connect()
             while self.isConnected():
-                for match, prediction in self.client.read(self.predictions):
-                    if not match:
-                        connected = False
-                        break
-                    prediction.callback(match)
+                self.client.handleSomeText(self.predictions)
         
         except Exception, e:
             if self.connected:
                 self.connected = False
-            for errortype in (IOError, LogOnError, InterruptError, EOFError,
-                                socket.error, socket.gaierror, socket.herror):
+            for errortype in (IOError, LogOnError, EOFError,
+                              socket.error, socket.gaierror, socket.herror):
                 if isinstance(e, errortype):
                     self.emit("error", e)
                     break

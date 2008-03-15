@@ -68,12 +68,12 @@ class IcGameModel (GameModel):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer.offerType == HURRY_REQUEST:
-            return
-        
         # This is only sent by ServerPlayers when observing
-        elif offer.offerType == TAKEBACK_FORCE:
+        if offer.offerType == TAKEBACK_FORCE:
             self.undoMoves(self.ply - offer.param)
+        
+        elif offer.offerType == CHAT_ACTION:
+            opPlayer.putMessage(offer.param)
         
         elif offer.offerType in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
