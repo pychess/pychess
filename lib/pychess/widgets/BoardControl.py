@@ -8,7 +8,7 @@ from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
-from pychess.Utils.logic import getDestinationCords
+from pychess.Utils.logic import validate
 
 from BoardView import BoardView, rect
 from BoardView import join
@@ -32,87 +32,89 @@ class BoardControl (gtk.EventBox):
             if menuitem == None: print key
             menuitem.connect("activate", self.actionActivate, key)
         
+        self.view.connect("shown_changed", self.shown_changed)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
         
-        self.fromcord = None # The cord to which the tocords list is relative
-        self.tocords = [] # List of cords to which the selected piece can move
-        
-        self.pressed = False
-        self.locked = True
+        self.normalState = NormalState(self)
+        self.selectedState = SelectedState(self)
+        self.activeState = ActiveState(self)
+        self.lockedState = LockedState(self)
+        self.currentState = self.lockedState
+    
+    def actionActivate (self, widget, key):
+        """ Put actions from a menu or similar """
+        if key == "call_flag":
+            self.emit("action", FLAG_CALL, None)
+        elif key == "draw":
+            self.emit("action", DRAW_OFFER, None)
+        elif key == "resign":
+            self.emit("action", RESIGNATION, None)
+        elif key == "ask_to_move":
+            self.emit("action", HURRY_ACTION, None)
+        elif key == "undo1":
+            self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
+        elif key == "pause1":
+            self.emit("action", PAUSE_OFFER, None)
+        elif key == "resume1":
+            self.emit("action", RESUME_OFFER, None)
+    
+    def shown_changed (self, view, shown):
+        self.view.selected = None
+        self.view.active = None
+        self.view.hover = None
+        if view.model.curplayer.__type__ == LOCAL and shown == view.model.ply:
+            self.setState(self.normalState)
+        else: self.setState(self.lockedState)
+    
+    def setLocked (self, locked):
+        if locked:
+            self.setState(self.lockedState)
+        else: self.setState(self.normalState)
+    
+    def setState (self, state):
+        self.currentState = state
+    
+    def button_press (self, widget, event):
+        return self.currentState.press(event.x, event.y)
+    
+    def button_release (self, widget, event):
+        return self.currentState.release(event.x, event.y)
+    
+    def motion_notify (self, widget, event):
+        return self.currentState.motion(event.x, event.y)
+    
+    def leave_notify (self, widget, event):
+        return self.currentState.leave(event.x, event.y)
+
+class BoardState:
+    def __init__ (self, board):
+        self.parrent = board
+        self.view = board.view
+    
+    def getBoard (self):
+        return self.view.model.getBoardAtPly(self.view.shown)
+    
+    def validate (self, cord0, cord1):
+        return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
     
     def emit_move_signal (self, cord0, cord1):
         # Help that user won't be able to move twice in cases of lag
-        self.locked = True
-        log.debug("emit_move_signal %s %s\n" % (cord0, cord1), "Human")
-        
         promotion = QUEEN
-        if self.view.model.boards[-1][cord0].sign == PAWN and cord1.y in (0,7):
-            res = int(self.promotionDialog.run())
-            self.promotionDialog.hide()
+        if self.getBoard()[cord0].sign == PAWN and cord1.y in (0,7):
+            res = int(self.parrent.promotionDialog.run())
+            self.parrent.promotionDialog.hide()
             if res == int(gtk.RESPONSE_DELETE_EVENT):
                 # Put back pawn moved be d'n'd
                 self.view.runAnimation(redrawMisc = False)
-                self.locked = False
                 return
             promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
         
         move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
-        self.emit("piece_moved", move)
-    
-    #          Selection and stuff          #
-    
-    def isSelectable (self, cord):
-        if self.locked: return False
-        if self.view.model.status != RUNNING: return False
-        if not cord: return False
-        if cord.x < 0 or cord.x > 7 or cord.y < 0 or cord.y > 7: return False
-        
-        if self.view.shown != self.view.model.ply:
-            return False
-        
-        # Set the basiscord to the selected or active
-        if self.view.active:
-            basiscord = self.view.active
-        else: basiscord = self.view.selected
-        
-        # If we are dealing with two cords (a piece select)
-        if basiscord and basiscord != cord:
-            
-            # If some fast mouse trickery was used to make a cord active with no
-            # piece, we can't continue
-            if not self.view.model.boards[-1][basiscord]:
-                return False
-            
-            # If the tocords list, is not relative to our basiscord, we have to
-            # create a new list.
-            if self.fromcord != basiscord:
-                self.tocords = getDestinationCords(
-                                        self.view.model.boards[-1], basiscord)
-                self.fromcord = basiscord # Remember the basiscord of self.tocords
-            
-            # If cord is a legal move..
-            if cord in self.tocords:
-                return True
-        
-        # if no other cord is active/selected, we are probably trying to select
-        # a piece to move. In that case we should not want empty cords
-        if self.view.model.boards[-1][cord] == None:
-            return False
-        
-        # We also don't won't to select friendly pieces while dragging
-        if self.view.active and self.pressed:
-            return False
-        
-        # We should not be able to select an opponent piece
-        color = self.view.model.boards[-1].color
-        if self.view.model.boards[-1][cord].color != color:
-            return False
-        
-        return True
+        self.parrent.emit("piece_moved", move)
     
     def transPoint (self, x, y):
         if not self.view.square: return None
@@ -126,114 +128,168 @@ class BoardControl (gtk.EventBox):
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
+        if not 0 <= int(point[0]) <= 7 or not 0 <= int(point[1]) <= 7:
+            return None
         return Cord(int(point[0]), int(point[1]))
     
-    def button_press (self, widget, event):
-        if self.locked: return False
-        self.pressed = True
-        log.debug("press %d %d\n" % (event.x, event.y), "Human")
-        
-        self.grab_focus()
-        cord = self.point2Cord (event.x, event.y)
-        
-        if not self.isSelectable(cord):
+    def isSelectable (self, cord):
+        # Simple isSelectable method, disabling selecting cords out of bound etc
+        if not cord or \
+                not 0 <= cord.x <= 7 or not 0 <= cord.y <= 7 or \
+                self.view.model.status != RUNNING or \
+                self.view.shown != self.view.model.ply:
+            return False
+        return True
+    
+    def press (self, x, y):
+        pass
+    
+    def release (self, x, y):
+        pass
+    
+    def motion (self, x, y):
+        cord = self.point2Cord(x, y)
+        if cord and self.isSelectable(cord):
+            self.view.hover = cord
+        else: self.view.hover = None
+    
+    def leave (self, x, y):
+        a = self.parrent.get_allocation()
+        if not (0 <= x < a.width and 0 <= y < a.height):
+            self.view.hover = None
+
+class NormalState (BoardState):
+    def isSelectable (self, cord):
+        if not BoardState.isSelectable(self, cord):
+            return False
+        # We don't want empty cords
+        if self.getBoard()[cord] == None:
+            return False
+        # We should not be able to select an opponent piece
+        if self.getBoard()[cord].color != self.getBoard().color:
+            return False
+        return True
+    
+    def press (self, x, y):
+        self.parrent.grab_focus()
+        cord = self.point2Cord(x,y)
+        if self.isSelectable(cord):
+            self.view.active = cord
+            self.parrent.setState(self.parrent.activeState)
+
+class LockedState (BoardState):
+    def isSelectable (self, cord):
+        return False
+
+class ActiveState (BoardState):
+    def isSelectable (self, cord):
+        if not BoardState.isSelectable(self, cord):
+            return False
+        return self.validate(self.view.active, cord)
+    
+    def release (self, x, y):
+        cord = self.point2Cord(x,y)
+        if not cord:
             self.view.active = None
             self.view.selected = None
-        else:
-            self.view.active = cord
-    
-    def button_release (self, widget, event):
-        if self.locked: return False
-        self.pressed = False
-        log.debug("release %d %d\n" % (event.x, event.y), "Human")
-        
-        cord = self.point2Cord (event.x, event.y)
-        if self.view.selected == cord or cord == None:
-            self.view.selected = None
             self.view.startAnimation()
-        elif cord == self.view.active:
-            color = self.view.model.boards[-1].color
-            if self.view.model.boards[-1][cord] != None and \
-                    self.view.model.boards[-1][cord].color == color:
-                self.view.selected = cord
+            self.parrent.setState(self.parrent.normalState)
+        
+        # When in the mixed active/selected state
+        elif self.view.selected:
+            # Unselect when releasing on an already selected cord
+            if cord == self.view.active == self.view.selected:
+                self.view.hover = cord
+                self.view.selected = None
+                self.view.active = None
                 self.view.startAnimation()
-            elif self.view.selected:
-                if self.view.active and \
-                        self.view.model.boards[-1][self.view.active] and \
-                        self.view.model.boards[-1][cord].color == color:
-                    self.emit_move_signal(self.view.active, cord)
-                else: self.emit_move_signal(self.view.selected, cord)
-                self.view._hover = cord
-                self.view.selected = None
-            else:
-                self.view.selected = cord
-        elif self.view.active != None:
-            color = self.view.model.boards[-1].color
-            if self.isSelectable(cord) and \
-                    (not self.view.model.boards[-1][cord] or \
-                    self.view.model.boards[-1][cord].color != color):
-                cord0 = self.view.active
-                self.view.active = None
-                self.view.selected = None
-                self.emit_move_signal(cord0, cord)
-            else:
-                self.view.active = None
-                self.view.selected = None
-                color = self.view.model.boards[-1].color
-                if not self.isSelectable(cord) or \
-                        self.view.model.boards[-1][cord] and \
-                        self.view.model.boards[-1][cord].color == color:
+                self.parrent.setState(self.parrent.normalState)
+            
+            # Move when releasing on a good cord
+            elif cord == self.view.active:
+                # Select it if it is friendly
+                if self.getBoard()[cord] and \
+                        self.getBoard()[cord].color == self.getBoard().color:
+                    self.view.selected = cord
+                    self.view.active = None
                     self.view.startAnimation()
-    
-    def motion_notify (self, widget, event):
-        cord = self.point2Cord (event.x, event.y)
-        if cord == None: return
-        
-        if not self.isSelectable(cord):
-            self.view.hover = None
-        else: self.view.hover = cord
-        
-        if self.pressed and self.view.active:
-            piece = self.view.model.getBoardAtPly (\
-                    self.view.shown)[self.view.active]
-            if not piece: return
-            if piece.color != self.view.model.boards[-1].color: return
-            xc, yc, square, s = self.view.square
-            if not self.view.square: return
+                    self.parrent.setState(self.parrent.selectedState)
+                # Mote to it, if it isn't
+                else:
+                    self.emit_move_signal(self.view.selected, cord)
+                    self.view.selected = None
+                    self.view.active = None
+                    self.parrent.setState(self.parrent.normalState)
             
-            xc, yc, square, s = self.view.square
-            co, si = self.view.matrix[0], self.view.matrix[1]
-            point = self.transPoint(event.x-s*(co+si)/2.,
-                                    event.y+s*(co-si)/2.)
-            if not point: return
-            x, y = point
-            
-            if piece.x != x or piece.y != y:
-                if piece.x:
-                    paintBox = self.view.cord2RectRelative(piece.x, piece.y)
-                else: paintBox = self.view.cord2RectRelative(self.view.active)
-                paintBox = join(paintBox, self.view.cord2RectRelative(x, y))
-                piece.x = x
-                piece.y = y
-                self.view.redraw_canvas(rect(paintBox))
+            # Unselect when releasing on a nonactive cord
+            else:
+                self.view.selected = None
+                self.view.active = None
+                self.view.startAnimation()
+                self.parrent.setState(self.parrent.normalState)
+        
+        # Selecting if releasing on the active cord
+        elif cord == self.view.active:
+            self.view.selected = cord
+            self.view.active = None
+            self.view.startAnimation()
+            self.parrent.setState(self.parrent.selectedState)
+        
+        # If dragged and released on a possible cord
+        elif cord == self.view.hover:
+            self.emit_move_signal(self.view.active, cord)
+            self.view.active = None
+            self.parrent.setState(self.parrent.normalState)
+        
+        # Send back, if dragging to a not possible cord
+        else:
+            self.view.active = None
+            # Send the piece back to its original cord
+            self.view.startAnimation()
+            self.parrent.setState(self.parrent.normalState)
     
-    def leave_notify (self, widget, event):
-        a = self.get_allocation()
-        if not (0 <= event.x < a.width and 0 <= event.y < a.height):
-            self.view.hover = None
+    def motion (self, x, y):
+        if not self.getBoard()[self.view.active]:
+            return
+        
+        BoardState.motion(self, x, y)
+        fcord = self.view.active
+        piece = self.getBoard()[fcord]
+        
+        if not self.view.square: return
+        xc, yc, square, s = self.view.square
+        co, si = self.view.matrix[0], self.view.matrix[1]
+        point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
+        if not point: return
+        x, y = point
+        
+        if piece.x != x or piece.y != y:
+            if piece.x:
+                paintBox = self.view.cord2RectRelative(piece.x, piece.y)
+            else: paintBox = self.view.cord2RectRelative(self.view.active)
+            paintBox = join(paintBox, self.view.cord2RectRelative(x, y))
+            piece.x = x
+            piece.y = y
+            self.view.redraw_canvas(rect(paintBox))
+
+class SelectedState (BoardState):
+    def isSelectable (self, cord):
+        if not BoardState.isSelectable(self, cord):
+            return False
+        # Unselect us, or select something else
+        if self.getBoard()[cord] != None:
+            return True
+        return self.validate(self.view.selected, cord)
     
-    def actionActivate (self, widget, key):
-        if key == "call_flag":
-            self.emit("action", FLAG_CALL, None)
-        elif key == "draw":
-            self.emit("action", DRAW_OFFER, None)
-        elif key == "resign":
-            self.emit("action", RESIGNATION, None)
-        elif key == "ask_to_move":
-            self.emit("action", HURRY_REQUEST, None)
-        elif key == "undo1":
-            self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
-        elif key == "pause1":
-            self.emit("action", PAUSE_OFFER, None)
-        elif key == "resume1":
-            self.emit("action", RESUME_OFFER, None)
+    def press (self, x, y):
+        cord = self.point2Cord(x,y)
+        # Unselecting by pressing the selected cord, or marking the cord to be 
+        # moved to. We don't unset self.view.selected, so ActiveState can handle
+        # things correctly
+        if self.isSelectable(cord):
+            self.view.active = cord
+            self.parrent.setState(self.parrent.activeState)
+        # Unselecting by pressing an inactive cord
+        else:
+            self.view.selected = None
+            self.parrent.setState(self.parrent.normalState)
