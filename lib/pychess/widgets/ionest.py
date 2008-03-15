@@ -38,8 +38,6 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
             if type(val) == tuple:
                 gmwidg, game = val
                 gamewidget.attachGameWidget(gmwidg)
-                if game.timemodel:
-                    gmwidg.widgets["ccalign"].show()
                 handler.emit("gmwidg_created", gmwidg, game)
             
             # Then the worker will publish functions setting up widget stuff
