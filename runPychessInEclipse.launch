@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<launchConfiguration type="org.python.pydev.debug.regularLaunchConfigurationType">
-  <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/home/nori/workspace/pychess/pychess"/>
-  <stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="/usr/bin/python2.4"/>
-  <stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="pychess"/>
-  <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-</launchConfiguration>
