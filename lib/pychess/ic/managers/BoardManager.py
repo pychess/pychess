@@ -64,8 +64,7 @@ class BoardManager (GObject):
         self.connection.expect_fromto (self.onObservedGame,
             "Movelist for game (\d+):", "{Still in progress} \*")
         
-        self.connection.expect_line (self.onGameEnd,
-                "{Game (\d+) \(\w+ vs\. \w+\) (.*?)} ([\d/]{1,3}\-[\d/]{1,3}|\*)")
+        self.connection.glm.connect("removeGame", self.onGameEnd)
         
         self.connection.expect_line (self.onGamePause,
                 "Game (\d+): Game clock (paused|resumed).")
@@ -74,12 +73,12 @@ class BoardManager (GObject):
         self.queuedCalls = {}
         self.ourGameno = ""
         
-        print >> self.connection.client, "style 12"
-        print >> self.connection.client, "iset startpos 1"
+        self.connection.lvm.setVariable("style", "12")
+        self.connection.lvm.setVariable("startpos", True)
         # gameinfo <g1> doesn't really have any interesting info, at least not
         # until we implement crasyhouse and stuff
-        # print >> self.connection.client, "iset gameinfo 1"
-        print >> self.connection.client, "iset compressmove 1"
+        # self.connection.lvm.setVariable("gameinfo", True)
+        self.connection.lvm.setVariable("compressmove", True)
     
     def _style12ToFenRow (self, row):
         fenrow = []
@@ -237,22 +236,13 @@ class BoardManager (GObject):
         del self.queuedMoves[gameno]
         del self.queuedCalls[gameno]
     
-    def onGameEnd (self, match):
-        gameno, comment, state = match.groups()
-        
-        parts = comment.split()
-        if parts[0] in ("Creating", "Continuing"):
-            return
-        
-        if state in ("1-0", "0-1"):
-            if state == "1-0":
-                status = WHITEWON
-            else:
-                status = BLACKWON
+    def onGameEnd (self, glm, gameno, result, comment):
+        parts = set(comment.split())
+        if result in (WHITEWON, BLACKWON):
             if "resigns" in parts:
                 reason = WON_RESIGN
-            elif "disself.connection" in parts:
-                reason = WON_DISself.connection
+            elif "disconnection" in parts:
+                reason = WON_DISCONNECTION
             elif "time" in parts:
                 reason = WON_CALLFLAG
             elif "checkmated" in parts:
@@ -261,8 +251,7 @@ class BoardManager (GObject):
                 reason = WON_ADJUDICATION
             else:
                 reason = UNKNOWN_REASON
-        elif state == "1/2-1/2":
-            status = DRAW
+        elif result == DRAW:
             if "repetition" in parts:
                 reason = DRAW_REPITITION
             if "material" in parts:
@@ -283,7 +272,7 @@ class BoardManager (GObject):
             else:
                 reason = UNKNOWN_REASON
         elif "adjourned" in parts:
-            status = ADJOURNED
+            result = ADJOURNED
             if "connection" in parts:
                 reason = ADJOURNED_LOST_CONNECTION
             elif "agreement" in parts:
@@ -293,7 +282,7 @@ class BoardManager (GObject):
             else:
                 reason = UNKNOWN_REASON
         elif "aborted" in parts:
-            status = ABORTED
+            result = ABORTED
             if "agreement" in parts:
                 reason = ABORTED_AGREEMENT
             elif "moves" in parts:
@@ -309,16 +298,16 @@ class BoardManager (GObject):
             else:
                 reason = UNKNOWN_REASON
         elif "courtesyaborted" in parts:
-            status = ABORTED
+            result = ABORTED
             reason = ABORTED_COURTESY
         else:
-            status = UNKNOWN_STATE
+            result = UNKNOWN_STATE
             reason = UNKNOWN_REASON
         
         if gameno == self.ourGameno:
-            self.emit("curGameEnded", gameno, status, reason)
+            self.emit("curGameEnded", gameno, result, reason)
         else:
-            f = lambda: self.emit("obsGameEnded", gameno, status, reason)
+            f = lambda: self.emit("obsGameEnded", gameno, result, reason)
             if gameno in self.queuedCalls:
                 log.debug("added observed game ended to queue")
                 self.queuedCalls[gameno].append(f)

@@ -532,7 +532,7 @@
 	      <property name="orientation">GTK_PROGRESS_LEFT_TO_RIGHT</property>
 	      <property name="fraction">0</property>
 	      <property name="pulse_step">0.0399999991059</property>
-	      <property name="text" translatable="yes">Logging on to Server</property>
+	      <property name="text" translatable="yes"></property>
 	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
 	    </widget>
 	  </child>
