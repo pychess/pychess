@@ -4,7 +4,7 @@ import os.path
 
 import gtk, pango, gobject
 
-from pychess.System import glock
+from pychess.System import glock, uistuff
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
 from pychess.System.prefix import addDataPrefix
@@ -64,16 +64,7 @@ def newMessage (task, message, type):
             scroll.set_size_request(width, height)
         scroll.add(vp)
         
-        def changed (vadjust):
-            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.upper-vadjust.page_size)
-                vadjust.need_scroll = True
-        scroll.get_vadjustment().connect("changed", changed)
-        
-        def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-            		vadjust.upper) < vadjust.step_increment
-        scroll.get_vadjustment().connect("value-changed", value_changed)
+        uistuff.keepDown(scroll)
         
         notebook.append_page (scroll, gtk.Label(task))
         notebook.show_all()
@@ -88,9 +79,9 @@ def newMessage (task, message, type):
     textbuffer.insert_with_tags_by_name(
             textbuffer.get_end_iter(), message, str(type))
 
-#
-# Add early messages and connect for new
-#
+################################################################################
+# Add early messages and connect for new                                       #
+################################################################################
 
 def addMessages (messages):
     for task, message, type in messages:
@@ -105,9 +96,9 @@ finally:
 
 log.connect ("logged", lambda log, messages: addMessages(messages))
 
-#
-# External functions
-#
+################################################################################
+# External functions                                                           #
+################################################################################
 
 def show ():
     ensureReady ()

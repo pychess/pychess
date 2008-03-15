@@ -1,5 +1,9 @@
 
-import re, webbrowser
+import re
+import webbrowser
+import colorsys
+from math import log, ceil
+import random
 
 import gtk, pango
 
@@ -27,6 +31,57 @@ def createCombo (combo, data):
     combo.add_attribute(crt, 'text', 1)
     crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
 
+
+
+def genColor (n, startpoint=0):
+    assert n >= 1
+    # This splits the 0 - 1 segment in the pizza way
+    h = (2*n-1)/(2**ceil(log(n)/log(2)))-1
+    h = (h + startpoint) % 1
+    # We set saturation based on the amount of green, in the range 0.6 to 0.8
+    rgb = colorsys.hsv_to_rgb(h, 1, 1)
+    rgb = colorsys.hsv_to_rgb(h, 1, (1-rgb[1])*0.2+0.6)
+    return rgb
+
+
+
+def keepDown (scrolledWindow):
+    def changed (vadjust):
+        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
+            vadjust.set_value(vadjust.upper-vadjust.page_size)
+            vadjust.need_scroll = True
+    scrolledWindow.get_vadjustment().connect("changed", changed)
+        
+    def value_changed (vadjust):
+        vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
+                vadjust.upper) < vadjust.step_increment
+    scrolledWindow.get_vadjustment().connect("value-changed", value_changed)
+
+
+
+def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
+    cell = gtk.CellRendererText()
+    cell.props.wrap_mode = pango.WRAP_WORD
+    cell.props.wrap_width = defwidth
+    column = gtk.TreeViewColumn(name, cell, **kvargs)
+    treeview.append_column(column)
+    
+    def callback (treeview, allocation, column, cell):
+        otherColumns = (c for c in treeview.get_columns() if c != column)
+        newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
+        newWidth -= treeview.style_get_property("horizontal-separator") * 2
+        if cell.props.wrap_width == newWidth or newWidth <= 0:
+            return
+        cell.props.wrap_width = newWidth
+        store = treeview.get_model()
+        iter = store.get_iter_first()
+        while iter and store.iter_is_valid(iter):
+            store.row_changed(store.get_path(iter), iter)
+            iter = store.iter_next(iter)
+        treeview.set_size_request(0,-1)
+    treeview.connect_after("size-allocate", callback, column, cell)
+    
+    return cell
 
 
 methodDict = {
