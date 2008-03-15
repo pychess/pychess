@@ -3,7 +3,6 @@ from gtk import gdk
 
 from pychess.System import conf
 from pychess.System.glock import glock_connect
-from pychess.widgets import gamewidget
 from pychess.Utils.Move import toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
 
@@ -25,7 +24,7 @@ class Sidepanel:
         __widget__ = widgets.get_widget("panel")
         __widget__.unparent()
         
-        self.board = gmwidg.widgets["board"].view
+        self.board = gmwidg.board.view
         
         glock_connect(self.board.model, "game_changed", self.game_changed)
         glock_connect(self.board.model, "moves_undoing", self.moves_undoing)
