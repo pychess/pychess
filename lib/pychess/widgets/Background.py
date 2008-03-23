@@ -270,6 +270,7 @@ class NewGameTasker (gtk.HBox):
         vbox.add(table)
         # Start button
         button = createButton ("gtk-ok", _("Start Game"))
+        button.set_flags(gtk.CAN_DEFAULT)
         vbox.add(button)
         button.connect ("clicked", self.startClicked)
     
