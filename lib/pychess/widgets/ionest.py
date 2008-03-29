@@ -98,7 +98,6 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
         if not engine: engine = anaengines[0]
         hintanalyzer = discoverer.initEngine(engine, WHITE)
-        hintanalyzer.autoAnalyze(inverse=False)
         specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
@@ -106,7 +105,6 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
         if not engine: engine = anaengines[0]
         spyanalyzer = discoverer.initEngine(engine, WHITE)
-        spyanalyzer.autoAnalyze(inverse=True)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
@@ -128,6 +126,11 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                     _("Correct the move, or start playing with what could be read"))
             d.connect("response", lambda d,a: d.hide())
             worker.publish(d.show)
+    
+    if HINT in specs:
+        specs[HINT].autoAnalyze(inverse=False)
+    if SPY in specs:
+        specs[SPY].autoAnalyze(inverse=True)
     
     return gmwidg, gamemodel
 
