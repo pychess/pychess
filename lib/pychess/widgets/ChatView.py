@@ -53,7 +53,7 @@ class ChatView (gtk.VPaned):
         
         def callback (widget, allocation):
             widget.disconnect(handle_id)
-            self.set_position(max(0.79*allocation.height, allocation.height-60))
+            self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
         handle_id = self.connect("size-allocate", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
