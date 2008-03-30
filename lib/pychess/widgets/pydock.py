@@ -175,16 +175,12 @@ class ButtonDragHandler:
         widget.connect("drag-drop", moveAndChain, self.on_drag_drop)
         widget.connect("drag-motion", moveAndChain, self.on_drag_motion)
         
-        if isinstance(widget, gtk.Container) and not isinstance(widget, gtk.Notebook):
+        if isinstance(widget, gtk.Notebook):
+            widget.connect("drag-end", self.on_drag_end)
+        else:
             widget.connect("add", self.on_add)
             for child in widget.get_children():
                 self.on_add(widget, child)
-        
-        if isinstance(widget, gtk.Notebook):
-            print "connecting", widget, "end", "for", self
-            def cb (*args):
-                print "hallo?"
-            widget.connect("drag-end", cb)
     
     def on_drag_leave (self, self_, context, timestamp):
         if not self.showButtonsAlways:
@@ -206,7 +202,7 @@ class ButtonDragHandler:
             self.highLight = None
             self.queue_draw()
     
-    def on_drag_motion (self, widget, context, x, y, timestamp):
+    def on_drag_motion (self, receiver, context, x, y, timestamp):
         if self.dragPos == (x,y):
             return
         parsed = self.parsePosition(x,y)
@@ -218,13 +214,14 @@ class ButtonDragHandler:
         self.dragPos = (x,y)
         
         if self.highLight == None:
-            if isinstance(widget, gtk.Notebook):
-                widget.set_group_id(GROUP_ID_INACTIVE)
+            if isinstance(receiver, gtk.Notebook):
+                receiver.set_group_id(GROUP_ID_INACTIVE)
             else:
                 context.drag_status (gtk.gdk.ACTION_DEFAULT, timestamp)
         else:
-            if isinstance(widget, gtk.Notebook):
-                widget.set_group_id(GROUP_ID_ACTIVE)
+            if isinstance(receiver, gtk.Notebook):
+                receiver.set_group_id(GROUP_ID_ACTIVE)
+                context.get_source_widget().set_group_id(GROUP_ID_ACTIVE)
             else:
                 context.drag_status (gtk.gdk.ACTION_MOVE, timestamp)
             return True
@@ -247,7 +244,7 @@ class ButtonDragHandler:
                     return
                 if len(sender.get_children()) == 1:
                     return
-            elif len(sender.get_children()) >= 1:
+            elif len(sender.get_children()) >= 1 and position == POSITION_CENTER:
                 # We rely on the automatic tab moving
                 return
             else:
@@ -256,21 +253,14 @@ class ButtonDragHandler:
                 title = receiver.get_tab_label(child) 
                 receiver.remove_page(receiver.get_current_page())
                 sender.append_page(child, title)
+        else:
+            child = sender.get_nth_page(sender.get_current_page())
         
-        child = sender.get_nth_page(sender.get_current_page())
         title = sender.undock(child)
         self.dock(child, position, title)
+        
         context.finish(True, True, timestamp)
-        
         context.isFinished = True
-        
-        def do ():
-            if not hasattr(context, "endIsSent"):
-                context.endIsSent = True
-                self.emit("drag-end", context)
-            #self.on_drag_end(receiver, context)
-        gobject.idle_add(do)
-        
         
         return True
     
@@ -443,7 +433,11 @@ class PyDockLeaf (gtk.Notebook, DockLeaf, ButtonDragHandler):
         title = self.get_tab_label(widget)
         self.remove_page(self.page_num(widget))
         if self.get_n_pages() == 0:
-            self.get_parent().removeComponent(self)
+            def cb ():
+                self.get_parent().removeComponent(self)
+            # We need to idle_add this, as the widget won't emit drag-ended, if
+            # it is removed to early
+            gobject.idle_add(cb)
         return title
     
     def getButtonPositions (self):
