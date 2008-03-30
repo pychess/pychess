@@ -40,8 +40,8 @@ class NewsManager (GObject):
             # No need to check the expression any more
             self.connection.unexpect (self.onNewsItem)
         
-        def callback (matchlist):
-            self.connection.unexpect(callback)
+        def onFullNewsItem (matchlist):
+            self.connection.unexpect(onFullNewsItem)
             details = ""
             for line in matchlist[1:-1]:
                 if line.startswith("\\"):
@@ -50,5 +50,5 @@ class NewsManager (GObject):
             self.news[no][4] = details
             self.emit("readNews", self.news[no])
         
-        self.connection.expect_fromto (callback, re.escape(line), "Posted by.*")
-        print >> self.connection.client, "news", no
+        self.connection.expect_fromto (onFullNewsItem, re.escape(line), "Posted by.*")
+        print >> self.connection.client, "news %s" % no

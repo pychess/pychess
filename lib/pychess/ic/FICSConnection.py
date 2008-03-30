@@ -17,6 +17,9 @@ from managers.ChatManager import ChatManager
 from managers.ListAndVarManager import ListAndVarManager
 
 from pychess.System.ThreadPool import PooledThread
+from pychess.Utils.const import *
+from TimeSeal import TimeSeal
+from VerboseTelnet import VerboseTelnet, PredictionsTelnet
 
 class LogOnError (StandardError): pass
 
@@ -95,10 +98,6 @@ BADPAS = _("The entered password was invalid.\n\n" + \
            "If you have forgot your password, try logging in as a guest and open chat on channel 4. Write \"I've forgotten my password\" to get help.\n\n"+\
            "If that is by some reason not possible, please email: support@freechess.org")
 
-# Some errorstrings for gnugettext to find. Add more as fics spits them out
-_("Sorry, names can only consist of lower and upper case letters.")
-_("Sorry, names may be at most 17 characters long.")
-
 class FICSConnection (Connection):
     def __init__ (self, host, port, username="guest", password=""):
         Connection.__init__(self, host, port, username, password)
@@ -108,7 +107,7 @@ class FICSConnection (Connection):
         self.connecting = True
         self.emit("connecting")
         try:
-            self.client = VerboseTelnet()
+            self.client = VerboseTelnet(TimeSeal())
             
             self.emit('connectingMsg', _("Connecting to server"))
             self.client.open(self.host, self.port)
@@ -118,39 +117,43 @@ class FICSConnection (Connection):
             
             if self.username and self.username != "guest":
                 print >> self.client, self.username
-                index, match, text = self.client.expect([
-                        "password: .*",
-                        "login: .*",
-                        "\n(.*?)Try again\..*",
-                        "Press return to enter the server as.*"])
-                if index < 0:
-                    raise IOError, EOF
-                elif index == 0:
-                    print >> self.client, self.password
+                got = self.client.read_until("password:",
+                                             "enter the server as",
+                                             "Try again.")
+                if got == 0:
+                    self.client.write(self.password)
+                    #print >> self.client, self.password
                     self.registred = True
-                elif index == 2:
-                    raise LogOnError, _(match.groups()[0].strip())
-                elif index == 3:
+                # No such name
+                elif got == 1:
                     raise LogOnError, NOTREG % self.username
-            
+                # Bad name
+                elif got == 2:
+                    raise LogOnError, NOTREG % self.username
             else:
                 print >> self.client, "guest"
                 self.client.read_until("Press return")
                 print >> self.client
                 self.registred = False
             
-            index, match, text = self.client.expect([
-                    "Invalid password",
-                    "\*\*\*\* Starting FICS session as (\w+)(?:\(([CUHIFWM])\))? \*\*\*\*"])
-            
-            if index == 0:
-                raise LogOnError, BADPAS
-            elif index == 1:
-                self.username = match.groups()[0]
-            
-            self.client.read_until("fics%")
+            while True:
+                line = self.client.readline()
+                if "Invalid password" in line:
+                    raise LogOnError, BADPAS
+                
+                match = re.search("\*\*\*\* Starting FICS session as "+
+                                  "([A-Za-z]+)(?:\([A-Z*]+\))* \*\*\*\*", line)
+                if match:
+                    self.username = match.groups()[0]
+                
+                if "fics%" in line:
+                    break
             
             self.emit('connectingMsg', _("Setting up enviroment"))
+            self.client = PredictionsTelnet(self.client)
+            self.client.setStripLines(True)
+            self.client.setLinePrefix("fics%")
+            
             # Important: As the other managers use ListAndVarManager, we need it
             # to be instantiated first. We might decide that the purpose of this
             # manager is different - used by different parts of the code - so it
@@ -158,6 +161,7 @@ class FICSConnection (Connection):
             self.lvm = ListAndVarManager(self)
             while not self.lvm.isReady():
                 self.client.handleSomeText(self.predictions)
+            self.lvm.setVariable("interface", NAME+" "+VERSION)
             
             # FIXME: Some managers use each other to avoid regexp collapse. To
             # avoid having to init the in a specific order, connect calls should

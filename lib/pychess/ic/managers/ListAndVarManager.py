@@ -60,9 +60,9 @@ class ListAndVarManager:
         for key, usedvalue in self.variables.iteritems():
             if usedvalue != self.variablesBackup[key]:
                 self.setVariable(key, usedvalue)
-        for key, usedvalue in self.ivariables.iteritems():
-            if usedvalue != self.ivariablesBackup[key]:
-                self.setVariable(key, usedvalue)
+        #for key, usedvalue in self.ivariables.iteritems():
+        #    if usedvalue != self.ivariablesBackup[key]:
+        #        self.setVariable(key, usedvalue)
     
     # Lists
     

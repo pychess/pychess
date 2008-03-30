@@ -336,20 +336,20 @@ class BoardManager (GObject):
         print >> self.connection.client, "flag"
     
     def observe (self, gameno):
-        print >> self.connection.client, "observe", gameno
-        print >> self.connection.client, "moves", gameno
+        print >> self.connection.client, "observe %s" % gameno
+        print >> self.connection.client, "moves %s" % gameno
         self.queuedMoves[gameno] = {}
         self.queuedCalls[gameno] = []
     
     def unobserve (self, gameno):
-        print >> self.connection.client, "unobserve", gameno
+        print >> self.connection.client, "unobserve %s" % gameno
         self.emit("obsGameUnobserved", gameno)
     
     def play (self, seekno):
-        print >> self.connection.client, "play", seekno
+        print >> self.connection.client, "play %s" % seekno
     
     def accept (self, offerno):
-        print >> self.connection.client, "accept", offerno
+        print >> self.connection.client, "accept %s" % offerno
     
     def decline (self, offerno):
-        print >> self.connection.client, "decline", offerno
+        print >> self.connection.client, "decline %s" % offerno
