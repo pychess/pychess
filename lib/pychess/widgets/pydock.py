@@ -253,7 +253,8 @@ class ButtonDragHandler:
                 title = receiver.get_tab_label(child) 
                 receiver.remove_page(receiver.get_current_page())
                 sender.append_page(child, title)
-        else:
+        
+        if not "child" in locals():
             child = sender.get_nth_page(sender.get_current_page())
         
         title = sender.undock(child)
