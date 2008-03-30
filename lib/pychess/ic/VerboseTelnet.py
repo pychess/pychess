@@ -4,7 +4,6 @@ from copy import copy
 from telnetlib import Telnet
 
 from pychess.System.Log import log
-import timeseal
 
 class Prediction:
     def __init__ (self, callback, regexp0, regexp1=None):
@@ -39,6 +38,7 @@ RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp0):
+        self.old = regexp0
         Prediction.__init__(self, callback, regexp0)
     
     def handle(self, line):
@@ -107,74 +107,73 @@ class FromToPrediction (Prediction):
                 return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
-class VerboseTelnet (Telnet):
+class VerboseTelnet:
+    def __init__ (self, telnet):
+        self.telnet = telnet
     
-    def __init__ (self):
-        Telnet.__init__(self)
-        self.connected = False
-        self.state = None
-        self.buffer = ""
+    def open (self, address, port):
+        return self.telnet.open(address, port)
     
+    def read_until (self, *untils):
+        return self.telnet.read_until(*untils)
+    
+    def readline (self):
+        line = self.telnet.readline()
+        #log.debug(line, repr(self.telnet))
+        return line
+    
+    def write(self, str):
+        log.log(str, repr(self.telnet))
+        self.telnet.write(str)
+
+class PredictionsTelnet:
+    def __init__ (self, telnet):
+        self.telnet = telnet
+        self.__state = None
+        
+        self.__stripLines = True
+        self.__linePrefix = None
+    
+    def getStripLines(self):
+        return self.__stripLines
+    def getLinePrefix(self):
+        return self.__linePrefix
+    def setStripLines(self, value):
+        self.__stripLines = value
+    def setLinePrefix(self, value):
+        self.__linePrefix = value
+
     def handleSomeText (self, predictions):
         # The prediations list may be changed at any time, so to avoid
         # "changed size during iteration" errors, we make a shallow copy
         temppreds = copy(predictions)
         
-        line = self.readline().strip()
-        if line.startswith("fics% "):
-            line = line[6:]
-        elif line == "fics%":
-            line = ""
+        line = self.telnet.readline()
         
-        if self.state:
-            answer = self.state.handle(line)
-            if answer != RETURN_NEED_MORE:
-                self.state = None
-            if answer != RETURN_NO_MATCH:
+        if self.getStripLines():
+            line = line.strip()
+        if self.getLinePrefix():
+            while line.startswith(self.getLinePrefix()):
+                line = line[len(self.getLinePrefix()):]
+                if self.getStripLines():
+                    line = line.strip()
+        
+        if self.__state:
+            answer = self.__state.handle(line)
+            if answer in (RETURN_NO_MATCH, RETURN_MATCH):
+                self.__state = None
+            if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                 return
-        #print "line", line
-        if not self.state:
+        
+        if not self.__state:
             for prediction in temppreds:
                 answer = prediction.handle(line)
                 if answer == RETURN_NEED_MORE:
-                    self.state = prediction
-                if answer != RETURN_NO_MATCH:
+                    self.__state = prediction
+                if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                     break
             else:
                 log.debug(line+"\n", "nonmatched")
     
-    def readline (self):
-        while True:
-            s = self.buffer.split("\n", 1)
-            if len(s) == 2:
-                self.buffer = s[1]
-                return s[0]
-            self.buffer += self.read_some()
-    
-    def process_rawq (self):
-        cooked0 = self.cookedq
-        Telnet.process_rawq (self)
-        cooked1 = self.cookedq
-        if len(cooked1) > len(cooked0):
-            d = cooked1[len(cooked0):].replace("\r","")
-            lines = d.split("\n")
-            for line in lines[:-1]:
-                log.debug (line+"\n", self.name)
-            log.debug(lines[-1], self.name)
-    
-    def write (self, data):
-        if self.connected:
-            log.log(data, self.name)
-            Telnet.write (self, data)
-        else:
-            log.warn("Data not written due to closed telnetclient: '%s'"
-                    % data, self.name)
-    
-    def open(self, host, port):
-        Telnet.open(self, host, port)
-        self.name = "%s#%s" % (self.host, self.port)
-        self.connected = True
-    
-    def close (self):
-        self.connected = False
-        Telnet.close(self)
+    def write(self, str):
+        return self.telnet.write(str)
