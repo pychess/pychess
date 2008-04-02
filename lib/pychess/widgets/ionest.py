@@ -1,6 +1,7 @@
 """ The task of this module, is to save, load and init new games """
 
 import os
+from StringIO import StringIO
 
 import gtk, gobject
 
@@ -8,6 +9,7 @@ from pychess.System.Log import log
 from pychess.System import conf
 from pychess.System.protoopen import isWriteable
 from pychess.System.GtkWorker import GtkWorker
+from pychess.Utils.Chess960 import shuffle_start
 from pychess.Utils import const
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
@@ -114,7 +116,10 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     
     # Starting
     if not loaddata:
-        gamemodel.start()
+        if gamemodel.variant == VARIANT_960:
+            gamemodel.loadAndStart (StringIO(shuffle_start()), fen, 0, 0)
+        else:
+            gamemodel.start()
     else:
         try:
             uri, loader, gameno, position = loaddata

@@ -33,10 +33,12 @@ class GameModel (GObject, PooledThread):
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
     
-    def __init__ (self, timemodel=None):
+    def __init__ (self, timemodel=None, variant=VARIANT_STANDARD):
         GObject.__init__(self)
         
+        self.variant = variant
         self.boards = [Board(setup=True)]
+
         self.moves = []
         self.players = []
         
@@ -221,7 +223,8 @@ class GameModel (GObject, PooledThread):
         uriIsFile = type(uri) != str
         if not uriIsFile:
             chessfile = loader.load(protoopen(uri))
-        else: chessfile = loader.load(uri)
+        else: 
+            chessfile = loader.load(uri)
         
         self.emit("game_loading")
         try:
