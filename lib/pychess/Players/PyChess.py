@@ -17,7 +17,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
-from pychess.Utils.lutils.LBoard import LBoard, FEN_START
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils import leval
 
 try:
