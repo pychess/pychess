@@ -411,7 +411,6 @@ while True:
         leval.random = True
     
     elif lines[0] == "setboard":
-        print '***setboard***'
         lsearch.searching = False
         searchLock.acquire()
         try:
