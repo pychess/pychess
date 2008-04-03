@@ -47,4 +47,4 @@ def shuffle_start():
 
 if __name__ == '__main__':
   for i in range(10):
-    print shuffle()
+    print shuffle_start()
