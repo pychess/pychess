@@ -37,7 +37,10 @@ def save (file, model):
     print >> file, '[Black "%s"]' % repr(model.players[BLACK])
     print >> file, '[Result "%s"]' % status
     
-    if model.lowply > 0:
+    if model.variant == VARIANT_960:
+        print >> file, '[Variant "Fischerandom"]'
+        
+    if model.lowply > 0 or model.variant == VARIANT_960:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
     
@@ -124,11 +127,17 @@ class PGNFile (ChessFile):
     
     def loadToModel (self, gameno, position, model=None):
         if not model: model = GameModel()
+
+        variant = self._getTag(gameno, "Variant")
+        if variant and (variant == "Fischerandom" or "960" in variant):
+            model.variant = VARIANT_960
         
         fenstr = self._getTag(gameno, "FEN")
         if fenstr:
             model.boards = [Board(fenstr)]
-        else: model.boards = [Board(setup=True)]
+        else:
+            model.boards = [Board(setup=True)]
+
         del model.moves[:]
         model.status = WAITING_TO_START
         model.reason = UNKNOWN_REASON

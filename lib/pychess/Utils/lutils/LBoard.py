@@ -91,6 +91,10 @@ class LBoard:
         #  fifty:      A counter for the fifty moves rule                      #
         ########################################################################
         self.history = []
+
+        # initial cords of rooks and kings for castling in Chess960
+        self.ini_kings = [E1, E8]
+        self.ini_rooks = [[A1, H1], [A8, H8]]
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -158,6 +162,14 @@ class LBoard:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
+                    if moveNoChr == "1":
+                        if piece == KING:
+                            self.ini_kings[color] = cord
+                        elif piece == ROOK:
+                            if cord < self.kings[color]:
+                                self.ini_rooks[color][0] = cord
+                            else:
+                                self.ini_rooks[color][1] = cord
                     cord += 1
         
         # Parse active color field
@@ -167,7 +179,7 @@ class LBoard:
         else: self.setColor (BLACK)
         
         # Parse castling availability
-        
+
         castling = 0
         for char in castChr:
             if char == "K":
