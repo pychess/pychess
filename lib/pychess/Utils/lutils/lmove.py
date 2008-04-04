@@ -271,7 +271,7 @@ def parseSAN (board, san):
     notat = notat.replace("0","O").replace("o","O")
     if notat.startswith("O-O"):
         if color == WHITE:
-            fcord = E1
+            fcord = board.ini_kings[0] #E1
             if notat == "O-O":
                 flag = KING_CASTLE
                 tcord = G1
@@ -279,7 +279,7 @@ def parseSAN (board, san):
                 flag = QUEEN_CASTLE
                 tcord = C1
         else:
-            fcord = E8
+            fcord = board.ini_kings[1] #E8
             if notat == "O-O":
                 flag = KING_CASTLE
                 tcord = G8
