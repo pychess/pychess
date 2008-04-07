@@ -9,7 +9,6 @@ from pychess.System.Log import log
 from pychess.System import conf
 from pychess.System.protoopen import isWriteable
 from pychess.System.GtkWorker import GtkWorker
-from pychess.Utils.Chess960 import shuffle_start
 from pychess.Utils import const
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
@@ -116,10 +115,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     
     # Starting
     if not loaddata:
-        if gamemodel.variant == VARIANT_960:
-            gamemodel.loadAndStart (StringIO(shuffle_start()), fen, 0, 0)
-        else:
-            gamemodel.start()
+        gamemodel.start()
     else:
         try:
             uri, loader, gameno, position = loaddata
