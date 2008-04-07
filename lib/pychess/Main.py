@@ -349,7 +349,7 @@ class GladeHandlers:
     #          Taskers        #
     
     def on_newGameTasker_started (tasker, color, opponent, difficulty):
-        gamemodel = GameModel(TimeModel(5*60, 0)) #, VARIANT_960)
+        gamemodel = GameModel(TimeModel(5*60, 0))
         
         player0tup = (LOCAL, Human, (color, ""), _("Human"))
         if opponent == 0:

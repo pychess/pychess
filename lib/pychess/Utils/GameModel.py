@@ -33,10 +33,9 @@ class GameModel (GObject, PooledThread):
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
     
-    def __init__ (self, timemodel=None, variant=VARIANT_STANDARD):
+    def __init__ (self, timemodel=None):
         GObject.__init__(self)
         
-        self.variant = variant
         self.boards = [Board(setup=True)]
 
         self.moves = []
