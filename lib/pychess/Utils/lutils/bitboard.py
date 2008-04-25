@@ -123,7 +123,9 @@ def ensureBitArraysLoaded ():
                         ar.fromfile(f, l)
                 BITS_DONE = True
             
-            except EOFError:
+            except EOFError, TypeError:
+                # TypeError is called when f.read(1) returns bad data and 'ord'
+                # can't parse it.
                 pass
         finally:
             f.close()
