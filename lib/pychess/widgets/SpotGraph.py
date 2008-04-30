@@ -5,8 +5,9 @@ import math
 
 line = 10
 curve = 60
-dotSmall = 12
-dotLarge = 20
+dotSmall = 14
+dotLarge = 24
+lineprc = 1/7.
 
 tooltip = gtk.Tooltips()
 tooltip.force_window()
@@ -80,6 +81,7 @@ class SpotGraph (gtk.EventBox):
         width = alloc.width
         height = alloc.height
         
+        #------------------------------------------------------ Paint side ruler
         context.move_to(alloc.x+line, alloc.y+line)
         context.rel_line_to(0, height-line*2-curve)
         context.rel_curve_to(0, curve,  0, curve,  curve, curve)
@@ -90,69 +92,71 @@ class SpotGraph (gtk.EventBox):
         context.set_source_color(self.get_style().dark[self.state])
         context.stroke()
         
-        for y, title in self.ymarks:
-            context.set_source_color(self.get_style().fg[self.state])
-            #context.set_source_rgba(0, 0, 0, 0.7)
-            context.set_font_size(12)
-            x, y = self.transCords (0, y)
-            context.move_to (alloc.x+x+line/2., alloc.y+y+line/2.)
-            context.show_text(title)
-            
-            context.set_source_color(self.get_style().bg[self.state])
-            context.move_to (alloc.x+x, alloc.y+y-line/2.)
-            context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
-            context.rel_curve_to (line, 0,  line, 6,  line, 6)
-            context.close_path()
-            context.fill()
-        
+        #-------------------------------------------------- Paint horizontal marks
         for x, title in self.xmarks:
             context.set_source_color(self.get_style().fg[self.state])
-            #context.set_source_rgba(0, 0, 0, 0.7)
             context.set_font_size(12)
-            x, y = self.transCords (x, 1)
-            context.move_to (alloc.x+x+line/2., alloc.y+y)
+            x, y = self.prcToPix (x, 1)
+            context.move_to (x+line/2., y-line/2.)
             context.rotate(-math.pi/2)
             context.show_text(title)
             context.rotate(math.pi/2)
             
             context.set_source_color(self.get_style().bg[self.state])
-            context.move_to (alloc.x+x-line/2., alloc.y+y+line/2.)
+            context.move_to (x-line/2., y)
             context.rel_curve_to (6, 0,  6, line,  6, line)
             context.rel_curve_to (0, -line,  6, -line,  6, -line)
             context.close_path()
             context.fill()
         
-        context.set_line_width(dotSmall/10.)
+        #------------------------------------------------ Paint vertical marks
+        for y, title in self.ymarks:
+            context.set_source_color(self.get_style().fg[self.state])
+            context.set_font_size(12)
+            x, y = self.prcToPix (0, y)
+            context.move_to (x+line/2., y+line/2.)
+            context.show_text(title)
+            
+            context.set_source_color(self.get_style().bg[self.state])
+            context.move_to (x, y-line/2.)
+            context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
+            context.rel_curve_to (line, 0,  line, 6,  line, 6)
+            context.close_path()
+            context.fill()
+        
+        #----------------------------------------------------------- Paint spots
+        context.set_line_width(dotSmall*lineprc)
         for x, y, type, name, text in self.spots.values():
             context.set_source_rgb(*self.typeColors[type][0])
             if self.hovered and name == self.hovered[3]:
                 continue
             
-            x, y = self.transCords (x, y)
-            context.arc(alloc.x+x, alloc.y+y, dotSmall/2., 0, 2 * math.pi)
+            x, y = self.prcToPix (x, y)
+            context.arc(x, y, dotSmall/(1+lineprc)/2., 0, 2 * math.pi)
             context.fill_preserve()
             context.set_source_rgb(*self.typeColors[type][1])
             context.stroke()
         
-        context.set_line_width(dotLarge/10.)
+        #--------------------------------------------------- Paint hovered spots
+        context.set_line_width(dotLarge*lineprc)
         if self.hovered:
             x, y, type, name, text = self.hovered
-            x, y = self.transCords (x, y)
+            x, y = self.prcToPix (x, y)
             if not self.pressed:
                 context.set_source_rgb(*self.typeColors[type][0])
             else:
                 context.set_source_rgb(*self.typeColors[type][1])
-            context.arc(alloc.x+x, alloc.y+y, dotLarge/2., 0, 2 * math.pi)
+            context.arc(x, y, dotLarge/(1+lineprc)/2., 0, 2 * math.pi)
             context.fill_preserve()
             context.set_source_rgb(*self.typeColors[type][1])
             context.stroke()
             
             x, y, width, height = self.getTextBounds(self.hovered)
-            context.rectangle(alloc.x+x-hpadding, alloc.y+y-vpadding,
+            context.rectangle(x-hpadding, y-vpadding,
                              width+hpadding*2, height+vpadding*2)
             context.set_source_color(bg)
             context.fill()
-            context.move_to(alloc.x+x, alloc.y+y)
+            context.move_to(x, y)
             context.set_source_rgb(0,0,0)
             context.show_layout(self.create_pango_layout(text))
             
@@ -161,22 +165,25 @@ class SpotGraph (gtk.EventBox):
     ############################################################################
     
     def button_press (self, widget, event):
-        self.cords = [event.x, event.y]
+        alloc = self.get_allocation()
+        self.cords = [event.x+alloc.x, event.y+alloc.y]
         self.pressed = True
         if self.hovered:
             self.redraw_canvas(self.getBounds(self.hovered))
     
     def button_release (self, widget, event):
-        self.cords = [event.x, event.y]
+        alloc = self.get_allocation()
+        self.cords = [event.x+alloc.x, event.y+alloc.y]
         self.pressed = False
         if self.hovered:
             self.redraw_canvas(self.getBounds(self.hovered))
-            if self.pointIsOnSpot (event.x, event.y, self.hovered):
+            if self.pointIsOnSpot (event.x+alloc.x, event.y+alloc.y, self.hovered):
                 self.emit("spotClicked", self.hovered[3])
     
     def motion_notify (self, widget, event):
-        self.cords = [event.x, event.y]
-        spot = self.getSpotAtPoint (event.x, event.y)
+        alloc = self.get_allocation()
+        self.cords = [event.x+alloc.x, event.y+alloc.y]
+        spot = self.getSpotAtPoint (*self.cords)
         if self.hovered and spot == self.hovered:
             return
         if self.hovered:
@@ -229,7 +236,7 @@ class SpotGraph (gtk.EventBox):
     
     def getTextBounds (self, spot):
         x, y, type, name, text = spot
-        x, y = self.transCords (x, y)
+        x, y = self.prcToPix (x, y)
         
         alloc = self.get_allocation()
         width = alloc.width
@@ -241,9 +248,9 @@ class SpotGraph (gtk.EventBox):
         tx = x - x_bearing + dotLarge/2.
         ty = y - y_bearing - theight - dotLarge/2.
         
-        if tx + twidth > width and x - x_bearing - twidth - dotLarge/2. > 0:
+        if tx + twidth > width and x - x_bearing - twidth - dotLarge/2. > alloc.x:
             tx = x - x_bearing - twidth - dotLarge/2.
-        if ty < 0:
+        if ty < alloc.y:
             ty = y - y_bearing + dotLarge/2.
         
         return (tx, ty, twidth, theight)
@@ -258,13 +265,13 @@ class SpotGraph (gtk.EventBox):
     def getBounds (self, spot):
         
         x, y, type, name, text = spot
-        x, y = self.transCords (x, y)
+        x, y = self.prcToPix (x, y)
         
         if spot == self.hovered:
             size = dotLarge
         else: size = dotSmall
         
-        bounds = (x-size/2-1, y-size/2-1, x+size/2+1, y+size/2+1)
+        bounds = (x-size/2.-1, y-size/2.-1, size+2, size+2)
         
         if spot == self.hovered:
             x, y, w, h = self.getTextBounds(spot)
@@ -277,7 +284,7 @@ class SpotGraph (gtk.EventBox):
         """ This method performs an hexigon search for an empty place to put a
             new dot. """
         
-        x, y = self.transCords (xorg, yorg)
+        x, y = self.prcToPix (xorg, yorg)
         # Start by testing current spot
         if self.isEmpty (x, y):
             return xorg, yorg
@@ -291,7 +298,7 @@ class SpotGraph (gtk.EventBox):
             for dx, dy in directions:
                 for i in xrange(level):
                     if self.isEmpty (x, y):
-                        return self.reTransCords (x, y)
+                        return self.pixToPrc (x, y)
                     x += dx*dotSmall
                     y += dy*dotSmall
             level += 1
@@ -301,10 +308,10 @@ class SpotGraph (gtk.EventBox):
             place to put a new dot.
             http://en.wikipedia.org/wiki/Archimedean_spiral """
         
-        xorg, yorg = self.transCords (xorg, yorg)
+        xorg, yorg = self.prcToPix (xorg, yorg)
         # Start by testing current spot
         if self.isEmpty (xorg, yorg):
-            return self.reTransCords (xorg, yorg)
+            return self.pixToPrc (xorg, yorg)
         
         r = 0
         while True:
@@ -317,52 +324,45 @@ class SpotGraph (gtk.EventBox):
             x = r*math.cos(r)/(4*math.pi)*dotSmall + xorg
             y = r*math.sin(r)/(4*math.pi)*dotSmall + yorg
             if self.isEmpty (x, y):
-                return self.reTransCords (x, y)
+                return self.pixToPrc (x, y)
     
-    def getNearestFreeNeighbourSquare (self, xorg, yorg):
-        """ This method performs a square-spircal search for an empty square to
-            put a new dot. """
-         
-        #  49 26 27 28 29 30 31
-        #  48 25  9 10 11 12 32
-        #  47 24  8  1  2 13 33
-        #  46 23  7  X  3 14 34
-        #  45 22  6  5  4 15 35
-        #  44 21 20 18 17 16 36
-        #  43 42 41 40 39 38 37
-                
-        up = 1
+    def getNearestFreeNeighbour (self, xorg, yorg):
+        
+        """ This method performs a spircal search for an empty square to put a
+            new dot. """
+        
+        up = 2
         right = 1
-        down = 2
+        down = 1
         left = 2
         
-        x, y = self.transCords (xorg, yorg)
+        x, y = self.prcToPix (xorg, yorg)
         
         # Start by testing current spot
         if self.isEmpty (x, y):
-            return self.reTransCords (x, y)
+            return self.pixToPrc (x, y)
         
         while True:
-            
-            for i in range(up):
-                y -= dotSmall
-                if self.isEmpty (x, y):
-                    return self.reTransCords (x, y)
 
             for i in range(right):
                 x += dotSmall
                 if self.isEmpty (x, y):
-                    return self.reTransCords (x, y)
+                    return self.pixToPrc (x, y)
 
             for i in range(down):
                 y += dotSmall
                 if self.isEmpty (x, y):
-                    return self.reTransCords (x, y)
+                    return self.pixToPrc (x, y)
 
             for i in range(left):
                 x -= dotSmall
                 if self.isEmpty (x, y):
-                    return self.reTransCords (x, y)
+                    return self.pixToPrc (x, y)
+            
+            for i in range(up):
+                y -= dotSmall
+                if self.isEmpty (x, y):
+                    return self.pixToPrc (x, y)
             
             # Grow spiral bounds
             right += 2
@@ -371,37 +371,43 @@ class SpotGraph (gtk.EventBox):
             up += 2
     
     def isEmpty (self, x0, y0):
+        """ Returns true if a spot placed on (x, y) is inside the graph and not
+            intersecting with other spots.
+            x and y should be in pixels, not percent """
         
         # Make sure spiral search don't put dots outside the graph
-        alloc = self.get_allocation()
-        width = alloc.width
-        height = alloc.height
-        if not 0 <= x0 <= width or not 0 <= y0 <= height:
+        x, y = self.prcToPix(0,0)
+        w, h = self.prcToPix(1,1)
+        if not x <= x0 <= w or not y <= y0 <= h:
             return False
         
+        # Tests if the spot intersects any other spots
         for x1, y1, type, name, text in self.spots.values():
-            x1, y1 = self.transCords(x1, y1)
+            x1, y1 = self.prcToPix(x1, y1)
             if (x1-x0)**2 + (y1-y0)**2 < dotSmall**2 - 0.1:
                 return False
         
         return True
     
     def pointIsOnSpot (self, x0, y0, spot):
+        """ Returns true if (x, y) is inside the spot 'spot'. The size of the
+            spot is determined based on its hoverness.
+            x and y should be in pixels, not percent """
+        
         if spot == self.hovered:
             size = dotLarge
         else: size = dotSmall
         
-        alloc = self.get_allocation()
-        width = alloc.width
-        height = alloc.height
-        
         x1, y1, type, name, text = spot
-        x1, y1 = self.transCords(x1, y1)
+        x1, y1 = self.prcToPix(x1, y1)
         if (x1-x0)**2 + (y1-y0)**2 <= (size/2.)**2:
             return True
         return False
     
     def getSpotAtPoint (self, x, y):
+        """ Returns the spot embrace (x, y) if any. Otherwise it returns None.
+            x and y should be in pixels, not percent """
+        
         if self.hovered and self.pointIsOnSpot(x, y, self.hovered):
             return self.hovered
         
@@ -413,32 +419,36 @@ class SpotGraph (gtk.EventBox):
         
         return None
     
-    def transCords (self, x, y):
+    def prcToPix (self, x, y):
+        """ Translates from 0-1 cords to real world cords """ 
         alloc = self.get_allocation()
-        width = alloc.width
-        height = alloc.height
-        return x*(width-line*1.5)+line*1.5,  y*(height-line)-line
+        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5 + alloc.x, \
+               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5 + alloc.y
     
-    def reTransCords (self, x, y):
+    def pixToPrc (self, x, y):
+        """ Translates from real world cords to 0-1 cords """ 
         alloc = self.get_allocation()
-        width = alloc.width
-        height = alloc.height
-        return (x-line*1.5)/(width-line*1.5),  (y+line)/(height-line)
+        return (x - line*1.5 - alloc.x)/(alloc.width - line*1.5-dotLarge*0.5), \
+               (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
 
 if __name__ == "__main__":
     w = gtk.Window()
+    nb = gtk.Notebook()
+    w.add(nb)
     vb = gtk.VBox()
-    w.add(vb)
+    nb.append_page(vb)
     
     sg = SpotGraph()
+    sg.addXMark(.5, "Center")
+    sg.addYMark(.5, "Center")
     vb.pack_start(sg)
     
-    button = gtk.Button("Ny Prik")
+    button = gtk.Button("New Spot")
     def callback (button):
         if not hasattr(button, "nextnum"):
             button.nextnum = 0
         else: button.nextnum += 1
-        sg.addSpot(str(button.nextnum), "Blablabla", .5, .5, 0)
+        sg.addSpot(str(button.nextnum), "Blablabla", 1, 1, 0)
     button.connect("clicked", callback) 
     vb.pack_start(button, expand=False)
     
