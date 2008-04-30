@@ -405,10 +405,10 @@ class PyChess:
         # In rare cases, gtk throws some gtk_size_allocation error, which is
         # probably a race condition. To avoid the window forgets its size in
         # these cases, we add this extra hook
-        def callback (*args):
+        def callback (window, *args):
             window.disconnect(handle_id)
             loadPosition(window)
-            window.set_size_request(-1, -1)
+            gobject.idle_add(window.set_size_request, -1, -1)
         handle_id = window.connect("size-allocate", callback)
     
     def initGlade(self):
