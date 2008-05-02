@@ -330,7 +330,7 @@ def closeGame (gmwidg, game):
         
         d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
         d.format_secondary_text (_(
-            "It is not possible later to continue the game,\nif do don't save it."))
+            "It is not possible later to continue the game,\nif you don't save it."))
         response = d.run()
         d.hide()
         
