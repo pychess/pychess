@@ -283,7 +283,7 @@ class EngineDiscoverer (GObject, Thread):
             
             fileNodes = engine.getElementsByTagName("file")
             if fileNodes:
-                efile = fileNodes[0].childNodes[0].data.split()[-1]
+                efile = fileNodes[0].childNodes[0].data.strip()
                 if efile != file:
                     self._clearEngine(engine)
                     checkIt = True
