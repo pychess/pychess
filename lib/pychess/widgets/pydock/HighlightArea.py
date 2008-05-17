@@ -30,8 +30,10 @@ class HighlightArea (gtk.DrawingArea):
             x, y = 0, 0
             width, height = alloc.width, alloc.height
         
-        self.set_size_request(ceil(width), ceil(height))
+        if self.window:
+            self.window.move_resize(int(x), int(y), ceil(width), ceil(height))
         self.get_parent().move(self, int(x), int(y))
+        self.set_size_request(ceil(width), ceil(height))
         self.show()
     
     def __onExpose (self, self_, event):
