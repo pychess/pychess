@@ -7,6 +7,7 @@ import pango
 import gobject
 
 from pychess.System import uistuff
+from BorderBox import BorderBox
 
 class ChatView (gtk.VPaned):
     __gsignals__ = {
@@ -24,7 +25,7 @@ class ChatView (gtk.VPaned):
         
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        sw.set_shadow_type(gtk.SHADOW_NONE)
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
@@ -35,21 +36,21 @@ class ChatView (gtk.VPaned):
         self.readView.props.left_margin = 2
         #self.readView.get_buffer().create_tag("log",
         #        foreground = self.readView.get_style().fg[gtk.STATE_INSENSITIVE])
-        self.pack1(sw, resize=True, shrink=True)
+        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
         
         start = self.readView.get_buffer().get_start_iter()
         self.readView.get_buffer().create_mark("logMark", start)
         
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        sw.set_shadow_type(gtk.SHADOW_NONE)
         sw.add(self.writeView)
         #self.writeView.set_size_request(-1,20)
         self.writeView.props.wrap_mode = gtk.WRAP_WORD
         self.writeView.props.pixels_below_lines = 1
         self.writeView.props.pixels_above_lines = 2
         self.writeView.props.left_margin = 2
-        self.pack2(sw, resize=True, shrink=True)
+        self.pack2(BorderBox(sw,top=True), resize=True, shrink=True)
         
         def callback (widget, allocation):
             widget.disconnect(handle_id)
