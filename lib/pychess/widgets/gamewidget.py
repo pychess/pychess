@@ -373,6 +373,7 @@ def attachGameWidget (gmwidg):
         notebooks[panel.__title__].append_page(instance)
         instance.show_all()
     notebooks["statusbar"].append_page(gmwidg.stat_hbox)
+    gmwidg.stat_hbox.show_all()
     
     # We should always show tabs if more than one exists
     if headbook.get_n_pages() == 2:
@@ -406,11 +407,3 @@ def tabsCallback (none):
         else:
             show_tabs(True)
 conf.notify_add("hideTabs", tabsCallback)
-
-def showGrips (doShow):
-    dock = widgets["mainvbox"].get_children()[2].get_children()[0]
-    for dockitem in dock.get_children():
-        if doShow:
-            dockitem.show_grip()
-        else:
-            dockitem.hide_grip()
