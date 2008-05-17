@@ -12,14 +12,15 @@ from PyDockComposite import PyDockComposite
 from StarArrowButton import StarArrowButton
 from HighlightArea import HighlightArea
 
-class PyDockLeaf (gtk.Layout, DockLeaf):
+class PyDockLeaf (DockLeaf):
     def __init__ (self, widget, title, id):
-        gtk.Layout.__init__(self)
+        DockLeaf.__init__(self)
         self.set_no_show_all(True)
         
         self.book = gtk.Notebook()
         self.book.connect("drag-begin", self.__onDragBegin)
         self.book.connect("drag-end", self.__onDragEnd)
+        self.book.connect_after("switch-page", self.__onPageSwitched)
         self.put(self.book, 0, 0)
         self.connect("size-allocate", lambda self, alloc: \
                      self.book.set_size_request(alloc.width, alloc.height))
@@ -104,24 +105,42 @@ class PyDockLeaf (gtk.Layout, DockLeaf):
         self.dockable = dockable
     
     
-    def __onDragBegin (self, widget, context):
+    def showArrows (self):
         if self.dockable:
             self.starButton.show()
     
-    def __onDragEnd (self, widget, context):
+    def hideArrows (self):
         self.starButton.hide()
         self.highlightArea.hide()
+    
+    
+    def __onDragBegin (self, widget, context):
+        for instance in self.getInstances():
+            instance.showArrows()
+    
+    def __onDragEnd (self, widget, context):
+        for instance in self.getInstances():
+            instance.hideArrows()
     
     def __onDrop (self, starButton, position, sender):
         self.highlightArea.hide()
         if self.dockable:
             child = sender.get_nth_page(sender.get_current_page())
-            title, id = self.undock(child)
+            title, id = sender.get_parent().undock(child)
             self.dock(child, position, title, id)
     
     def __onHover (self, starButton, position, widget):
         if self.dockable:
+            starButton.window.raise_()
             self.highlightArea.showAt(position)
     
     def __onLeave (self, starButton):
         self.highlightArea.hide()
+    
+    
+    def __onPageSwitched (self, book, page, page_num):
+        # When a tab is dragged over another tab, the page is temporally
+        # switched, and the notebook child is hovered. Thus we need to reraise
+        # our star
+        if self.starButton.window:
+            self.starButton.window.raise_()
