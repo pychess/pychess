@@ -301,7 +301,7 @@ class GladeHandlers:
     
     def on_rotate_board1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.widgets["board"].view.rotation += math.pi
+        gmwidg.board.view.rotation += math.pi
     
     def on_rearrange_panels_activate (widget):
         gamewidget.showGrips(widget.get_active())
@@ -414,7 +414,7 @@ class PyChess:
     def initGlade(self):
         global window
         window = self
-    
+        
         gtk.glade.set_custom_handler(self.widgetHandler)
         self.widgets = gtk.glade.XML(addDataPrefix("glade/PyChess.glade"))
         
