@@ -9,14 +9,14 @@ from HighlightArea import HighlightArea
 from __init__ import TopDock, DockLeaf, DockComponent
 from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
-class PyDockTop (gtk.Layout, TopDock):
+class PyDockTop (TopDock):
     def __init__ (self, id):
-        gtk.Layout.__init__(self)
+        TopDock.__init__(self)
         self.set_no_show_all(True)
         
         self.__sock = gtk.Alignment(xscale=1, yscale=1)
         self.put(self.__sock, 0, 0)
-        self.__recursiveOnAdd(self, self.__sock)
+        #self.__recursiveOnAdd(self, self.__sock)
         self.connect("size-allocate", lambda self, alloc: \
                      self.__sock.set_size_request(alloc.width, alloc.height))
         self.__sock.show()
@@ -76,14 +76,23 @@ class PyDockTop (gtk.Layout, TopDock):
         elif isinstance(child, gtk.Container):
             child.connect("add", self.__recursiveOnAdd)
     
-    def __onDragBegin (self, widget, context):
+    def showArrows (self):
         for button in self.buttons:
             button.show()
     
-    def __onDragEnd (self, widget, context):
+    def hideArrows (self):
         for button in self.buttons:
             button.hide()
         self.highlightArea.hide()
+    
+    #def __onDragBegin (self, widget, context):
+    #    for button in self.buttons:
+    #        button.show()
+    
+    #def __onDragEnd (self, widget, context):
+    #    for button in self.buttons:
+    #        button.hide()
+    #    self.highlightArea.hide()
     
     def __onDrop (self, arrowButton, sender):
         self.highlightArea.hide()
