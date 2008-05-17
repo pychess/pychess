@@ -7,10 +7,15 @@ import time
 
 from pychess.System import uistuff
 from pychess.System.Log import log
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
 from pychess.widgets.ChatView import ChatView
 
 __title__ = _("Chat")
+
+__icon__ = addDataPrefix("glade/panel_chat.svg")
+
+__desc__ = _("The chat panel lets you communicate with your opponent during the game, assuming he or she is interested")
 
 class Sidepanel:
     def load (self, gmwidg):

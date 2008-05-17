@@ -9,7 +9,9 @@ from gtk import ICON_LOOKUP_USE_BUILTIN
 from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
-
+from pydock.PyDockTop import PyDockTop
+from pydock.__init__ import CENTER, WEST
+from pychess.System.prefix import addHomePrefix
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -100,7 +102,8 @@ class GameWidget (gobject.GObject):
         self.board = board
         self.statusbar = statusbar
         
-        self.notebookKey = gtk.HSeparator()
+        self.notebookKey = gtk.Label()
+        self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
         
@@ -114,17 +117,21 @@ class GameWidget (gobject.GObject):
             glock.release()
     
     def initTabcontents(self):
-        tabcontent = gtk.HBox()
-        tabcontent.set_spacing(4)
-        tabcontent.pack_start(createImage(light_off), expand=False)
+        tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
+        hbox = gtk.HBox()
+        hbox.set_spacing(4)
+        hbox.pack_start(createImage(light_off), expand=False)
         close_button = gtk.Button()
         close_button.set_property("can-focus", False)
         close_button.add(createImage(gtk_close))
         close_button.set_relief(gtk.RELIEF_NONE)
-        close_button.set_size_request(19, 18)
+        close_button.set_size_request(20, 18)
         close_button.connect("clicked", lambda w: self.emit("close_clicked"))
-        tabcontent.pack_end(close_button, expand=False)
-        tabcontent.pack_end(gtk.Label(""))
+        hbox.pack_end(close_button, expand=False)
+        label = gtk.Label("")
+        label.set_alignment(0,.7)
+        hbox.pack_end(label)
+        tabcontent.add(hbox)
         tabcontent.show_all() # Gtk doesn't show tab labels when the rest is
         return tabcontent
     
@@ -184,14 +191,14 @@ class GameWidget (gobject.GObject):
     def setLocked (self, locked):
         """ Makes the board insensitive and turns of the tab ready indicator """
         self.board.setLocked(locked)
-        self.tabcontent.remove(self.tabcontent.get_children()[0])
+        self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
         if not locked:
-            self.tabcontent.pack_start(createImage(light_on), expand=False)
-        else: self.tabcontent.pack_start(createImage(light_off), expand=False)
+            self.tabcontent.child.pack_start(createImage(light_on), expand=False)
+        else: self.tabcontent.child.pack_start(createImage(light_off), expand=False)
         self.tabcontent.show_all()
     
     def setTabText (self, text):
-        self.tabcontent.get_children()[1].set_text(text)
+        self.tabcontent.child.get_children()[1].set_text(text)
     
     def getTabText (self):
         return self.tabcontent[1].get_text()
@@ -270,6 +277,7 @@ def _ensureReadForGameWidgets ():
     align.set_property("yscale", 0)
     headbook = gtk.Notebook()
     headbook.set_scrollable(True)
+    headbook.props.tab_vborder = 0
     align.add(headbook)
     mainvbox.pack_start(align, expand=False)
     if not conf.get("hideTabs", False):
@@ -278,60 +286,56 @@ def _ensureReadForGameWidgets ():
     # Initing center
     
     centerVBox = gtk.VBox()
-    dock = gdl.Dock()
-    dock.show()
+    centerVBox.set_spacing(3)
+    centerVBox.set_border_width(3)
+    dock = PyDockTop("main")
     centerVBox.pack_start(dock)
+    dock.show()
     
-    dockbar = gdl.DockBar(dock)
-    dockbar.show()
-    centerVBox.pack_start(dockbar)
+    dockLocation = addHomePrefix("pydock.xml")
+    docks = {"board": ("Board", notebooks["board"])}
+    for id, panel in zip(files, sidePanels):
+        hbox = gtk.HBox()
+        pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
+        icon = gtk.image_new_from_pixbuf(pixbuf)
+        label = gtk.Label(panel.__title__)
+        label.set_size_request(0, 0)
+        label.set_alignment(0, 1)
+        hbox.pack_start(icon, expand=False, fill=False)
+        hbox.pack_start(label, expand=True, fill=True)
+        hbox.set_spacing(2)
+        hbox.show_all()
+        
+        tip = gtk.Tooltip()
+        def cb (widget, x, y, keyboard_mode, tooltip, title, desc, pixbuf):
+            tooltip.set_markup("<b>%s</b>\n%s" % (title,desc))
+            tooltip.set_icon(pixbuf)
+            return True
+        hbox.props.has_tooltip = True
+        hbox.connect("query-tooltip", cb, panel.__title__, panel.__desc__,
+                     gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 48, 48))
+        
+        docks[str(id)] = (hbox, notebooks[panel.__title__])
     
-    layout = gdl.DockLayout(dock)
-    
-    # FIXME: The loading is overriden
-    #layout.save_layout("__default__")
-    #layout.save_to_file("/home/thomas/layout.xml")
-    #layout.load_from_file("/home/thomas/layout.xml")
-    #layout.load_layout("__default__")
-    
-    #gdl.DockPlaceholder("ph_top", dock, gdl.DOCK_TOP, False)
-    #gdl.DockPlaceholder("ph_bottom", dock, gdl.DOCK_BOTTOM, False)
-    #gdl.DockPlaceholder("ph_left", dock, gdl.DOCK_LEFT, False)
-    #gdl.DockPlaceholder("ph_right", dock, gdl.DOCK_RIGHT, False)
-    #gdl.DockPlaceholder("ph_center", dock, gdl.DOCK_CENTER, False)
-    
-    for panel in sidePanels:
-        item = gdl.DockItem(panel.__title__, panel.__title__, None,
-                    gdl.DOCK_ITEM_BEH_CANT_ICONIFY|gdl.DOCK_ITEM_BEH_CANT_CLOSE)
-        item.add(notebooks[panel.__title__])
-        item.show_grip()
-        item.show_all()
-        dock.add_item(item, gdl.DOCK_CENTER)
-    boarditem = gdl.DockItem("board", _("Board"), None, gdl.DOCK_ITEM_BEH_NO_GRIP)
-    boarditem.add(notebooks["board"])
-    dock.add_item(boarditem, gdl.DOCK_LEFT)
-    boarditem.show()
-    
+    if False and os.path.isfile(dockLocation):
+        dock.loadFromXML(dockLocation, docks)
+    else:
+        for id in files:
+            title, panel = docks[str(id)]
+            leaf = dock.dock(panel, CENTER, title, str(id))
+        leaf = dock.dock(docks["board"][1], WEST, gtk.Label(docks["board"][0]), "board")
+        leaf.get_parent().set_position(500)
+        docks["board"][1].show_all()
+        leaf.setDockable(False)
     
     #def callback():
-    
+    #    dock.saveToXML(dockLocation)
     #atexit.register(callback)
-    
-    
-    dock.show()
-    #print boarditem.parent
-    #print dock.get_children()
-    #print boarditem.parent
-    #boarditem.show_item()
-    
-    
     
     centerVBox.pack_start(notebooks["statusbar"], expand=False)
     mainvbox.pack_start(centerVBox)
-    
-    
-    
-    
+    centerVBox.show_all()
+    mainvbox.show()
     
     # Connecting headbook to other notebooks
     
@@ -354,6 +358,7 @@ def attachGameWidget (gmwidg):
     key2gmwidg[gmwidg.notebookKey] = gmwidg
     
     headbook.append_page(gmwidg.notebookKey, gmwidg.tabcontent)
+    headbook.set_tab_label_packing(gmwidg.notebookKey, True, True, gtk.PACK_START)
     if hasattr(headbook, "set_tab_reorderable"):
         headbook.set_tab_reorderable (gmwidg.notebookKey, True)
     
@@ -363,15 +368,15 @@ def attachGameWidget (gmwidg):
     headbook.connect("switch-page", callback, gmwidg)
     
     notebooks["board"].append_page(gmwidg.boardvbox)
+    gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):
         notebooks[panel.__title__].append_page(instance)
+        instance.show_all()
     notebooks["statusbar"].append_page(gmwidg.stat_hbox)
     
     # We should always show tabs if more than one exists
     if headbook.get_n_pages() == 2:
         show_tabs(True)
-    
-    widgets["mainvbox"].show_all()
     
     headbook.set_current_page(-1)
 
