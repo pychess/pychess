@@ -7,6 +7,10 @@ from pychess.System.prefix import addDataPrefix
 
 __title__ = _("Opening Book")
 
+__icon__ = addDataPrefix("glade/panel_book.svg")
+
+__desc__ = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
+
 class Sidepanel:
     
     def load (self, gmwidg):

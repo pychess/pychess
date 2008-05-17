@@ -3,8 +3,8 @@ from gtk import gdk
 
 from pychess.System import conf
 from pychess.System.glock import glock_connect
-from pychess.Utils.Move import toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.Move import toSAN, toFAN
 
 from gtk.gdk import keyval_from_name
 leftkeys = map(keyval_from_name,("Left", "KP_Left"))
@@ -12,6 +12,8 @@ rightkeys = map(keyval_from_name,("Right", "KP_Right"))
 
 __title__ = _("Move History")
 __active__ = True
+__icon__ = addDataPrefix("glade/panel_moves.svg")
+__desc__ = _("The moves sheet keeps track of the players' moves and lets you navigate through the game history")
 
 class Sidepanel:
     
