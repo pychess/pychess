@@ -7,6 +7,7 @@ import gtk, gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.glock import glock_connect
+from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
 from pychess.Utils.lutils import leval
 
@@ -74,7 +75,6 @@ class ScorePlot (gtk.DrawingArea):
         return False
     
     def draw (self, cr):
-
         width = self.get_allocation().width
         height = len(self.scores)*self.moveHeight
         
@@ -142,6 +142,9 @@ class ScorePlot (gtk.DrawingArea):
     
 __title__ = _("Score")
 
+__icon__ = addDataPrefix("glade/panel_score.svg")
+
+__desc__ = _("The score panel tries to evaluate the positions and shows you a graph of the game progress")
 
 class Sidepanel:
     

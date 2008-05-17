@@ -13,6 +13,10 @@ from pychess.Utils.lutils import strateval
 
 __title__ = _("Comments")
 
+__icon__ = addDataPrefix("glade/panel_comments.svg")
+
+__desc__ = _("The comments panel will try to analyze and explain the moves played")
+
 class Sidepanel:
     
     def __init__ (self):
