@@ -139,60 +139,67 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 # Global Load and Save variables                                               #
 ################################################################################
 
+opendialog = None
+savedialog = None
 enddir = {}
-types = []
-savers = [getattr(Savers, s) for s in Savers.__all__]
-for saver in savers:
-    for ending in saver.__endings__:
-        enddir[ending] = saver
-    types.append((saver.__label__, saver.__endings__))
-
-opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
-savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE,
-    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
-
-savedialog.set_current_folder(os.environ["HOME"])
-saveformats = gtk.ListStore(str, str)
-
-# All files filter
-star = gtk.FileFilter()
-star.set_name(_("All Files"))
-star.add_pattern("*")
-opendialog.add_filter(star)
-saveformats.append([_("Detect type automatically"), ""])
-
-# All chess files filter
-all = gtk.FileFilter()
-all.set_name(_("All Chess Files"))
-opendialog.add_filter(all)
-opendialog.set_filter(all)
-
-# Specific filters and save formats
-default = 0
-for i, (label, endings) in enumerate(types):
-    endstr = "(%s)" % ", ".join(endings)
-    f = gtk.FileFilter()
-    f.set_name(label+" "+endstr)
-    for ending in endings:
-        f.add_pattern("*."+ending)
-        all.add_pattern("*."+ending)
-    opendialog.add_filter(f)
-    saveformats.append([label, endstr])
-    if "pgn" in endstr:
-        default = i + 1
-
-# Add widgets to the savedialog
-savecombo = gtk.ComboBox()
-savecombo.set_model(saveformats)
-crt = gtk.CellRendererText()
-savecombo.pack_start(crt, True)
-savecombo.add_attribute(crt, 'text', 0)
-crt = gtk.CellRendererText()
-savecombo.pack_start(crt, False)
-savecombo.add_attribute(crt, 'text', 1)
-savecombo.set_active(default)
-savedialog.set_extra_widget(savecombo)
+def getOpenAndSaveDialogs():
+    global opendialog, savedialog, enddir
+    
+    if not opendialog:
+        types = []
+        savers = [getattr(Savers, s) for s in Savers.__all__]
+        for saver in savers:
+            for ending in saver.__endings__:
+                enddir[ending] = saver
+        types.append((saver.__label__, saver.__endings__))
+        
+        opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
+        savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        savedialog.set_current_folder(os.environ["HOME"])
+        saveformats = gtk.ListStore(str, str)
+        
+        # All files filter
+        star = gtk.FileFilter()
+        star.set_name(_("All Files"))
+        star.add_pattern("*")
+        opendialog.add_filter(star)
+        saveformats.append([_("Detect type automatically"), ""])
+        
+        # All chess files filter
+        all = gtk.FileFilter()
+        all.set_name(_("All Chess Files"))
+        opendialog.add_filter(all)
+        opendialog.set_filter(all)
+        
+        # Specific filters and save formats
+        default = 0
+        for i, (label, endings) in enumerate(types):
+            endstr = "(%s)" % ", ".join(endings)
+            f = gtk.FileFilter()
+            f.set_name(label+" "+endstr)
+            for ending in endings:
+                f.add_pattern("*."+ending)
+                all.add_pattern("*."+ending)
+            opendialog.add_filter(f)
+            saveformats.append([label, endstr])
+            if "pgn" in endstr:
+                default = i + 1
+        
+        # Add widgets to the savedialog
+        savecombo = gtk.ComboBox()
+        savecombo.set_model(saveformats)
+        crt = gtk.CellRendererText()
+        savecombo.pack_start(crt, True)
+        savecombo.add_attribute(crt, 'text', 0)
+        crt = gtk.CellRendererText()
+        savecombo.pack_start(crt, False)
+        savecombo.add_attribute(crt, 'text', 1)
+        savecombo.set_active(default)
+        savedialog.set_extra_widget(savecombo)
+    
+    return opendialog, savedialog, enddir
 
 ################################################################################
 # Saving                                                                       #
@@ -213,6 +220,10 @@ def saveGameSimple (uri, game):
     game.save(uri, saver, append=False)
 
 def saveGameAs (game):
+    opendialog, savedialog, enddir = getOpenAndSaveDialogs()
+    
+    # Keep running the dialog until the user has canceled it or made an error
+    # free operation
     while True:
         res = savedialog.run()
         if res != gtk.RESPONSE_ACCEPT:
