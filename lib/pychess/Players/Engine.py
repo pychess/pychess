@@ -1,7 +1,10 @@
+import threading
+from urllib import urlopen, urlencode
 
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.Utils.const import ARTIFICIAL, DRAW_OFFER
+from pychess.Utils.Offer import Offer
+from pychess.Utils.const import ARTIFICIAL, DRAW_OFFER, CHAT_ACTION
 from Player import Player
 
 class Engine (Player):
@@ -51,6 +54,18 @@ class Engine (Player):
     
     def offerError (self, offer, error):
         pass #Ignore
+    
+    def putMessage (self, message):
+        thread = threading.Thread(target=self.answer, args=(message,))
+        thread.start()
+    
+    def answer (self, message):
+        data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                       urlencode({"message":message, "botcust2":"x"})).read()
+        ss = "<b>DMPGirl:</b>"
+        es = "<br>"
+        answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
+        self.emit("offer", Offer(CHAT_ACTION, answer))
     
     # Other methods
     
