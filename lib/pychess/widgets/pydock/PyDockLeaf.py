@@ -136,6 +136,8 @@ class PyDockLeaf (DockLeaf):
     def __onDrop (self, starButton, position, sender):
         self.highlightArea.hide()
         if self.dockable:
+            if sender.get_parent() == self and self.book.get_n_pages() == 1:
+                return
             child = sender.get_nth_page(sender.get_current_page())
             title, id = sender.get_parent().undock(child)
             self.dock(child, position, title, id)
