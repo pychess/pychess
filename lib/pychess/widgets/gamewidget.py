@@ -293,7 +293,7 @@ def _ensureReadForGameWidgets ():
     dock.show()
     
     dockLocation = addHomePrefix("pydock.xml")
-    docks = {"board": ("Board", notebooks["board"])}
+    docks = {"board": (gtk.Label("Board"), notebooks["board"])}
     for id, panel in zip(files, sidePanels):
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
@@ -317,7 +317,7 @@ def _ensureReadForGameWidgets ():
         
         docks[str(id)] = (hbox, notebooks[panel.__title__])
     
-    if False and os.path.isfile(dockLocation):
+    if os.path.isfile(dockLocation):
         dock.loadFromXML(dockLocation, docks)
     else:
         for id in files:
@@ -328,9 +328,7 @@ def _ensureReadForGameWidgets ():
         docks["board"][1].show_all()
         leaf.setDockable(False)
     
-    #def callback():
-    #    dock.saveToXML(dockLocation)
-    #atexit.register(callback)
+    dock.connect("unrealize", lambda dock: dock.saveToXML(dockLocation))
     
     centerVBox.pack_start(notebooks["statusbar"], expand=False)
     mainvbox.pack_start(centerVBox)
