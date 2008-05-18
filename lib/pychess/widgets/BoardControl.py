@@ -277,8 +277,9 @@ class SelectedState (BoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
-        # Unselect us, or select something else
-        if self.getBoard()[cord] != None:
+        # Select another piece
+        if self.getBoard()[cord] != None and \
+                self.getBoard()[cord].color == self.getBoard().color:
             return True
         return self.validate(self.view.selected, cord)
     
