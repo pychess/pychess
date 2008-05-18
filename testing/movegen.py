@@ -12,7 +12,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 1
+MAXDEPTH = 3
 
 
 class FindMovesTestCase(unittest.TestCase):
@@ -34,8 +34,12 @@ class FindMovesTestCase(unittest.TestCase):
                 if board.opIsChecked():
                     board.popMove()
                     continue
+
+
                 nmoves.append(nmove)
                 board.popMove()
+                # Validator test
+                self.assertTrue(validateMove(board, nmove))
             
             cmoves = []
             
@@ -43,6 +47,8 @@ class FindMovesTestCase(unittest.TestCase):
                 board.applyMove(move)
                 cmoves.append(move)
                 board.popMove()
+                # Validator test
+                self.assertTrue(validateMove(board, move))
             
             # This is not any kind of alphaBeta sort. Only int sorting, to make
             # comparison possible
