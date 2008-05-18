@@ -49,9 +49,9 @@ def validateMove (board, move):
     
     # Pawn moves need to be handled specially  
     if fpiece == PAWN:
+        enemies = board.friends[1-color]
         if flag == ENPASSANT:
-            enemies = board.friends[1-color] | bitPosArray[board.enpassant]
-        else: enemies = board.friends[1-color]
+            enemies |= bitPosArray[board.enpassant]
         if color == WHITE:
             if not moveArray[PAWN][fcord] & bitPosArray[tcord] & enemies and \
                not (tcord - fcord == 8 and tpiece == EMPTY) and \
