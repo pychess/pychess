@@ -1,3 +1,6 @@
+import os
+from xml.dom import minidom
+
 import gtk
 
 from pychess.System.prefix import addDataPrefix
@@ -6,17 +9,16 @@ from PyDockLeaf import PyDockLeaf
 from PyDockComposite import PyDockComposite
 from ArrowButton import ArrowButton
 from HighlightArea import HighlightArea
-from __init__ import TopDock, DockLeaf, DockComponent
+from __init__ import TopDock, DockLeaf, DockComponent, DockComposite
 from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 class PyDockTop (TopDock):
     def __init__ (self, id):
-        TopDock.__init__(self)
+        TopDock.__init__(self, id)
         self.set_no_show_all(True)
         
         self.__sock = gtk.Alignment(xscale=1, yscale=1)
         self.put(self.__sock, 0, 0)
-        #self.__recursiveOnAdd(self, self.__sock)
         self.connect("size-allocate", lambda self, alloc: \
                      self.__sock.set_size_request(alloc.width, alloc.height))
         self.__sock.show()
@@ -65,17 +67,6 @@ class PyDockTop (TopDock):
     #    Signals
     #===========================================================================
     
-    def __recursiveOnAdd (self, parrent, child):
-        if isinstance(child, PyDockLeaf):
-            child.book.connect("drag-end", self.__onDragEnd)
-            child.book.connect("drag-begin", self.__onDragBegin)
-        
-        elif isinstance(child, PyDockComposite):
-            child.paned.connect("add", self.__recursiveOnAdd)
-        
-        elif isinstance(child, gtk.Container):
-            child.connect("add", self.__recursiveOnAdd)
-    
     def showArrows (self):
         for button in self.buttons:
             button.show()
@@ -84,15 +75,6 @@ class PyDockTop (TopDock):
         for button in self.buttons:
             button.hide()
         self.highlightArea.hide()
-    
-    #def __onDragBegin (self, widget, context):
-    #    for button in self.buttons:
-    #        button.show()
-    
-    #def __onDragEnd (self, widget, context):
-    #    for button in self.buttons:
-    #        button.hide()
-    #    self.highlightArea.hide()
     
     def __onDrop (self, arrowButton, sender):
         self.highlightArea.hide()
@@ -128,62 +110,66 @@ class PyDockTop (TopDock):
             dockElem.setAttribute("id", self.id)
             doc.documentElement.appendChild(dockElem)
         
-        self._addChildsToXML(self, dockElem, doc)
+        if self.__sock.child:
+            self.__addToXML(self.__sock.child, dockElem, doc)
         f = file(xmlpath, "w")
         doc.writexml(f)
         f.close()
         doc.unlink()
     
-    def _addChildsToXML (self, container, parentElement, document):
-        for widget in container.get_children():
-            if isinstance(widget, DockComposite):
-                if isinstance(widget, VDockComposite):
-                    childElement = document.createElement("v")
-                else: childElement = document.createElement("h")
-                childElement.setAttribute("pos", str(widget.get_position()))
-                self._addChildsToXML(widget, childElement, document)
-            
-            elif isinstance(widget, DockLeaf):
-                childElement = document.createElement("leaf")
-                for panel, title, id in widget.getPanels():
-                    if widget.get_nth_page(widget.get_current_page()) == panel:
-                        childElement.setAttribute("current", id)
-                    e = document.createElement("panel")
-                    e.setAttribute("id", id)
-                    childElement.appendChild(e)
-            parentElement.appendChild(childElement)
+    def __addToXML (self, component, parentElement, document):
+        if isinstance(component, DockComposite):
+            if component.getPosition() in (NORTH, SOUTH):
+                childElement = document.createElement("v")
+            else: childElement = document.createElement("h")
+            self.__addToXML(component.getComponents()[0], childElement, document)
+            self.__addToXML(component.getComponents()[1], childElement, document)
+        
+        elif isinstance(component, DockLeaf):
+            childElement = document.createElement("leaf")
+            childElement.setAttribute("current", component.getCurrentPanel())
+            childElement.setAttribute("dockable", str(component.isDockable()))
+            for panel, title, id in component.getPanels():
+                e = document.createElement("panel")
+                e.setAttribute("id", id)
+                childElement.appendChild(e)
+        
+        parentElement.appendChild(childElement)
     
     def loadFromXML (self, xmlpath, idToWidget):
         doc = minidom.parse(xmlpath)
         for elem in doc.getElementsByTagName("dock"):
             if elem.getAttribute("id") == self.id:
-                dockElem = elem
                 break
         else:
             raise AttributeError, \
                   "XML file contains no <dock> elements with id '%s'" % self.id
         
-        e = [n for n in dockElem.childNodes if not isinstance(n, minidom.Text)][0]
-        self.add(self._createWidgetFromXML(e, idToWidget)) 
+        child = [n for n in elem.childNodes if isinstance(n, minidom.Element)]
+        if child:
+            self.addComponent(self.__createWidgetFromXML(child[0], idToWidget)) 
     
-    def _createWidgetFromXML (self, parentElement, idToWidget):
+    def __createWidgetFromXML (self, parentElement, idToWidget):
         children = [n for n in parentElement.childNodes
-                      if not isinstance(n, minidom.Text)]
+                      if isinstance(n, minidom.Element)]
         if parentElement.tagName in ("h", "v"):
             child1, child2 = children
             if parentElement.tagName == "h":
-                new = PyDockComposite(POSITION_RIGHT)
-            else: new = PyDockComposite(POSITION_BOTTOM)
-            new._initChildren(self._createWidgetFromXML(child1, idToWidget),
-                              self._createWidgetFromXML(child2, idToWidget))
+                new = PyDockComposite(EAST)
+            else: new = PyDockComposite(SOUTH)
+            new.initChildren(self.__createWidgetFromXML(child1, idToWidget),
+                             self.__createWidgetFromXML(child2, idToWidget))
             return new
         
         elif parentElement.tagName == "leaf":
             id = children[0].getAttribute("id")
-            widget, title = idToWidget[id]
+            title, widget = idToWidget[id]
             leaf = PyDockLeaf(widget, title, id)
             for panelElement in children[1:]:
                 id = panelElement.getAttribute("id")
-                widget, title = idToWidget[id]
-                leaf.dock(widget, POSITION_CENTER, title, id)
+                title, widget = idToWidget[id]
+                leaf.dock(widget, CENTER, title, id)
+            leaf.setCurrentPanel(parentElement.getAttribute("current"))
+            if parentElement.getAttribute("dockable").lower() == "false":
+                leaf.setDockable(False)
             return leaf

@@ -28,7 +28,7 @@ class PyDockComposite (gtk.Alignment, DockComposite):
         leaf = PyDockLeaf(widget, title, id)
         new = PyDockComposite(position)
         parent.changeComponent(self, new)
-        new._initChildren(self, leaf)
+        new.initChildren(self, leaf)
         return leaf
     
     def changeComponent (self, old, new):
@@ -52,7 +52,10 @@ class PyDockComposite (gtk.Alignment, DockComposite):
         parent.changeComponent(self, new)
         new.show()
     
-    def _initChildren (self, old, new):
+    def getComponents (self):
+        return self.paned.get_children()
+    
+    def initChildren (self, old, new):
         if self.position == NORTH or self.position == WEST:
             self.paned.pack1(new, resize=False, shrink=False)
             self.paned.pack2(old, resize=False, shrink=False)
@@ -62,3 +65,5 @@ class PyDockComposite (gtk.Alignment, DockComposite):
         old.show()
         new.show()
     
+    def getPosition (self):
+        return self.position

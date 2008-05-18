@@ -40,6 +40,12 @@ class DockComposite (DockComponent):
     
     def getComponents (self):
         abstract
+    
+    def getPosition (self):
+        """ Returns NORTH or SOUTH if the children are packed vertically.
+            Returns WEST or EAST if the children are packed horizontally.
+            Returns CENTER if there is only one child """
+        abstract
 
 class DockLeaf (DockComponent, TabReceiver):
     def undock (self, widget):
@@ -51,8 +57,30 @@ class DockLeaf (DockComponent, TabReceiver):
     def getPanels (self):
         """ Returns a list of (widget, title, id) tuples """
         abstract
+    
+    def getCurrentPanel (self):
+        """ Returns the panel id currently shown """
+        abstract
+    
+    def setCurrentPanel (self, id):
+        abstract
+    
+    def setDockable (self, dockable):
+        """ If the leaf is not dockable it won't be moveable and won't accept
+            new panels """
+        abstract
+    
+    def isDockable (self):
+        abstract
 
 class TopDock (DockComposite, TabReceiver):
+    def __init__ (self, id):
+        TabReceiver.__init__(self)
+        self.__id = id
+    
+    def getPosition (self):
+        return CENTER
+    
     def saveToXML (self, xmlpath):
         """
         <docks>
@@ -79,6 +107,5 @@ class TopDock (DockComposite, TabReceiver):
     
     def getId(self):
         return self.__id
-    def setId(self, value):
-        self.__id = value
-    id = property(getId, setId, None, None)
+    
+    id = property(getId, None, None, None)

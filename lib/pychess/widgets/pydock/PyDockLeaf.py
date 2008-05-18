@@ -44,6 +44,7 @@ class PyDockLeaf (DockLeaf):
         
         self.dockable = True
         self.panels = []
+        assert isinstance(widget, gtk.Notebook)
         self.__add(widget, title, id)
     
     def __add (self, widget, title, id):
@@ -67,7 +68,7 @@ class PyDockLeaf (DockLeaf):
             leaf = PyDockLeaf(widget, title, id)
             new = PyDockComposite(position)
             parent.changeComponent(self, new)
-            new._initChildren(self, leaf)
+            new.initChildren(self, leaf)
             new.show_all()
             return leaf
     
@@ -95,8 +96,18 @@ class PyDockLeaf (DockLeaf):
     def getPanels(self):
         return self.panels
     
+    def getCurrentPanel (self):
+        for i, (widget, title, id) in enumerate(self.panels):
+            if i == self.book.get_current_page():
+                return id
     
-    def getDockable (self):
+    def setCurrentPanel (self, id):
+        for i, (widget, title, id_) in enumerate(self.panels):
+            if id == id_:
+                self.book.set_current_page(i)
+                break
+    
+    def isDockable (self):
         return self.dockable
     
     def setDockable (self, dockable):
