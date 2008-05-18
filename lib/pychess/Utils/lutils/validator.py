@@ -71,27 +71,35 @@ def validateMove (board, move):
             if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
                \
                not (fcord == E1 and tcord == G1 and flag == KING_CASTLE and \
+                    board.castling & W_OO and \
                not fromToRay[E1][G1] & blocker and \
                not isAttacked (board, E1, BLACK) and \
-               not isAttacked (board, F1, BLACK)) and \
+               not isAttacked (board, F1, BLACK) and \
+               not isAttacked (board, G1, BLACK)) and \
                \
                not (fcord == E1 and tcord == C1 and flag == QUEEN_CASTLE and \
+                    board.castling & W_OOO and \
                not fromToRay[E1][B1] & blocker and \
                not isAttacked (board, E1, BLACK) and \
-               not isAttacked (board, D1, BLACK)):
+               not isAttacked (board, D1, BLACK) and \
+               not isAttacked (board, C1, BLACK)):
                 return False
         else:
             if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
                \
                not (fcord == E8 and tcord == G8 and flag == KING_CASTLE and \
+                    board.castling & B_OO and \
                not fromToRay[E8][G8] & blocker and \
                not isAttacked (board, E8, WHITE) and \
-               not isAttacked (board, F8, WHITE)) and \
+               not isAttacked (board, F8, WHITE) and \
+               not isAttacked (board, G8, WHITE)) and \
                \
                not (fcord == E8 and tcord == C8 and flag == QUEEN_CASTLE and \
+                    board.castling & B_OOO and \
                not fromToRay[E8][B8] & blocker and \
                not isAttacked (board, E8, WHITE) and \
-               not isAttacked (board, D8, WHITE)):
+               not isAttacked (board, D8, WHITE) and \
+               not isAttacked (board, C8, WHITE)):
                 return False
     
     # Other pieces are more easy
