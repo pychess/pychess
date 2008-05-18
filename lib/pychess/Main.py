@@ -24,9 +24,9 @@ from pychess.widgets.gamewidget import GAME_MENU_ITEMS, ACTION_MENU_ITEMS
 from pychess.widgets.gamewidget import VIEW_MENU_ITEMS, MENU_ITEMS
 from pychess.widgets import ionest
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
-from pychess.widgets.Background import TaskerManager
-from pychess.widgets.Background import NewGameTasker
-from pychess.widgets.Background import InternetGameTasker
+from pychess.widgets.TaskerManager import TaskerManager
+from pychess.widgets.TaskerManager import NewGameTasker
+from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.ic import ICLogon
 
 ################################################################################
