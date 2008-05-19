@@ -121,29 +121,25 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     widget.connect(signal, callback)
     conf.notify_add(key, lambda *args: set_value(conf.getStrict(key)))
 
-tooltip = gtk.Tooltips()
-tooltip.force_window()
-if hasattr(tooltip, 'tip_window') and tooltip.tip_window != None:
-    tooltip.tip_window.ensure_style()
-    tooltipStyle = tooltip.tip_window.get_style()
-else:
-    tooltipStyle = None
 
 
+
+tooltip = gtk.Window(gtk.WINDOW_POPUP)
+tooltip.set_name('gtk-tooltip')
+tooltip.ensure_style()
+tooltipStyle = tooltip.get_style()
 
 def makeYellow (box):
-    if tooltipStyle:
-        box.set_style(tooltipStyle)
     def on_box_expose_event (box, event):
-        allocation = box.allocation
         box.style.paint_flat_box (box.window,
             gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
-            allocation.x, allocation.y, allocation.width, allocation.height)
-        if not hasattr(box, "hasHadFirstDraw") or not box.hasHadFirstDraw:
-            box.queue_draw()
-            box.hasHadFirstDraw = True
-    box.connect_after("size-allocate", lambda box,a:
-            box.connect("expose-event", on_box_expose_event))
+            box.allocation.x, box.allocation.y,
+            box.allocation.width, box.allocation.height)
+    def cb (box, a):
+        box.set_style(tooltipStyle)
+        box.connect("expose-event", on_box_expose_event)
+    box.connect_after("size-allocate", cb)
+
 
 
 
