@@ -123,10 +123,14 @@ class PyDockTop (TopDock):
     
     def __addToXML (self, component, parentElement, document):
         if isinstance(component, DockComposite):
+            pos = component.paned.get_position()
             if component.getPosition() in (NORTH, SOUTH):
                 childElement = document.createElement("v")
-            else: childElement = document.createElement("h")
-            childElement.setAttribute("pos", str(component.paned.get_position()))
+                size = float(component.get_allocation().height)
+            else:
+                childElement = document.createElement("h")
+                size = float(component.get_allocation().width)
+            childElement.setAttribute("pos", str(pos/max(size,pos)))
             self.__addToXML(component.getComponents()[0], childElement, document)
             self.__addToXML(component.getComponents()[1], childElement, document)
         
@@ -165,12 +169,14 @@ class PyDockTop (TopDock):
             else: new = PyDockComposite(SOUTH)
             new.initChildren(self.__createWidgetFromXML(child1, idToWidget),
                              self.__createWidgetFromXML(child2, idToWidget))
-            def cb (widget, allocation, pos):
-                widget.set_position(pos)
-                if allocation.width >= pos:
-                    widget.disconnect(conid)
-            conid = new.paned.connect_after("size-allocate", cb,
-                                            int(parentElement.getAttribute("pos")))
+            def cb (widget, event, pos):
+                allocation = widget.get_allocation()
+                if parentElement.tagName == "h":
+                    widget.set_position(int(allocation.width * pos))
+                else: widget.set_position(int(allocation.height * pos))
+                widget.disconnect(conid)
+            conid = new.paned.connect("expose-event", cb,
+                                      float(parentElement.getAttribute("pos")))
             return new
         
         elif parentElement.tagName == "leaf":
