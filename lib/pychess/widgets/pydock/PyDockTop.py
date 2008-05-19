@@ -2,6 +2,7 @@ import os
 from xml.dom import minidom
 
 import gtk
+import gobject
 
 from pychess.System.prefix import addDataPrefix
 
@@ -63,6 +64,9 @@ class PyDockTop (TopDock):
         else:
             return self.__sock.get_child().dock(widget, position, title, id)
     
+    def clear (self):
+        self.__sock.remove(self.__sock.child)
+    
     #===========================================================================
     #    Signals
     #===========================================================================
@@ -122,6 +126,7 @@ class PyDockTop (TopDock):
             if component.getPosition() in (NORTH, SOUTH):
                 childElement = document.createElement("v")
             else: childElement = document.createElement("h")
+            childElement.setAttribute("pos", str(component.paned.get_position()))
             self.__addToXML(component.getComponents()[0], childElement, document)
             self.__addToXML(component.getComponents()[1], childElement, document)
         
@@ -152,6 +157,7 @@ class PyDockTop (TopDock):
     def __createWidgetFromXML (self, parentElement, idToWidget):
         children = [n for n in parentElement.childNodes
                       if isinstance(n, minidom.Element)]
+        
         if parentElement.tagName in ("h", "v"):
             child1, child2 = children
             if parentElement.tagName == "h":
@@ -159,6 +165,12 @@ class PyDockTop (TopDock):
             else: new = PyDockComposite(SOUTH)
             new.initChildren(self.__createWidgetFromXML(child1, idToWidget),
                              self.__createWidgetFromXML(child2, idToWidget))
+            def cb (widget, allocation, pos):
+                widget.set_position(pos)
+                if allocation.width >= pos:
+                    widget.disconnect(conid)
+            conid = new.paned.connect_after("size-allocate", cb,
+                                            int(parentElement.getAttribute("pos")))
             return new
         
         elif parentElement.tagName == "leaf":

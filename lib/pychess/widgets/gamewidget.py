@@ -2,10 +2,13 @@
 """ This module handles the tabbed layout in PyChess """
 
 import imp, os, atexit
+import traceback
+import cStringIO
 
 import gtk, gobject, gdl
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
+from pychess.System.Log import log
 from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
@@ -318,8 +321,25 @@ def _ensureReadForGameWidgets ():
         docks[str(id)] = (hbox, notebooks[panel.__title__])
     
     if os.path.isfile(dockLocation):
-        dock.loadFromXML(dockLocation, docks)
-    else:
+        try:
+            dock.loadFromXML(dockLocation, docks)
+        except Exception, e:
+            stringio = cStringIO.StringIO()
+            traceback.print_exc(file=stringio)
+            error = stringio.getvalue()
+            log.error("Dock loading error: %s\n%s" % (e, error))
+            md = gtk.MessageDialog(widgets["window1"], type=gtk.MESSAGE_ERROR,
+                                   buttons=gtk.BUTTONS_CLOSE)
+            md.set_markup(_("<b>PyChess was unable to load your panel settings</b>"))
+            md.format_secondary_text(_("Your panel settings have been reset. If this problem repeats, you should report it to the developers"))
+            md.run()
+            md.hide()
+            os.remove(dockLocation)
+            for title, panel in docks.values():
+                title.unparent()
+                panel.unparent()
+    
+    if not os.path.isfile(dockLocation):
         for id in files:
             title, panel = docks[str(id)]
             leaf = dock.dock(panel, CENTER, title, str(id))
