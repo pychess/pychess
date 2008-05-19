@@ -1,22 +1,18 @@
-
-import gtk, gtk.gdk, cairo, pango
-from gobject import *
 import math
+ceil = lambda f: int(math.ceil(f))
+
+from gobject import *
+import gtk
+import cairo
+import pango
+
+from pychess.System.uistuff import tooltip, tooltipStyle
 
 line = 10
 curve = 60
 dotSmall = 14
 dotLarge = 24
 lineprc = 1/7.
-
-tooltip = gtk.Tooltips()
-tooltip.force_window()
-if hasattr(tooltip, 'tip_window') and tooltip.tip_window != None:
-    tooltip.tip_window.ensure_style()
-    tooltipStyle = tooltip.tip_window.get_style()
-    bg = tooltipStyle.bg[gtk.STATE_NORMAL]
-else:
-    bg = gtk.Label().get_style().mid[gtk.STATE_NORMAL]
 
 hpadding = 5
 vpadding = 3
@@ -92,7 +88,7 @@ class SpotGraph (gtk.EventBox):
         context.set_source_color(self.get_style().dark[self.state])
         context.stroke()
         
-        #-------------------------------------------------- Paint horizontal marks
+        #------------------------------------------------ Paint horizontal marks
         for x, title in self.xmarks:
             context.set_source_color(self.get_style().fg[self.state])
             context.set_font_size(12)
@@ -109,7 +105,7 @@ class SpotGraph (gtk.EventBox):
             context.close_path()
             context.fill()
         
-        #------------------------------------------------ Paint vertical marks
+        #-------------------------------------------------- Paint vertical marks
         for y, title in self.ymarks:
             context.set_source_color(self.get_style().fg[self.state])
             context.set_font_size(12)
@@ -152,14 +148,16 @@ class SpotGraph (gtk.EventBox):
             context.stroke()
             
             x, y, width, height = self.getTextBounds(self.hovered)
-            context.rectangle(x-hpadding, y-vpadding,
-                             width+hpadding*2, height+vpadding*2)
-            context.set_source_color(bg)
-            context.fill()
-            context.move_to(x, y)
-            context.set_source_rgb(0,0,0)
-            context.show_layout(self.create_pango_layout(text))
             
+            tooltipStyle.paint_flat_box (self.window,
+                gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, tooltip, "tooltip",
+                int(x-hpadding), int(y-vpadding),
+                ceil(width+hpadding*2), ceil(height+vpadding*2))
+            
+            context.move_to(x, y)
+            context.set_source_color(tooltipStyle.fg[self.state])
+            context.show_layout(self.create_pango_layout(text))
+    
     ############################################################################
     # Events                                                                   #
     ############################################################################
