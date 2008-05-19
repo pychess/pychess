@@ -510,7 +510,9 @@ class BoardView (gtk.DrawingArea):
         self.square = (xc, yc, square, s)
         
         self.drawBoard (context, r)
-        self.drawCords (context, r)
+        
+        if min(alloc.width, alloc.height) > 32:
+            self.drawCords (context, r)
         
         if self.model.status != WAITING_TO_START:
             self.drawSpecial (context, r)

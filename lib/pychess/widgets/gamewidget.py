@@ -13,7 +13,7 @@ from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, WEST
+from pydock.__init__ import CENTER, EAST
 from pychess.System.prefix import addHomePrefix
 
 ################################################################################
@@ -340,13 +340,15 @@ def _ensureReadForGameWidgets ():
                 panel.unparent()
     
     if not os.path.isfile(dockLocation):
-        for id in files:
-            title, panel = docks[str(id)]
-            leaf = dock.dock(panel, CENTER, title, str(id))
-        leaf = dock.dock(docks["board"][1], WEST, gtk.Label(docks["board"][0]), "board")
-        leaf.get_parent().set_position(500)
-        docks["board"][1].show_all()
+        leaf = dock.dock(docks["board"][1], CENTER, gtk.Label(docks["board"][0]), "board")
         leaf.setDockable(False)
+        for i, id in enumerate(files):
+            title, panel = docks[str(id)]
+            if i == 0: pos = EAST
+            else: pos = CENTER
+            leaf = leaf.dock(panel, pos, title, str(id))
+        docks["board"][1].show_all()
+    
     
     dock.connect("unrealize", lambda dock: dock.saveToXML(dockLocation))
     
