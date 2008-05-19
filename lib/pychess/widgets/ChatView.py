@@ -52,10 +52,11 @@ class ChatView (gtk.VPaned):
         self.writeView.props.left_margin = 2
         self.pack2(BorderBox(sw,top=True), resize=True, shrink=True)
         
-        def callback (widget, allocation):
+        def callback (widget, event):
             widget.disconnect(handle_id)
+            allocation = widget.get_allocation()
             self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
-        handle_id = self.connect("size-allocate", callback)
+        handle_id = self.connect("expose-event", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
     
