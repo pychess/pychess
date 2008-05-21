@@ -15,6 +15,7 @@ from BoardControl import BoardControl
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST
 from pychess.System.prefix import addHomePrefix
+from pychess.System.uistuff import makeYellow
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -77,7 +78,9 @@ def setWidgets (w):
     widgets = w
 
 key2gmwidg = {}
-notebooks = {"board": cleanNotebook(), "statusbar": cleanNotebook()}
+notebooks = {"board": cleanNotebook(),
+             "statusbar": cleanNotebook(),
+             "messageArea": cleanNotebook()}
 for panel in sidePanels:
     notebooks[panel.__title__] = cleanNotebook()
 
@@ -98,15 +101,15 @@ class GameWidget (gobject.GObject):
         self.gamemodel = gamemodel
         
         tabcontent = self.initTabcontents()
-        boardvbox, board = self.initBoardAndClock(gamemodel)
+        boardvbox, board, messageSock = self.initBoardAndClock(gamemodel)
         statusbar, stat_hbox = self.initStatusbar(board)
         
         self.tabcontent = tabcontent
         self.board = board
         self.statusbar = statusbar
         
-        self.notebookKey = gtk.Label()
-        self.notebookKey.set_size_request(0,0)
+        self.messageSock = messageSock
+        self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
         
@@ -141,6 +144,10 @@ class GameWidget (gobject.GObject):
     def initBoardAndClock(self, gamemodel):
         boardvbox = gtk.VBox()
         boardvbox.set_spacing(2)
+        
+        messageSock = createAlignment(0,0,0,0)
+        makeYellow(messageSock)
+        
         if gamemodel.timemodel:
             ccalign = createAlignment(0, 0, 0, 0)
             cclock = ChessClock()
@@ -155,7 +162,7 @@ class GameWidget (gobject.GObject):
         
         board = BoardControl(gamemodel, actionMenuDic)
         boardvbox.pack_start(board)
-        return boardvbox, board
+        return boardvbox, board, messageSock
     
     def initStatusbar(self, board):
         stat_hbox = gtk.HBox()
@@ -221,23 +228,33 @@ class GameWidget (gobject.GObject):
     def getPageNumber (self):
         return getheadbook().page_num(self.notebookKey)
     
-    def connectToTabs (self, notebook):
-        mainbook = gtk.Notebook()
-        mainbook.set_show_tabs(False)
-        mainbook.set_show_border(False)
-        def callback (widget, page, page_num):
-            mainbook.set_current_page(page_num)
-        headbook.connect("switch_page", callback)
-        try:
-            def page_reordered (widget, child, new_page_num):
-                mainbook.reorder_child (
-                        head2mainDic[child].widgets["mvbox"], new_page_num)
-            headbook.connect("page-reordered", page_reordered)
-        except TypeError:
-            # Unknow signal name is raised by gtk < 2.10
-            pass
-        mainbook.show_all()
-
+    def showMessage (self, messageDialog, vertical=False):
+        if self.messageSock.child:
+            self.messageSock.remove(self.messageSock.child)
+        message, separator, hbuttonbox = messageDialog.child.get_children()
+        
+        if vertical:
+            buttonbox = gtk.VButtonBox()
+            buttonbox.props.layout_style = gtk.BUTTONBOX_SPREAD
+            for button in hbuttonbox.get_children():
+                button.unparent()
+                buttonbox.add(button)
+        else:
+            hbuttonbox.unparent()
+            buttonbox = hbuttonbox
+        
+        message.unparent()
+        texts = message.get_children()[1]
+        text1, text2 = texts.get_children()
+        texts.set_child_packing(text1, True, False, 0, gtk.PACK_START)
+        texts.set_child_packing(text2, True, False, 0, gtk.PACK_START)
+        texts.set_spacing(0)
+        message.pack_end(buttonbox, False, False)
+        self.messageSock.add(message)
+        self.messageSock.show_all()
+    
+    def hideMessage (self):
+        self.messageSock.hide()
 
 ################################################################################
 # Main handling of gamewidgets                                                 #
@@ -291,6 +308,13 @@ def _ensureReadForGameWidgets ():
     centerVBox = gtk.VBox()
     centerVBox.set_spacing(3)
     centerVBox.set_border_width(3)
+    
+    # The message area
+    
+    centerVBox.pack_start(notebooks["messageArea"], expand=False)
+    
+    # The dock
+    
     dock = PyDockTop("main")
     centerVBox.pack_start(dock)
     dock.show()
@@ -330,7 +354,7 @@ def _ensureReadForGameWidgets ():
             log.error("Dock loading error: %s\n%s" % (e, error))
             md = gtk.MessageDialog(widgets["window1"], type=gtk.MESSAGE_ERROR,
                                    buttons=gtk.BUTTONS_CLOSE)
-            md.set_markup(_("<b>PyChess was unable to load your panel settings</b>"))
+            md.set_markup(_("<b><big>PyChess was unable to load your panel settings</big></b>"))
             md.format_secondary_text(_("Your panel settings have been reset. If this problem repeats, you should report it to the developers"))
             md.run()
             md.hide()
@@ -349,8 +373,9 @@ def _ensureReadForGameWidgets ():
             leaf = leaf.dock(panel, pos, title, str(id))
         docks["board"][1].show_all()
     
-    
     dock.connect("unrealize", lambda dock: dock.saveToXML(dockLocation))
+    
+    # The status bar
     
     centerVBox.pack_start(notebooks["statusbar"], expand=False)
     mainvbox.pack_start(centerVBox)
@@ -387,6 +412,7 @@ def attachGameWidget (gmwidg):
             gmwidg.emit("infront")
     headbook.connect("switch-page", callback, gmwidg)
     
+    notebooks["messageArea"].append_page(gmwidg.messageSock)
     notebooks["board"].append_page(gmwidg.boardvbox)
     gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):
