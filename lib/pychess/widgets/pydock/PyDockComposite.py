@@ -64,6 +64,19 @@ class PyDockComposite (gtk.Alignment, DockComposite):
             self.paned.pack2(new, resize=False, shrink=False)
         old.show()
         new.show()
+        def cb (widget, allocation):
+            if allocation.height != 1:
+                if self.position == NORTH:
+                    pos = 0.381966011 * allocation.height
+                elif self.position == SOUTH:
+                    pos = 0.618033989 * allocation.height
+                elif self.position == WEST:
+                    pos = 0.381966011 * allocation.width
+                elif self.position == EAST:
+                    pos = 0.618033989 * allocation.width
+                widget.set_position(int(pos+.5))
+                widget.disconnect(conid)
+        conid = self.paned.connect("size-allocate", cb)
     
     def getPosition (self):
         return self.position
