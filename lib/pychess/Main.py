@@ -183,6 +183,10 @@ class GladeHandlers:
                 BLACK_ENGINE_DIED: _("as the black engine died"),
                 UNKNOWN_REASON: _("by no known reason")
             }[reason]
+            md = gtk.MessageDialog()
+            md.set_markup(_("<b><big>%s</big></b>") % m1)
+            md.format_secondary_markup(m2)
+            gmwidg.showMessage(md)
             gmwidg.status("%s %s" % (m1,m2))
             
             if reason == WHITE_ENGINE_DIED:
