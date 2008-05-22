@@ -13,7 +13,8 @@ if you want to translate PyChess into you language, please look for a
 template.po file in the lang/ directory. This can be edited using a program like
 poedit, free from http://www.poedit.org/ , when you are finished, please send
 your file, and a message of what language you have translated into, to
-lobais@gmail.com
+pychess-people@googlegroups.com or translation Pychess directly in web browsing
+with Rosetta Launchpad, instructions http://code.google.com/p/pychess/wiki/RosettaTranslates
 
 WORKING WITH PO FILES
 
@@ -25,4 +26,4 @@ version, use
 $ msgmerge oldtranslation.po newtemplate.po -o tobetranslated.po
 
 To compile the po file to an mo file (machine readable file) use
-$msgfmt mytranslation.po -o mytranslation.mo
+$ msgfmt mytranslation.po -o mytranslation.mo
