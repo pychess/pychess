@@ -41,10 +41,10 @@ for level, stock, altstock in \
             (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
             (_("Expert"), "stock_weather-storm", "weather-storm")):
     try:
-        image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        image = it.load_icon(stock, 24, gtk.ICON_LOOKUP_USE_BUILTIN)
         difItems += [(image, level, stock)]
     except gobject.GError:
-        image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        image = it.load_icon(altstock, 24, gtk.ICON_LOOKUP_USE_BUILTIN)
         difItems += [(image, level, altstock)]
 
 ################################################################################
