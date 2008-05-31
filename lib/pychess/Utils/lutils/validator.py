@@ -72,7 +72,8 @@ def validateMove (board, move):
     elif fpiece == KING:
         if board.boardVariant.variant == FISCHERRANDOMCHESS:
             from pychess.Variants.fischerandom import frc_castling_move
-            if not moveArray[fpiece][fcord] & bitPosArray[tcord] and \
+            if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
+                    not flag in (KING_CASTLE, QUEEN_CASTLE)) and \
                not frc_castling_move(board, fcord, tcord, flag):
                 return False
         else:

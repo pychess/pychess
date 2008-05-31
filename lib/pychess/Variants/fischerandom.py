@@ -124,7 +124,7 @@ class FRCBoard(Board):
 
         tmp = ''.join(tmp)
         tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w KQkq - 0 1'
-        #tmp = 'rnqkbbnr/pppppppp/8/8/8/8/PPPPPPPP/RNQKBBNR'+' w KQkq - 0 1'
+#        tmp = 'nnqbbrkr/pppppppp/8/8/8/8/PPPPPPPP/NNQBBRKR'+' w KQkq - 0 1'
         
         return tmp
 
@@ -173,7 +173,7 @@ def frc_castling_moves(board):
                 not isAttacked (board, G1, BLACK):
                     yield newMove (F1, G1, KING_CASTLE)
         
-            if board.ini_kings[WHITE] == G1 and \
+            if board.ini_kings[WHITE] == G1 and board.arBoard[F1] == EMPTY and \
                 not isAttacked (board, G1, BLACK):
                     yield newMove (G1, G1, KING_CASTLE)
 
@@ -260,7 +260,7 @@ def frc_castling_moves(board):
                 not isAttacked (board, G8, BLACK):
                     yield newMove (F8, G8, KING_CASTLE)
         
-            if board.ini_kings[BLACK] == G8 and \
+            if board.ini_kings[BLACK] == G8 and board.arBoard[F8] == EMPTY and \
                 not isAttacked (board, G8, BLACK):
                     yield newMove (G8, G8, KING_CASTLE)
 
@@ -350,7 +350,7 @@ def frc_castling_move(board, fcord, tcord, flag):
                 not isAttacked (board, G1, BLACK):
                     return True
         
-            if fcord == G1 and \
+            if fcord == G1 and board.arBoard[F1] == EMPTY and \
                 not isAttacked (board, G1, BLACK):
                     return True
 
@@ -439,7 +439,7 @@ def frc_castling_move(board, fcord, tcord, flag):
                 not isAttacked (board, G8, BLACK):
                     return True
         
-            if fcord == G8 and \
+            if fcord == G8 and board.arBoard[F8] == EMPTY and \
                 not isAttacked (board, G8, BLACK):
                     return True
 
