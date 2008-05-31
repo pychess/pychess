@@ -50,18 +50,22 @@ class FRCBoard(Board):
         # move castling rook
         if self.color == WHITE:
             if flag == QUEEN_CASTLE:
-                newBoard[Cord(D1)] = newBoard[Cord(self.board.ini_rooks[0][0])]
-                newBoard[Cord(self.board.ini_rooks[0][0])] = None
+                if self.board.ini_rooks[0][0] != D1:
+                    newBoard[Cord(D1)] = newBoard[Cord(self.board.ini_rooks[0][0])]
+                    newBoard[Cord(self.board.ini_rooks[0][0])] = None
             elif flag == KING_CASTLE:
-                newBoard[Cord(F1)] = newBoard[Cord(self.board.ini_rooks[0][1])]
-                newBoard[Cord(self.board.ini_rooks[0][1])] = None
+                if self.board.ini_rooks[0][1] != F1:
+                    newBoard[Cord(F1)] = newBoard[Cord(self.board.ini_rooks[0][1])]
+                    newBoard[Cord(self.board.ini_rooks[0][1])] = None
         else:
             if flag == QUEEN_CASTLE:
-                newBoard[Cord(D8)] = newBoard[Cord(self.board.ini_rooks[1][0])]
-                newBoard[Cord(self.board.ini_rooks[1][0])] = None
+                if self.board.ini_rooks[1][0] != D8:
+                    newBoard[Cord(D8)] = newBoard[Cord(self.board.ini_rooks[1][0])]
+                    newBoard[Cord(self.board.ini_rooks[1][0])] = None
             elif flag == KING_CASTLE:
-                newBoard[Cord(F8)] = newBoard[Cord(self.board.ini_rooks[1][1])]
-                newBoard[Cord(self.board.ini_rooks[1][1])] = None
+                if self.board.ini_rooks[1][1] != F8:
+                    newBoard[Cord(F8)] = newBoard[Cord(self.board.ini_rooks[1][1])]
+                    newBoard[Cord(self.board.ini_rooks[1][1])] = None
         
         # put the castling king now
         if flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -124,7 +128,6 @@ class FRCBoard(Board):
 
         tmp = ''.join(tmp)
         tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w KQkq - 0 1'
-#        tmp = 'nnqbbrkr/pppppppp/8/8/8/8/PPPPPPPP/NNQBBRKR'+' w KQkq - 0 1'
         
         return tmp
 
