@@ -30,7 +30,7 @@ def evaluateComplete (board, color, balanced=False):
     s += randomval
     
     if balanced:
-        opboard = LBoard()
+        opboard = LBoard(board)
         opboard.applyFen (board.asFen())
         opboard.setColor(1-board.color)
         s += evalKingTropism (opboard)
