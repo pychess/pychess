@@ -3,6 +3,7 @@ from bitboard import *
 from attack import *
 from pychess.Utils.const import *
 from lmove import newMove
+from pychess.Variants.fischerandom import frc_castling_moves
 
 def newPromotes (fromcord, tocord):
     for p in PROMOTIONS:
@@ -38,6 +39,7 @@ def queenAttack (board, cord):
 ################################################################################
 
 def genAllMoves (board):
+    fischerandom = board.boardVariant.variant == FISCHERRANDOMCHESS
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -182,31 +184,36 @@ def genAllMoves (board):
     
     # Castling
     
-    if board.color == WHITE:
-        if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
-            not isAttacked (board, E1, BLACK) and \
-            not isAttacked (board, F1, BLACK) and \
-            not isAttacked (board, G1, BLACK):
-                yield newMove (E1, G1, KING_CASTLE)
-        
-        if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
-            not isAttacked (board, E1, BLACK) and \
-            not isAttacked (board, D1, BLACK) and \
-            not isAttacked (board, C1, BLACK):
-                yield newMove (E1, C1, QUEEN_CASTLE)
-    
+    if fischerandom:
+        for move in frc_castling_moves(board):
+            yield move
     else:
-        if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
-            not isAttacked (board, E8, WHITE) and \
-            not isAttacked (board, F8, WHITE) and \
-            not isAttacked (board, G8, WHITE):
-                yield newMove (E8, G8, KING_CASTLE)
+        if board.color == WHITE:
+                if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
+                    not isAttacked (board, E1, BLACK) and \
+                    not isAttacked (board, F1, BLACK) and \
+                    not isAttacked (board, G1, BLACK):
+                        yield newMove (E1, G1, KING_CASTLE)
                 
-        if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
-            not isAttacked (board, E8, WHITE) and \
-            not isAttacked (board, D8, WHITE) and \
-            not isAttacked (board, C8, WHITE):
-                yield newMove (E8, C8, QUEEN_CASTLE)
+                if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
+                    not isAttacked (board, E1, BLACK) and \
+                    not isAttacked (board, D1, BLACK) and \
+                    not isAttacked (board, C1, BLACK):
+                        yield newMove (E1, C1, QUEEN_CASTLE)
+
+                
+        else:
+            if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
+                    yield newMove (E8, G8, KING_CASTLE)
+                    
+            if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, C8, WHITE):
+                    yield newMove (E8, C8, QUEEN_CASTLE)
 
 ################################################################################
 #   Generate capturing moves                                                   #
@@ -338,6 +345,7 @@ def genCaptures (board):
 ################################################################################
 
 def genNonCaptures (board):
+    fischerandom = board.boardVariant.variant == FISCHERRANDOMCHESS
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -421,31 +429,35 @@ def genNonCaptures (board):
     
     # Castling
     
-    if board.color == WHITE:
-        if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
-            not isAttacked (board, E1, BLACK) and \
-            not isAttacked (board, F1, BLACK) and \
-            not isAttacked (board, G1, BLACK):
-                yield newMove (E1, G1, KING_CASTLE)
-        
-        if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
-            not isAttacked (board, E1, BLACK) and \
-            not isAttacked (board, D1, BLACK) and \
-            not isAttacked (board, C1, BLACK):
-                yield newMove (E1, C1, QUEEN_CASTLE)
-    
+    if fischerandom:
+        for move in frc_castling_moves(board):
+            yield move
     else:
-        if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
-            not isAttacked (board, E8, WHITE) and \
-            not isAttacked (board, F8, WHITE) and \
-            not isAttacked (board, G8, WHITE):
-                yield newMove (E8, G8, KING_CASTLE)
-                
-        if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
-            not isAttacked (board, E8, WHITE) and \
-            not isAttacked (board, D8, WHITE) and \
-            not isAttacked (board, C8, WHITE):
-                yield newMove (E8, C8, QUEEN_CASTLE)
+        if board.color == WHITE:
+            if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
+                not isAttacked (board, E1, BLACK) and \
+                not isAttacked (board, F1, BLACK) and \
+                not isAttacked (board, G1, BLACK):
+                    yield newMove (E1, G1, KING_CASTLE)
+            
+            if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
+                not isAttacked (board, E1, BLACK) and \
+                not isAttacked (board, D1, BLACK) and \
+                not isAttacked (board, C1, BLACK):
+                    yield newMove (E1, C1, QUEEN_CASTLE)
+        
+        else:
+            if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
+                    yield newMove (E8, G8, KING_CASTLE)
+                    
+            if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, C8, WHITE):
+                    yield newMove (E8, C8, QUEEN_CASTLE)
 
 ################################################################################
 #   Generate escapes from check                                                #

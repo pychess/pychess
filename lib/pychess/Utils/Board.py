@@ -1,4 +1,5 @@
-import sys
+from copy import copy
+
 from lutils.LBoard import LBoard
 from lutils.bitboard import iterBits
 from lutils.lmove import RANK, FILE, FLAG, PROMOTE_PIECE, toAN
@@ -6,7 +7,6 @@ from Piece import Piece
 from Cord import Cord
 from const import *
 
-from copy import copy
 
 class Board:
     """ Board is a thin layer above LBoard, adding the Piece objects, which are
@@ -16,9 +16,11 @@ class Board:
         Caveat: As the only objects, the Piece objects in the self.data lists
         will not be cloned, to make animation state preserve between moves """
     
+    variant = NORMALCHESS
+    
     def __init__ (self, setup=False):
         self.data = [[None]*8 for i in xrange(8)]
-        self.board = LBoard()
+        self.board = LBoard(self)
         
         if setup:
             if setup == True:
@@ -54,7 +56,7 @@ class Board:
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
-    
+
     def move (self, move):
         
         assert self[move.cord0], "%s %s" % (move, self.asFen())
@@ -82,7 +84,7 @@ class Board:
             elif flag == KING_CASTLE:
                 newBoard[Cord(F8)] = newBoard[Cord(H8)]
                 newBoard[Cord(H8)] = None
-        
+
         if flag in PROMOTIONS:
             newBoard[cord1] = Piece(self.color, PROMOTE_PIECE(flag))
         
@@ -90,7 +92,7 @@ class Board:
             newBoard[Cord(cord1.x, cord0.y)] = None
         
         return newBoard
-    
+
     def willLeaveInCheck (self, move):
         self.board.lock.acquire()
         try:
@@ -140,12 +142,20 @@ class Board:
     
     def clone (self):
         fenstr = self.asFen()
-        lboard = LBoard()
+        
+        lboard = LBoard(self)
         lboard.applyFen (fenstr)
         lboard.history = copy(self.board.history)
+        lboard.ini_kings = copy(self.board.ini_kings)
+        lboard.ini_rooks = copy(self.board.ini_rooks)
         
-        newBoard = Board()
+        if self.variant == FISCHERRANDOMCHESS:
+            from pychess.Variants.fischerandom import FRCBoard
+            newBoard = FRCBoard()
+        else:
+            newBoard = Board()
         newBoard.board = lboard
+
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 newBoard.data[y][x] = piece

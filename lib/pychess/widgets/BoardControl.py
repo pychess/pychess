@@ -211,10 +211,24 @@ class ActiveState (BoardState):
                 # Select it if it is friendly
                 if self.getBoard()[cord] and \
                         self.getBoard()[cord].color == self.getBoard().color:
-                    self.view.selected = cord
-                    self.view.active = None
-                    self.view.startAnimation()
-                    self.parent.setState(self.parent.selectedState)
+                    if self.getBoard().variant == FISCHERRANDOMCHESS:
+                        # in frc we enable castling moves when the king
+                        # moves on top of the involved rook
+                        if self.validate(self.view.selected, cord):
+                            self.parent.emit_move_signal(self.view.selected, cord)
+                            self.view.selected = None
+                            self.view.active = None
+                            self.parent.setState(self.parent.normalState)
+                        else:
+                            self.view.selected = cord
+                            self.view.active = None
+                            self.view.startAnimation()
+                            self.parent.setState(self.parent.selectedState)
+                    else:
+                        self.view.selected = cord
+                        self.view.active = None
+                        self.view.startAnimation()
+                        self.parent.setState(self.parent.selectedState)
                 # Mote to it, if it isn't
                 else:
                     self.parent.emit_move_signal(self.view.selected, cord)
