@@ -5,6 +5,7 @@ from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
 from pychess.Utils.Board import Board
+from pychess.Variants.fischerandom import FischerRandomChess
 
 from ChessFile import ChessFile, LoadingError
 
@@ -36,8 +37,11 @@ def save (file, model):
     print >> file, '[White "%s"]' % repr(model.players[WHITE])
     print >> file, '[Black "%s"]' % repr(model.players[BLACK])
     print >> file, '[Result "%s"]' % status
-    
-    if model.lowply > 0:
+
+    if issubclass(model.variant, FischerRandomChess):
+        print >> file, '[Variant "Fischerandom"]'
+        
+    if model.lowply > 0 or issubclass(model.variant, FischerRandomChess):
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
     
@@ -125,6 +129,10 @@ class PGNFile (ChessFile):
     def loadToModel (self, gameno, position, model=None):
         if not model: model = GameModel()
 
+        variant = self._getTag(gameno, "Variant")
+        if variant and ("fischer" in variant.lower() or "960" in variant):
+            model.variant = FischerRandomChess
+        
         fenstr = self._getTag(gameno, "FEN")
         if fenstr:
             model.boards = [Board(fenstr)]

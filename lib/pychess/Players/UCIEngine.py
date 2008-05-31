@@ -3,13 +3,13 @@ from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
-from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
+from pychess.Variants.fischerandom import FischerRandomChess
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
@@ -274,6 +274,11 @@ class UCIEngine (ProtocolEngine):
         # is from an entirely different game than the current, there is no need
         # that the engine still stores the old transposition table
         self.board = None
+
+        if model.boards[0].asFen() != FEN_START:
+            if "UCI_Chess960" in self.options and \
+                    model.variant == FischerRandomChess:
+                self.setOptions({"UCI_Chess960": True})
     
         ########################################################################
         #   Offer Stuff                                                        #
