@@ -3,6 +3,7 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
+from pychess.Utils.Board import Board
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.bitboard import toString
@@ -107,7 +108,7 @@ class FindMovesTestCase(unittest.TestCase):
     def testMovegen(self):
         """Testing move generator with several positions"""
         print
-        board = LBoard ()
+        board = LBoard(Board)
         for i, (pos, depths) in enumerate(self.positions[1:]):
             print i+1, "/", len(self.positions), "-", pos
             
