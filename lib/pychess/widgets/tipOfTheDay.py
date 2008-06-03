@@ -35,7 +35,11 @@ def set_currentIndex (value):
 
 tips = (
     _("You can start a new game by pressing <b>Game -> New Game</b>"),
+    _("You can start the Tips of the day in the start of Pychess by pressing <b>Settings -> Preferences -> Show tips at startup</b>"),
+    _("Do you know that it is possible to finish a chess game in just 2 turns?"),
+    _("The number of Shannon as rough estimates of the number of possible bids in the game of chess, which is 10<sup>123</sup> and, as comparison, the number of atoms in the universe is estimated in 4x10<sup>78</sup> and 6x10<sup>79</sup>."),
     _("A tip a day keeps the doctor away"),
+    _("Do you can help translate Pychess in your language, pressing <b>Help -> Translate Pychess</b>"),
+    _("Do you can call flag when the clock is with you, pressing <b>Actions -> Call Flag</b>"),
     _("If you want to win all your chessmatches..."),
-    _("<b>England</b> is the largest and most populous of the constituent countries of the United Kingdom. The division dates from the arrival of the Anglo-Saxons in the 5th century. The territory of England has been politically united since the 10th century. This article concerns that territory. However, before the 10th century and after the accession of James VI of Scotland to the throne of England in 1603, it becomes less convenient to distinguish Scottish and Welsh from English history since the union of these nations with England."),
 )
