@@ -35,7 +35,6 @@ def set_currentIndex (value):
 
 tips = (
     _("You can start a new game by pressing <b>Game -> New Game</b>"),
-    _("You can start the Tips of the day in the start of Pychess by pressing <b>Settings -> Preferences -> Show tips at startup</b>"),
     _("Do you know that it is possible to finish a chess game in just 2 turns?"),
     _("The number of Shannon as rough estimates of the number of possible bids in the game of chess, which is 10<sup>123</sup> and, as comparison, the number of atoms in the universe is estimated in 4x10<sup>78</sup> and 6x10<sup>79</sup>."),
     _("A tip a day keeps the doctor away"),
