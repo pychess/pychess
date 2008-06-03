@@ -152,7 +152,7 @@ opendialog = None
 savedialog = None
 enddir = {}
 def getOpenAndSaveDialogs():
-    global opendialog, savedialog, enddir
+    global opendialog, savedialog, enddir, savecombo, savers
     
     if not opendialog:
         types = []
@@ -208,7 +208,7 @@ def getOpenAndSaveDialogs():
         savecombo.set_active(default)
         savedialog.set_extra_widget(savecombo)
     
-    return opendialog, savedialog, enddir
+    return opendialog, savedialog, enddir, savecombo, savers
 
 ################################################################################
 # Saving                                                                       #
@@ -229,7 +229,7 @@ def saveGameSimple (uri, game):
     game.save(uri, saver, append=False)
 
 def saveGameAs (game):
-    opendialog, savedialog, enddir = getOpenAndSaveDialogs()
+    opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
     
     # Keep running the dialog until the user has canceled it or made an error
     # free operation
