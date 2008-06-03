@@ -34,8 +34,8 @@ def set_currentIndex (value):
     widgets["tipfield"].set_markup(tips[value])
 
 tips = (
-    "You can start a new game by pressing <b>Game -> New Game</b>",
-    "A tip a day keeps the doctor away",
-    "If you want to win all your chessmatches...",
-    "<b>England</b> is the largest and most populous of the constituent countries of the United Kingdom. The division dates from the arrival of the Anglo-Saxons in the 5th century. The territory of England has been politically united since the 10th century. This article concerns that territory. However, before the 10th century and after the accession of James VI of Scotland to the throne of England in 1603, it becomes less convenient to distinguish Scottish and Welsh from English history since the union of these nations with England.",
+    _("You can start a new game by pressing <b>Game -> New Game</b>"),
+    _("A tip a day keeps the doctor away"),
+    _("If you want to win all your chessmatches..."),
+    _("<b>England</b> is the largest and most populous of the constituent countries of the United Kingdom. The division dates from the arrival of the Anglo-Saxons in the 5th century. The territory of England has been politically united since the 10th century. This article concerns that territory. However, before the 10th century and after the accession of James VI of Scotland to the throne of England in 1603, it becomes less convenient to distinguish Scottish and Welsh from English history since the union of these nations with England."),
 )
