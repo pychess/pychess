@@ -312,7 +312,7 @@ class LBoard:
         # Capture
         if tpiece != EMPTY:
             if self.boardVariant.variant == FISCHERRANDOMCHESS:
-                # don't capture _our_ piece!
+                # don't capture _our_ piece when castling king steps on rook!
                 if flag not in (KING_CASTLE, QUEEN_CASTLE):
                     self._removePiece(tcord, tpiece, opcolor)
             else:
@@ -473,7 +473,7 @@ class LBoard:
         
         if self.boardVariant.variant == FISCHERRANDOMCHESS:
             if flag in (KING_CASTLE, QUEEN_CASTLE):
-                if self.color == WHITE:
+                if color == WHITE:
                     if flag == QUEEN_CASTLE:
                         rookf = self.ini_rooks[0][0]
                         rookt = D1
