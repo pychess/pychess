@@ -128,7 +128,7 @@ class FRCBoard(Board):
 
         tmp = ''.join(tmp)
         tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w KQkq - 0 1'
-        
+
         return tmp
 
 
@@ -229,87 +229,87 @@ def frc_castling_moves(board):
         if board.castling & B_OO:
             blocker = clearBit(board.blocker, board.ini_rooks[BLACK][1])
             if board.ini_kings[BLACK] == B8 and not fromToRay[B8][G8] & blocker and \
-                not isAttacked (board, B8, BLACK) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, B8, WHITE) and \
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (B8, G8, KING_CASTLE)
 
             if board.ini_kings[BLACK] == C8 and not fromToRay[C8][G8] & blocker and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (C8, G8, KING_CASTLE)
 
             if board.ini_kings[BLACK] == D8 and not fromToRay[D8][G8] & blocker and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (D8, G8, KING_CASTLE)
 
             if board.ini_kings[BLACK] == E8 and not fromToRay[E8][G8] & blocker and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (E8, G8, KING_CASTLE)
 
             if board.ini_kings[BLACK] == F8 and not fromToRay[F8][G8] & blocker and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (F8, G8, KING_CASTLE)
         
             if board.ini_kings[BLACK] == G8 and board.arBoard[F8] == EMPTY and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, G8, WHITE):
                     yield newMove (G8, G8, KING_CASTLE)
 
         if board.castling & B_OOO:
             blocker = clearBit(board.blocker, board.ini_rooks[BLACK][0])
             if board.ini_kings[BLACK] == G8 and not fromToRay[G8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     yield newMove (G8, C8, QUEEN_CASTLE)
 
             if board.ini_kings[BLACK] == F8 and not fromToRay[F8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE):
                     yield newMove (F8, C8, QUEEN_CASTLE)
 
             if board.ini_kings[BLACK] == E8 and not fromToRay[E8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE):
                     yield newMove (E8, C8, QUEEN_CASTLE)
 
             if board.ini_kings[BLACK] == D8 and not fromToRay[D8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE):
                     yield newMove (D8, C8, QUEEN_CASTLE)
 
             if board.ini_kings[BLACK] == C8 and \
                 board.arBoard[D8] == EMPTY and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK):
+                not isAttacked (board, C8, WHITE):
                     yield newMove (C8, C8, QUEEN_CASTLE)
 
             if board.ini_kings[BLACK] == B8 and not fromToRay[B8][C8] & blocker and \
                 board.arBoard[C8] == EMPTY and \
                 board.arBoard[D8] == EMPTY and \
-                not isAttacked (board, B8, BLACK) and \
-                not isAttacked (board, C8, BLACK):
+                not isAttacked (board, B8, WHITE) and \
+                not isAttacked (board, C8, WHITE):
                     yield newMove (B8, C8, QUEEN_CASTLE)
 
 
@@ -408,42 +408,42 @@ def frc_castling_move(board, fcord, tcord, flag):
            (tcord == G8 or tcord == board.ini_rooks[BLACK][1]):
             blocker = clearBit(board.blocker, board.ini_rooks[BLACK][1])
             if fcord == B8 and not fromToRay[B8][G8] & blocker and \
-                not isAttacked (board, B8, BLACK) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, B8, WHITE) and \
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
 
             if fcord == C8 and not fromToRay[C8][G8] & blocker and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
 
             if fcord == D8 and not fromToRay[D8][G8] & blocker and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
 
             if fcord == E8 and not fromToRay[E8][G8] & blocker and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
 
             if fcord == F8 and not fromToRay[F8][G8] & blocker and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
         
             if fcord == G8 and board.arBoard[F8] == EMPTY and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, G8, WHITE):
                     return True
 
         if board.castling & B_OOO and flag == QUEEN_CASTLE and \
@@ -451,45 +451,45 @@ def frc_castling_move(board, fcord, tcord, flag):
             blocker = clearBit(board.blocker, board.ini_rooks[BLACK][0])
             if fcord == G8 and not fromToRay[G8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK) and \
-                not isAttacked (board, G8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE) and \
+                not isAttacked (board, G8, WHITE):
                     return True
 
             if fcord == F8 and not fromToRay[F8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK) and \
-                not isAttacked (board, F8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE) and \
+                not isAttacked (board, F8, WHITE):
                     return True
 
             if fcord == E8 and not fromToRay[E8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK) and \
-                not isAttacked (board, E8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE) and \
+                not isAttacked (board, E8, WHITE):
                     return True
 
             if fcord == D8 and not fromToRay[D8][C8] & blocker and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK) and \
-                not isAttacked (board, D8, BLACK):
+                not isAttacked (board, C8, WHITE) and \
+                not isAttacked (board, D8, WHITE):
                     return True
 
             if fcord == C8 and \
                 board.arBoard[D8] == EMPTY and \
                 not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, BLACK):
+                not isAttacked (board, C8, WHITE):
                     return True
 
             if fcord == B8 and not fromToRay[B8][C8] & blocker and \
                 board.arBoard[C8] == EMPTY and \
                 board.arBoard[D8] == EMPTY and \
-                not isAttacked (board, B8, BLACK) and \
-                not isAttacked (board, C8, BLACK):
+                not isAttacked (board, B8, WHITE) and \
+                not isAttacked (board, C8, WHITE):
                     return True
 
     return False
