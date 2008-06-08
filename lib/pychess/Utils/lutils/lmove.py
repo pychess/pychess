@@ -447,15 +447,15 @@ def parseAN (board, an):
                     ((board.color == WHITE and tcord==C1) or \
                      (board.color == BLACK and tcord==C8))) or \
                 (board.ini_rooks[board.color][0] == tcord and \
-                    (board.color == WHITE and board.castling & W_OOO) or \
-                    (board.color == BLACK and board.castling & B_OOO))                :
+                    ((board.color == WHITE and board.castling & W_OOO) or \
+                    (board.color == BLACK and board.castling & B_OOO))):
                 flag = QUEEN_CASTLE
             elif (abs(fcord - tcord) > 1 and \
                     ((board.color == WHITE and tcord==G1) or \
                      (board.color == BLACK and tcord==G8))) or \
                 (board.ini_rooks[board.color][1] == tcord and \
-                    (board.color == WHITE and board.castling & W_OO) or \
-                    (board.color == BLACK and board.castling & B_OO))                :
+                    ((board.color == WHITE and board.castling & W_OO) or \
+                    (board.color == BLACK and board.castling & B_OO))):
                 flag = KING_CASTLE
             else:
                 flag = NORMAL_MOVE
