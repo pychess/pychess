@@ -171,6 +171,8 @@ def validateBoard (board):
         if not BitPosArray[sq] & board.b[xside][PAWN]:
             return False
     
+    # TODO: use self.ini_rooks and self.ini_kings
+    # TODO: instead of hardcoded E1/H1 etc.
     if board.flag & WKINGCASTLE:
         if not(BitPosArray[E1] & board.b[WHITE][KING]):
             return False

@@ -380,23 +380,23 @@ class LBoard:
                     self.castling &= ~W_OO
                     
             if fpiece == ROOK:
-                if fcord == H1:
+                if fcord == self.ini_rooks[0][1]: #H1
                     if self.castling & W_OO:
                         self.hash ^= W_OOHash
                         self.castling &= ~W_OO
                     
-                elif fcord == A1:
+                elif fcord == self.ini_rooks[0][0]: #A1
                     if self.castling & W_OOO:
                         self.hash ^= W_OOOHash
                         self.castling &= ~W_OOO
             
             if tpiece == ROOK:
-                if tcord == H8:
+                if tcord == self.ini_rooks[1][1]: #H8
                     if self.castling & B_OO:
                         self.hash ^= B_OOHash
                         self.castling &= ~B_OO
             
-                elif tcord == A8:
+                elif tcord == self.ini_rooks[1][0]: #A8
                     if self.castling & B_OOO:
                         self.hash ^= B_OOOHash
                         self.castling &= ~B_OOO
@@ -411,23 +411,23 @@ class LBoard:
                     self.castling &= ~B_OO
             
             if fpiece == ROOK:
-                if fcord == H8:
+                if fcord == self.ini_rooks[1][1]: #H8
                     if self.castling & B_OO:
                         self.hash ^= B_OOHash
                         self.castling &= ~B_OO
             
-                elif fcord == A8:
+                elif fcord == self.ini_rooks[1][0]: #A8
                     if self.castling & B_OOO:
                         self.hash ^= B_OOOHash
                         self.castling &= ~B_OOO
             
             if tpiece == ROOK:
-                if tcord == H1:
+                if tcord == self.ini_rooks[0][1]: #H1
                     if self.castling & W_OO:
                         self.hash ^= W_OOHash
                         self.castling &= ~W_OO
                     
-                elif tcord == A1:
+                elif tcord == self.ini_rooks[0][0]: #A1
                     if self.castling & W_OOO:
                         self.hash ^= W_OOOHash
                         self.castling &= ~W_OOO
