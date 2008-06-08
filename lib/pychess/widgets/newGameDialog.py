@@ -200,7 +200,7 @@ class NewGameMode (_GameInitializationMode):
 class LoadFileExtension (_GameInitializationMode):
     @classmethod
     def _init (cls):
-        opendialog, savedialog, enddir = ionest.getOpenAndSaveDialogs()
+        opendialog, savedialog, enddir, savecombo, savers = ionest.getOpenAndSaveDialogs()
         cls.filechooserbutton = gtk.FileChooserButton(opendialog)
         cls.loadSidePanel = BoardPreview.BoardPreview(cls.widgets,
                 cls.filechooserbutton, opendialog, enddir)
