@@ -123,17 +123,19 @@ def attack_type (model, phase):
     tcord = TCORD(move)
     
     if oldboard.arBoard[tcord] != EMPTY:
-        if oldmove and oldboard3.arBoard[TCORD(oldmove)] != EMPTY and \
-                TCORD(oldmove) == tcord:
-            yield _("takes back material")
-        else:
-            see = staticExchangeEvaluate(oldboard, move)
-            if see == 0:
-                yield _("exchanges material")
-            elif see > 0:
-                yield _("captures material")
-            elif see < 0:
-                yield _("sacrifies material")
+        if not (board.boardVariant.variant == FISCHERRANDOMCHESS and \
+            FLAG(move) in (KING_CASTLE, QUEEN_CASTLE)): 
+            if oldmove and oldboard3.arBoard[TCORD(oldmove)] != EMPTY and \
+                    TCORD(oldmove) == tcord:
+                yield _("takes back material")
+            else:
+                see = staticExchangeEvaluate(oldboard, move)
+                if see == 0:
+                    yield _("exchanges material")
+                elif see > 0:
+                    yield _("captures material")
+                elif see < 0:
+                    yield _("sacrifies material")
     
     # ------------------------------------------------------------------------ #
     # Test if we threats something, or at least puts more preassure on it      #
