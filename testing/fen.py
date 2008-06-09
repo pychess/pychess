@@ -3,6 +3,7 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
+from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
 import sys
 
@@ -18,7 +19,7 @@ class FenTestCase(unittest.TestCase):
     def testFEN(self):
         """Testing board-FEN conversion with several positions"""
         print
-        board = LBoard()
+        board = LBoard(Board)
         for i, fenstr in enumerate(self.positions[1:]):
             sys.stdout.write("#")
             board.applyFen(fenstr)

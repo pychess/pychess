@@ -4,6 +4,7 @@ import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
 from pychess.Utils.const import *
+from pychess.Utils.Board import Board
 from pychess.Utils.lutils.leval import evaluateComplete
 from pychess.Utils.lutils.leval import LBoard
 
@@ -11,7 +12,7 @@ from pychess.Utils.lutils.leval import LBoard
 class EvalTestCase(unittest.TestCase):
     
     def setUp (self):
-        self.board = LBoard()
+        self.board = LBoard(Board)
     
     def testStartboardScore_1(self):
         """Testing eval symmetry with startboard (WHITE)"""
