@@ -94,8 +94,12 @@ class LBoard:
         self.history = []
 
         # initial cords of rooks and kings for castling in Chess960
-        self.ini_kings = [None, None] #[E1, E8]
-        self.ini_rooks = [[None, None], [None, None]] #[[A1, H1], [A8, H8]]
+        if self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+            self.ini_kings = [None, None]
+            self.ini_rooks = [[None, None], [None, None]]
+        else:
+            self.ini_kings = [E1, E8]
+            self.ini_rooks = [[A1, H1], [A8, H8]]
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -163,16 +167,28 @@ class LBoard:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
-                    if moveNoChr == "1":
-                        if piece == KING:
-                            self.ini_kings[color] = cord
-                        elif piece == ROOK:
-                            if self.ini_rooks[color][0] is None:
-                                self.ini_rooks[color][0] = cord
-                            else:
-                                self.ini_rooks[color][1] = cord
+                    if moveNoChr == "1" and \
+                        self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+                            if piece == KING:
+                                self.ini_kings[color] = cord
+                            elif piece == ROOK:
+                                if self.ini_rooks[color][0] is None:
+                                    self.ini_rooks[color][0] = cord
+                                else:
+                                    self.ini_rooks[color][1] = cord
                     cord += 1
         
+        # Help tests/movegen.py in positions having no 4 rooks
+        if self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+            if self.ini_rooks[0][0] is None:
+                self.ini_rooks[0][0] = A1
+            if self.ini_rooks[0][1] is None:
+                self.ini_rooks[0][1] = H1
+            if self.ini_rooks[1][0] is None:
+                self.ini_rooks[1][0] = A8
+            if self.ini_rooks[1][1] is None:
+                self.ini_rooks[1][1] = H8
+
         # Parse active color field
         
         if colChr.lower() == "w":
