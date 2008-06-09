@@ -4,6 +4,7 @@ import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
 from pychess.Utils.const import *
+from pychess.Utils.Board import Board
 from pychess.Utils.lutils.leval import LBoard
 from pychess.Utils.lutils.lmove import parseAN
 
@@ -15,7 +16,7 @@ class ZobristTestCase(unittest.TestCase):
         self.board.applyMove(parseAN(self.board, an_move))
     
     def setUp(self):
-        self.board = LBoard()
+        self.board = LBoard(Board)
         self.board.applyFen(FEN)
          
     def testZobrist_1(self):
