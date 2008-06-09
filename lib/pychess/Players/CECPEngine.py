@@ -48,6 +48,7 @@ class CECPEngine (ProtocolEngine):
             "reuse":     1,
             "analyze":   0,
             "myname":    self.defname,
+            "variants":  "",
             "colors":    1,
             "ics":       0,
             "name":      0,
