@@ -62,10 +62,8 @@ def getStatus (board):
     return DRAW, DRAW_STALEMATE
 
 def validate (board, move):
-    return validateMove (board.board, move.move)
-    # and not board.willLeaveInCheck(move)
-    # TODO: this somehow produces strange things in chess960
-    # TODO: with castling moves
+    return validateMove (board.board, move.move) \
+     and not board.willLeaveInCheck(move)
 
 def getMoveKillingKing (board):
     """ Returns a move from the current color, able to capture the opponent
