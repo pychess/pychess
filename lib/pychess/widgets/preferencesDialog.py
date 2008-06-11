@@ -42,7 +42,7 @@ class GeneralTab:
         # Give to uistuff.keeper
         
         for key in ("firstName", "secondName",
-                    "hideTabs", "autoRotate", "showCords", "figuresInNotation", "tipOfTheDay",  
+                    "hideTabs", "autoRotate", "showCords", "figuresInNotation", 
                     "fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
 
