@@ -132,6 +132,15 @@ class GladeHandlers:
         setMode(gmwidg, HINT, window["hint_mode"].get_active())
         setMode(gmwidg, SPY, window["spy_mode"].get_active())
         
+        def on_gmwidg_closed (gmwidg):
+            del gameDic[gmwidg]
+            #for player in gamemodel.players:
+            #    player.kill(WON_DISCONNECTION)
+            if not gameDic:
+                for widget in MENU_ITEMS:
+                    window[widget].set_property('sensitive', False)
+        gmwidg.connect("closed", on_gmwidg_closed)
+        
         # Connect game_loaded, game_saved and game_ended to statusbar
         def game_loaded (gamemodel, uri):
             if type(uri) in (str, unicode):
@@ -225,15 +234,6 @@ class GladeHandlers:
                                 glock.release()
                     player.connect("offer", offer_callback)
             
-            def on_gmwidg_closed (gmwidg):
-                del gameDic[gmwidg]
-                for player in gamemodel.players:
-                    player.kill(WON_DISCONNECTION)
-                if not gameDic:
-                    for widget in MENU_ITEMS:
-                        window[widget].set_property('sensitive', False)
-            gmwidg.connect("closed", on_gmwidg_closed)
-            
             # Set right sensitivity states in menubar, when tab is switched
             def infront (gmwidg):
                 auto = gamemodel.players[0].__type__ != LOCAL and \
@@ -294,10 +294,10 @@ class GladeHandlers:
     
     def on_close1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        ionest.closeGame(gmwidg, gameDic[gmwidg])
+        response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate (widget, *args):
-        if ionest.closeAllGames (gameDic.items()) == gtk.RESPONSE_OK:
+        if ionest.closeAllGames(gameDic.items()) in (gtk.RESPONSE_OK, gtk.RESPONSE_YES):
             gtk.main_quit()
         else: return True
     
