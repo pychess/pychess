@@ -252,6 +252,7 @@ class GameWidget (gobject.GObject):
         message.pack_end(buttonbox, False, False)
         self.messageSock.add(message)
         self.messageSock.show_all()
+        notebooks["messageArea"].show()
     
     def hideMessage (self):
         self.messageSock.hide()
@@ -293,7 +294,7 @@ def _ensureReadForGameWidgets ():
     
     # Initing headbook
     
-    align = createAlignment (2, 2, 0, 2)
+    align = createAlignment (4, 4, 0, 4)
     align.set_property("yscale", 0)
     headbook = gtk.Notebook()
     headbook.set_scrollable(True)
@@ -306,17 +307,23 @@ def _ensureReadForGameWidgets ():
     # Initing center
     
     centerVBox = gtk.VBox()
-    centerVBox.set_spacing(3)
-    centerVBox.set_border_width(3)
+    #centerVBox.set_spacing(3)
+    #centerVBox.set_border_width(3)
     
     # The message area
     
     centerVBox.pack_start(notebooks["messageArea"], expand=False)
+    def callback (notebook, gpointer, page_num):
+        notebook.props.visible = notebook.get_nth_page(page_num).child.props.visible
+    notebooks["messageArea"].connect("switch-page", callback)
     
     # The dock
     
     dock = PyDockTop("main")
-    centerVBox.pack_start(dock)
+    dockAlign = createAlignment(4,4,0,4)
+    dockAlign.add(dock)
+    centerVBox.pack_start(dockAlign)
+    dockAlign.show()
     dock.show()
     
     dockLocation = addHomePrefix("pydock.xml")
@@ -377,6 +384,7 @@ def _ensureReadForGameWidgets ():
     
     # The status bar
     
+    notebooks["statusbar"].set_border_width(4)
     centerVBox.pack_start(notebooks["statusbar"], expand=False)
     mainvbox.pack_start(centerVBox)
     centerVBox.show_all()
@@ -412,7 +420,10 @@ def attachGameWidget (gmwidg):
             gmwidg.emit("infront")
     headbook.connect("switch-page", callback, gmwidg)
     
-    notebooks["messageArea"].append_page(gmwidg.messageSock)
+    messageSockAlign = createAlignment(4,4,0,4)
+    messageSockAlign.show()
+    messageSockAlign.add(gmwidg.messageSock)
+    notebooks["messageArea"].append_page(messageSockAlign)
     notebooks["board"].append_page(gmwidg.boardvbox)
     gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):
