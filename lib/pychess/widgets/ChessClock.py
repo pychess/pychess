@@ -170,7 +170,7 @@ class ChessClock (gtk.DrawingArea):
         if self.formatedCache != [wt, bt]:
             self.formatedCache = [wt, bt]
             self.redraw_canvas()
-        return True
+        return not self.model.ended
     
     def formatTime(self, seconds):
         if not -10 <= seconds <= 10: seconds = ceil(seconds)

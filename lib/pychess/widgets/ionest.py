@@ -52,6 +52,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     
     def onDone (worker, (gmwidg, game)):
         gmwidg.connect("close_clicked", closeGame, game)
+        worker.__del__()
     worker.connect("done", onDone)
     
     worker.execute()
@@ -329,7 +330,7 @@ def closeAllGames (pairs):
         response = d.run()
         d.hide()
     
-    if response != gtk.RESPONSE_CANCEL:
+    if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         for gmwidg, game in pairs:
             game.end(ABORTED, ABORTED_AGREEMENT)
     
@@ -352,14 +353,14 @@ def closeGame (gmwidg, game):
         d.format_secondary_text (_(
             "It is not possible later to continue the game,\nif you don't save it."))
         response = d.run()
-        d.hide()
+        d.destroy()
         
         if response == gtk.RESPONSE_YES:
             # Test if cancel was pressed in the save-file-dialog
             if saveGame(game) != gtk.RESPONSE_ACCEPT:
                 response = gtk.RESPONSE_CANCEL
     
-    if response != gtk.RESPONSE_CANCEL:
+    if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         game.end(ABORTED, ABORTED_AGREEMENT)
         gamewidget.delGameWidget (gmwidg)
     
