@@ -26,6 +26,7 @@ class TimeModel (GObject):
         self.counter = None
         
         self.started = False
+        self.ended = False
         
         self.movingColor = WHITE
     
@@ -67,7 +68,11 @@ class TimeModel (GObject):
         
         self.counter = time()
         self.emit("time_changed")
-        
+    
+    def end (self):
+        self.pause()
+        self.ended = True
+    
     def pause (self):
         if self.paused: return
         self.paused = True
@@ -147,7 +152,6 @@ class TimeModel (GObject):
     ############################################################################
     
     def getPlayerTime (self, color):
-        
         if color == self.movingColor and self.started:
             if self.paused:
                 return self.intervals[color][-1] - self.pauseInterval

@@ -6,6 +6,8 @@ from ThreadPool import PooledThread
 
 import glock
 
+import time
+
 #
 # IDEA: We could implement gdk prioritizing by using a global PriorityQueue
 #
@@ -49,10 +51,13 @@ class Publisher (PooledThread):
     
     def put (self, task):
         self.queue.put(task)
+    
+    def __del__ (self):
+        self.queue.put(None)
 
 class EmitPublisher (Publisher):
     """ EmitPublisher is a version of Publisher made for the common task of
-        emitting a signal when the gdklock is ready """
+        emitting a signal after waiting for the gdklock """
     def __init__ (self, parrent, signal, sendPolicy):
         Publisher.__init__(self, lambda v: parrent.emit(signal, v), sendPolicy)
 
@@ -179,6 +184,8 @@ class GtkWorker (GObject, PooledThread):
             """
         self.cancelled = True
         self.done = True
+        self.publisher.__del__()
+        self.progressor.__del__()
     
     ############################################################################
     # Get stuf                                                                 #
