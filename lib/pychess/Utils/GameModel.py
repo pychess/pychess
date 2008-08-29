@@ -401,7 +401,7 @@ class GameModel (GObject, PooledThread):
     
     def end (self, status, reason):
         if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            return
+            self.needsSave = True
         
         log.debug("Ending a game with status %d for reason %d\n%s" % (status, reason,
             "".join(traceback.format_list(traceback.extract_stack())).strip()))
@@ -414,15 +414,11 @@ class GameModel (GObject, PooledThread):
             spectactor.end(self.status, self.reason)
         
         if self.timemodel:
-            self.timemodel.pause()
+            self.timemodel.end()
         
-        self.needsSave = True
         self.emit("game_ended", reason)
     
     def kill (self, reason):
-        if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            return
-        
         log.debug("Killing a game for reason %d\n%s" % (reason,
             "".join(traceback.format_list(traceback.extract_stack())).strip()))
         self.status = KILLED
@@ -435,7 +431,7 @@ class GameModel (GObject, PooledThread):
             spectactor.kill(reason)
         
         if self.timemodel:
-            self.timemodel.pause()
+            self.timemodel.end()
         
         self.emit("game_ended", reason)
     
