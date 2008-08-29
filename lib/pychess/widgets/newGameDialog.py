@@ -24,10 +24,10 @@ from pychess.Variants.normal import NormalChess
 from pychess.Variants.shuffle import ShuffleChess
 from pychess.Variants.fischerandom import FischerRandomChess
 
-# We init players here, to have a better balance between application and dialog
-# startup time.
-# This way we also make it accessible to the Background.Taskers and let them
-# have a very simmilar look
+#===============================================================================
+# We init most dialog icons global to make them accessibly to the
+# Background.Taskers so they have a similar look.
+#===============================================================================
 
 it = gtk.icon_theme_get_default()
 
@@ -55,9 +55,11 @@ for level, stock, altstock in \
         image = it.load_icon(altstock, 24, gtk.ICON_LOOKUP_USE_BUILTIN)
         difItems += [(image, level, altstock)]
 
-################################################################################
-# GameInitializationMode                                                       #
-################################################################################
+#===============================================================================
+# GameInitializationMode is the super class of new game dialogs. Dialogs include
+# the standard new game dialog, the load file dialog and the enter notation
+# dialog.
+#===============================================================================
 
 class _GameInitializationMode:
     @classmethod
