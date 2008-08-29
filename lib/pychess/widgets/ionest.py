@@ -3,12 +3,15 @@
 import os
 from StringIO import StringIO
 
-import gtk, gobject
+import gtk
+import gobject
+from gettext import ngettext as _n
 
 from pychess.System.Log import log
 from pychess.System import conf
 from pychess.System.protoopen import isWriteable
 from pychess.System.GtkWorker import GtkWorker
+from pychess.System.uistuff import GladeWidgets
 from pychess.Utils import const
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
@@ -161,7 +164,7 @@ def getOpenAndSaveDialogs():
         for saver in savers:
             for ending in saver.__endings__:
                 enddir[ending] = saver
-        types.append((saver.__label__, saver.__endings__))
+                types.append((saver.__label__, saver.__endings__))
         
         opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
@@ -235,11 +238,13 @@ def saveGameAs (game):
     # Keep running the dialog until the user has canceled it or made an error
     # free operation
     while True:
+        savedialog.set_current_name("%s %s %s" %
+                                   (game.players[0], _("vs."), game.players[1]))
         res = savedialog.run()
         if res != gtk.RESPONSE_ACCEPT:
             break
         
-        uri = savedialog.get_uri()[7:]
+        uri = savedialog.get_filename()
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
         
@@ -290,7 +295,8 @@ Please ensure that you have given the right path and try again."))
                 append = True
             elif replaceRes == gtk.RESPONSE_CANCEL:
                 continue
-        
+        else:
+            print repr(uri)
         try:
             game.save(uri, saver, append)
         except IOError, e:
@@ -312,7 +318,6 @@ Please ensure that you have given the right path and try again."))
 ################################################################################
 # Closing                                                                      #
 ################################################################################
-
 def closeAllGames (pairs):
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
@@ -320,15 +325,58 @@ def closeAllGames (pairs):
     elif len(changedPairs) == 1:
         response = closeGame(*changedPairs[0])
     else:
-        names = ["%s vs %s" % tuple(g.players) for w, g in changedPairs]
-        d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
-        d.add_button(_("Close _without Saving"), gtk.RESPONSE_OK)
-        d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        d.set_markup(_("<big><b>There are %d games with unsaved changes:</b></big>")
-                % len(changedPairs))
-        d.format_secondary_text("\n".join(names))
-        response = d.run()
-        d.hide()
+        widgets = GladeWidgets("saveGamesDialog.glade")
+        dialog = widgets["saveGamesDialog"]
+        heading = widgets["saveGamesDialogHeading"]
+        saveLabel = widgets["saveGamesDialogSaveLabel"]
+        treeview = widgets["saveGamesDialogTreeview"]
+        
+        heading.set_markup("<big><b>" +
+                           _n("There are %d game with unsaved moves.",
+                              "There are %d games with unsaved moves.",
+                              len(changedPairs)) % len(changedPairs) +
+                           " " + _("Save moves before closing?") +
+                           "</b></big>")
+        
+        liststore = gtk.ListStore(bool, str)
+        treeview.set_model(liststore)
+        renderer = gtk.CellRendererToggle()
+        renderer.props.activatable = True
+        treeview.append_column(gtk.TreeViewColumn("", renderer, active=0))
+        treeview.append_column(gtk.TreeViewColumn("", gtk.CellRendererText(), text=1))
+        for gmwidg, game in changedPairs:
+            liststore.append((True, "%s %s %s" %
+                             (game.players[0], _("vs."), game.players[1])))
+        
+        def callback (cell, path):
+            if path:
+                liststore[path][0] = not liststore[path][0]
+            saves = len(tuple(row for row in liststore if row[0]))
+            saveLabel.set_text(_n("_Save %d document", "_Save %d documents", saves) % saves)
+            saveLabel.set_use_underline(True)
+        renderer.connect("toggled", callback)
+        
+        callback(None, None)
+        
+        while True:
+            response = dialog.run()
+            if response == gtk.RESPONSE_YES:
+                for i in xrange(len(liststore)-1, -1, -1):
+                    checked, name = liststore[i]
+                    if checked:
+                        gmwidg, game = changedPairs[i]
+                        if saveGame(game) == gtk.RESPONSE_ACCEPT:
+                            del pairs[i]
+                            liststore.remove(liststore.get_iter((i,)))
+                            game.end(ABORTED, ABORTED_AGREEMENT)
+                            gamewidget.delGameWidget(gmwidg)
+                        else:
+                            break
+                else:
+                    break
+            else:
+                break
+        dialog.destroy()
     
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         for gmwidg, game in pairs:
