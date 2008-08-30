@@ -73,7 +73,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     players = []
     def updateTitle (*args):
         gmwidg.setTabText("%s %s %s" %
-                (repr(players[0]), _("vs"), repr(players[1])) )
+                (repr(players[0]), _("vs."), repr(players[1])) )
     
     # Initing players
     for i, playertup in enumerate((player0tup, player1tup)):
