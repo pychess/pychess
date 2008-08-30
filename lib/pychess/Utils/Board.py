@@ -56,7 +56,79 @@ class Board:
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
-
+    
+    def simulateMove (self, board1, move):
+        moved = []
+        new = []
+        dead = []
+        
+        cord0, cord1 = move.cords
+        
+        moved.append( (self[cord0], cord0) )
+        
+        if self[cord1]:
+            dead.append( self[cord1] )
+        
+        if move.flag == QUEEN_CASTLE:
+            if self.color == WHITE:
+                moved.append( (self[Cord(A1)], Cord(A1)) )
+            else:
+                moved.append( (self[Cord(A8)], Cord(A8)) )
+        elif move.flag == KING_CASTLE:
+            if self.color == WHITE:
+                moved.append( (self[Cord(H1)], Cord(H1)) )
+            else:
+                moved.append( (self[Cord(H8)], Cord(H8)) )
+        
+        elif move.flag in PROMOTIONS:
+            newPiece = board1[cord1]
+            moved.append( (newPiece, cord0) )
+            new.append( newPiece )
+            dead.append( self[cord0] )
+        
+        elif move.flag == ENPASSANT:
+            if self.color == WHITE:
+                dead.append( self[Cord(cord1.x, cord1.y-1)] )
+            else: dead.append( self[Cord(cord1.x, cord1.y+1)] )
+        
+        return moved, new, dead
+    
+    def simulateUnmove (self, board1, move):
+        moved = []
+        new = []
+        dead = []
+        
+        cord0, cord1 = move.cords
+        
+        moved.append( (self[cord1], cord1) )
+        
+        if board1[cord1]:
+            dead.append( board1[cord1] )
+        
+        if move.flag == QUEEN_CASTLE:
+            if board1.color == WHITE:
+                moved.append( (self[Cord(D1)], Cord(D1)) )
+            else:
+                moved.append( (self[Cord(D8)], Cord(D8)) )
+        elif move.flag == KING_CASTLE:
+            if board1.color == WHITE:
+                moved.append( (self[Cord(F1)], Cord(F1)) )
+            else:
+                moved.append( (self[Cord(F8)], Cord(F8)) )
+        
+        elif move.flag in PROMOTIONS:
+            newPiece = board1[cord0]
+            moved.append( (newPiece, cord1) )
+            new.append( newPiece )
+            dead.append( self[cord1] )
+        
+        elif move.flag == ENPASSANT:
+            if board1.color == WHITE:
+                new.append( board1[Cord(cord1.x, cord1.y-1)] )
+            else: new.append( board1[Cord(cord1.x, cord1.y+1)] )
+        
+        return moved, new, dead
+    
     def move (self, move):
         
         assert self[move.cord0], "%s %s" % (move, self.asFen())
