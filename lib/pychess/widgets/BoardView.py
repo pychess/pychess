@@ -75,7 +75,7 @@ def matrixAround (rotatedMatrix, anchorX, anchorY):
     invmatrix = cairo.Matrix(co, -si, si, co, axco-aysi, ayco+axsi)
     return matrix, invmatrix
 
-ANIMATION_TIME = .5
+ANIMATION_TIME = 0.5
 
 # If this is true, the board is scaled so that everything fits inside the window
 # even if the board is rotated 45 degrees
@@ -133,11 +133,13 @@ class BoardView (gtk.DrawingArea):
         self.drawcount = 0
         self.drawtime = 0
         
-        self.animationLock = Lock()
+        self.gotStarted = False
+        self.animationLock = RLock()
         self.rotationLock = Lock()
     
     def game_started (self, model):
         if conf.get("noAnimation", False):
+            self.gotStarted = True
             self.redraw_canvas()
         else:
             if model.moves:
@@ -150,6 +152,7 @@ class BoardView (gtk.DrawingArea):
                             piece.opacity = 0
             finally:
                 self.animationLock.release()
+            self.gotStarted = True
             self.startAnimation()
     
     def game_changed (self, model):
@@ -262,41 +265,32 @@ class BoardView (gtk.DrawingArea):
         self.animationLock.acquire()
         try:
             deadset = set()
-            for i in range(self.shown, shown, step):
-                board0 = self.model.getBoardAtPly(i)
-                board1 = self.model.getBoardAtPly(i+step)
+            for i in xrange(self.shown, shown, step):
+                board = self.model.getBoardAtPly(i)
+                board1 = self.model.getBoardAtPly(i + step)
+                if step == 1:
+                    move = self.model.getMoveAtPly(i)
+                    moved, new, dead = board.simulateMove(board1, move)
+                else:
+                    move = self.model.getMoveAtPly(i-1)
+                    moved, new, dead = board.simulateUnmove(board1, move)
                 
-                for y, row in enumerate(board0.data):
-                    for x, piece in enumerate(row):
-                        if not piece: continue
-                        
-                        if step < 0 and piece.opacity < 1:
-                            # If piece is fading in, it should not move
-                            continue
-                            
-                        if step > 0 and piece in deadset:
-                            # No need for more testing, if piece is dead
-                            continue
-                            
-                        if piece != board1.data[y][x]:
-                            
-                            dir = board0.color == WHITE and 1 or -1
-                            if step > 0 and board1.data[y][x] != None or \
-                                    0 < y < 7 and board0.enpassant == Cord(x,y+dir)\
-                                    and board1[board0.enpassant] != None:
-                                    
-                                # A piece is dying
-                                deadset.add(piece)
-                                
-                                # If dead pieces as a location, they jump a little
-                                # When they are waken to life
-                                piece.x = None
-                                piece.y = None
-                                
-                            elif piece.x == None:
-                                # It has moved
-                                piece.x = x
-                                piece.y = y
+                for piece in dead:
+                    deadset.add(piece)
+                    # Reset the location of the piece to avoid a small visual
+                    # jump, when it is at some other time waken to life.
+                    piece.x = None
+                    piece.y = None
+                
+                for piece in new:
+                    piece.opacity = 0
+                
+                for piece, cord0 in moved:
+                    # Test if the piece already has a realcoord (has been dragged)
+                    if not piece.x:
+                        piece.x = cord0.x
+                        piece.y = cord0.y
+        
         finally:
             self.animationLock.release()
         
@@ -304,6 +298,7 @@ class BoardView (gtk.DrawingArea):
         for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
             for x, piece in enumerate(row):
                 if piece in deadset:
+                    print "adding piece to deadlist",(piece,x,y) 
                     self.deadlist.append((piece,x,y))
         
         self._shown = shown
@@ -333,7 +328,7 @@ class BoardView (gtk.DrawingArea):
         try:
             paintBox = None
             
-            mod = min(1.0, (time()-self.animationStart)/ANIMATION_TIME)
+            mod = min(1, (time()-self.animationStart)/ANIMATION_TIME)
             board = self.model.getBoardAtPly(self.shown)
             
             for y, row in enumerate(board.data):
@@ -342,8 +337,13 @@ class BoardView (gtk.DrawingArea):
                     
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
-                            newx = piece.x + (x-piece.x)*mod
-                            newy = piece.y + (y-piece.y)*mod
+                            if piece.piece == KNIGHT:
+                                #print mod, x, piece.x
+                                newx = piece.x + (x-piece.x)*mod**(1.5)
+                                newy = piece.y + (y-piece.y)*mod
+                            else:
+                                newx = piece.x + (x-piece.x)*mod
+                                newy = piece.y + (y-piece.y)*mod
                         else:
                             newx, newy = x, y
                         
@@ -355,7 +355,7 @@ class BoardView (gtk.DrawingArea):
                         
                         if (newx <= x <= piece.x or newx >= x >= piece.x) and \
                            (newy <= y <= piece.y or newy >= y >= piece.y) or \
-                           abs(newx-x) < 0.01 and abs(newy-y) < 0.01:
+                           abs(newx-x) < 0.005 and abs(newy-y) < 0.005:
                             piece.x = None
                             piece.y = None
                         else:
@@ -375,11 +375,11 @@ class BoardView (gtk.DrawingArea):
                         else: paintBox = self.cord2RectRelative(px, py)
                         
                         if not conf.get("noAnimation", False):
-                            newOp = piece.opacity + (1-piece.opacity)*mod
+                            newOp = piece.opacity + (1-piece.opacity)*mod**(1.5)
                         else:
                             newOp = 1
                         
-                        if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.01:
+                        if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.005:
                             piece.opacity = 1
                         else: piece.opacity = newOp
             
@@ -453,7 +453,9 @@ class BoardView (gtk.DrawingArea):
         else:
             self.drawcount += 1
             start = time()
+            self.animationLock.acquire()
             self.draw(context, event.area)
+            self.animationLock.release()
             self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
             #    print "Average FPS: %0.3f - %d / %d" % \
@@ -514,7 +516,7 @@ class BoardView (gtk.DrawingArea):
         if min(alloc.width, alloc.height) > 32:
             self.drawCords (context, r)
         
-        if self.model.status != WAITING_TO_START:
+        if self.gotStarted:
             self.drawSpecial (context, r)
             self.drawEnpassant (context, r)
             self.drawArrows (context)
@@ -653,17 +655,32 @@ class BoardView (gtk.DrawingArea):
     def drawPieces(self, context, r):
         pieces = self.model.getBoardAtPly(self.shown)
         xc, yc, square, s = self.square
+        CORD_PADDING = 1.5
         
-        CORD_BORDER = 1.5
+        parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
+        fgN = parseC(self.get_style().fg[gtk.STATE_NORMAL])
+        fgS = fgN
+        fgA = parseC(self.get_style().fg[gtk.STATE_ACTIVE])
+        fgP = parseC(self.get_style().fg[gtk.STATE_PRELIGHT])
+        
+        # As default we use normal foreground for selected cords, as it looks
+        # less confusing. However for some themes, the normal foreground is so
+        # similar to the selected background, that we have to use the selected
+        # foreground.
+        bgSl = parseC(self.get_style().bg[gtk.STATE_SELECTED])
+        bgSd = parseC(self.get_style().dark[gtk.STATE_SELECTED])
+        if min((fgN[0]-bgSl[0])**2+(fgN[1]-bgSl[1])**2+(fgN[2]-bgSl[2])**2,
+               (fgN[0]-bgSd[0])**2+(fgN[1]-bgSd[1])**2+(fgN[2]-bgSd[2])**2) < 0.2:
+            fgS = parseC(self.get_style().fg[gtk.STATE_SELECTED])
         
         # Draw dying pieces (Found in self.deadlist)
         for piece, x, y in self.deadlist:
             matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
             context.transform(invmatrix)
-            context.set_source_rgba(0,0,0,piece.opacity)
+            context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
             drawPiece(  piece, context,
-                        cx+CORD_BORDER, cy+CORD_BORDER,
-                        s-CORD_BORDER*2)
+                        cx+CORD_PADDING, cy+CORD_PADDING,
+                        s-CORD_PADDING*2)
             context.transform(matrix)
         
         # Draw pieces reincarnating (With opacity < 1)
@@ -671,15 +688,17 @@ class BoardView (gtk.DrawingArea):
             for x, piece in enumerate(row):
                 if not piece or piece.opacity == 1:
                     continue
-                matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
-                context.transform(invmatrix)
-                context.set_source_rgba(0,0,0,piece.opacity)
+                if piece.x:
+                    cx, cy = self.cord2Point(piece.x, piece.y)
+                    matrix, invmatrix = matrixAround(self.matrix, cx+s/2., cy+s/2.)
+                else:
+                    matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
+                    context.transform(invmatrix)
+                context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
                 drawPiece(  piece, context,
-                            cx+CORD_BORDER, cy+CORD_BORDER,
-                            s-CORD_BORDER*2)
+                            cx+CORD_PADDING, cy+CORD_PADDING,
+                            s-CORD_PADDING*2)
                 context.transform(matrix)
-        
-        context.set_source_rgb(0,0,0)
         
         # Draw standing pieces (Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
@@ -690,10 +709,19 @@ class BoardView (gtk.DrawingArea):
                     continue
                 matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
                 context.transform(invmatrix)
+                if Cord(x,y) == self.selected:
+                    context.set_source_rgb(*fgS)
+                elif Cord(x,y) == self.active:
+                    context.set_source_rgb(*fgA)
+                elif Cord(x,y) == self.hover:
+                    context.set_source_rgb(*fgP)
+                else: context.set_source_rgb(*fgN)
                 drawPiece(  piece, context,
-                            cx+CORD_BORDER, cy+CORD_BORDER,
-                            s-CORD_BORDER*2)
+                            cx+CORD_PADDING, cy+CORD_PADDING,
+                            s-CORD_PADDING*2)
                 context.transform(matrix)
+        
+        context.set_source_rgb(*fgP)
         
         # Draw moving or dragged pieces (Those with piece.x and piece.y != None)
         for y, row in enumerate(pieces.data):
@@ -704,8 +732,8 @@ class BoardView (gtk.DrawingArea):
                 matrix, invmatrix = matrixAround(self.matrix, cx+s/2., cy+s/2.)
                 context.transform(invmatrix)
                 drawPiece(  piece, context,
-                            cx+CORD_BORDER, cy+CORD_BORDER,
-                            s-CORD_BORDER*2)
+                            cx+CORD_PADDING, cy+CORD_PADDING,
+                            s-CORD_PADDING*2)
                 context.transform(matrix)
     
     ###############################
