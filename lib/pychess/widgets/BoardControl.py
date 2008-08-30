@@ -16,7 +16,7 @@ from BoardView import join
 class BoardControl (gtk.EventBox):
     
     __gsignals__ = {
-        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
         'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int, object))
     }
     
@@ -46,7 +46,7 @@ class BoardControl (gtk.EventBox):
         self.currentState = self.lockedState
     
     def emit_move_signal (self, cord0, cord1):
-        # Help that user won't be able to move twice in cases of lag
+        color = self.view.model.boards[-1].color
         promotion = QUEEN
         board = self.view.model.getBoardAtPly(self.view.shown)
         if board[cord0].sign == PAWN and cord1.y in (0,7):
@@ -59,7 +59,7 @@ class BoardControl (gtk.EventBox):
             promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
         
         move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
-        self.emit("piece_moved", move)
+        self.emit("piece_moved", move, color)
     
     def actionActivate (self, widget, key):
         """ Put actions from a menu or similar """
