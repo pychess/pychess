@@ -87,7 +87,6 @@ class Human (Player):
     def piece_moved (self, board, move, color):
         if color != self.color:
             return
-        print self, "got move", move
         self.queue.put(move)
     
     def emit_action (self, action, param):
