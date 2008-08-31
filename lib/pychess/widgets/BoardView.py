@@ -256,9 +256,6 @@ class BoardView (gtk.DrawingArea):
             self.redraw_canvas()
             return
         
-        # TODO: This should be faster and be able to support fade at promotion,
-        # if it is rewritten to be based on <Move>s instead of boards. Perhaps
-        # it would share code with the Board .move method
         
         step = shown > self.shown and 1 or -1
         
@@ -275,6 +272,16 @@ class BoardView (gtk.DrawingArea):
                     move = self.model.getMoveAtPly(i-1)
                     moved, new, dead = board.simulateUnmove(board1, move)
                 
+                for piece, cord0 in moved:
+                    # Test if the piece already has a realcoord (has been dragged)
+                    if not piece.x:
+                        # We don't want newly restored pieces to flew from their
+                        # deadspot to their old position, as it doesn't work
+                        # vice versa  
+                        if piece.opacity == 1:
+                            piece.x = cord0.x
+                            piece.y = cord0.y
+                
                 for piece in dead:
                     deadset.add(piece)
                     # Reset the location of the piece to avoid a small visual
@@ -284,12 +291,6 @@ class BoardView (gtk.DrawingArea):
                 
                 for piece in new:
                     piece.opacity = 0
-                
-                for piece, cord0 in moved:
-                    # Test if the piece already has a realcoord (has been dragged)
-                    if not piece.x:
-                        piece.x = cord0.x
-                        piece.y = cord0.y
         
         finally:
             self.animationLock.release()
@@ -298,7 +299,6 @@ class BoardView (gtk.DrawingArea):
         for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
             for x, piece in enumerate(row):
                 if piece in deadset:
-                    print "adding piece to deadlist",(piece,x,y) 
                     self.deadlist.append((piece,x,y))
         
         self._shown = shown
@@ -375,7 +375,7 @@ class BoardView (gtk.DrawingArea):
                         else: paintBox = self.cord2RectRelative(px, py)
                         
                         if not conf.get("noAnimation", False):
-                            newOp = piece.opacity + (1-piece.opacity)*mod**(1.5)
+                            newOp = piece.opacity + (1-piece.opacity)*mod
                         else:
                             newOp = 1
                         
@@ -393,7 +393,7 @@ class BoardView (gtk.DrawingArea):
                 else:
                     newOp = 0
                 
-                if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.01:
+                if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.005:
                     del self.deadlist[i]
                 else: piece.opacity = newOp
         
