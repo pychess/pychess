@@ -84,6 +84,7 @@ class Board:
             newPiece = board1[cord1]
             moved.append( (newPiece, cord0) )
             new.append( newPiece )
+            newPiece.opacity=1
             dead.append( self[cord0] )
         
         elif move.flag == ENPASSANT:
@@ -120,6 +121,7 @@ class Board:
             newPiece = board1[cord0]
             moved.append( (newPiece, cord1) )
             new.append( newPiece )
+            newPiece.opacity=1
             dead.append( self[cord1] )
         
         elif move.flag == ENPASSANT:
