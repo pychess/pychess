@@ -285,7 +285,7 @@ class ActiveState (BoardState):
             paintBox = join(paintBox, self.view.cord2RectRelative(x, y))
             piece.x = x
             piece.y = y
-            self.view.redraw_canvas(rect(paintBox))
+            self.view.redraw_canvas(rect(paintBox), queue=True)
 
 class SelectedState (BoardState):
     def isSelectable (self, cord):
