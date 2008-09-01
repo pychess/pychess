@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
@@ -52,7 +52,7 @@
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1434">
+			<widget class="GtkImage" id="image1465">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-new</property>
 			  <property name="icon_size">1</property>
@@ -74,7 +74,7 @@
 		      <accelerator key="I" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1435">
+			<widget class="GtkImage" id="image1466">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -102,7 +102,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1436">
+			<widget class="GtkImage" id="image1467">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -148,7 +148,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1437">
+			<widget class="GtkImage" id="image1468">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save</property>
 			  <property name="icon_size">1</property>
@@ -171,7 +171,7 @@
 		      <accelerator key="S" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1438">
+			<widget class="GtkImage" id="image1469">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -286,7 +286,7 @@
 		      <accelerator key="Z" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1439">
+			<widget class="GtkImage" id="image1470">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-undo</property>
 			  <property name="icon_size">1</property>
@@ -358,7 +358,7 @@
 		      <accelerator key="R" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1440">
+			<widget class="GtkImage" id="image1471">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-refresh</property>
 			  <property name="icon_size">1</property>
@@ -372,13 +372,45 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="rearrange_panels">
+		    <widget class="GtkImageMenuItem" id="fullscreen1">
 		      <property name="visible">True</property>
-		      <property name="sensitive">False</property>
-		      <property name="label" translatable="yes">Rearrange _Panels</property>
+		      <property name="label" translatable="yes">_Fullscreen</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
-		      <signal name="activate" handler="on_rearrange_panels_activate" last_modification_time="Sun, 10 Feb 2008 23:11:34 GMT"/>
+		      <signal name="activate" handler="on_fullscreen1_activate" last_modification_time="Mon, 01 Sep 2008 17:33:50 GMT"/>
+		      <accelerator key="F11" modifiers="0" signal="activate"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image1472">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-fullscreen</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="leave_fullscreen1">
+		      <property name="label" translatable="yes">Leave _Fullscreen</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_leave_fullscreen1_activate" last_modification_time="Mon, 01 Sep 2008 17:38:55 GMT"/>
+		      <accelerator key="F11" modifiers="0" signal="activate"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image1473">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-leave-fullscreen</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -465,7 +497,7 @@
 		      <signal name="activate" handler="on_about_chess1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1441">
+			<widget class="GtkImage" id="image1474">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -486,7 +518,7 @@
 		      <signal name="activate" handler="on_how_to_play1_activate" last_modification_time="Wed, 08 Nov 2006 06:55:13 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1442">
+			<widget class="GtkImage" id="image1475">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -507,7 +539,7 @@
 		      <signal name="activate" handler="translate_this_application_activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1443">
+			<widget class="GtkImage" id="image1476">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-network</property>
 			  <property name="icon_size">1</property>
@@ -519,16 +551,16 @@
 		      </child>
 		    </widget>
 		  </child>
-		
-			<child>
+
+		  <child>
 		    <widget class="GtkImageMenuItem" id="tip_of_the_day1">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Tip of the Day</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_TipOfTheDayMenuItem_activate"/>
 
-		  <child internal-child="image">
-			<widget class="GtkImage" id="gtk-dialog-info">
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image1477">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-info</property>
 			  <property name="icon_size">1</property>
@@ -540,7 +572,7 @@
 		      </child>
 		    </widget>
 		  </child>
-		    
+
 		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="skillelinje13">
 		      <property name="visible">True</property>
@@ -1466,7 +1498,6 @@ ThijsVermeir</property>
 				      <property name="fill">False</property>
 				    </packing>
 				  </child>
-				  
 				</widget>
 			      </child>
 			    </widget>
