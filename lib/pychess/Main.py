@@ -307,8 +307,15 @@ class GladeHandlers:
         gmwidg = gamewidget.cur_gmwidg()
         gmwidg.board.view.rotation += math.pi
     
-    def on_rearrange_panels_activate (widget):
-        gamewidget.showGrips(widget.get_active())
+    def on_fullscreen1_activate (widget):
+        window["window1"].fullscreen()
+        window["fullscreen1"].hide()
+        window["leave_fullscreen1"].show()
+    
+    def on_leave_fullscreen1_activate (widget):
+        window["window1"].unfullscreen()
+        window["leave_fullscreen1"].hide()
+        window["fullscreen1"].show()
     
     def on_about1_activate (widget):
         window["aboutdialog1"].show()
