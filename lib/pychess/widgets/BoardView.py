@@ -471,7 +471,7 @@ class BoardView (gtk.DrawingArea):
     #        redraw_canvas        #
     ###############################
     
-    def redraw_canvas(self, r=None):
+    def redraw_canvas(self, r=None, queue=False):
         if self.window:
             glock.acquire()
             try:
@@ -480,8 +480,11 @@ class BoardView (gtk.DrawingArea):
                         alloc = self.get_allocation()
                         r = gtk.gdk.Rectangle(0, 0, alloc.width, alloc.height)
                     assert type(r[2]) == int
-                    self.window.invalidate_rect(r, True)
-                    self.window.process_updates(True)
+                    if queue:
+                        self.queue_draw_area(r.x, r.y, r.width, r.height)
+                    else:
+                        self.window.invalidate_rect(r, True)
+                        self.window.process_updates(True)
             finally:
                 glock.release()
     
