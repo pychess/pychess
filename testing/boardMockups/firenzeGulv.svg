@@ -27,15 +27,15 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="1160.8402"
-     inkscape:cy="1149.6903"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="95.677764"
+     inkscape:cy="727.71999"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1917"
+     inkscape:window-width="1914"
      inkscape:window-height="1116"
-     inkscape:window-x="1317"
+     inkscape:window-x="0"
      inkscape:window-y="284"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -233,14 +233,6 @@
        style="fill:#eeeeec;fill-opacity:1;stroke:none;stroke-width:3.99999976;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="M 1137.5129,889.86218 L 1150.0129,902.36218 L 1162.5129,889.86218 L 1137.5129,889.86218 z"
        id="path3235" />
-    <image
-       y="86.103348"
-       x="-800.40527"
-       id="image2416"
-       height="643.81714"
-       width="666.75842"
-       sodipodi:absref="/home/thomas/Desktop/farver1.png"
-       xlink:href="farver1.png" />
     <rect
        y="1100.0001"
        x="-852.36218"
