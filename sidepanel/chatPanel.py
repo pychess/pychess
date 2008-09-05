@@ -37,7 +37,10 @@ class Sidepanel:
             self.opplayer = gamemodel.players[0]
         else:
             log.warn("Chatpanel loaded with no local players")
-        self.player.connect("messageRecieved", self.onMessageReieved)
+            self.chatView.hide()
+        
+        if hasattr(self, "player"):
+            self.player.connect("messageRecieved", self.onMessageReieved)
         
         self.chatView.enable()
     
