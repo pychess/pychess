@@ -444,9 +444,9 @@ class GameModel (GObject, PooledThread):
             and spectactors. If they raise NotImplementedError we'll try to call
             setBoard instead """
         
-        # We really shouldn't do this at the same time we are applying a move
-        # On the other hand it shouldn't matter to undo a move while a player is
-        # thinking, as the player should be smart enough.
+        # * We really shouldn't do this at the same time we are applying a move
+        # * However it shouldn't matter to undo a move while a player is
+        #   thinking, as the player should be smart enough.
         
         self.emit("moves_undoing", moves)
         

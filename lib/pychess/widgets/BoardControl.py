@@ -82,9 +82,6 @@ class BoardControl (gtk.EventBox):
         self.view.selected = None
         self.view.active = None
         self.view.hover = None
-        if view.model.curplayer.__type__ == LOCAL and shown == view.model.ply:
-            self.setState(self.normalState)
-        else: self.setState(self.lockedState)
     
     def setLocked (self, locked):
         if locked:
@@ -229,12 +226,14 @@ class ActiveState (BoardState):
                         self.view.active = None
                         self.view.startAnimation()
                         self.parent.setState(self.parent.selectedState)
-                # Mote to it, if it isn't
+                # Move to it, if it isn't
                 else:
+                    self.parent.setState(self.parent.normalState)
+                    # It is important to emit_move_signal after setting of stage
+                    # as listeners of the function probably will lock the board
                     self.parent.emit_move_signal(self.view.selected, cord)
                     self.view.selected = None
                     self.view.active = None
-                    self.parent.setState(self.parent.normalState)
             
             # Unselect when releasing on a nonactive cord
             else:
