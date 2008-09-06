@@ -7,6 +7,7 @@ import random
 
 import gtk, pango
 
+from pychess.System.Log import log
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
@@ -84,43 +85,54 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
     return cell
 
 
-methodDict = {
-    gtk.Entry: ("get_text", "set_text", "changed"),
-    gtk.Expander: ("get_expanded", "set_expanded", "notify::expanded"),
-    gtk.CheckButton: ("get_active", "set_active", "toggled"),
-    gtk.CheckMenuItem: ("get_active", "set_active", "toggled"),
-    gtk.RadioButton: ("get_active", "set_active", "toggled"),
-    gtk.ComboBox: ("get_active", "set_active", "changed"),
-    gtk.SpinButton: ("get_value", "set_value", "value-changed"),
-    ToggleComboBox: ("_get_active", "_set_active", "changed")
-}
+methods = (
+    (gtk.Entry, ("get_text", "set_text", "changed")),
+    (gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
+    (gtk.ComboBox, ("get_active", "set_active", "changed")),
+    # ToggleComboBox should be listed prior to gtk.ToggleButton, as it is a
+    # subclass, but requires different handling
+    (ToggleComboBox, ("_get_active", "_set_active", "changed")),
+    (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
+    (gtk.Range, ("get_value", "set_value", "value-changed")),
+)
 
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
         raise AttributeError, "key '%s' isn't in widgets" % key
     
+    for class_, methods_ in methods:
+        if isinstance(widget, class_):
+            getter, setter, signal = methods_
+            break
+    else:
+        raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+    
     if get_value_:
         get_value = lambda: get_value_(widget)
     else:
-        get_value = getattr(widget, methodDict[type(widget)][0])
+        get_value = getattr(widget, getter)
     
     if set_value_:
         set_value = lambda v: set_value_(widget, v)
     else:
-        set_value = getattr(widget, methodDict[type(widget)][1])
+        set_value = getattr(widget, setter)
     
     if first_value != None:
         conf.set(key, first_value)
+    def setFromConf ():
+        try:
+            set_value(conf.getStrict(key))
+        except TypeError:
+            log.warn("Key '%s' from conf had the wrong type '%s', ignored" % 
+                     (key, type(conf.getStrict(key))))
     if conf.hasKey(key):
-        set_value(conf.getStrict(key))
+        setFromConf()
     
-    signal = methodDict[type(widget)][2]
     def callback(*args):
         if not conf.hasKey(key) or conf.getStrict(key) != get_value():
             conf.set(key, get_value())
     widget.connect(signal, callback)
-    conf.notify_add(key, lambda *args: set_value(conf.getStrict(key)))
-
+    conf.notify_add(key, lambda *args: setFromConf)
 
 
 
