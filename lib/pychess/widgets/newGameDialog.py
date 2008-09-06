@@ -35,6 +35,17 @@ image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 playerItems = [(image, _("Human Being"), "stock_people")]
 image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 
+skillToIcon = {
+    1: it.load_icon("weather-clear", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    2: it.load_icon("weather-few-clouds", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    3: it.load_icon("weather-few-clouds", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    4: it.load_icon("weather-overcast", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    5: it.load_icon("weather-overcast", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    6: it.load_icon("weather-showers", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    7: it.load_icon("weather-showers", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    8: it.load_icon("weather-storm", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+}
+
 for engine in discoverer.getEngines().values():
     playerItems += [(image, discoverer.getName(engine), "stock_notebook")]
 
@@ -74,42 +85,51 @@ class _GameInitializationMode:
     @classmethod
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
-
-        combo = cls.widgets["variant"]
-        uistuff.createCombo(combo, [i[:2] for i in variantItems])
         
-        for combo in (cls.widgets["whiteDifficulty"], cls.widgets["blackDifficulty"]):
-            uistuff.createCombo(combo, [i[:2] for i in difItems])
         
-        for combo in (cls.widgets["whitePlayerCombobox"], cls.widgets["blackPlayerCombobox"]):
-            uistuff.createCombo(combo, [i[:2] for i in playerItems])
+        uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
+                            (i[:2] for i in playerItems))
+        uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
+                            (i[:2] for i in playerItems))
+        
+        
+        def on_playerCombobox_changed (widget, skillHbox):
+            skillHbox.props.visible = widget.get_active() > 0
+        cls.widgets["whitePlayerCombobox"].connect(
+                "changed", on_playerCombobox_changed, cls.widgets["skillHbox1"])
+        cls.widgets["blackPlayerCombobox"].connect(
+                "changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
+        cls.widgets["whitePlayerCombobox"].set_active(0)
+        cls.widgets["blackPlayerCombobox"].set_active(1)
+        #on_playerCombobox_changed (cls.widgets["blackPlayerCombobox"],
+        #                           cls.widgets["skillHbox2"])
+        
+        
+        def on_skill_changed (scale, image):
+            image.set_from_pixbuf(skillToIcon[int(scale.get_value())])
+        cls.widgets["skillSlider1"].connect("value-changed", on_skill_changed,
+                                            cls.widgets["skillIcon1"])
+        cls.widgets["skillSlider2"].connect("value-changed", on_skill_changed,
+                                            cls.widgets["skillIcon2"])
+        cls.widgets["skillSlider1"].set_value(3)
+        cls.widgets["skillSlider2"].set_value(3)
+        
         
         def on_useTimeCB_clicked (widget):
             cls.widgets["table6"].set_sensitive(widget.get_active())
         cls.widgets["useTimeCB"].connect("clicked", on_useTimeCB_clicked)
         
-        def on_playerCombobox_changed (widget, colorstring):
-            if widget.get_active() > 0:
-                cls.widgets["%sDifficulty" % colorstring].set_sensitive(True)
-                cls.widgets["%sDifficulty" % colorstring].set_active(1)
-            else:
-                cls.widgets["%sDifficulty" % colorstring].set_sensitive(False)
-                cls.widgets["%sDifficulty" % colorstring].set_active(-1)
         
-        cls.widgets["whitePlayerCombobox"].connect(
-                "changed", on_playerCombobox_changed, "white")
-        cls.widgets["blackPlayerCombobox"].connect(
-                "changed", on_playerCombobox_changed, "black")
-
+        uistuff.createCombo(cls.widgets["variant"],
+                            (i[:2] for i in variantItems))
         cls.widgets["variant"].set_active(0)
         
-        cls.widgets["whitePlayerCombobox"].set_active(0)
-        cls.widgets["blackPlayerCombobox"].set_active(1)
-        on_playerCombobox_changed (cls.widgets["blackPlayerCombobox"], "black")
         
-        for key in ("variant", "whitePlayerCombobox", "blackPlayerCombobox", "whiteDifficulty",
-                "blackDifficulty", "spinbuttonH", "spinbuttonM", "spinbuttonS",
-                "spinbuttonG", "useTimeCB"):
+        for key in ("whitePlayerCombobox", "blackPlayerCombobox",
+                    "skillSlider1", "skillSlider2", 
+                    "useTimeCB", "spinbuttonH", "spinbuttonM",
+                    "spinbuttonS", "spinbuttonG",
+                    "variant", "enableUndo"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -140,9 +160,9 @@ class _GameInitializationMode:
             
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
-            diffi0 = cls.widgets["whiteDifficulty"].get_active()
+            diffi0 = cls.widgets["skillSlider1"].get_value()
             player1 = cls.widgets["blackPlayerCombobox"].get_active()
-            diffi1 = cls.widgets["blackDifficulty"].get_active()
+            diffi1 = cls.widgets["skillSlider2"].get_value()
             
             # Prepare players for ionest
             playertups = []
