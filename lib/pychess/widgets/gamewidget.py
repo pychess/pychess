@@ -5,7 +5,7 @@ import imp, os, atexit
 import traceback
 import cStringIO
 
-import gtk, gobject, gdl
+import gtk, gobject
 from gtk import ICON_LOOKUP_USE_BUILTIN
 
 from pychess.System.Log import log

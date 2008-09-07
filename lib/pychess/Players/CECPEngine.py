@@ -60,6 +60,7 @@ class CECPEngine (ProtocolEngine):
         self.gonext = False
         self.sd = True
         self.st = True
+        self.timeHandicap = 1
         
         self.lastping = 0
         self.lastpong = 0
@@ -378,7 +379,7 @@ class CECPEngine (ProtocolEngine):
     
     def updateTime (self, secs, opsecs):
         if self.ready:
-            print >> self.engine, "time", int(secs)
+            print >> self.engine, "time", int(secs*self.timeHandicap)
             print >> self.engine, "otim", int(opsecs)
         else:
             self.runWhenReady(self.updateTime, secs, opsecs)
@@ -544,17 +545,27 @@ class CECPEngine (ProtocolEngine):
         else:
             self.runWhenReady(self.newGame)
     
+    #    Strength    Depth    Ponder    Time handicap
+    #Nem 1    1    o    o
+    #    2    2    o    o
+    #    3    3    o    o
+    #Mel 4    5    o    10,00%
+    #    5    7    o    20,00%
+    #    6    9    o    40,00%
+    #Svr 7    o    x    80,00%
+    #    8    o    x    o
+    
     def setStrength (self, strength):
         if self.ready:
-            if strength == 0:
-                self.setPonder (False)
-                self.setDepth (1)
-            elif strength == 1:
-                self.setPonder (False)
-                self.setDepth (4)
-            elif strength == 2:
-                self.setPonder (True)
-                self.setDepth (9)
+            if 4 <= strength <= 7:
+                self.setTimeHandicap(0.1 * 2**(strength-4))
+            
+            if strength <= 3:
+                self.setDepth(strength)
+            elif strength <= 6:
+                self.setDepth(5+(strength-4)*2)
+            
+            self.setPonder(strength >= 7)
         else:
             self.runWhenReady(self.setStrength, strength)
     
@@ -566,6 +577,9 @@ class CECPEngine (ProtocolEngine):
                 print >> self.engine, "depth %d" % depth
         else:
             self.runWhenReady(self.setDepth, ponder)
+    
+    def setTimeHandicap (self, timeHandicap):
+        self.timeHandicap = timeHandicap
     
     def setPonder (self, ponder):
         if self.ready:
@@ -579,6 +593,8 @@ class CECPEngine (ProtocolEngine):
     
     def setTime (self, secs, gain):
         if self.ready:
+            secs = self.timeHandicap * secs
+            gain = self.timeHandicap * gain
             minutes = int(secs / 60)
             secs = int(secs % 60)
             s = str(minutes)
