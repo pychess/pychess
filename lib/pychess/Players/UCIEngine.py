@@ -126,15 +126,11 @@ class UCIEngine (ProtocolEngine):
         if self.mode == NORMAL:
             print >> self.engine, "position fen", self.board.asFen()
             
-            if self.getOption('UCI_LimitStrength') or self.strength == EXPERT:
+            if self.strength <= 3:
+                print >> self.engine, "go depth %d" % self.strength
+            else:
                 print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
-                                         "winc", self.incr, "binc", self.incr
-            
-            elif self.strength == INTERMEDIATE:
-                print >> self.engine, "go depth 4"
-                
-            elif self.strength == EASY:
-                print >> self.engine, "go depth 1"
+                                      "winc", self.incr, "binc", self.incr
         
         else:
             print >> self.engine, "stop"
@@ -259,10 +255,10 @@ class UCIEngine (ProtocolEngine):
     
     def updateTime (self, secs, opsecs):
         if self.color == WHITE:
-            self.wtime = int(secs*1000)
+            self.wtime = int(secs*1000*self.timeHandicap)
             self.btime = int(opsecs*1000)
         else:
-            self.btime = int(secs*1000)
+            self.btime = int(secs*1000*self.timeHandicap)
             self.wtime = int(opsecs*1000)
     
     def newGame (self):
@@ -329,22 +325,25 @@ class UCIEngine (ProtocolEngine):
             
             if 'UCI_LimitStrength' in self.options and 'UCI_Elo' in self.options:
                 options['UCI_LimitStrength'] = True
-                if strength == EASY:
-                    options['UCI_Elo'] = 1000
-                elif strength == INTERMEDIATE:
-                    options['UCI_Elo'] = 1500
+                if strength <= 6:
+                    options['UCI_Elo'] = 300 * strength + 200
+            else:
+                self.setTimeHandicap(0.01 * 10**(strength/4.))
             
             if 'Ponder' in self.options:
-                options['Ponder'] = strength==EXPERT
+                options['Ponder'] = strength >= 7
             
             self.setOptions(options)
         else:
             self.runWhenReady(self.setStrength, strength)
     
+    def setTimeHandicap (self, timeHandicap):
+        self.timeHandicap = timeHandicap
+    
     def setTime (self, secs, gain):
-        self.wtime = max(secs*1000, 1)
-        self.btime = max(secs*1000, 1)
-        self.incr = max(gain*1000, 1)
+        self.wtime = int(max(secs*1000*self.timeHandicap, 1))
+        self.btime = int(max(secs*1000*self.timeHandicap, 1))
+        self.incr = int(gain*1000*self.timeHandicap)
     
     def end (self, status, reason):
         if self.connected:
