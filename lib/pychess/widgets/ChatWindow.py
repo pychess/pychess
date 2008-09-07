@@ -2,7 +2,6 @@ import time
 
 import gtk
 import gobject
-import gdl
 import pango
 
 from pychess.System import uistuff

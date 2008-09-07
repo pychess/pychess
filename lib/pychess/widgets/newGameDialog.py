@@ -6,9 +6,13 @@ import gtk
 from cairo import ImageSurface
 
 try:
-    from gtksourceview import *
+    from gtksourceview import SourceBuffer
+    from gtksourceview import SourceView
+    from gtksourceview import SourceLanguagesManager
 except ImportError:
-    from gtksourceview2 import *
+    from gtksourceview2 import Buffer as SourceBuffer
+    from gtksourceview2 import View as SourceView
+    from gtksourceview2 import LanguageManager as SourceLanguagesManager
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
@@ -160,9 +164,9 @@ class _GameInitializationMode:
             
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
-            diffi0 = cls.widgets["skillSlider1"].get_value()
+            diffi0 = int(cls.widgets["skillSlider1"].get_value())
             player1 = cls.widgets["blackPlayerCombobox"].get_active()
-            diffi1 = cls.widgets["skillSlider2"].get_value()
+            diffi1 = int(cls.widgets["skillSlider2"].get_value())
             
             # Prepare players for ionest
             playertups = []
