@@ -149,14 +149,17 @@ class PredictionsTelnet:
         temppreds = copy(predictions)
         
         line = self.telnet.readline()
+        line = line.lstrip()
         
-        if self.getStripLines():
-            line = line.strip()
-        if self.getLinePrefix():
+        if self.getLinePrefix() and self.getLinePrefix() in line:
             while line.startswith(self.getLinePrefix()):
                 line = line[len(self.getLinePrefix()):]
                 if self.getStripLines():
-                    line = line.strip()
+                    line = line.lstrip()
+        
+        origLine = line
+        if self.getStripLines():
+            line = line.strip()
         
         if self.__state:
             answer = self.__state.handle(line)
@@ -173,7 +176,7 @@ class PredictionsTelnet:
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                     break
             else:
-                log.debug(line+"\n", "nonmatched")
+                log.debug(origLine, "nonmatched")
     
     def write(self, str):
         return self.telnet.write(str)
