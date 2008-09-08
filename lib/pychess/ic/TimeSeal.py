@@ -148,7 +148,7 @@ class TimeSeal:
         while True:
             i = self.buf.find("\n")
             if i >= 0:
-                line = self.buf[:i]
+                line = self.buf[:i+1]
                 self.buf = self.buf[i+1:]
                 return line
             self.cook_some()
@@ -159,6 +159,7 @@ class TimeSeal:
             raise SessionException("No more data")
         
         recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
+        recv = recv.replace("\r","")
         log.debug(recv, "fics")
         
         for i in range(g_count):

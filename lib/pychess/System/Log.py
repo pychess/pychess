@@ -32,7 +32,7 @@ class Log (gobject.GObject):
     
     __gsignals__ = {
         "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
-    }                                              # list of (str, str, int)
+    }                                              # list of (str, float, str, int)
     
     def __init__ (self, logpath):
         gobject.GObject.__init__(self)
@@ -57,6 +57,11 @@ class Log (gobject.GObject):
     def _log (self, task, message, type):
         if not message: return
         
+        if self.messages != None:
+            self.messages.append((task, time.time(), message, type))
+        self.publisher.put((task, time.time(), message, type))
+        
+        
         if self.printTime:
             message = self._format(task, message, type)
         self.printTime = message[-1] == ("\n")
@@ -68,10 +73,6 @@ class Log (gobject.GObject):
             if not type == ERROR:
                 self.error("Unable to write '%s' to log file because of error: %s" % \
                         (message, ", ".join(str(a) for a in e.args)))
-        
-        if self.messages != None:
-            self.messages.append((task, message, type))
-        self.publisher.put((task, message, type))
         
         if type == ERROR and task != "stdout":
             print message
