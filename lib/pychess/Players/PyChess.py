@@ -353,7 +353,7 @@ while True:
                 (moves, mytime, increment)
     
     elif lines[0] == "time":
-        mytime = int(lines[1])
+        mytime = int(lines[1])/100.
     
     #elif lines[0] == "otim":
     #   optime = int(lines[1])
