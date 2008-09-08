@@ -51,6 +51,9 @@ class TimeSeal:
         gobject.io_add_watch(self.sock.fileno(), gobject.IO_IN, lambda ch, cond: queue.put(None) or False)
         queue.get()
     
+    def close (self):
+        self.sock.close()
+    
     def on_ready(self):
         self.sock.send(self.encode(self.get_init_string()))
         self.sock.setblocking(True)
@@ -179,8 +182,6 @@ class TimeSeal:
     
     def __repr__ (self):
         return "fics"
-    
-
 
             
 

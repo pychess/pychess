@@ -125,6 +125,9 @@ class VerboseTelnet:
     def write(self, str):
         log.log(str, repr(self.telnet))
         self.telnet.write(str)
+    
+    def close (self):
+        self.telnet.close()
 
 class PredictionsTelnet:
     def __init__ (self, telnet):
@@ -180,3 +183,6 @@ class PredictionsTelnet:
     
     def write(self, str):
         return self.telnet.write(str)
+    
+    def close (self):
+        self.telnet.close()
