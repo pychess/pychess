@@ -379,8 +379,8 @@ class CECPEngine (ProtocolEngine):
     
     def updateTime (self, secs, opsecs):
         if self.ready:
-            print >> self.engine, "time", int(secs*self.timeHandicap)
-            print >> self.engine, "otim", int(opsecs)
+            print >> self.engine, "time", int(secs*100*self.timeHandicap)
+            print >> self.engine, "otim", int(opsecs*100)
         else:
             self.runWhenReady(self.updateTime, secs, opsecs)
     
