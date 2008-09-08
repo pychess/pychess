@@ -5,6 +5,7 @@ import colorsys
 from math import log, ceil
 import random
 
+import gobject
 import gtk, pango
 
 from pychess.System.Log import log
@@ -133,6 +134,59 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
             conf.set(key, get_value())
     widget.connect(signal, callback)
     conf.notify_add(key, lambda *args: setFromConf)
+
+
+
+POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN = range(3)
+def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE):
+    key = key + "window"
+    
+    def savePosition (window, *event):
+        width = window.get_allocation().width
+        height = window.get_allocation().height
+        x, y = window.get_position()
+        
+        if width <= 0:
+            log.error("Setting width = '%d' for %s to conf" % (width,key))
+        if height <= 0:
+            log.error("Setting height = '%d' for %s to conf" % (height,key))
+        
+        conf.set(key+"_width",  width)
+        conf.set(key+"_height", height)
+        conf.set(key+"_x", x)
+        conf.set(key+"_y", y)
+    window.connect("delete-event", savePosition)
+    
+    def loadPosition (window):
+        if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
+            window.set_size_request(conf.getStrict(key+"_width"),
+                                    conf.getStrict(key+"_height"))
+        elif defaultSize:
+            window.set_size_request(*defaultSize)
+        
+        if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
+            window.move(conf.getStrict(key+"_x"),
+                        conf.getStrict(key+"_y"))
+        elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
+            x = int(gtk.gdk.screen_width()/2-width/2)
+            if defaultPosition == POSITION_CENTER:
+                y = int(gtk.gdk.screen_height()/2-height/2)
+            else:
+                # Place the window on the upper golden ratio line
+                y = int(gtk.gdk.screen_height()/2.618-height/2)
+            window.move(x, y)
+    loadPosition(window)
+    
+    # In rare cases, gtk throws some gtk_size_allocation error, which is
+    # probably a race condition. To avoid the window forgets its size in
+    # these cases, we add this extra hook
+    def callback (window, *args):
+        # Disconnect ourselves to get run_once effect
+        window.disconnect(handle_id)
+        loadPosition(window)
+        gobject.idle_add(window.set_size_request, -1, -1)
+    handle_id = window.connect("size-allocate", callback)
+
 
 
 

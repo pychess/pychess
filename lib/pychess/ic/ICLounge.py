@@ -32,6 +32,7 @@ class ICLounge:
     def __init__ (self, c):
         
         self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
+        uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
         
         glock.acquire()
         try:
