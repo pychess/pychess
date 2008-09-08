@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import os.path
+import time
 
 import gtk, pango, gobject
 
@@ -16,10 +17,12 @@ class InformationWindow:
         cls.tagToIter = {}
         cls.tagToPage = {}
         cls.pathToPage = {}
+        cls.tagToTime = {}
         
         cls.window = gtk.Window()
         cls.window.set_title("PyChess Information Window")
         cls.window.set_border_width(12)
+        uistuff.keepWindowSize("logdialog", cls.window, (640,480))
         mainHBox = gtk.HBox()
         mainHBox.set_spacing(6)
         cls.window.add(mainHBox)
@@ -52,8 +55,17 @@ class InformationWindow:
         cls.window.hide()
     
     @classmethod
-    def newMessage (cls, tag, message, importance):
+    def newMessage (cls, tag, timestamp, message, importance):
         textview = cls._getPageFromTag(tag)["textview"]
+        
+        if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
+            t = time.strftime("%T",time.localtime(timestamp))
+            textview.get_buffer().insert_with_tags_by_name(
+                textview.get_buffer().get_end_iter(),
+                "\n%s\n------------------------------------------------------------\n"%t,
+                str(LOG))
+            cls.tagToTime[tag] = timestamp
+        
         textview.get_buffer().insert_with_tags_by_name(
             textview.get_buffer().get_end_iter(), message, str(importance))
     
@@ -73,7 +85,9 @@ class InformationWindow:
         alignment.set_padding(6, 0, 12, 0)
         frame.add(alignment)
         sw = gtk.ScrolledWindow()
+        sw.set_shadow_type(gtk.SHADOW_IN)
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
+        uistuff.keepDown(sw)
         alignment.add(sw)
         textview = gtk.TextView()
         tb = textview.get_buffer()
@@ -116,8 +130,8 @@ class InformationWindow:
 InformationWindow._init()
 
 def addMessages (messages):
-    for task, message, type in messages:
-        InformationWindow.newMessage (task, message, type)
+    for task, timestamp, message, type in messages:
+        InformationWindow.newMessage (task, timestamp, message, type)
 
 glock.acquire()
 try:
