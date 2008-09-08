@@ -525,7 +525,8 @@ class ChatWindow:
         self.window = None
         self.panels = []
         widgets["show_chat_button"].connect("clicked", self.showChat)
-        glock_connect(connection, "disconnected", lambda c: self.window.hide())
+        glock_connect(connection, "disconnected",
+                      lambda c: self.window and self.window.hide())
     
     def showChat (self, *widget):
         if not self.window:

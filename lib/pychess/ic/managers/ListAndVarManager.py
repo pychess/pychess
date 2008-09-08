@@ -58,7 +58,7 @@ class ListAndVarManager:
         
         # Restore variables
         for key, usedvalue in self.variables.iteritems():
-            if usedvalue != self.variablesBackup[key]:
+            if key in self.variablesBackup and usedvalue != self.variablesBackup[key]:
                 self.setVariable(key, usedvalue)
         #for key, usedvalue in self.ivariables.iteritems():
         #    if usedvalue != self.ivariablesBackup[key]:
@@ -116,11 +116,11 @@ class ListAndVarManager:
                 k,v = kv.split("=")
                 if isIvars:
                     self.ivariables[k] = v
-                    if not k in self.ivariablesBackup:
+                    if k not in self.ivariablesBackup:
                         self.ivariablesBackup[k] = v
                 else:
                     self.variables[k] = v
-                    if not k in self.variablesBackup:
+                    if k not in self.variablesBackup:
                          self.variablesBackup[k] = v
         # Unlock if people are waiting of the backup and we've got the normal
         # variable backup set. The interface variables automatically reset
@@ -159,9 +159,9 @@ class ListAndVarManager:
     def setVariable (self, name, value):
         self.varLock.acquire()
         self.varLock.release()
-        if name in self.variables:
-            print >> self.connection.client, "set %s %s" % (name, value)
-            self.variables[name] = value
-        else:
+        if name in self.ivariables:
             print >> self.connection.client, "iset %s %s" % (name, value)
             self.ivariables[name] = value
+        else:
+            print >> self.connection.client, "set %s %s" % (name, value)
+            self.variables[name] = value
