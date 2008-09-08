@@ -5,8 +5,10 @@ import atexit
 import signal
 
 import pango, gobject, gtk
+from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 from pychess.System import conf, gstreamer, glock, uistuff
+from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.System.GtkWorker import GtkWorker
@@ -386,41 +388,12 @@ class GladeHandlers:
 dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
              ('application/da-chess-pgn', 0, 0xbadbeef),
              ('text/plain', 0, 0xbadbeef) ]
-from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
+
 
 class PyChess:
     def __init__(self, args):
         self.initGlade()
         self.handleArgs(args)
-    
-    def mainWindowSize (self, window):
-        def savePosition (window, *event):
-            conf.set("window_width",  window.get_allocation().width)
-            conf.set("window_height", window.get_allocation().height)
-            conf.set("window_x", window.get_position()[0])
-            conf.set("window_y", window.get_position()[1])
-        window.connect("delete-event", savePosition)
-        
-        def loadPosition (window):
-            width = conf.get("window_width", 575)
-            height = conf.get("window_height", 479)
-            assert width > 0
-            assert height > 0
-            window.set_size_request(width, height)
-            x = conf.get("window_x", gtk.gdk.screen_width()/2-width/2)
-            # As default, put center on upper golden ratio line
-            y = conf.get("window_y", int(gtk.gdk.screen_height()/2.618)-height/2)
-            window.move(x, y)
-        loadPosition(window)
-        
-        # In rare cases, gtk throws some gtk_size_allocation error, which is
-        # probably a race condition. To avoid the window forgets its size in
-        # these cases, we add this extra hook
-        def callback (window, *args):
-            window.disconnect(handle_id)
-            loadPosition(window)
-            gobject.idle_add(window.set_size_request, -1, -1)
-        handle_id = window.connect("size-allocate", callback)
     
     def initGlade(self):
         global window
@@ -430,7 +403,7 @@ class PyChess:
         self.widgets = gtk.glade.XML(addDataPrefix("glade/PyChess.glade"))
         
         self.widgets.signal_autoconnect(GladeHandlers.__dict__)
-        self.mainWindowSize(self["window1"])
+        uistuff.keepWindowSize("main", self["window1"], (575,479), POSITION_GOLDEN)
         self["window1"].show()
         self["Background"].show_all()
         
