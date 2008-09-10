@@ -68,6 +68,7 @@ class InformationWindow:
                 str(LOG))
             cls.tagToTime[tag] = timestamp
         
+        message = unicode(message, "utf-8", 'replace')
         textview.get_buffer().insert_with_tags_by_name(
             textview.get_buffer().get_end_iter(), message, str(importance))
     
