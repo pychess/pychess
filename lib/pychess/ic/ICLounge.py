@@ -83,13 +83,14 @@ class VariousSection(Section):
         widgets["fics_lounge"].connect("delete-event", on_window_delete)
         
         def on_logoffButton_clicked (button):
+            widgets["fics_lounge"].emit("delete-event", None)
             connection.disconnect()
-            widgets["fics_lounge"].hide()
         widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
+        
         sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
-        #sizeGroup.add_widget(widgets["show_chat_label"])
-        #sizeGroup.add_widget(widgets["show_console_label"])
-        #sizeGroup.add_widget(widgets["log_off_label"])
+        sizeGroup.add_widget(widgets["show_chat_label"])
+        sizeGroup.add_widget(widgets["show_console_label"])
+        sizeGroup.add_widget(widgets["log_off_label"])
         
         uistuff.makeYellow(widgets["cautionBox"])
         uistuff.makeYellow(widgets["cautionHeader"])

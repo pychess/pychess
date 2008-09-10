@@ -352,7 +352,7 @@ class GladeHandlers:
         webbrowser.open("http://code.google.com/p/pychess/wiki/RosettaTranslates")
         
     def on_TipOfTheDayMenuItem_activate (widget):
-        tipOfTheDay.show()
+        tipOfTheDay.TipOfTheDay.show()
     
     #          Other          #
     
@@ -417,8 +417,8 @@ class PyChess:
         window["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         window["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         
-        #TODO: disabled by default
-        #TipOfTheDay.TipOfTheDay()
+        if conf.get("show_tip_at_startup", False):
+            tipOfTheDay.TipOfTheDay.show()
     
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
