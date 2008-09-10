@@ -40,6 +40,8 @@ class InformationWindow:
         cls.pages.set_show_border(False)
         mainHBox.pack_start(cls.pages)
         
+        mainHBox.show_all()
+        
         def selectionChanged (selection):
             treestore, iter = selection.get_selected()
             child = cls.pathToPage[treestore.get_path(iter)]["child"]
@@ -48,7 +50,7 @@ class InformationWindow:
     
     @classmethod
     def show (cls):
-        cls.window.show_all()
+        cls.window.show()
     
     @classmethod
     def hide (cls):
@@ -76,14 +78,11 @@ class InformationWindow:
         cls.tagToIter[tag] = iter
         
         widgets = uistuff.GladeWidgets("findbar.glade")
-        
         frame = widgets["frame"]
         frame.unparent()
         frame.show_all()
-        cls.pages.append_page(frame)
         
         uistuff.keepDown(widgets["scrolledwindow"])
-        
         textview = widgets["textview"]
         tb = textview.get_buffer()
         tb.create_tag(str(DEBUG), family='Monospace')
@@ -91,6 +90,21 @@ class InformationWindow:
         tb.create_tag(str(WARNING), family='Monospace', foreground="red")
         tb.create_tag(str(ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
         
+        
+        findbar = widgets["findbar"]
+        findbar.hide()
+        # Make searchEntry share height with the buttons
+        widgets["prevButton"].connect("size-allocate", lambda w, alloc:
+                widgets["searchEntry"].set_size_request(-1, alloc.height))
+        
+        # Connect showing/hiding of the findbar
+        cls.window.connect("key-press-event", cls.onTextviewKeypress, widgets)
+        widgets["findbar"].connect("key-press-event", cls.onFindbarKeypress)
+        
+        
+        
+        
+        cls.pages.append_page(frame)
         page = {"child": frame, "textview":textview}
         cls.tagToPage[tag] = page
         cls.pathToPage[cls.treeview.get_model().get_path(iter)] = page
@@ -115,7 +129,21 @@ class InformationWindow:
         
         cls._createPage(None, tag[:1])
         return cls._getPageFromTag(tag)
-
+    
+    @classmethod
+    def onTextviewKeypress (cls, textview, event, widgets):
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if event.keyval in (ord("f"), ord("F")):
+                widgets["findbar"].props.visible = not widgets["findbar"].props.visible
+                if widgets["findbar"].props.visible:
+                    widgets["searchEntry"].grab_focus()
+    
+    @classmethod
+    def onFindbarKeypress (cls, findbar, event):
+        if gtk.gdk.keyval_name(event.keyval) == "Escape":
+            findbar.props.visible = False
+    
+    
 uistuff.cacheGladefile("findbar.glade")
 
 ################################################################################
