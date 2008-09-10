@@ -260,12 +260,16 @@ def go (queue):
                                 break
                         else:
                             # Endtime occured in depth
+                            print "Endtime occoured while I was searching depth %d" % depth
                             break
                         prevtime = time()-starttime - prevtime
                     else:
+                        print "I don't have enough time to go into depth %d" % depth
                         # Not enough time for depth
                         break
-
+                else:
+                    print "I searched through depths [1, %d]" % (sd+1)
+                
                 mytime -= time() - starttime
                 mytime += increment
             
