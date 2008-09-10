@@ -6,7 +6,7 @@ from pychess.Utils import const
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
-ratings = "([\d\+\-]{1,4})"
+ratings = "([\d\+\- ]{1,4})"
 names = "(\w+)(?:\((\w+)\))?"
 mf = "(?:([mf]{1,2})\s?)?"
 ratingSplit = re.compile("P|E| ")
@@ -63,9 +63,10 @@ class GameListManager (GObject):
                 "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E])+)")
         self.connection.expect_line (self.on_player_remove,
                 "%s is no longer available for matches." % names)
-        self.connection.expect_line (self.on_player_add,
-                "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)\s+is now available for matches." %
-                    (names, ratings, ratings, ratings, ratings, ratings))
+        self.connection.expect_fromto (self.on_player_add,
+                "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
+                (names, ratings, ratings, ratings, ratings, ratings),
+                "is now available for matches.")
         
         self.connection.expect_line (self.on_adjourn_add,
                 "\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*)")
@@ -186,10 +187,11 @@ class GameListManager (GObject):
         if name in self.players:
             self.players.remove(name)
     
-    def on_player_add (self, match):
-        name, title, blitz, std, wild, light, bug = match.groups()
-        mean = sum(int(r) for r in (blitz, std, wild, light, bug) if int(r))/5.
-        self.emit("addPlayer", {"name":name, "title":int(title,16), "rating":mean})
+    def on_player_add (self, matches):
+        name, title, blitz, std, wild, light, bug = matches[0].groups()
+        ratings = (blitz, std, wild, light, bug)
+        mean = sum(int(r) for r in ratings if r.strip().isdigit())/5.
+        self.emit("addPlayer", {"name":name, "title":0, "rating":mean})
         self.players.add(name)
     
     ###
