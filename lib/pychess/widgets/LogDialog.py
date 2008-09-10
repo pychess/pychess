@@ -75,54 +75,22 @@ class InformationWindow:
         iter = cls.treeview.get_model().append(parrentIter, (name,))
         cls.tagToIter[tag] = iter
         
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_NONE)
-        cls.pages.append_page(frame)
-        label = gtk.Label()
-        label.set_markup("<b>Communication</b>")
-        frame.set_label_widget(label)
-        alignment = gtk.Alignment(1,1,1,1)
-        alignment.set_padding(6, 0, 12, 0)
-        frame.add(alignment)
-        vbox = gtk.VBox()
-        alignment.add(vbox)
+        widgets = uistuff.GladeWidgets("findbar.glade")
         
-        sw = gtk.ScrolledWindow()
-        sw.set_shadow_type(gtk.SHADOW_IN)
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-        uistuff.keepDown(sw)
-        vbox.pack_start(sw)
-        textview = gtk.TextView()
+        frame = widgets["frame"]
+        frame.unparent()
+        frame.show_all()
+        cls.pages.append_page(frame)
+        
+        uistuff.keepDown(widgets["scrolledwindow"])
+        
+        textview = widgets["textview"]
         tb = textview.get_buffer()
         tb.create_tag(str(DEBUG), family='Monospace')
         tb.create_tag(str(LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
         tb.create_tag(str(WARNING), family='Monospace', foreground="red")
         tb.create_tag(str(ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
-        sw.add(textview)
         
-        findbar = gtk.Table(columns=5)
-        vbox.pack_start(findbar, expand=False)
-        closeButton = gtk.Button()
-        closeButton.set_relief(gtk.RELIEF_NONE)
-        closeButton.set_border_width(2)
-        findbar.attach(closeButton, 0,1,0,1, xoptions=gtk.FILL)
-        image = gtk.Image()
-        image.set_from_stock("gtk-close", 1)
-        closeButton.add(image)
-        label = gtk.Label(_("Search:")+" ")
-        findbar.attach(label, 1,2,0,1, xoptions=gtk.FILL)
-        searchEntry = gtk.Entry()
-        findbar.attach(searchEntry, 2,3,0,1)
-        backButton = gtk.Button(stock="gtk-media-previous")
-        backButton.set_relief(gtk.RELIEF_NONE)
-        backButton.set_size_request(-1,30)
-        findbar.attach(backButton, 3,4,0,1, xoptions=gtk.FILL, yoptions=0)
-        nextButton = gtk.Button(stock="gtk-media-next")
-        nextButton.set_relief(gtk.RELIEF_NONE)
-        nextButton.set_size_request(-1,30)
-        findbar.attach(nextButton, 4,5,0,1, xoptions=gtk.FILL, yoptions=0)
-        
-        frame.show_all()
         page = {"child": frame, "textview":textview}
         cls.tagToPage[tag] = page
         cls.pathToPage[cls.treeview.get_model().get_path(iter)] = page
@@ -147,6 +115,8 @@ class InformationWindow:
         
         cls._createPage(None, tag[:1])
         return cls._getPageFromTag(tag)
+
+uistuff.cacheGladefile("findbar.glade")
 
 ################################################################################
 # Add early messages and connect for new                                       #
@@ -181,7 +151,7 @@ InformationWindow.window.connect("delete-event", _destroy_notify)
 
 def show ():
     InformationWindow.show()
-    
+
 def hide ():
     InformationWindow.hide()
 
