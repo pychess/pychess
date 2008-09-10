@@ -4,11 +4,13 @@ import webbrowser
 import colorsys
 from math import log, ceil
 import random
+import Queue
 
 import gobject
 import gtk, pango
 
 from pychess.System.Log import log
+from pychess.System.ThreadPool import pool
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
@@ -142,6 +144,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     key = key + "window"
     
     def savePosition (window, *event):
+        
         width = window.get_allocation().width
         height = window.get_allocation().height
         x, y = window.get_position()
@@ -155,18 +158,21 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
         conf.set(key+"_height", height)
         conf.set(key+"_x", x)
         conf.set(key+"_y", y)
-    window.connect("delete-event", savePosition)
+    window.connect("delete-event", savePosition, "delete-event")
     
     def loadPosition (window):
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
-            window.set_size_request(conf.getStrict(key+"_width"),
-                                    conf.getStrict(key+"_height"))
+            width = conf.getStrict(key+"_width")
+            height = conf.getStrict(key+"_height")
+            window.set_size_request(width, height)
         elif defaultSize:
-            window.set_size_request(*defaultSize)
+            width, height = defaultSize
+            window.set_size_request(width, height)
         
         if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
             window.move(conf.getStrict(key+"_x"),
                         conf.getStrict(key+"_y"))
+        
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
             x = int(gtk.gdk.screen_width()/2-width/2)
             if defaultPosition == POSITION_CENTER:
@@ -307,12 +313,31 @@ def initLabelLinks (text, url):
     return eventbox
 
 
+cachedGlades = {}
+def cacheGladefile(filename):
+    """ gtk.glade automatically caches the file, so we only need to use this
+        file once """
+    if filename not in cachedGlades:
+        cachedGlades[filename] = Queue.Queue()
+        def readit ():
+            widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+            cachedGlades[filename].put(widgets)
+        pool.start(readit)
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
-        self.widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+        self.widgets = None
+        try:
+            if filename in cachedGlades:
+                self.widgets = cachedGlades[filename].get(block=False)
+        except Queue.Empty:
+            pass
+        
+        if not self.widgets:
+            self.widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+    
     def __getitem__(self, key):
         return self.widgets.get_widget(key)
 
