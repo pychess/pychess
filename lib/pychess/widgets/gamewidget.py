@@ -301,8 +301,7 @@ def _ensureReadForGameWidgets ():
     headbook.props.tab_vborder = 0
     align.add(headbook)
     mainvbox.pack_start(align, expand=False)
-    if not conf.get("hideTabs", False):
-        align.show_all()
+    show_tabs(not conf.get("hideTabs", False))
     
     # Initing center
     
@@ -411,6 +410,7 @@ def attachGameWidget (gmwidg):
     key2gmwidg[gmwidg.notebookKey] = gmwidg
     
     headbook.append_page(gmwidg.notebookKey, gmwidg.tabcontent)
+    gmwidg.notebookKey.show_all()
     headbook.set_tab_label_packing(gmwidg.notebookKey, True, True, gtk.PACK_START)
     if hasattr(headbook, "set_tab_reorderable"):
         headbook.set_tab_reorderable (gmwidg.notebookKey, True)
@@ -459,8 +459,5 @@ def tabsCallback (none):
     head = getheadbook()
     if not head: return
     if head.get_n_pages() == 1:
-        if conf.get("hideTabs", False):
-            show_tabs(False)
-        else:
-            show_tabs(True)
+        show_tabs(not conf.get("hideTabs", False))
 conf.notify_add("hideTabs", tabsCallback)
