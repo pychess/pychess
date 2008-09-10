@@ -2,7 +2,7 @@
 import re
 import webbrowser
 import colorsys
-from math import log, ceil
+from math import log as ln, ceil
 import random
 import Queue
 
@@ -40,7 +40,7 @@ def createCombo (combo, data):
 def genColor (n, startpoint=0):
     assert n >= 1
     # This splits the 0 - 1 segment in the pizza way
-    h = (2*n-1)/(2**ceil(log(n)/log(2)))-1
+    h = (2*n-1)/(2**ceil(ln(n)/ln(2)))-1
     h = (h + startpoint) % 1
     # We set saturation based on the amount of green, in the range 0.6 to 0.8
     rgb = colorsys.hsv_to_rgb(h, 1, 1)
