@@ -151,7 +151,9 @@ class SubProcess:
         
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
-        self.defname = (self.defname, time.strftime("%H:%m:%S"))
+        t = time.time()
+        self.defname = (self.defname,
+                        time.strftime("%H:%m:%%.3f",time.localtime(t)) % (t%60))
         log.debug(path+"\n", self.defname)
         
         self.priority = 15
