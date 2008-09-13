@@ -102,7 +102,7 @@ setup (
     long_description = LONG_DESC,
     license          = 'GPL2',
     url              = 'http://pychess.googlepages.com/home',
-    download_url     = 'http://gnomefiles.org/app.php/pychess',
+    download_url     = 'http://code.google.com/p/pychess/downloads/list',
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
