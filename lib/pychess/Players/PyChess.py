@@ -54,7 +54,7 @@ features = {
     "reuse": 0,
     "draw": 1,
     "sigterm": 1,
-    "variants": "normal, fischerandom",
+    "variants": "normal,nocastle,fischerandom",
     "myname": "PyChess %s" % VERSION
 }
 
