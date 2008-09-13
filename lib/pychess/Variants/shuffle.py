@@ -1,4 +1,4 @@
-# Shuffle Chess
+# Shuffle Chess (nocastle variant in xboard terms)
 # http://en.wikipedia.org/wiki/Chess960#Other_related_chess_variants
 
 import random
