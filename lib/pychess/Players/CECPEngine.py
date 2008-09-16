@@ -7,6 +7,7 @@ from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.const import *
 from pychess.System.Log import log
@@ -114,8 +115,10 @@ class CECPEngine (ProtocolEngine):
         self.movecon.release()
     
     def autoAnalyze (self, inverse=False):
+        self.board = GameModel().boards[-1]
         self.start(block=True)
         self.analyze(inverse)
+
         def autorun ():
             while self.connected:
                 try:
