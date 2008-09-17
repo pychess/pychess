@@ -387,4 +387,4 @@ class UCIEngine (ProtocolEngine):
             return self.name
         if "name" in self.ids:
             return self.ids["name"]
-        return self.defname
+        return ', '.join(self.defname)

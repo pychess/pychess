@@ -17,7 +17,7 @@ class ProtocolEngine (Engine):
         Engine.__init__(self)
         
         self.engine = subprocess
-        self.defname = subprocess.defname[0]
+        self.defname = subprocess.defname
         self.color = color
         self.protover = protover
         

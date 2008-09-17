@@ -48,7 +48,7 @@ class CECPEngine (ProtocolEngine):
             "sigterm":   1,
             "reuse":     1,
             "analyze":   0,
-            "myname":    self.defname,
+            "myname":    ', '.join(self.defname),
             "variants":  "",
             "colors":    1,
             "ics":       0,
