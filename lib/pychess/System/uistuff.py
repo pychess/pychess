@@ -36,6 +36,24 @@ def createCombo (combo, data):
     crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
 
 
+def updateCombo (combo, data):
+    def get_active(combobox):
+        model = combobox.get_model()
+        active = combobox.get_active()
+        if active < 0:
+            return None
+        return model[active][1]
+
+    last_active = get_active(combo)
+    ls = combo.get_model()
+    ls.clear()
+    new_active = 0
+    for i, row in enumerate(data):
+        ls.append(row)
+        if last_active == row[1]:
+            new_active = i
+    combo.set_active(new_active)
+
 
 def genColor (n, startpoint=0):
     assert n >= 1

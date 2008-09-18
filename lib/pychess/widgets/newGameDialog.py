@@ -36,7 +36,6 @@ from pychess.Variants.fischerandom import FischerRandomChess
 it = gtk.icon_theme_get_default()
 
 image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-playerItems = [(image, _("Human Being"), "stock_people")]
 image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 
 skillToIcon = {
@@ -50,13 +49,21 @@ skillToIcon = {
     8: it.load_icon("weather-storm", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
 }
 
-for engine in discoverer.getEngines().values():
-    playerItems += [(image, discoverer.getName(engine), "stock_notebook")]
-
 variants = (NormalChess, ShuffleChess, FischerRandomChess)
 variantItems = []
-for variantClass in variants:
+playerItems = [[], [], []]
+
+for i, variantClass in enumerate(variants):
     variantItems += [(image, variantClass.name, "stock_notebook")]
+    playerItems[i] += [(image, _("Human Being"), "stock_people")]
+    for engine in discoverer.getEngines().values():
+        if i==0:
+            playerItems[0] += [(image, discoverer.getName(engine), "stock_notebook")]
+        else:
+            for feature in engine.getElementsByTagName("feature"):
+                if feature.getAttribute("command") == "variants":
+                    if variantClass.variant_name in feature.getAttribute("value"):
+                        playerItems[i] += [(image, discoverer.getName(engine), "stock_notebook")]
 
 difItems = []
 for level, stock, altstock in \
@@ -92,9 +99,9 @@ class _GameInitializationMode:
         
         
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
-                            (i[:2] for i in playerItems))
+                            (i[:2] for i in playerItems[0]))
         uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
-                            (i[:2] for i in playerItems))
+                            (i[:2] for i in playerItems[0]))
         
         
         def on_playerCombobox_changed (widget, skillHbox):
@@ -126,6 +133,15 @@ class _GameInitializationMode:
         
         uistuff.createCombo(cls.widgets["variant"],
                             (i[:2] for i in variantItems))
+
+        def on_variantCombobox_changed (widget, black, white):
+            uistuff.updateCombo(black,
+                                (i[:2] for i in playerItems[widget.get_active()]))
+            uistuff.updateCombo(white,
+                                (i[:2] for i in playerItems[widget.get_active()]))
+        cls.widgets["variant"].connect(
+                "changed", on_variantCombobox_changed,
+                 cls.widgets["blackPlayerCombobox"], cls.widgets["whitePlayerCombobox"])
         cls.widgets["variant"].set_active(0)
         
         
@@ -149,8 +165,8 @@ class _GameInitializationMode:
                 return 
             
             # Find variant
-            variant = cls.widgets["variant"].get_active()
-            variant = variants[variant]
+            variant_index = cls.widgets["variant"].get_active()
+            variant = variants[variant_index]
             
             # Find time
             if cls.widgets["useTimeCB"].get_active():
@@ -164,8 +180,10 @@ class _GameInitializationMode:
             
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
+            player0 = playerItems[0].index(playerItems[variant_index][player0])
             diffi0 = int(cls.widgets["skillSlider1"].get_value())
             player1 = cls.widgets["blackPlayerCombobox"].get_active()
+            player1 = playerItems[0].index(playerItems[variant_index][player1])
             diffi1 = int(cls.widgets["skillSlider2"].get_value())
             
             # Prepare players for ionest
