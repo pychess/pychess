@@ -842,10 +842,10 @@
 			  <child>
 			    <widget class="GtkTable" id="table7">
 			      <property name="visible">True</property>
-			      <property name="n_rows">2</property>
+			      <property name="n_rows">3</property>
 			      <property name="n_columns">2</property>
 			      <property name="homogeneous">False</property>
-			      <property name="row_spacing">3</property>
+			      <property name="row_spacing">0</property>
 			      <property name="column_spacing">12</property>
 
 			      <child>
@@ -908,10 +908,89 @@
 				<packing>
 				  <property name="left_attach">0</property>
 				  <property name="right_attach">2</property>
+				  <property name="top_attach">2</property>
+				  <property name="bottom_attach">3</property>
+				  <property name="x_options">fill</property>
+				  <property name="y_options"></property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkAlignment" id="alignment49">
+				  <property name="visible">True</property>
+				  <property name="xalign">0.5</property>
+				  <property name="yalign">0.5</property>
+				  <property name="xscale">1</property>
+				  <property name="yscale">1</property>
+				  <property name="top_padding">0</property>
+				  <property name="bottom_padding">3</property>
+				  <property name="left_padding">0</property>
+				  <property name="right_padding">0</property>
+
+				  <child>
+				    <widget class="GtkHBox" id="hbox55">
+				      <property name="visible">True</property>
+				      <property name="homogeneous">False</property>
+				      <property name="spacing">3</property>
+
+				      <child>
+					<widget class="GtkLabel" id="label98">
+					  <property name="visible">True</property>
+					  <property name="label" translatable="yes">&lt;i&gt;Pieces are placed at random positions&lt;/i&gt;</property>
+					  <property name="use_underline">False</property>
+					  <property name="use_markup">True</property>
+					  <property name="justify">GTK_JUSTIFY_LEFT</property>
+					  <property name="wrap">False</property>
+					  <property name="selectable">False</property>
+					  <property name="xalign">0</property>
+					  <property name="yalign">0.5</property>
+					  <property name="xpad">0</property>
+					  <property name="ypad">0</property>
+					  <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
+					  <property name="width_chars">-1</property>
+					  <property name="single_line_mode">False</property>
+					  <property name="angle">0</property>
+					</widget>
+					<packing>
+					  <property name="padding">0</property>
+					  <property name="expand">True</property>
+					  <property name="fill">True</property>
+					</packing>
+				      </child>
+
+				      <child>
+					<widget class="GtkLabel" id="label99">
+					  <property name="visible">True</property>
+					  <property name="label" translatable="yes">&lt;u&gt;&lt;i&gt;&lt;span color=&quot;blue&quot;&gt;More&lt;/span&gt;&lt;/i&gt;&lt;/u&gt;</property>
+					  <property name="use_underline">False</property>
+					  <property name="use_markup">True</property>
+					  <property name="justify">GTK_JUSTIFY_LEFT</property>
+					  <property name="wrap">False</property>
+					  <property name="selectable">False</property>
+					  <property name="xalign">0.5</property>
+					  <property name="yalign">0.5</property>
+					  <property name="xpad">0</property>
+					  <property name="ypad">0</property>
+					  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+					  <property name="width_chars">-1</property>
+					  <property name="single_line_mode">False</property>
+					  <property name="angle">0</property>
+					</widget>
+					<packing>
+					  <property name="padding">0</property>
+					  <property name="expand">False</property>
+					  <property name="fill">False</property>
+					</packing>
+				      </child>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="left_attach">0</property>
+				  <property name="right_attach">2</property>
 				  <property name="top_attach">1</property>
 				  <property name="bottom_attach">2</property>
 				  <property name="x_options">fill</property>
-				  <property name="y_options"></property>
 				</packing>
 			      </child>
 			    </widget>
@@ -1440,7 +1519,7 @@
 	      <property name="width">225</property>
 	      <property name="height">400</property>
 	      <property name="hadjustment">0 0 225 0 202.5 225</property>
-	      <property name="vadjustment">0 0 400 0 349.2 388</property>
+	      <property name="vadjustment">0 0 403 0 362.7 403</property>
 
 	      <child>
 		<widget class="GtkFrame" id="enterGameNotationFrame">
