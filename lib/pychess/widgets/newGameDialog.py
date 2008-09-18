@@ -64,6 +64,10 @@ for i, variantClass in enumerate(variants):
                 if feature.getAttribute("command") == "variants":
                     if variantClass.variant_name in feature.getAttribute("value"):
                         playerItems[i] += [(image, discoverer.getName(engine), "stock_notebook")]
+            for option in engine.getElementsByTagName("check-option"):
+                if variantClass.variant_name == "fischerandom":
+                    if option.getAttribute("name") == "UCI_Chess960":
+                        playerItems[i] += [(image, discoverer.getName(engine), "stock_notebook")]
 
 difItems = []
 for level, stock, altstock in \
