@@ -47,6 +47,7 @@ class ShuffleBoard(Board):
 
 class ShuffleChess:
     name = _("Shuffle")
+    variant_name = "nocastle"
     board = ShuffleBoard
 
 
