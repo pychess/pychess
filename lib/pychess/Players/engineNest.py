@@ -213,8 +213,12 @@ class EngineDiscoverer (GObject, Thread):
             if key == "myname":
                 meta.appendChild( self._createElement("name", value) )
             
-            args = (("command",key),
-                    ("supports", value and "true" or "false"))
+            if key == "variants":
+                args = (("command",key),
+                        ("value", value))
+            else:
+                args = (("command",key),
+                        ("supports", value and "true" or "false"))
             node = self._createElement("feature",args=args)
             feature_node.appendChild(node)
         

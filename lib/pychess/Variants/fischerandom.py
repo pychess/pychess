@@ -134,6 +134,7 @@ class FRCBoard(Board):
 
 class FischerRandomChess:
     name = _("Fischer Random")
+    variant_name = "fischerandom"
     board = FRCBoard
 
 

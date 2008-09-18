@@ -177,7 +177,7 @@ class NewGameTasker (gtk.HBox):
         labelSizeGroup.add_widget(label)
         table.attach(label, 0, 1, 1, 2, xoptions=0)
         self.playerCombo = combo = ToggleComboBox()
-        for image, name, stock in newGameDialog.playerItems:
+        for image, name, stock in newGameDialog.playerItems[0]:
             combo.addItem(name, stock)
         combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
