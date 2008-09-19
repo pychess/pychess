@@ -40,6 +40,8 @@ class ToggleComboBox (gtk.ToggleButton):
         return self._active
     
     def _set_active(self, active):
+        if type(active) != int:
+            raise TypeError
         if active == self._active: return
         oldactive = self._active
         # take care the case when last used engine was uninstalled
