@@ -150,6 +150,7 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
         except TypeError:
             log.warn("Key '%s' from conf had the wrong type '%s', ignored" % 
                      (key, type(conf.getStrict(key))))
+            conf.set(key, get_value())
     if conf.hasKey(key):
         setFromConf()
     
