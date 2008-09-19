@@ -37,7 +37,7 @@ class Engine (Player):
     def canAnalyze (self):
         raise NotImplementedError
     
-    def analyze (self, inverse=False):
+    def analyze (self, model, inverse=False):
         """ If canAnalyze responds True, this method will be called on the
             engine, if it is not to play any moves, but rather analyze the game
             and emit 'analyze' signals now and then """

@@ -77,6 +77,9 @@ def setWidgets (w):
     global widgets
     widgets = w
 
+def getWidgets ():
+    return widgets
+
 key2gmwidg = {}
 notebooks = {"board": cleanNotebook(),
              "statusbar": cleanNotebook(),
@@ -419,6 +422,7 @@ def attachGameWidget (gmwidg):
         if notebook.get_nth_page(page_num) == gmwidg.notebookKey:
             gmwidg.emit("infront")
     headbook.connect("switch-page", callback, gmwidg)
+    gmwidg.emit("infront")
     
     messageSockAlign = createAlignment(4,4,0,4)
     messageSockAlign.show()

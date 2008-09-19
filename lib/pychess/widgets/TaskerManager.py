@@ -9,6 +9,15 @@ from ToggleComboBox import ToggleComboBox
 from Background import giveBackground
 import newGameDialog
 
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Players.Human import Human
+from pychess.Players.engineNest import discoverer
+from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE
+from pychess.ic import ICLogon
+from pychess.widgets import ionest
+from pychess.widgets import newGameDialog
+
 class TaskerManager (gtk.Table):
     
     def __init__ (self):
@@ -64,7 +73,7 @@ class TaskerManager (gtk.Table):
             yield (next, 1-next)
             next = first-(1-next)
     
-    def packTaskers (self, widgets):
+    def packTaskers (self, *widgets):
         
         self.widgets = widgets
         
@@ -113,7 +122,7 @@ class TaskerManager (gtk.Table):
                 alignment = gtk.Alignment(hspac[col], vspac[-1])
                 alignment.add(widget)
                 alignment.set_padding(self.border, self.border, self.border, self.border)
-                lastrow.pack_start(alignment)    
+                lastrow.pack_start(alignment)
             
             self.attach(lastrow, 0, cols, rrows, rrows+1)
 
@@ -141,10 +150,8 @@ def createButton (iconname, text):
     hbox.pack_start(label)
     return button
 
-class NewGameTasker (gtk.HBox):
-    __gsignals__ = {
-        'startClicked': (SIGNAL_RUN_FIRST, TYPE_NONE, (int, int, int))
-    }
+class NewGameTasker2 (gtk.HBox):
+    
     def __init__ (self):
         gtk.HBox.__init__(self)
         # Sun
@@ -209,77 +216,170 @@ class NewGameTasker (gtk.HBox):
         button.connect ("clicked", self.startClicked)
     
     def startClicked (self, button):
-        self.emit ("startClicked",
-                   self.colorCombo.active,
-                   self.playerCombo.active,
-                   self.difCombo.active)
+        color = self.colorCombo.active
+        opponent = self.playerCombo.active
+        difficulty = self.difCombo.active
+        
+        gamemodel = GameModel(TimeModel(5*60, 0))
+        
+        player0tup = (LOCAL, Human, (color, ""), _("Human"))
+        if opponent == 0:
+            player1tup = (LOCAL, Human, (1-color, ""), _("Human"))
+        else:
+            engine = discoverer.getEngineN (opponent-1)
+            name = discoverer.getName(engine)
+            player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
+                    (engine, 1-color, difficulty, 5*60, 0), name)
+        
+        if color == WHITE:
+            ionest.generalStart(gamemodel, player0tup, player1tup)
+        else: ionest.generalStart(gamemodel, player1tup, player0tup)
 
-class InternetGameTasker (gtk.HBox):
-    __gsignals__ = {
-        'connectClicked': (SIGNAL_RUN_FIRST, TYPE_NONE, (bool, str, str))
-    }
+class NewGameTasker (gtk.Alignment):
+    
     def __init__ (self):
-        gtk.HBox.__init__(self)
-        # Image
-        pix = it.load_icon("stock_init", 48, gtk.ICON_LOOKUP_USE_BUILTIN)
-        image = gtk.Image()
-        image.set_from_pixbuf(pix)
-        image.set_size_request(75, -1)
-        image.props.yalign = 0.2
-        image.props.xalign = 0.5
-        self.add(image)
-        vbox = gtk.VBox()
-        vbox.set_spacing(3)
-        vbox.set_size_request(250, -1)
-        # Table
-        table = gtk.Table()
-        table.set_row_spacings(3)
-        table.set_col_spacings(3)
-        vbox.add(table)
-        self.add(vbox)
-        # First row
-        self.asGuestCheck = gtk.CheckButton(_("Log on as _Guest"))
+        gtk.Alignment.__init__(self,0,0,0,0)
+        self.widgets = widgets = uistuff.GladeWidgets("taskers.glade")
+        tasker = widgets["newGameTasker"]
+        tasker.unparent()
+        self.add(tasker)
+        
+        self.colorCombo = combo = ToggleComboBox()
+        combo.addItem(_("White"), "stock_draw-rounded-square-unfilled")
+        combo.addItem(_("Black"), "stock_draw-rounded-square")
+        combo.setMarkup("<b>", "</b>")
+        uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
+        widgets["colorDock"].add(combo)
+        
+        self.playerCombo = combo = ToggleComboBox()
+        for image, name, stock in newGameDialog.playerItems[0]:
+            combo.addItem(name, stock)
+        combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        combo.setMarkup("<b>", "</b>")
+        combo.active = 1
+        uistuff.keep(self.playerCombo, "newgametasker_playercombo")
+        widgets["opponentDock"].add(combo)
+        
+        def on_playerCombobox_changed (widget, event):
+            widgets["skillSlider"].props.visible = widget.get_active() > 0
+        combo.connect("changed", on_playerCombobox_changed)
+        
+        def on_skill_changed (scale):
+            pix = newGameDialog.skillToIconLarge[int(scale.get_value())]
+            widgets["skillImage"].set_from_pixbuf(pix)
+        widgets["skillSlider"].connect("value-changed", on_skill_changed)
+        
+        widgets["startButton"].connect("clicked", self.startClicked)
+    
+    def startClicked (self, button):
+        color = self.widgets["colorDock"].child.active
+        opponent = self.widgets["opponentDock"].child.active
+        difficulty = self.widgets["skillSlider"].get_value()
+        
+        gamemodel = GameModel(TimeModel(5*60, 0))
+        
+        player0tup = (LOCAL, Human, (color, ""), _("Human"))
+        if opponent == 0:
+            player1tup = (LOCAL, Human, (1-color, ""), _("Human"))
+        else:
+            engine = discoverer.getEngineN (opponent-1)
+            name = discoverer.getName(engine)
+            player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
+                    (engine, 1-color, difficulty, 5*60, 0), name)
+        
+        if color == WHITE:
+            ionest.generalStart(gamemodel, player0tup, player1tup)
+        else: ionest.generalStart(gamemodel, player1tup, player0tup)
+
+class InternetGameTasker (gtk.Alignment):
+    
+    def __init__ (self):
+        gtk.Alignment.__init__(self,0,0,0,0)
+        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        tasker = self.widgets["internetGameTasker"]
+        tasker.unparent()
+        self.add(tasker)
+        
         def asGuestCallback (checkbutton):
-            for widget in (self.usernameLabel, self.usernameEntry,
-                           self.passwordLabel, self.passwordEntry):
+            for widget in (self.widgets["usernameLabel"], self.widgets["usernameEntry"],
+                           self.widgets["passwordLabel"], self.widgets["passwordEntry"]):
                 widget.set_sensitive(not checkbutton.get_active())
-        self.asGuestCheck.connect("toggled", asGuestCallback)
-        table.attach(self.asGuestCheck, 0, 2, 0, 1)
-        # Seccond row
-        self.usernameLabel = gtk.Label(_("Name")+":")
-        self.usernameLabel.props.xalign = 0
-        labelSizeGroup.add_widget(self.usernameLabel)
-        table.attach(self.usernameLabel, 0, 1, 1, 2, xoptions=0)
-        self.usernameEntry = gtk.Entry()
-        self.usernameEntry.props.activates_default = True
-        self.usernameEntry.set_width_chars(0)
-        table.attach(self.usernameEntry, 1, 2, 1, 2)
-        # Third row
-        self.passwordLabel = gtk.Label(_("Password")+":")
-        self.passwordLabel.props.xalign = 0
-        labelSizeGroup.add_widget(self.passwordLabel)
-        table.attach(self.passwordLabel, 0, 1, 2, 3, xoptions=0)
-        self.passwordEntry = gtk.Entry()
-        self.passwordEntry.set_visibility(False)
-        self.passwordEntry.props.activates_default = True
-        self.passwordEntry.set_width_chars(0)
-        table.attach(self.passwordEntry, 1, 2, 2, 3)
-        # Button
-        self.connectButton = createButton("gtk-ok", _("Connect to FICS"))
-        vbox.add(self.connectButton)
-        self.connectButton.set_flags(gtk.CAN_DEFAULT)
-        self.connectButton.connect ("clicked", self.connectClicked)
-        # On activate
-        def onActivateCallback (entry):
-            self.connectButton.clicked()
-        self.usernameEntry.connect("activate", onActivateCallback)
-        self.passwordEntry.connect("activate", onActivateCallback)
-        # Keep
-        uistuff.keep(self.asGuestCheck, "logOnAsGuest")
-        asGuestCallback(self.asGuestCheck)
+        self.widgets["asGuestCheck"].connect("toggled", asGuestCallback)
+        
+        uistuff.keep(self.widgets["asGuestCheck"], "asGuestCheck")
+        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry")
+        uistuff.keep(self.widgets["passwordEntry"], "passwordEntry")
+        
+        self.widgets["connectButton"].connect("clicked", self.connectClicked)
     
     def connectClicked (self, button):
-        self.emit ("connectClicked",
-                   self.asGuestCheck.get_active(),
-                   self.usernameEntry.get_text(),
-                   self.passwordEntry.get_text())
+        asGuest = self.widgets["asGuestCheck"].get_active()
+        username = self.widgets["usernameEntry"].get_text()
+        password = self.widgets["passwordEntry"].get_text()
+        
+        ICLogon.run()
+        if not ICLogon.dialog.connection:
+            ICLogon.dialog.widgets["logOnAsGuest"].set_active(asGuest)
+            ICLogon.dialog.widgets["nameEntry"].set_text(username)
+            ICLogon.dialog.widgets["passEntry"].set_text(password)
+            ICLogon.dialog.widgets["connectButton"].clicked()
+
+if False:
+    gtk.HBox.__init__(self)
+    # Image
+    pix = it.load_icon("stock_init", 48, gtk.ICON_LOOKUP_USE_BUILTIN)
+    image = gtk.Image()
+    image.set_from_pixbuf(pix)
+    image.set_size_request(75, -1)
+    image.props.yalign = 0.2
+    image.props.xalign = 0.5
+    self.add(image)
+    vbox = gtk.VBox()
+    vbox.set_spacing(3)
+    vbox.set_size_request(250, -1)
+    # Table
+    table = gtk.Table()
+    table.set_row_spacings(3)
+    table.set_col_spacings(3)
+    vbox.add(table)
+    self.add(vbox)
+    # First row
+    self.asGuestCheck = gtk.CheckButton(_("Log on as _Guest"))
+    def asGuestCallback (checkbutton):
+        for widget in (self.usernameLabel, self.usernameEntry,
+                       self.passwordLabel, self.passwordEntry):
+            widget.set_sensitive(not checkbutton.get_active())
+    self.asGuestCheck.connect("toggled", asGuestCallback)
+    table.attach(self.asGuestCheck, 0, 2, 0, 1)
+    # Seccond row
+    self.usernameLabel = gtk.Label(_("Name")+":")
+    self.usernameLabel.props.xalign = 0
+    labelSizeGroup.add_widget(self.usernameLabel)
+    table.attach(self.usernameLabel, 0, 1, 1, 2, xoptions=0)
+    self.usernameEntry = gtk.Entry()
+    self.usernameEntry.props.activates_default = True
+    self.usernameEntry.set_width_chars(0)
+    table.attach(self.usernameEntry, 1, 2, 1, 2)
+    # Third row
+    self.passwordLabel = gtk.Label(_("Password")+":")
+    self.passwordLabel.props.xalign = 0
+    labelSizeGroup.add_widget(self.passwordLabel)
+    table.attach(self.passwordLabel, 0, 1, 2, 3, xoptions=0)
+    self.passwordEntry = gtk.Entry()
+    self.passwordEntry.set_visibility(False)
+    self.passwordEntry.props.activates_default = True
+    self.passwordEntry.set_width_chars(0)
+    table.attach(self.passwordEntry, 1, 2, 2, 3)
+    # Button
+    self.connectButton = createButton("gtk-ok", _("Connect to FICS"))
+    vbox.add(self.connectButton)
+    self.connectButton.set_flags(gtk.CAN_DEFAULT)
+    self.connectButton.connect ("clicked", self.connectClicked)
+    # On activate
+    def onActivateCallback (entry):
+        self.connectButton.clicked()
+    self.usernameEntry.connect("activate", onActivateCallback)
+    self.passwordEntry.connect("activate", onActivateCallback)
+    # Keep
+    uistuff.keep(self.asGuestCheck, "logOnAsGuest")
+    asGuestCallback(self.asGuestCheck)

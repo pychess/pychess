@@ -13,12 +13,16 @@ from pychess.System.protoopen import isWriteable
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.uistuff import GladeWidgets
 from pychess.Utils import const
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
 from pychess import Savers
 from pychess.Savers import *
 from pychess.Savers.ChessFile import LoadingError
+
 from pychess.widgets import gamewidget
+from pychess.widgets import gamenanny
+
 from pychess.Variants.normal import NormalChess
 from pychess.Variants.shuffle import ShuffleChess
 from pychess.Variants.fischerandom import FischerRandomChess
@@ -46,6 +50,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
             if type(val) == tuple:
                 gmwidg, game = val
                 gamewidget.attachGameWidget(gmwidg)
+                gamenanny.nurseGame(gmwidg, game)
                 handler.emit("gmwidg_created", gmwidg, game)
             
             # Then the worker will publish functions setting up widget stuff
@@ -142,9 +147,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             worker.publish(d.show)
     
     if HINT in specs:
-        specs[HINT].autoAnalyze(inverse=False)
+        specs[HINT].analyze(GameModel(), inverse=False)
     if SPY in specs:
-        specs[SPY].autoAnalyze(inverse=True)
+        specs[SPY].analyze(GameModel(), inverse=True)
     
     return gmwidg, gamemodel
 
