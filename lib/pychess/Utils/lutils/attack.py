@@ -232,6 +232,9 @@ def defends (board, fcord, tcord):
         fcord?
         Doesn't test check. """
     
+    # Work on a board copy, as we are going to change some stuff
+    board = board.clone()
+    
     if board.friends[WHITE] & bitPosArray[fcord]:
         color = WHITE
     else: color = BLACK
@@ -240,33 +243,29 @@ def defends (board, fcord, tcord):
     boards = board.boards[color]
     opboards = board.boards[opcolor]
     
-    board.lock.acquire()
-    try:
-        # To see if we now defend the piece, we have to "give" it to the other team
-        piece = board.arBoard[tcord]
-        
-        backup = boards[piece]
-        opbackup = opboards[piece]
-        
-        boards[piece] &= notBitPosArray[tcord]
-        opboards[piece] |= bitPosArray[tcord]
-        board.friends[color] &= notBitPosArray[tcord]
-        board.friends[opcolor] |= bitPosArray[tcord]
-        
-        # Can we "attack" the piece now?
-        backupColor = board.color
-        board.setColor(color)
-        from lmove import newMove
-        from validator import validateMove
-        islegal = validateMove (board, newMove(fcord, tcord))
-        board.setColor(backupColor)
-        
-        # Set board back
-        boards[piece] = backup
-        opboards[piece] = opbackup
-        board.friends[color] |= bitPosArray[tcord]
-        board.friends[opcolor] &= notBitPosArray[tcord]
-    finally:
-        board.lock.release()
+    # To see if we now defend the piece, we have to "give" it to the other team
+    piece = board.arBoard[tcord]
+    
+    #backup = boards[piece]
+    #opbackup = opboards[piece]
+    
+    boards[piece] &= notBitPosArray[tcord]
+    opboards[piece] |= bitPosArray[tcord]
+    board.friends[color] &= notBitPosArray[tcord]
+    board.friends[opcolor] |= bitPosArray[tcord]
+    
+    # Can we "attack" the piece now?
+    backupColor = board.color
+    board.setColor(color)
+    from lmove import newMove
+    from validator import validateMove
+    islegal = validateMove (board, newMove(fcord, tcord))
+    board.setColor(backupColor)
+    
+    # We don't need to set the board back, as we work on a copy
+    #boards[piece] = backup
+    #opboards[piece] = opbackup
+    #board.friends[color] |= bitPosArray[tcord]
+    #board.friends[opcolor] &= notBitPosArray[tcord]
     
     return islegal

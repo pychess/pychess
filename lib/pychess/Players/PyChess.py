@@ -70,7 +70,7 @@ forced = False
 analyzing = False
 scr = 0 # The current predicted score. Used when accepting draw offers
 
-board = LBoard(Board)
+board = LBoard(Board.variant)
 board.applyFen(FEN_START)
 
 #import time
@@ -245,7 +245,7 @@ def go (queue):
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
-                print "Time left: %3.2f seconds; Plan to thinking for %3.2f seconds" % \
+                print "Time left: %3.2f seconds; Planing to thinking for %3.2f seconds" % \
                        (mytime, usetime)
                 for depth in range(1, sd+1):
                     # Heuristic time saving

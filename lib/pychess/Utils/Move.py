@@ -117,7 +117,7 @@ def parseAN (board, an):
 ################################################################################
 
 def listToSan (board, moves):
-    return lmove.listToSan(board.board, [m.move for m in moves])
+    return lmove.listToSan(board.board, (m.move for m in moves))
 
 def toAN (board, move):
     """ Returns a Algebraic Notation string of a move

@@ -138,12 +138,6 @@ class CECPEngine (ProtocolEngine):
         try:
             # Make the move
             self.board = gamemodel.boards[-1]
-            if hasattr(self, "oldboard"):
-                #print gamemodel.boards[-2].ply
-                #print self.oldboard.ply
-                assert gamemodel.boards[self.oldboard.ply] == self.oldboard
-            self.oldboard = self.board.clone()
-            assert self.oldboard == self.board
             
             if self.isAnalyzing():
                 del self.analyzeMoves[:]

@@ -46,7 +46,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     table.setHashMove (ply, -1)
-    probe = table.probe (board.hash, ply, alpha, beta)
+    from types import InstanceType
+    assert type(board) == InstanceType
+    probe = table.probe (board, ply, alpha, beta)
     
     if probe:
         move, score, hashf = probe
@@ -147,7 +149,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         
         if val > alpha:
             if val >= beta:
-                table.record (board.hash, move, beta, hashfBETA, ply)
+                table.record (board, move, beta, hashfBETA, ply)
                 # We don't want to use our valuable killer move spaces for
                 # captures and promotions, as these are searched early anyways.
                 if board.arBoard[move&63] == EMPTY and \

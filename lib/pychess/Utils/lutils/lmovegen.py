@@ -39,7 +39,7 @@ def queenAttack (board, cord):
 ################################################################################
 
 def genAllMoves (board):
-    fischerandom = board.boardVariant.variant == FISCHERRANDOMCHESS
+    fischerandom = board.variant == FISCHERRANDOMCHESS
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -345,7 +345,7 @@ def genCaptures (board):
 ################################################################################
 
 def genNonCaptures (board):
-    fischerandom = board.boardVariant.variant == FISCHERRANDOMCHESS
+    fischerandom = board.variant == FISCHERRANDOMCHESS
     
     blocker = board.blocker
     notblocker = ~blocker
