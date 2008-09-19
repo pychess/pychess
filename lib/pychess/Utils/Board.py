@@ -222,6 +222,9 @@ class Board:
         lboard.history = copy(self.board.history)
         lboard.ini_kings = copy(self.board.ini_kings)
         lboard.ini_rooks = copy(self.board.ini_rooks)
+        lboard.checked = self.board.checked
+        lboard.opchecked = self.board.opchecked
+        lboard.hasCastled = copy(self.board.hasCastled)
         
         if self.variant == FISCHERRANDOMCHESS:
             from pychess.Variants.fischerandom import FRCBoard
@@ -229,9 +232,13 @@ class Board:
         else:
             newBoard = Board()
         newBoard.board = lboard
-
+        
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
                 newBoard.data[y][x] = piece
         
         return newBoard
+    
+    def __eq__ (self, other):
+        if type(self) != type(other): return False
+        return self.board == other.board

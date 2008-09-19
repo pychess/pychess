@@ -114,10 +114,10 @@ class CECPEngine (ProtocolEngine):
         self.movecon.wait()
         self.movecon.release()
     
-    def autoAnalyze (self, inverse=False):
-        self.board = GameModel().boards[-1]
+    def analyze (self, model, inverse=False):
+        self.board = model.boards[-1]
         self.start(block=True)
-        self.analyze(inverse)
+        self.sendAnalyze(inverse)
 
         def autorun ():
             while self.connected:
@@ -138,6 +138,12 @@ class CECPEngine (ProtocolEngine):
         try:
             # Make the move
             self.board = gamemodel.boards[-1]
+            if hasattr(self, "oldboard"):
+                #print gamemodel.boards[-2].ply
+                #print self.oldboard.ply
+                assert gamemodel.boards[self.oldboard.ply] == self.oldboard
+            self.oldboard = self.board.clone()
+            assert self.oldboard == self.board
             
             if self.isAnalyzing():
                 del self.analyzeMoves[:]
@@ -356,7 +362,7 @@ class CECPEngine (ProtocolEngine):
     def post (self):
         print >> self.engine, "post"
     
-    def analyze (self, inverse=False):
+    def sendAnalyze (self, inverse=False):
         if self.ready:
             self.force()
             self.post()

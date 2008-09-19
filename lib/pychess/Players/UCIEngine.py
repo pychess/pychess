@@ -53,7 +53,7 @@ class UCIEngine (ProtocolEngine):
                     break
                 self.parseLine(line)
     
-    def autoAnalyze (self, inverse=False):
+    def analyze (self, model, inverse=False):
         self.start(block=True)
         
         if not inverse:
@@ -61,7 +61,7 @@ class UCIEngine (ProtocolEngine):
         else: self.mode = INVERSE_ANALYZING
         self.setOptions({'Ponder': False})
         
-        self.makeMove(GameModel())
+        self.makeMove(model)
         
         def autorun ():
             while self.connected:
