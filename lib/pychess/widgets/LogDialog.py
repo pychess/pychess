@@ -169,6 +169,8 @@ class InformationWindow:
         
     @classmethod
     def searchJump (cls, count, widgets):
+        if not hasattr(widgets["outofLabel"], "hits"):
+            return
         amount = len(widgets["outofLabel"].hits)
         if not amount:
             widgets["outofLabel"].set_text("0 %s 0" % _("of"))
@@ -189,7 +191,7 @@ class InformationWindow:
             if event.keyval in (ord("f"), ord("F")):
                 widgets["findbar"].props.visible = not widgets["findbar"].props.visible
                 if widgets["findbar"].props.visible:
-                    widgets["searchEntry"].grab_focus()
+                    gobject.idle_add(widgets["searchEntry"].grab_focus)
     
     @classmethod
     def onFindbarKeypress (cls, findbar, event):
