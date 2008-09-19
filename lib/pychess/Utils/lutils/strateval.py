@@ -123,7 +123,7 @@ def attack_type (model, phase):
     tcord = TCORD(move)
     
     if oldboard.arBoard[tcord] != EMPTY:
-        if not (board.boardVariant.variant == FISCHERRANDOMCHESS and \
+        if not (board.variant == FISCHERRANDOMCHESS and \
             FLAG(move) in (KING_CASTLE, QUEEN_CASTLE)): 
             if oldmove and oldboard3.arBoard[TCORD(oldmove)] != EMPTY and \
                     TCORD(oldmove) == tcord:

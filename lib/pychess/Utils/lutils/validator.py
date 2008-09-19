@@ -29,7 +29,7 @@ def validateMove (board, move):
     
     # TO square is a friendly piece, so illegal move  
     if bitPosArray[tcord] & board.friends[color]:
-        if board.boardVariant.variant == FISCHERRANDOMCHESS:
+        if board.variant == FISCHERRANDOMCHESS:
             if not flag in (KING_CASTLE, QUEEN_CASTLE):
                 return False
         else:
@@ -70,7 +70,7 @@ def validateMove (board, move):
     
     # King moves are also special, especially castling  
     elif fpiece == KING:
-        if board.boardVariant.variant == FISCHERRANDOMCHESS:
+        if board.variant == FISCHERRANDOMCHESS:
             from pychess.Variants.fischerandom import frc_castling_move
             if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
                     not flag in (KING_CASTLE, QUEEN_CASTLE)) and \

@@ -78,20 +78,13 @@ def determineAlgebraicNotation (algnot):
 ################################################################################
 
 def listToSan (board, moves):
+    # Work on a copy to ensure we don't break things
+    board = board.clone()
     sanmoves = []
-    
-    board.lock.acquire()
-    try:
-        for move in moves:
-            san = toSAN (board, move)
-            sanmoves.append(san)
-            board.applyMove(move)
-            
-        for move in moves:
-            board.popMove()
-    finally:
-        board.lock.release()
-    
+    for move in moves:
+        san = toSAN (board, move)
+        sanmoves.append(san)
+        board.applyMove(move)
     return sanmoves
 
 ################################################################################
@@ -99,36 +92,31 @@ def listToSan (board, moves):
 ################################################################################
 
 def listToMoves (board, movstrs, type=None, testvalidate=False):
+    # Work on a copy to ensure we don't break things
+    board = board.clone()
     moves = []
-    
-    board.lock.acquire()
-    try:
-        for mstr in movstrs:
-            try:
-                if type == None:
-                    move = parseAny (board, mstr)
-                elif type == SAN:
-                    move = parseSAN (board, mstr)
-                elif type == AN:
-                    move = parseAN (board, mstr)
-                elif type == LAN:
-                    move = parseLAN (board, mstr)
-            except ParsingError:
-                # We expect a ParsingError to be raised when parsing "old" lines
-                # from analyzing engines, which haven't yet noticed their new tasks
+
+    for mstr in movstrs:
+        try:
+            if type == None:
+                move = parseAny (board, mstr)
+            elif type == SAN:
+                move = parseSAN (board, mstr)
+            elif type == AN:
+                move = parseAN (board, mstr)
+            elif type == LAN:
+                move = parseLAN (board, mstr)
+        except ParsingError:
+            # We expect a ParsingError to be raised when parsing "old" lines
+            # from analyzing engines, which haven't yet noticed their new tasks
+            break
+        
+        if testvalidate:
+            if not validateMove (board, move):
                 break
-            
-            if testvalidate:
-                if not validateMove (board, move):
-                    break
-            
-            moves.append(move)
-            board.applyMove(move)
-            
-        for move in moves:
-            board.popMove()
-    finally:
-        board.lock.release()
+        
+        moves.append(move)
+        board.applyMove(move)
     
     return moves
 
@@ -171,21 +159,18 @@ def toSAN (board, move, localRepr=False):
         xs = []
         ys = []
         
-        board.lock.acquire()
-        try:
-            for altmove in genAllMoves(board):
-                mfcord = FCORD(altmove)
-                if board.arBoard[mfcord] == fpiece and \
-                        mfcord != fcord and \
-                        TCORD(altmove) == tcord:
-                    board.applyMove(altmove)
-                    if not board.opIsChecked():
-                        xs.append(FILE(mfcord))
-                        ys.append(RANK(mfcord))
-                    board.popMove()
-        finally:
-            board.lock.release()
-        
+        board_clone = board.clone()
+        for altmove in genAllMoves(board_clone):
+            mfcord = FCORD(altmove)
+            if board_clone.arBoard[mfcord] == fpiece and \
+                    mfcord != fcord and \
+                    TCORD(altmove) == tcord:
+                board_clone.applyMove(altmove)
+                if not board_clone.opIsChecked():
+                    xs.append(FILE(mfcord))
+                    ys.append(RANK(mfcord))
+                board_clone.popMove()
+
         x = FILE(fcord)
         y = RANK(fcord)
         
@@ -214,24 +199,19 @@ def toSAN (board, move, localRepr=False):
             notat += "="+localReprSign[PROMOTE_PIECE(flag)]
         else:
             notat += "="+reprSign[PROMOTE_PIECE(flag)]
-
-    board.lock.acquire()
-    try:
-        board.applyMove(move)
-        if board.isChecked():
-            for altmove in genAllMoves (board):
-                board.applyMove(altmove)
-                if board.opIsChecked():
-                    board.popMove()
-                    continue
-                board.popMove()
-                notat += "+"
-                break
-            else:
-                notat += "#"
-        board.popMove()
-    finally:
-        board.lock.release()
+    
+    board_clone = board.clone()
+    board_clone.applyMove(move)
+    if board_clone.isChecked():
+        for altmove in genAllMoves (board_clone):
+            board_clone.applyMove(altmove)
+            if board_clone.opIsChecked():
+                board_clone.popMove()
+                continue
+            notat += "+"
+            break
+        else:
+            notat += "#"
     
     return notat
 
@@ -328,8 +308,7 @@ def parseSAN (board, san):
     # We find all pieces who could have done it. (If san was legal, there should
     # never be more than one)
     from lmovegen import genAllMoves
-    moves = [m for m in genAllMoves(board)]
-    for move in moves:
+    for move in genAllMoves(board):
         if TCORD(move) != tcord:
             continue
         f = FCORD(move)
@@ -342,15 +321,10 @@ def parseSAN (board, san):
         if flag in PROMOTIONS and FLAG(move) != flag:
             continue
         
-        board.lock.acquire()
-        try:
-            board.applyMove(move)
-            if board.opIsChecked():
-                board.popMove()
-                continue
-            board.popMove()
-        finally:
-            board.lock.release()
+        board_clone = board.clone()
+        board_clone.applyMove(move)
+        if board_clone.opIsChecked():
+            continue
         
         return move
     
@@ -442,7 +416,7 @@ def parseAN (board, an):
     if len(an) == 5:
         flag = chr2Sign[an[4].lower()] + 2
     elif board.arBoard[fcord] == KING:
-        if board.boardVariant.variant == FISCHERRANDOMCHESS:
+        if board.variant == FISCHERRANDOMCHESS:
             if (abs(fcord - tcord) > 1 and \
                     ((board.color == WHITE and tcord==C1) or \
                      (board.color == BLACK and tcord==C8))) or \
@@ -520,23 +494,20 @@ def toFAN (board, move):
             fileNecessary = False
             
             from lmovegen import genAllMoves
-            board.lock.acquire()
-            try:
-                for altmove in genAllMoves(board):
-                    mfcord = FCORD(altmove)
-                    if board.arBoard[mfcord] == PAWN and \
-                            mfcord != fcord and \
-                            TCORD(altmove) == tcord:
-                        board.applyMove(altmove)
-                        if not board.opIsChecked():
-                            fileNecessary = True
-                        board.popMove()
-                        # If we found a pawn, that is not us, which can move to our
-                        # tcord, there is no point in looking further, as we can
-                        # never have more than two pawn pointing at the same cord
-                        break
-            finally:
-                board.lock.release()
+            board_clone = board.clone()
+            for altmove in genAllMoves(board_clone):
+                mfcord = FCORD(altmove)
+                if board_clone.arBoard[mfcord] == PAWN and \
+                        mfcord != fcord and \
+                        TCORD(altmove) == tcord:
+                    board_clone.applyMove(altmove)
+                    if not board_clone.opIsChecked():
+                        fileNecessary = True
+                    board_clone.popMove()
+                    # If we found a pawn, that is not us, which can move to our
+                    # tcord, there is no point in looking further, as we can
+                    # never have more than two pawn pointing at the same cord
+                    break
             
             if not fileNecessary:
                 lan = lan[i:]
@@ -587,19 +558,16 @@ def parseFAN (board, fan):
             tcord = cordDic[tocord]
             
             from lmovegen import genAllMoves
-            board.lock.acquire()
-            try:
-                for altmove in genAllMoves(board):
-                    if board.arBoard[FCORD(altmove)] == PAWN and \
-                            TCORD(altmove) == tcord:
-                        board.applyMove(altmove)
-                        if not board.opIsChecked():
-                            san = reprFile(mfcord) + san
-                        board.popMove()
-                        # We know there is only one pawn which can move to tcord, so
-                        # we stop work here
-                        break
-            finally:
-                board.lock.release()
+            board_clone = board.clone()
+            for altmove in genAllMoves(board_clone):
+                if board_clone.arBoard[FCORD(altmove)] == PAWN and \
+                        TCORD(altmove) == tcord:
+                    board_clone.applyMove(altmove)
+                    if not board_clone.opIsChecked():
+                        san = reprFile(mfcord) + san
+                    board_clone.popMove()
+                    # We know there is only one pawn which can move to tcord, so
+                    # we stop work here
+                    break
     
     return parseSAN (board, san)

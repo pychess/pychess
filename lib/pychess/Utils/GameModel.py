@@ -38,7 +38,6 @@ class GameModel (GObject, PooledThread):
 
         self.variant = variant
         self.boards = [variant.board(setup=True)]
-        print "b", self.lowply
         
         self.moves = []
         self.players = []
@@ -302,7 +301,6 @@ class GameModel (GObject, PooledThread):
             
             try:
                 move = curPlayer.makeMove(self)
-                print "made move", move
             except PlayerIsDead, e:
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                     stringio = cStringIO.StringIO()
@@ -327,16 +325,7 @@ class GameModel (GObject, PooledThread):
                 if not self.checkStatus():
                     break
                 self.emit("game_changed")
-                print "changed"
                 for spectactor in self.spectactors.values():
-                    #print spectactor, spectactor.board
-                    model = GameModel()
-                    model.boards = [board.clone() for board in self.boards]
-                    model.moves = [move for move in self.moves]
-                    model.players = self.players
-                    model.status = self.status
-                    model.reason = self.reason
-                    print "spec move"
                     spectactor.makeMove(self)
             finally:
                 self.applyingMoveLock.release()

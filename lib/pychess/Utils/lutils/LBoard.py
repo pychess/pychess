@@ -6,6 +6,7 @@ from ldata import *
 from attack import isAttacked
 from bitboard import *
 from threading import RLock
+from copy import deepcopy
 
 ################################################################################
 # Zobrit hashing 32 bit implementation                                         #
@@ -48,8 +49,8 @@ STRICT_FEN = False
 ################################################################################
 
 class LBoard:
-    def __init__ (self, boardVariant):
-        self.boardVariant = boardVariant
+    def __init__ (self, variant):
+        self.variant = variant
         self._reset()
     
     def _reset (self):
@@ -73,12 +74,6 @@ class LBoard:
         
         self.arBoard = array("B", [0]*64)
         
-        # This lock is intended to be used anywhere you need to first add some
-        # moves and then pop them, to be sure the board is in the correct state
-        # if another thread looks at it at the same time.
-        # Examples are printing a list of sanmoves or checking for check.
-        self.lock = RLock()
-        
         self.hash = 0
         self.pawnhash = 0
         
@@ -94,7 +89,7 @@ class LBoard:
         self.history = []
 
         # initial cords of rooks and kings for castling in Chess960
-        if self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+        if self.variant == FISCHERRANDOMCHESS or self.variant == SHUFFLECHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
         else:
@@ -168,7 +163,7 @@ class LBoard:
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
                     if moveNoChr == "1" and \
-                        self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+                        self.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
                             if piece == KING:
                                 self.ini_kings[color] = cord
                             elif piece == ROOK:
@@ -179,7 +174,7 @@ class LBoard:
                     cord += 1
         
         # Help tests/movegen.py in positions having no 4 rooks
-        if self.boardVariant.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+        if self.variant == FISCHERRANDOMCHESS or self.variant == SHUFFLECHESS:
             if self.ini_rooks[0][0] is None:
                 self.ini_rooks[0][0] = A1
             if self.ini_rooks[0][1] is None:
@@ -327,7 +322,7 @@ class LBoard:
         
         # Capture
         if tpiece != EMPTY:
-            if self.boardVariant.variant == FISCHERRANDOMCHESS:
+            if self.variant == FISCHERRANDOMCHESS:
                 # don't capture _our_ piece when castling king steps on rook!
                 if flag not in (KING_CASTLE, QUEEN_CASTLE):
                     self._removePiece(tcord, tpiece, opcolor)
@@ -351,7 +346,7 @@ class LBoard:
         
         if flag in (KING_CASTLE, QUEEN_CASTLE):
             if flag == QUEEN_CASTLE:
-                if self.boardVariant.variant == FISCHERRANDOMCHESS:
+                if self.variant == FISCHERRANDOMCHESS:
                     if self.color == WHITE:
                         rookf = self.ini_rooks[0][0]
                         rookt = D1
@@ -364,7 +359,7 @@ class LBoard:
                     rookt = fcord - 1
                     self._move (rookf, rookt, ROOK, self.color)
             else:
-                if self.boardVariant.variant == FISCHERRANDOMCHESS:
+                if self.variant == FISCHERRANDOMCHESS:
                     if self.color == WHITE:
                         rookf = self.ini_rooks[0][1]
                         rookt = F1
@@ -449,7 +444,7 @@ class LBoard:
                         self.castling &= ~W_OOO
         
         if not flag in PROMOTIONS:
-            if self.boardVariant.variant == FISCHERRANDOMCHESS:
+            if self.variant == FISCHERRANDOMCHESS:
                 if flag in (KING_CASTLE, QUEEN_CASTLE):
                     if tpiece == EMPTY:
                         self._move(fcord, tcord, KING, self.color)
@@ -487,7 +482,7 @@ class LBoard:
         
         tpiece = self.arBoard[tcord]
         
-        if self.boardVariant.variant == FISCHERRANDOMCHESS:
+        if self.variant == FISCHERRANDOMCHESS:
             if flag in (KING_CASTLE, QUEEN_CASTLE):
                 if color == WHITE:
                     if flag == QUEEN_CASTLE:
@@ -517,7 +512,7 @@ class LBoard:
 
         # Put back rook moved by castling
         if flag in (KING_CASTLE, QUEEN_CASTLE):
-            if self.boardVariant.variant == FISCHERRANDOMCHESS:
+            if self.variant == FISCHERRANDOMCHESS:
                 self._move (rookt, rookf, ROOK, color)
             else:
                 if flag == QUEEN_CASTLE:
@@ -535,7 +530,7 @@ class LBoard:
                 self._addPiece (tcord, cpiece, opcolor)
                 self._addPiece (fcord, PAWN, color)
             else:
-                if self.boardVariant.variant == FISCHERRANDOMCHESS:
+                if self.variant == FISCHERRANDOMCHESS:
                     if flag in (KING_CASTLE, QUEEN_CASTLE):
                         if flag == KING_CASTLE:
                             self._addPiece (fcord, KING, color)
@@ -654,29 +649,5 @@ class LBoard:
         
         return "".join(fenstr)
     
-    def __eq__ (self, other):
-        if self.arBoard != other.arBoard: return False
-        if self.friends != other.friends: return False
-        if self.enpassant != other.enpassant: return False
-        if self.color != other.color: return False
-        if self.castling != other.castling: return False
-        if self.fifty != other.fifty: return False
-        if self.ini_kings != other.ini_kings: return False
-        if self.ini_rooks != other.ini_rooks: return False
-        if self.history != other.history: return False
-        
-        assert self.blocker45 == other.blocker45
-        assert self.blocker315 == other.blocker315
-        assert self.blocker == other.blocker
-        assert self.blocker90 == other.blocker90
-        
-        assert self.kings == other.kings
-        assert self.boards == other.boards
-        assert self.hasCastled == other.hasCastled
-        
-        assert self.checked == other.checked
-        assert self.opchecked == other.opchecked, (self.opchecked, other.opchecked)
-        assert self.hash == other.hash
-        assert self.pawnhash == other.pawnhash
-        
-        return True
+    def clone (self):
+        return deepcopy(self)
