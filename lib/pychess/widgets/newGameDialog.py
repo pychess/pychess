@@ -159,11 +159,11 @@ class _GameInitializationMode:
         cls.widgets["variant"].set_active(0)
         
         
-        for key in ("whitePlayerCombobox", "blackPlayerCombobox",
+        for key in ("variant", "whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
                     "useTimeCB", "spinbuttonH", "spinbuttonM",
                     "spinbuttonS", "spinbuttonG",
-                    "variant", "enableUndo"):
+                    "enableUndo"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
