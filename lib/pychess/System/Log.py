@@ -74,7 +74,7 @@ class Log (gobject.GObject):
                 self.error("Unable to write '%s' to log file because of error: %s" % \
                         (message, ", ".join(str(a) for a in e.args)))
         
-        if type == ERROR and task != "stdout":
+        if type in (ERROR, WARNING) and task != "stdout":
             print message
     
     def debug (self, message, task="Default"):

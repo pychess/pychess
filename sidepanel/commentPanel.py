@@ -124,19 +124,13 @@ class Sidepanel:
         
         def getMessages (prefix):
             messages = []
-            # We have to lock board and oldboard, as some of the eval functions
-            # does funny things with them.
-            # I'm not sure if this is nessesery, as no other threads I know of
-            # are running in our process (the main one)...
-            oldboard.lock.acquire()
-            board.lock.acquire()
+            
             for functionName in dir(strateval):
                 if not functionName.startswith(prefix+"_"): continue
                 function = getattr(strateval, functionName)
                 for message in function (model, phase):
                     messages.append(message)
-            board.lock.release()
-            oldboard.lock.release()
+            
             return messages
         
         #move = model.moves[-1].move
