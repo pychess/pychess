@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import gtk, gtk.glade
+import gtk, gtk.glade, gobject
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
 from pychess.Utils.Board import Board
 from pychess.System.uistuff import GladeWidgets
@@ -57,6 +57,7 @@ class BoardPreview:
         self.widgets["boardPreviewDock"].add(self.boardview)
         self.boardview.show()
         self.gamemodel = self.boardview.model
+        self.boardview.gotStarted = True
         
         # Connect label showing possition
         self.boardview.connect('shown_changed', self.shown_changed)
