@@ -561,7 +561,7 @@ class LBoard:
         else:
             self._addPiece (fcord, tpiece, color)
         
-       
+        
         self.setColor(color)
         self.updateBoard ()
         
@@ -653,3 +653,30 @@ class LBoard:
         fenstr.append(str(fullmove))
         
         return "".join(fenstr)
+    
+    def __eq__ (self, other):
+        if self.arBoard != other.arBoard: return False
+        if self.friends != other.friends: return False
+        if self.enpassant != other.enpassant: return False
+        if self.color != other.color: return False
+        if self.castling != other.castling: return False
+        if self.fifty != other.fifty: return False
+        if self.ini_kings != other.ini_kings: return False
+        if self.ini_rooks != other.ini_rooks: return False
+        if self.history != other.history: return False
+        
+        assert self.blocker45 == other.blocker45
+        assert self.blocker315 == other.blocker315
+        assert self.blocker == other.blocker
+        assert self.blocker90 == other.blocker90
+        
+        assert self.kings == other.kings
+        assert self.boards == other.boards
+        assert self.hasCastled == other.hasCastled
+        
+        assert self.checked == other.checked
+        assert self.opchecked == other.opchecked, (self.opchecked, other.opchecked)
+        assert self.hash == other.hash
+        assert self.pawnhash == other.pawnhash
+        
+        return True

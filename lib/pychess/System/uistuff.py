@@ -117,6 +117,7 @@ methods = (
     # subclass, but requires different handling
     (ToggleComboBox, ("_get_active", "_set_active", "changed")),
     (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
+    (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
     (gtk.Range, ("get_value", "set_value", "value-changed")),
 )
 
@@ -341,25 +342,27 @@ def cacheGladefile(filename):
     if filename not in cachedGlades:
         cachedGlades[filename] = Queue.Queue()
         def readit ():
-            widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
-            cachedGlades[filename].put(widgets)
+            glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+            cachedGlades[filename].put(glade)
         pool.start(readit)
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
-        self.widgets = None
+        self.glade = None
         try:
             if filename in cachedGlades:
-                self.widgets = cachedGlades[filename].get(block=False)
+                self.glade = cachedGlades[filename].get(block=False)
         except Queue.Empty:
             pass
         
-        if not self.widgets:
-            self.widgets = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+        if not self.glade:
+            self.glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
     
     def __getitem__(self, key):
-        return self.widgets.get_widget(key)
-
+        return self.glade.get_widget(key)
+    
+    def getGlade (self):
+        return self.glade
 

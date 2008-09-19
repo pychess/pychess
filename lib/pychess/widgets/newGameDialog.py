@@ -49,6 +49,18 @@ skillToIcon = {
     8: it.load_icon("weather-storm", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
 }
 
+# Used by TaskerManager. Put here to help synchronization
+skillToIconLarge = {
+    1: it.load_icon("weather-clear", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    2: it.load_icon("weather-few-clouds", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    3: it.load_icon("weather-few-clouds", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    4: it.load_icon("weather-overcast", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    5: it.load_icon("weather-overcast", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    6: it.load_icon("weather-showers", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    7: it.load_icon("weather-showers", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    8: it.load_icon("weather-storm", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+}
+
 variants = (NormalChess, ShuffleChess, FischerRandomChess)
 variantItems = []
 playerItems = [[], [], []]
@@ -219,7 +231,7 @@ class _GameInitializationMode:
 
             gamemodel = GameModel (timemodel, variant)
 
-            callback((gamemodel, playertups[0], playertups[1]))
+            callback(gamemodel, playertups[0], playertups[1])
         
         handlerId = cls.widgets["newgamedialog"].connect("response", onResponse)
         cls.widgets["newgamedialog"].show()
@@ -242,7 +254,7 @@ class NewGameMode (_GameInitializationMode):
         pass
     
     @classmethod
-    def run (cls, callback):
+    def run (cls):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -250,7 +262,7 @@ class NewGameMode (_GameInitializationMode):
         
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
-        cls._generalRun(callback)
+        cls._generalRun(ionest.generalStart)
 
 ################################################################################
 # LoadFileExtension                                                            #
@@ -265,7 +277,7 @@ class LoadFileExtension (_GameInitializationMode):
                 cls.filechooserbutton, opendialog, enddir)
     
     @classmethod
-    def run (cls, callback, uri=None):
+    def run (cls, uri=None):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -287,15 +299,15 @@ class LoadFileExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
         
-        def _callback (startdata):
+        def _callback (gamemodel, p0, p1):
             if not cls.loadSidePanel.is_empty():
                 uri =  cls.loadSidePanel.get_filename()
                 loader = ionest.enddir[uri[uri.rfind(".")+1:]]
                 position = cls.loadSidePanel.get_position()
                 gameno = cls.loadSidePanel.get_gameno()
-                callback(startdata + ((uri, loader, gameno, position),))
+                ionest.generalStart(gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
-                callback(startdata)
+                ionest.generalStart(gamemodel, p0, p1)
         cls._generalRun(_callback)
 
 ################################################################################
@@ -341,7 +353,7 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.sourcebuffer.set_highlight(True)
     
     @classmethod
-    def run (cls, callback):
+    def run (cls):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -351,7 +363,7 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Enter Game"))
         cls.widgets["enterGameNotationSidePanel"].show()
         
-        def _callback (startdata):
+        def _callback (gamemodel, p0, p1):
             text = cls.sourcebuffer.get_text(
                 cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
             
@@ -366,7 +378,7 @@ class EnterNotationExtension (_GameInitializationMode):
                     text = text.replace(sign, reprSign[i+1])
                 text = str(text)
             
-            callback(startdata + ((StringIO(text), pgn, 0, -1),))
+            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), pgn, 0, -1))
         cls._generalRun(_callback)
 
 class ImageButton(gtk.DrawingArea):
