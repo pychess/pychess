@@ -35,8 +35,8 @@ from pychess.Variants.fischerandom import FischerRandomChess
 
 it = gtk.icon_theme_get_default()
 
-image = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-image = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
+ipeople = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
+inotebook = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 
 skillToIcon = {
     1: it.load_icon("weather-clear", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
@@ -54,20 +54,30 @@ variantItems = []
 playerItems = [[], [], []]
 
 for i, variantClass in enumerate(variants):
-    variantItems += [(image, variantClass.name, "stock_notebook")]
-    playerItems[i] += [(image, _("Human Being"), "stock_people")]
-    for engine in discoverer.getEngines().values():
+    variantItems += [(inotebook, variantClass.name, "stock_notebook")]
+    playerItems[i] += [(ipeople, _("Human Being"), "stock_people")]
+
+for engine in discoverer.getEngines().values():
+    name = discoverer.getName(engine)
+    c = discoverer.getCountry(engine)
+    if c:
+        flag = "flags/%s.png" % c
+    else:
+        flag = "flags/unknown.png"
+    flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
+
+    for i, variantClass in enumerate(variants):
         if i==0:
-            playerItems[0] += [(image, discoverer.getName(engine), "stock_notebook")]
+            playerItems[0] += [(flag_icon, name, "stock_notebook")]
         else:
             for feature in engine.getElementsByTagName("feature"):
                 if feature.getAttribute("command") == "variants":
                     if variantClass.variant_name in feature.getAttribute("value"):
-                        playerItems[i] += [(image, discoverer.getName(engine), "stock_notebook")]
+                        playerItems[i] += [(flag_icon, name, "stock_notebook")]
             for option in engine.getElementsByTagName("check-option"):
                 if variantClass.variant_name == "fischerandom":
                     if option.getAttribute("name") == "UCI_Chess960":
-                        playerItems[i] += [(image, discoverer.getName(engine), "stock_notebook")]
+                        playerItems[i] += [(flag_icon, name, "stock_notebook")]
 
 difItems = []
 for level, stock, altstock in \
