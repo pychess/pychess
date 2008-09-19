@@ -158,7 +158,8 @@ class _GameInitializationMode:
                  cls.widgets["blackPlayerCombobox"], cls.widgets["whitePlayerCombobox"])
         cls.widgets["variant"].set_active(0)
         
-        
+        # The "variant" has to come before players, because the engine positions
+        # in the user comboboxes can be different in different variants
         for key in ("variant", "whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
                     "useTimeCB", "spinbuttonH", "spinbuttonM",
