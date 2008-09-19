@@ -2,11 +2,12 @@ from UserDict import UserDict
 from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, WHITE
 from ldata import MATE_VALUE
 from pychess.System.LimitedDict import LimitedDict
+from types import InstanceType
 
-class TranspositionTable (UserDict):
+class TranspositionTable:
     def __init__ (self, maxSize):
-        UserDict.__init__(self)
         assert maxSize > 0
+        self.data = {}
         self.maxSize = maxSize
         self.krono = []
         self.maxdepth = 0
@@ -14,36 +15,33 @@ class TranspositionTable (UserDict):
         self.killer1 = [-1]*20
         self.killer2 = [-1]*20
         self.hashmove = [-1]*20
+    
+    def probe (self, board, depth, alpha, beta):
+        assert type(board) == InstanceType, type(board)
+        try:
+            move, score, hashf, ply = self.data[board.hash]
+            if ply < depth:
+                return
+            if hashf == hashfEXACT:
+                return move, score, hashf
+            if hashf == hashfALPHA and score <= alpha:
+                return move, alpha, hashf
+            if hashf == hashfBETA and score >= beta:
+                return move, beta, hashf
+        except KeyError:
+            return
+    
+    def record (self, board, move, score, hashf, ply):
+        assert type(board) == InstanceType, type(board)
         
-    def __setitem__ (self, key, item):
-        if not key in self:
-            if len(self) >= self.maxSize:
+        if not board.hash in self.data:
+            if len(self.data) >= self.maxSize:
                 try:
-                    del self[self.krono[0]]
+                    del self.data[self.krono[0]]
                 except KeyError: pass # Overwritten
                 del self.krono[0]
-        self.data[key] = item
-        self.krono.append(key)
-    
-    def probe (self, hash, depth, alpha, beta):
-        if not hash in self:
-            return
-        move, score, hashf, ply = self[hash]
-        if ply < depth:
-            return
-        if hashf == hashfEXACT:
-            return move, score, hashf
-        if hashf == hashfALPHA and score <= alpha:
-            return move, alpha, hashf
-        if hashf == hashfBETA and score >= beta:
-            return move, beta, hashf
-    
-    def record (self, hash, move, score, hashf, ply):
-        #if score > MATE_VALUE-256 or score < -MATE_VALUE+256:
-        #    if score > 0:
-        #        score += ply
-        #    else: score -= ply
-        self[hash] = (move, score, hashf, ply)
+        self.data[board.hash] = (move, score, hashf, ply)
+        self.krono.append(board.hash)
     
     def addKiller (self, ply, move):
         if self.killer1[ply] == -1:

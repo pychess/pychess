@@ -167,7 +167,6 @@ def engineDead (engine, gmwidg):
     d.show_all()
 
 def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
-    print "a", analyzerType in gmwidg.gamemodel.spectactors, gmwidg.gamemodel.spectactors
     if not analyzerType in gmwidg.gamemodel.spectactors:
         return
     

@@ -20,7 +20,7 @@ class Board:
     
     def __init__ (self, setup=False):
         self.data = [[None]*8 for i in xrange(8)]
-        self.board = LBoard(self)
+        self.board = LBoard(self.variant)
         
         if setup:
             if setup == True:
@@ -168,14 +168,9 @@ class Board:
         return newBoard
 
     def willLeaveInCheck (self, move):
-        self.board.lock.acquire()
-        try:
-            self.board.applyMove(move.move)
-            result = self.board.opIsChecked()
-            self.board.popMove()
-        finally:
-            self.board.lock.release()
-        return result
+        board_clone = self.board.clone()
+        board_clone.applyMove(move.move)
+        return board_clone.opIsChecked()
     
     def switchColor (self):
         """ Switches the current color to move and unsets the enpassant cord.
@@ -215,16 +210,8 @@ class Board:
         self.data[cord.y][cord.x] = piece
     
     def clone (self):
-        fenstr = self.asFen()
         
-        lboard = LBoard(self)
-        lboard.applyFen (fenstr)
-        lboard.history = copy(self.board.history)
-        lboard.ini_kings = copy(self.board.ini_kings)
-        lboard.ini_rooks = copy(self.board.ini_rooks)
-        lboard.checked = self.board.checked
-        lboard.opchecked = self.board.opchecked
-        lboard.hasCastled = copy(self.board.hasCastled)
+        lboard = self.board.clone()
         
         if self.variant == FISCHERRANDOMCHESS:
             from pychess.Variants.fischerandom import FRCBoard

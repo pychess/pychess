@@ -41,17 +41,14 @@ def getStatus (board):
     if ldraw.testFifty (lboard):
         return DRAW, DRAW_50MOVES
     
-    lboard.lock.acquire()
-    try:
-        for move in lmovegen.genAllMoves (lboard):
-            lboard.applyMove(move)
-            if lboard.opIsChecked():
-                lboard.popMove()
-                continue
-            lboard.popMove()
-            return RUNNING, UNKNOWN_REASON
-    finally:
-        lboard.lock.release()
+    board_clone = lboard.clone()
+    for move in lmovegen.genAllMoves (board_clone):
+        board_clone.applyMove(move)
+        if board_clone.opIsChecked():
+            board_clone.popMove()
+            continue
+        board_clone.popMove()
+        return RUNNING, UNKNOWN_REASON
     
     if lboard.isChecked():
         if board.color == WHITE:
