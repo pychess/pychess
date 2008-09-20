@@ -19,7 +19,7 @@ VERSION = const.VERSION
 
 DESC = "Gnome chess game"
 
-LONG_DESC = """PyChess is a gtk chessgame for Linux. It is designed to a the same time be easy to use, beautiful to look at and provide advanced functions for advanced players"""
+LONG_DESC = """PyChess is a GTK+ chess game for Linux. It is designed to at the same time be easy to use, beautiful to look at, and provide advanced functions for advanced players."""
 
 CLASSIFIERS = [
     'License :: OSI Approved :: GNU General Public License (GPL)',
