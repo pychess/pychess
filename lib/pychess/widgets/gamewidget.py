@@ -343,13 +343,27 @@ def _ensureReadForGameWidgets ():
         hbox.show_all()
         
         tip = gtk.Tooltip()
-        def cb (widget, x, y, keyboard_mode, tooltip, title, desc, pixbuf):
-            tooltip.set_markup("<b>%s</b>\n%s" % (title,desc))
-            tooltip.set_icon(pixbuf)
+        def cb (widget, x, y, keyboard_mode, tooltip, title, desc, filename):
+            table = gtk.Table(2,2)
+            table.set_row_spacings(2)
+            table.set_col_spacings(6)
+            table.set_border_width(4)
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 56, 56)
+            image = gtk.image_new_from_pixbuf(pixbuf)
+            image.set_alignment(0, 0)
+            table.attach(image, 0,1,0,2)
+            titleLabel = gtk.Label()
+            titleLabel.set_markup("<b>%s</b>" % title)
+            titleLabel.set_alignment(0, 0)
+            table.attach(titleLabel, 1,2,0,1)
+            descLabel = gtk.Label(desc)
+            descLabel.props.wrap = True
+            table.attach(descLabel, 1,2,1,2)
+            tooltip.set_custom(table)
+            table.show_all()
             return True
         hbox.props.has_tooltip = True
-        hbox.connect("query-tooltip", cb, panel.__title__, panel.__desc__,
-                     gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 48, 48))
+        hbox.connect("query-tooltip", cb, panel.__title__, panel.__desc__, panel.__icon__)
         
         docks[str(id)] = (hbox, notebooks[panel.__title__])
     
