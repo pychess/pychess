@@ -21,7 +21,7 @@ attrToProtocol = {
 
 # TODO: Diablo, Amy and Amundsen
 backup = """
-<engines>
+<engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py" />
     <engine protocol="cecp" protover="2" binname="gnuchess">
         <meta><country>us</country></meta></engine>
@@ -51,7 +51,7 @@ backup = """
     <engine protocol="uci" protover="1" binname="toga2">
         <meta><country>de</country></meta></engine>
 </engines>
-"""
+""" % ENGINES_XML_API_VERSION
 
 class EngineDiscoverer (GObject, Thread):
     
@@ -67,6 +67,16 @@ class EngineDiscoverer (GObject, Thread):
         
         try:
             self.dom = minidom.parse( self.xmlpath )
+            engines = self.dom.documentElement
+            if engines.hasAttribute("version"):
+                version = engines.getAttribute("version")
+                if float(version) < float(ENGINES_XML_API_VERSION):
+                    log.warn("engineNest: updated engines.xml from version %s to %s \n" %\
+                        (version, ENGINES_XML_API_VERSION))
+                    self.dom = minidom.parseString( backup )
+            else:
+                log.warn("engineNest: no version attribute found\n")
+                self.dom = minidom.parseString( backup )
         except ExpatError, e:
             log.warn("engineNest: %s\n" % e)
             self.dom = minidom.parseString( backup )
