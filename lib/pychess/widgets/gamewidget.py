@@ -240,13 +240,13 @@ class GameWidget (gobject.GObject):
             buttonbox = gtk.VButtonBox()
             buttonbox.props.layout_style = gtk.BUTTONBOX_SPREAD
             for button in hbuttonbox.get_children():
-                button.unparent()
+                hbuttonbox.remove(button)
                 buttonbox.add(button)
         else:
-            hbuttonbox.unparent()
+            messageDialog.child.remove(hbuttonbox)
             buttonbox = hbuttonbox
         
-        message.unparent()
+        messageDialog.child.remove(message)
         texts = message.get_children()[1]
         text1, text2 = texts.get_children()
         texts.set_child_packing(text1, True, False, 0, gtk.PACK_START)
