@@ -82,7 +82,9 @@ class BoardControl (gtk.EventBox):
         self.view.selected = None
         self.view.active = None
         self.view.hover = None
-        self.setState(self.normalState)
+        if isinstance(self.currentState, ActiveState) or \
+                isinstance(self.currentState, SelectedState):
+            self.setState(self.normalState)
     
     def setLocked (self, locked):
         if locked:
