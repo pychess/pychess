@@ -201,7 +201,7 @@ def evalPawnStructure (board, phase):
             ptype = color == WHITE and PAWN or BPAWN
             opptype = color == BLACK and PAWN or BPAWN
             
-            if not i in range(64):
+            if not 0 <= i <= 63:
                 print toString(pawns)
                 print board
             if not (passedPawnMask[opcolor][i] & ~fileBits[cord&7] & pawns) and\
