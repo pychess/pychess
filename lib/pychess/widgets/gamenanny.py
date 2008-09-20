@@ -126,13 +126,12 @@ def on_game_started (gamemodel, gmwidg):
             boardview.rotation = math.pi
     
     # Play set-up sound
-    if conf.get("useSounds", False):
-        preferencesDialog.SoundTab.playAction("gameIsSetup")
+    preferencesDialog.SoundTab.playAction("gameIsSetup")
     
     # Connect player offers to statusbar
     for player in gamemodel.players:
         if player.__type__ == LOCAL:
-            player.connect("offer", offer_callback, gmwidg)
+            player.connect("offer", offer_callback, gamemodel, gmwidg)
     
     # Start analyzers if any
     setAnalyzerEnabled(gmwidg, HINT, getWidgets()["hint_mode"].get_active())
@@ -142,7 +141,7 @@ def on_game_started (gamemodel, gmwidg):
 # Player signals
 #===============================================================================
 
-def offer_callback (player, offer, gmwidg):
+def offer_callback (player, offer, gamemodel, gmwidg):
     if offer.offerType == DRAW_OFFER:
         if gamemodel.status != RUNNING:
             return # If the offer has already been handled by

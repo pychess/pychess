@@ -157,8 +157,7 @@ class BoardView (gtk.DrawingArea):
     
     def game_changed (self, model):
         # Play sounds
-        if self.model.players and conf.get("useSounds", False) and \
-                self.model.status != WAITING_TO_START:
+        if self.model.players and self.model.status != WAITING_TO_START:
             move = model.moves[-1]
             if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
                 sound = "aPlayerCaptures"
@@ -198,7 +197,7 @@ class BoardView (gtk.DrawingArea):
     def game_ended (self, model, reason):
         self.redraw_canvas()
         
-        if self.model.players and conf.get("useSounds", False):
+        if self.model.players:
             sound = False
             
             if model.status == DRAW:
