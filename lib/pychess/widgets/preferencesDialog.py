@@ -6,6 +6,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
+from pychess.System.prefix import addDataPrefix
 
 firstRun = True
 def run(widgets):
@@ -180,10 +181,34 @@ class EngineTab:
 # Sound initing                                                                #
 ################################################################################
 
+# Setup default sounds
+
+for i in xrange(9):
+    if not conf.hasKey("soundcombo%d" % i):
+        conf.set("soundcombo%d" % i, SOUND_URI)
+if not conf.hasKey("sounduri0"):
+    conf.set("sounduri0", "file://"+addDataPrefix("sounds/move1.ogg"))
+if not conf.hasKey("sounduri1"):
+    conf.set("sounduri1", "file://"+addDataPrefix("sounds/check1.ogg"))
+if not conf.hasKey("sounduri2"):
+    conf.set("sounduri2", "file://"+addDataPrefix("sounds/capture1.ogg"))
+if not conf.hasKey("sounduri3"):
+    conf.set("sounduri3", "file://"+addDataPrefix("sounds/start1.ogg"))
+if not conf.hasKey("sounduri4"):
+    conf.set("sounduri4", "file://"+addDataPrefix("sounds/win1.ogg"))
+if not conf.hasKey("sounduri5"):
+    conf.set("sounduri5", "file://"+addDataPrefix("sounds/lose1.ogg"))
+if not conf.hasKey("sounduri6"):
+    conf.set("sounduri6", "file://"+addDataPrefix("sounds/draw1.ogg"))
+if not conf.hasKey("sounduri7"):
+    conf.set("sounduri7", "file://"+addDataPrefix("sounds/obs_mov.ogg"))
+if not conf.hasKey("sounduri8"):
+    conf.set("sounduri8", "file://"+addDataPrefix("sounds/obs_end.ogg"))
+
 class SoundTab:
     
-    SOUND_DIRS = ("/usr/share/sounds", "/usr/local/share/sounds",
-                  os.environ["HOME"])
+    SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
+                  "/usr/local/share/sounds", os.environ["HOME"])
     
     COUNT_OF_SOUNDS = 9
     
@@ -208,6 +233,9 @@ class SoundTab:
     
     @classmethod
     def playAction (cls, action):
+        if not conf.get("useSounds", True):
+            return
+        
         if type(action) == str:
             no = cls.actionToKeyNo[action]
         else: no = action
@@ -292,12 +320,13 @@ class SoundTab:
                 model = combo.get_model()
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
-            
+        
         for i in xrange(self.COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
                 conf.set("soundcombo%d"%i, SOUND_MUTE)
             uistuff.keep(widgets["soundcombo%d"%i], "soundcombo%d"%i)
+            #widgets["soundcombo%d"%i].set_active(conf.get("soundcombo%d"%i, SOUND_MUTE))
         
         # Init play button
         
@@ -314,6 +343,7 @@ class SoundTab:
             checkbox = widgets["useSounds"]
             widgets["frame23"].set_property("sensitive", checkbox.get_active())
         conf.notify_add("useSounds", checkCallBack)
+        widgets["useSounds"].set_active(True)
         uistuff.keep(widgets["useSounds"], "useSounds")
         checkCallBack()
         
