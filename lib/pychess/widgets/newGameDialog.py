@@ -3,6 +3,7 @@ import gettext, locale
 from cStringIO import StringIO
 
 import gtk
+import gobject
 from cairo import ImageSurface
 
 try:
