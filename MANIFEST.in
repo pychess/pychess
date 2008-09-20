@@ -1,4 +1,4 @@
-include glade/*.glade glade/*.png flags/*.png
+include glade/*.glade glade/*.png glade/*.svg flags/*.png
 include README AUTHORS LICENSE INSTALL
 include sidepanel/*.py sidepanel/*.glade sidepanel/*.pyc sidepanel/*.pyo
 include manpages/pychess.1.gz
