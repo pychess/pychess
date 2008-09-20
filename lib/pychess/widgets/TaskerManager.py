@@ -173,7 +173,7 @@ class NewGameTasker (gtk.Alignment):
     def startClicked (self, button):
         color = self.widgets["colorDock"].child.active
         opponent = self.widgets["opponentDock"].child.active
-        difficulty = self.widgets["skillSlider"].get_value()
+        difficulty = int(self.widgets["skillSlider"].get_value())
         
         gamemodel = GameModel(TimeModel(5*60, 0))
         
