@@ -36,19 +36,19 @@ CLASSIFIERS = [
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
-DATA_FILES = [("share/games/pychess",
+DATA_FILES = [("share/pychess",
     ["README", "AUTHORS", "LICENSE", "open.db"])]
 
 # UI
-DATA_FILES += [("share/games/pychess/glade", glob('glade/*.glade'))]
-DATA_FILES += [("share/games/pychess/glade", glob('glade/*.png'))]
-DATA_FILES += [("share/games/pychess/flags", glob('flags/*.png'))]
+DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
+DATA_FILES += [("share/pychess/glade", glob('glade/*.png'))]
+DATA_FILES += [("share/pychess/flags", glob('flags/*.png'))]
 
 # Sidepanel (not a package)
-DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.glade'))]
-DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.py'))]
-DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyc'))]
-DATA_FILES += [("share/games/pychess/sidepanel", glob('sidepanel/*.pyo'))]
+DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.glade'))]
+DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.py'))]
+DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.pyc'))]
+DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 
 # Data
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
