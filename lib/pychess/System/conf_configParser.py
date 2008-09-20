@@ -19,12 +19,14 @@ conid = 0
 
 typeEncode = {
     str: repr(str),
+    unicode: repr(unicode),
     int: repr(int),
     float: repr(float),
     bool: repr(bool)
 }
 typeDecode = {
     repr(str): configParser.get,
+    repr(unicode): configParser.get,
     repr(int): configParser.getint,
     repr(float): configParser.getfloat,
     repr(bool): configParser.getboolean,
