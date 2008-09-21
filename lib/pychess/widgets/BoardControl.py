@@ -92,7 +92,6 @@ class BoardControl (gtk.EventBox):
         else: self.setState(self.normalState)
     
     def setState (self, state):
-        print state
         self.currentState = state
     
     def button_press (self, widget, event):
