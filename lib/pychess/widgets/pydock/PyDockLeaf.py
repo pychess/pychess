@@ -44,7 +44,9 @@ class PyDockLeaf (DockLeaf):
         
         self.dockable = True
         self.panels = []
-        assert isinstance(widget, gtk.Notebook)
+        
+        #assert isinstance(widget, gtk.Notebook)
+        
         self.__add(widget, title, id)
     
     def __add (self, widget, title, id):
