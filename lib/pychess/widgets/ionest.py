@@ -147,9 +147,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             worker.publish(d.show)
     
     if HINT in specs:
-        specs[HINT].analyze(GameModel(), inverse=False)
+        specs[HINT].analyze(gamemodel, inverse=False)
     if SPY in specs:
-        specs[SPY].analyze(GameModel(), inverse=True)
+        specs[SPY].analyze(gamemodel, inverse=True)
     
     return gmwidg, gamemodel
 
