@@ -18,21 +18,14 @@ class PyDockTop (TopDock):
         TopDock.__init__(self, id)
         self.set_no_show_all(True)
         
-        self.__sock = gtk.Alignment(xscale=1, yscale=1)
-        self.put(self.__sock, 0, 0)
-        self.connect("size-allocate", lambda self, alloc: \
-                     self.__sock.set_size_request(alloc.width, alloc.height))
-        self.__sock.show()
+        self.highlightArea = HighlightArea(self)
         
-        self.highlightArea = HighlightArea()
-        self.put(self.highlightArea, 0, 0)
+        self.buttons = (ArrowButton(self, addDataPrefix("glade/dock_top.svg"), NORTH),
+                        ArrowButton(self, addDataPrefix("glade/dock_right.svg"), EAST),
+                        ArrowButton(self, addDataPrefix("glade/dock_bottom.svg"), SOUTH),
+                        ArrowButton(self, addDataPrefix("glade/dock_left.svg"), WEST))
         
-        self.buttons = (ArrowButton(addDataPrefix("glade/dock_top.svg"), NORTH),
-                        ArrowButton(addDataPrefix("glade/dock_right.svg"), EAST),
-                        ArrowButton(addDataPrefix("glade/dock_bottom.svg"), SOUTH),
-                        ArrowButton(addDataPrefix("glade/dock_left.svg"), WEST))
         for button in self.buttons:
-            self.put(button, 0, 0)
             button.connect("dropped", self.__onDrop)
             button.connect("hovered", self.__onHover)
             button.connect("left", self.__onLeave)
@@ -42,7 +35,7 @@ class PyDockTop (TopDock):
     #===========================================================================
     
     def addComponent (self, widget):
-        self.__sock.add(widget)
+        self.add(widget)
         widget.show()
     
     def changeComponent (self, old, new):
@@ -50,11 +43,12 @@ class PyDockTop (TopDock):
         self.addComponent(new)
     
     def removeComponent (self, widget):
-        self.__sock.remove(widget)
+        self.remove(widget)
     
     def getComponents (self):
-        return [child for child in self.__sock.get_children() if \
-                isinstance(child, DockComponent)]
+        if isinstance(self.child, DockComponent):
+            return [self.child]
+        return []
     
     def dock (self, widget, position, title, id):
         if not self.getComponents():
@@ -62,10 +56,10 @@ class PyDockTop (TopDock):
             self.addComponent(leaf)
             return leaf
         else:
-            return self.__sock.get_child().dock(widget, position, title, id)
+            return self.child.dock(widget, position, title, id)
     
     def clear (self):
-        self.__sock.remove(self.__sock.child)
+        self.remove(self.child)
     
     #===========================================================================
     #    Signals
@@ -73,6 +67,7 @@ class PyDockTop (TopDock):
     
     def showArrows (self):
         for button in self.buttons:
+            button._calcSize()
             button.show()
     
     def hideArrows (self):
@@ -87,7 +82,8 @@ class PyDockTop (TopDock):
         self.dock(child, arrowButton.position, title, id)
     
     def __onHover (self, arrowButton, widget):
-        self.highlightArea.showAt(arrowButton.position)
+        self.highlightArea.showAt(arrowButton.myposition)
+        arrowButton.window.raise_()
     
     def __onLeave (self, arrowButton):
         self.highlightArea.hide()
@@ -114,8 +110,8 @@ class PyDockTop (TopDock):
             dockElem.setAttribute("id", self.id)
             doc.documentElement.appendChild(dockElem)
         
-        if self.__sock.child:
-            self.__addToXML(self.__sock.child, dockElem, doc)
+        if self.child:
+            self.__addToXML(self.child, dockElem, doc)
         f = file(xmlpath, "w")
         doc.writexml(f)
         f.close()

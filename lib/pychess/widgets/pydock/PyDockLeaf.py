@@ -21,23 +21,22 @@ class PyDockLeaf (DockLeaf):
         self.book.connect("drag-begin", self.__onDragBegin)
         self.book.connect("drag-end", self.__onDragEnd)
         self.book.connect_after("switch-page", self.__onPageSwitched)
-        self.put(self.book, 0, 0)
-        self.connect("size-allocate", lambda self, alloc: \
-                     self.book.set_size_request(alloc.width, alloc.height))
+        self.add(self.book)
         self.book.show()
         self.book.props.tab_vborder = 0
         self.book.props.tab_hborder = 1
         
-        self.highlightArea = HighlightArea()
-        self.put(self.highlightArea, 0, 0)
+        self.highlightArea = HighlightArea(self)
+        #self.put(self.highlightArea, 0, 0)
         
-        self.starButton = StarArrowButton(addDataPrefix("glade/dock_top.svg"),
+        self.starButton = StarArrowButton(self,
+                                          addDataPrefix("glade/dock_top.svg"),
                                           addDataPrefix("glade/dock_right.svg"),
                                           addDataPrefix("glade/dock_bottom.svg"),
                                           addDataPrefix("glade/dock_left.svg"),
                                           addDataPrefix("glade/dock_center.svg"),
                                           addDataPrefix("glade/dock_star.svg"))
-        self.put(self.starButton, 0, 0)
+        #self.put(self.starButton, 0, 0)
         self.starButton.connect("dropped", self.__onDrop)
         self.starButton.connect("hovered", self.__onHover)
         self.starButton.connect("left", self.__onLeave)
@@ -120,6 +119,7 @@ class PyDockLeaf (DockLeaf):
     
     def showArrows (self):
         if self.dockable:
+            self.starButton._calcSize()
             self.starButton.show()
     
     def hideArrows (self):
@@ -146,8 +146,8 @@ class PyDockLeaf (DockLeaf):
     
     def __onHover (self, starButton, position, widget):
         if self.dockable:
-            starButton.window.raise_()
             self.highlightArea.showAt(position)
+            starButton.window.raise_()
     
     def __onLeave (self, starButton):
         self.highlightArea.hide()

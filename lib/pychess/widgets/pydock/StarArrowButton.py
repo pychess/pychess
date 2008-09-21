@@ -1,10 +1,10 @@
 from math import ceil as float_ceil
 ceil = lambda f: int(float_ceil(f))
 
-import gtk
+import gtk, cairo
 import gobject
 
-from AbstractArrowButton import AbstractArrowButton
+from OverlayWindow import OverlayWindow
 
 POSITIONS_COUNT = 5
 NORTH, EAST, SOUTH, WEST, CENTER = range(POSITIONS_COUNT)
@@ -12,7 +12,7 @@ DX_DY = ((0,-1), (1,0), (0,1), (-1,0), (0,0))
 PADDING_X = 0.2 # Amount of button width
 PADDING_Y = 0.4 # Amount of button height
 
-class StarArrowButton (AbstractArrowButton):
+class StarArrowButton (OverlayWindow):
     
     __gsignals__ = {
         'dropped' : (gobject.SIGNAL_RUN_FIRST, None, (int, object)),
@@ -20,13 +20,14 @@ class StarArrowButton (AbstractArrowButton):
         'left' : (gobject.SIGNAL_RUN_FIRST, None, ()),
     }
     
-    def __init__ (self, northSvg, eastSvg, southSvg, westSvg, centerSvg, bgSvg):
-        AbstractArrowButton.__init__(self)
+    def __init__ (self, parent, northSvg, eastSvg, southSvg, westSvg, centerSvg, bgSvg):
+        OverlayWindow.__init__(self, parent)
         
+        self.myparent = parent
         self.svgs = (northSvg, eastSvg, southSvg, westSvg, centerSvg)
         self.bgSvg = bgSvg
         self.size = ()
-        self.connect("expose-event", self.__onExposeEvent)
+        self.connect_after("expose-event", self.__onExposeEvent)
         self.currentHovered = -1
         
         targets = [("GTK_NOTEBOOK_TAB", gtk.TARGET_SAME_APP, 0xbadbeef)]
@@ -37,37 +38,45 @@ class StarArrowButton (AbstractArrowButton):
         self.connect("drag-leave", self.__onDragLeave)
         self.connect("drag-drop", self.__onDragDrop)
         
-        self.parentAlloc = None
+        self.myparentAlloc = None
+        self.myparentPos = None
+        self.hasHole = False
         self.size = ()
     
-    def __calcSize (self):
-        parentAlloc = self.get_parent().get_allocation()
-        if self.parentAlloc != None and \
-                parentAlloc.x == self.parentAlloc.x and \
-                parentAlloc.y == self.parentAlloc.y and \
-                parentAlloc.width == self.parentAlloc.width and \
-                parentAlloc.height == self.parentAlloc.height:
-            return
-        self.parentAlloc = parentAlloc
+    def _calcSize (self):
+        parentAlloc = self.myparent.get_allocation()
         
-        starWidth, starHeight = self.getSizeOfSvg(self.bgSvg)
-        scale = min(1,
-                    parentAlloc.width  / float(starWidth),
-                    parentAlloc.height / float(starHeight))
+        if self.myparentAlloc == None or \
+                parentAlloc.width != self.myparentAlloc.width or \
+                parentAlloc.height != self.myparentAlloc.height:
+            
+            starWidth, starHeight = self.getSizeOfSvg(self.bgSvg)
+            scale = min(1, parentAlloc.width  / float(starWidth),
+                           parentAlloc.height / float(starHeight))
+            self.size = map(int, (starWidth*scale, starHeight*scale))
+            self.resize(self.size[0], self.size[1])
+            
+            if self.window:
+                self.hasHole = True
+                self.digAHole(self.bgSvg, self.size[0], self.size[1])
         
-        self.size = map(int, (starWidth*scale, starHeight*scale))
-        self.set_size_request(self.size[0], self.size[1])
+        elif not self.hasHole:
+            self.hasHole = True
+            self.digAHole(self.bgSvg, self.size[0], self.size[1])
         
-        self.get_parent().move(self,
-                               int(parentAlloc.width/2. - self.size[0]/2.),
-                               int(parentAlloc.height/2. - self.size[1]/2.))
+        x, y = self.translateCoords(int(parentAlloc.width/2. - self.size[0]/2.),
+                                    int(parentAlloc.height/2. - self.size[1]/2.))
+        if (x,y) != self.get_position():
+            self.move(x, y)
+        
+        self.myparentAlloc = parentAlloc
+        self.myparentPos = self.myparent.window.get_position()
     
     def __onExposeEvent (self, self_, event):
-        self.__calcSize()
-        #self.window.set_composited(True)
-        #print gtk.gdk.display_get_default().supports_cursor_alpha()
+        self._calcSize()
         
         context = self.window.cairo_create()
+        self.paintTransparent(context)
         surface = self.getSurfaceFromSvg(self.bgSvg, self.size[0], self.size[1])
         context.set_source_surface(surface, 0, 0)
         context.paint()
@@ -128,28 +137,53 @@ class StarArrowButton (AbstractArrowButton):
 if __name__ == "__main__":
     w = gtk.Window()
     w.connect("delete-event", gtk.main_quit)
-    hbox = gtk.HBox()
-    
-    l = gtk.Layout()
-    l.set_size_request(200,200)
-    sab = StarArrowButton("/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
+    sab = StarArrowButton(w,
+                          "/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_right.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_bottom.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_left.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_center.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_star.svg")
-    sab.set_size_request(200,200)
-    l.put(sab, 0, 0)
-    hbox.add(l)
-    def handle (*args):
-        sab.showAt(l, CENTER)
-    l.connect("button-press-event", handle)
     
-    nb = gtk.Notebook()
-    label = gtk.Label("hi")
-    nb.append_page(label)
-    nb.set_tab_detachable(label, True)
-    hbox.add(nb)
-    w.add(hbox)
+    def on_expose (widget, event):
+        cr = widget.window.cairo_create()
+        cx = cy = 100
+        r = 50
+        cr.arc(cx, cy, r-1, 0, 2*math.pi)
+        cr.set_source_rgba(1.0, 0.0, 0.0, 1.0)
+        cr.set_operator(cairo.OPERATOR_OVER)
+        cr.fill()
+    #w.connect("e)
+    
     w.show_all()
+    sab.show_all()
     gtk.main()
+
+#if __name__ != "__main__":
+#    w = gtk.Window()
+#    w.connect("delete-event", gtk.main_quit)
+#    hbox = gtk.HBox()
+#    
+#    l = gtk.Layout()
+#    l.set_size_request(200,200)
+#    sab = StarArrowButton("/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
+#                          "/home/thomas/Programmering/workspace/pychess/glade/dock_right.svg",
+#                          "/home/thomas/Programmering/workspace/pychess/glade/dock_bottom.svg",
+#                          "/home/thomas/Programmering/workspace/pychess/glade/dock_left.svg",
+#                          "/home/thomas/Programmering/workspace/pychess/glade/dock_center.svg",
+#                          "/home/thomas/Programmering/workspace/pychess/glade/dock_star.svg")
+#    sab.set_size_request(200,200)
+#    l.put(sab, 0, 0)
+#    hbox.add(l)
+#    def handle (*args):
+#        sab.showAt(l, CENTER)
+#    l.connect("button-press-event", handle)
+#    
+#    nb = gtk.Notebook()
+#    label = gtk.Label("hi")
+#    nb.append_page(label)
+#    nb.set_tab_detachable(label, True)
+#    hbox.add(nb)
+#    w.add(hbox)
+#    w.show_all()
+#    gtk.main()

@@ -5,13 +5,47 @@ import gtk
 import rsvg
 import cairo
 
-class AbstractArrowButton (gtk.DrawingArea):
-    
-    def __init__ (self):
-        assert type(self) != AbstractArrowButton
-        gtk.DrawingArea.__init__(self)
+class OverlayWindow (gtk.Window):
+    """ This class knows about being an overlaywindow and some svg stuff """
     
     cache = {} # Class global self.cache for svgPath:rsvg and (svgPath,w,h):surface
+    
+    def __init__ (self, parent):
+        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
+        colormap = self.get_screen().get_rgba_colormap()
+        self.set_colormap(colormap)
+        self.myparent = parent
+    
+    #===========================================================================
+    #   The overlay stuff
+    #===========================================================================
+    
+    def paintTransparent (self, cairoContext):
+        if self.is_composited():
+            cairoContext.set_operator(cairo.OPERATOR_CLEAR)
+            cairoContext.set_source_rgba(0,0,0,0)
+            cairoContext.paint()
+            cairoContext.set_operator(cairo.OPERATOR_OVER)
+    
+    def digAHole (self, svgShape, width, height):
+        surface = self.getSurfaceFromSvg(svgShape, width, height)
+        mask = gtk.gdk.Pixmap(None, width, height, 1)
+        mcontext = mask.cairo_create()
+        mcontext.set_source_surface(surface, 0, 0)
+        mcontext.paint()
+        if self.is_composited():
+            self.window.input_shape_combine_mask(mask, 0, 0)
+        else: self.window.shape_combine_mask(mask, 0, 0)
+    
+    def translateCoords (self, x, y):
+        x1, y1 = self.myparent.window.get_position()
+        x += x1 + self.myparent.get_allocation().x
+        y += y1 + self.myparent.get_allocation().y
+        return x, y
+    
+    #===========================================================================
+    #   The SVG stuff
+    #===========================================================================
     
     def getSurfaceFromSvg (self, svgPath, width, height):
         path = os.path.abspath(svgPath)
@@ -37,7 +71,7 @@ class AbstractArrowButton (gtk.DrawingArea):
     
     def __loadNativeColoredSvg (self, svgPath):
         def colorToHex (color, state):
-            color = getattr(self.get_style(), color)[state]
+            color = getattr(self.myparent.get_style(), color)[state]
             pixels = (color.red, color.green, color.blue)
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
