@@ -118,7 +118,7 @@ class CECPEngine (ProtocolEngine):
         self.board = model.boards[-1]
         self.start(block=True)
         self.sendAnalyze(inverse)
-
+        
         def autorun ():
             while self.connected:
                 try:
@@ -134,7 +134,13 @@ class CECPEngine (ProtocolEngine):
         pool.start(autorun)
     
     def makeMove (self, gamemodel):
+        
+        if not self.ready:
+            self.runWhenReady(self.ping, gamemodel)
+            return
+        
         self.changeLock.acquire()
+        
         try:
             # Make the move
             self.board = gamemodel.boards[-1]
@@ -239,7 +245,7 @@ class CECPEngine (ProtocolEngine):
             # Analyzing
             if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
                 if parts[:4] == ["0","0","0","0"]:
-                    # Crafty doesn't analyze untill it is out of book
+                    # Crafty doesn't analyze until it is out of book
                     print >> self.engine, "book off"
                     return
                 
@@ -270,13 +276,13 @@ class CECPEngine (ProtocolEngine):
             
             #Tell User Error
             if parts[0] == "tellusererror":
-                #print "Tell User Error", repr(" ".join(parts[1:]))
+                log.warn("Ignoring tellusererror: %s" % " ".join(parts[1:]))
                 return
             
             # Tell Somebody
             if parts[0][:4] == "tell" and \
                     parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-                #print "Tell", parts[0][4:], repr(" ".join(parts[1:]))
+                log.warn("Ignoring tell %s: %s" % (parts[0][4:], " ".join(parts[1:])))
                 return
             
             if "feature" in parts:
@@ -490,9 +496,7 @@ class CECPEngine (ProtocolEngine):
         if self.ready:
             if self.mode not in (ANALYZING, INVERSE_ANALYZING):
                 if self.board:
-                    print 1
                     self.movecon.acquire()
-                    print 2
                     try:
                         self.hurry()
                         self.force()
@@ -505,6 +509,10 @@ class CECPEngine (ProtocolEngine):
             self.changeLock.acquire()
             try:
                 
+                if self.mode == INVERSE_ANALYZING:
+                    self.board = self.board.setColor(1-self.board.color)
+                    self.printColor()
+                
                 for i in xrange(moves):
                     print >> self.engine, "undo"
                 
@@ -516,6 +524,11 @@ class CECPEngine (ProtocolEngine):
                         self.board = None
                 else:
                     self.board = gamemodel.boards[-1]
+                
+                if self.mode == INVERSE_ANALYZING:
+                    self.board = self.board.setColor(1-self.board.color)
+                    self.printColor()
+                
             finally:
                 self.changeLock.release()
         else:
