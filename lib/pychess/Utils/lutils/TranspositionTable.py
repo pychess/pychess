@@ -10,8 +10,14 @@ class TranspositionTable:
         self.data = {}
         self.maxSize = maxSize
         self.krono = []
-        self.maxdepth = 0
         
+        self.killer1 = [-1]*20
+        self.killer2 = [-1]*20
+        self.hashmove = [-1]*20
+    
+    def clear (self):
+        self.data.clear()
+        del self.krono[:]
         self.killer1 = [-1]*20
         self.killer2 = [-1]*20
         self.hashmove = [-1]*20

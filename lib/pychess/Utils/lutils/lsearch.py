@@ -13,7 +13,7 @@ import ldraw
 
 TIMECHECK_FREQ = 500
 
-table = TranspositionTable(50000)
+table = TranspositionTable(5000000)
 skipPruneChance = 0
 searching = False
 movesearches = 0
@@ -45,14 +45,14 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Look up transposition table                                              #
     ############################################################################
     
-    table.setHashMove (ply, -1)
+    table.setHashMove (depth, -1)
     from types import InstanceType
     assert type(board) == InstanceType
-    probe = table.probe (board, ply, alpha, beta)
+    probe = table.probe (board, depth, alpha, beta)
     
     if probe:
         move, score, hashf = probe
-        table.setHashMove (ply, move)
+        table.setHashMove (depth, move)
         
         if hashf == hashfEXACT:
             return [move], score
@@ -105,15 +105,10 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     movesearches += 1
     
-    # TODO: Using heap is slower than simply doing a list.sort()
-    
-    heap = []
     if isCheck:
-        for move in genCheckEvasions(board):
-            heappush(heap, (-getMoveValue (board, table, ply, move), move))
-    else:
-        for move in genAllMoves(board):
-            heappush(heap, (-getMoveValue (board, table, ply, move), move))
+        moves = [(-getMoveValue(board,table,depth,m),m) for m in genCheckEvasions(board)]
+    else: moves = [(-getMoveValue(board,table,depth,m),m) for m in genAllMoves(board)]
+    moves.sort()
     
     # This is needed on checkmate
     catchFailLow = None
@@ -122,10 +117,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Loop moves                                                               #
     ############################################################################
     
-    while heap:
+    for moveValue, move in moves:
         nodes += 1
-        
-        v, move = heappop(heap)
         
         board.applyMove(move)
         if not isCheck:
@@ -149,12 +142,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         
         if val > alpha:
             if val >= beta:
-                table.record (board, move, beta, hashfBETA, ply)
+                table.record (board, move, beta, hashfBETA, depth)
                 # We don't want to use our valuable killer move spaces for
                 # captures and promotions, as these are searched early anyways.
                 if board.arBoard[move&63] == EMPTY and \
                         not move>>12 in PROMOTIONS:
-                    table.addKiller (ply, move)
+                    table.addKiller (depth, move)
                 last = 2
                 return [move]+mvs, beta
                 
@@ -169,13 +162,14 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if amove:
         last = 3
-        table.record (board, amove[0], alpha, hashf, ply)
+        table.record (board, amove[0], alpha, hashf, depth)
         if board.arBoard[amove[0]&63] == EMPTY:
-            table.addKiller (ply, amove[0])
+            table.addKiller (depth, amove[0])
         return amove, alpha
-        
+    
     if catchFailLow:
         last = 4
+        table.record (board, catchFailLow, alpha, hashf, depth)
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
