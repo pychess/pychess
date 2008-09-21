@@ -58,7 +58,7 @@ features = {
     "myname": "PyChess %s" % VERSION
 }
 
-sd = 4
+sd = 10
 skipPruneChance = 0
 moves = None
 increment = None
