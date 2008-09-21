@@ -7,6 +7,8 @@ import pango
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
+from pychess.widgets.pydock.PyDockTop import PyDockTop
+from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
 
 TYPE_PERSONAL, TYPE_CHANNEL = range(2)
 
@@ -446,6 +448,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         vbox = gtk.VBox()
         self.add_with_viewport(vbox)
+        self.child.set_shadow_type(gtk.SHADOW_NONE)
         
         self.joinedList = TextImageTree("gtk-remove")
         self.joinedList.connect("activated", self.onRemove)
@@ -540,38 +543,28 @@ class ChatWindow:
         self.window.connect("delete-event", lambda w,e: w.hide() or True)
         self.window.resize(650, 400)
         
-        self.dock = gdl.Dock()
-        self.window.add(self.dock)
-        
-        panel = self.addPanel(ChannelsPanel, "conversations", _("Conversations"),
-                              gdl.DOCK_CENTER, 
-                              gdl.DOCK_ITEM_BEH_CANT_ICONIFY|
-                              gdl.DOCK_ITEM_BEH_CANT_CLOSE)
-        panel.connect('conversationAdded', self.onConversationAdded)
-        panel.connect('conversationRemoved', self.onConversationRemoved)
-        panel.connect('conversationSelected', self.onConversationSelected)
-        
-        self.addPanel(ViewsPanel, "chat", "chat",
-                      gdl.DOCK_RIGHT,
-                      gdl.DOCK_ITEM_BEH_NO_GRIP)
+        dock = PyDockTop("icchat")
+        dock.show()
+        self.window.add(dock)
         
         
+        panel1 = ViewsPanel(self.connection)
+        leaf = dock.dock(panel1, CENTER, gtk.Label("chat"), "chat")
+        leaf.setDockable(False)
         
-        self.addPanel(InfoPanel, "info", _("Conversation info"),
-                      gdl.DOCK_RIGHT,
-                      gdl.DOCK_ITEM_BEH_CANT_ICONIFY|
-                      gdl.DOCK_ITEM_BEH_CANT_CLOSE)
+        panel2 = ChannelsPanel(self.connection)
+        panel2.connect('conversationAdded', self.onConversationAdded)
+        panel2.connect('conversationRemoved', self.onConversationRemoved)
+        panel2.connect('conversationSelected', self.onConversationSelected)
+        leaf.dock(panel2, WEST, gtk.Label(_("Conversations")), "conversations")
         
+        panel3 = InfoPanel(self.connection)
+        leaf.dock(panel3, EAST, gtk.Label(_("Conversation info")), "info")
+        
+        self.panels = [panel1, panel2, panel3]
         for panel in self.panels:
+            panel.show_all()
             panel.start()
-    
-    def addPanel (self, class_, id, name, orientation, flags):
-        item = gdl.DockItem(id, name, None, flags)
-        panel = class_(self.connection)
-        item.add(panel)
-        self.dock.add_item(item, orientation)
-        self.panels.append(panel)
-        return panel
     
     def onConversationAdded (self, panel, id, text, type):
         chatView = ChatView()
