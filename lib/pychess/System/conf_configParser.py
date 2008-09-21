@@ -61,4 +61,5 @@ def set (key, value):
             func (None)
 
 def hasKey (key):
-    return configParser.has_option(section, key)
+    return configParser.has_option(section, key) and \
+           configParser.has_option(section+"_Types", key)
