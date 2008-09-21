@@ -136,7 +136,7 @@ class CECPEngine (ProtocolEngine):
     def makeMove (self, gamemodel):
         
         if not self.ready:
-            self.runWhenReady(self.ping, gamemodel)
+            self.runWhenReady(self.makeMove, gamemodel)
             return
         
         self.changeLock.acquire()
