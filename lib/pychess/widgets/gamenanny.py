@@ -21,10 +21,19 @@ def nurseGame (gmwidg, gamemodel):
     
     gmwidg.connect("infront", on_gmwidg_infront)
     
-    gamemodel.connect("game_loaded", game_loaded, gmwidg)
+    # Because of the async loading of games, the game might already be started,
+    # when the glock is ready and nurseGame is called.
+    # Thus we support both cases.
+    if gamemodel.status == WAITING_TO_START:
+        gamemodel.connect("game_started", on_game_started, gmwidg)
+        gamemodel.connect("game_loaded", game_loaded, gmwidg)
+    else:
+        if gamemodel.uri:
+            game_loaded(gamemodel, gamemodel.uri)
+        on_game_started(gamemodel, gmwidg)
+    
     gamemodel.connect("game_saved", game_saved, gmwidg)
     gamemodel.connect("game_ended", game_ended, gmwidg)
-    gamemodel.connect("game_started", on_game_started, gmwidg)
 
 #===============================================================================
 # Gamewidget signals
