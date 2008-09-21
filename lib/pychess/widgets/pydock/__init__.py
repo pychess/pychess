@@ -15,11 +15,11 @@ class DockComponent:
     def dock (self, widget, position, title, id):
         abstract
 
-class TabReceiver (gtk.Layout):
+class TabReceiver (gtk.Alignment):
     __instances = []
     
     def __init__ (self):
-        gtk.Layout.__init__(self)
+        gtk.Alignment.__init__(self,1,1,1,1)
         self.__instances.append(self)
     
     def getInstances (self):

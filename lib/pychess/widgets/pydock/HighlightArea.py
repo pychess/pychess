@@ -1,19 +1,21 @@
-import gtk
+import gtk, cairo
 
 from math import ceil as fceil
 ceil = lambda f: int(fceil(f))
 
 from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from OverlayWindow import OverlayWindow
 
-class HighlightArea (gtk.DrawingArea):
+class HighlightArea (OverlayWindow):
     """ An entirely blue widget """
     
-    def __init__ (self):
-        gtk.DrawingArea.__init__(self)
+    def __init__ (self, parent):
+        OverlayWindow.__init__(self, parent)
+        self.myparent = parent
         self.connect_after("expose-event", self.__onExpose)
     
     def showAt (self, position):
-        alloc = self.get_parent().get_allocation()
+        alloc = self.myparent.get_allocation()
         if position == NORTH:
             x, y = 0, 0
             width, height = alloc.width, alloc.height*0.381966011
@@ -30,14 +32,20 @@ class HighlightArea (gtk.DrawingArea):
             x, y = 0, 0
             width, height = alloc.width, alloc.height
         
-        if self.window:
-            self.window.move_resize(int(x), int(y), ceil(width), ceil(height))
-        self.get_parent().move(self, int(x), int(y))
-        self.set_size_request(ceil(width), ceil(height))
+        x, y = self.translateCoords(int(x), int(y))
+        self.move(x, y)
+        self.resize(ceil(width), ceil(height))
         self.show()
     
     def __onExpose (self, self_, event):
         context = self.window.cairo_create()
-        context.set_source_color(self.get_style().light[gtk.STATE_SELECTED])
         context.rectangle(event.area)
-        context.fill()
+        if self.is_composited():
+            color = self.get_style().light[gtk.STATE_SELECTED]
+            context.set_source_rgba(color.red, color.green, color.blue, 0.5)
+            context.set_operator(cairo.OPERATOR_CLEAR)
+            context.paint()
+        else:
+            context.set_source_color(self.get_style().light[gtk.STATE_SELECTED])
+            context.set_operator(cairo.OPERATOR_OVER)
+            context.fill()
