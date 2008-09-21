@@ -332,7 +332,7 @@ class LBoard:
         if fpiece == PAWN:
 
             if flag == ENPASSANT:
-                takenPawnC = self.enpassant + (self.color == WHITE and -8 or 8)
+                takenPawnC = tcord + (self.color == WHITE and -8 or 8)
                 self._removePiece (takenPawnC, PAWN, opcolor)
                 
             elif flag in PROMOTIONS:
