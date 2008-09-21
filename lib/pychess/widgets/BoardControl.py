@@ -92,6 +92,7 @@ class BoardControl (gtk.EventBox):
         else: self.setState(self.normalState)
     
     def setState (self, state):
+        print state
         self.currentState = state
     
     def button_press (self, widget, event):
@@ -135,10 +136,13 @@ class BoardState:
     
     def isSelectable (self, cord):
         # Simple isSelectable method, disabling selecting cords out of bound etc
-        if not cord or \
-                not 0 <= cord.x <= 7 or not 0 <= cord.y <= 7 or \
-                self.view.model.status != RUNNING or \
-                self.view.shown != self.view.model.ply:
+        if not cord:
+            return False
+        if not 0 <= cord.x <= 7 or not 0 <= cord.y <= 7:
+            return False
+        if self.view.model.status != RUNNING:
+            return False
+        if self.view.shown != self.view.model.ply:
             return False
         return True
     
@@ -272,6 +276,9 @@ class ActiveState (BoardState):
         BoardState.motion(self, x, y)
         fcord = self.view.active
         piece = self.getBoard()[fcord]
+        
+        if piece.color != self.getBoard().color:
+            return
         
         if not self.view.square: return
         xc, yc, square, s = self.view.square
