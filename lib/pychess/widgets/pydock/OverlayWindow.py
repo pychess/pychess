@@ -13,7 +13,8 @@ class OverlayWindow (gtk.Window):
     def __init__ (self, parent):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
         colormap = self.get_screen().get_rgba_colormap()
-        self.set_colormap(colormap)
+        if colormap:
+            self.set_colormap(colormap)
         self.myparent = parent
     
     #===========================================================================
