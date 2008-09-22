@@ -71,18 +71,14 @@ class Board:
         
         if move.flag == QUEEN_CASTLE:
             if self.color == WHITE:
-                r1 = self.board.ini_rooks[0][0]
-                moved.append( (self[Cord(r1)], Cord(r1)) )
+                moved.append( (self[Cord(A1)], Cord(A1)) )
             else:
-                r8 = self.board.ini_rooks[1][0]
-                moved.append( (self[Cord(r8)], Cord(r8)) )
+                moved.append( (self[Cord(A8)], Cord(A8)) )
         elif move.flag == KING_CASTLE:
             if self.color == WHITE:
-                r1 = self.board.ini_rooks[0][1]
-                moved.append( (self[Cord(r1)], Cord(r1)) )
+                moved.append( (self[Cord(H1)], Cord(H1)) )
             else:
-                r8 = self.board.ini_rooks[1][1]
-                moved.append( (self[Cord(r8)], Cord(r8)) )
+                moved.append( (self[Cord(H8)], Cord(H8)) )
         
         elif move.flag in PROMOTIONS:
             newPiece = board1[cord1]
