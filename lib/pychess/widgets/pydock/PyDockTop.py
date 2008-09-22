@@ -79,7 +79,7 @@ class PyDockTop (TopDock):
         self.highlightArea.hide()
         child = sender.get_nth_page(sender.get_current_page())
         title, id = sender.get_parent().undock(child)
-        self.dock(child, arrowButton.position, title, id)
+        self.dock(child, arrowButton.myposition, title, id)
     
     def __onHover (self, arrowButton, widget):
         self.highlightArea.showAt(arrowButton.myposition)
