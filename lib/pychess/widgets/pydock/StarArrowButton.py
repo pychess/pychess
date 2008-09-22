@@ -64,13 +64,14 @@ class StarArrowButton (OverlayWindow):
             self.hasHole = True
             self.digAHole(self.bgSvg, self.size[0], self.size[1])
         
-        x, y = self.translateCoords(int(parentAlloc.width/2. - self.size[0]/2.),
-                                    int(parentAlloc.height/2. - self.size[1]/2.))
-        if (x,y) != self.get_position():
-            self.move(x, y)
-        
+        if self.myparent.window:
+            x, y = self.translateCoords(int(parentAlloc.width/2. - self.size[0]/2.),
+                                        int(parentAlloc.height/2. - self.size[1]/2.))
+            if (x,y) != self.get_position():
+                self.move(x, y)
+            
+            self.myparentPos = self.myparent.window.get_position()
         self.myparentAlloc = parentAlloc
-        self.myparentPos = self.myparent.window.get_position()
     
     def __onExposeEvent (self, self_, event):
         self._calcSize()

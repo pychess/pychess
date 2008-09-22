@@ -42,9 +42,12 @@ class HighlightArea (OverlayWindow):
         context.rectangle(event.area)
         if self.is_composited():
             color = self.get_style().light[gtk.STATE_SELECTED]
-            context.set_source_rgba(color.red, color.green, color.blue, 0.5)
             context.set_operator(cairo.OPERATOR_CLEAR)
-            context.paint()
+            context.set_source_rgba(0,0,0,0.0)
+            context.fill_preserve ()
+            context.set_operator(cairo.OPERATOR_OVER)
+            context.set_source_rgba(color.red/65535., color.green/65535., color.blue/65535., 0.5)
+            context.fill()
         else:
             context.set_source_color(self.get_style().light[gtk.STATE_SELECTED])
             context.set_operator(cairo.OPERATOR_OVER)
