@@ -3,8 +3,8 @@ import unittest
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
-from pychess.Utils.Board import Board
-from pychess.Variants.fischerandom import FRCBoard
+#from pychess.Utils.Board import Board
+#from pychess.Variants.fischerandom import FRCBoard
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.bitboard import toString
@@ -106,11 +106,7 @@ class FindMovesTestCase(unittest.TestCase):
             depths = [int(s[3:].rstrip()) for s in parts[1:]]
             self.positions.append( (parts[0], depths) )
     
-    def testMovegen(self):
-        """Testing move generator with several positions"""
-        print
-        board = LBoard(Board)
-#        board = LBoard(FRCBoard)
+    def movegen(self, board):
         for i, (pos, depths) in enumerate(self.positions[1:]):
             print i+1, "/", len(self.positions), "-", pos
             
@@ -125,6 +121,17 @@ class FindMovesTestCase(unittest.TestCase):
                 self.perft (board, depth+1, [])
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
-            
+
+    def testMovegenNormal(self):
+        """Testing NORMAL variant move generator with several positions"""
+        print
+        self.movegen(LBoard(NORMALCHESS))
+
+    def testMovegenFRC(self):
+        """Testing FRC variant move generator with several positions"""
+        print
+        self.movegen(LBoard(FISCHERRANDOMCHESS))
+
+
 if __name__ == '__main__':
     unittest.main()
