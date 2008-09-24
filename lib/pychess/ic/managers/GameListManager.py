@@ -141,7 +141,7 @@ class GameListManager (GObject):
                 if value[-1] in (" ", "P", "E"):
                     seek[key] = value[:-1]
             elif key == "a":
-                seek["manual"] = value == "f"
+                seek["manual"] = value == "f" # Must be accepted manually
         
         self.emit("addSeek", seek)
     
