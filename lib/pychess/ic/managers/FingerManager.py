@@ -4,6 +4,7 @@ from gobject import *
 from time import time
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating
+from pychess.System.Log import log
 
 types = "(?:blitz|standard|lightning|wild|bughouse|crazyhouse|suicide|losers|atomic)"
 rated = "(rated|unrated)"
@@ -312,7 +313,7 @@ class FingerManager (GObject):
             elif groupdict["noteno"] != None:
                 finger.setNote(int(groupdict["noteno"])-1, groupdict["note"])
             else:
-                print "Unmatched finger", repr(match.group()), groupdict
+                log.debug("Ignored fingerline: %s" % repr(match.group()))
         
         self.emit ("fingeringFinished", finger)
     
