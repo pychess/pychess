@@ -394,7 +394,7 @@ def toAN (board, move):
     
     s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
     if FLAG(move) in PROMOTIONS:
-        s += reprSign[PROMOTE_PIECE(FLAG(move))]
+        s += "="+reprSign[PROMOTE_PIECE(FLAG(move))]
     return s
 
 ################################################################################
@@ -414,7 +414,11 @@ def parseAN (board, an):
         raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     if len(an) == 5:
+        #The a7a8q variant
         flag = chr2Sign[an[4].lower()] + 2
+    elif len(an) == 6:
+        #The a7a8=q variant
+        flag = chr2Sign[an[5].lower()] + 2
     elif board.arBoard[fcord] == KING:
         if board.variant == FISCHERRANDOMCHESS:
             if (abs(fcord - tcord) > 1 and an[1]==an[3] and \
