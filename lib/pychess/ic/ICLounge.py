@@ -15,6 +15,7 @@ from pychess.System import glock, uistuff
 from pychess.System.GtkWorker import EmitPublisher, Publisher
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
+from pychess.System.Log import log
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
 from pychess.widgets.ChatWindow import ChatWindow
@@ -99,6 +100,9 @@ class VariousSection(Section):
             retur = widgets["ficsCautionDialog"].run()
             widgets["ficsCautionDialog"].hide()
         widgets["caution_learn_more"].connect("clicked", on_learn_more_clicked)
+        
+        connection.em.connect("onCommandNotFound", lambda em, cmd:
+                log.error("Fics answered '%s': Command not found" % cmd))
 
 ############################################################################
 # Initialize User Information Section                                      #
