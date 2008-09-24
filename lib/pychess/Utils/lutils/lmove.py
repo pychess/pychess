@@ -417,14 +417,14 @@ def parseAN (board, an):
         flag = chr2Sign[an[4].lower()] + 2
     elif board.arBoard[fcord] == KING:
         if board.variant == FISCHERRANDOMCHESS:
-            if (abs(fcord - tcord) > 1 and \
+            if (abs(fcord - tcord) > 1 and an[1]==an[3] and \
                     ((board.color == WHITE and tcord==C1) or \
                      (board.color == BLACK and tcord==C8))) or \
                 (board.ini_rooks[board.color][0] == tcord and \
                     ((board.color == WHITE and board.castling & W_OOO) or \
                     (board.color == BLACK and board.castling & B_OOO))):
                 flag = QUEEN_CASTLE
-            elif (abs(fcord - tcord) > 1 and \
+            elif (abs(fcord - tcord) > 1 and an[1]==an[3] and \
                     ((board.color == WHITE and tcord==G1) or \
                      (board.color == BLACK and tcord==G8))) or \
                 (board.ini_rooks[board.color][1] == tcord and \
