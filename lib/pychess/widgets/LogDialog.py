@@ -2,6 +2,7 @@
 
 import os.path
 import time
+import codecs
 
 import gtk, pango, gobject
 
@@ -9,6 +10,12 @@ from pychess.System import glock, uistuff
 from pychess.System.Log import log
 from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
 from pychess.System.prefix import addDataPrefix
+
+def rawreplace(error):
+    symbols = (ur"\x%02x" % ord(s)
+        for s in error.object[error.start:error.end])
+    return u"".join(symbols), error.end
+codecs.register_error("rawreplace", rawreplace)
 
 class InformationWindow:
     
@@ -71,7 +78,7 @@ class InformationWindow:
             cls.tagToTime[tag] = timestamp
         
         if type(message) == str:
-            message = unicode(message, "utf-8", 'replace')
+            message = unicode(message, "utf-8", 'rawreplace')
         textview.get_buffer().insert_with_tags_by_name(
             textview.get_buffer().get_end_iter(), message, str(importance))
     
@@ -191,7 +198,9 @@ class InformationWindow:
             if event.keyval in (ord("f"), ord("F")):
                 widgets["findbar"].props.visible = not widgets["findbar"].props.visible
                 if widgets["findbar"].props.visible:
-                    gobject.idle_add(widgets["searchEntry"].grab_focus)
+                    signal = widgets["searchEntry"].connect_after("expose-event",
+                            lambda w,e: w.grab_focus() or
+                            widgets["searchEntry"].disconnect(signal))
     
     @classmethod
     def onFindbarKeypress (cls, findbar, event):
