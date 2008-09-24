@@ -35,8 +35,9 @@ class TimeSeal:
                 raise
         self.sock = sock
         self.buf = ''
+        self.writebuf = ''
         
-        self.write(self.get_init_string())
+        print >> self, self.get_init_string()
         self.cook_some()
     
     def close (self):
@@ -53,30 +54,31 @@ class TimeSeal:
         return res
     
     def encode(self, inbuf, timestamp = None):
+        assert inbuf[-1] != "\n"
+        
         timestamp = timestamp or self.get_time()
         enc = inbuf + '\x18' + str(timestamp) + '\x19'
         padding = 11 - ((len(enc) - 1) % 12)
         filler = [random.choice(FILLER) for x in range(padding)]
         enc += ''.join(filler)
-    
+        
         buf = [ord(i) for i in enc]
-    
+        
         for i in range(0, len(buf), 12):
             buf[i + 11], buf[i] = buf[i], buf[i + 11]
             buf[i + 9], buf[i + 2] = buf[i + 2], buf[i + 9]
             buf[i + 7], buf[i + 4] = buf[i + 4], buf[i + 7]
-    
+        
         j = encode_offset = random.randint(0, ENCODELEN-1)
-    
+        
         for i in range(0, len(buf)):
             buf[i] |= 0x80
             buf[i] = chr((buf[i] ^ ENCODE[j]) - 32)
             j += 1
             if j>= ENCODELEN: j = 0
-    
+        
         buf.append( chr(0x80 | encode_offset))
-        buf.append(chr(10)) #nl
-    
+        
         return ''.join(buf)
 
     def get_init_string(self):
@@ -123,10 +125,17 @@ class TimeSeal:
         return ''.join(result), g_count, (state, lookahead)
     
     def write(self, str):
-        str = str.strip()
-        if not str: return
-        log.log(str+"\n", (repr(self), "raw"))
-        self.sock.send(self.encode(str))
+        self.writebuf += str
+        if "\n" not in self.writebuf:
+            return
+        
+        i = self.writebuf.rfind("\n")
+        str = self.writebuf[:i+1]
+        self.writebuf = self.writebuf[i+1:]
+        
+        log.log(str, (repr(self), "raw"))
+        str = self.encode(str[:-1])+"\n"
+        self.sock.send(str)
     
     def readline(self):
         while True:
@@ -156,7 +165,7 @@ class TimeSeal:
             log.debug(recv, (repr(self), "raw"))
             
             for i in range(g_count):
-                self.sock.send(self.encode(G_RESPONSE))
+                print >> self, G_RESPONSE
             
             self.buf += recv
     
