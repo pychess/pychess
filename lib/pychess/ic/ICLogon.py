@@ -111,8 +111,24 @@ class ICLogon:
         
         self.showNormal()
         
-        self.widgets["messageTitle"].set_markup("<b>%s</b>" % title)
-        self.widgets["messageText"].set_text(str(text))
+        pars = str(text).split("\n")
+        textsVbox = self.widgets["textsVbox"]
+        
+        while len(textsVbox.get_children()) > len(pars)+1:
+            child = textsVbox.get_children()[-1]
+            textsVbox.remove(child)
+        
+        while len(textsVbox.get_children()) < len(pars)+1:
+            label = gtk.Label()
+            label.props.wrap = True
+            label.props.xalign = 0
+            label.props.justify = gtk.JUSTIFY_LEFT
+            textsVbox.add(label)
+        
+        textsVbox.get_children()[0].set_markup("<b><big>%s</big></b>" % title)
+        for i, par in enumerate(pars):
+            textsVbox.get_children()[i+1].set_text(par)
+        
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):

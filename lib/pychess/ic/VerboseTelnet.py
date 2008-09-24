@@ -123,11 +123,13 @@ class VerboseTelnet:
         return line
     
     def write(self, str):
-        log.log(str, repr(self.telnet))
         self.telnet.write(str)
     
     def close (self):
         self.telnet.close()
+    
+    def __repr__ (self):
+        return self.telnet.address
 
 class PredictionsTelnet:
     def __init__ (self, telnet):
@@ -163,9 +165,12 @@ class PredictionsTelnet:
         origLine = line
         if self.getStripLines():
             line = line.strip()
+            log.debug(line+"\n", (repr(self.telnet), "lines"))
         
         if self.__state:
             answer = self.__state.handle(line)
+            if answer != RETURN_NO_MATCH:
+                log.debug(line+"\n", (repr(self.telnet), repr(self.__state.callback.__name__)))
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
@@ -174,12 +179,14 @@ class PredictionsTelnet:
         if not self.__state:
             for prediction in temppreds:
                 answer = prediction.handle(line)
+                if answer != RETURN_NO_MATCH:
+                    log.debug(line+"\n", (repr(self.telnet), repr(prediction.callback.__name__)))
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                     break
             else:
-                log.debug(origLine, "nonmatched")
+                log.debug(origLine, (repr(self.telnet), "nonmatched"))
     
     def write(self, str):
         return self.telnet.write(str)

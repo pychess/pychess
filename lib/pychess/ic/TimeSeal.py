@@ -15,12 +15,6 @@ ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
 G_RESPONSE = '\x029'
 FILLER = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-g_testing = False
-
-class SessionException(Exception):
-    def __init__(self, str):
-        Exception.__init__(self, str)
-
 IAC_WONT_ECHO = ''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
 class TimeSeal:
@@ -30,9 +24,8 @@ class TimeSeal:
         self.port = port
         self.address = address
         
-        self.session_handle = None
+        self.connected = False
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setblocking(False)
         self.stateinfo = None
         
         try:
@@ -43,21 +36,11 @@ class TimeSeal:
         self.sock = sock
         self.buf = ''
         
-        gobject.io_add_watch(self.sock.fileno(), gobject.IO_OUT,
-                lambda ch, cond: self.on_ready())
-        
-        import Queue
-        queue = Queue.Queue()
-        gobject.io_add_watch(self.sock.fileno(), gobject.IO_IN, lambda ch, cond: queue.put(None) or False)
-        queue.get()
+        self.write(self.get_init_string())
+        self.cook_some()
     
     def close (self):
         self.sock.close()
-    
-    def on_ready(self):
-        self.sock.send(self.encode(self.get_init_string()))
-        self.sock.setblocking(True)
-        return False
     
     #get time elapsed in milliseconds since the start of app
     def get_time(self):
@@ -74,8 +57,6 @@ class TimeSeal:
         enc = inbuf + '\x18' + str(timestamp) + '\x19'
         padding = 11 - ((len(enc) - 1) % 12)
         filler = [random.choice(FILLER) for x in range(padding)]
-        if g_testing:
-            filler = [FILLER[0]] * padding
         enc += ''.join(filler)
     
         buf = [ord(i) for i in enc]
@@ -85,10 +66,7 @@ class TimeSeal:
             buf[i + 9], buf[i + 2] = buf[i + 2], buf[i + 9]
             buf[i + 7], buf[i + 4] = buf[i + 4], buf[i + 7]
     
-        if g_testing:
-            j = encode_offset = 0
-        else:
-            j = encode_offset = random.randint(0, ENCODELEN-1)
+        j = encode_offset = random.randint(0, ENCODELEN-1)
     
         for i in range(0, len(buf)):
             buf[i] |= 0x80
@@ -142,9 +120,12 @@ class TimeSeal:
                 lookahead = []
                 state = 0
     
-        return (''.join(result),g_count, (state, lookahead))
+        return ''.join(result), g_count, (state, lookahead)
     
     def write(self, str):
+        str = str.strip()
+        if not str: return
+        log.log(str+"\n", (repr(self), "raw"))
         self.sock.send(self.encode(str))
     
     def readline(self):
@@ -157,19 +138,27 @@ class TimeSeal:
             self.cook_some()
     
     def cook_some (self):
-        recv = self.sock.recv(self.BUFFER_SIZE) 
+        recv = self.sock.recv(self.BUFFER_SIZE)
         if len(recv) == 0:
-            raise SessionException("No more data")
+            return
         
-        recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
-        recv = recv.replace("\r","")
-        log.debug(recv, "fics")
+        if not self.connected:
+            log.debug(recv, (repr(self), "raw"))
+            self.buf += recv
+            
+            if "Starting FICS session" in self.buf:
+                self.connected = True
+                self.buf = self.buf.replace(IAC_WONT_ECHO, '')
         
-        for i in range(g_count):
-            print "G_RESPONSE"
-            self.sock.send(self.encode(G_RESPONSE))
-        
-        self.buf += recv
+        else:
+            recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
+            recv = recv.replace("\r","")
+            log.debug(recv, (repr(self), "raw"))
+            
+            for i in range(g_count):
+                self.sock.send(self.encode(G_RESPONSE))
+            
+            self.buf += recv
     
     def read_until (self, *untils):
         while True:
@@ -181,7 +170,7 @@ class TimeSeal:
             self.cook_some()
     
     def __repr__ (self):
-        return "fics"
+        return self.address
 
             
 
