@@ -15,6 +15,7 @@ from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
 from managers.ChatManager import ChatManager
 from managers.ListAndVarManager import ListAndVarManager
+from managers.ErrorManager import ErrorManager
 
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
@@ -166,6 +167,7 @@ class FICSConnection (Connection):
             # avoid having to init the in a specific order, connect calls should
             # be moved to a "start" function, so all managers would be in
             # the connection object when they are called
+            self.em = ErrorManager(self)
             self.glm = GameListManager(self)
             self.bm = BoardManager(self)
             self.fm = FingerManager(self)
