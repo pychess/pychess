@@ -25,7 +25,7 @@ class TaskerManager (gtk.Table):
         self.border = 20
         giveBackground(self)
         self.connect("expose_event", self.expose)
-        self.set_homogeneous(True)
+        #self.set_homogeneous(True)
     
     def expose (self, widget, event):
         cr = widget.window.cairo_create()
