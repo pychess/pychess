@@ -23,11 +23,11 @@ from pychess.widgets.SpotGraph import SpotGraph
 from pychess.Utils.const import *
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
-from pychess.Players.ServerPlayer import ServerPlayer
+from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn
 
-from IcGameModel import IcGameModel
+from ICGameModel import ICGameModel
 
 class ICLounge:
     def __init__ (self, c):
@@ -871,29 +871,29 @@ class CreatedBoards (Section):
     
     def playBoardCreated (self, bm, board):
         timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
-        game = IcGameModel (self.connection, board["gameno"], timemodel)
+        game = ICGameModel (self.connection, board["gameno"], timemodel)
         
         if board["wname"].lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
-            player1tup = (REMOTE, ServerPlayer,
+            player1tup = (REMOTE, ICPlayer,
                     (game, board["bname"], board["gameno"], BLACK), board["bname"])
         else:
             player1tup = (LOCAL, Human, (BLACK, ""), _("Human"))
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
-            player0 = ServerPlayer(game, board["wname"], board["gameno"], WHITE)
+            player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)
             player0tup = (REMOTE, lambda:player0, (), board["wname"])
         
         ionest.generalStart(game, player0tup, player1tup)
     
     def observeBoardCreated (self, bm, gameno, pgndata, secs, incr, wname, bname):
         timemodel = TimeModel (secs, incr)
-        game = IcGameModel (self.connection, gameno, timemodel)
+        game = ICGameModel (self.connection, gameno, timemodel)
         
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
-        player0 = ServerPlayer(game, wname, gameno, WHITE)
-        player1 = ServerPlayer(game, bname, gameno, BLACK)
+        player0 = ICPlayer(game, wname, gameno, WHITE)
+        player1 = ICPlayer(game, bname, gameno, BLACK)
         
         player0tup = (REMOTE, lambda:player0, (), wname)
         player1tup = (REMOTE, lambda:player1, (), bname)

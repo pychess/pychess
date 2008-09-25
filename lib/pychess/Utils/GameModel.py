@@ -242,9 +242,9 @@ class GameModel (GObject, PooledThread):
         
         if self.status == RUNNING:
             for player in self.players:
-                player.setBoard(self)
+                player.setOptionInitialBoard(self)
             for spectactor in self.spectactors.values():
-                spectactor.setBoard(self)
+                spectactor.setOptionInitialBoard(self)
             
             if self.timemodel:
                 self.timemodel.setMovingColor(self.boards[-1].color)
@@ -288,6 +288,9 @@ class GameModel (GObject, PooledThread):
         if self.status != WAITING_TO_START:
             return
         
+        for player in self.players + self.spectactors.values():
+            player.start()
+        
         self.status = RUNNING
         self.emit("game_started")
         
@@ -300,7 +303,11 @@ class GameModel (GObject, PooledThread):
                                      self.timemodel.getPlayerTime(1-curColor))
             
             try:
-                move = curPlayer.makeMove(self)
+                if self.ply > self.lowply:
+                    move = curPlayer.makeMove(self.boards[-1],
+                                              self.moves[-1],
+                                              self.boards[-2])
+                else: move = curPlayer.makeMove(self.boards[-1], None, None)
             except PlayerIsDead, e:
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                     stringio = cStringIO.StringIO()
@@ -325,8 +332,11 @@ class GameModel (GObject, PooledThread):
                 if not self.checkStatus():
                     break
                 self.emit("game_changed")
+                
                 for spectactor in self.spectactors.values():
-                    spectactor.makeMove(self)
+                    spectactor.putMove(self.boards[-1],
+                                       self.moves[-1],
+                                       self.boards[-2])
             finally:
                 self.applyingMoveLock.release()
     
@@ -434,13 +444,13 @@ class GameModel (GObject, PooledThread):
     
     def undoMoves (self, moves):
         """ Will push back one full move by calling the undo methods of players
-            and spectactors. If they raise NotImplementedError we'll try to call
-            setBoard instead """
+            and spectactors. """
         
         # * We really shouldn't do this at the same time we are applying a move
         # * However it shouldn't matter to undo a move while a player is
         #   thinking, as the player should be smart enough.
         
+        assert self.ply > 0
         self.emit("moves_undoing", moves)
         
         self.applyingMoveLock.acquire()
@@ -451,12 +461,9 @@ class GameModel (GObject, PooledThread):
             del self.moves[-moves:]
             
             for player in list(self.players) + list(self.spectactors.values()):
-                try:
-                    player.undoMoves(moves, self)
-                except NotImplementedError:
-                    # If the player doesn't support undoing, we might be able to
-                    # simply "load" the new last board
-                    player.setBoard(self)
+                # FIXME: If player is an engine, this will block, and the UI
+                #        won't be accessible until the engine makes a move.
+                player.undoMoves(moves, self)
             
             if self.timemodel:
                 self.timemodel.undoMoves(moves)

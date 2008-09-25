@@ -210,7 +210,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
             set_arrow (None)
         
         gmwidg.gamemodel.anacons[analyzerType].append(
-                analyzer.connect("analyze", on_analyze))
+                glock.glock_connect(analyzer, "analyze", on_analyze))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("game_changed", on_game_change))
     

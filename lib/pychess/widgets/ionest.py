@@ -85,6 +85,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         type, func, args, name = playertup
         if type != LOCAL:
             players.append(func(*args))
+            if type == ARTIFICIAL:
+                players[-1].connect("readyForOptions", lambda p: updateTitle())
         else:
             # Until PyChess has a proper profiles system, as discussed on the
             # issue tracker, we need to give human players special treatment
@@ -111,14 +113,16 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     if conf.get("analyzer_check", True):
         engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
         if not engine: engine = anaengines[0]
-        hintanalyzer = discoverer.initEngine(engine, WHITE)
+        hintanalyzer = discoverer.initAnalyzerEngine(engine, ANALYZING,
+                                                     gamemodel.variant)
         specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
     
     if conf.get("inv_analyzer_check", True):
         engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
         if not engine: engine = anaengines[0]
-        spyanalyzer = discoverer.initEngine(engine, WHITE)
+        spyanalyzer = discoverer.initAnalyzerEngine(engine, INVERSE_ANALYZING,
+                                                    gamemodel.variant)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
     
@@ -127,14 +131,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     gamemodel.setSpectactors(specs)
     
     # Starting
-    if not loaddata:
-        if gamemodel.variant in (FischerRandomChess, ShuffleChess):
-            for player in gamemodel.players:
-                player.setBoard(gamemodel)
-            for spectactor in gamemodel.spectactors.values():
-                spectactor.setBoard(gamemodel)
-        gamemodel.start()
-    else:
+    if loaddata:
         try:
             uri, loader, gameno, position = loaddata
             gamemodel.loadAndStart (uri, loader, gameno, position)
@@ -146,10 +143,12 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             d.connect("response", lambda d,a: d.hide())
             worker.publish(d.show)
     
-    if HINT in specs:
-        specs[HINT].analyze(gamemodel, inverse=False)
-    if SPY in specs:
-        specs[SPY].analyze(gamemodel, inverse=True)
+    else:
+        if gamemodel.variant in (FischerRandomChess, ShuffleChess):
+            for player in gamemodel.players + gamemodel.spectactors.values():
+                player.setOptionInitialBoard(gamemodel)
+        
+        gamemodel.start()
     
     return gmwidg, gamemodel
 

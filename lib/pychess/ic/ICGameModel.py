@@ -4,7 +4,7 @@ from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 
-class IcGameModel (GameModel):
+class ICGameModel (GameModel):
     
     def __init__ (self, connection, gameno, timemodel):
         GameModel.__init__(self, timemodel)

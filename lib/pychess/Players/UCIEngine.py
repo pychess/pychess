@@ -1,6 +1,9 @@
+from copy import copy
+
 from pychess.Players.Player import PlayerIsDead
 from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
+from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
 from pychess.Utils.GameModel import GameModel
@@ -14,10 +17,6 @@ from pychess.Variants.fischerandom import FischerRandomChess
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
 
-# FIXME: isready system is not very good. In many methods where we ought to wait
-#        for readyok, we don't.
-#        Perhaps we could block on a classglobal write method?
-
 class UCIEngine (ProtocolEngine):
     
     def __init__ (self, subprocess, color, protover):
@@ -25,325 +24,82 @@ class UCIEngine (ProtocolEngine):
         
         self.ids = {}
         self.options = {}
+        self.optionsToBeSent = {}
+        
         self.wtime = 60000
         self.btime = 60000
         self.incr = 0
+        self.timeHandicap = 1 
         
-        self.readyok = False
         self.pondermove = None
         self.ignoreNext = False
         self.board = None
         self.uciok = False
+        
+        self.connect("readyForOptions", self.__onReadyForOptions_before)
+        self.connect_after("readyForOptions", self.__onReadyForOptions)
+        self.connect_after("readyForMoves", self.__onReadyForMoves)
     
-    ############################################################################
-    #   Move                                                                   #
-    ############################################################################
+    #===========================================================================
+    #    Starting the game
+    #===========================================================================
     
-    def start (self, block):
+    def prestart (self):
         print >> self.engine, "uci"
-        
-        if block:
-            while not self.ready:
-                try:
-                    line = self.engine.readline()
-                except SubProcessError, e:
-                    # We catch this later in getMove
-                    print "FUCK", e.args
-                    self.emit("ready")
-                    break
-                self.parseLine(line)
     
-    def analyze (self, model, inverse=False):
-        self.start(block=True)
-        
-        if not inverse:
-            self.mode = ANALYZING
-        else: self.mode = INVERSE_ANALYZING
-        self.setOptions({'Ponder': False})
-        
-        self.makeMove(model)
-        
-        def autorun ():
-            while self.connected:
-                try:
-                    self.parseLine(self.engine.readline())
-                except PlayerIsDead:
-                    if self.connected:
-                        log.warn("Analyzer died\n", self.defname)
-                        self.connected = False
-                except SubProcessError, e:
-                    if self.connected:
-                        log.warn("Analyzer raised: %s\n" % e, self.defname)
-                        self.connected = False
-        pool.start(autorun)
-    
-    def makeMove (self, gamemodel):
-        
-        if not self.board:
-            self.isready()
-            self.newGame()
-        
-        self.board = gamemodel.boards[-1]
-        
-        ponderhit = False
-        
-        if self.mode == NORMAL:
-            if gamemodel.ply > gamemodel.lowply+1 and self.pondermove:
-                if self.pondermove and gamemodel.moves[-1] == self.pondermove:
-                    print >> self.engine, "ponderhit"
-                    ponderhit = True
-                else:
-                    self.ignoreNext = True
-                    print >> self.engine, "stop"
-        
-        elif self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
-        
-        if not ponderhit:
-            self._searchNow()
-        
-        # We don't block when analyzing. Instead the readline call is placed in
-        # a thread created by autoAnalyze
+    def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            return
-        
-        # Parse outputs
-        while True:
+            pool.start(self.__startBlocking)
+        else: self.__startBlocking()
+    
+    def __startBlocking (self):
+        while not self.readyMoves:
             try:
                 line = self.engine.readline()
             except SubProcessError, e:
-                raise PlayerIsDead, e
-            
-            move = self.parseLine(line)
-            if move:
-                return move
+                # We catch this later in getMove
+                # FIXME: Will this also get catched, if we are an analyzer?
+                self.emit("readyForOptions")
+                self.emit("readyForMoves")
+            self.parseLine(line)
     
-    ############################################################################
-    #   Internal                                                               #
-    ############################################################################
+    def __onReadyForOptions_before (self, self_):
+        self.readyOptions = True
     
-    def _searchNow (self):
-        if self.mode == NORMAL:
-            print >> self.engine, "position fen", self.board.asFen()
-            
-            if self.strength <= 3:
-                print >> self.engine, "go depth %d" % self.strength
-            else:
-                print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
-                                      "winc", self.incr, "binc", self.incr
+    def __onReadyForOptions (self, self_):
+        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            if self.hasOption("Ponder"):
+                self.setOption('Ponder', False)
         
-        else:
-            print >> self.engine, "stop"
-            if self.mode == INVERSE_ANALYZING:
-                if self.board.board.opIsChecked():
-                    # Many engines don't like positions able to take down enemy
-                    # king. Therefore we just return the "kill king" move
-                    # automaticaly
-                    self.emit("analyze", [getMoveKillingKing(self.board)])
-                    return
-            print >> self.engine, "position fen", self.board.asFen()
-            print >> self.engine, "go infinite"
-    
-    def _startPonder (self):
-        print >> self.engine, "position fen", self.board.asFen(), \
-                                "moves", self.pondermove
-        print >> self.engine, "go ponder wtime", self.wtime, \
-            "btime", self.btime, "winc", self.incr, "binc", self.incr
-    
-    ############################################################################
-    #   From Engine                                                            #
-    ############################################################################
-    
-    def parseLine (self, line):
-        parts = line.split()
-        if not parts: return
-        
-        if parts[0] == "id":
-            self.ids[parts[1]] = " ".join(parts[2:])
-            return
-        
-        if parts[0] == "option":
-            dic = {}
-            last = 1
-            varlist = []
-            for i in xrange (2, len(parts)+1):
-                if i == len(parts) or parts[i] in OPTKEYS:
-                    key = parts[last]
-                    value = " ".join(parts[last+1:i])
-                    if "type" in dic and dic["type"] in TYPEDIC:
-                        value = TYPEDIC[dic["type"]](value)
-                        
-                    if key == "var":
-                        varlist.append(value)
-                    else:
-                        dic[key] = value
-                        
-                    last = i
-            if varlist:
-                dic["vars"] = varlist
-            
-            name = dic["name"]
-            del dic["name"]
-            self.options[name] = dic
-            return
-        
-        if parts[0] == "uciok":
-            self.uciok = True
-            # We need to run isready before any searching. However setOptions
-            # will run it, so we only need to do it here for engines we don't
-            # set options for
-            if "OwnBook" in self.options:
-                self.setOptions({"OwnBook": True})
-            self.emit("ready")
-            return
-        
-        if parts[0] == "readyok":
-            return "ready"
-        
-        # A Move
-        if self.mode == NORMAL and parts[0] == "bestmove":
-            
-            if self.ignoreNext:
-                self.ignoreNext = False
-                return
-            
-            move = parseAN(self.board, parts[1])
-            self.board = self.board.move(move)
-            
-            if self.getOption('Ponder'):
-                if len(parts) == 4 and self.board:
-                    self.pondermove = parseAN(self.board, parts[3])
-                    self._startPonder()
-                else: self.pondermove = None
-            
-            return move
-        
-        if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
-            movstrs = parts[parts.index("pv")+1:]
-            moves = listToMoves (self.board, movstrs, AN, validate=True)
-            self.emit("analyze", moves)
-            return
-    
-    ############################################################################
-    #   To Engine                                                              #
-    ############################################################################
-    
-    def setOptions (self, dic):
-        #assert self.uciok
-        for option, value in dic.iteritems():
+        for option, value in self.optionsToBeSent.iteritems():
             if self.options[option]["default"] != value:
                 self.options[option]["default"] = value
                 if type(value) == bool: value = str(value).lower()
                 print >> self.engine, "setoption name", option, "value", str(value)
-    
-    def getOption (self, option):
-        if option in self.options:
-            return self.options[option]["default"]
-        return None
-    
-    def isready (self):
+        
         print >> self.engine, "isready"
-        while True:
-            try:
-                line = self.engine.readline()
-            except SubProcessError, e:
-                raise PlayerIsDead, e
-            
-            ready = self.parseLine(line)
-            if ready == "ready":
-                break
     
-    def updateTime (self, secs, opsecs):
-        if self.color == WHITE:
-            self.wtime = int(secs*1000*self.timeHandicap)
-            self.btime = int(opsecs*1000)
-        else:
-            self.btime = int(secs*1000*self.timeHandicap)
-            self.wtime = int(opsecs*1000)
+    def __onReadyForMoves (self, self_):
+        self.readyMoves = True
+        self._newGame()
+        
+        # If we are an analyzer, this signal was already called in a different
+        # thread, so we can safely block it.
+        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            if not self.board:
+                self.board = Board(setup=True)
+            self.putMove(self.board, None, None)
+            while self.connected:
+                try:
+                    self.parseLine(self.engine.readline())
+                except SubProcessError, e:
+                    if self.connected:
+                        log.warn("Analyzer died: %s\n" % e, self.defname)
+                        self.connected = False
     
-    def newGame (self):
-        print >> self.engine, "ucinewgame"
-    
-    def setBoard (self, model):
-        # UCI always sets the position when searching for a new game, so we
-        # don't actually have to do anything here. However when the new board
-        # is from an entirely different game than the current, there is no need
-        # that the engine still stores the old transposition table
-        self.board = None
-
-        if model.boards[0].asFen() != FEN_START:
-            if "UCI_Chess960" in self.options and \
-                    model.variant == FischerRandomChess:
-                self.setOptions({"UCI_Chess960": True})
-    
-        ########################################################################
-        #   Offer Stuff                                                        #
-        ########################################################################
-    
-    def offer (self, offer):
-        if offer.offerType == DRAW_OFFER:
-            self.emit("decline", offer)
-        else:
-            self.emit("accept", offer)
-    
-    def hurry (self):
-        print >> self.engine, "stop"
-    
-    def pause (self):
-        if self.ready:
-            if self.board and self.board.color == self.color or \
-                    self.mode != NORMAL or self.pondermove:
-                self.ignoreNext = True
-                print >> self.engine, "stop"
-        else:
-            self.runWhenReady(self.pause)
-    
-    def resume (self):
-        if self.ready:
-            if self.mode == NORMAL:
-                if self.board and self.board.color == self.color:
-                    self._searchNow()
-                elif self.getOption('Ponder') and self.pondermove:
-                    self._startPonder()
-            else:
-                self._searchNow()
-        else:
-            self.runWhenReady(self.resume)
-    
-    def undoMoves (self, moves, gamemodel):
-        # Not nessesary in UCI
-        pass
-    
-        ########################################################################
-        #   Start / Stop                                                       #
-        ########################################################################
-    
-    def setStrength (self, strength):
-        if self.ready:
-            self.strength = strength
-            options = {}
-            
-            if 'UCI_LimitStrength' in self.options and 'UCI_Elo' in self.options:
-                options['UCI_LimitStrength'] = True
-                if strength <= 6:
-                    options['UCI_Elo'] = 300 * strength + 200
-            else:
-                self.setTimeHandicap(0.01 * 10**(strength/4.))
-            
-            if 'Ponder' in self.options:
-                options['Ponder'] = strength >= 7
-            
-            self.setOptions(options)
-        else:
-            self.runWhenReady(self.setStrength, strength)
-    
-    def setTimeHandicap (self, timeHandicap):
-        self.timeHandicap = timeHandicap
-    
-    def setTime (self, secs, gain):
-        self.wtime = int(max(secs*1000*self.timeHandicap, 1))
-        self.btime = int(max(secs*1000*self.timeHandicap, 1))
-        self.incr = int(gain*1000*self.timeHandicap)
+    #===========================================================================
+    #    Ending the game
+    #===========================================================================
     
     def end (self, status, reason):
         if self.connected:
@@ -375,11 +131,276 @@ class UCIEngine (ProtocolEngine):
                 # Clear the analyzed data, if any
                 self.emit("analyze", [])
     
-    ############################################################################
-    #   Info                                                                   #
-    ############################################################################
+    #===========================================================================
+    #    Send the player move updates
+    #===========================================================================
+    
+    def putMove (self, board1, move, board2):
+        if not self.readyMoves:
+            return
+        
+        self.board = board1
+        
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.board.switchColor()
+        
+        self._searchNow()
+    
+    def makeMove (self, board1, move, board2):
+        
+        assert self.readyMoves
+        
+        self.board = board1
+        
+        ponderhit = False
+        
+        if board2 and self.pondermove:
+            if self.pondermove and move == self.pondermove:
+                print >> self.engine, "ponderhit"
+                ponderhit = True
+            else:
+                self.ignoreNext = True
+                print >> self.engine, "stop"
+        
+        if not ponderhit:
+            self._searchNow()
+        
+        # Parse outputs
+        while True:
+            try:
+                line = self.engine.readline()
+            except SubProcessError, e:
+                raise PlayerIsDead, e
+            
+            move = self.parseLine(line)
+            if move:
+                return move
+    
+    def updateTime (self, secs, opsecs):
+        if self.color == WHITE:
+            self.wtime = int(secs*1000*self.timeHandicap)
+            self.btime = int(opsecs*1000)
+        else:
+            self.btime = int(secs*1000*self.timeHandicap)
+            self.wtime = int(opsecs*1000)
+    
+    #===========================================================================
+    #    Standard options
+    #===========================================================================
+    
+    def setOptionAnalyzing (self, mode):
+        self.mode = mode
+    
+    def setOptionInitialBoard (self, model):
+        # UCI always sets the position when searching for a new game, but for
+        # getting analyzers ready to analyze at first ply, it is good to have.
+        self.board = model.getBoardAtPly(model.ply)
+        pass
+    
+    def setOptionVariant (self, variant):
+        if variant == FischerRandomChess:
+            assert self.hasOption("UCI_Chess960")
+            self.setOption("UCI_Chess960", True)
+    
+    def setOptionTime (self, secs, gain):
+        self.wtime = int(max(secs*1000*self.timeHandicap, 1))
+        self.btime = int(max(secs*1000*self.timeHandicap, 1))
+        self.incr = int(gain*1000*self.timeHandicap)
+    
+    def setOptionStrength (self, strength):
+        self.strength = strength
+        
+        if self.hasOption('UCI_LimitStrength') and self.hasOption('UCI_Elo'):
+            self.setOption('UCI_LimitStrength', True)
+            if strength <= 6:
+                self.setOption('UCI_Elo', 300 * strength + 200)
+        else:
+            self.timeHandicap = th = 0.01 * 10**(strength/4.)
+            self.wtime = int(max(self.wtime*th, 1))
+            self.btime = int(max(self.btime*th, 1))
+            self.incr = int(self.incr*th)
+        
+        if self.hasOption('Ponder'):
+            self.setOption('Ponder', strength >= 7)
+    
+    #===========================================================================
+    #    Interacting with the player
+    #===========================================================================
+    
+    def pause (self):
+        if self.board and self.board.color == self.color or \
+                self.mode != NORMAL or self.pondermove:
+            self.ignoreNext = True
+            print >> self.engine, "stop"
+    
+    def resume (self):
+        if self.mode == NORMAL:
+            if self.board and self.board.color == self.color:
+                self._searchNow()
+            elif self.getOption('Ponder') and self.pondermove:
+                self._startPonder()
+        else:
+            self._searchNow()
+    
+    def hurry (self):
+        print >> self.engine, "stop"
+    
+    def undoMoves (self, moves, gamemodel):
+        # Not really necessary in UCI, but for the analyzer, it needs to keep up
+        # with the latest trends
+        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
+    
+    #===========================================================================
+    #    Offer handling
+    #===========================================================================
+    
+    def offer (self, offer):
+        if offer.offerType == DRAW_OFFER:
+            self.emit("decline", offer)
+        else:
+            self.emit("accept", offer)
+    
+    #===========================================================================
+    #    Option handling
+    #===========================================================================
+    
+    def setOption (self, key, value):
+        """ Set an option, which will be sent to the engine, after the
+            'readyForOptions' signal has passed.
+            If you want to know the possible options, you should go to
+            engineDiscoverer or use the getOption, getOptions and hasOption
+            methods, while you are in your 'readyForOptions' signal handler """ 
+        assert not self.readyMoves
+        self.optionsToBeSent[key] = value
+    
+    def getOption (self, option):
+        assert self.readyOptions
+        if option in self.options:
+            return self.options[option]["default"]
+        return None
+    
+    def getOptions (self):
+        assert self.readyOptions
+        return copy(self.options)
+    
+    def hasOption (self, key):
+        assert self.readyOptions
+        return key in self.options
+    
+    #===========================================================================
+    #    Internal
+    #===========================================================================
+    
+    def _newGame (self):
+        print >> self.engine, "ucinewgame"
+    
+    def _searchNow (self):
+        if self.mode == NORMAL:
+            print >> self.engine, "position fen", self.board.asFen()
+            
+            if self.strength <= 3:
+                print >> self.engine, "go depth %d" % self.strength
+            else:
+                print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
+                                      "winc", self.incr, "binc", self.incr
+        
+        else:
+            print >> self.engine, "stop"
+            if self.mode == INVERSE_ANALYZING:
+                if self.board.board.opIsChecked():
+                    # Many engines don't like positions able to take down enemy
+                    # king. Therefore we just return the "kill king" move
+                    # automaticaly
+                    self.emit("analyze", [getMoveKillingKing(self.board)])
+                    return
+            print >> self.engine, "position fen", self.board.asFen()
+            print >> self.engine, "go infinite"
+    
+    def _startPonder (self):
+        print >> self.engine, "position fen", self.board.asFen(), \
+                                "moves", self.pondermove
+        print >> self.engine, "go ponder wtime", self.wtime, \
+            "btime", self.btime, "winc", self.incr, "binc", self.incr
+    
+    #===========================================================================
+    #    Parsing from engine
+    #===========================================================================
+    
+    def parseLine (self, line):
+        parts = line.split()
+        if not parts: return
+        
+        #--------------------------------------------------------------- Initing
+        if parts[0] == "id":
+            self.ids[parts[1]] = " ".join(parts[2:])
+            return
+        
+        if parts[0] == "uciok":
+            self.emit("readyForOptions")
+            return
+        
+        if parts[0] == "readyok":
+            self.emit("readyForMoves")
+            return
+        
+        #------------------------------------------------------- Options parsing
+        if parts[0] == "option":
+            dic = {}
+            last = 1
+            varlist = []
+            for i in xrange (2, len(parts)+1):
+                if i == len(parts) or parts[i] in OPTKEYS:
+                    key = parts[last]
+                    value = " ".join(parts[last+1:i])
+                    if "type" in dic and dic["type"] in TYPEDIC:
+                        value = TYPEDIC[dic["type"]](value)
+                        
+                    if key == "var":
+                        varlist.append(value)
+                    else:
+                        dic[key] = value
+                        
+                    last = i
+            if varlist:
+                dic["vars"] = varlist
+            
+            name = dic["name"]
+            del dic["name"]
+            self.options[name] = dic
+            return
+        
+        #---------------------------------------------------------------- A Move
+        if self.mode == NORMAL and parts[0] == "bestmove":
+            
+            if self.ignoreNext:
+                self.ignoreNext = False
+                return
+            
+            move = parseAN(self.board, parts[1])
+            self.board = self.board.move(move)
+            
+            if self.getOption('Ponder'):
+                if len(parts) == 4 and self.board:
+                    self.pondermove = parseAN(self.board, parts[3])
+                    self._startPonder()
+                else: self.pondermove = None
+            
+            return move
+        
+        #----------------------------------------------------------- An Analysis
+        if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
+            movstrs = parts[parts.index("pv")+1:]
+            moves = listToMoves (self.board, movstrs, AN, validate=True)
+            self.emit("analyze", moves)
+            return
+    
+    #===========================================================================
+    #    Info
+    #===========================================================================
     
     def canAnalyze (self):
+        # All UCIEngines can analyze
         return True
     
     def __repr__ (self):
