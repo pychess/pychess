@@ -11,6 +11,7 @@ import newGameDialog
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.const import NORMALCHESS
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE
@@ -183,8 +184,8 @@ class NewGameTasker (gtk.Alignment):
         else:
             engine = discoverer.getEngineN (opponent-1)
             name = discoverer.getName(engine)
-            player1tup = (ARTIFICIAL, discoverer.initAndStartEngine,
-                    (engine, 1-color, difficulty, 5*60, 0), name)
+            player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
+                    (engine, 1-color, difficulty, NORMALCHESS, 5*60, 0), name)
         
         if color == WHITE:
             ionest.generalStart(gamemodel, player0tup, player1tup)

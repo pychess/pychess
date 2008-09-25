@@ -313,6 +313,7 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = self.model.getMoveAtPly(self.shown-1)
         else:
             self.lastMove = None
+       
         self.runAnimation(redrawMisc=True)
         repeat(self.runAnimation)
         

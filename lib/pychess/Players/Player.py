@@ -20,21 +20,93 @@ class Player (GObject):
         "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
+    def __init__ (self):
+        GObject.__init__(self)
+        self.name = None
     
     def setName (self, name):
         """ __repr__ should return this name """
+        self.name = name
+    
+    def __repr__ (self):
+        return self.name
+    
+    #===========================================================================
+    #    Starting the game
+    #===========================================================================
+    
+    def prestart (self):
+        pass # Optional
+    
+    def start (self):
+        pass # Optional
+    
+    def setOptionInitialBoard (self, model):
+        pass # Optional. Further defined in Engine.py
+    
+    #===========================================================================
+    #    Ending the game
+    #===========================================================================
+    
+    def end (self, status, reason):
+        """ Called when the game ends in a normal way. Use this for shutting
+            down engines etc. """
         raise NotImplementedError
-
-    def makeMove (self, history):
-        """ Takes a history object, concidering the last move as an opponent
-            move, and returns a new moveobject with the players answer. """
+    
+    def kill (self, reason):
+        """ Called when game has too die fast and ugly. Mostly used in case of
+            errors and stuff. Use for closing connections etc. """
         raise NotImplementedError
+    
+    #===========================================================================
+    #    Send the player move updates
+    #===========================================================================
+    
+    def makeMove (self, board1, move, board2):
+        """ Takes a board object, and if ply>lowply the latest move object and
+            second latest board object as well. Otherwise these two are None.
+            Retruns: A new move object, witch the player wants to do. """
+        raise NotImplementedError
+    
+    def putMove (self, board1, move, board2):
+        """ Like makeMove, but doesn't block and doesn't return anything.
+            putMove is only used when the player is spectatctor to a game """
+        #Optional
     
     def updateTime (self, secs, opsecs):
         """ Updates the player with the current remaining time as a float of
             seconds """
         #Optional
     
+    #===========================================================================
+    #    Interacting with the player
+    #===========================================================================
+    
+    def pause (self):
+        """ Should stop the player from thinking until resume is called """
+        raise NotImplementedError
+    
+    def resume (self):
+        """ Should resume player to think if he's paused """
+        raise NotImplementedError
+    
+    def hurry (self):
+        """ Forces engines to move now, and sends a hurry message to nonlocal
+            human players """
+        #Optional
+    
+    def undoMoves (self, moves, gamemodel):
+        """ Undo 'moves' moves and makes the latest board in gamemodel the
+            current """
+        #Optional
+    
+    def putMessage (self, message):
+        """ Sends the player a chatmessage """
+        #Optional
+    
+    #===========================================================================
+    #    Offer handling
+    #===========================================================================
     
     def offer (self, offer):
         """ The players opponent has offered the player offer. If the player
@@ -55,47 +127,4 @@ class Player (GObject):
     def offerError (self, offer, error):
         """ An offer, accept or action made by the player has been refused by
             the game model. """
-        #Optional
-    
-    def end (self, status, reason):
-        """ Called when the game ends in a normal way. Use this for shutting
-            down engines etc. """
-        raise NotImplementedError
-    
-    def kill (self, reason):
-        """ Called when game has too die fast and ugly. Mostly used in case of
-            errors and stuff. Use for closing connections etc. """
-        raise NotImplementedError
-    
-    
-    def hurry (self):
-        """ Forces engines to move now, and sends a hurry message to nonlocal
-            human players """
-        #Optional
-    
-    def putMessage (self, message):
-        """ Sends the player a chatmessage """
-        #Optional
-    
-    def pause (self):
-        """ Should stop the player from thinking until resume is called """
-        raise NotImplementedError
-        
-    def resume (self):
-        """ Should resume player to think if he's paused """
-        raise NotImplementedError
-    
-    def setBoard (self, gamemodel):
-        """ Sets the latest board in gamemodel as the current. """
-        #Optional
-    
-    def undoMoves (self, moves, gamemodel):
-        """ Undo 'moves' moves and makes the latest board in gamemodel the
-            current """
-        #Optional
-    
-    
-    def showBoard (self):
-        """ Print the board as it the players sees it, e.g. in fen. Used for
-            debugging only """
         #Optional
