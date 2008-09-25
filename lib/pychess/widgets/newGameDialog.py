@@ -221,8 +221,8 @@ class _GameInitializationMode:
                 if playerno > 0:
                     engine = discoverer.getEngineN (playerno-1)
                     name = discoverer.getName(engine)
-                    playertups.append((ARTIFICIAL, discoverer.initAndStartEngine,
-                            (engine, color, diffi, secs, incr), name))
+                    playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
+                            (engine, color, diffi, variant, secs, incr), name))
                 else:
                     playertups.append((LOCAL, Human, (color, ""), _("Human")))
             

@@ -8,7 +8,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess.System.ThreadPool import pool
 #from pychess.System.TaskQueue import TaskQueue
 from pychess.System.Log import log
-from pychess.System.SubProcess import SubProcess, searchPath
+from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addHomePrefix
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
@@ -251,23 +251,23 @@ class EngineDiscoverer (GObject, Thread):
         for xmlengine, binname in toBeDiscovered:
             engine = self.initEngine (xmlengine, BLACK)
             try:
-                try:
-                    engine.start(True)
-                    protname = xmlengine.getAttribute("protocol")
-                    if protname == "uci":
-                        self._handleUCIOptions (xmlengine, engine.ids, engine.options)
-                    elif protname == "cecp":
-                        self._handleCECPOptions (xmlengine, engine.features)
-                except:
-                    rechecks.append(xmlengine)
-            finally:
-                exitcode = engine.kill(UNKNOWN_REASON)
-                if exitcode:
-                    rechecks.append(xmlengine)
-                    log.debug("Engine failed %s\n" % self.getName(xmlengine))
-                else:
-                    log.debug("Engine finished %s\n" % self.getName(xmlengine))
-                self.emit ("engine_discovered", binname, xmlengine)
+                engine.prestart()
+                engine.start()
+                protname = xmlengine.getAttribute("protocol")
+                if protname == "uci":
+                    self._handleUCIOptions (xmlengine, engine.ids, engine.options)
+                elif protname == "cecp":
+                    self._handleCECPOptions (xmlengine, engine.features)
+            except SubProcessError:
+                rechecks.append(xmlengine)
+            
+            exitcode = engine.kill(UNKNOWN_REASON)
+            if exitcode:
+                rechecks.append(xmlengine)
+                log.debug("Engine failed %s\n" % self.getName(xmlengine))
+            else:
+                log.debug("Engine finished %s\n" % self.getName(xmlengine))
+            self.emit ("engine_discovered", binname, xmlengine)
         
         return rechecks
         
@@ -413,14 +413,36 @@ class EngineDiscoverer (GObject, Thread):
         warnwords = ("illegal", "error")
         subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
         
-        return attrToProtocol[protocol](subprocess, color, protover)
+        engine = attrToProtocol[protocol](subprocess, color, protover)
+        
+        if protocol == "uci":
+            # If the user has configured special options for this engine, here is
+            # where they should be set.
+            def optionsCallback (engine):
+                if engine.hasOption("OwnBook"):
+                    engine.setOption("OwnBook", True)
+            engine.connect("readyForOptions", optionsCallback)
+        
+        return engine
     
-    def initAndStartEngine (self, xmlengine, color, diffi, secs=0, incr=0):
+    def initPlayerEngine (self, xmlengine, color, diffi, variant, secs=0, incr=0):
         engine = self.initEngine (xmlengine, color)
-        engine.start(block=True)
-        engine.setStrength(diffi)
-        if secs > 0:
-            engine.setTime(secs, incr)
+        def optionsCallback (engine):
+            engine.setOptionStrength(diffi)
+            engine.setOptionVariant(variant)
+            if secs > 0:
+                engine.setOptionTime(secs, incr)
+        engine.connect("readyForOptions", optionsCallback)
+        engine.prestart()
+        return engine
+    
+    def initAnalyzerEngine (self, xmlengine, mode, variant):
+        engine = self.initEngine (xmlengine, WHITE)
+        engine.setOptionAnalyzing(mode)
+        def optionsCallback (engine):
+            engine.setOptionVariant(variant)
+        engine.connect("readyForOptions", optionsCallback)
+        engine.prestart()
         return engine
     
     #

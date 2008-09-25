@@ -67,6 +67,7 @@ forced = False
 analyzing = False
 scr = 0 # The current predicted score. Used when accepting draw offers
 playingAs = WHITE
+increment = 0
 
 board = LBoard(NORMALCHESS)
 board.applyFen(FEN_START)

@@ -10,8 +10,13 @@ class ProtocolEngine (Engine):
     NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
     
     __gsignals__ = {
-        'ready':      (SIGNAL_RUN_FIRST, None, ())
+        "readyForOptions": (SIGNAL_RUN_FIRST, None, ()),
+        "readyForMoves": (SIGNAL_RUN_FIRST, None, ())
     }
+    
+    #===========================================================================
+    #    Setting engine options
+    #===========================================================================
     
     def __init__ (self, subprocess, color, protover):
         Engine.__init__(self)
@@ -21,11 +26,9 @@ class ProtocolEngine (Engine):
         self.color = color
         self.protover = protover
         
-        self.readycon = Condition()
-        self.runWhenReadyLock = RLock()
-        self.readylist = []
+        self.readyMoves = False
+        self.readyOptions = False
         
-        self.ready = False
         self.connected = True
         self.mode = NORMAL
         
@@ -33,30 +36,3 @@ class ProtocolEngine (Engine):
         
         self.movecon = Condition()
         self.analyzeMoves = []
-        self.name = None
-        
-        self.connect("ready", self.onReady)
-    
-    def setName (self, name):
-        self.name = name
-    
-    def runWhenReady (self, method, *args):
-        self.runWhenReadyLock.acquire()
-        try:
-            if self.ready:
-                method(*args)
-            else:
-                self.readylist.append((method,args))
-        finally:
-            self.runWhenReadyLock.release()
-    
-    def onReady (self, proto):
-        self.readycon.acquire()
-        try:
-            self.ready = True
-            for method, args in self.readylist:
-                method(*args)
-            del self.readylist[:]
-            self.readycon.notifyAll()
-        finally:
-            self.readycon.release()
