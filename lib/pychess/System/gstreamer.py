@@ -7,7 +7,8 @@ try:
     pygst.require('0.10')
     import gst
 
-except ImportError:
+except ImportError, e:
+    log.error("Unable to import gstreamer. All sound will be mute.\n%s" % e, task)
     class Player (GObject):
         __gsignals__ = {
             'end': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),

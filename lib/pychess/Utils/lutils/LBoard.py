@@ -242,6 +242,8 @@ class LBoard:
         self.blocker315 = setBit(self.blocker315, r315[cord])
         
         if piece == PAWN:
+            assert not (color == WHITE and cord > 55)
+            assert not (color == BLACK and cord < 8)
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
         elif piece == KING:
             self.kings[color] = cord
