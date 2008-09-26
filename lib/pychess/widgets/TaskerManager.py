@@ -57,7 +57,7 @@ class TaskerManager (gtk.Table):
             cr.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
             cr.fill()
             
-            cr.rectangle (x-self.border, y+height-29, width+self.border*2, 29)
+            cr.rectangle (x-self.border, y+height-30, width+self.border*2, 30)
             cr.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
             cr.fill()
     
