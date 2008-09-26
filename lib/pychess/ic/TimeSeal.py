@@ -54,7 +54,7 @@ class TimeSeal:
         return res
     
     def encode(self, inbuf, timestamp = None):
-        assert inbuf[-1] != "\n"
+        assert inbuf == "" or inbuf[-1] != "\n"
         
         timestamp = timestamp or self.get_time()
         enc = inbuf + '\x18' + str(timestamp) + '\x19'
