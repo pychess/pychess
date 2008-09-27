@@ -19,13 +19,8 @@ from pychess.Players.engineNest import discoverer
 from pychess import Savers
 from pychess.Savers import *
 from pychess.Savers.ChessFile import LoadingError
-
 from pychess.widgets import gamewidget
 from pychess.widgets import gamenanny
-
-from pychess.Variants.normal import NormalChess
-from pychess.Variants.shuffle import ShuffleChess
-from pychess.Variants.fischerandom import FischerRandomChess
 
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
@@ -144,7 +139,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             worker.publish(d.show)
     
     else:
-        if gamemodel.variant in (FischerRandomChess, ShuffleChess):
+        if gamemodel.variant.need_initial_board:
             for player in gamemodel.players + gamemodel.spectactors.values():
                 player.setOptionInitialBoard(gamemodel)
         
