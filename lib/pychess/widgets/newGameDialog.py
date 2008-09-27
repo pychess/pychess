@@ -25,9 +25,7 @@ from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.Savers import pgn
-from pychess.Variants.normal import NormalChess
-from pychess.Variants.shuffle import ShuffleChess
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants import variants
 
 #===============================================================================
 # We init most dialog icons global to make them accessibly to the
@@ -62,12 +60,12 @@ skillToIconLarge = {
     8: it.load_icon("weather-storm", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
 }
 
-variants = (NormalChess, ShuffleChess, FischerRandomChess)
 variantItems = []
-playerItems = [[], [], []]
+playerItems = []
 
 for i, variantClass in enumerate(variants):
     variantItems += [(inotebook, variantClass.name, "stock_notebook")]
+    playerItems.append([])
     playerItems[i] += [(ipeople, _("Human Being"), "stock_people")]
 
 for engine in discoverer.getEngines().values():
@@ -80,13 +78,15 @@ for engine in discoverer.getEngines().values():
     flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
 
     for i, variantClass in enumerate(variants):
-        if i==0:
-            playerItems[0] += [(flag_icon, name, "stock_notebook")]
+        if variantClass.standard_rules:
+            playerItems[i] += [(flag_icon, name, "stock_notebook")]
         else:
+            # fill in player combo with CECP engines supporting this variant
             for feature in engine.getElementsByTagName("feature"):
                 if feature.getAttribute("command") == "variants":
                     if variantClass.variant_name in feature.getAttribute("value"):
                         playerItems[i] += [(flag_icon, name, "stock_notebook")]
+            # UCI engines semms to know only the "UCI_Chess960" as common variant name
             for option in engine.getElementsByTagName("check-option"):
                 if variantClass.variant_name == "fischerandom":
                     if option.getAttribute("name") == "UCI_Chess960":
