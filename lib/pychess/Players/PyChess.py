@@ -263,9 +263,7 @@ while True:
     
     elif lines[0] == "usermove":
         
-        lsearch.searching = False
-        searchLock.acquire()
-        searchLock.release()
+        stopSearching()
         #lsearch.table.clear()
         
         move = parseAny (board, lines[1])
@@ -362,7 +360,7 @@ while True:
     
     elif lines[0] == "variant":
         if lines[1] == "fischerandom":
-            board.variant = FISCHERRANDOMCHESS
+            board.variant = getEngineName
         
     elif lines[0] == "setboard":
         lsearch.searching = False
