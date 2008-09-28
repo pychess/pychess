@@ -186,8 +186,8 @@ class UserInfoSection(Section):
                 elif pingtime == -1:
                     pingLabel.set_text(_("Unknown"))
                 else: pingLabel.set_text("%.0f ms" % pingtime)
-            pinger.connect("recieved", callback)
-            pinger.connect("error", callback)
+            glock.glock_connect(pinger, "recieved", callback)
+            glock.glock_connect(pinger, "error", callback)
             pinger.start()
             table.attach(pingLabel, 1, 6, row, row+1)
             row += 1
