@@ -33,7 +33,7 @@ def createCombo (combo, data):
     crt.set_property('xpad', 4)
     combo.pack_start(crt, True)
     combo.add_attribute(crt, 'text', 1)
-    crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
+    #crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
 
 
 def updateCombo (combo, data):
@@ -197,6 +197,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
                         conf.getStrict(key+"_y"))
         
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
+            width, height = window.get_size_request()
             x = int(gtk.gdk.screen_width()/2-width/2)
             if defaultPosition == POSITION_CENTER:
                 y = int(gtk.gdk.screen_height()/2-height/2)

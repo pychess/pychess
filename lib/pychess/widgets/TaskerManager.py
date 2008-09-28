@@ -148,8 +148,8 @@ class NewGameTasker (gtk.Alignment):
         uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
         
         self.playerCombo = combo = ToggleComboBox()
-        for image, name, stock in newGameDialog.playerItems[0]:
-            combo.addItem(name, stock)
+        for image, name in newGameDialog.smallPlayerItems[0]:
+            combo.addItem(name, image)
         combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
         combo.setMarkup("<b>", "</b>")
         combo.active = 1
