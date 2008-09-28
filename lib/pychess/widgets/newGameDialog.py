@@ -116,8 +116,6 @@ class _GameInitializationMode:
                 "changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
         cls.widgets["whitePlayerCombobox"].set_active(0)
         cls.widgets["blackPlayerCombobox"].set_active(1)
-        #on_playerCombobox_changed (cls.widgets["blackPlayerCombobox"],
-        #                           cls.widgets["skillHbox2"])
         
         
         def on_skill_changed (scale, image):
@@ -130,28 +128,34 @@ class _GameInitializationMode:
         cls.widgets["skillSlider2"].set_value(3)
         
         
-        def on_useTimeCB_clicked (widget):
-            cls.widgets["table6"].set_sensitive(widget.get_active())
-        cls.widgets["useTimeCB"].connect("clicked", on_useTimeCB_clicked)
+        def on_playVariantCheck_clicked (widget):
+            cls.widgets["table7"].set_sensitive(widget.get_active())
+        cls.widgets["playVariantCheck"].connect("clicked", on_playVariantCheck_clicked)
         
         
-        uistuff.createCombo(cls.widgets["variant"], variantItems)
-
-        def on_variantCombobox_changed (widget, black, white):
-            uistuff.updateCombo(black, playerItems[widget.get_active()])
-            uistuff.updateCombo(white, playerItems[widget.get_active()])
-        cls.widgets["variant"].connect(
-                "changed", on_variantCombobox_changed,
-                 cls.widgets["blackPlayerCombobox"], cls.widgets["whitePlayerCombobox"])
-        cls.widgets["variant"].set_active(0)
+        def on_variantRadio_toggled (widget):
+            if not cls.widgets["playVariantCheck"].get_active():
+                variant = NORMALCHESS
+            elif cls.widgets["shuffleRadio"].get_active():
+                variant = SHUFFLECHESS
+            elif cls.widgets["fischerRadio"]:
+                variant = FISCHERRANDOMCHESS
+            elif cls.widgets["upsideRadio"]:
+                variant = UPSIDEDOWNCHESS
+            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
+            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
+        cls.widgets["playVariantCheck"].connect("toggled", on_variantRadio_toggled)
+        cls.widgets["shuffleRadio"].connect("toggled", on_variantRadio_toggled)
+        cls.widgets["fischerRadio"].connect("toggled", on_variantRadio_toggled)
+        cls.widgets["upsideRadio"].connect("toggled", on_variantRadio_toggled)
         
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
-        for key in ("variant", "whitePlayerCombobox", "blackPlayerCombobox",
+        for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
-                    "useTimeCB", "spinbuttonH", "spinbuttonM",
-                    "spinbuttonS", "spinbuttonG",
-                    "enableUndo"):
+                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio",
+                    "enableUndo", "playVariantCheck",
+                    "shuffleRadio", "fischerRadio", "upsideRadio"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -167,18 +171,29 @@ class _GameInitializationMode:
                 return 
             
             # Find variant
-            variant_index = cls.widgets["variant"].get_active()
+            if not cls.widgets["playVariantCheck"].get_active():
+                variant_index = NORMALCHESS
+            elif cls.widgets["shuffleRadio"].get_active():
+                variant_index = SHUFFLECHESS
+            elif cls.widgets["fischerRadio"]:
+                variant_index = FISCHERRANDOMCHESS
+            elif cls.widgets["upsideRadio"]:
+                variant_index = UPSIDEDOWNCHESS
             variant = variants[variant_index]
             
             # Find time
-            if cls.widgets["useTimeCB"].get_active():
-                secs = cls.widgets["spinbuttonH"].get_value()*3600
-                secs += cls.widgets["spinbuttonM"].get_value()*60
-                secs += cls.widgets["spinbuttonS"].get_value()
-                incr = cls.widgets["spinbuttonG"].get_value()
-            else:
+            if cls.widgets["notimeRadio"].get_active():
                 secs = 0
                 incr = 0
+            elif cls.widgets["blitzRadio"].get_active():
+                secs = 5*60
+                incr = 0
+            elif cls.widgets["shortRadio"].get_active():
+                secs = 15*60
+                incr = 10
+            elif cls.widgets["normalRadio"].get_active():
+                secs = 40*60
+                incr = 15
             
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
