@@ -89,7 +89,7 @@ class LBoard:
         self.history = []
 
         # initial cords of rooks and kings for castling in Chess960
-        if self.variant == FISCHERRANDOMCHESS or self.variant == SHUFFLECHESS:
+        if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
         else:
@@ -163,7 +163,7 @@ class LBoard:
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
                     if moveNoChr == "1" and \
-                        self.variant in (FISCHERRANDOMCHESS, SHUFFLECHESS):
+                        self.variant == FISCHERRANDOMCHESS:
                             if piece == KING:
                                 self.ini_kings[color] = cord
                             elif piece == ROOK:
@@ -174,7 +174,7 @@ class LBoard:
                     cord += 1
         
         # Help tests/movegen.py in positions having no 4 rooks
-        if self.variant == FISCHERRANDOMCHESS or self.variant == SHUFFLECHESS:
+        if self.variant == FISCHERRANDOMCHESS:
             if self.ini_rooks[0][0] is None:
                 self.ini_rooks[0][0] = A1
             if self.ini_rooks[0][1] is None:
