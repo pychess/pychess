@@ -47,12 +47,11 @@ class ToggleComboBox (gtk.ToggleButton):
         # take care the case when last used engine was uninstalled
         self._active = (active < len(self._items) and [active] or [1])[0]
         self.emit("changed", oldactive)
-        text, iconname = self._items[self._active]
+        text, icon = self._items[self._active]
         self.label.set_markup (self.markup[0] + text + self.markup[1])
-        if iconname != None:
+        if icon != None:
             self.hbox.set_spacing(6)
-            self.image.set_from_pixbuf(gtk.icon_theme_get_default().load_icon (
-                            iconname, 12, gtk.ICON_LOOKUP_USE_BUILTIN))
+            self.image.set_from_pixbuf(icon)
         else:
             self.hbox.set_spacing(0)
             self.image.clear()
@@ -73,10 +72,11 @@ class ToggleComboBox (gtk.ToggleButton):
             item = gtk.MenuItem()
             label = gtk.Label(text)
             label.props.xalign = 0
-            pix = gtk.icon_theme_get_default().load_icon(
-                    stock, 12, gtk.ICON_LOOKUP_USE_BUILTIN)
+            if type(stock) == str:
+                stock = gtk.icon_theme_get_default().load_icon(
+                        stock, 12, gtk.ICON_LOOKUP_USE_BUILTIN)            
             image = gtk.Image()
-            image.set_from_pixbuf(pix)
+            image.set_from_pixbuf(stock)            
             hbox = gtk.HBox()
             hbox.set_spacing(6)
             hbox.pack_start(image, expand=False, fill=False)
