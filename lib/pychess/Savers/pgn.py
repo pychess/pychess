@@ -41,7 +41,7 @@ def save (file, model):
     if issubclass(model.variant, FischerRandomChess):
         print >> file, '[Variant "Fischerandom"]'
         
-    if model.lowply > 0 or issubclass(model.variant, FischerRandomChess):
+    if model.lowply > 0 or model.variant.need_initial_board:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
     
@@ -127,17 +127,20 @@ class PGNFile (ChessFile):
         return moves
     
     def loadToModel (self, gameno, position, model=None):
-        if not model: model = GameModel()
+        if not model:
+            model = GameModel()
 
+        fenstr = self._getTag(gameno, "FEN")
         variant = self._getTag(gameno, "Variant")
         if variant and ("fischer" in variant.lower() or "960" in variant):
+            from pychess.Variants.fischerandom import FRCBoard
             model.variant = FischerRandomChess
-        
-        fenstr = self._getTag(gameno, "FEN")
-        if fenstr:
-            model.boards = [Board(fenstr)]
+            model.boards = [FRCBoard(fenstr)]
         else:
-            model.boards = [Board(setup=True)]
+            if fenstr:
+                model.boards = [Board(fenstr)]
+            else:
+                model.boards = [Board(setup=True)]
 
         del model.moves[:]
         model.status = WAITING_TO_START
