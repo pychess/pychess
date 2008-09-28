@@ -86,7 +86,7 @@ for engine in discoverer.getEngines().values():
                 if feature.getAttribute("command") == "variants":
                     if variantClass.variant_name in feature.getAttribute("value"):
                         playerItems[i] += [(flag_icon, name, "stock_notebook")]
-            # UCI engines semms to know only the "UCI_Chess960" as common variant name
+            # UCI engines seems to know only the "UCI_Chess960" as common variant name
             for option in engine.getElementsByTagName("check-option"):
                 if variantClass.variant_name == "fischerandom":
                     if option.getAttribute("name") == "UCI_Chess960":
