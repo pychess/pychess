@@ -377,10 +377,27 @@ class EngineDiscoverer (GObject, Thread):
             if md5.childNodes[0].data.strip() == md5sum:
                 return engine
     
+    def getEngineVariants (self, engine):
+        yield NORMALCHESS
+        yield SHUFFLECHESS
+        protocol = engine.getAttribute("protocol")
+        if protocol == "cecp":
+            for feature in engine.getElementsByTagName("feature"):
+                if feature.getAttribute("command") == "variants":
+                    if "fischerandom" in feature.getAttribute("value"):
+                        yield FISCHERRANDOMCHESS
+                    if "upsidedown" in feature.getAttribute("value"):
+                        yield UPSIDEDOWNCHESS
+        elif protocol == "uci":
+            for option in engine.getElementsByTagName("check-option"):
+                if option.getAttribute("name") == "UCI_Chess960":
+                    yield FISCHERRANDOMCHESS
+    
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
         if engine == None:
             return Thread.getName(self)
+        
         names = engine.getElementsByTagName("name")
         if names:
             return names[0].childNodes[0].data.strip()

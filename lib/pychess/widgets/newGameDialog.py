@@ -34,8 +34,11 @@ from pychess.Variants import variants
 
 it = gtk.icon_theme_get_default()
 
+iwheels = it.load_icon("gtk-execute", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 ipeople = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
 inotebook = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
+speople = it.load_icon("stock_people", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+snotebook = it.load_icon("stock_notebook", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
 
 skillToIcon = {
     1: it.load_icon("weather-clear", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
@@ -62,47 +65,21 @@ skillToIconLarge = {
 
 variantItems = []
 playerItems = []
+smallPlayerItems = []
 
-for i, variantClass in enumerate(variants):
-    variantItems += [(inotebook, variantClass.name, "stock_notebook")]
-    playerItems.append([])
-    playerItems[i] += [(ipeople, _("Human Being"), "stock_people")]
+for variantClass in variants:
+    variantItems += [(iwheels, variantClass.name)]
+    playerItems += [ [(ipeople, _("Human Being"))] ]
+    smallPlayerItems += [ [(speople, _("Human Being"))] ]
 
 for engine in discoverer.getEngines().values():
     name = discoverer.getName(engine)
     c = discoverer.getCountry(engine)
-    if c:
-        flag = "flags/%s.png" % c
-    else:
-        flag = "flags/unknown.png"
-    flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
-
-    for i, variantClass in enumerate(variants):
-        if variantClass.standard_rules:
-            playerItems[i] += [(flag_icon, name, "stock_notebook")]
-        else:
-            # fill in player combo with CECP engines supporting this variant
-            for feature in engine.getElementsByTagName("feature"):
-                if feature.getAttribute("command") == "variants":
-                    if variantClass.variant_name in feature.getAttribute("value"):
-                        playerItems[i] += [(flag_icon, name, "stock_notebook")]
-            # UCI engines seems to know only the "UCI_Chess960" as common variant name
-            for option in engine.getElementsByTagName("check-option"):
-                if variantClass.variant_name == "fischerandom":
-                    if option.getAttribute("name") == "UCI_Chess960":
-                        playerItems[i] += [(flag_icon, name, "stock_notebook")]
-
-difItems = []
-for level, stock, altstock in \
-        ((_("Beginner"), "stock_weather-few-clouds", "weather-few-clouds"), 
-            (_("Intermediate"), "stock_weather-cloudy", "weather-overcast"),
-            (_("Expert"), "stock_weather-storm", "weather-storm")):
-    try:
-        image = it.load_icon(stock, 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-        difItems += [(image, level, stock)]
-    except gobject.GError:
-        image = it.load_icon(altstock, 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-        difItems += [(image, level, altstock)]
+    if c: flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix("flags/%s.png" % c))
+    else: flag_icon = inotebook
+    for variant in discoverer.getEngineVariants(engine):
+        playerItems[variant] += [(flag_icon, name)]
+        smallPlayerItems[variant] += [(snotebook, name)]
 
 #===============================================================================
 # GameInitializationMode is the super class of new game dialogs. Dialogs include
@@ -158,14 +135,11 @@ class _GameInitializationMode:
         cls.widgets["useTimeCB"].connect("clicked", on_useTimeCB_clicked)
         
         
-        uistuff.createCombo(cls.widgets["variant"],
-                            (i[:2] for i in variantItems))
+        uistuff.createCombo(cls.widgets["variant"], variantItems)
 
         def on_variantCombobox_changed (widget, black, white):
-            uistuff.updateCombo(black,
-                                (i[:2] for i in playerItems[widget.get_active()]))
-            uistuff.updateCombo(white,
-                                (i[:2] for i in playerItems[widget.get_active()]))
+            uistuff.updateCombo(black, playerItems[widget.get_active()])
+            uistuff.updateCombo(white, playerItems[widget.get_active()])
         cls.widgets["variant"].connect(
                 "changed", on_variantCombobox_changed,
                  cls.widgets["blackPlayerCombobox"], cls.widgets["whitePlayerCombobox"])
