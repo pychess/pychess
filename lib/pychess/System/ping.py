@@ -23,8 +23,13 @@ class Pinger (GObject, PooledThread):
     def __init__ (self, host):
         GObject.__init__(self)
         self.host = host
-        self.expression = re.compile("time=([\d\.]+) (m?s)")
         self.subproc = None
+        
+        self.expression = re.compile("time=([\d\.]+) (m?s)")
+        self.errorExprs = (
+            re.compile("(Destination Host Unreachable)"),
+        )
+        
         atexit.register(self.stop)
     
     def start (self):
@@ -37,23 +42,22 @@ class Pinger (GObject, PooledThread):
             try:
                 line = self.subproc.readline()
             except SubProcessError, e:
-                glock.acquire()
-                try:
-                    self.emit("error", ", ".join(e[1]))
-                finally:
-                    glock.release()
+                self.emit("error", ", ".join(e[1]))
                 return
+            
             match = self.expression.search(line)
             if match:
                 time, unit = match.groups()
                 time = float(time)
                 if unit == "s":
                     time *= 1000
-                glock.acquire()
-                try:
-                    self.emit("recieved", time)
-                finally:
-                    glock.release()
+                self.emit("recieved", time)
+            
+            else:
+                for expr in self.errorExprs:
+                    match = expr.search(line)
+                    if match:
+                        self.emit("error", match.groups()[0])
     
     def stop (self):
         if not self.subproc: return
