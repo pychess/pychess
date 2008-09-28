@@ -40,8 +40,8 @@ def save (file, model):
 
     if issubclass(model.variant, FischerRandomChess):
         print >> file, '[Variant "Fischerandom"]'
-        
-    if model.lowply > 0 or model.variant.need_initial_board:
+    
+    if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
     
