@@ -40,10 +40,14 @@ def semisynced(f):
     def newFunction(*args, **kw):
         self = args[0]
         self.funcQueue.append((f, args, kw))
+        self.changeLock.acquire()
         if self.readyMoves:
-            for func, args, kw in self.funcQueue:
-                func(*args, **kw)
-            del self.funcQueue[:]
+            try:
+                for func, args, kw in self.funcQueue:
+                    func(*args, **kw)
+                del self.funcQueue[:]
+            finally:
+                self.changeLock.release()
     return newFunction
 
 class CECPEngine (ProtocolEngine):
@@ -150,6 +154,14 @@ class CECPEngine (ProtocolEngine):
         # If we are an analyzer, this signal was already called in a different
         # thread, so we can safely block it.
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            self.changeLock.acquire()
+            try:
+                for func, args, kw in self.funcQueue:
+                    func(*args, **kw)
+        	    del self.funcQueue[:]
+            finally:
+            	self.changeLock.release()
+            
             if not self.board:
                 self.board = Board(setup=True)
             self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
@@ -419,9 +431,11 @@ class CECPEngine (ProtocolEngine):
                     try:
                         print >> self.engine, "?"
                         self.__force()
+                        self.changeLock.release()
                         self.movecon.wait()
                     finally:
                         self.movecon.release()
+                        self.changeLock.acquire()
                 else:
                     self.__force()
             
