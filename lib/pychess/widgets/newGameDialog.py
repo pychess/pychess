@@ -175,9 +175,9 @@ class _GameInitializationMode:
                 variant_index = NORMALCHESS
             elif cls.widgets["shuffleRadio"].get_active():
                 variant_index = SHUFFLECHESS
-            elif cls.widgets["fischerRadio"]:
+            elif cls.widgets["fischerRadio"].get_active():
                 variant_index = FISCHERRANDOMCHESS
-            elif cls.widgets["upsideRadio"]:
+            elif cls.widgets["upsideRadio"].get_active():
                 variant_index = UPSIDEDOWNCHESS
             variant = variants[variant_index]
             
