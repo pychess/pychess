@@ -138,9 +138,9 @@ class _GameInitializationMode:
                 variant = NORMALCHESS
             elif cls.widgets["shuffleRadio"].get_active():
                 variant = SHUFFLECHESS
-            elif cls.widgets["fischerRadio"]:
+            elif cls.widgets["fischerRadio"].get_active():
                 variant = FISCHERRANDOMCHESS
-            elif cls.widgets["upsideRadio"]:
+            elif cls.widgets["upsideRadio"].get_active():
                 variant = UPSIDEDOWNCHESS
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
             uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
