@@ -383,16 +383,14 @@ class EngineDiscoverer (GObject, Thread):
             if variantClass.standard_rules:
                 yield variantClass.board.variant
             else:
-                protocol = engine.getAttribute("protocol")
-                if protocol == "cecp":
-                    for feature in engine.getElementsByTagName("feature"):
-                        if feature.getAttribute("command") == "variants":
-                            if variantClass.variant_name in feature.getAttribute("value"):
-                                yield variantClass.board.variant
-                elif protocol == "uci":
-                    for option in engine.getElementsByTagName("check-option"):
-                        if option.getAttribute("name") == "UCI_Chess960":
-                            yield FISCHERRANDOMCHESS
+                for feature in engine.getElementsByTagName("feature"):
+                    if feature.getAttribute("command") == "variants":
+                        if variantClass.variant_name in feature.getAttribute("value"):
+                            yield variantClass.board.variant
+                # UCI knows Chess960 only
+                for option in engine.getElementsByTagName("check-option"):
+                    if option.getAttribute("name") == "UCI_Chess960":
+                        yield variantClass.board.variant
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
