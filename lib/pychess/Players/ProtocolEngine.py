@@ -7,8 +7,6 @@ from pychess.Utils.const import *
 
 class ProtocolEngine (Engine):
     
-    NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
-    
     __gsignals__ = {
         "readyForOptions": (SIGNAL_RUN_FIRST, None, ()),
         "readyForMoves": (SIGNAL_RUN_FIRST, None, ())
