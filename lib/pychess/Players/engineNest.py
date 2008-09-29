@@ -13,6 +13,7 @@ from pychess.System.prefix import addHomePrefix
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
 from UCIEngine import UCIEngine
+from pychess.Variants import variants
 
 attrToProtocol = {
     "uci": UCIEngine,
@@ -378,20 +379,20 @@ class EngineDiscoverer (GObject, Thread):
                 return engine
     
     def getEngineVariants (self, engine):
-        yield NORMALCHESS
-        yield SHUFFLECHESS
-        protocol = engine.getAttribute("protocol")
-        if protocol == "cecp":
-            for feature in engine.getElementsByTagName("feature"):
-                if feature.getAttribute("command") == "variants":
-                    if "fischerandom" in feature.getAttribute("value"):
-                        yield FISCHERRANDOMCHESS
-                    if "upsidedown" in feature.getAttribute("value"):
-                        yield UPSIDEDOWNCHESS
-        elif protocol == "uci":
-            for option in engine.getElementsByTagName("check-option"):
-                if option.getAttribute("name") == "UCI_Chess960":
-                    yield FISCHERRANDOMCHESS
+        for variantClass in variants:
+            if variantClass.standard_rules:
+                yield variantClass.board.variant
+            else:
+                protocol = engine.getAttribute("protocol")
+                if protocol == "cecp":
+                    for feature in engine.getElementsByTagName("feature"):
+                        if feature.getAttribute("command") == "variants":
+                            if variantClass.variant_name in feature.getAttribute("value"):
+                                yield variantClass.board.variant
+                elif protocol == "uci":
+                    for option in engine.getElementsByTagName("check-option"):
+                        if option.getAttribute("name") == "UCI_Chess960":
+                            yield FISCHERRANDOMCHESS
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread

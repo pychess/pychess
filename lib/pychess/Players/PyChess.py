@@ -360,7 +360,7 @@ while True:
     
     elif lines[0] == "variant":
         if lines[1] == "fischerandom":
-            board.variant = getEngineName
+            board.variant = FISCHERRANDOMCHESS
         
     elif lines[0] == "setboard":
         lsearch.searching = False
