@@ -219,7 +219,7 @@ class FRCBoard(Board):
 
 class FischerRandomChess:
     name = _("Fischer Random")
-    variant_name = "fischerandom"
+    cecp_name = "fischerandom"
     board = FRCBoard
     need_initial_board = True
     standard_rules = False

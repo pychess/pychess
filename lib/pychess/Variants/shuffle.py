@@ -47,7 +47,7 @@ class ShuffleBoard(Board):
 
 class ShuffleChess:
     name = _("Shuffle")
-    variant_name = "nocastle"
+    cecp_name = "nocastle"
     board = ShuffleBoard
     need_initial_board = True
     standard_rules = True
