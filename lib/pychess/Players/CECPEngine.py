@@ -16,7 +16,7 @@ from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants import variants
 
 
 def isdigits (strings):
@@ -326,10 +326,10 @@ class CECPEngine (ProtocolEngine):
             self.changeLock.release()
     
     def setOptionVariant (self, variant):
-        if variant == FischerRandomChess:
-            assert "fischerandom" in self.features["variants"], \
-                                          "%s dosn't support the variant" % self
-            self.optionQueue.append("variant fischerandom")
+        if variant in variants:
+            assert variant.cecp_name in self.features["variants"], \
+                    "%s dosn't support %s variant" % (self, variant.cecp_name)
+            self.optionQueue.append("variant %s" % variant.cecp_name)
     
         #==================================================#
         #    Strength system                               #
