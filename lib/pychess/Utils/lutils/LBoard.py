@@ -194,14 +194,26 @@ class LBoard:
 
         castling = 0
         for char in castChr:
-            if char == "K":
-                castling |= W_OO
-            elif char == "Q":
-                castling |= W_OOO
-            elif char == "k":
-                castling |= B_OO
-            elif char == "q":
-                castling |= B_OOO
+            if self.variant == FISCHERRANDOMCHESS:
+                if char in reprFile:
+                    if char < reprCord[self.kings[BLACK]][0]:
+                        castling |= B_OOO
+                    else:
+                        castling |= B_OO
+                elif char in [c.upper() for c in reprFile]:
+                    if char < reprCord[self.kings[WHITE]][0].upper():
+                        castling |= W_OOO
+                    else:
+                        castling |= W_OO
+            else:
+                if char == "K":
+                    castling |= W_OO
+                elif char == "Q":
+                    castling |= W_OOO
+                elif char == "k":
+                    castling |= B_OO
+                elif char == "q":
+                    castling |= B_OOO
         self.setCastling(castling)
         
         # Parse en passant target sqaure
@@ -577,14 +589,24 @@ class LBoard:
             return "-"
         else:
             strs = []
-            if self.castling & W_OO:
-                strs.append("K")
-            if self.castling & W_OOO:
-                strs.append("Q")
-            if self.castling & B_OO:
-                strs.append("k")
-            if self.castling & B_OOO:
-                strs.append("q")
+            if self.variant == FISCHERRANDOMCHESS:
+                if self.castling & W_OO:
+                    strs.append(reprCord[self.ini_rooks[0][1]][0].upper())
+                if self.castling & W_OOO:
+                    strs.append(reprCord[self.ini_rooks[0][0]][0].upper())
+                if self.castling & B_OO:
+                    strs.append(reprCord[self.ini_rooks[1][1]][0])
+                if self.castling & B_OOO:
+                    strs.append(reprCord[self.ini_rooks[1][0]][0])
+            else:
+                if self.castling & W_OO:
+                    strs.append("K")
+                if self.castling & W_OOO:
+                    strs.append("Q")
+                if self.castling & B_OO:
+                    strs.append("k")
+                if self.castling & B_OOO:
+                    strs.append("q")
             return "".join(strs)
     
     def __repr__ (self):

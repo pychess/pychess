@@ -181,7 +181,8 @@ class FRCBoard(Board):
       
         positions = [1, 2, 3, 4, 5, 6, 7, 8]
         tmp = [''] * 8
-
+        castl = ''
+        
         bishop = random.choice((1, 3, 5, 7))
         tmp[bishop-1] = 'b'
         positions.remove(bishop)
@@ -204,16 +205,18 @@ class FRCBoard(Board):
 
         rook = positions[0]
         tmp[rook-1] = 'r'
+        castl += reprFile[rook-1]
 
         king = positions[1]
         tmp[king-1] = 'k'
 
         rook = positions[2]
         tmp[rook-1] = 'r'
+        castl += reprFile[rook-1]
 
         tmp = ''.join(tmp)
-        tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w KQkq - 0 1'
-
+        tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w ' + castl.upper() + castl +' - 0 1'
+        #tmp = "rnqbbknr/pppppppp/8/8/8/8/PPPPPPPP/RNQBBKNR w AHah - 0 1"
         return tmp
 
 
