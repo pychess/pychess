@@ -388,9 +388,10 @@ class EngineDiscoverer (GObject, Thread):
                         if variantClass.cecp_name in feature.getAttribute("value"):
                             yield variantClass.board.variant
                 # UCI knows Chess960 only
-                for option in engine.getElementsByTagName("check-option"):
-                    if option.getAttribute("name") == "UCI_Chess960":
-                        yield variantClass.board.variant
+                if variantClass.cecp_name == "fischerandom":
+                    for option in engine.getElementsByTagName("check-option"):
+                        if option.getAttribute("name") == "UCI_Chess960":
+                            yield variantClass.board.variant
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
