@@ -385,7 +385,7 @@ class EngineDiscoverer (GObject, Thread):
             else:
                 for feature in engine.getElementsByTagName("feature"):
                     if feature.getAttribute("command") == "variants":
-                        if variantClass.variant_name in feature.getAttribute("value"):
+                        if variantClass.cecp_name in feature.getAttribute("value"):
                             yield variantClass.board.variant
                 # UCI knows Chess960 only
                 for option in engine.getElementsByTagName("check-option"):

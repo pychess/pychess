@@ -26,7 +26,7 @@ class UpsideDownBoard(Board):
 
 class UpsideDownChess:
     name = _("Upside-down")
-    variant_name = "upsidedown"
+    cecp_name = "upsidedown"
     board = UpsideDownBoard
     need_initial_board = True
     standard_rules = True
