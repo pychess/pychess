@@ -41,7 +41,7 @@ isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
 typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
             _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
 
-NORMALCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, UPSIDEDOWNCHESS = range(4)
+NORMALCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, UPSIDEDOWNCHESS, LOSERSCHESS = range(5)
 
 # Action errors
 ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \
