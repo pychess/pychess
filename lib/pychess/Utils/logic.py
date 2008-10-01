@@ -58,9 +58,37 @@ def getStatus (board):
     
     return DRAW, DRAW_STALEMATE
 
-def validate (board, move):
+def standard_validate (board, move):
     return validateMove (board.board, move.move) \
      and not board.willLeaveInCheck(move)
+
+def validate (board, move):
+    if board.variant == LOSERSCHESS:
+        capture = board.board.arBoard[move.move & 63] != EMPTY
+        if capture:
+            return standard_validate (board, move)
+        else:
+            can_capture = False
+            can_escape = False
+            ischecked = board.board.isChecked()
+            for c in lmovegen.genCaptures(board.board):
+                can_capture = True
+                if ischecked:
+                    if not board.willLeaveInCheck(move):
+                        can_escape = True
+                        break
+                else:
+                    break
+            if can_capture:
+                if ischecked and not can_escape:
+                    return standard_validate (board, move)
+                else:
+                    return False
+            else:
+                return standard_validate (board, move)
+    
+    else:
+        return standard_validate (board, move)
 
 def getMoveKillingKing (board):
     """ Returns a move from the current color, able to capture the opponent

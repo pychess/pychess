@@ -67,7 +67,7 @@ variantItems = []
 playerItems = []
 smallPlayerItems = []
 
-for variantClass in variants:
+for variantClass in variants.values():
     variantItems += [(iwheels, variantClass.name)]
     playerItems += [ [(ipeople, _("Human Being"))] ]
     smallPlayerItems += [ [(speople, _("Human Being"))] ]
