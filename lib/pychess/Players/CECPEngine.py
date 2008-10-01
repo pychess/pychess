@@ -326,7 +326,7 @@ class CECPEngine (ProtocolEngine):
             self.changeLock.release()
     
     def setOptionVariant (self, variant):
-        if variant in variants:
+        if variant in variants.values():
             assert variant.cecp_name in self.features["variants"], \
                     "%s dosn't support %s variant" % (self, variant.cecp_name)
             self.optionQueue.append("variant %s" % variant.cecp_name)

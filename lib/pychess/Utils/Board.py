@@ -213,9 +213,9 @@ class Board:
         
         lboard = self.board.clone()
         
-        if self.variant == FISCHERRANDOMCHESS:
-            from pychess.Variants.fischerandom import FRCBoard
-            newBoard = FRCBoard()
+        if self.variant != NORMALCHESS:
+            from pychess.Variants import variants
+            newBoard = variants[self.variant].board()
         else:
             newBoard = Board()
         newBoard.board = lboard
