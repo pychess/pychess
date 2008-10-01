@@ -93,6 +93,7 @@ def game_ended (gamemodel, reason, gmwidg):
         WON_MATE: _("on a mate"),
         WON_DISCONNECTION: _("as opponent disconnected"),
         WON_ADJUDICATION:  _("as decided by an admin"),
+        WON_NOMATERIAL: _("by losing all pieces except the king"),
         
         ADJOURNED_LOST_CONNECTION: _("as a player lost connection"),
         ADJOURNED_AGREEMENT: _("as the players agreed to"),
