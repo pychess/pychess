@@ -11,6 +11,8 @@ from Move import Move
 from const import *
 from lutils.bitboard import iterBits
 from lutils.attack import getAttacks
+from pychess.Variants.losers import testKingOnly
+
 
 def getDestinationCords (board, cord):
     tcords = []
@@ -31,9 +33,17 @@ def isClaimableDraw (board):
 def getStatus (board):
     
     lboard = board.board
-    
-    if ldraw.testMaterial (lboard):
-        return DRAW, DRAW_INSUFFICIENT
+
+    if board.variant == LOSERSCHESS:
+        if testKingOnly(lboard):
+            if board.color == WHITE:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+            return status, WON_NOMATERIAL
+    else:
+        if ldraw.testMaterial (lboard):
+            return DRAW, DRAW_INSUFFICIENT
     
     if ldraw.testRepetition (lboard):
         return DRAW, DRAW_REPITITION
@@ -51,12 +61,26 @@ def getStatus (board):
         return RUNNING, UNKNOWN_REASON
     
     if lboard.isChecked():
-        if board.color == WHITE:
-            status = BLACKWON
-        else: status = WHITEWON
+        if board.variant == LOSERSCHESS:
+            if board.color == WHITE:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+        else:
+            if board.color == WHITE:
+                status = BLACKWON
+            else:
+                status = WHITEWON
         return status, WON_MATE
     
-    return DRAW, DRAW_STALEMATE
+    if board.variant == LOSERSCHESS:
+        if board.color == WHITE:
+            status = WHITEWON
+        else:
+            status = BLACKWON
+        return status, DRAW_STALEMATE
+    else:
+        return DRAW, DRAW_STALEMATE
 
 def standard_validate (board, move):
     return validateMove (board.board, move.move) \
