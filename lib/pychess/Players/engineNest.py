@@ -379,7 +379,7 @@ class EngineDiscoverer (GObject, Thread):
                 return engine
     
     def getEngineVariants (self, engine):
-        for variantClass in variants:
+        for variantClass in variants.values():
             if variantClass.standard_rules:
                 yield variantClass.board.variant
             else:
