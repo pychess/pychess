@@ -107,10 +107,20 @@ class FindMovesTestCase(unittest.TestCase):
             self.positions.append( (parts[0], depths) )
     
     def movegen(self, board):
-        for i, (pos, depths) in enumerate(self.positions[1:]):
-            print i+1, "/", len(self.positions), "-", pos
-            
-            board.applyFen(pos)
+        for i, (fen, depths) in enumerate(self.positions[1:]):
+            if board.variant == FISCHERRANDOMCHESS:
+                fen = fen.split()
+                castl = fen[2]
+                castl = castl.replace("K", "H")
+                castl = castl.replace("Q", "A")
+                castl = castl.replace("k", "h")
+                castl = castl.replace("q", "a")
+                fen[2] = castl
+                fen = ' '.join(fen)
+
+            print i+1, "/", len(self.positions), "-", fen
+
+            board.applyFen(fen)
             hash = board.hash
             
             for depth, suposedMoveCount in enumerate(depths):
