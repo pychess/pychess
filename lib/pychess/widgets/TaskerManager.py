@@ -11,13 +11,13 @@ import newGameDialog
 
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import NORMALCHESS
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
-from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE
+from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, NORMALCHESS
 from pychess.ic import ICLogon
 from pychess.widgets import ionest
 from pychess.widgets import newGameDialog
+from pychess.Variants import variants
 
 class TaskerManager (gtk.Table):
     
@@ -185,7 +185,7 @@ class NewGameTasker (gtk.Alignment):
             engine = discoverer.getEngineN (opponent-1)
             name = discoverer.getName(engine)
             player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
-                    (engine, 1-color, difficulty, NORMALCHESS, 5*60, 0), name)
+                    (engine, 1-color, difficulty, variants[NORMALCHESS], 5*60, 0), name)
         
         if color == WHITE:
             ionest.generalStart(gamemodel, player0tup, player1tup)
