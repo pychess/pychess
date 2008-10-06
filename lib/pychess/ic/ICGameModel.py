@@ -21,7 +21,7 @@ class ICGameModel (GameModel):
         
         self.connection.connect("disconnected", self.onDisconnected)
         
-        self.connect("game_ended", self.afterGameEnded)
+        self.connect("game_terminated", self.afterGameEnded)
         
         self.inControl = True
     

@@ -34,6 +34,7 @@ def nurseGame (gmwidg, gamemodel):
     
     gamemodel.connect("game_saved", game_saved, gmwidg)
     gamemodel.connect("game_ended", game_ended, gmwidg)
+    gamemodel.connect("game_unended", game_unended, gmwidg)
 
 #===============================================================================
 # Gamewidget signals
@@ -125,6 +126,15 @@ def game_ended (gamemodel, reason, gmwidg):
     finally:
         glock.release()
 
+def game_unended (gamemodel, gmwidg):
+    glock.acquire()
+    try:
+        print "sending hideMessage"
+        gmwidg.hideMessage()
+        gmwidg.status("")
+    finally:
+        glock.release()
+
 def on_game_started (gamemodel, gmwidg):
     # Rotate to human player
     boardview = gmwidg.board.view
@@ -211,7 +221,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
             set_arrow (None)
         
         gmwidg.gamemodel.anacons[analyzerType].append(
-                glock.glock_connect(analyzer, "analyze", on_analyze))
+                analyzer.connect("analyze", on_analyze))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("game_changed", on_game_change))
     
