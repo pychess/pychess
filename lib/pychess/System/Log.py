@@ -2,10 +2,10 @@ import os, sys, time, gobject
 from Queue import Queue
 from GtkWorker import EmitPublisher, Publisher
 from prefix import getHomePrefix, addHomePrefix
+from pychess.Utils.const import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
 
 MAXFILES = 10
-DEBUG, LOG, WARNING, ERROR = range(4)
-labels = {DEBUG: "Debug", LOG: "Log", WARNING: "Warning", ERROR: "Error"}
+labels = {LOG_DEBUG: "Debug", LOG_LOG: "Log", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
 
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -70,24 +70,24 @@ class Log (gobject.GObject):
             self.file.write(message)
             self.file.flush()
         except IOError, e:
-            if not type == ERROR:
+            if not type == LOG_ERROR:
                 self.error("Unable to write '%s' to log file because of error: %s" % \
                         (message, ", ".join(str(a) for a in e.args)))
         
-        if type in (ERROR, WARNING) and task != "stdout":
+        if type in (LOG_ERROR, LOG_WARNING) and task != "stdout":
             print message
     
     def debug (self, message, task="Default"):
-        self._log (task, message, DEBUG)
+        self._log (task, message, LOG_DEBUG)
     
     def log (self, message, task="Default"):
-        self._log (task, message, LOG)
+        self._log (task, message, LOG_LOG)
     
     def warn (self, message, task="Default"):
-        self._log (task, message, WARNING)
+        self._log (task, message, LOG_WARNING)
     
     def error (self, message, task="Default"):
-        self._log (task, message, ERROR)
+        self._log (task, message, LOG_ERROR)
 
 oldlogs = [l for l in os.listdir(getHomePrefix()) if l.endswith(".log")]
 if len(oldlogs) >= MAXFILES:

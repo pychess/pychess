@@ -8,7 +8,7 @@ import gtk, pango, gobject
 
 from pychess.System import glock, uistuff
 from pychess.System.Log import log
-from pychess.System.Log import DEBUG, LOG, WARNING, ERROR
+from pychess.System.Log import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
 from pychess.System.prefix import addDataPrefix
 
 def rawreplace(error):
@@ -74,7 +74,7 @@ class InformationWindow:
             textview.get_buffer().insert_with_tags_by_name(
                 textview.get_buffer().get_end_iter(),
                 "\n%s\n------------------------------------------------------------\n"%t,
-                str(LOG))
+                str(LOG_LOG))
             cls.tagToTime[tag] = timestamp
         
         if type(message) == str:
@@ -96,10 +96,10 @@ class InformationWindow:
         uistuff.keepDown(widgets["scrolledwindow"])
         textview = widgets["textview"]
         tb = textview.get_buffer()
-        tb.create_tag(str(DEBUG), family='Monospace')
-        tb.create_tag(str(LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
-        tb.create_tag(str(WARNING), family='Monospace', foreground="red")
-        tb.create_tag(str(ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
+        tb.create_tag(str(LOG_DEBUG), family='Monospace')
+        tb.create_tag(str(LOG_LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
+        tb.create_tag(str(LOG_WARNING), family='Monospace', foreground="red")
+        tb.create_tag(str(LOG_ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
         
         
         findbar = widgets["findbar"]
