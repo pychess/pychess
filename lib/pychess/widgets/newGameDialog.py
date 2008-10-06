@@ -19,6 +19,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
 from pychess.System import uistuff, protoopen
+from pychess.System.Log import log
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
