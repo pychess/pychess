@@ -29,7 +29,7 @@ class ThreadPool:
         self.lock = Lock()
         self.threads = 0
     
-    def start (self, func, *args):
+    def start (self, func, *args, **kw):
         self.lock.acquire()
         
         try:
@@ -43,7 +43,7 @@ class ThreadPool:
             else:
                 a = self.queue.get()
         
-        a.func = lambda: func(*args)
+        a.func = lambda: func(*args, **kw)
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
@@ -72,11 +72,15 @@ class ThreadPool:
                         try:
                             self.func()
                         except Exception, e:
-                            if glock._rlock._RLock__owner == self:
-                                # As a service we take care of releasing the gdk
-                                # lock when a thread breaks to avoid freezes
-                                for i in xrange(_rlock._RLock__count):
-                                    glock.release()
+                            #try:
+                            #    if glock._rlock._RLock__owner == self:
+                            #        # As a service we take care of releasing the gdk
+                            #        # lock when a thread breaks to avoid freezes
+                            #        for i in xrange(glock._rlock._RLock__count):
+                            #            glock.release()
+                            #except AssertionError, e:
+                            #    print e
+                            #    pass
                             
                             list = self.tracestack[:-2] + \
                                     traceback.extract_tb(sys_.exc_traceback)[2:]
