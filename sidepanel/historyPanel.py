@@ -179,6 +179,6 @@ class Sidepanel:
         col = ply & 1 and self.left or self.right
         other = ply & 1 and self.right or self.left
         if self.board.model.lowply & 1:
-            row = (ply-self.board.model.lowply)/2
-        else: row = (ply-self.board.model.lowply-1)/2
+            row = (ply-self.board.model.lowply) // 2
+        else: row = (ply-self.board.model.lowply-1) // 2
         return row, col, other
