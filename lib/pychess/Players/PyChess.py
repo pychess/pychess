@@ -200,7 +200,7 @@ def go ():
                         print "got moves", " ".join(listToSan(board, mvs)), "from depth", depth
                     else:
                         # We were interrupted
-                        print "We were interrupted while searching depth %d" % depth
+                        print "We were interrupted (%d) while searching depth %d" % (lsearch.last, depth)
                         break
                     prevtime = time()-starttime - prevtime
                 else:
