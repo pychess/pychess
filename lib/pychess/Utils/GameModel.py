@@ -162,8 +162,9 @@ class GameModel (GObject, PooledThread):
         elif offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
             player.offerError(offer, ACTION_ERROR_TOO_LARGE_UNDO)
         
-        elif offer.offerType == TAKEBACK_OFFER and (self.status not in UNDOABLE_STATES or
-                                                    self.reason not in UNDOABLE_REASONS):
+        elif offer.offerType == TAKEBACK_OFFER and self.status != RUNNING and (
+                                                   self.status not in UNDOABLE_STATES or
+                                                   self.reason not in UNDOABLE_REASONS):
             player.offerError(offer, ACTION_ERROR_GAME_ENDED)
         
         elif offer.offerType in OFFERS:
