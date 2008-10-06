@@ -25,9 +25,13 @@ backup = """
 <engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py" />
     <engine protocol="cecp" protover="2" binname="gnuchess">
-        <meta><country>us</country></meta></engine>
+        <meta><country>us</country></meta>
+        <cecp-features><feature command="sigint" supports="true"/></cecp-features>
+        </engine>
     <engine protocol="cecp" protover="2" binname="gnome-gnuchess">
-        <meta><country>us</country></meta></engine>
+        <meta><country>us</country></meta>
+        <cecp-features><feature command="sigint" supports="true"/></cecp-features>
+        </engine>
     <engine protocol="cecp" protover="2" binname="crafty">
         <meta><country>us</country></meta></engine>
     <engine protocol="cecp" protover="1" binname="faile">
@@ -282,6 +286,7 @@ class EngineDiscoverer (GObject, Thread):
         for engine in self.dom.getElementsByTagName("engine"):
             if not engine.hasAttribute("protocol") and \
                    engine.hasAttribute("binname"):
+                log.warn("Engine '%s' misses protocol/binname attribute\n")
                 continue
             
             binname = engine.getAttribute("binname")
@@ -427,7 +432,7 @@ class EngineDiscoverer (GObject, Thread):
         
         path = xmlengine.getElementsByTagName("path")[0].childNodes[0].data.strip()
         args = self.getArgs(xmlengine)
-        warnwords = ("illegal", "error")
+        warnwords = ("illegal", "error", "exception")
         subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
         
         engine = attrToProtocol[protocol](subprocess, color, protover)

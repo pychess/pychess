@@ -51,8 +51,10 @@ ERROR_MESSAGES = {
         _("The clock hasn't yet been started."),
     ACTION_ERROR_SWITCH_UNDERWAY:
         _("You can't switch color during the game."),
-    ACTION_ERROR_TO_LARGE_UNDO:
+    ACTION_ERROR_TOO_LARGE_UNDO:
         _("You have tried to redo to many moves."),
+    ACTION_ERROR_GAME_ENDED:
+        _("You can't undo a game, which has ended in an unnatural way."),
 }
 
 class Human (Player):
@@ -121,10 +123,11 @@ class Human (Player):
     #===========================================================================
     
     def end (self, status, reason):
-        # We don't really need to know the status
-        self.kill(reason)
+        # We don't really need to know the result
+        pass
     
     def kill (self, reason):
+        print "I am killed", self
         for id in self.conid:
             if self.board.handler_is_connected(id):
                 self.board.disconnect(id)
@@ -149,10 +152,18 @@ class Human (Player):
             self.gmwidg.setLocked(False)
     
     def undoMoves (self, movecount, gamemodel):
-        # If current player has changed so that it is no longer us to move,
-        # We raise TurnInterruprt in order to let GameModel continue the game
-        if movecount % 2 == 1 and gamemodel.curplayer != self:
-            self.queue.put("int")
+        #If the movecount is odd, the player has changed, and we have to interupt
+        if movecount % 2 == 1:
+            # If it is no longer us to move, we raise TurnInterruprt in order to
+            # let GameModel continue the game.
+            if gamemodel.curplayer != self:
+                self.queue.put("int")
+        
+        # If the movecount is even, we have to ensure the board is unlocked.
+        # This is because it might have been locked by the game ending, but
+        # perhaps we have now undone some moves, and it is no longer ended.
+        elif movecount % 2 == 0 and gamemodel.curplayer == self:
+            self.gmwidg.setLocked(False)
     
     def putMessage (self, text):
         self.emit("messageRecieved", text)
