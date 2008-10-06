@@ -3,9 +3,8 @@ import re
 import time
 from threading import RLock
 from copy import copy
+import Queue
 
-from pychess.Players.Player import PlayerIsDead
-from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -18,6 +17,8 @@ from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
 from pychess.Variants import variants
 
+from ProtocolEngine import ProtocolEngine
+from Player import Player, PlayerIsDead, TurnInterrupt
 
 def isdigits (strings):
     for s in strings:
@@ -31,7 +32,8 @@ def isdigits (strings):
     return True
 
 d_plus_dot_expr = re.compile(r"\d+\.")
-movre = re.compile(r"([a-hxOoKQRBN0-8+#=-]{2,7})[?!]*\s")
+mov = "[a-hxOoKQRBN0-8+#=-]{2,7}[?!]*"
+anare = re.compile("\d+\.?\s+(Mat\d+|[-\d\.]+)\s+\d+\s+\d+\s+((?:%s\s*)+)" % mov)
 whitespaces = re.compile(r"\s+")
 
 def semisynced(f):
@@ -48,6 +50,11 @@ def semisynced(f):
                 del self.funcQueue[:]
             finally:
                 self.changeLock.release()
+    return newFunction
+
+def inthread(f):
+    def newFunction(*args, **kw):
+        pool.start(f, *args, **kw)
     return newFunction
 
 class CECPEngine (ProtocolEngine):
@@ -84,6 +91,10 @@ class CECPEngine (ProtocolEngine):
         self.lastpong = 0
         self.timeout = None
         
+        self.returnQueue = Queue.Queue()
+        self.engine.connect("line", self.parseLine)
+        self.engine.connect("died", lambda e: self.returnQueue.put("del"))
+        
         self.funcQueue = []
         self.optionQueue = []
         
@@ -106,32 +117,26 @@ class CECPEngine (ProtocolEngine):
             # the engines support the protocol, we can add more. We don't add
             # infinite time though, just in case.
             # The engine can get another 10 minutes time, by sending done=0
-            self.timeout = time.time() + 10
+            self.timeout = time.time() + 5
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             pool.start(self.__startBlocking)
-        else: self.__startBlocking()
+        else:
+            self.__startBlocking()
     
     def __startBlocking (self):
         if self.protover == 2:
-            while not self.readyMoves:
-                try:
-                     line = self.engine.readline((self.timeout-time.time())*1000)
-                except TimeOutError:
-                    log.warn("Got timeout error", self)
-                    self.emit("readyForOptions")
-                    self.emit("readyForMoves")
-                    break
-                except SubProcessError:
-                    # We catch this later in getMove
-                    # FIXME: Will this also get catched, if we are an analyzer?
-                    self.emit("readyForOptions")
-                    self.emit("readyForMoves")
-                self.parseLine(line)
-        else:
-            self.emit("readyForOptions")
-            self.emit("readyForMoves")
+            try:
+                r = self.returnQueue.get(True, self.timeout-time.time())
+                if r == "not ready":
+                    r = self.returnQueue.get(True, self.timeout-time.time())
+            except Queue.Empty:
+                log.warn("Got timeout error\n", self.defname)
+            else:
+                assert r == "ready"
+        self.emit("readyForOptions")
+        self.emit("readyForMoves")
     
     def __onReadyForOptions_before (self, self_):
         self.readyOptions = True
@@ -155,18 +160,9 @@ class CECPEngine (ProtocolEngine):
         # If we are an analyzer, this signal was already called in a different
         # thread, so we can safely block it.
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            
             if not self.board:
                 self.board = Board(setup=True)
             self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
-            
-            while self.connected:
-                try:
-                    self.parseLine(self.engine.readline())
-                except SubProcessError, e:
-                    if self.connected:
-                        log.warn("Analyzer died: %s\n" % e, self.defname)
-                        self.connected = False
     
     #===========================================================================
     #    Ending the game
@@ -200,7 +196,8 @@ class CECPEngine (ProtocolEngine):
             try:
                 try:
                     print >> self.engine, "quit"
-                    return self.engine.gentleKill()
+                    self.returnQueue.put("del")
+                    self.engine.gentleKill()
                 
                 except OSError, e:
                     # No need to raise on a hang up error, as the engine is dead
@@ -269,15 +266,12 @@ class CECPEngine (ProtocolEngine):
             self.changeLock.release()
         
         # Parse outputs
-        while True:
-            try:
-                line = self.engine.readline()
-            except SubProcessError, e:
-                raise PlayerIsDead, e
-            
-            move = self.parseLine(line)
-            if move:
-                return move
+        r = self.returnQueue.get()
+        if r == "del":
+            raise PlayerIsDead, "Killed by forgin forces"
+        if r == "int":
+            raise TurnInterrupt
+        return r
     
     @semisynced
     def updateTime (self, secs, opsecs):
@@ -393,6 +387,9 @@ class CECPEngine (ProtocolEngine):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         
+        self.engine.pause()
+        return
+        
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             return
         if self.features["pause"]:
@@ -403,6 +400,9 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def resume (self):
+        self.engine.resume()
+        return
+        
         if self.mode not in (ANALYZING, INVERSE_ANALYZING):
             if self.features["pause"]:
                 print "features resume"
@@ -413,48 +413,40 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def hurry (self):
-        print >> self.engine, "?"
+        self.__hurry()
     
+    @inthread
     @semisynced
     def undoMoves (self, moves, gamemodel):
-        self.changeLock.acquire()
-        try:
-            if self.mode not in (ANALYZING, INVERSE_ANALYZING):
-                if self.board:
-                    self.movecon.acquire()
-                    try:
-                        print >> self.engine, "?"
-                        self.__force()
-                        self.changeLock.release()
-                        self.movecon.wait()
-                    finally:
-                        self.movecon.release()
-                        self.changeLock.acquire()
-                else:
-                    self.__force()
+        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if gamemodel.curplayer != self and moves % 2 == 1:
+                # Interrupt if we were searching, but should no longer do so
+                self.returnQueue.put("int")
             
-            if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.setColor(1-self.board.color)
-                self.__printColor()
-            
-            for i in xrange(moves):
-                print >> self.engine, "undo"
-            
-            if self.mode not in (ANALYZING, INVERSE_ANALYZING):
-                if gamemodel.curplayer.color == self.color:
-                    self.board = gamemodel.boards[-1]
-                    self.__go()
-                else:
-                    self.board = None
-            else:
+            self.__force()
+            if self.board:
+                self.__hurry()
+                self._blockTillMove()
+        
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.board.setColor(1-self.board.color)
+            self.__printColor()
+        
+        for i in xrange(moves):
+            print >> self.engine, "undo"
+        
+        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if gamemodel.curplayer == self:
                 self.board = gamemodel.boards[-1]
-            
-            if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.setColor(1-self.board.color)
-                self.__printColor()
-            
-        finally:
-            self.changeLock.release()
+                self.__go()
+            else:
+                self.board = None
+        else:
+            self.board = gamemodel.boards[-1]
+        
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.board.setColor(1-self.board.color)
+            self.__printColor()
     
     #===========================================================================
     #    Offer handling
@@ -487,6 +479,11 @@ class CECPEngine (ProtocolEngine):
         if self.features["san"]:
             print >> self.engine, toSAN(board, move)
         else: print >> self.engine, toAN(board, move)
+    
+    def __hurry (self):
+        if self.features["sigint"]:
+            self.engine.sigint()
+        print >> self.engine, "?"
     
     def __force (self):
         print >> self.engine, "force"
@@ -542,16 +539,19 @@ class CECPEngine (ProtocolEngine):
             print >> self.engine, "."
     
     def _blockTillMove (self):
-        self.movecon.acquire()
-        self.movecon.wait()
-        self.movecon.release()
+        saved_state = self.changeLock._release_save()
+        try:
+            self.movecon.acquire()
+            self.movecon.wait()
+            self.movecon.release()
+        finally:
+            self.changeLock._acquire_restore(saved_state)
     
     #===========================================================================
     #    Parsing
     #===========================================================================
     
-    def parseLine (self, line):
-        
+    def parseLine (self, engine, line):
         parts = whitespaces.split(line.strip())
         
         if parts[0] == "pong":
@@ -580,7 +580,7 @@ class CECPEngine (ProtocolEngine):
                     if self.forced:
                         # If engine was set in pause just before the engine sent its
                         # move, we ignore it. However the engine has to know that we
-                        # ignored it, and therefor we step it one back
+                        # ignored it, and thus we step it one back
                         print >> self.engine, "undo"
                     else:
                         try:
@@ -589,7 +589,8 @@ class CECPEngine (ProtocolEngine):
                             raise PlayerIsDead, e
                         if validate(self.board, move):
                             self.board = None
-                            return move
+                            self.returnQueue.put(move)
+                            return
                         raise PlayerIsDead, "Board didn't validate after move"
                 finally:
                     self.changeLock.release()
@@ -598,22 +599,25 @@ class CECPEngine (ProtocolEngine):
                     self.movecon.release()
         
         # Analyzing
-        if len(parts) >= 5 and self.forced and isdigits(parts[1:4]):
+        if self.forced:
             if parts[:4] == ["0","0","0","0"]:
                 # Crafty doesn't analyze until it is out of book
                 print >> self.engine, "book off"
                 return
             
-            mvstrs = movre.findall(" ".join(parts[4:])+" ")
-            moves = listToMoves (self.board, mvstrs, type=None, validate=True)
-            
-            # Don't emit if we weren't able to parse moves, or if we have a move
-            # to kill the opponent king - as it confuses many engines
-            if moves and not self.board.board.opIsChecked():
-                self.analyzeMoves = moves
-                self.emit("analyze", moves)
-            
-            return
+            match = anare.match(line.strip())
+            if match:
+                score, moves = match.groups()
+                mvstrs = moves.split()
+                moves = listToMoves (self.board, mvstrs, type=None, validate=True)
+                
+                # Don't emit if we weren't able to parse moves, or if we have a move
+                # to kill the opponent king - as it confuses many engines
+                if moves and not self.board.board.opIsChecked():
+                    self.analyzeMoves = moves
+                    self.emit("analyze", moves)
+                
+                return
         
         # Offers draw
         if parts[0:2] == ["offer", "draw"]:
@@ -675,16 +679,15 @@ class CECPEngine (ProtocolEngine):
                 
                 if key == "done":
                     if value == 1:
-                        self.emit("readyForOptions")
-                        self.emit("readyForMoves")
+                        self.returnQueue.put("ready")
                     elif value == 0:
                         log.warn("Adds 10 minutes timeout", repr(self))
                         # This'll buy you 10 more minutes
                         self.timeout = time.time()+10*60
+                        self.returnQueue.put("not ready")
                     return
                 
                 self.features[key] = value
-
     
     #===========================================================================
     #    Info

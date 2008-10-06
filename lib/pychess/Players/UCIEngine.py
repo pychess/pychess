@@ -1,7 +1,6 @@
 from copy import copy
+import Queue
 
-from pychess.Players.Player import PlayerIsDead
-from pychess.Players.ProtocolEngine import ProtocolEngine
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -13,6 +12,9 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
 from pychess.Variants.fischerandom import FischerRandomChess
+
+from ProtocolEngine import ProtocolEngine
+from Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
@@ -36,6 +38,10 @@ class UCIEngine (ProtocolEngine):
         self.board = None
         self.uciok = False
         
+        self.returnQueue = Queue.Queue()
+        self.engine.connect("line", self.parseLine)
+        self.engine.connect("died", lambda e: self.returnQueue.put("del"))
+        
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
         self.connect_after("readyForMoves", self.__onReadyForMoves)
@@ -50,18 +56,14 @@ class UCIEngine (ProtocolEngine):
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             pool.start(self.__startBlocking)
-        else: self.__startBlocking()
+        else:
+            self.__startBlocking()
     
     def __startBlocking (self):
-        while not self.readyMoves:
-            try:
-                line = self.engine.readline()
-            except SubProcessError, e:
-                # We catch this later in getMove
-                # FIXME: Will this also get catched, if we are an analyzer?
-                self.emit("readyForOptions")
-                self.emit("readyForMoves")
-            self.parseLine(line)
+        r = self.returnQueue.get()
+        assert r == "ready"
+        #self.emit("readyForOptions")
+        #self.emit("readyForMoves")
     
     def __onReadyForOptions_before (self, self_):
         self.readyOptions = True
@@ -80,6 +82,7 @@ class UCIEngine (ProtocolEngine):
         print >> self.engine, "isready"
     
     def __onReadyForMoves (self, self_):
+        self.returnQueue.put("ready")
         self.readyMoves = True
         self._newGame()
         
@@ -89,22 +92,14 @@ class UCIEngine (ProtocolEngine):
             if not self.board:
                 self.board = Board(setup=True)
             self.putMove(self.board, None, None)
-            while self.connected:
-                try:
-                    self.parseLine(self.engine.readline())
-                except SubProcessError, e:
-                    if self.connected:
-                        log.warn("Analyzer died: %s\n" % e, self.defname)
-                        self.connected = False
     
     #===========================================================================
     #    Ending the game
     #===========================================================================
     
     def end (self, status, reason):
-        if self.connected:
-            # UCI doens't care about reason, so we just kill
-            self.kill(reason)
+        # UCI doens't care about reason, so we just kill
+        self.kill(reason)
     
     def kill (self, reason):
         """ Kills the engine, starting with the 'stop' and 'quit' commands, then
@@ -117,6 +112,7 @@ class UCIEngine (ProtocolEngine):
                 try:
                     print >> self.engine, "stop"
                     print >> self.engine, "quit"
+                    self.returnQueue.put("del")
                     return self.engine.gentleKill()
                 
                 except OSError, e:
@@ -166,15 +162,12 @@ class UCIEngine (ProtocolEngine):
             self._searchNow()
         
         # Parse outputs
-        while True:
-            try:
-                line = self.engine.readline()
-            except SubProcessError, e:
-                raise PlayerIsDead, e
-            
-            move = self.parseLine(line)
-            if move:
-                return move
+        r = self.returnQueue.get()
+        if r == "del":
+            raise PlayerIsDead
+        if r == "int":
+            raise TurnInterrupt
+        return r
     
     def updateTime (self, secs, opsecs):
         if self.color == WHITE:
@@ -228,12 +221,18 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def pause (self):
+        self.engine.pause()
+        return
+        
         if self.board and self.board.color == self.color or \
                 self.mode != NORMAL or self.pondermove:
             self.ignoreNext = True
             print >> self.engine, "stop"
     
     def resume (self):
+        self.engine.resume()
+        return
+        
         if self.mode == NORMAL:
             if self.board and self.board.color == self.color:
                 self._searchNow()
@@ -248,7 +247,12 @@ class UCIEngine (ProtocolEngine):
     def undoMoves (self, moves, gamemodel):
         # Not really necessary in UCI, but for the analyzer, it needs to keep up
         # with the latest trends
-        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+        
+        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if gamemodel.curplayer != self and moves % 2 == 1:
+                # Interrupt if we were searching, but should no longer do so
+                self.returnQueue.put("int")
+        else:
             self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
     
     #===========================================================================
@@ -327,11 +331,11 @@ class UCIEngine (ProtocolEngine):
     #    Parsing from engine
     #===========================================================================
     
-    def parseLine (self, line):
+    def parseLine (self, engine, line):
         parts = line.split()
         if not parts: return
         
-        #--------------------------------------------------------------- Initing
+        #---------------------------------------------------------- Initializing
         if parts[0] == "id":
             self.ids[parts[1]] = " ".join(parts[2:])
             return
@@ -386,7 +390,7 @@ class UCIEngine (ProtocolEngine):
                     self._startPonder()
                 else: self.pondermove = None
             
-            return move
+            self.returnQueue.put(move)
         
         #----------------------------------------------------------- An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
