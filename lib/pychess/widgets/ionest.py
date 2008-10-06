@@ -380,6 +380,7 @@ def closeAllGames (pairs):
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         for gmwidg, game in pairs:
             game.end(ABORTED, ABORTED_AGREEMENT)
+            game.terminate()
     
     return response
 
@@ -409,6 +410,7 @@ def closeGame (gmwidg, game):
     
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         game.end(ABORTED, ABORTED_AGREEMENT)
+        game.terminate()
         gamewidget.delGameWidget (gmwidg)
     
     return response
