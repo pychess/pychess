@@ -18,10 +18,6 @@ except ImportError:
     print "Please try to run pychess as stated in the INSTALL file"
     sys.exit(1)
 
-# Start logging
-from pychess.System.Log import log
-log.debug("Started\n")
-
 # Set up translations
 import gettext, gtk.glade
 if isInstalled():
@@ -31,6 +27,10 @@ else:
     gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
+
+# Start logging
+from pychess.System.Log import log
+log.debug("Started\n")
 
 # This is an ugly hack needed prior to gtkSourceView2 because of a pygtk bug:
 # http://bugzilla.gnome.org/show_bug.cgi?id=393483
