@@ -253,6 +253,8 @@ class GameWidget (gobject.GObject):
         texts.set_child_packing(text2, True, False, 0, gtk.PACK_START)
         texts.set_spacing(0)
         message.pack_end(buttonbox, False, False)
+        if self.messageSock.child:
+            self.messageSock.remove(self.messageSock.child)
         self.messageSock.add(message)
         self.messageSock.show_all()
         notebooks["messageArea"].show()

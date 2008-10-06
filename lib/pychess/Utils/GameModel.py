@@ -26,10 +26,12 @@ class GameModel (GObject, PooledThread):
         "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "game_unended": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "game_terminated":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
     
@@ -157,10 +159,14 @@ class GameModel (GObject, PooledThread):
             reason = getStatus(self.boards[-1])[1]
             self.end(DRAW, reason)
         
+        elif offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
+            player.offerError(offer, ACTION_ERROR_TOO_LARGE_UNDO)
+        
+        elif offer.offerType == TAKEBACK_OFFER and (self.status not in UNDOABLE_STATES or
+                                                    self.reason not in UNDOABLE_REASONS):
+            player.offerError(offer, ACTION_ERROR_GAME_ENDED)
+        
         elif offer.offerType in OFFERS:
-            if offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
-                player.offerError(offer, ACTION_ERROR_TO_LARGE_UNDO)
-                return
             if offer not in self.offerMap:
                 self.offerMap[offer] = player
                 opPlayer.offer(offer)
@@ -287,14 +293,14 @@ class GameModel (GObject, PooledThread):
         # Avoid racecondition when self.start is called while we are in self.end
         if self.status != WAITING_TO_START:
             return
+        self.status = RUNNING
         
         for player in self.players + self.spectactors.values():
             player.start()
         
-        self.status = RUNNING
         self.emit("game_started")
         
-        while self.status in (PAUSED, RUNNING):
+        while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
             curColor = self.boards[-1].color
             curPlayer = self.players[curColor]
             
@@ -330,28 +336,42 @@ class GameModel (GObject, PooledThread):
                 if self.timemodel:
                     self.timemodel.tap()
                 if not self.checkStatus():
-                    break
-                self.emit("game_changed")
-                
-                for spectactor in self.spectactors.values():
-                    spectactor.putMove(self.boards[-1],
-                                       self.moves[-1],
-                                       self.boards[-2])
+                    pass
             finally:
                 self.applyingMoveLock.release()
+            
+            self.emit("game_changed")
+            
+            for spectactor in self.spectactors.values():
+                spectactor.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
     
     def checkStatus (self):
-        if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
-            return False
         status, reason = getStatus(self.boards[-1])
-        if status not in (WAITING_TO_START, PAUSED, RUNNING):
+        
+        if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             self.status = status
-            self.emit("game_changed")
-            self.status = RUNNING # self.end only accepts ending if running
             self.end(status, reason)
             return False
         
+        if status != self.status and self.status in UNDOABLE_STATES \
+                and self.reason in UNDOABLE_REASONS:
+             self.__resume()
+             self.status = status
+             self.reason = UNKNOWN_REASON
+             self.emit("game_unended")
+        
         return True
+    
+    def __pause (self):
+        for player in self.players:
+            player.pause()
+            try:
+                for spectactor in self.spectactors.values():
+                    spectactor.pause()
+            except NotImplementedError:
+                pass
+            if self.timemodel:
+                self.timemodel.pause()
     
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
@@ -361,42 +381,30 @@ class GameModel (GObject, PooledThread):
         self.applyingMoveLock.acquire()
         glock.acquire()
         try:
-            for player in self.players:
-                player.pause()
-            
-            try:
-                for spectactor in self.spectactors.values():
-                    spectactor.pause()
-            except NotImplementedError:
-                pass
-            
-            if self.timemodel:
-                self.timemodel.pause()
-            
+            self.__pause()
             self.status = PAUSED
         finally:
             glock.release()
             self.applyingMoveLock.release()
             glock.acquire()
     
-    def resume (self):
-        
-        glock.release()
-        self.applyingMoveLock.acquire()
-        glock.acquire()
-        try:
-            for player in self.players:
-                player.resume()
-            
+    def __resume (self):
+        for player in self.players:
+            player.resume()
             try:
                 for spectactor in self.spectactors.values():
                     spectactor.resume()
             except NotImplementedError:
                 pass
-            
             if self.timemodel:
                 self.timemodel.resume()
-            
+    
+    def resume (self):
+        glock.release()
+        self.applyingMoveLock.acquire()
+        glock.acquire()
+        try:
+            self.__resume()
             self.status = RUNNING
         finally:
             glock.release()
@@ -409,34 +417,45 @@ class GameModel (GObject, PooledThread):
         log.debug("Ending a game with status %d for reason %d\n%s" % (status, reason,
             "".join(traceback.format_list(traceback.extract_stack())).strip()))
         self.status = status
+        self.reason = reason
+        
+        self.emit("game_ended", reason)
+        
+        self.__pause()
+    
+    def kill (self, reason):
+        log.debug("Killing a game for reason %d\n%s" % (reason,
+            "".join(traceback.format_list(traceback.extract_stack())).strip()))
+        
+        self.status = KILLED
+        self.reason = reason
         
         for player in self.players:
-            player.end(self.status, self.reason)
+            player.end(reason)
         
         for spectactor in self.spectactors.values():
-            spectactor.end(self.status, self.reason)
+            spectactor.end(reason)
         
         if self.timemodel:
             self.timemodel.end()
         
         self.emit("game_ended", reason)
     
-    def kill (self, reason):
-        log.debug("Killing a game for reason %d\n%s" % (reason,
-            "".join(traceback.format_list(traceback.extract_stack())).strip()))
-        self.status = KILLED
-        self.reason = reason
+    def terminate (self):
         
-        for player in self.players:
-            player.kill(reason)
+        if self.status != KILLED:
+            #self.resume()
+            
+            for player in self.players:
+                player.end(self.status, self.reason)
+            
+            for spectactor in self.spectactors.values():
+                spectactor.end(self.status, self.reason)
+            
+            if self.timemodel:
+                self.timemodel.end()
         
-        for spectactor in self.spectactors.values():
-            spectactor.kill(reason)
-        
-        if self.timemodel:
-            self.timemodel.end()
-        
-        self.emit("game_ended", reason)
+        self.emit("game_terminated")
     
     ############################################################################
     # Other stuff                                                              #
@@ -445,10 +464,6 @@ class GameModel (GObject, PooledThread):
     def undoMoves (self, moves):
         """ Will push back one full move by calling the undo methods of players
             and spectactors. """
-        
-        # * We really shouldn't do this at the same time we are applying a move
-        # * However it shouldn't matter to undo a move while a player is
-        #   thinking, as the player should be smart enough.
         
         assert self.ply > 0
         self.emit("moves_undoing", moves)
@@ -461,12 +476,12 @@ class GameModel (GObject, PooledThread):
             del self.moves[-moves:]
             
             for player in list(self.players) + list(self.spectactors.values()):
-                # FIXME: If player is an engine, this will block, and the UI
-                #        won't be accessible until the engine makes a move.
                 player.undoMoves(moves, self)
             
             if self.timemodel:
                 self.timemodel.undoMoves(moves)
+            
+            self.checkStatus()
         finally:
             self.applyingMoveLock.release()
     
