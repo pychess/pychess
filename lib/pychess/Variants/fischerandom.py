@@ -229,180 +229,35 @@ class FischerRandomChess:
 
 
 def frc_castling_moves(board):
+    def generateOne (color, rooknum, king_after, rook_after):
+        king = board.ini_kings[color]
+        rook = board.ini_rooks[color][rooknum]
+        blocker = clearBit(board.blocker, king)
+        blocker = clearBit(blocker, rook)
+        stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
+        if not stepover & blocker:
+            for cord in xrange(min(king,king_after), max(king,king_after)+1):
+                if isAttacked (board, cord, 1-color):
+                    return
+            return newMove (king, king_after, KING_CASTLE)
+    
     if board.color == WHITE:
         if board.castling & W_OO:
-            blocker = clearBit(board.blocker, board.ini_rooks[WHITE][1])
-            if board.ini_kings[WHITE] == B1 and not fromToRay[B1][G1] & blocker and \
-                not isAttacked (board, B1, BLACK) and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (B1, G1, KING_CASTLE)
-
-            if board.ini_kings[WHITE] == C1 and not fromToRay[C1][G1] & blocker and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (C1, G1, KING_CASTLE)
-
-            if board.ini_kings[WHITE] == D1 and not fromToRay[D1][G1] & blocker and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (D1, G1, KING_CASTLE)
-
-            if board.ini_kings[WHITE] == E1 and not fromToRay[E1][G1] & blocker and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (E1, G1, KING_CASTLE)
-
-            if board.ini_kings[WHITE] == F1 and not fromToRay[F1][G1] & blocker and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (F1, G1, KING_CASTLE)
+            move = generateOne (WHITE, 1, G1, F1) 
+            if move: yield move
         
-            if board.ini_kings[WHITE] == G1 and board.arBoard[F1] == EMPTY and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (G1, G1, KING_CASTLE)
-
-        if board.castling & W_OOO:
-            blocker = clearBit(board.blocker, board.ini_rooks[WHITE][0])
-            if board.ini_kings[WHITE] == G1 and not fromToRay[G1][C1] & blocker and \
-                not (board.ini_rooks[WHITE][0]==A1 and board.arBoard[B1] != EMPTY) and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (G1, C1, QUEEN_CASTLE)
-
-            if board.ini_kings[WHITE] == F1 and not fromToRay[F1][C1] & blocker and \
-                not (board.ini_rooks[WHITE][0]==A1 and board.arBoard[B1] != EMPTY) and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK):
-                    yield newMove (F1, C1, QUEEN_CASTLE)
-
-            if board.ini_kings[WHITE] == E1 and not fromToRay[E1][C1] & blocker and \
-                not (board.ini_rooks[WHITE][0]==A1 and board.arBoard[B1] != EMPTY) and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, E1, BLACK):
-                    yield newMove (E1, C1, QUEEN_CASTLE)
-
-            if board.ini_kings[WHITE] == D1 and not fromToRay[D1][C1] & blocker and \
-                not (board.ini_rooks[WHITE][0]==A1 and board.arBoard[B1] != EMPTY) and \
-                not isAttacked (board, C1, BLACK) and \
-                not isAttacked (board, D1, BLACK):
-                    yield newMove (D1, C1, QUEEN_CASTLE)
-
-            if board.ini_kings[WHITE] == C1 and \
-                board.arBoard[D1] == EMPTY and \
-                not (board.ini_rooks[WHITE][0]==A1 and board.arBoard[B1] != EMPTY) and \
-                not isAttacked (board, C1, BLACK):
-                    yield newMove (C1, C1, QUEEN_CASTLE)
-
-            if board.ini_kings[WHITE] == B1 and \
-                board.arBoard[C1] == EMPTY and \
-                board.arBoard[D1] == EMPTY and \
-                not isAttacked (board, B1, BLACK) and \
-                not isAttacked (board, C1, BLACK):
-                    yield newMove (B1, C1, QUEEN_CASTLE)
-
+        elif board.castling & W_OOO:
+            move = generateOne (WHITE, 0, C1, D1) 
+            if move: yield move
+    
     else:
         if board.castling & B_OO:
-            blocker = clearBit(board.blocker, board.ini_rooks[BLACK][1])
-            if board.ini_kings[BLACK] == B8 and not fromToRay[B8][G8] & blocker and \
-                not isAttacked (board, B8, WHITE) and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (B8, G8, KING_CASTLE)
-
-            if board.ini_kings[BLACK] == C8 and not fromToRay[C8][G8] & blocker and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (C8, G8, KING_CASTLE)
-
-            if board.ini_kings[BLACK] == D8 and not fromToRay[D8][G8] & blocker and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (D8, G8, KING_CASTLE)
-
-            if board.ini_kings[BLACK] == E8 and not fromToRay[E8][G8] & blocker and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (E8, G8, KING_CASTLE)
-
-            if board.ini_kings[BLACK] == F8 and not fromToRay[F8][G8] & blocker and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (F8, G8, KING_CASTLE)
+            move = generateOne (BLACK, 1, G8, F8) 
+            if move: yield move
         
-            if board.ini_kings[BLACK] == G8 and board.arBoard[F8] == EMPTY and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (G8, G8, KING_CASTLE)
-
-        if board.castling & B_OOO:
-            blocker = clearBit(board.blocker, board.ini_rooks[BLACK][0])
-            if board.ini_kings[BLACK] == G8 and not fromToRay[G8][C8] & blocker and \
-                not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (G8, C8, QUEEN_CASTLE)
-
-            if board.ini_kings[BLACK] == F8 and not fromToRay[F8][C8] & blocker and \
-                not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE):
-                    yield newMove (F8, C8, QUEEN_CASTLE)
-
-            if board.ini_kings[BLACK] == E8 and not fromToRay[E8][C8] & blocker and \
-                not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, E8, WHITE):
-                    yield newMove (E8, C8, QUEEN_CASTLE)
-
-            if board.ini_kings[BLACK] == D8 and not fromToRay[D8][C8] & blocker and \
-                not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, WHITE) and \
-                not isAttacked (board, D8, WHITE):
-                    yield newMove (D8, C8, QUEEN_CASTLE)
-
-            if board.ini_kings[BLACK] == C8 and \
-                board.arBoard[D8] == EMPTY and \
-                not (board.ini_rooks[BLACK][0]==A8 and board.arBoard[B8] != EMPTY) and \
-                not isAttacked (board, C8, WHITE):
-                    yield newMove (C8, C8, QUEEN_CASTLE)
-
-            if board.ini_kings[BLACK] == B8 and not fromToRay[B8][C8] & blocker and \
-                board.arBoard[C8] == EMPTY and \
-                board.arBoard[D8] == EMPTY and \
-                not isAttacked (board, B8, WHITE) and \
-                not isAttacked (board, C8, WHITE):
-                    yield newMove (B8, C8, QUEEN_CASTLE)
-
+        elif board.castling & B_OOO:
+            move = generateOne (BLACK, 0, C8, D8) 
+            if move: yield move
 
 def frc_castling_move(board, fcord, tcord, flag):
     if board.color == WHITE:
