@@ -98,7 +98,7 @@ class OfferManager (GObject):
     def notEnoughMovesToUndo (self, match):
         param = match.groups()[0] != "no" and groups[0] or 0
         offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
-        self.emit("onActionError", offer, ACTION_ERROR_TO_LARGE_UNDO)
+        self.emit("onActionError", offer, ACTION_ERROR_TOO_LARGE_UNDO)
     
     def onOfferAdd (self, match):
         tofrom, index, offertype, parameters = match.groups()
