@@ -3,7 +3,7 @@ from bitboard import *
 from attack import *
 from pychess.Utils.const import *
 from lmove import newMove
-from pychess.Variants.fischerandom import frc_castling_moves
+
 
 def newPromotes (fromcord, tocord):
     for p in PROMOTIONS:
@@ -39,7 +39,20 @@ def queenAttack (board, cord):
 ################################################################################
 
 def genAllMoves (board):
-    fischerandom = board.variant == FISCHERRANDOMCHESS
+    def generateOne (color, rooknum, king_after, rook_after):
+        if rooknum == 0:
+            castle = QUEEN_CASTLE
+        else:
+            castle = KING_CASTLE
+        king = board.ini_kings[color]
+        rook = board.ini_rooks[color][rooknum]
+        blocker = clearBit(clearBit(board.blocker, king), rook)
+        stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
+        if not stepover & blocker:
+            for cord in xrange(min(king,king_after), max(king,king_after)+1):
+                if isAttacked (board, cord, 1-color):
+                    return
+            return newMove (king, king_after, castle)
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -183,37 +196,25 @@ def genAllMoves (board):
                 yield newMove (cord+9, cord)
     
     # Castling
-    
-    if fischerandom:
-        for move in frc_castling_moves(board):
-            yield move
-    else:
-        if board.color == WHITE:
-                if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
-                    not isAttacked (board, E1, BLACK) and \
-                    not isAttacked (board, F1, BLACK) and \
-                    not isAttacked (board, G1, BLACK):
-                        yield newMove (E1, G1, KING_CASTLE)
-                
-                if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
-                    not isAttacked (board, E1, BLACK) and \
-                    not isAttacked (board, D1, BLACK) and \
-                    not isAttacked (board, C1, BLACK):
-                        yield newMove (E1, C1, QUEEN_CASTLE)
 
-                
-        else:
-            if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (E8, G8, KING_CASTLE)
-                    
-            if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, C8, WHITE):
-                    yield newMove (E8, C8, QUEEN_CASTLE)
+    if board.color == WHITE:
+        if board.castling & W_OO:
+            move = generateOne (WHITE, 1, G1, F1) 
+            if move: yield move
+        
+        if board.castling & W_OOO:
+            move = generateOne (WHITE, 0, C1, D1) 
+            if move: yield move
+    
+    else:
+        if board.castling & B_OO:
+            move = generateOne (BLACK, 1, G8, F8) 
+            if move: yield move
+        
+        if board.castling & B_OOO:
+            move = generateOne (BLACK, 0, C8, D8) 
+            if move: yield move
+    
 
 ################################################################################
 #   Generate capturing moves                                                   #
@@ -340,124 +341,6 @@ def genCaptures (board):
             else:
                 yield newMove (cord+9, cord)
 
-################################################################################
-#   Generate moves which doesn't capture any pieces                            #
-################################################################################
-
-def genNonCaptures (board):
-    fischerandom = board.variant == FISCHERRANDOMCHESS
-    
-    blocker = board.blocker
-    notblocker = ~blocker
-    enpassant = board.enpassant
-    
-    friends = board.friends[board.color]
-    notfriends = ~friends
-    enemies = board.friends[1- board.color]
-    
-    pawns = board.boards[board.color][PAWN]
-    knights = board.boards[board.color][KNIGHT]
-    bishops = board.boards[board.color][BISHOP]
-    rooks = board.boards[board.color][ROOK]
-    queens = board.boards[board.color][QUEEN]
-    kings = board.boards[board.color][KING]
-    
-    # Knights
-    knightMoves = moveArray[KNIGHT]
-    for cord in iterBits(knights):
-        for move in bitsToMoves (cord, knightMoves[cord] & notblocker):
-            yield move
-    
-    # King
-    kingMoves = moveArray[KING]
-    cord = firstBit( kings )
-    for move in bitsToMoves (cord, kingMoves[cord] & notblocker):
-        yield move
-    
-    # Rooks
-    for cord in iterBits(rooks):
-        attackBoard = rookAttack(board, cord)
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
-    
-    # Bishops
-    for cord in iterBits(bishops):
-        attackBoard = bishopAttack(board, cord)
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
-    
-    # Queens
-    for cord in iterBits(queens):
-        attackBoard = queenAttack(board, cord)
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
-    
-    # White pawns
-    if board.color == WHITE:
-        
-        # One step
-        
-        movedpawns = (pawns >> 8) & ~rankBits[7]
-        for cord in iterBits(movedpawns):
-            yield newMove (cord-8, cord)
-        
-        # Two steps
-        
-        seccondrow = pawns & rankBits[1] # Get seccond row pawns
-        movedpawns = (seccondrow >> 8) & notblocker # Move two steps forward, while
-        movedpawns = (movedpawns >> 8) & notblocker # ensuring middle cord is clear
-        for cord in iterBits(movedpawns):
-            yield newMove (cord-16, cord)
-    
-    # Black pawns
-    else:
-        
-        # One step
-        
-        movedpawns = pawns << 8 & notblocker & ~rankBits[0]
-        for cord in iterBits(movedpawns):
-            yield newMove (cord+8, cord)
-        
-        # Two steps
-        
-        seccondrow = pawns & rankBits[6] # Get seventh row pawns
-        # Move two steps forward, while ensuring middle cord is clear
-        movedpawns = seccondrow << 8 & notblocker
-        movedpawns = movedpawns << 8 & notblocker
-        for cord in iterBits(movedpawns):
-            yield newMove (cord+16, cord)
-    
-    # Castling
-    
-    if fischerandom:
-        for move in frc_castling_moves(board):
-            yield move
-    else:
-        if board.color == WHITE:
-            if board.castling & W_OO and not fromToRay[E1][G1] & blocker and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, F1, BLACK) and \
-                not isAttacked (board, G1, BLACK):
-                    yield newMove (E1, G1, KING_CASTLE)
-            
-            if board.castling & W_OOO and not fromToRay[E1][B1] & blocker and \
-                not isAttacked (board, E1, BLACK) and \
-                not isAttacked (board, D1, BLACK) and \
-                not isAttacked (board, C1, BLACK):
-                    yield newMove (E1, C1, QUEEN_CASTLE)
-        
-        else:
-            if board.castling & B_OO and not fromToRay[E8][G8] & blocker and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, F8, WHITE) and \
-                not isAttacked (board, G8, WHITE):
-                    yield newMove (E8, G8, KING_CASTLE)
-                    
-            if board.castling & B_OOO and not fromToRay[E8][B8] & blocker and \
-                not isAttacked (board, E8, WHITE) and \
-                not isAttacked (board, D8, WHITE) and \
-                not isAttacked (board, C8, WHITE):
-                    yield newMove (E8, C8, QUEEN_CASTLE)
 
 ################################################################################
 #   Generate escapes from check                                                #

@@ -228,41 +228,6 @@ class FischerRandomChess:
     standard_rules = False
 
 
-def frc_castling_moves(board):
-    def generateOne (color, rooknum, king_after, rook_after):
-        if rooknum == 0:
-            castle = QUEEN_CASTLE
-        else:
-            castle = KING_CASTLE
-        king = board.ini_kings[color]
-        rook = board.ini_rooks[color][rooknum]
-        blocker = clearBit(board.blocker, king)
-        blocker = clearBit(blocker, rook)
-        stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
-        if not stepover & blocker:
-            for cord in xrange(min(king,king_after), max(king,king_after)+1):
-                if isAttacked (board, cord, 1-color):
-                    return
-            return newMove (king, king_after, castle)
-    
-    if board.color == WHITE:
-        if board.castling & W_OO:
-            move = generateOne (WHITE, 1, G1, F1) 
-            if move: yield move
-        
-        if board.castling & W_OOO:
-            move = generateOne (WHITE, 0, C1, D1) 
-            if move: yield move
-    
-    else:
-        if board.castling & B_OO:
-            move = generateOne (BLACK, 1, G8, F8) 
-            if move: yield move
-        
-        if board.castling & B_OOO:
-            move = generateOne (BLACK, 0, C8, D8) 
-            if move: yield move
-
 def frc_castling_move(board, fcord, tcord, flag):
     if board.color == WHITE:
         if board.castling & W_OO and flag == KING_CASTLE and \
