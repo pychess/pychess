@@ -14,6 +14,11 @@ from pychess.Utils.const import *
 
 MAXDEPTH = 3
 
+try:
+    import psyco
+    psyco.bind(genAllMoves)
+except ImportError:
+    print 'psyco not found'
 
 class FindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
