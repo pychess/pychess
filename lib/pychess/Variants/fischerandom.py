@@ -4,10 +4,6 @@
 import random
 from copy import copy
 
-# used only for selftesting
-#import __builtin__
-#__builtin__.__dict__['_'] = lambda s: s
-
 from pychess.Utils.const import *
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
@@ -18,7 +14,6 @@ from pychess.Utils.lutils.lmove import newMove, FLAG, PROMOTE_PIECE
 
 
 class FRCBoard(Board):
-
     variant = FISCHERRANDOMCHESS
     
     def __init__ (self, setup=False):
