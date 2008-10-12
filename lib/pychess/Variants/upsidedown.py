@@ -1,12 +1,6 @@
 # Upside-down Chess
 # http://en.wikipedia.org/wiki/Chess_variant#Chess_with_different_starting_positions
 
-import random
-
-# used only for selftesting
-#import __builtin__
-#__builtin__.__dict__['_'] = lambda s: s
-
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
 
@@ -14,7 +8,6 @@ UPSIDEDOWNSTART = "RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr w - - 0 1"
 
 
 class UpsideDownBoard(Board):
-
     variant = UPSIDEDOWNCHESS
 
     def __init__ (self, setup=False):
