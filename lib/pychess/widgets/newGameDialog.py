@@ -136,8 +136,8 @@ class _GameInitializationMode:
         
         cls.__initTimeRadio(_("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
                             cls.widgets["configImageBlitz"], 5, 0)
-        cls.__initTimeRadio(_("Short"), "ngshort", cls.widgets["shortRadio"],
-                            cls.widgets["configImageShort"], 15, 5)
+        cls.__initTimeRadio(_("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
+                            cls.widgets["configImageRapid"], 15, 5)
         cls.__initTimeRadio(_("Normal"), "ngnormal", cls.widgets["normalRadio"],
                             cls.widgets["configImageNormal"], 40, 15)
         
@@ -158,7 +158,7 @@ class _GameInitializationMode:
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
-                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio"):
+                    "notimeRadio", "blitzRadio", "rapidRadio", "normalRadio"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -229,9 +229,9 @@ class _GameInitializationMode:
             elif cls.widgets["blitzRadio"].get_active():
                 secs = cls.widgets["ngblitz min"].get_value_as_int()*60
                 incr = cls.widgets["ngblitz gain"].get_value_as_int()
-            elif cls.widgets["shortRadio"].get_active():
-                secs = cls.widgets["ngshort min"].get_value_as_int()*60
-                incr = cls.widgets["ngshort gain"].get_value_as_int()
+            elif cls.widgets["rapidRadio"].get_active():
+                secs = cls.widgets["ngrapid min"].get_value_as_int()*60
+                incr = cls.widgets["ngrapid gain"].get_value_as_int()
             elif cls.widgets["normalRadio"].get_active():
                 secs = cls.widgets["ngnormal min"].get_value_as_int()*60
                 incr = cls.widgets["ngnormal gain"].get_value_as_int()
