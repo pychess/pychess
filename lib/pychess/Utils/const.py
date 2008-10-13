@@ -43,8 +43,12 @@ isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
 typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
             _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
 
+# Chess variants
 NORMALCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, UPSIDEDOWNCHESS, LOSERSCHESS, \
 PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS = range(9)
+
+# Chess variant groups
+VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER = range(4)
 
 # Action errors
 ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \

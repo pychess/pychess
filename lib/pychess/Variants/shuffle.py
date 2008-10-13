@@ -46,6 +46,7 @@ class ShuffleChess:
     board = ShuffleBoard
     need_initial_board = True
     standard_rules = True
+    variant_group = VARIANTS_SHUFFLE
 
 
 if __name__ == '__main__':
