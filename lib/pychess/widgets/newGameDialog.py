@@ -1,6 +1,8 @@
 
 import gettext, locale
 from cStringIO import StringIO
+from operator import attrgetter
+from itertools import groupby
 
 import gtk
 import gobject
@@ -20,6 +22,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
 from pychess.System import uistuff, protoopen
 from pychess.System.Log import log
+from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
@@ -28,6 +31,7 @@ from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
 from pychess.Savers import pgn
 from pychess.Variants import variants
+from pychess.Variants.normal import NormalChess
 
 #===============================================================================
 # We init most dialog icons global to make them accessibly to the
@@ -130,10 +134,6 @@ class _GameInitializationMode:
         cls.widgets["skillSlider2"].set_value(3)
         
         
-        def on_playSpecialRadio_toggled (widget):
-            cls.widgets["variantCombobox"].set_sensitive(widget.get_active())
-        cls.widgets["playSpecialRadio"].connect("toggled", on_playSpecialRadio_toggled)
-        
         cls.__initTimeRadio(_("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
                             cls.widgets["configImageBlitz"], 5, 0)
         cls.__initTimeRadio(_("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
@@ -141,24 +141,33 @@ class _GameInitializationMode:
         cls.__initTimeRadio(_("Normal"), "ngnormal", cls.widgets["normalRadio"],
                             cls.widgets["configImageNormal"], 40, 15)
         
-#        def on_variantCombobox_changed (widget):
-#            if not cls.widgets["playVariantCheck"].get_active():
-#                variant = NORMALCHESS
-#            elif cls.widgets["shuffleRadio"].get_active():
-#                variant = SHUFFLECHESS
-#            elif cls.widgets["fischerRadio"].get_active():
-#                variant = FISCHERRANDOMCHESS
-#            elif cls.widgets["upsideRadio"].get_active():
-#                variant = UPSIDEDOWNCHESS
-#            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
-#            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
-#        cls.widgets["variantCombobox"].connect("changed", on_variantCombobox_changed)
+        cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
+                               cls.widgets["configImageVariant1"],
+                               FISCHERRANDOMCHESS)
+        cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
+                               cls.widgets["configImageVariant2"], LOSERSCHESS)
+        
+        def updateCombos(*args):
+            if cls.widgets["playNormalRadio"].get_active():
+                variant = NORMALCHESS
+            elif cls.widgets["playVariant1Radio"].get_active():
+                variant = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+            else:
+                variant = conf.get("ngvariant2", LOSERSCHESS)
+            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
+            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
+        conf.notify_add("ngvariant1", updateCombos)
+        conf.notify_add("ngvariant2", updateCombos)
+        cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
+        cls.widgets["playVariant1Radio"].connect("toggled", updateCombos)
+        cls.widgets["playVariant2Radio"].connect("toggled", updateCombos)
         
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
-                    "notimeRadio", "blitzRadio", "rapidRadio", "normalRadio"):
+                    "notimeRadio", "blitzRadio", "rapidRadio", "normalRadio",
+                    "playNormalRadio", "playVariant1Radio", "playVariant2Radio"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -204,6 +213,48 @@ class _GameInitializationMode:
         updateString(None)
     
     @classmethod
+    def __initVariantRadio (cls, confid, radiobutton, configImage, default):
+        model = gtk.TreeStore(str)
+        treeview = gtk.TreeView(model)
+        treeview.set_headers_visible(False)
+        treeview.append_column(gtk.TreeViewColumn(None, gtk.CellRendererText(), text=0))
+        alignment = gtk.Alignment(1,1,1,1)
+        alignment.set_padding(6,6,12,12)
+        alignment.add(treeview)
+        ImageMenu.switchWithImage(configImage, alignment)
+        
+        groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
+                      VARIANTS_ODDS: _("Odds"),
+                      VARIANTS_SHUFFLE: _("Shuffle"),
+                      VARIANTS_OTHER: _("Other")}
+        specialVariants = [v for v in variants.values() if v != NormalChess]
+        groups = groupby(specialVariants, attrgetter("variant_group"))
+        pathToVariant = {}
+        variantToPath = {}
+        for i, (id, group) in enumerate(groups):
+            iter = model.append(None, (groupNames[id],))
+            for variant in group:
+                subiter = model.append(iter, (variant.name,))
+                path = model.get_path(subiter)
+                pathToVariant[path] = variant.board.variant
+                variantToPath[variant.board.variant] = path
+            treeview.expand_row((i,), True)
+        
+        selection = treeview.get_selection()
+        selection.set_mode(gtk.SELECTION_BROWSE)
+        selection.set_select_function(lambda path: len(path) > 1)
+        selection.select_path(variantToPath[conf.get(confid, default)])
+        
+        def callback (selection):
+            model, iter = selection.get_selected()
+            radiobutton.set_label("Play %s chess" % model.get(iter, 0))
+            path = model.get_path(iter)
+            variant = pathToVariant[path]
+            conf.set(confid, variant)
+        selection.connect("changed", callback)
+        callback(selection)
+    
+    @classmethod
     def _generalRun (cls, callback):
         def onResponse(dialog, res):
             cls.widgets["newgamedialog"].hide()
@@ -212,14 +263,12 @@ class _GameInitializationMode:
                 return 
             
             # Find variant
-            #if not cls.widgets["playVariantCheck"].get_active():
-            variant_index = NORMALCHESS
-            #elif cls.widgets["shuffleRadio"].get_active():
-            #    variant_index = SHUFFLECHESS
-            #elif cls.widgets["fischerRadio"].get_active():
-            #    variant_index = FISCHERRANDOMCHESS
-            #elif cls.widgets["upsideRadio"].get_active():
-            #    variant_index = UPSIDEDOWNCHESS
+            if cls.widgets["playNormalRadio"].get_active():
+                variant_index = NORMALCHESS
+            elif cls.widgets["playVariant1Radio"].get_active():
+                variant_index = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+            else:
+                variant_index = conf.get("ngvariant2", LOSERSCHESS)
             variant = variants[variant_index]
             
             # Find time
