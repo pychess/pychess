@@ -19,4 +19,5 @@ class QueenOddsChess:
     board = QueenOddsBoard
     need_initial_board = True
     standard_rules = True
+    variant_group = VARIANTS_ODDS
 

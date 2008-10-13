@@ -23,4 +23,5 @@ class UpsideDownChess:
     board = UpsideDownBoard
     need_initial_board = True
     standard_rules = True
+    variant_group = VARIANTS_OTHER
 
