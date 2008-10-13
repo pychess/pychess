@@ -6,7 +6,7 @@ __builtin__.__dict__['_'] = lambda s: s
 from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import LBoard
 from pychess.Utils.lutils.lmove import newMove, FLAG
-from pychess.Utils.lutils.lmovegen import genAllMoves
+from pychess.Utils.lutils.lmovegen import genCastles
 
 # TODO: add more test data
 data = (
@@ -30,7 +30,7 @@ class FRCCastlingTestCase(unittest.TestCase):
             print fen
             board.applyFen(fen)
             #print board
-            moves = [move for move in genAllMoves(board) if FLAG(move) in (KING_CASTLE, QUEEN_CASTLE)]
+            moves = [move for move in genCastles(board)]
             self.assertEqual(len(moves), len(castles))
             for i, castle in enumerate(castles):
                 kfrom, kto, flag = castle
