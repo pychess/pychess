@@ -221,6 +221,7 @@ class FischerRandomChess:
     board = FRCBoard
     need_initial_board = True
     standard_rules = False
+    variant_group = VARIANTS_SHUFFLE
 
 
 def frc_castling_move(board, fcord, tcord, flag):

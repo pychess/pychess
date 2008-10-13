@@ -19,4 +19,5 @@ class RookOddsChess:
     board = RookOddsBoard
     need_initial_board = True
     standard_rules = True
+    variant_group = VARIANTS_ODDS
 

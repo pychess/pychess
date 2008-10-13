@@ -19,4 +19,5 @@ class PawnOddsChess:
     board = PawnOddsBoard
     need_initial_board = True
     standard_rules = True
+    variant_group = VARIANTS_ODDS
 
