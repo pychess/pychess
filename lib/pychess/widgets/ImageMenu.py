@@ -7,6 +7,7 @@ class ImageMenu(gtk.EventBox):
         
         self.subwindow = gtk.Window()
         self.subwindow.set_decorated(False)
+        self.subwindow.set_resizable(False)
         self.subwindow.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.subwindow.add(child)
         self.subwindow.connect_after("expose-event", self.__sub_onExpose)
