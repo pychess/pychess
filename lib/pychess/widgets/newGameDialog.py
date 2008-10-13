@@ -25,7 +25,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
-from pychess.widgets.ToggleComboBox import ToggleComboBox
+from pychess.widgets import ImageMenu
 from pychess.Savers import pgn
 from pychess.Variants import variants
 
@@ -134,8 +134,12 @@ class _GameInitializationMode:
             cls.widgets["variantCombobox"].set_sensitive(widget.get_active())
         cls.widgets["playSpecialRadio"].connect("toggled", on_playSpecialRadio_toggled)
         
-        
-        
+        cls.__initTimeRadio(_("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
+                            cls.widgets["configImageBlitz"], 5, 0)
+        cls.__initTimeRadio(_("Short"), "ngshort", cls.widgets["shortRadio"],
+                            cls.widgets["configImageShort"], 15, 5)
+        cls.__initTimeRadio(_("Normal"), "ngnormal", cls.widgets["normalRadio"],
+                            cls.widgets["configImageNormal"], 40, 15)
         
 #        def on_variantCombobox_changed (widget):
 #            if not cls.widgets["playVariantCheck"].get_active():
@@ -154,14 +158,50 @@ class _GameInitializationMode:
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
-                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio"):#,
-                    #"playNormalRadio", "playFischerRadio", "playSpecialRadio",
-                    #"variantCombobox"):
+                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
         # it on respond
         cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
+    
+    @classmethod
+    def __initTimeRadio (cls, name, id, radiobutton, configImage, defmin, defgain):
+        minSpin = gtk.SpinButton(gtk.Adjustment(1,1,240,1))
+        gainSpin = gtk.SpinButton(gtk.Adjustment(0,-60,60,1))
+        cls.widgets["%s min" % id] = minSpin
+        cls.widgets["%s gain" % id] = gainSpin
+        uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
+        uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
+        
+        table = gtk.Table(2, 2)
+        table.props.row_spacing = 3
+        table.props.column_spacing = 12
+        label = gtk.Label(_("Minutes")+":")
+        label.props.xalign = 0
+        table.attach(label, 0, 1, 0, 1)
+        table.attach(minSpin, 1, 2, 0, 1)
+        label = gtk.Label("Gain:")
+        label.props.xalign = 0
+        table.attach(label, 0, 1, 1, 2)
+        table.attach(gainSpin, 1, 2, 1, 2)
+        alignment = gtk.Alignment(1,1,1,1)
+        alignment.set_padding(6,6,12,12)
+        alignment.add(table)
+        ImageMenu.switchWithImage(configImage, alignment)
+        
+        def updateString (spin):
+            minutes = minSpin.get_value_as_int()
+            gain = gainSpin.get_value_as_int()
+            if gain > 0:
+                radiobutton.set_label("%s %d min + %d sec/move" % (name, minutes, gain))
+            elif gain < 0:
+                radiobutton.set_label("%s %d min - %d sec/move" % (name, minutes, -gain))
+            else:
+                radiobutton.set_label("%s %d min" % (name, minutes))
+        minSpin.connect("value-changed", updateString)
+        gainSpin.connect("value-changed", updateString)
+        updateString(None)
     
     @classmethod
     def _generalRun (cls, callback):
@@ -172,14 +212,14 @@ class _GameInitializationMode:
                 return 
             
             # Find variant
-            if not cls.widgets["playVariantCheck"].get_active():
-                variant_index = NORMALCHESS
-            elif cls.widgets["shuffleRadio"].get_active():
-                variant_index = SHUFFLECHESS
-            elif cls.widgets["fischerRadio"].get_active():
-                variant_index = FISCHERRANDOMCHESS
-            elif cls.widgets["upsideRadio"].get_active():
-                variant_index = UPSIDEDOWNCHESS
+            #if not cls.widgets["playVariantCheck"].get_active():
+            variant_index = NORMALCHESS
+            #elif cls.widgets["shuffleRadio"].get_active():
+            #    variant_index = SHUFFLECHESS
+            #elif cls.widgets["fischerRadio"].get_active():
+            #    variant_index = FISCHERRANDOMCHESS
+            #elif cls.widgets["upsideRadio"].get_active():
+            #    variant_index = UPSIDEDOWNCHESS
             variant = variants[variant_index]
             
             # Find time
@@ -187,14 +227,14 @@ class _GameInitializationMode:
                 secs = 0
                 incr = 0
             elif cls.widgets["blitzRadio"].get_active():
-                secs = 5*60
-                incr = 0
+                secs = cls.widgets["ngblitz min"].get_value_as_int()*60
+                incr = cls.widgets["ngblitz gain"].get_value_as_int()
             elif cls.widgets["shortRadio"].get_active():
-                secs = 15*60
-                incr = 10
+                secs = cls.widgets["ngshort min"].get_value_as_int()*60
+                incr = cls.widgets["ngshort gain"].get_value_as_int()
             elif cls.widgets["normalRadio"].get_active():
-                secs = 40*60
-                incr = 15
+                secs = cls.widgets["ngnormal min"].get_value_as_int()*60
+                incr = cls.widgets["ngnormal gain"].get_value_as_int()
             
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
