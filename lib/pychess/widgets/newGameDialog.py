@@ -25,6 +25,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
+from pychess.widgets.ToggleComboBox import ToggleComboBox
 from pychess.Savers import pgn
 from pychess.Variants import variants
 
@@ -129,34 +130,33 @@ class _GameInitializationMode:
         cls.widgets["skillSlider2"].set_value(3)
         
         
-        def on_playVariantCheck_clicked (widget):
-            cls.widgets["table7"].set_sensitive(widget.get_active())
-        cls.widgets["playVariantCheck"].connect("clicked", on_playVariantCheck_clicked)
+        def on_playSpecialRadio_toggled (widget):
+            cls.widgets["variantCombobox"].set_sensitive(widget.get_active())
+        cls.widgets["playSpecialRadio"].connect("toggled", on_playSpecialRadio_toggled)
         
         
-        def on_variantRadio_toggled (widget):
-            if not cls.widgets["playVariantCheck"].get_active():
-                variant = NORMALCHESS
-            elif cls.widgets["shuffleRadio"].get_active():
-                variant = SHUFFLECHESS
-            elif cls.widgets["fischerRadio"].get_active():
-                variant = FISCHERRANDOMCHESS
-            elif cls.widgets["upsideRadio"].get_active():
-                variant = UPSIDEDOWNCHESS
-            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
-            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
-        cls.widgets["playVariantCheck"].connect("toggled", on_variantRadio_toggled)
-        cls.widgets["shuffleRadio"].connect("toggled", on_variantRadio_toggled)
-        cls.widgets["fischerRadio"].connect("toggled", on_variantRadio_toggled)
-        cls.widgets["upsideRadio"].connect("toggled", on_variantRadio_toggled)
+        
+        
+#        def on_variantCombobox_changed (widget):
+#            if not cls.widgets["playVariantCheck"].get_active():
+#                variant = NORMALCHESS
+#            elif cls.widgets["shuffleRadio"].get_active():
+#                variant = SHUFFLECHESS
+#            elif cls.widgets["fischerRadio"].get_active():
+#                variant = FISCHERRANDOMCHESS
+#            elif cls.widgets["upsideRadio"].get_active():
+#                variant = UPSIDEDOWNCHESS
+#            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
+#            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
+#        cls.widgets["variantCombobox"].connect("changed", on_variantCombobox_changed)
         
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", 
-                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio",
-                    "enableUndo", "playVariantCheck",
-                    "shuffleRadio", "fischerRadio", "upsideRadio"):
+                    "notimeRadio", "blitzRadio", "shortRadio", "normalRadio"):#,
+                    #"playNormalRadio", "playFischerRadio", "playSpecialRadio",
+                    #"variantCombobox"):
             uistuff.keep(cls.widgets[key], key)
         
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -395,6 +395,7 @@ class ImageButton(gtk.DrawingArea):
         context.fill()
     
     def buttonPress (self, self_, event):
-        self.current = (self.current + 1) % len(self.surfaces)
-        self.window.invalidate_rect(self.size, True)
-        self.window.process_updates(True)
+        if event.button == 1 and event.type == gtk.gdk.BUTTON_PRESS:
+            self.current = (self.current + 1) % len(self.surfaces)
+            self.window.invalidate_rect(self.size, True)
+            self.window.process_updates(True)
