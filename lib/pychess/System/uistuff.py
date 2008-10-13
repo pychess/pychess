@@ -142,17 +142,19 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     else:
         set_value = getattr(widget, setter)
     
-    if first_value != None:
-        conf.set(key, first_value)
     def setFromConf ():
         try:
             set_value(conf.getStrict(key))
         except TypeError:
             log.warn("Key '%s' from conf had the wrong type '%s', ignored" % 
                      (key, type(conf.getStrict(key))))
-            conf.set(key, get_value())
+            if first_value != None:
+                conf.set(key, first_value)
+            else: conf.set(key, get_value())
     if conf.hasKey(key):
         setFromConf()
+    elif first_value != None:
+        conf.set(key, first_value)
     
     def callback(*args):
         if not conf.hasKey(key) or conf.getStrict(key) != get_value():
@@ -361,9 +363,16 @@ class GladeWidgets:
         
         if not self.glade:
             self.glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+        
+        self.extras = {}
     
     def __getitem__(self, key):
+        if key in self.extras:
+            return self.extras[key]
         return self.glade.get_widget(key)
+    
+    def __setitem__(self, key, widget):
+        self.extras[key] = widget
     
     def getGlade (self):
         return self.glade
