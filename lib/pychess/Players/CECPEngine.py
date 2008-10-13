@@ -128,8 +128,10 @@ class CECPEngine (ProtocolEngine):
     def __startBlocking (self):
         if self.protover == 2:
             try:
-                r = self.returnQueue.get(True, self.timeout-time.time())
+                r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
                 if r == "not ready":
+                    # The engine has sent done=0, and parseLine has added ten
+                    # more minutes to self.timeout.
                     r = self.returnQueue.get(True, self.timeout-time.time())
             except Queue.Empty:
                 log.warn("Got timeout error\n", self.defname)
