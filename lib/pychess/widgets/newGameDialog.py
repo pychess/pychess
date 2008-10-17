@@ -247,10 +247,11 @@ class _GameInitializationMode:
         
         def callback (selection):
             model, iter = selection.get_selected()
-            radiobutton.set_label("Play %s chess" % model.get(iter, 0))
-            path = model.get_path(iter)
-            variant = pathToVariant[path]
-            conf.set(confid, variant)
+            if iter:
+                radiobutton.set_label("Play %s chess" % model.get(iter, 0))
+                path = model.get_path(iter)
+                variant = pathToVariant[path]
+                conf.set(confid, variant)
         selection.connect("changed", callback)
         callback(selection)
     
