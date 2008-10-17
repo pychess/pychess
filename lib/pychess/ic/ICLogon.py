@@ -1,6 +1,7 @@
 import socket
 from socket import SHUT_RDWR
 import webbrowser
+import re
 
 import gtk, gobject, sys
 
@@ -8,6 +9,7 @@ from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
 from pychess.System import gstreamer, uistuff, glock
 from pychess.System.prefix import addDataPrefix
+from pychess.System import uistuff
 from pychess.Utils.const import *
 
 from FICSConnection import FICSConnection, LogOnError
@@ -28,9 +30,14 @@ def run():
 class ICLogon:
     def __init__ (self):
         self.widgets = uistuff.GladeWidgets("fics_logon.glade")
+        uistuff.keepWindowSize("fics_logon", self.widgets["fics_logon"],
+                               defaultPosition=uistuff.POSITION_GOLDEN)
         
         def on_logOnAsGuest_toggled (check):
-            self.widgets["logOnTable"].set_sensitive(not check.get_active())
+            self.widgets["nameLabel"].set_sensitive(not check.get_active())
+            self.widgets["nameEntry"].set_sensitive(not check.get_active())
+            self.widgets["passwordLabel"].set_sensitive(not check.get_active())
+            self.widgets["passEntry"].set_sensitive(not check.get_active())
         self.widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
         
@@ -155,9 +162,13 @@ class ICLogon:
             username = self.widgets["nameEntry"].get_text()
             password = self.widgets["passEntry"].get_text()
         
+        ports = self.widgets["portsEntry"].get_text()
+        ports = map(int, re.findall("\d+", ports))
+        if not 23 in ports: ports.append(23)
+        if not 5000 in ports: ports.append(5000)
         self.showConnecting()
         
-        self.connection = FICSConnection("freechess.org", 23, username, password)
+        self.connection = FICSConnection("freechess.org", ports, username, password)
         self.connection.connect("connected", self.onConnected)
         self.connection.connect("disconnected", self.onDisconnected)
         self.connection.connect("error", self.showError)

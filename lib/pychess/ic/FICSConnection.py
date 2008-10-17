@@ -2,11 +2,9 @@ import re, socket
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
-from VerboseTelnet import LinePrediction
-from VerboseTelnet import ManyLinesPrediction
-from VerboseTelnet import FromPlusPrediction
-from VerboseTelnet import FromToPrediction
-from VerboseTelnet import VerboseTelnet
+from pychess.System.Log import log
+from pychess.System.ThreadPool import PooledThread
+from pychess.Utils.const import *
 
 from managers.GameListManager import GameListManager
 from managers.FingerManager import FingerManager
@@ -17,10 +15,12 @@ from managers.ChatManager import ChatManager
 from managers.ListAndVarManager import ListAndVarManager
 from managers.ErrorManager import ErrorManager
 
-from pychess.System.ThreadPool import PooledThread
-from pychess.Utils.const import *
 from TimeSeal import TimeSeal
-from VerboseTelnet import VerboseTelnet, PredictionsTelnet
+from VerboseTelnet import LinePrediction
+from VerboseTelnet import ManyLinesPrediction
+from VerboseTelnet import FromPlusPrediction
+from VerboseTelnet import FromToPrediction
+from VerboseTelnet import PredictionsTelnet
 
 class LogOnError (StandardError): pass
 
@@ -35,11 +35,11 @@ class Connection (GObject, PooledThread):
         'error':         (SIGNAL_RUN_FIRST, None, (object,)),
     }
     
-    def __init__ (self, host, port, username, password):
+    def __init__ (self, host, ports, username, password):
         GObject.__init__(self)
         
         self.host = host
-        self.port = port
+        self.ports = ports
         self.username = username
         self.password = password
         
@@ -100,18 +100,26 @@ BADPAS = _("The entered password was invalid.\n" + \
            "If that is by some reason not possible, please email: support@freechess.org")
 
 class FICSConnection (Connection):
-    def __init__ (self, host, port, username="guest", password=""):
-        Connection.__init__(self, host, port, username, password)
+    def __init__ (self, host, ports, username="guest", password=""):
+        Connection.__init__(self, host, ports, username, password)
         self.registred = None
     
     def _connect (self):
         self.connecting = True
         self.emit("connecting")
         try:
-            self.client = VerboseTelnet(TimeSeal())
+            self.client = TimeSeal()
             
             self.emit('connectingMsg', _("Connecting to server"))
-            self.client.open(self.host, self.port)
+            for i, port in enumerate(self.ports):
+                log.debug("Trying port %d\n" % port, (self.host, "raw"))
+                try:
+                    self.client.open(self.host, port)
+                except socket.error, e:
+                    if e.args[0] != 111 or i+1 == len(self.ports):
+                        raise
+                else:
+                    break
             
             self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
