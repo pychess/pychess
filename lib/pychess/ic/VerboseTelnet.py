@@ -107,30 +107,6 @@ class FromToPrediction (Prediction):
                 return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
-class VerboseTelnet:
-    def __init__ (self, telnet):
-        self.telnet = telnet
-    
-    def open (self, address, port):
-        return self.telnet.open(address, port)
-    
-    def read_until (self, *untils):
-        return self.telnet.read_until(*untils)
-    
-    def readline (self):
-        line = self.telnet.readline()
-        #log.debug(line, repr(self.telnet))
-        return line
-    
-    def write(self, str):
-        self.telnet.write(str)
-    
-    def close (self):
-        self.telnet.close()
-    
-    def __repr__ (self):
-        return self.telnet.address
-
 class PredictionsTelnet:
     def __init__ (self, telnet):
         self.telnet = telnet
