@@ -40,7 +40,7 @@ class ICGameModel (GameModel):
         if gameno == self.gameno:
             self.end (status, reason)
     
-    def afterGameEnded (self, self_, reason):
+    def afterGameEnded (self, self_):
         if not self.inControl:
             self.connection.bm.unobserve(self.gameno)
     
