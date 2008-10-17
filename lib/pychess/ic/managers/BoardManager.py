@@ -237,7 +237,7 @@ class BoardManager (GObject):
         del self.queuedCalls[gameno]
     
     def onGameEnd (self, glm, gameno, result, comment):
-        parts = set(comment.split())
+        parts = set(re.findall("\w+",comment))
         if result in (WHITEWON, BLACKWON):
             if "resigns" in parts:
                 reason = WON_RESIGN
