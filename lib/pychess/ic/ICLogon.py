@@ -53,8 +53,8 @@ class ICLogon:
         self.widgets["fics_logon"].hide()
     
     def showConnecting (self):
-        self.widgets["progressbar"].show()
-        self.widgets["mainvbox"].set_sensitive(False)
+        self.widgets["progressbarBox"].show()
+        self.widgets["mainbox"].set_sensitive(False)
         self.widgets["connectButton"].hide()
         self.widgets["stopButton"].show()
         
@@ -64,11 +64,11 @@ class ICLogon:
         self.pulser = gobject.timeout_add(30, pulse)
     
     def showNormal (self):
-        self.widgets["mainvbox"].set_sensitive(True)
+        self.widgets["mainbox"].set_sensitive(True)
         self.widgets["connectButton"].show()
         self.widgets["fics_logon"].set_default(self.widgets["connectButton"])
         self.widgets["stopButton"].hide()
-        self.widgets["progressbar"].hide()
+        self.widgets["progressbarBox"].hide()
         self.widgets["progressbar"].set_text("")
         gobject.source_remove(self.pulser)
     
@@ -92,6 +92,10 @@ class ICLogon:
         webbrowser.open("http://freechess.org/Register/index.html")
     
     def showError (self, connection, error):
+        # Don't bring up errors, if we have pressed "stop"
+        if self.connection != connection:
+            return True
+        
         text = str(error)
         if isinstance (error, IOError):
             title = _("Connection Error")
