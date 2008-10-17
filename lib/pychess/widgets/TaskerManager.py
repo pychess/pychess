@@ -9,6 +9,9 @@ from ToggleComboBox import ToggleComboBox
 from Background import giveBackground
 import newGameDialog
 
+from pychess.widgets import newGameDialog
+from pychess.ic import ICLogon
+
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
@@ -170,6 +173,10 @@ class NewGameTasker (gtk.Alignment):
         on_skill_changed(widgets["skillSlider"])
         
         widgets["startButton"].connect("clicked", self.startClicked)
+        self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
+    
+    def openDialogClicked (self, button):
+        newGameDialog.NewGameMode.run()
     
     def startClicked (self, button):
         color = self.widgets["colorDock"].child.active
@@ -211,6 +218,10 @@ class InternetGameTasker (gtk.Alignment):
         uistuff.keep(self.widgets["passwordEntry"], "passwordEntry")
         
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
+        self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
+    
+    def openDialogClicked (self, button):
+        ICLogon.run()
     
     def connectClicked (self, button):
         asGuest = self.widgets["asGuestCheck"].get_active()
