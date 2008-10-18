@@ -28,6 +28,7 @@ from pychess.ic import ICLogon
 # gameDic - containing the gamewidget:gamemodel of all open games              #
 ################################################################################
 gameDic = {}
+chessFiles = {}
 
 class GladeHandlers:
     
@@ -69,7 +70,7 @@ class GladeHandlers:
         ICLogon.run()
     
     def on_load_game1_activate (widget):
-        newGameDialog.LoadFileExtension.run()
+        newGameDialog.LoadFileExtension.run(None, chessFiles)
     
     def on_set_up_position_activate (widget):
         # Not implemented
@@ -215,7 +216,7 @@ class PyChess:
     def handleArgs (self, args):
         if args:
             def do ():
-                newGameDialog.LoadFileExtension.run(args[0])
+                newGameDialog.LoadFileExtension.run(args[0], chessFiles)
                 glock.release()
             # For this once we do an idle_add. We do so to ensure the window is
             # set up before we start doing other things

@@ -153,7 +153,7 @@ class BoardPreview:
         if os.path.isfile(asPath):
             self.fcbutton.show()
             if filename != self._retrieve_filename():
-                self.fcbutton.set_filename(asPath)
+                self.fcbutton.set_filename(os.path.abspath(asPath))
         else:
             self.fcbutton.set_uri("")
             self.fcbutton.hide()

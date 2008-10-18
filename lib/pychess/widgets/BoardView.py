@@ -186,7 +186,7 @@ class BoardView (gtk.DrawingArea):
     def moves_undoing (self, model, moves):
         self.shown = model.ply-moves
     
-    def game_loading (self, model):
+    def game_loading (self, model, uri):
         self.autoUpdateShown = False
     
     def game_loaded (self, model, uri):

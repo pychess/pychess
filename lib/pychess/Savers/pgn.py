@@ -1,9 +1,11 @@
 import re
+import datetime
 
 from pychess.Utils.Move import *
 from pychess.Utils.const import *
 from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Board import Board
 from pychess.Variants.fischerandom import FischerRandomChess
 
