@@ -27,7 +27,7 @@ class GameModel (GObject, PooledThread):
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_unended": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
@@ -65,6 +65,7 @@ class GameModel (GObject, PooledThread):
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
+        self.gameno = 0
         
         self.spectactors = {}
         
@@ -226,14 +227,19 @@ class GameModel (GObject, PooledThread):
     
     def loadAndStart (self, uri, loader, gameno, position):
         assert self.status == WAITING_TO_START
-        
+
         uriIsFile = type(uri) != str
-        if not uriIsFile:
-            chessfile = loader.load(protoopen(uri))
-        else: 
-            chessfile = loader.load(uri)
-        
-        self.emit("game_loading")
+        from pychess.Main import chessFiles
+        if chessFiles.has_key(uri):
+            chessfile = chessFiles[uri]
+        else:
+            if not uriIsFile:
+                chessfile = loader.load(protoopen(uri))
+            else: 
+                chessfile = loader.load(uri)
+
+        self.gameno = gameno
+        self.emit("game_loading", uri)
         try:
             chessfile.loadToModel(gameno, position, self)
         #Postpone error raising to make games loadable to the point of the error
