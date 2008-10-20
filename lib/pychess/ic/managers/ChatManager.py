@@ -48,7 +48,7 @@ class ChatManager (GObject):
         self.connection.expect_line_plus (self.onShoutMessage,
                 "%s(\*)? (c-)?shouts: (.*)" % names)
         self.connection.expect_line_plus (self.onShoutMessage,
-                "--> %s(\*)? (.*)" % names)
+                "--> %s(\*)?:? (.*)" % names)
         
         self.connection.expect_fromto (self.onChannelList,
                 "channels only for their designated topics.",
