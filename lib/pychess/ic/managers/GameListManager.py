@@ -57,7 +57,7 @@ class GameListManager (GObject):
         self.connection.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) (\S+) match\.\}$")
         self.connection.expect_line (self.on_game_remove,
-                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z]+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
         self.connection.expect_line (self.on_player_list,
                 "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E])+)")
