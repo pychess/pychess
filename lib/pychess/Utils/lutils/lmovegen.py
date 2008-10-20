@@ -323,7 +323,7 @@ def genCaptures (board):
             elif cord == enpassant:
                 yield newMove (cord+7, cord, ENPASSANT)
             else:
-               yield newMove (cord+7, cord)
+                yield newMove (cord+7, cord)
         
         # Capture right
         

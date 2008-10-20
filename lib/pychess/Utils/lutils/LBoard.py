@@ -54,14 +54,14 @@ class LBoard:
         self._reset()
     
     def _reset (self):
-        self.blocker45 = 0
-        self.blocker315 = 0
-        self.blocker = 0
-        self.blocker90 = 0
+        self.blocker45 = createBoard(0)
+        self.blocker315 = createBoard(0)
+        self.blocker = createBoard(0)
+        self.blocker90 = createBoard(0)
         
-        self.friends = [0]*2
+        self.friends = [createBoard(0)]*2
         self.kings = [-1]*2
-        self.boards = [[0]*7 for i in range(2)]
+        self.boards = [[createBoard(0)]*7 for i in range(2)]
         
         self.enpassant = -1
         self.color = WHITE
@@ -674,4 +674,33 @@ class LBoard:
         return "".join(fenstr)
     
     def clone (self):
-        return deepcopy(self)
+        copy = LBoard(self.variant)
+        copy.blocker45 = self.blocker45
+        copy.blocker315 = self.blocker315
+        copy.blocker = self.blocker
+        copy.blocker90 = self.blocker90
+        
+        copy.friends = self.friends[:]
+        copy.kings = self.kings[:]
+        copy.boards = [self.boards[WHITE][:], self.boards[BLACK][:]]
+        
+        copy.enpassant = self.enpassant
+        copy.color = self.color
+        copy.castling = self.castling
+        copy.hasCastled = self.hasCastled[:]
+        copy.fifty = self.fifty
+        
+        copy.checked = self.checked
+        copy.opchecked = self.opchecked
+        
+        copy.arBoard = self.arBoard[:]
+        
+        copy.hash = self.hash
+        copy.pawnhash = self.pawnhash
+        
+        # We don't need to deepcopy the tupples, as they are imutable
+        copy.history = self.history[:]
+        
+        copy.ini_kings = self.ini_kings[:]
+        copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
+        return copy
