@@ -88,17 +88,17 @@ outpost = (
     0, 0, 0, 0, 0, 0, 0, 0)
 )
 
-d2e2    = ( 0x0018000000000000, 0x0000000000001800 )
-brank7  = ( 0x000000000000FF00, 0x00FF000000000000 )
-brank8  = ( 0x00000000000000FF, 0xFF00000000000000 )
-brank67 = ( 0x0000000000FFFF00, 0x00FFFF0000000000 )
-brank58 = ( 0x00000000FFFFFFFF, 0xFFFFFFFF00000000 )
-brank48 = ( 0x000000FFFFFFFFFF, 0xFFFFFFFFFF000000 )
+d2e2    = (createBoard(0x0018000000000000), createBoard(0x0000000000001800))
+brank7  = (createBoard(0x000000000000FF00), createBoard(0x00FF000000000000))
+brank8  = (createBoard(0x00000000000000FF), createBoard(0xFF00000000000000))
+brank67 = (createBoard(0x0000000000FFFF00), createBoard(0x00FFFF0000000000))
+brank58 = (createBoard(0x00000000FFFFFFFF), createBoard(0xFFFFFFFF00000000))
+brank48 = (createBoard(0x000000FFFFFFFFFF), createBoard(0xFFFFFFFFFF000000))
 
 # Penalties if the file is half-open (i.e. no enemy pawns on it)
 isolani_weaker = (-22, -24, -26, -28, -28, -26, -24, -22)
 
-stonewall = [0,0]
+stonewall = [createBoard(0), createBoard(0)]
 # D4, E3, F4
 # - - - - - - - -
 # - - - - - - - -
@@ -108,7 +108,7 @@ stonewall = [0,0]
 # - - - - # - - -
 # - - - - - - - -
 # - - - - - - - -
-stonewall[WHITE] = 0x81400000000
+stonewall[WHITE] = createBoard(0x81400000000)
 
 # D5, E6, F5
 # - - - - - - - -
@@ -119,7 +119,7 @@ stonewall[WHITE] = 0x81400000000
 # - - - - - - - -
 # - - - - - - - -
 # - - - - - - - -
-stonewall[BLACK] = 0x14080000
+stonewall[BLACK] = createBoard(0x81400000000)
 
 # - - - - - - - -
 # - - - - - - - -
@@ -256,13 +256,8 @@ mask315 = [
 #  Ranks and files                                                             #
 ################################################################################
 
-rankBits = []
-fileBits = []
-for i in range (8):
-    rankBits.append (255 << i*8)
-    fileBits.append (0x0101010101010101 << i)
-rankBits.reverse()
-fileBits.reverse()
+rankBits = [createBoard(255 << i*8) for i in xrange(7,-1,-1)]
+fileBits = [createBoard(0x0101010101010101 << i) for i in xrange(7,-1,-1)]
 
 ################################################################################
 ################################################################################
@@ -270,8 +265,8 @@ fileBits.reverse()
 ################################################################################
 ################################################################################
 
-WHITE_SQUARES = 0x55AA55AA55AA55AA
-BLACK_SQUARES = 0xAA55AA55AA55AA55
+WHITE_SQUARES = createBoard(0x55AA55AA55AA55AA)
+BLACK_SQUARES = createBoard(0xAA55AA55AA55AA55)
 
 # - - - - - - - -
 # - - - - - - - -
@@ -281,7 +276,7 @@ BLACK_SQUARES = 0xAA55AA55AA55AA55
 # - - - - - - - -
 # - - - - - - - -
 # - - - - - - - -
-CENTER_FOUR = 0x0000001818000000
+CENTER_FOUR = createBoard(0x0000001818000000)
 
 # - - - - - - - -
 # - - - - - - - -
@@ -291,7 +286,7 @@ CENTER_FOUR = 0x0000001818000000
 # - - # # # # - -
 # - - - - - - - -
 # - - - - - - - -
-sbox = 0x00003C3C3C3C0000
+sbox = createBoard(0x00003C3C3C3C0000)
 
 # - - - - - - - -
 # - # # # # # # -
@@ -301,7 +296,7 @@ sbox = 0x00003C3C3C3C0000
 # - # # # # # # -
 # - # # # # # # -
 # - - - - - - - -
-lbox = 0x007E7E7E7E7E7E00
+lbox = createBoard(0x007E7E7E7E7E7E00)
 
 # - - - - - # # #
 # - - - - - # # #
@@ -375,7 +370,7 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-moveArray = [[0]*64 for i in xrange(len(dir))] # moveArray[8][64]
+moveArray = [[createBoard(0)]*64 for i in xrange(len(dir))] # moveArray[8][64]
 
 for piece in xrange(1,len(dir)):
     for fcord in xrange(120):
@@ -384,7 +379,7 @@ for piece in xrange(1,len(dir)):
             # We only generate moves for squares inside the board
             continue
         # Create a new bitboard
-        b = 0
+        b = createBoard(0)
         for d in dir[piece]:
             tcord = fcord
             while True:
@@ -415,8 +410,8 @@ del sliders[9]; del sliders[8]
 #  the index into rays[f] array allow us to find the ray in that direction.    #
 ################################################################################
 
-directions = [array('b',[-1]*64) for i in xrange(64)] # directions[64][64]
-rays = [[0]*8 for i in xrange(64)] # rays[64][8]
+directions = [[-1]*64 for i in xrange(64)] # directions[64][64]
+rays = [[createBoard(0)]*8 for i in xrange(64)] # rays[64][8]
 
 for fcord in xrange(120):
     f = map[fcord]
@@ -441,7 +436,7 @@ for fcord in xrange(120):
 #  ray is possible, then a 0 is returned.                                      #
 ################################################################################
 
-fromToRay = [[0]*64 for i in xrange(64)] # fromToRay[64][64]
+fromToRay = [[createBoard(0)]*64 for i in xrange(64)] # fromToRay[64][64]
 
 for piece in BISHOP, ROOK:
     for fcord in xrange (120):
@@ -468,7 +463,7 @@ for piece in BISHOP, ROOK:
 #  E.g. PassedPawnMask[white][b3] = 1's in a4-c4-c8-a8 rect, 0 otherwise.      #
 ################################################################################
 
-passedPawnMask = [[0]*64, [0]*64]
+passedPawnMask = [[createBoard(0)]*64, [createBoard(0)]*64]
 
 #  Do for white pawns first
 for cord in xrange(64):
@@ -487,10 +482,10 @@ for cord in xrange(64):
 #  These tables are used to calculate rook, queen and bishop moves             #
 ################################################################################
 
-rook00Attack = [[0]*256 for i in xrange(64)] # rook00Attack[64][256]
-rook90Attack = [[0]*256 for i in xrange(64)] # rook90Attack[64][256]
-bishop45Attack = [[0]*256 for i in xrange(64)] # bishop45Attack[64][256]
-bishop315Attack = [[0]*256 for i in xrange(64)] # bishop315Attack[64][256]
+rook00Attack = [[createBoard(0)]*256 for i in xrange(64)] # rook00Attack[64][256]
+rook90Attack = [[createBoard(0)]*256 for i in xrange(64)] # rook90Attack[64][256]
+bishop45Attack = [[createBoard(0)]*256 for i in xrange(64)] # bishop45Attack[64][256]
+bishop315Attack = [[createBoard(0)]*256 for i in xrange(64)] # bishop315Attack[64][256]
 
 cmap = [ 128, 64, 32, 16, 8, 4, 2, 1 ]
 rot1 = [ A1, A2, A3, A4, A5, A6, A7, A8 ]
