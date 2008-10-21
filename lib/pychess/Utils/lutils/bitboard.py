@@ -29,7 +29,7 @@ def setBit (bitboard, i):
     return bitboard.setbit(63-i)
 
 if True or uselp:
-    def setBit2 (bitboard, i):
+    def setBit (bitboard, i):
         return bitboard | bitPosArray[i]
 
     bitPosArray = [2**(63-i) for i in xrange(64)]
