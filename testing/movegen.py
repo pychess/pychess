@@ -108,8 +108,8 @@ class FindMovesTestCase(unittest.TestCase):
             depths = [int(s[3:].rstrip()) for s in parts[1:]]
             self.positions.append( (parts[0], depths) )
     
-    def movegen(self, board):
-        for i, (fen, depths) in enumerate(self.positions[1:]):
+    def movegen(self, board, positions):
+        for i, (fen, depths) in enumerate(positions):
             if board.variant == FISCHERRANDOMCHESS:
                 fen = fen.split()
                 castl = fen[2]
@@ -120,7 +120,7 @@ class FindMovesTestCase(unittest.TestCase):
                 fen[2] = castl
                 fen = ' '.join(fen)
 
-            print i+1, "/", len(self.positions), "-", fen
+            print i+1, "/", len(positions), "-", fen
             board.applyFen(fen)
             hash = board.hash
             
@@ -133,15 +133,35 @@ class FindMovesTestCase(unittest.TestCase):
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
 
-    def testMovegenNormal(self):
-        """Testing NORMAL variant move generator with several positions"""
+    def testMovegen1(self):
+        """Testing NORMAL variant move generator with perftsuite.epd"""
         print
-        self.movegen(LBoard(NORMALCHESS))
+        self.movegen(LBoard(NORMALCHESS), self.positions)
 
-    def testMovegenFRC(self):
-        """Testing FRC variant move generator with several positions"""
+
+class FRCFindMovesTestCase(FindMovesTestCase):
+    def setUp(self):
+        self.positions1 = []
+        for line in open('gamefiles/perftsuite.epd'):
+            parts = line.split(";")
+            depths = [int(s[3:].rstrip()) for s in parts[1:]]
+            self.positions1.append( (parts[0], depths) )
+
+        self.positions2 = []
+        for line in open('gamefiles/frc_perftsuite.epd'):
+            parts = line.split(";")
+            depths = [int(s[3:].rstrip()) for s in parts[1:]]
+            self.positions2.append( (parts[0], depths) )
+
+    def testMovegen1(self):
+        """Testing FRC variant move generator with perftsuite.epd"""
         print
-        #self.movegen(LBoard(FISCHERRANDOMCHESS))
+        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions1)
+
+    def testMovegen2(self):
+        """Testing FRC variant move generator with frc_perftsuite.epd"""
+        print
+        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions2)
 
 
 if __name__ == '__main__':
