@@ -273,6 +273,9 @@ class CECPEngine (ProtocolEngine):
             raise PlayerIsDead, "Killed by forgin forces"
         if r == "int":
             raise TurnInterrupt
+        if r == "ready" or r == "not ready":
+            log.warn("Engine seams to be protover=2, but is treated as protover=1", repr(self))
+            r = self.returnQueue.get()
         return r
     
     @semisynced
@@ -636,13 +639,13 @@ class CECPEngine (ProtocolEngine):
         
         #Tell User Error
         if parts[0] == "tellusererror":
-            log.warn("Ignoring tellusererror: %s" % " ".join(parts[1:]))
+            log.warn("Ignoring tellusererror: %s\n" % " ".join(parts[1:]))
             return
         
         # Tell Somebody
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-            log.warn("Ignoring tell %s: %s" % (parts[0][4:], " ".join(parts[1:])))
+            log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
             return
         
         if "feature" in parts:
