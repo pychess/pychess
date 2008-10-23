@@ -62,17 +62,6 @@ class SubProcess (gobject.GObject):
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
         gobject.child_watch_add(self.pid, self.__child_watch_callback)
-        
-        global hasPrivateLooper
-        if not gtk.main_level() and not hasPrivateLooper:
-            hasPrivateLooper = True
-            pool.start(self.privateLooper)
-    
-    def privateLooper (self):
-        while not gtk.main_level():
-            if gtk.events_pending():
-                gtk.main_iteration()
-            else: time.sleep(0.1)
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
@@ -85,8 +74,9 @@ class SubProcess (gobject.GObject):
         os.nice(15)
     
     def __child_watch_callback (self, pid, code):
-        log.error(os.strerror(code)+"\n", self.defname)
-        self.emit("died")
+        if code != 0:
+            log.error(os.strerror(code)+"\n", self.defname)
+            self.emit("died")
     
     def __io_cb (self, channel, condition, isstderr):
         

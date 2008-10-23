@@ -10,6 +10,7 @@ from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addHomePrefix
+from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
 from UCIEngine import UCIEngine
@@ -24,6 +25,7 @@ attrToProtocol = {
 backup = """
 <engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py" />
+    <engine protocol="cecp" protover="2" binname="shatranj.py" />
     <engine protocol="cecp" protover="2" binname="gnuchess">
         <meta><country>us</country></meta>
         <cecp-features><feature command="sigint" supports="true"/></cecp-features>
@@ -58,7 +60,7 @@ backup = """
 </engines>
 """ % ENGINES_XML_API_VERSION
 
-class EngineDiscoverer (GObject, Thread):
+class EngineDiscoverer (GObject, PooledThread):
     
     __gsignals__ = {
         "discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -146,6 +148,11 @@ class EngineDiscoverer (GObject, Thread):
                     return False
             
             return path, interpreterPath, ["-u", path]
+        
+        elif binname == "shatranj.py":
+            interpreterPath = searchPath("python", access=os.R_OK|os.EX_OK)
+            path = "/home/thomas/Desktop/shatranj.py"
+            return path, interpreterPath, ["-u", path, "-xboard"]
         
         else:
             path = searchPath(binname, access=os.R_OK|os.X_OK)
@@ -280,7 +287,7 @@ class EngineDiscoverer (GObject, Thread):
     # Main loop                                                                #
     ############################################################################
     
-    def start (self):
+    def run (self):
         toBeDiscovered = []
         
         for engine in self.dom.getElementsByTagName("engine"):
@@ -475,7 +482,6 @@ class EngineDiscoverer (GObject, Thread):
         self.dom.unlink()
 
 discoverer = EngineDiscoverer()
-discoverer.start()
 
 if __name__ == "__main__":
 
