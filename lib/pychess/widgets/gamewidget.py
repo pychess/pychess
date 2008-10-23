@@ -13,7 +13,7 @@ from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
 from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, EAST
+from pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.System.prefix import addHomePrefix
 from pychess.System.uistuff import makeYellow
 
@@ -391,13 +391,17 @@ def _ensureReadForGameWidgets ():
     
     if not os.path.isfile(dockLocation):
         leaf = dock.dock(docks["board"][1], CENTER, gtk.Label(docks["board"][0]), "board")
-        leaf.setDockable(False)
-        for i, id in enumerate(files):
-            title, panel = docks[str(id)]
-            if i == 0: pos = EAST
-            else: pos = CENTER
-            leaf = leaf.dock(panel, pos, title, str(id))
         docks["board"][1].show_all()
+        leaf.setDockable(False)
+        
+        # NE
+        leaf = leaf.dock(docks["historyPanel"][1], EAST, docks["historyPanel"][0], "historyPanel")
+        leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
+        
+        # SE
+        leaf = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0], "bookPanel")
+        leaf = leaf.dock(docks["commentPanel"][1], CENTER, docks["commentPanel"][0], "commentPanel")
+        leaf = leaf.dock(docks["chatPanel"][1], CENTER, docks["chatPanel"][0], "chatPanel")
     
     dock.connect("unrealize", lambda dock: dock.saveToXML(dockLocation))
     
