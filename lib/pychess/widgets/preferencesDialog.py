@@ -37,7 +37,7 @@ class GeneralTab:
     
     def __init__ (self, widgets):
 
-        conf.set("firstName", conf.get("firstName", username))
+        conf.set("firstName", conf.get("firstName", conf.username))
         conf.set("secondName", conf.get("secondName", _("Guest")))
         
         # Give to uistuff.keeper

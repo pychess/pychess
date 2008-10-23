@@ -214,7 +214,7 @@ class GameWidget (gobject.GObject):
         self.tabcontent.child.get_children()[1].set_text(text)
     
     def getTabText (self):
-        return self.tabcontent[1].get_text()
+        return self.tabcontent.child.get_children()[1].get_text()
     
     def status (self, message):
         glock.acquire()
@@ -323,6 +323,7 @@ def _ensureReadForGameWidgets ():
     
     # The dock
     
+    global dock, dockAlign
     dock = PyDockTop("main")
     dockAlign = createAlignment(4,4,0,4)
     dockAlign.add(dock)
@@ -469,6 +470,22 @@ def getheadbook ():
         return None
     return widgets["mainvbox"].get_children()[1].child
 
+
+def zoomToBoard (viewZoomed):
+    def setStuffColor (color):
+        for boardvbox in notebooks["board"].get_children():
+            ccalign, boardcontrol = boardvbox.get_children()
+            ccalign.child.modify_bg(ccalign.child.state, color)
+            boardcontrol.view.modify_bg(boardcontrol.view.state, color)
+    
+    if viewZoomed:
+        dockAlign.remove(dock)
+        parent = notebooks["board"].get_parent()
+        parent.remove(notebooks["board"])
+        dockAlign.add(notebooks["board"])
+        setStuffColor(boardvbox.get_style().bg[ccalign.child.state])
+    else:
+        setStuffColor(notebooks["board"].get_style().bg[ccalign.child.state])
 
 def show_tabs (show):
     if show:
