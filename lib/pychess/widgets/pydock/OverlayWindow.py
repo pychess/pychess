@@ -29,11 +29,22 @@ class OverlayWindow (gtk.Window):
             cairoContext.set_operator(cairo.OPERATOR_OVER)
     
     def digAHole (self, svgShape, width, height):
-        surface = self.getSurfaceFromSvg(svgShape, width, height)
+        
+        # Create a bitmap and clear it
         mask = gtk.gdk.Pixmap(None, width, height, 1)
         mcontext = mask.cairo_create()
+        mcontext.set_source_rgb(0, 0, 0)
+        mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
+        mcontext.paint()
+        
+        # Paint our shape
+        surface = self.getSurfaceFromSvg(svgShape, width, height)
+        mcontext.set_operator(cairo.OPERATOR_OVER)
         mcontext.set_source_surface(surface, 0, 0)
         mcontext.paint()
+        
+        # Apply it only if aren't composited, in which case we only need input
+        # masking
         if self.is_composited():
             self.window.input_shape_combine_mask(mask, 0, 0)
         else: self.window.shape_combine_mask(mask, 0, 0)
