@@ -5,6 +5,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System import uistuff
+from pychess.System.glock import glock_connect_after 
 from ToggleComboBox import ToggleComboBox
 from Background import giveBackground
 import newGameDialog
@@ -150,21 +151,13 @@ class NewGameTasker (gtk.Alignment):
         widgets["colorDock"].add(combo)
         uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
         
-        self.playerCombo = combo = ToggleComboBox()
-        for image, name in newGameDialog.smallPlayerItems[0]:
-            combo.addItem(name, image)
-        combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
-        combo.setMarkup("<b>", "</b>")
-        combo.active = 1
-        widgets["opponentDock"].add(combo)
-        uistuff.keep(self.playerCombo, "newgametasker_playercombo")
-        
-        def on_playerCombobox_changed (widget, event):
-            widgets["skillSlider"].props.visible = widget.active > 0
-        combo.connect("changed", on_playerCombobox_changed)
-        uistuff.keep(widgets["skillSlider"], "taskerSkillSlider")
-        widgets["skillSlider"].set_no_show_all(True)
-        on_playerCombobox_changed(self.playerCombo, None)
+        # We need to wait until after engines have been discovered, to init the
+        # playerCombos. We use connect_after to make sure, that newGameDialog
+        # has also had time to init the constants we share with them.
+        self.playerCombo = ToggleComboBox()
+        widgets["opponentDock"].add(self.playerCombo)
+        glock_connect_after(discoverer, "all_engines_discovered",
+                            self.__initPlayerCombo, widgets)
         
         def on_skill_changed (scale):
             pix = newGameDialog.skillToIconLarge[int(scale.get_value())]
@@ -174,6 +167,22 @@ class NewGameTasker (gtk.Alignment):
         
         widgets["startButton"].connect("clicked", self.startClicked)
         self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
+    
+    def __initPlayerCombo (self, discoverer, widgets):
+        combo = self.playerCombo
+        for image, name in newGameDialog.smallPlayerItems[0]:
+            combo.addItem(name, image)
+        combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+        combo.setMarkup("<b>", "</b>")
+        combo.active = 1
+        uistuff.keep(self.playerCombo, "newgametasker_playercombo")
+        
+        def on_playerCombobox_changed (widget, event):
+            widgets["skillSlider"].props.visible = widget.active > 0
+        combo.connect("changed", on_playerCombobox_changed)
+        uistuff.keep(widgets["skillSlider"], "taskerSkillSlider")
+        widgets["skillSlider"].set_no_show_all(True)
+        on_playerCombobox_changed(self.playerCombo, None)
     
     def openDialogClicked (self, button):
         newGameDialog.NewGameMode.run()

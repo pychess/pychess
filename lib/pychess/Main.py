@@ -15,6 +15,7 @@ from pychess.Utils import book # Kills pychess if no sqlite available
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
+from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets import gamewidget
 from pychess.widgets import gamenanny
 from pychess.widgets import ionest
@@ -22,6 +23,7 @@ from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
+from pychess.Players.engineNest import discoverer
 from pychess.ic import ICLogon
 
 ################################################################################
@@ -124,6 +126,9 @@ class GladeHandlers:
             LogDialog.show()
         else: LogDialog.hide()
     
+    def on_show_sidepanels_activate (widget):
+        gamewidget.zoomToBoard(not widget.get_active())
+    
     def on_hint_mode_activate (widget):
         for gmwidg in gameDic.keys():
             gamenanny.setAnalyzerEnabled(gmwidg, HINT, widget.get_active())
@@ -170,18 +175,43 @@ class PyChess:
         self.handleArgs(args)
     
     def initGlade(self):
+        #=======================================================================
+        # Init glade and the 'GladeHandlers'
+        #=======================================================================
         gtk.glade.set_custom_handler(self.widgetHandler)
         widgets = uistuff.GladeWidgets("PyChess.glade")
         widgets.getGlade().signal_autoconnect(GladeHandlers.__dict__)
         
+        #------------------------------------------------------ Redirect widgets
+        gamewidget.setWidgets(widgets)
+        
+        #-------------------------- Main.py still needs a minimum of information
+        ionest.handler.connect("gmwidg_created",
+                               GladeHandlers.__dict__["on_gmwidg_created"])
+        
+        #---------------------- The only two menuitems that need special initing
+        uistuff.keep(widgets["hint_mode"], "hint_mode")
+        uistuff.keep(widgets["spy_mode"], "spy_mode")
+        
+        #=======================================================================
+        # Show main window and init d'n'd
+        #=======================================================================
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
         
-        # Make log dialog ready
+        flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+        widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        
+        #=======================================================================
+        # Init 'minor' dialogs
+        #=======================================================================
+        
+        #------------------------------------------------------------ Log dialog
         LogDialog.add_destroy_notify(lambda: widgets["log_viewer1"].set_active(0))
         
-        # Make about dialog ready
+        #---------------------------------------------------------- About dialog
         clb = widgets["aboutdialog1"].get_child().get_children()[1].get_children()[2]
         widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
         def callback(button, *args):
@@ -191,21 +221,16 @@ class PyChess:
         clb.connect("clicked", callback)
         widgets["aboutdialog1"].connect("delete-event", callback)
         
-        # Keep the two only checkbox menuitems
-        uistuff.keep(widgets["hint_mode"], "hint_mode")
-        uistuff.keep(widgets["spy_mode"], "spy_mode")
+        #----------------------------------------------------- Discoverer dialog
+        def discovering_started (discoverer, binnames):
+            DiscovererDialog.show(discoverer, binnames, widgets["window1"])
+        glock.glock_connect(discoverer, "discovering_started", discovering_started)
+        gobject.idle_add(discoverer.start)
         
-        gamewidget.setWidgets(widgets)
-        
-        ionest.handler.connect("gmwidg_created",
-            GladeHandlers.__dict__["on_gmwidg_created"])
-        
-        flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
-        widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
-        widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
-        
+        #------------------------------------------------- Tip of the day dialog
         if conf.get("show_tip_at_startup", False):
             tipOfTheDay.TipOfTheDay.show()
+    
     
     def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
         # Tasker is currently the only widget that uses glades CustomWidget

@@ -69,23 +69,27 @@ skillToIconLarge = {
     8: it.load_icon("weather-storm", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
 }
 
-variantItems = []
 playerItems = []
 smallPlayerItems = []
 
-for variantClass in variants.values():
-    variantItems += [(iwheels, variantClass.name)]
-    playerItems += [ [(ipeople, _("Human Being"))] ]
-    smallPlayerItems += [ [(speople, _("Human Being"))] ]
+def createPlayerUIGlobals (discoverer):
+    global playerItems
+    global smallPlayerItems
+    
+    for variantClass in variants.values():
+        playerItems += [ [(ipeople, _("Human Being"))] ]
+        smallPlayerItems += [ [(speople, _("Human Being"))] ]
 
-for engine in discoverer.getEngines().values():
-    name = discoverer.getName(engine)
-    c = discoverer.getCountry(engine)
-    if c: flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix("flags/%s.png" % c))
-    else: flag_icon = inotebook
-    for variant in discoverer.getEngineVariants(engine):
-        playerItems[variant] += [(flag_icon, name)]
-        smallPlayerItems[variant] += [(snotebook, name)]
+    for engine in discoverer.getEngines().values():
+        name = discoverer.getName(engine)
+        c = discoverer.getCountry(engine)
+        if c: flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix("flags/%s.png" % c))
+        else: flag_icon = inotebook
+        for variant in discoverer.getEngineVariants(engine):
+            playerItems[variant] += [(flag_icon, name)]
+            smallPlayerItems[variant] += [(snotebook, name)]
+
+discoverer.connect("all_engines_discovered", createPlayerUIGlobals)
 
 #===============================================================================
 # GameInitializationMode is the super class of new game dialogs. Dialogs include
