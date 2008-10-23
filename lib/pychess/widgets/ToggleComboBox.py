@@ -2,7 +2,7 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 from gobject import *
-from pychess.System import log
+from pychess.System.Log import log
 
 class ToggleComboBox (gtk.ToggleButton):
 
