@@ -2,6 +2,7 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 from gobject import *
+from pychess.System import log
 
 class ToggleComboBox (gtk.ToggleButton):
 
@@ -43,6 +44,10 @@ class ToggleComboBox (gtk.ToggleButton):
         if type(active) != int:
             raise TypeError
         if active == self._active: return
+        if active >= len(self._items):
+            log.warn("Tried to set combobox to %d, but it has only got %d items"
+                     % (active, len(self._items)))
+            return
         oldactive = self._active
         # take care the case when last used engine was uninstalled
         self._active = (active < len(self._items) and [active] or [1])[0]
