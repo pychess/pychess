@@ -80,8 +80,6 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         type, func, args, name = playertup
         if type != LOCAL:
             players.append(func(*args))
-            if type == ARTIFICIAL:
-                players[-1].connect("readyForOptions", lambda p: updateTitle())
         else:
             # Until PyChess has a proper profiles system, as discussed on the
             # issue tracker, we need to give human players special treatment
@@ -99,6 +97,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 updateTitle()
             conf.notify_add(key, callback)
     
+    for player in players:
+        if player.__type__ == ARTIFICIAL:
+            player.connect("readyForOptions", lambda p: updateTitle())
     worker.publish(updateTitle)
     
     # Initing analyze engines
