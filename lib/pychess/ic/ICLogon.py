@@ -33,6 +33,10 @@ class ICLogon:
         uistuff.keepWindowSize("fics_logon", self.widgets["fics_logon"],
                                defaultPosition=uistuff.POSITION_GOLDEN)
         
+        self.widgets["fics_logon"].connect('key-press-event',
+                lambda w, e: e.keyval == gtk.keysyms.Escape and w.hide())
+        
+        
         def on_logOnAsGuest_toggled (check):
             self.widgets["nameLabel"].set_sensitive(not check.get_active())
             self.widgets["nameEntry"].set_sensitive(not check.get_active())
