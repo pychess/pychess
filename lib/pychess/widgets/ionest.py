@@ -12,7 +12,7 @@ from pychess.System import conf
 from pychess.System.protoopen import isWriteable
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.uistuff import GladeWidgets
-from pychess.Utils import const
+from pychess.System import conf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
@@ -71,15 +71,32 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     
     # For updating names
     players = []
-    def updateTitle (*args):
-        gmwidg.setTabText("%s %s %s" %
-                (repr(players[0]), _("vs."), repr(players[1])) )
+    def updateTitle (color=None):
+        
+        name0_name1 = gmwidg.getTabText().split(" %s "%_("vs"))
+        if not name0_name1:
+            name0, name1 = _("White"), _("Black")
+        else: name0, name1 = name0_name1
+        
+        if color == None:
+            name0 = repr(players[WHITE])
+            name1 = repr(players[BLACK])
+        elif color == WHITE:
+            name0 = repr(players[WHITE])
+        elif color == BLACK:
+            name1 = repr(players[BLACK])
+        
+        gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
     
     # Initing players
     for i, playertup in enumerate((player0tup, player1tup)):
         type, func, args, name = playertup
         if type != LOCAL:
             players.append(func(*args))
+            if type == ARTIFICIAL:
+                def readyformoves (player, color):
+                    updateTitle(color)
+                players[i].connect("readyForMoves", readyformoves, i)
         else:
             # Until PyChess has a proper profiles system, as discussed on the
             # issue tracker, we need to give human players special treatment
@@ -87,19 +104,17 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             players.append(player)
             if i == 0 or (i == 1 and player0tup[0] != LOCAL):
                 key = "firstName"
-                alt = const.username
+                alt = conf.username
             else:
                 key = "secondName"
                 alt = _("Guest")
             player.setName(conf.get(key, alt))
-            def callback (*args):
-                player.setName(conf.get(key, alt))
-                updateTitle()
-            conf.notify_add(key, callback)
+            
+            def callback (none, color, key, alt):
+                players[color].setName(conf.get(key, alt))
+                updateTitle(color)
+            conf.notify_add(key, callback, i, key, alt)
     
-    for player in players:
-        if player.__type__ == ARTIFICIAL:
-            player.connect("readyForOptions", lambda p: updateTitle())
     worker.publish(updateTitle)
     
     # Initing analyze engines
