@@ -151,8 +151,9 @@ class EngineDiscoverer (GObject, PooledThread):
         
         elif binname == "shatranj.py":
             interpreterPath = searchPath("python", access=os.R_OK|os.EX_OK)
-            path = "/home/thomas/Desktop/shatranj.py"
-            return path, interpreterPath, ["-u", path, "-xboard"]
+            path = os.path.expanduser("~/Desktop/shatranj.py")
+            if os.path.isfile(path):
+                return path, interpreterPath, ["-u", path, "-xboard"]
         
         else:
             path = searchPath(binname, access=os.R_OK|os.X_OK)
