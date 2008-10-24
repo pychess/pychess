@@ -736,6 +736,7 @@ class SeekChallengeSection (ParrentListSection):
         self.connection = connection
         
         liststore = gtk.ListStore(str, str)
+        liststore.append([_("Don't Care"), ""])
         liststore.append(["0 → 1300", _("Easy")])
         liststore.append(["1300 → 1600", _("Advanced")])
         liststore.append(["1600 → 9999", _("Expert")])
@@ -815,8 +816,11 @@ class SeekChallengeSection (ParrentListSection):
             combo.old_active = combo.get_active()
     
     def onSeekButtonClicked (self, button):
-        ratingrange = map(int, self.widgets["strengthCombobox"].get_model()[
-                self.widgets["strengthCombobox"].get_active()][0].split(" → "))
+        item = self.widgets["strengthCombobox"].get_model()[
+                   self.widgets["strengthCombobox"].get_active()]
+        if item[0] == _("Don't Care"):
+            ratingrange = (0, 9999)
+        else: ratingrange = map(int, item[1].split(" → "))
         rated = self.widgets["ratedGameCheck"].get_active()
         color = self.widgets["colorCombobox"].get_active()-1
         if color == -1: color = None
