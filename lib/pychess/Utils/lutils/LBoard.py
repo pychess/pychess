@@ -54,10 +54,7 @@ class LBoard:
         self._reset()
     
     def _reset (self):
-        self.blocker45 = createBoard(0)
-        self.blocker315 = createBoard(0)
         self.blocker = createBoard(0)
-        self.blocker90 = createBoard(0)
         
         self.friends = [createBoard(0)]*2
         self.kings = [-1]*2
@@ -249,13 +246,10 @@ class LBoard:
     def _addPiece (self, cord, piece, color):
         self.boards[color][piece] = \
                 setBit(self.boards[color][piece], cord)
-        self.blocker90 = setBit(self.blocker90, r90[cord])
-        self.blocker45 = setBit(self.blocker45, r45[cord])
-        self.blocker315 = setBit(self.blocker315, r315[cord])
         
         if piece == PAWN:
-            assert not (color == WHITE and cord > 55)
-            assert not (color == BLACK and cord < 8)
+            #assert not (color == WHITE and cord > 55)
+            #assert not (color == BLACK and cord < 8)
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
         elif piece == KING:
             self.kings[color] = cord
@@ -266,9 +260,6 @@ class LBoard:
     def _removePiece (self, cord, piece, color):
         self.boards[color][piece] = \
                 clearBit(self.boards[color][piece], cord)
-        self.blocker90 = clearBit(self.blocker90, r90[cord])
-        self.blocker45 = clearBit(self.blocker45, r45[cord])
-        self.blocker315 = clearBit(self.blocker315, r315[cord])
         
         if piece == PAWN:
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
@@ -675,10 +666,7 @@ class LBoard:
     
     def clone (self):
         copy = LBoard(self.variant)
-        copy.blocker45 = self.blocker45
-        copy.blocker315 = self.blocker315
         copy.blocker = self.blocker
-        copy.blocker90 = self.blocker90
         
         copy.friends = self.friends[:]
         copy.kings = self.kings[:]
