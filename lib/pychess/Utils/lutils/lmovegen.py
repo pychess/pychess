@@ -31,9 +31,6 @@ def rookAttack (board, cord):
     return rook00Attack[cord][(board.blocker >> shift00[cord]) & 0xFF] | \
            rook90Attack[cord][(board.blocker90 >> shift90[cord]) & 0xFF]
 
-def queenAttack (board, cord):
-    return bishopAttack(board,cord) | rookAttack(board,cord)
-
 ################################################################################
 #   Generate all moves                                                         #
 ################################################################################
@@ -102,13 +99,15 @@ def genAllMoves (board):
     
     # Rooks and Queens
     for cord in iterBits(rooks | queens):
-        attackBoard = rookAttack(board, cord)
+        attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                      attack90[cord][ray90[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & notfriends):
             yield move
     
     # Bishops and Queens
     for cord in iterBits(bishops | queens):
-        attackBoard = bishopAttack(board, cord)
+        attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                      attack135[cord][ray135[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & notfriends):
             yield move
     
@@ -246,21 +245,17 @@ def genCaptures (board):
     for move in bitsToMoves (cord, kingMoves[cord] & enemies):
         yield move
     
-    # Rooks
-    for cord in iterBits(rooks):
-        attackBoard = rookAttack(board, cord)
+    # Rooks and Queens
+    for cord in iterBits(rooks|queens):
+        attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                      attack90[cord][ray90[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & enemies):
             yield move
     
-    # Bishops
-    for cord in iterBits(bishops):
-        attackBoard = bishopAttack(board, cord)
-        for move in bitsToMoves (cord, attackBoard & enemies):
-            yield move
-    
-    # Queens
-    for cord in iterBits(queens):
-        attackBoard = queenAttack(board, cord)
+    # Bishops and Queens
+    for cord in iterBits(bishops|queens):
+        attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                      attack135[cord][ray135[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & enemies):
             yield move
     
@@ -272,9 +267,9 @@ def genCaptures (board):
         # Promotes
         
         movedpawns = (pawns >> 8) & notblocker & rankBits[7]
-        for cord in iterBits(movedpawns):
-            for move in newPromotes (cord-8, cord):
-                yield move
+        #for cord in iterBits(movedpawns):
+        #    for move in newPromotes (cord-8, cord):
+        #        yield move
         
         # Capture left
         
@@ -308,9 +303,9 @@ def genCaptures (board):
         # One step
         
         movedpawns = pawns << 8 & notblocker & rankBits[0]
-        for cord in iterBits(movedpawns):
-            for move in newPromotes (cord+8, cord):
-                yield move
+        #for cord in iterBits(movedpawns):
+        #    for move in newPromotes (cord+8, cord):
+        #        yield move
         
         # Capture left
         
@@ -366,21 +361,17 @@ def genNonCaptures (board):
     for move in bitsToMoves (cord, kingMoves[cord] & notblocker):
         yield move
     
-    # Rooks
+    # Rooks and Queens
     for cord in iterBits(rooks):
-        attackBoard = rookAttack(board, cord)
+        attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                      attack90[cord][ray90[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & notblocker):
             yield move
     
-    # Bishops
+    # Bishops and Queens
     for cord in iterBits(bishops):
-        attackBoard = bishopAttack(board, cord)
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
-    
-    # Queens
-    for cord in iterBits(queens):
-        attackBoard = queenAttack(board, cord)
+        attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                      attack135[cord][ray135[cord] & blocker]
         for move in bitsToMoves (cord, attackBoard & notblocker):
             yield move
     
