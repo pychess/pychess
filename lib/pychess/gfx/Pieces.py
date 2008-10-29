@@ -1,11 +1,37 @@
 import re
 from pychess.Utils.const import *
+import time
 
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
 spaceExpr = re.compile(r"[\s,]+")
 
-# TODO: This can be boosted with the use of the exec function
-# http://cairographics.org//svgtopycairo/index.html?updated
+l = []
+
+def parse(n, psize):
+    yield "def f(c):"
+    s = psize/size
+    for cmd, points in n:
+        pstr = ",".join(str(p*s) for p in points)
+        if cmd == "M":
+            yield "c.rel_move_to(%s)" % pstr
+        elif cmd == "L":
+            yield "c.rel_line_to(%s)" % pstr
+        else:
+            yield "c.rel_curve_to(%s)" % pstr
+            
+# This has double speed at drawing, but when generating new functions, it
+# takes about ten times longer.
+def drawPiece3 (piece, cc, x, y, psize):
+    cc.save()
+    cc.move_to(x,y)
+    
+    if not psize in parsedPieces[piece.color][piece.sign]:
+        exec("\n    ".join(parse(parsedPieces[piece.color][piece.sign][size],psize)))
+        parsedPieces[piece.color][piece.sign][psize] = f
+    
+    cc.fill()
+    cc.restore()
+
 def drawPieceReal (piece, cc, psize):
     for cmd, points in parsedPieces[piece.color][piece.sign][psize]:
         if cmd == 'M':
@@ -18,6 +44,7 @@ def drawPieceReal (piece, cc, psize):
 def drawPiece (piece, cc, x, y, psize):
     cc.save()
     cc.move_to(x,y)
+    
     if not psize in parsedPieces[piece.color][piece.sign]:
         list = [(cmd, [(p*psize/size) for p in points])
                 for cmd, points in parsedPieces[piece.color][piece.sign][size]]
