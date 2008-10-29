@@ -18,20 +18,6 @@ def bitsToMoves (fromcord, tobits):
         yield newMove(fromcord, c)
 
 ################################################################################
-#   Create bit attack maps                                                     #
-################################################################################
-
-def bishopAttack (board, cord):
-    return bishop45Attack[cord] \
-                    [ (board.blocker45 >> shift45[cord]) & mask45[cord] ] | \
-           bishop315Attack[cord] \
-                    [ (board.blocker315 >> shift315[cord]) & mask315[cord] ]
-
-def rookAttack (board, cord):
-    return rook00Attack[cord][(board.blocker >> shift00[cord]) & 0xFF] | \
-           rook90Attack[cord][(board.blocker90 >> shift90[cord]) & 0xFF]
-
-################################################################################
 #   Generate all moves                                                         #
 ################################################################################
 
