@@ -108,7 +108,7 @@ def analyze ():
         protocol """
     
     start = time()
-    lsearch.endtime = start + 60*60
+    lsearch.endtime = sys.maxint
     
     for depth in xrange (1, 10):
         if not lsearch.searching:

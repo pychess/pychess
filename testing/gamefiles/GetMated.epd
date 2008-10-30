@@ -27,7 +27,7 @@
 1K2k3/8/6p1/P4p2/3R1Pp1/8/8/8 b - - acd 16; acn 161438213; ce -32747; pv g3 a6 g2 Rd1 Ke7 a7 g1=Q Rxg1 g5 a8=Q Kd6 Rd1+ Kc5 Qd5+ Kb4 Rd4+ Ka3 Qb5 gxf4 Ra4#; pm g3; id "C.A.P. 1143557";
 1K2k3/8/P7/5pp1/3R1Pp1/8/8/8 b - - acd 13; acn 164947514; ce -32755; pv Kf7 a7 gxf4 a8=Q Kg6 Rd6+ Kg5 Qh1 g3 Rh6 g2 Qh5#; pm Kf7; id "C.A.P. 1143560";
 1K2k3/P7/8/5pp1/3R1P2/6p1/8/8 b - - acd 13; acn 180405027; ce -32757; pv g2 a8=Q g1=Q Qc6+ Kf8 Rd8+ Kg7 Rd7+ Kh8 Qc8#; pm g2; id "C.A.P. 1143562";
-1K2k3/P7/8/5pp1/3R1P2/6p1/8/8 b - - acn 1057 acd ; acn 1057; ce -32757; pv Kf7 a8=Q Kg6 Rd6+ Kf7 Qa7+ Ke8 Qc7 g2 Rd8#; pm Kf7; id "C.A.P. 1395132";
+1K2k3/P7/8/5pp1/3R1P2/6p1/8/8 b - - acn 1057; acd 20; acn 1057; ce -32757; pv Kf7 a8=Q Kg6 Rd6+ Kf7 Qa7+ Ke8 Qc7 g2 Rd8#; pm Kf7; id "C.A.P. 1395132";
 1k2q3/1pp1r3/1pb4p/6p1/2P2pQ1/1P4PP/P4r1B/5RK1 w - - acd 11; acn 149600574; ce -32749; pv Kxf2 f3 Qd4 Re2+ Kg1 Rg2+ Kh1 Qe2 Qh8+ Ka7 Qb8+ Kxb8 Rf2 Qe1+ Rf1 Qxf1+ Bg1 Qxg1#; pm Kxf2; id "C.A.P. 1332632";
 1k2r3/2Q2p2/1P2b3/8/8/2p1P3/4BKPP/7r b - - acd 2; acn 3; ce -32765; pv Ka8 Qa7#; pm Ka8; id "C.A.P. 44441";
 1k3N2/Rp4r1/1P2K2P/8/P7/1p1pP3/3P4/8 b - - acd 13; acn 1000; ce -32759; pv Rh7 Nxh7 b2 Nf6 b1=Q Nd7+ Kc8 Ra8#; pm Rh7; id "C.A.P. 44505";

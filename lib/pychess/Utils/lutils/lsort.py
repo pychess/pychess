@@ -57,7 +57,7 @@ def sortCaptures (board, moves):
     moves.sort(key=f, reverse=True)
     return moves
 
-def getMoveValue (board, table, ply, move):
+def getMoveValue (board, table, depth, move):
     """ Sort criteria is as follows.
         1.  The move from the hash table
         2.  Captures as above.
@@ -67,7 +67,8 @@ def getMoveValue (board, table, ply, move):
     
     # As we only return directly from transposition table if hashf == hashfEXACT
     # There could be a non  hashfEXACT very promising move for us to test
-    if table.isHashMove(ply, move):
+    
+    if table.isHashMove(depth, move):
         return maxint
     
     fcord = (move >> 6) & 63
@@ -86,16 +87,24 @@ def getMoveValue (board, table, ply, move):
     if flag in PROMOTIONS:
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
-    killervalue = table.isKiller(ply, move)
+    killervalue = table.isKiller(depth, move)
     if killervalue:
         return 1000 + killervalue
     
     # King tropism - a move that brings us nearer to the enemy king, is probably
     # a good move
-    opking = board.kings[1-board.color]
-    return 10-distance[tcord][opking]*2+distance[fcord][opking]
+    #opking = board.kings[1-board.color]
+    #score = distance[fpiece][fcord][opking] - distance[fpiece][tcord][opking]
+    
+    from pychess.Utils.eval import pos
+    score = pos[fpiece][board.color][tcord] - pos[fpiece][board.color][fcord] 
+    
+    # History heuristic
+    score += table.getButterfly(move)
+    
+    return score
 
-def sortMoves (board, table, ply, moves):
-    f = lambda move: getMoveValue (board, table, ply, move)
+def sortMoves (board, table, ply, hashmove, moves):
+    f = lambda move: getMoveValue (board, table, ply, hashmove, move)
     moves.sort(key=f, reverse=True)
     return moves
