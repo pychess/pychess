@@ -1,8 +1,10 @@
 from array import array
 from operator import or_
 from pychess.Utils.const import *
+#from pychess.Utils.lutils.lmove import RANK, FILE
 from bitboard import *
-
+def RANK (cord): return cord >> 3
+def FILE (cord): return cord & 7
 ################################################################################
 ################################################################################
 ##   Evaluating constants                                                     ##
@@ -24,7 +26,7 @@ MATE_VALUE = MAXVAL = 99999
 # opponent king
 pawnTScale = [0, 40, 20, 12, 9, 6, 4, 2, 1, 0]
 bishopTScale = [0, 50, 25, 15, 7, 5, 3, 2, 2, 1]
-knightTScale = [0, 50, 70, 35, 10, 3, 2, 2, 1, 1]
+knightTScale = [0, 100, 50, 35, 10, 3, 2, 2, 1, 1]
 rookTScale = [0, 50, 40, 15, 5, 2, 1, 1, 1, 0]
 queenTScale = [0, 100, 60, 20, 10, 7, 5, 4, 3, 2]
 
@@ -38,16 +40,89 @@ isolani_normal = ( -8, -10, -12, -14, -14, -12, -10, -8 )
 # Penalties if the file is half-open (i.e. no enemy pawns on it)
 isolani_weaker = ( -22, -24, -26, -28, -28, -26, -24, -22 )
 
-from math import sqrt
+###############################################################################
+# Distance boards for different pieces                                        #
+###############################################################################
 
-distance = [[0]*64 for i in range(64)]
-for fcord in range(64):
-    for tcord in range(64):
-        fx = fcord >> 3
-        fy = fcord & 7
-        tx = tcord >> 3
-        ty = tcord & 7
-        distance[fcord][tcord] = int(sqrt((fx-tx)**2+(fy-ty)**2))
+taxicab = [[0]*64 for i in range(64)]
+sdistance = [[0]*64 for i in range(64)]
+for fcord in xrange(64):
+    for tcord in xrange(fcord+1, 64):
+        fx = FILE(fcord) 
+        fy = RANK(fcord)
+        tx = FILE(tcord)
+        ty = RANK(tcord)
+        taxicab[fcord][tcord] = taxicab[fcord][tcord] = abs(fx-tx) + abs(fy-ty)
+        sdistance[fcord][tcord] = sdistance[fcord][tcord] = min(abs(fx-tx), abs(fy-ty))
+
+distance = [[[0]*64 for i in xrange(64)] for j in xrange(KING+1)]
+
+distance[EMPTY] = None
+distance[KING] = sdistance
+distance[PAWN] = sdistance
+
+# Special table for knightdistances
+
+knightDistance = [
+    6, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6,
+    5, 4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4, 5,
+    4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4,
+    5, 4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4, 5,
+    4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4,
+    5, 4, 3, 2, 3, 4, 1, 2, 1, 4, 3, 2, 3, 4, 5,
+    4, 3, 4, 3, 2, 1, 2, 3, 2, 1, 2, 3, 4, 3, 4,
+    5, 4, 3, 2, 3, 2, 3, 0, 3, 2, 3, 2, 3, 4, 5,
+    4, 3, 4, 3, 2, 1, 2, 3, 2, 1, 2, 3, 4, 3, 4,
+    5, 4, 3, 2, 3, 4, 1, 2, 1, 4, 3, 2, 3, 4, 5,
+    4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4,
+    5, 4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4, 5,
+    4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4,
+    5, 4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4, 5,
+    6, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6,
+]
+
+# Calculate
+
+for fcord in xrange(64):
+    frank = RANK(fcord)
+    ffile = FILE(fcord)
+    
+    for tcord in xrange(fcord+1, 64):
+        # Notice, that we skip fcord == tcord, as all fields are zero from
+        # scratch in anyway
+        
+        trank = RANK(tcord)
+        tfile = FILE(tcord)
+        
+        # Knight
+        field = (7-frank+trank)*15 + 7-ffile+tfile
+        distance[KNIGHT][tcord][fcord] = distance[KNIGHT][fcord][tcord] = \
+            knightDistance[field]
+        
+        # Rook
+        if frank == trank or ffile == tfile:
+            distance[ROOK][tcord][fcord] = distance[ROOK][fcord][tcord] = 1
+        else: distance[ROOK][tcord][fcord] = distance[ROOK][fcord][tcord] = 2
+        
+        # Bishop
+        if abs(frank-trank) == abs(ffile-tfile):
+            distance[BISHOP][tcord][fcord] = distance[BISHOP][fcord][tcord] = 1
+        else: distance[BISHOP][tcord][fcord] = distance[BISHOP][fcord][tcord] = 2
+        
+        # Queen
+        if frank == trank or ffile == tfile or abs(frank-trank) == abs(ffile-tfile):
+            distance[QUEEN][tcord][fcord] = distance[QUEEN][fcord][tcord] = 1
+        else: distance[QUEEN][tcord][fcord] = distance[QUEEN][fcord][tcord] = 2
+
+# Special cases for knights in corners
+distance[KNIGHT][A1][B2] = distance[KNIGHT][B2][A1] = 4
+distance[KNIGHT][H1][G2] = distance[KNIGHT][G2][H1] = 4
+distance[KNIGHT][A8][B7] = distance[KNIGHT][B7][A8] = 4
+distance[KNIGHT][H8][G7] = distance[KNIGHT][G7][H8] = 4
+
+###############################################################################
+# Boards used for evaluating
+###############################################################################
 
 pawnScoreBoard = (
    (0,  0,  0,  0,  0,  0,  0,  0,
@@ -88,6 +163,32 @@ outpost = (
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0)
 )
+
+normalKing = (
+   24, 24, 24, 16, 16,  0, 32, 32,
+   24, 20, 16, 12, 12, 16, 20, 24,
+   16, 12,  8,  4,  4,  8, 12, 16,
+   12,  8,  4,  0,  0,  4,  8, 12,
+   12,  8,  4,  0,  0,  4,  8, 12,
+   16, 12,  8,  4,  4,  8, 12, 16,
+   24, 20, 16, 12, 12, 16, 20, 24,
+   24, 24, 24, 16, 16,  0, 32, 32
+)
+
+endingKing = (
+   0,  6, 12, 18, 18, 12,  6,  0,
+   6, 12, 18, 24, 24, 18, 12,  6,
+  12, 18, 24, 32, 32, 24, 18, 12,
+  18, 24, 32, 48, 48, 32, 24, 18,
+  18, 24, 32, 48, 48, 32, 24, 18,
+  12, 18, 24, 32, 32, 24, 18, 12,
+   6, 12, 18, 24, 24, 18, 12,  6,
+   0,  6, 12, 18, 18, 12,  6,  0
+)
+
+###############################################################################
+# Maps for bitboards
+###############################################################################
 
 d2e2    = (createBoard(0x0018000000000000), createBoard(0x0000000000001800))
 brank7  = (createBoard(0x000000000000FF00), createBoard(0x00FF000000000000))
@@ -147,111 +248,6 @@ qbwingpawns1 = bitPosArray[A7] | bitPosArray[B7]
 qbwingpawns2 = bitPosArray[A7] | bitPosArray[B6]
 kbwingpawns1 = bitPosArray[G7] | bitPosArray[H7]
 kbwingpawns2 = bitPosArray[G6] | bitPosArray[H7]
-
-################################################################################
-################################################################################
-##   Array boards                                                             ##
-################################################################################
-################################################################################
-
-shift00 = [
-    56, 56, 56, 56, 56, 56, 56, 56,
-    48, 48, 48, 48, 48, 48, 48, 48,
-    40, 40, 40, 40, 40, 40, 40, 40,
-    32, 32, 32, 32, 32, 32, 32, 32,
-    24, 24, 24, 24, 24, 24, 24, 24,
-    16, 16, 16, 16, 16, 16, 16, 16,
-     8,  8,  8,  8,  8,  8,  8,  8,
-     0,  0,  0,  0,  0,  0,  0,  0
-]
-
-r90 = [
-    A8, A7, A6, A5, A4, A3, A2, A1,
-    B8, B7, B6, B5, B4, B3, B2, B1,
-    C8, C7, C6, C5, C4, C3, C2, C1,
-    D8, D7, D6, D5, D4, D3, D2, D1,
-    E8, E7, E6, E5, E4, E3, E2, E1,
-    F8, F7, F6, F5, F4, F3, F2, F1,
-    G8, G7, G6, G5, G4, G3, G2, G1,
-    H8, H7, H6, H5, H4, H3, H2, H1
-]
-
-shift90 = [
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56,
-    0, 8, 16, 24, 32, 40, 48, 56
-]
-
-r45 = [
-    E4, F3, H2, C2, G1, D1, B1, A1,
-    E5, F4, G3, A3, D2, H1, E1, C1,
-    D6, F5, G4, H3, B3, E2, A2, F1, 
-    B7, E6, G5, H4, A4, C3, F2, B2,
-    G7, C7, F6, H5, A5, B4, D3, G2, 
-    C8, H7, D7, G6, A6, B5, C4, E3, 
-    F8, D8, A8, E7, H6, B6, C5, D4, 
-    H8, G8, E8, B8, F7, A7, C6, D5
-]
-
-shift45 = [
-    28, 36, 43, 49, 54, 58, 61, 63,
-    21, 28, 36, 43, 49, 54, 58, 61,
-    15, 21, 28, 36, 43, 49, 54, 58,
-    10, 15, 21, 28, 36, 43, 49, 54,
-     6, 10, 15, 21, 28, 36, 43, 49,
-     3,  6, 10, 15, 21, 28, 36, 43,
-     1,  3,  6, 10, 15, 21, 28, 36,
-     0,  1,  3,  6, 10, 15, 21, 28
-]
-
-mask45 = [
-    0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01,
-    0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 
-    0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 
-    0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 
-    0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 
-    0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 
-    0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 
-    0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF
-]
-
-r315 = [
-    A1, C1, F1, B2, G2, E3, D4, D5,
-    B1, E1, A2, F2, D3, C4, C5, C6,
-    D1, H1, E2, C3, B4, B5, B6, A7,
-    G1, D2, B3, A4, A5, A6, H6, F7,
-    C2, A3, H3, H4, H5, G6, E7, B8,
-    H2, G3, G4, G5, F6, D7, A8, E8,
-    F3, F4, F5, E6, C7, H7, D8, G8,
-    E4, E5, D6, B7, G7, C8, F8, H8
-]
-
-shift315 = [
-    63, 61, 58, 54, 49, 43, 36, 28,
-    61, 58, 54, 49, 43, 36, 28, 21,
-    58, 54, 49, 43, 36, 28, 21, 15,
-    54, 49, 43, 36, 28, 21, 15, 10,
-    49, 43, 36, 28, 21, 15, 10,  6,
-    43, 36, 28, 21, 15, 10,  6,  3,
-    36, 28, 21, 15, 10,  6,  3,  1,
-    28, 21, 15, 10,  6,  3,  1,  0
-]
-
-mask315 = [
-    0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF,
-    0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F,
-    0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F,
-    0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F,
-    0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F,
-    0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07,
-    0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03,
-    0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01
-]
 
 ################################################################################
 #  Ranks and files                                                             #
@@ -318,20 +314,6 @@ right = fileBits[5] | fileBits[6] | fileBits[7]
 # # # # - - - - -
 # # # # - - - - -
 left = fileBits[0] | fileBits[1] | fileBits[2]
-
-################################################################################
-#  The IsolaniMask variable is used to determine if a pawn is an isolani.      #
-#  This mask is basically all 1's on files beside the file the pawn is on.     #
-#  Other bits will be set to zero.                                             #
-#  E.g. isolaniMask[d-file] = 1's in c-file & e-file, 0 otherwise.             #
-################################################################################
-
-isolaniMask = [0]*8
-
-isolaniMask[0] = fileBits[1]
-isolaniMask[7] = fileBits[6]
-for i in xrange (1, 7):
-    isolaniMask[i] = fileBits[i-1] | fileBits[i+1]
 
 ################################################################################
 #  Generate the move bitboards.  For e.g. the bitboard for all                 #
@@ -480,13 +462,56 @@ for cord in xrange(64):
         passedPawnMask[BLACK][cord] |= rays[cord+1][4]
 
 ################################################################################
+#  The IsolaniMask variable is used to determine if a pawn is an isolani.      #
+#  This mask is basically all 1's on files beside the file the pawn is on.     #
+#  Other bits will be set to zero.                                             #
+#  E.g. isolaniMask[d-file] = 1's in c-file & e-file, 0 otherwise.             #
+################################################################################
+
+isolaniMask = [0]*8
+
+isolaniMask[0] = fileBits[1]
+isolaniMask[7] = fileBits[6]
+for i in xrange (1, 7):
+    isolaniMask[i] = fileBits[i-1] | fileBits[i+1]
+
+#===============================================================================
+# The SquarePawnMask is used to determine if a king is in the square of
+# the passed pawn and is able to prevent it from queening.  
+# Caveat:  Pawns on 2nd rank have the same mask as pawns on the 3rd rank
+# as they can advance 2 squares.
+#===============================================================================
+
+squarePawnMask = [[createBoard(0)]*64, [createBoard(0)]*64]
+for cord in xrange(64):
+    # White mask
+    l = 7 - RANK(cord)
+    i = max(cord & 56, cord-l)
+    j = min(cord | 7, cord+l)
+    for k in xrange(i, j+1):
+        squarePawnMask[WHITE][cord] |= bitPosArray[k] | fromToRay[k][k|56]
+    
+    # Black mask
+    l = RANK(cord)
+    i = max(cord & 56, cord-l)
+    j = min(cord | 7, cord+l)
+    for k in xrange(i, j+1):
+        squarePawnMask[BLACK][cord] |= bitPosArray[k] | fromToRay[k][k&7]
+
+# For pawns on 2nd rank, they have same mask as pawns on 3rd rank
+for cord in xrange(A2, H2+1):
+    squarePawnMask[WHITE][cord] = squarePawnMask[WHITE][cord+8]
+for cord in xrange(A7, H7+1):
+    squarePawnMask[BLACK][cord] = squarePawnMask[BLACK][cord-8]
+
+################################################################################
 #  These tables are used to calculate rook, queen and bishop moves             #
 ################################################################################
 
-ray00  = [rays[cord][5]|rays[cord][6] | 1<<(63-cord) for cord in xrange(64)]
-ray45  = [rays[cord][0]|rays[cord][3] | 1<<(63-cord) for cord in xrange(64)]
-ray90  = [rays[cord][4]|rays[cord][7] | 1<<(63-cord) for cord in xrange(64)]
-ray135 = [rays[cord][1]|rays[cord][2] | 1<<(63-cord) for cord in xrange(64)]
+ray00  = [rays[cord][5] | rays[cord][6] | 1<<(63-cord) for cord in xrange(64)]
+ray45  = [rays[cord][0] | rays[cord][3] | 1<<(63-cord) for cord in xrange(64)]
+ray90  = [rays[cord][4] | rays[cord][7] | 1<<(63-cord) for cord in xrange(64)]
+ray135 = [rays[cord][1] | rays[cord][2] | 1<<(63-cord) for cord in xrange(64)]
 
 attack00 = [{} for i in xrange(64)]
 attack45 = [{} for i in xrange(64)]

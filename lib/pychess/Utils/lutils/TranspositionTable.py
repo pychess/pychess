@@ -1,8 +1,9 @@
 from UserDict import UserDict
-from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, WHITE
+from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, WHITE
 from ldata import MATE_VALUE
 from pychess.System.LimitedDict import LimitedDict
 from types import InstanceType
+from lmove import TCORD, FCORD
 
 class TranspositionTable:
     def __init__ (self, maxSize):
@@ -11,23 +12,26 @@ class TranspositionTable:
         self.maxSize = maxSize
         self.krono = []
         
-        self.killer1 = [-1]*20
-        self.killer2 = [-1]*20
-        self.hashmove = [-1]*20
+        self.killer1 = [-1]*80
+        self.killer2 = [-1]*80
+        self.hashmove = [-1]*80
+        
+        self.butterfly = [0]*(64*64)
     
     def clear (self):
         self.data.clear()
         del self.krono[:]
-        self.killer1 = [-1]*20
-        self.killer2 = [-1]*20
-        self.hashmove = [-1]*20
+        self.killer1 = [-1]*80
+        self.killer2 = [-1]*80
+        self.hashmove = [-1]*80
+        self.butterfly = [0]*(64*64)
     
     def probe (self, board, depth, alpha, beta):
         assert type(board) == InstanceType, type(board)
         try:
-            move, score, hashf, ply = self.data[board.hash]
-            if ply < depth:
-                return
+            move, score, hashf, tdepth = self.data[board.hash]
+            if tdepth < depth:
+                return move, -1, hashfBAD
             if hashf == hashfEXACT:
                 return move, score, hashf
             if hashf == hashfALPHA and score <= alpha:
@@ -72,3 +76,9 @@ class TranspositionTable:
     
     def isHashMove (self, ply, move):
         return self.hashmove[ply] == move
+    
+    def addButterfly (self, move, depth):
+        self.butterfly[move & 0xfff] += 1 << depth
+    
+    def getButterfly (self, move):
+        return self.butterfly[move & 0xfff]

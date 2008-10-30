@@ -12,7 +12,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, toAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 2
+MAXDEPTH = 3
 
 try:
     import psyco
@@ -153,15 +153,15 @@ class FRCFindMovesTestCase(FindMovesTestCase):
             depths = [int(s[3:].rstrip()) for s in parts[1:]]
             self.positions2.append( (parts[0], depths) )
 
-    def testMovegen1(self):
-        """Testing FRC variant move generator with perftsuite.epd"""
-        print
-        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions1)
+    #def testMovegen1(self):
+    #    """Testing FRC variant move generator with perftsuite.epd"""
+    #    print
+    #    self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions1)
 
-    def testMovegen2(self):
-        """Testing FRC variant move generator with frc_perftsuite.epd"""
-        print
-        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions2)
+    #def testMovegen2(self):
+    #    """Testing FRC variant move generator with frc_perftsuite.epd"""
+    #    print
+    #    self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions2)
 
 
 if __name__ == '__main__':

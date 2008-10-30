@@ -40,18 +40,25 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     foundPv = False
     hashf = hashfALPHA
     amove = []
-
+    
+    ###########################################################################
+    # We don't save repetition in the table, so we need to test draw before   #
+    # table                                                                   #
+    ###########################################################################
+    
+    if ldraw.test(board):
+        return [], 0
+    
     ############################################################################
     # Look up transposition table                                              #
     ############################################################################
     
     table.setHashMove (depth, -1)
-    from types import InstanceType
-    assert type(board) == InstanceType
     probe = table.probe (board, depth, alpha, beta)
-    
+    hashmove = None
     if probe:
         move, score, hashf = probe
+        hashmove = move
         table.setHashMove (depth, move)
         
         if hashf == hashfEXACT:
@@ -61,11 +68,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         elif hashf == hashfALPHA:
             alpha = score
             
-        if alpha >= beta:
+        if hashf != hashfBAD and alpha >= beta:
             return [move], score
-    
-    if ldraw.test(board):
-        return [], 0
     
     ############################################################################
     # Cheking the time                                                         #
@@ -83,7 +87,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if not searching:
         last = 1
-        return [], evaluateComplete(board, board.color)
+        return [], -evaluateComplete(board, 1-board.color)
     
     ############################################################################
     # Go for quiescent search                                                  #
@@ -97,7 +101,30 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             depth += 1
         else:
             last = 0
-            return quiescent(board, alpha, beta, ply)
+            
+            #if (ply+board.color)%2:
+            #    v = -evaluateComplete(board, 1-board.color, balanced=True)
+            #else:
+                # White
+            if not (ply+board.color)%2:
+                mvs, val = quiescent(board, alpha, beta, ply)
+            else:
+                val = evaluateComplete(board, board.color)
+                mvs = []
+            #assert abs(val)/val == abs(v)/v, (abs(val)/val, abs(v)/v, v, val, last) 
+            
+            #Sprint ply, ",", alpha, beta, quiescent(board, alpha, beta, ply)
+            return mvs, val
+            
+            if board.color == BLACK:
+                return [], -v
+            return [], v
+            if board.color != (board.color+ply)%2:
+                return [], -v
+            return [], v
+            return [] 
+            mvs, val = -quiescent(board, alpha, beta, ply)
+            return mvs, val
     
     ############################################################################
     # Find and sort moves                                                      #
@@ -117,7 +144,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Loop moves                                                               #
     ############################################################################
     
+    
     for moveValue, move in moves:
+        
         nodes += 1
         
         board.applyMove(move)
@@ -142,19 +171,21 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         
         if val > alpha:
             if val >= beta:
-                table.record (board, move, beta, hashfBETA, depth)
-                # We don't want to use our valuable killer move spaces for
-                # captures and promotions, as these are searched early anyways.
-                if board.arBoard[move&63] == EMPTY and \
-                        not move>>12 in PROMOTIONS:
-                    table.addKiller (depth, move)
+                if searching:
+                    table.record (board, move, beta, hashfBETA, depth)
+                    # We don't want to use our valuable killer move spaces for
+                    # captures and promotions, as these are searched early anyways.
+                    if board.arBoard[move&63] == EMPTY and \
+                            not move>>12 in PROMOTIONS:
+                        table.addKiller (depth, move)
+                        table.addButterfly(move, depth)
                 last = 2
                 return [move]+mvs, beta
                 
             alpha = val
             amove = [move]+mvs
             hashf = hashfEXACT
-            foundPv = True
+            foundPv = False#True
     
     ############################################################################
     # Return                                                                   #
@@ -162,14 +193,16 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if amove:
         last = 3
-        table.record (board, amove[0], alpha, hashf, depth)
-        if board.arBoard[amove[0]&63] == EMPTY:
-            table.addKiller (depth, amove[0])
+        if searching:
+            table.record (board, amove[0], alpha, hashf, depth)
+            if board.arBoard[amove[0]&63] == EMPTY:
+                table.addKiller (depth, amove[0])
         return amove, alpha
     
     if catchFailLow:
         last = 4
-        table.record (board, catchFailLow, alpha, hashf, depth)
+        if searching:
+            table.record (board, catchFailLow, alpha, hashf, depth)
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate

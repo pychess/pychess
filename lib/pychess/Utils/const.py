@@ -86,7 +86,7 @@ FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 # Search values                                                                #
 ################################################################################
 
-hashfALPHA, hashfBETA, hashfEXACT = range(3)
+hashfALPHA, hashfBETA, hashfEXACT, hashfBAD = range(4)
 
 # Engine modes
 NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
