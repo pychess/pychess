@@ -108,7 +108,7 @@ class Sidepanel:
         board = model.boards[-1].board
         oldboard = model.boards[-2].board
         color = oldboard.color
-        s, phase = evalMaterial (board)
+        s, phase = evalMaterial (board, color)
         
         #   * Final: Will be shown alone: "mates", "draws"
         #   * Prefix: Will always be shown: "castles", "promotes"

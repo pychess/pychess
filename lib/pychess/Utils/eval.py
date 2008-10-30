@@ -339,7 +339,7 @@ def evalMaterial (board):
                 / ( 6400 * ( numPawns[WHITE] + 1 ) )
         return val
 
-from validator import findKings
+#from validator import findKings
 def evalKingTropism (board):
     """ All other things being equal, having your Knights, Queens and Rooks close
         to the opponent's king is a good thing """

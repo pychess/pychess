@@ -405,10 +405,8 @@ def state_trappedBishops (model, phase):
     else:
         return
     
-    s = leval.evalTrappedBishops (board)
-    oldboard.setColor(1-oldboard.color)
-    olds = leval.evalTrappedBishops (oldboard)
-    oldboard.setColor(1-oldboard.color)
+    s = leval.evalTrappedBishops (board, opcolor, phase)
+    olds = leval.evalTrappedBishops (oldboard, opcolor, phase)
     
     # We have got more points -> We have trapped a bishop
     if s > olds:
@@ -427,10 +425,8 @@ def simple_tropism (model, phase):
     arBoard = board.arBoard
     
     if arBoard[tcord] != PAWN:
-        score = leval.evalKingTropism(board)
-        oldboard.setColor(1-oldboard.color)
-        oldscore = leval.evalKingTropism(oldboard)
-        oldboard.setColor(1-oldboard.color)
+        score = leval.evalKingTropism(board, color, phase)
+        oldscore = leval.evalKingTropism(oldboard, color, phase)
     else:
         if color == WHITE:
             rank23 = brank67[BLACK]
@@ -445,7 +441,8 @@ def simple_tropism (model, phase):
     opking = board.kings[1-color]
     
     if score > oldscore:
-        if phase >= 5 or distance[fcord][opking] < distance[fcord][king]:
+        if phase >= 5 or distance[arBoard[tcord]][fcord][opking] < \
+                distance[arBoard[tcord]][fcord][king]:
             yield score-oldscore, _("brings a %s closer to enemy king: %s") % \
                     (reprPiece[arBoard[tcord]], reprCord[tcord])
         else:
