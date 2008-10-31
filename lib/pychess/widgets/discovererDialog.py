@@ -1,9 +1,14 @@
-import gtk.glade, os
+import os
+
+import gtk.glade
+ 
 from pychess.System import conf
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
-from pychess.Players.engineNest import discoverer
 from pychess.System.glock import glock_connect
+from pychess.Players.engineNest import discoverer
+
+from Throbber import Throbber
 
 uistuff.cacheGladefile("discovererDialog.glade")
 
@@ -13,6 +18,14 @@ class DiscovererDialog:
     def show (cls, discoverer, binnames, mainwindow):
         assert not hasattr(cls, "widgets"), "Show can only be called once"
         cls.widgets = uistuff.GladeWidgets("discovererDialog.glade")
+        
+        #=======================================================================
+        # Add throbber
+        #=======================================================================
+        
+        throbber = Throbber(150, 150)
+        throbber.set_size_request(150, 150)
+        cls.widgets["throbberDock"].add(throbber)
         
         #=======================================================================
         # Clear glade defaults, and insert the names to be discovered
