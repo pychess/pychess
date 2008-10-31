@@ -23,8 +23,8 @@ class DiscovererDialog:
         # Add throbber
         #=======================================================================
         
-        throbber = Throbber(150, 150)
-        throbber.set_size_request(150, 150)
+        throbber = Throbber(100, 100)
+        throbber.set_size_request(100, 100)
         cls.widgets["throbberDock"].add(throbber)
         
         #=======================================================================
