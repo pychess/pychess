@@ -54,7 +54,7 @@ def evalMaterial (board, color):
         material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
         material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
     
-    phase = 8 - (material[WHITE] + material[BLACK]) / 1150
+    phase = max(1, round(8 - (material[WHITE] + material[BLACK]) / 1150))
     
     # If both sides are equal, we don't need to compute anything!
     if material[BLACK] == material[WHITE]:
