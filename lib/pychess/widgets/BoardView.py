@@ -696,7 +696,7 @@ class BoardView (gtk.DrawingArea):
                     matrix, invmatrix = matrixAround(self.matrix, cx+s/2., cy+s/2.)
                 else:
                     matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
-                    context.transform(invmatrix)
+                context.transform(invmatrix)
                 context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
                 drawPiece(  piece, context,
                             cx+CORD_PADDING, cy+CORD_PADDING,
