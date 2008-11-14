@@ -9,9 +9,10 @@ import Queue
 import gobject
 import gtk, pango
 
+from pychess.System import glock
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
-from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
@@ -362,7 +363,9 @@ class GladeWidgets:
             pass
         
         if not self.glade:
+            glock.acquire()
             self.glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+            glock.release()
         
         self.extras = {}
     

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Oct 24 00:08:01 2008 -->
+<!--*- mode: xml -*-->
 <glade-interface>
   <widget class="GtkWindow" id="discovererDialog">
     <property name="border_width">12</property>
     <property name="resizable">False</property>
     <property name="icon_name">pychess</property>
-    <property name="deletable">False</property>
     <child>
       <widget class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -29,21 +28,40 @@
             <property name="column_spacing">6</property>
             <property name="row_spacing">3</property>
             <child>
-              <widget class="GtkLabel" id="label2">
+              <widget class="GtkProgressBar" id="progressbar3">
                 <property name="visible">True</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">gnuchess:</property>
-              </widget>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label3">
-                <property name="visible">True</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">ShredderLinuxChess:</property>
+                <property name="pulse_step">0.10000000149</property>
+                <property name="text" translatable="yes"></property>
               </widget>
               <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
                 <property name="top_attach">2</property>
                 <property name="bottom_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkProgressBar" id="progressbar2">
+                <property name="visible">True</property>
+                <property name="pulse_step">0.10000000149</property>
+                <property name="text" translatable="yes"></property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkProgressBar" id="progressbar1">
+                <property name="visible">True</property>
+                <property name="pulse_step">0.10000000149</property>
+                <property name="text" translatable="yes"></property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
               </packing>
             </child>
             <child>
@@ -58,39 +76,22 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkProgressBar" id="progressbar1">
+              <widget class="GtkLabel" id="label3">
                 <property name="visible">True</property>
-                <property name="text" translatable="yes"></property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">ShredderLinuxChess:</property>
               </widget>
               <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkProgressBar" id="progressbar2">
-                <property name="visible">True</property>
-                <property name="text" translatable="yes"></property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkProgressBar" id="progressbar3">
-                <property name="visible">True</property>
-                <property name="text" translatable="yes"></property>
-                <property name="discrete_blocks">2</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
                 <property name="top_attach">2</property>
                 <property name="bottom_attach">3</property>
               </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">gnuchess:</property>
+              </widget>
             </child>
           </widget>
           <packing>
@@ -101,6 +102,8 @@
         <child>
           <widget class="GtkAlignment" id="throbberDock">
             <property name="visible">True</property>
+            <property name="xscale">0</property>
+            <property name="yscale">0</property>
             <child>
               <placeholder/>
             </child>
