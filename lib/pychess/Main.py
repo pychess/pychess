@@ -248,6 +248,7 @@ class PyChess:
             gobject.idle_add(do)
 
 def run (args):
+    import gtkexcepthook
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
     gtk.gdk.threads_init()
