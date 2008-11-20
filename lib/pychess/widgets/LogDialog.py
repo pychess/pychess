@@ -27,7 +27,7 @@ class InformationWindow:
         cls.tagToTime = {}
         
         cls.window = gtk.Window()
-        cls.window.set_title("PyChess Information Window")
+        cls.window.set_title(_("PyChess Information Window"))
         cls.window.set_border_width(12)
         uistuff.keepWindowSize("logdialog", cls.window, (640,480))
         mainHBox = gtk.HBox()
