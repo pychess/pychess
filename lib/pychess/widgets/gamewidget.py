@@ -474,7 +474,7 @@ def getheadbook ():
         return None
     return widgets["mainvbox"].get_children()[1].child
 
-
+boardsRemember = gtk.Alignment(1,1,1,1)
 def zoomToBoard (viewZoomed):
     def setStuffColor (color):
         for boardvbox in notebooks["board"].get_children():
@@ -484,12 +484,22 @@ def zoomToBoard (viewZoomed):
     
     if viewZoomed:
         dockAlign.remove(dock)
+        # parent is the 'book' Notebook owned by PyDockLeaf
         parent = notebooks["board"].get_parent()
-        parent.remove(notebooks["board"])
+        if parent == boardsRemember:
+            boardsRemember.remove(notebooks["board"])
+        else:
+            label = parent.get_tab_label(notebooks["board"])
+            parent.remove_page(parent.page_num(notebooks["board"]))
+            parent.append_page(boardsRemember, label)
         dockAlign.add(notebooks["board"])
-        setStuffColor(boardvbox.get_style().bg[ccalign.child.state])
+        setStuffColor(dockAlign.get_style().bg[gtk.STATE_NORMAL])
     else:
-        setStuffColor(notebooks["board"].get_style().bg[ccalign.child.state])
+        setStuffColor(boardsRemember.get_parent().get_style().bg[gtk.STATE_NORMAL])
+        dockAlign.remove(notebooks["board"])
+        boardsRemember.add(notebooks["board"])
+        boardsRemember.show_all()
+        dockAlign.add(dock)
 
 def show_tabs (show):
     if show:
