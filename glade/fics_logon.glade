@@ -278,7 +278,7 @@
                         <child>
                           <widget class="GtkImage" id="image348">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-orientation-portrait</property>
+                            <property name="icon_name">contact-new</property>
                           </widget>
                         </child>
                         <child>
