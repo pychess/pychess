@@ -86,12 +86,16 @@ class TopDock (DockComposite, TabReceiver):
         <docks>
             <dock id="x">
                 <v pos="200">
-                    <leaf current="x">
-                        <panel id="x" title="Lala" />
+                    <leaf current="x" dockable="False">
+                        <panel id="x" />
                     </leaf>
                     <h pos="200">
-                        <leaf current="y">
-                            <panel id="y" title="Lala" />
+                        <leaf current="y" dockable="True">
+                            <panel id="y" />
+                            <panel id="z" />
+                        </leaf>
+                        <leaf current="y" dockable="True">
+                            <panel id="y" />
                         </leaf>
                     </h>
                 </v>

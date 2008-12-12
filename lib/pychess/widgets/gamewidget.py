@@ -59,7 +59,7 @@ media_next = lookup16("stock_media-next")
 GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
 ACTION_MENU_ITEMS = ("draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
-VIEW_MENU_ITEMS = ("rotate_board1", "hint_mode", "spy_mode")
+VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
 
 path = prefix.addDataPrefix("sidepanel")
@@ -270,6 +270,9 @@ def delGameWidget (gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
     gmwidg.emit("closed")
     
+    if len(key2gmwidg) == 1:
+        getWidgets()["show_sidepanels"].set_active(True)
+    
     del key2gmwidg[gmwidg.notebookKey]
     pageNum = gmwidg.getPageNumber()
     headbook = getheadbook()
@@ -474,32 +477,11 @@ def getheadbook ():
         return None
     return widgets["mainvbox"].get_children()[1].child
 
-boardsRemember = gtk.Alignment(1,1,1,1)
 def zoomToBoard (viewZoomed):
-    def setStuffColor (color):
-        for boardvbox in notebooks["board"].get_children():
-            ccalign, boardcontrol = boardvbox.get_children()
-            ccalign.child.modify_bg(ccalign.child.state, color)
-            boardcontrol.view.modify_bg(boardcontrol.view.state, color)
-    
     if viewZoomed:
-        dockAlign.remove(dock)
-        # parent is the 'book' Notebook owned by PyDockLeaf
-        parent = notebooks["board"].get_parent()
-        if parent == boardsRemember:
-            boardsRemember.remove(notebooks["board"])
-        else:
-            label = parent.get_tab_label(notebooks["board"])
-            parent.remove_page(parent.page_num(notebooks["board"]))
-            parent.append_page(boardsRemember, label)
-        dockAlign.add(notebooks["board"])
-        setStuffColor(dockAlign.get_style().bg[gtk.STATE_NORMAL])
+        notebooks["board"].get_parent().get_parent().zoomUp()
     else:
-        setStuffColor(boardsRemember.get_parent().get_style().bg[gtk.STATE_NORMAL])
-        dockAlign.remove(notebooks["board"])
-        boardsRemember.add(notebooks["board"])
-        boardsRemember.show_all()
-        dockAlign.add(dock)
+        notebooks["board"].get_parent().get_parent().zoomDown()
 
 def show_tabs (show):
     if show:
