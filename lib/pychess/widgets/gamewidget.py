@@ -51,10 +51,10 @@ light_on = lookup16("stock_3d-light-on", "weather-clear")
 light_off = lookup16("stock_3d-light-off", "weather-clear-night")
 gtk_close = lookup16("gtk-close")
 
-media_previous = lookup16("stock_media-prev")
-media_rewind = lookup16("stock_media-rew")
-media_forward = lookup16("stock_media-fwd")
-media_next = lookup16("stock_media-next")
+media_previous = lookup16("gtk-media-previous-ltr")
+media_rewind = lookup16("gtk-media-rewind-ltr")
+media_forward = lookup16("gtk-media-forward-ltr")
+media_next = lookup16("gtk-media-next-ltr")
 
 GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
 ACTION_MENU_ITEMS = ("draw", "pause1", "resume1", "undo1", 
