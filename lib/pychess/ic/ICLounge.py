@@ -532,9 +532,9 @@ class PlayerTabSection (ParrentListSection):
     l = gtk.ICON_LOOKUP_USE_BUILTIN
     peoplepix = icons.load_icon("stock_people", 15, l)
     bookpix = icons.load_icon("stock_book_blue", 15, l)
-    easypix = icons.load_icon("stock_weather-few-clouds", 15, l)
-    advpix = icons.load_icon("stock_weather-cloudy", 15, l)
-    exppix = icons.load_icon("stock_weather-storm", 15, l)
+    easypix = icons.load_icon("weather-few-clouds", 15, l)
+    advpix = icons.load_icon("weather-overcast", 15, l)
+    exppix = icons.load_icon("weather-storm", 15, l)
     cmppix = icons.load_icon("stock_notebook", 15, l)
     
     def __init__ (self, widgets, connection):
