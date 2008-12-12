@@ -7,7 +7,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.BorderBox import BorderBox 
 
 from __init__ import CENTER
-from __init__ import DockComposite, DockLeaf
+from __init__ import DockComposite, DockLeaf, TopDock
 from PyDockComposite import PyDockComposite
 from StarArrowButton import StarArrowButton
 from HighlightArea import HighlightArea
@@ -43,6 +43,10 @@ class PyDockLeaf (DockLeaf):
         
         self.dockable = True
         self.panels = []
+        
+        self.zoomPointer = gtk.Label()
+        self.realtop = None
+        self.zoomed = False
         
         #assert isinstance(widget, gtk.Notebook)
         
@@ -93,6 +97,40 @@ class PyDockLeaf (DockLeaf):
             gobject.idle_add(cb)
         
         return title, id
+    
+    def zoomUp (self):
+        if self.zoomed:
+            return
+        
+        parent = self.get_parent()
+        while not isinstance(parent, DockComposite):
+            parent = parent.get_parent()
+        
+        parent.changeComponent(self, self.zoomPointer)
+        
+        while not isinstance(parent, TopDock):
+            parent = parent.get_parent()
+        
+        self.realtop = parent.getComponents()[0]
+        parent.changeComponent(self.realtop, self)
+        self.zoomed = True
+        self.book.set_show_border(False)
+    
+    def zoomDown (self):
+        if not self.zoomed:
+            return
+        
+        top_parent = self.get_parent()
+        old_parent = self.zoomPointer.get_parent()
+        while not isinstance(old_parent, DockComposite):
+            old_parent = old_parent.get_parent()
+        
+        top_parent.changeComponent(self, self.realtop)
+        old_parent.changeComponent(self.zoomPointer, self)
+        
+        self.realtop = None
+        self.zoomed = False
+        self.book.set_show_border(True)
     
     def getPanels(self):
         return self.panels
