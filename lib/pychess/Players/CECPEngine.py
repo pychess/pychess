@@ -32,8 +32,27 @@ def isdigits (strings):
     return True
 
 d_plus_dot_expr = re.compile(r"\d+\.")
-mov = "[a-hxOoKQRBN0-8+#=-]{2,7}[?!]*"
-anare = re.compile("\d+\.?\s+(Mat\d+|[-\d\.]+)\s+\d+\s+\d+\s+((?:%s\s*)+)" % mov)
+movere = re.compile("[a-hxOoKQRBN0-8+#=-]{2,7}[?!]*")
+
+anare = re.compile("""
+    ^                   # beginning of string
+    \s*                 #
+    \d+ \.?             # The ply analyzed. Some engines end it with a dot
+    \s+                 #
+    (Mat\d+ | [-\d\.]+) # Mat1 is used by gnuchess to specify mate in one.
+                        #        otherwise we should support a signed float
+    \s+                 #
+    [\d\.]+             # The time used in seconds
+    \s+                 #
+    [\d\.]+             # The score found in centipawns
+    \s+                 #
+    (.+)                # The Principal-Variation. With or without move numbers
+    \s*                 #
+    $                   # end of string
+    """, re.VERBOSE)
+                   
+#anare = re.compile("\d+\.?\s+ (Mat\d+|[-\d\.]+) \s+ \d+\s+\d+\s+((?:%s\s*)+)" % mov)
+
 whitespaces = re.compile(r"\s+")
 
 def semisynced(f):
@@ -253,8 +272,8 @@ class CECPEngine (ProtocolEngine):
             # Make the move
             self.board = board1
             
-            if self.isAnalyzing():
-                del self.analyzeMoves[:]
+            #if self.isAnalyzing():
+            #    del self.analyzeMoves[:]
             
             if not board2 or self.gonext:
                 self.__go()
@@ -610,16 +629,15 @@ class CECPEngine (ProtocolEngine):
                 print >> self.engine, "book off"
                 return
             
-            match = anare.match(line.strip())
+            match = anare.match(line)
             if match:
                 score, moves = match.groups()
-                mvstrs = moves.split()
+                mvstrs = movere.findall(moves)
                 moves = listToMoves (self.board, mvstrs, type=None, validate=True)
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
                 if moves and not self.board.board.opIsChecked():
-                    self.analyzeMoves = moves
                     self.emit("analyze", moves)
                 
                 return

@@ -17,6 +17,14 @@ class Engine (Player):
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
+    def __init__(self):
+        Player.__init__(self)
+        
+        self.currentAnalysis = []
+        def on_analysis(self_, analysis):
+            self.currentAnalysis = analysis
+        self.connect('analyze', on_analysis)
+    
     #===========================================================================
     #    Offer handling
     #===========================================================================
@@ -75,9 +83,9 @@ class Engine (Player):
         #Optional
     
     def getAnalysis (self):
-        """ Returns a list of moves, or None if there havent yet been made an
+        """ Returns a list of moves, or None if there haven't yet been made an
             analysis """
-        #Optional
+        return self.currentAnalysis
     
     #===========================================================================
     #    General chat handling

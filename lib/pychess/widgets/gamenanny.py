@@ -197,9 +197,9 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
     set_arrow = lambda x: gmwidg.board.view.runWhenReady(arrow, x)
     
     if enabled:
-        if len(analyzer.analyzeMoves) >= 1:
+        if len(analyzer.getAnalysis()) >= 1:
             if gmwidg.gamemodel.curplayer.__type__ == LOCAL:
-                set_arrow (analyzer.analyzeMoves[0].cords)
+                set_arrow (analyzer.getAnalysis()[0].cords)
             else: set_arrow (None)
         
         # This is a kludge using pythons ability to asign attributes to an
@@ -216,7 +216,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
             if gmwidg.gamemodel.curplayer.__type__ == LOCAL and moves:
                set_arrow (moves[0].cords)
             else: set_arrow (None)
-            
+        
         def on_game_change (gamemodel):
             set_arrow (None)
         
