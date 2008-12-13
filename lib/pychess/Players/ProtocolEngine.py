@@ -33,4 +33,3 @@ class ProtocolEngine (Engine):
         log.debug(reprColor[color]+"\n", self.defname)
         
         self.movecon = Condition()
-        self.analyzeMoves = []

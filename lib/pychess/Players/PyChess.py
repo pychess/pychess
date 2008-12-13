@@ -117,10 +117,13 @@ def analyze ():
         
         mvs, scr = alphaBeta (board, depth)
         
-        smvs = " ".join(listToSan(board, mvs))
+        #ply, eval, time, nodes, p/v
         
-        print depth, "\t", "%0.2f" % (time()-start), "\t", scr, "\t", \
-              lsearch.nodes, "\t", smvs
+        print depth, "\t", \
+              scr, "\t", \
+              "%0.2f" % (time()-start), "\t", \
+              lsearch.nodes, "\t", \
+              " ".join(listToSan(board, mvs))
         
         if lsearch.movesearches:
             print "%0.1f moves/position; %0.1f n/s" % (
