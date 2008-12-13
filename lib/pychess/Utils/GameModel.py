@@ -438,10 +438,10 @@ class GameModel (GObject, PooledThread):
         self.reason = reason
         
         for player in self.players:
-            player.end(reason)
+            player.end(self.status, reason)
         
         for spectactor in self.spectactors.values():
-            spectactor.end(reason)
+            spectactor.end(self.status, reason)
         
         if self.timemodel:
             self.timemodel.end()
