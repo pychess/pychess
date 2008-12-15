@@ -4,19 +4,6 @@ from attack import *
 from pychess.Utils.const import *
 from lmove import newMove
 
-
-def newPromotes (fromcord, tocord):
-    for p in PROMOTIONS:
-        yield newMove(fromcord, tocord, p)
-
-################################################################################
-#   bitsToMoves                                                                #
-################################################################################
-
-def bitsToMoves (fromcord, tobits):
-    for c in iterBits(tobits):
-        yield newMove(fromcord, c)
-
 ################################################################################
 #   Generate all moves                                                         #
 ################################################################################
@@ -74,28 +61,28 @@ def genAllMoves (board):
     # Knights
     knightMoves = moveArray[KNIGHT]
     for cord in iterBits(knights):
-        for move in bitsToMoves (cord, knightMoves[cord] & notfriends):
-            yield move
+        for c in iterBits(knightMoves[cord] & notfriends):
+            yield newMove(cord, c)
     
     # King
     kingMoves = moveArray[KING]
     cord = firstBit( kings )
-    for move in bitsToMoves (cord, kingMoves[cord] & notfriends):
-        yield move
+    for c in iterBits(kingMoves[cord] & notfriends):
+        yield newMove(cord, c)
     
     # Rooks and Queens
     for cord in iterBits(rooks | queens):
         attackBoard = attack00[cord][ray00[cord] & blocker] | \
                       attack90[cord][ray90[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & notfriends):
-            yield move
+        for c in iterBits(attackBoard & notfriends):
+            yield newMove(cord, c)
     
     # Bishops and Queens
     for cord in iterBits(bishops | queens):
         attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
                       attack135[cord][ray135[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & notfriends):
-            yield move
+        for c in iterBits(attackBoard & notfriends):
+            yield newMove(cord, c)
     
     # White pawns
     pawnEnemies = enemies | (enpassant != None and bitPosArray[enpassant] or 0)
@@ -106,9 +93,12 @@ def genAllMoves (board):
         movedpawns = (pawns >> 8) & notblocker # Move all pawns one step forward
         for cord in iterBits(movedpawns):
             if cord >= 56:
-                for move in newPromotes (cord-8, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord-8, cord, p)
             else:
+                #if (cord-8, cord) == (33, 41):
+                #    print repr(board)
+                #print toString(pawns)
                 yield newMove (cord-8, cord)
         
         # Two steps
@@ -125,8 +115,8 @@ def genAllMoves (board):
         capLeftPawns = (capLeftPawns >> 7) & pawnEnemies
         for cord in iterBits(capLeftPawns):
             if cord >= 56:
-                for move in newPromotes (cord-7, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord-7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-7, cord, ENPASSANT)
             else:
@@ -138,8 +128,8 @@ def genAllMoves (board):
         capRightPawns = (capRightPawns >> 9) & pawnEnemies
         for cord in iterBits(capRightPawns):
             if cord >= 56:
-                for move in newPromotes (cord-9, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord-9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-9, cord, ENPASSANT)
             else:
@@ -153,8 +143,8 @@ def genAllMoves (board):
         movedpawns = (pawns << 8) & notblocker
         for cord in iterBits(movedpawns):
             if cord <= 7:
-                for move in newPromotes (cord+8, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord+8, cord, p)
             else:
                 yield newMove (cord+8, cord)
         
@@ -173,8 +163,8 @@ def genAllMoves (board):
         capLeftPawns = capLeftPawns << 7 & pawnEnemies
         for cord in iterBits(capLeftPawns):
             if cord <= 7:
-                for move in newPromotes (cord+7, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord+7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+7, cord, ENPASSANT)
             else:
@@ -186,8 +176,8 @@ def genAllMoves (board):
         capRightPawns = capRightPawns << 9 & pawnEnemies
         for cord in iterBits(capRightPawns):
             if cord <= 7:
-                for move in newPromotes (cord+9, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord+9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+9, cord, ENPASSANT)
             else:
@@ -222,28 +212,28 @@ def genCaptures (board):
     # Knights
     knightMoves = moveArray[KNIGHT]
     for cord in iterBits(knights):
-        for move in bitsToMoves (cord, knightMoves[cord] & enemies):
-            yield move
+        for c in iterBits(knightMoves[cord] & enemies):
+            yield newMove(cord, c)
     
     # King
     kingMoves = moveArray[KING]
     cord = firstBit( kings )
-    for move in bitsToMoves (cord, kingMoves[cord] & enemies):
-        yield move
+    for c in iterBits(kingMoves[cord] & enemies):
+        yield newMove(cord, c)
     
     # Rooks and Queens
     for cord in iterBits(rooks|queens):
         attackBoard = attack00[cord][ray00[cord] & blocker] | \
                       attack90[cord][ray90[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & enemies):
-            yield move
+        for c in iterBits(attackBoard & enemies):
+            yield newMove(cord, c)
     
     # Bishops and Queens
     for cord in iterBits(bishops|queens):
         attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
                       attack135[cord][ray135[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & enemies):
-            yield move
+        for c in iterBits(attackBoard & enemies):
+            yield newMove(cord, c)
     
     # White pawns
     pawnEnemies = enemies | (enpassant != None and bitPosArray[enpassant] or 0)
@@ -254,8 +244,8 @@ def genCaptures (board):
         
         movedpawns = (pawns >> 8) & notblocker & rankBits[7]
         #for cord in iterBits(movedpawns):
-        #    for move in newPromotes (cord-8, cord):
-        #        yield move
+        #    for p in PROMOTIONS:
+        #            yield newMove(cord-8, cord, p)
         
         # Capture left
         
@@ -263,8 +253,8 @@ def genCaptures (board):
         capLeftPawns = (capLeftPawns >> 7) & pawnEnemies
         for cord in iterBits(capLeftPawns):
             if cord >= 56:
-                for move in newPromotes (cord-7, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord-7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-7, cord, ENPASSANT)
             else:
@@ -276,8 +266,8 @@ def genCaptures (board):
         capRightPawns = (capRightPawns >> 9) & pawnEnemies
         for cord in iterBits(capRightPawns):
             if cord >= 56:
-                for move in newPromotes (cord-9, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord-9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-9, cord, ENPASSANT)
             else:
@@ -290,8 +280,8 @@ def genCaptures (board):
         
         movedpawns = pawns << 8 & notblocker & rankBits[0]
         #for cord in iterBits(movedpawns):
-        #    for move in newPromotes (cord+8, cord):
-        #        yield move
+        #    for p in PROMOTIONS:
+        #            yield newMove(cord+8, cord, p)
         
         # Capture left
         
@@ -299,8 +289,8 @@ def genCaptures (board):
         capLeftPawns = capLeftPawns << 7 & pawnEnemies
         for cord in iterBits(capLeftPawns):
             if cord <= 7:
-                for move in newPromotes (cord+7, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord+7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+7, cord, ENPASSANT)
             else:
@@ -312,8 +302,8 @@ def genCaptures (board):
         capRightPawns = capRightPawns << 9 & pawnEnemies
         for cord in iterBits(capRightPawns):
             if cord <= 7:
-                for move in newPromotes (cord+9, cord):
-                    yield move
+                for p in PROMOTIONS:
+                    yield newMove(cord+9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+9, cord, ENPASSANT)
             else:
@@ -338,28 +328,28 @@ def genNonCaptures (board):
     # Knights
     knightMoves = moveArray[KNIGHT]
     for cord in iterBits(knights):
-        for move in bitsToMoves (cord, knightMoves[cord] & notblocker):
-            yield move
+        for c in iterBits(knightMoves[cord] & notblocker):
+            yield newMove(cord, c)
     
     # King
     kingMoves = moveArray[KING]
     cord = firstBit( kings )
-    for move in bitsToMoves (cord, kingMoves[cord] & notblocker):
-        yield move
+    for c in iterBits(kingMoves[cord] & notblocker):
+        yield newMove(cord, c)
     
     # Rooks and Queens
     for cord in iterBits(rooks):
         attackBoard = attack00[cord][ray00[cord] & blocker] | \
                       attack90[cord][ray90[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
+        for c in iterBits(attackBoard & notblocker):
+            yield newMove(cord, c)
     
     # Bishops and Queens
     for cord in iterBits(bishops):
         attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
                       attack135[cord][ray135[cord] & blocker]
-        for move in bitsToMoves (cord, attackBoard & notblocker):
-            yield move
+        for c in iterBits(attackBoard & notblocker):
+            yield newMove(cord, c)
     
     # White pawns
     if board.color == WHITE:
@@ -425,8 +415,8 @@ def genCheckEvasions (board):
             if not pinnedOnKing (board, cord, color):
                 if arBoard[cord] == PAWN and \
                         (chkcord <= H1 or chkcord >= A8):
-                    for move in newPromotes (cord, chkcord):
-                        yield move
+                    for p in PROMOTIONS:
+                        yield newMove(cord, chkcord, p)
                 else:
                     yield newMove (cord, chkcord)
         
@@ -467,8 +457,8 @@ def genCheckEvasions (board):
                     if pinnedOnKing (board, fcord, color):
                         continue
                     if arBoard[fcord] == PAWN and (cord > H7 or cord < A2):
-                        for move in newPromotes (fcord, cord):
-                            yield move
+                        for p in PROMOTIONS:
+                            yield newMove(fcord, cord, p)
                     else:
                         yield newMove (fcord, cord)
     
