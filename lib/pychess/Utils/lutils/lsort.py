@@ -1,5 +1,6 @@
 
 from attack import getAttacks, addXrayPiece, swapOff, xray
+from pychess.Utils.eval import pos as positionValues
 
 def staticExchangeEvaluate (board, move):
     """ The GnuChess Static Exchange Evaluator (or SEE for short).
@@ -96,8 +97,12 @@ def getMoveValue (board, table, depth, move):
     #opking = board.kings[1-board.color]
     #score = distance[fpiece][fcord][opking] - distance[fpiece][tcord][opking]
     
-    from pychess.Utils.eval import pos
-    score = pos[fpiece][board.color][tcord] - pos[fpiece][board.color][fcord] 
+    if fpiece not in positionValues:
+        # That is, fpiece == EMPTY
+        print fcord, tcord
+        print repr(board)
+    score = positionValues[fpiece][board.color][tcord] - \
+            positionValues[fpiece][board.color][fcord]
     
     # History heuristic
     score += table.getButterfly(move)
