@@ -14,6 +14,29 @@ def testFifty (board):
         return True
     return False
 
+drawSet = set((
+    (0, 1, 0, 0,   0, 0, 0, 0), #KBK
+    (1, 0, 0, 0,   0, 0, 0, 0), #KNK
+    (0, 0, 0, 0,   0, 1, 0, 0), #KKB
+    (0, 0, 0, 0,   1, 0, 0, 0), #KNK
+    
+    (1, 0, 0, 0,   0, 1, 0, 0), #KNKB
+    (0, 1, 0, 0,   1, 0, 0, 0), #KBKN
+))
+
+# Contains not 100% sure ones 
+drawSet2 = set((
+    (2, 0, 0, 0,   0, 0, 0, 0), #KNNK
+    (0, 0, 0, 0,   2, 0, 0, 0), #KKNN
+    
+    (2, 0, 0, 0,   1, 0, 0, 0), #KNNKN
+    (1, 0, 0, 0,   2, 0, 0, 0), #KNKNN
+    (2, 0, 0, 0,   0, 1, 0, 0), #KNNKB
+    (0, 1, 0, 0,   2, 0, 0, 0), #KBKNN
+    (2, 0, 0, 0,   0, 0, 1, 0), #KNNKR
+    (0, 0, 1, 0,   2, 0, 0, 0)  #KRKNN
+))
+
 def testMaterial (board):
     """ Tests if no players are able to win the game from the current
         position """
@@ -21,29 +44,26 @@ def testMaterial (board):
     whiteBoards = board.boards[WHITE]
     blackBoards = board.boards[BLACK]
     
-    if bitLength(whiteBoards[QUEEN]) > 0 or bitLength(whiteBoards[ROOK]) or \
-            bitLength(blackBoards[QUEEN]) > 0 or bitLength(blackBoards[ROOK]):
+    if bitLength(whiteBoards[PAWN]) or bitLength(blackBoards[PAWN]):
         return False
     
-    wp = bitLength(whiteBoards[PAWN])
-    bp = bitLength(blackBoards[PAWN])
-    if wp > 0 or bp > 0:
+    if bitLength(whiteBoards[QUEEN]) or bitLength(blackBoards[QUEEN]):
         return False
     
     wn = bitLength(whiteBoards[KNIGHT])
     wb = bitLength(whiteBoards[BISHOP])
+    wr = bitLength(whiteBoards[ROOK])
     bn = bitLength(blackBoards[KNIGHT])
     bb = bitLength(blackBoards[BISHOP])
+    br = bitLength(blackBoards[ROOK])
     
-    # Tests: KK, KBK, KKB, KNK, KKN
-    if wn + wb + bn + bb <= 1:
+    if (wn, wb, wr, 0,   bn, wb, wr, 0) in drawSet:
         return True
-    
-    # Tests KBKB
-    if wn == 0 and bn == 0 and wb == 1 and bb == 1:
-        # Draw if bishops are of same color
-        if (whiteBoards[BISHOP] & BLACK_SQUARES and BLACK or WHITE) == \
-                (blackBoards[BISHOP] & BLACK_SQUARES and BLACK or WHITE):
+        
+    # Tests KBKB. Draw if bishops are of same color
+    if not wn + wr + bn + wr and wb == 1 and bb == 1:
+        if whiteBoards[BISHOP] & BLACK_SQUARES and True != \
+           blackBoards[BISHOP] & BLACK_SQUARES and True:
             return True
 
 # This could be expanded by the fruit kpk draw function, which can test if a
