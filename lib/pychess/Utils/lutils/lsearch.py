@@ -10,6 +10,7 @@ from lmove import toSAN
 from ldata import MATE_VALUE
 from TranspositionTable import TranspositionTable
 import ldraw
+from pychess.Utils.lutils.egtb_k4it import probeEndGameTable
 
 TIMECHECK_FREQ = 500
 
@@ -21,6 +22,7 @@ nodes = 0
 last = 0
 endtime = 0
 timecheck_counter = TIMECHECK_FREQ
+useegtb = False
 
 def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
@@ -40,6 +42,28 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     foundPv = False
     hashf = hashfALPHA
     amove = []
+    
+    ############################################################################
+    # Look in the end game table
+    ############################################################################
+    
+    if useegtb:
+        egtb = probeEndGameTable(board)
+        if egtb:
+            move, state, steps = egtb[0]
+            
+            if state == DRAW:
+                score = 0
+            elif board.color == WHITE:
+                if state == WHITEWON:
+                    score = MATE_VALUE-steps+2
+                else: score = -MATE_VALUE+steps-2
+            else:
+                if state == WHITEWON:
+                    score = -MATE_VALUE+steps-2
+                else: score = MATE_VALUE-steps+2
+            
+            return [move], score
     
     ###########################################################################
     # We don't save repetition in the table, so we need to test draw before   #
@@ -101,29 +125,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             depth += 1
         else:
             last = 0
-            
-            #if (ply+board.color)%2:
-            #    v = -evaluateComplete(board, 1-board.color, balanced=True)
-            #else:
-                # White
-            if not (ply+board.color)%2:
-                mvs, val = quiescent(board, alpha, beta, ply)
-            else:
-                val = evaluateComplete(board, board.color)
-                mvs = []
-            #assert abs(val)/val == abs(v)/v, (abs(val)/val, abs(v)/v, v, val, last) 
-            
-            #Sprint ply, ",", alpha, beta, quiescent(board, alpha, beta, ply)
-            return mvs, val
-            
-            if board.color == BLACK:
-                return [], -v
-            return [], v
-            if board.color != (board.color+ply)%2:
-                return [], -v
-            return [], v
-            return [] 
-            mvs, val = -quiescent(board, alpha, beta, ply)
+            mvs, val = quiescent(board, alpha, beta, ply)
             return mvs, val
     
     ############################################################################
@@ -181,11 +183,11 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                         table.addButterfly(move, depth)
                 last = 2
                 return [move]+mvs, beta
-                
+            
             alpha = val
             amove = [move]+mvs
             hashf = hashfEXACT
-            foundPv = False#True
+            foundPv = True
     
     ############################################################################
     # Return                                                                   #
