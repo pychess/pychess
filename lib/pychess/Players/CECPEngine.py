@@ -374,7 +374,10 @@ class CECPEngine (ProtocolEngine):
         
         self.__setPonder(strength >= 7)
         
-        self.optionQueue.append("random")
+        if strength == 8:
+            self.optionQueue.append("egtb")
+        else:
+            self.optionQueue.append("random")
     
     def __setDepth (self, depth):
         self.optionQueue.append("sd %d" % depth)

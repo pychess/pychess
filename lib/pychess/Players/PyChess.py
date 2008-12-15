@@ -21,6 +21,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils import leval
 from pychess.Utils.Board import Board
 
+
 try:
     import psyco
     psyco.bind(alphaBeta)
@@ -59,6 +60,7 @@ features = {
 
 sd = 10
 skipPruneChance = 0
+useegtb = False
 moves = None
 increment = None
 mytime = None
@@ -165,6 +167,7 @@ def go ():
         
         global mytime, increment, scr
         lsearch.skipPruneChance = skipPruneChance
+        lsearch.useegtb = useegtb
         lsearch.searching = True
         
         if mytime == None:
@@ -289,6 +292,10 @@ while True:
         if sd >= 5:
             print "If the game has no timesettings, you probably don't want\n"+\
                   "to set a search depth much greater than 4"
+    
+    elif lines[0] == "egtb":
+        # This is a crafty command interpreted a bit loose
+        useegtb = True
     
     elif lines[0] == "level":
         moves = int(lines[1])
