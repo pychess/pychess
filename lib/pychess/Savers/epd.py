@@ -142,7 +142,7 @@ class EpdFile (ChessFile):
                 if sem == -1:
                     opcode = data[keyindex+len(key)+1:]
                 else: opcode = data[keyindex+len(key)+1:sem]
-                email, name = opcode.split(" ")
+                email, name = opcode.split(" ", 1)
                 names[key] = name
         
         color = data.split(" ")[1] == "b" and BLACK or WHITE
