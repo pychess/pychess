@@ -44,11 +44,13 @@ class SpotGraph (gtk.EventBox):
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.motion_notify)
+        self.connect("size-allocate", self.size_allocate)
         
         self.cords = []
         self.hovered = None
         self.pressed = False
         self.spots = {}
+        self.spotQueue = [] # For spots added prior to widget allocation
         
         self.xmarks = []
         self.ymarks = []
@@ -192,6 +194,12 @@ class SpotGraph (gtk.EventBox):
             self.hovered = spot
             self.redraw_canvas(self.getBounds(self.hovered))
     
+    def size_allocate (self, widget, allocation):
+        assert self.get_allocation().width > 1
+        for spot in self.spotQueue:
+            self.addSpot(*spot)
+        del self.spotQueue[:]
+    
     ############################################################################
     # Interaction                                                              #
     ############################################################################
@@ -199,6 +207,11 @@ class SpotGraph (gtk.EventBox):
     def addSpot (self, name, text, x0, y0, type=0):
         """ x and y are in % from 0 to 1 """
         assert type in range(len(self.typeColors))
+        
+        if self.get_allocation().width <= 1:
+            self.spotQueue.append((name, text, x0, y0, type))
+            return
+        
         x1, y1 = self.getNearestFreeNeighbourHexigon(x0, 1-y0)
         spot = (x1, y1, type, name, text)
         self.spots[name] = spot
@@ -324,7 +337,7 @@ class SpotGraph (gtk.EventBox):
             if self.isEmpty (x, y):
                 return self.pixToPrc (x, y)
     
-    def getNearestFreeNeighbour (self, xorg, yorg):
+    def getNearestFreeNeighbourSquare (self, xorg, yorg):
         
         """ This method performs a spircal search for an empty square to put a
             new dot. """
@@ -376,6 +389,7 @@ class SpotGraph (gtk.EventBox):
         # Make sure spiral search don't put dots outside the graph
         x, y = self.prcToPix(0,0)
         w, h = self.prcToPix(1,1)
+        
         if not x <= x0 <= w or not y <= y0 <= h:
             return False
         
