@@ -149,17 +149,60 @@ def pinnedOnKing (board, cord, color):
 
     return False
 
-def swapOff (board, tcord, swaplist = [], lastval = 0, ours = -1, theirs = -1):
+def staticExchangeEvaluate (board, moveOrTcord, color=None):
+    """ The GnuChess Static Exchange Evaluator (or SEE for short).
+    First determine the target square.  Create a bitboard of all squares
+    attacking the target square for both sides.  Using these 2 bitboards,
+    we take turn making captures from smallest piece to largest piece.
+    When a sliding piece makes a capture, we check behind it to see if
+    another attacker piece has been exposed.  If so, add this to the bitboard
+    as well.  When performing the "captures", we stop if one side is ahead
+    and doesn't need to capture, a form of pseudo-minimaxing. """
     
-    color = board.color
-    opcolor = 1-color
-    boards = board.boards[color]
-    opboards = board.boards[opcolor]
+    #
+    # Notice: If you use the tcord version, the color is the color attacked, and
+    #         the color to witch the score is relative.
+    #
     
-    if ours == -1:
+    swaplist = [0]
+    
+    if color == None:
+        move = moveOrTcord
+        flag = move >> 12
+        fcord = (move >> 6) & 63
+        tcord = move & 63
+        
+        color = board.friends[BLACK] & bitPosArray[fcord] and BLACK or WHITE
+        opcolor = 1-color
+        boards = board.boards[color]
+        opboards = board.boards[opcolor]
+    
         ours = getAttacks (board, tcord, color)
-    if theirs == -1:
+        ours = clearBit (ours, fcord)
         theirs = getAttacks (board, tcord, opcolor)
+    
+        if xray[board.arBoard[fcord]]:
+            ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
+        
+        if flag in PROMOTIONS:
+            swaplist = [PIECE_VALUES[flag-3] - PAWN_VALUE]
+            lastval = -PIECE_VALUES[flag-3]
+        else:
+            if flag == ENPASSANT:
+                swaplist = [PAWN_VALUE]
+            else: swaplist = [PIECE_VALUES[board.arBoard[tcord]]]
+            lastval = -PIECE_VALUES[board.arBoard[fcord]]
+    
+    else:
+        tcord = moveOrTcord
+        opcolor = 1-color
+        boards = board.boards[color]
+        opboards = board.boards[opcolor]
+        
+        ours = getAttacks (board, tcord, color)
+        theirs = getAttacks (board, tcord, opcolor)
+        
+        lastval = -PIECE_VALUES[board.arBoard[tcord]]
     
     while theirs:
         for piece in range(PAWN, KING+1):
@@ -174,7 +217,9 @@ def swapOff (board, tcord, swaplist = [], lastval = 0, ours = -1, theirs = -1):
                 lastval = PIECE_VALUES[piece]
                 break
         
-        if not ours: break
+        if not ours:
+            break
+        
         for piece in range(PAWN, KING+1):
             r = ours & boards[piece]
             if r:
@@ -190,7 +235,7 @@ def swapOff (board, tcord, swaplist = [], lastval = 0, ours = -1, theirs = -1):
     #  At this stage, we have the swap scores in a list.  We just need to
     #  mini-max the scores from the bottom up to the top of the list.
     
-    for n in range(len(swaplist)-1, -1, -1):
+    for n in xrange(len(swaplist)-1, 0, -1):
         if n & 1:
             if swaplist[n] <= swaplist[n-1]:
                 swaplist[n-1] = swaplist[n] 

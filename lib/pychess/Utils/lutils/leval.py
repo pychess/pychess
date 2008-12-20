@@ -110,7 +110,7 @@ def evalKingTropism (board, color, phase):
     pieces = board.boards[color]
     oppieces = board.boards[opcolor]
     
-    if phase > 4 or not oppieces[QUEEN]:
+    if phase >= 4 or not oppieces[QUEEN]:
         opking = board.kings[opcolor]
     else:
         opking = firstBit(oppieces[QUEEN])
@@ -307,17 +307,35 @@ def evalPawnStructure (board, color, phase):
         score -= 48
     elif color == BLACK and ((pawns & d2e2[BLACK]) << 8) & blocker:
         score -= 48
-        
+    
     # Enemy has no pieces & King is outcolor of passed pawn square
     if passed and not opMajorCount:
         for cord in iterBits(passed):
             if board.color == color:
                 if not squarePawnMask[color][cord] & opboards[KING]:
-                    score += 1100 * passedScores[color][RANK(cord)] / 550
+                    score += passedScores[color][RANK(cord)]
             else:
                 if not moveArray[KING][opking] & squarePawnMask[color][cord]:
-                    score += 1100 * passedScores[color][RANK(cord)] / 550
-        
+                    score += passedScores[color][RANK(cord)]
+    
+    # Estimate if any majors are able to hunt us down
+    for pawn in iterBits(passed):
+        found_hunter = False
+        if color == WHITE:
+            prom_cord = 7 << 3 | FILE(pawn)
+        else: prom_cord = FILE(pawn)
+        distance_to_promotion = distance[PAWN][pawn][prom_cord]
+        for piece in xrange(KNIGHT, KING+1):
+            for cord in iterBits(opboards[piece]):
+                hunter_distance = distance[piece][cord][prom_cord]
+                if hunter_distance <= distance_to_promotion:
+                    found_hunter = True
+                    break
+            if found_hunter:
+                break
+        if not found_hunter:
+            score += passedScores[color][RANK(pawn)] / 5
+    
     # If both colors are castled on different colors, bonus for pawn storms
     if abs(FILE(king)-FILE(opking)) >= 4 and phase < 6:
         n1 = FILE(opking)
@@ -364,16 +382,39 @@ def evalKing (board, color, phase):
     # - - - - - n - -
     # - - - K - - - R
     
-    # If we are in endgame
+    king = board.kings[color]
+    opking = board.kings[1-color]
+    
+    # If we are in endgame, we want our king in the center, and theirs far away
     if phase >= 6:
-        return endingKing[board.kings[color]] - endingKing[board.kings[1-color]]
+        return endingKing[king] - endingKing[opking]
+    
+    # else if castled, prefer having some pawns in front
+    elif FILE(king) not in (3,4) and RANK(king) in (0,8):
+        if color == WHITE:
+            if FILE(king) < 3:
+                wall1 = frontWall[color][B1]
+            else: wall1 = frontWall[color][G1]
+            wall2 = wall1 >> 8
+        else:
+            if FILE(king) < 3:
+                wall1 = frontWall[color][B8]
+            else: wall1 = frontWall[color][G8]
+            wall2 = wall1 << 8
+        
+        pawns = board.boards[color][PAWN]
+        total_in_front = bitLength(wall1|wall2&pawns)
+        numbermod = (0,1,2,3,2.33,1.67,1)[total_in_front]
+        
+        s = bitLength(wall1&pawns) + bitLength(wall2&pawns)/2.
+        return s * numbermod * 5
     
     return 0
     
 def evalKnights (board, color, phase):
     outerring = ~lbox
-    score = -15 * bitLength (board.boards[color][KNIGHT] & outerring)
-    return score-score/phase
+    outer_count = bitLength (board.boards[color][KNIGHT] & outerring)
+    return -max(15-phase,0)*outer_count
 
 def evalDev (board, color, phase):
     """
@@ -481,18 +522,18 @@ def evalBishops (board, color, phase):
     if color == WHITE:
         if bishops & bitPosArray[B5] and arBoard[C6] == EMPTY and \
                 oppawns & bitPosArray[B7] and oppawns & bitPosArray[C7]:
-            score -= 25
+            score -= 50
         if bishops & bitPosArray[G5] and arBoard[F6] == EMPTY and \
                 oppawns & bitPosArray[F7] and oppawns & bitPosArray[G7]:
-            score -= 25
+            score -= 50
     
     else:
         if bishops & bitPosArray[B4] and arBoard[C3] == EMPTY and \
                 oppawns & bitPosArray[B2] and oppawns & bitPosArray[C2]:
-            score -= 25
+            score -= 50
         if bishops & bitPosArray[G4] and arBoard[F3] == EMPTY and \
                 oppawns & bitPosArray[F2] and oppawns & bitPosArray[G2]:
-            score -= 25
+            score -= 50
     
     return score
 
