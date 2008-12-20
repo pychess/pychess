@@ -19,6 +19,7 @@ from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils import leval
+from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.Board import Board
 
 
@@ -273,9 +274,13 @@ while True:
     elif lines[0] == "usermove":
         
         stopSearching()
-        #lsearch.table.clear()
         
         move = parseAny (board, lines[1])
+        
+        if not validateMove(board, move):
+            print "Illegal move", lines[1]
+            continue
+        
         board.applyMove(move)
         
         playingAs = board.color

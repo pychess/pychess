@@ -269,16 +269,12 @@ class CECPEngine (ProtocolEngine):
         
         self.changeLock.acquire()
         try:
-            # Make the move
-            self.board = board1
-            
-            #if self.isAnalyzing():
-            #    del self.analyzeMoves[:]
-            
-            if not board2 or self.gonext:
+            if self.board == board1 or not board2 or self.gonext:
+                self.board = board1
                 self.__go()
                 self.gonext = False
             else:
+                self.board = board1
                 self.__usermove(board2, move)
                 
                 if self.forced:
