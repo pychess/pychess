@@ -6,6 +6,8 @@
     Can be used for commenting on board changes.
 """
 
+from gettext import ngettext as _n
+
 import leval
 from pychess.Utils.const import *
 from lmove import *
@@ -13,6 +15,16 @@ from lmovegen import *
 from lsort import staticExchangeEvaluate
 from ldata import *
 from validator import validateMove
+
+
+def join(items):
+    if len(items) == 1:
+        return items[0]
+    else:
+        s = "%s %s %s" % (items[-2], _("and"), items[-1])
+        if len(items) > 2:
+            s = ", ".join(items[:-2]+[s])
+        return s 
 
 #
 # Functions can be of types:
@@ -31,11 +43,11 @@ def final_status (model, phase):
     elif model.status in (WHITEWON,BLACKWON):
         yield _("mates")
 
-def moves_check (model, phase):
+def offencive_moves_check (model, phase):
     if model.boards[-1].board.isChecked():
         yield _("puts opponent in check")
 
-def moves_safety (model, phase):
+def defencive_moves_safety (model, phase):
     
     board = model.boards[-1].board
     oldboard = model.boards[-2].board
@@ -46,22 +58,37 @@ def moves_safety (model, phase):
     color = oldboard.color
     opcolor = 1-color
     
-    kc = board.kings[color]
-    okc = oldboard.kings[color]
-    s = ((6-phase)*leval.normalKing[kc] + phase*leval.endingKing[kc]) / 6
-    os = ((6-phase)*leval.normalKing[okc] + phase*leval.endingKing[okc]) / 6
+    delta_eval_king = leval.evalKing(board, color, phase) - \
+                      leval.evalKing(oldboard, color, phase)
     
-    if s > os:
-        pawns = board.boards[color][PAWN]
-        if bitLength(frontWall[color][kc] & pawns) == 3:
-            yield _("improves king safety")
-        else:
-            yield _("slightly improves king safety")
+    # PyChess points tropism to queen for phase <= 3. Thus we set a high phase 
+    delta_eval_tropism = leval.evalKingTropism(board, opcolor, 10) - \
+                         leval.evalKingTropism(oldboard, opcolor, 10)
+    
+    # Notice, that tropism was negative
+    delta_score = delta_eval_king - delta_eval_tropism/2
+    
+    if delta_score > 35:
+        yield _("improves king safety")
+    elif delta_score > 15:
+        yield _("slightly improves king safety")
 
-def moves_rook (model, phase):
+def offencive_moves_rook (model, phase):
     move = model.moves[-1].move
+    fcord = FCORD(move)
     tcord = TCORD(move)
     board = model.boards[-1].board
+    color = 1-board.color
+    opcolor = 1-color
+    
+    # We also detect rook-to-open castlings
+    if board.arBoard[tcord] == KING:
+        if FLAG(move) == QUEEN_CASTLE:
+            fcord = board.ini_rooks[color][0]
+            tcord = tcord+1
+        elif FLAG(move) == KING_CASTLE:
+            fcord = board.ini_rooks[color][1]
+            tcord = tcord-1
     
     if board.arBoard[tcord] != ROOK:
         return
@@ -80,7 +107,7 @@ def moves_rook (model, phase):
             yield _("moves a rook to an open file")
         else: yield _("moves an rook to a half-open file")
 
-def moves_fianchetto (model, phase):
+def offencive_moves_fianchetto (model, phase):
     
     board = model.boards[-1].board
     tcord = TCORD(model.moves[-1].move)
@@ -89,12 +116,12 @@ def moves_fianchetto (model, phase):
     if movingcolor == WHITE:
         if board.castling & W_OO and tcord == G2:
             yield _("moves bishop into fianchetto: %s") % "g2"
-        if board.castling & W_OOO and tcord == B2:
+        elif board.castling & W_OOO and tcord == B2:
             yield _("moves bishop into fianchetto: %s") % "b2"
     else:
         if board.castling & B_OO and tcord == G7:
             yield _("moves bishop into fianchetto: %s") % "g7"
-        if board.castling & B_OOO and tcord == B7:
+        elif board.castling & B_OOO and tcord == B7:
             yield _("moves bishop into fianchetto: %s") % "b7"
 
 def prefix_type (model, phase):
@@ -130,16 +157,34 @@ def attack_type (model, phase):
                 yield _("takes back material")
             else:
                 see = staticExchangeEvaluate(oldboard, move)
-                if see == 0:
+                if see < 0:
+                    yield _("sacrifies material")
+                elif see == 0:
                     yield _("exchanges material")
                 elif see > 0:
                     yield _("captures material")
-                elif see < 0:
-                    yield _("sacrifies material")
+    
+    PIECE_VALUES[BISHOP] = bishopBackup
+
+def defencive_moves_tactic (model, phase):
     
     # ------------------------------------------------------------------------ #
-    # Test if we threats something, or at least puts more preassure on it      #
+    # Test if we threat something, or at least put more pressure on it         #
     # ------------------------------------------------------------------------ #
+    
+    # We set bishop value down to knight value, as it is what most people expect
+    bishopBackup = PIECE_VALUES[BISHOP]
+    PIECE_VALUES[BISHOP] = PIECE_VALUES[KNIGHT]
+    
+    board = model.boards[-1].board
+    oldboard = model.boards[-2].board
+    move = model.moves[-1].move
+    fcord = FCORD(move)
+    tcord = TCORD(move)
+    piece = board.arBoard[tcord]
+    
+    found_threatens = []
+    found_increases = []
     
     # What do we attack now?
     board.setColor(1-board.color)
@@ -153,6 +198,10 @@ def attack_type (model, phase):
         if FCORD(ncap) != TCORD (move):
             continue
         
+        # We don't want to move back
+        if TCORD(ncap) == FCORD(move):
+            continue
+        
         # We don't thread the king. We check him! (in another function)
         if board.arBoard[TCORD(ncap)] == KING:
             continue
@@ -161,33 +210,32 @@ def attack_type (model, phase):
         if validateMove(oldboard, newMove(FCORD(move), TCORD(ncap))):
             continue
         
-        # We will always attack first with the lowest valued piece.
-        # Where is it?
-        lowest = None
-        cord = None
-        attacks = getAttacks (board, TCORD(ncap), board.color)
-        for fcord in iterBits(attacks):
-            v = PIECE_VALUES[board.arBoard[fcord]]
-            if lowest == None or v < lowest:
-                lowest = v
-                cord = fcord
-        assert cord != None, "How can there not be any attacks, when ncap exists? %s" % toString(attacks)
-        easiestAttack = newMove(cord, TCORD(ncap))
-        
-        # Now test if we threats our enemy, or they are too strong
-        see = staticExchangeEvaluate(board, easiestAttack)
-        if see > 0:
+        # Test if we threats our enemy, at least more than before
+        see0 = staticExchangeEvaluate(oldboard, TCORD(ncap), 1-oldboard.color)
+        see1 = staticExchangeEvaluate(board, TCORD(ncap), 1-oldboard.color)
+        if see1 > see0:
+            
             # If a new winning capture has been created
-            yield _("threatens to win material %s") % toSAN(board,easiestAttack, True)
-        elif bitLength(attacks) > 1:
+            if see1 > 0:
+                # Find the easiest attack
+                attacks = getAttacks (board, TCORD(ncap), board.color)
+                v, cord = min((PIECE_VALUES[board.arBoard[fc]],fc)
+                              for fc in iterBits(attacks))
+                easiestAttack = newMove(cord, TCORD(ncap))
+                found_threatens.append(toSAN(board,easiestAttack, True))
+            
             # Even though we might not yet be strong enough, we might still
             # have strengthened another friendly attack
-            yield _("increases the pressure on %s") % reprCord[TCORD(ncap)]
+            else:
+                found_increases.append(reprCord[TCORD(ncap)])
+    
     board.setColor(1-board.color)
     
-    # ------------------------------------------------------------------------ #
-    # Test if we defend a one of our pieces                                    #
-    # ------------------------------------------------------------------------ #
+    # -------------------------------------------------------------------- #
+    # Test if we defend a one of our pieces                                #
+    # -------------------------------------------------------------------- #
+    
+    found_defends = []
     
     # Test which pieces were under attack
     used = []
@@ -206,29 +254,85 @@ def attack_type (model, phase):
         if TCORD(ncap) == FCORD(move) or TCORD(ncap) == TCORD(move):
             continue
         
-        # If we were already defending the piece, we don't send a new message
+        # If we were already defending the piece, we don't send a new
+        # message
         if defends(oldboard, FCORD(move), TCORD(ncap)):
             continue
         
         # If the attack was not strong, we ignore it
-        oldboard.setColor(1-oldboard.color)
         see = staticExchangeEvaluate(oldboard, ncap)
-        oldboard.setColor(1-oldboard.color)
         if see < 0: continue
         
         v = defends(board, TCORD(move), TCORD(ncap))
         
-        # If the defend didn't help, it doesn't matter. Like defending a bishop,
-        # threatened by a pawn, with a queen.
+        # If the defend didn't help, it doesn't matter. Like defending a
+        # bishop, threatened by a pawn, with a queen.
         # But on the other hand - it might still be a defend...
         # newsee = staticExchangeEvaluate(board, ncap)
         # if newsee <= see: continue
         
         if v:
-            yield _("defends %s") % reprCord[TCORD(ncap)]
-            
-    PIECE_VALUES[BISHOP] = bishopBackup
+            found_defends.append(reprCord[TCORD(ncap)])
     
+    # ------------------------------------------------------------------------ #
+    # Test if we are rescuing an otherwise exposed piece                       #
+    # ------------------------------------------------------------------------ #
+    
+    # Rescuing is only an option, if our own move wasn't an attack
+    if oldboard.arBoard[tcord] == EMPTY:
+        see0 = staticExchangeEvaluate(oldboard, fcord, oldboard.color)
+        see1 = staticExchangeEvaluate(board, tcord, oldboard.color)
+        if see1 > see0 and see1 > 0:
+            yield _("rescues a %s") % reprPiece[board.arBoard[tcord]].lower()
+    
+    if found_threatens:
+        yield _("threatens to win material by %s") % join(found_threatens)
+    if found_increases:
+        yield _("increases the pressure on %s") % join(found_increases)
+    if found_defends:
+        yield _("defends %s") % join(found_defends)
+    
+    PIECE_VALUES[BISHOP] = bishopBackup
+
+
+def offencive_moves_pin (model, phase):
+    
+    board = model.boards[-1].board
+    move = model.moves[-1].move
+    tcord = TCORD(move)
+    piece = board.arBoard[tcord]
+    
+    ray = createBoard(0)
+    if piece in (BISHOP, QUEEN):
+        ray |= ray45[tcord] | ray135[tcord]
+    if piece in (ROOK, QUEEN):
+        ray |= ray00[tcord] | ray90[tcord]
+    
+    if ray: 
+        for c in iterBits(ray & board.friends[board.color]):
+            # We don't pin on pieces that are less worth than us
+            if not PIECE_VALUES[piece] < PIECE_VALUES[board.arBoard[c]]:
+                continue
+            # There should be zero friendly pieces in between
+            ray = fromToRay[tcord][c]
+            if ray & board.friends[1-board.color]:
+                continue
+            # There should be exactly one opponent piece in between
+            op = clearBit(ray & board.friends[board.color], c) 
+            if bitLength(op) != 1:
+                continue
+            # The king can't be pinned
+            pinned = lastBit(op)
+            oppiece = board.arBoard[pinned]
+            if oppiece == KING:
+                continue
+            # Yield
+            yield _("pins an enemy %s on the %s at %s") % (
+                reprPiece[oppiece].lower(),
+                reprPiece[board.arBoard[c]].lower(),
+                reprCord[c])
+
+
 def state_outpost (model, phase):
     
     if phase >= 6:
@@ -307,6 +411,10 @@ def state_pawn (model, phase):
                     (reprColor[color], reprCord[cord])
     
     # Double pawns
+    found_doubles = []
+    found_halfopen_doubles = []
+    found_white_isolates = []
+    found_black_isolates = []
     for file in range(8):
         bits = fileBits[file]
         
@@ -315,20 +423,15 @@ def state_pawn (model, phase):
         opcount = bitLength(oppawns & bits)
         oldopcount = bitLength(oldoppawns & bits)
         
-        # Double pawns
+        # Single pawn -> double pawns
         if count > oldcount >= 1:
             if not opcount:
-                yield (8+phase)*2, \
-                    _("%s has a new double pawn in the half-open %s file") % \
-                            (reprColor[color], reprFile[file])
-            else:
-                yield 8+phase, _("%s has a new double pawn in the %s file") % \
-                        (reprColor[color], reprFile[file])
-                        
+                found_halfopen_doubles.append(reprFile[file])
+            else: found_doubles.append(reprFile[file])
+        
+        # Closed file double pawn -> half-open file double pawn
         elif count > 1 and opcount == 0 and oldopcount > 0:
-            yield (8+phase)*2, \
-                _("%s has an double pawn in the half-open %s file") % \
-                            (reprColor[color], reprFile[file])
+            found_halfopen_doubles.append(reprFile[file])
         
         # Isolated pawns
         if color == WHITE:
@@ -344,13 +447,38 @@ def state_pawn (model, phase):
         
         if wpawns & bits and not wpawns & isolaniMask[file] and \
                 (not oldwpawns & bits or oldwpawns & isolaniMask[file]):
-            yield 20, _("%s has a new isolated pawn in the %s file") % \
-                            (reprColor[WHITE], reprFile[file])
+            found_white_isolates.append(reprFile[file])
         
         if bpawns & bits and not bpawns & isolaniMask[file] and \
                 (not oldbpawns & bits or oldbpawns & isolaniMask[file]):
-            yield 20, _("%s has a new isolated pawn in the %s file") % \
-                            (reprColor[BLACK], reprFile[file])
+            found_black_isolates.append(reprFile[file])
+    
+    # We need to take care of 'worstcases' like: "got new double pawns in the a
+    # file, in the half-open b, c and d files and in the open e and f files"
+    
+    doubles_count = len(found_doubles) + len(found_halfopen_doubles)
+    if doubles_count > 0:
+        
+        parts = []
+        for type_, list_ in (("", found_doubles),
+                             (_("half-open")+" ", found_halfopen_doubles)):
+            if len(list_) == 1:
+                parts.append(_("in the %s%s file") % (type_, list_[0]))
+            elif len(list_) >= 2:
+                parts.append(_("in the %s%s files") % (type_, join(list_)))
+        
+        if doubles_count == 1:
+            s = _("%s got a double pawn %s")
+        else: s = _("%s got new double pawns %s")
+        
+        yield (8+phase)*2*doubles_count, s % (reprColor[color], join(parts))
+    
+    for (color_, list_) in ((WHITE, found_white_isolates),
+                            (BLACK, found_black_isolates)):
+        if list_:
+            yield 20*len(list_), _n(_("%s got an isolated pawn in the %s file"),
+                                    _("%s got isolated pawns in the %s files"),
+                                    len(list_)) %  (reprColor[color_], join(list_)) 
     
     # Stone wall
     if stonewall[color] & pawns == stonewall[color] and \
@@ -369,14 +497,18 @@ def state_destroysCastling (model, phase):
     castling = model.boards[-1].board.castling
     
     if oldcastling & W_OOO and not castling & W_OOO:
-        yield 400/phase, _("White can no longer castle in queenside")
-    if oldcastling & W_OO and not castling & W_OO:
-        yield 500/phase, _("White can no longer castle in kingside")
+        if oldcastling & W_OO and not castling & W_OO:
+            yield 900/phase, _("%s can no longer castle") % reprColor[WHITE]
+        else: yield 400/phase, _("%s can no longer castle in queenside") % reprColor[WHITE]
+    elif oldcastling & W_OO and not castling & W_OO:
+        yield 500/phase, _("%s can no longer castle in kingside") % reprColor[WHITE]
         
     if oldcastling & B_OOO and not castling & B_OOO:
-        yield 400/phase, _("Black can no longer castle in queenside")
-    if oldcastling & B_OO and not castling & B_OO:
-        yield 500/phase, _("Black can no longer castle in kingside")
+        if oldcastling & B_OO and not castling & B_OO:
+            yield 900/phase, _("%s can no longer castle") % reprColor[BLACK]
+        else: yield 400/phase, _("%s can no longer castle in queenside") % reprColor[BLACK]
+    elif oldcastling & B_OO and not castling & B_OO:
+        yield 500/phase, _("%s can no longer castle in kingside") % reprColor[BLACK]
 
 def state_trappedBishops (model, phase):
     """ Check for bishops trapped at A2/H2/A7/H7 """
@@ -432,7 +564,7 @@ def simple_tropism (model, phase):
             rank23 = brank67[BLACK]
         else: rank23 = brank67[WHITE]
         if bitPosArray[fcord] & rank23:
-            yield 2, _("develops a %s: %s") % (reprPiece[PAWN], reprCord[tcord])
+            yield 2, _("develops a %s: %s") % (reprPiece[PAWN].lower(), reprCord[tcord])
         else: yield 1, _("brings a pawn closer to the backrow: %s") % \
                                                                  reprCord[tcord]
         return
@@ -447,7 +579,7 @@ def simple_tropism (model, phase):
                     (reprPiece[arBoard[tcord]], reprCord[tcord])
         else:
             yield (score-oldscore)*2, _("develops a %s: %s") % \
-                    (reprPiece[arBoard[tcord]], reprCord[tcord])
+                    (reprPiece[arBoard[tcord]].lower(), reprCord[tcord])
 
 def simple_activity (model, phase):
     
@@ -465,7 +597,7 @@ def simple_activity (model, phase):
     
     if moves > oldmoves:
         yield (moves-oldmoves)/2, _("places a %s more active: %s") % \
-                (reprPiece[board.arBoard[tcord]], reprCord[tcord])
+                (reprPiece[board.arBoard[tcord]].lower(), reprCord[tcord])
 
 def tip_pawnStorm (model, phase):
     """ If players are castled in different directions we should storm in

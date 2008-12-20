@@ -1,45 +1,6 @@
 
-from attack import getAttacks, addXrayPiece, swapOff, xray
+from attack import getAttacks, staticExchangeEvaluate
 from pychess.Utils.eval import pos as positionValues
-
-def staticExchangeEvaluate (board, move):
-    """ The GnuChess Static Exchange Evaluator (or SEE for short).
-    First determine the target square.  Create a bitboard of all squares
-    attacking the target square for both sides.  Using these 2 bitboards,
-    we take turn making captures from smallest piece to largest piece.
-    When a sliding piece makes a capture, we check behind it to see if
-    another attacker piece has been exposed.  If so, add this to the bitboard
-    as well.  When performing the "captures", we stop if one side is ahead
-    and doesn't need to capture, a form of pseudo-minimaxing. """
-    
-    swaplist = []
-    
-    flag = move >> 12
-    fcord = (move >> 6) & 63
-    tcord = move & 63
-    
-    color = board.friends[BLACK] & bitPosArray[fcord] and BLACK or WHITE
-    opcolor = 1-color
-    
-    pieces = board.arBoard
-    
-    ours = getAttacks (board, tcord, color)
-    ours = clearBit (ours, fcord)
-    theirs = getAttacks (board, tcord, opcolor)
-    
-    if xray[pieces[fcord]]:
-        ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
-    
-    if flag in PROMOTIONS:
-        swaplist.append(PIECE_VALUES[flag-3] - PAWN_VALUE)
-        lastval = -PIECE_VALUES[flag-3]
-    else:
-        if flag == ENPASSANT:
-            swaplist.append(PAWN_VALUE)
-        else: swaplist.append(PIECE_VALUES[pieces[tcord]])
-        lastval = -PIECE_VALUES[pieces[fcord]]
-    
-    return swapOff (board, tcord, swaplist, lastval, ours, theirs)
 
 from sys import maxint
 from ldata import *

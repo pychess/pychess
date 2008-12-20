@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import gtk, pango
+from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.glock import glock_connect
 from pychess.Utils.const import *
@@ -38,10 +39,11 @@ class Sidepanel:
         self.store = gtk.ListStore(str)
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        r = gtk.CellRendererText()
-        r.set_property("wrap-width", 177) #FIXME: Fixed width size
-        r.set_property("wrap-mode", pango.WRAP_WORD)
-        self.tv.append_column(gtk.TreeViewColumn("Comment", r, text=0))
+        #r = gtk.CellRendererText()
+        #r.set_property("wrap-width", 177) #FIXME: Fixed width size
+        #r.set_property("wrap-mode", pango.WRAP_WORD)
+        #self.tv.append_column(gtk.TreeViewColumn("Comment", r, text=0))
+        uistuff.appendAutowrapColumn(self.tv, 200, "Comment", text=0)
         
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)
         self.boardview = gmwidg.board.view
@@ -158,26 +160,26 @@ class Sidepanel:
             strings.append("%s %s" % (reprColor[color], message))
         
         # ----------------------------------------------------------------------
-        # Check for prefixs
+        # Check for prefixes
         # ----------------------------------------------------------------------
         
         messages = getMessages ("prefix")
         if messages:
-            string = "%s %s" % (reprColor[color], messages[0])
-        else: string = ""
+            prefix = messages[0]
+        else: prefix = ""
         
         # ----------------------------------------------------------------------
-        # Check for special move stuff
+        # Check for special move stuff. All of which accept prefixes
         # ----------------------------------------------------------------------
         
-        messages = getMessages ("moves")
-        for message in messages:
-            if not string:
-                string = "%s %s" % (reprColor[color], message)
-            else: string += " %s %s" % (_("and"), message)
-        
-        if string:
-            strings.append(string)
+        for message in getMessages("offencive_moves") \
+                       + getMessages("defencive_moves"):
+            if prefix:
+                strings.append("%s %s %s %s" %
+                              (reprColor[color], prefix, _("and"), message))
+                prefix = ""
+            else:
+                strings.append("%s %s" % (reprColor[color], message))
         
         # ----------------------------------------------------------------------
         # Simple
@@ -189,7 +191,20 @@ class Sidepanel:
             if messages:
                 messages.sort(reverse=True)
                 score, message = messages[0]
-                strings.append("%s %s" % (reprColor[color], message))
+                if prefix:
+                    strings.append("%s %s %s %s" %
+                                  (reprColor[color], prefix, _("and"), message))
+                    prefix = ""
+        
+        # ----------------------------------------------------------------------
+        # Prefix fallback                                                       
+        # ----------------------------------------------------------------------
+        
+        # There was nothing to apply the prefix to, so we just post it here
+        # before the states and tips
+        if prefix:
+            strings.append("%s %s" % (reprColor[color], prefix))
+            prefix = ""
         
         # ----------------------------------------------------------------------
         # State
