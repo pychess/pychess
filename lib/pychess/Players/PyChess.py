@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+print "feature done=0"
+
 import gettext
 from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
