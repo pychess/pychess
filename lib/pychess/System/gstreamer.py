@@ -30,7 +30,6 @@ else:
             GObject.__init__(self)
             self.player = gst.element_factory_make("playbin")
             self.player.get_bus().add_watch(self.onMessage)
-            self.playLock = Lock()
         
         def onMessage(self, bus, message):
             if message.type == gst.MESSAGE_ERROR:
@@ -39,18 +38,15 @@ else:
                 # self.emit("error", message)
                 simpleMessage, advMessage = message.parse_error()
                 log.warn("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
+                self.__del__()
             elif message.type == gst.MESSAGE_EOS:
                 self.emit("end")
             return True
         
         def play(self, uri):
-            self.playLock.acquire()
-            try:
-                self.player.set_state(gst.STATE_READY)
-                self.player.set_property("uri", uri)
-                self.player.set_state(gst.STATE_PLAYING)
-            finally:
-                self.playLock.release()
+            self.player.set_state(gst.STATE_READY)
+            self.player.set_property("uri", uri)
+            self.player.set_state(gst.STATE_PLAYING)
         
         def __del__ (self):
             self.player.set_state(gst.STATE_NULL)
