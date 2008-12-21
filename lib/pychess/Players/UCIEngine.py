@@ -332,6 +332,9 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def parseLine (self, engine, line):
+        if not self.connected:
+            return
+        
         parts = line.split()
         if not parts: return
         
