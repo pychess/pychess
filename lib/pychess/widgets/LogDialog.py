@@ -156,7 +156,7 @@ class InformationWindow:
     
     @classmethod
     def onSearchChanged (cls, searchEntry, widgets):
-        pattern = searchEntry.get_text()
+        pattern = searchEntry.get_text().lower()
         widgets["outofLabel"].props.visible = bool(pattern)
         if not pattern:
             return
