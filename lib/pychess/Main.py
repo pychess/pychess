@@ -213,6 +213,7 @@ class PyChess:
         
         #---------------------------------------------------------- About dialog
         clb = widgets["aboutdialog1"].get_child().get_children()[1].get_children()[2]
+        widgets["aboutdialog1"].set_name(NAME)
         widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
         def callback(button, *args):
             widgets["aboutdialog1"].hide()

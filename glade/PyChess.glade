@@ -631,7 +631,7 @@
   <property name="border_width">5</property>
   <property name="destroy_with_parent">False</property>
   <property name="name">PyChess</property>
-  <property name="copyright">Copyright © 2006-2007</property>
+  <property name="copyright">Copyright © 2006-2009</property>
   <property name="comments" translatable="yes">Chess client for the Gnome desktop</property>
   <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
