@@ -99,4 +99,4 @@ class Engine (Player):
             es = "<br>"
             answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
             self.emit("offer", Offer(CHAT_ACTION, answer))
-        pool.start(answer)
+        pool.start(answer, message)
