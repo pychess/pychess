@@ -5,9 +5,9 @@
 ################################################################################
 
 NAME = "PyChess"
-VERSION = "0.9"
-VERSION_NAME = "Staunton"
-ENGINES_XML_API_VERSION = "0.9"
+VERSION = "0.10"
+VERSION_NAME = "Staunton Alpha"
+ENGINES_XML_API_VERSION = "0.10"
 
 ################################################################################
 # Player info                                                                  #
