@@ -55,6 +55,7 @@ DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
+DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
 DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
 DATA_FILES += [('share/gtksourceview-1.0/language-specs', ['gtksourceview-1.0/language-specs/pgn.lang'])]
 
