@@ -703,7 +703,7 @@ class CECPEngine (ProtocolEngine):
                     if value == 1:
                         self.returnQueue.put("ready")
                     elif value == 0:
-                        log.warn("Adds 10 minutes timeout", self.defname)
+                        log.log("Adds 10 minutes timeout", self.defname)
                         # This'll buy you 10 more minutes
                         self.timeout = time.time()+10*60
                         self.returnQueue.put("not ready")
