@@ -101,7 +101,7 @@ class BoardManager (GObject):
         relation = relations[groups[18]]
         
         # Board data
-        fen = "".join(map(self._style12ToFenRow, groups[:8]))
+        fen = "/".join(map(self._style12ToFenRow, groups[:8]))
         fen += " "
         
         # Current color
