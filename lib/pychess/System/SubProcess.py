@@ -74,7 +74,7 @@ class SubProcess (gobject.GObject):
         os.nice(15)
     
     def __child_watch_callback (self, pid, code):
-        if code != 0:
+        if code not in (0,11): # Success and 'Resource temporarily unavailable'
             log.error(os.strerror(code)+"\n", self.defname)
             self.emit("died")
     
