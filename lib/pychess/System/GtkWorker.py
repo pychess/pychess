@@ -13,7 +13,7 @@ import time
 #
 
 class Publisher (PooledThread):
-    """ Publisher can be used when a thread is oftenly spitting out results,
+    """ Publisher can be used when a thread is often spitting out results,
         and you want to process these results in gtk as soon as possible.
         While waiting for gdk access, results will be stored, and depending on
         the send policy, either the entire list, or only the last item will be
@@ -61,7 +61,7 @@ class EmitPublisher (Publisher):
     def __init__ (self, parrent, signal, sendPolicy):
         Publisher.__init__(self, lambda v: parrent.emit(signal, v), sendPolicy)
 
-class GtkWorker (GObject, PooledThread):
+class GtkWorker (GObject, Thread):
     
     __gsignals__ = {
         "progressed": (SIGNAL_RUN_FIRST, None, (float,)),
@@ -72,6 +72,7 @@ class GtkWorker (GObject, PooledThread):
     def __init__ (self, func):
         """ Initialize a new GtkWorker around a specific function """
         GObject.__init__(self)
+        Thread.__init__(self)
         
         # By some reason we cannot access __gsignals__, so we have to do a
         # little double work here
@@ -183,7 +184,6 @@ class GtkWorker (GObject, PooledThread):
                 ...
             """
         self.cancelled = True
-        self.done = True
         self.publisher.__del__()
         self.progressor.__del__()
     
