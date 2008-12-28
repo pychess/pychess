@@ -66,6 +66,10 @@ path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
 files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
 sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
+pref_sidePanels = []
+for panel in sidePanels:
+    if conf.get(panel.__name__, True):
+        pref_sidePanels.append(panel)
 
 
 ################################################################################
@@ -85,7 +89,7 @@ notebooks = {"board": cleanNotebook(),
              "statusbar": cleanNotebook(),
              "messageArea": cleanNotebook()}
 for panel in sidePanels:
-    notebooks[panel.__title__] = cleanNotebook()
+    notebooks[panel.__name__] = cleanNotebook()
 
 ################################################################################
 # The holder class for tab releated widgets                                    #
@@ -336,7 +340,7 @@ def _ensureReadForGameWidgets ():
     
     dockLocation = addHomePrefix("pydock.xml")
     docks = {"board": (gtk.Label("Board"), notebooks["board"])}
-    for id, panel in zip(files, sidePanels):
+    for panel in sidePanels:
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
         icon = gtk.image_new_from_pixbuf(pixbuf)
@@ -371,7 +375,7 @@ def _ensureReadForGameWidgets ():
         hbox.props.has_tooltip = True
         hbox.connect("query-tooltip", cb, panel.__title__, panel.__desc__, panel.__icon__)
         
-        docks[str(id)] = (hbox, notebooks[panel.__title__])
+        docks[panel.__name__] = (hbox, notebooks[panel.__name__])
     
     if os.path.isfile(dockLocation):
         try:
@@ -455,11 +459,13 @@ def attachGameWidget (gmwidg):
     notebooks["board"].append_page(gmwidg.boardvbox)
     gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):
-        notebooks[panel.__title__].append_page(instance)
+        notebooks[panel.__name__].append_page(instance)
         instance.show_all()
+        if not panel in pref_sidePanels:
+            notebooks[panel.__name__].hide()
     notebooks["statusbar"].append_page(gmwidg.stat_hbox)
     gmwidg.stat_hbox.show_all()
-    
+
     # We should always show tabs if more than one exists
     if headbook.get_n_pages() == 2:
         show_tabs(True)
