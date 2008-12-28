@@ -25,6 +25,7 @@ def initialize(widgets):
     GeneralTab(widgets)
     EngineTab(widgets)
     SoundTab(widgets)
+    PanelTab(widgets)
     
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences_close_button"].connect("clicked", delete_event)
@@ -351,3 +352,51 @@ class SoundTab:
             widgets["useSounds"].set_sensitive(False)
             widgets["useSounds"].set_active(False)
         self.getPlayer().connect("error", soundError)
+
+################################################################################
+# Panel initing                                                               #
+################################################################################
+
+class PanelTab:
+    
+    def __init__ (self, widgets):
+        # Put panels in trees
+
+        from pychess.widgets.gamewidget import sidePanels
+        allstore = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
+        for panel in sidePanels:
+            panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
+            allstore.append((conf.get(panel.__name__, True), panel_icon, panel.__title__+"\n"+panel.__desc__, panel))
+            # TODO: the 3. column should be a 1x2 table
+            # TODO: with bold __title__ in first row and __desc__ in second row
+
+        tv = widgets["treeview1"]
+        tv.set_model(allstore)
+
+        cbrenderer = gtk.CellRendererToggle()
+        cbrenderer.connect('toggled', self.col_toggled, allstore)
+        tv.append_column(gtk.TreeViewColumn(
+                "Active", cbrenderer, active=0))
+
+        tv.append_column(gtk.TreeViewColumn(
+                "Icon", gtk.CellRendererPixbuf(), pixbuf=1))
+
+        tv.append_column(gtk.TreeViewColumn(
+                "Name", gtk.CellRendererText(), text=2))
+        
+    def col_toggled( self, cell, path, model ):
+        """
+        Sets the toggled state on the toggle button to true or false.
+        """
+        model[path][0] = not model[path][0]
+        panel = model[path][3]
+        print "Toggle '%s' to: %s" % (panel.__name__, model[path][0],)
+        from pychess.widgets.gamewidget import notebooks
+        if model[path][0]:
+            conf.set(panel.__name__, True)
+            notebooks[panel.__name__].show()
+        else:
+            conf.set(panel.__name__, False)
+            notebooks[panel.__name__].hide()
+        return
+  
