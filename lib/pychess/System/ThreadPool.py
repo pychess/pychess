@@ -109,7 +109,7 @@ class PooledThread:
     def run (self):
         pass
     
-    def join (self):
+    def join (self, timeout=None):
         raise NotImplementedError
     
     def setName (self, name):
