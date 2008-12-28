@@ -122,7 +122,7 @@ class ChatManager (GObject):
     def onChannelList(self, matchlist):
         self.channels = [(CHANNEL_SHOUT, _("Shout")),
                          (CHANNEL_CSHOUT, _("Chess Shout"))]
-        numbers = set(range(256))
+        numbers = set(range(256)) #TODO: Use limits->Server->Channels
         for line in matchlist[1:-1]:
             match = self.channelListItem.match(line)
             if not match: continue
@@ -292,3 +292,16 @@ class ChatManager (GObject):
     def tellBughousePartner (self, message):
         message = self.stripChars(message)
         print >> self.connection.client, "ptell %s" % message
+    
+    def tellUser (self, player, message):
+        IS_TD = False
+        if IS_TD:
+            MAX_COM_SIZE = 1024 #TODO: Get from limits
+            for i in xrange(0,len(message),MAX_COM_SIZE):
+                chunk = message[i:i+MAX_COM_SIZE]
+                chunk = chunk.replace("\n", "\\n")
+                chunk = self.entityEncode(chunk)
+                print >> self.connection.client, "qell %s %s" % (player, chunk)
+        else:
+            for line in message.strip().split("\n"):
+                self.tellPlayer(player, line)
