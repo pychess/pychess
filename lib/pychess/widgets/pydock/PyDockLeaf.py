@@ -62,6 +62,9 @@ class PyDockLeaf (DockLeaf):
         widget.show_all()
     
     def dock (self, widget, position, title, id):
+        """ if position == CENTER: Add a new widget to the leaf-notebook
+            if position != CENTER: Fork this leaf into two """ 
+        
         if position == CENTER:
             self.__add(widget, title, id)
             return self
@@ -78,6 +81,9 @@ class PyDockLeaf (DockLeaf):
             return leaf
     
     def undock (self, widget):
+        """ remove the widget from the leaf-notebook
+            if this was the only widget, remove this leaf from its owner """ 
+        
         for i, (widget_, title, id) in enumerate(self.panels):
             if widget_ == widget:
                 break
