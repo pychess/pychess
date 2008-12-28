@@ -7,10 +7,12 @@ class AutoLogOutManager (GObject):
     def __init__ (self, connection):
         GObject.__init__(self)
         self.connection = connection
+        
         self.connection.expect_line (self.onLogOut,
-           "**** Auto-logout because you were idle more than \d+ minutes. ****")
-        #FIXME: **** Lobais has arrived - you can't both be logged in. ****
-        # (Logout screen by Alefith)
-        # Thank you for using the Free Internet Chess server (http://www.freechess.org).
+           "\*\*\*\* Auto-logout because you were idle more than \d+ minutes\. \*\*\*\*")
+        self.connection.expect_line (self.onLogOut, "Logging you out\.")
+        self.connection.expect_line (self.onLogOut,
+           "\*\*\*\* .+? has arrived - you can't both be logged in\. \*\*\*\*")
+    
     def onLogOut (self, match):
         self.emit("logOut")

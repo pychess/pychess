@@ -114,7 +114,7 @@ class GameListManager (GObject):
         print >> self.connection.client, "iset seekinfo 1"
     
     def getPlayerlist (self):
-        return self.players
+        return self.players.copy()
     
     ###
     

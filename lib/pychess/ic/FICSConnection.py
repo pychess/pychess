@@ -13,6 +13,7 @@ from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
 from managers.ChatManager import ChatManager
 from managers.ListAndVarManager import ListAndVarManager
+from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 
 from TimeSeal import TimeSeal
@@ -182,6 +183,7 @@ class FICSConnection (Connection):
             self.nm = NewsManager(self)
             self.om = OfferManager(self)
             self.cm = ChatManager(self)
+            self.alm = AutoLogOutManager(self)
             
             self.connecting = False
             self.connected = True
@@ -192,7 +194,8 @@ class FICSConnection (Connection):
     
     def run (self):
         try:
-            self._connect()
+            if not self.isConnected():
+                self._connect()
             while self.isConnected():
                 self.client.handleSomeText(self.predictions)
         
