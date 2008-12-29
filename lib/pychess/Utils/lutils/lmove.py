@@ -391,8 +391,15 @@ def parseLAN (board, lan):
 def toAN (board, move):
     """ Returns a Algebraic Notation string of a move
         board should be prior to the move """
-    
+
     s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
+    if board.variant == FISCHERRANDOMCHESS:
+        flag = move >> 12
+        if flag == KING_CASTLE:
+            return "O-O"
+        elif flag == QUEEN_CASTLE:
+            return "O-O-O"
+    
     if FLAG(move) in PROMOTIONS:
         s += "="+reprSign[PROMOTE_PIECE(FLAG(move))]
     return s
@@ -403,6 +410,29 @@ def toAN (board, move):
 
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
+
+    if board.variant == FISCHERRANDOMCHESS:
+        color = board.color
+        notat = an
+        notat = notat.replace("0","O").replace("o","O")
+        if notat.startswith("O-O"):
+            if color == WHITE:
+                fcord = board.ini_kings[0] #E1
+                if notat == "O-O":
+                    flag = KING_CASTLE
+                    tcord = G1
+                else:
+                    flag = QUEEN_CASTLE
+                    tcord = C1
+            else:
+                fcord = board.ini_kings[1] #E8
+                if notat == "O-O":
+                    flag = KING_CASTLE
+                    tcord = G8
+                else:
+                    flag = QUEEN_CASTLE
+                    tcord = C8
+            return newMove (fcord, tcord, flag)
 
     if not 4 <= len(an) <= 5:
         raise ParsingError, (an, "the move must be 4 or 5 chars long", board.asFen())
@@ -420,30 +450,12 @@ def parseAN (board, an):
         #The a7a8=q variant
         flag = chr2Sign[an[5].lower()] + 2
     elif board.arBoard[fcord] == KING:
-        if board.variant == FISCHERRANDOMCHESS:
-            if (abs(fcord - tcord) > 1 and an[1]==an[3] and \
-                    ((board.color == WHITE and tcord==C1) or \
-                     (board.color == BLACK and tcord==C8))) or \
-                (board.ini_rooks[board.color][0] == tcord and \
-                    ((board.color == WHITE and board.castling & W_OOO) or \
-                    (board.color == BLACK and board.castling & B_OOO))):
-                flag = QUEEN_CASTLE
-            elif (abs(fcord - tcord) > 1 and an[1]==an[3] and \
-                    ((board.color == WHITE and tcord==G1) or \
-                     (board.color == BLACK and tcord==G8))) or \
-                (board.ini_rooks[board.color][1] == tcord and \
-                    ((board.color == WHITE and board.castling & W_OO) or \
-                    (board.color == BLACK and board.castling & B_OO))):
-                flag = KING_CASTLE
-            else:
-                flag = NORMAL_MOVE
+        if fcord - tcord == 2:
+            flag = QUEEN_CASTLE
+        elif fcord - tcord == -2:
+            flag = KING_CASTLE
         else:
-            if fcord - tcord == 2:
-                flag = QUEEN_CASTLE
-            elif fcord - tcord == -2:
-                flag = KING_CASTLE
-            else:
-                flag = NORMAL_MOVE
+            flag = NORMAL_MOVE
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
