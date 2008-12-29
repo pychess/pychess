@@ -573,13 +573,20 @@ def simple_tropism (model, phase):
     opking = board.kings[1-color]
     
     if score > oldscore:
-        if phase >= 5 or distance[arBoard[tcord]][fcord][opking] < \
-                distance[arBoard[tcord]][fcord][king]:
+        # in FISCHERRANDOMCHESS unusual casting case the tcord is
+        # the involved rook's position, not the king's destination!
+        flag = move >> 12
+        if flag in (KING_CASTLE, QUEEN_CASTLE):
+            piece = KING
+        else:
+            piece = arBoard[tcord]
+        if phase >= 5 or distance[piece][fcord][opking] < \
+                distance[piece][fcord][king]:
             yield score-oldscore, _("brings a %s closer to enemy king: %s") % \
-                    (reprPiece[arBoard[tcord]], reprCord[tcord])
+                    (reprPiece[piece], reprCord[tcord])
         else:
             yield (score-oldscore)*2, _("develops a %s: %s") % \
-                    (reprPiece[arBoard[tcord]].lower(), reprCord[tcord])
+                    (reprPiece[piece].lower(), reprCord[tcord])
 
 def simple_activity (model, phase):
     
