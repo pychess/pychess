@@ -4,6 +4,7 @@ system or user space
 """
 
 import os
+import sys
 from os import mkdir
 from os.path import isdir, join, dirname, abspath
 
@@ -11,16 +12,12 @@ from os.path import isdir, join, dirname, abspath
 # Locate files in system space                                                 #
 ################################################################################
 
-prefixes = ("/usr/share", "/usr/local/share", "/usr/share/locale",
-    "/usr/share/games", "/usr/local/share/games")
-
 # Test if we are installed on the system, or are being run from tar/svn
 if "site-packages" in __file__:
-    for prefix in prefixes:
-        if isdir (join (prefix, "pychess")):
-            _prefix = join (prefix, "pychess")
-            _installed = True
-            break
+    _prefix = join (sys.prefix, "share", "pychess")
+    _installed = True
+    if not isdir (_prefix):
+        raise Exception("can't find pychess 'share' directory")
 else:
     _prefix = abspath (join (dirname (__file__), "../../.."))
     _installed = False
