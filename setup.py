@@ -14,12 +14,19 @@ from os.path import isdir, isfile
 import os
 import sys
 
+# to run "setup.py register" change name to "NAME+VERSION_NAME" because already exist in pypi
 NAME = "pychess"
 VERSION = const.VERSION
 
 DESC = "Gnome chess game"
 
-LONG_DESC = """PyChess is a GTK+ chess game for Linux. It is designed to at the same time be easy to use, beautiful to look at, and provide advanced functions for advanced players."""
+LONG_DESC = """PyChess is a gtk chess client, originally developed for gnome, but running well under all other linux desktops.
+(Which we know of, at least). PyChess is 100% python code, from the top of the UI to the bottom of the chess engine, and all code
+is licensed under the Gnu Public License.
+
+The goal of PyChess is to provide an advanced chess client for linux following the Gnome Human Interface Guidelines. The client should be usable
+to those new to chess, who just want to play a short game and get back to their work, as well as those who wants to use the computer to further
+enhance their play."""
 
 CLASSIFIERS = [
     'License :: OSI Approved :: GNU General Public License (GPL)',
@@ -122,12 +129,16 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
 setup (
     name             = NAME,
     version          = VERSION,
+    author           = 'Pychess team',
+    author_email     = 'pychess-people at googlegroups com',
+    maintainer       = 'Thomas Dybdahl Ahle',
     classifiers      = CLASSIFIERS,
+    keywords         = 'python gtk chess xboard gnuchess game pgn epd board linux',
     description      = DESC,
     long_description = LONG_DESC,
     license          = 'GPL2',
     url              = 'http://pychess.googlepages.com/home',
-    download_url     = 'http://code.google.com/p/pychess/downloads/list',
+    download_url     = 'http://gnomefiles.org/app.php/PyChess',
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
