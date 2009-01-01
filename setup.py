@@ -27,17 +27,39 @@ CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
     'Topic :: Desktop Environment :: Gnome',
     'Topic :: Games/Entertainment :: Board Games',
-    'Operating System :: POSIX',
-    'Natural Language :: English',
+    'Natural Language :: Arabic',
+    'Natural Language :: Bulgarian',
+    'Natural Language :: Catalan',
+    'Natural Language :: Czech',
     'Natural Language :: Danish',
+    'Natural Language :: Dutch',
+    'Natural Language :: English',
+    'Natural Language :: Finnish',
+    'Natural Language :: French',
+    'Natural Language :: German',
+    'Natural Language :: Greek',
+    'Natural Language :: Hebrew',
+    'Natural Language :: Hindi', 
     'Natural Language :: Hungarian',
-    'Natural Language :: Portuguese (Brazilian)'
+    'Natural Language :: Italian',
+    'Natural Language :: Japanese',
+    'Natural Language :: Norwegian',
+    'Natural Language :: Persian',
+    'Natural Language :: Polish',
+    'Natural Language :: Portuguese',
+    'Natural Language :: Portuguese (Brazilian)',
+    'Natural Language :: Romanian',
+    'Natural Language :: Russian',
+    'Natural Language :: Slovak',
+    'Natural Language :: Spanish',
+    'Natural Language :: Swedish',
+    'Natural Language :: Turkish',
 ]
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 DATA_FILES = [("share/pychess",
-    ["README", "AUTHORS", "LICENSE", "open.db"])]
+    ["README", "AUTHORS", "LICENSE", "TRANSLATORS", "open.db"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
