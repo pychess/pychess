@@ -498,45 +498,10 @@ def toFAN (board, move):
     
     lan = toSAN (board, move)
     
-    if not lan[0] in ("K", "Q", "R", "B", "N", "O"):
-        
-        # We generally don't want notations like Pexd4, as the from file - in
-        # this case 'e' could be cut out. However in some cases where two pawns
-        # can attack the same cord, we'll still need it.
-        i = lan.find("x")
-        if i >= 0:
-            fcord = FCORD(move)
-            tcord = TCORD(move)
-            fileNecessary = False
-            
-            from lmovegen import genAllMoves
-            board_clone = board.clone()
-            for altmove in genAllMoves(board_clone):
-                mfcord = FCORD(altmove)
-                if board_clone.arBoard[mfcord] == PAWN and \
-                        mfcord != fcord and \
-                        TCORD(altmove) == tcord:
-                    board_clone.applyMove(altmove)
-                    if not board_clone.opIsChecked():
-                        fileNecessary = True
-                    board_clone.popMove()
-                    # If we found a pawn, that is not us, which can move to our
-                    # tcord, there is no point in looking further, as we can
-                    # never have more than two pawn pointing at the same cord
-                    break
-            
-            if not fileNecessary:
-                lan = lan[i:]
-        
-        # We add the pawn sign by appending instead of replacing, as SAN
-        # notation has no equal
-        if board.color == WHITE:
-            lan = FAN_PIECES[WHITE][PAWN] + lan
-        else: lan = FAN_PIECES[BLACK][PAWN] + lan
-    
     if board.color == WHITE:
         lan = san2WhiteFanRegex.sub(san2WhiteFanFunc, lan)
-    else: lan = san2BlackFanRegex.sub(san2BlackFanFunc, lan)
+    else:
+        lan = san2BlackFanRegex.sub(san2BlackFanFunc, lan)
     
     return lan
 
