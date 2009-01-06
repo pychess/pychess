@@ -389,14 +389,16 @@ class PanelTab:
         Sets the toggled state on the toggle button to true or false.
         """
         model[path][0] = not model[path][0]
-        panel = model[path][3]
-        print "Toggle '%s' to: %s" % (panel.__name__, model[path][0],)
-        from pychess.widgets.gamewidget import notebooks
+        panel = model[path][3].__name__
+        print "Toggle '%s' to: %s" % (panel, model[path][0],)
+        from pychess.widgets.gamewidget import notebooks, docks
+        from pydock.__init__ import WEST
         if model[path][0]:
-            conf.set(panel.__name__, True)
-            notebooks[panel.__name__].show()
+            conf.set(panel, True)
+            leaf = notebooks["board"].get_parent().get_parent()
+            leaf.dock(docks[panel][1], WEST, docks[panel][0], panel)
         else:
-            conf.set(panel.__name__, False)
-            notebooks[panel.__name__].hide()
+            conf.set(panel, False)
+            notebooks[panel].get_parent().get_parent().undock(notebooks[panel])
         return
   

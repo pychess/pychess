@@ -71,7 +71,6 @@ for panel in sidePanels:
     if conf.get(panel.__name__, True):
         pref_sidePanels.append(panel)
 
-
 ################################################################################
 # Initialize module variables                                                  #
 ################################################################################
@@ -90,6 +89,8 @@ notebooks = {"board": cleanNotebook(),
              "messageArea": cleanNotebook()}
 for panel in sidePanels:
     notebooks[panel.__name__] = cleanNotebook()
+
+docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 
 ################################################################################
 # The holder class for tab releated widgets                                    #
@@ -339,7 +340,6 @@ def _ensureReadForGameWidgets ():
     dock.show()
     
     dockLocation = addHomePrefix("pydock.xml")
-    docks = {"board": (gtk.Label("Board"), notebooks["board"])}
     for panel in sidePanels:
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
@@ -461,8 +461,6 @@ def attachGameWidget (gmwidg):
     for panel, instance in zip(sidePanels, gmwidg.panels):
         notebooks[panel.__name__].append_page(instance)
         instance.show_all()
-        if not panel in pref_sidePanels:
-            notebooks[panel.__name__].hide()
     notebooks["statusbar"].append_page(gmwidg.stat_hbox)
     gmwidg.stat_hbox.show_all()
 
