@@ -392,11 +392,11 @@ class PanelTab:
         panel = model[path][3].__name__
         print "Toggle '%s' to: %s" % (panel, model[path][0],)
         from pychess.widgets.gamewidget import notebooks, docks
-        from pydock.__init__ import WEST
+        from pychess.widgets.pydock.__init__ import EAST
         if model[path][0]:
             conf.set(panel, True)
             leaf = notebooks["board"].get_parent().get_parent()
-            leaf.dock(docks[panel][1], WEST, docks[panel][0], panel)
+            leaf.dock(docks[panel][1], EAST, docks[panel][0], panel)
         else:
             conf.set(panel, False)
             notebooks[panel].get_parent().get_parent().undock(notebooks[panel])
