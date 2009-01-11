@@ -221,7 +221,7 @@ class LBoard:
         
         # Parse halfmove clock field
         
-        self.fifty = int(fiftyChr)
+        self.fifty = max(int(fiftyChr),0)
         
         # Parse fullmove number
         
