@@ -62,16 +62,19 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 if state == WHITEWON:
                     score = -MATE_VALUE+steps-2
                 else: score = MATE_VALUE-steps+2
-            
+            last = 1
             return [move], score
     
     ###########################################################################
     # We don't save repetition in the table, so we need to test draw before   #
-    # table                                                                   #
+    # table.                                                                  #
     ###########################################################################
     
-    if ldraw.test(board):
-        return [], 0
+    # We don't adjudicate draws. Clients may have different rules for that.
+    if ply > 0:
+    	if ldraw.test(board):
+        	last = 2
+	        return [], 0
     
     ############################################################################
     # Look up transposition table                                              #
@@ -86,6 +89,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         table.setHashMove (depth, move)
         
         if hashf == hashfEXACT:
+            last = 3
             return [move], score
         elif hashf == hashfBETA:
             beta = min(score, beta)
@@ -93,6 +97,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             alpha = score
             
         if hashf != hashfBAD and alpha >= beta:
+            last = 4
             return [move], score
     
     ############################################################################
@@ -110,7 +115,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     if not searching:
-        last = 1
+        last = 5
         return [], -evaluateComplete(board, 1-board.color)
     
     ############################################################################
@@ -124,7 +129,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
         else:
-            last = 0
+            last = 6
             mvs, val = quiescent(board, alpha, beta, ply)
             return mvs, val
     
@@ -181,7 +186,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                             not move>>12 in PROMOTIONS:
                         table.addKiller (depth, move)
                         table.addButterfly(move, depth)
-                last = 2
+                last = 7
                 return [move]+mvs, beta
             
             alpha = val
@@ -194,25 +199,25 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     if amove:
-        last = 3
         if searching:
             table.record (board, amove[0], alpha, hashf, depth)
             if board.arBoard[amove[0]&63] == EMPTY:
                 table.addKiller (depth, amove[0])
+        last = 8
         return amove, alpha
     
     if catchFailLow:
-        last = 4
         if searching:
             table.record (board, catchFailLow, alpha, hashf, depth)
+        last = 9
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
-    last = 5
     if isCheck:
+        last = 10
         return [], -MATE_VALUE+ply-2
     
-    last = 6
+    last = 11
     return [], 0
 
 def quiescent (board, alpha, beta, ply):
