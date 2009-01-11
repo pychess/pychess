@@ -6,6 +6,7 @@ import random
 import subprocess
 import email.Utils
 import gettext
+from urllib import urlopen, urlencode
 
 from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
@@ -14,16 +15,16 @@ from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.lmove import toSAN, parseAny, parseSAN, FLAG, listToSan
+from pychess.Utils.lutils.lmove import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils import leval
 from pychess.Utils.lutils.validator import validateMove
 
 from pychess.System.GtkWorker import GtkWorker
+from pychess.System.repeat import repeat_sleep
+from pychess.System.ThreadPool import pool
 
 from pychess.ic.FICSConnection import FICSConnection
-
-from Engine import Engine
 
 class PyChess:
     
@@ -81,13 +82,14 @@ class PyChess:
         
         # TODO: Length info should be put in the book.
         # Btw. 10 is not enough. Try 20
-        if len(self.board.history) < 14:
-            movestr = self.__getBestOpening()
-            if movestr:
-                mvs = [parseSAN(self.board, movestr)]
+        #if len(self.board.history) < 14:
+        movestr = self.__getBestOpening()
+        if movestr:
+            mvs = [parseSAN(self.board, movestr)]
         
-        if len(self.board.history) >= 14 or not movestr:
-            
+        #if len(self.board.history) >= 14 or not movestr:
+        if not movestr:
+               
             lsearch.skipPruneChance = self.skipPruneChance
             lsearch.useegtb = self.useegtb
             lsearch.searching = True
@@ -176,8 +178,7 @@ class PyChess:
             lsearch.searching = False
         
         move = mvs[0]
-        sanmove = toSAN(self.board, move) 
-        self.board.applyMove(move)
+        sanmove = toSAN(self.board, move)
         return sanmove
     
     def __analyze (self, worker):
@@ -385,7 +386,9 @@ class PyChessCECP(PyChess):
         self.worker = GtkWorker(lambda worker: PyChess._PyChess__go(self, worker))
         def process (worker, messages): print "\n".join(messages)
         self.worker.connect("published", process)
-        def ondone (worker, result): print "move %s" % result
+        def ondone (worker, result):
+            self.board.applyMove(parseSAN(self.board,result))
+            print "move %s" % result
         self.worker.connect("done", ondone)
         self.worker.execute()
     
@@ -400,15 +403,46 @@ class PyChessFICS(PyChess):
         PyChess.__init__(self)
         
         self.ports = (23, 5000)
-        self.username = "PyChess"
+        if not password:
+            self.username = "guest"
+        else: self.username = "PyChess"
         self.owner = "Lobais"
         self.password = password
         self.from_address = "The PyChess Bot <%s>" % from_address
         self.to_address = "Thomas Dybdahl Ahle <%s>" % to_address
         
+        # Possible start times
+        self.minutes = (5,6,7,8,9,10)
+        self.gains = (0,5,10,15,20)
+        # Possible colors. None == random
+        self.colors = (WHITE, BLACK, None) 
+        # The amount of random challenges, that PyChess sends with each seek
+        self.challenges = 10
+        
         self.sudos = set()
+        self.ownerOnline = False
         self.waitingForPassword = None
         self.log = []
+        
+        self.worker = None
+        
+        repeat_sleep(self.sendChallenges, 60*5)
+    
+    def sendChallenges(self):
+        if self.connection.bm.isPlaying():
+            return True
+        
+        minute = random.choice(self.minutes)
+        gain = random.choice(self.gains)
+        color = random.choice(self.colors)
+        self.extendlog(["Seeking %d %d" % (minute, gain)])
+        self.connection.glm.seek(minute, gain, True, color=color)
+        opps = random.sample(self.connection.glm.getPlayerlist(), self.challenges)
+        self.extendlog("Challenging %s" % op for op in opps)
+        for player in opps:
+            self.connection.glm.challenge(player, minute, gain, True, color=color)
+        
+        return True
     
     def makeReady(self):
         PyChess.makeReady(self)
@@ -419,17 +453,52 @@ class PyChessFICS(PyChess):
         self.connection._connect()
         
         self.connection.glm.connect("addPlayer", self.__onAddPlayer)
+        self.connection.glm.connect("removePlayer", self.__onRemovePlayer)
         self.connection.cm.connect("privateMessage", self.__onTell)
         self.connection.alm.connect("logOut", self.__onLogOut)
         self.connection.bm.connect("playBoardCreated", self.__onPlayBoardCreated)
+        self.connection.bm.connect("curGameEnded", self.__onGameEnded)
         self.connection.bm.connect("clockUpdatedMs", self.__onClockUpdatedMs)
         self.connection.bm.connect("boardRecieved", self.__onBoardRecieved)
         self.connection.bm.connect("moveRecieved", self.__onMoveRecieved)
         self.connection.om.connect("onChallengeAdd", self.__onChallengeAdd)
+        self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
+        self.connection.adm.connect("onAdjournmentsList", self.__onAdjournmentsList)
+        self.connection.em.connect("onAmbiguousMove", self.__onAmbiguousMove)
+        
+        self.connection.adm.queryAdjournments()
+        self.connection.lvm.setVariable("autoflag", True)
+        
+        self.connection.fm.setFingerNote(1,
+            "PyChess is the chess engine bundled with the PyChess %s " % VERSION +
+            "chess client. This instance is owned by %s, but acts " % self.owner +
+            "quite autonomously.")
+        
+        self.connection.fm.setFingerNote(2,
+            "PyChess is 100% Python code and is released under the terms of " +
+            "the GPL. The evalution function is largely equal to the one of" +
+            "GnuChess, but it plays quite differently.")
+        
+        self.connection.fm.setFingerNote(3,
+            "PyChess runs on an elderly AMD Sempron(tm) Processor 3200+, 512 " +
+            "MB DDR2 Ram, but is built to take use of 64bit calculating when " +
+            "accessible, through the gpm library.")
+        
+        self.connection.fm.setFingerNote(4,
+            "PyChess uses a small 500 KB openingbook based solely on Kasparov " +
+            "games. The engine doesn't have much endgame knowledge, but might " +
+            "in some cases access an online endgamedatabase.")
+        
+        self.connection.fm.setFingerNote(5,
+            "PyChess will allow any pause/resume and adjourn wishes, but will " +
+            "deny takebacks. Draw, abort and switch offers are accepted, " +
+            "if they are found to be an advance. Flag is auto called, but " +
+            "PyChess never resigns. We don't want you to forget your basic " +
+            "mating skills.")
     
     def run(self):
         self.connection.run()
-        self.phoneHome("Session ended")
+        self.phoneHome("Session ended\n"+"\n".join(self.log))
         print "Session ended"
     
     #===========================================================================
@@ -441,12 +510,23 @@ class PyChessFICS(PyChess):
     
     def __onLogOut (self, autoLogoutManager):
         self.connection.disconnect()
+        sys.exit()
     
     def __onAddPlayer (self, gameListManager, player):
         if player["name"] in self.sudos:
             self.sudos.remove(player["name"])
         if player["name"] == self.owner:
             self.connection.cm.tellPlayer(self.owner, "Greetings")
+            self.ownerOnline = True
+    
+    def __onRemovePlayer (self, gameListManager, playername):
+        if playername == self.owner:
+            self.ownerOnline = False
+    
+    def __onAdjournmentsList (self, adjournManager, adjournments):
+        for adjournment in adjournments:
+            if adjournment["online"]:
+                adjournManager.challenge(adjournment["opponent"])
     
     def __usage (self):
         return "|| PyChess bot help file || " +\
@@ -481,14 +561,24 @@ class PyChessFICS(PyChess):
                 self.waitingForPassword = command
         
         elif args == ["sendlog"]:
-            log2 = self.log[:]
-            del self.log[:]
-            # TODO: Consider email
-            chatManager.tellPlayer(name, "\\n".join(log2))
+            if self.log:
+                # TODO: Consider email
+                chatManager.tellPlayer(name, "\\n".join(self.log))
+            else:
+                chatManager.tellPlayer(name, "The log is currently empty")
         
         else:
-            chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
-                                       "Please read my help file for more info")
+            self.extendlog(["%s told me '%s'" % (name, text)])
+            def onlineanswer (message):
+                data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                               urlencode({"message":message, "botcust2":"x"})).read()
+                ss = "<b>DMPGirl:</b>"
+                es = "<br>"
+                answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
+                chatManager.tellPlayer(name, answer)
+            pool.start(onlineanswer, text)
+            #chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
+            #                           "Please read my help file for more info")
     
     #===========================================================================
     # Challenges and other offers
@@ -497,6 +587,16 @@ class PyChessFICS(PyChess):
     def __onChallengeAdd (self, offerManager, index, match):
         #match = {"tp": type, "w": fname, "rt": rating, "r": rated, "t": mins, "i": incr}
         offerManager.acceptIndex(index)
+    
+    def __onOfferAdd (self, offerManager, index, offer):
+        if offer.offerType in (PAUSE_OFFER, RESUME_OFFER, ADJOURN_OFFER):
+            offerManager.acceptIndex(index)
+        elif offer.offerType in (TAKEBACK_OFFER,):
+            offerManager.declineIndex(index)
+        elif offer.offerType in (DRAW_OFFER, ABORT_OFFER, SWITCH_OFFER):
+            if self.scr <= 0:
+                offerManager.acceptIndex(index)
+            else: offerManager.declineIndex(index)
     
     #===========================================================================
     # Playing
@@ -507,51 +607,100 @@ class PyChessFICS(PyChess):
             self.mytime = msecs/1000.
     
     def __onPlayBoardCreated (self, boardManager, board):
+        
         self.mytime = int(board["mins"])*60
         self.increment = int(board["incr"])
         self.gameno = board["gameno"]
         self.lastPly = -1
         
-        self.board = LBoard(NORMALCHESS)
-        self.board.applyFen(FEN_START)
-        # TODO: Support board.variant = FISCHERRANDOMCHESS
+        self.extendlog(["Starting a game (%s, %s) gameno: %s" %
+                (board["wname"], board["bname"], board["gameno"])])
         
         if board["bname"].lower() == self.connection.getUsername().lower():
             self.playingAs = BLACK
         else:
             self.playingAs = WHITE
-            self.__go()
+        
+        self.board = LBoard(NORMALCHESS)
+        # Now we wait until we recieve the board.
     
     def __go (self):
-        worker = GtkWorker(lambda worker: PyChess._PyChess__go(self, worker))
-        worker.connect("published", lambda w, msg: self.log.extend(messages))
-        worker.connect("done", lambda w, res: self.connection.bm.sendMove(res))
-        worker.execute()
+        if self.worker:
+            self.worker.cancel()
+        self.worker = GtkWorker(lambda worker: PyChess._PyChess__go(self, worker))
+        self.worker.connect("published", lambda w, msg: self.extendlog(msg))
+        self.worker.connect("done", self.__onMoveCalculated)
+        self.worker.execute()
+    
+    def __onGameEnded (self, boardManager, gameno, result, reason):
+        self.extendlog(["Stopping search for gameno: %s" % gameno])
+        lsearch.searching = False
+        if self.worker:
+            self.worker.cancel()
+            self.worker = None
+    
+    def __onMoveCalculated (self, worker, sanmove):
+        if worker.isCancelled() or not sanmove:
+            return
+        self.board.applyMove(parseSAN(self.board,sanmove))
+        self.connection.bm.sendMove(sanmove)
+        self.extendlog(["Move sent %s" % sanmove])
     
     def __onMoveRecieved (self, boardManager, moveply, sanmove, gameno, movecol):
-        if self.gameno == gameno:
+        if self.gameno == gameno and movecol != self.playingAs:
+            self.extendlog(["","I got move %s %s" % (moveply, sanmove)])
+            
             # We want the current ply rather than the moveply, so we add one
             curply = int(moveply) +1
             # In some cases (like lost on time) the last move is resent
             if curply <= self.lastPly:
+                print "XXX"
                 return
+            
             self.lastPly = curply
-            if self.playingAs != movecol:
-                move = parseSAN (self.board, sanmove)
-                self.board.applyMove(move)
-                self.__go()
+            move = parseSAN (self.board, sanmove)
+            self.board.applyMove(move)
+            self.__go()
     
     def __onBoardRecieved (self, boardManager, gameno, ply, fen, wsecs, bsecs):
-        # Take back
+        
+        self.extendlog(["Recieved board for gameno: %s" % gameno])
+        
+        if self.gameno != gameno:
+            return
+        
         self.board.applyFen(fen)
-        if self.gameno == gameno:
-            if self.playingAs == WHITE:
-                self.mytime = wsecs
-            else: self.mytime = bsecs
+        # TODO: Support board.variant = FISCHERRANDOMCHESS
+        
+        if self.playingAs == WHITE:
+            self.mytime = wsecs
+        else: self.mytime = bsecs
+        
+        if self.board.color == self.playingAs:
+            self.__go()
+    
+    def __onAmbiguousMove (self, errorManager, move):
+        # This is really a fix for fics, but sometimes it is necessary
+        if determineAlgebraicNotation(move) == SAN:
+            lanmove = toLAN(self.board, parseSAN(self.board, sanmove))
+            self.connection.bm.sendMove(lanmove)
+        else:
+            self.connection.cm.tellOpponent(
+                    "I'm sorry, I wanted to move %s, but FICS called " % move +
+                    "it 'Ambigious'. I can't find another way to express it, " +
+                    "so you can win")
+            self.connection.bm.resign()
     
     #===========================================================================
     # Utils
     #===========================================================================
+    
+    def extendlog(self, messages):
+        print "\n".join(messages)
+        self.log.extend(messages)
+        #if self.ownerOnline:
+        #    self.connection.cm.tellPlayer(self.owner, "\\n".join(messages))
+        del self.log[:-10]
     
     def phoneHome(self, message):
         
@@ -583,11 +732,38 @@ class PyChessFICS(PyChess):
 if __name__ == "__main__":
     if len(sys.argv) == 1 or sys.argv[1:] == ["xboard"]:
         pychess = PyChessCECP()
+    
     elif len(sys.argv) == 5 and sys.argv[1] == "fics":
         pychess = PyChessFICS(*sys.argv[2:])
+        
+        import signal, gtk
+        signal.signal(signal.SIGINT, gtk.main_quit)
+        import gettext, gtk.glade
+        from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
+        if isInstalled():
+            gettext.install("pychess", unicode=1)
+            gtk.glade.bindtextdomain("pychess")
+        else:
+            gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+            gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
+        gtk.glade.textdomain("pychess")
+        
+        # Start logging
+        from pychess.System.Log import log
+        log.debug("Started\n")
+        from pychess.widgets import LogDialog
+        LogDialog.show()
+        
     else:
         print "Unknown argument(s):", repr(sys.argv)
         sys.exit(0)
     
     pychess.makeReady()
-    pychess.run()
+    
+    if len(sys.argv) == 5 and sys.argv[1] == "fics":
+        from pychess.System.ThreadPool import pool
+        pool.start(pychess.run)
+        gtk.gdk.threads_init()
+        gtk.main()
+    else:
+        pychess.run()

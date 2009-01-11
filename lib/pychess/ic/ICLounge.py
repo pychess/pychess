@@ -705,8 +705,60 @@ class AdjournedTabSection (ParrentListSection):
     
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
+        self.connection = connection
+        self.opponents = {}
         
-        widgets["notebook"].remove_page(4)
+        # Set up the treeview
+        
+        icons = gtk.icon_theme_get_default()
+        self.wpix = icons.load_icon("stock_draw-rounded-square-unfilled", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        self.bpix = icons.load_icon("stock_draw-rounded-square", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        
+        self.tv = widgets["adjournedtreeview"]
+        self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str)
+        self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.addColumns (self.tv, _("Your color"), _("Opponent"),
+                                  _("Is online"), _("Length"), pix=[0])
+        
+        # Connect to adjourmentlist signals
+        
+        self.connection.adm.connect("onAdjournmentsList", lambda glm, adjournments:
+                self.listPublisher.put((self.onAdjournmentsList, adjournments)) )
+        self.connection.adm.queryAdjournments()
+        
+        self.connection.bm.connect("curGameEnded", lambda bm, gameno, result, reason:
+                self.listPublisher.put((self.onCurGameEnded, result)))
+        
+        # Set up buttons
+        
+        widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
+        self.connection.adm.connect("onGamePreview", lambda adm, pgn, secs, gain, whitename, blackname:
+                self.listPublisher.put((self.onGamePreview, pgn, secs, gain, whitename, blackname)))
+        
+    
+    def onAdjournmentsList (self, adjournments):
+        for adjourn in adjournments:
+            if adjourn["opponent"].lower() in self.opponents:
+                continue
+            pix = (self.wpix, self.bpix)[adjourn["color"]]
+            ti = self.store.append ([pix, adjourn["opponent"],
+                                     adjourn["online"], adjourn["length"]])
+            self.opponents[adjourn["opponent"].lower()] = ti 
+    
+    def onCurGameEnded (self, result):
+        if result == ADJOURNED:
+            self.store.clear()
+            self.opponents.clear()
+            self.connection.adm.queryAdjournments()
+    
+    def onPreviewButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        opponent = model.get_value(iter, 1)
+        self.connection.adm.queryMoves(opponent)
+    
+    def onGamePreview (self, pgn, secs, gain, whitename, blackname):
+        print pgn
         
         #if not connection.registered:
         #    widgets["notebook"].remove_page(4)
