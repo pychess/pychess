@@ -30,7 +30,7 @@ class Publisher (PooledThread):
     def run (self):
         while True:
             v = self.queue.get()
-            if v == None:
+            if v == self.StopNow:
                 break
             glock.acquire()
             try:
@@ -38,11 +38,12 @@ class Publisher (PooledThread):
                 while True:
                     try:
                         v = self.queue.get_nowait()
-                        if v == self.StopNow:
-                            break
                     except Queue.Empty:
                         break
-                    else: l.append(v)
+                    else:
+                        if v == self.StopNow:
+                            break
+                        l.append(v)
                 
                 if self.sendPolicy == self.SEND_LIST:
                     self.func(l)
