@@ -38,6 +38,8 @@ class Publisher (PooledThread):
                 while True:
                     try:
                         v = self.queue.get_nowait()
+                        if v == self.StopNow:
+                            break
                     except Queue.Empty:
                         break
                     else: l.append(v)
@@ -53,7 +55,9 @@ class Publisher (PooledThread):
         self.queue.put(task)
     
     def __del__ (self):
-        self.queue.put(None)
+        self.queue.put(self.StopNow)
+    
+    class StopNow(Exception): pass
 
 class EmitPublisher (Publisher):
     """ EmitPublisher is a version of Publisher made for the common task of
