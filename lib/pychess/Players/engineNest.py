@@ -1,6 +1,7 @@
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
-import os, md5, imp
+import os, imp
+from hashlib import md5
 from threading import Thread
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
@@ -305,7 +306,7 @@ class EngineDiscoverer (GObject, PooledThread):
                 continue
             
             file, path, args = location
-            md5sum = md5.new(open(file).read()).hexdigest()
+            md5sum = md5(open(file).read()).hexdigest()
             
             checkIt = False
             
