@@ -11,7 +11,7 @@ names = "(\w+)(?:\(([CUHIFWM])\))?"
 # FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
 types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
-ratings = "\(([0-9\ \-\+]{4}|UNR)\)"
+ratings = "\(([0-9\ \-\+]+|UNR)\)"
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
 
 moveListNames = re.compile("%s %s vs. %s %s --- .*" %
@@ -306,6 +306,7 @@ class BoardManager (GObject):
         
         if gameno == self.ourGameno:
             self.emit("curGameEnded", gameno, result, reason)
+            self.ourGameno = ""
         else:
             f = lambda: self.emit("obsGameEnded", gameno, result, reason)
             if gameno in self.queuedCalls:
@@ -325,6 +326,9 @@ class BoardManager (GObject):
     ############################################################################
     #   Interacting                                                            #
     ############################################################################
+    
+    def isPlaying (self):
+        return bool(self.ourGameno)
     
     def sendMove (self, move):
         print >> self.connection.client, move
