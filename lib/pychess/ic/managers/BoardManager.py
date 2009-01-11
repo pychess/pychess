@@ -34,6 +34,13 @@ relations = { "-3": IC_POS_ISOLATED,
                "1": IC_POS_ME_TO_MOVE,
                "0": IC_POS_OBSERVING }
 
+# TODO: Fischer and other wild
+#Creating: Lobais (----) GuestGFDC (++++) unrated wild/fr 2 12
+#{Game 155 (Lobais vs. GuestGFDC) Creating unrated wild/fr match.}
+
+#<12> bqrknbnr pppppppp -------- -------- -------- -------- PPPPPPPP BQRKNBNR W -1 1 1 1 1 0 155 Lobais GuestGFDC 1 2 12 39 39 120 120 1 none (0:00) none 0 0 0
+
+
 class BoardManager (GObject):
     
     __gsignals__ = {
