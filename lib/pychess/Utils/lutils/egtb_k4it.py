@@ -16,7 +16,6 @@ PROMOTION_FLAGS = {
 }
 
 table = {}
-
 def probeEndGameTable (board):
     
     fen = board.asFen().split()[0] + " w - - 0 1"
@@ -30,7 +29,8 @@ def probeEndGameTable (board):
         return []
     
     # Request the page
-    f = urllib.urlopen(URL + fen)
+    url = (URL + fen).replace(" ", "%20")
+    f = urllib.urlopen(url)
     data = f.read()
     
     # Parse
@@ -57,28 +57,41 @@ def probeEndGameTable (board):
                 steps = int(steps)
             
             if result.startswith("Win"):
-                if board.color == WHITE:
+                if color == WHITE:
                     state = (WHITEWON, int(steps))
                 else: state = (BLACKWON, int(steps))
             elif result.startswith("Lose"):
-                if board.color == WHITE:
+                if color == WHITE:
                     state = (BLACKWON, int(steps))
                 else: state = (WHITEWON, int(steps))
             
             moves.append( (move,state,steps) )
         
         if moves:
-            table[(fen,board.color)] = moves
-        else:
-            log.warn("Unable to get egtb data for position: %s.\nData was: %s" %
-                     (board.asFen(), repr(data)))
+            table[(fen,color)] = moves
+        elif color == board.color and board.opIsChecked():
+            log.warn("Asked endgametable for a won position: %s" % fen)
+        elif color == board.color:
+            log.warn("Unable to get %s data for position: %s.\nData was: %s" %
+                     (reprColor[color], fen, repr(data)))
     
-    return table[(fen,board.color)]
+    if (fen,board.color) in table:
+        return table[(fen,board.color)]
+    return []
 
 if __name__ == "__main__":
     from pychess.Utils.lutils.LBoard import LBoard
+    from pychess.Utils.lutils.lmove import listToSan
     board = LBoard(NORMALCHESS)
+    
     board.applyFen("8/k2P4/8/8/8/8/8/4K2R w - - 0 1")
     moves = probeEndGameTable(board)
-    print moves
-    assert len(moves) == 18
+    assert len(moves) == 18, listToSan(board, (move[0] for move in moves))
+    
+    board.applyFen("8/p7/6kp/3K4/6PP/8/8/8 b - - 0 1")
+    moves = probeEndGameTable(board)
+    assert len(moves) == 7, listToSan(board, (move[0] for move in moves))
+    
+    board.applyFen("8/p6k/2K5/7R/6PP/8/8/8 b - - 0 66")
+    moves = probeEndGameTable(board)
+    assert len(moves) == 3, listToSan(board, (move[0] for move in moves))
