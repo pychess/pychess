@@ -21,7 +21,7 @@ if not hasattr(Thread, "_Thread__bootstrap_inner"):
     setattr(SafeThread, "_Thread__bootstrap", SafeThread.encaps)
     threading.Thread = SafeThread
 
-maxThreads = 50
+maxThreads = sys_.maxint
 
 class ThreadPool:
     def __init__ (self):
@@ -94,6 +94,7 @@ class ThreadPool:
                     self.wcond.acquire()
                     self.wcond.wait()
             except:
+                self.threads -= 1
                 if self.running:
                     raise
         
