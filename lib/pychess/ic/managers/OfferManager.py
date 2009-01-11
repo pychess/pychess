@@ -113,10 +113,6 @@ class OfferManager (GObject):
             fname, frating, col, tname, trating, rated, type, mins, incr, ad = \
                     matchre.match(parameters).groups()
             
-            # We still don't support adjourned games
-            if ad:
-            	self.decline(MATCH_OFFER)
-            
             rating = frating.strip()
             rating = rating.isdigit() and rating or "0"
             rated = rated == "unrated" and "u" or "r"
@@ -163,6 +159,9 @@ class OfferManager (GObject):
     
     def acceptIndex (self, index):
         print >> self.connection.client, "accept", index
+    
+    def declineIndex (self, index):
+        print >> self.connection.client, "decline", index
     
     def playIndex (self, index):
         print >> self.connection.client, "play", index

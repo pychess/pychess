@@ -15,6 +15,7 @@ from managers.ChatManager import ChatManager
 from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
+from managers.AdjournManager import AdjournManager
 
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction
@@ -154,9 +155,9 @@ class FICSConnection (Connection):
                                   "([A-Za-z]+)(?:\([A-Z*]+\))* \*\*\*\*", line)
                 if match:
                     self.username = match.groups()[0]
-                
-                if "fics%" in line:
                     break
+            
+            self.client.readuntil("fics%")
             
             self.emit('connectingMsg', _("Setting up enviroment"))
             self.client = PredictionsTelnet(self.client)
@@ -184,6 +185,7 @@ class FICSConnection (Connection):
             self.om = OfferManager(self)
             self.cm = ChatManager(self)
             self.alm = AutoLogOutManager(self)
+            self.adm = AdjournManager(self)
             
             self.connecting = False
             self.connected = True
