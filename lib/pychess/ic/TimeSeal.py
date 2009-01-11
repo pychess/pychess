@@ -43,24 +43,15 @@ class TimeSeal:
     def close (self):
         self.sock.close()
     
-    #get time elapsed in milliseconds since the start of app
-    def get_time(self):
-        now = time.time()
-        intnow = int(now)
-        secs = 1000 * (intnow%10000)
-        millis = int((now - intnow)*1000)
-        res = secs + millis
-        #print "TIME:", res, "S,M",(secs,millis)
-        return res
-    
     def encode(self, inbuf, timestamp = None):
         assert inbuf == "" or inbuf[-1] != "\n"
         
-        timestamp = timestamp or self.get_time()
-        enc = inbuf + '\x18' + str(timestamp) + '\x19'
-        padding = 11 - ((len(enc) - 1) % 12)
-        filler = [random.choice(FILLER) for x in range(padding)]
-        enc += ''.join(filler)
+        if not timestamp:
+            timestamp = int(time.time()*1000 % 1e7)
+        enc = inbuf + '\x18%d\x19' % timestamp
+        padding = 12 - len(enc)%12
+        filler = random.sample(FILLER, padding)
+        enc += "".join(filler)
         
         buf = [ord(i) for i in enc]
         
@@ -69,13 +60,12 @@ class TimeSeal:
             buf[i + 9], buf[i + 2] = buf[i + 2], buf[i + 9]
             buf[i + 7], buf[i + 4] = buf[i + 4], buf[i + 7]
         
-        j = encode_offset = random.randint(0, ENCODELEN-1)
+        encode_offset = random.randrange(ENCODELEN)
         
-        for i in range(0, len(buf)):
+        for i in xrange(len(buf)):
             buf[i] |= 0x80
+            j = (i+encode_offset) % ENCODELEN
             buf[i] = chr((buf[i] ^ ENCODE[j]) - 32)
-            j += 1
-            if j>= ENCODELEN: j = 0
         
         buf.append( chr(0x80 | encode_offset))
         
@@ -138,12 +128,15 @@ class TimeSeal:
         self.sock.send(str)
     
     def readline(self):
+        return self.readuntil("\n")
+    
+    def readuntil(self, until):
         while True:
-            i = self.buf.find("\n")
+            i = self.buf.find(until)
             if i >= 0:
-                line = self.buf[:i+1]
-                self.buf = self.buf[i+1:]
-                return line
+                stuff = self.buf[:i+len(until)]
+                self.buf = self.buf[i+len(until):]
+                return stuff
             self.cook_some()
     
     def cook_some (self):
