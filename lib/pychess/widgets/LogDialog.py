@@ -29,6 +29,7 @@ class InformationWindow:
         cls.window = gtk.Window()
         cls.window.set_title(_("PyChess Information Window"))
         cls.window.set_border_width(12)
+        cls.window.set_icon_name("pychess")
         uistuff.keepWindowSize("logdialog", cls.window, (640,480))
         mainHBox = gtk.HBox()
         mainHBox.set_spacing(6)
