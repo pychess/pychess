@@ -12,6 +12,7 @@ from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.book import getOpenings
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils import lsearch
@@ -23,6 +24,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
+from pychess.System.Log import log
 
 from pychess.ic.FICSConnection import FICSConnection
 
@@ -412,7 +414,7 @@ class PyChessFICS(PyChess):
         self.to_address = "Thomas Dybdahl Ahle <%s>" % to_address
         
         # Possible start times
-        self.minutes = (5,6,7,8,9,10)
+        self.minutes = (1,2,3,4,5,6,7,8,9,10)
         self.gains = (0,5,10,15,20)
         # Possible colors. None == random
         self.colors = (WHITE, BLACK, None) 
@@ -423,10 +425,11 @@ class PyChessFICS(PyChess):
         self.ownerOnline = False
         self.waitingForPassword = None
         self.log = []
+        self.acceptedTimesettings = []
         
         self.worker = None
         
-        repeat_sleep(self.sendChallenges, 60*5)
+        repeat_sleep(self.sendChallenges, 60*1)
     
     def sendChallenges(self):
         if self.connection.bm.isPlaying():
@@ -465,6 +468,7 @@ class PyChessFICS(PyChess):
         self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
         self.connection.adm.connect("onAdjournmentsList", self.__onAdjournmentsList)
         self.connection.em.connect("onAmbiguousMove", self.__onAmbiguousMove)
+        self.connection.em.connect("onIllegalMove", self.__onAmbiguousMove)
         
         self.connection.adm.queryAdjournments()
         self.connection.lvm.setVariable("autoflag", True)
@@ -498,6 +502,7 @@ class PyChessFICS(PyChess):
     
     def run(self):
         self.connection.run()
+        self.extendlog([str(self.acceptedTimesettings)])
         self.phoneHome("Session ended\n"+"\n".join(self.log))
         print "Session ended"
     
@@ -537,11 +542,13 @@ class PyChessFICS(PyChess):
     def __onTell (self, chatManager, name, title, isadmin, text):
         
         if self.waitingForPassword:
-            if text.strip() == self.password:
+            if text.strip() == self.password or (not self.password and text == "none"):
                 self.sudos.add(name)
+                self.tellHome("%s gained sudo access" % name)
                 print >> self.connection.client, self.waitingForPassword
             else:
                 chatManager.tellPlayer(name, "Wrong password")
+                self.tellHome("%s failed sudo access" % name)
             self.waitingForPassword = None
             return
         
@@ -568,15 +575,17 @@ class PyChessFICS(PyChess):
                 chatManager.tellPlayer(name, "The log is currently empty")
         
         else:
-            self.extendlog(["%s told me '%s'" % (name, text)])
-            def onlineanswer (message):
-                data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                               urlencode({"message":message, "botcust2":"x"})).read()
-                ss = "<b>DMPGirl:</b>"
-                es = "<br>"
-                answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
-                chatManager.tellPlayer(name, answer)
-            pool.start(onlineanswer, text)
+            if self.ownerOnline:
+                self.tellHome("%s told me '%s'" % (name, text))
+            else:
+                def onlineanswer (message):
+                    data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                                   urlencode({"message":message, "botcust2":"x"})).read()
+                    ss = "<b>DMPGirl:</b>"
+                    es = "<br>"
+                    answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
+                    chatManager.tellPlayer(name, answer)
+                pool.start(onlineanswer, text)
             #chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
             #                           "Please read my help file for more info")
     
@@ -613,8 +622,10 @@ class PyChessFICS(PyChess):
         self.gameno = board["gameno"]
         self.lastPly = -1
         
-        self.extendlog(["Starting a game (%s, %s) gameno: %s" %
-                (board["wname"], board["bname"], board["gameno"])])
+        self.acceptedTimesettings.append((self.mytime, self.increment))
+        
+        self.tellHome("Starting a game (%s, %s) gameno: %s" %
+                (board["wname"], board["bname"], board["gameno"]))
         
         if board["bname"].lower() == self.connection.getUsername().lower():
             self.playingAs = BLACK
@@ -633,7 +644,7 @@ class PyChessFICS(PyChess):
         self.worker.execute()
     
     def __onGameEnded (self, boardManager, gameno, result, reason):
-        self.extendlog(["Stopping search for gameno: %s" % gameno])
+        self.tellHome(reprResult_long[result] + " " + reprReason_long[reason])
         lsearch.searching = False
         if self.worker:
             self.worker.cancel()
@@ -682,7 +693,7 @@ class PyChessFICS(PyChess):
     def __onAmbiguousMove (self, errorManager, move):
         # This is really a fix for fics, but sometimes it is necessary
         if determineAlgebraicNotation(move) == SAN:
-            lanmove = toLAN(self.board, parseSAN(self.board, sanmove))
+            lanmove = toLAN(self.board, parseSAN(self.board, move))
             self.connection.bm.sendMove(lanmove)
         else:
             self.connection.cm.tellOpponent(
@@ -696,11 +707,14 @@ class PyChessFICS(PyChess):
     #===========================================================================
     
     def extendlog(self, messages):
-        print "\n".join(messages)
+        [log.log(m+"\n") for m in messages]
         self.log.extend(messages)
-        #if self.ownerOnline:
-        #    self.connection.cm.tellPlayer(self.owner, "\\n".join(messages))
         del self.log[:-10]
+    
+    def tellHome(self, message):
+        print message
+        if self.ownerOnline:
+            self.connection.cm.tellPlayer(self.owner, message)
     
     def phoneHome(self, message):
         
@@ -730,6 +744,7 @@ class PyChessFICS(PyChess):
 ################################################################################
 
 if __name__ == "__main__":
+    
     if len(sys.argv) == 1 or sys.argv[1:] == ["xboard"]:
         pychess = PyChessCECP()
     
