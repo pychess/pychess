@@ -460,9 +460,6 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         self.channelsList = TextImageTree("gtk-add")
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
-        for id, name in connection.cm.getChannels():
-            id = self.compileId(id, TYPE_CHANNEL)
-            self.channelsList.addRow(id, name, TYPE_CHANNEL)
         expander.add(self.channelsList)
         
         expander = gtk.Expander(_("More players"))
@@ -470,17 +467,22 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         self.playersList = TextImageTree("gtk-add")
         self.playersList.connect("activated", self.onAdd)
         self.playersList.fixed_height_mode = True
-        for name in connection.glm.getPlayerlist():
-            id = self.compileId(name, TYPE_PERSONAL)
-            self.playersList.addRow(id, name, TYPE_PERSONAL)
         glock_connect(connection.cm, "privateMessage", self.onPersonMessage, after=True)
         expander.add(self.playersList)
     
     def start (self):
         for id, name in self.connection.cm.getChannels():
+            id = self.compileId(id, TYPE_CHANNEL)
+            self.channelsList.addRow(id, name, TYPE_CHANNEL)
+        
+        for id, name in self.connection.cm.getChannels():
             if id in self.connection.cm.getJoinedChannels():
                 id = self.compileId(id, TYPE_CHANNEL)
                 self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
+        
+        for name in self.connection.glm.getPlayerlist():
+            id = self.compileId(name, TYPE_PERSONAL)
+            self.playersList.addRow(id, name, TYPE_PERSONAL)
     
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:
@@ -526,10 +528,17 @@ class ChatWindow:
     def __init__ (self, widgets, connection):
         self.connection = connection
         self.window = None
-        self.panels = []
+        
         widgets["show_chat_button"].connect("clicked", self.showChat)
+        glock_connect(connection.cm, "privateMessage",
+                      self.onPersonMessage, after=False)
         glock_connect(connection, "disconnected",
                       lambda c: self.window and self.window.hide())
+        
+        self.viewspanel = ViewsPanel(self.connection)
+        self.channelspanel = ChannelsPanel(self.connection)
+        self.infopanel = InfoPanel(self.connection)
+        self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
     
     def showChat (self, *widget):
         if not self.window:
@@ -539,29 +548,26 @@ class ChatWindow:
     def initUi (self):
         self.window = gtk.Window()
         self.window.set_border_width(12)
+        self.window.set_icon_name("pychess")
         self.window.set_title("PyChess - Internet Chess Chat")
         self.window.connect("delete-event", lambda w,e: w.hide() or True)
-        self.window.resize(650, 400)
+        
+        uistuff.keepWindowSize("chatwindow", self.window, defaultSize=(650,400))
         
         dock = PyDockTop("icchat")
         dock.show()
         self.window.add(dock)
         
-        
-        panel1 = ViewsPanel(self.connection)
-        leaf = dock.dock(panel1, CENTER, gtk.Label("chat"), "chat")
+        leaf = dock.dock(self.viewspanel, CENTER, gtk.Label("chat"), "chat")
         leaf.setDockable(False)
         
-        panel2 = ChannelsPanel(self.connection)
-        panel2.connect('conversationAdded', self.onConversationAdded)
-        panel2.connect('conversationRemoved', self.onConversationRemoved)
-        panel2.connect('conversationSelected', self.onConversationSelected)
-        leaf.dock(panel2, WEST, gtk.Label(_("Conversations")), "conversations")
+        self.channelspanel.connect('conversationAdded', self.onConversationAdded)
+        self.channelspanel.connect('conversationRemoved', self.onConversationRemoved)
+        self.channelspanel.connect('conversationSelected', self.onConversationSelected)
+        leaf.dock(self.channelspanel, WEST, gtk.Label(_("Conversations")), "conversations")
         
-        panel3 = InfoPanel(self.connection)
-        leaf.dock(panel3, EAST, gtk.Label(_("Conversation info")), "info")
+        leaf.dock(self.infopanel, EAST, gtk.Label(_("Conversation info")), "info")
         
-        self.panels = [panel1, panel2, panel3]
         for panel in self.panels:
             panel.show_all()
             panel.start()
@@ -578,7 +584,17 @@ class ChatWindow:
     def onConversationSelected (self, panel, id):
         for panel in self.panels:
             panel.selectItem(id)
-
+    
+    def onPersonMessage (self, cm, name, title, isadmin, text):
+        self.showChat()
+        self.window.set_urgency_hint(True)
+    
+    def openChatWithPlayer (self, name):
+        self.showChat()
+        self.window.window.raise_()
+        cm = self.connection.cm
+        self.onPersonMessage(cm, name, "", False, "")
+        self.channelspanel.onPersonMessage(cm, name, "", False, "")
 
 if __name__ == "__main__":
     import random

@@ -98,7 +98,7 @@ class ChatManager (GObject):
         self.connection.lvm.setVariable("tell", "1")
         self.connection.lvm.setVariable("height", "240")
         
-        print >> self.connection.client, "inchannel lobais"
+        print >> self.connection.client, "inchannel %s" % self.connection.username
         print >> self.connection.client, "help channel_list"
         
         self.getChannelsLock = threading.Semaphore()
