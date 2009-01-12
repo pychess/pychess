@@ -46,6 +46,7 @@ class BoardManager (GObject):
     __gsignals__ = {
         'playBoardCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
         'observeBoardCreated' : (SIGNAL_RUN_FIRST, None, (str, str, int, int, str, str)),
+        'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (str,)),
         'moveRecieved'        : (SIGNAL_RUN_FIRST, None, (str, str, str, int)),
         'boardRecieved'       : (SIGNAL_RUN_FIRST, None, (str, int, str, int, int)),
         'clockUpdatedMs'      : (SIGNAL_RUN_FIRST, None, (str, int, int)),
@@ -63,6 +64,9 @@ class BoardManager (GObject):
         self.connection.expect_line (self.onStyle12, "<12>\s*(.+)")
         self.connection.expect_line (self.onMove, "<d1>\s*(.+)")
         
+        self.connection.expect_line (self.onWasPrivate,
+                "Sorry, game (\d+) is a private game\.")
+        
         self.connection.expect_fromto (self.playBoardCreated,
                 "Creating: %s %s %s %s %s %s (\d+) (\d+)" %
                     (names, ratings, names, ratings, rated, types),
@@ -74,7 +78,11 @@ class BoardManager (GObject):
         self.connection.glm.connect("removeGame", self.onGameEnd)
         
         self.connection.expect_line (self.onGamePause,
-                "Game (\d+): Game clock (paused|resumed).")
+                "Game (\d+): Game clock (paused|resumed)\.")
+        
+        self.connection.expect_line (self.onUnobserveGame,
+                "Removing game (\d+) from observation list\.")
+        
         
         self.queuedMoves = {}
         self.queuedCalls = {}
@@ -168,6 +176,10 @@ class BoardManager (GObject):
             self.queuedCalls[gameno].append(f)
         else:
             f()
+    
+    def onWasPrivate (self, match):
+        gameno, = match.groups()
+        self.emit("wasPrivate", gameno)
     
     def onMove (self, match):
         gameno, curply, sanmove, _, _, remainingMs = match.groups()[0].split()[:6]
@@ -330,6 +342,10 @@ class BoardManager (GObject):
         else:
             f()
     
+    def onUnobserveGame (self, match):
+        gameno, = match.groups()
+        self.emit("obsGameUnobserved", gameno)
+    
     ############################################################################
     #   Interacting                                                            #
     ############################################################################
@@ -354,7 +370,6 @@ class BoardManager (GObject):
     
     def unobserve (self, gameno):
         print >> self.connection.client, "unobserve %s" % gameno
-        self.emit("obsGameUnobserved", gameno)
     
     def play (self, seekno):
         print >> self.connection.client, "play %s" % seekno

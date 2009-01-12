@@ -65,7 +65,6 @@ class GameModel (GObject, PooledThread):
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
-        self.gameno = 0
         
         self.spectactors = {}
         
@@ -237,8 +236,7 @@ class GameModel (GObject, PooledThread):
                 chessfile = loader.load(protoopen(uri))
             else: 
                 chessfile = loader.load(uri)
-
-        self.gameno = gameno
+        
         self.emit("game_loading", uri)
         try:
             chessfile.loadToModel(gameno, position, self)

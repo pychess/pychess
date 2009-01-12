@@ -157,16 +157,18 @@ class GameListManager (GObject):
     
     def on_game_list (self, match):
         gameno, wr, wn, br, bn, private, type, rated, min, inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = match.groups()
-        
-        game = {"gameno":gameno, "wn":wn, "bn":bn, "type":typedic[type]}
+        game = {"gameno":gameno, "wn":wn, "bn":bn, "private":private == "p",
+                "type":typedic[type], "min":int(min), "inc":int(inc) }
         self.emit("addGame", game)
     
     def on_game_add (self, match):
         gameno, wn, bn, rated, type = match.groups()
+        
         if not type in ("standard", "blitz", "lightning"):
             return
         type = typedic[type[0]]
-        self.emit("addGame", {"gameno":gameno, "wn":wn, "bn":bn, "type":type})
+        
+        self.emit("addGame", {"gameno":gameno, "wn":wn, "bn":bn, "type":type, "private":False})
     
     def on_game_remove (self, match):
         gameno, wn, bn, person, comment, result = match.groups()

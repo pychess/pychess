@@ -35,7 +35,7 @@ class AdjournManager (GObject):
         
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
-                                        "\s*\d+: (B|W) (%s)\s+(Y|N) \[ ([a-zA-Z]{2})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\?\?\?|[A-Z]\d+)\s+(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" %
+                                        "\s*\d+: (B|W) (%s)\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\?\?\?|[A-Z]\d+)\s+(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" %
                                         (names, "|".join(weekdays), "|".join(months))) 
         
         self.adjournments = []
@@ -48,7 +48,7 @@ class AdjournManager (GObject):
         #Stored games of User: 
         #     C Opponent     On Type          Str  M    ECO Date
         #  1: W TheDane       N [ br  2  12]  0-0  B2   ??? Sun Nov 23,  6:14 CST 1997
-        #  2: W PyChess       Y [ bu  2  12] 39-39 W3   C20 Sun Jan 11, 17:40 ??? 2009
+        #  2: W PyChess       Y [psu  2  12] 39-39 W3   C20 Sun Jan 11, 17:40 ??? 2009
         
         del self.adjournments[:]
         
@@ -62,6 +62,9 @@ class AdjournManager (GObject):
             move_num = match.groups()[9]
             eco = match.groups()[10]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
+            
+            private = game_type[0] == "p"
+            rated = game_type[2] == "r"
             
             our_color = our_color == "B" and BLACK or WHITE
             minutes = int(minutes)
