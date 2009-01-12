@@ -167,6 +167,8 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
 
 POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN = range(3)
 def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE):
+    """ You should call keepWindowSize before show on your windows """
+    
     key = key + "window"
     
     def savePosition (window, *event):
