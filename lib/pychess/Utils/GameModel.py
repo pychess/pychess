@@ -450,7 +450,6 @@ class GameModel (GObject, PooledThread):
         
         if self.status != KILLED:
             #self.resume()
-            print "term"
             for player in self.players:
                 player.end(self.status, self.reason)
             

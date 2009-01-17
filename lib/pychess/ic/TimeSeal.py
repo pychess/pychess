@@ -25,6 +25,7 @@ class TimeSeal:
         self.address = address
         
         self.connected = False
+        self.closed = False
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.stateinfo = None
         
@@ -41,6 +42,7 @@ class TimeSeal:
         self.cook_some()
     
     def close (self):
+        self.closed = True
         self.sock.close()
     
     def encode(self, inbuf, timestamp = None):
@@ -119,13 +121,16 @@ class TimeSeal:
         if "\n" not in self.writebuf:
             return
         
+        if self.closed:
+            return
+        
         i = self.writebuf.rfind("\n")
-        str = self.writebuf[:i+1]
+        str = self.writebuf[:i]
         self.writebuf = self.writebuf[i+1:]
         
-        log.log(str, (repr(self), "raw"))
-        str = self.encode(str[:-1])+"\n"
-        self.sock.send(str)
+        log.log(str+"\n", (repr(self), "raw"))
+        str = self.encode(str)
+        self.sock.send(str+"\n")
     
     def readline(self):
         return self.readuntil("\n")

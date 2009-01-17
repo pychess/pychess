@@ -55,9 +55,8 @@ class ICGameModel (GameModel):
         else: self.resume()
     
     def onDisconnected (self, connection):
-        if not self.inControl and \
-                self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.end (KILLED, UNKNOWN_REASON)
+        if self.status in (WAITING_TO_START, PAUSED, RUNNING):
+            self.end (KILLED, WON_DISCONNECTION)
     
     ############################################################################
     # Offer management                                                         #
