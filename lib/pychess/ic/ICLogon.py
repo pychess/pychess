@@ -173,9 +173,9 @@ class ICLogon:
         self.showConnecting()
         
         self.connection = FICSConnection("freechess.org", ports, username, password)
-        self.connection.connect("connected", self.onConnected)
+        glock.glock_connect(self.connection, "connected", self.onConnected)
         self.connection.connect("disconnected", self.onDisconnected)
-        self.connection.connect("error", self.showError)
-        self.connection.connect("connectingMsg", self.showMessage)
+        glock.glock_connect(self.connection, "error", self.showError)
+        glock.glock_connect(self.connection, "connectingMsg", self.showMessage)
         
         self.connection.start()
