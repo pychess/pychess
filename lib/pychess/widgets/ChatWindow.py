@@ -409,6 +409,11 @@ class InfoPanel (gtk.Notebook, Panel):
         
         def onMessageAdded (self, chatView, sender, text, color):
             iter = self.store.get_iter_first()
+            
+            # If the names list hasn't been retrieved yet, we have to skip this
+            if not iter:
+                return
+            
             while self.store.get_path(iter) != self.store.get_path(self.separatorIter):
                 person = self.store.get_value(iter, 1)
                 # If the person is already in the area before the separator, we
