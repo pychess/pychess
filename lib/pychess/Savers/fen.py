@@ -32,7 +32,7 @@ class FenFile (ChessFile):
         #    fen = " ".join(fenlist[:5]) + " 1" 
         fen = self.games[gameno]
         
-        model.boards = [Board(fen)]
+        model.boards = [model.variant.board(setup=fen)]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
         
