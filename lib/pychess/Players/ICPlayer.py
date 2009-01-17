@@ -21,7 +21,7 @@ class ICPlayer (Player):
         self.gamemodel = gamemodel
         self.connection = self.gamemodel.connection
         
-        self.connection.bm.connect("moveRecieved", self.__moveRecieved)
+        self.connection.bm.connect("boardUpdate", self.__boardUpdate)
         self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
         self.connection.om.connect("onOfferRemove", self.__onOfferRemove)
         self.connection.cm.connect("privateMessage", self.__onPrivateMessage)
@@ -46,16 +46,14 @@ class ICPlayer (Player):
         if name == self.name:
             self.emit("offer", Offer(CHAT_ACTION, text))
     
-    def __moveRecieved (self, bm, moveply, sanmove, gameno, movecol):
+    def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wms, bms):
         if gameno == self.gameno:
-            # We want the current ply rather than the moveply, so we add one
-            curply = int(moveply) +1
             # In some cases (like lost on time) the last move is resent
-            if curply <= self.lastPly:
+            if ply <= self.lastPly:
                 return
-            self.lastPly = curply
-            if movecol == self.color:
-                self.queue.put((self.lastPly,sanmove))
+            self.lastPly = ply
+            if 1-curcol == self.color:
+                self.queue.put((self.lastPly,lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
                 # game/player thread has recieved the move.
                 # Specifically this ensures that we aren't killed due to end of
@@ -70,9 +68,6 @@ class ICPlayer (Player):
         self.queue.put("del")
     
     def kill (self, reason):
-        p = self.gamemodel.players
-        if p[0].__type__ != REMOTE or p[1].__type__ != REMOTE:
-            self.connection.om.offer(Offer(RESIGNATION), self.lastPly)
         self.queue.put("del")
     
     #===========================================================================
@@ -100,7 +95,7 @@ class ICPlayer (Player):
             try:
                 move = parseSAN (board1, sanmove)
             except ParsingError, e:
-                raise PlayerIsDead, e
+                raise
             return move
         finally:
             self.okqueue.put("ok")

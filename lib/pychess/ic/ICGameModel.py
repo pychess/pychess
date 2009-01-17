@@ -2,17 +2,17 @@
 from pychess.System.Log import log
 from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
 
 class ICGameModel (GameModel):
     
-    def __init__ (self, connection, gameno, timemodel):
-        GameModel.__init__(self, timemodel)
+    def __init__ (self, connection, gameno, timemodel, variant):
+        GameModel.__init__(self, timemodel, variant)
         self.connection = connection
         self.gameno = gameno
         
-        self.connection.bm.connect("clockUpdatedMs", self.onClockUpdatedMs)
-        self.connection.bm.connect("boardRecieved", self.onBoardRecieved)
+        self.connection.bm.connect("boardUpdate", self.onBoardUpdate)
         self.connection.bm.connect("obsGameEnded", self.onGameEnded)
         self.connection.bm.connect("curGameEnded", self.onGameEnded)
         self.connection.bm.connect("gamePaused", self.onGamePaused)
@@ -25,16 +25,16 @@ class ICGameModel (GameModel):
         
         self.inControl = True
     
-    def onClockUpdatedMs (self, bm, gameno, msecs, color):
-        if gameno == self.gameno:
-            self.timemodel.updatePlayer (color, msecs/1000.)
-    
-    def onBoardRecieved (self, bm, gameno, ply, fen, wsecs, bsecs):
-        if gameno == self.gameno:
-            self.timemodel.syncClock (wsecs, bsecs)
-            if ply < self.ply:
-                log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
-                self.undoMoves(self.ply-ply)
+    def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wms, bms):
+        if gameno != self.gameno:
+            return
+        
+        self.timemodel.updatePlayer (WHITE, wms/1000.)
+        self.timemodel.updatePlayer (BLACK, bms/1000.)
+        
+        if ply < self.ply:
+            log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
+            self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, gameno, status, reason):
         if gameno == self.gameno:
@@ -107,3 +107,13 @@ class ICGameModel (GameModel):
     
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)
+    
+    #
+    # Terminate
+    #
+    
+    def terminate (self):
+        #if self.status in (WAITING_TO_START, PAUSED, RUNNING):
+        if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
+            self.connection.om.offer(Offer(RESIGNATION), -1)
+        GameModel.terminate(self)

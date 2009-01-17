@@ -9,8 +9,7 @@ from pychess.ic.VerboseTelnet import *
 
 names = "(\w+)(?:\(([CUHIFWM])\))?"
 # FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
-types = "(blitz|lightning|standard)"
-rated = "(rated|unrated)"
+ratedexp = "(rated|unrated)"
 ratings = "\(([0-9\ \-\+]+|UNR)\)"
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
 
@@ -18,16 +17,17 @@ moveListNames = re.compile("%s %s vs. %s %s --- .*" %
         (names, ratings, names, ratings))
 
 moveListOther = re.compile(
-        "%s %s match, initial time: (\d+) minutes, increment: (\d+) seconds\." %
-        (rated, types), re.IGNORECASE)
+        "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." %
+        ratedexp, re.IGNORECASE)
 
-moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\) *(?:%s +\(\d+:\d+\))?" %
+moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +\(\d+:[\d\.]+\) *(?:%s +\(\d+:[\d\.]+\))?" %
         (sanmove, sanmove))
 
 fileToEpcord = (("a3","b3","c3","d3","e3","f3","g3","h3"),
                 ("a6","b6","c6","d6","e6","f6","g6","h6"))
 
-relations = { "-3": IC_POS_ISOLATED,
+relations = { "-4": IC_POS_INITIAL,
+              "-3": IC_POS_ISOLATED,
               "-2": IC_POS_OBSERVING_EXAMINATION,
                "2": IC_POS_EXAMINATING,
               "-1": IC_POS_OP_TO_MOVE,
@@ -40,16 +40,13 @@ relations = { "-3": IC_POS_ISOLATED,
 
 #<12> bqrknbnr pppppppp -------- -------- -------- -------- PPPPPPPP BQRKNBNR W -1 1 1 1 1 0 155 Lobais GuestGFDC 1 2 12 39 39 120 120 1 none (0:00) none 0 0 0
 
-
 class BoardManager (GObject):
     
     __gsignals__ = {
         'playBoardCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'observeBoardCreated' : (SIGNAL_RUN_FIRST, None, (str, str, int, int, str, str)),
+        'observeBoardCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
         'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (str,)),
-        'moveRecieved'        : (SIGNAL_RUN_FIRST, None, (str, str, str, int)),
-        'boardRecieved'       : (SIGNAL_RUN_FIRST, None, (str, int, str, int, int)),
-        'clockUpdatedMs'      : (SIGNAL_RUN_FIRST, None, (str, int, int)),
+        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (str, int, int, str, str, int, int)),
         'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (str, int, int)),
         'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (str, int, int)),
         'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (str,)),
@@ -61,16 +58,17 @@ class BoardManager (GObject):
         
         self.connection = connection
         
-        self.connection.expect_line (self.onStyle12, "<12>\s*(.+)")
-        self.connection.expect_line (self.onMove, "<d1>\s*(.+)")
+        self.connection.expect_line (self.onStyle12, "<12> (.+)")
         
         self.connection.expect_line (self.onWasPrivate,
                 "Sorry, game (\d+) is a private game\.")
         
-        self.connection.expect_fromto (self.playBoardCreated,
-                "Creating: %s %s %s %s %s %s (\d+) (\d+)" %
-                    (names, ratings, names, ratings, rated, types),
-                "{Game (\d+)\s")
+        self.connection.expect_n_lines (self.playBoardCreated,
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)"
+            % (names, ratings, names, ratings, ratedexp),
+            "{Game (\d+) \(%s vs\. %s\) Creating %s ([^ ]+) match\."
+            % (names, names, ratedexp),
+            "", "<12> (.+)")
         
         self.connection.expect_fromto (self.onObservedGame,
             "Movelist for game (\d+):", "{Still in progress} \*")
@@ -83,123 +81,150 @@ class BoardManager (GObject):
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
         
-        
-        self.queuedMoves = {}
+        self.queuedUpdates = {}
         self.queuedCalls = {}
         self.ourGameno = ""
+        self.castleSigns = {}
         
+        # The ms ivar makes the remaining second fields in style12 use ms
+        self.connection.lvm.setVariable("ms", True)
+        # Style12 is a must, when you don't want to parse visualoptimized stuff
         self.connection.lvm.setVariable("style", "12")
+        # When we observe fischer games, this puts a startpos in the movelist
         self.connection.lvm.setVariable("startpos", True)
+        # movecase ensures that bc3 will never be a bishop move
+        self.connection.lvm.setVariable("movecase", True)
+        self.connection.lvm.setVariable("formula", "")
+        
         # gameinfo <g1> doesn't really have any interesting info, at least not
         # until we implement crasyhouse and stuff
         # self.connection.lvm.setVariable("gameinfo", True)
-        self.connection.lvm.setVariable("compressmove", True)
-    
-    def _style12ToFenRow (self, row):
-        fenrow = []
-        spaceCounter = 0
-        for c in row:
-            if c == "-":
-                spaceCounter += 1
-            else:
-                if spaceCounter:
-                    fenrow.append(str(spaceCounter))
-                    spaceCounter = 0
-                fenrow.append(c)
-        return "".join(fenrow)
-    
-    def onStyle12 (self, match):
-        groups = match.groups()[0].split()
         
-        curcol = groups[8] == "B" and BLACK or WHITE
-        gameno = groups[15]
-        relation = relations[groups[18]]
+        # We don't use deltamoves as fisc won't send them with variants
+        #self.connection.lvm.setVariable("compressmove", True)
+    
+    def __parseStyle12 (self, line, castleSigns=None):
+        fields = line.split()
+        
+        curcol = fields[8] == "B" and BLACK or WHITE
+        gameno = fields[15]
+        relation = relations[fields[18]]
+        ply = int(fields[25])*2 - (curcol == WHITE and 2 or 1)
+        lastmove = fields[28] != "none" and fields[28] or None
+        wname = fields[16]
+        bname = fields[17]
+        wms = int(fields[23])
+        bms = int(fields[24])
+        gain = int(fields[20])
         
         # Board data
-        fen = "/".join(map(self._style12ToFenRow, groups[:8]))
+        fenrows = []
+        for row in fields[:8]:
+            fenrow = []
+            spaceCounter = 0
+            for c in row:
+                if c == "-":
+                    spaceCounter += 1
+                else:
+                    if spaceCounter:
+                        fenrow.append(str(spaceCounter))
+                        spaceCounter = 0
+                    fenrow.append(c)
+            if spaceCounter:
+                fenrow.append(str(spaceCounter))
+            fenrows.append("".join(fenrow))
+        
+        fen = "/".join(fenrows)
         fen += " "
         
         # Current color
-        fen += groups[8].lower()
+        fen += fields[8].lower()
         fen += " "
         
         # Castling
-        if groups[10:14] == ["0","0","0","0"]:
+        if fields[10:14] == ["0","0","0","0"]:
             fen += "-"
         else:
-            if groups[10] == "1":
-                fen += "K"
-            if groups[11] == "1":
-                fen += "Q"
-            if groups[12] == "1":
-                fen += "k"
-            if groups[13] == "1":
-                fen += "q"
+            if fields[10] == "1":
+                fen += castleSigns[0].upper()
+            if fields[11] == "1":
+                fen += castleSigns[1].upper()
+            if fields[12] == "1":
+                fen += castleSigns[0].lower()
+            if fields[13] == "1":
+                fen += castleSigns[1].lower()
         fen += " "
+        # 1 0 1 1 when short castling k1 last possibility
         
         # En passant
-        if groups[9] == "-1":
+        if fields[9] == "-1":
             fen += "-"
         else:
-            fen += fileToEpcord [1-curcol] [int(groups[9])]
+            fen += fileToEpcord [1-curcol] [int(fields[9])]
         fen += " "
         
         # Half move clock
-        fen += str(int(groups[14])-1)
+        fen += str(max(int(fields[14]),0))
         fen += " "
         
         # Standard chess numbering
-        moveno = groups[25]
-        fen += moveno
+        fen += fields[25]
         
-        # San move
-        sanmove = groups[28]
+        return gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen
+    
+    def onStyle12 (self, match):
+        style12 = match.groups()[0]
+        gameno = style12.split()[15]
         
-        # Names
-        wname = groups[16]
-        bname = groups[17]
+        if gameno in self.queuedUpdates:
+            self.queuedUpdates[gameno].append(style12)
+            return
         
-        # Clock update
-        wsec = int(groups[23])
-        bsec = int(groups[24])
-        
-        # Ply
-        ply = int(moveno)*2-2
-        if curcol == BLACK: ply += 1
-        
-        # Emit
-        f = lambda: self.emit("boardRecieved", gameno, ply, fen, wsec, bsec)
-        if gameno in self.queuedMoves:
-            for moveply in self.queuedMoves[gameno].keys():
-                if moveply > ply+1:
-                    del self.queuedMoves[gameno][moveply]
-            self.queuedCalls[gameno].append(f)
-        else:
-            f()
+        castleSigns = self.castleSigns[gameno]
+        gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
+                self.__parseStyle12(style12, castleSigns)
+        self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wms, bms)
     
     def onWasPrivate (self, match):
         gameno, = match.groups()
         self.emit("wasPrivate", gameno)
     
-    def onMove (self, match):
-        gameno, curply, sanmove, _, _, remainingMs = match.groups()[0].split()[:6]
-        moveply = int(curply)-1
-        
-        if gameno in self.queuedMoves:
-            self.queuedMoves[moveply] = sanmove
+    def __parseType (self, type):
+        if type == "wild/fr":
+            variant = FISCHERRANDOMCHESS
+        elif type == "losers":
+            variant = LOSERSCHESS
+        elif type in ("suicide", "crazyhouse", "bughouse"):
+            raise RuntimeError, "We don't support %s yet :X" % type
         else:
-            movecolor = moveply % 2 == 1 and BLACK or WHITE
-            self.emit("moveRecieved", moveply, sanmove, gameno, movecolor)
-            self.emit("clockUpdatedMs", gameno, int(remainingMs), movecolor)
+            variant = NORMALCHESS
+        return variant
+    
+    def __generateCastleSigns (self, style12, variant):
+        if variant == FISCHERRANDOMCHESS:
+            backrow = style12.split()[0]
+            leftside = backrow.find("r")
+            rightside = backrow.find("r", leftside+1)
+            return (reprFile[rightside], reprFile[leftside])
+        else:
+            return ("k", "q")
     
     def playBoardCreated (self, matchlist):
-        gameno = matchlist[1].groups()[0]
-        wname, wtit, wrat, bname, btit, brat, rt, type, min, incr = \
-                matchlist[0].groups()
-        board = {"wname": wname, "wtitle": wtit, "wrating": wrat,
-                 "bname": bname, "btitle": btit, "brating": brat,
-                 "rated": rt, "type": type, "mins": min, "incr": incr,
-                 "gameno": gameno}
+        
+        gameno, wname, wtit, bname, btit, rated, type = matchlist[1].groups()
+        style12 = matchlist[-1].groups()[0]
+        
+        rated = rated == "rated"
+        variant = self.__parseType(type)
+        castleSigns = self.__generateCastleSigns(style12, variant)
+        
+        self.castleSigns[gameno] = castleSigns
+        gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
+                self.__parseStyle12(style12, castleSigns)
+        
+        board = {"wname": wname, "wtitle": wtit, "bname": bname, "btitle": btit,
+                 "rated": rated, "wms": wms, "bms":bms, "gain": gain,
+                 "gameno": gameno, "variant":variant, "fen": fen}
         self.ourGameno = gameno
         self.emit("playBoardCreated", board)
     
@@ -214,16 +239,46 @@ class BoardManager (GObject):
         rated, type, minutes, increment = \
                 moveListOther.match(matchlist[3]).groups()
         
-        moves = self.queuedMoves[gameno]
-        for moveline in matchlist[7:-1]:
-            if not moveListMoves.match(moveline):
-                log.error("Line %s could not be mathed by regexp" % moveline)
-            moveno, wmove, bmove = moveListMoves.match(moveline).groups()
+        variant = self.__parseType(type)
+        
+        if matchlist[5].startswith("<12>"):
+            style12 = matchlist[5][5:]
+            castleSigns = self.__generateCastleSigns(style12, variant)
+            gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
+                    self.__parseStyle12(style12, castleSigns)
+            initialfen = fen
+            movesstart = 9
+        else:
+            castleSigns = ("k", "q")
+            initialfen = None
+            movesstart = 7
+        
+        self.castleSigns[gameno] = castleSigns
+        
+        moves = {}
+        for moveline in matchlist[movesstart:-1]:
+            match = moveListMoves.match(moveline)
+            if not match:
+                log.error("Line %s could not be macthed by regexp" % moveline)
+                continue
+            moveno, wmove, bmove = match.groups()
             ply = int(moveno)*2-2
-            moves[ply] = wmove
+            if wmove:
+                moves[ply] = wmove
             if bmove:
                 moves[ply+1] = bmove
         
+        # Apply queued board updates
+        for style12 in self.queuedUpdates[gameno]:
+            gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
+                    self.__parseStyle12(style12, castleSigns)
+            
+            moves[ply-1] = lastmove
+            # Updated the queuedMoves in case there has been a takeback
+            for moveply in moves.keys():
+                if moveply > ply-1:
+                    del moves[moveply]
+                
         # Create game
         pgnHead = [
             ("Event", "Ficsgame"),
@@ -231,9 +286,17 @@ class BoardManager (GObject):
             ("White", whitename),
             ("Black", blackname)
         ]
-        if whiterating not in ("0", "UNR"):
+        if initialfen:
+            pgnHead += [
+                ("SetUp", "1"),
+                ("FEN", initialfen)
+            ]
+            if variant == FISCHERRANDOMCHESS:
+                pgnHead += [("Variant", "Fischerandom")]
+        
+        if whiterating not in ("0", "UNR", "----"):
             pgnHead.append(("WhiteElo", whiterating))
-        if blackrating not in ("0", "UNR"):
+        if blackrating not in ("0", "UNR", "----"):
             pgnHead.append(("BlackElo", blackrating))
         
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
@@ -246,13 +309,29 @@ class BoardManager (GObject):
             pgn += move + " "
         pgn += "\n"
         
-        self.emit ("observeBoardCreated", gameno, pgn,
-                   int(minutes)*60, int(increment), whitename, blackname)
         
-        for function in self.queuedCalls[gameno]:
-            function()
+        if self.queuedUpdates[gameno]:
+            style12 = self.queuedUpdates[gameno][-1]
+            gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
+                    self.__parseStyle12(style12, castleSigns)
+        else:
+            wms = bms = int(minutes)*60*1000
+            gain = int(increment)
         
-        del self.queuedMoves[gameno]
+        board = {"wname": whitename, "wtitle": whitetitle,
+                 "bname": blackname, "btitle": blacktitle,
+                 "rated": rated.lower()=="rated",
+                 "wms": wms, "bms":bms, "gain": gain,
+                 "gameno": gameno, "variant":variant, "pgn": pgn}
+        
+        self.emit ("observeBoardCreated", board)
+        
+        for call in self.queuedCalls[gameno]:
+            print "call %s" % call
+            call()
+            print "/call"
+        
+        del self.queuedUpdates[gameno]
         del self.queuedCalls[gameno]
     
     def onGameEnd (self, glm, gameno, result, comment):
@@ -363,10 +442,11 @@ class BoardManager (GObject):
         print >> self.connection.client, "flag"
     
     def observe (self, gameno):
+        if gameno not in self.queuedUpdates:
+            self.queuedUpdates[gameno] = []
+            self.queuedCalls[gameno] = []
         print >> self.connection.client, "observe %s" % gameno
         print >> self.connection.client, "moves %s" % gameno
-        self.queuedMoves[gameno] = {}
-        self.queuedCalls[gameno] = []
     
     def unobserve (self, gameno):
         print >> self.connection.client, "unobserve %s" % gameno
@@ -379,3 +459,16 @@ class BoardManager (GObject):
     
     def decline (self, offerno):
         print >> self.connection.client, "decline %s" % offerno
+
+if __name__ == "__main__":
+    from pychess.ic.FICSConnection import Connection
+    con = Connection("","","","")
+    bm = BoardManager(con)
+    
+    print bm._BoardManager__parseStyle12("rkbrnqnb pppppppp -------- -------- -------- -------- PPPPPPPP RKBRNQNB W -1 1 1 1 1 0 161 GuestNPFS GuestMZZK -1 2 12 39 39 120 120 1 none (0:00) none 1 0 0",
+                                         ("d","a"))
+    
+    print bm._BoardManager__parseStyle12("rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
+                                         ("k","q"))
+    
+    

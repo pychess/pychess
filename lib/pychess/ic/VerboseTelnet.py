@@ -6,30 +6,25 @@ from telnetlib import Telnet
 from pychess.System.Log import log
 
 class Prediction:
-    def __init__ (self, callback, regexp0, regexp1=None):
+    def __init__ (self, callback, *regexps):
         self.callback = callback
         
-        if not regexp1:
-            self.hash = hash(regexp0) ^ hash(callback)
-        else: self.hash = hash(regexp0) ^ hash(regexp1) ^ hash(callback)
-        
-        if not hasattr("match", regexp0):
-            # FICS being fairly case insensitive, we can compile with IGNORECASE
-            # to easy some expressions
-            regexp0 = re.compile(regexp0, re.IGNORECASE)
-        if regexp1 and not hasattr("match", regexp1):
-            regexp1 = re.compile(regexp1, re.IGNORECASE)
-        
-        self.regexp0 = regexp0
-        self.regexp1 = regexp1
+        self.regexps = []
+        self.hash = hash(callback)
+        for regexp in regexps:
+            self.hash ^= hash(regexp)
+            
+            if not hasattr("match", regexp):
+                # FICS being fairly case insensitive, we can compile with IGNORECASE
+                # to easy some expressions
+                self.regexps.append(re.compile(regexp, re.IGNORECASE))
     
     def __hash__ (self):
         return self.hash
     
     def __cmp__ (self, other):
-        return self.type == other.type and \
-               self.regexp0 == other.regexp0 and \
-               self.regexp1 == other.regexp1
+        return self.callback == other.callback and \
+               self.regexps == other.regexps
     
     def __repr__ (self):
         return "<Prediction to %s>" % self.callback.__name__
@@ -37,29 +32,45 @@ class Prediction:
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
 class LinePrediction (Prediction):
-    def __init__ (self, callback, regexp0):
-        self.old = regexp0
-        Prediction.__init__(self, callback, regexp0)
+    def __init__ (self, callback, regexp):
+        Prediction.__init__(self, callback, regexp)
     
     def handle(self, line):
-        match = self.regexp0.match(line)
+        match = self.regexps[0].match(line)
         if match:
             self.callback(match)
             return RETURN_MATCH
         return RETURN_NO_MATCH
 
 class ManyLinesPrediction (Prediction):
-    def __init__ (self, callback, regexp0):
-        Prediction.__init__(self, callback, regexp0)
+    def __init__ (self, callback, regexp):
+        Prediction.__init__(self, callback, regexp)
         self.matchlist = []
     
     def handle(self, line):
-        match = self.regexp0.match(line)
+        match = self.regexps[0].match(line)
         if match:
             self.matchlist.append(match)
             return RETURN_NEED_MORE
         if self.matchlist:
             self.callback(self.matchlist)
+        return RETURN_NO_MATCH
+
+class NLinesPrediction (Prediction):
+    def __init__ (self, callback, *regexps):
+        Prediction.__init__(self, callback, *regexps)
+        self.matchlist = []
+    
+    def handle(self, line):
+        regexp = self.regexps[len(self.matchlist)]
+        match = regexp.match(line)
+        if match:
+            self.matchlist.append(match)
+            if len(self.matchlist) == len(self.regexps):
+                self.callback(self.matchlist)
+                del self.matchlist[:]
+                return RETURN_MATCH
+            return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
 class FromPlusPrediction (Prediction):
@@ -69,12 +80,12 @@ class FromPlusPrediction (Prediction):
     
     def handle (self, line):
         if not self.matchlist:
-            match = self.regexp0.match(line)
+            match = self.regexps[0].match(line)
             if match:
                 self.matchlist.append(match)
                 return RETURN_NEED_MORE
         else:
-            match = self.regexp1.match(line)
+            match = self.regexps[1].match(line)
             if match:
                 self.matchlist.append(match)
                 return RETURN_NEED_MORE
@@ -91,12 +102,12 @@ class FromToPrediction (Prediction):
     
     def handle (self, line):
         if not self.matchlist:
-            match = self.regexp0.match(line)
+            match = self.regexps[0].match(line)
             if match:
                 self.matchlist.append(match)
                 return RETURN_NEED_MORE
         else:
-            match = self.regexp1.match(line)
+            match = self.regexps[1].match(line)
             if match:
                 self.matchlist.append(match)
                 self.callback(self.matchlist)

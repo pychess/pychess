@@ -6,21 +6,27 @@ from gobject import *
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
+from pychess.ic.managers.GameListManager import convertName
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
-types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
-colors = "(?:\[(white|black)\]\s?)?"
+colors = "(?:\[(white|black)\])?"
 ratings = "\(([0-9\ \-\+]{4})\)"
 
+matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
+                                  (ratings, colors, ratings, rated) )
 
-matchre = re.compile ("(\w+) %s %s(\w+) %s %s %s (\d+) (\d+)\s*(\(adjourned\))?" % \
-        (ratings, colors, ratings,rated, types) )
+#<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) [black] GuestNXMP (----) unrated blitz 2 12
+#<pf> 16 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated wild 2 12 Loaded from wild/fr
+#<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)
+#<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12
 
 #
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
+
+unsupportedtypes = ("wild/0", "wild/1", "bughouse", "crazyhouse", "suicide")
 
 strToOfferType = {
     "draw": DRAW_OFFER,
@@ -74,7 +80,7 @@ class OfferManager (GObject):
                     ficsstring)
         
         self.connection.expect_line (self.notEnoughMovesToUndo,
-                "There are (?:(no)|only (\d+) half) moves in your game.")
+                "There are (?:(no)|only (\d+) half) moves in your game\.")
         
         self.connection.expect_line (self.noOffersToAccept,
                 "There are no ([^ ]+) offers to (accept).")
@@ -82,6 +88,7 @@ class OfferManager (GObject):
         self.lastPly = 0
         self.indexType = {}
         
+        self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse")
         self.connection.lvm.setVariable("pendinfo", True)
     
     def noOffersToAccept (self, match):
@@ -96,7 +103,9 @@ class OfferManager (GObject):
         self.emit("onActionError", Offer(offerType), error)
     
     def notEnoughMovesToUndo (self, match):
-        param = match.groups()[0] != "no" and groups[0] or 0
+        param = match.groups()[0] or match.groups()[1]
+        if param == "no": param = 0
+        else: param = int(param)
         offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
         self.emit("onActionError", offer, ACTION_ERROR_TOO_LARGE_UNDO)
     
@@ -110,15 +119,22 @@ class OfferManager (GObject):
         
         self.indexType[index] = offertype
         if offertype == "match":
-            fname, frating, col, tname, trating, rated, type, mins, incr, ad = \
+            fname, frating, col, tname, trating, rated, type_short, mins, incr, type = \
                     matchre.match(parameters).groups()
             
-            rating = frating.strip()
-            rating = rating.isdigit() and rating or "0"
-            rated = rated == "unrated" and "u" or "r"
-            match = {"tp": type, "w": fname, "rt": rating,
-                        "r": rated, "t": mins, "i": incr}
-            self.emit("onChallengeAdd", index, match)
+            if not type or "adjourned" in type:
+                type = type_short
+            
+            if type.split()[-1] in unsupportedtypes:
+                self.declineIndex(index)
+            
+            else:
+                rating = frating.strip()
+                rating = rating.isdigit() and rating or "0"
+                rated = rated == "unrated" and "u" or "r"
+                match = {"tp": convertName(type), "w": fname, "rt": rating,
+                         "r": rated, "t": mins, "i": incr}
+                self.emit("onChallengeAdd", index, match)
         
         elif offertype in strToOfferType:
             offerType = strToOfferType[offertype]

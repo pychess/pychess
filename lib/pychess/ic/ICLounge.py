@@ -25,7 +25,8 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
-from pychess.Savers import pgn
+from pychess.Savers import pgn, fen
+from pychess.Variants import variants
 
 from ICGameModel import ICGameModel
 
@@ -668,11 +669,14 @@ class GameTabSection (ParrentListSection):
         self.connection.glm.connect("removeGame", lambda glm, gameno, res, com:
                 self.listPublisher.put((self.onGameRemove, gameno)) )
         
+        self.connection.bm.connect("wasPrivate", lambda bm, game:
+                self.listPublisher.put((self.onWasPrivate, game)) )
+        
         self.widgets["observeButton"].connect ("clicked", self.onObserveClicked)
         self.tv.connect("row-activated", self.onObserveClicked)
         
-        self.connection.bm.connect("observeBoardCreated", lambda bm, gameno, *args:
-                self.listPublisher.put((self.onGameObserved, gameno)) )
+        self.connection.bm.connect("observeBoardCreated", lambda bm, board:
+                self.listPublisher.put((self.onGameObserved, board)) )
         
         self.connection.bm.connect("obsGameUnobserved", lambda bm, gameno:
                 self.listPublisher.put((self.onGameUnobserved, gameno)) )
@@ -699,6 +703,19 @@ class GameTabSection (ParrentListSection):
         postfix = count == 1 and _("Game Running") or _("Games Running")
         self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
     
+    def onWasPrivate (self, gameno):
+        # When observable games were added to the list later than the latest
+        # full send, private information will not be known.
+        model, paths = self.tv.get_selection().get_selected_rows()
+        for path in paths:
+            rowiter = model.get_iter(path)
+            if gameno == model.get_value(rowiter, 0):
+                gametype = model.get_value(rowiter, 4)
+                if not _("Private") in gametype:
+                    gametype += ", " + _("Private")
+                    model.set_value(rowiter, 4, gametype)
+                break
+    
     def onGameRemove (self, gameno):
         if not gameno in self.games:
             return
@@ -718,13 +735,14 @@ class GameTabSection (ParrentListSection):
             gameno = model.get_value(rowiter, 0)
             self.connection.bm.observe(gameno)
     
-    def onGameObserved (self, gameno):
-        threeiter = self.games[gameno]
+    def onGameObserved (self, board):
+        threeiter = self.games[board["gameno"]]
         self.store.set_value (threeiter, 1, self.recpix)
     
     def onGameUnobserved (self, gameno):
-        threeiter = self.games[gameno]
-        self.store.set_value(threeiter, 1, self.clearpix)
+        if gameno in self.games:
+            threeiter = self.games[gameno]
+            self.store.set_value(threeiter, 1, self.clearpix)
 
 ########################################################################
 # Initialize Adjourned List                                            #
@@ -956,8 +974,9 @@ class CreatedBoards (Section):
         self.connection.bm.connect ("observeBoardCreated", self.observeBoardCreated)
     
     def playBoardCreated (self, bm, board):
-        timemodel = TimeModel (int(board["mins"])*60, int(board["incr"]))
-        game = ICGameModel (self.connection, board["gameno"], timemodel)
+        
+        timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
+        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]])
         
         if board["wname"].lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
@@ -970,19 +989,24 @@ class CreatedBoards (Section):
             player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)
             player0tup = (REMOTE, lambda:player0, (), board["wname"])
         
-        ionest.generalStart(game, player0tup, player1tup)
+        if not board["fen"]:
+            ionest.generalStart(game, player0tup, player1tup)
+        else:
+            ionest.generalStart(game, player0tup, player1tup,
+                                (StringIO(board["fen"]), fen, 0, -1))
     
-    def observeBoardCreated (self, bm, gameno, pgndata, secs, incr, wname, bname):
-        timemodel = TimeModel (secs, incr)
-        game = ICGameModel (self.connection, gameno, timemodel)
+    def observeBoardCreated (self, bm, board):
+        
+        timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
+        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]])
         
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
-        player0 = ICPlayer(game, wname, gameno, WHITE)
-        player1 = ICPlayer(game, bname, gameno, BLACK)
+        player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)
+        player1 = ICPlayer(game, board["bname"], board["gameno"], BLACK)
         
-        player0tup = (REMOTE, lambda:player0, (), wname)
-        player1tup = (REMOTE, lambda:player1, (), bname)
+        player0tup = (REMOTE, lambda:player0, (), board["wname"])
+        player1tup = (REMOTE, lambda:player1, (), board["bname"])
         
-        ionest.generalStart(
-                game, player0tup, player1tup, (StringIO(pgndata), pgn, 0, -1))
+        ionest.generalStart(game, player0tup, player1tup,
+                            (StringIO(board["pgn"]), pgn, 0, -1))
