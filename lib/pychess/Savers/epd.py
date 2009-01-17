@@ -1,5 +1,4 @@
 from pychess.Utils.Cord import Cord
-from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
@@ -109,7 +108,7 @@ class EpdFile (ChessFile):
             fen += " " + opcodes["fmvn"]
         else: fen += " 1"
         
-        model.boards = [Board(fen)]
+        model.boards = [model.variant.board(setup=fen)]
         model.status = WAITING_TO_START
         
         # rc i kinda broken
