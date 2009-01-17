@@ -97,7 +97,7 @@ class ThreadPool:
                     self.wcond.acquire()
                     self.wcond.wait()
             except:
-                self.threads -= 1
+                #self.threads -= 1
                 if self.running:
                     raise
         
