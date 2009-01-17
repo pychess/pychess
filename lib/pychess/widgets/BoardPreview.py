@@ -86,6 +86,8 @@ class BoardPreview:
             filename = self.get_filename()
         else:
             return
+        if os.path.isdir(filename):
+            return
         
         ending = filename[filename.rfind(".")+1:]
         loader = self.enddir[ending]
