@@ -6,6 +6,8 @@ from pychess.System.Log import log
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 
+_ = lambda x:x
+
 from managers.GameListManager import GameListManager
 from managers.FingerManager import FingerManager
 from managers.NewsManager import NewsManager
@@ -23,6 +25,7 @@ from VerboseTelnet import ManyLinesPrediction
 from VerboseTelnet import FromPlusPrediction
 from VerboseTelnet import FromToPrediction
 from VerboseTelnet import PredictionsTelnet
+from VerboseTelnet import NLinesPrediction
 
 class LogOnError (StandardError): pass
 
@@ -63,6 +66,9 @@ class Connection (GObject, PooledThread):
     
     def expect_many_lines (self, callback, regexp):
         self.expect(ManyLinesPrediction(callback, regexp))
+    
+    def expect_n_lines (self, callback, *regexps):
+        self.expect(NLinesPrediction(callback, *regexps))
     
     def expect_line_plus (self, callback, regexp):
         def callback_decorator (matchlist):

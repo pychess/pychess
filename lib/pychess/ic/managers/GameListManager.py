@@ -1,15 +1,72 @@
+if not "_" in globals():
+    _ = lambda x:x
 
 from gobject import *
 import re
 from pychess.Utils import const
 
-types = "(blitz|lightning|standard)"
+#types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\- ]{1,4})"
 names = "(\w+)(?:\((\w+)\))?"
 mf = "(?:([mf]{1,2})\s?)?"
 ratingSplit = re.compile("P|E| ")
+
+unsupportedWilds = { # We need to disable wild 0 and 1, as they allow castling even
+                # when the king starts out in the d row. 
+                "wild/0": _("Asymmetric"),
+                "wild/1": _("Simple shuffle"),
+                "bughouse": _("Bughouse"),
+                "crazyhouse": _("Crazyhouse"),
+                "suicide": _("Suicide") }
+
+wilds = { "wild/2": _("Shuffle"),
+          "wild/3": _("Random"),
+          "wild/4": _("Asymmetric Shuffle"),
+          "wild/5": _("Upside Down"),
+          "wild/8": _("Pawns Pushed"),
+          "wild/8a": _("Pawns Passed"),
+          "wild/fr": _("Fischer Random") }
+
+standards = { "blitz": _("Blitz"),
+              "lightning": _("Lightning"),
+              "untimed": _("Untimed"),
+              "standard": _("Standard"),
+              "losers": _("Losers"),
+              "nonstandard": _("Other")}
+
+shortTypes = { "b": _("Blitz"),
+               "l": _("Lightning"),
+               "u": _("Untimed"),
+               "e": _("Examined Game"),
+               "s": _("Standard"),
+               "w": _("Wild"),
+               "x": _("Atomic"),
+               "z": _("Crazyhouse"),
+               "B": _("Bughouse"),
+               "L": _("Losers"),
+               "S": _("Suicide") }
+
+supportedShorts = ("b","l","s","w","L")
+
+def convertName (typename):
+    # Try common
+    if typename in standards:
+        return standards[typename]
+    # Get rid of 'Loaded from'
+    typename = typename.split()[-1]
+    # Try wilds
+    if typename in wilds:
+        return wilds[typename]
+    # Default solution for eco/A00 and a few others
+    if "/" in typename:
+        a, b = typename.split("/")
+        a = a[0].upper() + a[1:]
+        b = b[0].upper() + b[1:]
+        return a + " " + b
+    # Otherwise forget about it
+    return typename[0].upper() + typename[1:]
 
 #0x1 - unregistered
 #0x2 - computer
@@ -20,7 +77,7 @@ ratingSplit = re.compile("P|E| ")
 #0x40 - WIM
 #0x80 - WFM
 
-typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
+#typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
 from pychess.Utils.const import WHITE
 
@@ -53,9 +110,10 @@ class GameListManager (GObject):
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         
         self.connection.expect_line (self.on_game_list,
-                "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(s|b|l)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)" % (ratings, ratings))
+                "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
+                % (ratings, ratings, "|".join(supportedShorts)))
         self.connection.expect_line (self.on_game_add,
-                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) (\S+) match\.\}$")
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.connection.expect_line (self.on_game_remove,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
@@ -71,10 +129,10 @@ class GameListManager (GObject):
         self.connection.expect_line (self.on_adjourn_add,
                 "\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*)")
         
-        self.connection.expect_fromto (self.playBoardCreated,
-                "Creating: %s %s %s %s %s %s (\d+) (\d+)" %
-                    (names, ratings, names, ratings, rated, types),
-                "{Game (\d+)\s.*")
+        #self.connection.expect_fromto (self.playBoardCreated,
+        #        "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)" %
+        #            (names, ratings, names, ratings, rated),
+        #        "{Game (\d+)\s.*")
         
         
         self.connection.lvm.setVariable("seekinfo", True)
@@ -83,7 +141,11 @@ class GameListManager (GObject):
         
         self.connection.lvm.setVariable("gin", True)
         self.connection.lvm.setVariable("allresults", True)
-        print >> self.connection.client, "games /sbl"
+        
+        #b: blitz      l: lightning   u: untimed      e: examined game
+        #s: standard   w: wild        x: atomic       z: crazyhouse        
+        #B: Bughouse   L: losers      S: Suicide
+        print >> self.connection.client, "games /sblwL"
         
         print >> self.connection.client, "who Isbla"
         #self.connection.lvm.setVariable("availmax", True)
@@ -122,7 +184,7 @@ class GameListManager (GObject):
         parts = match.groups()[0].split(" ")
         # The <s> message looks like:
         # <s> index w=name_from ti=titles rt=rating t=time i=increment
-        #     r=rated('r')/unrated('u') tp=type c=color
+        #     r=rated('r')/unrated('u') tp=type("fr"/"4","blitz") c=color
         #     rr=rating_range(lower-upper) a=automatic?('t'/'f')
         #     f=formula_checked('t'/f')
         
@@ -130,10 +192,10 @@ class GameListManager (GObject):
         for key, value in [p.split("=") for p in parts[1:] if p]:
             seek[key] = value
             if key == "tp":
-                if not value in ("standard", "lightning", "blitz"):
+                if value in unsupportedWilds:
                     return
-                seek[key] = typedic[value[0]]
-            elif key == "rr":
+                seek[key] = convertName(value)
+            if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
             elif key == "ti":
                 seek["cp"] = int(value) & 2 # 0x2 - computer
@@ -157,18 +219,16 @@ class GameListManager (GObject):
     
     def on_game_list (self, match):
         gameno, wr, wn, br, bn, private, type, rated, min, inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = match.groups()
+        if type in unsupportedWilds: return
         game = {"gameno":gameno, "wn":wn, "bn":bn, "private":private == "p",
-                "type":typedic[type], "min":int(min), "inc":int(inc) }
+                "type":shortTypes[type], "min":int(min), "inc":int(inc) }
         self.emit("addGame", game)
     
     def on_game_add (self, match):
         gameno, wn, bn, rated, type = match.groups()
-        
-        if not type in ("standard", "blitz", "lightning"):
-            return
-        type = typedic[type[0]]
-        
-        self.emit("addGame", {"gameno":gameno, "wn":wn, "bn":bn, "type":type, "private":False})
+        if type in unsupportedWilds: return
+        self.emit("addGame", {"gameno":gameno, "wn":wn, "bn":bn,
+                              "type":convertName(type), "private":False})
     
     def on_game_remove (self, match):
         gameno, wn, bn, person, comment, result = match.groups()
@@ -208,4 +268,8 @@ class GameListManager (GObject):
     
     def playBoardCreated (self, match):
         self.emit("clearSeeks")
-    
+
+if __name__ == "__main__":
+    assert convertName("Loaded from eco/a00") == convertName("eco/a00") == "Eco A00"
+    assert convertName("wild/fr") == _("Fischer Random")
+    assert convertName("blitz") == _("Blitz")

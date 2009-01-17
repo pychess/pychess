@@ -14,10 +14,11 @@ class TimeModel (GObject):
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs, gain):
+    def __init__ (self, secs, gain, bsecs=-1):
         GObject.__init__(self)
         
-        self.intervals = [[secs],[secs]]
+        if bsecs < 0: bsecs = secs
+        self.intervals = [[secs],[bsecs]]
         self.gain = gain
         
         self.paused = False
