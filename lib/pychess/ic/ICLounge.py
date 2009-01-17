@@ -36,33 +36,29 @@ class ICLounge:
         self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
         
-        glock.acquire()
-        try:
-            global sections
-            sections = (
-                VariousSection(w,c),
-                UserInfoSection(w,c),
-                NewsSection(w,c),
-                
-                SeekTabSection(w,c),
-                ChallengeTabSection(w,c),
-                SeekGraphSection(w,c),
-                PlayerTabSection(w,c),
-                GameTabSection(w,c),
-                AdjournedTabSection(w,c),
-                
-                ChatWindow(w,c),
-                #ConsoleWindow(w,c),
-                
-                SeekChallengeSection(w,c),
-                
-                # This is not really a section. Merely a pair of BoardManager connects
-                # which takes care of ionest and stuff when a new game is started or
-                # observed
-                CreatedBoards(w,c)
-            )
-        finally:
-            glock.release()
+        global sections
+        sections = (
+            VariousSection(w,c),
+            UserInfoSection(w,c),
+            NewsSection(w,c),
+            
+            SeekTabSection(w,c),
+            ChallengeTabSection(w,c),
+            SeekGraphSection(w,c),
+            PlayerTabSection(w,c),
+            GameTabSection(w,c),
+            AdjournedTabSection(w,c),
+            
+            ChatWindow(w,c),
+            #ConsoleWindow(w,c),
+            
+            SeekChallengeSection(w,c),
+            
+            # This is not really a section. Merely a pair of BoardManager connects
+            # which takes care of ionest and stuff when a new game is started or
+            # observed
+            CreatedBoards(w,c)
+        )
     
     def show (self):
         self.widgets["fics_lounge"].show()
@@ -173,7 +169,7 @@ class UserInfoSection(Section):
             
             if finger.getCreated():
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
-                s = time.strftime("%Y %B %d ", time.localtime(time.time()))
+                s = strftime("%Y %B %d ", localtime(time()))
                 s += _("online in total")
                 table.attach(label(s), 1, 6, row, row+1)
                 row += 1
