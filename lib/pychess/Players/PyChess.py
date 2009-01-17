@@ -2,7 +2,7 @@
 
 from time import time
 import sys, os
-import random
+import random, math
 import subprocess
 import email.Utils
 import gettext
@@ -152,7 +152,6 @@ class PyChess:
                     # We were interupted
                     lsearch.movesearches = 0
                     lsearch.nodes = 0
-                    searchLock.release()
                     return
                 
                 # This should only happen in terminal mode
@@ -420,6 +419,7 @@ class PyChessFICS(PyChess):
         self.colors = (WHITE, BLACK, None) 
         # The amount of random challenges, that PyChess sends with each seek
         self.challenges = 10
+        self.useegtb = True
         
         self.sudos = set()
         self.ownerOnline = False
@@ -431,19 +431,80 @@ class PyChessFICS(PyChess):
         
         repeat_sleep(self.sendChallenges, 60*1)
     
+    def __triangular(self, low, high, mode):
+        """Triangular distribution.
+        Continuous distribution bounded by given lower and upper limits,
+        and having a given mode value in-between.
+        http://en.wikipedia.org/wiki/Triangular_distribution
+        """
+        u = random.random()
+        c = (mode - low) / (high - low)
+        if u > c:
+            u = 1 - u
+            c = 1 - c
+            low, high = high, low
+        tri = low + (high - low) * (u * c) ** 0.5
+        if tri < mode:
+            return int(tri)
+        elif tri > mode:
+            return int(math.ceil(tri))
+        return int(math.round(tri))
+    
     def sendChallenges(self):
         if self.connection.bm.isPlaying():
             return True
         
-        minute = random.choice(self.minutes)
-        gain = random.choice(self.gains)
-        color = random.choice(self.colors)
+        statsbased = ((0.39197722779282, 3, 0),
+                      (0.59341408108783, 5, 0),
+                      (0.77320877377846, 1, 0),
+                      (0.8246379941394, 10, 0),
+                      (0.87388717406441, 2, 12),
+                      (0.91443760169489, 15, 0),
+                      (0.9286423058163, 4, 0),
+                      (0.93891977227793, 2, 0),
+                      (0.94674539138335, 20, 0),
+                      (0.95321476842423, 2, 2),
+                      (0.9594588808257, 5, 2),
+                      (0.96564528079889, 3, 2),
+                      (0.97173859621034, 7, 0),
+                      (0.97774906636184, 3, 1),
+                      (0.98357243654425, 5, 12),
+                      (0.98881309737017, 5, 5),
+                      (0.99319644938247, 6, 0),
+                      (0.99675879556023, 3, 12),
+                      (1, 5, 3))
+        
+        #n = random.random()
+        #for culminativeChance, minute, gain in statsbased:
+        #    if n < culminativeChance:
+        #        break
+        
+        culminativeChance, minute, gain = random.choice(statsbased)
+        
+        #type = random.choice((TYPE_LIGHTNING, TYPE_BLITZ, TYPE_STANDARD))
+        #if type == TYPE_LIGHTNING:
+        #    minute = self.__triangular(0,2+1,1)
+        #    mingain = not minute and 1 or 0
+        #    maxgain = int((3-minute)*3/2)
+        #    gain = random.randint(mingain, maxgain)
+        #elif type == TYPE_BLITZ:
+        #    minute = self.__triangular(0,14+1,5)
+        #    mingain = max(int((3-minute)*3/2+1), 0)
+        #    maxgain = int((15-minute)*3/2)
+        #    gain = random.randint(mingain, maxgain)
+        #elif type == TYPE_STANDARD:
+        #    minute = self.__triangular(0,20+1,12)
+        #    mingain = max(int((15-minute)*3/2+1), 0)
+        #    maxgain = int((20-minute)*3/2)
+        #    gain = self.__triangular(mingain, maxgain, mingain)
+        
+        #color = random.choice(self.colors)
         self.extendlog(["Seeking %d %d" % (minute, gain)])
-        self.connection.glm.seek(minute, gain, True, color=color)
+        self.connection.glm.seek(minute, gain, True)
         opps = random.sample(self.connection.glm.getPlayerlist(), self.challenges)
         self.extendlog("Challenging %s" % op for op in opps)
         for player in opps:
-            self.connection.glm.challenge(player, minute, gain, True, color=color)
+            self.connection.glm.challenge(player, minute, gain, True)
         
         return True
     
@@ -461,9 +522,7 @@ class PyChessFICS(PyChess):
         self.connection.alm.connect("logOut", self.__onLogOut)
         self.connection.bm.connect("playBoardCreated", self.__onPlayBoardCreated)
         self.connection.bm.connect("curGameEnded", self.__onGameEnded)
-        self.connection.bm.connect("clockUpdatedMs", self.__onClockUpdatedMs)
-        self.connection.bm.connect("boardRecieved", self.__onBoardRecieved)
-        self.connection.bm.connect("moveRecieved", self.__onMoveRecieved)
+        self.connection.bm.connect("boardUpdate", self.__onBoardUpdate)
         self.connection.om.connect("onChallengeAdd", self.__onChallengeAdd)
         self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
         self.connection.adm.connect("onAdjournmentsList", self.__onAdjournmentsList)
@@ -515,7 +574,7 @@ class PyChessFICS(PyChess):
     
     def __onLogOut (self, autoLogoutManager):
         self.connection.disconnect()
-        sys.exit()
+        #sys.exit()
     
     def __onAddPlayer (self, gameListManager, player):
         if player["name"] in self.sudos:
@@ -554,10 +613,10 @@ class PyChessFICS(PyChess):
         
         args = text.split()
         
-        if args == ["help"]:
-            chatManager.tellPlayer(name, self.__usage())
+        #if args == ["help"]:
+        #    chatManager.tellPlayer(name, self.__usage())
         
-        elif args[0] == "sudo":
+        if args[0] == "sudo":
             command = " ".join(args[1:])
             if name in self.sudos or name == self.owner:
                 # Notice: This can be used to make nasty loops
@@ -611,10 +670,6 @@ class PyChessFICS(PyChess):
     # Playing
     #===========================================================================
     
-    def __onClockUpdatedMs (self, boardManager, gameno, msecs, color):
-        if self.gameno == gameno and self.playingAs == color:
-            self.mytime = msecs/1000.
-    
     def __onPlayBoardCreated (self, boardManager, board):
         
         self.mytime = int(board["mins"])*60
@@ -657,43 +712,28 @@ class PyChessFICS(PyChess):
         self.connection.bm.sendMove(sanmove)
         self.extendlog(["Move sent %s" % sanmove])
     
-    def __onMoveRecieved (self, boardManager, moveply, sanmove, gameno, movecol):
-        if self.gameno == gameno and movecol != self.playingAs:
-            self.extendlog(["","I got move %s %s" % (moveply, sanmove)])
-            
-            # We want the current ply rather than the moveply, so we add one
-            curply = int(moveply) +1
-            # In some cases (like lost on time) the last move is resent
-            if curply <= self.lastPly:
-                print "XXX"
-                return
-            
-            self.lastPly = curply
-            move = parseSAN (self.board, sanmove)
-            self.board.applyMove(move)
-            self.__go()
-    
-    def __onBoardRecieved (self, boardManager, gameno, ply, fen, wsecs, bsecs):
-        
-        self.extendlog(["Recieved board for gameno: %s" % gameno])
+    def __onBoardUpdate (self, boardManager, gameno, ply, curcol, lastmove, fen, wms, bms):
+        self.extendlog(["","I got move %d %s for gameno %s" % (ply, lastmove, gameno)])
         
         if self.gameno != gameno:
             return
         
         self.board.applyFen(fen)
-        # TODO: Support board.variant = FISCHERRANDOMCHESS
         
         if self.playingAs == WHITE:
-            self.mytime = wsecs
-        else: self.mytime = bsecs
+            self.mytime = wms/1000.
+        else: self.mytime = bms/1000.
         
-        if self.board.color == self.playingAs:
+        if curcol == self.playingAs:
             self.__go()
     
     def __onAmbiguousMove (self, errorManager, move):
         # This is really a fix for fics, but sometimes it is necessary
         if determineAlgebraicNotation(move) == SAN:
-            lanmove = toLAN(self.board, parseSAN(self.board, move))
+            self.board.popMove()
+            move_ = parseSAN(self.board, move)
+            lanmove = toLAN(self.board, move_)
+            self.board.applyMove(move_)
             self.connection.bm.sendMove(lanmove)
         else:
             self.connection.cm.tellOpponent(

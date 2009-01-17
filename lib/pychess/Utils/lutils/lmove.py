@@ -61,11 +61,16 @@ def determineAlgebraicNotation (algnot):
     if upnot in ("O-O", "O-O-O", "0-0", "0-0-0"):
         return SAN
     
+    # Test for e2-e4
     if "-" in algnot:
         return LAN
     
-    if (len(algnot) == 4 or (len(algnot) == 5 and upnot[4] in reprSign)) and \
-            algnot[:2] in cordDic and algnot[2:4] in cordDic:
+    # Test for b4xc5
+    if "x" in algnot and algnot.split('x')[0] in cordDic:
+        return LAN
+    
+    # Test for e2e4 or a7a8q or a7a8=q
+    if algnot[:2] in cordDic and algnot[2:4] in cordDic:
         return AN
     
     if algnot[0] in FAN_PIECES[WHITE] or algnot[0] in FAN_PIECES[BLACK]:
