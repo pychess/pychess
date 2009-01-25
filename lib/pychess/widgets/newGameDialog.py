@@ -1,5 +1,7 @@
 
-import gettext, locale
+import gettext
+import locale
+from time import sleep
 from cStringIO import StringIO
 from operator import attrgetter
 from itertools import groupby
@@ -75,11 +77,9 @@ smallPlayerItems = []
 def createPlayerUIGlobals (discoverer):
     global playerItems
     global smallPlayerItems
-    
     for variantClass in variants.values():
         playerItems += [ [(ipeople, _("Human Being"))] ]
         smallPlayerItems += [ [(speople, _("Human Being"))] ]
-
     for engine in discoverer.getEngines().values():
         name = discoverer.getName(engine)
         c = discoverer.getCountry(engine)
@@ -111,7 +111,11 @@ class _GameInitializationMode:
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
         
-        
+        # When PyChess starts with a gamefile command line arg
+        # we have to wait for createPlayerUIGlobals
+        while len(playerItems) == 0:
+            sleep(0.1)
+
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             (i[:2] for i in playerItems[0]))
         uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
