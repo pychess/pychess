@@ -111,11 +111,6 @@ class _GameInitializationMode:
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
         
-        # When PyChess starts with a gamefile command line arg
-        # we have to wait for createPlayerUIGlobals
-        while len(playerItems) == 0:
-            sleep(0.1)
-
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             (i[:2] for i in playerItems[0]))
         uistuff.createCombo(cls.widgets["blackPlayerCombobox"],

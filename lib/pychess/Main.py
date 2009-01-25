@@ -241,12 +241,9 @@ class PyChess:
     
     def handleArgs (self, args):
         if args:
-            def do ():
+            def do (discoverer):
                 newGameDialog.LoadFileExtension.run(args[0], chessFiles)
-                glock.release()
-            # For this once we do an idle_add. We do so to ensure the window is
-            # set up before we start doing other things
-            gobject.idle_add(do)
+            glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
 def run (args):
     import gtkexcepthook
