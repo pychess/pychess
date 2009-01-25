@@ -123,8 +123,7 @@ class Human (Player):
     #===========================================================================
     
     def end (self, status, reason):
-        # We don't really need to know the result
-        pass
+        self.queue.put("del")
     
     def kill (self, reason):
         print "I am killed", self
