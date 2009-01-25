@@ -61,10 +61,9 @@ class Log (gobject.GObject):
             self.messages.append((task, time.time(), message, type))
         self.publisher.put((task, time.time(), message, type))
         
-        
         if self.printTime:
             message = self._format(task, message, type)
-        self.printTime = message[-1] == ("\n")
+        self.printTime = message.endswith("\n")
         
         try:
             self.file.write(message)
