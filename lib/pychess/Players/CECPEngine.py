@@ -662,7 +662,13 @@ class CECPEngine (ProtocolEngine):
         # Tell Somebody
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-            log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
+            
+            # Crafty sometimes only resign to ics :S
+            if parts[1] == "resign":
+                self.emit("offer", Offer(RESIGNATION))
+                log.warn("Interpreted tellics as a wish to resign")
+            else:
+                log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
             return
         
         if "feature" in parts:
