@@ -77,8 +77,6 @@ DATA_FILES += [("share/pychess/flags", glob('flags/*.png'))]
 # Sidepanel (not a package)
 DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.glade'))]
 DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.py'))]
-DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.pyc'))]
-DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.pyo'))]
 
 # Data
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
@@ -105,18 +103,6 @@ for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d
     else:
         os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
     DATA_FILES += [("share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
-
-if isfile ("MANIFEST.in"):
-    notlanglines = [l for l in open("MANIFEST.in") if not l.rstrip().endswith(".po")]
-    file = open ("MANIFEST.in", "w")
-    for line in notlanglines:
-        print >> file, line[:-1]
-    for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
-        print >> file, "include lang/%s/%s.po" % (dir, pofile)
-    file.close()
-
-if isfile ("MANIFEST"):
-	os.remove ("MANIFEST")
 
 # Packages
 
