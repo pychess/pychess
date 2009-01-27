@@ -1,36 +1,9 @@
 include glade/*.glade glade/*.png glade/*.svg flags/*.png
 include README AUTHORS LICENSE INSTALL TRANSLATORS
-include sidepanel/*.py sidepanel/*.glade sidepanel/*.pyc sidepanel/*.pyo
+include sidepanel/*.py sidepanel/*.glade
 include sounds/*.ogg
 include manpages/pychess.1.gz
 include gtksourceview-1.0/language-specs/pgn.lang
-include MANIFEST.in
 include open.db
 include pychess.desktop pychess.svg pychess.png
-include lang/az/LC_MESSAGES/pychess.po
-include lang/bg/LC_MESSAGES/pychess.po
-include lang/ca/LC_MESSAGES/pychess.po
-include lang/cs/LC_MESSAGES/pychess.po
-include lang/da/LC_MESSAGES/pychess.po
-include lang/de/LC_MESSAGES/pychess.po
-include lang/el/LC_MESSAGES/pychess.po
-include lang/es/LC_MESSAGES/pychess.po
-include lang/et/LC_MESSAGES/pychess.po
-include lang/eu/LC_MESSAGES/pychess.po
-include lang/fr/LC_MESSAGES/pychess.po
-include lang/gl/LC_MESSAGES/pychess.po
-include lang/he/LC_MESSAGES/pychess.po
-include lang/hi/LC_MESSAGES/pychess.po
-include lang/hr/LC_MESSAGES/pychess.po
-include lang/hu/LC_MESSAGES/pychess.po
-include lang/it/LC_MESSAGES/pychess.po
-include lang/ja/LC_MESSAGES/pychess.po
-include lang/nl/LC_MESSAGES/pychess.po
-include lang/pl/LC_MESSAGES/pychess.po
-include lang/pt/LC_MESSAGES/pychess.po
-include lang/pt_BR/LC_MESSAGES/pychess.po
-include lang/ro/LC_MESSAGES/pychess.po
-include lang/ru/LC_MESSAGES/pychess.po
-include lang/sv/LC_MESSAGES/pychess.po
-include lang/tr/LC_MESSAGES/pychess.po
-include lang/wa/LC_MESSAGES/pychess.po
+recursive-include lang *.po
