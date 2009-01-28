@@ -384,11 +384,6 @@ class PanelTab:
         tv.append_column(gtk.TreeViewColumn(
                 "Name", gtk.CellRendererText(), text=2))
         
-        from pychess.widgets.gamewidget import _ensureReadForGameWidgets, widgets
-        _ensureReadForGameWidgets()
-        background = widgets["mainvbox"].get_children()[1]
-        background.show()
-        
     def col_toggled( self, cell, path, model ):
         """
         Sets the toggled state on the toggle button to true or false.
