@@ -152,18 +152,17 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
             if first_value != None:
                 conf.set(key, first_value)
             else: conf.set(key, get_value())
-    if conf.hasKey(key):
-        setFromConf()
-    elif first_value != None:
-        conf.set(key, first_value)
     
     def callback(*args):
         if not conf.hasKey(key) or conf.getStrict(key) != get_value():
             conf.set(key, get_value())
     widget.connect(signal, callback)
-    conf.notify_add(key, lambda *args: setFromConf)
-
-
+    conf.notify_add(key, lambda *args: setFromConf())
+    
+    if conf.hasKey(key):
+        setFromConf()
+    elif first_value != None:
+        conf.set(key, first_value)
 
 POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN = range(3)
 def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE):
