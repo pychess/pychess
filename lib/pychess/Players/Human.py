@@ -218,15 +218,14 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     @glock.glocked
-    def _message (self, title, description, type, buttons, resfunc=None):
+    def _message (self, title, description, type, buttons, resfunc=(lambda d,r:None)):
         d = gtk.MessageDialog (type=type, buttons=buttons)
         d.set_markup ("<big><b>%s</b></big>" % title)
         d.format_secondary_text (description)
         def response (dialog, response):
-            if resfunc:
-                resfunc(dialog, response)
+            resfunc(dialog, response)
             d.hide()
         d.connect("response", response)
         d.show()
-    
+
 
