@@ -39,7 +39,7 @@ class UCIEngine (ProtocolEngine):
         self.uciok = False
         
         self.returnQueue = Queue.Queue()
-        self.engine.connect("line", self.parseLine)
+        self.engine.connect("line", self.parseLines)
         self.engine.connect("died", lambda e: self.returnQueue.put("del"))
         
         self.connect("readyForOptions", self.__onReadyForOptions_before)
@@ -331,7 +331,11 @@ class UCIEngine (ProtocolEngine):
     #    Parsing from engine
     #===========================================================================
     
-    def parseLine (self, engine, line):
+    def parseLines (self, engine, lines):
+        for line in lines:
+            self.__parseLine(line)
+    
+    def __parseLine (self, line):
         if not self.connected:
             return
         

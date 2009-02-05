@@ -111,7 +111,7 @@ class CECPEngine (ProtocolEngine):
         self.timeout = None
         
         self.returnQueue = Queue.Queue()
-        self.engine.connect("line", self.parseLine)
+        self.engine.connect("line", self.parseLines)
         self.engine.connect("died", lambda e: self.returnQueue.put("del"))
         
         self.funcQueue = []
@@ -574,7 +574,11 @@ class CECPEngine (ProtocolEngine):
     #    Parsing
     #===========================================================================
     
-    def parseLine (self, engine, line):
+    def parseLines (self, engine, lines):
+        for line in lines:
+            self.__parseLine(line)
+    
+    def __parseLine (self, line):
         parts = whitespaces.split(line.strip())
         
         if parts[0] == "pong":

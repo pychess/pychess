@@ -10,6 +10,7 @@ from pychess.Utils.const import *
 from Log import log
 from pychess.System.ThreadPool import pool
 from pychess.System import glock
+from pychess.System.GtkWorker import EmitPublisher
 
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
@@ -25,12 +26,10 @@ def searchPath (file, pathvar="PATH", access=os.R_OK):
                 return path
     return None
 
-hasPrivateLooper = False
-
 class SubProcess (gobject.GObject):
     
     __gsignals__ = {
-        "line": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
+        "line": (gobject.SIGNAL_RUN_FIRST, None, (object,)),
         "died": (gobject.SIGNAL_RUN_FIRST, None, ())
     }
     
@@ -42,6 +41,9 @@ class SubProcess (gobject.GObject):
         self.warnwords = warnwords
         self.env = env or os.environ
         self.buffer = ""
+        
+        self.linePublisher = EmitPublisher(self, "line", EmitPublisher.SEND_LIST)
+        self.linePublisher.start()
         
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
@@ -106,7 +108,7 @@ class SubProcess (gobject.GObject):
                         break
                 else: log.debug(line, self.defname)
             
-            self.emit("line", line)
+            self.linePublisher.put(line)
     
     def write (self, data):
         log.log(data, self.defname)
