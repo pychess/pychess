@@ -6,8 +6,6 @@ from pychess.System.Log import log
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 
-_ = lambda x:x
-
 from managers.GameListManager import GameListManager
 from managers.FingerManager import FingerManager
 from managers.NewsManager import NewsManager
