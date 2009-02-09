@@ -91,6 +91,7 @@ class SubProcess (gobject.GObject):
         if code != errno.EWOULDBLOCK:
             log.error(os.strerror(code)+"\n", self.defname)
             self.emit("died")
+            self.gentleKill()
     
     def __io_cb (self, channel, condition, isstderr):
         
