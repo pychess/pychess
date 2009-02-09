@@ -7,7 +7,7 @@ import math
 import gtk
 
 from pychess.Utils.const import *
-from pychess.Utils.repr import reprResult_long, reprReason_long
+from pychess.Utils.repr import *
 from pychess.System import conf
 from pychess.System import glock
 
@@ -72,15 +72,27 @@ def game_saved (gamemodel, uri, gmwidg):
         glock.release()
 
 def game_ended (gamemodel, reason, gmwidg):
-    m1 = reprResult_long[gamemodel.status]
-    m2 = reprReason_long[reason]
+    
+    nameDic = {"white": gamemodel.players[WHITE],
+               "black": gamemodel.players[BLACK],
+               "mover": gamemodel.curplayer}
+    if gamemodel.status == WHITEWON:
+        nameDic["winner"] = gamemodel.players[WHITE]
+        nameDic["loser"] = gamemodel.players[BLACK]
+    elif gamemodel.status == BLACKWON:
+        nameDic["winner"] = gamemodel.players[BLACK]
+        nameDic["loser"] = gamemodel.players[WHITE]
+    
+    m1 = reprResult_long[gamemodel.status] % nameDic
+    m2 = reprReason_long[reason] % nameDic
+    
     glock.acquire()
     try:
         md = gtk.MessageDialog()
         md.set_markup(_("<b><big>%s</big></b>") % m1)
         md.format_secondary_markup(m2)
         gmwidg.showMessage(md)
-        gmwidg.status("%s %s" % (m1,m2))
+        gmwidg.status("%s %s" % (m1,m2.lower()))
         
         if reason == WHITE_ENGINE_DIED:
             engineDead(gamemodel.players[0], gmwidg)
