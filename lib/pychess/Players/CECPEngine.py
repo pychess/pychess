@@ -56,7 +56,7 @@ anare = re.compile("""
 whitespaces = re.compile(r"\s+")
 
 def semisynced(f):
-    """ All moveSynced methods will be qued up, and called in the right
+    """ All moveSynced methods will be queued up, and called in the right
         order after self.readyMoves is true """
     def newFunction(*args, **kw):
         self = args[0]
@@ -175,15 +175,15 @@ class CECPEngine (ProtocolEngine):
             print >> self.engine, command
     
     def __onReadyForMoves (self, self_):
-        self.readyMoves = True
-        semisynced(lambda s:None)(self)
-        
         # If we are an analyzer, this signal was already called in a different
         # thread, so we can safely block it.
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             if not self.board:
                 self.board = Board(setup=True)
             self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        
+        self.readyMoves = True
+        semisynced(lambda s:None)(self)
     
     #===========================================================================
     #    Ending the game
