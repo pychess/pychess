@@ -439,8 +439,8 @@ def parseAN (board, an):
                     tcord = C8
             return newMove (fcord, tcord, flag)
 
-    if not 4 <= len(an) <= 5:
-        raise ParsingError, (an, "the move must be 4 or 5 chars long", board.asFen())
+    if not 4 <= len(an) <= 6:
+        raise ParsingError, (an, "the move must be 4 or 6 chars long", board.asFen())
     
     try:
         fcord = cordDic[an[:2]]
