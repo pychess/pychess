@@ -1,6 +1,8 @@
 import re
 from pychess.Utils.const import *
 import time
+import math
+from pychess.System import conf
 
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
 spaceExpr = re.compile(r"[\s,]+")
@@ -33,6 +35,8 @@ def drawPiece3 (piece, cc, x, y, psize):
     cc.restore()
 
 def drawPieceReal (piece, cc, psize):
+    
+    # Do the actual drawing to the Cairo context
     for cmd, points in parsedPieces[piece.color][piece.sign][psize]:
         if cmd == 'M':
             cc.rel_move_to(*points)

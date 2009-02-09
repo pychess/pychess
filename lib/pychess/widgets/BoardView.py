@@ -13,6 +13,7 @@ from pychess.System import glock, conf, gstreamer
 from pychess.System.glock import glock_connect, glock_connect_after
 from pychess.System.repeat import repeat, repeat_sleep
 from pychess.gfx.Pieces import drawPiece
+from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
@@ -81,6 +82,8 @@ ANIMATION_TIME = 0.5
 # even if the board is rotated 45 degrees
 SCALE_ROTATED_BOARD = False
 
+CORD_PADDING = 1.5
+
 class BoardView (gtk.DrawingArea):
     
     __gsignals__ = {
@@ -99,9 +102,11 @@ class BoardView (gtk.DrawingArea):
         glock_connect_after(self.model, "game_loading", self.game_loading)
         glock_connect_after(self.model, "game_loaded", self.game_loaded)
         glock_connect_after(self.model, "game_ended", self.game_ended)
+        
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
+        conf.notify_add("faceToFace", self.on_face_to_face)
         self.set_size_request(350,350)
         
         self.animationStart = time()
@@ -114,12 +119,14 @@ class BoardView (gtk.DrawingArea):
         self.square = 0, 0, 8, 1 # An object global variable with the current
                                  # board size
         self.pad = 0.13 # Padding applied only when setcords is active
+        
         self._selected = None
         self._hover = None
         self._active = None
         self._redarrow = None
         self._greenarrow = None
         self._bluearrow = None
+        
         self._shown = self.model.ply
         self._showCords = False
         self.showCords = conf.get("showCords", False)
@@ -227,6 +234,9 @@ class BoardView (gtk.DrawingArea):
     
     def on_show_cords (self, *args):
         self.showCords = conf.get("showCords", False)
+    
+    def on_face_to_face (self, *args):
+        self.redraw_canvas()
     
     ###############################
     #          Animation          #
@@ -347,10 +357,7 @@ class BoardView (gtk.DrawingArea):
                         else:
                             newx, newy = x, y
                         
-                        if not paintBox:
-                            paintBox = self.cord2RectRelative(piece.x, piece.y)
-                        else: paintBox = join(paintBox,
-                                self.cord2RectRelative(piece.x, piece.y))
+                        paintBox = join(paintBox, self.cord2RectRelative(piece.x, piece.y))
                         paintBox = join(paintBox, self.cord2RectRelative(newx, newy))
                         
                         if (newx <= x <= piece.x or newx >= x >= piece.x) and \
@@ -640,25 +647,44 @@ class BoardView (gtk.DrawingArea):
     #         drawPieces          #
     ###############################
     
-    def getCordMatrices (self, x, y):
+    def getCordMatrices (self, x, y, inv=False):
         xc, yc, square, s = self.square
         square_, rot_ = self.cordMatricesState
         if square != self.square or rot_ != self.rotation:
             self.cordMatrices = [None] * 64
             self.cordMatricesState = (self.square, self.rotation)
         c = x * 8 + y
-        matrices = self.cordMatrices[c]
-        if matrices == None:
+        if type(c) == int and self.cordMatrices[c]:
+            matrices = self.cordMatrices[c]
+        else:
             cx, cy = self.cord2Point(x,y)
             matrices = matrixAround(self.matrix, cx+s/2., cy+s/2.)
             matrices += (cx, cy)
-            self.cordMatrices[c] = matrices
+            if type(c) == int:
+                self.cordMatrices[c] = matrices
         return matrices
+    
+    def __drawPiece(self, context, piece, x, y):
+        xc, yc, square, s = self.square
+        
+        if not conf.get("faceToFace", False):
+            matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
+        else:
+            cx, cy = self.cord2Point(x,y)
+            if piece.color == BLACK:
+                matrix, invmatrix = matrixAround((-1,0), cx+s/2., cy+s/2.)
+            else:
+                matrix = invmatrix = cairo.Matrix(1,0,0,1,0,0)
+        
+        context.transform(invmatrix)
+        drawPiece(  piece, context,
+                    cx+CORD_PADDING, cy+CORD_PADDING,
+                    s-CORD_PADDING*2)
+        context.transform(matrix)
     
     def drawPieces(self, context, r):
         pieces = self.model.getBoardAtPly(self.shown)
         xc, yc, square, s = self.square
-        CORD_PADDING = 1.5
         
         parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
         fgN = parseC(self.get_style().fg[gtk.STATE_NORMAL])
@@ -678,13 +704,8 @@ class BoardView (gtk.DrawingArea):
         
         # Draw dying pieces (Found in self.deadlist)
         for piece, x, y in self.deadlist:
-            matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
-            context.transform(invmatrix)
             context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
-            drawPiece(  piece, context,
-                        cx+CORD_PADDING, cy+CORD_PADDING,
-                        s-CORD_PADDING*2)
-            context.transform(matrix)
+            self.__drawPiece(context, piece, x, y)
         
         # Draw pieces reincarnating (With opacity < 1)
         for y, row in enumerate(pieces.data):
@@ -692,16 +713,9 @@ class BoardView (gtk.DrawingArea):
                 if not piece or piece.opacity == 1:
                     continue
                 if piece.x:
-                    cx, cy = self.cord2Point(piece.x, piece.y)
-                    matrix, invmatrix = matrixAround(self.matrix, cx+s/2., cy+s/2.)
-                else:
-                    matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
-                context.transform(invmatrix)
+                    x, y = piece.x, piece.y
                 context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
-                drawPiece(  piece, context,
-                            cx+CORD_PADDING, cy+CORD_PADDING,
-                            s-CORD_PADDING*2)
-                context.transform(matrix)
+                self.__drawPiece(context, piece, x, y)
         
         # Draw standing pieces (Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
@@ -710,8 +724,7 @@ class BoardView (gtk.DrawingArea):
                     continue
                 if not intersects(rect(self.cord2RectRelative(x,y)), r):
                     continue
-                matrix, invmatrix, cx, cy = self.getCordMatrices(x, y)
-                context.transform(invmatrix)
+                
                 if Cord(x,y) == self.selected:
                     context.set_source_rgb(*fgS)
                 elif Cord(x,y) == self.active:
@@ -719,10 +732,8 @@ class BoardView (gtk.DrawingArea):
                 elif Cord(x,y) == self.hover:
                     context.set_source_rgb(*fgP)
                 else: context.set_source_rgb(*fgN)
-                drawPiece(  piece, context,
-                            cx+CORD_PADDING, cy+CORD_PADDING,
-                            s-CORD_PADDING*2)
-                context.transform(matrix)
+                
+                self.__drawPiece(context, piece, x, y)
         
         context.set_source_rgb(*fgP)
         
@@ -731,13 +742,7 @@ class BoardView (gtk.DrawingArea):
             for x, piece in enumerate(row):
                 if not piece or piece.x == None or piece.opacity < 1:
                     continue
-                cx, cy = self.cord2Point(piece.x, piece.y)
-                matrix, invmatrix = matrixAround(self.matrix, cx+s/2., cy+s/2.)
-                context.transform(invmatrix)
-                drawPiece(  piece, context,
-                            cx+CORD_PADDING, cy+CORD_PADDING,
-                            s-CORD_PADDING*2)
-                context.transform(matrix)
+                self.__drawPiece(context, piece, piece.x, piece.y)
     
     ###############################
     #         drawSpecial         #
@@ -847,6 +852,48 @@ class BoardView (gtk.DrawingArea):
     #         drawArrows          #
     ###############################
     
+    def __drawArrow (self, context, cords, aw, ahw, ahh, asw, fillc, strkc):
+        context.save()
+        
+        lvx = cords[1].x-cords[0].x
+        lvy = cords[0].y-cords[1].y
+        l = float((lvx**2+lvy**2)**.5)
+        vx = lvx/l
+        vy = lvy/l
+        v1x = -vy
+        v1y = vx
+        
+        r = self.cord2Rect(cords[0])
+        
+        px = r[0]+r[2]/2.0
+        py = r[1]+r[2]/2.0
+        ax = v1x*r[2]*aw/2
+        ay = v1y*r[2]*aw/2
+        context.move_to(px+ax, py+ay)
+        
+        p1x = px+(lvx-vx*ahh)*r[2]
+        p1y = py+(lvy-vy*ahh)*r[2]
+        context.line_to(p1x+ax, p1y+ay)
+        
+        lax = v1x*r[2]*ahw/2
+        lay = v1y*r[2]*ahw/2
+        context.line_to(p1x+lax, p1y+lay)
+        
+        context.line_to(px+lvx*r[2], py+lvy*r[2])
+        context.line_to(p1x-lax, p1y-lay)
+        context.line_to(p1x-ax, p1y-ay)
+        context.line_to(px-ax, py-ay)
+        context.close_path()
+        
+        context.set_source_rgba(*fillc)
+        context.fill_preserve()
+        context.set_line_join(gtk.gdk.JOIN_ROUND)
+        context.set_line_width(asw*r[2])
+        context.set_source_rgba(*strkc)
+        context.stroke()
+        
+        context.restore()
+    
     def drawArrows (self, context):
         # TODO: Only redraw when intersecting with the redrawn area
         
@@ -854,53 +901,21 @@ class BoardView (gtk.DrawingArea):
         ahw = 0.72 # Arrow head width
         ahh = 0.64 # Arrow head height
         asw = 0.08 # Arrow stroke width
-        def drawArrow (cords, fillc, strkc):
-            context.save()
-            
-            lvx = cords[1].x-cords[0].x
-            lvy = cords[0].y-cords[1].y
-            from math import sqrt
-            l = float(sqrt(lvx**2+lvy**2))
-            vx = lvx/l
-            vy = lvy/l
-            v1x = -vy
-            v1y = vx
-            r = self.cord2Rect(cords[0])
-            px = r[0]+r[2]/2.0
-            py = r[1]+r[2]/2.0
-            ax = v1x*r[2]*aw/2
-            ay = v1y*r[2]*aw/2
-            context.move_to(px+ax, py+ay)
-            p1x = px+(lvx-vx*ahh)*r[2]
-            p1y = py+(lvy-vy*ahh)*r[2]
-            context.line_to(p1x+ax, p1y+ay)
-            lax = v1x*r[2]*ahw/2
-            lay = v1y*r[2]*ahw/2
-            context.line_to(p1x+lax, p1y+lay)
-            context.line_to(px+lvx*r[2], py+lvy*r[2])
-            context.line_to(p1x-lax, p1y-lay)
-            context.line_to(p1x-ax, p1y-ay)
-            context.line_to(px-ax, py-ay)
-            context.close_path()
-            
-            context.set_source_rgba(*fillc)
-            context.fill_preserve()
-            context.set_line_join(gtk.gdk.JOIN_ROUND)
-            context.set_line_width(asw*r[2])
-            context.set_source_rgba(*strkc)
-            context.stroke()
-            context.restore()
         
         if self.bluearrow:
-            drawArrow(self.bluearrow, (.447,.624,.812,0.9), (.204,.396,.643,1))
+            self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
+                             (.447,.624,.812,0.9), (.204,.396,.643,1))
         
         if self.shown != self.model.ply:
             return
         
         if self.greenarrow:
-            drawArrow(self.greenarrow, (.54,.886,.2,0.9), (.306,.604,.024,1))
+            self.__drawArrow(context, self.greenarrow, aw, ahw, ahh, asw,
+                             (.54,.886,.2,0.9), (.306,.604,.024,1))
+        
         if self.redarrow:
-            drawArrow(self.redarrow, (.937,.16,.16,0.9), (.643,0,0,1))
+            self.__drawArrow(context, self.redarrow, aw, ahw, ahh, asw,
+                             (.937,.16,.16,0.9), (.643,0,0,1))
     
     ###############################
     #        drawEnpassant        #
@@ -1129,9 +1144,9 @@ class BoardView (gtk.DrawingArea):
         x1, y1 = self.matrix.transform_point(cx+s, cy)
         x2, y2 = self.matrix.transform_point(cx, cy+s)
         x3, y3 = self.matrix.transform_point(cx+s, cy+s)
-        x = min((x0, x1, x2, x3))
-        y = min((y0, y1, y2, y3))
-        s = max((y0, y1, y2, y3)) - y
+        x = min(x0, x1, x2, x3)
+        y = min(y0, y1, y2, y3)
+        s = max(y0, y1, y2, y3) - y
         return (x, y, s)
     
     def isLight (self, cord):
