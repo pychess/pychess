@@ -106,7 +106,11 @@ class GladeHandlers:
     
     def on_rotate_board1_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        gmwidg.board.view.rotation += math.pi
+        if gmwidg.board.view.rotation:
+            gmwidg.board.view.rotation = 0
+        else:
+            gmwidg.board.view.rotation = math.pi
+
     
     def on_fullscreen1_activate (widget):
         gamewidget.getWidgets()["window1"].fullscreen()
@@ -246,7 +250,7 @@ class PyChess:
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
 def run (args):
-    import gtkexcepthook
+    #import gtkexcepthook
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
     gtk.gdk.threads_init()
