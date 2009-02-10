@@ -425,7 +425,8 @@ def closeGame (gmwidg, game):
                 response = gtk.RESPONSE_CANCEL
     
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
-        game.end(ABORTED, ABORTED_AGREEMENT)
+        if game.status in UNFINISHED_STATES:
+            game.end(ABORTED, ABORTED_AGREEMENT)
         game.terminate()
         gamewidget.delGameWidget (gmwidg)
     

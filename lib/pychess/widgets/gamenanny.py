@@ -77,8 +77,6 @@ def game_saved (gamemodel, uri, gmwidg):
 
 def game_ended (gamemodel, reason, gmwidg):
     
-    print "end game"
-    
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
                "mover": gamemodel.curplayer}
