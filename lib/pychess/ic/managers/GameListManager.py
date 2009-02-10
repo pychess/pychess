@@ -164,14 +164,6 @@ class GameListManager (GObject):
         print >> self.connection.client, "seek %d %d %s %s %d-%d" % \
                 (startmin, incsec, rchar, cchar, ratings[0], ratings[1])
     
-    def challenge (self, playerName, startmin, incsec, rated, color=None):
-        rchar = rated and "r" or "u"
-        if color != None:
-            cchar = color == WHITE and "w" or "b"
-        else: cchar = ""
-        print >> self.connection.client, "match %s %d %d %s %s" % \
-                (playerName, startmin, incsec, rchar, cchar)
-    
     def refreshSeeks (self):
         print >> self.connection.client, "iset seekinfo 1"
     

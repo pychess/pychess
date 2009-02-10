@@ -129,6 +129,9 @@ class ICPlayer (Player):
     #    Offer handling
     #===========================================================================
     
+    def offerRematch (self):
+        self.connection.om.offerRematch()
+    
     def offer (self, offer):
         self.connection.om.offer(offer, self.lastPly)
     
