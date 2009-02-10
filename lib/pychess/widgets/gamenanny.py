@@ -6,6 +6,10 @@ import math
 
 import gtk
 
+from pychess.Utils.Offer import Offer
+#from pychess.Utils.GameModel import GameModel
+#from pychess.Utils.TimeModel import TimeModel
+
 from pychess.Utils.const import *
 from pychess.Utils.repr import *
 from pychess.System import conf
@@ -73,6 +77,8 @@ def game_saved (gamemodel, uri, gmwidg):
 
 def game_ended (gamemodel, reason, gmwidg):
     
+    print "end game"
+    
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
                "mover": gamemodel.curplayer}
@@ -86,13 +92,35 @@ def game_ended (gamemodel, reason, gmwidg):
     m1 = reprResult_long[gamemodel.status] % nameDic
     m2 = reprReason_long[reason] % nameDic
     
+    
+    md = gtk.MessageDialog()
+    md.set_markup(_("<b><big>%s</big></b>") % m1)
+    md.format_secondary_markup(m2)
+    
+    if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
+        if gamemodel.players[0].__type__ == REMOTE or gamemodel.players[1].__type__ == REMOTE:
+            md.add_button(_("Offer Rematch"), 0)
+        else:
+            md.add_button(_("Play Rematch"), 1)
+            md.add_button(_("Undo two moves"), 2)
+    
+    def cb (messageDialog, responseId):
+        if responseId == 0:
+            nameDic["loser"].offerRematch()
+        elif responseId == 1:
+            from pychess.widgets.newGameDialog import createRematch
+            createRematch(gamemodel)
+        elif responseId == 2:
+            offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
+            if gamemodel.players[0].__type__ == LOCAL:
+                gamemodel.players[0].emit("offer", offer)
+            else: gamemodel.players[1].emit("offer", offer)
+    md.connect("response", cb)
+    
     glock.acquire()
     try:
-        md = gtk.MessageDialog()
-        md.set_markup(_("<b><big>%s</big></b>") % m1)
-        md.format_secondary_markup(m2)
         gmwidg.showMessage(md)
-        gmwidg.status("%s %s" % (m1,m2.lower()))
+        gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
         
         if reason == WHITE_ENGINE_DIED:
             engineDead(gamemodel.players[0], gmwidg)

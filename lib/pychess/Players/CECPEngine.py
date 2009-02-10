@@ -360,6 +360,8 @@ class CECPEngine (ProtocolEngine):
         #==================================================#
     
     def setOptionStrength (self, strength):
+        self.strength = strength
+        
         if 4 <= strength <= 7:
             self.__setTimeHandicap(0.1 * 2**(strength-4))
         
