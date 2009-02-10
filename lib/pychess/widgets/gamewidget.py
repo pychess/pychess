@@ -254,14 +254,18 @@ class GameWidget (gobject.GObject):
         else:
             messageDialog.child.remove(hbuttonbox)
             buttonbox = hbuttonbox
+            buttonbox.props.layout_style = gtk.BUTTONBOX_SPREAD
         
         messageDialog.child.remove(message)
         texts = message.get_children()[1]
+        message.set_child_packing(texts, False, False, 0, gtk.PACK_START)
         text1, text2 = texts.get_children()
-        texts.set_child_packing(text1, True, False, 0, gtk.PACK_START)
-        texts.set_child_packing(text2, True, False, 0, gtk.PACK_START)
-        texts.set_spacing(0)
-        message.pack_end(buttonbox, False, False)
+        text1.props.yalign = 1
+        text2.props.yalign = 0
+        texts.set_child_packing(text1, True, True, 0, gtk.PACK_START)
+        texts.set_child_packing(text2, True, True, 0, gtk.PACK_START)
+        texts.set_spacing(3)
+        message.pack_end(buttonbox, True, True)
         if self.messageSock.child:
             self.messageSock.remove(self.messageSock.child)
         self.messageSock.add(message)
