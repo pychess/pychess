@@ -157,12 +157,27 @@ class OfferManager (GObject):
         else: self.emit("onOfferRemove", index)
         del self.indexType[index]
     
+    ###
+    
+    def challenge (self, playerName, startmin, incsec, rated, color=None):
+        rchar = rated and "r" or "u"
+        if color != None:
+            cchar = color == WHITE and "w" or "b"
+        else: cchar = ""
+        print >> self.connection.client, "match %s %d %d %s %s" % \
+                (playerName, startmin, incsec, rchar, cchar)
+    
+    def offerRematch (self):
+        print >> self.connection.client, "rematch"
+    
     def offer (self, offer, ply):
         self.lastPly = ply
         s = offerTypeToStr[offer.offerType]
         if offer.offerType == TAKEBACK_OFFER:
             s += " " + str(ply-offer.param)
         print >> self.connection.client, s
+    
+    ###
     
     def withdraw (self, type):
         print >> self.connection.client, "withdraw t", offerTypeToStr[type]

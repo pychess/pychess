@@ -504,7 +504,7 @@ class PyChessFICS(PyChess):
         opps = random.sample(self.connection.glm.getPlayerlist(), self.challenges)
         self.extendlog("Challenging %s" % op for op in opps)
         for player in opps:
-            self.connection.glm.challenge(player, minute, gain, True)
+            self.connection.om.challenge(player, minute, gain, True)
         
         return True
     
