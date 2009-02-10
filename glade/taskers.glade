@@ -296,7 +296,7 @@
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0</property>
 		      <property name="xscale">0</property>
-		      <property name="yscale">0</property>
+		      <property name="yscale">1</property>
 		      <property name="top_padding">0</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">0</property>
@@ -634,7 +634,7 @@
 		      <property name="xalign">0.5</property>
 		      <property name="yalign">0.5</property>
 		      <property name="xscale">0</property>
-		      <property name="yscale">0</property>
+		      <property name="yscale">1</property>
 		      <property name="top_padding">0</property>
 		      <property name="bottom_padding">0</property>
 		      <property name="left_padding">0</property>
