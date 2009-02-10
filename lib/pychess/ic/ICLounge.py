@@ -933,7 +933,7 @@ class SeekChallengeSection (ParrentListSection):
         if color == -1: color = None
         min, incr = map(int, self.widgets["chaTimeCombobox"].get_model()[
                 self.widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
-        self.connection.glm.challenge(playerName, min, incr, rated, color)
+        self.connection.om.challenge(playerName, min, incr, rated, color)
     
     def onSeekSelectionChanged (self, selection):
         # You can't press challengebutton when nobody are selected
