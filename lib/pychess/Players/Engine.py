@@ -67,6 +67,7 @@ class Engine (Player):
     
     def setOptionStrength (self, strength):
         """ Strength is a number [1,8] inclusive. Higher is better. """
+        self.strength = strength
         raise NotImplementedError
     
     #===========================================================================
