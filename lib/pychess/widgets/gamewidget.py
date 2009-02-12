@@ -173,6 +173,11 @@ class GameWidget (gobject.GObject):
         return boardvbox, board, messageSock
     
     def initStatusbar(self, board):
+        def tip (widget, x, y, keyboard_mode, tooltip, text):
+            l = gtk.Label(text)
+            tooltip.set_custom(l)
+            l.show()
+            return True
         stat_hbox = gtk.HBox()
         page_vbox = gtk.VBox()
         page_vbox.set_spacing(1)
@@ -182,19 +187,23 @@ class GameWidget (gobject.GObject):
         startbut = gtk.Button()
         startbut.add(createImage(media_previous))
         startbut.set_relief(gtk.RELIEF_NONE)
-        startbut.set_tooltip_text(_("Jump to initial position"))
+        startbut.props.has_tooltip = True
+        startbut.connect("query-tooltip", tip, _("Jump to initial position"))
         backbut = gtk.Button()
         backbut.add(createImage(media_rewind))
         backbut.set_relief(gtk.RELIEF_NONE)
-        backbut.set_tooltip_text(_("Step back one move"))
+        backbut.props.has_tooltip = True
+        backbut.connect("query-tooltip", tip, _("Step back one move"))
         forwbut = gtk.Button()
         forwbut.add(createImage(media_forward))
         forwbut.set_relief(gtk.RELIEF_NONE)
-        forwbut.set_tooltip_text(_("Step forward one move"))
+        forwbut.props.has_tooltip = True
+        forwbut.connect("query-tooltip", tip, _("Step forward one move"))
         endbut = gtk.Button()
         endbut.add(createImage(media_next))
         endbut.set_relief(gtk.RELIEF_NONE)
-        endbut.set_tooltip_text(_("Jump to latest position"))
+        endbut.props.has_tooltip = True
+        endbut.connect("query-tooltip", tip, _("Jump to latest position"))
         startbut.connect("clicked", lambda w: board.view.showFirst())
         backbut.connect("clicked", lambda w: board.view.showPrevious())
         forwbut.connect("clicked", lambda w: board.view.showNext())
