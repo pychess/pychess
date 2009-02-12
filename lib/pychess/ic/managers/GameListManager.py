@@ -19,7 +19,8 @@ unsupportedWilds = { # We need to disable wild 0 and 1, as they allow castling e
                 "wild/1": _("Simple shuffle"),
                 "bughouse": _("Bughouse"),
                 "crazyhouse": _("Crazyhouse"),
-                "suicide": _("Suicide") }
+                "suicide": _("Suicide"),
+                "atomic": _("Atomic") }
 
 wilds = { "wild/2": _("Shuffle"),
           "wild/3": _("Random"),
