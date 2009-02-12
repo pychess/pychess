@@ -119,7 +119,7 @@ class GameListManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
         self.connection.expect_line (self.on_player_list,
-                "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E])+)")
+                "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?)+)")
         self.connection.expect_line (self.on_player_remove,
                 "%s is no longer available for matches." % names)
         self.connection.expect_fromto (self.on_player_add,
@@ -232,7 +232,13 @@ class GameListManager (GObject):
     
     def on_player_list (self, match):
         handle, title, ratings = match.groups()
-        mean = sum(int(r) for r in ratingSplit.split(ratings)[:-1] if int(r))/3.
+        numratings = 0
+        ratingtotal = 0
+        for rating in ratingSplit.split(ratings):
+            if rating.isdigit() and int(rating) > 0:
+                numratings += 1
+                ratingtotal += int(rating)
+        mean = numratings > 0 and ratingtotal/numratings or 0
         self.emit("addPlayer", {"name": handle, "rating": mean, "title":int(title,16)})
         self.players.add(handle)
     
@@ -244,8 +250,13 @@ class GameListManager (GObject):
     
     def on_player_add (self, matches):
         name, title, blitz, std, wild, light, bug = matches[0].groups()
-        ratings = (blitz, std, wild, light, bug)
-        mean = sum(int(r) for r in ratings if r.strip().isdigit())/5.
+        numratings = 0
+        ratingtotal = 0
+        for rating in (blitz, std, wild, light, bug):
+            if rating.isdigit() and int(rating) > 0:
+                numratings += 1
+                ratingtotal += int(rating)
+        mean = numratings > 0 and ratingtotal/numratings or 0
         self.emit("addPlayer", {"name":name, "title":0, "rating":mean})
         self.players.add(name)
     
