@@ -91,14 +91,6 @@ class VariousSection(Section):
         sizeGroup.add_widget(widgets["show_console_label"])
         sizeGroup.add_widget(widgets["log_off_label"])
         
-        uistuff.makeYellow(widgets["cautionBox"])
-        uistuff.makeYellow(widgets["cautionHeader"])
-        
-        def on_learn_more_clicked (button, *args):
-            retur = widgets["ficsCautionDialog"].run()
-            widgets["ficsCautionDialog"].hide()
-        widgets["caution_learn_more"].connect("clicked", on_learn_more_clicked)
-        
         connection.em.connect("onCommandNotFound", lambda em, cmd:
                 log.error("Fics answered '%s': Command not found" % cmd))
 
