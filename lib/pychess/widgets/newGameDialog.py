@@ -513,6 +513,8 @@ def createRematch (gamemodel):
             player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
         else:
             binname = bp.engine.path.split("/")[-1]
+            if binname == "python":
+                binname = bp.engine.args[1].split("/")[-1]
             xmlengine = discoverer.getEngines()[binname]
             player0tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                           (xmlengine, WHITE, bp.strength, gamemodel.variant,
@@ -520,6 +522,8 @@ def createRematch (gamemodel):
     else:
         player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
         binname = wp.engine.path.split("/")[-1]
+        if binname == "python":
+            binname = wp.engine.args[1].split("/")[-1]
         xmlengine = discoverer.getEngines()[binname]
         player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                       (xmlengine, BLACK, wp.strength, gamemodel.variant,
