@@ -32,7 +32,7 @@ def isdigits (strings):
     return True
 
 d_plus_dot_expr = re.compile(r"\d+\.")
-movere = re.compile("[a-hxOoKQRBN0-8+#=-]{2,7}[?!]*")
+movere = re.compile("([a-hKQRBNOo][a-h0-8xOo+#=-]{1,6})[?!]*")
 
 anare = re.compile("""
     ^                   # beginning of string
