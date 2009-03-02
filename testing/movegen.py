@@ -139,19 +139,19 @@ class FindMovesTestCase(unittest.TestCase):
         self.movegen(LBoard(NORMALCHESS), self.positions)
 
 
-class FRCFindMovesTestCase(FindMovesTestCase):
-    def setUp(self):
-        self.positions1 = []
-        for line in open('gamefiles/perftsuite.epd'):
-            parts = line.split(";")
-            depths = [int(s[3:].rstrip()) for s in parts[1:]]
-            self.positions1.append( (parts[0], depths) )
+#class FRCFindMovesTestCase(FindMovesTestCase):
+    #def setUp(self):
+        #self.positions1 = []
+        #for line in open('gamefiles/perftsuite.epd'):
+            #parts = line.split(";")
+            #depths = [int(s[3:].rstrip()) for s in parts[1:]]
+            #self.positions1.append( (parts[0], depths) )
 
-        self.positions2 = []
-        for line in open('gamefiles/frc_perftsuite.epd'):
-            parts = line.split(";")
-            depths = [int(s[3:].rstrip()) for s in parts[1:]]
-            self.positions2.append( (parts[0], depths) )
+        #self.positions2 = []
+        #for line in open('gamefiles/frc_perftsuite.epd'):
+            #parts = line.split(";")
+            #depths = [int(s[3:].rstrip()) for s in parts[1:]]
+            #self.positions2.append( (parts[0], depths) )
 
     #def testMovegen1(self):
     #    """Testing FRC variant move generator with perftsuite.epd"""
