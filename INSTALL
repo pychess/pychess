@@ -14,7 +14,7 @@ $ PYTHONPATH=lib/ python lib/pychess/Players/PyChess.py
 
 To run unit tests for pychess:
 cd testing
-$ PYTHONPATH=lib/ python run_test.py
+$ PYTHONPATH=lib/ python run_tests.py
 
 -------------
 Dependencies:
