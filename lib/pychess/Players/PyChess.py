@@ -22,6 +22,7 @@ from pychess.Utils.lutils import leval
 from pychess.Utils.lutils.validator import validateMove
 
 from pychess.System.GtkWorker import GtkWorker
+from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
 from pychess.System.Log import log
@@ -380,7 +381,9 @@ class PyChessCECP(PyChess):
         lsearch.searching = False
         if self.worker:
             self.worker.cancel()
+            glock.acquire()
             self.worker.get()
+            glock.release()
             self.worker = None
     
     def __go (self):
