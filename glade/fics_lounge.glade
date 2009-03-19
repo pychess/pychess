@@ -1249,7 +1249,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label57">
 					  <property name="visible">True</property>
-					  <property name="label">_Resume</property>
+					  <property name="label" translatable="yes">_Resume</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1329,7 +1329,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label58">
 					  <property name="visible">True</property>
-					  <property name="label">R_esign</property>
+					  <property name="label" translatable="yes">R_esign</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1392,7 +1392,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label60">
 					  <property name="visible">True</property>
-					  <property name="label">_Draw</property>
+					  <property name="label" translatable="yes">_Draw</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1455,7 +1455,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label59">
 					  <property name="visible">True</property>
-					  <property name="label">_Abort</property>
+					  <property name="label" translatable="yes">_Abort</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1535,7 +1535,7 @@ Custom</property>
 				      <child>
 					<widget class="GtkLabel" id="label61">
 					  <property name="visible">True</property>
-					  <property name="label">_Preview</property>
+					  <property name="label" translatable="yes">_Preview</property>
 					  <property name="use_underline">True</property>
 					  <property name="use_markup">False</property>
 					  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -1615,7 +1615,7 @@ Custom</property>
 		  <child>
 		    <widget class="GtkLabel" id="label55">
 		      <property name="visible">True</property>
-		      <property name="label">Adjourned</property>
+		      <property name="label" translatable="yes">Adjourned</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
