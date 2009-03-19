@@ -71,9 +71,9 @@ class EngineTab:
         tv = widgets["engines_treeview"]
         tv.set_model(allstore)
         tv.append_column(gtk.TreeViewColumn(
-                "Flag", gtk.CellRendererPixbuf(), pixbuf=0))
+                _("Flag"), gtk.CellRendererPixbuf(), pixbuf=0))
         tv.append_column(gtk.TreeViewColumn(
-                "Name", gtk.CellRendererText(), text=1))
+                _("Name"), gtk.CellRendererText(), text=1))
         
         analyzers = discoverer.getAnalyzers()
         ana_data = []
@@ -413,4 +413,5 @@ class PanelTab:
             conf.set(panel, False)
             notebooks[panel].get_parent().get_parent().undock(notebooks[panel])
         return
+
   
