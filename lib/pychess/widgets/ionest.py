@@ -29,16 +29,16 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
          A callable creating the player,
          A list of arguments for the callable,
          A preliminary name for the player)
-        
+
         If loaddata is specified, it should be a tuple of:
         (A text uri or fileobj,
          A Savers.something module with a load function capable of loading it,
          An int of the game in file you want to load,
          The position from where to start the game) """
-    
+
     worker = GtkWorker (lambda w:
             workfunc(w, gamemodel, player0tup, player1tup, loaddata))
-    
+
     def onPublished (worker, vallist):
         for val in vallist:
             # The worker will start by publishing (gmwidg, game)
@@ -47,37 +47,37 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
                 gamewidget.attachGameWidget(gmwidg)
                 gamenanny.nurseGame(gmwidg, game)
                 handler.emit("gmwidg_created", gmwidg, game)
-            
+
             # Then the worker will publish functions setting up widget stuff
             elif callable(val):
                 val()
     worker.connect("published", onPublished)
-    
+
     def onDone (worker, (gmwidg, game)):
         gmwidg.connect("close_clicked", closeGame, game)
         worker.__del__()
     worker.connect("done", onDone)
-    
+
     worker.execute()
 
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     gmwidg = gamewidget.GameWidget(gamemodel)
-    
+
     text = [name for t, f, a, name in (player0tup, player1tup)]
     text.insert(1,_("vs"))
     gmwidg.setTabText(" ".join(text))
-    
+
     worker.publish((gmwidg,gamemodel))
-    
+
     # For updating names
     players = []
     def updateTitle (color=None):
-        
+
         name0_name1 = gmwidg.getTabText().split(" %s "%_("vs"))
         if not name0_name1:
             name0, name1 = _("White"), _("Black")
         else: name0, name1 = name0_name1
-        
+
         if color == None:
             name0 = repr(players[WHITE])
             name1 = repr(players[BLACK])
@@ -85,9 +85,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             name0 = repr(players[WHITE])
         elif color == BLACK:
             name1 = repr(players[BLACK])
-        
+
         gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
-    
+
     # Initing players
     for i, playertup in enumerate((player0tup, player1tup)):
         type, func, args, name = playertup
@@ -109,18 +109,18 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 key = "secondName"
                 alt = _("Guest")
             player.setName(conf.get(key, alt))
-            
+
             def callback (none, color, key, alt):
                 players[color].setName(conf.get(key, alt))
                 updateTitle(color)
             conf.notify_add(key, callback, i, key, alt)
-    
+
     worker.publish(updateTitle)
-    
+
     # Initing analyze engines
     anaengines = discoverer.getAnalyzers()
     specs = {}
-    
+
     if conf.get("analyzer_check", True):
         engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
         if not engine: engine = anaengines[0]
@@ -128,7 +128,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                                                      gamemodel.variant)
         specs[HINT] = hintanalyzer
         log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
-    
+
     if conf.get("inv_analyzer_check", True):
         engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
         if not engine: engine = anaengines[0]
@@ -136,11 +136,11 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                                                     gamemodel.variant)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
-    
+
     # Setting game
     gamemodel.setPlayers(players)
     gamemodel.setSpectactors(specs)
-    
+
     # Starting
     if loaddata:
         try:
@@ -153,14 +153,14 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                     _("Correct the move, or start playing with what could be read"))
             d.connect("response", lambda d,a: d.hide())
             worker.publish(d.show)
-    
+
     else:
         if gamemodel.variant.need_initial_board:
             for player in gamemodel.players + gamemodel.spectactors.values():
                 player.setOptionInitialBoard(gamemodel)
-        
+
         gamemodel.start()
-    
+
     return gmwidg, gamemodel
 
 ################################################################################
@@ -172,7 +172,7 @@ savedialog = None
 enddir = {}
 def getOpenAndSaveDialogs():
     global opendialog, savedialog, enddir, savecombo, savers
-    
+
     if not opendialog:
         types = []
         savers = [getattr(Savers, s) for s in Savers.__all__]
@@ -180,27 +180,27 @@ def getOpenAndSaveDialogs():
             for ending in saver.__endings__:
                 enddir[ending] = saver
                 types.append((saver.__label__, saver.__endings__))
-        
+
         opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
         savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
         savedialog.set_current_folder(os.environ["HOME"])
         saveformats = gtk.ListStore(str, str)
-        
+
         # All files filter
         star = gtk.FileFilter()
         star.set_name(_("All Files"))
         star.add_pattern("*")
         opendialog.add_filter(star)
         saveformats.append([_("Detect type automatically"), ""])
-        
+
         # All chess files filter
         all = gtk.FileFilter()
         all.set_name(_("All Chess Files"))
         opendialog.add_filter(all)
         opendialog.set_filter(all)
-        
+
         # Specific filters and save formats
         default = 0
         for i, (label, endings) in enumerate(types):
@@ -214,7 +214,7 @@ def getOpenAndSaveDialogs():
             saveformats.append([label, endstr])
             if "pgn" in endstr:
                 default = i + 1
-        
+
         # Add widgets to the savedialog
         savecombo = gtk.ComboBox()
         savecombo.set_model(saveformats)
@@ -226,7 +226,7 @@ def getOpenAndSaveDialogs():
         savecombo.add_attribute(crt, 'text', 1)
         savecombo.set_active(default)
         savedialog.set_extra_widget(savecombo)
-    
+
     return opendialog, savedialog, enddir, savecombo, savers
 
 ################################################################################
@@ -249,7 +249,7 @@ def saveGameSimple (uri, game):
 
 def saveGameAs (game):
     opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
-    
+
     # Keep running the dialog until the user has canceled it or made an error
     # free operation
     while True:
@@ -258,13 +258,13 @@ def saveGameAs (game):
         res = savedialog.run()
         if res != gtk.RESPONSE_ACCEPT:
             break
-        
+
         uri = savedialog.get_filename()
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
-        
+
         append = False
-        
+
         if savecombo.get_active() == 0:
             if not ending in enddir:
                 d = gtk.MessageDialog(
@@ -272,7 +272,8 @@ def saveGameAs (game):
                 folder, file = os.path.split(uri)
                 d.set_markup(
                           _("<big><b>Unknown file type '%s'</b></big>") % ending)
-                d.format_secondary_text(_("Was unable to save '%s' as PyChess doesn't know the format '%s'.") % (uri,ending))
+                d.format_secondary_text(_("Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'.") % {
+                                            'uri': uri, 'ending': ending})
                 d.run()
                 d.hide()
                 continue
@@ -282,7 +283,7 @@ def saveGameAs (game):
             saver = savers[savecombo.get_active()-1]
             if not ending in enddir or not saver == enddir[ending]:
                 uri += ".%s" % saver.__endings__[0]
-        
+
         if os.path.isfile(uri) and not os.access (uri, os.W_OK):
             d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
             d.set_markup(_("<big><b>Unable to save file '%s'</b></big>") % uri)
@@ -292,7 +293,7 @@ Please ensure that you have given the right path and try again."))
             d.run()
             d.hide()
             continue
-        
+
         if os.path.isfile(uri):
             d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
             d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"),
@@ -305,7 +306,7 @@ Please ensure that you have given the right path and try again."))
             d.format_secondary_text(_("The file already exists in '%s'. If you replace it, its content will be overwritten.") % folder)
             replaceRes = d.run()
             d.hide()
-            
+
             if replaceRes == 1:
                 append = True
             elif replaceRes == gtk.RESPONSE_CANCEL:
@@ -324,9 +325,9 @@ Please ensure that you have given the right path and try again."))
             d.run()
             d.hide()
             continue
-        
+
         break
-    
+
     savedialog.hide()
     return res
 
@@ -345,14 +346,14 @@ def closeAllGames (pairs):
         heading = widgets["saveGamesDialogHeading"]
         saveLabel = widgets["saveGamesDialogSaveLabel"]
         treeview = widgets["saveGamesDialogTreeview"]
-        
+
         heading.set_markup("<big><b>" +
                            _n("There are %d game with unsaved moves.",
                               "There are %d games with unsaved moves.",
                               len(changedPairs)) % len(changedPairs) +
                            " " + _("Save moves before closing?") +
                            "</b></big>")
-        
+
         liststore = gtk.ListStore(bool, str)
         treeview.set_model(liststore)
         renderer = gtk.CellRendererToggle()
@@ -362,7 +363,7 @@ def closeAllGames (pairs):
         for gmwidg, game in changedPairs:
             liststore.append((True, "%s %s %s" %
                              (game.players[0], _("vs."), game.players[1])))
-        
+
         def callback (cell, path):
             if path:
                 liststore[path][0] = not liststore[path][0]
@@ -370,9 +371,9 @@ def closeAllGames (pairs):
             saveLabel.set_text(_n("_Save %d document", "_Save %d documents", saves) % saves)
             saveLabel.set_use_underline(True)
         renderer.connect("toggled", callback)
-        
+
         callback(None, None)
-        
+
         while True:
             response = dialog.run()
             if response == gtk.RESPONSE_YES:
@@ -392,12 +393,12 @@ def closeAllGames (pairs):
             else:
                 break
         dialog.destroy()
-    
+
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         for gmwidg, game in pairs:
             game.end(ABORTED, ABORTED_AGREEMENT)
             game.terminate()
-    
+
     return response
 
 def closeGame (gmwidg, game):
@@ -410,26 +411,26 @@ def closeGame (gmwidg, game):
         if game.uri:
             d.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
         else: d.add_button(gtk.STOCK_SAVE_AS, gtk.RESPONSE_YES)
-        
+
         gmwidg.bringToFront()
-        
+
         d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
         d.format_secondary_text (_(
             "It is not possible later to continue the game,\nif you don't save it."))
         response = d.run()
         d.destroy()
-        
+
         if response == gtk.RESPONSE_YES:
             # Test if cancel was pressed in the save-file-dialog
             if saveGame(game) != gtk.RESPONSE_ACCEPT:
                 response = gtk.RESPONSE_CANCEL
-    
+
     if response not in (gtk.RESPONSE_DELETE_EVENT, gtk.RESPONSE_CANCEL):
         if game.status in UNFINISHED_STATES:
             game.end(ABORTED, ABORTED_AGREEMENT)
         game.terminate()
         gamewidget.delGameWidget (gmwidg)
-    
+
     return response
 
 ################################################################################
@@ -442,11 +443,11 @@ class Handler (GObject):
     """ The goal of this class, is to provide signal handling for the ionest
         module.
         Emit objects are gmwidg, gameobject """
-        
+
     __gsignals__ = {
         'gmwidg_created': (SIGNAL_RUN_FIRST, TYPE_NONE, (object, object))
     }
-    
+
     def __init__ (self):
         GObject.__init__(self)
 
