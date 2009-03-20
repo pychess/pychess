@@ -349,7 +349,7 @@ class SeekTabSection (ParrentListSection):
         ti = self.store.append ([seek["gameno"], pix, seek["w"],
                                 int(seek["rt"]), rated, seek["tp"], time])
         self.seeks [seek["gameno"]] = ti
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
+        count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
         self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         
@@ -363,7 +363,7 @@ class SeekTabSection (ParrentListSection):
             return
         self.store.remove (treeiter)
         del self.seeks[gameno]
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])-1
+        count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
         self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
         
@@ -577,7 +577,7 @@ class PlayerTabSection (ParrentListSection):
         #    title = PlayerTabSection.bookpix
         ti = self.store.append ([title, player["name"], rating])
         self.players [player["name"]] = ti
-        count = int(self.widgets["playersOnlineLabel"].get_text().split()[0])+1
+        count = len(self.players)
         postfix = count == 1 and _("Player Ready") or _("Players Ready")
         self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
         
@@ -589,7 +589,7 @@ class PlayerTabSection (ParrentListSection):
             return
         self.store.remove (ti)
         del self.players[name]
-        count = int(self.widgets["playersOnlineLabel"].get_text().split()[0])-1
+        count = len(self.players)
         postfix = count == 1 and _("Player Ready") or _("Players Ready")
         self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
     
@@ -687,7 +687,7 @@ class GameTabSection (ParrentListSection):
         ti = self.store.append ([game["gameno"], self.clearpix, game["wn"],
                                 game["bn"], type, length])
         self.games[game["gameno"]] = ti
-        count = int(self.widgets["gamesRunningLabel"].get_text().split()[0])+1
+        count = len(self.games)
         postfix = count == 1 and _("Game Running") or _("Games Running")
         self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
     
@@ -712,7 +712,7 @@ class GameTabSection (ParrentListSection):
             return
         self.store.remove (ti)
         del self.games[gameno]
-        count = int(self.widgets["gamesRunningLabel"].get_text().split()[0])-1
+        count = len(self.games)
         postfix = count == 1 and _("Game Running") or _("Games Running")
         self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
     
