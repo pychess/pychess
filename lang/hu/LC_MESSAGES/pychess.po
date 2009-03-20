@@ -159,7 +159,7 @@ msgstr "Keresések grafikusan"
 # In context "x Players Ready" where x > 1
 #: glade/fics_lounge.glade:654
 msgid "0 Players Ready"
-msgstr "nincs játékos"
+msgstr "0 játékos"
 
 #: glade/fics_lounge.glade:687
 msgid "Start Private Chat"
@@ -940,7 +940,7 @@ msgstr "keresés"
 #: lib/pychess/ic/ICLounge.py:373 lib/pychess/ic/ICLounge.py:388
 #: lib/pychess/ic/ICLounge.py:425 lib/pychess/ic/ICLounge.py:435
 msgid "Active Seeks"
-msgstr "keresések"
+msgstr "keresés"
 
 # In context "1 Player Ready"
 #: lib/pychess/ic/ICLounge.py:581 lib/pychess/ic/ICLounge.py:593
@@ -950,7 +950,7 @@ msgstr "játékos"
 # In context "x Players Ready" where x > 1
 #: lib/pychess/ic/ICLounge.py:581 lib/pychess/ic/ICLounge.py:593
 msgid "Players Ready"
-msgstr "játékosok"
+msgstr "játékos"
 
 #: lib/pychess/ic/ICLounge.py:632
 msgid "White Player"
