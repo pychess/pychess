@@ -106,17 +106,17 @@ class _GameInitializationMode:
         if not hasattr(cls, "hasRunInit"):
             cls._init()
             cls.hasRunInit = True
-    
+
     @classmethod
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
-        
+
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             (i[:2] for i in playerItems[0]))
         uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
                             (i[:2] for i in playerItems[0]))
-        
-        
+
+
         def on_playerCombobox_changed (widget, skillHbox):
             skillHbox.props.visible = widget.get_active() > 0
         cls.widgets["whitePlayerCombobox"].connect(
@@ -125,8 +125,8 @@ class _GameInitializationMode:
                 "changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
         cls.widgets["whitePlayerCombobox"].set_active(0)
         cls.widgets["blackPlayerCombobox"].set_active(1)
-        
-        
+
+
         def on_skill_changed (scale, image):
             image.set_from_pixbuf(skillToIcon[int(scale.get_value())])
         cls.widgets["skillSlider1"].connect("value-changed", on_skill_changed,
@@ -135,21 +135,21 @@ class _GameInitializationMode:
                                             cls.widgets["skillIcon2"])
         cls.widgets["skillSlider1"].set_value(3)
         cls.widgets["skillSlider2"].set_value(3)
-        
-        
+
+
         cls.__initTimeRadio(_("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
                             cls.widgets["configImageBlitz"], 5, 0)
         cls.__initTimeRadio(_("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
                             cls.widgets["configImageRapid"], 15, 5)
         cls.__initTimeRadio(_("Normal"), "ngnormal", cls.widgets["normalRadio"],
                             cls.widgets["configImageNormal"], 40, 15)
-        
+
         cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
                                cls.widgets["configImageVariant1"],
                                FISCHERRANDOMCHESS)
         cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
                                cls.widgets["configImageVariant2"], LOSERSCHESS)
-        
+
         def updateCombos(*args):
             if cls.widgets["playNormalRadio"].get_active():
                 variant = NORMALCHESS
@@ -164,19 +164,19 @@ class _GameInitializationMode:
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
         cls.widgets["playVariant1Radio"].connect("toggled", updateCombos)
         cls.widgets["playVariant2Radio"].connect("toggled", updateCombos)
-        
+
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
-                    "skillSlider1", "skillSlider2", 
+                    "skillSlider1", "skillSlider2",
                     "notimeRadio", "blitzRadio", "rapidRadio", "normalRadio",
                     "playNormalRadio", "playVariant1Radio", "playVariant2Radio"):
             uistuff.keep(cls.widgets[key], key)
-        
+
         # We don't want the dialog to deallocate when closed. Rather we hide
         # it on respond
         cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
-    
+
     @classmethod
     def __initTimeRadio (cls, name, id, radiobutton, configImage, defmin, defgain):
         minSpin = gtk.SpinButton(gtk.Adjustment(1,1,240,1))
@@ -185,7 +185,7 @@ class _GameInitializationMode:
         cls.widgets["%s gain" % id] = gainSpin
         uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
         uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
-        
+
         table = gtk.Table(2, 2)
         table.props.row_spacing = 3
         table.props.column_spacing = 12
@@ -193,7 +193,7 @@ class _GameInitializationMode:
         label.props.xalign = 0
         table.attach(label, 0, 1, 0, 1)
         table.attach(minSpin, 1, 2, 0, 1)
-        label = gtk.Label("Gain:")
+        label = gtk.Label(_("Gain")+":")
         label.props.xalign = 0
         table.attach(label, 0, 1, 1, 2)
         table.attach(gainSpin, 1, 2, 1, 2)
@@ -201,20 +201,23 @@ class _GameInitializationMode:
         alignment.set_padding(6,6,12,12)
         alignment.add(table)
         ImageMenu.switchWithImage(configImage, alignment)
-        
+
         def updateString (spin):
             minutes = minSpin.get_value_as_int()
             gain = gainSpin.get_value_as_int()
             if gain > 0:
-                radiobutton.set_label("%s %d min + %d sec/move" % (name, minutes, gain))
+                radiobutton.set_label(_("%(name)s %(minutes)d min + %(gain)d sec/move") % {
+                                        'name': name, 'minutes': minutes, 'gain': gain})
             elif gain < 0:
-                radiobutton.set_label("%s %d min - %d sec/move" % (name, minutes, -gain))
+                radiobutton.set_label(_("%(name)s %(minutes)d min %(gain)d sec/move") % {
+                                        'name': name, 'minutes': minutes, 'gain': gain})
             else:
-                radiobutton.set_label("%s %d min" % (name, minutes))
+                radiobutton.set_label(_("%(name)s %(minutes)d min") % {
+                                        'name': name, 'minutes': minutes})
         minSpin.connect("value-changed", updateString)
         gainSpin.connect("value-changed", updateString)
         updateString(None)
-    
+
     @classmethod
     def __initVariantRadio (cls, confid, radiobutton, configImage, default):
         model = gtk.TreeStore(str)
@@ -225,7 +228,7 @@ class _GameInitializationMode:
         alignment.set_padding(6,6,12,12)
         alignment.add(treeview)
         ImageMenu.switchWithImage(configImage, alignment)
-        
+
         groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
                       VARIANTS_ODDS: _("Odds"),
                       VARIANTS_SHUFFLE: _("Shuffle"),
@@ -242,30 +245,30 @@ class _GameInitializationMode:
                 pathToVariant[path] = variant.board.variant
                 variantToPath[variant.board.variant] = path
             treeview.expand_row((i,), True)
-        
+
         selection = treeview.get_selection()
         selection.set_mode(gtk.SELECTION_BROWSE)
         selection.set_select_function(lambda path: len(path) > 1)
         selection.select_path(variantToPath[conf.get(confid, default)])
-        
+
         def callback (selection):
             model, iter = selection.get_selected()
             if iter:
-                radiobutton.set_label("Play %s chess" % model.get(iter, 0))
+                radiobutton.set_label("%s" % model.get(iter, 0))
                 path = model.get_path(iter)
                 variant = pathToVariant[path]
                 conf.set(confid, variant)
         selection.connect("changed", callback)
         callback(selection)
-    
+
     @classmethod
     def _generalRun (cls, callback):
         def onResponse(dialog, res):
             cls.widgets["newgamedialog"].hide()
             cls.widgets["newgamedialog"].disconnect(handlerId)
             if res != gtk.RESPONSE_OK:
-                return 
-            
+                return
+
             # Find variant
             if cls.widgets["playNormalRadio"].get_active():
                 variant_index = NORMALCHESS
@@ -274,7 +277,7 @@ class _GameInitializationMode:
             else:
                 variant_index = conf.get("ngvariant2", LOSERSCHESS)
             variant = variants[variant_index]
-            
+
             # Find time
             if cls.widgets["notimeRadio"].get_active():
                 secs = 0
@@ -288,7 +291,7 @@ class _GameInitializationMode:
             elif cls.widgets["normalRadio"].get_active():
                 secs = cls.widgets["ngnormal min"].get_value_as_int()*60
                 incr = cls.widgets["ngnormal gain"].get_value_as_int()
-            
+
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
             player0 = playerItems[0].index(playerItems[variant_index][player0])
@@ -296,7 +299,7 @@ class _GameInitializationMode:
             player1 = cls.widgets["blackPlayerCombobox"].get_active()
             player1 = playerItems[0].index(playerItems[variant_index][player1])
             diffi1 = int(cls.widgets["skillSlider2"].get_value())
-            
+
             # Prepare players for ionest
             playertups = []
             for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
@@ -308,7 +311,7 @@ class _GameInitializationMode:
                             (engine, color, diffi, variant, secs, incr), name))
                 else:
                     playertups.append((LOCAL, Human, (color, ""), _("Human")))
-            
+
             if secs > 0:
                 timemodel = TimeModel (secs, incr)
             else: timemodel = None
@@ -316,10 +319,10 @@ class _GameInitializationMode:
             gamemodel = GameModel (timemodel, variant)
 
             callback(gamemodel, playertups[0], playertups[1])
-        
+
         handlerId = cls.widgets["newgamedialog"].connect("response", onResponse)
         cls.widgets["newgamedialog"].show()
-    
+
     @classmethod
     def _hideOthers (cls):
         for extension in ("loadsidepanel", "enterGameNotationSidePanel",
@@ -336,14 +339,14 @@ class NewGameMode (_GameInitializationMode):
         # We have to override this, so the GameInitializationMode init method
         # isn't called twice
         pass
-    
+
     @classmethod
     def run (cls):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
             return
-        
+
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
         cls._generalRun(ionest.generalStart)
@@ -359,14 +362,14 @@ class LoadFileExtension (_GameInitializationMode):
         cls.filechooserbutton = gtk.FileChooserButton(opendialog)
         cls.loadSidePanel = BoardPreview.BoardPreview(cls.widgets,
                 cls.filechooserbutton, opendialog, enddir)
-    
+
     @classmethod
     def run (cls, uri=None, chessFiles=None):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
             return
-        
+
         if not uri:
             res = ionest.opendialog.run()
             ionest.opendialog.hide()
@@ -378,11 +381,11 @@ class LoadFileExtension (_GameInitializationMode):
                 return
             cls.loadSidePanel.set_filename(uri)
             cls.filechooserbutton.emit("file-activated")
-            
+
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
-        
+
         def _callback (gamemodel, p0, p1):
             if not cls.loadSidePanel.is_empty():
                 uri =  cls.loadSidePanel.get_filename()
@@ -408,7 +411,7 @@ class EnterNotationExtension (_GameInitializationMode):
             cls.widgets["enterGameNotationFrame"].set_size_request(
                     223, allocation.height-4)
         cls.widgets["enterGameNotationSidePanel"].connect_after("size-allocate", callback)
-        
+
         flags = []
         if isInstalled():
             path = gettext.find("pychess")
@@ -417,43 +420,43 @@ class EnterNotationExtension (_GameInitializationMode):
         if path:
             loc = locale.getdefaultlocale()[0][-2:].lower()
             flags.append(addDataPrefix("flags/%s.png" % loc))
-        
+
         flags.append(addDataPrefix("flags/us.png"))
-        
+
         cls.ib = ImageButton(flags)
         cls.widgets["imageButtonDock"].add(cls.ib)
         cls.ib.show()
-        
+
         cls.sourcebuffer = SourceBuffer()
         sourceview = SourceView(cls.sourcebuffer)
         cls.widgets["scrolledwindow6"].add(sourceview)
         sourceview.show()
-        
+
         # Pgn format does not allow tabulator
         sourceview.set_insert_spaces_instead_of_tabs(True)
         sourceview.set_wrap_mode(gtk.WRAP_WORD)
-        
+
         man = SourceLanguagesManager()
         lang = [l for l in man.get_available_languages() if l.get_name() == "PGN"][0]
         cls.sourcebuffer.set_language(lang)
-        
+
         cls.sourcebuffer.set_highlight(True)
-    
+
     @classmethod
     def run (cls):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
             return
-        
+
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("Enter Game"))
         cls.widgets["enterGameNotationSidePanel"].show()
-        
+
         def _callback (gamemodel, p0, p1):
             text = cls.sourcebuffer.get_text(
                 cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
-            
+
             # Test if the ImageButton has two layers and is set on the local language
             if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
                 # 2 step used to avoid backtranslating
@@ -464,7 +467,7 @@ class EnterNotationExtension (_GameInitializationMode):
                 for i, sign in enumerate(FAN_PIECES[0][1:7]):
                     text = text.replace(sign, reprSign[i+1])
                 text = str(text)
-            
+
             ionest.generalStart(gamemodel, p0, p1, (StringIO(text), pgn, 0, -1))
         cls._generalRun(_callback)
 
@@ -472,24 +475,24 @@ class ImageButton(gtk.DrawingArea):
     def __init__ (self, imagePaths):
         gtk.DrawingArea.__init__(self)
         self.set_events(gtk.gdk.EXPOSURE_MASK | gtk.gdk.BUTTON_PRESS_MASK)
-        
+
         self.connect("expose-event", self.draw)
         self.connect("button_press_event", self.buttonPress)
-        
+
         self.surfaces = [ImageSurface.create_from_png(path) for path in imagePaths]
         self.current = 0
-        
+
         width, height = self.surfaces[0].get_width(), self.surfaces[0].get_height()
         self.size = gtk.gdk.Rectangle(0, 0, width, height)
         self.set_size_request(width, height)
-    
+
     def draw (self, self_, event):
         context = self.window.cairo_create()
         context.rectangle (event.area.x, event.area.y,
                             event.area.width, event.area.height)
         context.set_source_surface(self.surfaces[self.current], 0, 0)
         context.fill()
-    
+
     def buttonPress (self, self_, event):
         if event.button == 1 and event.type == gtk.gdk.BUTTON_PRESS:
             self.current = (self.current + 1) % len(self.surfaces)
@@ -503,10 +506,10 @@ def createRematch (gamemodel):
         newgamemodel = GameModel(TimeModel(secs, gain), gamemodel.variant)
     else:
         newgamemodel = GameModel(variant=gamemodel.variant)
-    
+
     wp = gamemodel.players[WHITE]
     bp = gamemodel.players[BLACK]
-    
+
     if wp.__type__ == LOCAL:
         player1tup = (wp.__type__, wp.__class__, (BLACK, ""), repr(wp))
         if bp.__type__ == LOCAL:
@@ -528,5 +531,5 @@ def createRematch (gamemodel):
         player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                       (xmlengine, BLACK, wp.strength, gamemodel.variant,
                        secs, gain), repr(wp))
-    
+
     ionest.generalStart(newgamemodel, player0tup, player1tup)
