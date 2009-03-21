@@ -1,3 +1,4 @@
+import os
 import sys
 import webbrowser
 import math
@@ -7,7 +8,7 @@ import signal
 import pango, gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
-from pychess.System import conf, glock, uistuff
+from pychess.System import conf, glock, uistuff, prefix
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
 from pychess.Utils.const import *
@@ -218,7 +219,12 @@ class PyChess:
         #---------------------------------------------------------- About dialog
         clb = widgets["aboutdialog1"].get_child().get_children()[1].get_children()[2]
         widgets["aboutdialog1"].set_name(NAME)
-        widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        if os.path.isfile(prefix.addDataPrefix(".svn/entries")):
+            f = open(prefix.addDataPrefix(".svn/entries"))
+            line4 = [f.next() for i in xrange(4)][-1].strip()
+            widgets["aboutdialog1"].set_version(VERSION_NAME+" r"+line4)
+        else:
+            widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
         def callback(button, *args):
             widgets["aboutdialog1"].hide()
             return True
