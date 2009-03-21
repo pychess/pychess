@@ -5,7 +5,6 @@ from StringIO import StringIO
 
 import gtk
 import gobject
-from gettext import ngettext as _n
 
 from pychess.System.Log import log
 from pychess.System import conf
@@ -348,7 +347,7 @@ def closeAllGames (pairs):
         treeview = widgets["saveGamesDialogTreeview"]
 
         heading.set_markup("<big><b>" +
-                           _n("There are %d game with unsaved moves.",
+                           ngettext("There is %d game with unsaved moves.",
                               "There are %d games with unsaved moves.",
                               len(changedPairs)) % len(changedPairs) +
                            " " + _("Save moves before closing?") +
@@ -368,7 +367,7 @@ def closeAllGames (pairs):
             if path:
                 liststore[path][0] = not liststore[path][0]
             saves = len(tuple(row for row in liststore if row[0]))
-            saveLabel.set_text(_n("_Save %d document", "_Save %d documents", saves) % saves)
+            saveLabel.set_text(ngettext("_Save %d document", "_Save %d documents", saves) % saves)
             saveLabel.set_use_underline(True)
         renderer.connect("toggled", callback)
 

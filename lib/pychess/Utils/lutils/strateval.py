@@ -6,8 +6,6 @@
     Can be used for commenting on board changes.
 """
 
-from gettext import ngettext as _n
-
 import leval
 from pychess.Utils.const import *
 from lmove import *
@@ -476,8 +474,8 @@ def state_pawn (model, phase):
     for (color_, list_) in ((WHITE, found_white_isolates),
                             (BLACK, found_black_isolates)):
         if list_:
-            yield 20*len(list_), _n(_("%(color)s got an isolated pawn in the %(x)s file"),
-                                    _("%(color)s got isolated pawns in the %(x)s files"),
+            yield 20*len(list_), ngettext("%(color)s got an isolated pawn in the %(x)s file",
+                                        "%(color)s got isolated pawns in the %(x)s files",
                                     len(list_)) %  {'color': reprColor[color_], 'x': join(list_)}
 
     # Stone wall
@@ -585,7 +583,7 @@ def simple_tropism (model, phase):
             yield score-oldscore, _("brings a %(piece)s closer to enemy king: %(cord)s") % {
                                     'piece': reprPiece[piece], 'cord': reprCord[tcord]}
         else:
-            yield (score-oldscore)*2, _("develops a %()s: %()s") % {
+            yield (score-oldscore)*2, _("develops a %(piece)s: %(cord)s") % {
                                     'piece': reprPiece[piece].lower(), 'cord': reprCord[tcord]}
 
 def simple_activity (model, phase):
