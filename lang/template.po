@@ -8,13 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-20 18:27+0100\n"
+"POT-Creation-Date: 2009-03-21 20:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: glade/discovererDialog.glade:16
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -707,7 +708,7 @@ msgid ""
 "results."
 msgstr ""
 
-#: glade/saveGamesDialog.glade:39 lib/pychess/widgets/ionest.py:409
+#: glade/saveGamesDialog.glade:39 lib/pychess/widgets/ionest.py:408
 msgid "Close _without Saving"
 msgstr ""
 
@@ -1195,12 +1196,12 @@ msgid "Died"
 msgstr ""
 
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/ionest.py:78 lib/pychess/widgets/TaskerManager.py:148
+#: lib/pychess/widgets/ionest.py:77 lib/pychess/widgets/TaskerManager.py:148
 msgid "White"
 msgstr ""
 
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/ionest.py:78 lib/pychess/widgets/TaskerManager.py:149
+#: lib/pychess/widgets/ionest.py:77 lib/pychess/widgets/TaskerManager.py:149
 msgid "Black"
 msgstr ""
 
@@ -1525,110 +1526,124 @@ msgid ""
 "report it to the developers"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:67 lib/pychess/widgets/ionest.py:76
-#: lib/pychess/widgets/ionest.py:89
+#: lib/pychess/widgets/ionest.py:66 lib/pychess/widgets/ionest.py:75
+#: lib/pychess/widgets/ionest.py:88
 msgid "vs"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:110
+#: lib/pychess/widgets/ionest.py:109
 #: lib/pychess/widgets/preferencesDialog.py:42
 msgid "Guest"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:153
+#: lib/pychess/widgets/ionest.py:152
 msgid "Correct the move, or start playing with what could be read"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:184 lib/pychess/widgets/newGameDialog.py:386
+#: lib/pychess/widgets/ionest.py:183 lib/pychess/widgets/newGameDialog.py:386
 msgid "Open Game"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:186
+#: lib/pychess/widgets/ionest.py:185
 msgid "Save Game"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:193
+#: lib/pychess/widgets/ionest.py:192
 msgid "All Files"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:196
+#: lib/pychess/widgets/ionest.py:195
 msgid "Detect type automatically"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:200
+#: lib/pychess/widgets/ionest.py:199
 msgid "All Chess Files"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:257 lib/pychess/widgets/ionest.py:365
+#: lib/pychess/widgets/ionest.py:256 lib/pychess/widgets/ionest.py:364
 msgid "vs."
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:274
+#: lib/pychess/widgets/ionest.py:273
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:275
+#: lib/pychess/widgets/ionest.py:274
 #, python-format
 msgid ""
 "Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'."
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:289
+#: lib/pychess/widgets/ionest.py:288
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:291
+#: lib/pychess/widgets/ionest.py:290
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:299
+#: lib/pychess/widgets/ionest.py:298
 msgid "_Replace"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:303
+#: lib/pychess/widgets/ionest.py:302
 msgid "File exists"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:305
+#: lib/pychess/widgets/ionest.py:304
 #, python-format
 msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace it?</b></"
 "big>"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:306
+#: lib/pychess/widgets/ionest.py:305
 #, python-format
 msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:321
+#: lib/pychess/widgets/ionest.py:320
 msgid "Could not save the file"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:322
+#: lib/pychess/widgets/ionest.py:321
 msgid "<big><b>PyChess was not able to save the game</b></big>"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:323
+#: lib/pychess/widgets/ionest.py:322
 #, python-format
 msgid "The error was: %s"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:354
+#: lib/pychess/widgets/ionest.py:350
+#, python-format
+msgid "There is %d game with unsaved moves."
+msgid_plural "There are %d games with unsaved moves."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/pychess/widgets/ionest.py:353
 msgid "Save moves before closing?"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:417
+#: lib/pychess/widgets/ionest.py:370
+#, python-format
+msgid "_Save %d document"
+msgid_plural "_Save %d documents"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/pychess/widgets/ionest.py:416
 msgid "<b><big>Save the current game before you close it?</big></b>"
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:419
+#: lib/pychess/widgets/ionest.py:418
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
@@ -1860,228 +1875,225 @@ msgstr ""
 msgid "the captured cord (%s) is incorrect"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:24 sidepanel/commentPanel.py:179
+#: lib/pychess/Utils/lutils/strateval.py:22 sidepanel/commentPanel.py:179
 #: sidepanel/commentPanel.py:196
 msgid "and"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:42
+#: lib/pychess/Utils/lutils/strateval.py:40
 msgid "draws"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:44
+#: lib/pychess/Utils/lutils/strateval.py:42
 msgid "mates"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:48
+#: lib/pychess/Utils/lutils/strateval.py:46
 msgid "puts opponent in check"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:72
+#: lib/pychess/Utils/lutils/strateval.py:70
 msgid "improves king safety"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:74
+#: lib/pychess/Utils/lutils/strateval.py:72
 msgid "slightly improves king safety"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:107
+#: lib/pychess/Utils/lutils/strateval.py:105
 msgid "moves a rook to an open file"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:108
+#: lib/pychess/Utils/lutils/strateval.py:106
 msgid "moves an rook to a half-open file"
 msgstr ""
 
+#: lib/pychess/Utils/lutils/strateval.py:116
 #: lib/pychess/Utils/lutils/strateval.py:118
-#: lib/pychess/Utils/lutils/strateval.py:120
+#: lib/pychess/Utils/lutils/strateval.py:121
 #: lib/pychess/Utils/lutils/strateval.py:123
-#: lib/pychess/Utils/lutils/strateval.py:125
 #, python-format
 msgid "moves bishop into fianchetto: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:131
+#: lib/pychess/Utils/lutils/strateval.py:129
 #, python-format
 msgid "promotes a Pawn to a %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:134
+#: lib/pychess/Utils/lutils/strateval.py:132
 msgid "castles"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:157
+#: lib/pychess/Utils/lutils/strateval.py:155
 msgid "takes back material"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:161
+#: lib/pychess/Utils/lutils/strateval.py:159
 msgid "sacrifies material"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:163
+#: lib/pychess/Utils/lutils/strateval.py:161
 msgid "exchanges material"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:165
+#: lib/pychess/Utils/lutils/strateval.py:163
 msgid "captures material"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:286
+#: lib/pychess/Utils/lutils/strateval.py:284
 #, python-format
 msgid "rescues a %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:289
+#: lib/pychess/Utils/lutils/strateval.py:287
 #, python-format
 msgid "threatens to win material by %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:291
+#: lib/pychess/Utils/lutils/strateval.py:289
 #, python-format
 msgid "increases the pressure on %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:293
+#: lib/pychess/Utils/lutils/strateval.py:291
 #, python-format
 msgid "defends %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:330
+#: lib/pychess/Utils/lutils/strateval.py:328
 #, python-format
 msgid "pins an enemy %(oppiece)s on the %(piece)s at %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:363
+#: lib/pychess/Utils/lutils/strateval.py:361
 #, python-format
 msgid "White has a new piece in outpost: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:371
+#: lib/pychess/Utils/lutils/strateval.py:369
 #, python-format
 msgid "Black has a new piece in outpost: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:410
+#: lib/pychess/Utils/lutils/strateval.py:408
 #, python-format
 msgid "%(color)s has a new passed pawn on %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:464
+#: lib/pychess/Utils/lutils/strateval.py:462
 msgid "half-open"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:466
+#: lib/pychess/Utils/lutils/strateval.py:464
 #, python-format
 msgid "in the %(x)s%(y)s file"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:468
+#: lib/pychess/Utils/lutils/strateval.py:466
 #, python-format
 msgid "in the %(x)s%(y)s files"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:471
+#: lib/pychess/Utils/lutils/strateval.py:469
 #, python-format
 msgid "%(color)s got a double pawn %(place)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:472
+#: lib/pychess/Utils/lutils/strateval.py:470
 #, python-format
 msgid "%(color)s got new double pawns %(place)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:479
+#: lib/pychess/Utils/lutils/strateval.py:477
 #, python-format
 msgid "%(color)s got an isolated pawn in the %(x)s file"
-msgstr ""
+msgid_plural "%(color)s got isolated pawns in the %(x)s files"
+msgstr[0] ""
+msgstr[1] ""
 
-#: lib/pychess/Utils/lutils/strateval.py:480
-#, python-format
-msgid "%(color)s got isolated pawns in the %(x)s files"
-msgstr ""
-
-#: lib/pychess/Utils/lutils/strateval.py:486
+#: lib/pychess/Utils/lutils/strateval.py:484
 #, python-format
 msgid "%s moves pawns into stonewall formation"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:501
-#: lib/pychess/Utils/lutils/strateval.py:508
+#: lib/pychess/Utils/lutils/strateval.py:499
+#: lib/pychess/Utils/lutils/strateval.py:506
 #, python-format
 msgid "%s can no longer castle"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:500
+#: lib/pychess/Utils/lutils/strateval.py:507
+#, python-format
+msgid "%s can no longer castle in queenside"
 msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:502
 #: lib/pychess/Utils/lutils/strateval.py:509
 #, python-format
-msgid "%s can no longer castle in queenside"
-msgstr ""
-
-#: lib/pychess/Utils/lutils/strateval.py:504
-#: lib/pychess/Utils/lutils/strateval.py:511
-#, python-format
 msgid "%s can no longer castle in kingside"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:545
+#: lib/pychess/Utils/lutils/strateval.py:543
 #, python-format
 msgid "%(opcolor)s has a new trapped bishop on %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:567
+#: lib/pychess/Utils/lutils/strateval.py:565
 #, python-format
 msgid "develops a pawn: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:568
+#: lib/pychess/Utils/lutils/strateval.py:566
 #, python-format
 msgid "brings a pawn closer to the backrow: %s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:585
+#: lib/pychess/Utils/lutils/strateval.py:583
 #, python-format
 msgid "brings a %(piece)s closer to enemy king: %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:588
+#: lib/pychess/Utils/lutils/strateval.py:586
 #, python-format
-msgid "develops a %()s: %()s"
+msgid "develops a %(piece)s: %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:606
+#: lib/pychess/Utils/lutils/strateval.py:604
 #, python-format
 msgid "places a %(piece)s more active: %(cord)s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:632
+#: lib/pychess/Utils/lutils/strateval.py:630
 msgid "White should do pawn storm in right"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:634
+#: lib/pychess/Utils/lutils/strateval.py:632
 msgid "Black should do pawn storm in left"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:637
+#: lib/pychess/Utils/lutils/strateval.py:635
 msgid "White should do pawn storm in left"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:639
+#: lib/pychess/Utils/lutils/strateval.py:637
 msgid "Black should do pawn storm in right"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:672
+#: lib/pychess/Utils/lutils/strateval.py:670
 msgid "Black has a rather cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:674
+#: lib/pychess/Utils/lutils/strateval.py:672
 msgid "Black has a slightly cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:676
+#: lib/pychess/Utils/lutils/strateval.py:674
 msgid "White has a rather cramped position"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/strateval.py:678
+#: lib/pychess/Utils/lutils/strateval.py:676
 msgid "White has a slightly cramped position"
 msgstr ""
 
