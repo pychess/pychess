@@ -778,9 +778,9 @@ class AdjournedTabSection (ParrentListSection):
                 continue
             pix = (self.wpix, self.bpix)[adjourn["color"]]
             if adjourn["online"]:
-                online = _("Yes")
+                online = _("Online")
             else:
-                online = _("No")
+                online = _("Not online")
             ti = self.store.append ([pix, adjourn["opponent"],
                                      online, adjourn["length"]])
             self.opponents[adjourn["opponent"].lower()] = ti

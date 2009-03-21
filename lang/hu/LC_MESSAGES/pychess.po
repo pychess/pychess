@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-21 20:16+0100\n"
+"POT-Creation-Date: 2009-03-21 20:34+0100\n"
 "PO-Revision-Date: 2007-10-13 21:03+0200\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <btami@freemail.hu>\n"
@@ -992,13 +992,12 @@ msgid "Length"
 msgstr "Hossz"
 
 #: lib/pychess/ic/ICLounge.py:781
-msgid "Yes"
-msgstr "Igen"
+msgid "Online"
+msgstr "Elérhető"
 
-# Chess knight letter
 #: lib/pychess/ic/ICLounge.py:783
-msgid "No"
-msgstr "Nem"
+msgid "Not online"
+msgstr "Nem elérhető"
 
 # In context: Your color: "Don't Care"
 #: lib/pychess/ic/ICLounge.py:831 lib/pychess/ic/ICLounge.py:843
@@ -2262,3 +2261,10 @@ msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the "
 "game progress"
 msgstr "Grafikus állásértékelés"
+
+#~ msgid "Yes"
+#~ msgstr "Igen"
+
+# Chess knight letter
+#~ msgid "No"
+#~ msgstr "Nem"
