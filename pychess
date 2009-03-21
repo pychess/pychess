@@ -24,7 +24,7 @@ if isInstalled():
     gettext.install("pychess", unicode=1)
     gtk.glade.bindtextdomain("pychess")
 else:
-    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
 
