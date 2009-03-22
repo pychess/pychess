@@ -753,10 +753,10 @@ class AdjournedTabSection (ParrentListSection):
         self.bpix = icons.load_icon("stock_draw-rounded-square", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
 
         self.tv = widgets["adjournedtreeview"]
-        self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str)
+        self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns (self.tv, _("Your color"), _("Opponent"),
-                                  _("Is online"), _("Length"), pix=[0])
+                                  _("Is online"), _("Length"), _("Date/Time"), pix=[0])
 
         # Connect to adjourmentlist signals
 
@@ -784,7 +784,7 @@ class AdjournedTabSection (ParrentListSection):
             else:
                 online = _("Not online")
             ti = self.store.append ([pix, adjourn["opponent"],
-                                     online, adjourn["length"]])
+                                     online, adjourn["length"], adjourn["time"]])
             self.opponents[adjourn["opponent"].lower()] = ti
 
     def onCurGameEnded (self, result):
