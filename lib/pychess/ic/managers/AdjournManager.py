@@ -10,7 +10,7 @@ weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
 months = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
 
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
-moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\) *(?:%s +\(\d+:\d+\))?" %
+moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\.\d+\) *(?:%s +\(\d+:\d+\.\d+\))?" %
         (sanmove, sanmove))
 
 class AdjournManager (GObject):
@@ -87,8 +87,8 @@ class AdjournManager (GObject):
     def __onSmovesResponse (self, matchlist):
         #Move  PyChess            selman             
         #----  ----------------   ----------------
-        #  1.  e4      (0:00)     c5      (0:00)  
-        #  2.  Nf3     (0:00) 
+        #  1.  e4      (0:00.000)     c5      (0:00.000)  
+        #  2.  Nf3     (0:00.000) 
         #      {White lost connection; game adjourned} *
         
         white_name, black_name = matchlist[0].groups()
