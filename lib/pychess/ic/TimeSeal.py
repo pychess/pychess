@@ -21,6 +21,9 @@ class TimeSeal:
     BUFFER_SIZE = 4096
 
     def open (self, address, port):
+        if hasattr(self, "closed") and self.closed:
+            return
+        
         self.port = port
         self.address = address
         
@@ -43,7 +46,8 @@ class TimeSeal:
     
     def close (self):
         self.closed = True
-        self.sock.close()
+        if hasattr(self, "sock"):
+            self.sock.close()
     
     def encode(self, inbuf, timestamp = None):
         assert inbuf == "" or inbuf[-1] != "\n"
