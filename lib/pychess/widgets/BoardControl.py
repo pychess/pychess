@@ -259,9 +259,9 @@ class ActiveState (BoardState):
         
         # If dragged and released on a possible cord
         elif cord == self.view.hover:
+            self.parent.setState(self.parent.normalState)
             self.parent.emit_move_signal(self.view.active, cord)
             self.view.active = None
-            self.parent.setState(self.parent.normalState)
         
         # Send back, if dragging to a not possible cord
         else:
