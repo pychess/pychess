@@ -194,7 +194,7 @@ class BoardManager (GObject):
             variant = FISCHERRANDOMCHESS
         elif type == "losers":
             variant = LOSERSCHESS
-        elif type in ("suicide", "crazyhouse", "bughouse"):
+        elif type in ("suicide", "crazyhouse", "bughouse", "atomic"):
             raise RuntimeError, "We don't support %s yet :X" % type
         else:
             variant = NORMALCHESS
