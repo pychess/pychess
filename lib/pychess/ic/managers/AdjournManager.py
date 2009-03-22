@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 
 names = "\w+(?:\([A-Z\*]+\))*"
 weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
-months = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
 moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\.\d+\) *(?:%s +\(\d+:\d+\.\d+\))?" %
@@ -64,7 +64,7 @@ class AdjournManager (GObject):
             eco = match.groups()[10]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
             gametime = datetime.datetime(int(year), months.index(month)+1, int(day),
-                                         int(hour), int(minute)).strftime("%x %H:%M")
+                                         int(hour), int(minute)).strftime("%c")
             
             private = game_type[0] == "p"
             rated = game_type[2] == "r"
