@@ -1,5 +1,6 @@
 
 import re
+import datetime
 
 from gobject import *
 
@@ -62,6 +63,8 @@ class AdjournManager (GObject):
             move_num = match.groups()[9]
             eco = match.groups()[10]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
+            gametime = datetime.datetime(int(year), months.index(month)+1, int(day),
+                                         int(hour), int(minute)).strftime("%x %H:%M")
             
             private = game_type[0] == "p"
             rated = game_type[2] == "r"
@@ -75,7 +78,7 @@ class AdjournManager (GObject):
             
             self.adjournments.append({"color":our_color, "opponent":opponent,
                                       "online":opponent_online, "length":length,
-                                      "minutes":minutes, "gain":gain})
+                                      "time":gametime, "minutes":minutes, "gain":gain})
             
             #print >> self.connection, "smoves %s" % opponent
         
