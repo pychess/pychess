@@ -1,7 +1,6 @@
 import socket
 import re, sre_constants
 from copy import copy
-from telnetlib import Telnet
 
 from pychess.System.Log import log
 
