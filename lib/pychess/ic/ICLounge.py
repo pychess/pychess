@@ -701,7 +701,9 @@ class GameTabSection (ParrentListSection):
                 gametype = model.get_value(rowiter, 4)
                 if not _("Private") in gametype:
                     gametype += ", " + _("Private")
-                    model.set_value(rowiter, 4, gametype)
+                    childmodel = model.get_model()
+                    childrowiter = model.convert_iter_to_child_iter(None, rowiter)
+                    childmodel.set_value(childrowiter, 4, gametype)
                 break
 
     def onGameRemove (self, gameno):
