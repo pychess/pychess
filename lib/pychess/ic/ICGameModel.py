@@ -112,7 +112,7 @@ class ICGameModel (GameModel):
     #
     
     def terminate (self):
-        #if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-        if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
-            self.connection.om.offer(Offer(RESIGNATION), -1)
+        if self.status in UNFINISHED_STATES:
+            if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
+                self.connection.om.offer(Offer(RESIGNATION), -1)
         GameModel.terminate(self)
