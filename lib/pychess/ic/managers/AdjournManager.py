@@ -64,7 +64,7 @@ class AdjournManager (GObject):
             eco = match.groups()[10]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
             gametime = datetime.datetime(int(year), months.index(month)+1, int(day),
-                                         int(hour), int(minute)).strftime("%c")
+                                         int(hour), int(minute)).strftime("%x %H:%M")
             
             private = game_type[0] == "p"
             rated = game_type[2] == "r"
