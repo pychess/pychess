@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-21 20:34+0100\n"
+"POT-Creation-Date: 2009-03-24 17:41+0100\n"
 "PO-Revision-Date: 2007-10-13 21:03+0200\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <btami@freemail.hu>\n"
@@ -797,17 +797,17 @@ msgstr "_Jelszó:"
 
 #: glade/taskers.glade:585
 msgid "Handle:"
-msgstr "Kezelő:"
+msgstr "Név:"
 
 #: glade/taskers.glade:669
 msgid "<b>Connect to FICS</b>"
 msgstr "<b>Kapcsolódás a FICS-hez</b>"
 
-#: lib/pychess/Main.py:153
+#: lib/pychess/Main.py:154
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr "http://hu.wikipedia.org/wiki/Sakk"
 
-#: lib/pychess/Main.py:156
+#: lib/pychess/Main.py:157
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr "http://hu.wikipedia.org/wiki/Sakk#A_sakk_le.C3.ADr.C3.A1sa"
 
@@ -924,6 +924,14 @@ msgstr "Típus"
 msgid "Clock"
 msgstr "Idő"
 
+#: lib/pychess/ic/ICLounge.py:346 lib/pychess/ic/ICLounge.py:419
+#: lib/pychess/ic/ICLounge.py:498 lib/pychess/ic/ICLounge.py:861
+#: lib/pychess/ic/ICLounge.py:863 lib/pychess/ic/ICLounge.py:865
+#: lib/pychess/ic/ICLounge.py:914
+#, python-format
+msgid "%(min)s min + %(sec)s sec"
+msgstr "%(min)s perc + %(sec)s mp"
+
 #: lib/pychess/ic/ICLounge.py:347 lib/pychess/ic/ICLounge.py:420
 #: lib/pychess/ic/ICLounge.py:496
 msgid "Unrated"
@@ -939,6 +947,10 @@ msgstr "keresés"
 #: lib/pychess/ic/ICLounge.py:425 lib/pychess/ic/ICLounge.py:435
 msgid "Active Seeks"
 msgstr "keresés"
+
+#: lib/pychess/ic/ICLounge.py:465
+msgid " min"
+msgstr " perc"
 
 # In context "1 Player Ready"
 #: lib/pychess/ic/ICLounge.py:581 lib/pychess/ic/ICLounge.py:593
@@ -967,97 +979,101 @@ msgstr "Játszma típusa"
 msgid "Private"
 msgstr "Magán"
 
-#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:716
+#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:718
 msgid "Game Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:716
+#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:718
 msgid "Games Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/ICLounge.py:756
+#: lib/pychess/ic/ICLounge.py:758
 msgid "Your color"
 msgstr "Szín"
 
-#: lib/pychess/ic/ICLounge.py:756
+#: lib/pychess/ic/ICLounge.py:758
 msgid "Opponent"
 msgstr "Ellenfél"
 
-#: lib/pychess/ic/ICLounge.py:757
+#: lib/pychess/ic/ICLounge.py:759
 msgid "Is online"
 msgstr "Elérhető"
 
-#: lib/pychess/ic/ICLounge.py:757
+#: lib/pychess/ic/ICLounge.py:759
 msgid "Length"
 msgstr "Hossz"
 
-#: lib/pychess/ic/ICLounge.py:781
+#: lib/pychess/ic/ICLounge.py:759
+msgid "Date/Time"
+msgstr "Dátum/Idő"
+
+#: lib/pychess/ic/ICLounge.py:782
 msgid "Online"
 msgstr "Elérhető"
 
-#: lib/pychess/ic/ICLounge.py:783
-msgid "Not online"
+#: lib/pychess/ic/ICLounge.py:782
+msgid "Offline"
 msgstr "Nem elérhető"
 
 # In context: Your color: "Don't Care"
-#: lib/pychess/ic/ICLounge.py:831 lib/pychess/ic/ICLounge.py:843
-#: lib/pychess/ic/ICLounge.py:913
+#: lib/pychess/ic/ICLounge.py:837 lib/pychess/ic/ICLounge.py:849
+#: lib/pychess/ic/ICLounge.py:923
 msgid "Don't Care"
 msgstr "Mindegy"
 
-#: lib/pychess/ic/ICLounge.py:832
+#: lib/pychess/ic/ICLounge.py:838
 msgid "Easy"
 msgstr "Kezdő"
 
-#: lib/pychess/ic/ICLounge.py:833
+#: lib/pychess/ic/ICLounge.py:839
 msgid "Advanced"
 msgstr "Haladó"
 
-#: lib/pychess/ic/ICLounge.py:834
+#: lib/pychess/ic/ICLounge.py:840
 msgid "Expert"
 msgstr "Profi"
 
-#: lib/pychess/ic/ICLounge.py:844
+#: lib/pychess/ic/ICLounge.py:850
 msgid "Want White"
 msgstr "Világos"
 
-#: lib/pychess/ic/ICLounge.py:845
+#: lib/pychess/ic/ICLounge.py:851
 msgid "Want Black"
 msgstr "Sötét"
 
 # Chess clock setting
-#: lib/pychess/ic/ICLounge.py:854 lib/pychess/Variants/normal.py:5
+#: lib/pychess/ic/ICLounge.py:862 lib/pychess/Variants/normal.py:5
 #: lib/pychess/widgets/newGameDialog.py:144
 msgid "Normal"
 msgstr "Standard"
 
 # Chess clock setting
-#: lib/pychess/ic/ICLounge.py:855 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/ICLounge.py:864 lib/pychess/Utils/const.py:44
 #: lib/pychess/widgets/newGameDialog.py:140
-#: lib/pychess/ic/managers/GameListManager.py:33
-#: lib/pychess/ic/managers/GameListManager.py:40
-#: lib/pychess/ic/managers/GameListManager.py:279
+#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:37
+#: lib/pychess/ic/managers/GameListManager.py:276
 msgid "Blitz"
 msgstr "Schnell"
 
 # Chess clock setting
-#: lib/pychess/ic/ICLounge.py:856 lib/pychess/Utils/const.py:44
-#: lib/pychess/ic/managers/GameListManager.py:34
-#: lib/pychess/ic/managers/GameListManager.py:41
+#: lib/pychess/ic/ICLounge.py:866 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/managers/GameListManager.py:31
+#: lib/pychess/ic/managers/GameListManager.py:38
 msgid "Lightning"
 msgstr "Villám"
 
 # Combo item to create a new custom time setting
-#: lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/ic/ICLounge.py:867
 msgid "New Custom"
 msgstr "Új egyéni"
 
 # Label for a custom time setting
-#: lib/pychess/ic/ICLounge.py:905
+#: lib/pychess/ic/ICLounge.py:915
 msgid "Custom"
 msgstr "Egyéni"
 
-#: lib/pychess/ic/ICLounge.py:974 lib/pychess/ic/ICLounge.py:978
+#: lib/pychess/ic/ICLounge.py:985 lib/pychess/ic/ICLounge.py:989
 #: lib/pychess/widgets/newGameDialog.py:313
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
@@ -1278,38 +1294,38 @@ msgstr "Világos"
 msgid "Black"
 msgstr "Sötét"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:36
-#: lib/pychess/ic/managers/GameListManager.py:44
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:33
+#: lib/pychess/ic/managers/GameListManager.py:41
 msgid "Standard"
 msgstr "Standard"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:45
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:42
 msgid "Wild"
 msgstr "Vad"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:20
-#: lib/pychess/ic/managers/GameListManager.py:48
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:17
+#: lib/pychess/ic/managers/GameListManager.py:45
 msgid "Bughouse"
 msgstr "Négykezes"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:21
-#: lib/pychess/ic/managers/GameListManager.py:47
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:44
 msgid "Crazyhouse"
 msgstr "Őrültek háza"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:22
-#: lib/pychess/ic/managers/GameListManager.py:50
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:47
 msgid "Suicide"
 msgstr "Öngyilkos"
 
 #: lib/pychess/Utils/const.py:45 lib/pychess/Variants/losers.py:14
-#: lib/pychess/ic/managers/GameListManager.py:37
-#: lib/pychess/ic/managers/GameListManager.py:49
+#: lib/pychess/ic/managers/GameListManager.py:34
+#: lib/pychess/ic/managers/GameListManager.py:46
 msgid "Losers"
 msgstr "Lúzer"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:23
-#: lib/pychess/ic/managers/GameListManager.py:46
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:20
+#: lib/pychess/ic/managers/GameListManager.py:43
 msgid "Atomic"
 msgstr "Atom"
 
@@ -1474,8 +1490,8 @@ msgid "The reason is unknown"
 msgstr "(ismeretlen ok)"
 
 #: lib/pychess/Variants/fischerandom.py:219
-#: lib/pychess/ic/managers/GameListManager.py:31
-#: lib/pychess/ic/managers/GameListManager.py:278
+#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:275
 msgid "Fischer Random"
 msgstr "Fischer random"
 
@@ -1792,12 +1808,12 @@ msgid "Odds"
 msgstr "Előnyadás"
 
 #: lib/pychess/widgets/newGameDialog.py:234
-#: lib/pychess/ic/managers/GameListManager.py:25
+#: lib/pychess/ic/managers/GameListManager.py:22
 msgid "Shuffle"
 msgstr "Kevert alapállás"
 
 #: lib/pychess/widgets/newGameDialog.py:235
-#: lib/pychess/ic/managers/GameListManager.py:38
+#: lib/pychess/ic/managers/GameListManager.py:35
 msgid "Other"
 msgstr "Egyéb"
 
@@ -1916,40 +1932,40 @@ msgstr "Sakk bekiabálás"
 msgid "Unofficial channel %d"
 msgstr "Nem hivatalos csatorna %d"
 
-#: lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:15
 msgid "Asymmetric"
 msgstr "Nem szimmetrikus"
 
-#: lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:16
 msgid "Simple shuffle"
 msgstr "Egyszerű kevert"
 
-#: lib/pychess/ic/managers/GameListManager.py:26
+#: lib/pychess/ic/managers/GameListManager.py:23
 msgid "Random"
 msgstr "Kevert"
 
-#: lib/pychess/ic/managers/GameListManager.py:27
+#: lib/pychess/ic/managers/GameListManager.py:24
 msgid "Asymmetric Shuffle"
 msgstr "Nem szimmetrikus kevert"
 
-#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Upside Down"
 msgstr "Fejjel lefele"
 
-#: lib/pychess/ic/managers/GameListManager.py:29
+#: lib/pychess/ic/managers/GameListManager.py:26
 msgid "Pawns Pushed"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:27
 msgid "Pawns Passed"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:35
-#: lib/pychess/ic/managers/GameListManager.py:42
+#: lib/pychess/ic/managers/GameListManager.py:32
+#: lib/pychess/ic/managers/GameListManager.py:39
 msgid "Untimed"
 msgstr "Időkontrol nélküli"
 
-#: lib/pychess/ic/managers/GameListManager.py:43
+#: lib/pychess/ic/managers/GameListManager.py:40
 msgid "Examined Game"
 msgstr "Értékelt játszma"
 
@@ -2261,6 +2277,9 @@ msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the "
 "game progress"
 msgstr "Grafikus állásértékelés"
+
+#~ msgid "Not online"
+#~ msgstr "Nem elérhető"
 
 #~ msgid "Yes"
 #~ msgstr "Igen"
