@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-21 20:34+0100\n"
+"POT-Creation-Date: 2009-03-24 17:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -754,11 +754,11 @@ msgstr ""
 msgid "<b>Connect to FICS</b>"
 msgstr ""
 
-#: lib/pychess/Main.py:153
+#: lib/pychess/Main.py:154
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr ""
 
-#: lib/pychess/Main.py:156
+#: lib/pychess/Main.py:157
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr ""
 
@@ -868,6 +868,14 @@ msgstr ""
 msgid "Clock"
 msgstr ""
 
+#: lib/pychess/ic/ICLounge.py:346 lib/pychess/ic/ICLounge.py:419
+#: lib/pychess/ic/ICLounge.py:498 lib/pychess/ic/ICLounge.py:861
+#: lib/pychess/ic/ICLounge.py:863 lib/pychess/ic/ICLounge.py:865
+#: lib/pychess/ic/ICLounge.py:914
+#, python-format
+msgid "%(min)s min + %(sec)s sec"
+msgstr ""
+
 #: lib/pychess/ic/ICLounge.py:347 lib/pychess/ic/ICLounge.py:420
 #: lib/pychess/ic/ICLounge.py:496
 msgid "Unrated"
@@ -882,6 +890,10 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:373 lib/pychess/ic/ICLounge.py:388
 #: lib/pychess/ic/ICLounge.py:425 lib/pychess/ic/ICLounge.py:435
 msgid "Active Seeks"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:465
+msgid " min"
 msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:581 lib/pychess/ic/ICLounge.py:593
@@ -909,91 +921,95 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:716
+#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:718
 msgid "Game Running"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:716
+#: lib/pychess/ic/ICLounge.py:691 lib/pychess/ic/ICLounge.py:718
 msgid "Games Running"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:756
+#: lib/pychess/ic/ICLounge.py:758
 msgid "Your color"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:756
+#: lib/pychess/ic/ICLounge.py:758
 msgid "Opponent"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:757
+#: lib/pychess/ic/ICLounge.py:759
 msgid "Is online"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:757
+#: lib/pychess/ic/ICLounge.py:759
 msgid "Length"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:781
+#: lib/pychess/ic/ICLounge.py:759
+msgid "Date/Time"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:782
 msgid "Online"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:783
-msgid "Not online"
+#: lib/pychess/ic/ICLounge.py:782
+msgid "Offline"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:831 lib/pychess/ic/ICLounge.py:843
-#: lib/pychess/ic/ICLounge.py:913
+#: lib/pychess/ic/ICLounge.py:837 lib/pychess/ic/ICLounge.py:849
+#: lib/pychess/ic/ICLounge.py:923
 msgid "Don't Care"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:832
+#: lib/pychess/ic/ICLounge.py:838
 msgid "Easy"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:833
+#: lib/pychess/ic/ICLounge.py:839
 msgid "Advanced"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:834
+#: lib/pychess/ic/ICLounge.py:840
 msgid "Expert"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:844
+#: lib/pychess/ic/ICLounge.py:850
 msgid "Want White"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:845
+#: lib/pychess/ic/ICLounge.py:851
 msgid "Want Black"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:854 lib/pychess/Variants/normal.py:5
+#: lib/pychess/ic/ICLounge.py:862 lib/pychess/Variants/normal.py:5
 #: lib/pychess/widgets/newGameDialog.py:144
 msgid "Normal"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:855 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/ICLounge.py:864 lib/pychess/Utils/const.py:44
 #: lib/pychess/widgets/newGameDialog.py:140
-#: lib/pychess/ic/managers/GameListManager.py:33
-#: lib/pychess/ic/managers/GameListManager.py:40
-#: lib/pychess/ic/managers/GameListManager.py:279
+#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:37
+#: lib/pychess/ic/managers/GameListManager.py:276
 msgid "Blitz"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:856 lib/pychess/Utils/const.py:44
-#: lib/pychess/ic/managers/GameListManager.py:34
-#: lib/pychess/ic/managers/GameListManager.py:41
+#: lib/pychess/ic/ICLounge.py:866 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/managers/GameListManager.py:31
+#: lib/pychess/ic/managers/GameListManager.py:38
 msgid "Lightning"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/ic/ICLounge.py:867
 msgid "New Custom"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:905
+#: lib/pychess/ic/ICLounge.py:915
 msgid "Custom"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:974 lib/pychess/ic/ICLounge.py:978
+#: lib/pychess/ic/ICLounge.py:985 lib/pychess/ic/ICLounge.py:989
 #: lib/pychess/widgets/newGameDialog.py:313
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
@@ -1205,38 +1221,38 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:36
-#: lib/pychess/ic/managers/GameListManager.py:44
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:33
+#: lib/pychess/ic/managers/GameListManager.py:41
 msgid "Standard"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:45
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:42
 msgid "Wild"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:20
-#: lib/pychess/ic/managers/GameListManager.py:48
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:17
+#: lib/pychess/ic/managers/GameListManager.py:45
 msgid "Bughouse"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:21
-#: lib/pychess/ic/managers/GameListManager.py:47
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:44
 msgid "Crazyhouse"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:22
-#: lib/pychess/ic/managers/GameListManager.py:50
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:47
 msgid "Suicide"
 msgstr ""
 
 #: lib/pychess/Utils/const.py:45 lib/pychess/Variants/losers.py:14
-#: lib/pychess/ic/managers/GameListManager.py:37
-#: lib/pychess/ic/managers/GameListManager.py:49
+#: lib/pychess/ic/managers/GameListManager.py:34
+#: lib/pychess/ic/managers/GameListManager.py:46
 msgid "Losers"
 msgstr ""
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:23
-#: lib/pychess/ic/managers/GameListManager.py:46
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:20
+#: lib/pychess/ic/managers/GameListManager.py:43
 msgid "Atomic"
 msgstr ""
 
@@ -1393,8 +1409,8 @@ msgid "The reason is unknown"
 msgstr ""
 
 #: lib/pychess/Variants/fischerandom.py:219
-#: lib/pychess/ic/managers/GameListManager.py:31
-#: lib/pychess/ic/managers/GameListManager.py:278
+#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:275
 msgid "Fischer Random"
 msgstr ""
 
@@ -1698,12 +1714,12 @@ msgid "Odds"
 msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:234
-#: lib/pychess/ic/managers/GameListManager.py:25
+#: lib/pychess/ic/managers/GameListManager.py:22
 msgid "Shuffle"
 msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:235
-#: lib/pychess/ic/managers/GameListManager.py:38
+#: lib/pychess/ic/managers/GameListManager.py:35
 msgid "Other"
 msgstr ""
 
@@ -1821,40 +1837,40 @@ msgstr ""
 msgid "Unofficial channel %d"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:15
 msgid "Asymmetric"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:16
 msgid "Simple shuffle"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:26
+#: lib/pychess/ic/managers/GameListManager.py:23
 msgid "Random"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:27
+#: lib/pychess/ic/managers/GameListManager.py:24
 msgid "Asymmetric Shuffle"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Upside Down"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:29
+#: lib/pychess/ic/managers/GameListManager.py:26
 msgid "Pawns Pushed"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:27
 msgid "Pawns Passed"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:35
-#: lib/pychess/ic/managers/GameListManager.py:42
+#: lib/pychess/ic/managers/GameListManager.py:32
+#: lib/pychess/ic/managers/GameListManager.py:39
 msgid "Untimed"
 msgstr ""
 
-#: lib/pychess/ic/managers/GameListManager.py:43
+#: lib/pychess/ic/managers/GameListManager.py:40
 msgid "Examined Game"
 msgstr ""
 
