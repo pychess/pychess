@@ -1,6 +1,3 @@
-if not "_" in globals():
-    _ = lambda x:x
-
 from gobject import *
 import re
 from pychess.Utils import const
