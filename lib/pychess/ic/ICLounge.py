@@ -343,7 +343,7 @@ class SeekTabSection (ParrentListSection):
                 self.listPublisher.put((self.onCurGameEnded,)) )
 
     def onAddSeek (self, seek):
-        time = "%s min + %s sec" % (seek["t"], seek["i"])
+        time = _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         ti = self.store.append ([seek["gameno"], pix, seek["w"],
@@ -416,7 +416,7 @@ class ChallengeTabSection (ParrentListSection):
                 self.listPublisher.put((self.onChallengeRemove, index)) )
 
     def onChallengeAdd (self, index, match):
-        time = "%s min + %s sec" % (match["t"], match["i"])
+        time = _("%(min)s min + %(sec)s sec") % {'min': match["t"], 'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
         ti = self.store.append (["C"+index, self.chaPix, match["w"],
                                 int(match["rt"]), rated, match["tp"], time])
@@ -462,7 +462,7 @@ class SeekGraphSection (ParrentListSection):
         for rating in YMARKS:
             self.graph.addYMark(YLOCATION(rating), str(rating))
         for mins in XMARKS:
-            self.graph.addXMark(XLOCATION(mins), str(mins)+" min")
+            self.graph.addXMark(XLOCATION(mins), str(mins) + _(" min"))
 
         self.widgets["graphDock"].add(self.graph)
         self.graph.show()
@@ -495,7 +495,7 @@ class SeekGraphSection (ParrentListSection):
         text = "%s (%s)" % (seek["w"], seek["rt"])
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         text += "\n%s %s" % (rated, seek["tp"])
-        text += "\n%s min + %s sec" % (seek["t"], seek["i"])
+        text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
 
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
@@ -779,12 +779,9 @@ class AdjournedTabSection (ParrentListSection):
             if adjourn["opponent"].lower() in self.opponents:
                 continue
             pix = (self.wpix, self.bpix)[adjourn["color"]]
-            if adjourn["online"]:
-                online = _("Online")
-            else:
-                online = _("Not online")
+            opstatus = adjourn["online"] and _("Online") or _("Offline")
             ti = self.store.append ([pix, adjourn["opponent"],
-                                     online, adjourn["length"], adjourn["time"]])
+                                     opstatus, adjourn["length"], adjourn["time"]])
             self.opponents[adjourn["opponent"].lower()] = ti
 
     def onCurGameEnded (self, result):
@@ -821,6 +818,13 @@ class AdjournedTabSection (ParrentListSection):
 # Initialize seeking-/challengingpanel                                     #
 ############################################################################
 
+min_gain = [
+    [15, 10],
+    [5, 2],
+    [1, 0],
+    [],
+    [1, 0]]
+
 class SeekChallengeSection (ParrentListSection):
 
     def __init__ (self, widgets, connection):
@@ -852,10 +856,14 @@ class SeekChallengeSection (ParrentListSection):
 
         liststore = gtk.ListStore(str, str)
         chaliststore = gtk.ListStore(str, str)
+        
         for store in (liststore, chaliststore):
-            store.append(["15 min + 10", _("Normal")])
-            store.append(["5 min + 2", _("Blitz")])
-            store.append(["1 min + 0", _("Lightning")])
+            store.append([_("%(min)s min + %(sec)s sec") % {
+                'min': min_gain[0][0], 'sec': min_gain[0][1]}, _("Normal")])
+            store.append([_("%(min)s min + %(sec)s sec") % {
+                'min': min_gain[1][0], 'sec': min_gain[1][1]}, _("Blitz")])
+            store.append([_("%(min)s min + %(sec)s sec") % {
+                'min': min_gain[2][0], 'sec': min_gain[2][1]}, _("Lightning")])
             store.append(["", _("New Custom")])
         cell = gtk.CellRendererText()
         cell.set_property('xalign',1)
@@ -901,9 +909,10 @@ class SeekChallengeSection (ParrentListSection):
                 return
             if len(combo.get_model()) == 5:
                 del combo.get_model()[4]
-            minutes = self.widgets["minSpinbutton"].get_value()
-            gain = self.widgets["gainSpinbutton"].get_value()
-            text = "%d min + %d" % (minutes, gain)
+            minutes = int(self.widgets["minSpinbutton"].get_value())
+            gain = int(self.widgets["gainSpinbutton"].get_value())
+            text = _("%(min)s min + %(sec)s sec") % {'min': minutes, 'sec': gain}
+            min_gain[4] = [minutes, gain]
             combo.get_model().append([text, _("Custom")])
             combo.set_active(4)
         else:
@@ -918,8 +927,8 @@ class SeekChallengeSection (ParrentListSection):
         rated = self.widgets["ratedGameCheck"].get_active()
         color = self.widgets["colorCombobox"].get_active()-1
         if color == -1: color = None
-        min, incr = map(int, self.widgets["timeCombobox"].get_model()[
-                self.widgets["timeCombobox"].get_active()][0].split(" min +"))
+        index = self.widgets["timeCombobox"].get_active()
+        min, incr = min_gain[index]
         self.connection.glm.seek(min, incr, rated, ratingrange, color)
 
     def onChallengeButtonClicked (self, button):
@@ -929,8 +938,8 @@ class SeekChallengeSection (ParrentListSection):
         rated = self.widgets["chaRatedGameCheck"].get_active()
         color = self.widgets["chaColorCombobox"].get_active()-1
         if color == -1: color = None
-        min, incr = map(int, self.widgets["chaTimeCombobox"].get_model()[
-                self.widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
+        index = self.widgets["chaTimeCombobox"].get_active()
+        min, incr = min_gain[index]
         self.connection.om.challenge(playerName, min, incr, rated, color)
 
     def onSeekSelectionChanged (self, selection):
