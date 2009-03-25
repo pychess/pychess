@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: template\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-23 17:17+0100\n"
-"PO-Revision-Date: 2009-03-23 17:21+0100\n"
+"POT-Creation-Date: 2009-03-24 20:03+0100\n"
+"PO-Revision-Date: 2009-03-24 20:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: en_US <kde-i18n-doc@lists.kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -1030,52 +1030,52 @@ msgstr "Beli"
 msgid "Black"
 msgstr "Črni"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:864
 #: lib/pychess/widgets/newGameDialog.py:140
-#: lib/pychess/ic/managers/GameListManager.py:33
-#: lib/pychess/ic/managers/GameListManager.py:40
-#: lib/pychess/ic/managers/GameListManager.py:279
+#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:37
+#: lib/pychess/ic/managers/GameListManager.py:276
 msgid "Blitz"
 msgstr "Bliskovito"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:36
-#: lib/pychess/ic/managers/GameListManager.py:44
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:33
+#: lib/pychess/ic/managers/GameListManager.py:41
 msgid "Standard"
 msgstr "Navadno"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:858
-#: lib/pychess/ic/managers/GameListManager.py:34
-#: lib/pychess/ic/managers/GameListManager.py:41
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:866
+#: lib/pychess/ic/managers/GameListManager.py:31
+#: lib/pychess/ic/managers/GameListManager.py:38
 msgid "Lightning"
 msgstr "Oslepujoče"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:45
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:42
 msgid "Wild"
 msgstr "Divji"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:20
-#: lib/pychess/ic/managers/GameListManager.py:48
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:17
+#: lib/pychess/ic/managers/GameListManager.py:45
 msgid "Bughouse"
 msgstr "Norišnica"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:21
-#: lib/pychess/ic/managers/GameListManager.py:47
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:44
 msgid "Crazyhouse"
 msgstr "Norišnica"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:22
-#: lib/pychess/ic/managers/GameListManager.py:50
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:47
 msgid "Suicide"
 msgstr "Samomor"
 
 #: lib/pychess/Utils/const.py:45 lib/pychess/Variants/losers.py:14
-#: lib/pychess/ic/managers/GameListManager.py:37
-#: lib/pychess/ic/managers/GameListManager.py:49
+#: lib/pychess/ic/managers/GameListManager.py:34
+#: lib/pychess/ic/managers/GameListManager.py:46
 msgid "Losers"
 msgstr "Izgubarji"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:23
-#: lib/pychess/ic/managers/GameListManager.py:46
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:20
+#: lib/pychess/ic/managers/GameListManager.py:43
 msgid "Atomic"
 msgstr "Atomski"
 
@@ -1153,8 +1153,7 @@ msgstr "Ker zadnjih 50 potez ni prineslo ničesar novega"
 msgid "Because both players ran out of time"
 msgstr "Ker je obema igralcema potekel čas"
 
-#: lib/pychess/Utils/repr.py:17
-#, fuzzy, python-format
+#: lib/pychess/Utils/repr.py:17, python-format
 msgid "Because %(mover) stalemated"
 msgstr "Ker je %(mover) v patu"
 
@@ -1224,8 +1223,8 @@ msgid "The reason is unknown"
 msgstr "Neznan razlog"
 
 #: lib/pychess/Variants/fischerandom.py:219
-#: lib/pychess/ic/managers/GameListManager.py:31
-#: lib/pychess/ic/managers/GameListManager.py:278
+#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:275
 msgid "Fischer Random"
 msgstr "Fischer naključna"
 
@@ -1233,7 +1232,7 @@ msgstr "Fischer naključna"
 msgid "Knight odds"
 msgstr "Konj prednosti"
 
-#: lib/pychess/Variants/normal.py:5 lib/pychess/ic/ICLounge.py:856
+#: lib/pychess/Variants/normal.py:5 lib/pychess/ic/ICLounge.py:862
 #: lib/pychess/widgets/newGameDialog.py:144
 msgid "Normal"
 msgstr "Navadno"
@@ -1362,6 +1361,14 @@ msgstr "Tip"
 msgid "Clock"
 msgstr "Ura"
 
+#: lib/pychess/ic/ICLounge.py:346 lib/pychess/ic/ICLounge.py:419
+#: lib/pychess/ic/ICLounge.py:498 lib/pychess/ic/ICLounge.py:861
+#: lib/pychess/ic/ICLounge.py:863 lib/pychess/ic/ICLounge.py:865
+#: lib/pychess/ic/ICLounge.py:914
+#, python-format
+msgid "%(min)s min + %(sec)s sec"
+msgstr ""
+
 #: lib/pychess/ic/ICLounge.py:347 lib/pychess/ic/ICLounge.py:420
 #: lib/pychess/ic/ICLounge.py:496
 msgid "Unrated"
@@ -1377,6 +1384,10 @@ msgstr "Živo iskanje"
 #: lib/pychess/ic/ICLounge.py:425 lib/pychess/ic/ICLounge.py:435
 msgid "Active Seeks"
 msgstr "Živa iskanja"
+
+#: lib/pychess/ic/ICLounge.py:465
+msgid " min"
+msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:581 lib/pychess/ic/ICLounge.py:593
 msgid "Player Ready"
@@ -1428,52 +1439,51 @@ msgid "Length"
 msgstr "Dolžina"
 
 #: lib/pychess/ic/ICLounge.py:759
-#, fuzzy
 msgid "Date/Time"
-msgstr "Čas igre:"
+msgstr "Datum/Čas"
 
-#: lib/pychess/ic/ICLounge.py:783
+#: lib/pychess/ic/ICLounge.py:782
 msgid "Online"
-msgstr "Je prijavljen"
+msgstr "Prijavljen"
 
-#: lib/pychess/ic/ICLounge.py:785
-msgid "Not online"
-msgstr "Ni prijavljen"
+#: lib/pychess/ic/ICLounge.py:782
+msgid "Offline"
+msgstr "Odjavljen"
 
-#: lib/pychess/ic/ICLounge.py:833 lib/pychess/ic/ICLounge.py:845
-#: lib/pychess/ic/ICLounge.py:915
+#: lib/pychess/ic/ICLounge.py:837 lib/pychess/ic/ICLounge.py:849
+#: lib/pychess/ic/ICLounge.py:924
 msgid "Don't Care"
 msgstr "Vseeno mi je"
 
-#: lib/pychess/ic/ICLounge.py:834
+#: lib/pychess/ic/ICLounge.py:838
 msgid "Easy"
 msgstr "Enostavno"
 
-#: lib/pychess/ic/ICLounge.py:835
+#: lib/pychess/ic/ICLounge.py:839
 msgid "Advanced"
 msgstr "Napredno"
 
-#: lib/pychess/ic/ICLounge.py:836
+#: lib/pychess/ic/ICLounge.py:840
 msgid "Expert"
 msgstr "Izvedenec"
 
-#: lib/pychess/ic/ICLounge.py:846
+#: lib/pychess/ic/ICLounge.py:850
 msgid "Want White"
 msgstr "Želim bele"
 
-#: lib/pychess/ic/ICLounge.py:847
+#: lib/pychess/ic/ICLounge.py:851
 msgid "Want Black"
 msgstr "Želim črne"
 
-#: lib/pychess/ic/ICLounge.py:859
+#: lib/pychess/ic/ICLounge.py:867
 msgid "New Custom"
 msgstr "Novo po meri"
 
-#: lib/pychess/ic/ICLounge.py:907
+#: lib/pychess/ic/ICLounge.py:916
 msgid "Custom"
 msgstr "Po meri"
 
-#: lib/pychess/ic/ICLounge.py:976 lib/pychess/ic/ICLounge.py:980
+#: lib/pychess/ic/ICLounge.py:985 lib/pychess/ic/ICLounge.py:989
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
 #: lib/pychess/widgets/newGameDialog.py:313
@@ -1769,12 +1779,12 @@ msgid "Odds"
 msgstr "Neenako"
 
 #: lib/pychess/widgets/newGameDialog.py:234
-#: lib/pychess/ic/managers/GameListManager.py:25
+#: lib/pychess/ic/managers/GameListManager.py:22
 msgid "Shuffle"
 msgstr "Trik"
 
 #: lib/pychess/widgets/newGameDialog.py:235
-#: lib/pychess/ic/managers/GameListManager.py:38
+#: lib/pychess/ic/managers/GameListManager.py:35
 msgid "Other"
 msgstr "Drugo"
 
@@ -2154,40 +2164,40 @@ msgstr "Klic šaha"
 msgid "Unofficial channel %d"
 msgstr "Neuradna soba %d"
 
-#: lib/pychess/ic/managers/GameListManager.py:18
+#: lib/pychess/ic/managers/GameListManager.py:15
 msgid "Asymmetric"
 msgstr "Asimetričen"
 
-#: lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:16
 msgid "Simple shuffle"
 msgstr "Enostavna zvijača"
 
-#: lib/pychess/ic/managers/GameListManager.py:26
+#: lib/pychess/ic/managers/GameListManager.py:23
 msgid "Random"
 msgstr "Naključen"
 
-#: lib/pychess/ic/managers/GameListManager.py:27
+#: lib/pychess/ic/managers/GameListManager.py:24
 msgid "Asymmetric Shuffle"
 msgstr "Asimetrična zvijača"
 
-#: lib/pychess/ic/managers/GameListManager.py:28
+#: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Upside Down"
 msgstr "Zgoraj navzdol"
 
-#: lib/pychess/ic/managers/GameListManager.py:29
+#: lib/pychess/ic/managers/GameListManager.py:26
 msgid "Pawns Pushed"
 msgstr "Pritisk kmetov"
 
-#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:27
 msgid "Pawns Passed"
 msgstr "Kmeti so zaobšli"
 
-#: lib/pychess/ic/managers/GameListManager.py:35
-#: lib/pychess/ic/managers/GameListManager.py:42
+#: lib/pychess/ic/managers/GameListManager.py:32
+#: lib/pychess/ic/managers/GameListManager.py:39
 msgid "Untimed"
 msgstr "Nečasoven"
 
-#: lib/pychess/ic/managers/GameListManager.py:43
+#: lib/pychess/ic/managers/GameListManager.py:40
 msgid "Examined Game"
 msgstr "Preverjena igra"
 
@@ -2262,6 +2272,9 @@ msgid ""
 "game progress"
 msgstr ""
 "Panel rezultatov poskuša vrednotiti položaj in prikazati graf poteka igre"
+
+#~ msgid "Not online"
+#~ msgstr "Ni prijavljen"
 
 #~ msgid "Yes"
 #~ msgstr "Da"
