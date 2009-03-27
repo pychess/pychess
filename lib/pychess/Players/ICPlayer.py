@@ -35,8 +35,9 @@ class ICPlayer (Player):
     #===========================================================================
     
     def __onOfferAdd (self, om, index, offer):
-        self.indexToOffer[index] = offer
-        self.emit ("offer", offer)
+        if self.gamemodel.status in UNFINISHED_STATES:
+            self.indexToOffer[index] = offer
+            self.emit ("offer", offer)
     
     def __onOfferRemove (self, om, index):
         if index in self.indexToOffer:
