@@ -1,6 +1,6 @@
 from gobject import *
 import re
-from pychess.Utils import const
+from pychess.Utils.const import *
 
 #types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
@@ -12,8 +12,8 @@ ratingSplit = re.compile("P|E| ")
 
 unsupportedWilds = { # We need to disable wild 0 and 1, as they allow castling even
                 # when the king starts out in the d row. 
-                "wild/0": _("Asymmetric"),
-                "wild/1": _("Simple shuffle"),
+                "wild/0": _("Opposite Kings"),
+                "wild/1": _("Limited Shuffle"),
                 "bughouse": _("Bughouse"),
                 "crazyhouse": _("Crazyhouse"),
                 "suicide": _("Suicide"),
@@ -21,11 +21,20 @@ unsupportedWilds = { # We need to disable wild 0 and 1, as they allow castling e
 
 wilds = { "wild/2": _("Shuffle"),
           "wild/3": _("Random"),
-          "wild/4": _("Asymmetric Shuffle"),
+          "wild/4": _("Asymmetric Random"),
           "wild/5": _("Upside Down"),
           "wild/8": _("Pawns Pushed"),
           "wild/8a": _("Pawns Passed"),
           "wild/fr": _("Fischer Random") }
+
+strToVariant = { "wild/2": SHUFFLECHESS,
+                 "wild/3": RANDOMCHESS,
+                 "wild/4": ASYMMETRICRANDOMCHESS,
+                 "wild/5": UPSIDEDOWNCHESS,
+                 "wild/8": PAWNSPUSHEDCHESS,
+                 "wild/8a": PAWNSPASSEDCHESS,
+                 "wild/fr": FISCHERRANDOMCHESS,
+                 "losers": LOSERSCHESS }
 
 standards = { "blitz": _("Blitz"),
               "lightning": _("Lightning"),
@@ -77,7 +86,6 @@ def convertName (typename):
 
 #typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
-from pychess.Utils.const import WHITE
 
 class GameListManager (GObject):
     
@@ -222,7 +230,7 @@ class GameListManager (GObject):
     
     def on_game_remove (self, match):
         gameno, wn, bn, person, comment, result = match.groups()
-        result = const.reprResult.index(result)
+        result = reprResult.index(result)
         self.emit("removeGame", gameno, result, comment)
     
     ###

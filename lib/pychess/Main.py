@@ -41,10 +41,6 @@ class GladeHandlers:
         # Bring playing window to the front
         gamewidget.getWidgets()["window1"].present()
         
-        # Make sure game dependent menu entries are sensitive
-        for widget in gamewidget.MENU_ITEMS:
-            gamewidget.getWidgets()[widget].set_property('sensitive', True)
-        
         # Make sure we can remove gamewidgets from gameDic later
         gmwidg.connect("closed", GladeHandlers.__dict__["on_gmwidg_closed"])
     
