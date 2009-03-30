@@ -7,7 +7,7 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.ic.managers.GameListManager import convertName
-from GameListManager import unsupportedWilds
+from GameListManager import variantToSeek, unsupportedWilds
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -160,13 +160,13 @@ class OfferManager (GObject):
     
     ###
     
-    def challenge (self, playerName, startmin, incsec, rated, color=None):
+    def challenge (self, playerName, startmin, incsec, rated, color=None, variant=NORMALCHESS):
         rchar = rated and "r" or "u"
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
-        print >> self.connection.client, "match %s %d %d %s %s" % \
-                (playerName, startmin, incsec, rchar, cchar)
+        print >> self.connection.client, "match %s %d %d %s %s %s" % \
+                (playerName, startmin, incsec, rchar, cchar, variantToSeek[variant])
     
     def offerRematch (self):
         print >> self.connection.client, "rematch"
