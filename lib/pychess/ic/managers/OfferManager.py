@@ -7,6 +7,7 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.ic.managers.GameListManager import convertName
+from GameListManager import unsupportedWilds
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -26,7 +27,7 @@ matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
 
-unsupportedtypes = ("wild/0", "wild/1", "bughouse", "crazyhouse", "suicide")
+unsupportedtypes = (unsupportedWilds.keys())
 
 strToOfferType = {
     "draw": DRAW_OFFER,
@@ -88,7 +89,7 @@ class OfferManager (GObject):
         self.lastPly = 0
         self.indexType = {}
         
-        self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse")
+        self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse & !atomic")
         self.connection.lvm.setVariable("pendinfo", True)
     
     def noOffersToAccept (self, match):

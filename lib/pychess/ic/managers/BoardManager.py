@@ -4,6 +4,7 @@ from gobject import *
 
 from pychess.System.Log import log
 from pychess.Utils.const import *
+from GameListManager import strToVariant, unsupportedWilds
 
 from pychess.ic.VerboseTelnet import *
 
@@ -190,11 +191,9 @@ class BoardManager (GObject):
         self.emit("wasPrivate", gameno)
     
     def __parseType (self, type):
-        if type == "wild/fr":
-            variant = FISCHERRANDOMCHESS
-        elif type == "losers":
-            variant = LOSERSCHESS
-        elif type in ("suicide", "crazyhouse", "bughouse", "atomic"):
+        if type in strToVariant.keys():
+            variant = strToVariant[type]
+        elif type in unsupportedWilds.keys():
             raise RuntimeError, "We don't support %s yet :X" % type
         else:
             variant = NORMALCHESS

@@ -66,6 +66,36 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     text.insert(1,_("vs"))
     gmwidg.setTabText(" ".join(text))
 
+    # Initing analyze engines
+    # We have to do this before publishing gmwidg to make sure that
+    # gamemodel.*EngineSupportsVariant is set right before on_gmwidg_created() is called
+    anaengines = discoverer.getAnalyzers()
+    specs = {}
+    engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
+    if not engine: engine = anaengines[0]
+    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
+       gamemodel.variant.standard_rules:
+        if conf.get("analyzer_check", True):
+            hintanalyzer = discoverer.initAnalyzerEngine(engine, ANALYZING,
+                                                         gamemodel.variant)
+            specs[HINT] = hintanalyzer
+            log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
+        gamemodel.hintEngineSupportsVariant = True
+    else:
+        gamemodel.hintEngineSupportsVariant = False
+    engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
+    if not engine: engine = anaengines[0]
+    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
+       gamemodel.variant.standard_rules:
+        if conf.get("inv_analyzer_check", True):
+            spyanalyzer = discoverer.initAnalyzerEngine(engine, INVERSE_ANALYZING,
+                                                        gamemodel.variant)
+            specs[SPY] = spyanalyzer
+            log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
+        gamemodel.spyEngineSupportsVariant = True            
+    else:
+        gamemodel.spyEngineSupportsVariant = False
+
     worker.publish((gmwidg,gamemodel))
 
     # For updating names
@@ -115,26 +145,6 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             conf.notify_add(key, callback, i, key, alt)
 
     worker.publish(updateTitle)
-
-    # Initing analyze engines
-    anaengines = discoverer.getAnalyzers()
-    specs = {}
-
-    if conf.get("analyzer_check", True):
-        engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
-        if not engine: engine = anaengines[0]
-        hintanalyzer = discoverer.initAnalyzerEngine(engine, ANALYZING,
-                                                     gamemodel.variant)
-        specs[HINT] = hintanalyzer
-        log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
-
-    if conf.get("inv_analyzer_check", True):
-        engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
-        if not engine: engine = anaengines[0]
-        spyanalyzer = discoverer.initAnalyzerEngine(engine, INVERSE_ANALYZING,
-                                                    gamemodel.variant)
-        specs[SPY] = spyanalyzer
-        log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
 
     # Setting game
     gamemodel.setPlayers(players)

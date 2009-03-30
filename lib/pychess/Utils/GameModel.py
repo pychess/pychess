@@ -66,6 +66,9 @@ class GameModel (GObject, PooledThread):
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
         
+        self.hintEngineSupportsVariant = False
+        self.spyEngineSupportsVariant = False
+        
         self.spectactors = {}
         
         self.applyingMoveLock = RLock()
