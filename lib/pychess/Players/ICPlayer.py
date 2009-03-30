@@ -5,6 +5,7 @@ from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toAN, ParsingError, listToSan
 from pychess.Utils.const import *
+from pychess.Variants import variants
 
 class ICPlayer (Player):
     __type__ = REMOTE
@@ -131,7 +132,11 @@ class ICPlayer (Player):
     #===========================================================================
     
     def offerRematch (self):
-        self.connection.om.offerRematch()
+        min = int(self.gamemodel.timemodel.intervals[0][0])/60
+        inc = self.gamemodel.timemodel.gain
+        rated = self.gamemodel.rated
+        variant = [ k for (k, v) in variants.iteritems() if variants[k] == self.gamemodel.variant ][0]
+        self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
     
     def offer (self, offer):
         self.connection.om.offer(offer, self.lastPly)

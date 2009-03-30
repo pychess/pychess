@@ -7,7 +7,7 @@ from pychess.Utils.const import *
 
 class ICGameModel (GameModel):
     
-    def __init__ (self, connection, gameno, timemodel, variant):
+    def __init__ (self, connection, gameno, timemodel, variant, rated=False):
         GameModel.__init__(self, timemodel, variant)
         self.connection = connection
         self.gameno = gameno
@@ -24,6 +24,7 @@ class ICGameModel (GameModel):
         self.connect("game_terminated", self.afterGameEnded)
         
         self.inControl = True
+        self.rated = rated
     
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wms, bms):
         if gameno != self.gameno:
