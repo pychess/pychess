@@ -114,7 +114,10 @@ def game_ended (gamemodel, reason, gmwidg):
     
     def cb (messageDialog, responseId):
         if responseId == 0:
-            nameDic["loser"].offerRematch()
+            if gamemodel.players[0].__type__ == REMOTE:
+                gamemodel.players[0].offerRematch()
+            else:
+                gamemodel.players[1].offerRematch()
         elif responseId == 1:
             from pychess.widgets.newGameDialog import createRematch
             createRematch(gamemodel)

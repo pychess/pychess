@@ -36,6 +36,16 @@ strToVariant = { "wild/2": SHUFFLECHESS,
                  "wild/fr": FISCHERRANDOMCHESS,
                  "losers": LOSERSCHESS }
 
+variantToSeek = { NORMALCHESS : "",
+                  SHUFFLECHESS : "wild 2",
+                  RANDOMCHESS: "wild 3",
+                  ASYMMETRICRANDOMCHESS: "wild 4",
+                  UPSIDEDOWNCHESS : "wild 5",
+                  PAWNSPUSHEDCHESS : "wild 8",
+                  PAWNSPASSEDCHESS : "wild 8a",
+                  FISCHERRANDOMCHESS : "wild fr",
+                  LOSERSCHESS : "losers" }
+
 standards = { "blitz": _("Blitz"),
               "lightning": _("Lightning"),
               "untimed": _("Untimed"),
