@@ -979,7 +979,7 @@ class CreatedBoards (Section):
     def playBoardCreated (self, bm, board):
 
         timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
-        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]])
+        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         if board["wname"].lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
@@ -1001,7 +1001,7 @@ class CreatedBoards (Section):
     def observeBoardCreated (self, bm, board):
 
         timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
-        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]])
+        game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
