@@ -21,7 +21,7 @@ except ImportError:
 # Set up translations
 import gettext, gtk.glade
 if isInstalled():
-    gettext.install("pychess", unicode=1)
+    gettext.install("pychess", unicode=1, names=('ngettext',))
     gtk.glade.bindtextdomain("pychess")
 else:
     gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
