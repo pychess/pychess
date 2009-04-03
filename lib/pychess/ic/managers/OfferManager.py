@@ -168,9 +168,6 @@ class OfferManager (GObject):
         print >> self.connection.client, "match %s %d %d %s %s %s" % \
                 (playerName, startmin, incsec, rchar, cchar, variantToSeek[variant])
     
-    def offerRematch (self):
-        print >> self.connection.client, "rematch"
-    
     def offer (self, offer, ply):
         self.lastPly = ply
         s = offerTypeToStr[offer.offerType]
