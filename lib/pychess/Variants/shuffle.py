@@ -34,7 +34,7 @@ class ShuffleChess:
     cecp_name = "nocastle"
     board = ShuffleBoard
     need_initial_board = True
-    standard_rules = False
+    standard_rules = True
     variant_group = VARIANTS_SHUFFLE
 
 

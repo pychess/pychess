@@ -36,7 +36,7 @@ class RandomChess:
     cecp_name = "unknown"
     board = RandomBoard
     need_initial_board = True
-    standard_rules = False
+    standard_rules = True
     variant_group = VARIANTS_SHUFFLE
 
 
