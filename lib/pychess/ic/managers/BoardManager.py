@@ -8,10 +8,10 @@ from GameListManager import strToVariant, unsupportedWilds
 
 from pychess.ic.VerboseTelnet import *
 
-names = "(\w+)(?:\(([CUHIFWM])\))?"
-# FIXME: What about names like: Nemisis(SR)(CA)(TM) and Rebecca(*)(SR)(TD) ?
+names = "(\w+)"
+titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
-ratings = "\(([0-9\ \-\+]+|UNR)\)"
+ratings = "\(([-0-9 +]+|UNR)\)"
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
 
 moveListNames = re.compile("%s %s vs. %s %s --- .*" %
@@ -208,9 +208,17 @@ class BoardManager (GObject):
         else:
             return ("k", "q")
     
+    def getRating(self, rating):
+        if rating:
+            m = re.match("[0-9]+", rating)
+            if m: return m.group(0)
+            else: return None
+        else: return None
+    
     def playBoardCreated (self, matchlist):
         
-        gameno, wname, wtit, bname, btit, rated, type = matchlist[1].groups()
+        wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
+        gameno, wname, bname, rated, type = matchlist[1].groups()
         style12 = matchlist[-1].groups()[0]
         
         rated = rated == "rated"
@@ -221,7 +229,8 @@ class BoardManager (GObject):
         gameno, relation, curcol, ply, wms, bms, gain, lastmove, fen = \
                 self.__parseStyle12(style12, castleSigns)
         
-        board = {"wname": wname, "wtitle": wtit, "bname": bname, "btitle": btit,
+        board = {"wname": wname, "wrating": self.getRating(wrating),
+                 "bname": bname, "brating": self.getRating(brating),
                  "rated": rated, "wms": wms, "bms":bms, "gain": gain,
                  "gameno": gameno, "variant":variant, "fen": fen}
         self.ourGameno = gameno
@@ -232,7 +241,7 @@ class BoardManager (GObject):
         # Get info from match
         gameno = matchlist[0].groups()[0]
         
-        whitename, whitetitle, whiterating, blackname, blacktitle, blackrating = \
+        whitename, whiterating, blackname, blackrating = \
                 moveListNames.match(matchlist[2]).groups()
         
         rated, type, minutes, increment = \
@@ -317,8 +326,8 @@ class BoardManager (GObject):
             wms = bms = int(minutes)*60*1000
             gain = int(increment)
         
-        board = {"wname": whitename, "wtitle": whitetitle,
-                 "bname": blackname, "btitle": blacktitle,
+        board = {"wname": whitename, "wrating": self.getRating(whiterating),
+                 "bname": blackname, "brating": self.getRating(blackrating),
                  "rated": rated.lower()=="rated",
                  "wms": wms, "bms":bms, "gain": gain,
                  "gameno": gameno, "variant":variant, "pgn": pgn}
