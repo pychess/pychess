@@ -982,15 +982,15 @@ class CreatedBoards (Section):
         game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         if board["wname"].lower() == self.connection.getUsername().lower():
-            player0tup = (LOCAL, Human, (WHITE, ""), _("Human"))
+            player0tup = (LOCAL, Human, (WHITE, ""), _("Human"), board["wrating"])
             player1tup = (REMOTE, ICPlayer,
-                    (game, board["bname"], board["gameno"], BLACK), board["bname"])
+                    (game, board["bname"], board["gameno"], BLACK), board["bname"], board["brating"])
         else:
-            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"))
+            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"), board["brating"])
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
             player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)
-            player0tup = (REMOTE, lambda:player0, (), board["wname"])
+            player0tup = (REMOTE, lambda:player0, (), board["wname"], board["wrating"])
 
         if not board["fen"]:
             ionest.generalStart(game, player0tup, player1tup)
@@ -1008,8 +1008,8 @@ class CreatedBoards (Section):
         player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)
         player1 = ICPlayer(game, board["bname"], board["gameno"], BLACK)
 
-        player0tup = (REMOTE, lambda:player0, (), board["wname"])
-        player1tup = (REMOTE, lambda:player1, (), board["bname"])
+        player0tup = (REMOTE, lambda:player0, (), board["wname"], board["wrating"])
+        player1tup = (REMOTE, lambda:player1, (), board["bname"], board["brating"])
 
         ionest.generalStart(game, player0tup, player1tup,
                             (StringIO(board["pgn"]), pgn, 0, -1))
