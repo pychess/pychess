@@ -62,8 +62,14 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     gmwidg = gamewidget.GameWidget(gamemodel)
 
-    text = [name for t, f, a, name in (player0tup, player1tup)]
-    text.insert(1,_("vs"))
+    player0 = {}
+    player1 = {}
+    for player, playertup in ((player0, player0tup), (player1, player1tup)):
+        player["name"] = playertup[3]
+        player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+playertup[4]+")" or None
+        player["tabtext"] = player["rating"] and player["name"] + " " + player["rating"] \
+                or player["name"]
+    text = [ player0["tabtext"], _("vs"), player1["tabtext"] ]
     gmwidg.setTabText(" ".join(text))
 
     # Initing analyze engines
@@ -109,17 +115,21 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
         if color == None:
             name0 = repr(players[WHITE])
+            name0 += player0["rating"] and " "+player0["rating"] or ""
             name1 = repr(players[BLACK])
+            name1 += player1["rating"] and " "+player1["rating"] or ""
         elif color == WHITE:
             name0 = repr(players[WHITE])
+            name0 += player0["rating"] and " "+player0["rating"] or ""
         elif color == BLACK:
             name1 = repr(players[BLACK])
+            name1 += player1["rating"] and " "+player1["rating"] or ""
 
         gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
 
     # Initing players
     for i, playertup in enumerate((player0tup, player1tup)):
-        type, func, args, name = playertup
+        type, func, args = (playertup[0:3])
         if type != LOCAL:
             players.append(func(*args))
             if type == ARTIFICIAL:
