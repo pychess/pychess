@@ -13,7 +13,6 @@ from lmovegen import *
 from lsort import staticExchangeEvaluate
 from ldata import *
 from validator import validateMove
-from gettext import ngettext
 
 
 def join(items):

@@ -20,7 +20,6 @@ from pychess.Savers import *
 from pychess.Savers.ChessFile import LoadingError
 from pychess.widgets import gamewidget
 from pychess.widgets import gamenanny
-from gettext import ngettext
 
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
