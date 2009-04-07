@@ -19,13 +19,18 @@ except ImportError:
     sys.exit(1)
 
 # Set up translations
-import gettext, gtk.glade
+import __builtin__, gettext, gtk.glade
 if isInstalled():
-    gettext.install("pychess", unicode=1, names=('ngettext',))
+    #gettext.install("pychess", unicode=1, names=('ngettext',)) # requires Python >= 2.5
+    gettext.install("pychess", unicode=1)
+    t = gettext.translation("pychess")
     gtk.glade.bindtextdomain("pychess")
 else:
-    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
+    #gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+    t = gettext.translation("pychess", localedir=addDataPrefix("lang"))
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
+__builtin__.__dict__["ngettext"] = t.ungettext
 gtk.glade.textdomain("pychess")
 
 # Start logging
