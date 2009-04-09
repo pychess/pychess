@@ -21,7 +21,7 @@ Dependencies:
 pygtk
 pygobject
 pycairo
-pysqlite
+pysqlite (for Python < 2.5)
 gnome-python-desktop
 gnome-icon-theme
 gst-python (OPTIONAL for sound)
