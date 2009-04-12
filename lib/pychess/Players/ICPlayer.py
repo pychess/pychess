@@ -31,12 +31,15 @@ class ICPlayer (Player):
         self.indexToOffer = {}
         self.lastPly = -1
     
+    def getICHandle (self):
+        return self.name
+    
     #===========================================================================
     #    Handle signals from the connection
     #===========================================================================
     
     def __onOfferAdd (self, om, index, offer):
-        if self.gamemodel.status in UNFINISHED_STATES:
+        if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
             self.indexToOffer[index] = offer
             self.emit ("offer", offer)
     
@@ -48,8 +51,10 @@ class ICPlayer (Player):
         if name == self.name:
             self.emit("offer", Offer(CHAT_ACTION, text))
     
-    def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wms, bms):
-        if gameno == self.gameno:
+    def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
+        if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
+           and wname == self.gamemodel.players[0].getICHandle() \
+           and bname == self.gamemodel.players[1].getICHandle():
             # In some cases (like lost on time) the last move is resent
             if ply <= self.lastPly:
                 return

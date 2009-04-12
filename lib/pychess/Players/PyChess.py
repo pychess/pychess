@@ -701,7 +701,7 @@ class PyChessFICS(PyChess):
         self.worker.connect("done", self.__onMoveCalculated)
         self.worker.execute()
     
-    def __onGameEnded (self, boardManager, gameno, result, reason):
+    def __onGameEnded (self, boardManager, gameno, wname, bname, result, reason):
         self.tellHome(reprResult_long[result] + " " + reprReason_long[reason])
         lsearch.searching = False
         if self.worker:
@@ -715,7 +715,7 @@ class PyChessFICS(PyChess):
         self.connection.bm.sendMove(sanmove)
         self.extendlog(["Move sent %s" % sanmove])
     
-    def __onBoardUpdate (self, boardManager, gameno, ply, curcol, lastmove, fen, wms, bms):
+    def __onBoardUpdate (self, boardManager, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         self.extendlog(["","I got move %d %s for gameno %s" % (ply, lastmove, gameno)])
         
         if self.gameno != gameno:

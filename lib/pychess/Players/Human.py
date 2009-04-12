@@ -64,7 +64,7 @@ class Human (Player):
         "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
-    def __init__ (self, gmwidg, color, name):
+    def __init__ (self, gmwidg, color, name, ichandle=None):
         Player.__init__(self)
         
         self.defname = "Human"
@@ -78,6 +78,10 @@ class Human (Player):
             self.board.connect("action", lambda b,ac,pa: self.emit_action(ac,pa))
         ]
         self.setName(name)
+        self.ichandle = ichandle
+    
+    def getICHandle (self):
+        return self.ichandle
     
     #===========================================================================
     #    Handle signals from the board
