@@ -139,7 +139,11 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         else:
             # Until PyChess has a proper profiles system, as discussed on the
             # issue tracker, we need to give human players special treatment
-            player = func(gmwidg, *args)
+            ichandle = None
+            if len(args) > 2:
+                ichandle = args[2]
+                args = [ v for v in args[0:2] ]
+            player = func(gmwidg, ichandle=ichandle, *args)
             players.append(player)
             if i == 0 or (i == 1 and player0tup[0] != LOCAL):
                 key = "firstName"

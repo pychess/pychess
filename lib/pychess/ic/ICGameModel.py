@@ -26,8 +26,9 @@ class ICGameModel (GameModel):
         self.inControl = True
         self.rated = rated
     
-    def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wms, bms):
-        if gameno != self.gameno:
+    def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
+        if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
+           or bname != self.players[1].getICHandle():
             return
         
         self.timemodel.updatePlayer (WHITE, wms/1000.)
@@ -37,8 +38,9 @@ class ICGameModel (GameModel):
             log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
             self.undoMoves(self.ply-ply)
     
-    def onGameEnded (self, bm, gameno, status, reason):
-        if gameno == self.gameno:
+    def onGameEnded (self, bm, gameno, wname, bname, status, reason):
+        if gameno == self.gameno and len(self.players) >= 2 and wname == self.players[0].getICHandle() \
+           and bname == self.players[1].getICHandle():
             self.end (status, reason)
     
     def afterGameEnded (self, self_):

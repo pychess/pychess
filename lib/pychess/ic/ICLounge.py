@@ -339,7 +339,7 @@ class SeekTabSection (ParrentListSection):
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
                 self.listPublisher.put((self.onPlayingGame,)) )
 
-        self.connection.bm.connect("curGameEnded", lambda bm, gameno, status, reason:
+        self.connection.bm.connect("curGameEnded", lambda bm, gameno, wname, bname, status, reason:
                 self.listPublisher.put((self.onCurGameEnded,)) )
 
     def onAddSeek (self, seek):
@@ -481,7 +481,7 @@ class SeekGraphSection (ParrentListSection):
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
                 self.listPublisher.put((self.onPlayingGame,)) )
 
-        self.connection.bm.connect("curGameEnded", lambda bm, gameno, status, reason:
+        self.connection.bm.connect("curGameEnded", lambda bm, gameno, wname, bname, status, reason:
                 self.listPublisher.put((self.onCurGameEnded,)) )
 
     def onSpotClicked (self, graph, name):
@@ -654,7 +654,7 @@ class GameTabSection (ParrentListSection):
         self.connection.glm.connect("addGame", lambda glm, game:
                 self.listPublisher.put((self.onGameAdd, game)) )
 
-        self.connection.glm.connect("removeGame", lambda glm, gameno, res, com:
+        self.connection.glm.connect("removeGame", lambda glm, gameno, wname, bname, res, com:
                 self.listPublisher.put((self.onGameRemove, gameno)) )
 
         self.connection.bm.connect("wasPrivate", lambda bm, game:
@@ -764,14 +764,14 @@ class AdjournedTabSection (ParrentListSection):
                 self.listPublisher.put((self.onAdjournmentsList, adjournments)) )
         self.connection.adm.queryAdjournments()
 
-        self.connection.bm.connect("curGameEnded", lambda bm, gameno, result, reason:
+        self.connection.bm.connect("curGameEnded", lambda bm, gameno, wname, bname, result, reason:
                 self.listPublisher.put((self.onCurGameEnded, result)))
 
         # Set up buttons
 
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
-        self.connection.adm.connect("onGamePreview", lambda adm, pgn, secs, gain, whitename, blackname:
-                self.listPublisher.put((self.onGamePreview, pgn, secs, gain, whitename, blackname)))
+        self.connection.adm.connect("onGamePreview", lambda adm, pgn, secs, gain, wname, bname:
+                self.listPublisher.put((self.onGamePreview, pgn, secs, gain, wname, bname)))
 
 
     def onAdjournmentsList (self, adjournments):
@@ -796,7 +796,7 @@ class AdjournedTabSection (ParrentListSection):
         opponent = model.get_value(iter, 1)
         self.connection.adm.queryMoves(opponent)
 
-    def onGamePreview (self, pgn, secs, gain, whitename, blackname):
+    def onGamePreview (self, pgn, secs, gain, wname, bname):
         print pgn
 
         #if not connection.registered:
@@ -982,11 +982,11 @@ class CreatedBoards (Section):
         game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         if board["wname"].lower() == self.connection.getUsername().lower():
-            player0tup = (LOCAL, Human, (WHITE, ""), _("Human"), board["wrating"])
+            player0tup = (LOCAL, Human, (WHITE, "", board["wname"]), _("Human"), board["wrating"])
             player1tup = (REMOTE, ICPlayer,
                     (game, board["bname"], board["gameno"], BLACK), board["bname"], board["brating"])
         else:
-            player1tup = (LOCAL, Human, (BLACK, ""), _("Human"), board["brating"])
+            player1tup = (LOCAL, Human, (BLACK, "", board["bname"]), _("Human"), board["brating"])
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
             player0 = ICPlayer(game, board["wname"], board["gameno"], WHITE)

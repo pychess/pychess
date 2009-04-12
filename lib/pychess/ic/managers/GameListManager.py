@@ -105,7 +105,7 @@ class GameListManager (GObject):
         'clearSeeks' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         
         'addGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,str)),
+        'removeGame' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,str,str,int,str)),
         
         'addPlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         'removePlayer' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
@@ -239,9 +239,9 @@ class GameListManager (GObject):
                               "type":convertName(type), "private":False})
     
     def on_game_remove (self, match):
-        gameno, wn, bn, person, comment, result = match.groups()
+        gameno, wname, bname, person, comment, result = match.groups()
         result = reprResult.index(result)
-        self.emit("removeGame", gameno, result, comment)
+        self.emit("removeGame", gameno, wname, bname, result, comment)
     
     ###
     
