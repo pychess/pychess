@@ -31,8 +31,9 @@ class ICGameModel (GameModel):
            or bname != self.players[1].getICHandle():
             return
         
-        self.timemodel.updatePlayer (WHITE, wms/1000.)
-        self.timemodel.updatePlayer (BLACK, bms/1000.)
+        if self.timemodel:
+            self.timemodel.updatePlayer (WHITE, wms/1000.)
+            self.timemodel.updatePlayer (BLACK, bms/1000.)
         
         if ply < self.ply:
             log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
