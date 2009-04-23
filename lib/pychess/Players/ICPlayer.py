@@ -137,8 +137,12 @@ class ICPlayer (Player):
     #===========================================================================
     
     def offerRematch (self):
-        min = int(self.gamemodel.timemodel.intervals[0][0])/60
-        inc = self.gamemodel.timemodel.gain
+        if self.gamemodel.timemodel:
+            min = int(self.gamemodel.timemodel.intervals[0][0])/60
+            inc = self.gamemodel.timemodel.gain
+        else:
+            min = 0
+            inc = 0
         rated = self.gamemodel.rated
         variant = [ k for (k, v) in variants.iteritems() if variants[k] == self.gamemodel.variant ][0]
         self.connection.om.challenge(self.name, min, inc, rated, variant=variant)

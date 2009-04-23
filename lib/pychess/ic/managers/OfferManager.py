@@ -15,6 +15,8 @@ rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\])?"
 ratings = "\(([0-9\ \-\+]{4})\)"
 
+matchreUntimed = re.compile ("(\w+) %s %s ?(\w+) %s %s (untimed)\s*" % \
+                                  (ratings, colors, ratings, rated) )
 matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
                                   (ratings, colors, ratings, rated) )
 
@@ -22,6 +24,7 @@ matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
 #<pf> 16 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated wild 2 12 Loaded from wild/fr
 #<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)
 #<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12
+#<pf> 45 w=GuestYDDR t=match p=GuestYDDR (----) mgatto (1358) unrated untimed
 
 #
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
@@ -120,15 +123,19 @@ class OfferManager (GObject):
         
         self.indexType[index] = offertype
         if offertype == "match":
-            fname, frating, col, tname, trating, rated, type_short, mins, incr, type = \
+            if matchreUntimed.match(parameters) != None:
+                fname, frating, col, tname, trating, rated, type = \
+                    matchreUntimed.match(parameters).groups()
+                mins = "0"
+                incr = "0"
+            else:
+                fname, frating, col, tname, trating, rated, type_short, mins, incr, type = \
                     matchre.match(parameters).groups()
-            
-            if not type or "adjourned" in type:
-                type = type_short
+                if not type or "adjourned" in type:
+                    type = type_short
             
             if type.split()[-1] in unsupportedtypes:
                 self.declineIndex(index)
-            
             else:
                 rating = frating.strip()
                 rating = rating.isdigit() and rating or "0"

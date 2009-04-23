@@ -978,7 +978,10 @@ class CreatedBoards (Section):
 
     def playBoardCreated (self, bm, board):
 
-        timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
+        if board["wms"] == 0 and board["bms"] == 0:
+            timemodel = None
+        else:
+            timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
         game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         if board["wname"].lower() == self.connection.getUsername().lower():
@@ -1000,7 +1003,10 @@ class CreatedBoards (Section):
 
     def observeBoardCreated (self, bm, board):
 
-        timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
+        if board["wms"] == 0 and board["bms"] == 0:
+            timemodel = None
+        else:
+            timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
         game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
 
         # The players need to start listening for moves IN this method if they
