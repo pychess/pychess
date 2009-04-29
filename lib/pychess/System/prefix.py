@@ -13,7 +13,7 @@ from os.path import isdir, join, dirname, abspath
 ################################################################################
 
 # Test if we are installed on the system, or are being run from tar/svn
-if "site-packages" in __file__:
+if "site-packages" in __file__ or "dist-packages" in __file__:
     _prefix = join (sys.prefix, "share", "pychess")
     _installed = True
     if not isdir (_prefix):
