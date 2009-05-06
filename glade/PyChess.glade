@@ -820,7 +820,7 @@ ryukun
 
 Walloon translators:
 ThijsVermeir</property>
-  <property name="logo">christmas_about.png</property>
+  <property name="logo">about.png</property>
 </widget>
 
 <widget class="GtkDialog" id="game_info">

@@ -5,7 +5,7 @@
 ################################################################################
 
 NAME = "PyChess"
-VERSION = "0.10alpha2"
+VERSION = "0.10beta1"
 VERSION_NAME = "Staunton"
 ENGINES_XML_API_VERSION = "0.10"
 
