@@ -14,7 +14,8 @@ from os.path import isdir, join, dirname, abspath
 
 # Test if we are installed on the system, or are being run from tar/svn
 if "site-packages" in __file__ or "dist-packages" in __file__:
-    for sub in ("share", "games", "share/games"):
+    for sub in ("share", "games", "share/games",
+                "local/share", "local/games", "local/share/games"):
         _prefix = join (sys.prefix, sub, "pychess")
         if isdir(_prefix):
             _installed = True
