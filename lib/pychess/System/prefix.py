@@ -14,10 +14,13 @@ from os.path import isdir, join, dirname, abspath
 
 # Test if we are installed on the system, or are being run from tar/svn
 if "site-packages" in __file__ or "dist-packages" in __file__:
-    _prefix = join (sys.prefix, "share", "pychess")
-    _installed = True
-    if not isdir (_prefix):
-        raise Exception("can't find pychess 'share' directory")
+    for sub in ("share", "games", "share/games"):
+        _prefix = join (sys.prefix, sub, "pychess")
+        if isdir(_prefix):
+            _installed = True
+            break
+    else:
+        raise Exception("can't find the pychess data directory")
 else:
     _prefix = abspath (join (dirname (__file__), "../../.."))
     _installed = False
