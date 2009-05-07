@@ -5,13 +5,15 @@ from time import time
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
+import re
 
 types = "(?:blitz|standard|lightning|wild|bughouse|crazyhouse|suicide|losers|atomic)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\-]{1,4})"
-names = "(\w+)(?:\((\w+)\))*"
-titles = "(?:\((\w+)\))*"
+titleslist = "(?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)"
+titles = "((?:\(%s\))+)?" % titleslist
+names = "(\w+)%s" % titles
 mf = "(?:([mf]{1,2})\s?)?"
 # FIXME: Needs support for day, hour, min, sec
 times = "[, ]*".join("(?:(\d+) %s)?" % s for s in ("days", "hrs", "mins", "secs"))
@@ -51,7 +53,8 @@ class FingerObject:
         self.__color = WHITE
         self.__opponent = ""
         self.__silence = False
-        
+        self.__titles = None
+       
         self.__rating = {}
     
     def getName (self):
@@ -138,6 +141,8 @@ class FingerObject:
             return self.__rating
         return self.__rating[type]
     
+    def getTitles(self):
+        return self.__titles    
     
     def setName(self, value):
         self.__name = value
@@ -199,6 +204,8 @@ class FingerObject:
     def setRating(self, type, rating):
         self.__rating[type] = rating
 
+    def setTitles(self, titles):
+        self.__titles = titles
 
 class FingerManager (GObject):
     
@@ -259,9 +266,12 @@ class FingerManager (GObject):
         return 1
     
     def onFinger (self, matchlist):
-        name = matchlist[0].groups()[0]
         finger = FingerObject()
+        name = matchlist[0].groups()[0]
         finger.setName(name)
+        if matchlist[0].groups()[1]:
+            titles = re.findall(titleslist, matchlist[0].groups()[1])
+            finger.setTitles(titles)
         for match in matchlist[1:]:
             if not match.group():
                 continue
