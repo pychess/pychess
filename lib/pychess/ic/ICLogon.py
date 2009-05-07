@@ -44,7 +44,8 @@ class ICLogon:
             self.widgets["passEntry"].set_sensitive(not check.get_active())
         self.widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
-        
+        uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
+        uistuff.keep(self.widgets["passEntry"], "passwordEntry")
         uistuff.makeYellow(self.widgets["messagePanel"])
         
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
@@ -100,7 +101,7 @@ class ICLogon:
         return True
     
     def onCreateNew (self, button):
-        webbrowser.open("http://freechess.org/Register/index.html")
+        webbrowser.open("http://www.freechess.org/Register/index.html")
     
     def showError (self, connection, error):
         # Don't bring up errors, if we have pressed "stop"
