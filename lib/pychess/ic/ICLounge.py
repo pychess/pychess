@@ -7,9 +7,10 @@ from time import sleep, strftime, localtime
 from math import e
 import webbrowser
 
-import gtk, pango, re
+import gtk, gobject, pango, re
 from gtk import gdk
 from gtk.gdk import pixbuf_new_from_file
+from gobject import *
 
 from pychess.System import glock, uistuff
 from pychess.System.GtkWorker import EmitPublisher, Publisher
@@ -30,11 +31,33 @@ from pychess.Variants import variants
 
 from ICGameModel import ICGameModel
 
-class ICLounge:
+class ICLounge (GObject):
+    __gsignals__ = {
+        'logout'        : (SIGNAL_RUN_FIRST, None, ()),
+        'autoLogout'    : (SIGNAL_RUN_FIRST, None, ()),
+    }
+    
     def __init__ (self, c):
-
+        GObject.__init__(self)
+        self.connection = c
         self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
+
+        def on_window_delete (window, event):
+            self.close()
+            self.emit("logout")
+            return True
+        self.widgets["fics_lounge"].connect("delete-event", on_window_delete)
+        def on_logoffButton_clicked (button):
+            self.close()
+            self.emit("logout")
+        self.widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)        
+        def on_autoLogout (alm):
+            self.close()
+            self.emit("autoLogout")
+        self.connection.alm.connect("logOut", on_autoLogout)
+        self.connection.connect("disconnected", lambda connection: self.close())
+        self.connection.connect("error", lambda connection: self.close())
 
         global sections
         sections = (
@@ -63,6 +86,22 @@ class ICLounge:
     def show (self):
         self.widgets["fics_lounge"].show()
 
+    def present (self):
+        self.widgets["fics_lounge"].present()
+
+    def close (self):
+        if self.widgets == None:
+            return
+        self.widgets["fics_lounge"].hide()
+        global sections
+        for i in range(len(sections)):
+            if hasattr(sections[i], "__del__"):
+                sections[i].__del__()
+        sections = None
+        self.connection.disconnect()
+        self.connection = None
+        self.widgets = None
+
 ################################################################################
 # Initialize Sections                                                          #
 ################################################################################
@@ -76,16 +115,6 @@ class Section:
 
 class VariousSection(Section):
     def __init__ (self, widgets, connection):
-        def on_window_delete (window, event):
-            widgets["fics_lounge"].hide()
-            return True
-        widgets["fics_lounge"].connect("delete-event", on_window_delete)
-
-        def on_logoffButton_clicked (button):
-            widgets["fics_lounge"].emit("delete-event", None)
-            connection.disconnect()
-        widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
-
         sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         sizeGroup.add_widget(widgets["show_chat_label"])
         sizeGroup.add_widget(widgets["show_console_label"])
@@ -103,6 +132,7 @@ class UserInfoSection(Section):
     def __init__ (self, widgets, connection):
         self.widgets = widgets
         self.connection = connection
+        self.pinger = None
 
         self.dock = self.widgets["fingerTableDock"]
 
@@ -113,6 +143,10 @@ class UserInfoSection(Section):
 
         self.widgets["usernameLabel"].set_markup(
                 "<b>%s</b>" % self.connection.getUsername())
+
+    def __del__ (self):
+        if self.pinger != None:
+            self.pinger.stop()
 
     def onFinger (self, fm, finger):
         if finger.getName().lower() != self.connection.getUsername().lower():
@@ -169,7 +203,7 @@ class UserInfoSection(Section):
             table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
             pingLabel = gtk.Label(_("Connecting")+"...")
             pingLabel.props.xalign = 0
-            pinger = Pinger("freechess.org")
+            self.pinger = pinger = Pinger("freechess.org")
             def callback (pinger, pingtime):
                 if type(pingtime) == str:
                     pingLabel.set_text(pingtime)
@@ -191,7 +225,7 @@ class UserInfoSection(Section):
                 label0.props.width_request = 300
                 vbox.add(label0)
                 eventbox = uistuff.initLabelLinks(_("Register now"),
-                        "http://freechess.org/Register/index.html")
+                        "http://www.freechess.org/Register/index.html")
                 vbox.add(eventbox)
 
             if self.dock.get_children():
