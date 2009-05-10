@@ -223,7 +223,15 @@ class FICSConnection (Connection):
     def disconnect (self):
         self.emit("disconnecting")
         if self.isConnected():
-            print >> self.client, "quit"
+            try:
+                print >> self.client, "quit"
+            except Exception, e:
+                for errortype in (IOError, LogOnError, EOFError,
+                                  socket.error, socket.gaierror, socket.herror):
+                    if isinstance(e, errortype):
+                        e = None
+                if e != None: raise e
+            
             self.connected = False
         self.client.close()
     
