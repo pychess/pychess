@@ -129,7 +129,7 @@ class ICLogon:
             text = ", ".join(map(str,error.args))
         elif isinstance (error, AutoLogoutException):
             title = _("Auto-logout")
-            text = "You have been logged out because you were idle more than 60 minutes"
+            text = _("You have been logged out because you were idle more than 60 minutes")
         else:
             title = str(error.__class__)
         
