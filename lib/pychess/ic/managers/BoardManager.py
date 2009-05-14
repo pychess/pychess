@@ -282,7 +282,8 @@ class BoardManager (GObject):
         for style12 in self.queuedUpdates[gameno]:
             gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                     self.__parseStyle12(style12, castleSigns)
-            
+            if lastmove == None:
+                continue
             moves[ply-1] = lastmove
             # Updated the queuedMoves in case there has been a takeback
             for moveply in moves.keys():
