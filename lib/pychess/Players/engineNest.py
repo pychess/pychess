@@ -3,6 +3,7 @@ from xml.parsers.expat import ExpatError
 import os, imp
 from hashlib import md5
 from threading import Thread
+from os.path import join, dirname, abspath
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
@@ -138,16 +139,10 @@ class EngineDiscoverer (GObject, PooledThread):
             path = None
             interpreterPath = searchPath("python", access=os.R_OK|os.EX_OK)
             
-            if "PYTHONPATH" in os.environ:
-                path = searchPath("pychess/Players/PyChess.py", "PYTHONPATH")
-            
-            if not path:
-                path = os.path.dirname(imp.find_module("os")[1])
-                path = os.path.join(path,
-                        "site-packages/pychess/Players/PyChess.py")
-                if not os.path.isfile(path) or not os.access(path, os.R_OK):
-                    return False
-            
+            path = join(abspath(dirname(__file__)), "PyChess.py")
+            if not os.path.isfile(path) or not os.access(path, os.R_OK):
+                return False
+
             return path, interpreterPath, ["-u", path]
         
         elif binname == "shatranj.py":
