@@ -8,6 +8,7 @@ from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
 from pychess.System.prefix import addDataPrefix
 
+
 firstRun = True
 def run(widgets):
     global firstRun
@@ -16,17 +17,37 @@ def run(widgets):
         firstRun = False
     widgets["preferences"].show()
 
+panels_gw = None
 def initialize(widgets):
+    global panels_gw
+
+    from pychess.Utils.GameModel import GameModel
+    from pychess.widgets.gamewidget import key2gmwidg, GameWidget, attachGameWidget, delGameWidget
     
     def delete_event (widget, *args):
         widgets["preferences"].hide()
+        if panels_gw in key2gmwidg.values():
+            delGameWidget(panels_gw)
         return True
     
     GeneralTab(widgets)
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
-    
+
+    panels_gw = GameWidget(GameModel())
+
+    def switch_handler(widget, gpointer, pagenum):
+        page_widget = widget.get_nth_page(pagenum)
+        print "Widget attached to page %s: %s" % ( pagenum, page_widget )
+        if pagenum == 5:
+            attachGameWidget(panels_gw)
+        else:
+            if panels_gw in key2gmwidg.values():
+                delGameWidget(panels_gw)
+
+    widgets["notebook1"].connect("switch_page", switch_handler)    
+
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences_close_button"].connect("clicked", delete_event)
 
@@ -395,7 +416,7 @@ class PanelTab:
 
         tv.append_column(gtk.TreeViewColumn(
                 "Name", gtk.CellRendererText(), text=2))
-        
+
     def col_toggled( self, cell, path, model ):
         """
         Sets the toggled state on the toggle button to true or false.
@@ -405,6 +426,7 @@ class PanelTab:
         print "Toggle '%s' to: %s" % (panel, model[path][0],)
         from pychess.widgets.gamewidget import notebooks, docks
         from pychess.widgets.pydock.__init__ import EAST
+
         if model[path][0]:
             conf.set(panel, True)
             leaf = notebooks["board"].get_parent().get_parent()
