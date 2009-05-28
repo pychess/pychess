@@ -12,18 +12,21 @@ from pychess.System.prefix import addDataPrefix
 firstRun = True
 def run(widgets):
     global firstRun
+    from pychess.widgets.gamewidget import attachGameWidget
     if firstRun:
         initialize(widgets)
         firstRun = False
     widgets["preferences"].show()
 
+    nb = widgets["notebook1"]
+    page_widget = nb.get_nth_page(nb.get_current_page())
+    if nb.get_tab_label(page_widget).get_text() == _('Sidepanels'):
+        attachGameWidget(panels_gw)
+
 panels_gw = None
 def initialize(widgets):
     global panels_gw
-
-    from pychess.Utils.GameModel import GameModel
-    from pychess.widgets.gamewidget import key2gmwidg, GameWidget, attachGameWidget, delGameWidget
-    
+    from pychess.widgets.gamewidget import key2gmwidg, attachGameWidget, delGameWidget
     def delete_event (widget, *args):
         widgets["preferences"].hide()
         if panels_gw in key2gmwidg.values():
@@ -35,12 +38,13 @@ def initialize(widgets):
     SoundTab(widgets)
     PanelTab(widgets)
 
+    from pychess.Utils.GameModel import GameModel
+    from pychess.widgets.gamewidget import GameWidget
     panels_gw = GameWidget(GameModel())
 
     def switch_handler(widget, gpointer, pagenum):
         page_widget = widget.get_nth_page(pagenum)
-        print "Widget attached to page %s: %s" % ( pagenum, page_widget )
-        if pagenum == 5:
+        if widget.get_tab_label(page_widget).get_text() == _('Sidepanels'):
             attachGameWidget(panels_gw)
         else:
             if panels_gw in key2gmwidg.values():
@@ -423,7 +427,7 @@ class PanelTab:
         """
         model[path][0] = not model[path][0]
         panel = model[path][3].__name__
-        print "Toggle '%s' to: %s" % (panel, model[path][0],)
+
         from pychess.widgets.gamewidget import notebooks, docks
         from pychess.widgets.pydock.__init__ import EAST
 
