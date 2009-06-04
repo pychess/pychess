@@ -56,7 +56,7 @@ class ICPlayer (Player):
            and wname == self.gamemodel.players[0].getICHandle() \
            and bname == self.gamemodel.players[1].getICHandle():
             # In some cases (like lost on time) the last move is resent
-            if ply <= self.lastPly:
+            if ply <= self.gamemodel.ply:
                 return
             self.lastPly = ply
             if 1-curcol == self.color:
