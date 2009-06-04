@@ -29,6 +29,7 @@ reprReason_long = {
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
     ADJOURNED_AGREEMENT: _("Because the players agreed to"),
     ADJOURNED_SERVER_SHUTDOWN: _("Because the server was shutdown"),
+    ADJOURNED_COURTESY: _("Because a player lost connection and the other player requested adjournment"),
 
     ABORTED_ADJUDICATION: _("Because of adjudication by an admin"),
     ABORTED_AGREEMENT: _("Because the players agreed to"),

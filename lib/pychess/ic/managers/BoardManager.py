@@ -406,6 +406,9 @@ class BoardManager (GObject):
                 reason = ABORTED_ADJUDICATION
             else:
                 reason = UNKNOWN_REASON
+        elif "courtesyadjourned" in parts:
+            result = ADJOURNED
+            reason = ADJOURNED_COURTESY
         elif "courtesyaborted" in parts:
             result = ABORTED
             reason = ABORTED_COURTESY
