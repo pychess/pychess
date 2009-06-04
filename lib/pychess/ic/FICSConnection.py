@@ -229,9 +229,8 @@ class FICSConnection (Connection):
                 for errortype in (IOError, LogOnError, EOFError,
                                   socket.error, socket.gaierror, socket.herror):
                     if isinstance(e, errortype):
-                        e = None
-                if e != None: raise e
-            
+                        break
+                else: raise e
             self.connected = False
         self.client.close()
     
