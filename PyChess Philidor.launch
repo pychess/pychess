@@ -4,7 +4,7 @@
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/home/thomas/Programmering/workspace/pychess/pychess"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/home/thomas/Programmering/workspace/pychess 0.8.1/pychess"/>
 <stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="/usr/bin/python"/>
-<stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="pychess"/>
+<stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="pychess 0.8.1"/>
 </launchConfiguration>
