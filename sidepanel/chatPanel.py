@@ -6,6 +6,7 @@ import pango
 import time
 
 from pychess.System import uistuff
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
@@ -23,7 +24,7 @@ class Sidepanel:
         self.chatView.disable("Waiting for game to load")
         self.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
-        self.gamemodel.connect("game_started", self.onGameStarted)
+        glock.glock_connect(self.gamemodel, "game_started", self.onGameStarted)
         return self.chatView
     
     def onGameStarted (self, gamemodel):
