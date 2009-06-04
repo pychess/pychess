@@ -1,6 +1,7 @@
 
 import re
 from gobject import *
+import threading
 
 from pychess.System.Log import log
 from pychess.Utils.const import *
@@ -83,7 +84,7 @@ class BoardManager (GObject):
                 "Removing game (\d+) from observation list\.")
         
         self.queuedUpdates = {}
-        self.queuedCalls = {}
+        self.gamemodelFinishedInitEvents = {}
         self.ourGameno = ""
         self.castleSigns = {}
         
@@ -183,10 +184,16 @@ class BoardManager (GObject):
             self.queuedUpdates[gameno].append(style12)
             return
         
+        if self.gamemodelFinishedInitEvents.has_key(gameno):
+            self.gamemodelFinishedInitEvents[gameno].wait()
+        
         castleSigns = self.castleSigns[gameno]
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.__parseStyle12(style12, castleSigns)
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+    
+    def onGameModelStarted (self, gameno):
+        self.gamemodelFinishedInitEvents[gameno].set()
     
     def onWasPrivate (self, match):
         gameno, = match.groups()
@@ -329,6 +336,8 @@ class BoardManager (GObject):
             wms = bms = int(minutes)*60*1000
             gain = int(increment)
         
+        del self.queuedUpdates[gameno]
+        
         board = {"wname": wname, "wrating": self.parseDigits(wrating),
                  "bname": bname, "brating": self.parseDigits(brating),
                  "rated": rated.lower()=="rated",
@@ -336,14 +345,6 @@ class BoardManager (GObject):
                  "gameno": gameno, "variant":variant, "pgn": pgn}
         
         self.emit ("observeBoardCreated", board)
-        
-        for call in self.queuedCalls[gameno]:
-            print "call %s" % call
-            call()
-            print "/call"
-        
-        del self.queuedUpdates[gameno]
-        del self.queuedCalls[gameno]
     
     def onGameEnd (self, glm, gameno, wname, bname, result, comment):
         parts = set(re.findall("\w+",comment))
@@ -420,23 +421,19 @@ class BoardManager (GObject):
             self.emit("curGameEnded", gameno, wname, bname, result, reason)
             self.ourGameno = ""
         else:
-            f = lambda: self.emit("obsGameEnded", gameno, wname, bname, result, reason)
-            if gameno in self.queuedCalls:
-                log.debug("added observed game ended to queue")
-                self.queuedCalls[gameno].append(f)
-            else:
-                f()
+            if self.gamemodelFinishedInitEvents.has_key(gameno):
+                self.gamemodelFinishedInitEvents[gameno].wait()
+                self.emit("obsGameEnded", gameno, wname, bname, result, reason)
     
     def onGamePause (self, match):
         gameno, state = match.groups()
-        f = lambda: self.emit("gamePaused", gameno, state=="paused")
-        if gameno in self.queuedCalls:
-            self.queuedCalls[gameno].append(f)
-        else:
-            f()
+        if self.gamemodelFinishedInitEvents.has_key(gameno):
+            self.gamemodelFinishedInitEvents[gameno].wait()
+        self.emit("gamePaused", gameno, state=="paused")
     
     def onUnobserveGame (self, match):
         gameno, = match.groups()
+        del self.gamemodelFinishedInitEvents[gameno]
         self.emit("obsGameUnobserved", gameno)
     
     ############################################################################
@@ -456,11 +453,12 @@ class BoardManager (GObject):
         print >> self.connection.client, "flag"
     
     def observe (self, gameno):
-        if gameno not in self.queuedUpdates:
+        if not self.gamemodelFinishedInitEvents.has_key(gameno):
             self.queuedUpdates[gameno] = []
-            self.queuedCalls[gameno] = []
-        print >> self.connection.client, "observe %s" % gameno
-        print >> self.connection.client, "moves %s" % gameno
+            self.gamemodelFinishedInitEvents[gameno] = threading.Event()
+            self.gamemodelFinishedInitEvents[gameno].clear()
+            print >> self.connection.client, "observe %s" % gameno
+            print >> self.connection.client, "moves %s" % gameno
     
     def unobserve (self, gameno):
         print >> self.connection.client, "unobserve %s" % gameno
