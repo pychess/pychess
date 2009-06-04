@@ -22,10 +22,11 @@ class ICPlayer (Player):
         self.gamemodel = gamemodel
         self.connection = self.gamemodel.connection
         
-        self.connection.bm.connect("boardUpdate", self.__boardUpdate)
-        self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
-        self.connection.om.connect("onOfferRemove", self.__onOfferRemove)
-        self.connection.cm.connect("privateMessage", self.__onPrivateMessage)
+        self.conids = {}
+        self.conids["boardUpdate"] = self.connection.bm.connect("boardUpdate", self.__boardUpdate)
+        self.conids["onOfferAdd"] = self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
+        self.conids["onOfferRemove"] = self.connection.om.connect("onOfferRemove", self.__onOfferRemove)
+        self.conids["privateMessage"] = self.connection.cm.connect("privateMessage", self.__onPrivateMessage)
         
         self.offerToIndex = {}
         self.indexToOffer = {}
@@ -71,10 +72,22 @@ class ICPlayer (Player):
     #    Ending the game
     #===========================================================================
     
+    def __disconnect_conids(self):
+        if self.connection.bm.handler_is_connected(self.conids["boardUpdate"]):
+            self.connection.bm.disconnect(self.conids["boardUpdate"])
+        if self.connection.om.handler_is_connected(self.conids["onOfferAdd"]):
+            self.connection.om.disconnect(self.conids["onOfferAdd"])
+        if self.connection.om.handler_is_connected(self.conids["onOfferRemove"]):
+            self.connection.om.disconnect(self.conids["onOfferRemove"])
+        if self.connection.cm.handler_is_connected(self.conids["privateMessage"]):
+            self.connection.cm.disconnect(self.conids["privateMessage"])
+    
     def end (self, status, reason):
+        self.__disconnect_conids()
         self.queue.put("del")
     
     def kill (self, reason):
+        self.__disconnect_conids()
         self.queue.put("del")
     
     #===========================================================================
