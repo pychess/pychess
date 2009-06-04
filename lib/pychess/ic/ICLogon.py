@@ -160,7 +160,7 @@ class ICLogon:
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout", lambda iclounge: self.onDisconnected(None))
-        self.lounge.connect("autoLogout", lambda iclounge: self.onAutologout(None))
+        glock.glock_connect(self.lounge, "autoLogout", lambda iclounge: self.onAutologout(None))
         
         self.showNormal()
         self.widgets["messagePanel"].hide()
