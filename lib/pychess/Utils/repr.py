@@ -14,7 +14,7 @@ reprReason_long = {
     DRAW_REPITITION: _("Because the same position was repeated three times in a row"),
     DRAW_50MOVES: _("Because the last 50 moves brought nothing new"),
     DRAW_CALLFLAG: _("Because both players ran out of time"),
-    DRAW_STALEMATE: _("Because %(mover) stalemated"),
+    DRAW_STALEMATE: _("Because %(mover)s stalemated"),
     DRAW_AGREE: _("Because the players agreed to"),
     DRAW_ADJUDICATION: _("Because of adjudication by an admin"),
     DRAW_LENGTH: _("Because the game exceed the max length"),
