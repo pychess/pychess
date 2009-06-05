@@ -505,6 +505,8 @@ def createRematch (gamemodel):
         gain = gamemodel.timemodel.gain
         newgamemodel = GameModel(TimeModel(secs, gain), gamemodel.variant)
     else:
+        secs = 0
+        gain = 0
         newgamemodel = GameModel(variant=gamemodel.variant)
 
     wp = gamemodel.players[WHITE]
