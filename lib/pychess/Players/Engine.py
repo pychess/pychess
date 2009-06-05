@@ -4,8 +4,10 @@ from urllib import urlopen, urlencode
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.ThreadPool import pool
+from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, DRAW_OFFER, CHAT_ACTION
+
 
 from Player import Player
 
@@ -94,8 +96,13 @@ class Engine (Player):
     
     def putMessage (self, message):
         def answer (message):
-            data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                           urlencode({"message":message, "botcust2":"x"})).read()
+            try:
+                data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                               urlencode({"message":message, "botcust2":"x"})).read()
+            except IOError, e:
+                log.warn("Couldn't answer message from online bot: '%s'\n" % e,
+                         self.defname)
+                return
             ss = "<b>DMPGirl:</b>"
             es = "<br>"
             answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
