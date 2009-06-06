@@ -1,1 +1,1 @@
-__all__ = ["fen", "epd", "pgn"]
+__all__ = ["fen", "epd", "pgn",'chessalpha2']
