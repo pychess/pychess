@@ -68,7 +68,8 @@ def save (file, model):
     ############################################################################
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
         file.write(" resign;")
-            
+    
+    print >> file
     file.close()
     
 def load (file):
