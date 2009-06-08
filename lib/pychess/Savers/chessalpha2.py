@@ -17,7 +17,18 @@ diaPieces = ((('\'','Ê','Â','À','Ä','Æ','È'),
              (('#','Ë','Ã','Á','Å','Ç','É'),
               ('#','ë','ã','á','å','ç','é')))
 borderNums = ('¬','"','£','$','%','^','&','*')
-
+lisPieces = ((FAN_PIECES[BLACK][KNIGHT],'K'),
+ (FAN_PIECES[BLACK][BISHOP],'J'),
+ (FAN_PIECES[BLACK][ROOK],'L'),
+ (FAN_PIECES[BLACK][QUEEN],'M'),
+ (FAN_PIECES[BLACK][KING],'N'),
+ (FAN_PIECES[WHITE][KNIGHT],'k'),
+ (FAN_PIECES[WHITE][BISHOP],'j'),
+ (FAN_PIECES[WHITE][ROOK],'l'),
+ (FAN_PIECES[WHITE][QUEEN],'m'),
+ (FAN_PIECES[WHITE][KING],'n'),
+ ('†', '+'),
+ ('‡', '+'))
 #{\rtf1\ansi{\fonttbl\f0\fswiss Helvetica;}\f0\pard
 #This is some {\b bold} text.\par
 #}
@@ -27,12 +38,23 @@ def save (file, model):
     """Saves the position as a diagram using chess fonts"""
     
     print >> file, "<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>"
-    print >> file, "<style type='text/css'>pre {margin:0; padding:0}</style>"
-    print >> file, "<table style='float:left'><tr><td colspan='6'><pre style='font-family:\"Chess Alpha 2\"; font-size:20pt'>"
+    print >> file, """<style type='text/css'>
+                      table{display:inline-block; vertical-align:top; margin-right:2em;}
+                      td.mov{margin:0;padding:0;font-size:10pt;font-family:"Chess Alpha 2"; padding-left:.5em}
+                      td.numa, td.numb {width:0; padding:0; text-align:right}
+                      td.numb {padding-left:1em}
+                      pre{margin:0; padding:0}</style>"""
+    print >> file, """<table cellspacing="0" cellpadding="0"><tr><td colspan='6'>
+                      <pre style='font-family:"Chess Alpha 2"; font-size:16pt; text-align:center'>"""
     writeDiagram(file, model)
     print >> file, "</pre></td></tr>"
     
-    sanmvs = listToSan(model.boards[0], model.moves)
+    sanmvs = map(toFAN, model.boards[:-1], model.moves)
+    def conv(fan):
+        for f,r in lisPieces:
+            fan = fan.replace(f,r)
+        return fan
+    sanmvs = map(conv, sanmvs)
     sanmvs.extend(['']*((4-(len(sanmvs)%4))%4))
     sanmvs = [(sanmvs[i],sanmvs[i+1]) for i in xrange(0,len(sanmvs),2)]
     for i in xrange((len(sanmvs)+1)/2):
@@ -53,12 +75,21 @@ def save (file, model):
     
     file.close()
 
-def writeMoves(file, m1, movepair1, m2, movepair2):
+def writeMoves2(file, m1, movepair1, m2, movepair2):
     preit = lambda s: "<td style='font-family:\"Chess Alpha 2\"; font-size:10pt'>%s</td>"%s
+    preitr = lambda s: "<td style='font-family:\"Chess Alpha 2\"; font-size:10pt; text-align:right; width:0'>%s</td>"%s
     m1 += '.'; m2 += '.' 
-    print >> file, "<tr>%s%s%s" %  (preit(m1), preit(movepair1[0]), preit(movepair1[1]))
+    print >> file, "<tr>%s%s%s" %  (preitr(m1), preit(movepair1[0]), preit(movepair1[1]))
     if not movepair2[0]: m2 = ''
-    print >> file, "%s%s%s</tr>" %  (preit(m2), preit(movepair2[0]), preit(movepair2[1]))
+    print >> file, "%s%s%s</tr>" %  (preitr(m2), preit(movepair2[0]), preit(movepair2[1]))
+
+def writeMoves(file, m1, movepair1, m2, movepair2):
+    m1 += '.'; m2 += '.' 
+    if not movepair2[0]: m2 = ''
+    print >> file, """<tr><td class='mov numa'>%s</td><td class='mov'>%s</td><td class='mov'>%s</td>
+                          <td class='mov numb'>%s</td><td class='mov'>%s</td><td class='mov'>%s</td></tr>""" % \
+                          (m1, movepair1[0], movepair1[1], m2, movepair2[0], movepair2[1])
+
 
 def writeDiagram(file, model, border = True, whitetop = False):
     data = model.boards[-1].data[:]
