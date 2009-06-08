@@ -131,6 +131,7 @@ class BoardPreview:
             self.boardview.animationLock.release()
         self.boardview.redraw_canvas()
         self.boardview.shown = last
+        self.shown_changed(self.boardview, last)
     
     def on_first_button (self, button):
         self.boardview.showFirst()
