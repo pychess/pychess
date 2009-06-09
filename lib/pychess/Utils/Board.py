@@ -57,6 +57,11 @@ class Board:
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
     
+    def addPiece (self, cord, piece):
+        self[cord] = piece
+        self.board._addPiece(cord.cord, piece.piece, piece.color)
+        self.board.updateBoard()
+    
     def simulateMove (self, board1, move):
         moved = []
         new = []
