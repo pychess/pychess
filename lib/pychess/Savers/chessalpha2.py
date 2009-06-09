@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
+from htmlentitydefs import *
+
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import *
@@ -7,9 +10,13 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import evaluateComplete
 from pychess.Utils.logic import getStatus
 
+from ChessFile import ChessFile, LoadingError
+
+
 __label__ = _("Chess Alpha 2 Diagram")
 __endings__ = "html",
 __append__ = True
+
 
 #table[background][color][piece]
 diaPieces = ((('\'','Ê','Â','À','Ä','Æ','È'),
@@ -29,6 +36,18 @@ lisPieces = ((FAN_PIECES[BLACK][KNIGHT],'K'),
  (FAN_PIECES[WHITE][KING],'n'),
  ('†', '+'),
  ('‡', '+'))
+
+# Dictionaries and expressions for parsing diagrams
+entitydefs = dict(("&%s;"%a,unichr(ord(b)).encode('utf-8'))
+                  for a,b in entitydefs.iteritems() if len(b)==1)
+def2entity = dict((b, a) for a,b in entitydefs.iteritems())
+flatPieces = [c for a in diaPieces for b in a for c in b]
+piecesDia = dict((c,(col,pie)) for a in diaPieces for col,b in enumerate(a) for pie,c in enumerate(b))
+pat = "%s|%s" % ("|".join(flatPieces), "|".join(def2entity[a] for a in flatPieces if a in def2entity))
+reg1 = re.compile("(?:%s){8}"%pat, re.IGNORECASE)
+reg2 = re.compile(pat, re.IGNORECASE)
+
+    
 
 style = """
 table.pychess {display:inline-block; vertical-align:top; margin-right:2em;}
@@ -56,8 +75,9 @@ def save (file, model):
     sanmvs.extend(['']*((4-(len(sanmvs)%4))%4))
     sanmvs = [(sanmvs[i],sanmvs[i+1]) for i in xrange(0,len(sanmvs),2)]
     for i in xrange((len(sanmvs)+1)/2):
+        left = i+1+model.lowply/2
         writeMoves(file, str(i+1+model.lowply/2), sanmvs[i],
-                         str(i+1+len(sanmvs)/2+model.lowply/2), sanmvs[i+len(sanmvs)/2])
+                         str(left+len(sanmvs)/2), sanmvs[i+len(sanmvs)/2])
     print >> file, "</table>"
     
     file.close()
@@ -68,7 +88,6 @@ def writeMoves(file, m1, movepair1, m2, movepair2):
     print >> file, """<tr><td class='numa'>%s</td><td>%s</td><td>%s</td>
                           <td class='numb'>%s</td><td>%s</td><td>%s</td></tr>""" % \
                           (m1, movepair1[0], movepair1[1], m2, movepair2[0], movepair2[1])
-
 
 def writeDiagram(file, model, border = True, whitetop = False):
     data = model.boards[-1].data[:]
@@ -88,10 +107,35 @@ def writeDiagram(file, model, border = True, whitetop = False):
             else:
                 color = piece.color
                 piece = piece.piece
-            file.write(diaPieces[bg][color][piece])
+            c = diaPieces[bg][color][piece]
+            if c in def2entity: c = def2entity[c]
+            file.write(c)
         file.write('\\\n')
     if border:
         print >> file, "{ABCDEFGH}"
 
 def load (file):
-    assert False, "The format doesn't support opening yet"
+    lines = reg1.findall(file.read().encode('utf-8'))
+    return AlphaFile([lines[i:i+8] for i in xrange(0,len(lines),8)])
+
+class AlphaFile (ChessFile):
+    
+    def loadToModel (self, gameno, position, model=None):
+        if not model: model = GameModel()
+        
+        board = model.variant.board()
+        for y,row in enumerate(self.games[gameno]):
+            for x,letter in enumerate(reg2.findall(row)):
+                if letter in entitydefs:
+                    letter = entitydefs[letter]
+                if letter not in piecesDia:
+                    raise LoadingError (_("Couldn't load the diagram '%s'")%repr(letter))
+                col, pie = piecesDia[letter]
+                if pie != EMPTY:
+                    board.addPiece(Cord(x,7-y), Piece(col,pie))
+        
+        model.boards = [board]
+        if model.status == WAITING_TO_START:
+            model.status, model.reason = getStatus(model.boards[-1])
+        
+        return model
