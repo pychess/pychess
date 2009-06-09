@@ -29,6 +29,7 @@ class Sidepanel:
         self.board = gmwidg.board.view
         
         glock_connect(self.board.model, "game_changed", self.game_changed)
+        glock_connect(self.board.model, "game_started", self.game_changed)
         glock_connect(self.board.model, "moves_undoing", self.moves_undoing)
         self.board.connect("shown_changed", self.shown_changed)
         
@@ -122,12 +123,18 @@ class Sidepanel:
                 continue
     
     def game_changed (self, game):
-        ply = game.ply
-        
+        len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
+        if len(self.left.get_model()) and not self.left.get_model()[0][0]: len_ -= 1
+        #print len_, game.lowply, game.ply
+        for ply in xrange(len_+game.lowply, game.ply+1):
+            #print 'a', ply
+            self.__addMove(game, ply)
+    
+    def __addMove(self, game, ply):
         row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
-            notat = toFAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
+            notat = toFAN(m.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
         else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
                 localRepr=True)
         
@@ -138,8 +145,7 @@ class Sidepanel:
         
         # Test if the move is black first move. This will be the case if the
         # game was loaded from a fen/epd starting at black
-        if view == self.right and \
-                len(view.get_model()) == len(other.get_model()):
+        if view == self.right and len(view.get_model()) == len(other.get_model()):
             self.left.get_model().append([""])
         
         view.get_model().append([notat])

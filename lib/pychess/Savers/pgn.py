@@ -168,10 +168,7 @@ class PGNFile (ChessFile):
                 break
             model.moves.append(move)
             model.boards.append(model.boards[-1].move(move))
-
-            # This is for the sidepanels
-            model.emit("game_changed")
-
+        
         if model.timemodel:
             blacks = len(movstrs)/2
             whites = len(movstrs)-blacks
