@@ -11,7 +11,7 @@ from pychess.Utils.lutils.leval import evaluateComplete
 from pychess.Utils.logic import getStatus
 
 from ChessFile import ChessFile, LoadingError
-
+group = lambda l, s: [l[i:i+s] for i in xrange(0,len(l),s)]
 
 __label__ = _("Chess Alpha 2 Diagram")
 __endings__ = "html",
@@ -35,7 +35,12 @@ lisPieces = ((FAN_PIECES[BLACK][KNIGHT],'K'),
  (FAN_PIECES[WHITE][QUEEN],'m'),
  (FAN_PIECES[WHITE][KING],'n'),
  ('†', '+'),
- ('‡', '+'))
+ ('‡', '+'),
+ ('1/2', 'Z'))
+def fanconv(fan):
+    for f,r in lisPieces:
+        fan = fan.replace(f,r)
+    return fan
 
 # Dictionaries and expressions for parsing diagrams
 entitydefs = dict(("&%s;"%a,unichr(ord(b)).encode('utf-8'))
@@ -50,11 +55,12 @@ reg2 = re.compile(pat, re.IGNORECASE)
     
 
 style = """
-table.pychess {display:inline-block; vertical-align:top; margin-right:2em;}
+table.pychess {display:inline-block; vertical-align:top}
 table.pychess td {margin:0; padding:0; font-size:10pt; font-family:"Chess Alpha 2"; padding-left:.5em}
-table.pychess td.numa {width:0; padding:0; text-align:right}
-table.pychess td.numa {width:0; padding-left:1em; text-align:right}
-table.pychess pre {margin:0; padding:0; font-family:"Chess Alpha 2"; font-size:16pt; text-align:center}"""
+table.pychess td.numa {width:0; text-align:right}
+table.pychess td.numa {width:0; text-align:right; padding-left:1em}
+table.pychess td.status {text-align:center; font-size:12pt; padding-right:2em}
+table.pychess pre {margin:0; padding:0; font-family:"Chess Alpha 2"; font-size:16pt; text-align:center; line-height:1}"""
 
 def save (file, model):
     """Saves the position as a diagram using chess fonts"""
@@ -66,14 +72,13 @@ def save (file, model):
     print >> file, "</pre></td></tr>"
     
     sanmvs = map(toFAN, model.boards[:-1], model.moves)
-    def conv(fan):
-        for f,r in lisPieces:
-            fan = fan.replace(f,r)
-        return fan
-    sanmvs = map(conv, sanmvs)
-    if model.lowply & 1: sanmvs = [">"]+sanmvs
-    sanmvs.extend(['']*((4-(len(sanmvs)%4))%4))
-    sanmvs = [(sanmvs[i],sanmvs[i+1]) for i in xrange(0,len(sanmvs),2)]
+    sanmvs = map(fanconv, sanmvs)
+    if model.lowply & 1: sanmvs = ["&gt;"]+sanmvs
+    if model.status in (DRAW, WHITEWON, BLACKWON):
+        sanmvs.extend(['']*(-len(sanmvs)%2))
+        sanmvs.append(fanconv(reprResult[model.status]))
+    sanmvs.extend(['']*(-len(sanmvs)%4))
+    sanmvs = group(sanmvs, 2)
     for i in xrange((len(sanmvs)+1)/2):
         left = i+1+model.lowply/2
         writeMoves(file, str(i+1+model.lowply/2), sanmvs[i],
@@ -85,16 +90,17 @@ def save (file, model):
 def writeMoves(file, m1, movepair1, m2, movepair2):
     m1 += '.'; m2 += '.' 
     if not movepair2[0]: m2 = ''
-    print >> file, """<tr><td class='numa'>%s</td><td>%s</td><td>%s</td>
-                          <td class='numb'>%s</td><td>%s</td><td>%s</td></tr>""" % \
-                          (m1, movepair1[0], movepair1[1], m2, movepair2[0], movepair2[1])
+    print >> file, "<tr><td class='numa'>%s</td><td>%s</td><td>%s</td>" % (m1, movepair1[0], movepair1[1])
+    if not movepair2[1] and movepair2[0] in map(fanconv, reprResult):
+        print >> file, "<td class='status' colspan='3'>%s</td></tr>" % movepair2[0] 
+    else: print >> file, "<td class='numb'>%s</td><td>%s</td><td>%s</td></tr>" % (m2, movepair2[0], movepair2[1])
 
 def writeDiagram(file, model, border = True, whitetop = False):
     data = model.boards[-1].data[:]
     if not whitetop: data.reverse()
     
     if border:
-        print >> file, "[<<<<<<<<]"
+        print >> file, "[&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;]"
     for y,row in enumerate(data):
         if whitetop:
             file.write(borderNums(y))
@@ -116,7 +122,7 @@ def writeDiagram(file, model, border = True, whitetop = False):
 
 def load (file):
     lines = reg1.findall(file.read().encode('utf-8'))
-    return AlphaFile([lines[i:i+8] for i in xrange(0,len(lines),8)])
+    return AlphaFile(group(lines, 8))
 
 class AlphaFile (ChessFile):
     
