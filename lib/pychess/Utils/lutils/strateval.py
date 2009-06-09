@@ -35,22 +35,23 @@ def join(items):
 #   * Tip: (s) Will sometimes be shown: "pawn storm", "cramped position"
 #
 
-def final_status (model, phase):
-    if model.status == DRAW:
-        yield _("draws")
-    elif model.status in (WHITEWON,BLACKWON):
-        yield _("mates")
+def final_status (model, ply, phase):
+    if ply == model.ply:
+        if model.status == DRAW:
+            yield _("draws")
+        elif model.status in (WHITEWON,BLACKWON):
+            yield _("mates")
 
-def offencive_moves_check (model, phase):
-    if model.boards[-1].board.isChecked():
+def offencive_moves_check (model, ply, phase):
+    if model.getBoardAtPly(ply).board.isChecked():
         yield _("puts opponent in check")
 
-def defencive_moves_safety (model, phase):
+def defencive_moves_safety (model, ply, phase):
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
 
-    if board.arBoard[TCORD(model.moves[-1].move)] != KING:
+    if board.arBoard[TCORD(model.getMoveAtPly(ply-1).move)] != KING:
         return
 
     color = oldboard.color
@@ -71,11 +72,11 @@ def defencive_moves_safety (model, phase):
     elif delta_score > 15:
         yield _("slightly improves king safety")
 
-def offencive_moves_rook (model, phase):
-    move = model.moves[-1].move
+def offencive_moves_rook (model, ply, phase):
+    move = model.getMoveAtPly(ply-1).move
     fcord = FCORD(move)
     tcord = TCORD(move)
-    board = model.boards[-1].board
+    board = model.getBoardAtPly(ply).board
     color = 1-board.color
     opcolor = 1-color
 
@@ -105,10 +106,10 @@ def offencive_moves_rook (model, phase):
             yield _("moves a rook to an open file")
         else: yield _("moves an rook to a half-open file")
 
-def offencive_moves_fianchetto (model, phase):
+def offencive_moves_fianchetto (model, ply, phase):
 
-    board = model.boards[-1].board
-    tcord = TCORD(model.moves[-1].move)
+    board = model.getBoardAtPly(ply).board
+    tcord = TCORD(model.getMoveAtPly(ply-1).move)
     movingcolor = 1-board.color
 
     if movingcolor == WHITE:
@@ -122,8 +123,8 @@ def offencive_moves_fianchetto (model, phase):
         elif board.castling & B_OOO and tcord == B7:
             yield _("moves bishop into fianchetto: %s") % "b7"
 
-def prefix_type (model, phase):
-    flag = FLAG(model.moves[-1].move)
+def prefix_type (model, ply, phase):
+    flag = FLAG(model.getMoveAtPly(ply-1).move)
 
     if flag in PROMOTIONS:
         yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
@@ -131,20 +132,20 @@ def prefix_type (model, phase):
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
         yield _("castles")
 
-def attack_type (model, phase):
+def attack_type (model, ply, phase):
 
     # We set bishop value down to knight value, as it is what most people expect
     bishopBackup = PIECE_VALUES[BISHOP]
     PIECE_VALUES[BISHOP] = PIECE_VALUES[KNIGHT]
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
 
-    if len(model.moves) > 1:
-        oldmove = model.moves[-2].move
-        oldboard3 = model.boards[-3].board
+    if ply - model.lowply >= 2:
+        oldmove = model.getMoveAtPly(ply-2).move
+        oldboard3 = model.getBoardAtPly(ply-2).board
     else: oldmove = None
-    move = model.moves[-1].move
+    move = model.getMoveAtPly(ply-1).move
     tcord = TCORD(move)
 
     if oldboard.arBoard[tcord] != EMPTY:
@@ -164,7 +165,7 @@ def attack_type (model, phase):
 
     PIECE_VALUES[BISHOP] = bishopBackup
 
-def defencive_moves_tactic (model, phase):
+def defencive_moves_tactic (model, ply, phase):
 
     # ------------------------------------------------------------------------ #
     # Test if we threat something, or at least put more pressure on it         #
@@ -174,9 +175,9 @@ def defencive_moves_tactic (model, phase):
     bishopBackup = PIECE_VALUES[BISHOP]
     PIECE_VALUES[BISHOP] = PIECE_VALUES[KNIGHT]
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
-    move = model.moves[-1].move
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
+    move = model.getMoveAtPly(ply-1).move
     fcord = FCORD(move)
     tcord = TCORD(move)
     piece = board.arBoard[tcord]
@@ -293,10 +294,10 @@ def defencive_moves_tactic (model, phase):
     PIECE_VALUES[BISHOP] = bishopBackup
 
 
-def offencive_moves_pin (model, phase):
+def offencive_moves_pin (model, ply, phase):
 
-    board = model.boards[-1].board
-    move = model.moves[-1].move
+    board = model.getBoardAtPly(ply).board
+    move = model.getMoveAtPly(ply-1).move
     tcord = TCORD(move)
     piece = board.arBoard[tcord]
 
@@ -331,14 +332,14 @@ def offencive_moves_pin (model, phase):
                 'cord': reprCord[c]}
 
 
-def state_outpost (model, phase):
+def state_outpost (model, ply, phase):
 
     if phase >= 6:
         # Doesn't make sense in endgame
         return
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
     color = 1-board.color
     opcolor = 1-color
 
@@ -368,14 +369,14 @@ def state_outpost (model, phase):
                  oldwpawns & sides & front):
             yield 35, _("Black has a new piece in outpost: %s") % reprCord[cord]
 
-def state_pawn (model, phase):
+def state_pawn (model, ply, phase):
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
     color = 1-board.color
     opcolor = 1-color
 
-    move = model.moves[-1].move
+    move = model.getMoveAtPly(ply-1).move
 
     pawns = board.boards[color][PAWN]
     oppawns = board.boards[opcolor][PAWN]
@@ -483,16 +484,16 @@ def state_pawn (model, phase):
        stonewall[color] & oldpawns != stonewall[color]:
         yield 10, _("%s moves pawns into stonewall formation") % reprColor[color]
 
-def state_destroysCastling (model, phase):
+def state_destroysCastling (model, ply, phase):
     """ Does the move destroy the castling ability of the opponent """
 
     # If the move is a castling, nobody will every care if the castling
     # possibilities has changed
-    if FLAG(model.moves[-1].move) in (QUEEN_CASTLE, KING_CASTLE):
+    if FLAG(model.getMoveAtPly(ply-1).move) in (QUEEN_CASTLE, KING_CASTLE):
         return
 
-    oldcastling = model.boards[-2].board.castling
-    castling = model.boards[-1].board.castling
+    oldcastling = model.getBoardAtPly(ply-1).board.castling
+    castling = model.getBoardAtPly(ply).board.castling
 
     if oldcastling & W_OOO and not castling & W_OOO:
         if oldcastling & W_OO and not castling & W_OO:
@@ -508,16 +509,16 @@ def state_destroysCastling (model, phase):
     elif oldcastling & B_OO and not castling & B_OO:
         yield 500/phase, _("%s can no longer castle in kingside") % reprColor[BLACK]
 
-def state_trappedBishops (model, phase):
+def state_trappedBishops (model, ply, phase):
     """ Check for bishops trapped at A2/H2/A7/H7 """
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
 
     opcolor = board.color
     color = 1-opcolor
 
-    move = model.moves[-1].move
+    move = model.getMoveAtPly(ply-1).move
     tcord = TCORD(move)
 
     # Only a pawn is able to trap a bishop
@@ -543,13 +544,13 @@ def state_trappedBishops (model, phase):
         yield 300/phase, _("%(opcolor)s has a new trapped bishop on %(cord)s") % {
                             'opcolor': reprColor[opcolor], 'cord': reprCord[cord]}
 
-def simple_tropism (model, phase):
+def simple_tropism (model, ply, phase):
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
     color = oldboard.color
 
-    move = model.moves[-1].move
+    move = model.getMoveAtPly(ply-1).move
     fcord = FCORD(move)
     tcord = TCORD(move)
     arBoard = board.arBoard
@@ -586,12 +587,12 @@ def simple_tropism (model, phase):
             yield (score-oldscore)*2, _("develops a %(piece)s: %(cord)s") % {
                                     'piece': reprPiece[piece].lower(), 'cord': reprCord[tcord]}
 
-def simple_activity (model, phase):
+def simple_activity (model, ply, phase):
 
-    board = model.boards[-1].board
-    oldboard = model.boards[-2].board
+    board = model.getBoardAtPly(ply).board
+    oldboard = model.getBoardAtPly(ply-1).board
     color = 1-board.color
-    move = model.moves[-1].move
+    move = model.getMoveAtPly(ply-1).move
     fcord = FCORD(move)
     tcord = TCORD(move)
 
@@ -604,7 +605,7 @@ def simple_activity (model, phase):
         yield (moves-oldmoves)/2, _("places a %(piece)s more active: %(cord)s") % {
                 'piece': reprPiece[board.arBoard[tcord]].lower(), 'cord': reprCord[tcord]}
 
-def tip_pawnStorm (model, phase):
+def tip_pawnStorm (model, ply, phase):
     """ If players are castled in different directions we should storm in
         opponent side """
 
@@ -612,7 +613,7 @@ def tip_pawnStorm (model, phase):
         # We don't use this in endgame
         return
 
-    board = model.boards[-1].board
+    board = model.getBoardAtPly(ply).board
 
     #if not board.hasCastled[WHITE] or not board.hasCastled[BLACK]:
     #    # Only applies after castling for both sides
@@ -636,9 +637,9 @@ def tip_pawnStorm (model, phase):
         if bright > wright:
             yield (bleft+3-wleft)*10, _("Black should do pawn storm in right")
 
-def tip_mobility (model, phase):
+def tip_mobility (model, ply, phase):
 
-    board = model.boards[-1].board
+    board = model.getBoardAtPly(ply).board
     colorBackup = board.color
 
     # People need a chance to get developed
