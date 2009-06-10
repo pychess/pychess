@@ -87,7 +87,8 @@ class SpotGraph (gtk.EventBox):
         
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
-        context.set_source_color(self.get_style().dark[self.state])
+        state = self.state == gtk.STATE_NORMAL and gtk.STATE_PRELIGHT or self.state
+        context.set_source_color(self.get_style().dark[state])
         context.stroke()
         
         #------------------------------------------------ Paint horizontal marks
@@ -151,10 +152,13 @@ class SpotGraph (gtk.EventBox):
             
             x, y, width, height = self.getTextBounds(self.hovered)
             
+            oldstyle = self.get_style()
+            self.set_style(tooltipStyle)
             tooltipStyle.paint_flat_box (self.window,
                 gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, tooltip, "tooltip",
                 int(x-hpadding), int(y-vpadding),
                 ceil(width+hpadding*2), ceil(height+vpadding*2))
+            self.set_style(oldstyle)
             
             context.move_to(x, y)
             context.set_source_color(tooltipStyle.fg[self.state])
@@ -286,7 +290,7 @@ class SpotGraph (gtk.EventBox):
         
         if spot == self.hovered:
             x, y, w, h = self.getTextBounds(spot)
-            tbounds = (x-hpadding, y-vpadding, w+hpadding*2, h+vpadding*2)
+            tbounds = (x-hpadding, y-vpadding, w+hpadding*2+1, h+vpadding*2+1)
             return self.join(bounds, tbounds)
         
         return bounds
