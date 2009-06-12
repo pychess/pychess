@@ -219,7 +219,7 @@ class ScorePlot (gtk.DrawingArea):
         
         sign = lambda n: n == 0 and 1 or n/abs(n)
         if self.scores:
-            mapper = lambda score: (e**(-.005*abs(score))-1) * sign(score)
+            mapper = lambda score: (e**(-5e-4*abs(score))-1) * sign(score)
             cr.set_source_rgb (0, 0, 0)
             cr.move_to(width, 0)
             cr.line_to(width/2 - width/2*mapper(self.scores[0]), 0)
