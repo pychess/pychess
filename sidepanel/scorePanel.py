@@ -219,12 +219,12 @@ class ScorePlot (gtk.DrawingArea):
         
         sign = lambda n: n == 0 and 1 or n/abs(n)
         if self.scores:
-            mapper = lambda score: (e**(-abs(score)/2000.)-1) * sign(score)
+            mapper = lambda score: (e**(-.005*abs(score))-1) * sign(score)
             cr.set_source_rgb (0, 0, 0)
             cr.move_to(width, 0)
-            cr.line_to(width/2 + width/2*mapper(self.scores[0]), 0)
+            cr.line_to(width/2 - width/2*mapper(self.scores[0]), 0)
             for i, score in enumerate(self.scores):
-                x = width/2 + width/2*mapper(score)
+                x = width/2 - width/2*mapper(score)
                 y = (i+1) * self.moveHeight
                 cr.line_to(x, y)
             cr.line_to(width, height)
