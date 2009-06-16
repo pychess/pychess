@@ -369,7 +369,6 @@ def _ensureReadForGameWidgets ():
         hbox.set_spacing(2)
         hbox.show_all()
         
-        tip = gtk.Tooltip()
         def cb (widget, x, y, keyboard_mode, tooltip, title, desc, filename):
             table = gtk.Table(2,2)
             table.set_row_spacings(2)
