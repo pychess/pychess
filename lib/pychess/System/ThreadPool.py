@@ -106,7 +106,7 @@ class ThreadPool:
 
 pool = ThreadPool()
 
-class PooledThread:
+class PooledThread (object):
     def start (self):
         pool.start(self.run)
     
