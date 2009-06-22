@@ -219,7 +219,7 @@ class UserInfoSection(Section):
             if not self.connection.isRegistred():
                 vbox = gtk.VBox()
                 table.attach(vbox, 0, 6, row, row+1)
-                label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games is be smaller."))
+                label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games will be smaller."))
                 label0.props.xalign = 0
                 label0.props.wrap = True
                 label0.props.width_request = 300
