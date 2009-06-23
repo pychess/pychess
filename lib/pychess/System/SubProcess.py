@@ -65,6 +65,9 @@ class SubProcess (gobject.GObject):
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
         gobject.child_watch_add(self.pid, self.__child_watch_callback)
+        
+        self.subprocExitcode = (None, None)
+        pool.start(self._wait4exit)
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
@@ -120,10 +123,7 @@ class SubProcess (gobject.GObject):
             except gobject.GError, e:
                 log.error(str(e)+". Last line wasn't sent.\n", self.defname)
     
-    def wait4exit (self, timeout=None):
-        if timeout != None:
-            signal.alarm(timeout)
-        
+    def _wait4exit (self):
         try:
             pid, code = os.waitpid(self.pid, 0)
         except OSError, error:
@@ -131,17 +131,8 @@ class SubProcess (gobject.GObject):
                 pid, code = self.pid, error.errno
             else:
                 raise
-        
-        # Cancel the alarm
-        signal.alarm(0)
-        
-        # Test if we were interrupted by alarm
-        if code == errno.EINTR:
-            return None, None
-        
-        code = (code, os.strerror(code))
-        log.debug("Exitcode %d %s\n" % code, self.defname)
-        return code
+
+        self.subprocExitcode = (code, os.strerror(code))
     
     def sendSignal (self, sign):
         try:
@@ -159,13 +150,15 @@ class SubProcess (gobject.GObject):
     def __gentleKill_inner (self, first, second):
         self.resume()
         self._closeChannels()
-        code, string = self.wait4exit(timeout=first)
+        time.sleep(first)
+        code, string = self.subprocExitcode
         if code == None:
             self.sigterm()
-            code, string = self.wait4exit(timeout=second)
+            time.sleep(second)
+            code, string = self.subprocExitcode
             if code == None:
                 self.sigkill()
-                return self.wait4exit()[0]
+                return self.subprocExitcode[0]
             return code
         return code
     
