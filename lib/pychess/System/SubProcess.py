@@ -2,6 +2,7 @@ import os
 import signal
 import errno
 import time
+import threading
 
 import gtk
 import gobject
@@ -64,6 +65,8 @@ class SubProcess (gobject.GObject):
         self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
+        self.channelsClosed = False
+        self.channelsClosedLock = threading.Lock()
         gobject.child_watch_add(self.pid, self.__child_watch_callback)
         
         self.subprocExitcode = (None, None)
@@ -78,6 +81,14 @@ class SubProcess (gobject.GObject):
         return channel
     
     def _closeChannels (self):
+        self.channelsClosedLock.acquire()
+        try:
+            if self.channelsClosed == True:
+                return
+            self.channelsClosed = True
+        finally:
+            self.channelsClosedLock.release()
+
         for tag in self.__channelTags:
             gobject.source_remove(tag)
         for channel in (self.inChannel, self.outChannel, self.errChannel):
