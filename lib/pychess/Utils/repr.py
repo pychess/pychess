@@ -39,5 +39,6 @@ reprReason_long = {
 
     WHITE_ENGINE_DIED: _("Because the %(white)s engine died"),
     BLACK_ENGINE_DIED: _("Because the %(white)s engine died"),
+    DISCONNECTED: _("Because the connection to the server was lost"),
     UNKNOWN_REASON: _("The reason is unknown")
 }

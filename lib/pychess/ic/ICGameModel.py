@@ -60,7 +60,7 @@ class ICGameModel (GameModel):
     
     def onDisconnected (self, connection):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.end (KILLED, WON_DISCONNECTION)
+            self.end (KILLED, DISCONNECTED)
     
     ############################################################################
     # Offer management                                                         #
