@@ -279,7 +279,8 @@ class GameWidget (gobject.GObject):
             self.messageSock.remove(self.messageSock.child)
         self.messageSock.add(message)
         self.messageSock.show_all()
-        notebooks["messageArea"].show()
+        if self == cur_gmwidg():
+            notebooks["messageArea"].show()
     
     def hideMessage (self):
         self.messageSock.hide()
