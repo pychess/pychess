@@ -134,7 +134,7 @@ class Sidepanel:
         row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
-            notat = toFAN(m.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
+            notat = toFAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
         else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
                 localRepr=True)
         
