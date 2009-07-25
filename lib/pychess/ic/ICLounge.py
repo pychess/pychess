@@ -90,15 +90,16 @@ class ICLounge (GObject):
         self.widgets["fics_lounge"].present()
 
     def close (self):
-        if self.widgets == None:
-            return
-        self.widgets["fics_lounge"].hide()
+        if self.widgets != None:
+            self.widgets["fics_lounge"].hide()
         global sections
-        for i in range(len(sections)):
-            if hasattr(sections[i], "__del__"):
-                sections[i].__del__()
+        if sections != None:
+            for i in range(len(sections)):
+                if hasattr(sections[i], "__del__"):
+                    sections[i].__del__()
         sections = None
-        self.connection.disconnect()
+        if self.connection != None:
+            self.connection.disconnect()
         self.connection = None
         self.widgets = None
 
