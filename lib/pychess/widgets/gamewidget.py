@@ -494,6 +494,7 @@ def attachGameWidget (gmwidg):
 
 def cur_gmwidg ():
     headbook = getheadbook()
+    if headbook == None: return None
     notebookKey = headbook.get_nth_page(headbook.get_current_page())
     return key2gmwidg[notebookKey]
 
