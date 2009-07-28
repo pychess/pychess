@@ -449,7 +449,7 @@ class CECPEngine (ProtocolEngine):
                 self.returnQueue.put("int")
             
             self.__force()
-            if self.board:
+            if self.board and gamemodel.status in UNFINISHED_STATES:
                 self.__hurry()
                 self._blockTillMove()
         
