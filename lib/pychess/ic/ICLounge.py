@@ -328,6 +328,12 @@ class ParrentListSection (Section):
         if type(pix0) == gtk.gdk.Pixbuf and type(pix1) == gtk.gdk.Pixbuf:
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
+    
+    def timeCompareFunction (self, treemodel, iter0, iter1, column):
+        (minute0, minute1) = (treemodel.get_value(iter0, 7), treemodel.get_value(iter1, 7))
+        return cmp(minute0, minute1)
+
+
 
 ########################################################################
 # Initialize Seek List                                                 #
@@ -347,12 +353,13 @@ class SeekTabSection (ParrentListSection):
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
 
         self.tv = self.widgets["seektreeview"]
-        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str)
+        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns (
                 self.tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
-                _("Type"), _("Clock"), hide=[0], pix=[1] )
+                _("Type"), _("Clock"),"", hide=[0,7], pix=[1] )
         self.tv.set_search_column(2)
+        self.tv.get_model().set_sort_func(6, self.timeCompareFunction, 0)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
@@ -382,7 +389,7 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         ti = self.store.append ([seek["gameno"], pix, seek["w"],
-                                int(seek["rt"]), rated, seek["tp"], time])
+                                int(seek["rt"]), rated, seek["tp"], time, float(seek["t"] + "." + seek["i"])])
         self.seeks [seek["gameno"]] = ti
         count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
