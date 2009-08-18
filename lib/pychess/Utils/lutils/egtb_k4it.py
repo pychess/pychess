@@ -30,7 +30,11 @@ def probeEndGameTable (board):
     
     # Request the page
     url = (URL + fen).replace(" ", "%20")
-    f = urllib.urlopen(url)
+    try:
+        f = urllib.urlopen(url)
+    except IOError, e:
+        log.warn("Unable to read endgame tablebase from the Internet: %s" % repr(e))
+        return []
     data = f.read()
     
     # Parse
