@@ -8,7 +8,7 @@ import signal
 import pango, gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
-from pychess.System import conf, glock, uistuff, prefix
+from pychess.System import conf, glock, uistuff, prefix, SubProcess
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
 from pychess.Utils.const import *
@@ -255,5 +255,8 @@ def run (args):
     import gtkexcepthook
     PyChess(args)
     signal.signal(signal.SIGINT, gtk.main_quit)
+    def cleanup ():
+        SubProcess.finishAllSubprocesses()
+    atexit.register(cleanup)
     gtk.gdk.threads_init()
     gtk.main()

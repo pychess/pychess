@@ -27,6 +27,14 @@ def searchPath (file, pathvar="PATH", access=os.R_OK):
                 return path
     return None
 
+subprocesses = []
+def finishAllSubprocesses ():
+    for subprocess in subprocesses:
+        if subprocess.subprocExitCode[0] == None:
+            subprocess.gentleKill(0,0.3)
+    for subprocess in subprocesses:
+        subprocess.subprocFinishedEvent.wait()
+
 class SubProcess (gobject.GObject):
     
     __gsignals__ = {
@@ -69,7 +77,10 @@ class SubProcess (gobject.GObject):
         self.channelsClosedLock = threading.Lock()
         gobject.child_watch_add(self.pid, self.__child_watch_callback)
         
-        self.subprocExitcode = (None, None)
+        self.subprocExitCode = (None, None)
+        self.subprocFinishedEvent = threading.Event()
+        self.subprocFinishedEvent.clear()
+        subprocesses.append(self)
         pool.start(self._wait4exit)
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
@@ -143,7 +154,7 @@ class SubProcess (gobject.GObject):
             else:
                 raise
 
-        self.subprocExitcode = (code, os.strerror(code))
+        self.subprocExitCode = (code, os.strerror(code))
     
     def sendSignal (self, sign):
         try:
@@ -162,15 +173,18 @@ class SubProcess (gobject.GObject):
         self.resume()
         self._closeChannels()
         time.sleep(first)
-        code, string = self.subprocExitcode
+        code, string = self.subprocExitCode
         if code == None:
             self.sigterm()
             time.sleep(second)
-            code, string = self.subprocExitcode
+            code, string = self.subprocExitCode
             if code == None:
                 self.sigkill()
-                return self.subprocExitcode[0]
+                self.subprocFinishedEvent.set()
+                return self.subprocExitCode[0]
+            self.subprocFinishedEvent.set()
             return code
+        self.subprocFinishedEvent.set()
         return code
     
     def pause (self):
