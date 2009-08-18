@@ -183,12 +183,12 @@ class Human (Player):
         if takesParam:
             description = description % offer.param
         
-        def response (dialog, response):
+        def responsecb (dialog, response):
             if response == gtk.RESPONSE_YES:
                 self.emit("accept", offer)
             else: self.emit("decline", offer)
         self._message(title, description,
-                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, response)
+                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, responsecb)
     
     def offerDeclined (self, offer):
         if offer.offerType not in ACTION_NAMES:
@@ -222,14 +222,12 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     @glock.glocked
-    def _message (self, title, description, type, buttons, resfunc=(lambda d,r:None)):
+    def _message (self, title, description, type, buttons, responsecb=(lambda d,r:None)):
         d = gtk.MessageDialog (type=type, buttons=buttons)
         d.set_markup ("<big><b>%s</b></big>" % title)
         d.format_secondary_text (description)
-        def response (dialog, response):
-            resfunc(dialog, response)
-            d.hide()
-        d.connect("response", response)
+        def response (dialog, response, responsecb):
+            responsecb(dialog, response)
+            dialog.hide()
+        d.connect("response", response, responsecb)
         d.show()
-
-
