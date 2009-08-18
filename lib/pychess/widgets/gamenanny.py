@@ -40,6 +40,7 @@ def nurseGame (gmwidg, gamemodel):
     gamemodel.connect("game_saved", game_saved, gmwidg)
     gamemodel.connect("game_ended", game_ended, gmwidg)
     gamemodel.connect("game_unended", game_unended, gmwidg)
+    gamemodel.connect("game_resumed", game_unended, gmwidg)
 
 #===============================================================================
 # Gamewidget signals
