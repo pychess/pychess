@@ -32,6 +32,7 @@ class GameModel (GObject, PooledThread):
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_terminated":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_resumed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
     
@@ -406,6 +407,7 @@ class GameModel (GObject, PooledThread):
                 pass
             if self.timemodel:
                 self.timemodel.resume()
+        self.emit("game_resumed")
     
     def resume (self):
         glock.release()
