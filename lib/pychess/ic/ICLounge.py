@@ -461,7 +461,8 @@ class ChallengeTabSection (ParrentListSection):
         time = _("%(min)s min + %(sec)s sec") % {'min': match["t"], 'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
         ti = self.store.append (["C"+index, self.chaPix, match["w"],
-                                int(match["rt"]), rated, match["tp"], time])
+                                int(match["rt"]), rated, match["tp"], time,
+                                float(match["t"] + "." + match["i"])])
         self.challenges [index] = ti
         count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
