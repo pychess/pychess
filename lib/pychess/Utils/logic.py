@@ -83,12 +83,12 @@ def getStatus (board):
         return DRAW, DRAW_STALEMATE
 
 def standard_validate (board, move):
-    return validateMove (board.board, move.move) \
-     and not board.willLeaveInCheck(move)
+    return validateMove (board.board, move.move) and \
+           not board.willLeaveInCheck(move)
 
 def validate (board, move):
     if board.variant == LOSERSCHESS:
-        capture = board.board.arBoard[move.move & 63] != EMPTY
+        capture = board[move.cord1] != None
         if capture:
             return standard_validate (board, move)
         else:
@@ -98,7 +98,7 @@ def validate (board, move):
             for c in lmovegen.genCaptures(board.board):
                 can_capture = True
                 if ischecked:
-                    if not board.willLeaveInCheck(move):
+                    if not board.willLeaveInCheck(Move(c)):
                         can_escape = True
                         break
                 else:
@@ -124,3 +124,7 @@ def getMoveKillingKing (board):
     
     for cord in iterBits (getAttacks(lboard, opking, color)):
         return Move(Cord(cord), Cord(opking), board)
+
+def genCastles (board):
+    for move in lmovegen.genCastles(board.board):
+        yield Move(move)
