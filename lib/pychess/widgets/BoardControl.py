@@ -10,6 +10,7 @@ from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 
+from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
 
@@ -23,7 +24,7 @@ class BoardControl (gtk.EventBox):
     def __init__(self, gamemodel, actionMenuItems):
         gtk.EventBox.__init__(self)
         widgets = gtk.glade.XML(addDataPrefix("glade/promotion.glade"))
-        self.promotionDialog = widgets.get_widget("promotionDialog")
+        self.promotionDialog = PromotionDialog()
         self.view = BoardView(gamemodel)
         self.add(self.view)
         
@@ -47,16 +48,19 @@ class BoardControl (gtk.EventBox):
     
     def emit_move_signal (self, cord0, cord1):
         color = self.view.model.boards[-1].color
-        promotion = QUEEN
         board = self.view.model.getBoardAtPly(self.view.shown)
+        
+        # Ask player for which piece to promote into. If this move does not
+        # include a promotion, QUEEN will be sent as a dummy value, but not used
+        promotion = QUEEN
         if board[cord0].sign == PAWN and cord1.y in (0,7):
-            res = int(self.promotionDialog.run())
-            self.promotionDialog.hide()
-            if res == int(gtk.RESPONSE_DELETE_EVENT):
+            res = self.promotionDialog.runAndHide(color)
+            if res != gtk.RESPONSE_DELETE_EVENT:
+                promotion = res
+            else:
                 # Put back pawn moved be d'n'd
                 self.view.runAnimation(redrawMisc = False)
                 return
-            promotion = [QUEEN,ROOK,BISHOP,KNIGHT][res]
         
         move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
         self.emit("piece_moved", move, color)
