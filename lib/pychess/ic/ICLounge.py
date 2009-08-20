@@ -1026,6 +1026,7 @@ class CreatedBoards (Section):
         else:
             timemodel = TimeModel (board["wms"]/1000., board["gain"], bsecs=board["bms"]/1000.)
         game = ICGameModel (self.connection, board["gameno"], timemodel, variants[board["variant"]], board["rated"])
+        game.connect("game_started", lambda gamemodel: self.connection.bm.onGameModelStarted(board["gameno"]))
 
         if board["wname"].lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, "", board["wname"]), _("Human"), board["wrating"])

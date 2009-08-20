@@ -83,8 +83,9 @@ class BoardManager (GObject):
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
         
-        self.queuedUpdates = {}
-        self.gamemodelFinishedInitEvents = {}
+        self.queuedStyle12s = {}
+        self.queuedEmits = {}
+        self.gamemodelStartedEvents = {}
         self.ourGameno = ""
         self.castleSigns = {}
         
@@ -180,12 +181,12 @@ class BoardManager (GObject):
         style12 = match.groups()[0]
         gameno = style12.split()[15]
         
-        if gameno in self.queuedUpdates:
-            self.queuedUpdates[gameno].append(style12)
+        if gameno in self.queuedStyle12s:
+            self.queuedStyle12s[gameno].append(style12)
             return
         
-        if self.gamemodelFinishedInitEvents.has_key(gameno):
-            self.gamemodelFinishedInitEvents[gameno].wait()
+        if self.gamemodelStartedEvents.has_key(gameno):
+            self.gamemodelStartedEvents[gameno].wait()
         
         castleSigns = self.castleSigns[gameno]
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
@@ -193,7 +194,7 @@ class BoardManager (GObject):
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
     def onGameModelStarted (self, gameno):
-        self.gamemodelFinishedInitEvents[gameno].set()
+        self.gamemodelStartedEvents[gameno].set()
     
     def onWasPrivate (self, match):
         gameno, = match.groups()
@@ -243,6 +244,8 @@ class BoardManager (GObject):
                  "rated": rated, "wms": wms, "bms":bms, "gain": gain,
                  "gameno": gameno, "variant":variant, "fen": fen}
         self.ourGameno = gameno
+        self.gamemodelStartedEvents[gameno] = threading.Event()
+        self.gamemodelStartedEvents[gameno].clear()
         self.emit("playBoardCreated", board)
     
     def onObservedGame (self, matchlist):
@@ -286,7 +289,7 @@ class BoardManager (GObject):
                 moves[ply+1] = bmove
         
         # Apply queued board updates
-        for style12 in self.queuedUpdates[gameno]:
+        for style12 in self.queuedStyle12s[gameno]:
             gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                     self.__parseStyle12(style12, castleSigns)
             if lastmove == None:
@@ -327,16 +330,14 @@ class BoardManager (GObject):
             pgn += move + " "
         pgn += "\n"
         
-        
-        if self.queuedUpdates[gameno]:
-            style12 = self.queuedUpdates[gameno][-1]
+        if gameno in self.queuedStyle12s:
+            style12 = self.queuedStyle12s[gameno][-1]
             gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                     self.__parseStyle12(style12, castleSigns)
         else:
             wms = bms = int(minutes)*60*1000
             gain = int(increment)
-        
-        del self.queuedUpdates[gameno]
+        del self.queuedStyle12s[gameno]
         
         board = {"wname": wname, "wrating": self.parseDigits(wrating),
                  "bname": bname, "brating": self.parseDigits(brating),
@@ -345,7 +346,13 @@ class BoardManager (GObject):
                  "gameno": gameno, "variant":variant, "pgn": pgn}
         
         self.emit ("observeBoardCreated", board)
-    
+        
+        if gameno in self.gamemodelStartedEvents:
+            self.gamemodelStartedEvents[gameno].wait()
+        for emit in self.queuedEmits[gameno]:
+            emit()        
+        del self.queuedEmits[gameno]
+        
     def onGameEnd (self, glm, gameno, wname, bname, result, comment):
         parts = set(re.findall("\w+",comment))
         if result in (WHITEWON, BLACKWON):
@@ -418,22 +425,30 @@ class BoardManager (GObject):
             reason = UNKNOWN_REASON
         
         if gameno == self.ourGameno:
+            if gameno in self.gamemodelStartedEvents:
+                self.gamemodelStartedEvents[gameno].wait()
             self.emit("curGameEnded", gameno, wname, bname, result, reason)
             self.ourGameno = ""
+            del self.gamemodelStartedEvents[gameno]
         else:
-            if self.gamemodelFinishedInitEvents.has_key(gameno):
-                self.gamemodelFinishedInitEvents[gameno].wait()
+            if gameno in self.queuedEmits:
+                self.queuedEmits[gameno].append(lambda:self.emit("obsGameEnded", gameno, wname, bname, result, reason))
+            elif gameno in self.gamemodelStartedEvents:
+                self.gamemodelStartedEvents[gameno].wait()
                 self.emit("obsGameEnded", gameno, wname, bname, result, reason)
     
     def onGamePause (self, match):
         gameno, state = match.groups()
-        if self.gamemodelFinishedInitEvents.has_key(gameno):
-            self.gamemodelFinishedInitEvents[gameno].wait()
-        self.emit("gamePaused", gameno, state=="paused")
+        if gameno in self.queuedEmits:
+            self.queuedEmits[gameno].append(lambda:self.emit("gamePaused", gameno, state=="paused"))
+        else:
+            if gameno in self.gamemodelStartedEvents:
+                self.gamemodelStartedEvents[gameno].wait()
+            self.emit("gamePaused", gameno, state=="paused")
     
     def onUnobserveGame (self, match):
         gameno, = match.groups()
-        del self.gamemodelFinishedInitEvents[gameno]
+        del self.gamemodelStartedEvents[gameno]
         self.emit("obsGameUnobserved", gameno)
     
     ############################################################################
@@ -453,10 +468,11 @@ class BoardManager (GObject):
         print >> self.connection.client, "flag"
     
     def observe (self, gameno):
-        if not self.gamemodelFinishedInitEvents.has_key(gameno):
-            self.queuedUpdates[gameno] = []
-            self.gamemodelFinishedInitEvents[gameno] = threading.Event()
-            self.gamemodelFinishedInitEvents[gameno].clear()
+        if not gameno in self.gamemodelStartedEvents:
+            self.queuedStyle12s[gameno] = []
+            self.queuedEmits[gameno] = []
+            self.gamemodelStartedEvents[gameno] = threading.Event()
+            self.gamemodelStartedEvents[gameno].clear()
             print >> self.connection.client, "observe %s" % gameno
             print >> self.connection.client, "moves %s" % gameno
     
