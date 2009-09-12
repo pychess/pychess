@@ -143,6 +143,8 @@ class BoardView (gtk.DrawingArea):
         self.gotStarted = False
         self.animationLock = RLock()
         self.rotationLock = Lock()
+        
+        self.draggedPiece = None  # a piece being dragged by the user
     
     def game_started (self, model):
         if conf.get("noAnimation", False):
@@ -344,6 +346,7 @@ class BoardView (gtk.DrawingArea):
             for y, row in enumerate(board.data):
                 for x, piece in enumerate(row):
                     if not piece: continue
+                    if piece == self.draggedPiece: continue
                     
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
