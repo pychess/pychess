@@ -14,7 +14,7 @@ from pychess.System.Log import log
 from pychess.System import glock
 from pychess.Variants.normal import NormalChess
 
-from logic import getStatus, isClaimableDraw
+from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
 from const import *
 
 class GameModel (GObject, PooledThread):
@@ -151,6 +151,11 @@ class GameModel (GObject, PooledThread):
             if self.timemodel.getPlayerTime (opcolor) <= 0:
                 if self.timemodel.getPlayerTime (1-opcolor) <= 0:
                     self.end(DRAW, DRAW_CALLFLAG)
+                elif not playerHasMatingMaterial(self.boards[-1], (1-opcolor)):
+                    if opcolor == WHITE:
+                        self.end(DRAW, DRAW_BLACKINSUFFICIENTANDWHITETIME)
+                    else:
+                        self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)
                 else:
                     if player == self.players[WHITE]:
                         self.end(WHITEWON, WON_CALLFLAG)
