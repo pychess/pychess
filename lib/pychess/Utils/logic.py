@@ -30,6 +30,10 @@ def isClaimableDraw (board):
         return True
     return False
 
+def playerHasMatingMaterial (board, playercolor):
+    lboard = board.board
+    return ldraw.testPlayerMatingMaterial(lboard, playercolor)
+
 def getStatus (board):
     
     lboard = board.board

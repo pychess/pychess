@@ -371,7 +371,12 @@ class BoardManager (GObject):
         elif result == DRAW:
             if "repetition" in parts:
                 reason = DRAW_REPITITION
-            if "material" in parts:
+            elif "material" in parts and "time" in parts:
+                if re.search(wname + " ran out of time", comment, re.IGNORECASE):
+                    reason = DRAW_BLACKINSUFFICIENTANDWHITETIME
+                else:
+                    reason = DRAW_WHITEINSUFFICIENTANDBLACKTIME
+            elif "material" in parts:
                 reason = DRAW_INSUFFICIENT
             elif "time" in parts:
                 reason = DRAW_CALLFLAG
