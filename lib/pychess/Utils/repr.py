@@ -18,6 +18,8 @@ reprReason_long = {
     DRAW_AGREE: _("Because the players agreed to"),
     DRAW_ADJUDICATION: _("Because of adjudication by an admin"),
     DRAW_LENGTH: _("Because the game exceed the max length"),
+    DRAW_BLACKINSUFFICIENTANDWHITETIME: _("Because %(white)s ran out of time and %(black)s has insufficient material to mate"),
+    DRAW_WHITEINSUFFICIENTANDBLACKTIME: _("Because %(black)s ran out of time and %(white)s has insufficient material to mate"),
 
     WON_RESIGN: _("Because %(loser)s resigned"),
     WON_CALLFLAG: _("Because %(loser)s ran out of time"),

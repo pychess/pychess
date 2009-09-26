@@ -66,6 +66,17 @@ def testMaterial (board):
            blackBoards[BISHOP] & BLACK_SQUARES and True:
             return True
 
+def testPlayerMatingMaterial (board, color):
+    """ Tests if given color has enough material to mate on board """
+
+    boards = board.boards[color]
+    
+    if bitLength(boards[PAWN]) or bitLength(boards[QUEEN]) \
+       or bitLength(boards[ROOK]) \
+       or (bitLength(boards[KNIGHT]) + bitLength(boards[BISHOP]) > 1):
+        return True
+    return False
+
 # This could be expanded by the fruit kpk draw function, which can test if a
 # certain king verus king and pawn posistion is winable.
 
