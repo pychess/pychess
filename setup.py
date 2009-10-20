@@ -22,16 +22,19 @@ DESC = "Gnome chess game"
 
 LONG_DESC = """PyChess is a gtk chess client, originally developed for gnome, but running well under all other linux desktops.
 (Which we know of, at least). PyChess is 100% python code, from the top of the UI to the bottom of the chess engine, and all code
-is licensed under the Gnu Public License.
+is licensed under the GNU General Public License.
 
 The goal of PyChess is to provide an advanced chess client for linux following the Gnome Human Interface Guidelines. The client should be usable
 to those new to chess, who just want to play a short game and get back to their work, as well as those who wants to use the computer to further
 enhance their play."""
 
 CLASSIFIERS = [
-    'License :: OSI Approved :: GNU General Public License (GPL)',
-    'Intended Audience :: End Users/Desktop',
     'Development Status :: 3 - Alpha',
+    'Environment :: X11 Applications :: Gnome',
+    'Intended Audience :: End Users/Desktop',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Operating System :: POSIX',
+    'Programming Language :: Python',
     'Topic :: Desktop Environment :: Gnome',
     'Topic :: Games/Entertainment :: Board Games',
     'Natural Language :: Arabic',
@@ -123,8 +126,8 @@ setup (
     description      = DESC,
     long_description = LONG_DESC,
     license          = 'GPL2',
-    url              = 'http://pychess.googlepages.com/home',
-    download_url     = 'http://gnomefiles.org/app.php/PyChess',
+    url              = 'http://pychess.googlepages.com',
+    download_url     = 'http://code.google.com/p/pychess/downloads/list',
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
