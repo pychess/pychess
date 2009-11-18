@@ -1,4 +1,4 @@
-
+import os
 import gettext
 import locale
 from time import sleep
@@ -83,7 +83,9 @@ def createPlayerUIGlobals (discoverer):
     for engine in discoverer.getEngines().values():
         name = discoverer.getName(engine)
         c = discoverer.getCountry(engine)
-        if c: flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix("flags/%s.png" % c))
+        path = addDataPrefix("flags/%s.png" % c)
+        if c and os.path.isfile(path):
+            flag_icon = gtk.gdk.pixbuf_new_from_file(path)
         else: flag_icon = inotebook
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
