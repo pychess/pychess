@@ -75,7 +75,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     # Initing analyze engines
     # We have to do this before publishing gmwidg to make sure that
     # gamemodel.*EngineSupportsVariant is set right before on_gmwidg_created() is called
-    anaengines = discoverer.getAnalyzers()
+    
+    anaengines = list(discoverer.getAnalyzers())
     specs = {}
     engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
     if not engine: engine = anaengines[0]

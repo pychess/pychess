@@ -88,9 +88,10 @@ class EngineTab:
         for engine in engines.values():
             c = discoverer.getCountry(engine)
             if c:
-                flag = "flags/%s.png" % c
-            else: flag = "flags/unknown.png"
-            flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
+                flag = addDataPrefix("flags/%s.png" % c)
+            if not c or not os.path.isfile(flag):
+                flag = addDataPrefix("flags/unknown.png")
+            flag_icon = gtk.gdk.pixbuf_new_from_file(flag)
             allstore.append((flag_icon, discoverer.getName(engine)))
         
         tv = widgets["engines_treeview"]
@@ -100,16 +101,17 @@ class EngineTab:
         tv.append_column(gtk.TreeViewColumn(
                 _("Name"), gtk.CellRendererText(), text=1))
         
-        analyzers = discoverer.getAnalyzers()
+        analyzers = list(discoverer.getAnalyzers())
         ana_data = []
         invana_data = []
         for engine in analyzers:
             name = discoverer.getName(engine)
             c = discoverer.getCountry(engine)
             if c:
-                flag = "flags/%s.png" % c
-            else: flag = "flags/unknown.png"
-            flag_icon = gtk.gdk.pixbuf_new_from_file(addDataPrefix(flag))
+                flag = addDataPrefix("flags/%s.png" % c)
+            if not c or not os.path.isfile(flag):
+                flag = addDataPrefix("flags/unknown.png")
+            flag_icon = gtk.gdk.pixbuf_new_from_file(flag)
             ana_data.append((flag_icon, name))
             invana_data.append((flag_icon, name))
         
@@ -185,10 +187,9 @@ class EngineTab:
         for combo in ("ana_combobox", "inv_ana_combobox"):
             
             def get_value (combobox):
-                engine = discoverer.getAnalyzers()[combobox.get_active()]
-                md5s = engine.getElementsByTagName("md5")
-                if md5s:
-                    return md5s[0].childNodes[0].data.strip()
+                engine = list(discoverer.getAnalyzers())[combobox.get_active()]
+                if engine.find('md5') != None:
+                    return engine.find('md5').text.strip()
             
             def set_value (combobox, value):
                 engine = discoverer.getEngineByMd5(value)
@@ -196,7 +197,7 @@ class EngineTab:
                     combobox.set_active(0)
                 else:
                     try:
-                        index = discoverer.getAnalyzers().index(engine)
+                        index = list(discoverer.getAnalyzers()).index(engine)
                     except ValueError:
                         index = 0
                     combobox.set_active(index)
