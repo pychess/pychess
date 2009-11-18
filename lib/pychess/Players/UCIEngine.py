@@ -389,6 +389,12 @@ class UCIEngine (ProtocolEngine):
                 return
             
             move = parseAN(self.board, parts[1])
+            
+            # Some UCI engines send 'bestmove a1a1' as a tool of communication
+            # with polyglot, that cepc-uci adaptor. We should ignore this.
+            if move.cord0 == move.cord1 == Cord(A1):
+                return
+            
             self.board = self.board.move(move)
             
             if self.getOption('Ponder'):
