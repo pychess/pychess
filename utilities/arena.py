@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 '''
-    PyChess book generator script.
-    This script generates a tree from a start position using a specified engine.
-    The tree is saved in a databasefile, that can be used as an opening book.
+    PyChess arena tournament script.
+    This script executes a tournament between the engines installed on your
+    system. The script is executed from a terminal with the usual environment.
 '''
 
 ###############################################################################
@@ -102,7 +102,7 @@ def cb_gameended(game, reason):
     runGame()
 
 ###############################################################################
-# A few helpers 
+# A few helpers
 def printScoreboard():
     names = [discoverer.getName(e)[:3] for e in engines]
     print "W\B", " ".join(names)
