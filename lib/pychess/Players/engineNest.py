@@ -1,3 +1,5 @@
+from __future__ import with_statement 
+
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
 import os, imp
