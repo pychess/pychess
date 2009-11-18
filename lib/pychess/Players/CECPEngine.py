@@ -135,7 +135,7 @@ class CECPEngine (ProtocolEngine):
             # XBoard will only give 2 seconds, but as we are quite sure that
             # the engines support the protocol, we can add more. We don't add
             # infinite time though, just in case.
-            # The engine can get another 10 minutes time, by sending done=0
+            # The engine can get more time by sending done=0
             self.timeout = time.time() + 5
     
     def start (self):
@@ -149,22 +149,20 @@ class CECPEngine (ProtocolEngine):
             try:
                 r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
                 if r == "not ready":
-                    # The engine has sent done=0, and parseLine has added ten
-                    # more minutes to self.timeout.
-                    r = self.returnQueue.get(True, self.timeout-time.time())
+                    # The engine has sent done=0, and parseLine has added more
+                    # time to self.timeout
+                    r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
             except Queue.Empty:
                 log.warn("Got timeout error\n", self.defname)
             else:
                 assert r == "ready"
-        self.emit("readyForOptions")
-        self.emit("readyForMoves")
     
     def __onReadyForOptions_before (self, self_):
         self.readyOptions = True
     
     def __onReadyForOptions (self, self_):
         # This is no longer needed
-        self.timeout = None
+        #self.timeout = time.time()
         
         # Some engines has the 'post' option enabled by default, and posts a lot
         # of debug information. Generelly this only help to increase the log
@@ -713,11 +711,13 @@ class CECPEngine (ProtocolEngine):
                 
                 if key == "done":
                     if value == 1:
+                        self.emit("readyForOptions")
+                        self.emit("readyForMoves")
                         self.returnQueue.put("ready")
                     elif value == 0:
                         log.log("Adds 10 minutes timeout", self.defname)
-                        # This'll buy you 10 more minutes
-                        self.timeout = time.time()+10*60
+                        # This'll buy you 15 more secs
+                        self.timeout = time.time()+15
                         self.returnQueue.put("not ready")
                     return
                 
