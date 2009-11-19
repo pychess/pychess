@@ -29,16 +29,14 @@ attrToProtocol = {
     "cecp": CECPEngine
 }
 
-#def gmap(func, it):
-#    result = []
-#    def worker():
-#        try:
-#            v = it.next()
-#        except StopIteration:
-#            return False
-#        u = func(v)
-#        result.append(u)
-#    idle_add(worker)
+def compareVersions(ver1, ver2):
+    ''' Returns -1 if ver1 < ver2; 0 if ver1 == ver2; 1 if ver1 > ver2 '''
+    parts1 = map(int, ver1.split('.'))
+    parts2 = map(int, ver2.split('.'))
+    for part1, part2 in zip(parts1, parts2):
+        if part1 != part2:
+            return cmp(part1, part2)
+    return cmp(len(parts1),len(parts2))
 
 def mergeElements(elemA, elemB):
     """ Recursively merge two xml-elements into the first.
@@ -129,9 +127,13 @@ class EngineDiscoverer (GObject, PooledThread):
         self.xmlpath = addHomePrefix("engines.xml")
         try:
             self.dom = ET.ElementTree(file=self.xmlpath)
-            if self.dom.getroot().get('version') < ENGINES_XML_API_VERSION:
+            c = compareVersions(self.dom.getroot().get('version'), ENGINES_XML_API_VERSION)
+            if c == -1:
                 log.warn("engineNest: engines.xml is outdated. It will be replaced\n")
                 self.dom = deepcopy(self.backup)
+            elif c == 1:
+                raise NotImplementedError, "engines.xml is of a newer date. In order" + \
+                                "to run this version of PyChess it must first be removed"
         except ExpatError, e:
             log.warn("engineNest: %s\n" % e)
             self.dom = deepcopy(self.backup)
