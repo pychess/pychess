@@ -87,6 +87,9 @@ class Sidepanel:
     def game_changed (self, model):
         for ply in xrange(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))
+        row = self.gamemodel.ply - self.gamemodel.lowply
+        iter = self.store.get_iter(row)
+        self.tv.get_selection().select_iter(iter)
     
     def addComment (self, model, comment):
         self.store.append([comment])
