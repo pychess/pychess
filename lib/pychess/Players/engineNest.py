@@ -356,7 +356,7 @@ class EngineDiscoverer (GObject, PooledThread):
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
         
-        toBeRechecked = [c for c in self.backup.findall('engine')
+        toBeRechecked = [c for c in self.dom.findall('engine')
                          if c.get('recheck') == 'true']
         # Waiting for etree 1.3 to get into python, before we can use xpath
         # toBeRechecked = self.dom.findall('engine[recheck=true]')
