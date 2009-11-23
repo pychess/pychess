@@ -275,7 +275,8 @@ class UCIEngine (ProtocolEngine):
             If you want to know the possible options, you should go to
             engineDiscoverer or use the getOption, getOptions and hasOption
             methods, while you are in your 'readyForOptions' signal handler """ 
-        assert not self.readyMoves
+        if self.readyMoves:
+            log.warn("Options set after 'readyok' are not sent to the engine", self.defname)
         self.optionsToBeSent[key] = value
     
     def getOption (self, option):
