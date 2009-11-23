@@ -34,7 +34,7 @@ def nurseGame (gmwidg, gamemodel):
         gamemodel.connect("game_loaded", game_loaded, gmwidg)
     else:
         if gamemodel.uri:
-            game_loaded(gamemodel, gamemodel.uri)
+            game_loaded(gamemodel, gamemodel.uri, gmwidg)
         on_game_started(gamemodel, gmwidg)
     
     gamemodel.connect("game_saved", game_saved, gmwidg)
