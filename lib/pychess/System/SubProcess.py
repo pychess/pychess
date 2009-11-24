@@ -69,7 +69,7 @@ class SubProcess (gobject.GObject):
         
         self.__channelTags = []
         self.inChannel = self._initChannel(stdin, None, None, False)
-        readFlags = gobject.IO_IN|gobject.IO_PRI|gobject.IO_ERR
+        readFlags = gobject.IO_IN|gobject.IO_HUP#|gobject.IO_ERR
         self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
@@ -85,7 +85,7 @@ class SubProcess (gobject.GObject):
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
-        channel.set_flags(channel.get_flags() | gobject.IO_FLAG_NONBLOCK)
+        channel.set_flags(gobject.IO_FLAG_NONBLOCK)
         if callback:
             tag = channel.add_watch(callbackflag, callback, isstderr)
             self.__channelTags.append(tag)
@@ -114,17 +114,22 @@ class SubProcess (gobject.GObject):
     def __child_watch_callback (self, pid, code):
         # Kill the engine on any signal but 'Resource temporarily unavailable'
         if code != errno.EWOULDBLOCK:
-            log.error(os.strerror(code)+"\n", self.defname)
+            if type(code) == str:
+                log.error(code+"\n", self.defname)
+            else: log.error(os.strerror(code)+"\n", self.defname)
             self.emit("died")
             self.gentleKill()
     
     def __io_cb (self, channel, condition, isstderr):
-        
         while True:
-            line = channel.readline()
+            try:
+                line = channel.next()#readline()
+            except StopIteration:
+                self._wait4exit()
+                self.__child_watch_callback(*self.subprocExitCode)
+                break
             if not line:
                 return True
-            
             if isstderr:
                 log.error(line, self.defname)
             else:
@@ -137,6 +142,9 @@ class SubProcess (gobject.GObject):
             self.linePublisher.put(line)
     
     def write (self, data):
+        if self.channelsClosed:
+            log.warn("Chan closed for '%s'" % data, self.defname)
+            return
         log.log(data, self.defname)
         self.inChannel.write(data)
         if data.endswith("\n"):

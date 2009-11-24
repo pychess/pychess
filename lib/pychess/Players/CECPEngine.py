@@ -76,6 +76,19 @@ def inthread(f):
         pool.start(f, *args, **kw)
     return newFunction
 
+# There is no way in the CECP protocol to determine if an engine not answering
+# the protover=2 handshake with done=1 is old or just very slow. Thus we
+# need a timeout after which we conclude the engine is 'protover=1' and will
+# never answer. 
+# XBoard will only give 2 seconds, but as we are quite sure that
+# the engines support the protocol, we can add more. We don't add
+# infinite time though, just in case.
+# The engine can get more time by sending done=0
+TIME_OUT_FIRST = 10
+
+# The amount of seconds to add for the second timeout
+TIME_OUT_SECOND = 15
+
 class CECPEngine (ProtocolEngine):
     
     def __init__ (self, subprocess, color, protover):
@@ -131,12 +144,7 @@ class CECPEngine (ProtocolEngine):
         print >> self.engine, "xboard"
         if self.protover == 2:
             print >> self.engine, "protover 2"
-            
-            # XBoard will only give 2 seconds, but as we are quite sure that
-            # the engines support the protocol, we can add more. We don't add
-            # infinite time though, just in case.
-            # The engine can get more time by sending done=0
-            self.timeout = time.time() + 5
+            self.timeout = time.time() + TIME_OUT_FIRST
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
@@ -154,6 +162,8 @@ class CECPEngine (ProtocolEngine):
                     r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
             except Queue.Empty:
                 log.warn("Got timeout error\n", self.defname)
+                self.emit("readyForOptions")
+                self.emit("readyForMoves")
             else:
                 assert r == "ready"
     
@@ -282,13 +292,16 @@ class CECPEngine (ProtocolEngine):
         
         # Parse outputs
         r = self.returnQueue.get()
+        if r == "not ready":
+            log.warn("Engine seams to be protover=2, but is treated as protover=1", repr(self))
+            r = self.returnQueue.get()
+        if r == "ready":
+            r = self.returnQueue.get()
         if r == "del":
             raise PlayerIsDead, "Killed by forgin forces"
         if r == "int":
             raise TurnInterrupt
-        if r == "ready" or r == "not ready":
-            log.warn("Engine seams to be protover=2, but is treated as protover=1", repr(self))
-            r = self.returnQueue.get()
+        assert isinstance(r, Move), r
         return r
     
     @semisynced
@@ -715,9 +728,9 @@ class CECPEngine (ProtocolEngine):
                         self.emit("readyForMoves")
                         self.returnQueue.put("ready")
                     elif value == 0:
-                        log.log("Adds 10 minutes timeout", self.defname)
-                        # This'll buy you 15 more secs
-                        self.timeout = time.time()+15
+                        log.log("Adds %d seconds timeout\n" % TIME_OUT_SECOND, self.defname)
+                        # This'll buy you some more time
+                        self.timeout = time.time()+TIME_OUT_SECOND
                         self.returnQueue.put("not ready")
                     return
                 

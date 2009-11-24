@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+print "feature done=0"
+
 from time import time
 import sys, os
 import random, math
@@ -244,7 +246,6 @@ class PyChessCECP(PyChess):
         }
     
     def makeReady(self):
-        print "feature done=0"
         PyChess.makeReady(self)
     
     def run (self):

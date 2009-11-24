@@ -7,7 +7,8 @@ import random
 import Queue
 
 import gobject
-import gtk, pango
+import gtk, gtk.glade
+import pango
 
 from pychess.System import glock
 from pychess.System import conf

@@ -391,9 +391,10 @@ class UCIEngine (ProtocolEngine):
             
             move = parseAN(self.board, parts[1])
             
-            # Some UCI engines send 'bestmove a1a1' as a tool of communication
-            # with polyglot, that cepc-uci adaptor. We should ignore this.
-            if move.cord0 == move.cord1 == Cord(A1):
+            if not validate(self.board, move):
+                # This is critical. To avoid game stalls, we need to resign on
+                # behalf of the engine.
+                self.returnQueue.put('del')
                 return
             
             self.board = self.board.move(move)
@@ -401,7 +402,10 @@ class UCIEngine (ProtocolEngine):
             if self.getOption('Ponder'):
                 if len(parts) == 4 and self.board:
                     self.pondermove = parseAN(self.board, parts[3])
-                    self._startPonder()
+                    # Engines don't always check for everything in their ponders
+                    if validate(self.board, self.pondermove):
+                        self._startPonder()
+                    else: self.pondermove = None
                 else: self.pondermove = None
             
             self.returnQueue.put(move)
