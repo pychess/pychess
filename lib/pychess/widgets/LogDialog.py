@@ -73,7 +73,7 @@ class InformationWindow:
         if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
             t = time.strftime("%T",time.localtime(timestamp))
             textview.get_buffer().insert_with_tags_by_name(
-                textview.get_buffer().get_end_iter(), "\n%s\n"%t+"-"*60, str(LOG_LOG))
+                textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(LOG_LOG))
             cls.tagToTime[tag] = timestamp
         
         if type(message) == str:
@@ -214,6 +214,10 @@ uistuff.cacheGladefile("findbar.glade")
 ################################################################################
 
 InformationWindow._init()
+
+import gobject
+def addMessages2 (messages):
+    gobject.idle_add(addMessages2, messages)
 
 def addMessages (messages):
     for task, timestamp, message, type in messages:
