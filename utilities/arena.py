@@ -24,6 +24,11 @@ from pychess.Utils.const import *
 from pychess.Variants import variants
 
 ###############################################################################
+# Do logging
+#from pychess.widgets import LogDialog
+#LogDialog.show()
+
+###############################################################################
 # Look up engines
 def prepare():
     print "Discovering uci engines",
@@ -81,8 +86,8 @@ def runGame():
     game = GameModel(TimeModel(minutes*60,0))
     game.connect('game_started', cb_gamestarted)
     game.connect('game_ended', cb_gameended)
-    p0 = discoverer.initPlayerEngine(engines[a], WHITE, 7, variants[NORMALCHESS], minutes*60)
-    p1 = discoverer.initPlayerEngine(engines[b], BLACK, 7, variants[NORMALCHESS], minutes*60)
+    p0 = discoverer.initPlayerEngine(engines[a], WHITE, 8, variants[NORMALCHESS], minutes*60)
+    p1 = discoverer.initPlayerEngine(engines[b], BLACK, 8, variants[NORMALCHESS], minutes*60)
     game.setPlayers([p0,p1])
     game.start()
 
@@ -128,14 +133,37 @@ def printResults():
     for points, i in scores:
         print discoverer.getName(engines[i]), ":", points/2, "½"*(points%2)
 
+#def findMatch():
+#    for i, engineA in enumerate(engines):
+#        for j, engineB in enumerate(engines):
+#            if i != j and results[i][j] == None:
+#                return i, j
+#    return None, None
+
+import random
 def findMatch():
-    for i, engineA in enumerate(engines):
-        for j, engineB in enumerate(engines):
-            if i != j and results[i][j] == None:
-                return i, j
-    return None, None
+    pos = [(i,j) for i in xrange(len(engines))
+                 for j in xrange(len(engines))
+                 if i != j and results[i][j] == None]
+    #pos = [(i,j) for i,j in pos if
+    #       "pychess" in discoverer.getName(engines[i]).lower() or
+    #       "pychess" in discoverer.getName(engines[j]).lower()]
+    if not pos:
+        return None, None
+    return random.choice(pos)
 
 ###############################################################################
 # Push onto the mainloop and start it
-glib.idle_add(prepare)
+#glib.idle_add(prepare)
+prepare()
+def do(discoverer):
+    game = GameModel(TimeModel(60,0))
+    #game.connect('game_started', cb_gamestarted2)
+    game.connect('game_ended', lambda *a: mainloop.quit())
+    p0 = discoverer.initPlayerEngine(discoverer.getEngines()['rybka'], WHITE, 7, variants[NORMALCHESS], 60)
+    p1 = discoverer.initPlayerEngine(discoverer.getEngines()['gnuchess'], BLACK, 7, variants[NORMALCHESS], 60)
+    game.setPlayers([p0,p1])
+    game.start()
+#discoverer.connect('all_engines_discovered', do)
+#discoverer.start()
 mainloop.run()
