@@ -105,6 +105,11 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
         treeview.set_size_request(0,-1)
     treeview.connect_after("size-allocate", callback, column, cell)
     
+    scroll = treeview.get_parent()
+    if isinstance(scroll, gtk.ScrolledWindow):
+        scroll.set_policy(gtk.POLICY_NEVER,
+                          scroll.get_policy()[1])
+    
     return cell
 
 
