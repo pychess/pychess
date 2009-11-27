@@ -418,9 +418,8 @@ class PanelTab:
 
         tv.append_column(gtk.TreeViewColumn(
                 "Icon", gtk.CellRendererPixbuf(), pixbuf=1))
-
-        tv.append_column(gtk.TreeViewColumn(
-                "Name", gtk.CellRendererText(), text=2))
+        
+        uistuff.appendAutowrapColumn(tv, 200, "Name", text=2)
 
     def col_toggled( self, cell, path, model ):
         """
