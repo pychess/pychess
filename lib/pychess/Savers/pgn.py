@@ -128,7 +128,7 @@ class PGNFile (ChessFile):
             del moves[-1]
         return moves
 
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position=-1, model=None):
         if not model:
             model = GameModel()
 
