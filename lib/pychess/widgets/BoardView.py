@@ -97,6 +97,7 @@ class BoardView (gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
         glock_connect(self.model, "game_started", self.game_started)
+        glock_connect_after(self.model, "game_started", self.game_started_after)
         glock_connect_after(self.model, "game_changed", self.game_changed)
         glock_connect_after(self.model, "moves_undoing", self.moves_undoing)
         glock_connect_after(self.model, "game_loading", self.game_loading)
@@ -145,6 +146,9 @@ class BoardView (gtk.DrawingArea):
         self.rotationLock = Lock()
         
         self.draggedPiece = None  # a piece being dragged by the user
+    
+    def game_started_after (self, model):
+        self.emit("shown_changed", self.shown)
     
     def game_started (self, model):
         if conf.get("noAnimation", False):
@@ -197,11 +201,9 @@ class BoardView (gtk.DrawingArea):
     
     def game_loading (self, model, uri):
         self.autoUpdateShown = False
-    
     def game_loaded (self, model, uri):
         self.autoUpdateShown = True
         self._shown = model.ply
-        self.emit("shown_changed", self.shown)
     
     def game_ended (self, model, reason):
         self.redraw_canvas()
@@ -351,7 +353,7 @@ class BoardView (gtk.DrawingArea):
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
                             if piece.piece == KNIGHT:
-                                #print mod, x, piece.x
+                            	#print mod, x, piece.x
                                 newx = piece.x + (x-piece.x)*mod**(1.5)
                                 newy = piece.y + (y-piece.y)*mod
                             else:
