@@ -8,6 +8,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.const import *
+from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
@@ -125,7 +126,7 @@ class UCIEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [])
+                self.emit("analyze", [], None)
     
     #===========================================================================
     #    Send the player move updates
@@ -317,7 +318,7 @@ class UCIEngine (ProtocolEngine):
                     # Many engines don't like positions able to take down enemy
                     # king. Therefore we just return the "kill king" move
                     # automaticaly
-                    self.emit("analyze", [getMoveKillingKing(self.board)])
+                    self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
                     return
             print >> self.engine, "position fen", self.board.asFen()
             print >> self.engine, "go infinite"
@@ -412,10 +413,31 @@ class UCIEngine (ProtocolEngine):
         
         #----------------------------------------------------------- An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
+            scoretype = parts[parts.index("score")+1]
+            if scoretype in ('lowerbound', 'upperbound'):
+                score = None
+            else:
+                score = int(parts[parts.index("score")+2])
+                if scoretype == 'mate':
+                    score = MATE_VALUE-abs(score)
+                    score *= score/abs(score) # sign
+            
             movstrs = parts[parts.index("pv")+1:]
             moves = listToMoves (self.board, movstrs, AN, validate=True)
-            self.emit("analyze", moves)
+            
+            self.emit("analyze", moves, score)
             return
+    
+        #* score
+        #* cp <x>
+        #    the score from the engine's point of view in centipawns.
+        #* mate <y>
+        #    mate in y moves, not plies.
+        #    If the engine is getting mated use negative values for y.
+        #* lowerbound
+        #  the score is just a lower bound.
+        #* upperbound
+        #   the score is just an upper bound.
     
     #===========================================================================
     #    Info
