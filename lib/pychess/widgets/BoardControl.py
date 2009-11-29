@@ -55,6 +55,13 @@ class BoardControl (gtk.EventBox):
         self.possibleBoards = {
             self.lockedPly : self._genPossibleBoards(self.lockedPly) }
         
+        self.allowPremove = False
+        def onGameStart (gamemodel):
+            for player in gamemodel.players:
+                if player.__type__ == LOCAL:
+                    self.allowPremove = True
+        gamemodel.connect("game_started", onGameStart)
+        
     def emit_move_signal (self, cord0, cord1):
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown)
@@ -223,7 +230,6 @@ class BoardState:
     def motion (self, x, y):
         cord = self.point2Cord(x, y)
         if self.lastMotionCord == cord:
-            self.view.hover = cord
             return
         self.lastMotionCord = cord
         if cord and self.isSelectable(cord):
@@ -410,6 +416,9 @@ class SelectedState (BoardState):
 class LockedState (LockedBoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
+            return False
+        # Don't allow premove if neither player is human
+        if not self.parent.allowPremove:
             return False
         # We don't want empty cords
         if self.getBoard()[cord] == None:
