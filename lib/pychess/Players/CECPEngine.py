@@ -12,6 +12,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.const import *
+from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
@@ -35,20 +36,20 @@ d_plus_dot_expr = re.compile(r"\d+\.")
 movere = re.compile("([a-hKQRBNOo][a-h0-8xOo+#=-]{1,6})[?!]*")
 
 anare = re.compile("""
-    ^                   # beginning of string
-    \s*                 #
-    \d+ \.?             # The ply analyzed. Some engines end it with a dot
-    \s+                 #
-    (Mat\d+ | [-\d\.]+) # Mat1 is used by gnuchess to specify mate in one.
-                        #        otherwise we should support a signed float
-    \s+                 #
-    [\d\.]+             # The time used in seconds
-    \s+                 #
-    [\d\.]+             # The score found in centipawns
-    \s+                 #
-    (.+)                # The Principal-Variation. With or without move numbers
-    \s*                 #
-    $                   # end of string
+    ^                     # beginning of string
+    \s*                   #
+    \d+ \.?               # The ply analyzed. Some engines end it with a dot
+    \s+                   #
+    (-?Mat\d+ | [-\d\.]+) # Mat1 is used by gnuchess to specify mate in one.
+                          #        otherwise we should support a signed float
+    \s+                   #
+    [\d\.]+               # The time used in seconds
+    \s+                   #
+    [\d\.]+               # The score found in centipawns
+    \s+                   #
+    (.+)                  # The Principal-Variation. With or without move numbers
+    \s*                   #
+    $                     # end of string
     """, re.VERBOSE)
                    
 #anare = re.compile("\d+\.?\s+ (Mat\d+|[-\d\.]+) \s+ \d+\s+\d+\s+((?:%s\s*)+)" % mov)
@@ -111,7 +112,12 @@ class CECPEngine (ProtocolEngine):
             "colors":    1,
             "ics":       0,
             "name":      0,
-            "pause":     0
+            "pause":     0,
+            "nps":       0,
+            "debug":     0,
+            "memory":    0,
+            "smp":       0,
+            "egt":       '',
         }
         
         self.board = None
@@ -238,7 +244,7 @@ class CECPEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [])
+                self.emit("analyze", [], None)
     
     #===========================================================================
     #    Send the player move updates
@@ -266,7 +272,7 @@ class CECPEngine (ProtocolEngine):
                 # Many engines don't like positions able to take down enemy
                 # king. Therefore we just return the "kill king" move
                 # automaticaly
-                self.emit("analyze", [getMoveKillingKing(self.board)])
+                self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
                 return
             self.__printColor()
     
@@ -648,13 +654,21 @@ class CECPEngine (ProtocolEngine):
             match = anare.match(line)
             if match:
                 score, moves = match.groups()
+                
+                if "mat" in score.lower():
+                    # Will look either like -Mat 3 or Mat3
+                    score = MATE_VALUE - int("".join(c for c in score if c.isdigit()))
+                    if score.startswith('-'): score = -score
+                else:
+                    score = int(score)
+                
                 mvstrs = movere.findall(moves)
                 moves = listToMoves (self.board, mvstrs, type=None, validate=True)
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
                 if moves and not self.board.board.opIsChecked():
-                    self.emit("analyze", moves)
+                    self.emit("analyze", moves, score)
                 
                 return
         

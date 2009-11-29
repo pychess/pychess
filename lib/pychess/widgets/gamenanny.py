@@ -229,7 +229,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
         if not hasattr (gmwidg.gamemodel, "chacons"):
             gmwidg.gamemodel.chacons = []
         
-        def on_analyze (analyzer, moves):
+        def on_analyze (analyzer, moves, score):
             if gmwidg.gamemodel.curplayer.__type__ == LOCAL and moves:
                set_arrow (moves[0].cords)
             else: set_arrow (None)
