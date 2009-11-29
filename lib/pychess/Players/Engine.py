@@ -15,15 +15,20 @@ class Engine (Player):
     
     __type__ = ARTIFICIAL
     
+    ''' The first argument is the pv list of moves. The second is a score
+        relative to the engine. If no score is known, the value can be None,
+        but not 0, which is a draw. '''
     __gsignals__ = {
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object))
     }
     
     def __init__(self):
         Player.__init__(self)
         
         self.currentAnalysis = []
-        def on_analysis(self_, analysis):
+        def on_analysis(self_, analysis, score):
+            if score != None:
+                self.currentScore = score
             self.currentAnalysis = analysis
         self.connect('analyze', on_analysis)
     
