@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import with_statement
+
 import gtk, pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
-from pychess.System.glock import glock_connect
+from pychess.System.glock import *
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
@@ -18,17 +20,22 @@ __icon__ = addDataPrefix("glade/panel_comments.svg")
 
 __desc__ = _("The comments panel will try to analyze and explain the moves played")
 
+class Switch:
+    def __init__(self): self.on = False
+    def __enter__(self): self.on = True
+    def __exit__(self, *a): self.on = False
+
 class Sidepanel:
 
     def __init__ (self):
         self.givenTips = {}
 
     def load (self, gmwidg):
-
+        
         self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
             glock_connect(self.gamemodel, "game_changed", self.game_changed),
-            glock_connect(self.gamemodel, "game_started", self.game_changed),
+            glock_connect(self.gamemodel, "game_started", self.game_started),
             glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
         ]
 
@@ -61,35 +68,33 @@ class Sidepanel:
                     vadjust.upper) < vadjust.step_increment
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
-        self.frozen = False
+        self.frozen = Switch()
 
         return scrollwin
 
     def select_cursor_row (self, selection):
         iter = selection.get_selected()[1]
         if iter == None: return
-        if self.frozen: return
+        if self.frozen.on: return
         row = self.tv.get_model().get_path(iter)[0]
         self.boardview.shown = self.gamemodel.lowply+row
-
+    
     def shown_changed (self, boardview, shown):
         row = shown - self.gamemodel.lowply
-        if row >= len(self.store): return
         iter = self.store.get_iter(row)
         self.tv.get_selection().select_iter(iter)
-
+    
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         model = self.tv.get_model()
         for i in xrange(moves):
             model.remove(model.get_iter( (len(model)-1,) ))
     
+    def game_started (self, model):
+        self.game_changed(model)
     def game_changed (self, model):
         for ply in xrange(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))
-        row = self.gamemodel.ply - self.gamemodel.lowply
-        iter = self.store.get_iter(row)
-        self.tv.get_selection().select_iter(iter)
     
     def addComment (self, model, comment):
         self.store.append([comment])
@@ -102,10 +107,9 @@ class Sidepanel:
                 return
         
         if self.boardview.shown >= model.ply:
-            self.frozen = True
             iter = self.store.get_iter(len(self.store)-1)
-            self.tv.get_selection().select_iter(iter)
-            self.frozen = False
+            with self.frozen:
+                self.tv.get_selection().select_iter(iter)
     
     def __chooseComment(self, model, ply):
         

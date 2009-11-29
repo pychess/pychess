@@ -15,10 +15,15 @@ __active__ = True
 __icon__ = addDataPrefix("glade/panel_moves.svg")
 __desc__ = _("The moves sheet keeps track of the players' moves and lets you navigate through the game history")
 
+class Switch:
+    def __init__(self): self.on = False
+    def __enter__(self): self.on = True
+    def __exit__(self, *a): self.on = False
+
 class Sidepanel:
     
     def __init__ (self):
-        self.freezed = False
+        self.frozen = Switch()
     
     def load (self, gmwidg):
         
@@ -44,16 +49,16 @@ class Sidepanel:
             renderer = gtk.CellRendererText()
             renderer.set_property("xalign",xalign)
             list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-            list.get_selection().set_mode(gtk.SELECTION_BROWSE)
+            list.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
         fixList(self.numbers, 1)
         fixList(self.left, 0)
         fixList(self.right, 0)
         
-        self.left.get_selection().connect_after(
-                'changed', self.on_selection_changed, self.left, 0)
-        self.right.get_selection().connect_after(
-                'changed', self.on_selection_changed, self.right, 1)
+        self.left.get_selection().connect('changed', self.on_selection_changed,
+                                          self.left, 0)
+        self.right.get_selection().connect('changed', self.on_selection_changed,
+                                           self.right, 1)
         
         widgets.signal_autoconnect ({
             "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
@@ -95,9 +100,8 @@ class Sidepanel:
     def on_selection_changed (self, selection, tree, col):
         iter = selection.get_selected()[1]
         if iter == None: return
-        
-        if self.freezed: return
-        
+        if self.frozen.on: return
+        print "sel changed. updating shown"
         row = tree.get_model().get_path(iter)[0]
         if self.board.model.lowply & 1:
             self.board.shown = self.board.model.lowply + row*2 + col
@@ -124,13 +128,13 @@ class Sidepanel:
     
     def game_changed (self, game):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
-        if len(self.left.get_model()) and not self.left.get_model()[0][0]: len_ -= 1
-        #print len_, game.lowply, game.ply
+        if len(self.left.get_model()) and not self.left.get_model()[0][0]:
+            len_ -= 1
         for ply in xrange(len_+game.lowply, game.ply+1):
-            #print 'a', ply
             self.__addMove(game, ply)
     
     def __addMove(self, game, ply):
+        print "Am I doing anything?"
         row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
@@ -149,37 +153,22 @@ class Sidepanel:
             self.left.get_model().append([""])
         
         view.get_model().append([notat])
-        if self.board.shown < ply:
-            return
-        
-        # Freezes to avoid that select_cursor_row changes board.shown
-        self.freezed = True
-        view.get_selection().select_iter(view.get_model().get_iter(row))
-        view.set_cursor((row,))
-        if other.is_focus():
-            view.grab_focus()
-        other.get_selection().unselect_all()
-        self.freezed = False
     
     def shown_changed (self, board, shown):
         if shown <= board.model.lowply:
+            print "Or is it me?"
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
-        
+        print "shown changed", shown 
         row, col, other = self._ply_to_row_col_other(shown)
         
-        # If game is changed, we can't expect the treeviews to be updated yet.
-        # Further more when game_changed is called, it will select stuff it self
-        if row >= len(col.get_model()):
-            return
-        
-        if shown > board.model.lowply:
+        with self.frozen:
+            other.get_selection().unselect_all()
             col.get_selection().select_iter(col.get_model().get_iter(row))
             col.set_cursor((row,))
-            if other.is_focus():
-                col.grab_focus()
-        other.get_selection().unselect_all()
+            col.scroll_to_cell((row,), None, False)
+            col.grab_focus()
     
     def _ply_to_row_col_other (self, ply):
         col = ply & 1 and self.left or self.right
