@@ -285,9 +285,11 @@ class BoardView (gtk.DrawingArea):
                     move = self.model.getMoveAtPly(i-1)
                     moved, new, dead = board.simulateUnmove(board1, move)
                 
+                # We need to ensure, that the piece coordinate is saved in the
+                # piece
                 for piece, cord0 in moved:
                     # Test if the piece already has a realcoord (has been dragged)
-                    if not piece.x:
+                    if piece.x == None:
                         # We don't want newly restored pieces to flew from their
                         # deadspot to their old position, as it doesn't work
                         # vice versa  
