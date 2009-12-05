@@ -15,6 +15,7 @@ def testFifty (board):
     return False
 
 drawSet = set((
+    (0, 0, 0, 0,   0, 0, 0, 0), #KK
     (0, 1, 0, 0,   0, 0, 0, 0), #KBK
     (1, 0, 0, 0,   0, 0, 0, 0), #KNK
     (0, 0, 0, 0,   0, 1, 0, 0), #KKB
