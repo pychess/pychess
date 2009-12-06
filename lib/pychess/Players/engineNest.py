@@ -96,6 +96,8 @@ backup = """
     
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
+    <engine protocol="uci" protover="1" binname="stockfish">
+        <meta><country>no</country></meta></engine>
     <engine protocol="uci" protover="1" binname="ShredderClassicLinux">
         <meta><country>de</country></meta></engine>
     <engine protocol="uci" protover="1" binname="fruit_21_static"> 
