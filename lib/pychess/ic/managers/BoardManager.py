@@ -66,9 +66,9 @@ class BoardManager (GObject):
                 "Sorry, game (\d+) is a private game\.")
         
         self.connection.expect_n_lines (self.playBoardCreated,
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)"
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
             % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) Creating %s ([^ ]+) match\."
+            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
         
