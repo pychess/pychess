@@ -129,7 +129,7 @@ class EngineDiscoverer (GObject, PooledThread):
         self.xmlpath = addHomePrefix("engines.xml")
         try:
             self.dom = ET.ElementTree(file=self.xmlpath)
-            c = compareVersions(self.dom.getroot().get('version'), ENGINES_XML_API_VERSION)
+            c = compareVersions(self.dom.getroot().get('version', default='0'), ENGINES_XML_API_VERSION)
             if c == -1:
                 log.warn("engineNest: engines.xml is outdated. It will be replaced\n")
                 self.dom = deepcopy(self.backup)
