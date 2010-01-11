@@ -5,9 +5,10 @@ modules_to_test = (
     "eval",
     "fen",
     "frc_castling",
-    "movegen",
+    #"movegen",
     "pgn",
     "zobrist",
+    'ficsmanagers',
     ) 
 
 def suite():
