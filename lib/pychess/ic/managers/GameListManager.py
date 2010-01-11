@@ -198,7 +198,8 @@ class GameListManager (GObject):
         
         seek = {"gameno": parts[0]}
         for key, value in [p.split("=") for p in parts[1:] if p]:
-            seek[key] = value
+            if key in ('w','r','t','i'):
+                seek[key] = value
             if key == "tp":
                 if value in unsupportedWilds:
                     return
@@ -206,10 +207,11 @@ class GameListManager (GObject):
             if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
             elif key == "ti":
-                seek["cp"] = int(value) & 2 # 0x2 - computer
+                seek["cp"] = bool(int(value) & 2) # 0x2 - computer
             elif key == "rt":
                 if value[-1] in (" ", "P", "E"):
                     seek[key] = value[:-1]
+                else: seek[key] = value
             elif key == "a":
                 seek["manual"] = value == "f" # Must be accepted manually
         

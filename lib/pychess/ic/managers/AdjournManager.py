@@ -11,7 +11,7 @@ weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
-moveListMoves = re.compile("(\d+)\. +%s +\(\d+:\d+\.\d+\) *(?:%s +\(\d+:\d+\.\d+\))?" %
+moveListMoves = re.compile("(\d+)\. +%s +\([\d:\.]+\) *(?:%s +\([\d:\.]+\))?" %
         (sanmove, sanmove))
 
 class AdjournManager (GObject):
@@ -107,6 +107,9 @@ class AdjournManager (GObject):
         
         pgnlist = []
         for line in matchlist[2:-1]:
+            if not moveListMoves.match(line):
+                print "HER!->", repr(line)
+            
             moveno, wmove, bmove = moveListMoves.match(line).groups()
             pgnlist.append(moveno+".")
             pgnlist.append(wmove)
