@@ -17,7 +17,7 @@ class LogPipe:
             self.to.write(data)
         except IOError:
             if flag == "stdout":
-                # Certainly hope we never ends up here
+                # Certainly hope we never end up here
                 pass
             else:
                 log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
