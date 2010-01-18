@@ -12,6 +12,7 @@ modules_to_test = (
     "pgn",
     "zobrist",
     'ficsmanagers',
+    'analysis',
     ) 
 
 def suite():
