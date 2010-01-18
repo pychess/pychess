@@ -1,5 +1,8 @@
 import unittest
 
+import __builtin__
+__builtin__.__dict__['_'] = lambda s: s
+
 modules_to_test = (
     "bitboard",
     "eval",

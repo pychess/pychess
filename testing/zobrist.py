@@ -1,8 +1,5 @@
 import unittest
 
-import __builtin__
-__builtin__.__dict__['_'] = lambda s: s
-
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.leval import LBoard
