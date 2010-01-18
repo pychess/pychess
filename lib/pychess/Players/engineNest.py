@@ -483,8 +483,8 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def initAnalyzerEngine (self, xmlengine, mode, variant):
         engine = self.initEngine (xmlengine, WHITE)
-        engine.setOptionAnalyzing(mode)
         def optionsCallback (engine):
+            engine.setOptionAnalyzing(mode)
             engine.setOptionVariant(variant)
         engine.connect("readyForOptions", optionsCallback)
         engine.prestart()
