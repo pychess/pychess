@@ -1,8 +1,5 @@
 import unittest
 
-import __builtin__
-__builtin__.__dict__['_'] = lambda s: s
-
 from pychess.Utils.const import WHITE
 from pychess.ic.FICSConnection import Connection
 from pychess.ic.VerboseTelnet import PredictionsTelnet
