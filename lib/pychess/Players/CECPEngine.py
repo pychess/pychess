@@ -262,7 +262,7 @@ class CECPEngine (ProtocolEngine):
             return
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.setColor(1-self.board.color)
+            self.board = board.switchColor()
             self.__printColor()
         
         self.__usermove(board2, move)
@@ -343,6 +343,10 @@ class CECPEngine (ProtocolEngine):
                 self.__usermove(board, move)
             
             self.board = boards[-1]
+            
+            if self.mode == INVERSE_ANALYZING:
+                self.board = self.board.switchColor()
+                self.__printColor()
             
             #if self.mode in (ANALYZING, INVERSE_ANALYZING) or \
             #        gamemodel.boards[-1].color == self.color:
@@ -471,7 +475,7 @@ class CECPEngine (ProtocolEngine):
                 self._blockTillMove()
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.setColor(1-self.board.color)
+            self.board = self.board.switchColor()
             self.__printColor()
         
         for i in xrange(moves):
@@ -487,7 +491,7 @@ class CECPEngine (ProtocolEngine):
             self.board = gamemodel.boards[-1]
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.setColor(1-self.board.color)
+            self.board = board.switchColor()
             self.__printColor()
     
     #===========================================================================
@@ -663,7 +667,10 @@ class CECPEngine (ProtocolEngine):
                     scoreval = int(score)
                 
                 mvstrs = movere.findall(moves)
-                moves = listToMoves (self.board, mvstrs, type=None, validate=True)
+                # We ignore errors to get the most parsable moves available.
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=True)
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
