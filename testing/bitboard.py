@@ -1,8 +1,5 @@
 import unittest
 
-import __builtin__
-__builtin__.__dict__['_'] = lambda s: s
-
 import random
 import operator
 
