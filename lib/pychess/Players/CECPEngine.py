@@ -262,7 +262,7 @@ class CECPEngine (ProtocolEngine):
             return
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = board.switchColor()
+            self.board = self.board.switchColor()
             self.__printColor()
         
         self.__usermove(board2, move)
@@ -491,7 +491,7 @@ class CECPEngine (ProtocolEngine):
             self.board = gamemodel.boards[-1]
         
         if self.mode == INVERSE_ANALYZING:
-            self.board = board.switchColor()
+            self.board = self.board.switchColor()
             self.__printColor()
     
     #===========================================================================
