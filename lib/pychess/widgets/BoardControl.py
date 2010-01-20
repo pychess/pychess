@@ -251,6 +251,7 @@ class LockedBoardState (BoardState):
             Note: This doesn't always return the correct value, such as when 
             BoardControl.setLocked() has been called and we've begun a drag,
             but view.shown and BoardControl.lockedPly haven't been yet been updated """
+        if cord0 == None or cord1 == None: return False
         if not self.parent.lockedPly in self.parent.possibleBoards:
             return False
         for board in self.parent.possibleBoards[self.parent.lockedPly]:
