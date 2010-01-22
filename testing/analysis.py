@@ -53,6 +53,13 @@ class CECPTests(EmittingTestCase):
         analyzer.start()
         return engine, analyzer
     
+    def _testLine(self, engine, analyzer, board, analine, moves, score):
+        self.traceSignal(analyzer, 'analyze')
+        engine.putline(analine)
+        results = self.getSignalResults(analyzer)
+        self.assertNotEqual(results, None, "signal wasn't sent")
+        self.assertEqual(results, (listToMoves(board,moves), score))
+    
     def setUp (self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
         self.engineI, self.analyzerI = self._setupengine(INVERSE_ANALYZING)
@@ -64,17 +71,28 @@ class CECPTests(EmittingTestCase):
         self.analyzerA.setBoard([board],[])
         self.analyzerI.setBoard([board],[])
         
-        self.traceSignal(self.analyzerA, 'analyze')
-        self.engineA.putline("1. Mat1 0 1     Bxb7#")
-        results = self.getSignalResults(self.analyzerA)
-        self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, (listToMoves(board,['Bxb7#']), MATE_VALUE-1))
+        self._testLine(self.engineA, self.analyzerA, board,
+                       "1. Mat1 0 1     Bxb7#",
+                       ['Bxb7#'], MATE_VALUE-1)
         
         # Notice, in the opposite situation there is no forced mate. Black can
         # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
         # recognizing this.
-        self.traceSignal(self.analyzerI, 'analyze')
-        self.engineI.putline("10. -Mat 2 35 64989837     Bd4 Bxb7#")
-        results = self.getSignalResults(self.analyzerI)
-        self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, (listToMoves(board.switchColor(),['Bd4','Bxb7#']), -MATE_VALUE+2))
+        self._testLine(self.engineI, self.analyzerI, board.switchColor(),
+                       "10. -Mat 2 35 64989837     Bd4 Bxb7#",
+                       ['Bd4','Bxb7#'], -MATE_VALUE+2)
+    
+    def test2(self):
+        """ Test analyzing in promotion situations """
+        
+        board = Board('5k2/PK6/8/8/8/6P1/6P1/8 w - - 1 48')
+        self.analyzerA.setBoard([board],[])
+        self.analyzerI.setBoard([board],[])
+        
+        self._testLine(self.engineA, self.analyzerA, board,
+                       "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
+                       ['a8=Q+','Kf7','Qa2+','Kf6','Qd2','Kf5','g4+'], 1833)
+        
+        self._testLine(self.engineI, self.analyzerI, board.switchColor(),
+                       "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
+                       ['Kf7','a8=Q','Ke6','Qa6+','Ke5','Qd6+','Kf5'], -1883)
