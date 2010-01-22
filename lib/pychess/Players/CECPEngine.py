@@ -17,6 +17,7 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
 from pychess.Variants import variants
+from pychess.Savers.pgn import movre as movere
 
 from ProtocolEngine import ProtocolEngine
 from Player import Player, PlayerIsDead, TurnInterrupt
@@ -33,7 +34,6 @@ def isdigits (strings):
     return True
 
 d_plus_dot_expr = re.compile(r"\d+\.")
-movere = re.compile("([a-hKQRBNOo][a-h0-8xOo+#=-]{1,6})[?!]*")
 
 anare = re.compile("""
     ^                        # beginning of string
@@ -670,7 +670,7 @@ class CECPEngine (ProtocolEngine):
                 # We ignore errors to get the most parsable moves available.
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=True)
+                moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=False)
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
