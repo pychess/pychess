@@ -667,10 +667,13 @@ class CECPEngine (ProtocolEngine):
                     scoreval = int(score)
                 
                 mvstrs = movere.findall(moves)
-                # We ignore errors to get the most parsable moves available.
-                # ParsingErrors may happen when parsing "old" lines from
-                # analyzing engines, which haven't yet noticed their new tasks
-                moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=False)
+                try:
+                    moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=False)
+                except ParsingError, e:
+                    # ParsingErrors may happen when parsing "old" lines from
+                    # analyzing engines, which haven't yet noticed their new tasks
+                    log.debug("Ignored line from analyzer due to error: %s" % e, repr(self))
+                    return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
