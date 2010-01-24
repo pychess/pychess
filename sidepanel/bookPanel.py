@@ -11,6 +11,8 @@ __icon__ = addDataPrefix("glade/panel_book.svg")
 
 __desc__ = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
 
+__about__ = _("Official PyChess panel.")
+
 class Sidepanel:
     
     def load (self, gmwidg):
@@ -36,6 +38,9 @@ class Sidepanel:
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
+        self.tv.connect("query-tooltip", self.query_tooltip)
+        
+        self.tv.props.has_tooltip = True
         
         self.shown_changed(self.board, 0)
         
@@ -93,6 +98,29 @@ class Sidepanel:
         if arrow and self.board.model.ply == self.board.shown:
             self.board.bluearrow = None
             self.boardcontrol.emit_move_signal(*arrow)
+    
+    def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
+        # First, find out where the pointer is:
+        path_col_x_y = treeview.get_path_at_pos (x, y);
+
+        # If we're not pointed at a row, then return FALSE to say
+        # "don't show a tip".
+        if not path_col_x_y:
+            return False
+        
+        # Otherwise, ask the TreeView to set up the tip's area according
+        # to the row's rectangle.
+        path, col, x, y = path_col_x_y
+        treeview.set_tooltip_row(tooltip, path);
+
+        # And then load it up with some meaningful text.
+        iter = self.store.get_iter(path)
+        w, d, l = self.store.get(iter, 2)[0]
+        tooltip.set_markup('Wins: <b>%0.1f%%</b>\nDraws: <b>%0.1f%%</b>\nLoses: <b>%0.1f%%</b>' %
+                           (w*100, d*100, l*100))
+        
+        # Return true to say "show the tip".
+        return True;
 
 ################################################################################
 # BookCellRenderer                                                             #
