@@ -299,7 +299,7 @@ class CECPEngine (ProtocolEngine):
         # Parse outputs
         r = self.returnQueue.get()
         if r == "not ready":
-            log.warn("Engine seams to be protover=2, but is treated as protover=1", repr(self))
+            log.warn("Engine seams to be protover=2, but is treated as protover=1", self.defname)
             r = self.returnQueue.get()
         if r == "ready":
             r = self.returnQueue.get()
@@ -672,7 +672,7 @@ class CECPEngine (ProtocolEngine):
                 except ParsingError, e:
                     # ParsingErrors may happen when parsing "old" lines from
                     # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug("Ignored line from analyzer due to error: %s" % e, repr(self))
+                    log.debug("Ignored a line from analyzer: ParsingError%s\n" % e, self.defname)
                     return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
@@ -734,7 +734,7 @@ class CECPEngine (ProtocolEngine):
                     i = rest.find('"')
                     j = rest.find("'")
                     if i + j == -2:
-                        log.warn("Missing endquotation in %s feature", repr(self))
+                        log.warn("Missing endquotation in %s feature", self.defname)
                         value = rest
                     elif min(i, j) != -1:
                         value = rest[:min(i, j)]
