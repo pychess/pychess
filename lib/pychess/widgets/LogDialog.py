@@ -131,6 +131,8 @@ class InformationWindow:
         page = {"child": frame, "textview":textview}
         cls.tagToPage[tag] = page
         cls.pathToPage[cls.treeview.get_model().get_path(iter)] = page
+        
+        cls.treeview.expand_all()
     
     @classmethod
     def _getPageFromTag (cls, tag):
