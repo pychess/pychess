@@ -5,6 +5,8 @@
     PyChess blunder finder script.
     This scripts allows you to analyze a played pgn file for blunders, using
     the engine of your choice.
+    
+    PYTHONPATH=lib/ python blunders.py game.pgn
 '''
 
 ###############################################################################
@@ -69,14 +71,14 @@ class DummyPlayer (Player):
         self.Q = Queue.Queue()
     def makeMove (self, board1, move, board2):
         r = self.Q.get()
-        if r == "del":  raise PlayerIsDead
+        if r == "del": raise PlayerIsDead
         if r == "int": raise TurnInterrupt
     def undoMoves (self, moves, gamemodel): self.Q.put('int')
     def end (self, status, reason): self.Q.put('del')
     def kill (self, reason): self.Q.put('del')
     def pause (self): pass
     def resume (self):  pass
-    def offer (self, offer): self.emit('decline', offer)
+    def offer (self, offer): self.emit('accept', offer)
 
 def start(discoverer):
     pgnfile, gameno = queryGameno(sys.argv[1])
