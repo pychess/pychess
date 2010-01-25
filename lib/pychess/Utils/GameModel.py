@@ -100,7 +100,11 @@ class GameModel (GObject, PooledThread):
     lowply = property(_get_lowest_ply)
     
     def _get_curplayer (self):
-        return self.players[self.getBoardAtPly(self.ply).color]
+        try:
+            return self.players[self.getBoardAtPly(self.ply).color]
+        except IndexError:
+            log.error("%s %s" % (self.players, self.getBoardAtPly(self.ply).color))
+            raise
     curplayer = property(_get_curplayer)
     
     def _plyToIndex (self, ply):
