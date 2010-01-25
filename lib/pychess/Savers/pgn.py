@@ -82,7 +82,7 @@ def stripBrackets (string):
 
 
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-movre = re.compile(r"([a-h0-8xOoKQRBN+#=-]{2,7})[\?!]*\s*")
+movre = re.compile(r"([KQRBN]?[a-h0-8]{0,2}x?[a-h][0-8]=?[KQRBN]?|[0Oo\-]{3,5})[+#]?[\?!]*\s*")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
 
 def load (file):
