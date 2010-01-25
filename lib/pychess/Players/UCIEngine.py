@@ -423,7 +423,14 @@ class UCIEngine (ProtocolEngine):
                     score *= score/abs(score) # sign
             
             movstrs = parts[parts.index("pv")+1:]
-            moves = listToMoves (self.board, movstrs, AN, validate=True)
+            try:
+                moves = listToMoves (self.board, movstrs, AN, validate=True, ignoreErrors=False)
+            except ParsingError, e:
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                log.debug("Ignored (%s) from analyzer: ParsingError%s\n" %
+                          (' '.join(movstrs),e), self.defname)
+                return
             
             self.emit("analyze", moves, score)
             return
