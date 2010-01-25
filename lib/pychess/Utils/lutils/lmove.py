@@ -119,7 +119,7 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
         if testvalidate:
             if not validateMove (board, move):
                 if not ignoreErrors:
-                    raise ParsingError, (move, '', board.asFen())
+                    raise ParsingError, (mstr, 'Validation', board.asFen())
                 break 
         
         moves.append(move)
