@@ -103,25 +103,29 @@ class GameModel (GObject, PooledThread):
         try:
             return self.players[self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s" % (self.players, self.getBoardAtPly(self.ply).color))
+            log.error("%s %s\n" % (self.players, self.getBoardAtPly(self.ply).color))
             raise
     curplayer = property(_get_curplayer)
     
     def _plyToIndex (self, ply):
         index = ply - self.lowply
         if index < 0:
-            raise IndexError, "%s < %s" % (ply, self.lowply)
+            raise IndexError, "%s < %s\n" % (ply, self.lowply)
         return index
     
     def getBoardAtPly (self, ply):
         try:
             return self.boards[self._plyToIndex(ply)]
         except:
-            log.debug("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.boards)))
+            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.boards)))
             raise
     
     def getMoveAtPly (self, ply):
-        return self.moves[self._plyToIndex(ply)]
+        try:
+            return self.moves[self._plyToIndex(ply)]
+        except IndexError:
+            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
+            raise
     
     ############################################################################
     # Offer management                                                         #
