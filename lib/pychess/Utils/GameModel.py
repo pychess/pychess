@@ -387,13 +387,13 @@ class GameModel (GObject, PooledThread):
     def __pause (self):
         for player in self.players:
             player.pause()
-            try:
-                for spectactor in self.spectactors.values():
-                    spectactor.pause()
-            except NotImplementedError:
-                pass
-            if self.timemodel:
-                self.timemodel.pause()
+        try:
+            for spectactor in self.spectactors.values():
+                spectactor.pause()
+        except NotImplementedError:
+            pass
+        if self.timemodel:
+            self.timemodel.pause()
     
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
@@ -413,13 +413,13 @@ class GameModel (GObject, PooledThread):
     def __resume (self):
         for player in self.players:
             player.resume()
-            try:
-                for spectactor in self.spectactors.values():
-                    spectactor.resume()
-            except NotImplementedError:
-                pass
-            if self.timemodel:
-                self.timemodel.resume()
+        try:
+            for spectactor in self.spectactors.values():
+                spectactor.resume()
+        except NotImplementedError:
+            pass
+        if self.timemodel:
+            self.timemodel.resume()
         self.emit("game_resumed")
     
     def resume (self):
