@@ -222,6 +222,7 @@ class GameWidget (gobject.GObject):
     def setLocked (self, locked):
         """ Makes the board insensitive and turns of the tab ready indicator """
         self.board.setLocked(locked)
+        if not self.tabcontent.get_children(): return
         self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
         if not locked:
             self.tabcontent.child.pack_start(createImage(light_on), expand=False)
