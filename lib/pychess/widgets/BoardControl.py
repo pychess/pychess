@@ -36,6 +36,7 @@ class BoardControl (gtk.EventBox):
             menuitem.connect("activate", self.actionActivate, key)
         
         self.view.connect("shown_changed", self.shown_changed)
+        gamemodel.connect("moves_undoing", self.moves_undone)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
@@ -106,6 +107,18 @@ class BoardControl (gtk.EventBox):
         if self.view.shown-2 in self.possibleBoards:
             del self.possibleBoards[self.view.shown-2]
     
+    def moves_undone (self, gamemodel, moves):
+        self.stateLock.acquire()
+        try:
+            self.view.selected = None
+            self.view.active = None
+            self.view.hover = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.currentState = self.lockedState
+        finally:
+            self.stateLock.release()
+    
     def setLocked (self, locked):
         self.stateLock.acquire()
         try:
@@ -113,6 +126,7 @@ class BoardControl (gtk.EventBox):
                 if self.view.model.status != RUNNING:
                     self.view.selected = None
                     self.view.active = None
+                    self.view.hover = None
                     self.view.draggedPiece = None
                     self.view.startAnimation()
                 self.currentState = self.lockedState
@@ -191,6 +205,7 @@ class BoardState:
     
     def validate (self, cord0, cord1):
         assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)
+        if self.getBoard()[cord0] == None: return False
         return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
     
     def transPoint (self, x, y):
@@ -250,7 +265,7 @@ class LockedBoardState (BoardState):
             as the next move after the player who's turn it is makes their move
             Note: This doesn't always return the correct value, such as when 
             BoardControl.setLocked() has been called and we've begun a drag,
-            but view.shown and BoardControl.lockedPly haven't been yet been updated """
+            but view.shown and BoardControl.lockedPly haven't been updated yet """
         if cord0 == None or cord1 == None: return False
         if not self.parent.lockedPly in self.parent.possibleBoards:
             return False
