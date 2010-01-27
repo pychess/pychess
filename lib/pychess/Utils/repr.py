@@ -10,7 +10,7 @@ reprResult_long = {
 }
 
 reprReason_long = {
-    DRAW_INSUFFICIENT: _("Because no players had sufficient material to mate"),
+    DRAW_INSUFFICIENT: _("Because neither player has sufficient material to mate"),
     DRAW_REPITITION: _("Because the same position was repeated three times in a row"),
     DRAW_50MOVES: _("Because the last 50 moves brought nothing new"),
     DRAW_CALLFLAG: _("Because both players ran out of time"),
