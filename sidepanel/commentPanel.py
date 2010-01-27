@@ -232,8 +232,8 @@ class Sidepanel:
 
         for (score, tip) in tips:
             if tip in self.givenTips:
-                oldscore, ply = self.givenTips[tip]
-                if score < oldscore*1.3 or model.ply < ply+10:
+                oldscore, oldply = self.givenTips[tip]
+                if score < oldscore*1.3 or model.ply < oldply+10:
                     continue
 
             self.givenTips[tip] = (score, model.ply)
