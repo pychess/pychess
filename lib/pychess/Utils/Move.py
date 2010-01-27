@@ -24,6 +24,8 @@ class Move:
             self.cord1 = Cord(lmove.TCORD(self.move))
             
         else:
+            assert cord0 != None and cord1 != None, "cord0=%s, cord1=%s, board=%s" % (cord0, cord1, board)
+            assert board[cord0] != None, "cord0=%s, cord1=%s, board=%s" % (cord0, cord1, board)
             self.cord0 = cord0
             self.cord1 = cord1
             if not board:
