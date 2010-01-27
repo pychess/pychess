@@ -228,9 +228,9 @@ def toSAN (board, move, localRepr=False):
 
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
-    if len(san) < 2:
-        if not san:
-            raise ParsingError, (san, _("the move is an empty string"), board.asFen())
+    if not san:
+        raise ParsingError, (san, _("the move is an empty string"), board.asFen())
+    elif len(san) < 2:
         raise ParsingError, (san, _("the move is too short"), board.asFen())
     
     notat = san
