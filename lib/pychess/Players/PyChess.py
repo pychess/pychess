@@ -392,6 +392,7 @@ class PyChessCECP(PyChess):
         def process (worker, messages): print "\n".join(messages)
         self.worker.connect("published", process)
         def ondone (worker, result):
+            if worker.cancelled: return
             self.board.applyMove(parseSAN(self.board,result))
             print "move %s" % result
         self.worker.connect("done", ondone)
