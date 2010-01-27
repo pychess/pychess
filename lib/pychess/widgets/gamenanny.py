@@ -7,6 +7,7 @@ import math
 import gtk
 
 from pychess.Utils.Offer import Offer
+from pychess.Utils.logic import validate
 #from pychess.Utils.GameModel import GameModel
 #from pychess.Utils.TimeModel import TimeModel
 
@@ -215,7 +216,8 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
     
     if enabled:
         if len(analyzer.getAnalysis()) >= 1:
-            if gmwidg.gamemodel.curplayer.__type__ == LOCAL:
+            if gmwidg.gamemodel.curplayer.__type__ == LOCAL and \
+               validate(gmwidg.gamemodel.boards[-1], analyzer.getAnalysis()[0]):
                 set_arrow (analyzer.getAnalysis()[0].cords)
             else: set_arrow (None)
         
