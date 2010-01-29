@@ -551,6 +551,11 @@ class CECPEngine (ProtocolEngine):
         
         print >> self.engine, "post"
         print >> self.engine, "analyze"
+        
+        # workaround for crafty not sending analysis after it has found a mating line
+        # http://code.google.com/p/pychess/issues/detail?id=515
+        if "crafty" in self.features["myname"].lower():
+            print >> self.engine, "noise 0"
     
     def __printColor (self):
         #if self.features["colors"]:
