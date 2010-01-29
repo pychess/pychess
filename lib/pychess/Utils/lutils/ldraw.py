@@ -58,7 +58,7 @@ def testMaterial (board):
     bb = bitLength(blackBoards[BISHOP])
     br = bitLength(blackBoards[ROOK])
     
-    if (wn, wb, wr, 0,   bn, wb, wr, 0) in drawSet:
+    if (wn, wb, wr, 0,   bn, bb, br, 0) in drawSet:
         return True
         
     # Tests KBKB. Draw if bishops are of same color
