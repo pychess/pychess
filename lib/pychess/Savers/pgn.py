@@ -82,8 +82,23 @@ def stripBrackets (string):
 
 
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-movre = re.compile(r"([KQRBN]?[a-h0-8]{0,2}x?[a-h][0-8]=?[KQRBN]?|[0Oo\-]{3,5})[+#]?[\?!]*\s*")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
+movre = re.compile(r"""
+    (                   # group start
+    (?:                 # non grouping parenthesis start
+    [KQRBN]?            # piece
+    [a-h]?[1-8]?        # unambiguous column or line
+    x?                  # capture
+    [a-h][1-8]          # destination square
+    =?[QRBN]?           # promotion
+    |O\-O(?:\-O)?       # castling
+    |0\-0(?:\-0)?       # castling
+    )                   # non grouping parenthesis end
+    [+#]?               # check/mate
+    )                   # group end
+    [\?!]*              # traditional suffix annotations
+    \s*                 # any whitespace
+    """, re.VERBOSE)
 
 def load (file):
     files = []
