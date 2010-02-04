@@ -1,17 +1,16 @@
 import os
-import sys
 import webbrowser
 import math
 import atexit
 import signal
 
-import pango, gobject, gtk
+import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 from pychess.System import conf, glock, uistuff, prefix, SubProcess
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
-from pychess.Utils.const import *
+from pychess.Utils.const import HINT, NAME, SPY, VERSION, VERSION_NAME
 from pychess.Utils import book # Kills pychess if no sqlite available
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
