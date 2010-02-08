@@ -417,6 +417,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="show_sidepanels">
 		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="label" translatable="yes">_Show Sidepanels</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">True</property>
