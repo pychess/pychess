@@ -377,6 +377,9 @@ class SeekTabSection (ParrentListSection):
 
         self.widgets["acceptButton"].connect("clicked", self.onAccept)
         self.tv.connect("row-activated", self.onAccept)
+        self.selection = self.tv.get_selection()
+        self.lastSeekSelected = None
+        self.selection.connect("changed", self.onSelectionChanged)
 
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
                 self.listPublisher.put((self.onPlayingGame,)) )
@@ -418,10 +421,18 @@ class SeekTabSection (ParrentListSection):
         model, iter = self.widgets["seektreeview"].get_selection().get_selected()
         if iter == None: return
         gameno = model.get_value(iter, 0)
+        if gameno != self.lastSeekSelected:
+            log.warn("row changed between first and second click of double-click")
+            return
         if gameno.startswith("C"):
             self.connection.om.acceptIndex(gameno[1:])
         else:
             self.connection.om.playIndex(gameno)
+
+    def onSelectionChanged (self, selection):
+        model, iter = self.widgets["seektreeview"].get_selection().get_selected()
+        if iter == None: return
+        self.lastSeekSelected = model.get_value(iter, 0)
 
     def onPlayingGame (self):
         self.widgets["seekListContent"].set_sensitive(False)
