@@ -52,6 +52,13 @@ class PyDockLeaf (DockLeaf):
         
         self.__add(widget, title, id)
     
+    def __repr__ (self):
+        s = DockLeaf.__repr__(self)
+        panels = []
+        for widget, title, id in self.getPanels():
+            panels.append(id)
+        return " (" + s + ", ".join(panels) + ")"
+    
     def __add (self, widget, title, id):
         #widget = BorderBox(widget, top=True)
         self.panels.append((widget, title, id))
@@ -98,6 +105,7 @@ class PyDockLeaf (DockLeaf):
                 while not isinstance(parent, DockComposite):
                     parent = parent.get_parent()
                 parent.removeComponent(self)
+                self.__del__()
             # We need to idle_add this, as the widget won't emit drag-ended, if
             # it is removed to early
             gobject.idle_add(cb)
@@ -105,34 +113,36 @@ class PyDockLeaf (DockLeaf):
         return title, id
     
     def zoomUp (self):
-        if self.zoomed:
-            return
+        if self.zoomed: return
         
         parent = self.get_parent()
-        while not isinstance(parent, DockComposite):
-            parent = parent.get_parent()
+        if not isinstance(parent, TopDock):
+            while not isinstance(parent, DockComposite):
+                parent = parent.get_parent()
+            
+            parent.changeComponent(self, self.zoomPointer)
+            
+            while not isinstance(parent, TopDock):
+                parent = parent.get_parent()
+            
+            self.realtop = parent.getComponents()[0]
+            parent.changeComponent(self.realtop, self)
         
-        parent.changeComponent(self, self.zoomPointer)
-        
-        while not isinstance(parent, TopDock):
-            parent = parent.get_parent()
-        
-        self.realtop = parent.getComponents()[0]
-        parent.changeComponent(self.realtop, self)
         self.zoomed = True
         self.book.set_show_border(False)
     
     def zoomDown (self):
-        if not self.zoomed:
-            return
+        if not self.zoomed: return
         
-        top_parent = self.get_parent()
-        old_parent = self.zoomPointer.get_parent()
-        while not isinstance(old_parent, DockComposite):
-            old_parent = old_parent.get_parent()
-        
-        top_parent.changeComponent(self, self.realtop)
-        old_parent.changeComponent(self.zoomPointer, self)
+        if self.zoomPointer.get_parent():
+            top_parent = self.get_parent()
+            old_parent = self.zoomPointer.get_parent()
+            
+            while not isinstance(old_parent, DockComposite):
+                old_parent = old_parent.get_parent()
+            
+            top_parent.changeComponent(self, self.realtop)
+            old_parent.changeComponent(self.zoomPointer, self)
         
         self.realtop = None
         self.zoomed = False
