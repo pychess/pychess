@@ -100,6 +100,22 @@ movre = re.compile(r"""
     \s*                 # any whitespace
     """, re.VERBOSE)
 
+# token categories
+COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
+VARIATION_START, VARIATION_END, \
+RESULT, FULL_MOVE, MOVE_COUNT, MOVE, MOVE_COMMENT = range(1,11)
+
+pattern = re.compile(r"""
+    (\;.*?[\n\r])        # comment, rest of line style
+    |(\{.*?\})           # comment, between {} 
+    |(\$[0-9]+)          # comment, Numeric Annotation Glyph
+    |(\()                # variation start
+    |(\))                # variation end
+    |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
+    |(([0-9]{1,3}[.]+\s*)*([a-hxOoKQRBN0-8+#=-]{2,7})([\?!]{1,2})*)    # move (full, count, move with ?!, ?!)
+    """, re.VERBOSE | re.DOTALL)
+
+
 def load (file):
     files = []
     inTags = False
@@ -126,6 +142,103 @@ def load (file):
     return PGNFile (files)
 
 
+def parse_string(string, model, board, position, parent=None, variation=False):
+    boards = []
+
+    board = board.clone()
+    board.parent = parent
+    last_board = board
+    boards.append(board)
+
+    error = None
+    parenthesis = 0
+    v_string = ""
+    for i, m in enumerate(re.finditer(pattern, string)):
+        group, text = m.lastindex, m.group(m.lastindex)
+        if parenthesis > 0:
+            v_string += ' '+text
+
+        if group == VARIATION_END:
+            parenthesis -= 1
+            if parenthesis == 0:
+                v_last_board.variations.append(parse_string(v_string[:-1], model, board.previous, position, v_parent, True))
+                v_string = ""
+                continue
+
+        elif group == VARIATION_START:
+            parenthesis += 1
+            if parenthesis == 1:
+                v_parent = board.previous
+                v_last_board = last_board
+
+        if parenthesis == 0:
+            if group == FULL_MOVE:
+                if not variation:
+                    if position != -1 and model.ply >= position:
+                        break
+
+                mstr = m.group(MOVE)
+                try:
+                    move = parseAny (boards[-1], mstr)
+                except ParsingError, e:
+                    notation, reason, boardfen = e.args
+                    ply = boards[-1].ply
+                    if ply % 2 == 0:
+                        moveno = "%d." % (i/2+1)
+                    else: moveno = "%d..." % (i/2+1)
+                    errstr1 = _("The game can't be read to end, because of an error parsing move %s '%s'.") % (moveno, notation)
+                    errstr2 = _("The move failed because %s.") % reason
+                    error = LoadingError (errstr1, errstr2)
+                    break
+
+                board = boards[-1].move(move)
+
+                if m.group(MOVE_COUNT):
+                    board.movestr = m.group(MOVE_COUNT).rstrip()
+                board.movestr += mstr
+
+                if m.group(MOVE_COMMENT):
+                    board.movestr += m.group(MOVE_COMMENT)
+
+                if last_board:
+                    board.previous = last_board
+                    last_board.next = board
+
+                boards.append(board)
+                last_board = board
+
+                if not variation:
+                    model.moves.append(move)
+                    model.boards.append(board)
+
+            elif group == COMMENT_REST:
+                last_board.comments.append(text[1:])
+
+            elif group == COMMENT_BRACE:
+                if board.parent is None and board.previous is None:
+                    model.comment = text[1:-1].replace('\r\n', ' ')
+                else:
+                    last_board.comments.append(text[1:-1].replace('\r\n', ' '))
+
+            elif group == COMMENT_NAG:
+                board.movestr += nag_replace(text)
+
+            elif group == RESULT:
+                if text == "1/2":
+                    model.status = reprResult.index("1/2-1/2")
+                else:
+                    model.status = reprResult.index(text)
+                break
+
+            else:
+                print "Unknown:",text
+
+        if error:
+            raise error
+
+    return boards
+
+
 class PGNFile (ChessFile):
 
     def __init__ (self, games):
@@ -143,9 +256,19 @@ class PGNFile (ChessFile):
             del moves[-1]
         return moves
 
-    def loadToModel (self, gameno, position=-1, model=None):
+    def loadToModel (self, gameno, position=-1, model=None, quick_parse=True):
         if not model:
             model = GameModel()
+
+        model.tags['Event'] = self._getTag(gameno, 'Event')
+        model.tags['Site'] = self._getTag(gameno, 'Site')
+        model.tags['Date'] = self._getTag(gameno, 'Date')
+        model.tags['Round'] = self._getTag(gameno, 'Round')
+        model.tags['White'], model.tags['Black'] = self.get_player_names(gameno)
+        model.tags['WhiteElo'] = self._getTag(gameno, 'WhiteElo')
+        model.tags['BlackElo'] = self._getTag(gameno, 'BlackElo')
+        model.tags['Result'] = reprResult[self.get_result(gameno)]
+        model.tags['ECO'] = self._getTag(gameno, "ECO")
 
         fenstr = self._getTag(gameno, "FEN")
         variant = self._getTag(gameno, "Variant")
@@ -163,30 +286,39 @@ class PGNFile (ChessFile):
         model.status = WAITING_TO_START
         model.reason = UNKNOWN_REASON
 
-        movstrs = self._getMoves (gameno)
         error = None
-        for i, mstr in enumerate(movstrs):
-            if position != -1 and model.ply >= position:
-                break
-            try:
-                move = parseAny (model.boards[-1], mstr)
-            except ParsingError, e:
-                notation, reason, boardfen = e.args
-                ply = model.boards[-1].ply
-                if ply % 2 == 0:
-                    moveno = "%d." % (i/2+1)
-                else: moveno = "%d..." % (i/2+1)
-                errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
-                            'moveno': moveno, 'notation': notation}
-                errstr2 = _("The move failed because %s.") % reason
-                error = LoadingError (errstr1, errstr2)
-                break
-            model.moves.append(move)
-            model.boards.append(model.boards[-1].move(move))
-        
+        if quick_parse:
+            movstrs = self._getMoves (gameno)
+            for i, mstr in enumerate(movstrs):
+                if position != -1 and model.ply >= position:
+                    break
+                try:
+                    move = parseAny (model.boards[-1], mstr)
+                except ParsingError, e:
+                    notation, reason, boardfen = e.args
+                    ply = model.boards[-1].ply
+                    if ply % 2 == 0:
+                        moveno = "%d." % (i/2+1)
+                    else: moveno = "%d..." % (i/2+1)
+                    errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                                'moveno': moveno, 'notation': notation}
+                    errstr2 = _("The move failed because %s.") % reason
+                    error = LoadingError (errstr1, errstr2)
+                    break
+                model.moves.append(move)
+                model.boards.append(model.boards[-1].move(move))
+        else:
+            model.notation_string = self.games[gameno][1]
+            model.boards = parse_string(model.notation_string, model, model.boards[-1], position)
+
         if model.timemodel:
-            blacks = len(movstrs)/2
-            whites = len(movstrs)-blacks
+            if quick_parse:
+                blacks = len(movstrs)/2
+                whites = len(movstrs)-blacks
+            else:
+                blacks = len(model.moves)/2
+                whites = len(model.moves)-blacks
+
             model.timemodel.intervals = [
                 [model.timemodel.intervals[0][0]]*(whites+1),
                 [model.timemodel.intervals[1][0]]*(blacks+1),
@@ -252,3 +384,23 @@ class PGNFile (ChessFile):
         if self._getTag(no,"Result") in pgn2Const:
             return pgn2Const[self._getTag(no,"Result")]
         return RUNNING
+
+
+def nag_replace(nag):
+    if nag == "$0": return ""
+    elif nag == "$1": return "!"
+    elif nag == "$2": return "?"
+    elif nag == "$3": return "!!"
+    elif nag == "$4": return "??"
+    elif nag == "$5": return "!?"
+    elif nag == "$6": return "?!"
+    elif nag == "$11": return "="
+    elif nag == "$14": return "+="
+    elif nag == "$15": return "=+"
+    elif nag == "$16": return "+/-"
+    elif nag == "$17": return "-/+"
+    elif nag == "$18": return "+-"
+    elif nag == "$19": return "-+"
+    elif nag == "$20": return "+--"
+    elif nag == "$21": return "--+"
+    else: return nag
