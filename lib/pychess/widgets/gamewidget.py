@@ -130,6 +130,9 @@ class GameWidget (gobject.GObject):
         finally:
             glock.release()
     
+    def __del__ (self):
+        self.board.__del__()
+    
     def initTabcontents(self):
         tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
         hbox = gtk.HBox()
@@ -314,6 +317,8 @@ def delGameWidget (gmwidg):
         mainvbox.remove(mainvbox.get_children()[1])
         mainvbox.pack_end(background)
         background.show()
+    
+    gmwidg.__del__()
 
 def _ensureReadForGameWidgets ():
     mainvbox = widgets["mainvbox"]

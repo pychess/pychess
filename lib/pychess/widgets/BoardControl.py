@@ -31,9 +31,10 @@ class BoardControl (gtk.EventBox):
         self.add(self.view)
         
         self.actionMenuItems = actionMenuItems
+        self.connections = {}
         for key, menuitem in self.actionMenuItems.iteritems():
             if menuitem == None: print key
-            menuitem.connect("activate", self.actionActivate, key)
+            self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
         
         self.view.connect("shown_changed", self.shown_changed)
         gamemodel.connect("moves_undoing", self.moves_undone)
@@ -62,6 +63,11 @@ class BoardControl (gtk.EventBox):
                 if player.__type__ == LOCAL:
                     self.allowPremove = True
         gamemodel.connect("game_started", onGameStart)
+        
+    def __del__ (self):
+        for menu, conid in self.connections.iteritems():
+            menu.disconnect(conid)
+        self.connections = {}
         
     def emit_move_signal (self, cord0, cord1):
         color = self.view.model.boards[-1].color
