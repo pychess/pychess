@@ -30,6 +30,9 @@ class PyDockTop (TopDock):
             button.connect("hovered", self.__onHover)
             button.connect("left", self.__onLeave)
     
+    def __del__ (self):
+        TopDock.__del__(self)
+    
     #===========================================================================
     #    Component stuff
     #===========================================================================

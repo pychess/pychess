@@ -22,6 +22,8 @@ def run(widgets):
     page_widget = nb.get_nth_page(nb.get_current_page())
     if nb.get_tab_label(page_widget).get_text() == _('Sidepanels'):
         attachGameWidget(panels_gw)
+        if not widgets["show_sidepanels"].get_active():
+            widgets["show_sidepanels"].set_active(True)
 
 panels_gw = None
 def initialize(widgets):
@@ -46,6 +48,8 @@ def initialize(widgets):
         page_widget = widget.get_nth_page(pagenum)
         if widget.get_tab_label(page_widget).get_text() == _('Sidepanels'):
             attachGameWidget(panels_gw)
+            if not widgets["show_sidepanels"].get_active():
+                widgets["show_sidepanels"].set_active(True)
         else:
             if panels_gw in key2gmwidg.values():
                 delGameWidget(panels_gw)
