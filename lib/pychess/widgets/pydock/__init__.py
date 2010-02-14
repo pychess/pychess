@@ -11,7 +11,7 @@ NORTH, EAST, SOUTH, WEST, CENTER = range(POSITIONS_COUNT)
 # Composite Interfaces
 #===============================================================================
 
-class DockComponent:
+class DockComponent (object):
     def dock (self, widget, position, title, id):
         abstract
 
@@ -21,6 +21,13 @@ class TabReceiver (gtk.Alignment):
     def __init__ (self):
         gtk.Alignment.__init__(self,1,1,1,1)
         self.__instances.append(self)
+    
+    def __del__ (self):
+        try:
+            index = TabReceiver.__instances.index(self)
+        except ValueError:
+            return
+        del TabReceiver.__instances[index]
     
     def getInstances (self):
         return iter(self.__instances)
@@ -32,6 +39,10 @@ class TabReceiver (gtk.Alignment):
         abstract
 
 class DockComposite (DockComponent):
+    def __del__ (self):
+        for component in self.getComponents():
+            component.__del__()
+    
     def changeComponent (self, old, new):
         abstract
     
@@ -48,6 +59,9 @@ class DockComposite (DockComponent):
         abstract
 
 class DockLeaf (DockComponent, TabReceiver):
+    def __del__ (self):
+        TabReceiver.__del__(self)
+    
     def undock (self, widget):
         """ Removes the widget from the leaf, and if it is the only widget, it
             removes the leaf as well.
@@ -77,6 +91,10 @@ class TopDock (DockComposite, TabReceiver):
     def __init__ (self, id):
         TabReceiver.__init__(self)
         self.__id = id
+    
+    def __del__ (self):
+        TabReceiver.__del__(self)
+        DockComposite.__del__(self)
     
     def getPosition (self):
         return CENTER

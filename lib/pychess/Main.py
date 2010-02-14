@@ -189,9 +189,10 @@ class PyChess:
         ionest.handler.connect("gmwidg_created",
                                GladeHandlers.__dict__["on_gmwidg_created"])
         
-        #---------------------- The only two menuitems that need special initing
+        #---------------------- The only menuitems that need special initing
         uistuff.keep(widgets["hint_mode"], "hint_mode")
         uistuff.keep(widgets["spy_mode"], "spy_mode")
+        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
         
         #=======================================================================
         # Show main window and init d'n'd
