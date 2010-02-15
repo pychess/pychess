@@ -40,6 +40,8 @@ class DummyVarManager:
         pass
 
 class EmittingTestCase(unittest.TestCase):
+    ''' Helps working with unittests on emitting objects.
+        Warning: Strong connection to fics managers '''
     def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None
         def handler(manager, *args): self.args = args
