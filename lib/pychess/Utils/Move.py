@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from lutils import lmove
