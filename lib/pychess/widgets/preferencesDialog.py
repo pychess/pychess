@@ -403,46 +403,75 @@ class PanelTab:
     
     def __init__ (self, widgets):
         # Put panels in trees
-
+        self.widgets = widgets
+        
         from pychess.widgets.gamewidget import sidePanels
-        allstore = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
+        store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
         for panel in sidePanels:
             checked = conf.get(panel.__name__, True)
             panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
-            allstore.append((checked, panel_icon, text, panel))
-
-        tv = widgets["treeview1"]
-        tv.set_model(allstore)
-
-        cbrenderer = gtk.CellRendererToggle()
-        cbrenderer.connect('toggled', self.col_toggled, allstore)
-        tv.append_column(gtk.TreeViewColumn("Active", cbrenderer, active=0))
+            store.append((checked, panel_icon, text, panel))
+        
+        self.tv = widgets["treeview1"]
+        self.tv.set_model(store)
+        
+        self.widgets['panel_about_button'].connect('clicked', self.panel_about)
+        self.widgets['panel_enable_button'].connect('toggled', self.panel_toggled)
+        self.tv.get_selection().connect('changed', self.selection_changed)
         
         pixbuf = gtk.CellRendererPixbuf()
         pixbuf.props.yalign = 0
         pixbuf.props.ypad = 3
-        tv.append_column(gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1))
+        pixbuf.props.xpad = 3
+        self.tv.append_column(gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
         
-        uistuff.appendAutowrapColumn(tv, 200, "Name", markup=2)
-
-    def col_toggled( self, cell, path, model ):
-        """
-        Sets the toggled state on the toggle button to true or false.
-        """
-        model[path][0] = not model[path][0]
-        panel = model[path][3].__name__
-
+        uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
+    
+    def selection_changed(self, treeselection):
+        store, iter = self.tv.get_selection().get_selected()
+        self.widgets['panel_enable_button'].set_sensitive(bool(iter))
+        self.widgets['panel_about_button'].set_sensitive(bool(iter))
+        
+        if iter:
+            active = self.tv.get_model().get(iter, 0)[0]
+            self.widgets['panel_enable_button'].set_active(active)
+    
+    def panel_about(self, button):
+        store, iter = self.tv.get_selection().get_selected()
+        assert iter # The button should only be clickable when we have a selection
+        path = store.get_path(iter)
+        panel = store[path][3]
+        
+        d = gtk.MessageDialog (type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_CLOSE)
+        d.set_markup ("<big><b>%s</b></big>" % panel.__title__)
+        text = panel.__about__ if hasattr(panel, '__about__') else _('Undescribed panel')
+        d.format_secondary_text (text)
+        d.run()
+        d.hide()
+    
+    def panel_toggled(self, button):
+        store, iter = self.tv.get_selection().get_selected()
+        assert iter # The button should only be clickable when we have a selection
+        path = store.get_path(iter)
+        active = button.get_active()
+        if store[path][0] == active:
+            return
+        
+        store[path][0] = active
+        self.__set_panel_active(store[path][3], active)
+    
+    def __set_panel_active(self, panel, active):
+        name = panel.__name__
+        model = self.tv.get_model()
+        
         from pychess.widgets.gamewidget import notebooks, docks
-        from pychess.widgets.pydock.__init__ import EAST
-
-        if model[path][0]:
-            conf.set(panel, True)
+        from pychess.widgets.pydock import EAST
+        
+        if active:
+            conf.set(name, True)
             leaf = notebooks["board"].get_parent().get_parent()
-            leaf.dock(docks[panel][1], EAST, docks[panel][0], panel)
+            leaf.dock(docks[name][1], EAST, docks[name][0], name)
         else:
-            conf.set(panel, False)
-            notebooks[panel].get_parent().get_parent().undock(notebooks[panel])
-        return
-
-  
+            conf.set(name, False)
+            notebooks[name].get_parent().get_parent().undock(notebooks[name])
