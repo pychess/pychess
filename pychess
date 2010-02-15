@@ -37,10 +37,6 @@ gtk.glade.textdomain("pychess")
 from pychess.System.Log import log
 log.debug("Started\n")
 
-# This is an ugly hack needed prior to gtkSourceView2 because of a pygtk bug:
-# http://bugzilla.gnome.org/show_bug.cgi?id=393483
-os.environ["XDG_DATA_DIRS"] = getDataPrefix()+":/usr/share/"
-
 # Let's rumble!
 import pychess.Main
 pychess.Main.run(sys.argv[1:])
