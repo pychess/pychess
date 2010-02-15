@@ -144,10 +144,16 @@ class ICLogon:
         
         while len(textsVbox.get_children()) < len(pars)+1:
             label = gtk.Label()
+            label.set_size_request(476, -1)
+            label.props.selectable = True
             label.props.wrap = True
             label.props.xalign = 0
             label.props.justify = gtk.JUSTIFY_LEFT
             textsVbox.add(label)
+        def callback (textsVbox, allocation):
+            for child in textsVbox.get_children():
+                child.set_size_request(allocation.width, -1)
+        textsVbox.connect_after("size-allocate", callback)
         
         textsVbox.get_children()[0].set_markup("<b><big>%s</big></b>" % title)
         for i, par in enumerate(pars):
