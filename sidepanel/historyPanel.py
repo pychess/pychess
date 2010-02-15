@@ -103,7 +103,7 @@ class Sidepanel:
         iter = selection.get_selected()[1]
         if iter == None: return
         if self.frozen.on: return
-        print "sel changed. updating shown"
+        #print "sel changed. updating shown"
         row = tree.get_model().get_path(iter)[0]
         if self.board.model.lowply & 1:
             self.board.shown = self.board.model.lowply + row*2 + col
@@ -136,7 +136,7 @@ class Sidepanel:
             self.__addMove(game, ply)
     
     def __addMove(self, game, ply):
-        print "Am I doing anything?"
+        #print "Am I doing anything?"
         row, view, other = self._ply_to_row_col_other(ply)
         
         if conf.get("figuresInNotation", False):
@@ -158,11 +158,11 @@ class Sidepanel:
     
     def shown_changed (self, board, shown):
         if shown <= board.model.lowply:
-            print "Or is it me?"
+            #print "Or is it me?"
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
-        print "shown changed", shown 
+        #print "shown changed", shown 
         row, col, other = self._ply_to_row_col_other(shown)
         
         with self.frozen:
