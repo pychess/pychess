@@ -1,10 +1,7 @@
-import sys
-
 import gtk
 import gobject
 
 from pychess.System.prefix import addDataPrefix
-from pychess.widgets.BorderBox import BorderBox 
 
 from __init__ import CENTER
 from __init__ import DockComposite, DockLeaf, TopDock
@@ -57,7 +54,7 @@ class PyDockLeaf (DockLeaf):
         panels = []
         for widget, title, id in self.getPanels():
             panels.append(id)
-        return " (" + s + ", ".join(panels) + ")"
+        return s + " (" + ", ".join(panels) + ")"
     
     def __add (self, widget, title, id):
         #widget = BorderBox(widget, top=True)
