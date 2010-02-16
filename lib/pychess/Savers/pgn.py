@@ -186,7 +186,8 @@ def parse_string(string, model, board, position, parent=None, variation=False):
                     if ply % 2 == 0:
                         moveno = "%d." % (i/2+1)
                     else: moveno = "%d..." % (i/2+1)
-                    errstr1 = _("The game can't be read to end, because of an error parsing move %s '%s'.") % (moveno, notation)
+                    errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                                'moveno': moveno, 'notation': notation}
                     errstr2 = _("The move failed because %s.") % reason
                     error = LoadingError (errstr1, errstr2)
                     break
