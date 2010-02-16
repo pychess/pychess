@@ -1,10 +1,9 @@
-from os import path, mkdir
-from array import array
+from os import path
 
 import gtk
 import cairo
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, addHomePrefix
 
 CLEARPATH = addDataPrefix("glade/clear.png")
 surface = None
@@ -44,14 +43,11 @@ def newtheme (widget, oldstyle):
         dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
     ]
     
-    # Check if a catche has been saved
-    pydir = path.expanduser("~/.pychess/")
-    temppngdir = path.join(pydir,"temp.png")
-    if not path.isdir(pydir):
-        mkdir(pydir)
-    if path.isfile(temppngdir):
-        f = open(temppngdir)
-        # Check if the catche was made while using the same theme
+    # Check if a cache has been saved
+    temppng = addHomePrefix("temp.png")
+    if path.isfile(temppng):
+        f = open(temppng)
+        # Check if the cache was made while using the same theme
         if [ord(c) for c in f.read(6)] == colors:
             surface = cairo.ImageSurface.create_from_png(f)
             return
@@ -73,9 +69,9 @@ def newtheme (widget, oldstyle):
     ctx.set_source_surface(imgsurface, 0, 0)
     ctx.paint_with_alpha(.8)
     
-    # Save a catche for later use. Save 'newcolor' in the frist three pixels
+    # Save a cache for later use. Save 'newcolor' in the frist three pixels
     # to check for theme changes between two instances
-    f = open(temppngdir, "w")
+    f = open(temppng, "w")
     for color in colors:
         f.write(chr(color))
     surface.write_to_png(f)
