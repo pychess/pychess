@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-16 22:50+0100\n"
-"PO-Revision-Date: 2010-02-16 23:48+0100\n"
+"POT-Creation-Date: 2010-02-17 08:57+0100\n"
+"PO-Revision-Date: 2010-02-17 09:01+0100\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <btami@freemail.hu>\n"
 "MIME-Version: 1.0\n"
@@ -245,13 +245,15 @@ msgid "Custom Time Setting"
 msgstr "Egyéni időkontrol"
 
 #: glade/fics_lounge.glade:2254
+#: lib/pychess/widgets/newGameDialog.py:195
 msgid "Minutes:"
-msgstr "Perc"
+msgstr "Perc:"
 
 # "Gain" as in "gain per move"
 #: glade/fics_lounge.glade:2282
+#: lib/pychess/widgets/newGameDialog.py:199
 msgid "Gain:"
-msgstr "Plusz idő"
+msgstr "Plusz idő:"
 
 #: glade/fics_lounge.glade:2386
 msgid "PyChess - Internet Chess Chat"
@@ -1845,15 +1847,6 @@ msgstr "Ember"
 msgid "Rapid"
 msgstr "Rapid"
 
-#: lib/pychess/widgets/newGameDialog.py:195
-msgid "Minutes"
-msgstr "Perc"
-
-# "Gain" as in "gain per move"
-#: lib/pychess/widgets/newGameDialog.py:199
-msgid "Gain"
-msgstr "Plusz idő"
-
 #: lib/pychess/widgets/newGameDialog.py:212
 #, python-format
 msgid "%(name)s %(minutes)d min + %(gain)d sec/move"
@@ -2303,23 +2296,5 @@ msgstr "Érték"
 msgid "The score panel tries to evaluate the positions and shows you a graph of the game progress"
 msgstr "Grafikus állásértékelés"
 
-#~ msgid "Create New"
-#~ msgstr "Regisztrálok"
-
-#~ msgid "Disable"
-#~ msgstr "Tiltás"
-
-#~ msgid "No castle"
-#~ msgstr "Nincs sánc"
-
-#~ msgid "Upside-down"
-#~ msgstr "Fejjel lefele"
-
-#~ msgid "Asymmetric Shuffle"
-#~ msgstr "Nem szimmetrikus kevert"
-
-#~ msgid "Not online"
-#~ msgstr "Nem elérhető"
-
-#~ msgid "Yes"
-#~ msgstr "Igen"
+#~ msgid "Minutes"
+#~ msgstr "Perc"
