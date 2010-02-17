@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-16 23:50+0100\n"
+"POT-Creation-Date: 2010-02-17 08:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,11 +221,11 @@ msgstr ""
 msgid "Custom Time Setting"
 msgstr ""
 
-#: glade/fics_lounge.glade:2254
+#: glade/fics_lounge.glade:2254 lib/pychess/widgets/newGameDialog.py:195
 msgid "Minutes:"
 msgstr ""
 
-#: glade/fics_lounge.glade:2282
+#: glade/fics_lounge.glade:2282 lib/pychess/widgets/newGameDialog.py:199
 msgid "Gain:"
 msgstr ""
 
@@ -1747,14 +1747,6 @@ msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:145
 msgid "Rapid"
-msgstr ""
-
-#: lib/pychess/widgets/newGameDialog.py:195
-msgid "Minutes"
-msgstr ""
-
-#: lib/pychess/widgets/newGameDialog.py:199
-msgid "Gain"
 msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:212

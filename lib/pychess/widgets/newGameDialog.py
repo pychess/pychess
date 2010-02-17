@@ -192,11 +192,11 @@ class _GameInitializationMode:
         table = gtk.Table(2, 2)
         table.props.row_spacing = 3
         table.props.column_spacing = 12
-        label = gtk.Label(_("Minutes")+":")
+        label = gtk.Label(_("Minutes:"))
         label.props.xalign = 0
         table.attach(label, 0, 1, 0, 1)
         table.attach(minSpin, 1, 2, 0, 1)
-        label = gtk.Label(_("Gain")+":")
+        label = gtk.Label(_("Gain:"))
         label.props.xalign = 0
         table.attach(label, 0, 1, 1, 2)
         table.attach(gainSpin, 1, 2, 1, 2)
