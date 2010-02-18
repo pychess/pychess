@@ -16,7 +16,7 @@ class LogPipe:
         try:
             self.to.write(data)
         except IOError:
-            if flag == "stdout":
+            if self.flag == "stdout":
                 # Certainly hope we never end up here
                 pass
             else:
