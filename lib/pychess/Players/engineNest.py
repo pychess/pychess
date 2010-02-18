@@ -1,8 +1,7 @@
 from __future__ import with_statement 
 
-from xml.dom import minidom
 from xml.parsers.expat import ExpatError
-import os, imp
+import os
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
@@ -13,11 +12,10 @@ from xml.etree.ElementTree import fromstring
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.System.ThreadPool import pool
 #from pychess.System.TaskQueue import TaskQueue
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addHomePrefix
+from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
@@ -126,7 +124,7 @@ class EngineDiscoverer (GObject, PooledThread):
         GObject.__init__(self)
         
         self.backup = ET.ElementTree(fromstring(backup))
-        self.xmlpath = addHomePrefix("engines.xml")
+        self.xmlpath = addUserConfigPrefix("engines.xml")
         try:
             self.dom = ET.ElementTree(file=self.xmlpath)
             c = compareVersions(self.dom.getroot().get('version', default='0'), ENGINES_XML_API_VERSION)
