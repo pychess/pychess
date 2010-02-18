@@ -5,7 +5,7 @@ system or user space
 
 import os
 import sys
-from os import mkdir
+from os import makedirs
 from os.path import isdir, join, dirname, abspath
 
 ################################################################################
@@ -39,12 +39,37 @@ def isInstalled ():
 # Locate files in user space                                                   #
 ################################################################################
 
-pychessdir = join(os.environ["HOME"], ".pychess")
-if not isdir(pychessdir):
-    mkdir(pychessdir)
+# The glib.get_user_*_dir() XDG functions below require pygobject >= 2.18
+try:
+    from glib import get_user_data_dir, get_user_config_dir, get_user_cache_dir
+except ImportError:
+    def __get_user_dir (xdg_env_var, fallback_dir_path):
+        try:
+            directory = os.environ[xdg_env_var]
+        except KeyError:
+            directory = join(os.environ["HOME"], fallback_dir_path)
+        return directory
+    def get_user_data_dir ():
+        return __get_user_dir("XDG_DATA_HOME", ".local/share")
+    def get_user_config_dir ():
+        return __get_user_dir("XDG_CONFIG_HOME", ".config")
+    def get_user_cache_dir ():
+        return __get_user_dir("XDG_CACHE_HOME", ".cache")
 
-def addHomePrefix (subpath):
-    return join(pychessdir, subpath)
+pychess = "pychess"
+def getUserDataPrefix ():
+    return join(get_user_data_dir(), pychess)
+def addUserDataPrefix (subpath):
+    return join(getUserDataPrefix(), subpath)
+def getUserConfigPrefix ():
+    return join(get_user_config_dir(), pychess)
+def addUserConfigPrefix (subpath):
+    return join(getUserConfigPrefix(), subpath)
+def getUserCachePrefix ():
+    return join(get_user_cache_dir(), pychess)
+def addUserCachePrefix (subpath):
+    return join(getUserCachePrefix(), subpath)
 
-def getHomePrefix ():
-    return pychessdir
+for directory in (getUserDataPrefix(), getUserConfigPrefix(), getUserCachePrefix()):
+    if not isdir(directory):
+        makedirs(directory, mode=0700)

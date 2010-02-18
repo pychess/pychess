@@ -1,7 +1,6 @@
 import os, sys, time, gobject
-from Queue import Queue
 from GtkWorker import EmitPublisher, Publisher
-from prefix import getHomePrefix, addHomePrefix
+from prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
 
 MAXFILES = 10
@@ -92,13 +91,13 @@ class Log (gobject.GObject):
     def error (self, message, task="Default"):
         self._log (task, message, LOG_ERROR)
 
-oldlogs = [l for l in os.listdir(getHomePrefix()) if l.endswith(".log")]
+oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
 if len(oldlogs) >= MAXFILES:
     oldlogs.sort()
-    os.remove(addHomePrefix(oldlogs[0]))
+    os.remove(addUserDataPrefix(oldlogs[0]))
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 
-log = Log (addHomePrefix(newName))
+log = Log(addUserDataPrefix(newName))
 
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")

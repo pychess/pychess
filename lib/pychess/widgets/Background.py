@@ -3,7 +3,7 @@ from os import path
 import gtk
 import cairo
 
-from pychess.System.prefix import addDataPrefix, addHomePrefix
+from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
 CLEARPATH = addDataPrefix("glade/clear.png")
 surface = None
@@ -44,7 +44,7 @@ def newtheme (widget, oldstyle):
     ]
     
     # Check if a cache has been saved
-    temppng = addHomePrefix("temp.png")
+    temppng = addUserCachePrefix("temp.png")
     if path.isfile(temppng):
         f = open(temppng)
         # Check if the cache was made while using the same theme
