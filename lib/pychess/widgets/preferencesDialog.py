@@ -6,8 +6,6 @@ from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
-from pychess.System.prefix import addDataPrefix
-
 
 firstRun = True
 def run(widgets):

@@ -1,7 +1,7 @@
 
 """ This module handles the tabbed layout in PyChess """
 
-import imp, os, atexit
+import imp, os
 import traceback
 import cStringIO
 
@@ -14,7 +14,7 @@ from ChessClock import ChessClock
 from BoardControl import BoardControl
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
-from pychess.System.prefix import addHomePrefix
+from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 
 ################################################################################
@@ -360,7 +360,7 @@ def _ensureReadForGameWidgets ():
     dockAlign.show()
     dock.show()
     
-    dockLocation = addHomePrefix("pydock.xml")
+    dockLocation = addUserConfigPrefix("pydock.xml")
     for panel in sidePanels:
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
