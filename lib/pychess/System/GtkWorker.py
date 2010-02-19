@@ -6,8 +6,6 @@ from ThreadPool import PooledThread
 
 import glock
 
-import time
-
 #
 # IDEA: We could implement gdk prioritizing by using a global PriorityQueue
 #
@@ -87,6 +85,7 @@ class GtkWorker (GObject, Thread):
         self.func = func
         self.cancelled = False
         self.done = False
+        self.result = None
         self.progress = 0
         
         ########################################################################
@@ -241,7 +240,6 @@ class GtkWorker (GObject, Thread):
 
 if __name__ == "__main__":
     def findPrimes (worker):
-        from math import sqrt
         limit = 10**4.
         primes = []
         for n in xrange(2, int(limit)+1):
