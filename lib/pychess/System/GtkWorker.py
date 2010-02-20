@@ -1,4 +1,4 @@
-from threading import Thread, Event
+from threading import Thread
 import Queue
 
 from gobject import GObject, SIGNAL_RUN_FIRST
@@ -85,8 +85,6 @@ class GtkWorker (GObject, Thread):
         self.func = func
         self.cancelled = False
         self.done = False
-        self.doneEvent = Event()
-        self.doneEvent.clear()
         self.progress = 0
         
         ########################################################################
@@ -160,7 +158,8 @@ class GtkWorker (GObject, Thread):
             glock.acquire()
             if self.isAlive():
                 return None
-            self.doneEvent.wait()
+        # if self.done != True by now, the worker thread must have exited abnormally
+        assert self.isDone()
         return self.result
     
     def execute (self):
@@ -171,7 +170,6 @@ class GtkWorker (GObject, Thread):
     def run (self):
         self.result = self.func(self)
         self.done = True
-        self.doneEvent.set()
         if self.connections["done"] >= 1:
             glock.acquire()
             try:
