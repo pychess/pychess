@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Event
 import Queue
 
 from gobject import GObject, SIGNAL_RUN_FIRST
@@ -85,7 +85,8 @@ class GtkWorker (GObject, Thread):
         self.func = func
         self.cancelled = False
         self.done = False
-        self.result = None
+        self.doneEvent = Event()
+        self.doneEvent.clear()
         self.progress = 0
         
         ########################################################################
@@ -138,10 +139,12 @@ class GtkWorker (GObject, Thread):
     def get (self, timeout=None):
         """ 'get' will block until the processed function returns, timeout
             happens, or the work is cancelled.
-            You can test if you were cancelled by the isCancelled() method, and
-            you can test if you reached the timeout by the isAlive() method.
-            Notice, cancelling will not make 'get' unblock, besides if you build
-            'isCancelled' calls into your function.
+            
+            You can test if you were cancelled by the isCancelled() method
+            afterwards. If you call the isAlive() method afterwards and it
+            returns True, then you must have hit the timeout.
+            Notice, cancelling will not make 'get' unblock, even if you build
+            isCancelled() calls into your function.
             
             Warning: the get function assumes that if you are the MainThread you
             have the gdklock and if you are not the MainThread you don't have
@@ -157,7 +160,7 @@ class GtkWorker (GObject, Thread):
             glock.acquire()
             if self.isAlive():
                 return None
-            self.done = True
+            self.doneEvent.wait()
         return self.result
     
     def execute (self):
@@ -168,6 +171,7 @@ class GtkWorker (GObject, Thread):
     def run (self):
         self.result = self.func(self)
         self.done = True
+        self.doneEvent.set()
         if self.connections["done"] >= 1:
             glock.acquire()
             try:
