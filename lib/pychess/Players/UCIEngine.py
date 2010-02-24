@@ -41,11 +41,14 @@ class UCIEngine (ProtocolEngine):
         
         self.returnQueue = Queue.Queue()
         self.engine.connect("line", self.parseLines)
-        self.engine.connect("died", lambda e: self.returnQueue.put("del"))
+        self.engine.connect("died", self.__die)
         
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
         self.connect_after("readyForMoves", self.__onReadyForMoves)
+    
+    def __die (self, subprocess):
+        self.returnQueue.put("die")
     
     #===========================================================================
     #    Starting the game
@@ -62,7 +65,9 @@ class UCIEngine (ProtocolEngine):
     
     def __startBlocking (self):
         r = self.returnQueue.get()
-        assert r == "ready"
+        if r == 'die':
+            raise PlayerIsDead
+        assert r == "ready" or r == 'del'
         #self.emit("readyForOptions")
         #self.emit("readyForMoves")
     

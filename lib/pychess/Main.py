@@ -230,11 +230,9 @@ class PyChess:
         
         #----------------------------------------------------- Discoverer dialog
         def discovering_started (discoverer, binnames):
-            gobject.idle_add(DiscovererDialog.show, discoverer, binnames, widgets["window1"])
-            #DiscovererDialog.show(discoverer, binnames, widgets["window1"])
+            gobject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"])
         discoverer.connect("discovering_started", discovering_started)
-        #glock.glock_connect(discoverer, "discovering_started", discovering_started)
-        #gobject.idle_add(discoverer.start)
+        DiscovererDialog.init(discoverer)
         discoverer.start()
         
         #------------------------------------------------- Tip of the day dialog

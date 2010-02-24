@@ -143,7 +143,7 @@ class SubProcess (gobject.GObject):
     
     def write (self, data):
         if self.channelsClosed:
-            log.warn("Chan closed for '%s'" % data, self.defname)
+            log.warn("Chan closed for %r" % data, self.defname)
             return
         log.log(data, self.defname)
         self.inChannel.write(data)
