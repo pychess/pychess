@@ -12,11 +12,11 @@ from xml.etree.ElementTree import fromstring
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
-#from pychess.System.TaskQueue import TaskQueue
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix
-from pychess.System.ThreadPool import PooledThread
+from pychess.System.ThreadPool import pool, PooledThread
+from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
 from UCIEngine import UCIEngine
@@ -217,13 +217,17 @@ class EngineDiscoverer (GObject, PooledThread):
     def __discoverE (self, engine):
         subproc = self.initEngine (engine, BLACK)
         try:
-            # We could also use readyForOptions, but then we would have to wait
-            # for the readyForMoves signal, before we could shut the engine...
             subproc.connect('readyForOptions', self.__discoverE2, engine)
             subproc.prestart() # Sends the 'start line'
+            subproc.start()
         except SubProcessError, e:
             log.warn("Engine %s failed discovery: %s" % (engine.get('binname'),e))
             self.emit("engine_failed", engine.get('binname'), engine)
+        except PlayerIsDead, e:
+            # Check if the player died after engine_discovered by our own hands
+            if not self.toBeRechecked[engine]:
+                log.warn("Engine %s failed discovery: %s" % (engine.get('binname'),e))
+                self.emit("engine_failed", engine.get('binname'), engine)
     
     def __discoverE2 (self, subproc, engine):
         if engine.get("protocol") == "uci":
@@ -241,7 +245,6 @@ class EngineDiscoverer (GObject, PooledThread):
         engine.set('recheck', 'false')
         log.debug("Engine finished %s\n" % self.getName(engine))
         self.emit ("engine_discovered", engine.get('binname'), engine)
-    
     
     
     ############################################################################
@@ -356,23 +359,22 @@ class EngineDiscoverer (GObject, PooledThread):
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
         
-        toBeRechecked = [c for c in self.dom.findall('engine')
-                         if c.get('recheck') == 'true']
+        self.toBeRechecked = dict((c,False) for c in self.dom.findall('engine')
+                                  if c.get('recheck') == 'true')
         # Waiting for etree 1.3 to get into python, before we can use xpath
         # toBeRechecked = self.dom.findall('engine[recheck=true]')
         
-        self.counter_ = 0
-        def count(self_, binname, engine):
-            self.counter_ += 1
-            if self.counter_ == len(toBeRechecked):
+        def count(self_, binname, engine, wentwell):
+            self.toBeRechecked[engine] = True
+            if all(self.toBeRechecked.values()):
                 self.emit("all_engines_discovered")
-        self.connect("engine_discovered", count)
-        self.connect("engine_failed", count)
+        self.connect("engine_discovered", count, True)
+        self.connect("engine_failed", count, False)
         
-        if toBeRechecked:
-            binnames = [engine.get('binname') for engine in toBeRechecked] 
+        if self.toBeRechecked:
+            binnames = [engine.get('binname') for engine in self.toBeRechecked.keys()] 
             self.emit("discovering_started", binnames)
-            for engine in toBeRechecked:
+            for engine in self.toBeRechecked.keys():
                 self.__discoverE(engine)
             self.connect("all_engines_discovered", cb)
             #self.emit("all_engines_discovered")
@@ -431,9 +433,9 @@ class EngineDiscoverer (GObject, PooledThread):
         if engine == None:
             return Thread.getName(self)
         
-        name = engine.find("meta/name")
-        if name != None:
-            return name.text.strip()
+        nametag = engine.find("meta/name")
+        if nametag != None:
+            return nametag.text.strip()
         return engine.get('binname')
     
     def getCountry (self, engine):
