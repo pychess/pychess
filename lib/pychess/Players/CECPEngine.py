@@ -4,6 +4,7 @@ import time
 from threading import RLock
 from copy import copy
 import Queue
+import itertools
 
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
@@ -148,7 +149,9 @@ class CECPEngine (ProtocolEngine):
     
     def prestart (self):
         print >> self.engine, "xboard"
-        if self.protover == 2:
+        if self.protover == 1:
+            self.emit("readyForOptions")
+        elif self.protover == 2:
             print >> self.engine, "protover 2"
             self.timeout = time.time() + TIME_OUT_FIRST
     
@@ -159,6 +162,8 @@ class CECPEngine (ProtocolEngine):
             self.__startBlocking()
     
     def __startBlocking (self):
+        if self.protover == 1:
+            self.emit("readyForMoves")
         if self.protover == 2:
             try:
                 r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
@@ -171,6 +176,8 @@ class CECPEngine (ProtocolEngine):
                 self.emit("readyForOptions")
                 self.emit("readyForMoves")
             else:
+                if r == 'del':
+                    raise PlayerIsDead
                 assert r == "ready"
     
     def __onReadyForOptions_before (self, self_):
@@ -764,6 +771,16 @@ class CECPEngine (ProtocolEngine):
                     return
                 
                 self.features[key] = value
+        
+        # A hack to get better names in protover 1.
+        # Unfortunately it wont work for now, as we don't read any lines from
+        # protover 1 engines. When should we stop?
+        if self.protover == 1:
+            if self.defname[0] in ''.join(parts):
+                basis = self.defname[0]
+                name = ' '.join(itertools.dropwhile(lambda part: basis not in part, parts))
+                self.features['myname'] = name
+        
     
     #===========================================================================
     #    Info
