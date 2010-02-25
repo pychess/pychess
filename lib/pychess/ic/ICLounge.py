@@ -373,8 +373,8 @@ class SeekTabSection (ParrentListSection):
         self.lastSeekSelected = None
         self.selection.set_select_function(self.selectFunction, full=True)
         self.selection.connect("changed", self.onSelectionChanged)
-        self.widgets["acceptButton"].connect("clicked", self.onAccept)
-        self.tv.connect("row-activated", self.onAccept)
+        self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
+        self.tv.connect("row-activated", self.row_activated)
         
         self.connection.glm.connect("addSeek", lambda glm, seek:
                 self.listPublisher.put((self.onAddSeek, seek)) )
@@ -453,16 +453,22 @@ class SeekTabSection (ParrentListSection):
         self.seeks = {}
         self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
 
-    def onAccept (self, treeview, path, view_column):
+    def onAcceptClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        gameno = model.get_value(iter, 0)
+        if gameno.startswith("C"):
+            self.connection.om.acceptIndex(gameno[1:])
+        else:
+            self.connection.om.playIndex(gameno)
+
+    def row_activated (self, treeview, path, view_column):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         gameno = model.get_value(iter, 0)
         if gameno != self.lastSeekSelected: return
         if path != model.get_path(iter): return
-        if gameno.startswith("C"):
-            self.connection.om.acceptIndex(gameno[1:])
-        else:
-            self.connection.om.playIndex(gameno)
+        self.onAcceptClicked(None)
 
     def onSelectionChanged (self, selection):
         model, iter = self.widgets["seektreeview"].get_selection().get_selected()
