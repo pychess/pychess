@@ -377,10 +377,10 @@ class GameModel (GObject, PooledThread):
         
         if status != self.status and self.status in UNDOABLE_STATES \
                 and self.reason in UNDOABLE_REASONS:
-             self.__resume()
-             self.status = status
-             self.reason = UNKNOWN_REASON
-             self.emit("game_unended")
+            self.__resume()
+            self.status = status
+            self.reason = UNKNOWN_REASON
+            self.emit("game_unended")
         
         return True
     
