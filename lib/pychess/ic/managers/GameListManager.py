@@ -123,6 +123,7 @@ class GameListManager (GObject):
         
         self.connection.expect_line (self.on_seek_clear, "<sc>")
         self.connection.expect_line (self.on_seek_add, "<s> (.+)")
+        self.connection.expect_line (self.on_seek_add, "<sn> (.+)")
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         
         self.connection.expect_line (self.on_game_list,
@@ -154,6 +155,7 @@ class GameListManager (GObject):
         self.connection.lvm.setVariable("seekinfo", True)
         self.connection.lvm.setVariable("seekremove", True)
         #self.connection.lvm.setVariable("seek", False)
+        self.connection.lvm.setVariable("showownseek", True)
         
         self.connection.lvm.setVariable("gin", True)
         self.connection.lvm.setVariable("allresults", True)

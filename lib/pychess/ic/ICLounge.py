@@ -351,48 +351,84 @@ class SeekTabSection (ParrentListSection):
 
         self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
-
+        
         self.tv = self.widgets["seektreeview"]
-        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float)
+        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns (
-                self.tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
-                _("Type"), _("Clock"),"", hide=[0,7], pix=[1] )
+        self.addColumns (self.tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
+                         _("Type"), _("Clock"), "", "", hide=[0,7,8], pix=[1] )
         self.tv.set_search_column(2)
-        self.tv.get_model().set_sort_func(6, self.timeCompareFunction, 0)
+        for i in range(2,7):
+            self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-
-        self.connection.glm.connect("addSeek", lambda glm, seek:
-                self.listPublisher.put((self.onAddSeek, seek)) )
-
-        self.connection.glm.connect("removeSeek", lambda glm, gameno:
-                self.listPublisher.put((self.onRemoveSeek, gameno)) )
-
-        self.connection.glm.connect("clearSeeks", lambda glm:
-                self.listPublisher.put((self.onClearSeeks,)) )
-
-        self.widgets["acceptButton"].connect("clicked", self.onAccept)
-        self.tv.connect("row-activated", self.onAccept)
+        for n in range(1,6):
+            column = self.tv.get_column(n)
+            for cellrenderer in column.get_cell_renderers():
+                column.add_attribute(cellrenderer, "foreground", 8)
         self.selection = self.tv.get_selection()
         self.lastSeekSelected = None
+        self.selection.set_select_function(self.selectFunction, full=True)
         self.selection.connect("changed", self.onSelectionChanged)
-
+        self.widgets["acceptButton"].connect("clicked", self.onAccept)
+        self.tv.connect("row-activated", self.onAccept)
+        
+        self.connection.glm.connect("addSeek", lambda glm, seek:
+                self.listPublisher.put((self.onAddSeek, seek)) )
+        self.connection.glm.connect("removeSeek", lambda glm, gameno:
+                self.listPublisher.put((self.onRemoveSeek, gameno)) )
+        self.connection.glm.connect("clearSeeks", lambda glm:
+                self.listPublisher.put((self.onClearSeeks,)) )
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
                 self.listPublisher.put((self.onPlayingGame,)) )
-
         self.connection.bm.connect("curGameEnded", lambda bm, gameno, wname, bname, status, reason:
                 self.listPublisher.put((self.onCurGameEnded,)) )
-
+        
+    def selectFunction (self, selection, model, path, is_selected):
+        if model[path][8] == "grey": return False
+        else: return True
+    
+    def compareFunction (self, model, iter0, iter1, column):
+        gameno0 = model.get_value(iter0, 0)
+        gameno1 = model.get_value(iter1, 0)
+        textcolor0 = model.get_value(iter0, 8)
+        textcolor1 = model.get_value(iter1, 8)
+        is_ascending = True if self.tv.get_column(column-1).get_sort_order() is \
+                               gtk.SORT_ASCENDING else False
+        if (gameno0 is not None and gameno0.startswith("C")) or (textcolor0 == "grey"):
+            if is_ascending: return -1
+            else: return 1
+        elif (gameno1 is not None and gameno1.startswith("C")) or (textcolor1 == "grey"):
+            if is_ascending: return 1
+            else: return -1
+        elif column is 6:
+            return self.timeCompareFunction(model, iter0, iter1, column)
+        else:
+            value0 = model.get_value(iter0, column)
+            value0 = value0.lower() if isinstance(value0, str) else value0
+            value1 = model.get_value(iter1, column)
+            value1 = value1.lower() if isinstance(value1, str) else value1
+            return cmp(value0, value1)
+        
     def onAddSeek (self, seek):
-        time = _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
+        time = _("%(min)s min") % {'min': seek["t"]}
+        if seek["i"] != "0":
+            time += _(" + %(sec)s sec") % {'sec': seek["i"]}
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
-        ti = self.store.append ([seek["gameno"], pix, seek["w"],
-                                int(seek["rt"]), rated, seek["tp"], time, float(seek["t"] + "." + seek["i"])])
+        textcolor = "grey" if seek["w"] == self.connection.getUsername() else "black"
+        if textcolor == "black":
+            ti = self.store.append ([seek["gameno"], pix, seek["w"],
+                                    int(seek["rt"]), rated, seek["tp"], time,
+                                    float(seek["t"] + "." + seek["i"]), textcolor])
+        else:
+            ti = self.store.prepend ([seek["gameno"], pix, seek["w"],
+                                    int(seek["rt"]), rated, seek["tp"], time,
+                                    float(seek["t"] + "." + seek["i"]), textcolor])
+            self.tv.scroll_to_cell(self.store.get_path(ti))
         self.seeks [seek["gameno"]] = ti
         count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
@@ -417,13 +453,12 @@ class SeekTabSection (ParrentListSection):
         self.seeks = {}
         self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
 
-    def onAccept (self, widget, *args):
-        model, iter = self.widgets["seektreeview"].get_selection().get_selected()
+    def onAccept (self, treeview, path, view_column):
+        model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         gameno = model.get_value(iter, 0)
-        if gameno != self.lastSeekSelected:
-            log.warn("row changed between first and second click of double-click")
-            return
+        if gameno != self.lastSeekSelected: return
+        if path != model.get_path(iter): return
         if gameno.startswith("C"):
             self.connection.om.acceptIndex(gameno[1:])
         else:
@@ -469,15 +504,18 @@ class ChallengeTabSection (ParrentListSection):
                 self.listPublisher.put((self.onChallengeRemove, index)) )
 
     def onChallengeAdd (self, index, match):
-        time = _("%(min)s min + %(sec)s sec") % {'min': match["t"], 'sec': match["i"]}
+        time = _("%(min)s min") % {'min': match["t"]}
+        if match["i"] != "0":
+            time += _(" + %(sec)s sec") % {'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
-        ti = self.store.append (["C"+index, self.chaPix, match["w"],
+        ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
                                 int(match["rt"]), rated, match["tp"], time,
-                                float(match["t"] + "." + match["i"])])
+                                float(match["t"] + "." + match["i"]), "black"])
         self.challenges [index] = ti
         count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
         self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
 
     def onChallengeRemove (self, index):
         if not index in self.challenges: return
