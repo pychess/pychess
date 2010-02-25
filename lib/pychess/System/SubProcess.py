@@ -175,7 +175,8 @@ class SubProcess (gobject.GObject):
             else: raise OSError, error
     
     def gentleKill (self, first=1, second=1):
-        pool.start(self.__gentleKill_inner, first, second)
+        if pool is not None:
+            pool.start(self.__gentleKill_inner, first, second)
     
     def __gentleKill_inner (self, first, second):
         self.resume()
