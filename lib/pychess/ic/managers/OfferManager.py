@@ -1,7 +1,7 @@
 
 import re
 
-from gobject import *
+from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
@@ -52,11 +52,11 @@ for k,v in strToOfferType.iteritems():
 class OfferManager (GObject):
     
     __gsignals__ = {
-        'onOfferAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
-        'onOfferRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'onChallengeAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,object)),
-        'onChallengeRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'onActionError' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,int))
+        'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (str,object)),
+        'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str,object)),
+        'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'onActionError' : (SIGNAL_RUN_FIRST, None, (object,int))
     }
     
     def __init__ (self, connection):
@@ -154,7 +154,7 @@ class OfferManager (GObject):
         else:
             log.error("Unknown offer type: #", index, offertype, "whith" + \
                       "parameters:", parameters, ". Declining")
-            print >> client, "decline", index
+            print >> self.connection.client, "decline", index
     
     def onOfferRemove (self, match):
         index = match.groups()[0]
