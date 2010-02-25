@@ -1,11 +1,10 @@
 import sys, os
-
-import gtk, gobject
+import gtk
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
-from pychess.Utils.const import *
 from pychess.Players.engineNest import discoverer
+from pychess.Utils.const import *
 
 firstRun = True
 def run(widgets):
@@ -25,9 +24,10 @@ def run(widgets):
 
 panels_gw = None
 def initialize(widgets):
-    global panels_gw
-    from pychess.widgets.gamewidget import key2gmwidg, attachGameWidget, delGameWidget
+    from pychess.Utils.GameModel import GameModel
+    from pychess.widgets.gamewidget import key2gmwidg, attachGameWidget, delGameWidget, GameWidget
     def delete_event (widget, *args):
+        global panels_gw
         widgets["preferences"].hide()
         if panels_gw in key2gmwidg.values():
             delGameWidget(panels_gw)
@@ -37,14 +37,12 @@ def initialize(widgets):
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
-
-    from pychess.Utils.GameModel import GameModel
-    from pychess.widgets.gamewidget import GameWidget
-    panels_gw = GameWidget(GameModel())
-
+    
     def switch_handler(widget, gpointer, pagenum):
+        global panels_gw
         page_widget = widget.get_nth_page(pagenum)
         if widget.get_tab_label(page_widget).get_text() == _('Sidepanels'):
+            panels_gw = GameWidget(GameModel())
             attachGameWidget(panels_gw)
             if not widgets["show_sidepanels"].get_active():
                 widgets["show_sidepanels"].set_active(True)
