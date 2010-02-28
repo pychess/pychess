@@ -1,6 +1,5 @@
 
 from pychess.System.Log import log
-from pychess.Utils.logic import getStatus
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
@@ -112,11 +111,12 @@ class ICGameModel (GameModel):
         self.emit("action_error", offer, error)
     
     #
-    # Terminate
+    # End
     #
     
-    def terminate (self):
-        if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
-            self.connection.om.offer(Offer(ABORT_OFFER), -1)
-            self.connection.om.offer(Offer(RESIGNATION), -1)
-        GameModel.terminate(self)
+    def end (self, status, reason):
+        if self.status in UNFINISHED_STATES:
+            if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
+                self.connection.om.offer(Offer(ABORT_OFFER), -1)
+                self.connection.om.offer(Offer(RESIGNATION), -1)
+        GameModel.end(self, status, reason)
