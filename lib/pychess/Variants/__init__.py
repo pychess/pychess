@@ -1,5 +1,6 @@
 from pychess.Utils.const import *
 from normal import NormalChess
+from corner import CornerChess
 from shuffle import ShuffleChess
 from fischerandom import FischerRandomChess
 from randomchess import RandomChess
@@ -14,6 +15,7 @@ from rookodds import RookOddsChess
 from queenodds import QueenOddsChess
 
 variants = {NORMALCHESS : NormalChess,
+            CORNERCHESS : CornerChess,
             SHUFFLECHESS : ShuffleChess,
             FISCHERRANDOMCHESS : FischerRandomChess,
             RANDOMCHESS: RandomChess,
