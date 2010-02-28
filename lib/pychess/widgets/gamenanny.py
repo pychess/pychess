@@ -215,7 +215,8 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
     
     if enabled:
         if len(analyzer.getAnalysis()) >= 1:
-            if gmwidg.gamemodel.curplayer.__type__ == LOCAL:
+            if gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
+               [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]:
                 set_arrow (analyzer.getAnalysis()[0].cords)
             else: set_arrow (None)
         
@@ -230,8 +231,9 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
             gmwidg.gamemodel.chacons = []
         
         def on_analyze (analyzer, moves, score):
-            if gmwidg.gamemodel.curplayer.__type__ == LOCAL and moves:
-               set_arrow (moves[0].cords)
+            if moves and (gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
+               [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]):
+                set_arrow (moves[0].cords)
             else: set_arrow (None)
         
         def on_game_change (gamemodel):
