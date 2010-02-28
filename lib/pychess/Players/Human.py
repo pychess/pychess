@@ -42,19 +42,40 @@ ACTION_NAMES = {
     TAKEBACK_OFFER: _("the takeback offer")
 }
 
+ACTION_ACTIONS = {
+    RESIGNATION: _("resign"),
+    FLAG_CALL: _("call your opponents flag"),
+    DRAW_OFFER: _("offer a draw"),
+    ABORT_OFFER: _("offer an abort"),
+    ADJOURN_OFFER: _("offer to adjourn"),
+    PAUSE_OFFER: _("offer a pause"),
+    RESUME_OFFER: _("offer to resume"),
+    SWITCH_OFFER: _("offer to switch sides"),
+    TAKEBACK_OFFER: _("offer a takeback"),
+    HURRY_ACTION: _("ask your opponent to move")
+}
+
 ERROR_MESSAGES = {
     ACTION_ERROR_NO_CLOCK:
         _("The game hasn't got a clock."),
     ACTION_ERROR_NOT_OUT_OF_TIME:
         _("Your opponent is not out of time."),
     ACTION_ERROR_CLOCK_NOT_STARTED:
-        _("The clock hasn't yet been started."),
+        _("The clock hasn't been started yet."),
     ACTION_ERROR_SWITCH_UNDERWAY:
-        _("You can't switch color during the game."),
+        _("You can't switch colors during the game."),
     ACTION_ERROR_TOO_LARGE_UNDO:
-        _("You have tried to redo to many moves."),
+        _("You have tried to redo too many moves."),
     ACTION_ERROR_GAME_ENDED:
-        _("You can't undo a game, which has ended in an unnatural way."),
+        _("You can not offer a takeback because your opponent is not available."),
+    ACTION_ERROR_REQUIRES_UNFINISHED_GAME:
+        _("You can not %s when the game is over."),
+    ACTION_ERROR_UNRESUMEABLE_POSITION:
+        _("The game can not be resumed because the current position is not legally playable."),
+    ACTION_ERROR_RESUME_REQUIRES_PAUSED:
+        _("You can not resume a game that is not paused."),
+    ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
+        _("You can not %s on FICS when the game is over."),
 }
 
 class Human (Player):
@@ -211,6 +232,11 @@ class Human (Player):
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
             title = _("Unable to accept %s") % actionName
             description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
+        elif error == ACTION_ERROR_REQUIRES_UNFINISHED_GAME or \
+           error == ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
+            if offer.offerType not in ACTION_ACTIONS: return
+            title = _("Game is not running")
+            description = ERROR_MESSAGES[error] % ACTION_ACTIONS[offer.offerType]
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
              error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either

@@ -70,8 +70,24 @@ class ICGameModel (GameModel):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
+        
+        if self.status not in UNFINISHED_STATES and offer.offerType in INGAME_ACTIONS:
+            player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
+        
+        # TODO: if game is over and opponent is online, send through resume offer
+        elif self.status not in UNFINISHED_STATES and offer.offerType in \
+           (TAKEBACK_OFFER, RESUME_OFFER):
+            player.offerError(offer, ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED)
+        
+#        elif offer.offerType == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
+#           self.reason in UNRESUMEABLE_REASONS:
+#            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
+        
+        elif offer.offerType == RESUME_OFFER and self.status != PAUSED:
+            player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
+
         # This is only sent by ServerPlayers when observing
-        if offer.offerType == TAKEBACK_FORCE:
+        elif offer.offerType == TAKEBACK_FORCE:
             self.undoMoves(self.ply - offer.param)
         
         elif offer.offerType == CHAT_ACTION:
