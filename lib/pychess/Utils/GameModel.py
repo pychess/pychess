@@ -8,7 +8,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from pychess.System.ThreadPool import pool, PooledThread
+from pychess.System.ThreadPool import PooledThread
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.System import glock
@@ -26,7 +26,7 @@ class GameModel (GObject, PooledThread):
         "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "game_unended": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_unended":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
@@ -136,7 +136,17 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer.offerType == HURRY_ACTION:
+        if self.status not in UNFINISHED_STATES and offer.offerType in INGAME_ACTIONS:
+            player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
+        
+        elif offer.offerType == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
+           self.reason in UNRESUMEABLE_REASONS:
+            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
+        
+        elif offer.offerType == RESUME_OFFER and self.status != PAUSED:
+            player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
+        
+        elif offer.offerType == HURRY_ACTION:
             opPlayer.hurry()
         
         elif offer.offerType == CHAT_ACTION:
