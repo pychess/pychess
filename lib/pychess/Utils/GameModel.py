@@ -381,7 +381,6 @@ class GameModel (GObject, PooledThread):
         status, reason = getStatus(self.boards[-1])
         
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.status = status
             self.end(status, reason)
             return False
         
@@ -444,7 +443,10 @@ class GameModel (GObject, PooledThread):
             self.applyingMoveLock.release()
     
     def end (self, status, reason):
-        if not self.status in (WAITING_TO_START, PAUSED, RUNNING):
+        if self.status not in UNFINISHED_STATES:
+            log.warn("Can't end a game that's already ended: %s %s" % (status, reason))
+            return
+        if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.needsSave = True
         
         #log.debug("Ending a game with status %d for reason %d\n%s" % (status, reason,
