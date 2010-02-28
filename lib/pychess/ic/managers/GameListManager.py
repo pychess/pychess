@@ -135,6 +135,9 @@ class GameListManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
         self.connection.expect_line (self.on_player_list,
+                "<wa> ([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?)+)")
+        self.connection.expect_line (self.on_player_remove, "<wd> %s" % names)
+        self.connection.expect_line (self.on_player_list,
                 "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?)+)")
         self.connection.expect_line (self.on_player_remove,
                 "%s is no longer available for matches." % names)
@@ -158,6 +161,7 @@ class GameListManager (GObject):
         self.connection.lvm.setVariable("showownseek", True)
         
         self.connection.lvm.setVariable("gin", True)
+        self.connection.lvm.setVariable("pin", True)
         self.connection.lvm.setVariable("allresults", True)
         
         #b: blitz      l: lightning   u: untimed      e: examined game
