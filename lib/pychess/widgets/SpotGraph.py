@@ -6,8 +6,6 @@ import gtk
 import cairo
 import pango
 
-from pychess.System.uistuff import tooltip, tooltipStyle
-
 line = 10
 curve = 60
 dotSmall = 14
@@ -152,16 +150,13 @@ class SpotGraph (gtk.EventBox):
             
             x, y, width, height = self.getTextBounds(self.hovered)
             
-            oldstyle = self.get_style()
-            self.set_style(tooltipStyle)
-            tooltipStyle.paint_flat_box (self.window,
-                gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, tooltip, "tooltip",
+            self.get_style().paint_flat_box (self.window,
+                gtk.STATE_NORMAL, gtk.SHADOW_NONE, r, self, "tooltip",
                 int(x-hpadding), int(y-vpadding),
                 ceil(width+hpadding*2), ceil(height+vpadding*2))
-            self.set_style(oldstyle)
             
             context.move_to(x, y)
-            context.set_source_color(tooltipStyle.fg[self.state])
+            context.set_source_color(self.get_style().fg[self.state])
             context.show_layout(self.create_pango_layout(text))
     
     ############################################################################
