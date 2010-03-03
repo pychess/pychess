@@ -183,16 +183,15 @@ class EngineDiscoverer (GObject, PooledThread):
         
         optnode = engine.find('options')
         for name, dic in options.iteritems():
-            option = fromstring('<%s-option/>' % dic['type'])
+            option = fromstring('<%s-option name="%s"/>' % (dic.pop('type'), name))
             optnode.append(option)
             for key, value in dic.iteritems():
-                if key == 'type': continue
-                if key != 'vars':
-                    option.attrib[key] = str(value)
+                if key == 'vars':
+                    for valueoption in value:
+                        option.append(fromstring('<var name="%s" />' % valueoption))
                 else:
-                    for subvalue in value:
-                        option.append(fromstring('<var name="%s" />' % subvalue))
-        
+                    option.attrib[key] = str(value)
+                
         return engine
     
     def __fromCECPProcess (self, subprocess):
@@ -374,10 +373,9 @@ class EngineDiscoverer (GObject, PooledThread):
         if self.toBeRechecked:
             binnames = [engine.get('binname') for engine in self.toBeRechecked.keys()] 
             self.emit("discovering_started", binnames)
+            self.connect("all_engines_discovered", cb)
             for engine in self.toBeRechecked.keys():
                 self.__discoverE(engine)
-            self.connect("all_engines_discovered", cb)
-            #self.emit("all_engines_discovered")
         else:
             self.emit('all_engines_discovered')
         
@@ -420,7 +418,7 @@ class EngineDiscoverer (GObject, PooledThread):
             else:
                 for feature in engine.findall("cecp-features/feature"):
                     if feature.get("name") == "variants":
-                        if variantClass.cecp_name == feature.get('value'):
+                        if variantClass.cecp_name in feature.get('value'):
                             yield variantClass.board.variant
                 # UCI knows Chess960 only
                 if variantClass.cecp_name == "fischerandom":
