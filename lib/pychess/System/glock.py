@@ -1,3 +1,4 @@
+import traceback
 from threading import RLock, currentThread
 from gtk.gdk import threads_enter, threads_leave
 _rlock = RLock()
@@ -29,7 +30,9 @@ def release():
             threads_leave()
         _rlock.release()
     else:
-        print "Warning: Releasing nonowned glock has no effect"
+        print "Warning: Releasing nonowned glock has no effect\n" + \
+                "Traceback was: %s" % traceback.extract_stack()        
+        
 
 def glock_connect(emitter, signal, function, *args, **kwargs):
     def handler(emitter, *extra):
