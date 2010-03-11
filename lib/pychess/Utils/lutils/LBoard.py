@@ -171,6 +171,7 @@ class LBoard:
                     cord += 1
         
         # Help tests/movegen.py in positions having no 4 rooks
+        # or moveNoChr is not 1
         if self.variant == FISCHERRANDOMCHESS:
             if self.ini_rooks[0][0] is None:
                 self.ini_rooks[0][0] = A1
@@ -180,6 +181,10 @@ class LBoard:
                 self.ini_rooks[1][0] = A8
             if self.ini_rooks[1][1] is None:
                 self.ini_rooks[1][1] = H8
+            if self.ini_kings[BLACK] is None:
+                self.ini_kings[BLACK] = self.kings[BLACK]
+            if self.ini_kings[WHITE] is None:
+                self.ini_kings[WHITE] = self.kings[WHITE]
 
         # Parse active color field
         
