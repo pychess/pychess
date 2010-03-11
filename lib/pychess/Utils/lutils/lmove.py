@@ -57,7 +57,6 @@ def parseAny (board, algnot):
 
 def determineAlgebraicNotation (algnot):
     upnot = algnot.upper()
-    
     if upnot in ("O-O", "O-O-O", "0-0", "0-0-0"):
         return SAN
     
@@ -418,29 +417,6 @@ def toAN (board, move):
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
 
-    if board.variant == FISCHERRANDOMCHESS:
-        color = board.color
-        notat = an
-        notat = notat.replace("0","O").replace("o","O")
-        if notat.startswith("O-O"):
-            if color == WHITE:
-                fcord = board.ini_kings[0] #E1
-                if notat == "O-O":
-                    flag = KING_CASTLE
-                    tcord = G1
-                else:
-                    flag = QUEEN_CASTLE
-                    tcord = C1
-            else:
-                fcord = board.ini_kings[1] #E8
-                if notat == "O-O":
-                    flag = KING_CASTLE
-                    tcord = G8
-                else:
-                    flag = QUEEN_CASTLE
-                    tcord = C8
-            return newMove (fcord, tcord, flag)
-
     if not 4 <= len(an) <= 6:
         raise ParsingError, (an, "the move must be 4 or 6 chars long", board.asFen())
     
@@ -457,7 +433,16 @@ def parseAN (board, an):
         #The a7a8=q variant
         flag = chr2Sign[an[5].lower()] + 2
     elif board.arBoard[fcord] == KING:
-        if fcord - tcord == 2:
+        if board.variant == FISCHERRANDOMCHESS and board.arBoard[tcord] == ROOK:
+            color = board.color
+            friends = board.friends[color]
+            if bitPosArray[tcord] & friends:
+                if board.ini_rooks[color][0] == tcord:
+                    flag = QUEEN_CASTLE
+                else:
+                    flag = KING_CASTLE
+                
+        elif fcord - tcord == 2:
             flag = QUEEN_CASTLE
         elif fcord - tcord == -2:
             flag = KING_CASTLE
