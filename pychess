@@ -33,10 +33,6 @@ else:
 __builtin__.__dict__["ngettext"] = t.ungettext
 gtk.glade.textdomain("pychess")
 
-# Start logging
-from pychess.System.Log import log
-log.debug("Started\n")
-
 # Let's rumble!
 import pychess.Main
 pychess.Main.run(sys.argv[1:])
