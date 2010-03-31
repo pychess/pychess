@@ -259,4 +259,8 @@ def run (args):
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
     gtk.gdk.threads_init()
+    
+    # Start logging
+    log.debug("Started\n")
+    
     gtk.main()
