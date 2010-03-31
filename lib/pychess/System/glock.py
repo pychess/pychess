@@ -5,13 +5,13 @@ _rlock = RLock()
 
 def has():
     me = currentThread()
-    return _rlock._RLock__owner != me._Thread__ident
+    return _rlock._RLock__owner == me._Thread__ident
 
 def acquire():
     me = currentThread()
     # Ensure we don't deadlock if another thread is waiting on threads_enter
     # while we wait on _rlock.acquire()
-    if me.getName() == "MainThread" and has():
+    if me.getName() == "MainThread" and not has():
         threads_leave()
     # Acquire the lock, if it is not ours, or add one to the recursive counter
     _rlock.acquire()
