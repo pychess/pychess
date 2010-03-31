@@ -5,7 +5,9 @@ _rlock = RLock()
 
 def has():
     me = currentThread()
-    return _rlock._RLock__owner == me._Thread__ident
+    if type(_rlock._RLock__owner) == int:
+        return _rlock._RLock__owner == me._Thread__ident
+    return _rlock._RLock__owner == me
 
 def acquire():
     me = currentThread()
