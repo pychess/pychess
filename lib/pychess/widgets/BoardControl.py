@@ -25,7 +25,6 @@ class BoardControl (gtk.EventBox):
     
     def __init__(self, gamemodel, actionMenuItems):
         gtk.EventBox.__init__(self)
-        widgets = gtk.glade.XML(addDataPrefix("glade/promotion.glade"))
         self.promotionDialog = PromotionDialog()
         self.view = BoardView(gamemodel)
         self.add(self.view)

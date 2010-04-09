@@ -11,35 +11,35 @@ from Player import Player, PlayerIsDead, TurnInterrupt
 
 OFFER_MESSAGES = {
     DRAW_OFFER:
-        (_("You've got a draw offer. Accept?"),
-         _("Your opponent has offered you a draw. If you accept it the game will end with score 1/2 - 1/2."), False),
+        (_("Your opponent has offered you a draw. Accept?"),
+         _("Your opponent has offered you a draw. If you accept this offer, the game will end with a score of 1/2 - 1/2."), False),
     ABORT_OFFER:
-        (_("You've got an abort offer. Accept?"),
-         _("Your opponent has offered you to abort the game. If you accept, the game will end with no rating change."), False),
+        (_("Your opponent wants to abort the game. Accept?"),
+         _("Your opponent has asked that the game be aborted. If you accept this offer, the game will end with no rating change."), False),
     ADJOURN_OFFER:
-        (_("You've got an adjourn offer. Accept?"),
-         _("Your opponent has offered you to adjourn the game. If you accept, the game will adjourned, and you can later resume it (If your opponent is online and willing)."), False),
+        (_("Your opponent wants to adjourn the game. Accept?"),
+         _("Your opponent has asked that the game be adjourned. If you accept this offer, the game will be adjourned and you can resume it later (when your opponent is online and both players agree to resume)."), False),
     TAKEBACK_OFFER:
-        (_("Your opponent wants to undo. Accept?"),
-         _("Your opponent wants to undo back to halfmove %s.. If you accept, the game will continue from the earlier position."), True),
+        (_("Your opponent wants to undo %s move(s). Accept?"),
+         _("Your opponent has asked that the last %s move(s) be undone. If you accept this offer, the game will continue from the earlier position."), True),
     PAUSE_OFFER:
-        (_("Your opponent offers you a pause. Accept?"),
-         _("Your opponent wants to make a break. If you accept the game clock will be paused until on of you accept a resume offer"), False),
+        (_("Your opponent wants to pause the game. Accept?"),
+         _("Your opponent has asked that the game be paused. If you accept this offer, the game clock will be paused until both players agree to resume the game."), False),
     RESUME_OFFER:
-        (_("Your opponent wants to resume. Accept?"),
-         _("Your opponent wants to resume the game. If you accept, the game clock will start counting down from where it was left."), False)
+        (_("Your opponent wants to resume the game. Accept?"),
+         _("Your opponent has asked that the game be resumed. If you accept this offer, the game clock will continue from where it was paused."), False)
 }
 
 ACTION_NAMES = {
-    RESIGNATION: _("the resignation"),
-    FLAG_CALL: _("the flag call"),
-    DRAW_OFFER: _("the draw offer"),
-    ABORT_OFFER: _("the abort offer"),
-    ADJOURN_OFFER: _("the adjourn offer"),
-    PAUSE_OFFER: _("the pause offer"),
-    RESUME_OFFER: _("the resume offer"),
-    SWITCH_OFFER: _("the offer to switch sides"),
-    TAKEBACK_OFFER: _("the takeback offer")
+    RESIGNATION: _("The resignation"),
+    FLAG_CALL: _("The flag call"),
+    DRAW_OFFER: _("The draw offer"),
+    ABORT_OFFER: _("The abort offer"),
+    ADJOURN_OFFER: _("The adjourn offer"),
+    PAUSE_OFFER: _("The pause offer"),
+    RESUME_OFFER: _("The resume offer"),
+    SWITCH_OFFER: _("The offer to switch sides"),
+    TAKEBACK_OFFER: _("The takeback offer"),
 }
 
 ACTION_ACTIONS = {
@@ -65,7 +65,7 @@ ERROR_MESSAGES = {
     ACTION_ERROR_SWITCH_UNDERWAY:
         _("You can't switch colors during the game."),
     ACTION_ERROR_TOO_LARGE_UNDO:
-        _("You have tried to redo too many moves."),
+        _("You have tried to undo too many moves."),
     ACTION_ERROR_GAME_ENDED:
         _("You can not offer a takeback because your opponent is not available."),
     ACTION_ERROR_REQUIRES_UNFINISHED_GAME:
@@ -96,7 +96,7 @@ class Human (Player):
         self.color = color
         self.conid = [
             self.board.connect("piece_moved", self.piece_moved),
-            self.board.connect("action", lambda b,ac,pa: self.emit_action(ac,pa))
+            self.board.connect("action", lambda b,action,param: self.emit_action(action, param))
         ]
         self.setName(name)
         self.ichandle = ichandle
@@ -138,7 +138,7 @@ class Human (Player):
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
         if item == "del":
-            raise PlayerIsDead, "Killed by forgin forces"
+            raise PlayerIsDead, "Killed by foreign forces"
         if item == "int":
             raise TurnInterrupt
         return item
@@ -222,7 +222,7 @@ class Human (Player):
         if offer.offerType not in ACTION_NAMES:
             return
         title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.offerType]
-        description = _("Your opponent seams to have changed his or her mind.")
+        description = _("Your opponent seems to have changed his or her mind.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerError (self, offer, error):
@@ -230,7 +230,7 @@ class Human (Player):
             return
         actionName = ACTION_NAMES[offer.offerType]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
-            title = _("Unable to accept %s") % actionName
+            title = _("Unable to accept %s") % actionName.lower()
             description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
         elif error == ACTION_ERROR_REQUIRES_UNFINISHED_GAME or \
            error == ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
@@ -243,7 +243,7 @@ class Human (Player):
             # declined or withdrawn.
             return
         else:
-            title = _("%s returns an error") % (actionName[0].upper()+actionName[1:])
+            title = _("%s returns an error") % actionName
             description = ERROR_MESSAGES[error]
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
