@@ -8,6 +8,7 @@ modules_to_test = (
     "eval",
     "fen",
     "frc_castling",
+    "move",
     #"movegen",
     "pgn",
     "zobrist",
