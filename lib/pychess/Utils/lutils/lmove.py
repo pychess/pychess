@@ -304,8 +304,8 @@ def parseSAN (board, san):
     if notat and notat[0] in reprRank:
         frank = int(notat[0])-1
         notat = notat[1:]
-    if notat and notat[0] and notat in reprFile:
-        ffile = ord(notat) - ord("a")
+    if notat and notat[0] in reprFile:
+        ffile = ord(notat[0]) - ord("a")
         notat = notat[1:]
     if notat and notat[0] in reprRank:
         frank = int(notat[0])-1
