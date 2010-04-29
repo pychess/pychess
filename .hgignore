@@ -1,0 +1,5 @@
+
+syntax: regexp
+^\.pydevproject$
+syntax: regexp
+\.pydevproject$
