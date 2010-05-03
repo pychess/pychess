@@ -439,7 +439,7 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkImage" id="image996">
+			<widget class="GtkImage" id="startIcon">
 			  <property name="visible">True</property>
 			  <property name="icon_name">stock_init</property>
 			  <property name="pixel_size">48</property>

@@ -4,6 +4,7 @@ import gtk
 import gobject
 import pango
 
+from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
@@ -90,8 +91,7 @@ class TextImageTree (gtk.TreeView):
         self.append_column(self.leftcol)
         
         # Second column
-        icons = gtk.icon_theme_get_default()
-        pixbuf = icons.load_icon(icon_name, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        pixbuf = load_icon(16, icon_name)
         crp = gtk.CellRendererPixbuf()
         crp.props.pixbuf = pixbuf
         self.rightcol = gtk.TreeViewColumn("", crp)

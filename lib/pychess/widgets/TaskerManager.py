@@ -13,6 +13,7 @@ import newGameDialog
 from pychess.widgets import newGameDialog
 from pychess.ic import ICLogon
 
+from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
@@ -207,6 +208,9 @@ class NewGameTasker (gtk.Alignment):
             ionest.generalStart(gamemodel, player0tup, player1tup)
         else: ionest.generalStart(gamemodel, player1tup, player0tup)
 
+
+big_start = load_icon(48, "stock_init", "gnome-globe")
+
 class InternetGameTasker (gtk.Alignment):
     
     def __init__ (self):
@@ -228,6 +232,8 @@ class InternetGameTasker (gtk.Alignment):
         
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
+
+        self.widgets["startIcon"].set_from_pixbuf(big_start)
     
     def openDialogClicked (self, button):
         ICLogon.run()
