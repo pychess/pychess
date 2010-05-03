@@ -169,7 +169,7 @@
 			  <property name="spacing">0</property>
 
 			  <child>
-			    <widget class="GtkImage" id="image341">
+			    <widget class="GtkImage" id="playersIcon">
 			      <property name="width_request">58</property>
 			      <property name="visible">True</property>
 			      <property name="icon_size">6</property>
@@ -466,7 +466,7 @@
 			  <property name="spacing">0</property>
 
 			  <child>
-			    <widget class="GtkImage" id="image343">
+			    <widget class="GtkImage" id="timeIcon">
 			      <property name="width_request">58</property>
 			      <property name="visible">True</property>
 			      <property name="icon_size">6</property>
