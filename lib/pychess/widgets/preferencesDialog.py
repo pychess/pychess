@@ -5,6 +5,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
+from pychess.Utils.IconLoader import load_icon
 
 firstRun = True
 def run(widgets):
@@ -315,17 +316,12 @@ class SoundTab:
                  (_("Beep"), "stock_bell", "audio-x-generic"), 
                  (_("Select sound file..."), "gtk-open", "document-open"))
         
-        it = gtk.icon_theme_get_default()
         items = []
         for level, stock, altstock in icons:
-            try:
-                image = it.load_icon(stock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-            except gobject.GError:
-                image = it.load_icon(altstock, 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+            image = load_icon(16, stock, altstock)
             items += [(image, level)]
         
-        audioIco = it.load_icon("audio-x-generic", 16,
-                                gtk.ICON_LOOKUP_USE_BUILTIN)
+        audioIco = load_icon(16, "audio-x-generic")
         
         # Set-up combos
         

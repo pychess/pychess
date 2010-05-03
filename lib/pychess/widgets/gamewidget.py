@@ -6,8 +6,8 @@ import traceback
 import cStringIO
 
 import gtk, gobject
-from gtk import ICON_LOOKUP_USE_BUILTIN
 
+from pychess.Utils.IconLoader import load_icon
 from pychess.System.Log import log
 from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
@@ -35,26 +35,19 @@ def cleanNotebook ():
     notebook.set_show_border(False)
     return notebook
 
-icons = gtk.icon_theme_get_default()
-def lookup16 (name, alternative=None):
-    try:
-        return icons.load_icon(name, 16, ICON_LOOKUP_USE_BUILTIN)
-    except:
-        return icons.load_icon(alternative, 16, ICON_LOOKUP_USE_BUILTIN)
-
 def createImage (pixbuf):
     image = gtk.Image()
     image.set_from_pixbuf(pixbuf)
     return image
 
-light_on = lookup16("stock_3d-light-on", "weather-clear")
-light_off = lookup16("stock_3d-light-off", "weather-clear-night")
-gtk_close = lookup16("gtk-close")
+light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
+light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
+gtk_close = load_icon(16, "gtk-close")
 
-media_previous = lookup16("gtk-media-previous-ltr")
-media_rewind = lookup16("gtk-media-rewind-ltr")
-media_forward = lookup16("gtk-media-forward-ltr")
-media_next = lookup16("gtk-media-next-ltr")
+media_previous = load_icon(16, "gtk-media-previous-ltr")
+media_rewind = load_icon(16, "gtk-media-rewind-ltr")
+media_forward = load_icon(16, "gtk-media-forward-ltr")
+media_next = load_icon(16, "gtk-media-next-ltr")
 
 GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
 ACTION_MENU_ITEMS = ("draw", "pause1", "resume1", "undo1", 
