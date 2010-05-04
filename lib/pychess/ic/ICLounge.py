@@ -717,7 +717,6 @@ class GameTabSection (ParrentListSection):
 
         self.games = {}
 
-        icons = gtk.icon_theme_get_default()
         self.recpix = load_icon(16, "media-record")
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
 
@@ -845,7 +844,6 @@ class AdjournedTabSection (ParrentListSection):
 
         # Set up the treeview
 
-        icons = gtk.icon_theme_get_default()
         self.wpix = load_icon(16, "stock_draw-rounded-square-unfilled", "computer")
         self.bpix = load_icon(16, "stock_draw-rounded-square", "computer")
 
