@@ -1018,7 +1018,7 @@ class SeekChallengeSection (ParrentListSection):
                    self.widgets["strengthCombobox"].get_active()]
         if item[0] == _("Don't Care"):
             ratingrange = (0, 9999)
-        else: ratingrange = map(int, item[1].split(" → "))
+        else: ratingrange = map(int, item[0].split(" → "))
         rated = self.widgets["ratedGameCheck"].get_active()
         color = self.widgets["colorCombobox"].get_active()-1
         if color == -1: color = None
