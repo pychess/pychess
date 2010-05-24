@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--*- mode: xml -*-->
+<?xml version="1.0"?>
 <glade-interface>
+  <!-- interface-requires gtk+ 2.10 -->
+  <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="window">
     <property name="title" translatable="yes">window1</property>
     <child>
@@ -11,7 +11,6 @@
         <child>
           <widget class="GtkTable" id="findbar">
             <property name="visible">True</property>
-            <property name="n_rows">1</property>
             <property name="n_columns">6</property>
             <child>
               <widget class="GtkLabel" id="outofLabel">
@@ -31,8 +30,8 @@
               <widget class="GtkButton" id="prevButton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="relief">GTK_RELIEF_NONE</property>
-                <property name="response_id">0</property>
+                <property name="receives_default">False</property>
+                <property name="relief">none</property>
                 <child>
                   <widget class="GtkHBox" id="hbox3">
                     <property name="visible">True</property>
@@ -48,10 +47,13 @@
                             <property name="height_request">16</property>
                             <property name="visible">True</property>
                             <property name="stock">gtk-go-up</property>
-                            <property name="icon_size">1</property>
+                            <property name="icon-size">1</property>
                           </widget>
                         </child>
                       </widget>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                     <child>
                       <widget class="GtkLabel" id="label5">
@@ -78,8 +80,8 @@
               <widget class="GtkButton" id="nextButton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="relief">GTK_RELIEF_NONE</property>
-                <property name="response_id">0</property>
+                <property name="receives_default">False</property>
+                <property name="relief">none</property>
                 <child>
                   <widget class="GtkHBox" id="hbox4">
                     <property name="visible">True</property>
@@ -95,10 +97,13 @@
                             <property name="height_request">16</property>
                             <property name="visible">True</property>
                             <property name="stock">gtk-go-down</property>
-                            <property name="icon_size">1</property>
+                            <property name="icon-size">1</property>
                           </widget>
                         </child>
                       </widget>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                     <child>
                       <widget class="GtkLabel" id="label6">
@@ -145,14 +150,14 @@
                 <property name="height_request">30</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="relief">GTK_RELIEF_NONE</property>
-                <property name="response_id">0</property>
+                <property name="receives_default">False</property>
+                <property name="relief">none</property>
                 <child>
                   <widget class="GtkImage" id="image6">
                     <property name="visible">True</property>
                     <property name="ypad">1</property>
                     <property name="stock">gtk-close</property>
-                    <property name="icon_size">2</property>
+                    <property name="icon-size">2</property>
                   </widget>
                 </child>
               </widget>
@@ -175,6 +180,7 @@
           </widget>
           <packing>
             <property name="expand">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -186,8 +192,8 @@
               <widget class="GtkScrolledWindow" id="scrolledwindow">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-                <property name="shadow_type">GTK_SHADOW_IN</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="shadow_type">in</property>
                 <child>
                   <widget class="GtkTextView" id="textview">
                     <property name="visible">True</property>
