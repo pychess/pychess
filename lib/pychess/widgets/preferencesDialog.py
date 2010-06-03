@@ -305,7 +305,7 @@ class SoundTab:
         
         soundfilter = gtk.FileFilter()
         soundfilter.add_custom(soundfilter.get_needed(),
-                               lambda data: data[3].startswith("audio/"))
+                               lambda data: data[3] and data[3].startswith("audio/"))
         opendialog.add_filter(soundfilter)
         opendialog.set_filter(soundfilter)
         
