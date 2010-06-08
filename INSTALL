@@ -18,10 +18,10 @@ $ PYTHONPATH=lib/ python run_tests.py
 
 -------------
 Dependencies:
+python >= 2.5
 pygtk
 pygobject
 pycairo
-pysqlite (for Python < 2.5)
 gnome-python-desktop
 gnome-icon-theme
 gst-python (OPTIONAL for sound)
