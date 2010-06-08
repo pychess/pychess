@@ -20,6 +20,7 @@ except ImportError:
     from gtksourceview2 import View as SourceView
     from gtksourceview2 import LanguageManager
 
+from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
@@ -41,35 +42,35 @@ from pychess.Variants.normal import NormalChess
 # Background.Taskers so they have a similar look.
 #===============================================================================
 
-it = gtk.icon_theme_get_default()
-
-iwheels = it.load_icon("gtk-execute", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-ipeople = it.load_icon("stock_people", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-inotebook = it.load_icon("stock_notebook", 24, gtk.ICON_LOOKUP_USE_BUILTIN)
-speople = it.load_icon("stock_people", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-snotebook = it.load_icon("stock_notebook", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+big_time = load_icon(48, "stock_alarm", "appointment-soon")
+big_people = load_icon(48, "stock_people", "system-users")
+iwheels = load_icon(24, "gtk-execute")
+ipeople = load_icon(24, "stock_people", "system-users")
+inotebook = load_icon(24, "stock_notebook", "computer")
+speople = load_icon(16, "stock_people", "system-users")
+snotebook = load_icon(16, "stock_notebook", "computer")
 
 skillToIcon = {
-    1: it.load_icon("weather-clear", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    2: it.load_icon("weather-few-clouds", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    3: it.load_icon("weather-few-clouds", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    4: it.load_icon("weather-overcast", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    5: it.load_icon("weather-overcast", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    6: it.load_icon("weather-showers", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    7: it.load_icon("weather-showers", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
-    8: it.load_icon("weather-storm", 16, gtk.ICON_LOOKUP_USE_BUILTIN),
+    1: load_icon(16, "weather-clear"),
+    2: load_icon(16, "weather-few-clouds"),
+    3: load_icon(16, "weather-few-clouds"),
+    4: load_icon(16, "weather-overcast"),
+    5: load_icon(16, "weather-overcast"),
+    6: load_icon(16, "weather-showers"),
+    7: load_icon(16, "weather-showers"),
+    8: load_icon(16, "weather-storm"),
 }
 
 # Used by TaskerManager. Put here to help synchronization
 skillToIconLarge = {
-    1: it.load_icon("weather-clear", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    2: it.load_icon("weather-few-clouds", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    3: it.load_icon("weather-few-clouds", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    4: it.load_icon("weather-overcast", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    5: it.load_icon("weather-overcast", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    6: it.load_icon("weather-showers", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    7: it.load_icon("weather-showers", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
-    8: it.load_icon("weather-storm", 48, gtk.ICON_LOOKUP_USE_BUILTIN),
+    1: load_icon(48, "weather-clear"),
+    2: load_icon(48, "weather-few-clouds"),
+    3: load_icon(48, "weather-few-clouds"),
+    4: load_icon(48, "weather-overcast"),
+    5: load_icon(48, "weather-overcast"),
+    6: load_icon(48, "weather-showers"),
+    7: load_icon(48, "weather-showers"),
+    8: load_icon(48, "weather-storm"),
 }
 
 playerItems = []
@@ -118,6 +119,9 @@ class _GameInitializationMode:
                             (i[:2] for i in playerItems[0]))
         uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
                             (i[:2] for i in playerItems[0]))
+
+        cls.widgets["playersIcon"].set_from_pixbuf(big_people)
+        cls.widgets["timeIcon"].set_from_pixbuf(big_time)
 
 
         def on_playerCombobox_changed (widget, skillHbox):

@@ -2,7 +2,10 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 from gobject import *
+
 from pychess.System.Log import log
+from pychess.Utils.IconLoader import load_icon
+
 
 class ToggleComboBox (gtk.ToggleButton):
 
@@ -78,8 +81,7 @@ class ToggleComboBox (gtk.ToggleButton):
             label = gtk.Label(text)
             label.props.xalign = 0
             if type(stock) == str:
-                stock = gtk.icon_theme_get_default().load_icon(
-                        stock, 12, gtk.ICON_LOOKUP_USE_BUILTIN)            
+                stock = load_icon(12, stock)
             image = gtk.Image()
             image.set_from_pixbuf(stock)            
             hbox = gtk.HBox()
