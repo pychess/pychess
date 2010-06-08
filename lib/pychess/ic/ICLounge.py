@@ -22,6 +22,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.Utils.const import *
+from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
 from pychess.Players.ICPlayer import ICPlayer
@@ -616,14 +617,12 @@ class SeekGraphSection (ParrentListSection):
 
 class PlayerTabSection (ParrentListSection):
 
-    icons = gtk.icon_theme_get_default()
-    l = gtk.ICON_LOOKUP_USE_BUILTIN
-    peoplepix = icons.load_icon("stock_people", 15, l)
-    bookpix = icons.load_icon("stock_book_blue", 15, l)
-    easypix = icons.load_icon("weather-few-clouds", 15, l)
-    advpix = icons.load_icon("weather-overcast", 15, l)
-    exppix = icons.load_icon("weather-storm", 15, l)
-    cmppix = icons.load_icon("stock_notebook", 15, l)
+    peoplepix = load_icon(15, "stock_people", "system-users")
+    bookpix = load_icon(15, "stock_book_blue", "accessories-dictionary")
+    easypix = load_icon(15, "weather-few-clouds")
+    advpix = load_icon(15, "weather-overcast")
+    exppix = load_icon(15, "weather-storm")
+    cmppix = load_icon(15, "stock_notebook", "computer")
 
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
@@ -718,8 +717,7 @@ class GameTabSection (ParrentListSection):
 
         self.games = {}
 
-        icons = gtk.icon_theme_get_default()
-        self.recpix = icons.load_icon("media-record", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        self.recpix = load_icon(16, "media-record")
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
 
         self.tv = self.widgets["gametreeview"]
@@ -846,9 +844,8 @@ class AdjournedTabSection (ParrentListSection):
 
         # Set up the treeview
 
-        icons = gtk.icon_theme_get_default()
-        self.wpix = icons.load_icon("stock_draw-rounded-square-unfilled", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
-        self.bpix = icons.load_icon("stock_draw-rounded-square", 16, gtk.ICON_LOOKUP_USE_BUILTIN)
+        self.wpix = load_icon(16, "stock_draw-rounded-square-unfilled", "computer")
+        self.bpix = load_icon(16, "stock_draw-rounded-square", "computer")
 
         self.tv = widgets["adjournedtreeview"]
         self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
@@ -1021,7 +1018,7 @@ class SeekChallengeSection (ParrentListSection):
                    self.widgets["strengthCombobox"].get_active()]
         if item[0] == _("Don't Care"):
             ratingrange = (0, 9999)
-        else: ratingrange = map(int, item[1].split(" → "))
+        else: ratingrange = map(int, item[0].split(" → "))
         rated = self.widgets["ratedGameCheck"].get_active()
         color = self.widgets["colorCombobox"].get_active()-1
         if color == -1: color = None

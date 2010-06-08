@@ -1,3 +1,6 @@
+syntax: glob
+*.mo
+*.pyc
 
 syntax: regexp
 ^\.pydevproject$
