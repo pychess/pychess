@@ -330,7 +330,7 @@ class UCIEngine (ProtocolEngine):
     
     def _startPonder (self):
         print >> self.engine, "position fen", self.board.asFen(), \
-                                "moves", self.pondermove
+                                "moves", toAN(self.board, self.pondermove, short=True)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "btime", self.btime, "winc", self.incr, "binc", self.incr
     

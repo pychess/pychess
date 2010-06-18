@@ -394,10 +394,12 @@ def parseLAN (board, lan):
 # toAN                                                                         #
 ################################################################################
 
-def toAN (board, move):
+def toAN (board, move, short=False):
     """ Returns a Algebraic Notation string of a move
-        board should be prior to the move """
-
+        board should be prior to the move
+        
+        short -- returns the short variant, e.g. f7f8q rather than f7f8=Q
+    """
     s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
     if board.variant == FISCHERRANDOMCHESS:
         flag = move >> 12
@@ -407,7 +409,10 @@ def toAN (board, move):
             return "O-O-O"
     
     if FLAG(move) in PROMOTIONS:
-        s += "="+reprSign[PROMOTE_PIECE(FLAG(move))]
+        if short:
+            s += reprSign[PROMOTE_PIECE(FLAG(move))].lower()
+        else:
+            s += "=" + reprSign[PROMOTE_PIECE(FLAG(move))]
     return s
 
 ################################################################################
