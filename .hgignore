@@ -6,3 +6,9 @@ syntax: regexp
 ^\.pydevproject$
 syntax: regexp
 \.pydevproject$
+syntax: regexp
+^\.project$
+syntax: regexp
+\.project$
+syntax: regexp
+^[^/]+.launch$
