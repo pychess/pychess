@@ -3,7 +3,6 @@ import re
 import webbrowser
 import colorsys
 from math import log as ln, ceil
-import random
 import Queue
 
 import gobject
