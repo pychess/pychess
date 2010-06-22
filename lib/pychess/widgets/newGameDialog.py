@@ -1,4 +1,3 @@
-import os
 import os.path
 import gettext
 import locale
@@ -8,7 +7,6 @@ from operator import attrgetter
 from itertools import groupby
 
 import gtk
-import gobject
 from cairo import ImageSurface
 
 try:
@@ -24,7 +22,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
-from pychess.System import uistuff, protoopen
+from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
