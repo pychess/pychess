@@ -144,42 +144,44 @@ class EngineTab:
         
         # Put options in trees in add/edit dialog
         
-        tv = widgets["optionview"]
-        tv.append_column(gtk.TreeViewColumn(
-            "Option", gtk.CellRendererText(), text=0))
-        tv.append_column(gtk.TreeViewColumn(
-            "Value", gtk.CellRendererText(), text=1))
-        
-        def edit (button):
-            
-            iter = widgets["engines_treeview"].get_selection().get_selected()[1]
-            if iter: row = allstore.get_path(iter)[0]
-            else: return
-            
-            engine = discoverer.getEngineN(row)
-            optionstags = engine.getElementsByTagName("options")
-            if not optionstags:
-                widgets["engine_options_expander"].hide()
-            else:
-                widgets["engine_options_expander"].show()
-                widgets["engine_options_expander"].set_expanded(False)
-                
-                optionsstore = gtk.ListStore(str, str)
-                tv = widgets["optionview"]
-                tv.set_model(optionsstore)
-                
-                for option in optionstags[0].childNodes:
-                    if option.nodeType != option.ELEMENT_NODE: continue
-                    optionsstore.append( [option.getAttribute("name"),
-                                          option.getAttribute("default")] )
-                
-            widgets["engine_path_chooser"].set_title(_("Locate Engine"))
-            widgets["engine_path_chooser"].set_uri("file:///usr/bin/gnuchess")
-            
-            dialog = widgets["addconfig_engine"]
-            answer = dialog.run()
-            dialog.hide()
-        widgets["edit_engine_button"].connect("clicked", edit)
+        #=======================================================================
+        # tv = widgets["optionview"]
+        # tv.append_column(gtk.TreeViewColumn(
+        #    "Option", gtk.CellRendererText(), text=0))
+        # tv.append_column(gtk.TreeViewColumn(
+        #    "Value", gtk.CellRendererText(), text=1))
+        # 
+        # def edit (button):
+        #    
+        #    iter = widgets["engines_treeview"].get_selection().get_selected()[1]
+        #    if iter: row = allstore.get_path(iter)[0]
+        #    else: return
+        #    
+        #    engine = discoverer.getEngineN(row)
+        #    optionstags = engine.getElementsByTagName("options")
+        #    if not optionstags:
+        #        widgets["engine_options_expander"].hide()
+        #    else:
+        #        widgets["engine_options_expander"].show()
+        #        widgets["engine_options_expander"].set_expanded(False)
+        #        
+        #        optionsstore = gtk.ListStore(str, str)
+        #        tv = widgets["optionview"]
+        #        tv.set_model(optionsstore)
+        #        
+        #        for option in optionstags[0].childNodes:
+        #            if option.nodeType != option.ELEMENT_NODE: continue
+        #            optionsstore.append( [option.getAttribute("name"),
+        #                                  option.getAttribute("default")] )
+        #        
+        #    widgets["engine_path_chooser"].set_title(_("Locate Engine"))
+        #    widgets["engine_path_chooser"].set_uri("file:///usr/bin/gnuchess")
+        #    
+        #    dialog = widgets["addconfig_engine"]
+        #    answer = dialog.run()
+        #    dialog.hide()
+        # widgets["edit_engine_button"].connect("clicked", edit)
+        #=======================================================================
         #widgets["remove_engine_button"].connect("clicked", remove)
         #widgets["add_engine_button"].connect("clicked", add)
         
