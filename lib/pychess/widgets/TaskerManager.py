@@ -1,6 +1,7 @@
 import math
 
 import gtk, cairo, pango
+from gtk.gdk import pixbuf_new_from_file
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.prefix import addDataPrefix
@@ -146,8 +147,8 @@ class NewGameTasker (gtk.Alignment):
         self.add(tasker)
         
         self.colorCombo = combo = ToggleComboBox()
-        combo.addItem(_("White"), "stock_draw-rounded-square-unfilled")
-        combo.addItem(_("Black"), "stock_draw-rounded-square")
+        combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
+        combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
         combo.setMarkup("<b>", "</b>")
         widgets["colorDock"].add(combo)
         uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
