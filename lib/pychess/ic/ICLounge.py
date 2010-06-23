@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from Queue import Queue
-from Queue import Empty as EmptyError
 from cStringIO import StringIO
 from time import sleep, strftime, localtime
 from math import e
-import webbrowser
 
-import gtk, gobject, pango, re
+import gtk, pango
 from gtk import gdk
 from gtk.gdk import pixbuf_new_from_file
 from gobject import *
@@ -24,7 +21,6 @@ from pychess.widgets.SpotGraph import SpotGraph
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.GameModel import GameModel
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
@@ -94,7 +90,7 @@ class ICLounge (GObject):
         if self.widgets != None:
             self.widgets["fics_lounge"].hide()
         global sections
-        if sections != None:
+        if 'sections' in globals() and sections != None:
             for i in range(len(sections)):
                 if hasattr(sections[i], "__del__"):
                     sections[i].__del__()
@@ -117,10 +113,10 @@ class Section:
 
 class VariousSection(Section):
     def __init__ (self, widgets, connection):
-        sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
-        sizeGroup.add_widget(widgets["show_chat_label"])
-        sizeGroup.add_widget(widgets["show_console_label"])
-        sizeGroup.add_widget(widgets["log_off_label"])
+        #sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        #sizeGroup.add_widget(widgets["show_chat_label"])
+        #sizeGroup.add_widget(widgets["show_console_label"])
+        #sizeGroup.add_widget(widgets["log_off_label"])
 
         connection.em.connect("onCommandNotFound", lambda em, cmd:
                 log.error("Fics answered '%s': Command not found" % cmd))
