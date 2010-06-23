@@ -233,7 +233,7 @@ class ViewsPanel (gtk.Notebook, Panel):
     
     def onChannelLog (self, cm, channel, time, handle, text, name_, chatView):
         if channel.lower() == name_.lower():
-            chatView.appendLogMessage(time, handle, text)
+            chatView.insertLogMessage(time, handle, text)
     
     def onMessageTyped (self, chatView, text, id, name, type):
         if type == TYPE_CHANNEL:
