@@ -61,9 +61,9 @@
             </child>
             <child>
               <widget class="GtkVBox" id="vbox46">
-              <property name="orientation">vertical</property>
                 <property name="width_request">250</property>
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
                 <child>
                   <widget class="GtkTable" id="table13">
@@ -102,10 +102,11 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label150">
+                      <widget class="GtkLabel" id="opponentLabel">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Opponent:</property>
+                        <property name="label" translatable="yes">_Opponent:</property>
+                        <property name="use_underline">True</property>
                       </widget>
                       <packing>
                         <property name="top_attach">2</property>
@@ -127,10 +128,11 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label134">
+                      <widget class="GtkLabel" id="yourColorLabel">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Your Color:</property>
+                        <property name="label" translatable="yes">_Your Color:</property>
+                        <property name="use_underline">True</property>
                       </widget>
                       <packing>
                         <property name="x_options"></property>
@@ -189,9 +191,10 @@
                             <child>
                               <widget class="GtkLabel" id="label148">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Start Game&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;_Start Game&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                                 <property name="use_underline">True</property>
+                                <property name="mnemonic_widget">startButton</property>
                               </widget>
                               <packing>
                                 <property name="expand">False</property>
@@ -280,9 +283,9 @@
             </child>
             <child>
               <widget class="GtkVBox" id="vbox47">
-              <property name="orientation">vertical</property>
                 <property name="width_request">250</property>
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">3</property>
                 <child>
                   <widget class="GtkTable" id="table16">
@@ -293,7 +296,7 @@
                     <property name="row_spacing">3</property>
                     <child>
                       <widget class="GtkCheckButton" id="asGuestCheck">
-                        <property name="label" translatable="yes">Log on as _Guest</property>
+                        <property name="label" translatable="yes">Log on as G_uest</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -310,6 +313,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="invisible_char">&#x2022;</property>
+                        <property name="activates_default">True</property>
                         <accessibility>
                           <atkaction action_name="activate" description="connectButton"/>
                         </accessibility>
@@ -328,6 +332,7 @@
                         <property name="can_focus">True</property>
                         <property name="visibility">False</property>
                         <property name="invisible_char">&#x2022;</property>
+                        <property name="activates_default">True</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -341,7 +346,7 @@
                       <widget class="GtkLabel" id="passwordLabel">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Password:</property>
+                        <property name="label" translatable="yes">_Password:</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">passwordEntry</property>
                       </widget>
@@ -356,7 +361,7 @@
                       <widget class="GtkLabel" id="usernameLabel">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Handle:</property>
+                        <property name="label" translatable="yes">Ha_ndle:</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">usernameEntry</property>
                         <accessibility>
@@ -381,9 +386,11 @@
                     <property name="height_request">30</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="has_focus">True</property>
+                    <property name="is_focus">True</property>
                     <property name="can_default">True</property>
                     <property name="has_default">True</property>
-                    <property name="receives_default">False</property>
+                    <property name="receives_default">True</property>
                     <property name="relief">none</property>
                     <child>
                       <widget class="GtkAlignment" id="alignment1">
@@ -408,9 +415,10 @@
                             <child>
                               <widget class="GtkLabel" id="label1">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Connect to FICS&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;_Connect to FICS&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                                 <property name="use_underline">True</property>
+                                <property name="mnemonic_widget">connectButton</property>
                               </widget>
                               <packing>
                                 <property name="expand">False</property>
