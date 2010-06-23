@@ -1,3 +1,4 @@
+from pychess.System import conf
 from threading import Semaphore
 
 class ListAndVarManager:
@@ -37,6 +38,9 @@ class ListAndVarManager:
         print >> self.connection.client, "ivariables"
         
         self.connection.connect("disconnecting", self.stop)
+        
+        # Auto flag
+        conf.notify_add('autoCallFlag', self.autoFlagNotify)
     
     def isReady (self):
         return self.listLock._Semaphore__value and self.varLock._Semaphore__value
@@ -126,6 +130,10 @@ class ListAndVarManager:
         # variable backup set. The interface variables automatically reset
         if not self.varLock._Semaphore__value and self.variablesBackup:
             self.varLock.release()
+    
+    def autoFlagNotify(self, none):
+        self.setVariable('autoflag', conf.get('autoCallFlag',False))
+        print 'notify flag', conf.get('autoCallFlag',False)
     
     # User methods
     
