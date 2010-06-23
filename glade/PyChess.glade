@@ -990,6 +990,7 @@ Max Froumentin</property>
                               <widget class="GtkEntry" id="firstName">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip" translatable="yes">The displayed name of the first human player, e.g., John.</property>
                                 <property name="invisible_char">&#x2022;</property>
                               </widget>
                             </child>
@@ -1027,6 +1028,7 @@ Max Froumentin</property>
                               <widget class="GtkEntry" id="secondName">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip" translatable="yes">The displayed name of the guest player, e.g., Mary.</property>
                                 <property name="invisible_char">&#x2022;</property>
                               </widget>
                             </child>
@@ -1075,6 +1077,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, this hides the tab in the top of the playing window, when it is not needed.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                       </widget>
@@ -1090,6 +1093,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, the board will turn after each move, to show the natural view for the current player.</property>
                                         <property name="use_underline">True</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -1106,6 +1110,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, the black pieces will be head down, suitable for playing against friends on mobile devices.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                       </widget>
@@ -1121,6 +1126,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, the playing board will display labels and ranks for each chess field. These are usable in chess notation.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                       </widget>
@@ -1136,6 +1142,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, PyChess will use figures to express moved pieces, rather than uppercase letters.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                       </widget>
@@ -1143,6 +1150,22 @@ Max Froumentin</property>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
                                         <property name="position">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <widget class="GtkCheckButton" id="autoCallFlag">
+                                        <property name="label" translatable="yes">Auto _call flag</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">If set, PyChess will automatically end games, where a player has exceeded his or her timelimit.</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </widget>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">5</property>
                                       </packing>
                                     </child>
                                   </widget>
@@ -1194,6 +1217,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">Animate pieces, board rotation and more. Use this on fast machines.</property>
                                         <property name="use_underline">True</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -1210,6 +1234,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">Only animate piece moves.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">fullAnimation</property>
@@ -1226,6 +1251,7 @@ Max Froumentin</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip" translatable="yes">Never use animation. Use this on slow machines.</property>
                                         <property name="use_underline">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">fullAnimation</property>
