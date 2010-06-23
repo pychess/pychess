@@ -12,6 +12,7 @@ import conf_configParser as confmodule
 """Module for using gconf without having to care about types"""
 
 def notify_add (key, func, *args):
+    """The signature for func must be self, client, *args, **kwargs"""
     return confmodule.notify_add(key, func, args)
 
 def notify_remove (conid):
