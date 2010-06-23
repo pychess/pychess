@@ -1,18 +1,14 @@
 import math
 
-import gtk, cairo, pango
+import gtk, pango
 from gtk.gdk import pixbuf_new_from_file
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from gobject import SIGNAL_RUN_FIRST
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect_after 
 from ToggleComboBox import ToggleComboBox
 from Background import giveBackground
-import newGameDialog
-
-from pychess.widgets import newGameDialog
-from pychess.ic import ICLogon
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
@@ -146,12 +142,13 @@ class NewGameTasker (gtk.Alignment):
         tasker.unparent()
         self.add(tasker)
         
-        self.colorCombo = combo = ToggleComboBox()
+        combo = ToggleComboBox()
         combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
         combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
         combo.setMarkup("<b>", "</b>")
         widgets["colorDock"].add(combo)
-        uistuff.keep(self.colorCombo, "newgametasker_colorcombo")
+        uistuff.keep(combo, "newgametasker_colorcombo")
+        widgets['yourColorLabel'].set_mnemonic_widget(combo)
         
         # We need to wait until after engines have been discovered, to init the
         # playerCombos. We use connect_after to make sure, that newGameDialog
@@ -160,6 +157,7 @@ class NewGameTasker (gtk.Alignment):
         widgets["opponentDock"].add(self.playerCombo)
         glock_connect_after(discoverer, "all_engines_discovered",
                             self.__initPlayerCombo, widgets)
+        widgets['opponentLabel'].set_mnemonic_widget(self.playerCombo)
         
         def on_skill_changed (scale):
             pix = newGameDialog.skillToIconLarge[int(scale.get_value())]

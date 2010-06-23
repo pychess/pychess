@@ -371,7 +371,7 @@
             <child>
               <widget class="GtkMenuItem" id="settings">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_Settings</property>
+                <property name="label" translatable="yes">S_ettings</property>
                 <property name="use_underline">True</property>
                 <child>
                   <widget class="GtkMenu" id="settings_menu">
