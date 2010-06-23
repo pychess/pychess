@@ -840,8 +840,8 @@ class AdjournedTabSection (ParrentListSection):
 
         # Set up the treeview
 
-        self.wpix = load_icon(16, "stock_draw-rounded-square-unfilled", "computer")
-        self.bpix = load_icon(16, "stock_draw-rounded-square", "computer")
+        self.wpix = pixbuf_new_from_file(addDataPrefix("glade/white.png"))
+        self.bpix = pixbuf_new_from_file(addDataPrefix("glade/black.png"))
 
         self.tv = widgets["adjournedtreeview"]
         self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
