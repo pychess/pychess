@@ -94,7 +94,10 @@ class Log (gobject.GObject):
 oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
 if len(oldlogs) >= MAXFILES:
     oldlogs.sort()
-    os.remove(addUserDataPrefix(oldlogs[0]))
+    try:
+        os.remove(addUserDataPrefix(oldlogs[0]))
+    except OSError, e:
+        pass
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 
 log = Log(addUserDataPrefix(newName))
