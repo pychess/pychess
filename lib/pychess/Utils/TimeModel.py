@@ -1,12 +1,15 @@
+import heapq
 from time import time
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from pychess.Utils.const import WHITE, BLACK
+from pychess.System import repeat
 
 class TimeModel (GObject):
     
     __gsignals__ = {
         "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "zero_reached": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
     }
     
@@ -30,6 +33,47 @@ class TimeModel (GObject):
         self.ended = False
         
         self.movingColor = WHITE
+        
+        self.connect('time_changed', self.__zerolistener, 'time_changed')
+        self.connect('player_changed', self.__zerolistener, 'player_changed')
+        self.connect('pause_changed', self.__zerolistener, 'pause_changed')
+        self.heap = []
+    
+    def __zerolistener(self, *args):
+        # If we are called by a sleeper (rather than a signal) we need to pop
+        # at least one time, as we might otherwise end up with items in the
+        # heap, but no sleepers.
+        if len(args) == 0 and self.heap:
+            self.heap.pop()
+        # Pop others (could this give a problem where too many are popped?)
+        # No I don't think so. If a sleeper is too slow, so a later sleeper
+        # comes before him and pops him, then it is most secure not to rely on
+        # mr late, and start a new one.
+        # We won't be 'one behind' always, because the previous pop doesnt
+        # happen if the heap is empty.
+        while self.heap and self.heap[-1] <= time():
+            self.heap.pop()
+        
+        if self.getPlayerTime(WHITE) <= 0:
+            #print 'emit for white'
+            self.emit('zero_reached', WHITE)
+        if self.getPlayerTime(BLACK) <= 0:
+            #print 'emit for black'
+            self.emit('zero_reached', BLACK)
+        
+        #print 'heap is now', self.heap
+        
+        t1 = time() + self.getPlayerTime(WHITE)
+        t2 = time() + self.getPlayerTime(BLACK)
+        t = min(t1,t2)
+        
+        if not self.heap or t < self.heap[-1]:
+            s = t-time()+0.01
+            if s > 0:
+                self.heap.append(t)
+                # Because of recur, we wont get callback more than once.
+                repeat.repeat_sleep(self.__zerolistener, s, recur=True)
+                #print 'repeat on', s
     
     ############################################################################
     # Interacting                                                              #

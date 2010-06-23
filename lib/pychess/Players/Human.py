@@ -4,7 +4,8 @@ import gtk, gobject
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
-from pychess.System import glock
+from pychess.System.Log import log
+from pychess.System import glock, conf
 from pychess.widgets.gamewidget import cur_gmwidg
 
 from Player import Player, PlayerIsDead, TurnInterrupt
@@ -100,6 +101,9 @@ class Human (Player):
         ]
         self.setName(name)
         self.ichandle = ichandle
+        
+        self.timemodel = self.gamemodel.timemodel
+        self.timemodel.connect('zero_reached', self.zero_reached)
     
     def getICHandle (self):
         return self.ichandle
@@ -107,6 +111,13 @@ class Human (Player):
     #===========================================================================
     #    Handle signals from the board
     #===========================================================================
+    
+    def zero_reached (self, timemodel, color):
+        if conf.get('autoCallFlag', False) and \
+                self.gamemodel.status == RUNNING and \
+                timemodel.getPlayerTime(1-self.color) <= 0:
+            log.log('Automatically sending flag call on behalf of player %s.' % self.name)
+            self.emit("offer", Offer(FLAG_CALL)) 
     
     def piece_moved (self, board, move, color):
         if color != self.color:
@@ -202,6 +213,7 @@ class Human (Player):
     def offer (self, offer):
         title, description, takesParam = OFFER_MESSAGES[offer.offerType]
         if takesParam:
+            title = title % offer.param
             description = description % offer.param
         
         def responsecb (dialog, response):
