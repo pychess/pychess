@@ -92,9 +92,10 @@ docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 class GameWidget (gobject.GObject):
     
     __gsignals__ = {
-        'close_clicked': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
-        'infront': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
-        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
+        'close_clicked': (gobject.SIGNAL_RUN_FIRST, None, ()), 
+        'infront': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'title_changed': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'closed': (gobject.SIGNAL_RUN_FIRST, None, ()),
     }
     
     def __init__ (self, gamemodel):
@@ -227,6 +228,7 @@ class GameWidget (gobject.GObject):
     
     def setTabText (self, text):
         self.tabcontent.child.get_children()[1].set_text(text)
+        self.emit('title_changed')
     
     def getTabText (self):
         return self.tabcontent.child.get_children()[1].get_text()
@@ -242,6 +244,9 @@ class GameWidget (gobject.GObject):
     
     def bringToFront (self):
         getheadbook().set_current_page(self.getPageNumber())
+    
+    def isInFront(self):
+        return getheadbook().get_current_page() == self.getPageNumber()
     
     def getPageNumber (self):
         return getheadbook().page_num(self.notebookKey)
