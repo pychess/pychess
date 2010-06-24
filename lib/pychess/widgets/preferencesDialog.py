@@ -1,7 +1,6 @@
 import sys, os
 import gtk
 
-from pychess.Utils.GameModel import GameModel
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
@@ -28,6 +27,9 @@ def initialize(widgets):
         return True
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences_close_button"].connect("clicked", delete_event)
+    
+    widgets["preferences"].connect("key-press-event",
+        lambda w,e: delete_event(w) if e.keyval == gtk.keysyms.Escape else None)
 
 ################################################################################
 # General initing                                                              #
@@ -395,8 +397,6 @@ class PanelTab:
         
         uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
         
-        from pychess.widgets.gamewidget import GameWidget
-        self.panels_gw = GameWidget(GameModel())
         widgets['notebook1'].connect("switch-page", self.__on_switch_page)
         widgets["preferences"].connect("show", self.__on_show_window)
         widgets["preferences"].connect("hide", self.__on_hide_window)
@@ -449,18 +449,12 @@ class PanelTab:
             notebooks[name].get_parent().get_parent().undock(notebooks[name])
     
     def showit(self):
-        from pychess.widgets.gamewidget import key2gmwidg, attachGameWidget
-        if self.panels_gw in key2gmwidg.values():
-            return # This shouldnt nappen
-        self.widgets["show_sidepanels"].set_active(True)
-        self.widgets["show_sidepanels"].set_sensitive(False)
-        attachGameWidget(self.panels_gw)
-        
+        from pychess.widgets.gamewidget import showDesignGW
+        showDesignGW()
+    
     def hideit(self):
-        from pychess.widgets.gamewidget import key2gmwidg, delGameWidget
-        if self.panels_gw in key2gmwidg.values(): # This shouldnt happen
-            delGameWidget(self.panels_gw)
-        self.widgets["show_sidepanels"].set_sensitive(True)
+        from pychess.widgets.gamewidget import hideDesignGW
+        hideDesignGW()
     
     def __on_switch_page(self, notebook, page, page_num):
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:

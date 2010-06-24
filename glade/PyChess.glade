@@ -1154,7 +1154,7 @@ Max Froumentin</property>
                                     </child>
                                     <child>
                                       <widget class="GtkCheckButton" id="autoCallFlag">
-                                        <property name="label" translatable="yes">Auto _call flag</property>
+                                        <property name="label" translatable="yes">Auto ca_ll flag</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
