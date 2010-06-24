@@ -2225,7 +2225,7 @@ No sound</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkAlignment" id="alignment45">
+              <widget class="GtkAlignment" id="sidepanels">
                 <property name="visible">True</property>
                 <property name="top_padding">3</property>
                 <child>
