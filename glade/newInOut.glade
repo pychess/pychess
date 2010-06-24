@@ -85,7 +85,9 @@
                                   <widget class="GtkLabel" id="label31">
                                     <property name="visible">True</property>
                                     <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">Black player:</property>
+                                    <property name="label" translatable="yes">_Black player:</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="mnemonic_widget">blackPlayerCombobox</property>
                                   </widget>
                                   <packing>
                                     <property name="top_attach">2</property>
@@ -99,7 +101,9 @@
                                     <property name="height_request">32</property>
                                     <property name="visible">True</property>
                                     <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">White player:</property>
+                                    <property name="label" translatable="yes">_White player:</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="mnemonic_widget">whitePlayerCombobox</property>
                                   </widget>
                                   <packing>
                                     <property name="x_options"></property>
@@ -242,7 +246,7 @@
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkRadioButton" id="notimeRadio">
-                                    <property name="label" translatable="yes">No controls</property>
+                                    <property name="label" translatable="yes">_No controls</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -457,7 +461,7 @@
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkRadioButton" id="playNormalRadio">
-                                    <property name="label" translatable="yes">Play Normal chess</property>
+                                    <property name="label" translatable="yes">_Play Normal chess</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -897,8 +901,8 @@
             <child>
               <widget class="GtkLayout" id="enterGameNotationSidePanel">
                 <property name="width_request">225</property>
-                <property name="hadjustment">0 0 225 0 0.90000000000000002 1</property>
-                <property name="vadjustment">0 0 400 0 338.40000000000003 376</property>
+                <property name="hadjustment">0 0 225 0 29.699999999999999 33</property>
+                <property name="vadjustment">0 0 400 0 341.10000000000002 379</property>
                 <property name="width">225</property>
                 <property name="height">400</property>
                 <child>
