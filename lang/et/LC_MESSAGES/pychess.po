@@ -1,0 +1,1641 @@
+# Estonian translation for pychess
+# Copyright (c) 2007 Rosetta Contributors and Canonical Ltd 2007
+# This file is distributed under the same license as the pychess package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pychess\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2007-09-15 17:50+0200\n"
+"PO-Revision-Date: 2007-12-30 18:48+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Estonian <et@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2008-02-17 18:00+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: glade/fics_logon.glade:9
+msgid "PyChess - Connect to Internet Chess"
+msgstr "PyChess - Mängi malet Internetis"
+
+#: glade/fics_logon.glade:84
+msgid "Create New"
+msgstr "Loo uus"
+
+#: glade/fics_logon.glade:315 lib/pychess/widgets/Background.py:306
+msgid "Log on as _Guest"
+msgstr "Logi sisse _Külalisena"
+
+#: glade/fics_logon.glade:353
+msgid "_Name:"
+msgstr "_Nimi:"
+
+#: glade/fics_logon.glade:403
+msgid "_Password:"
+msgstr "_Parool:"
+
+#: glade/fics_logon.glade:471
+msgid "<b>Log On</b>"
+msgstr "<b>Logi sisse</b>"
+
+#: glade/fics_logon.glade:523
+msgid "Logging on to Server"
+msgstr "Login serverisse"
+
+#: glade/fics_lounge.glade:9
+msgid "PyChess - Internet Chess: FICS"
+msgstr "PyChess - Male Internetis: FICS"
+
+#: glade/fics_lounge.glade:64
+msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
+msgstr ""
+"<b>Hoiatus:</b> FICSi toetus PyChessis  on endiselt lõpuni arendamata."
+
+#: glade/fics_lounge.glade:98
+msgid "<u>Learn more</u>"
+msgstr "<u>Uuri lisaks</u>"
+
+#: glade/fics_lounge.glade:205
+msgid "_Accept"
+msgstr "_Nõustu"
+
+#: glade/fics_lounge.glade:297
+msgid "Opp Strength:"
+msgstr "Vastase tugevus"
+
+#: glade/fics_lounge.glade:325 glade/fics_lounge.glade:925
+msgid ""
+"Don't Care\n"
+"Want White\n"
+"Want Black"
+msgstr ""
+"Ei hooli\n"
+"Tahan valgeid\n"
+"Tahan musti"
+
+#: glade/fics_lounge.glade:344 glade/fics_lounge.glade:869
+msgid "Your Color:"
+msgstr "Sinu värvus"
+
+#: glade/fics_lounge.glade:372 glade/fics_lounge.glade:897
+msgid "Game Time:"
+msgstr "Mänguaeg"
+
+#: glade/fics_lounge.glade:400 glade/fics_lounge.glade:944
+msgid ""
+"15 min + 10\tNormal\n"
+"5 min + 2\tBlitz\n"
+"1 min + 0\tLightning\n"
+"Custom"
+msgstr ""
+"15 min + 10\tTavaline\n"
+"5 min + 2\tKiirmale\n"
+"1 min + 0\tVälkmale"
+
+#: glade/fics_lounge.glade:420
+msgid ""
+"0 → 1300\t\tEasy\n"
+"1300 → 1600\tAdvanced\n"
+"1600 → 9999\tExpert"
+msgstr ""
+"0 → 1300\t\tKerge\n"
+"1300 → 1600\tEdasijõudnud\n"
+"1600 → 9999\tEkspert"
+
+#: glade/fics_lounge.glade:440 glade/fics_lounge.glade:965
+msgid "Rated Game"
+msgstr "Reitinguga mäng"
+
+#: glade/fics_lounge.glade:509
+msgid "Send seek"
+msgstr "Saada mänguotsing"
+
+#: glade/fics_lounge.glade:553
+msgid "Seek Panel"
+msgstr "Mänguotsingute paneel"
+
+#: glade/fics_lounge.glade:589
+msgid "Seeks / Challenges"
+msgstr "Mänguotsingud/Väljakutsed"
+
+#: glade/fics_lounge.glade:622 lib/pychess/ic/icLounge.py:404
+msgid "Rating"
+msgstr "Reiting"
+
+#: glade/fics_lounge.glade:674
+msgid "Time"
+msgstr "Aeg"
+
+#: glade/fics_lounge.glade:708
+msgid "Seek Graph"
+msgstr "Mänguotsingute graafik"
+
+#: glade/fics_lounge.glade:777
+msgid "Show Info Window"
+msgstr "Näita Infoakent"
+
+#: glade/fics_lounge.glade:1035
+msgid "Send challenge"
+msgstr "Saada väljakutse"
+
+#: glade/fics_lounge.glade:1078
+msgid "Challenge Panel"
+msgstr "Väljakutsete paneel"
+
+#: glade/fics_lounge.glade:1114
+msgid "Player List"
+msgstr "Mängijate loetelu"
+
+#: glade/fics_lounge.glade:1182
+msgid "_Observe"
+msgstr "_Vaatle"
+
+#: glade/fics_lounge.glade:1252
+msgid "Game List"
+msgstr "Mängude loetelu"
+
+#: glade/fics_lounge.glade:1844
+msgid "<b>News</b>"
+msgstr "<b>Uudised</b>"
+
+#: glade/fics_lounge.glade:1901
+msgid "Show Chat"
+msgstr "Näita vestlust"
+
+#: glade/fics_lounge.glade:1918
+msgid "Show Console"
+msgstr "Näita konsooli"
+
+#: glade/fics_lounge.glade:1975
+msgid "Log Off"
+msgstr "Logi välja"
+
+#: glade/fics_lounge.glade:2015
+msgid "<b>Tools</b>"
+msgstr "<b>Tööriistad</b>"
+
+#: glade/fics_lounge.glade:2061
+#, fuzzy
+msgid "Custom Time Setting"
+msgstr "Kohandatud ajasätted"
+
+#: glade/fics_lounge.glade:2196 glade/newInOut.glade:644
+msgid "Minutes:"
+msgstr "Minutid:"
+
+#: glade/fics_lounge.glade:2224 glade/newInOut.glade:700
+#, fuzzy
+msgid "Gain:"
+msgstr "Saak:"
+
+#: glade/fics_lounge.glade:2328
+msgid "FICS Warning"
+msgstr "FICS-i Hoiatus"
+
+#: glade/fics_lounge.glade:2434
+msgid "<big>PyChess FICS incompleteness</big>"
+msgstr "<big>PyChessi FICSi lõpetamatus</big>"
+
+#: glade/fics_lounge.glade:2490
+#, fuzzy
+msgid ""
+"PyChess 0.8 Phillidor comes with an incomplete implementation of the FICS "
+"protocol, which enables you to play against other people on the web.\n"
+"Unfortunatly not all of the protocol has yet been implemented, why you need "
+"to take a little caution when using this implementation."
+msgstr ""
+"PyChess 0.8 Phillidoriga on kaasas mittetäielikult teostatud FICS protokoll, "
+"mis võimaldab sul võrgus mängida teiste inimeste vastu.\n"
+"Kahjuks on protokoll toetatud ainult osaliselt, mistõttu tuleb olla pisut "
+"ettevaatlik rakenduse kasutamisel."
+
+#: glade/fics_lounge.glade:2513
+msgid "<b>General</b>"
+msgstr "<b>Üldine</b>"
+
+#: glade/fics_lounge.glade:2563
+msgid ""
+"People on FICS chat a lot. However as this is not yet available in PyChess "
+"you will appear mute.\n"
+"Some people might findt this offensive."
+msgstr ""
+"Inimesed vestlevad FICSil palju. Kuna see ei ole veel PyChessis võimalik "
+"ilmud sina vaigistatuna.\n"
+"Mõned inimesed võivad pidada seda solvavaks."
+
+#: glade/fics_lounge.glade:2586
+msgid "<b>Chatting</b>"
+msgstr "<b>Vestlus</b>"
+
+#: glade/fics_lounge.glade:2636
+msgid ""
+"FICS uses the idea of Adjourning, which is a way to save the game on the "
+"server to later continue the play.\n"
+"This version of PyChess doesn't support this feature, and will auto decline "
+"requests from opponents who wants to use this feature."
+msgstr ""
+"FICS kasutab edasi lükkamise ideed, mis on mängu salvestamise moodus "
+"serveril, et hiljem mängu jätkata.\n"
+"\n"
+"Antud PyChessi versioon ei toeta seda võimalust ja keeldub automaatselt "
+"palvetest vastastelt kes soovivad seda kasutada."
+
+#: glade/fics_lounge.glade:2659
+#, fuzzy
+msgid "<b>Adjourning</b>"
+msgstr "<b>Lükkan edasi</b>"
+
+#: glade/gamepreview.glade:114
+msgid "<b>Open game</b>"
+msgstr "<b>Ava mäng</b>"
+
+#: glade/gamepreview.glade:129 lib/pychess/widgets/ionest.py:54
+#: lib/pychess/widgets/ionest.py:518
+msgid "Open Game"
+msgstr "Ava mäng"
+
+#: glade/gamepreview.glade:453
+msgid "<b>Initial position</b>"
+msgstr "<b>Algseis</b>"
+
+#: glade/newInOut.glade:8 lib/pychess/widgets/ionest.py:495
+msgid "New Game"
+msgstr "Uus mäng"
+
+#: glade/newInOut.glade:97
+msgid "_Start Game"
+msgstr "_Alusta mängu"
+
+#: glade/newInOut.glade:203 glade/newInOut.glade:386
+msgid "White Player:"
+msgstr "Valgetega mängija"
+
+#: glade/newInOut.glade:231 glade/newInOut.glade:414
+msgid "Black Player:"
+msgstr "Mustadega mängija"
+
+#: glade/newInOut.glade:303
+msgid "<b>Players</b>"
+msgstr "<b>Mängijad</b>"
+
+#: glade/newInOut.glade:490
+msgid "<b>Difficulty</b>"
+msgstr "<b>Raskusaste</b>"
+
+#: glade/newInOut.glade:571
+#, fuzzy
+msgid "Game has time"
+msgstr "Mängul on aeg"
+
+#: glade/newInOut.glade:616
+msgid "Hours:"
+msgstr "Tunnid:"
+
+#: glade/newInOut.glade:672
+msgid "Seconds:"
+msgstr "Sekundid:"
+
+#: glade/newInOut.glade:839
+msgid "<b>Alarm</b>"
+msgstr "<b>Alarm</b>"
+
+#: glade/newInOut.glade:951
+msgid "<b>Enter Game Notation</b>"
+msgstr "<b>Sisesta mängu üleskirjutus</b>"
+
+#: glade/promotion.glade:9
+msgid "Promotion"
+msgstr "Lipustumine"
+
+#: glade/promotion.glade:41
+msgid "Queen"
+msgstr "Lipp"
+
+#: glade/promotion.glade:55
+msgid "Rook"
+msgstr "Vanker"
+
+#: glade/promotion.glade:68
+msgid "Bishop"
+msgstr "Oda"
+
+#: glade/promotion.glade:81
+msgid "Knight"
+msgstr "Ratsu"
+
+#: glade/promotion.glade:100
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>Milliseks malendiks muuta lipustuv ettur?</big></b>"
+
+#: glade/PyChess.glade:40
+msgid "_Game"
+msgstr "_Mäng"
+
+#: glade/PyChess.glade:49
+msgid "_New Game"
+msgstr "_Uus mäng"
+
+#: glade/PyChess.glade:71
+msgid "_Play Internet Chess"
+msgstr "_Mängi Internetis malet"
+
+#: glade/PyChess.glade:99
+msgid "_Load Game"
+msgstr "_Lae mäng"
+
+#: glade/PyChess.glade:120
+msgid "Set up Position"
+msgstr "Säti positsioon üles"
+
+#: glade/PyChess.glade:129
+msgid "Enter game notation"
+msgstr "Sisesta mängu üleskirjutus"
+
+#: glade/PyChess.glade:145
+msgid "_Save Game"
+msgstr "_Salvesta mäng"
+
+#: glade/PyChess.glade:168
+#, fuzzy
+msgid "Save Game _As"
+msgstr "Salvesta mäng _nagu"
+
+#: glade/PyChess.glade:205
+msgid "Player _Rating"
+msgstr "Mängija _reiting"
+
+#: glade/PyChess.glade:243
+msgid "_Actions"
+msgstr "_Tegevused"
+
+#: glade/PyChess.glade:253
+#, fuzzy
+msgid "_Call Flag"
+msgstr "_Kutse Lipp"
+
+#: glade/PyChess.glade:263
+msgid "Offer _Draw"
+msgstr "Paku _viiki"
+
+#: glade/PyChess.glade:273
+msgid "_Resign"
+msgstr "_Alistu"
+
+#: glade/PyChess.glade:289
+#, fuzzy
+msgid "_Force to move"
+msgstr "_Sunni käima"
+
+#: glade/PyChess.glade:311
+msgid "Undo"
+msgstr "Ennista"
+
+#: glade/PyChess.glade:334
+msgid "_Pause"
+msgstr "_Paus"
+
+#: glade/PyChess.glade:349
+msgid "_View"
+msgstr "_Vaade"
+
+#: glade/PyChess.glade:359
+msgid "_Rotate Board"
+msgstr "_Pööra lauda"
+
+#: glade/PyChess.glade:382
+#, fuzzy
+msgid "_Side Panel"
+msgstr "_Külgpaneel"
+
+#: glade/PyChess.glade:392
+#, fuzzy
+msgid "_Log Viewer"
+msgstr "_Logi vaataja"
+
+#: glade/PyChess.glade:409
+msgid "_Hint mode"
+msgstr "Nõustamismood"
+
+#: glade/PyChess.glade:421
+msgid "Sp_y mode"
+msgstr "_Nuhi mood"
+
+#: glade/PyChess.glade:436
+msgid "_Preferences"
+msgstr "_Eelistused"
+
+#: glade/PyChess.glade:458
+msgid "_Help"
+msgstr "_Abi"
+
+#: glade/PyChess.glade:467
+msgid "About Chess"
+msgstr "Male kohta"
+
+#: glade/PyChess.glade:488
+msgid "How to play"
+msgstr "Kuidas mängida"
+
+#: glade/PyChess.glade:509
+msgid "Translate PyChess..."
+msgstr "Tõlgi PyChess..."
+
+#: glade/PyChess.glade:576
+#, fuzzy
+msgid "Chess client for the Gnome desktop"
+msgstr "Maleklient Gnome töölauale"
+
+#: glade/PyChess.glade:577
+#, fuzzy
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+"PyChess on vaba tarkvara; sa võid levitada ja/või muuta seda\n"
+"GNU General Public License tingimustel nagu need on avaldatud\n"
+"Free Software Foundationi poolt; kas siis Litsensi versioonis 2 või\n"
+"(sinu valikul) suvalises hilisemas versioonis.\n"
+"\n"
+"PyChessi levitatakse lootuses, et see on kasulik,\n"
+"kuid ILMA IGASUGUSE GARANTIITA; ilma isegi loomulikult eeldatava\n"
+"MÜÜGIKÕLBLIKKUSE või KINDLAKS EESMÄRGIKS SOBIVUSE garantiita. Vaata\n"
+"detaile GNU General Public License'ist.\n"
+"\n"
+"Sa pidid saama GNU General Public License'i koopia\n"
+"koos PyChessiga; kui ei siis kirjuta Free Software Foundation, Inc.,\n"
+"51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA"
+
+#: glade/PyChess.glade:612
+msgid "Game information"
+msgstr "Mänguinfo"
+
+#: glade/PyChess.glade:735
+msgid "Site:"
+msgstr "Lehekülg:"
+
+#: glade/PyChess.glade:763
+#, fuzzy
+msgid "Round:"
+msgstr "Ring:"
+
+#: glade/PyChess.glade:854
+msgid "Event:"
+msgstr "Sündmus:"
+
+#: glade/PyChess.glade:891
+msgid "<b>Game data</b>"
+msgstr "<b>Mängu andmed</b>"
+
+#: glade/PyChess.glade:968
+msgid "<b>Date of game</b>"
+msgstr "<b>Mängu kuupäev</b>"
+
+#: glade/PyChess.glade:1009
+msgid "Preferences"
+msgstr "Eelistused"
+
+#: glade/PyChess.glade:1097
+msgid "<b>Name of first human player:</b>"
+msgstr "<b>Esimese mängija (inimene) nimi:</b>"
+
+#: glade/PyChess.glade:1162
+msgid "<b>Name of second human player:</b>"
+msgstr "<b>Teise mängija (inimene) nimi:</b>"
+
+#: glade/PyChess.glade:1224
+#, fuzzy
+msgid "_Hide tabs when only one game is open"
+msgstr "_Peida tabid kui ainult üks mäng on lahti"
+
+#: glade/PyChess.glade:1243
+#, fuzzy
+msgid "_Auto rotate board to current human player"
+msgstr "_Automaatselt pööra laud inimesest mängija poole"
+
+#: glade/PyChess.glade:1262
+#, fuzzy
+msgid "_Show cords"
+msgstr "_Näita võrgustikku"
+
+#: glade/PyChess.glade:1281
+msgid "_Prefer figures in notation"
+msgstr "_Eelista üleskirjutuses pilte"
+
+#: glade/PyChess.glade:1310
+#, fuzzy
+msgid "<b>General Display Options</b>"
+msgstr "Üldised kuva valikud"
+
+#: glade/PyChess.glade:1372
+#, fuzzy
+msgid "_Full board animation"
+msgstr "_Täislaua animeerimine"
+
+#: glade/PyChess.glade:1391
+msgid "_Only animate moves"
+msgstr "_ainult käikude animeerimine"
+
+#: glade/PyChess.glade:1411
+#, fuzzy
+msgid "_No animation"
+msgstr "_Ilma animatsioonita"
+
+#: glade/PyChess.glade:1441
+msgid "<b>Animation</b>"
+msgstr "<b>Animatsioon</b>"
+
+#: glade/PyChess.glade:1479
+msgid "General"
+msgstr "Üldine"
+
+#: glade/PyChess.glade:2312
+msgid "<b>Chess Engines</b>"
+msgstr "Male mootorid"
+
+#: glade/PyChess.glade:2374
+msgid "Use _analyzer"
+msgstr "Kasuta _analüüsijat"
+
+#: glade/PyChess.glade:2423
+msgid ""
+"The analyzer will run in the background and analyze the game. <b>This is "
+"nessesary for the hint mode to work</b>"
+msgstr ""
+"Analüüsija töötab taustal ja analüüsib mängu. <b> See on vajalik nõuannete "
+"moodis töötamiseks</b>"
+
+#: glade/PyChess.glade:2471
+msgid "Use _inverted analyzer"
+msgstr "Kasuta _pööratud analüüsijat"
+
+#: glade/PyChess.glade:2520
+msgid ""
+"The inverse analyzer will analyze the game as if your opponent was to move. "
+"<b>This is nessesary for the spy mode to work</b>"
+msgstr ""
+"Pööratud analüüsija analüüsib mängu nii nagu oleks sinu vastase käik. <b>See "
+"on vajalik nuhimoodi töötamiseks</b>"
+
+#: glade/PyChess.glade:2565
+msgid "<b>Analyzing</b>"
+msgstr "<b>Analüüsin</b>"
+
+#: glade/PyChess.glade:2603
+#, fuzzy
+msgid "Computer Opponents"
+msgstr "Tehisintellektiga vastased"
+
+#: glade/PyChess.glade:2658
+msgid "_Use sounds in PyChess"
+msgstr "_Kasuta helisid PyChessis"
+
+#: glade/PyChess.glade:2779
+msgid ""
+"Beep\n"
+"Select sound file...\n"
+"No sound"
+msgstr ""
+"Piiks\n"
+"Vali helifail ...\n"
+"Heli puudub"
+
+#: glade/PyChess.glade:3051
+msgid "A player _checks:"
+msgstr "Mängija annab _tule"
+
+#: glade/PyChess.glade:3079
+msgid "A player _moves:"
+msgstr "Mängija _käib"
+
+#: glade/PyChess.glade:3107
+msgid "Game is _drawn:"
+msgstr "Mäng on _viigis"
+
+#: glade/PyChess.glade:3135
+msgid "Game is _lost:"
+msgstr "Mäng on _kaotatud"
+
+#: glade/PyChess.glade:3163
+msgid "Game is _won:"
+msgstr "Mäng on _võidetud"
+
+#: glade/PyChess.glade:3191
+msgid "A player c_aptures:"
+msgstr "Mängija lööb:"
+
+#: glade/PyChess.glade:3234
+msgid "Game is _set-up:"
+msgstr "Mäng on üles _seatud"
+
+#: glade/PyChess.glade:3307
+msgid "_Observed moves:"
+msgstr "_Vaadeldud käigud"
+
+#: glade/PyChess.glade:3335
+#, fuzzy
+msgid "Observed _ends:"
+msgstr "Vaadeldav _lõppeb"
+
+#: glade/PyChess.glade:3471
+msgid "<b>Play Sound When...</b>"
+msgstr "<b>Mängi helilõik kui ...</b>"
+
+#: glade/PyChess.glade:3509
+msgid "Sounds"
+msgstr "Helid"
+
+#: glade/PyChess.glade:5780
+msgid "Player Rating"
+msgstr "Mängija reiting"
+
+#: glade/PyChess.glade:5805
+#, fuzzy
+msgid ""
+"While you fight different local chessengines, PyChess keeps track of your "
+"results."
+msgstr ""
+"Sa mängid mitme kohaliku malemootori vastu. PyChess peab su tulemuste arvet."
+
+#: lib/pychess/Main.py:35
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>Mootor, %s, suri</b></big>"
+
+#: lib/pychess/Main.py:36
+#, fuzzy
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against "
+"another one."
+msgstr ""
+"PyChess on kaotanud sideme mootoriga. Tõenäoliselt seetõttu, et see on "
+"surnud.\n"
+"Sa võid proovida alustada uut mängu selle mootoriga või siis proovida "
+"mängida mõne teise vastu."
+
+#: lib/pychess/Main.py:166 lib/pychess/Main.py:167
+msgid "Loaded game"
+msgstr "Laetud mäng"
+
+#: lib/pychess/Main.py:172
+msgid "Saved game"
+msgstr "Salvestatud mäng"
+
+#: lib/pychess/Main.py:177
+msgid "The game ended in a draw"
+msgstr "Mäng lõppes viigiga"
+
+#: lib/pychess/Main.py:178
+msgid "White player won the game"
+msgstr "Valged võitsid mängu"
+
+#: lib/pychess/Main.py:179
+msgid "Black player won the game"
+msgstr "Mustad võitsid mängu"
+
+#: lib/pychess/Main.py:180
+msgid "The game has been killed"
+msgstr "Mäng on tapetud"
+
+#: lib/pychess/Main.py:181
+msgid "The game has been adjourned"
+msgstr "Mäng on edasi lükatud"
+
+#: lib/pychess/Main.py:182
+msgid "The game has been aborted"
+msgstr "Mäng on katkestatud"
+
+#: lib/pychess/Main.py:185
+msgid "caused by insufficient material"
+msgstr "ebapiisavast materjalist põhjustatud"
+
+#: lib/pychess/Main.py:186
+msgid "as the same position was repeated three times in a row"
+msgstr "kuna positsioon kordus kolm korda järjest"
+
+#: lib/pychess/Main.py:187
+msgid "as the last 50 moves brought nothing new"
+msgstr "kuna viimased 50 käiku ei muutnud midagi"
+
+#: lib/pychess/Main.py:188
+msgid "as both players ran out of time"
+msgstr "kuna mõlemad mängijad ületasid ajalimiidi"
+
+#: lib/pychess/Main.py:189
+msgid "because of stalemate"
+msgstr "patiseisu tõttu"
+
+#: lib/pychess/Main.py:190 lib/pychess/Main.py:201 lib/pychess/Main.py:205
+msgid "as the players agreed to"
+msgstr "kuna mängijad on kokku leppinud"
+
+#: lib/pychess/Main.py:191 lib/pychess/Main.py:198 lib/pychess/Main.py:204
+msgid "as decided by an admin"
+msgstr "nagu administraator otsustas"
+
+#: lib/pychess/Main.py:192
+msgid "as game exceed the max length"
+msgstr "kuna mäng ületas maksimaalse pikkuse"
+
+#: lib/pychess/Main.py:194
+msgid "as opponent resigned"
+msgstr "kuna vastane alistus"
+
+#: lib/pychess/Main.py:195
+msgid "as opponent ran out of time"
+msgstr "kuna vastane ületas ajalimiidi"
+
+#: lib/pychess/Main.py:196
+msgid "on a mate"
+msgstr "matiga"
+
+#: lib/pychess/Main.py:197
+msgid "as opponent disconnected"
+msgstr "kuna vastasel katkes ühendus"
+
+#: lib/pychess/Main.py:200
+msgid "as a player lost connection"
+msgstr "kuna mängija kaotas ühenduse"
+
+#: lib/pychess/Main.py:202 lib/pychess/Main.py:208
+#, fuzzy
+msgid "as the server was shut down"
+msgstr "kuna server suleti"
+
+#: lib/pychess/Main.py:206
+#, fuzzy
+msgid "by courtesy by a player"
+msgstr "mängija vastutulelikkuse tõttu"
+
+#: lib/pychess/Main.py:207
+msgid "in the early phase of the game"
+msgstr "mängu varajases faasis"
+
+#: lib/pychess/Main.py:210
+msgid "as the white engine died"
+msgstr "kuna valgete mootor suri"
+
+#: lib/pychess/Main.py:211
+msgid "as the black engine died"
+msgstr "kuna mustade mootor suri"
+
+#: lib/pychess/Main.py:212
+msgid "by no known reason"
+msgstr "teadmata põhjusel"
+
+#: lib/pychess/Main.py:231
+msgid "You sent a draw offer"
+msgstr "Sa saatsid viigipakkumise"
+
+#: lib/pychess/Main.py:366
+msgid "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://et.wikipedia.org/wiki/Male"
+
+#: lib/pychess/Main.py:369
+msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr "http://et.wikipedia.org/wiki/Male"
+
+#: lib/pychess/ic/icLogOn.py:82
+msgid "Connection Error"
+msgstr "Ühenduse viga"
+
+#: lib/pychess/ic/icLogOn.py:85
+msgid "Log on Error"
+msgstr "Viga sisselogimisel"
+
+#: lib/pychess/ic/icLogOn.py:88
+msgid "Connection was broken"
+msgstr "Ühendus katkes"
+
+#: lib/pychess/ic/icLogOn.py:91
+msgid "Connection was closed"
+msgstr "Ühendus suleti"
+
+#: lib/pychess/ic/icLounge.py:136
+msgid "Email"
+msgstr "E-post"
+
+#: lib/pychess/ic/icLounge.py:141
+#, fuzzy
+msgid "Spent"
+msgstr "Kulutatud"
+
+#: lib/pychess/ic/icLounge.py:162
+#, fuzzy
+msgid "online in total"
+msgstr "ühendunud kogusummas"
+
+#: lib/pychess/ic/icLounge.py:166
+msgid "Ping"
+msgstr "Ping"
+
+#: lib/pychess/ic/icLounge.py:167
+msgid "Connecting"
+msgstr "Ühendumine"
+
+#: lib/pychess/ic/icLounge.py:174 lib/pychess/Savers/epd.py:134
+msgid "Unknown"
+msgstr "Tundmatu"
+
+#: lib/pychess/ic/icLounge.py:185
+msgid ""
+"You are currently logged in as a guest.\n"
+"A guest is not able to play rated games, and thus the offer of games is be "
+"smaller."
+msgstr ""
+"Sa oled hetkel sisseloginud külalisena.\n"
+"Külaline ei saa mängida reitinguga mänge ja seega on mängude pakkumine "
+"väiksem."
+
+#: lib/pychess/ic/icLounge.py:191 lib/pychess/ic/icLounge.py:196
+#: lib/pychess/ic/icLounge.py:199
+msgid "Register now"
+msgstr "Registreerun kohe"
+
+#: lib/pychess/ic/icLounge.py:404 lib/pychess/widgets/Background.py:314
+msgid "Name"
+msgstr "Nimi"
+
+#: lib/pychess/ic/icLounge.py:404 lib/pychess/ic/icLounge.py:414
+#: lib/pychess/ic/icLounge.py:516 lib/pychess/ic/icLounge.py:568
+msgid "Rated"
+msgstr "Reitinguga"
+
+#: lib/pychess/ic/icLounge.py:405
+msgid "Type"
+msgstr "Tüüp"
+
+#: lib/pychess/ic/icLounge.py:405
+msgid "Clock"
+msgstr "Kell"
+
+#: lib/pychess/ic/icLounge.py:414 lib/pychess/ic/icLounge.py:516
+#: lib/pychess/ic/icLounge.py:568
+msgid "Unrated"
+msgstr "Reitinguta"
+
+#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
+msgid "Active Seek"
+msgstr "Aktiivne mänguotsing"
+
+#: lib/pychess/ic/icLounge.py:419 lib/pychess/ic/icLounge.py:436
+#: lib/pychess/ic/icLounge.py:521 lib/pychess/ic/icLounge.py:534
+msgid "Active Seeks"
+msgstr "Aktiivsed mänguotsingud"
+
+#: lib/pychess/ic/icLounge.py:486 lib/pychess/ic/icLounge.py:746
+#: lib/pychess/widgets/ionest.py:435
+msgid "vs"
+msgstr "vs"
+
+#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
+msgid "Player Ready"
+msgstr "Valmis mängija"
+
+#: lib/pychess/ic/icLounge.py:649 lib/pychess/ic/icLounge.py:664
+msgid "Players Ready"
+msgstr "Valmis mängijad"
+
+#: lib/pychess/ic/icLounge.py:697
+msgid "White Player"
+msgstr "Valgetega mängija"
+
+#: lib/pychess/ic/icLounge.py:697
+msgid "Black Player"
+msgstr "Mustadega mängija"
+
+#: lib/pychess/ic/icLounge.py:698
+msgid "Game Type"
+msgstr "Mängu tüüp"
+
+#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
+msgid "Game Running"
+msgstr "Jooksev mäng"
+
+#: lib/pychess/ic/icLounge.py:718 lib/pychess/ic/icLounge.py:733
+msgid "Games Running"
+msgstr "Jooksvad mängud"
+
+#: lib/pychess/ic/icLounge.py:819
+msgid "Easy"
+msgstr "Kerge"
+
+#: lib/pychess/ic/icLounge.py:820
+msgid "Advanced"
+msgstr "Edasijõudnud"
+
+#: lib/pychess/ic/icLounge.py:821 lib/pychess/widgets/ionest.py:302
+msgid "Expert"
+msgstr "Ekspert"
+
+#: lib/pychess/ic/icLounge.py:830
+msgid "Don't Care"
+msgstr "Ei hooli"
+
+#: lib/pychess/ic/icLounge.py:831
+#, fuzzy
+msgid "Want White"
+msgstr "Soovid valgeid"
+
+#: lib/pychess/ic/icLounge.py:832
+msgid "Want Black"
+msgstr "Soovid musti"
+
+#: lib/pychess/ic/icLounge.py:841
+msgid "Normal"
+msgstr "Tavaline"
+
+#: lib/pychess/ic/icLounge.py:842
+msgid "Blitz"
+msgstr "Kiirmale"
+
+#: lib/pychess/ic/icLounge.py:843
+msgid "Lightning"
+msgstr "Välkmale"
+
+#: lib/pychess/ic/icLounge.py:844
+msgid "New Custom"
+msgstr "Uus kohandatud"
+
+#: lib/pychess/ic/icLounge.py:869
+msgid "Custom"
+msgstr "Kohandatud"
+
+#: lib/pychess/ic/telnet.py:127 lib/pychess/ic/telnet.py:140
+#, fuzzy
+msgid "The connection was broken - got \"end of file\" message"
+msgstr "Ühendus katkes - sain \"end of file\" sõnumi"
+
+#: lib/pychess/ic/telnet.py:142
+msgid "Names can only consist of lower and upper case letters"
+msgstr "Nimed võivad koosneda ainult suur- ja väiketähtedest"
+
+#: lib/pychess/ic/telnet.py:144
+#, python-format
+msgid "'%s' is not a registered name"
+msgstr "'%s' ei ole registreeritud nimi"
+
+#: lib/pychess/ic/telnet.py:157
+msgid ""
+"The entered password was invalid.\n"
+"\n"
+msgstr ""
+"Sisestatud parool on vale\n"
+"\n"
+
+#: lib/pychess/Players/Human.py:13
+msgid "You've got a draw offer. Accept?"
+msgstr "Sulle pakuti viiki. Võtad vastu?"
+
+#: lib/pychess/Players/Human.py:14
+msgid ""
+"Your opponent has offered you a draw. If you accept it the game will end "
+"with score 1/2 - 1/2."
+msgstr ""
+"Sinu vastane pakkus sulle viiki. Kui sa selle vastu võtad lõppeb mäng "
+"seisuga 1/2 - 1/2"
+
+#: lib/pychess/Players/Human.py:16
+msgid "You've got an abort offer. Accept?"
+msgstr "Sulle tehti ettepanek katkestada. Võtad vastu?"
+
+#: lib/pychess/Players/Human.py:17
+msgid ""
+"Your opponent has offered you to abort the game. If you accept, the game "
+"will end with no rating change."
+msgstr ""
+"Sinu vastane on teinud ettepaneku mäng katkestada. Kui sa jääd sellega "
+"nõusse mäng lõpeb ja reiting ei muutu."
+
+#: lib/pychess/Players/Human.py:19
+msgid "You've got an adjourn offer. Accept?"
+msgstr "Sulle tehti ettepanek mäng edasi lükata. Võtad vastu?"
+
+#: lib/pychess/Players/Human.py:20
+msgid ""
+"Your opponent has offered you to adjourn the game. If you accept, the game "
+"will adjourned, and you can later resume it (If your opponent is online and "
+"willing)."
+msgstr ""
+"Sinu vastane tegi ettepaneku mäng edasi lükata. Kui sa selle vastu võtad "
+"lükatakse mäng edasi ja te saate seda hiljem edasi mängida (kui vastane on "
+"ühendunud ja soovib seda)."
+
+#: lib/pychess/Players/Human.py:22
+msgid "Your opponent wants to undo. Accept?"
+msgstr "Sinu vastane soovib tagasi võtta. Nõustud?"
+
+#: lib/pychess/Players/Human.py:23
+#, fuzzy, python-format
+msgid ""
+"Your opponent wants to undo back to halfmove %s.. If you accept, the game "
+"will continue from the earlier position."
+msgstr ""
+"Sinu vastane soovib käiku %s tagasi võtta. Kui sa nõustud jätkub mäng "
+"varasemast positsioonist."
+
+#: lib/pychess/Players/Human.py:25
+msgid "Your opponent offers you a pause. Accept?"
+msgstr "Sinu vastane pakub pausi tegemise võimalust. Nõustud?"
+
+#: lib/pychess/Players/Human.py:26
+msgid ""
+"Your opponent wants to make a break. If you accept the game clock will be "
+"paused until on of you accept a resume offer"
+msgstr ""
+"Sinu vastane soovib teha pausi. Kui sa nõustud jääb mängu kell seisma kuni "
+"sa nõustud taastamispakkumisega."
+
+#: lib/pychess/Players/Human.py:28
+msgid "Your opponent wants to resume. Accept?"
+msgstr "Sinu vastane soovib mängu jätkata. Nõustud?"
+
+#: lib/pychess/Players/Human.py:29
+msgid ""
+"Your opponent wants to resume the game. If you accept, the game clock will "
+"start counting down from where it was left."
+msgstr ""
+"Sinu vastane soovib mängu jätkata. Kui sa nõustud sellega siis hakkab kell "
+"tiksuma sellest hetkest, kus mäng pooleli jäi."
+
+#: lib/pychess/Players/Human.py:33
+msgid "the resignation"
+msgstr "alistumine"
+
+#: lib/pychess/Players/Human.py:34
+#, fuzzy
+msgid "the flag call"
+msgstr "lipu kutse"
+
+#: lib/pychess/Players/Human.py:35
+msgid "the draw offer"
+msgstr "viigi pakkumine"
+
+#: lib/pychess/Players/Human.py:36
+msgid "the abort offer"
+msgstr "katkestamise pakkumine"
+
+#: lib/pychess/Players/Human.py:37
+msgid "the adjourn offer"
+msgstr "edasi lükkamise pakkumine"
+
+#: lib/pychess/Players/Human.py:38
+msgid "the pause offer"
+msgstr "pausi pakkumine"
+
+#: lib/pychess/Players/Human.py:39
+msgid "the resume offer"
+msgstr "jätkamise pakkumine"
+
+#: lib/pychess/Players/Human.py:40
+msgid "the offer to swith sides"
+msgstr "poolte vahetuse pakkumine"
+
+#: lib/pychess/Players/Human.py:41
+msgid "the takeback offer"
+msgstr "käigu tagasivõtmise pakkumine"
+
+#: lib/pychess/Players/Human.py:46
+#, fuzzy
+msgid "The game hasn't got a clock."
+msgstr "Mängul pole kella"
+
+#: lib/pychess/Players/Human.py:48
+#, fuzzy
+msgid "Your opponent is not out of time."
+msgstr "Sinu vastane pole ületanud ajalimiiti"
+
+#: lib/pychess/Players/Human.py:50
+msgid "The clock hasn't yet been started."
+msgstr "Kell pole veel käima läinud"
+
+#: lib/pychess/Players/Human.py:52
+msgid "You can't switch color during the game."
+msgstr "Sa ei saa vahetada värvi mängu ajal"
+
+#: lib/pychess/Players/Human.py:54
+msgid "You have tried to redo to many moves."
+msgstr "Sa püüdsid liiga palju käike tagasi vütta"
+
+#: lib/pychess/Players/Human.py:138
+#, fuzzy, python-format
+msgid "%s was declined by your opponent"
+msgstr "Sinu vastane keeldus %s"
+
+#: lib/pychess/Players/Human.py:139
+msgid ""
+"You can try to send the offer to your opponent later in the game again."
+msgstr "Sa võid proovida oma pakkumise kordamist hiljem mängu jooksul uuesti"
+
+#: lib/pychess/Players/Human.py:145
+#, python-format
+msgid "%s was withdrawn by your opponent"
+msgstr "%s võeti su vastase poolt tagasi"
+
+#: lib/pychess/Players/Human.py:146
+msgid "Your opponent seams to have changed his or her mind."
+msgstr "Sinu vastane näib olevat meelt muutnud"
+
+#: lib/pychess/Players/Human.py:154
+#, python-format
+msgid "Unable to accept %s"
+msgstr "%s ei saa vastu võtta"
+
+#: lib/pychess/Players/Human.py:155
+#, fuzzy, python-format
+msgid ""
+"PyChess was unable to get the %s offer accepted. Probably because it has "
+"been withdrawn."
+msgstr ""
+"PyChess ei suutnud vastu võtta %s pakkumist. Tõenäoliselt seepärast, et see "
+"on tagasi võetud."
+
+#: lib/pychess/Players/Human.py:162
+#, python-format
+msgid "%s returns an error"
+msgstr "%s annab vea"
+
+#: lib/pychess/Players/Human.py:179
+msgid "Your opponent asks you to hurry!"
+msgstr "Sinu vastane palub sul kiirustada!"
+
+#: lib/pychess/Players/Human.py:180
+msgid ""
+"Generally this means nothing, as the game is timebased, but if you want to "
+"please your opponent, perhaps you should get going."
+msgstr ""
+"Üldiselt ei tähenda see midagi kuna mäng on ajal põhinev aga, kui sa tahad "
+"vastasele meele järgi olla, võibolla sa võiksid jätkata"
+
+#: lib/pychess/Savers/epd.py:8
+msgid "Chess Position"
+msgstr "Male positsioon"
+
+#: lib/pychess/Savers/fen.py:7
+msgid "Simple Chess Position"
+msgstr "Lihtne male positsioon"
+
+#: lib/pychess/Savers/pgn.py:7
+msgid "Chess Game"
+msgstr "Malemäng"
+
+#: lib/pychess/Utils/const.py:84
+msgid "P"
+msgstr "E"
+
+#: lib/pychess/Utils/const.py:84
+msgid "N"
+msgstr "R"
+
+#: lib/pychess/Utils/const.py:84
+msgid "B"
+msgstr "O"
+
+#: lib/pychess/Utils/const.py:84
+msgid "R"
+msgstr "V"
+
+#: lib/pychess/Utils/const.py:84
+msgid "Q"
+msgstr "L"
+
+#: lib/pychess/Utils/const.py:84
+msgid "K"
+msgstr "K"
+
+#: lib/pychess/Utils/GameModel.py:46
+msgid "Local Event"
+msgstr "Kohalik sündmus"
+
+#: lib/pychess/Utils/GameModel.py:47
+#, fuzzy
+msgid "Local Site"
+msgstr "Kohalik lehekülg"
+
+#: lib/pychess/widgets/Background.py:230
+msgid "Your Color"
+msgstr "Sinu värvus"
+
+#: lib/pychess/widgets/Background.py:235 lib/pychess/widgets/ChessClock.py:18
+msgid "White"
+msgstr "Valge"
+
+#: lib/pychess/widgets/Background.py:236 lib/pychess/widgets/ChessClock.py:18
+msgid "Black"
+msgstr "Must"
+
+#: lib/pychess/widgets/Background.py:241
+msgid "Opponent"
+msgstr "Vastane"
+
+#: lib/pychess/widgets/Background.py:254
+msgid "Difficulty"
+msgstr "Raskusaste"
+
+#: lib/pychess/widgets/Background.py:272
+msgid "Start Game"
+msgstr "Alusta mängu"
+
+#: lib/pychess/widgets/Background.py:325
+msgid "Password"
+msgstr "Parool"
+
+#: lib/pychess/widgets/Background.py:335
+msgid "Connect to FICS"
+msgstr "Ühendu FICS-ga"
+
+#: lib/pychess/widgets/ionest.py:52
+msgid "Save Game"
+msgstr "Salvesta mäng"
+
+#: lib/pychess/widgets/ionest.py:62
+msgid "All Files"
+msgstr "Kõik failid"
+
+#: lib/pychess/widgets/ionest.py:65
+msgid "Detect type automatically"
+msgstr "Määra tüüp automaatselt"
+
+#: lib/pychess/widgets/ionest.py:68
+msgid "All Chess Files"
+msgstr "Kõik malefailid"
+
+#: lib/pychess/widgets/ionest.py:300
+msgid "Beginner"
+msgstr "Algaja"
+
+#: lib/pychess/widgets/ionest.py:301
+msgid "Intermediate"
+msgstr "Vahepealne"
+
+#: lib/pychess/widgets/ionest.py:313
+msgid "Human Being"
+msgstr "Inimene"
+
+#: lib/pychess/widgets/ionest.py:449
+#: lib/pychess/widgets/preferencesDialog.py:40
+msgid "Guest"
+msgstr "Külaline"
+
+#: lib/pychess/widgets/ionest.py:544
+msgid "Set up Game"
+msgstr "Sea mäng üles"
+
+#: lib/pychess/widgets/ionest.py:557
+#, fuzzy
+msgid "Enter Game"
+msgstr "Sisene mängu"
+
+#: lib/pychess/widgets/ionest.py:608
+#, python-format
+msgid "<big><b>Unknown file type '%s'</b></big>"
+msgstr "<big><b>Tundmatu failitüüp '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:609
+#, python-format
+msgid "Was unable to save '%s' as PyChess doesn't know the format '%s'."
+msgstr "'%s' ei õnnestunud salvestada kuna PyChess ei tunne formaati '%s'."
+
+#: lib/pychess/widgets/ionest.py:622
+#, python-format
+msgid "<big><b>Unable to save file '%s'</b></big>"
+msgstr "<big><b>Faili '%s' ei õnnestu salvestada</b></big>"
+
+#: lib/pychess/widgets/ionest.py:624
+msgid ""
+"You don't have the necessary rights to save the file.\n"
+"Please ensure that you have given the right path and try again."
+msgstr ""
+"Sul pole faili salvestamiseks vajalikke õigusi.\n"
+"Palun veendu, et sa andsid õige teekonna ja proovi uuesti."
+
+#: lib/pychess/widgets/ionest.py:632
+msgid "_Replace"
+msgstr "_Asenda"
+
+#: lib/pychess/widgets/ionest.py:636
+msgid "File exists"
+msgstr "Fail on juba olemas"
+
+#: lib/pychess/widgets/ionest.py:638
+#, python-format
+msgid ""
+"<big><b>A file named '%s' already exists. Would you like to replace "
+"it?</b></big>"
+msgstr ""
+"<big><b>Faili nimega '%s' on juba olemas. Kas sa soovid seda "
+"asendada?</b></big>"
+
+#: lib/pychess/widgets/ionest.py:639
+#, fuzzy, python-format
+msgid ""
+"The file already exists in '%s'. If you replace it, its content will be "
+"overwritten."
+msgstr ""
+"Fail eksisteerib juba kataloogis '%s' Kui sa ta asendad siis kirjutatakse "
+"tema sisu üle."
+
+#: lib/pychess/widgets/ionest.py:653
+msgid "Could not save the file"
+msgstr "Faili ei saa salvestada"
+
+#: lib/pychess/widgets/ionest.py:654
+msgid "<big><b>PyChess was not able to save the game</b></big>"
+msgstr "<big><b>PyChess ei suutnud mängu salvestada</b></big>"
+
+#: lib/pychess/widgets/ionest.py:655
+#, python-format
+msgid "The error was: %s"
+msgstr "Viga oli: %s"
+
+#: lib/pychess/widgets/ionest.py:675 lib/pychess/widgets/ionest.py:705
+msgid "Close _without Saving"
+msgstr "Sulge _ilma salvestamiseta"
+
+#: lib/pychess/widgets/ionest.py:681
+msgid "<b><big>Save the current game before you close it?</big></b>"
+msgstr "<b><big>Salvesta jooksev mäng enne sulgemist?</big></b>"
+
+#: lib/pychess/widgets/ionest.py:683
+msgid ""
+"It is not possible later to continue the game,\n"
+"if do don't save it."
+msgstr ""
+"Mängu pole hiljem võimalik jätkata,\n"
+"kui sa seda ei salvesta."
+
+#: lib/pychess/widgets/ionest.py:709
+msgid "<big><b>There is 1 game with unsaved changes:</b></big>"
+msgstr "<big><b>Üks mäng on salvestamata muutustega:</b></big>"
+
+#: lib/pychess/widgets/ionest.py:712
+#, python-format
+msgid "<big><b>There are %d games with unsaved changes:</b></big>"
+msgstr "<big><b>%d mängu on salvestamata muutustega:</b></big>"
+
+#: lib/pychess/widgets/LogDialog.py:30
+#, fuzzy
+msgid "PyChess - Log Viewer"
+msgstr "PyChess - Logide vaataja"
+
+#: lib/pychess/widgets/preferencesDialog.py:146
+msgid "Locate Engine"
+msgstr "Otsi mootorit"
+
+#: lib/pychess/widgets/preferencesDialog.py:223
+msgid "Open Sound File"
+msgstr "Ava helifail"
+
+#: lib/pychess/widgets/preferencesDialog.py:240
+msgid "No sound"
+msgstr "Heli puudub"
+
+#: lib/pychess/widgets/preferencesDialog.py:241
+msgid "Beep"
+msgstr "Piiks"
+
+#: lib/pychess/widgets/preferencesDialog.py:242
+msgid "Select sound file..."
+msgstr "Vali helifail..."
+
+#: lib/pychess/Utils/lutils/strateval.py:30
+msgid "draws"
+msgstr "viigistab"
+
+#: lib/pychess/Utils/lutils/strateval.py:32
+msgid "mates"
+msgstr "matistab"
+
+#: lib/pychess/Utils/lutils/strateval.py:36
+msgid "puts opponent in check"
+msgstr "annab vastasele tule"
+
+#: lib/pychess/Utils/lutils/strateval.py:57
+msgid "improves king safety"
+msgstr "parandab kuninga julgeolekut"
+
+#: lib/pychess/Utils/lutils/strateval.py:59
+msgid "slightly improves king safety"
+msgstr "parandab pisut kuninga julgeolekut"
+
+#: lib/pychess/Utils/lutils/strateval.py:80
+msgid "moves a rook to an open file"
+msgstr "viib vankri avatud liinile"
+
+#: lib/pychess/Utils/lutils/strateval.py:81
+msgid "moves an rook to a half-open file"
+msgstr "viib vankri poolavatud liinile"
+
+#: lib/pychess/Utils/lutils/strateval.py:91
+#: lib/pychess/Utils/lutils/strateval.py:93
+#: lib/pychess/Utils/lutils/strateval.py:96
+#: lib/pychess/Utils/lutils/strateval.py:98
+#, fuzzy, python-format
+msgid "moves bishop into fianchetto: %s"
+msgstr "käib odaga fianchetto positsiooni: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:105
+#, fuzzy, python-format
+msgid "promotes a Pawn to a %s"
+msgstr "ettur lipustub viguriks %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:108
+msgid "castles"
+msgstr "vangerdab"
+
+#: lib/pychess/Utils/lutils/strateval.py:129
+msgid "takes back material"
+msgstr "võidab materjali tagasi"
+
+#: lib/pychess/Utils/lutils/strateval.py:133
+#, fuzzy
+msgid "exchanges material"
+msgstr "vahetab materjali"
+
+#: lib/pychess/Utils/lutils/strateval.py:135
+#, fuzzy
+msgid "captures material"
+msgstr "võtab materjali"
+
+#: lib/pychess/Utils/lutils/strateval.py:137
+msgid "sacrifies material"
+msgstr "ohverdab materjali"
+
+#: lib/pychess/Utils/lutils/strateval.py:181
+#, fuzzy, python-format
+msgid "threatens to win material %s"
+msgstr "ähvardab võita materjali %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:185
+#, python-format
+msgid "increases the pressure on %s"
+msgstr "suurendab survet %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:229
+#, python-format
+msgid "defends %s"
+msgstr "kaitseb %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:260
+#, python-format
+msgid "White has a new piece in outpost: %s"
+msgstr "Valgel on uus vigur eelpostil: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:268
+#, python-format
+msgid "Black has a new piece in outpost: %s"
+msgstr "Mustall on uus vigur eelpostil: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:307
+#, python-format
+msgid "%s has a new passed pawn on %s"
+msgstr "%s on uus läbimurdnud ettur %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:323
+#, python-format
+msgid "%s has a new double pawn in the half-open %s file"
+msgstr "%s on uus topeltettur poolavatud liinil %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:326
+#, python-format
+msgid "%s has a new double pawn in the %s file"
+msgstr "%s on uus topeltettur %s liinil"
+
+#: lib/pychess/Utils/lutils/strateval.py:331
+#, python-format
+msgid "%s has an double pawn in the half-open %s file"
+msgstr "%s on uus topeltettur poolavatud liinil %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:348
+#: lib/pychess/Utils/lutils/strateval.py:353
+#, python-format
+msgid "%s has a new isolated pawn in the %s file"
+msgstr "%s on uus isoleeritud ettur poolavatud liinil %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:359
+#, fuzzy, python-format
+msgid "%s moves pawns into stonewall formation"
+msgstr "%s moodustab etturitega stonewall formatsiooni"
+
+#: lib/pychess/Utils/lutils/strateval.py:374
+msgid "White can no longer castle in queenside"
+msgstr "Valge ei saa enam teha pikka vangerdust"
+
+#: lib/pychess/Utils/lutils/strateval.py:376
+msgid "White can no longer castle in kingside"
+msgstr "Valge ei saa enam teha lühikest vangerdust"
+
+#: lib/pychess/Utils/lutils/strateval.py:379
+msgid "Black can no longer castle in queenside"
+msgstr "Must ei saa enam teha pikka vangerdust"
+
+#: lib/pychess/Utils/lutils/strateval.py:381
+msgid "Black can no longer castle in kingside"
+msgstr "Must ei saa enam teha lühikest vangerdust"
+
+#: lib/pychess/Utils/lutils/strateval.py:417
+#, fuzzy, python-format
+msgid "%s has a new trapped bishop on %s"
+msgstr "%s on oda %s lõksus"
+
+#: lib/pychess/Utils/lutils/strateval.py:441
+#: lib/pychess/Utils/lutils/strateval.py:454
+#, fuzzy, python-format
+msgid "develops a %s: %s"
+msgstr "arendab %s väljale %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:442
+#, fuzzy, python-format
+msgid "brings a pawn closer to the backrow: %s"
+msgstr "Toob etturi tagareale lähemale: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:451
+#, fuzzy, python-format
+msgid "brings a %s closer to enemy king: %s"
+msgstr "toob %s lähemale vaenlase kuningale: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:472
+#, python-format
+msgid "places a %s more active: %s"
+msgstr "asetab %s aktiivsemalt: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:498
+msgid "White should do pawn storm in right"
+msgstr "Valge peaks alustama etturite rünnakut paremal"
+
+#: lib/pychess/Utils/lutils/strateval.py:500
+msgid "Black should do pawn storm in left"
+msgstr "Must peaks alustama etturite rünnakut vasakul"
+
+#: lib/pychess/Utils/lutils/strateval.py:503
+msgid "White should do pawn storm in left"
+msgstr "Valge peaks alustama etturite rünnakut vasakul"
+
+#: lib/pychess/Utils/lutils/strateval.py:505
+msgid "Black should do pawn storm in right"
+msgstr "Must peaks alustama etturite rünnakut paremal"
+
+#: lib/pychess/Utils/lutils/strateval.py:538
+msgid "Black has a rather cramped position"
+msgstr "Must on üsna surutud seisus"
+
+#: lib/pychess/Utils/lutils/strateval.py:540
+msgid "Black has a slightly cramped position"
+msgstr "Must on kergelt surutud seisus"
+
+#: lib/pychess/Utils/lutils/strateval.py:542
+msgid "White has a rather cramped position"
+msgstr "Valgel on üsna surutud positsioon"
+
+#: lib/pychess/Utils/lutils/strateval.py:544
+msgid "White has a slightly cramped position"
+msgstr "Valgel on pisut surutud positsioon"
+
+#: sidepanel/bookPanel.py:9
+msgid "Opening Book"
+msgstr "Avanguraamat"
+
+#: sidepanel/bookPanel.py:52
+msgid ""
+"In this position,\n"
+"there is no book move."
+msgstr ""
+"Selles positsioonis\n"
+"puudub raamatukäik"
+
+#: sidepanel/commentPanel.py:13
+msgid "Comments"
+msgstr "Kommentaarid"
+
+#: sidepanel/commentPanel.py:54
+msgid "Initial position"
+msgstr "Algseis"
+
+#: sidepanel/commentPanel.py:227
+#, fuzzy, python-format
+msgid "%s moves a %s to %s"
+msgstr "%s käib %s %s"
+
+#: sidepanel/historyPanel.py:13
+msgid "Move History"
+msgstr "Käikude ajalugu"
+
+#: sidepanel/scorePanel.py:131
+msgid "Score"
+msgstr "Tulemus"
