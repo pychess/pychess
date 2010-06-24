@@ -102,8 +102,8 @@ class Human (Player):
         self.setName(name)
         self.ichandle = ichandle
         
-        self.timemodel = self.gamemodel.timemodel
-        self.timemodel.connect('zero_reached', self.zero_reached)
+        if self.gamemodel.timemodel:
+            self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
     
     def getICHandle (self):
         return self.ichandle
