@@ -101,18 +101,12 @@ class GameWidget (gobject.GObject):
         gobject.GObject.__init__(self)
         self.gamemodel = gamemodel
         
-        tabcontent = self.initTabcontents()
-        boardvbox, board, messageSock = self.initBoardAndClock(gamemodel)
-        statusbar, stat_hbox = self.initStatusbar(board)
+        if gamemodel:
+            self.boardvbox, self.board, self.messageSock = self.initBoardAndClock(gamemodel)
+            self.statusbar, self.stat_hbox = self.initStatusbar(self.board)
         
-        self.tabcontent = tabcontent
-        self.board = board
-        self.statusbar = statusbar
-        
-        self.messageSock = messageSock
+        self.tabcontent = self.initTabcontents()
         self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
-        self.boardvbox = boardvbox
-        self.stat_hbox = stat_hbox
         
         # Some stuff in the sidepanels .load functions might change UI, so we
         # need glock
