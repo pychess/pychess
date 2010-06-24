@@ -4,6 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="saveGamesDialog">
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Quit PyChess</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="icon_name">pychess</property>
