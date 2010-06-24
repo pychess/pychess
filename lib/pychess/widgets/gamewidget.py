@@ -460,9 +460,12 @@ def _ensureReadForGameWidgets ():
     
     if hasattr(headbook, "set_tab_reorderable"):
         def page_reordered (widget, child, new_num, headbook):
-            old_num = notebooks["board"].page_num(key2gmwidg[child].board)
-            for notebook in notebooks.values():
-                notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
+            old_num = notebooks["board"].page_num(key2gmwidg[child].boardvbox)
+            if old_num == -1:
+                log.error('Games and labels are out of sync!')
+            else:
+                for notebook in notebooks.values():
+                    notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
         headbook.connect("page-reordered", page_reordered, headbook)
 
 def attachGameWidget (gmwidg):

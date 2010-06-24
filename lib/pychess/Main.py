@@ -34,6 +34,31 @@ chessFiles = {}
 
 class GladeHandlers:
     
+    def on_window_key_press (window, event):
+        # Tabbing related shortcuts
+        if not gamewidget.getheadbook():
+            pagecount = 0
+        else: pagecount = gamewidget.getheadbook().get_n_pages()
+        if pagecount > 1:
+            if event.state & gtk.gdk.CONTROL_MASK:
+                page_num = gamewidget.getheadbook().get_current_page()
+                # Change selected
+                if not event.state & gtk.gdk.SHIFT_MASK:
+                    if event.keyval == gtk.keysyms.Page_Up:
+                        gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
+                    elif event.keyval == gtk.keysyms.Page_Down:
+                        gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
+                # Move selected
+                else:
+                    child = gamewidget.getheadbook().get_nth_page(page_num)
+                    if event.keyval == gtk.keysyms.Page_Up:
+                        gamewidget.getheadbook().reorder_child(child, (page_num-1)%pagecount)
+                    elif event.keyval == gtk.keysyms.Page_Down:
+                        gamewidget.getheadbook().reorder_child(child, (page_num+1)%pagecount)
+        
+        # Other
+        pass
+    
     def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel
         
@@ -198,6 +223,8 @@ class PyChess:
         # Show main window and init d'n'd
         #=======================================================================
         widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
+        widgets["window1"].connect("key-press-event",
+                                   GladeHandlers.__dict__["on_window_key_press"])
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
@@ -239,7 +266,6 @@ class PyChess:
         #------------------------------------------------- Tip of the day dialog
         if conf.get("show_tip_at_startup", False):
             tipOfTheDay.TipOfTheDay.show()
-    
     
     def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
         # Tasker is currently the only widget that uses glades CustomWidget
