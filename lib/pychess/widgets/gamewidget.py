@@ -16,6 +16,8 @@ from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
+from pychess.Utils.GameModel import GameModel
+
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -246,6 +248,7 @@ class GameWidget (gobject.GObject):
         getheadbook().set_current_page(self.getPageNumber())
     
     def isInFront(self):
+        if not getheadbook(): return False
         return getheadbook().get_current_page() == self.getPageNumber()
     
     def getPageNumber (self):
@@ -531,3 +534,27 @@ def tabsCallback (none):
     if head.get_n_pages() == 1:
         show_tabs(not conf.get("hideTabs", False))
 conf.notify_add("hideTabs", tabsCallback)
+
+################################################################################
+# Handling of the special sidepanels-design-gamewidget used in preferences     #
+################################################################################
+
+designGW = None
+
+def showDesignGW():
+    global designGW
+    if not designGW:
+        designGW = GameWidget(GameModel())
+    if isDesignGWShown():
+        return
+    getWidgets()["show_sidepanels"].set_active(True)
+    getWidgets()["show_sidepanels"].set_sensitive(False)
+    attachGameWidget(designGW)
+    
+def hideDesignGW():
+    if isDesignGWShown():
+        delGameWidget(designGW)
+    getWidgets()["show_sidepanels"].set_sensitive(True)
+
+def isDesignGWShown():
+    return designGW in key2gmwidg.values()

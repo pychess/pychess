@@ -17,7 +17,7 @@ from pychess.System import glock
 
 from pychess.widgets import preferencesDialog
 
-from gamewidget import getWidgets, key2gmwidg
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 from gamewidget import MENU_ITEMS, ACTION_MENU_ITEMS
 
 
@@ -56,14 +56,18 @@ def on_gmwidg_infront (gmwidg):
         getWidgets()[item].props.sensitive = not auto
     
     for widget in MENU_ITEMS:
-        if (widget not in ('hint_mode', 'spy_mode')) or \
-           (widget == 'hint_mode' and gmwidg.gamemodel.hintEngineSupportsVariant == True \
-            and conf.get("analyzer_check", True)) or \
-           (widget == 'spy_mode' and gmwidg.gamemodel.spyEngineSupportsVariant == True \
-            and conf.get("inv_analyzer_check", True)):
-            getWidgets()[widget].set_property('sensitive', True)
-        else:
-            getWidgets()[widget].set_property('sensitive', False)
+        sensitive = False
+        if widget == 'hint_mode':
+            if gmwidg.gamemodel.hintEngineSupportsVariant and conf.get("analyzer_check", True):
+                sensitive = True
+        elif widget == 'spy_mode':
+            if gmwidg.gamemodel.spyEngineSupportsVariant and conf.get("inv_analyzer_check", True):
+                sensitive = True
+        elif widget == 'show_sidepanels':
+            if not isDesignGWShown():
+                sensitive = True
+        else: sensitive = True
+        getWidgets()[widget].set_property('sensitive', sensitive)
     
     # Change window title
     getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
