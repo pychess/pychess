@@ -62,7 +62,6 @@ def mergeElements(elemA, elemB):
 #    </vm>
 #</engine>
 
-# TODO: Diablo, Amy and Amundsen
 backup = """
 <engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py">
@@ -91,6 +90,10 @@ backup = """
         <meta><country>de</country></meta></engine>
     <engine protocol="cecp" protover="1" binname="boochess">
         <meta><country>de</country></meta></engine>
+    <engine protocol="cecp" protover="2" binname="amy">
+        <meta><country>de</country><author>Thorsten Greiner</author></meta></engine>
+    <engine protocol="cecp" protover="1" binname="amundsen">
+        <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
@@ -108,6 +111,8 @@ backup = """
         <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="hiarcs">
         <meta><country>gb</country></meta></engine>
+    <engine protocol="uci" protover="1" binname="diablo">
+        <meta><country>us</country><author>Marcus Predaski</author></meta></engine>
 </engines>
 """ % ENGINES_XML_API_VERSION
 
