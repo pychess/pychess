@@ -197,6 +197,7 @@ class PyChess:
         #=======================================================================
         # Show main window and init d'n'd
         #=======================================================================
+        widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
