@@ -10,7 +10,7 @@ class ChainVBox (gtk.VBox):
     """ Inspired by the GIMP chainbutton widget """
 
     __gsignals__ = {
-        'clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        'clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
     }
 
     def __init__ (self):
@@ -37,7 +37,7 @@ class ChainVBox (gtk.VBox):
         else:
             self.image.set_from_file(addDataPrefix("glade/stock-vchain-broken-24.png"))
             self.active = False
-        self.emit("clicked", self)
+        self.emit("clicked")
 
 CHAIN_TOP, CHAIN_BOTTOM = range(2)
 SHORT_LINE = 2
