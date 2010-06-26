@@ -17,7 +17,7 @@ from pychess.System import glock
 
 from pychess.widgets import preferencesDialog
 
-from gamewidget import getWidgets
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 from gamewidget import MENU_ITEMS, ACTION_MENU_ITEMS
 
 
@@ -25,6 +25,8 @@ def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
     
     gmwidg.connect("infront", on_gmwidg_infront)
+    gmwidg.connect("closed", on_gmwidg_closed)
+    gmwidg.connect("title_changed", on_gmwidg_title_changed)
     
     # Because of the async loading of games, the game might already be started,
     # when the glock is ready and nurseGame is called.
@@ -52,16 +54,31 @@ def on_gmwidg_infront (gmwidg):
             gmwidg.gamemodel.players[1].__type__ != LOCAL
     for item in ACTION_MENU_ITEMS:
         getWidgets()[item].props.sensitive = not auto
-
+    
     for widget in MENU_ITEMS:
-        if (widget not in ('hint_mode', 'spy_mode')) or \
-           (widget == 'hint_mode' and gmwidg.gamemodel.hintEngineSupportsVariant == True \
-            and conf.get("analyzer_check", True)) or \
-           (widget == 'spy_mode' and gmwidg.gamemodel.spyEngineSupportsVariant == True \
-            and conf.get("inv_analyzer_check", True)):
-            getWidgets()[widget].set_property('sensitive', True)
-        else:
-            getWidgets()[widget].set_property('sensitive', False)
+        sensitive = False
+        if widget == 'hint_mode':
+            if gmwidg.gamemodel.hintEngineSupportsVariant and conf.get("analyzer_check", True):
+                sensitive = True
+        elif widget == 'spy_mode':
+            if gmwidg.gamemodel.spyEngineSupportsVariant and conf.get("inv_analyzer_check", True):
+                sensitive = True
+        elif widget == 'show_sidepanels':
+            if not isDesignGWShown():
+                sensitive = True
+        else: sensitive = True
+        getWidgets()[widget].set_property('sensitive', sensitive)
+    
+    # Change window title
+    getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+
+def on_gmwidg_closed (gmwidg):
+    if len(key2gmwidg) == 1:
+        getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
+
+def on_gmwidg_title_changed (gmwidg):
+    if gmwidg.isInFront():
+        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
 
 #===============================================================================
 # Gamemodel signals
