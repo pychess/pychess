@@ -1791,11 +1791,19 @@ Custom</property>
                                             <child>
                                               <widget class="GtkAlignment" id="chainAlignment">
                                                 <property name="visible">True</property>
+                                                <property name="tooltip" translatable="yes">When this button is in the "locked" state, the relationship
+between "Opponent's strength" and "Your strength" will be
+preserved when 
+a) your rating for the type of game sought has changed
+b) you change the variant or the time control</property>
+                                                <property name="left_padding">20</property>
                                                 <child>
                                                   <placeholder/>
                                                 </child>
                                               </widget>
                                               <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
                                                 <property name="position">1</property>
                                               </packing>
                                             </child>
@@ -2008,14 +2016,13 @@ Custom</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
-                            <property name="xpad">8</property>
-                            <property name="ypad">2</property>
+                            <property name="xpad">10</property>
+                            <property name="ypad">5</property>
                             <property name="pixbuf">piece-unknown.png</property>
                             <property name="icon-size">5</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -2023,6 +2030,7 @@ Custom</property>
                           <widget class="GtkAlignment" id="alignment13">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
+                            <property name="left_padding">7</property>
                             <child>
                               <widget class="GtkVBox" id="vbox32">
                                 <property name="visible">True</property>
