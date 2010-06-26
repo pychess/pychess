@@ -29,6 +29,7 @@ from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
 from ICGameModel import ICGameModel
+from pychess.Utils.Rating import Rating
 
 class ICLounge (GObject):
     __gsignals__ = {
@@ -1020,6 +1021,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["chaRatedGameCheck"].show()
                 
         self.chainbox = ChainVBox()
+        self.chainbox.connect("clicked", self.onChainBoxClicked)
         self.widgets["chainAlignment"].add(self.chainbox)
         
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
@@ -1250,12 +1252,12 @@ class SeekChallengeSection (ParrentListSection):
             min = int(self.widgets["minutesSpin"].get_value())
             gain = int(self.widgets["gainSpin"].get_value())
             gameTypeName = self.__getNameOfTimeControl(min, gain)
-            ratingType=self.__getTypeOfTimeControl(min, gain)
+            ratingType = self.__getTypeOfTimeControl(min, gain)
         else:
             variant_combo_getter = self.seekEditorWidgetGettersSetters["variantCombo"][0]
             variant = variant_combo_getter(self.widgets["variantCombo"])
             gameTypeName = variants[variant].name
-            ratingType=self.variantToRatingType[variant]
+            ratingType = self.variantToRatingType[variant]
 
         try:
             rating = self.finger.getRating(type=ratingType)
@@ -1267,7 +1269,22 @@ class SeekChallengeSection (ParrentListSection):
         pixbuf = self.__getPixbufForRating(rating)
         self.widgets["yourRatingNameLabel"].set_label(gameTypeName)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
+        oldrating = int(self.widgets["yourRatingLabel"].get_text())
         self.widgets["yourRatingLabel"].set_label(str(rating))
+        if self.chainbox.active and self.__clamp(rating) != self.__clamp(oldrating):
+            oldclamp = self.__clamp(oldrating)
+            center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
+            difference = oldclamp - center
+            newclamp = self.__clamp(rating)
+            self.widgets["ratingCenterSlider"].set_value((newclamp - difference) / RATING_SLIDER_STEP)
+    
+    def __clamp (self, rating):
+        assert type(rating) is int
+        mod = rating % RATING_SLIDER_STEP
+        if mod > RATING_SLIDER_STEP / 2:
+            return rating - mod + RATING_SLIDER_STEP
+        else:
+            return rating - mod
     
     def __initVariantCombo (self, combo):
         model = gtk.TreeStore(str)
@@ -1313,6 +1330,13 @@ class SeekChallengeSection (ParrentListSection):
         self.finger = finger
         self.__updateYourRatingHBox()
 
+    def onChainBoxClicked (self, chainbox):
+#        if chainbox.active:
+#            print "locked"
+#        else:
+#            print "unlocked"
+        pass
+    
     def onTimeSpinChanged (self, spin):
         minutes = self.widgets["minutesSpin"].get_value_as_int()
         gain = self.widgets["gainSpin"].get_value_as_int()
