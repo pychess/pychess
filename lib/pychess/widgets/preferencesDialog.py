@@ -10,51 +10,26 @@ from pychess.Utils.IconLoader import load_icon
 firstRun = True
 def run(widgets):
     global firstRun
-    from pychess.widgets.gamewidget import attachGameWidget
     if firstRun:
         initialize(widgets)
         firstRun = False
     widgets["preferences"].show()
 
-    nb = widgets["notebook1"]
-    page_widget = nb.get_nth_page(nb.get_current_page())
-    if nb.get_tab_label(page_widget).get_text() == _('Sidepanels'):
-        attachGameWidget(panels_gw)
-        if not widgets["show_sidepanels"].get_active():
-            widgets["show_sidepanels"].set_active(True)
-
-panels_gw = None
 def initialize(widgets):
-    from pychess.Utils.GameModel import GameModel
-    from pychess.widgets.gamewidget import key2gmwidg, attachGameWidget, delGameWidget, GameWidget
-    def delete_event (widget, *args):
-        global panels_gw
-        widgets["preferences"].hide()
-        if panels_gw in key2gmwidg.values():
-            delGameWidget(panels_gw)
-        return True
     
     GeneralTab(widgets)
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
     
-    def switch_handler(widget, gpointer, pagenum):
-        global panels_gw
-        page_widget = widget.get_nth_page(pagenum)
-        if widget.get_tab_label(page_widget).get_text() == _('Sidepanels'):
-            panels_gw = GameWidget(GameModel())
-            attachGameWidget(panels_gw)
-            if not widgets["show_sidepanels"].get_active():
-                widgets["show_sidepanels"].set_active(True)
-        else:
-            if panels_gw in key2gmwidg.values():
-                delGameWidget(panels_gw)
-
-    widgets["notebook1"].connect("switch_page", switch_handler)    
-
+    def delete_event (widget, *args):
+        widgets["preferences"].hide()
+        return True
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences_close_button"].connect("clicked", delete_event)
+    
+    widgets["preferences"].connect("key-press-event",
+        lambda w,e: delete_event(w) if e.keyval == gtk.keysyms.Escape else None)
 
 ################################################################################
 # General initing                                                              #
@@ -421,6 +396,10 @@ class PanelTab:
         self.tv.append_column(gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
         
         uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
+        
+        widgets['notebook1'].connect("switch-page", self.__on_switch_page)
+        widgets["preferences"].connect("show", self.__on_show_window)
+        widgets["preferences"].connect("hide", self.__on_hide_window)
     
     def selection_changed(self, treeselection):
         store, iter = self.tv.get_selection().get_selected()
@@ -457,7 +436,6 @@ class PanelTab:
     
     def __set_panel_active(self, panel, active):
         name = panel.__name__
-        model = self.tv.get_model()
         
         from pychess.widgets.gamewidget import notebooks, docks
         from pychess.widgets.pydock import EAST
@@ -469,3 +447,23 @@ class PanelTab:
         else:
             conf.set(name, False)
             notebooks[name].get_parent().get_parent().undock(notebooks[name])
+    
+    def showit(self):
+        from pychess.widgets.gamewidget import showDesignGW
+        showDesignGW()
+    
+    def hideit(self):
+        from pychess.widgets.gamewidget import hideDesignGW
+        hideDesignGW()
+    
+    def __on_switch_page(self, notebook, page, page_num):
+        if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
+            self.showit()
+        else: self.hideit()
+    def __on_show_window(self, widget):
+        notebook = self.widgets['notebook1']
+        page_num = notebook.get_current_page()
+        if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
+            self.showit()
+    def __on_hide_window(self, widget):
+        self.hideit()

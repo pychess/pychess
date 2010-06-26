@@ -16,6 +16,8 @@ from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
+from pychess.Utils.GameModel import GameModel
+
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -92,9 +94,10 @@ docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 class GameWidget (gobject.GObject):
     
     __gsignals__ = {
-        'close_clicked': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
-        'infront': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
-        'closed': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()), 
+        'close_clicked': (gobject.SIGNAL_RUN_FIRST, None, ()), 
+        'infront': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'title_changed': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'closed': (gobject.SIGNAL_RUN_FIRST, None, ()),
     }
     
     def __init__ (self, gamemodel):
@@ -227,6 +230,7 @@ class GameWidget (gobject.GObject):
     
     def setTabText (self, text):
         self.tabcontent.child.get_children()[1].set_text(text)
+        self.emit('title_changed')
     
     def getTabText (self):
         return self.tabcontent.child.get_children()[1].get_text()
@@ -242,6 +246,10 @@ class GameWidget (gobject.GObject):
     
     def bringToFront (self):
         getheadbook().set_current_page(self.getPageNumber())
+    
+    def isInFront(self):
+        if not getheadbook(): return False
+        return getheadbook().get_current_page() == self.getPageNumber()
     
     def getPageNumber (self):
         return getheadbook().page_num(self.notebookKey)
@@ -452,9 +460,12 @@ def _ensureReadForGameWidgets ():
     
     if hasattr(headbook, "set_tab_reorderable"):
         def page_reordered (widget, child, new_num, headbook):
-            old_num = notebooks["board"].page_num(key2gmwidg[child].board)
-            for notebook in notebooks.values():
-                notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
+            old_num = notebooks["board"].page_num(key2gmwidg[child].boardvbox)
+            if old_num == -1:
+                log.error('Games and labels are out of sync!')
+            else:
+                for notebook in notebooks.values():
+                    notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
         headbook.connect("page-reordered", page_reordered, headbook)
 
 def attachGameWidget (gmwidg):
@@ -526,3 +537,27 @@ def tabsCallback (none):
     if head.get_n_pages() == 1:
         show_tabs(not conf.get("hideTabs", False))
 conf.notify_add("hideTabs", tabsCallback)
+
+################################################################################
+# Handling of the special sidepanels-design-gamewidget used in preferences     #
+################################################################################
+
+designGW = None
+
+def showDesignGW():
+    global designGW
+    if not designGW:
+        designGW = GameWidget(GameModel())
+    if isDesignGWShown():
+        return
+    getWidgets()["show_sidepanels"].set_active(True)
+    getWidgets()["show_sidepanels"].set_sensitive(False)
+    attachGameWidget(designGW)
+    
+def hideDesignGW():
+    if isDesignGWShown():
+        delGameWidget(designGW)
+    getWidgets()["show_sidepanels"].set_sensitive(True)
+
+def isDesignGWShown():
+    return designGW in key2gmwidg.values()
