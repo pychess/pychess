@@ -187,10 +187,18 @@
                 <child>
                   <widget class="GtkMenu" id="action1_menu">
                     <child>
+                      <widget class="GtkMenuItem" id="abort">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="label" translatable="yes">Offer _Abort</property>
+                        <property name="use_underline">True</property>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkMenuItem" id="adjourn">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">Offer _Adjourn</property>
+                        <property name="label" translatable="yes">Offer Ad_journment</property>
                         <property name="use_underline">True</property>
                       </widget>
                     </child>

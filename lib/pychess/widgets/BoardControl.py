@@ -91,6 +91,8 @@ class BoardControl (gtk.EventBox):
         """ Put actions from a menu or similar """
         if key == "call_flag":
             self.emit("action", FLAG_CALL, None)
+        elif key == "abort":
+            self.emit("action", ABORT_OFFER, None)
         elif key == "adjourn":
             self.emit("action", ADJOURN_OFFER, None)
         elif key == "draw":

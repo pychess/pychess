@@ -59,7 +59,10 @@ def on_gmwidg_infront (gmwidg):
     
     for widget in MENU_ITEMS:
         sensitive = False
-        if widget == 'adjourn':
+        if widget == 'abort':
+            if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
+                sensitive = True
+        elif widget == 'adjourn':
             if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
                 sensitive = True
         elif widget == 'hint_mode':
