@@ -56,7 +56,8 @@ class OfferManager (GObject):
         'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
         'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str,object)),
         'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
-        'onActionError' : (SIGNAL_RUN_FIRST, None, (object,int))
+        'onActionError' : (SIGNAL_RUN_FIRST, None, (object, int)),
+        'tooManySeeks' : (SIGNAL_RUN_FIRST, None, ())
     }
     
     def __init__ (self, connection):
@@ -89,11 +90,16 @@ class OfferManager (GObject):
         self.connection.expect_line (self.noOffersToAccept,
                 "There are no ([^ ]+) offers to (accept).")
         
+        self.connection.expect_line (self.tooManySeeks, "You can only have 3 active seeks.")
+        
         self.lastPly = 0
         self.indexType = {}
         
         self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse & !atomic")
         self.connection.lvm.setVariable("pendinfo", True)
+    
+    def tooManySeeks (self, match):
+        self.emit("tooManySeeks")
     
     def noOffersToAccept (self, match):
         offerstr, type = match.groups()
