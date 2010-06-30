@@ -45,14 +45,36 @@
                               </packing>
                             </child>
                             <child>
+                              <widget class="GtkButton" id="clearSeeksButton">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
+                                <property name="has_default">True</property>
+                                <property name="receives_default">True</property>
+                                <child>
+                                  <widget class="GtkLabel" id="label5">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">6</property>
+                                    <property name="label" translatable="yes">_Clear Seeks</property>
+                                    <property name="use_underline">True</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <widget class="GtkButton" id="acceptButton">
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
-                                <property name="has_focus">True</property>
                                 <property name="can_default">True</property>
                                 <property name="has_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkLabel" id="label65">
                                     <property name="visible">True</property>
@@ -65,7 +87,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </widget>
