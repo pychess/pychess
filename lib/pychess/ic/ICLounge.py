@@ -993,7 +993,7 @@ class SeekChallengeSection (ParrentListSection):
         def toleranceHBoxGetter (widget):
             return self.widgets["toleranceHBox"].get_property("visible")
         def toleranceHBoxSetter (widget, visible):
-            assert visible in (True, False), "value not a bool: %s" % str(visible)
+            assert type(visible) is bool
             if visible:
                 self.widgets["toleranceHBox"].show()
             else:
@@ -1010,15 +1010,6 @@ class SeekChallengeSection (ParrentListSection):
         variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
         self.seekEditorWidgetGettersSetters["variantCombo"] = (variantComboGetter, variantComboSetter)
         self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
-
-        if not connection.isRegistred():
-            self.widgets["ratedGameCheck"].set_active(False)
-            self.widgets["chaRatedGameCheck"].set_active(False)
-            self.widgets["ratedGameCheck"].hide()
-            self.widgets["chaRatedGameCheck"].hide()
-        else:
-            self.widgets["ratedGameCheck"].show()
-            self.widgets["chaRatedGameCheck"].show()
                 
         self.chainbox = ChainVBox()
         self.chainbox.connect("clicked", self.onChainBoxClicked)
@@ -1042,12 +1033,22 @@ class SeekChallengeSection (ParrentListSection):
         
         self.connections = {}
         self.savedSeekRadioTexts = [_("Blitz"), _("Blitz"), _("Blitz")]
+        self.lastratinglabel = -1
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeek(i)
             self.connections["seek%sRadioConfigButton" % i] = \
                 self.widgets["seek%sRadioConfigButton" % i].connect( \
                 "clicked", self.onSeekRadioConfigButtonClicked, i)
+
+        if not connection.isRegistred():
+            self.widgets["ratedGameCheck"].set_active(False)
+            self.widgets["chaRatedGameCheck"].set_active(False)
+            self.widgets["ratedGameCheck"].hide()
+            self.widgets["chaRatedGameCheck"].hide()
+        else:
+            self.widgets["ratedGameCheck"].show()
+            self.widgets["chaRatedGameCheck"].show()
         
         # TODO: if registered and no default, update default rating center
         # to be as close as possible to users blitz rating
@@ -1248,7 +1249,11 @@ class SeekChallengeSection (ParrentListSection):
 
     def __updateYourRatingHBox (self):
         if self.finger == None: return
-        if self.widgets["noVariantRadio"].get_active():
+        
+        if self.widgets["untimedCheck"].get_active():
+            gameTypeName = self.__getNameOfTimeControl(0, 0)
+            ratingType = self.__getTypeOfTimeControl(0, 0)
+        elif self.widgets["noVariantRadio"].get_active():
             min = int(self.widgets["minutesSpin"].get_value())
             gain = int(self.widgets["gainSpin"].get_value())
             gameTypeName = self.__getNameOfTimeControl(min, gain)
@@ -1259,22 +1264,24 @@ class SeekChallengeSection (ParrentListSection):
             gameTypeName = variants[variant].name
             ratingType = self.variantToRatingType[variant]
 
+        self.widgets["yourRatingNameLabel"].set_label(gameTypeName)
         try:
             rating = self.finger.getRating(type=ratingType)
         except KeyError:  # the user doesn't have a rating for this game type
-            self.widgets["yourRatingHBox"].hide()
+            self.widgets["yourRatingImage"].clear()
+            self.widgets["yourRatingLabel"].set_label(_("Unrated"))
             return
-        self.widgets["yourRatingHBox"].show()
         rating = int(rating.elo)
         pixbuf = self.__getPixbufForRating(rating)
-        self.widgets["yourRatingNameLabel"].set_label(gameTypeName)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
-        oldrating = int(self.widgets["yourRatingLabel"].get_text())
         self.widgets["yourRatingLabel"].set_label(str(rating))
+        oldrating = self.lastratinglabel
+        self.lastratinglabel = rating
+        
         if self.chainbox.active and self.__clamp(rating) != self.__clamp(oldrating):
             oldclamp = self.__clamp(oldrating)
-            center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
-            difference = oldclamp - center
+            oldcenter = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
+            difference = oldclamp - oldcenter
             newclamp = self.__clamp(rating)
             self.widgets["ratingCenterSlider"].set_value((newclamp - difference) / RATING_SLIDER_STEP)
     
@@ -1388,12 +1395,7 @@ class SeekChallengeSection (ParrentListSection):
         # on FICS, untimed games can't be rated and can't be a chess variant
         self.widgets["variantHBox"].set_sensitive(not is_untimed_game)
         self.widgets["ratedGameCheck"].set_sensitive(not is_untimed_game)
-        if is_untimed_game:
-            self.widgets["yourRatingHBox"].hide()
-            self.widgets["chainAlignment"].hide()
-        else:
-            self.widgets["yourRatingHBox"].show()
-            self.widgets["chainAlignment"].show_all()
+        self.__updateYourRatingHBox()
         
     def onStrengthCheckToggled (self, check):
         strengthsensitive = not check.get_active()
@@ -1507,7 +1509,6 @@ class SeekChallengeSection (ParrentListSection):
             self.__loadSeekEditor(1)
         
         min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
-        
         self.connection.glm.seek(min, incr, rated, ratingrange, color, variant, manual)
 
     def onChallengeButtonClicked (self, button):
