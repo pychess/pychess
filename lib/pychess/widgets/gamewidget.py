@@ -52,7 +52,7 @@ media_forward = load_icon(16, "gtk-media-forward-ltr")
 media_next = load_icon(16, "gtk-media-next-ltr")
 
 GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
-ACTION_MENU_ITEMS = ("draw", "pause1", "resume1", "undo1", 
+ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS

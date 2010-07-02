@@ -187,6 +187,22 @@
                 <child>
                   <widget class="GtkMenu" id="action1_menu">
                     <child>
+                      <widget class="GtkMenuItem" id="abort">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="label" translatable="yes">Offer _Abort</property>
+                        <property name="use_underline">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="adjourn">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="label" translatable="yes">Offer Ad_journment</property>
+                        <property name="use_underline">True</property>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkMenuItem" id="draw">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -257,7 +273,7 @@
                       <widget class="GtkMenuItem" id="ask_to_move">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
-                        <property name="label" translatable="yes">_Ask to move</property>
+                        <property name="label" translatable="yes">Ask to _Move</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_ask_to_move_activate"/>
                       </widget>

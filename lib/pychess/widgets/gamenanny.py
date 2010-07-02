@@ -11,6 +11,7 @@ from pychess.Utils.Offer import Offer
 #from pychess.Utils.TimeModel import TimeModel
 
 from pychess.Utils.const import *
+import pychess.ic.ICGameModel
 from pychess.Utils.repr import *
 from pychess.System import conf
 from pychess.System import glock
@@ -19,6 +20,7 @@ from pychess.widgets import preferencesDialog
 
 from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 from gamewidget import MENU_ITEMS, ACTION_MENU_ITEMS
+from pychess.ic.ICGameModel import ICGameModel
 
 
 def nurseGame (gmwidg, gamemodel):
@@ -57,7 +59,13 @@ def on_gmwidg_infront (gmwidg):
     
     for widget in MENU_ITEMS:
         sensitive = False
-        if widget == 'hint_mode':
+        if widget == 'abort':
+            if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
+                sensitive = True
+        elif widget == 'adjourn':
+            if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
+                sensitive = True
+        elif widget == 'hint_mode':
             if gmwidg.gamemodel.hintEngineSupportsVariant and conf.get("analyzer_check", True):
                 sensitive = True
         elif widget == 'spy_mode':
