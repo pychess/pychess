@@ -375,6 +375,7 @@ class SeekTabSection (ParrentListSection):
         self.lastSeekSelected = None
         self.selection.set_select_function(self.selectFunction, full=True)
         self.selection.connect("changed", self.onSelectionChanged)
+        self.widgets["clearSeeksButton"].connect("clicked", self.onClearSeeksClicked)
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
         self.tv.connect("row-activated", self.row_activated)
         
@@ -422,15 +423,12 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         textcolor = "grey" if seek["w"] == self.connection.getUsername() else "black"
-        if textcolor == "black":
-            ti = self.store.append ([seek["gameno"], pix, seek["w"],
-                                    int(seek["rt"]), rated, seek["tp"], time,
-                                    float(seek["t"] + "." + seek["i"]), textcolor])
-        else:
-            ti = self.store.prepend ([seek["gameno"], pix, seek["w"],
-                                    int(seek["rt"]), rated, seek["tp"], time,
-                                    float(seek["t"] + "." + seek["i"]), textcolor])
+        ti = self.store.append ([seek["gameno"], pix, seek["w"],
+                                int(seek["rt"]), rated, seek["tp"], time,
+                                float(seek["t"] + "." + seek["i"]), textcolor])
+        if textcolor == "grey":
             self.tv.scroll_to_cell(self.store.get_path(ti))
+            self.widgets["clearSeeksButton"].set_sensitive(True)
         self.seeks [seek["gameno"]] = ti
         count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
@@ -464,6 +462,10 @@ class SeekTabSection (ParrentListSection):
         else:
             self.connection.om.playIndex(gameno)
 
+    def onClearSeeksClicked (self, button):
+        print >> self.connection.client, "unseek"
+        self.widgets["clearSeeksButton"].set_sensitive(False)
+    
     def row_activated (self, treeview, path, view_column):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
@@ -480,6 +482,7 @@ class SeekTabSection (ParrentListSection):
     def onPlayingGame (self):
         self.widgets["seekListContent"].set_sensitive(False)
         self.widgets["challengePanel"].set_sensitive(False)
+        self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
         self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
 

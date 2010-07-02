@@ -17,6 +17,7 @@ class ICGameModel (GameModel):
         self.connection.bm.connect("gamePaused", self.onGamePaused)
         
         self.connection.om.connect("onActionError", self.onActionError)
+        self.connection.om.connect("tooManySeeks", self.tooManySeeks)
         
         self.connection.connect("disconnected", self.onDisconnected)
         
@@ -96,6 +97,12 @@ class ICGameModel (GameModel):
         elif offer.offerType in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
         
+        elif offer.offerType == ABORT_OFFER:
+            self.connection.om.abort()
+        
+        elif offer.offerType == ADJOURN_OFFER:
+            self.connection.om.adjourn()
+        
         elif offer.offerType in OFFERS:
             if offer not in self.offerMap:
                 self.offerMap[offer] = player
@@ -125,6 +132,12 @@ class ICGameModel (GameModel):
     
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)
+    
+    def tooManySeeks (self, om):
+        if self.players[0].__type__ != REMOTE:
+            self.players[0].tooManySeeks()
+        else:
+            self.players[1].tooManySeeks()
     
     #
     # End
