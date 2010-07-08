@@ -927,7 +927,7 @@ class SeekChallengeSection (ParrentListSection):
     advancedpix = load_icon(15, "weather-showers")
     expertpix = load_icon(15, "weather-storm")
     
-    variantToRatingType = {
+    variants = {
         SHUFFLECHESS : TYPE_WILD,
         FISCHERRANDOMCHESS : TYPE_WILD,
         RANDOMCHESS: TYPE_WILD,
@@ -1265,7 +1265,7 @@ class SeekChallengeSection (ParrentListSection):
             variant_combo_getter = self.seekEditorWidgetGettersSetters["variantCombo"][0]
             variant = variant_combo_getter(self.widgets["variantCombo"])
             gameTypeName = variants[variant].name
-            ratingType = self.variantToRatingType[variant]
+            ratingType = self.variants[variant]
 
         self.widgets["yourRatingNameLabel"].set_label(gameTypeName)
         try:
@@ -1308,8 +1308,8 @@ class SeekChallengeSection (ParrentListSection):
                       VARIANTS_ODDS: _("Odds"),
                       VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other")}
-        specialVariants = [v for v in variants.values() if v != NormalChess]
-        groups = groupby(specialVariants, attrgetter("variant_group"))
+        ficsvariants = [v for k, v in variants.iteritems() if k in self.variants.keys()]
+        groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
         for i, (id, group) in enumerate(groups):
