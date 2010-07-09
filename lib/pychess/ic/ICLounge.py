@@ -922,9 +922,9 @@ class AdjournedTabSection (ParrentListSection):
 ############################################################################
 
 RATING_SLIDER_STEP = 25
-
-class SeekChallengeSection (ParrentListSection):
     
+class SeekChallengeSection (ParrentListSection):
+        
     novicepix = load_icon(15, "weather-clear")
     beginnerpix = load_icon(15, "weather-few-clouds")
     intermediatepix = load_icon(15, "weather-overcast")
@@ -954,7 +954,8 @@ class SeekChallengeSection (ParrentListSection):
         # when the widget is loaded, variantRadio isn't selected by the callback,
         # overwriting the user's saved value for the variant radio buttons
         "variantCombo", "noVariantRadio", "variantRadio",
-        "ratedGameCheck", "chaRatedGameCheck", "manualAcceptCheck" )
+        "ratedGameCheck", "manualAcceptCheck" )
+    
     seekEditorWidgetDefaults = {
         "untimedCheck": [False, False, False],
         "minutesSpin": [15, 5, 2],
@@ -971,11 +972,11 @@ class SeekChallengeSection (ParrentListSection):
         "whitecolorRadio": [False, False, False],
         "blackcolorRadio": [False, False, False],
         "ratedGameCheck": [False, True, True],
-        "chaRatedGameCheck": [False, False, True],
         "manualAcceptCheck": [False, False, False],
     }
-    seekEditorWidgetGettersSetters = {}
     
+    seekEditorWidgetGettersSetters = {}
+
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
         
@@ -990,6 +991,21 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["minutesSpin"].connect("value-changed", self.onTimeSpinChanged)
         self.widgets["gainSpin"].connect("value-changed", self.onTimeSpinChanged)
         self.onTimeSpinChanged(self.widgets["minutesSpin"])
+        
+        self.widgets["nocolorRadio"].connect("toggled", self.onColorRadioChanged)
+        self.widgets["whitecolorRadio"].connect("toggled", self.onColorRadioChanged)
+        self.widgets["blackcolorRadio"].connect("toggled", self.onColorRadioChanged)
+        self.onColorRadioChanged(self.widgets["nocolorRadio"])
+        
+        self.widgets["noVariantRadio"].connect("toggled", self.onVariantRadioChanged)
+        self.widgets["variantRadio"].connect("toggled", self.onVariantRadioChanged)
+        variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
+        self.seekEditorWidgetGettersSetters["variantCombo"] = (variantComboGetter, variantComboSetter)
+        self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
+
+        self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
+        glock.glock_connect(self.connection, "disconnected",
+                      lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
 
         self.widgets["strengthCheck"].connect("toggled", self.onStrengthCheckToggled)
         self.onStrengthCheckToggled(self.widgets["strengthCheck"])
@@ -1008,17 +1024,6 @@ class SeekChallengeSection (ParrentListSection):
                 self.widgets["toleranceHBox"].hide()
         self.seekEditorWidgetGettersSetters["toleranceHBox"] = (toleranceHBoxGetter, toleranceHBoxSetter)
         
-        self.widgets["nocolorRadio"].connect("toggled", self.onColorRadioChanged)
-        self.widgets["whitecolorRadio"].connect("toggled", self.onColorRadioChanged)
-        self.widgets["blackcolorRadio"].connect("toggled", self.onColorRadioChanged)
-        self.onColorRadioChanged(self.widgets["nocolorRadio"])
-        
-        self.widgets["noVariantRadio"].connect("toggled", self.onVariantRadioChanged)
-        self.widgets["variantRadio"].connect("toggled", self.onVariantRadioChanged)
-        variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
-        self.seekEditorWidgetGettersSetters["variantCombo"] = (variantComboGetter, variantComboSetter)
-        self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
-                
         self.chainbox = ChainVBox()
         self.chainbox.connect("clicked", self.onChainBoxClicked)
         self.widgets["chainAlignment"].add(self.chainbox)
@@ -1028,20 +1033,17 @@ class SeekChallengeSection (ParrentListSection):
             self.chainbox.active = is_active
         self.seekEditorWidgetGettersSetters["chainAlignment"] = (chainboxGetter, chainboxSetter)
         
-        self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
-        glock.glock_connect(self.connection, "disconnected",
-                      lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
-
         self.widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
-#        self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
+        self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
         
         seekSelection = self.widgets["seektreeview"].get_selection()
         seekSelection.connect_after("changed", self.onSeekSelectionChanged)
-        
         playerSelection = self.widgets["playertreeview"].get_selection()
         playerSelection.connect_after("changed", self.onPlayerSelectionChanged)
+        self.onPlayerSelectionChanged(playerSelection)
         
-        for widget in ("seek1Radio", "seek2Radio", "seek3Radio"):
+        for widget in ("seek1Radio", "seek2Radio", "seek3Radio",
+                       "challenge1Radio", "challenge2Radio", "challenge3Radio"):
             uistuff.keep(self.widgets[widget], widget)
         
         self.connections = {}
@@ -1050,22 +1052,193 @@ class SeekChallengeSection (ParrentListSection):
         
         for i in range(1,4):
             self.__loadSeekEditor(i)
-            self.__writeSavedSeek(i)
+            self.__writeSavedSeeks(i)
             self.connections["seek%sRadioConfigButton" % i] = \
                 self.widgets["seek%sRadioConfigButton" % i].connect( \
                 "clicked", self.onSeekRadioConfigButtonClicked, i)
-
+            self.connections["challenge%sRadioConfigButton" % i] = \
+                self.widgets["challenge%sRadioConfigButton" % i].connect( \
+                "clicked", self.onChallengeRadioConfigButtonClicked, i)
+        
         if not connection.isRegistred():
             self.widgets["ratedGameCheck"].set_active(False)
-            self.widgets["chaRatedGameCheck"].set_active(False)
             self.widgets["ratedGameCheck"].hide()
-            self.widgets["chaRatedGameCheck"].hide()
         else:
             self.widgets["ratedGameCheck"].show()
-            self.widgets["chaRatedGameCheck"].show()
         
         # TODO: if registered and no default, update default rating center
         # to be as close as possible to users blitz rating
+
+    def onSeekButtonClicked (self, button):
+        if self.widgets["seek3Radio"].get_active():
+            self.__loadSeekEditor(3)
+        elif self.widgets["seek2Radio"].get_active():
+            self.__loadSeekEditor(2)
+        else:
+            self.__loadSeekEditor(1)
+        
+        min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
+        self.connection.glm.seek(min, incr, rated, ratingrange, color, variant, manual)
+
+    def onChallengeButtonClicked (self, button):
+        model, iter = self.widgets["playertreeview"].get_selection().get_selected()
+        if iter == None: return
+        playername = model.get_value(iter, 1)
+        
+        if self.widgets["challenge3Radio"].get_active():
+            self.__loadSeekEditor(3)
+        elif self.widgets["challenge2Radio"].get_active():
+            self.__loadSeekEditor(2)
+        else:
+            self.__loadSeekEditor(1)
+        
+        min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
+        self.connection.om.challenge(playername, min, incr, rated, color, variant)
+
+    def onSeekRadioConfigButtonClicked (self, configimage, seeknumber): 
+        self.__showSeekEditor(seeknumber)
+    
+    def onChallengeRadioConfigButtonClicked (self, configimage, seeknumber):
+        self.__showSeekEditor(seeknumber, challengemode=True)
+        self.onPlayerSelectionChanged(self.widgets["playertreeview"].get_selection())
+        
+    def __showSeekEditor (self, seeknumber, challengemode=False):
+        if not challengemode:
+            radioname = "seek%dRadio"
+            opradioname = "challenge%dRadio"
+            buttonname = "seek%dRadioConfigButton"
+            opbuttonname = "challenge%dRadioConfigButton"
+            configbuttoncallee = self.onSeekRadioConfigButtonClicked
+            self.widgets["strengthFrame"].show()
+            self.widgets["manualAcceptCheck"].show()
+        else:
+            radioname = "challenge%dRadio"
+            opradioname = "seek%dRadio"
+            buttonname = "challenge%dRadioConfigButton"
+            opbuttonname = "seek%dRadioConfigButton"
+            configbuttoncallee = self.onChallengeRadioConfigButtonClicked
+            self.widgets["strengthFrame"].hide()
+            self.widgets["manualAcceptCheck"].hide()
+            self.widgets["editSeekDialog"].resize(100, 100)
+        
+        self.widgets["chainAlignment"].show_all()        
+        self.__loadSeekEditor(seeknumber)
+        configbutton = buttonname % seeknumber
+        
+        def onResponse (dialog, response):
+            self.widgets["editSeekDialog"].hide()
+            self.widgets["editSeekDialog"].disconnect(handlerId)
+            for i in range(1,4):
+                self.widgets[buttonname % i].set_sensitive(True)
+                self.widgets[opbuttonname % i].set_sensitive(True)
+            if configbutton in self.connections:
+                self.widgets[configbutton].disconnect(self.connections[configbutton])
+            self.connections[configbutton] = \
+               self.widgets[configbutton].connect("clicked", configbuttoncallee, seeknumber)
+            if response != gtk.RESPONSE_OK:
+                return
+            self.__saveSeekEditor(seeknumber)
+            self.__writeSavedSeeks(seeknumber)
+        
+        for i in range(1,4):
+            if i is not seeknumber:
+                self.widgets[buttonname % i].set_sensitive(False)
+            self.widgets[opbuttonname % i].set_sensitive(False)
+        if configbutton in self.connections:
+            self.widgets[configbutton].disconnect(self.connections[configbutton])
+        self.connections[configbutton] = \
+           self.widgets[configbutton].connect("clicked", lambda *w: self.widgets["editSeekDialog"].present())
+        self.widgets[radioname % seeknumber].set_active(True)
+        self.widgets[opradioname % seeknumber].set_active(True)
+        
+        self.__updateYourRatingHBox()
+        self.__updateRatingCenterInfoBox()
+        self.__updateToleranceButton()
+        self.onUntimedCheckToggled(self.widgets["untimedCheck"])
+        
+        handlerId = self.widgets["editSeekDialog"].connect("response", onResponse)
+        title = "Edit Seek: " + self.widgets[radioname % seeknumber].get_label()[:-1]
+        self.widgets["editSeekDialog"].set_title(title)
+        self.widgets["editSeekDialog"].show()
+    
+    def onSeekSelectionChanged (self, selection):
+        # You can't press "Accept" button when nobody are selected
+        isAnythingSelected = selection.get_selected()[1] != None
+        self.widgets["acceptButton"].set_sensitive(isAnythingSelected)
+    
+    def onPlayerSelectionChanged (self, selection):
+        model, iter = selection.get_selected()
+        
+        # You can't press challengebutton when nobody is selected
+        isAnythingSelected = iter != None
+        self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
+        
+        if isAnythingSelected:
+            # You can't challenge a guest to a rated game
+            playerTitle = model.get_value(iter, 0)
+            isGuestPlayer = playerTitle == PlayerTabSection.peoplepix
+        self.widgets["ratedGameCheck"].set_sensitive(not isAnythingSelected or not isGuestPlayer)
+
+    #-------------------------------------------------------- Seek Editor
+        
+    def __writeSavedSeeks (self, seekNumber):
+        """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
+        min, gain, variant, ratingRange, color, rated, manual = self.__getSeekEditorDialogValues()
+        isUntimedGame = True if min is 0 else False
+        radioText = self.__getNameOfTimeControl(min, gain)
+        self.savedSeekRadioTexts[seekNumber-1] = radioText
+        self.__writeSeekRadioLabels()
+        seek = []
+        challenge = []
+        
+        if isUntimedGame:
+            pass
+        elif gain > 0:
+            seek.append("%d min + %d sec/move" % (min, gain))
+            challenge.append("%d min + %d sec/move" % (min, gain))
+        else:
+            seek.append("%d min" % (min))
+            challenge.append("%d min" % (min))
+        
+        if variant != NORMALCHESS and not isUntimedGame:
+            seek.append("%s" % variants[variant].name)
+            challenge.append("%s" % variants[variant].name)
+        
+        if ratingRange[0] > 0:
+            ratingText = "%d" % ratingRange[0]
+            if ratingRange[1] == 9999:
+                ratingText += "↑"
+            else:
+                ratingText += "-%d" % ratingRange[1]
+            seek.append(ratingText)
+        elif ratingRange[1] != 9999:
+            seek.append("%d↓" % ratingRange[1])
+        
+        if color == WHITE:
+            seek.append(_("White"))
+            challenge.append(_("White"))
+        elif color == BLACK:
+            seek.append(_("Black"))
+            challenge.append(_("Black"))
+        
+        if rated and not isUntimedGame:
+            seek.append(_("Rated"))
+            challenge.append(_("Rated"))
+        
+        if manual:
+            seek.append(_("Manual"))
+        
+        seekText = ", ".join(seek)
+        challengeText = ", ".join(challenge)
+        if seekNumber == 1:
+            self.widgets["seek1RadioLabel"].set_text(seekText)
+            self.widgets["challenge1RadioLabel"].set_text(challengeText)
+        elif seekNumber == 2:
+            self.widgets["seek2RadioLabel"].set_text(seekText)
+            self.widgets["challenge2RadioLabel"].set_text(challengeText)
+        else:
+            self.widgets["seek3RadioLabel"].set_text(seekText)
+            self.widgets["challenge3RadioLabel"].set_text(challengeText)
         
     def __loadSeekEditor (self, seeknumber):
         for widget in self.seekEditorWidgets:
@@ -1166,56 +1339,11 @@ class SeekChallengeSection (ParrentListSection):
                 labelText = "%s #%d:" % \
                    (self.savedSeekRadioTexts[i], gameTypes[self.savedSeekRadioTexts[i]][1])
                 self.widgets["seek%dRadio" % (i+1)].set_label(labelText)
+                self.widgets["challenge%dRadio" % (i+1)].set_label(labelText)
                 gameTypes[self.savedSeekRadioTexts[i]][1] += 1
             else:
                 self.widgets["seek%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
-        
-    def __writeSavedSeek (self, seekNumber):
-        min, gain, variant, ratingRange, color, rated, manual = self.__getSeekEditorDialogValues()
-        isUntimedGame = min == 0 and True or False
-        radioText = self.__getNameOfTimeControl(min, gain)
-        self.savedSeekRadioTexts[seekNumber-1] = radioText
-        self.__writeSeekRadioLabels()
-        seek = []
-        
-        if isUntimedGame:
-            pass
-        elif gain > 0:
-            seek.append("%d min + %d sec/move" % (min, gain))
-        else:
-            seek.append("%d min" % (min))
-        
-        if ratingRange[0] > 0:
-            ratingText = "%d" % ratingRange[0]
-            if ratingRange[1] == 9999:
-                ratingText += "↑"
-            else:
-                ratingText += "-%d" % ratingRange[1]
-            seek.append(ratingText)
-        elif ratingRange[1] != 9999:
-            seek.append("%d↓" % ratingRange[1])
-        
-        if color == WHITE:
-            seek.append(_("White"))
-        elif color == BLACK:
-            seek.append(_("Black"))
-        
-        if variant != NORMALCHESS and not isUntimedGame:
-            seek.append("%s" % variants[variant].name)
-        
-        if rated and not isUntimedGame:
-            seek.append(_("Rated"))
-        
-        if manual:
-            seek.append(_("Manual"))
-        
-        seekText = ", ".join(seek)
-        if seekNumber == 1:
-            self.widgets["seek1RadioLabel"].set_text(seekText)
-        elif seekNumber == 2:
-            self.widgets["seek2RadioLabel"].set_text(seekText)
-        else:
-            self.widgets["seek3RadioLabel"].set_text(seekText)
+                self.widgets["challenge%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
 
     def __getPixbufForRating (self, rating):
         assert type(rating) == int, "rating not an int: %s" % str(rating)
@@ -1372,44 +1500,6 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["timeControlNameLabel"].set_label("%s" % name)
         self.__updateYourRatingHBox()
     
-    def onSeekRadioConfigButtonClicked (self, configimage, seeknumber):
-        self.widgets["chainAlignment"].show_all()
-        self.__loadSeekEditor(seeknumber)
-
-        configbutton = "seek%dRadioConfigButton" % seeknumber
-        def onResponse (dialog, response):
-            self.widgets["editSeekDialog"].hide()
-            self.widgets["editSeekDialog"].disconnect(handlerId)
-            for i in range(1,4):
-                self.widgets["seek%dRadioConfigButton" % i].set_sensitive(True)
-            if configbutton in self.connections:
-                self.widgets[configbutton].disconnect(self.connections[configbutton])
-            self.connections[configbutton] = \
-               self.widgets[configbutton].connect("clicked", self.onSeekRadioConfigButtonClicked, seeknumber)
-            if response != gtk.RESPONSE_OK:
-                return
-            self.__saveSeekEditor(seeknumber)
-            self.__writeSavedSeek(seeknumber)
-        
-        for i in range(1,4):
-            if i is not seeknumber:
-                self.widgets["seek%dRadioConfigButton" % i].set_sensitive(False)
-        if configbutton in self.connections:
-            self.widgets[configbutton].disconnect(self.connections[configbutton])
-        self.connections[configbutton] = \
-           self.widgets[configbutton].connect("clicked", lambda *w: self.widgets["editSeekDialog"].present())
-        self.widgets["seek%dRadio" % seeknumber].set_active(True)
-        
-        self.__updateYourRatingHBox()
-        self.__updateRatingCenterInfoBox()
-        self.__updateToleranceButton()
-        self.onUntimedCheckToggled(self.widgets["untimedCheck"])
-        
-        handlerId = self.widgets["editSeekDialog"].connect("response", onResponse)
-        title = "Edit Seek: " + self.widgets["seek%dRadio" % seeknumber].get_label()[:-1]
-        self.widgets["editSeekDialog"].set_title(title)
-        self.widgets["editSeekDialog"].show()
-    
     def onUntimedCheckToggled (self, check):
         is_untimed_game = check.get_active()
         self.widgets["timeControlConfigVBox"].set_sensitive(not is_untimed_game)
@@ -1466,52 +1556,6 @@ class SeekChallengeSection (ParrentListSection):
         tolerance = int(self.widgets["toleranceSlider"].get_value()) * RATING_SLIDER_STEP
         self.widgets["toleranceLabel"].set_label("±%d" % tolerance)
         self.__updateRatingRangeBox()
-        
-#    def onMinstrengthSliderChanged (self, slider):
-#        minsliderval = int(self.widgets["customminstrengthSlider"].get_value())
-#        maxsliderval = int(self.widgets["custommaxstrengthSlider"].get_value())
-#        
-#        if minsliderval <= 0:
-#            self.widgets["customminstrengthLabel"].set_label(_("None"))
-#        else:
-#            self.widgets["customminstrengthLabel"].set_label("%d" % (minsliderval*100))
-#
-#        if minsliderval >= 19:
-#            self.widgets["customminstrengthImage"].set_from_pixbuf(self.expertpix)
-#        elif minsliderval >= 16:
-#            self.widgets["customminstrengthImage"].set_from_pixbuf(self.advancedpix)
-#        elif minsliderval >= 13:
-#            self.widgets["customminstrengthImage"].set_from_pixbuf(self.intermediatepix)
-#        elif minsliderval >= 10:
-#            self.widgets["customminstrengthImage"].set_from_pixbuf(self.beginnerpix)
-#        else:
-#            self.widgets["customminstrengthImage"].set_from_pixbuf(self.novicepix)
-#
-#        if (minsliderval+1) > maxsliderval:
-#            self.widgets["custommaxstrengthSlider"].set_value(minsliderval+1)
-#        
-#    def onMaxstrengthSliderChanged (self, slider):
-#        maxsliderval = int(self.widgets["custommaxstrengthSlider"].get_value())
-#        minsliderval = int(self.widgets["customminstrengthSlider"].get_value())
-#        
-#        if maxsliderval >= 30:
-#            self.widgets["custommaxstrengthLabel"].set_label( _("None"))
-#        else:
-#            self.widgets["custommaxstrengthLabel"].set_label("%d" % (maxsliderval*100))
-#
-#        if maxsliderval >= 19:
-#            self.widgets["custommaxstrengthImage"].set_from_pixbuf(self.expertpix)
-#        elif maxsliderval >= 16:
-#            self.widgets["custommaxstrengthImage"].set_from_pixbuf(self.advancedpix)
-#        elif maxsliderval >= 13:
-#            self.widgets["custommaxstrengthImage"].set_from_pixbuf(self.intermediatepix)
-#        elif maxsliderval >= 10:
-#            self.widgets["custommaxstrengthImage"].set_from_pixbuf(self.beginnerpix)
-#        else:
-#            self.widgets["custommaxstrengthImage"].set_from_pixbuf(self.novicepix)
-#        
-#        if (maxsliderval-1) < minsliderval:
-#            self.widgets["customminstrengthSlider"].set_value(maxsliderval-1)
 
     def onColorRadioChanged (self, radio):
         if self.widgets["nocolorRadio"].get_active():
@@ -1530,47 +1574,6 @@ class SeekChallengeSection (ParrentListSection):
     def onVariantComboChanged (self, combo):
         self.widgets["variantRadio"].set_active(True)            
         self.__updateYourRatingHBox()
-
-    def onSeekButtonClicked (self, button):
-        if self.widgets["seek3Radio"].get_active():
-            self.__loadSeekEditor(3)
-        elif self.widgets["seek2Radio"].get_active():
-            self.__loadSeekEditor(2)
-        else:
-            self.__loadSeekEditor(1)
-        
-        min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
-        self.connection.glm.seek(min, incr, rated, ratingrange, color, variant, manual)
-
-    def onChallengeButtonClicked (self, button):
-        model, iter = self.widgets["playertreeview"].get_selection().get_selected()
-        if iter == None: return
-        playerName = model.get_value(iter, 1)
-        rated = self.widgets["chaRatedGameCheck"].get_active()
-        color = self.widgets["chaColorCombobox"].get_active()-1
-        if color == -1: color = None
-        min, incr = map(int, self.widgets["chaTimeCombobox"].get_model()[
-                self.widgets["chaTimeCombobox"].get_active()][0].split(" min +"))
-        self.connection.om.challenge(playerName, min, incr, rated, color)
-    
-    def onSeekSelectionChanged (self, selection):
-        # You can't press challengebutton when nobody are selected
-        isAnythingSelected = selection.get_selected()[1] != None
-        self.widgets["acceptButton"].set_sensitive(isAnythingSelected)
-    
-    def onPlayerSelectionChanged (self, selection):
-        model, iter = selection.get_selected()
-        
-        # You can't press challengebutton when nobody are selected
-        isAnythingSelected = iter != None
-        self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
-        
-        if isAnythingSelected:
-            # You can't challenge a guest to a rated game
-            playerTitle = model.get_value(iter, 0)
-            isGuestPlayer = playerTitle == PlayerTabSection.peoplepix
-        self.widgets["chaRatedGameCheck"].set_sensitive(
-                not isAnythingSelected or not isGuestPlayer)
 
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
