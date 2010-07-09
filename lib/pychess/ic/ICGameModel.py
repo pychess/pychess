@@ -17,7 +17,6 @@ class ICGameModel (GameModel):
         self.connection.bm.connect("gamePaused", self.onGamePaused)
         
         self.connection.om.connect("onActionError", self.onActionError)
-        self.connection.om.connect("tooManySeeks", self.tooManySeeks)
         
         self.connection.connect("disconnected", self.onDisconnected)
         
@@ -132,12 +131,6 @@ class ICGameModel (GameModel):
     
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)
-    
-    def tooManySeeks (self, om):
-        if self.players[0].__type__ != REMOTE:
-            self.players[0].tooManySeeks()
-        else:
-            self.players[1].tooManySeeks()
     
     #
     # End
