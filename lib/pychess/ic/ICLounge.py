@@ -73,7 +73,11 @@ class ICLounge (GObject):
             #ConsoleWindow(w,c),
 
             SeekChallengeSection(w,c),
-
+            
+            # This is not really a section. It handles error messages which
+            # don't correspond to a running game
+            ErrorMessages(w,c),
+            
             # This is not really a section. Merely a pair of BoardManager connects
             # which takes care of ionest and stuff when a new game is started or
             # observed
@@ -1058,6 +1062,29 @@ class SeekChallengeSection (ParrentListSection):
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
         pass
+
+############################################################################
+# Relay server error messages to the user which aren't part of a game      #
+############################################################################
+
+class ErrorMessages (Section):
+    def __init__ (self, widgets, connection):
+        self.connection = connection
+        self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
+    
+    @glock.glocked
+    def tooManySeeks (self, om):
+        title = _("You can only have 3 outstanding seeks")
+        description = _("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?")
+        d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
+        d.set_markup ("<big><b>%s</b></big>" % title)
+        d.format_secondary_text (description)
+        def response (dialog, response):
+            if response == gtk.RESPONSE_YES:
+                print >> self.connection.client, "unseek"
+            dialog.hide()
+        d.connect("response", response)
+        d.show()
 
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #

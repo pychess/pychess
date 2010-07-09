@@ -176,11 +176,6 @@ class Human (Player):
         title = _("Your opponent asks you to hurry!")
         description = _("Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
-    
-    def tooManySeeks (self):
-        title = _("You can only have 3 outstanding seeks")
-        description = _("You can only have 3 outstanding seeks at the same time. If you would like to add a new seek, you must clear your active seeks by clicking the \"Clear Seeks\" button in the \"Seeks\" List.")
-        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
         
     @glock.glocked
     def pause (self):
