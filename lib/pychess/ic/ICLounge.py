@@ -10,7 +10,7 @@ import gtk, pango
 from gtk.gdk import pixbuf_new_from_file
 from gobject import GObject, SIGNAL_RUN_FIRST
 
-from pychess.System import glock, uistuff
+from pychess.System import conf, glock, uistuff
 from pychess.System.GtkWorker import Publisher
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
@@ -1035,8 +1035,9 @@ class SeekChallengeSection (ParrentListSection):
             uistuff.keep(self.widgets[widget], widget)
         
         self.connections = {}
+        self.lastdifference = 0
         self.savedSeekRadioTexts = [_("Blitz"), _("Blitz"), _("Blitz")]
-        self.lastratinglabel = -1
+        
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeek(i)
@@ -1068,7 +1069,9 @@ class SeekChallengeSection (ParrentListSection):
                                    first_value=self.seekEditorWidgetDefaults[widget][seeknumber-1])
             else:
                 uistuff.loadDialogWidget(self.widgets[widget], widget, seeknumber)
-                
+        
+        self.lastdifference = conf.get("lastdifference-%d" % seeknumber, -1)
+        
     def __saveSeekEditor (self, seeknumber):
         for widget in self.seekEditorWidgets:
             if widget in self.seekEditorWidgetGettersSetters:
@@ -1076,6 +1079,8 @@ class SeekChallengeSection (ParrentListSection):
                                          get_value_=self.seekEditorWidgetGettersSetters[widget][0])
             else:
                 uistuff.saveDialogWidget(self.widgets[widget], widget, seeknumber)
+        
+        conf.set("lastdifference-%d" % seeknumber, self.lastdifference)
 
     def __getSeekEditorDialogValues (self):
         if self.widgets["untimedCheck"].get_active():
@@ -1249,27 +1254,30 @@ class SeekChallengeSection (ParrentListSection):
         if minRating == 0 and maxRating == 9999:
             self.widgets["ratingRangeMinLabel"].set_label("Any strength")
             self.widgets["ratingRangeMinLabel"].show()
-
-    def __updateYourRatingHBox (self):
-        if self.finger == None: return
-        
+    
+    def __getGameTypes (self):
         if self.widgets["untimedCheck"].get_active():
-            gameTypeName = self.__getNameOfTimeControl(0, 0)
-            ratingType = self.__getTypeOfTimeControl(0, 0)
+            gametype = self.__getNameOfTimeControl(0, 0)
+            ratingtype = self.__getTypeOfTimeControl(0, 0)
         elif self.widgets["noVariantRadio"].get_active():
             min = int(self.widgets["minutesSpin"].get_value())
             gain = int(self.widgets["gainSpin"].get_value())
-            gameTypeName = self.__getNameOfTimeControl(min, gain)
-            ratingType = self.__getTypeOfTimeControl(min, gain)
+            gametype = self.__getNameOfTimeControl(min, gain)
+            ratingtype = self.__getTypeOfTimeControl(min, gain)
         else:
             variant_combo_getter = self.seekEditorWidgetGettersSetters["variantCombo"][0]
             variant = variant_combo_getter(self.widgets["variantCombo"])
-            gameTypeName = variants[variant].name
-            ratingType = self.variants[variant]
-
-        self.widgets["yourRatingNameLabel"].set_label(gameTypeName)
+            gametype = variants[variant].name
+            ratingtype = self.variants[variant]
+        return gametype, ratingtype
+        
+    def __updateYourRatingHBox (self):
+        if self.finger == None: return
+        gametype, ratingtype = self.__getGameTypes()
+        
+        self.widgets["yourRatingNameLabel"].set_label(gametype)
         try:
-            rating = self.finger.getRating(type=ratingType)
+            rating = self.finger.getRating(type=ratingtype)
         except KeyError:  # the user doesn't have a rating for this game type
             self.widgets["yourRatingImage"].clear()
             self.widgets["yourRatingLabel"].set_label(_("Unrated"))
@@ -1278,15 +1286,15 @@ class SeekChallengeSection (ParrentListSection):
         pixbuf = self.__getPixbufForRating(rating)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
         self.widgets["yourRatingLabel"].set_label(str(rating))
-        oldrating = self.lastratinglabel
-        self.lastratinglabel = rating
         
-        if self.chainbox.active and self.__clamp(rating) != self.__clamp(oldrating):
-            oldclamp = self.__clamp(oldrating)
-            oldcenter = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
-            difference = oldclamp - oldcenter
-            newclamp = self.__clamp(rating)
-            self.widgets["ratingCenterSlider"].set_value((newclamp - difference) / RATING_SLIDER_STEP)
+        center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
+        newclamp = self.__clamp(rating)
+        difference = newclamp - center
+        if self.chainbox.active and difference is not self.lastdifference:
+            newsliderval = (newclamp - self.lastdifference) / RATING_SLIDER_STEP
+            self.widgets["ratingCenterSlider"].set_value(newsliderval)
+        else:
+            self.lastdifference = difference
     
     def __clamp (self, rating):
         assert type(rating) is int
@@ -1412,6 +1420,16 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)        
         self.__updateRatingRangeBox()
 
+        gametype, ratingtype = self.__getGameTypes()
+        if self.finger == None: return
+        try:
+            rating = self.finger.getRating(type=ratingtype)
+        except KeyError:  # the user doesn't have a rating for this game type
+            return
+        rating = int(rating.elo)
+        newclamp = self.__clamp(rating)
+        self.lastdifference = newclamp - center
+        
     def __updateRatingCenterInfoBox (self):
         if self.widgets["toleranceHBox"].get_property("visible") == True:
             self.widgets["ratingCenterAlignment"].set_property("top-padding", 4)
