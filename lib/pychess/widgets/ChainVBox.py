@@ -27,16 +27,27 @@ class ChainVBox (gtk.VBox):
         self.button.set_image(self.image)
         self.button.set_relief(gtk.RELIEF_NONE)
         self.button.set_property("yalign", 0)
-        self.active = True
+        self._active = True
         self.button.connect("clicked", self.onClicked)
-        
-    def onClicked (self, button):
-        if self.active == False:
+    
+    def getActive (self):
+        return self._active
+    def setActive (self, active):
+        assert type(active) is bool
+        self._active = active
+        if self._active is True:
             self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))
-            self.active = True
         else:
             self.image.set_from_file(addDataPrefix("glade/stock-vchain-broken-24.png"))
-            self.active = False
+    active = property(getActive, setActive)
+    
+    def onClicked (self, button):
+        if self._active is False:
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))
+            self._active = True
+        else:
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-broken-24.png"))
+            self._active = False
         self.emit("clicked")
 
 CHAIN_TOP, CHAIN_BOTTOM = range(2)

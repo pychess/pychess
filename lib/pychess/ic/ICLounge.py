@@ -944,7 +944,7 @@ class SeekChallengeSection (ParrentListSection):
     
     seekEditorWidgets = (
         "untimedCheck", "minutesSpin", "gainSpin",
-        "strengthCheck", "ratingCenterSlider", "toleranceSlider", "toleranceHBox",
+        "strengthCheck", "chainAlignment", "ratingCenterSlider", "toleranceSlider", "toleranceHBox",
         "nocolorRadio", "whitecolorRadio", "blackcolorRadio",
         # variantCombo has to come before other variant widgets so that
         # when the widget is loaded, variantRadio isn't selected by the callback,
@@ -956,6 +956,7 @@ class SeekChallengeSection (ParrentListSection):
         "minutesSpin": [15, 5, 2],
         "gainSpin": [10, 0, 1],
         "strengthCheck": [False, True, False],
+        "chainAlignment": [True, True, True],
         "ratingCenterSlider": [40, 40, 40],
         "toleranceSlider": [8, 8, 8],
         "toleranceHBox": [False, False, False],
@@ -1017,6 +1018,11 @@ class SeekChallengeSection (ParrentListSection):
         self.chainbox = ChainVBox()
         self.chainbox.connect("clicked", self.onChainBoxClicked)
         self.widgets["chainAlignment"].add(self.chainbox)
+        def chainboxGetter (widget):
+            return self.chainbox.active
+        def chainboxSetter (widget, is_active):
+            self.chainbox.active = is_active
+        self.seekEditorWidgetGettersSetters["chainAlignment"] = (chainboxGetter, chainboxSetter)
         
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
         glock.glock_connect(self.connection, "disconnected",
