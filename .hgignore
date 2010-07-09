@@ -12,3 +12,5 @@ syntax: regexp
 \.project$
 syntax: regexp
 ^[^/]+.launch$
+syntax: regexp
+^\.settings/org\.eclipse\.core\.resources\.prefs
