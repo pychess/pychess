@@ -2527,7 +2527,7 @@ b) you change the variant or the time control</property>
                                 </child>
                                 <child>
                                   <widget class="GtkCheckButton" id="manualAcceptCheck">
-                                    <property name="label" translatable="yes">Manually accept opponents</property>
+                                    <property name="label" translatable="yes">Manually accept opponent</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
