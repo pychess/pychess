@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: template\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-09 17:31+0200\n"
-"PO-Revision-Date: 2010-07-09 18:11+0200\n"
+"POT-Creation-Date: 2010-07-12 16:08+0200\n"
+"PO-Revision-Date: 2010-07-12 16:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: slovensko <lugos-slo@lugos.si>\n"
 "MIME-Version: 1.0\n"
@@ -21,13 +21,33 @@ msgstr ""
 msgid "_Game"
 msgstr "_Igra"
 
+#: glade/PyChess.glade:27
+msgid "_New Game"
+msgstr "_Nova igra"
+
+#: glade/PyChess.glade:43
+msgid "Play _Internet Chess"
+msgstr "_Igraj medmrežni šah"
+
+#: glade/PyChess.glade:64
+msgid "_Load Game"
+msgstr "_Naloži igro"
+
 #: glade/PyChess.glade:80
-msgid "Set up Position"
+msgid "Setup Position"
 msgstr "Nastavi položaj"
 
 #: glade/PyChess.glade:88
-msgid "Enter game _notation"
+msgid "Enter Game _Notation"
 msgstr "Vnesi notacijo igre"
+
+#: glade/PyChess.glade:100
+msgid "_Save Game"
+msgstr "_Shrani igro"
+
+#: glade/PyChess.glade:117
+msgid "Save Game _As"
+msgstr "Shrani igro _kot"
 
 #: glade/PyChess.glade:149
 msgid "Player _Rating"
@@ -57,11 +77,15 @@ msgstr "Ponudi _premor"
 msgid "Offer _Resume"
 msgstr "Ponudi _nadaljevanje"
 
+#: glade/PyChess.glade:234
+msgid "Offer _Undo"
+msgstr "Ponudi p_ovrnitev poteze"
+
 #: glade/PyChess.glade:258
 msgid "_Call Flag"
 msgstr "Sporoči padec zastavice"
 
-#: glade/PyChess.glade:267 glade/fics_lounge.glade:916
+#: glade/PyChess.glade:267 glade/fics_lounge.glade:1236
 msgid "R_esign"
 msgstr "_Predam se"
 
@@ -72,6 +96,18 @@ msgstr "Prosi za premik"
 #: glade/PyChess.glade:288
 msgid "_View"
 msgstr "_Pogled"
+
+#: glade/PyChess.glade:294
+msgid "_Rotate Board"
+msgstr "_Zavrti tablo"
+
+#: glade/PyChess.glade:311
+msgid "_Fullscreen"
+msgstr "Celotni zaslon"
+
+#: glade/PyChess.glade:327
+msgid "Leave _Fullscreen"
+msgstr "Zapusti celotni zaslon"
 
 #: glade/PyChess.glade:344
 msgid "_Show Sidepanels"
@@ -96,6 +132,22 @@ msgstr "_Nastavitve"
 #: glade/PyChess.glade:410
 msgid "_Help"
 msgstr "_Pomoč"
+
+#: glade/PyChess.glade:416
+msgid "About Chess"
+msgstr "O šahu"
+
+#: glade/PyChess.glade:430
+msgid "How to Play"
+msgstr "Kako igrati"
+
+#: glade/PyChess.glade:444
+msgid "Translate PyChess"
+msgstr "Prevedi PyChess"
+
+#: glade/PyChess.glade:458
+msgid "Tip of the Day"
+msgstr "Nasvet dneva"
 
 #: glade/PyChess.glade:510
 msgid "Chess client for the Gnome desktop"
@@ -219,8 +271,8 @@ msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
 msgstr ""
-"Če je nastavljeno, bo igralna tabla prikazala oznako za vsako šahovsko polje."
-" Le-ti ne bodo prikazani v šahovski notaciji."
+"Če je nastavljeno, bo igralna tabla prikazala oznako za vsako šahovsko "
+"polje. Le-ti ne bodo prikazani v šahovski notaciji."
 
 #: glade/PyChess.glade:1157
 msgid "Prefer figures in _notation"
@@ -458,160 +510,278 @@ msgstr "PyChess - Medmrežni šah: FICS"
 
 #: glade/fics_lounge.glade:59
 msgid "_Clear Seeks"
-msgstr "_Počisti povpraševanja"
+msgstr "_Počisti poizvedbo"
 
 #: glade/fics_lounge.glade:82
 msgid "_Accept"
 msgstr "_Sprejmem"
 
-#: glade/fics_lounge.glade:144
-msgid "Opp Strength:"
-msgstr "Moč nasprotnika"
+#: glade/fics_lounge.glade:269 glade/fics_lounge.glade:762
+msgid "Lightning:"
+msgstr "Oslepojoče:"
 
-#: glade/fics_lounge.glade:154 glade/fics_lounge.glade:514
-msgid ""
-"Don't Care\n"
-"Want White\n"
-"Want Black"
-msgstr ""
-"Mi je vseeno\n"
-"Želim bele\n"
-"Želim črne"
+#: glade/fics_lounge.glade:291 glade/fics_lounge.glade:784
+msgid "Standard:"
+msgstr "Navadno:"
 
-#: glade/fics_lounge.glade:171 glade/fics_lounge.glade:491
-msgid "Your Color:"
-msgstr "Tvoja barva:"
+#: glade/fics_lounge.glade:314 glade/fics_lounge.glade:807
+msgid "Blitz:"
+msgstr "Bliskovito:"
 
-#: glade/fics_lounge.glade:184 glade/fics_lounge.glade:502
-msgid "Game Time:"
-msgstr "Čas igre:"
+#: glade/fics_lounge.glade:337
+msgid "2 min, 1800↓, Black, Fischer Random"
+msgstr "2 min, 1800↓, črni, Fischer Random"
 
-#: glade/fics_lounge.glade:196 glade/fics_lounge.glade:528
-msgid ""
-"15 min + 10\tNormal\n"
-"5 min + 2\tBlitz\n"
-"1 min + 0\tLightning\n"
-"Custom"
-msgstr ""
-"15 min + 10\tNavadna\n"
-"5 min + 2\tBlitz\n"
-"1 min + 0\tHitra\n"
-"Po meri"
+#: glade/fics_lounge.glade:356
+msgid "10 min + 6 sec/move, 1400↑, White"
+msgstr "10 min + 6 sec/potezo, 1400↑, beli"
 
-#: glade/fics_lounge.glade:213
-msgid ""
-"0 → 1300\t\tEasy\n"
-"1300 → 1600\tAdvanced\n"
-"1600 → 9999\tExpert"
-msgstr ""
-"0 → 1300\t\tEnostavno\n"
-"1300 → 1600\tNapredno\n"
-"1600 → 9999\tIzvedenec"
+#: glade/fics_lounge.glade:375
+msgid "5 min, 1200-1800"
+msgstr "5 min, 1200-1800"
 
-#: glade/fics_lounge.glade:226 glade/fics_lounge.glade:544
-msgid "Rated Game"
-msgstr "Rangirana igra"
-
-#: glade/fics_lounge.glade:275
-msgid "S_end seek"
+#: glade/fics_lounge.glade:423
+msgid "Send seek"
 msgstr "Pošlji poizvedbo"
 
-#: glade/fics_lounge.glade:310
-msgid "Seek Panel"
-msgstr "Poizvedben pano"
+#: glade/fics_lounge.glade:455
+msgid "Create Seek"
+msgstr "Ustvari poizvedbo"
 
-#: glade/fics_lounge.glade:327
+#: glade/fics_lounge.glade:472
 msgid "_Seeks / Challenges"
 msgstr "Poizvedbe / Izzivalci"
 
-#: glade/fics_lounge.glade:344 lib/pychess/ic/ICLounge.py:178
-#: lib/pychess/ic/ICLounge.py:359 lib/pychess/ic/ICLounge.py:641
+#: glade/fics_lounge.glade:489 lib/pychess/ic/ICLounge.py:183
+#: lib/pychess/ic/ICLounge.py:364 lib/pychess/ic/ICLounge.py:646
 msgid "Rating"
 msgstr "Rang"
 
-#: glade/fics_lounge.glade:367
+#: glade/fics_lounge.glade:512
 msgid "Time"
 msgstr "Čas"
 
-#: glade/fics_lounge.glade:389
+#: glade/fics_lounge.glade:534
 msgid "Seek _Graph"
 msgstr "Grafikon poizvedbe"
 
-#: glade/fics_lounge.glade:412
+#: glade/fics_lounge.glade:557
 msgid "0 Players Ready"
 msgstr "0 Igralcev pripravljenih"
 
-#: glade/fics_lounge.glade:428
+#: glade/fics_lounge.glade:573
 msgid "Start P_rivate Chat"
 msgstr "Začni zasebni pogovor"
 
-#: glade/fics_lounge.glade:594
-msgid "S_end challenge"
-msgstr "Pošlji izziv"
+#: glade/fics_lounge.glade:830
+msgid "2 min, Black, Fischer Random"
+msgstr "2 min, črni, Fischer naključna"
 
-#: glade/fics_lounge.glade:628
-msgid "Challenge Panel"
-msgstr "Pano izzivalcev"
+#: glade/fics_lounge.glade:849
+msgid "10 min + 6 sec/move, White"
+msgstr "10 min + 6 sec/potezo, beli"
 
-#: glade/fics_lounge.glade:649
+#: glade/fics_lounge.glade:868
+msgid "5 min"
+msgstr "5 min"
+
+#: glade/fics_lounge.glade:916 glade/fics_lounge.glade:948
+msgid "Challenge"
+msgstr "Izziv"
+
+#: glade/fics_lounge.glade:969
 msgid "_Player List"
 msgstr "Seznam igralcev"
 
-#: glade/fics_lounge.glade:687
+#: glade/fics_lounge.glade:1007
 msgid "_Observe"
 msgstr "_Opazuj"
 
-#: glade/fics_lounge.glade:729
+#: glade/fics_lounge.glade:1049
 msgid "_Game List"
 msgstr "Seznam iger"
 
-#: glade/fics_lounge.glade:780
+#: glade/fics_lounge.glade:1100
 msgid "Pre_view"
 msgstr "_Predogled"
 
-#: glade/fics_lounge.glade:821
+#: glade/fics_lounge.glade:1141
 msgid "A_bort"
 msgstr "_Prekliči"
 
-#: glade/fics_lounge.glade:862
+#: glade/fics_lounge.glade:1182
 msgid "_Draw"
 msgstr "Neodločeno"
 
-#: glade/fics_lounge.glade:969
+#: glade/fics_lounge.glade:1289
 msgid "_Resume"
 msgstr "_Nadaljuj"
 
-#: glade/fics_lounge.glade:1021
+#: glade/fics_lounge.glade:1341
 msgid "_Adjourned"
 msgstr "Odloženo"
 
-#: glade/fics_lounge.glade:1118
+#: glade/fics_lounge.glade:1438
 msgid "<b>News</b>"
 msgstr "Novice"
 
-#: glade/fics_lounge.glade:1149
+#: glade/fics_lounge.glade:1469
 msgid "Show _Chat"
 msgstr "_Prikaži klepet"
 
-#: glade/fics_lounge.glade:1163
+#: glade/fics_lounge.glade:1483
 msgid "_Log Off"
 msgstr "_Odjavi se"
 
-#: glade/fics_lounge.glade:1182
+#: glade/fics_lounge.glade:1502
 msgid "<b>Tools</b>"
 msgstr "Orodja"
 
-#: glade/fics_lounge.glade:1212
-msgid "Custom Time Setting"
-msgstr "Nastavitev časa po meri"
+#: glade/fics_lounge.glade:1532
+msgid "Edit Seek"
+msgstr "Uredi povpraševanje"
 
-#: glade/fics_lounge.glade:1271 lib/pychess/widgets/newGameDialog.py:197
-msgid "Minutes:"
-msgstr "Minute"
+#: glade/fics_lounge.glade:1588 lib/pychess/ic/ICLounge.py:1323
+#: lib/pychess/ic/ICLounge.py:1332
+#: lib/pychess/ic/managers/GameListManager.py:51
+#: lib/pychess/ic/managers/GameListManager.py:58
+msgid "Untimed"
+msgstr "Brez časa"
 
-#: glade/fics_lounge.glade:1282 lib/pychess/widgets/newGameDialog.py:201
-msgid "Gain:"
-msgstr "Dodatek:"
+#: glade/fics_lounge.glade:1632
+msgid "Minutes:  "
+msgstr "Minut:  "
+
+#: glade/fics_lounge.glade:1655
+msgid "   Gain:  "
+msgstr "   Dodatek:  "
+
+#: glade/fics_lounge.glade:1685
+msgid "Time control:  "
+msgstr "Nadzor časa:  "
+
+#: glade/fics_lounge.glade:1696 glade/fics_lounge.glade:1844
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1325
+#: lib/pychess/ic/ICLounge.py:1332
+#: lib/pychess/ic/managers/GameListManager.py:52
+#: lib/pychess/ic/managers/GameListManager.py:60
+msgid "Standard"
+msgstr "Navadno"
+
+#: glade/fics_lounge.glade:1728 glade/newInOut.glade:417
+msgid "<b>Time Control</b>"
+msgstr "<b>Nadzor časa</b>"
+
+#: glade/fics_lounge.glade:1780 glade/fics_lounge.glade:2238
+msgid "Don't care"
+msgstr "Vseeno mi je"
+
+#: glade/fics_lounge.glade:1834
+msgid "Your "
+msgstr "Tvoja "
+
+#: glade/fics_lounge.glade:1854
+msgid " strength: "
+msgstr " moč: "
+
+#: glade/fics_lounge.glade:1879 glade/fics_lounge.glade:2057
+msgid "1200"
+msgstr "1200"
+
+#: glade/fics_lounge.glade:1904
+msgid "Opponent's strength: "
+msgstr "Moč nasprotnika: "
+
+#: glade/fics_lounge.glade:1929
+msgid "1000"
+msgstr "1000"
+
+#: glade/fics_lounge.glade:1939
+msgid " - "
+msgstr " - "
+
+#: glade/fics_lounge.glade:1964
+msgid "1400"
+msgstr "1400"
+
+#: glade/fics_lounge.glade:1991
+msgid ""
+"When this button is in the \"locked\" state, the relationship\n"
+"between \"Opponent's strength\" and \"Your strength\" will be\n"
+"preserved when \n"
+"a) your rating for the type of game sought has changed\n"
+"b) you change the variant or the time control"
+msgstr ""
+"Ko je ta gumb v stanju \"zaklenjeno\", bo povezava\n"
+"med \"Močjo nasprotnika\" in \"Tvoja moč\"ohranjena ko \n"
+"a) se je vaš rang poizvedovanja spremenil\n"
+"b) spremenite šahovsko varianto in čas igre"
+
+#: glade/fics_lounge.glade:2025
+msgid "Center:"
+msgstr "Usredišči:"
+
+#: glade/fics_lounge.glade:2101
+msgid "Tolerance:"
+msgstr "Odstopanje:"
+
+#: glade/fics_lounge.glade:2118
+msgid "±200"
+msgstr "±200"
+
+#: glade/fics_lounge.glade:2148 lib/pychess/ic/ICLounge.py:1543
+msgid "Hide"
+msgstr "Skrij"
+
+#: glade/fics_lounge.glade:2186
+msgid "<b>Opponent Strength</b>"
+msgstr "<b>Nasprotnikova moč</b>"
+
+#: glade/fics_lounge.glade:2271 lib/pychess/Utils/const.py:24
+#: lib/pychess/ic/ICLounge.py:1218 lib/pychess/ic/ICLounge.py:1219
+#: lib/pychess/widgets/ChessClock.py:18
+#: lib/pychess/widgets/TaskerManager.py:146 lib/pychess/widgets/ionest.py:114
+msgid "White"
+msgstr "Beli"
+
+#: glade/fics_lounge.glade:2293 lib/pychess/Utils/const.py:24
+#: lib/pychess/ic/ICLounge.py:1221 lib/pychess/ic/ICLounge.py:1222
+#: lib/pychess/widgets/ChessClock.py:18
+#: lib/pychess/widgets/TaskerManager.py:147 lib/pychess/widgets/ionest.py:114
+msgid "Black"
+msgstr "Črni"
+
+#: glade/fics_lounge.glade:2324
+msgid "<b>Your Color</b>"
+msgstr "Tvoja barva:"
+
+#: glade/fics_lounge.glade:2378
+msgid "Play normal chess rules"
+msgstr "Igraj navadni šah"
+
+#: glade/fics_lounge.glade:2411
+msgid "Play"
+msgstr "Igraj"
+
+#: glade/fics_lounge.glade:2433
+msgid "Asymmetric Random\t"
+msgstr "Asimetrično naključen\t"
+
+#: glade/fics_lounge.glade:2462 glade/newInOut.glade:586
+msgid "<b>Chess Variant</b>"
+msgstr "<b>Različica šaha</b>"
+
+#: glade/fics_lounge.glade:2516
+msgid "Rated game"
+msgstr "Rangirana igra"
+
+#: glade/fics_lounge.glade:2530
+msgid "Manually accept opponents"
+msgstr "Ročno odobri nasprotnike"
+
+#: glade/fics_lounge.glade:2555
+msgid "<b>Options</b>"
+msgstr "<b>Možnosti</b>"
 
 #: glade/findbar.glade:6
 msgid "window1"
@@ -665,10 +835,6 @@ msgstr "Naključno:\t15 min + 10 sek/potezo"
 msgid "Normal:\t40 min + 15 sec/move"
 msgstr "Navadno:\t40 min + 15 sek/potezo"
 
-#: glade/newInOut.glade:417
-msgid "<b>Time Control</b>"
-msgstr "<b>Nadzor časa</b>"
-
 #: glade/newInOut.glade:464
 msgid "_Play Normal chess"
 msgstr "Igraj navadni šah"
@@ -680,10 +846,6 @@ msgstr "Igraj Fischer naključni šah"
 #: glade/newInOut.glade:538
 msgid "Play Lossers chess"
 msgstr "Igraj izgubarski šah"
-
-#: glade/newInOut.glade:586
-msgid "<b>Chess Variant</b>"
-msgstr "<b>Različica šaha</b>"
 
 #: glade/newInOut.glade:663
 msgid "<b>Open Game</b>"
@@ -1050,7 +1212,7 @@ msgstr "Ne morem naložiti diagrama '%s'"
 msgid "Chess Position"
 msgstr "Položaj šaha"
 
-#: lib/pychess/Savers/epd.py:139 lib/pychess/ic/ICLounge.py:213
+#: lib/pychess/Savers/epd.py:139 lib/pychess/ic/ICLounge.py:218
 msgid "Unknown"
 msgstr "Neznan"
 
@@ -1088,30 +1250,17 @@ msgstr "Krajevni dogodek"
 msgid "Local Site"
 msgstr "Lokalna stran"
 
-#: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/TaskerManager.py:146 lib/pychess/widgets/ionest.py:114
-msgid "White"
-msgstr "Beli"
-
-#: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/TaskerManager.py:147 lib/pychess/widgets/ionest.py:114
-msgid "Black"
-msgstr "Črni"
-
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:962
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1051
+#: lib/pychess/ic/ICLounge.py:1327 lib/pychess/ic/ICLounge.py:1333
 #: lib/pychess/widgets/newGameDialog.py:145
 #: lib/pychess/ic/managers/GameListManager.py:49
 #: lib/pychess/ic/managers/GameListManager.py:56
-#: lib/pychess/ic/managers/GameListManager.py:302
+#: lib/pychess/ic/managers/GameListManager.py:305
 msgid "Blitz"
 msgstr "Bliskovito"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:52
-#: lib/pychess/ic/managers/GameListManager.py:60
-msgid "Standard"
-msgstr "Navadno"
-
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:964
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1329
+#: lib/pychess/ic/ICLounge.py:1333
 #: lib/pychess/ic/managers/GameListManager.py:50
 #: lib/pychess/ic/managers/GameListManager.py:57
 msgid "Lightning"
@@ -1330,7 +1479,7 @@ msgstr "Kot"
 
 #: lib/pychess/Variants/fischerandom.py:219
 #: lib/pychess/ic/managers/GameListManager.py:28
-#: lib/pychess/ic/managers/GameListManager.py:301
+#: lib/pychess/ic/managers/GameListManager.py:304
 msgid "Fischer Random"
 msgstr "Fischer naključna"
 
@@ -1338,8 +1487,7 @@ msgstr "Fischer naključna"
 msgid "Knight odds"
 msgstr "Konj prednosti"
 
-#: lib/pychess/Variants/normal.py:5 lib/pychess/ic/ICLounge.py:960
-#: lib/pychess/widgets/newGameDialog.py:149
+#: lib/pychess/Variants/normal.py:5 lib/pychess/widgets/newGameDialog.py:149
 msgid "Normal"
 msgstr "Navadno"
 
@@ -1370,7 +1518,8 @@ msgstr "Naključen"
 msgid "Rook odds"
 msgstr "Trnjava prednosti"
 
-#: lib/pychess/Variants/shuffle.py:33 lib/pychess/widgets/newGameDialog.py:239
+#: lib/pychess/Variants/shuffle.py:33 lib/pychess/ic/ICLounge.py:1455
+#: lib/pychess/widgets/newGameDialog.py:239
 #: lib/pychess/ic/managers/GameListManager.py:22
 msgid "Shuffle"
 msgstr "Trik"
@@ -1429,39 +1578,39 @@ msgstr "Samodejna odjava"
 msgid "You have been logged out because you were idle more than 60 minutes"
 msgstr "Samodejno si bil odjavljen, ker si bil nedejaven več kot 60 minut"
 
-#: lib/pychess/ic/ICLounge.py:178
+#: lib/pychess/ic/ICLounge.py:183
 msgid "Win"
 msgstr "Zmaga"
 
-#: lib/pychess/ic/ICLounge.py:178
+#: lib/pychess/ic/ICLounge.py:183
 msgid "Draw"
 msgstr "Neodločeno"
 
-#: lib/pychess/ic/ICLounge.py:178
+#: lib/pychess/ic/ICLounge.py:183
 msgid "Loss"
 msgstr "Poraz"
 
-#: lib/pychess/ic/ICLounge.py:194
+#: lib/pychess/ic/ICLounge.py:199
 msgid "Email"
 msgstr "E-pošta"
 
-#: lib/pychess/ic/ICLounge.py:199
+#: lib/pychess/ic/ICLounge.py:204
 msgid "Spent"
 msgstr "Potrošiti"
 
-#: lib/pychess/ic/ICLounge.py:201
+#: lib/pychess/ic/ICLounge.py:206
 msgid "online in total"
 msgstr "skupaj prijavljenih"
 
-#: lib/pychess/ic/ICLounge.py:205
+#: lib/pychess/ic/ICLounge.py:210
 msgid "Ping"
 msgstr "Ping"
 
-#: lib/pychess/ic/ICLounge.py:206
+#: lib/pychess/ic/ICLounge.py:211
 msgid "Connecting"
 msgstr "Povezujem"
 
-#: lib/pychess/ic/ICLounge.py:224
+#: lib/pychess/ic/ICLounge.py:229
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest is not able to play rated games, and thus the offer of games will be "
@@ -1470,164 +1619,151 @@ msgstr ""
 "Trenutno si povezan kot gost.\n"
 "Gost ne more igrati rangiranih iger in zato je ponudba iger manjša."
 
-#: lib/pychess/ic/ICLounge.py:229
+#: lib/pychess/ic/ICLounge.py:234
 msgid "Register now"
 msgstr "Registriraj se sedaj"
 
-#: lib/pychess/ic/ICLounge.py:359 lib/pychess/ic/ICLounge.py:641
+#: lib/pychess/ic/ICLounge.py:364 lib/pychess/ic/ICLounge.py:646
 #: lib/pychess/widgets/preferencesDialog.py:78
 msgid "Name"
 msgstr "Ime"
 
-#: lib/pychess/ic/ICLounge.py:359 lib/pychess/ic/ICLounge.py:422
-#: lib/pychess/ic/ICLounge.py:520 lib/pychess/ic/ICLounge.py:598
+#: lib/pychess/ic/ICLounge.py:364 lib/pychess/ic/ICLounge.py:427
+#: lib/pychess/ic/ICLounge.py:525 lib/pychess/ic/ICLounge.py:603
+#: lib/pychess/ic/ICLounge.py:1225 lib/pychess/ic/ICLounge.py:1226
 msgid "Rated"
 msgstr "Rangiran"
 
-#: lib/pychess/ic/ICLounge.py:360
+#: lib/pychess/ic/ICLounge.py:365
 msgid "Type"
 msgstr "Tip"
 
-#: lib/pychess/ic/ICLounge.py:360
+#: lib/pychess/ic/ICLounge.py:365
 msgid "Clock"
 msgstr "Ura"
 
-#: lib/pychess/ic/ICLounge.py:419 lib/pychess/ic/ICLounge.py:517
+#: lib/pychess/ic/ICLounge.py:424 lib/pychess/ic/ICLounge.py:522
 #, python-format
 msgid "%(min)s min"
-msgstr "%(min)s min + %(sec)s sec"
+msgstr "%(min)s min"
 
-#: lib/pychess/ic/ICLounge.py:421 lib/pychess/ic/ICLounge.py:519
+#: lib/pychess/ic/ICLounge.py:426 lib/pychess/ic/ICLounge.py:524
 #, python-format
 msgid " + %(sec)s sec"
-msgstr "%(min)s min + %(sec)s sec"
+msgstr " + %(sec)s sec"
 
-#: lib/pychess/ic/ICLounge.py:422 lib/pychess/ic/ICLounge.py:520
-#: lib/pychess/ic/ICLounge.py:598
+#: lib/pychess/ic/ICLounge.py:427 lib/pychess/ic/ICLounge.py:525
+#: lib/pychess/ic/ICLounge.py:603 lib/pychess/ic/ICLounge.py:1421
 msgid "Unrated"
 msgstr "Nerangiran"
 
-#: lib/pychess/ic/ICLounge.py:433 lib/pychess/ic/ICLounge.py:447
-#: lib/pychess/ic/ICLounge.py:526 lib/pychess/ic/ICLounge.py:537
+#: lib/pychess/ic/ICLounge.py:438 lib/pychess/ic/ICLounge.py:452
+#: lib/pychess/ic/ICLounge.py:531 lib/pychess/ic/ICLounge.py:542
 msgid "Active Seek"
 msgstr "Živo iskanje"
 
-#: lib/pychess/ic/ICLounge.py:433 lib/pychess/ic/ICLounge.py:447
-#: lib/pychess/ic/ICLounge.py:453 lib/pychess/ic/ICLounge.py:486
-#: lib/pychess/ic/ICLounge.py:526 lib/pychess/ic/ICLounge.py:537
+#: lib/pychess/ic/ICLounge.py:438 lib/pychess/ic/ICLounge.py:452
+#: lib/pychess/ic/ICLounge.py:458 lib/pychess/ic/ICLounge.py:491
+#: lib/pychess/ic/ICLounge.py:531 lib/pychess/ic/ICLounge.py:542
 msgid "Active Seeks"
 msgstr "Živa iskanja"
 
-#: lib/pychess/ic/ICLounge.py:567
+#: lib/pychess/ic/ICLounge.py:572
 msgid " min"
 msgstr "min"
 
-#: lib/pychess/ic/ICLounge.py:600 lib/pychess/ic/ICLounge.py:959
-#: lib/pychess/ic/ICLounge.py:961 lib/pychess/ic/ICLounge.py:963
-#: lib/pychess/ic/ICLounge.py:1012
+#: lib/pychess/ic/ICLounge.py:605
 #, python-format
 msgid "%(min)s min + %(sec)s sec"
 msgstr "%(min)s min + %(sec)s sec"
 
-#: lib/pychess/ic/ICLounge.py:681 lib/pychess/ic/ICLounge.py:693
+#: lib/pychess/ic/ICLounge.py:686 lib/pychess/ic/ICLounge.py:698
 msgid "Player Ready"
 msgstr "Igralec pripravljen"
 
-#: lib/pychess/ic/ICLounge.py:681 lib/pychess/ic/ICLounge.py:693
+#: lib/pychess/ic/ICLounge.py:686 lib/pychess/ic/ICLounge.py:698
 msgid "Players Ready"
 msgstr "Igralci pripravljeni"
 
-#: lib/pychess/ic/ICLounge.py:731
+#: lib/pychess/ic/ICLounge.py:736
 msgid "White Player"
 msgstr "Beli igralec"
 
-#: lib/pychess/ic/ICLounge.py:731
+#: lib/pychess/ic/ICLounge.py:736
 msgid "Black Player"
 msgstr "Črni igralec"
 
-#: lib/pychess/ic/ICLounge.py:732
+#: lib/pychess/ic/ICLounge.py:737
 msgid "Game Type"
 msgstr "Tip igre"
 
-#: lib/pychess/ic/ICLounge.py:784 lib/pychess/ic/ICLounge.py:801
-#: lib/pychess/ic/ICLounge.py:802
+#: lib/pychess/ic/ICLounge.py:789 lib/pychess/ic/ICLounge.py:806
+#: lib/pychess/ic/ICLounge.py:807
 msgid "Private"
 msgstr "Zasebno"
 
-#: lib/pychess/ic/ICLounge.py:790 lib/pychess/ic/ICLounge.py:817
+#: lib/pychess/ic/ICLounge.py:795 lib/pychess/ic/ICLounge.py:822
 msgid "Game Running"
 msgstr "Igra teče"
 
-#: lib/pychess/ic/ICLounge.py:790 lib/pychess/ic/ICLounge.py:817
+#: lib/pychess/ic/ICLounge.py:795 lib/pychess/ic/ICLounge.py:822
 msgid "Games Running"
 msgstr "Igre tečejo"
 
-#: lib/pychess/ic/ICLounge.py:856
+#: lib/pychess/ic/ICLounge.py:861
 msgid "Your color"
 msgstr "Tvoja barva"
 
-#: lib/pychess/ic/ICLounge.py:856
+#: lib/pychess/ic/ICLounge.py:861
 msgid "Opponent"
 msgstr "Nasprotnik"
 
-#: lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/ic/ICLounge.py:862
 msgid "Is online"
 msgstr "Je sedaj prijavljen"
 
-#: lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/ic/ICLounge.py:862
 msgid "Length"
 msgstr "Dolžina"
 
-#: lib/pychess/ic/ICLounge.py:857
+#: lib/pychess/ic/ICLounge.py:862
 msgid "Date/Time"
 msgstr "Datum/Čas"
 
-#: lib/pychess/ic/ICLounge.py:880
+#: lib/pychess/ic/ICLounge.py:885
 msgid "Online"
 msgstr "Prijavljen"
 
-#: lib/pychess/ic/ICLounge.py:880
+#: lib/pychess/ic/ICLounge.py:885
 msgid "Offline"
 msgstr "Odjavljen"
 
-#: lib/pychess/ic/ICLounge.py:935 lib/pychess/ic/ICLounge.py:947
-#: lib/pychess/ic/ICLounge.py:1022
-msgid "Don't Care"
-msgstr "Vseeno mi je"
+#: lib/pychess/ic/ICLounge.py:1229
+msgid "Manual"
+msgstr "Ročno"
 
-#: lib/pychess/ic/ICLounge.py:936
-msgid "Easy"
-msgstr "Enostavno"
+#: lib/pychess/ic/ICLounge.py:1453 lib/pychess/widgets/newGameDialog.py:237
+msgid "Blindfold"
+msgstr "Na slepo"
 
-#: lib/pychess/ic/ICLounge.py:937
-msgid "Advanced"
-msgstr "Napredno"
+#: lib/pychess/ic/ICLounge.py:1454 lib/pychess/widgets/newGameDialog.py:238
+msgid "Odds"
+msgstr "Neenako"
 
-#: lib/pychess/ic/ICLounge.py:938
-msgid "Expert"
-msgstr "Izvedenec"
+#: lib/pychess/ic/ICLounge.py:1456 lib/pychess/widgets/newGameDialog.py:240
+#: lib/pychess/ic/managers/GameListManager.py:54
+msgid "Other"
+msgstr "Drugo"
 
-#: lib/pychess/ic/ICLounge.py:948
-msgid "Want White"
-msgstr "Želim bele"
+#: lib/pychess/ic/ICLounge.py:1545
+msgid "Change Tolerance"
+msgstr "Spremeni odstopanje"
 
-#: lib/pychess/ic/ICLounge.py:949
-msgid "Want Black"
-msgstr "Želim črne"
-
-#: lib/pychess/ic/ICLounge.py:965
-msgid "New Custom"
-msgstr "Novo po meri"
-
-#: lib/pychess/ic/ICLounge.py:1014
-msgid "Custom"
-msgstr "Po meri"
-
-#: lib/pychess/ic/ICLounge.py:1077
+#: lib/pychess/ic/ICLounge.py:1593
 msgid "You can only have 3 outstanding seeks"
 msgstr "Lahko imaš le 3 čakajoča povpraševanja"
 
-#: lib/pychess/ic/ICLounge.py:1078
+#: lib/pychess/ic/ICLounge.py:1594
 msgid ""
 "You can only have 3 outstanding seeks at the same time. If you want to add a "
 "new seek you must clear your currently active seeks. Clear your seeks?"
@@ -1636,7 +1772,7 @@ msgstr ""
 "povpraševanje, moraš počistiti obstoječa povpraševanja. Ali počistim "
 "obstoječa povpraševanja?"
 
-#: lib/pychess/ic/ICLounge.py:1110 lib/pychess/ic/ICLounge.py:1114
+#: lib/pychess/ic/ICLounge.py:1626 lib/pychess/ic/ICLounge.py:1630
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
 #: lib/pychess/widgets/newGameDialog.py:318
@@ -1900,6 +2036,14 @@ msgstr "Človek"
 msgid "Rapid"
 msgstr "Hitro"
 
+#: lib/pychess/widgets/newGameDialog.py:197
+msgid "Minutes:"
+msgstr "Minute"
+
+#: lib/pychess/widgets/newGameDialog.py:201
+msgid "Gain:"
+msgstr "Dodatek:"
+
 #: lib/pychess/widgets/newGameDialog.py:214
 #, python-format
 msgid "%(name)s %(minutes)d min + %(gain)d sec/move"
@@ -1914,19 +2058,6 @@ msgstr "%(name)s %(minutes)d min %(gain)d sec/potezo"
 #, python-format
 msgid "%(name)s %(minutes)d min"
 msgstr "%(name)s %(minutes)d min"
-
-#: lib/pychess/widgets/newGameDialog.py:237
-msgid "Blindfold"
-msgstr "Na slepo"
-
-#: lib/pychess/widgets/newGameDialog.py:238
-msgid "Odds"
-msgstr "Neenako"
-
-#: lib/pychess/widgets/newGameDialog.py:240
-#: lib/pychess/ic/managers/GameListManager.py:54
-msgid "Other"
-msgstr "Drugo"
 
 #: lib/pychess/widgets/newGameDialog.py:475
 msgid "Enter Game"
@@ -1963,9 +2094,8 @@ msgid ""
 "Variants</b>."
 msgstr ""
 "Lahko pričneš z novo igro z <b>Igra</b> > <b>Nova igra</b>, v Nova igra "
-"oknu, "
-"kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Način šahovske "
-"igre</b>."
+"oknu, kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Način "
+"šahovske igre</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
 msgid ""
@@ -1994,8 +2124,8 @@ msgid ""
 "Do you know that you can call flag when the clock is with you, <b>Actions</"
 "b> > <b>Call Flag</b>."
 msgstr ""
-"Lahko pozoveš, da je padla zastavica, ko je čas na tvoji strani, "
-"<b>Dejanja</b> > <b>Vdaja</b>."
+"Lahko pozoveš, da je padla zastavica, ko je čas na tvoji strani, <b>Dejanja</"
+"b> > <b>Vdaja</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid "Pressing <b>Ctrl+Z</b> to offer opponent the possible rollback moves."
@@ -2313,11 +2443,6 @@ msgstr "Nasprotni kralji"
 msgid "Limited Shuffle"
 msgstr "Enostavna zvijača"
 
-#: lib/pychess/ic/managers/GameListManager.py:51
-#: lib/pychess/ic/managers/GameListManager.py:58
-msgid "Untimed"
-msgstr "Nečasoven"
-
 #: lib/pychess/ic/managers/GameListManager.py:59
 msgid "Examined Game"
 msgstr "Preverjena igra"
@@ -2398,44 +2523,67 @@ msgid ""
 msgstr ""
 "Panel rezultatov poskuša vrednotiti položaj in prikazati graf poteka igre"
 
-#~ msgid "_New Game"
-#~ msgstr "_Nova igra"
+#~ msgid ""
+#~ "Don't Care\n"
+#~ "Want White\n"
+#~ "Want Black"
+#~ msgstr ""
+#~ "Mi je vseeno\n"
+#~ "Želim bele\n"
+#~ "Želim črne"
 
-#~ msgid "_Play Internet Chess"
-#~ msgstr "_Igraj medmrežni šah"
+#~ msgid "Game Time:"
+#~ msgstr "Čas igre:"
 
-#~ msgid "_Load Game"
-#~ msgstr "_Naloži igro"
+#~ msgid ""
+#~ "15 min + 10\tNormal\n"
+#~ "5 min + 2\tBlitz\n"
+#~ "1 min + 0\tLightning\n"
+#~ "Custom"
+#~ msgstr ""
+#~ "15 min + 10\tNavadna\n"
+#~ "5 min + 2\tBlitz\n"
+#~ "1 min + 0\tHitra\n"
+#~ "Po meri"
 
-#~ msgid "_Save Game"
-#~ msgstr "_Shrani igro"
+#~ msgid ""
+#~ "0 → 1300\t\tEasy\n"
+#~ "1300 → 1600\tAdvanced\n"
+#~ "1600 → 9999\tExpert"
+#~ msgstr ""
+#~ "0 → 1300\t\tEnostavno\n"
+#~ "1300 → 1600\tNapredno\n"
+#~ "1600 → 9999\tIzvedenec"
 
-#~ msgid "Save Game _As"
-#~ msgstr "Shrani igro _kot"
+#~ msgid "Seek Panel"
+#~ msgstr "Poizvedben pano"
 
-#~ msgid "Offer _Undo"
-#~ msgstr "Ponudi p_ovrnitev poteze"
+#~ msgid "S_end challenge"
+#~ msgstr "Pošlji izziv"
 
-#~ msgid "_Rotate Board"
-#~ msgstr "_Zavrti tablo"
+#~ msgid "Custom Time Setting"
+#~ msgstr "Nastavitev časa po meri"
 
-#~ msgid "_Fullscreen"
-#~ msgstr "Celotni zaslon"
+#~ msgid "Easy"
+#~ msgstr "Enostavno"
 
-#~ msgid "Leave _Fullscreen"
-#~ msgstr "Zapusti celotni zaslon"
+#~ msgid "Advanced"
+#~ msgstr "Napredno"
 
-#~ msgid "About Chess"
-#~ msgstr "O šahu"
+#~ msgid "Expert"
+#~ msgstr "Izvedenec"
 
-#~ msgid "How to play"
-#~ msgstr "Kako igrati"
+#~ msgid "Want White"
+#~ msgstr "Želim bele"
 
-#~ msgid "Translate PyChess"
-#~ msgstr "Prevedi PyChess"
+#~ msgid "Want Black"
+#~ msgstr "Želim črne"
 
-#~ msgid "Tip of the Day"
-#~ msgstr "Nasvet dneva"
+#~ msgid "New Custom"
+#~ msgstr "Novo po meri"
+
+#~ msgid "Custom"
+#~ msgstr "Po meri"
 
 #, fuzzy
 #~ msgid "Active"
@@ -2507,9 +2655,6 @@ msgstr ""
 
 #~ msgid "Disable"
 #~ msgstr "Onemogoči"
-
-#~ msgid "Create New"
-#~ msgstr "Ustvari novo"
 
 #~ msgid "No castle"
 #~ msgstr "Brez rokade"
