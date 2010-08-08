@@ -18,6 +18,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+from pychess.Variants.fischerandom import FischerRandomChess
 import preferencesDialog
 
 def intersects (r0, r1):
@@ -172,7 +173,7 @@ class BoardView (gtk.DrawingArea):
         # Play sounds
         if self.model.players and self.model.status != WAITING_TO_START:
             move = model.moves[-1]
-            if move.flag == ENPASSANT or model.boards[-2][move.cord1] != None:
+            if move.is_capture(model.boards[-2]):
                 sound = "aPlayerCaptures"
             else: sound = "aPlayerMoves"
             
@@ -246,6 +247,23 @@ class BoardView (gtk.DrawingArea):
     #          Animation          #
     ###############################
     
+    def paintBoxAround(self, move):
+        paintBox = self.cord2RectRelative(move.cord0)
+        paintBox = join(paintBox, self.cord2RectRelative(move.cord1))
+        if move.flag in (KING_CASTLE, QUEEN_CASTLE):
+            y = move.cord0.cy
+            color = (y == 1)
+            rsqs = self.model.boards[-1].board.ini_rooks[color]
+            if move.flag == KING_CASTLE:
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[1])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord("f" + y)))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord("g" + y)))
+            elif move.flag == KING_CASTLE:
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[0])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord("c" + y)))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord("d" + y)))
+        return paintBox
+
     def _get_shown(self):
         return self._shown
     
@@ -321,8 +339,7 @@ class BoardView (gtk.DrawingArea):
         
         self.animationStart = time()
         if self.lastMove:
-            paintBox = self.cord2RectRelative(self.lastMove.cord0)
-            paintBox = join(paintBox, self.cord2RectRelative(self.lastMove.cord1))
+            paintBox = self.paintBoxAround(self.lastMove)
             self.lastMove = None
             self.redraw_canvas(rect(paintBox))
         if self.shown > self.model.lowply:
@@ -424,9 +441,7 @@ class BoardView (gtk.DrawingArea):
                     paintBox = join(paintBox, self.cord2RectRelative(arrow[1]))
             if self.lastMove:
                 paintBox = join(paintBox,
-                                self.cord2RectRelative(self.lastMove.cord0))
-                paintBox = join(paintBox,
-                                self.cord2RectRelative(self.lastMove.cord1))
+                                self.paintBoxAround(self.lastMove))
         
         if paintBox:
             self.redraw_canvas(rect(paintBox))
@@ -784,9 +799,10 @@ class BoardView (gtk.DrawingArea):
     
     def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
-        ply = self.shown-1
-        if ply < self.model.lowply: return
-        capture = self.model.getBoardAtPly(ply)[self.lastMove.cord1]
+        if self.shown <= self.model.lowply: return
+        show_board = self.model.getBoardAtPly(self.shown)
+        last_board = self.model.getBoardAtPly(self.shown - 1)
+        capture = self.lastMove.is_capture(last_board)
         
         wh = 0.27 # Width of marker
         p0 = 0.155 # Padding on last cord
@@ -807,53 +823,66 @@ class BoardView (gtk.DrawingArea):
         light_orange = (.961, .475, 0, 0.8)
         dark_orange  = (.808, .361, 0, 0.5)
         
-        
-        rel = self.cord2RectRelative(self.lastMove.cord0)
-        if intersects(rect(rel), redrawn):
-            r = self.cord2Rect(self.lastMove.cord0)
-            for m in ms:
-                context.move_to(
-                    r[0]+(d0[m[0]]+wh*m[0])*r[2],
-                    r[1]+(d0[m[1]]+wh*m[1])*r[2])
-                context.rel_line_to(
-                    0, -wh*r[2]*m[1])
-                context.rel_curve_to(
-                    0, wh*r[2]*m[1]/2.0,
-                    -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
-                    -wh*r[2]*m[0], wh*r[2]*m[1])
-                context.close_path()
-            
-            context.set_source_rgba(*light_yellow)
-            context.fill_preserve()
-            context.set_source_rgba(*dark_yellow)
-            context.stroke()
-            
-        rel = self.cord2RectRelative(self.lastMove.cord1)
-        if intersects(rect(rel), redrawn):
-            r = self.cord2Rect(self.lastMove.cord1)
-            
-            for m in ms:
-                context.move_to(
-                    r[0]+d1[m[0]]*r[2],
-                    r[1]+d1[m[1]]*r[2])
-                context.rel_line_to(
-                    wh*r[2]*m[0], 0)
-                context.rel_curve_to(
-                    -wh*r[2]*m[0]/2.0, 0,
-                    -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
-                    -wh*r[2]*m[0], wh*r[2]*m[1])
-                context.close_path()
-            
-            if capture:
-                context.set_source_rgba(*light_orange)
-                context.fill_preserve()
-                context.set_source_rgba(*dark_orange)
-                context.stroke()
+        if self.lastMove.flag in (KING_CASTLE, QUEEN_CASTLE):
+            ksq0 = last_board.board.kings[last_board.color]
+            ksq1 = show_board.board.kings[last_board.color]
+            if self.lastMove.flag == KING_CASTLE:
+                rsq0 = show_board.board.ini_rooks[last_board.color][1]
+                rsq1 = ksq1 - 1
             else:
+                rsq0 = show_board.board.ini_rooks[last_board.color][0]
+                rsq1 = ksq1 + 1
+            cord_pairs = [ [Cord(ksq0), Cord(ksq1)], [Cord(rsq0), Cord(rsq1)] ]
+        else:
+            cord_pairs = [ [self.lastMove.cord0, self.lastMove.cord1] ]
+
+        for [cord0, cord1] in cord_pairs:
+            rel = self.cord2RectRelative(cord0)
+            if intersects(rect(rel), redrawn):
+                r = self.cord2Rect(cord0)
+                for m in ms:
+                    context.move_to(
+                        r[0]+(d0[m[0]]+wh*m[0])*r[2],
+                        r[1]+(d0[m[1]]+wh*m[1])*r[2])
+                    context.rel_line_to(
+                        0, -wh*r[2]*m[1])
+                    context.rel_curve_to(
+                        0, wh*r[2]*m[1]/2.0,
+                        -wh*r[2]*m[0]/2.0, wh*r[2]*m[1],
+                        -wh*r[2]*m[0], wh*r[2]*m[1])
+                    context.close_path()
+                
                 context.set_source_rgba(*light_yellow)
                 context.fill_preserve()
                 context.set_source_rgba(*dark_yellow)
                 context.stroke()
+                
+            rel = self.cord2RectRelative(cord1)
+            if intersects(rect(rel), redrawn):
+                r = self.cord2Rect(cord1)
+                
+                for m in ms:
+                    context.move_to(
+                        r[0]+d1[m[0]]*r[2],
+                        r[1]+d1[m[1]]*r[2])
+                    context.rel_line_to(
+                        wh*r[2]*m[0], 0)
+                    context.rel_curve_to(
+                        -wh*r[2]*m[0]/2.0, 0,
+                        -wh*r[2]*m[0], wh*r[2]*m[1]/2.0,
+                        -wh*r[2]*m[0], wh*r[2]*m[1])
+                    context.close_path()
+                
+                if capture:
+                    context.set_source_rgba(*light_orange)
+                    context.fill_preserve()
+                    context.set_source_rgba(*dark_orange)
+                    context.stroke()
+                else:
+                    context.set_source_rgba(*light_yellow)
+                    context.fill_preserve()
+                    context.set_source_rgba(*dark_yellow)
+                    context.stroke()
     
     ###############################
     #         drawArrows          #

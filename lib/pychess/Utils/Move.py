@@ -81,6 +81,11 @@ class Move:
     
     def __hash__ (self):
         return hash(self.cords)
+    
+    def is_capture (self, board):
+        return self.flag == ENPASSANT or \
+               board[self.cord1] != None and \
+               self.flag != QUEEN_CASTLE and self.flag != KING_CASTLE
 
 ################################################################################
 # Parsers                                                                      #
