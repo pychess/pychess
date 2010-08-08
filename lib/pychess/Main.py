@@ -42,20 +42,19 @@ class GladeHandlers:
         if pagecount > 1:
             if event.state & gtk.gdk.CONTROL_MASK:
                 page_num = gamewidget.getheadbook().get_current_page()
-                # Change selected
-                if not event.state & gtk.gdk.SHIFT_MASK:
-                    if event.keyval == gtk.keysyms.Page_Up:
-                        gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
-                    elif event.keyval == gtk.keysyms.Page_Down:
-                        gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
                 # Move selected
-                else:
+                if event.state & gtk.gdk.SHIFT_MASK:
                     child = gamewidget.getheadbook().get_nth_page(page_num)
                     if event.keyval == gtk.keysyms.Page_Up:
                         gamewidget.getheadbook().reorder_child(child, (page_num-1)%pagecount)
                     elif event.keyval == gtk.keysyms.Page_Down:
                         gamewidget.getheadbook().reorder_child(child, (page_num+1)%pagecount)
-        
+                # Change selected
+                else:
+                    if event.keyval == gtk.keysyms.Page_Up:
+                        gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
+                    elif event.keyval == gtk.keysyms.Page_Down:
+                        gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
         # Other
         pass
     
