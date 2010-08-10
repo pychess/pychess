@@ -258,7 +258,7 @@ class BoardView (gtk.DrawingArea):
                 paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[1])))
                 paintBox = join(paintBox, self.cord2RectRelative(Cord("f" + y)))
                 paintBox = join(paintBox, self.cord2RectRelative(Cord("g" + y)))
-            elif move.flag == KING_CASTLE:
+            else:
                 paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[0])))
                 paintBox = join(paintBox, self.cord2RectRelative(Cord("c" + y)))
                 paintBox = join(paintBox, self.cord2RectRelative(Cord("d" + y)))
