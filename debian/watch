@@ -1,0 +1,3 @@
+version=3
+opts="uversionmangle=s/_/./" \
+http://code.google.com/p/pychess/downloads/list .*/pychess-(.*)\.tgz
