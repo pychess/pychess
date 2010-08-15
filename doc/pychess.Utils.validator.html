@@ -1,0 +1,124 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.Utils.validator</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.Utils.html"><font color="#ffffff">Utils</font></a>.validator</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/validator.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/validator.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;is&nbsp;written&nbsp;to&nbsp;do&nbsp;basic&nbsp;chess&nbsp;computing.<br>
+This&nbsp;module&nbsp;can&nbsp;validate&nbsp;a&nbsp;Move&nbsp;or&nbsp;generate&nbsp;a&nbsp;list&nbsp;of&nbsp;possible&nbsp;moves<br>
+It&nbsp;can&nbsp;also&nbsp;be&nbsp;used&nbsp;to&nbsp;find&nbsp;moves&nbsp;for&nbsp;SAN&nbsp;parsing<br>
+and&nbsp;to&nbsp;detect&nbsp;the&nbsp;status&nbsp;of&nbsp;the&nbsp;game</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-findMoves"><strong>findMoves</strong></a>(board, testCheck<font color="#909090">=True</font>)</dt><dd><tt>Creates&nbsp;a&nbsp;dict&nbsp;of&nbsp;all&nbsp;legal&nbsp;moves&nbsp;for&nbsp;current&nbsp;player&nbsp;(baord.color)<br>
+Returns&nbsp;a&nbsp;dict&nbsp;of&nbsp;{fromcord:[tocord,tocord...],...}</tt></dd></dl>
+ <dl><dt><a name="-findMoves2"><strong>findMoves2</strong></a>(board, testCheck<font color="#909090">=True</font>, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;all&nbsp;possible&nbsp;moves&nbsp;for&nbsp;current&nbsp;player&nbsp;(board.color)</tt></dd></dl>
+ <dl><dt><a name="-genBishop"><strong>genBishop</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;bishop&nbsp;moves.&nbsp;Bishop&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genKing"><strong>genKing</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;king&nbsp;moves.&nbsp;King&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genKnight"><strong>genKnight</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;knight&nbsp;moves.&nbsp;Knight&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genLegalMoves"><strong>genLegalMoves</strong></a>(board, cord, testCheck)</dt><dd><tt>Generate&nbsp;all&nbsp;legal&nbsp;moves&nbsp;for&nbsp;piece&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genMovesPointingAt"><strong>genMovesPointingAt</strong></a>(board, cols, rows, color, testCheck<font color="#909090">=False</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;move&nbsp;that&nbsp;legaly&nbsp;attack&nbsp;a&nbsp;cord&nbsp;with&nbsp;the&nbsp;specified&nbsp;color<br>
+in&nbsp;one&nbsp;of&nbsp;the&nbsp;specified&nbsp;columns&nbsp;or&nbsp;rows</tt></dd></dl>
+ <dl><dt><a name="-genPawn"><strong>genPawn</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;pawn&nbsp;moves.&nbsp;Pawn&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genQueen"><strong>genQueen</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;queen&nbsp;moves.&nbsp;Queen&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-genRook"><strong>genRook</strong></a>(cord, board, pureCaptures<font color="#909090">=False</font>)</dt><dd><tt>Generate&nbsp;rook&nbsp;moves.&nbsp;Rook&nbsp;is&nbsp;located&nbsp;at&nbsp;cord</tt></dd></dl>
+ <dl><dt><a name="-getMovePointingAt"><strong>getMovePointingAt</strong></a>(board, cord, color<font color="#909090">=None</font>, sign<font color="#909090">=None</font>, r<font color="#909090">=None</font>, c<font color="#909090">=None</font>)</dt><dd><tt>Returns&nbsp;a&nbsp;cord&nbsp;containing&nbsp;a&nbsp;piece&nbsp;that&nbsp;can&nbsp;attack&nbsp;the&nbsp;specified&nbsp;cord<br>
+If&nbsp;color,&nbsp;sign,&nbsp;r,&nbsp;or&nbsp;c&nbsp;is&nbsp;not&nbsp;=&nbsp;None,&nbsp;only&nbsp;cords&nbsp;with&nbsp;that<br>
+color&nbsp;/&nbsp;sign&nbsp;/&nbsp;row&nbsp;/&nbsp;column&nbsp;will&nbsp;be&nbsp;returned</tt></dd></dl>
+ <dl><dt><a name="-isCheck"><strong>isCheck</strong></a>(board, who)</dt><dd><tt>Returns&nbsp;True&nbsp;if&nbsp;"who"&nbsp;is&nbsp;in&nbsp;check&nbsp;in&nbsp;the&nbsp;specified&nbsp;possition</tt></dd></dl>
+ <dl><dt><a name="-status"><strong>status</strong></a>(history)</dt><dd><tt>Returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;(the&nbsp;current&nbsp;status&nbsp;of&nbsp;the&nbsp;game,&nbsp;a&nbsp;comment&nbsp;of&nbsp;the&nbsp;reason)<br>
+Status&nbsp;can&nbsp;be&nbsp;one&nbsp;of&nbsp;RUNNING,&nbsp;DRAW,&nbsp;WHITEWON&nbsp;or&nbsp;BLACKWON.<br>
+Comment&nbsp;can&nbsp;be&nbsp;any&nbsp;from&nbsp;pychess.Utils.const&nbsp;or&nbsp;None,&nbsp;if&nbsp;status&nbsp;is&nbsp;RUNNING</tt></dd></dl>
+ <dl><dt><a name="-time"><strong>time</strong></a>(...)</dt><dd><tt><a href="#-time">time</a>()&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;current&nbsp;time&nbsp;in&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch.<br>
+Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;the&nbsp;system&nbsp;clock&nbsp;provides&nbsp;them.</tt></dd></dl>
+ <dl><dt><a name="-valiBishop"><strong>valiBishop</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;bishop&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-valiKing"><strong>valiKing</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;king&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-valiKnight"><strong>valiKnight</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;knight&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-valiPawn"><strong>valiPawn</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;pawn&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-valiQueen"><strong>valiQueen</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;queen&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-valiRook"><strong>valiRook</strong></a>(move, board, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Validate&nbsp;rook&nbsp;move</tt></dd></dl>
+ <dl><dt><a name="-validate"><strong>validate</strong></a>(move, board, testCheck<font color="#909090">=True</font>, cancapture<font color="#909090">=False</font>)</dt><dd><tt>Tests&nbsp;if&nbsp;"move"&nbsp;is&nbsp;a&nbsp;legal&nbsp;move&nbsp;on&nbsp;board&nbsp;"board"<br>
+Will&nbsp;asume&nbsp;the&nbsp;first&nbsp;cord&nbsp;of&nbsp;move&nbsp;is&nbsp;an&nbsp;ally&nbsp;piece<br>
+@param&nbsp;cancapture:&nbsp;Only&nbsp;test&nbsp;if&nbsp;the&nbsp;piece&nbsp;can&nbsp;capture&nbsp;cord1.</tt></dd></dl>
+ <dl><dt><a name="-willCheck"><strong>willCheck</strong></a>(board, move)</dt><dd><tt>Returns&nbsp;True&nbsp;if&nbsp;the&nbsp;move&nbsp;will&nbsp;cause&nbsp;the&nbsp;player<br>
+making&nbsp;the&nbsp;move&nbsp;to&nbsp;be&nbsp;in&nbsp;check</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ARTIFICIAL</strong> = 1<br>
+<strong>BISHOP</strong> = 3<br>
+<strong>BLACK</strong> = 1<br>
+<strong>BLACKWON</strong> = 3<br>
+<strong>BLACK_CASTLED</strong> = 32<br>
+<strong>BLACK_OO</strong> = 4<br>
+<strong>BLACK_OOO</strong> = 8<br>
+<strong>DRAW</strong> = 1<br>
+<strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
+<strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
+<strong>DRAW_REPITITION</strong> = 0<br>
+<strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
+<strong>KING</strong> = 0<br>
+<strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
+<strong>LOCAL</strong> = 0<br>
+<strong>NAME</strong> = 'PyChess'<br>
+<strong>PAWN</strong> = 5<br>
+<strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
+<strong>QUEEN</strong> = 1<br>
+<strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
+<strong>ROOK</strong> = 2<br>
+<strong>RUNNING</strong> = 0<br>
+<strong>SAN</strong> = 0<br>
+<strong>SPY</strong> = 1<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
+<strong>WHITE</strong> = 0<br>
+<strong>WHITEWON</strong> = 2<br>
+<strong>WHITE_CASTLED</strong> = 16<br>
+<strong>WHITE_OO</strong> = 1<br>
+<strong>WHITE_OOO</strong> = 2<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
+<strong>checkDic</strong> = {}<br>
+<strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
+<strong>kingPlaces</strong> = ((1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1))<br>
+<strong>knightPlaces</strong> = ((1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2))<br>
+<strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
+<strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;<br>
+<strong>movePool</strong> = &lt;pychess.Utils.Move.MovePool instance&gt;<br>
+<strong>moveToCastling</strong> = {'e1c1': 2, 'e1g1': 1, 'e8c8': 8, 'e8g8': 4}<br>
+<strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
+<strong>range8</strong> = (3, 4, 2, 5, 1, 6, 0, 7)<br>
+<strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
+<strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
+<strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
+<strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>
+</body></html>
