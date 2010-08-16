@@ -185,7 +185,14 @@ class UserInfoSection(Section):
                 row += 1
 
                 for type_, rating in finger.getRating().iteritems():
-                    table.attach(label(typeName[type_]+":"), 0, 1, row, row+1)
+                    ratinglabel = label(typeName[type_] + ":")
+                    table.attach(ratinglabel, 0, 1, row, row+1)
+                    if type_ is TYPE_WILD:
+                        ratinglabel.set_tooltip_text(
+                        _("On FICS, your \"Wild\" rating encompasses all of the following variants at all time controls:\n") +
+                        _("Shuffle, Fischer Random, Random, Asymmetric Random\n") +
+                        _("Upside Down, Pawns Pushed, Pawns Passed\n") +
+                        _("Pawn Odds, Knight Odds, Rook Odds, Queen Odds"))
                     table.attach(label(rating.elo, xalign=1), 1, 2, row, row+1)
                     table.attach(label(rating.wins, xalign=1), 2, 3, row, row+1)
                     table.attach(label(rating.draws, xalign=1), 3, 4, row, row+1)
@@ -918,7 +925,7 @@ class AdjournedTabSection (ParrentListSection):
         #    glm.connect("addAdjourn", on_adjourn_add)
 
 ############################################################################
-# Initialize seeking-/challengingpanel                                     #
+# Initialize "Create Seek" and"Challenge" panels, and "Edit Seek:" dialog  #
 ############################################################################
 
 RATING_SLIDER_STEP = 25
