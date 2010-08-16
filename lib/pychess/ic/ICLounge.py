@@ -984,7 +984,8 @@ class SeekChallengeSection (ParrentListSection):
         self.connection = connection
         
         self.finger = None
-        self.connection.fm.connect("fingeringFinished", self.onFinger)
+        glock.glock_connect(self.connection.fm, "fingeringFinished",
+                lambda fm, finger: self.onFinger(fm, finger))
         self.connection.fm.finger(self.connection.getUsername())
         
         self.widgets["untimedCheck"].connect("toggled", self.onUntimedCheckToggled)
@@ -1005,7 +1006,7 @@ class SeekChallengeSection (ParrentListSection):
 
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
         glock.glock_connect(self.connection, "disconnected",
-                      lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
+            lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
 
         self.widgets["strengthCheck"].connect("toggled", self.onStrengthCheckToggled)
         self.onStrengthCheckToggled(self.widgets["strengthCheck"])
@@ -1025,7 +1026,6 @@ class SeekChallengeSection (ParrentListSection):
         self.seekEditorWidgetGettersSetters["toleranceHBox"] = (toleranceHBoxGetter, toleranceHBoxSetter)
         
         self.chainbox = ChainVBox()
-        self.chainbox.connect("clicked", self.onChainBoxClicked)
         self.widgets["chainAlignment"].add(self.chainbox)
         def chainboxGetter (widget):
             return self.chainbox.active
@@ -1157,7 +1157,7 @@ class SeekChallengeSection (ParrentListSection):
         self.onUntimedCheckToggled(self.widgets["untimedCheck"])
         
         handlerId = self.widgets["editSeekDialog"].connect("response", onResponse)
-        title = "Edit Seek: " + self.widgets[radioname % seeknumber].get_label()[:-1]
+        title = _("Edit Seek: ") + self.widgets[radioname % seeknumber].get_label()[:-1]
         self.widgets["editSeekDialog"].set_title(title)
         self.widgets["editSeekDialog"].show()
     
@@ -1413,7 +1413,7 @@ class SeekChallengeSection (ParrentListSection):
         if self.finger == None: return
         gametype, ratingtype = self.__getGameTypes()
         
-        self.widgets["yourRatingNameLabel"].set_label(gametype)
+        self.widgets["yourRatingNameLabel"].set_label("(" + gametype + ")")
         try:
             rating = self.finger.getRating(type=ratingtype)
         except KeyError:  # the user doesn't have a rating for this game type
@@ -1480,18 +1480,10 @@ class SeekChallengeSection (ParrentListSection):
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
     
-    # TODO: glock this!
     def onFinger (self, fm, finger):
         if not finger.getName() == self.connection.getUsername(): return
         self.finger = finger
         self.__updateYourRatingHBox()
-
-    def onChainBoxClicked (self, chainbox):
-#        if chainbox.active:
-#            print "locked"
-#        else:
-#            print "unlocked"
-        pass
     
     def onTimeSpinChanged (self, spin):
         minutes = self.widgets["minutesSpin"].get_value_as_int()
