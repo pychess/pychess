@@ -30,8 +30,6 @@ def initialize(widgets, gameDic):
         gamemodel.tags["Event"] = widgets["event_entry"].get_text()
         gamemodel.tags["Site"] = widgets["site_entry"].get_text()
         gamemodel.tags["Round"] = int(widgets["round_spinbutton"].get_value())
-        x= gamemodel.tags["Round"]
-        print x, type(x)
         gamemodel.tags["Year"] = widgets["game_info_calendar"].get_date()[0]
         gamemodel.tags["Month"] = widgets["game_info_calendar"].get_date()[1] + 1
         gamemodel.tags["Day"] = widgets["game_info_calendar"].get_date()[2]
