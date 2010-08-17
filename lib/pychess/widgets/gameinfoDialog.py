@@ -12,7 +12,7 @@ def initialize(widgets, gameDic):
     gamemodel = gameDic[gamewidget.cur_gmwidg()]
     widgets["event_entry"].set_text(gamemodel.tags["Event"])
     widgets["site_entry"].set_text(gamemodel.tags["Site"])
-    widgets["round_spinbutton"].set_value(gamemodel.tags["Round"])
+    widgets["round_spinbutton"].set_value(float(gamemodel.tags["Round"]))
     
     # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
     # 1 to 12

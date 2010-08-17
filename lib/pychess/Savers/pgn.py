@@ -33,7 +33,7 @@ def save (file, model):
 
     print >> file, '[Event "%s"]' % model.tags["Event"]
     print >> file, '[Site "%s"]' % model.tags["Site"]
-    print >> file, '[Round "%d"]' % model.tags["Round"]
+    print >> file, '[Round "%s"]' % model.tags["Round"]
     print >> file, '[Date "%04d.%02d.%02d"]' % \
             (model.tags["Year"], model.tags["Month"], model.tags["Day"])
     print >> file, '[White "%s"]' % repr(model.players[WHITE])
