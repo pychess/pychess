@@ -334,7 +334,7 @@
                                               <widget class="GtkLabel" id="seek3RadioLabel">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">2 min, 1800&#x2193;, Black, Fischer Random</property>
+                                                <property name="label" translatable="yes">2 min, Fischer Random, 1800&#x2193;, Black</property>
                                               </widget>
                                             </child>
                                           </widget>
@@ -372,7 +372,7 @@
                                               <widget class="GtkLabel" id="seek1RadioLabel">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">5 min, 1200-1800</property>
+                                                <property name="label" translatable="yes">5 min, 1200-1800, Manual</property>
                                               </widget>
                                             </child>
                                           </widget>
@@ -561,11 +561,60 @@
                               </packing>
                             </child>
                             <child>
+                              <widget class="GtkButton" id="challengeButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
+                                <property name="receives_default">True</property>
+                                <child>
+                                  <widget class="GtkAlignment" id="alignment22">
+                                    <property name="visible">True</property>
+                                    <property name="xscale">0</property>
+                                    <property name="yscale">0</property>
+                                    <child>
+                                      <widget class="GtkHBox" id="hbox14">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <widget class="GtkImage" id="image10">
+                                            <property name="visible">True</property>
+                                            <property name="pixbuf">challenge.png</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <widget class="GtkLabel" id="label6">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Challenge</property>
+                                            <property name="use_underline">True</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </widget>
+                                    </child>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <widget class="GtkButton" id="private_chat_button">
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkLabel" id="label66">
                                     <property name="visible">True</property>
@@ -578,7 +627,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </widget>
@@ -602,360 +651,6 @@
                           </widget>
                           <packing>
                             <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="GtkHSeparator" id="hseparator2">
-                            <property name="visible">True</property>
-                          </widget>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="GtkExpander" id="challengeExpander">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="expanded">True</property>
-                            <child>
-                              <widget class="GtkAlignment" id="alignment12">
-                                <property name="visible">True</property>
-                                <property name="top_padding">3</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <widget class="GtkVBox" id="vbox3">
-                                    <property name="visible">True</property>
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">10</property>
-                                    <child>
-                                      <widget class="GtkTable" id="table2">
-                                        <property name="visible">True</property>
-                                        <property name="n_rows">3</property>
-                                        <property name="n_columns">3</property>
-                                        <property name="row_spacing">3</property>
-                                        <child>
-                                          <widget class="GtkButton" id="challenge1RadioConfigButton">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="can_default">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="xalign">1</property>
-                                            <child>
-                                              <widget class="GtkAlignment" id="alignment13">
-                                                <property name="visible">True</property>
-                                                <property name="xscale">0</property>
-                                                <property name="yscale">0</property>
-                                                <child>
-                                                  <widget class="GtkHBox" id="hbox6">
-                                                    <property name="visible">True</property>
-                                                    <property name="spacing">2</property>
-                                                    <child>
-                                                      <widget class="GtkImage" id="image1">
-                                                        <property name="visible">True</property>
-                                                        <property name="stock">gtk-properties</property>
-                                                      </widget>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">0</property>
-                                                      </packing>
-                                                    </child>
-                                                  </widget>
-                                                </child>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="right_attach">3</property>
-                                            <property name="x_options">GTK_SHRINK | GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkButton" id="challenge2RadioConfigButton">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="can_default">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="xalign">1</property>
-                                            <child>
-                                              <widget class="GtkAlignment" id="alignment14">
-                                                <property name="visible">True</property>
-                                                <property name="xscale">0</property>
-                                                <property name="yscale">0</property>
-                                                <child>
-                                                  <widget class="GtkHBox" id="hbox7">
-                                                    <property name="visible">True</property>
-                                                    <property name="spacing">2</property>
-                                                    <child>
-                                                      <widget class="GtkImage" id="image8">
-                                                        <property name="visible">True</property>
-                                                        <property name="stock">gtk-properties</property>
-                                                      </widget>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">0</property>
-                                                      </packing>
-                                                    </child>
-                                                  </widget>
-                                                </child>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="right_attach">3</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="bottom_attach">2</property>
-                                            <property name="x_options">GTK_SHRINK | GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkButton" id="challenge3RadioConfigButton">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="can_default">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="xalign">1</property>
-                                            <child>
-                                              <widget class="GtkAlignment" id="alignment15">
-                                                <property name="visible">True</property>
-                                                <property name="xscale">0</property>
-                                                <property name="yscale">0</property>
-                                                <child>
-                                                  <widget class="GtkHBox" id="hbox8">
-                                                    <property name="visible">True</property>
-                                                    <property name="spacing">2</property>
-                                                    <child>
-                                                      <widget class="GtkImage" id="image9">
-                                                        <property name="visible">True</property>
-                                                        <property name="stock">gtk-properties</property>
-                                                      </widget>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">0</property>
-                                                      </packing>
-                                                    </child>
-                                                  </widget>
-                                                </child>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="right_attach">3</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="bottom_attach">3</property>
-                                            <property name="x_options">GTK_SHRINK | GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment16">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">25</property>
-                                            <child>
-                                              <widget class="GtkRadioButton" id="challenge3Radio">
-                                                <property name="label" translatable="yes">Lightning:</property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">False</property>
-                                                <property name="use_underline">True</property>
-                                                <property name="draw_indicator">True</property>
-                                                <property name="group">challenge1Radio</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="top_attach">2</property>
-                                            <property name="bottom_attach">3</property>
-                                            <property name="x_options">GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment17">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">25</property>
-                                            <child>
-                                              <widget class="GtkRadioButton" id="challenge2Radio">
-                                                <property name="label" translatable="yes">Standard:</property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">False</property>
-                                                <property name="use_underline">True</property>
-                                                <property name="xalign">0.47999998927116394</property>
-                                                <property name="draw_indicator">True</property>
-                                                <property name="group">challenge1Radio</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="top_attach">1</property>
-                                            <property name="bottom_attach">2</property>
-                                            <property name="x_options">GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment18">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">25</property>
-                                            <child>
-                                              <widget class="GtkRadioButton" id="challenge1Radio">
-                                                <property name="label" translatable="yes">Blitz:</property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">False</property>
-                                                <property name="use_underline">True</property>
-                                                <property name="xalign">0</property>
-                                                <property name="active">True</property>
-                                                <property name="draw_indicator">True</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="x_options">GTK_SHRINK | GTK_FILL</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment19">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">35</property>
-                                            <child>
-                                              <widget class="GtkLabel" id="challenge3RadioLabel">
-                                                <property name="visible">True</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">2 min, Black, Fischer Random</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="right_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="bottom_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment20">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">35</property>
-                                            <child>
-                                              <widget class="GtkLabel" id="challenge2RadioLabel">
-                                                <property name="visible">True</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">10 min + 6 sec/move, White</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="right_attach">2</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="bottom_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <widget class="GtkAlignment" id="alignment21">
-                                            <property name="visible">True</property>
-                                            <property name="right_padding">35</property>
-                                            <child>
-                                              <widget class="GtkLabel" id="challenge1RadioLabel">
-                                                <property name="visible">True</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">5 min</property>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="right_attach">2</property>
-                                          </packing>
-                                        </child>
-                                      </widget>
-                                      <packing>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <widget class="GtkHButtonBox" id="hbuttonbox1">
-                                        <property name="visible">True</property>
-                                        <property name="spacing">6</property>
-                                        <property name="layout_style">end</property>
-                                        <child>
-                                          <widget class="GtkButton" id="challengeButton">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="can_default">True</property>
-                                            <property name="receives_default">True</property>
-                                            <child>
-                                              <widget class="GtkAlignment" id="alignment22">
-                                                <property name="visible">True</property>
-                                                <property name="xscale">0</property>
-                                                <property name="yscale">0</property>
-                                                <child>
-                                                  <widget class="GtkHBox" id="hbox14">
-                                                    <property name="visible">True</property>
-                                                    <property name="spacing">2</property>
-                                                    <child>
-                                                      <widget class="GtkImage" id="image10">
-                                                        <property name="visible">True</property>
-                                                        <property name="pixbuf">challenge.png</property>
-                                                      </widget>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">0</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <widget class="GtkLabel" id="label6">
-                                                        <property name="visible">True</property>
-                                                        <property name="label" translatable="yes">Challenge</property>
-                                                        <property name="use_underline">True</property>
-                                                      </widget>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">1</property>
-                                                      </packing>
-                                                    </child>
-                                                  </widget>
-                                                </child>
-                                              </widget>
-                                            </child>
-                                          </widget>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                      </widget>
-                                      <packing>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </widget>
-                                </child>
-                              </widget>
-                            </child>
-                            <child>
-                              <widget class="GtkLabel" id="label91">
-                                <property name="visible">True</property>
-                                <property name="label" translatable="yes">Challenge</property>
-                                <property name="use_underline">True</property>
-                              </widget>
-                              <packing>
-                                <property name="type">label_item</property>
-                              </packing>
-                            </child>
-                          </widget>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">3</property>
                           </packing>
                         </child>
                       </widget>
@@ -1531,6 +1226,7 @@
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Edit Seek</property>
     <property name="window_position">center</property>
+    <property name="destroy_with_parent">True</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
@@ -2591,6 +2287,419 @@ b) you change the variant or the time control</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="GtkDialog" id="challengeDialog">
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Challenge: &lt;Player&gt;</property>
+    <property name="window_position">center</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="icon_name">pychess</property>
+    <property name="type_hint">normal</property>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
+      <widget class="GtkVBox" id="dialog-vbox2">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">1</property>
+        <child>
+          <widget class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">&lt;big&gt;Challenge:&lt;/big&gt;</property>
+                <property name="use_markup">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="challengeeNameLabel">
+                <property name="visible">True</property>
+                <property name="xpad">6</property>
+                <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;mgatto&lt;/b&gt;&lt;/big&gt;</property>
+                <property name="use_markup">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkAlignment" id="alignment12">
+            <property name="visible">True</property>
+            <property name="top_padding">5</property>
+            <property name="left_padding">12</property>
+            <child>
+              <widget class="GtkVBox" id="vbox3">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">10</property>
+                <child>
+                  <widget class="GtkTable" id="table2">
+                    <property name="visible">True</property>
+                    <property name="n_rows">3</property>
+                    <property name="n_columns">3</property>
+                    <property name="row_spacing">3</property>
+                    <child>
+                      <widget class="GtkButton" id="challenge1RadioConfigButton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="can_default">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="xalign">1</property>
+                        <child>
+                          <widget class="GtkAlignment" id="alignment13">
+                            <property name="visible">True</property>
+                            <property name="xscale">0</property>
+                            <property name="yscale">0</property>
+                            <child>
+                              <widget class="GtkHBox" id="hbox6">
+                                <property name="visible">True</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <widget class="GtkImage" id="image1">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-properties</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                              </widget>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="x_options">GTK_SHRINK | GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkButton" id="challenge2RadioConfigButton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="can_default">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="xalign">1</property>
+                        <child>
+                          <widget class="GtkAlignment" id="alignment14">
+                            <property name="visible">True</property>
+                            <property name="xscale">0</property>
+                            <property name="yscale">0</property>
+                            <child>
+                              <widget class="GtkHBox" id="hbox7">
+                                <property name="visible">True</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <widget class="GtkImage" id="image8">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-properties</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                              </widget>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="x_options">GTK_SHRINK | GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkButton" id="challenge3RadioConfigButton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="can_default">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="xalign">1</property>
+                        <child>
+                          <widget class="GtkAlignment" id="alignment15">
+                            <property name="visible">True</property>
+                            <property name="xscale">0</property>
+                            <property name="yscale">0</property>
+                            <child>
+                              <widget class="GtkHBox" id="hbox8">
+                                <property name="visible">True</property>
+                                <property name="spacing">2</property>
+                                <child>
+                                  <widget class="GtkImage" id="image9">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-properties</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                              </widget>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_SHRINK | GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment16">
+                        <property name="visible">True</property>
+                        <property name="right_padding">25</property>
+                        <child>
+                          <widget class="GtkRadioButton" id="challenge3Radio">
+                            <property name="label" translatable="yes">Lightning:</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">challenge1Radio</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment17">
+                        <property name="visible">True</property>
+                        <property name="right_padding">25</property>
+                        <child>
+                          <widget class="GtkRadioButton" id="challenge2Radio">
+                            <property name="label" translatable="yes">Standard:</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="xalign">0.47999998927116394</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">challenge1Radio</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment18">
+                        <property name="visible">True</property>
+                        <property name="right_padding">25</property>
+                        <child>
+                          <widget class="GtkRadioButton" id="challenge1Radio">
+                            <property name="label" translatable="yes">Blitz:</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="xalign">0</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="x_options">GTK_SHRINK | GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment19">
+                        <property name="visible">True</property>
+                        <property name="right_padding">35</property>
+                        <child>
+                          <widget class="GtkLabel" id="challenge3RadioLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">&lt;b&gt;2 min&lt;/b&gt;, &lt;b&gt;Fischer Random&lt;/b&gt;, 1800&#x2193;, &lt;b&gt;Black&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment20">
+                        <property name="visible">True</property>
+                        <property name="right_padding">35</property>
+                        <child>
+                          <widget class="GtkLabel" id="challenge2RadioLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">&lt;b&gt;10 min + 6 sec/move&lt;/b&gt;, 1400&#x2191;, &lt;b&gt;White&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment21">
+                        <property name="visible">True</property>
+                        <property name="right_padding">35</property>
+                        <child>
+                          <widget class="GtkLabel" id="challenge1RadioLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">&lt;b&gt;5 min&lt;/b&gt;, 1200-1800, Manual</property>
+                            <property name="use_markup">True</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkLabel" id="label4">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="yalign">0</property>
+            <property name="ypad">4</property>
+            <property name="label" translatable="yes">&lt;small&gt;Note: only those parameters that are in &lt;b&gt;bold&lt;/b&gt; will be used for the challenge&lt;/small&gt;</property>
+            <property name="use_markup">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <widget class="GtkHButtonBox" id="dialog-action_area2">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <widget class="GtkButton" id="button1">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="sendChallengeButton">
+                <property name="response_id">5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">True</property>
+                <child>
+                  <widget class="GtkAlignment" id="alignment22">
+                    <property name="visible">True</property>
+                    <property name="xscale">0</property>
+                    <property name="yscale">0</property>
+                    <child>
+                      <widget class="GtkHBox" id="hbox14">
+                        <property name="visible">True</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <widget class="GtkImage" id="image10">
+                            <property name="visible">True</property>
+                            <property name="pixbuf">challenge.png</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkLabel" id="label6">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Send Challenge</property>
+                            <property name="use_underline">True</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
+                  </widget>
+                </child>
               </widget>
               <packing>
                 <property name="expand">False</property>

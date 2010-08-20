@@ -925,7 +925,7 @@ class AdjournedTabSection (ParrentListSection):
         #    glm.connect("addAdjourn", on_adjourn_add)
 
 ############################################################################
-# Initialize "Create Seek" and"Challenge" panels, and "Edit Seek:" dialog  #
+# Initialize "Create Seek" and "Challenge" panels, and "Edit Seek:" dialog #
 ############################################################################
 
 RATING_SLIDER_STEP = 25
@@ -992,7 +992,7 @@ class SeekChallengeSection (ParrentListSection):
         
         self.finger = None
         glock.glock_connect(self.connection.fm, "fingeringFinished",
-                lambda fm, finger: self.onFinger(fm, finger))
+            lambda fm, finger: self.onFinger(fm, finger))
         self.connection.fm.finger(self.connection.getUsername())
         
         self.widgets["untimedCheck"].connect("toggled", self.onUntimedCheckToggled)
@@ -1040,8 +1040,12 @@ class SeekChallengeSection (ParrentListSection):
             self.chainbox.active = is_active
         self.seekEditorWidgetGettersSetters["chainAlignment"] = (chainboxGetter, chainboxSetter)
         
+        self.challengee = "<Player>"
+        self.seeknumber = 1
         self.widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
         self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
+        self.widgets["challengeDialog"].connect("response", self.onSendChallengeButtonResponse)
+        self.widgets["editSeekDialog"].connect("response", self.onSeekEditorButtonResponse)
         
         seekSelection = self.widgets["seektreeview"].get_selection()
         seekSelection.connect_after("changed", self.onSeekSelectionChanged)
@@ -1053,18 +1057,15 @@ class SeekChallengeSection (ParrentListSection):
                        "challenge1Radio", "challenge2Radio", "challenge3Radio"):
             uistuff.keep(self.widgets[widget], widget)
         
-        self.connections = {}
         self.lastdifference = 0
         self.savedSeekRadioTexts = [_("Blitz"), _("Blitz"), _("Blitz")]
         
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeeks(i)
-            self.connections["seek%sRadioConfigButton" % i] = \
-                self.widgets["seek%sRadioConfigButton" % i].connect( \
+            self.widgets["seek%sRadioConfigButton" % i].connect(
                 "clicked", self.onSeekRadioConfigButtonClicked, i)
-            self.connections["challenge%sRadioConfigButton" % i] = \
-                self.widgets["challenge%sRadioConfigButton" % i].connect( \
+            self.widgets["challenge%sRadioConfigButton" % i].connect(
                 "clicked", self.onChallengeRadioConfigButtonClicked, i)
         
         if not connection.isRegistred():
@@ -1092,16 +1093,26 @@ class SeekChallengeSection (ParrentListSection):
         if iter == None: return
         playername = model.get_value(iter, 1)
         
+        self.challengee = playername
+        self.widgets["challengeeNameLabel"].set_markup("<big><b>%s</b></big>" % playername)
+        title = _("Challenge: ") + playername
+        self.widgets["challengeDialog"].set_title(title)
+        self.widgets["challengeDialog"].present()
+
+    def onSendChallengeButtonResponse (self, dialog, response):
+        self.widgets["challengeDialog"].hide()
+        if response is not 5:
+            return
+        
         if self.widgets["challenge3Radio"].get_active():
             self.__loadSeekEditor(3)
         elif self.widgets["challenge2Radio"].get_active():
             self.__loadSeekEditor(2)
         else:
             self.__loadSeekEditor(1)
-        
         min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
-        self.connection.om.challenge(playername, min, incr, rated, color, variant)
-
+        self.connection.om.challenge(self.challengee, min, incr, rated, color, variant)
+    
     def onSeekRadioConfigButtonClicked (self, configimage, seeknumber): 
         self.__showSeekEditor(seeknumber)
     
@@ -1109,64 +1120,35 @@ class SeekChallengeSection (ParrentListSection):
         self.__showSeekEditor(seeknumber, challengemode=True)
         self.onPlayerSelectionChanged(self.widgets["playertreeview"].get_selection())
         
+    def onSeekEditorButtonResponse (self, dialog, response):
+        self.widgets["editSeekDialog"].hide()
+        if response != gtk.RESPONSE_OK:
+            return
+        self.__saveSeekEditor(self.seeknumber)
+        self.__writeSavedSeeks(self.seeknumber)
+    
     def __showSeekEditor (self, seeknumber, challengemode=False):
+        self.seeknumber = seeknumber
         if not challengemode:
-            radioname = "seek%dRadio"
-            opradioname = "challenge%dRadio"
-            buttonname = "seek%dRadioConfigButton"
-            opbuttonname = "challenge%dRadioConfigButton"
-            configbuttoncallee = self.onSeekRadioConfigButtonClicked
-            self.widgets["strengthFrame"].show()
-            self.widgets["manualAcceptCheck"].show()
+            self.widgets["strengthFrame"].set_sensitive(True)
+            self.widgets["manualAcceptCheck"].set_sensitive(True)
         else:
-            radioname = "challenge%dRadio"
-            opradioname = "seek%dRadio"
-            buttonname = "challenge%dRadioConfigButton"
-            opbuttonname = "seek%dRadioConfigButton"
-            configbuttoncallee = self.onChallengeRadioConfigButtonClicked
-            self.widgets["strengthFrame"].hide()
-            self.widgets["manualAcceptCheck"].hide()
-            self.widgets["editSeekDialog"].resize(100, 100)
+            self.widgets["strengthFrame"].set_sensitive(False)
+            self.widgets["manualAcceptCheck"].set_sensitive(False)
         
         self.widgets["chainAlignment"].show_all()        
         self.__loadSeekEditor(seeknumber)
-        configbutton = buttonname % seeknumber
-        
-        def onResponse (dialog, response):
-            self.widgets["editSeekDialog"].hide()
-            self.widgets["editSeekDialog"].disconnect(handlerId)
-            for i in range(1,4):
-                self.widgets[buttonname % i].set_sensitive(True)
-                self.widgets[opbuttonname % i].set_sensitive(True)
-            if configbutton in self.connections:
-                self.widgets[configbutton].disconnect(self.connections[configbutton])
-            self.connections[configbutton] = \
-               self.widgets[configbutton].connect("clicked", configbuttoncallee, seeknumber)
-            if response != gtk.RESPONSE_OK:
-                return
-            self.__saveSeekEditor(seeknumber)
-            self.__writeSavedSeeks(seeknumber)
-        
-        for i in range(1,4):
-            if i is not seeknumber:
-                self.widgets[buttonname % i].set_sensitive(False)
-            self.widgets[opbuttonname % i].set_sensitive(False)
-        if configbutton in self.connections:
-            self.widgets[configbutton].disconnect(self.connections[configbutton])
-        self.connections[configbutton] = \
-           self.widgets[configbutton].connect("clicked", lambda *w: self.widgets["editSeekDialog"].present())
-        self.widgets[radioname % seeknumber].set_active(True)
-        self.widgets[opradioname % seeknumber].set_active(True)
+        self.widgets["seek%dRadio" % seeknumber].set_active(True)
+        self.widgets["challenge%dRadio" % seeknumber].set_active(True)
         
         self.__updateYourRatingHBox()
         self.__updateRatingCenterInfoBox()
         self.__updateToleranceButton()
         self.onUntimedCheckToggled(self.widgets["untimedCheck"])
         
-        handlerId = self.widgets["editSeekDialog"].connect("response", onResponse)
-        title = _("Edit Seek: ") + self.widgets[radioname % seeknumber].get_label()[:-1]
+        title = _("Edit Seek: ") + self.widgets["seek%dRadio" % seeknumber].get_label()[:-1]
         self.widgets["editSeekDialog"].set_title(title)
-        self.widgets["editSeekDialog"].show()
+        self.widgets["editSeekDialog"].present()
     
     def onSeekSelectionChanged (self, selection):
         # You can't press "Accept" button when nobody are selected
@@ -1188,64 +1170,67 @@ class SeekChallengeSection (ParrentListSection):
 
     #-------------------------------------------------------- Seek Editor
         
-    def __writeSavedSeeks (self, seekNumber):
+    def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
-        min, gain, variant, ratingRange, color, rated, manual = self.__getSeekEditorDialogValues()
+        min, gain, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
         isUntimedGame = True if min is 0 else False
         radioText = self.__getNameOfTimeControl(min, gain)
-        self.savedSeekRadioTexts[seekNumber-1] = radioText
+        self.savedSeekRadioTexts[seeknumber-1] = radioText
         self.__writeSeekRadioLabels()
-        seek = []
-        challenge = []
+        seek = {}
         
         if isUntimedGame:
-            pass
+            seek["time"] = _("Untimed")
         elif gain > 0:
-            seek.append("%d min + %d sec/move" % (min, gain))
-            challenge.append("%d min + %d sec/move" % (min, gain))
+            seek["time"] = "%d min + %d sec/move" % (min, gain)
         else:
-            seek.append("%d min" % (min))
-            challenge.append("%d min" % (min))
+            seek["time"] = "%d min" % min
         
         if variant != NORMALCHESS and not isUntimedGame:
-            seek.append("%s" % variants[variant].name)
-            challenge.append("%s" % variants[variant].name)
+            seek["variant"] = "%s" % variants[variant].name
         
-        if ratingRange[0] > 0:
-            ratingText = "%d" % ratingRange[0]
-            if ratingRange[1] == 9999:
+        if ratingrange[0] > 0:
+            ratingText = "%d" % ratingrange[0]
+            if ratingrange[1] == 9999:
                 ratingText += "↑"
             else:
-                ratingText += "-%d" % ratingRange[1]
-            seek.append(ratingText)
-        elif ratingRange[1] != 9999:
-            seek.append("%d↓" % ratingRange[1])
+                ratingText += "-%d" % ratingrange[1]
+            seek["rating"] = ratingText
+        elif ratingrange[1] != 9999:
+            seek["rating"] = "%d↓" % ratingrange[1]
         
         if color == WHITE:
-            seek.append(_("White"))
-            challenge.append(_("White"))
+            seek["color"] = _("White")
         elif color == BLACK:
-            seek.append(_("Black"))
-            challenge.append(_("Black"))
+            seek["color"] = _("Black")
         
         if rated and not isUntimedGame:
-            seek.append(_("Rated"))
-            challenge.append(_("Rated"))
+            seek["rated"] = _("Rated")
         
         if manual:
-            seek.append(_("Manual"))
+            seek["manual"] = _("Manual")
         
-        seekText = ", ".join(seek)
-        challengeText = ", ".join(challenge)
-        if seekNumber == 1:
-            self.widgets["seek1RadioLabel"].set_text(seekText)
-            self.widgets["challenge1RadioLabel"].set_text(challengeText)
-        elif seekNumber == 2:
-            self.widgets["seek2RadioLabel"].set_text(seekText)
-            self.widgets["challenge2RadioLabel"].set_text(challengeText)
+        seek_ = []
+        challenge = []
+        for key in ("time", "variant", "rating", "color", "rated", "manual"):
+            if key in seek:
+                seek_.append(seek[key])
+                if key in ("time", "variant", "color", "rated"):
+                    challenge.append("<b>" + seek[key] + "</b>")
+                else:
+                    challenge.append(seek[key])
+        seektext = ", ".join(seek_)
+        challengetext = ", ".join(challenge)
+        
+        if seeknumber == 1:
+            self.widgets["seek1RadioLabel"].set_text(seektext)
+            self.widgets["challenge1RadioLabel"].set_markup(challengetext)
+        elif seeknumber == 2:
+            self.widgets["seek2RadioLabel"].set_text(seektext)
+            self.widgets["challenge2RadioLabel"].set_markup(challengetext)
         else:
-            self.widgets["seek3RadioLabel"].set_text(seekText)
-            self.widgets["challenge3RadioLabel"].set_text(challengeText)
+            self.widgets["seek3RadioLabel"].set_text(seektext)
+            self.widgets["challenge3RadioLabel"].set_markup(challengetext)
         
     def __loadSeekEditor (self, seeknumber):
         for widget in self.seekEditorWidgets:
@@ -1503,7 +1488,7 @@ class SeekChallengeSection (ParrentListSection):
         is_untimed_game = check.get_active()
         self.widgets["timeControlConfigVBox"].set_sensitive(not is_untimed_game)
         # on FICS, untimed games can't be rated and can't be a chess variant
-        self.widgets["variantHBox"].set_sensitive(not is_untimed_game)
+        self.widgets["variantFrame"].set_sensitive(not is_untimed_game)
         self.widgets["ratedGameCheck"].set_sensitive(not is_untimed_game)
         self.__updateYourRatingHBox()
         
