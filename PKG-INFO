@@ -1,0 +1,51 @@
+Metadata-Version: 1.1
+Name: PyChess Staunton
+Version: 0.10alpha
+Author: Thomas Dybdahl Ahle
+Author-email: pychess-people at googlegroups com
+Home-page: http://pychess.googlepages.com/home
+Download-url: http://gnomefiles.org/app.php/PyChess
+Summary: Gnome chess game
+License: GPL2
+Description: PyChess is a gtk chess client, originally developed for gnome, but running well under all other linux desktops.
+        (Which we know of, at least). PyChess is 100% python code, from the top of the UI to the bottom of the chess engine, and all code
+        is licensed under the Gnu Public License.
+        
+        The goal of PyChess is to provide an advanced chess client for linux following the Gnome Human Interface Guidelines. The client should be usable
+        to those new to chess, who just want to play a short game and get back to their work, as well as those who wants to use the computer to further
+        enhance their play.
+Keywords: python gtk chess xboard gnuchess game pgn epd board linux
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Natural Language :: Arabic
+Classifier: Natural Language :: Bulgarian
+Classifier: Natural Language :: Catalan
+Classifier: Natural Language :: Czech
+Classifier: Natural Language :: Danish
+Classifier: Natural Language :: Dutch
+Classifier: Natural Language :: English
+Classifier: Natural Language :: Finnish
+Classifier: Natural Language :: French
+Classifier: Natural Language :: German
+Classifier: Natural Language :: Greek
+Classifier: Natural Language :: Hebrew
+Classifier: Natural Language :: Hindi
+Classifier: Natural Language :: Hungarian
+Classifier: Natural Language :: Italian
+Classifier: Natural Language :: Japanese
+Classifier: Natural Language :: Norwegian
+Classifier: Natural Language :: Persian
+Classifier: Natural Language :: Polish
+Classifier: Natural Language :: Portuguese
+Classifier: Natural Language :: Portuguese (Brazilian)
+Classifier: Natural Language :: Romanian
+Classifier: Natural Language :: Russian
+Classifier: Natural Language :: Slovak
+Classifier: Natural Language :: Spanish
+Classifier: Natural Language :: Swedish
+Classifier: Natural Language :: Turkish
+Classifier: Topic :: Desktop Environment :: Gnome
+Classifier: Topic :: Games/Entertainment :: Board Games
+
