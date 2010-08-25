@@ -931,7 +931,7 @@ class AdjournedTabSection (ParrentListSection):
 RATING_SLIDER_STEP = 25
     
 class SeekChallengeSection (ParrentListSection):
-        
+    
     novicepix = load_icon(15, "weather-clear")
     beginnerpix = load_icon(15, "weather-few-clouds")
     intermediatepix = load_icon(15, "weather-overcast")
@@ -1014,6 +1014,8 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
         glock.glock_connect(self.connection, "disconnected",
             lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
+        glock.glock_connect(self.connection, "disconnected",
+            lambda c: self.widgets and self.widgets["challengeDialog"].response(gtk.RESPONSE_CANCEL))
 
         self.widgets["strengthCheck"].connect("toggled", self.onStrengthCheckToggled)
         self.onStrengthCheckToggled(self.widgets["strengthCheck"])
@@ -1041,6 +1043,8 @@ class SeekChallengeSection (ParrentListSection):
         self.seekEditorWidgetGettersSetters["chainAlignment"] = (chainboxGetter, chainboxSetter)
         
         self.challengee = "<Player>"
+        self.challengee_is_guest = False
+        self.in_challenge_mode = False
         self.seeknumber = 1
         self.widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
         self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
@@ -1068,11 +1072,12 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["challenge%sRadioConfigButton" % i].connect(
                 "clicked", self.onChallengeRadioConfigButtonClicked, i)
         
-        if not connection.isRegistred():
-            self.widgets["ratedGameCheck"].set_active(False)
-            self.widgets["ratedGameCheck"].hide()
-        else:
-            self.widgets["ratedGameCheck"].show()
+        if not self.connection.isRegistred():
+            self.chainbox.active = False
+            self.widgets["chainAlignment"].set_sensitive(False)
+            self.widgets["chainAlignment"].set_tooltip_text(
+                _("You can't play rated games because you are logged in as a guest, ") +
+                _("and therefore, the chain button is not applicable"))
         
         # TODO: if registered and no default, update default rating center
         # to be as close as possible to users blitz rating
@@ -1094,6 +1099,21 @@ class SeekChallengeSection (ParrentListSection):
         playername = model.get_value(iter, 1)
         
         self.challengee = playername
+        playertitle = model.get_value(iter, 0)
+        self.challengee_is_guest = playertitle == PlayerTabSection.peoplepix
+        self.in_challenge_mode = True
+        for i in range(1,4):
+            self.__loadSeekEditor(i)
+            self.__writeSavedSeeks(i)
+        self.__updateRatedGameCheck()
+        if self.widgets["seek3Radio"].get_active():
+            seeknumber = 3
+        elif self.widgets["seek2Radio"].get_active():
+            seeknumber = 2
+        else:
+            seeknumber = 1
+        self.__updateSeekEditor(seeknumber, challengemode=True)
+        
         self.widgets["challengeeNameLabel"].set_markup("<big><b>%s</b></big>" % playername)
         title = _("Challenge: ") + playername
         self.widgets["challengeDialog"].set_title(title)
@@ -1127,7 +1147,8 @@ class SeekChallengeSection (ParrentListSection):
         self.__saveSeekEditor(self.seeknumber)
         self.__writeSavedSeeks(self.seeknumber)
     
-    def __showSeekEditor (self, seeknumber, challengemode=False):
+    def __updateSeekEditor (self, seeknumber, challengemode=False):
+        self.in_challenge_mode = challengemode
         self.seeknumber = seeknumber
         if not challengemode:
             self.widgets["strengthFrame"].set_sensitive(True)
@@ -1144,10 +1165,14 @@ class SeekChallengeSection (ParrentListSection):
         self.__updateYourRatingHBox()
         self.__updateRatingCenterInfoBox()
         self.__updateToleranceButton()
+        self.__updateRatedGameCheck()
         self.onUntimedCheckToggled(self.widgets["untimedCheck"])
         
         title = _("Edit Seek: ") + self.widgets["seek%dRadio" % seeknumber].get_label()[:-1]
         self.widgets["editSeekDialog"].set_title(title)
+        
+    def __showSeekEditor (self, seeknumber, challengemode=False):
+        self.__updateSeekEditor(seeknumber, challengemode)
         self.widgets["editSeekDialog"].present()
     
     def onSeekSelectionChanged (self, selection):
@@ -1161,15 +1186,9 @@ class SeekChallengeSection (ParrentListSection):
         # You can't press challengebutton when nobody is selected
         isAnythingSelected = iter != None
         self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
-        
-        if isAnythingSelected:
-            # You can't challenge a guest to a rated game
-            playerTitle = model.get_value(iter, 0)
-            isGuestPlayer = playerTitle == PlayerTabSection.peoplepix
-        self.widgets["ratedGameCheck"].set_sensitive(not isAnythingSelected or not isGuestPlayer)
-
+    
     #-------------------------------------------------------- Seek Editor
-        
+    
     def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
         min, gain, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
@@ -1215,7 +1234,8 @@ class SeekChallengeSection (ParrentListSection):
         for key in ("time", "variant", "rating", "color", "rated", "manual"):
             if key in seek:
                 seek_.append(seek[key])
-                if key in ("time", "variant", "color", "rated"):
+                if key in ("time", "variant", "color") or \
+                        (key == "rated" and not self.challengee_is_guest):
                     challenge.append(seek[key])
         seektext = ", ".join(seek_)
         challengetext = ", ".join(challenge)
@@ -1432,6 +1452,28 @@ class SeekChallengeSection (ParrentListSection):
         else:
             return rating - mod
     
+    def __updateRatedGameCheck (self):
+        # on FICS, untimed games can't be rated, nor can games against a guest
+        if not self.connection.isRegistred():
+            self.widgets["ratedGameCheck"].set_active(False)
+            sensitive = False
+            self.widgets["ratedGameCheck"].set_tooltip_text(
+                _("You can't play rated games because you are logged in as a guest"))
+        elif self.widgets["untimedCheck"].get_active() :
+            sensitive = False
+            self.widgets["ratedGameCheck"].set_tooltip_text(
+                _("You can't play rated games because \"Untimed\" is checked, ") +
+                _("and on FICS, untimed games can't be rated"))
+        elif self.in_challenge_mode and self.challengee_is_guest:
+            sensitive = False
+            self.widgets["ratedGameCheck"].set_tooltip_text(
+                _("This option is not available because you're challenging a guest, ") +
+                _("and guests can't play rated games"))
+        else:
+            sensitive = True
+            self.widgets["ratedGameCheck"].set_tooltip_text("")
+        self.widgets["ratedGameCheck"].set_sensitive(sensitive)
+    
     def __initVariantCombo (self, combo):
         model = gtk.TreeStore(str)
         cellRenderer = gtk.CellRendererText()
@@ -1487,7 +1529,13 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["timeControlConfigVBox"].set_sensitive(not is_untimed_game)
         # on FICS, untimed games can't be rated and can't be a chess variant
         self.widgets["variantFrame"].set_sensitive(not is_untimed_game)
-        self.widgets["ratedGameCheck"].set_sensitive(not is_untimed_game)
+        if is_untimed_game:
+            self.widgets["variantFrame"].set_tooltip_text(
+                _("You can't select a variant because \"Untimed\" is checked, ") +
+                _("and on FICS, untimed games have to be normal chess rules"))
+        else:
+            self.widgets["variantFrame"].set_tooltip_text("")
+        self.__updateRatedGameCheck()  # sets sensitivity of widgets["ratedGameCheck"]
         self.__updateYourRatingHBox()
         
     def onStrengthCheckToggled (self, check):
