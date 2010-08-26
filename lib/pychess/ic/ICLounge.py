@@ -58,6 +58,10 @@ class ICLounge (GObject):
         self.connection.alm.connect("logOut", on_autoLogout)
         self.connection.connect("disconnected", lambda connection: self.close())
         self.connection.connect("error", lambda connection: self.close())
+        
+        if self.connection.isRegistred():
+            numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
+            conf.set("numberOfTimesLoggedInAsRegisteredUser", numtimes)
 
         global sections
         sections = (
@@ -1080,9 +1084,6 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["chainAlignment"].set_tooltip_text(
                 _("You can't play rated games because you are logged in as a guest, ") +
                 _("and therefore, the chain button is not applicable"))
-        
-        # TODO: if registered and no default, update default rating center
-        # to be as close as possible to users blitz rating
 
     def onSeekButtonClicked (self, button):
         if self.widgets["seek3Radio"].get_active():
@@ -1424,17 +1425,13 @@ class SeekChallengeSection (ParrentListSection):
         return gametype, ratingtype
         
     def __updateYourRatingHBox (self):
-        if self.finger == None: return
         gametype, ratingtype = self.__getGameTypes()
-        
         self.widgets["yourRatingNameLabel"].set_label("(" + gametype + ")")
-        try:
-            rating = self.finger.getRating(type=ratingtype)
-        except KeyError:  # the user doesn't have a rating for this game type
+        rating = self.__getRating(ratingtype)
+        if rating is None:
             self.widgets["yourRatingImage"].clear()
             self.widgets["yourRatingLabel"].set_label(_("Unrated"))
             return
-        rating = int(rating.elo)
         pixbuf = self.__getPixbufForRating(rating)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
         self.widgets["yourRatingLabel"].set_label(str(rating))
@@ -1517,9 +1514,39 @@ class SeekChallengeSection (ParrentListSection):
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
     
+    def __getRating (self, gametype):
+        if self.finger is None: return None
+        try:
+            ratingobj = self.finger.getRating(type=gametype)
+            rating = int(ratingobj.elo)
+        except KeyError:  # the user doesn't have a rating for this game type
+            rating = None
+        return rating
+        
     def onFinger (self, fm, finger):
         if not finger.getName() == self.connection.getUsername(): return
         self.finger = finger
+        
+        if conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) is 1:
+            standard = self.__getRating(TYPE_STANDARD)
+            blitz = self.__getRating(TYPE_BLITZ)
+            lightning = self.__getRating(TYPE_LIGHTNING)
+            
+            if standard is not None:
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard / RATING_SLIDER_STEP
+            elif blitz is not None:
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = blitz / RATING_SLIDER_STEP
+            if blitz is not None:
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][1] = blitz / RATING_SLIDER_STEP
+            if lightning is not None:
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning / RATING_SLIDER_STEP
+            elif blitz is not None:
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz / RATING_SLIDER_STEP
+            
+            for i in range(1,4):
+                self.__loadSeekEditor(i)
+                self.__writeSavedSeeks(i)
+
         self.__updateYourRatingHBox()
     
     def onTimeSpinChanged (self, spin):
@@ -1556,14 +1583,9 @@ class SeekChallengeSection (ParrentListSection):
         self.__updateRatingRangeBox()
 
         gametype, ratingtype = self.__getGameTypes()
-        if self.finger == None: return
-        try:
-            rating = self.finger.getRating(type=ratingtype)
-        except KeyError:  # the user doesn't have a rating for this game type
-            return
-        rating = int(rating.elo)
-        newclamp = self.__clamp(rating)
-        self.lastdifference = newclamp - center
+        rating = self.__getRating(ratingtype)
+        rating = self.__clamp(rating)
+        self.lastdifference = rating - center
         
     def __updateRatingCenterInfoBox (self):
         if self.widgets["toleranceHBox"].get_property("visible") == True:
