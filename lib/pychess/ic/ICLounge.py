@@ -1063,6 +1063,7 @@ class SeekChallengeSection (ParrentListSection):
             uistuff.keep(self.widgets[widget], widget)
         
         self.lastdifference = 0
+        self.loading_seek_editor = False
         self.savedSeekRadioTexts = [_("Blitz"), _("Blitz"), _("Blitz")]
         
         for i in range(1,4):
@@ -1252,6 +1253,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["challenge3RadioLabel"].set_text(challengetext)
         
     def __loadSeekEditor (self, seeknumber):
+        self.loading_seek_editor = True
         for widget in self.seekEditorWidgets:
             if widget in self.seekEditorWidgetGettersSetters:
                 uistuff.loadDialogWidget(self.widgets[widget], widget, seeknumber,
@@ -1265,6 +1267,7 @@ class SeekChallengeSection (ParrentListSection):
                 uistuff.loadDialogWidget(self.widgets[widget], widget, seeknumber)
         
         self.lastdifference = conf.get("lastdifference-%d" % seeknumber, -1)
+        self.loading_seek_editor = False
         
     def __saveSeekEditor (self, seeknumber):
         for widget in self.seekEditorWidgets:
@@ -1437,11 +1440,12 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["yourRatingLabel"].set_label(str(rating))
         
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
-        newclamp = self.__clamp(rating)
-        difference = newclamp - center
-        if self.chainbox.active and difference is not self.lastdifference:
-            newsliderval = (newclamp - self.lastdifference) / RATING_SLIDER_STEP
-            self.widgets["ratingCenterSlider"].set_value(newsliderval)
+        rating = self.__clamp(rating)
+        difference = rating - center
+        if self.loading_seek_editor is False and self.chainbox.active and \
+                difference is not self.lastdifference:
+            newcenter = rating - self.lastdifference
+            self.widgets["ratingCenterSlider"].set_value(newcenter / RATING_SLIDER_STEP)
         else:
             self.lastdifference = difference
     
