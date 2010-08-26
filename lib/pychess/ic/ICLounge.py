@@ -987,7 +987,7 @@ class SeekChallengeSection (ParrentListSection):
     }
     
     seekEditorWidgetGettersSetters = {}
-
+    
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
         
@@ -1081,10 +1081,8 @@ class SeekChallengeSection (ParrentListSection):
         if not self.connection.isRegistred():
             self.chainbox.active = False
             self.widgets["chainAlignment"].set_sensitive(False)
-            self.widgets["chainAlignment"].set_tooltip_text(
-                _("You can't play rated games because you are logged in as a guest, ") +
-                _("and therefore, the chain button is not applicable"))
-
+            self.widgets["chainAlignment"].set_tooltip_text(_("The chain button is disabled because you are logged in as a guest. Guests can't establish ratings, and the chain button's state has no effect when there is no rating to which to tie \"Opponent Strength\" to"))
+    
     def onSeekButtonClicked (self, button):
         if self.widgets["seek3Radio"].get_active():
             self.__loadSeekEditor(3)
@@ -1155,10 +1153,16 @@ class SeekChallengeSection (ParrentListSection):
         self.seeknumber = seeknumber
         if not challengemode:
             self.widgets["strengthFrame"].set_sensitive(True)
+            self.widgets["strengthFrame"].set_tooltip_text("")
             self.widgets["manualAcceptCheck"].set_sensitive(True)
+            self.widgets["manualAcceptCheck"].set_tooltip_text("")
         else:
             self.widgets["strengthFrame"].set_sensitive(False)
+            self.widgets["strengthFrame"].set_tooltip_text(
+                _("This option is not applicable because you're challenging a player"))
             self.widgets["manualAcceptCheck"].set_sensitive(False)
+            self.widgets["manualAcceptCheck"].set_tooltip_text(
+                _("This option is not applicable because you're challenging a player"))
         
         self.widgets["chainAlignment"].show_all()        
         self.__loadSeekEditor(seeknumber)
@@ -1572,7 +1576,6 @@ class SeekChallengeSection (ParrentListSection):
         
     def onStrengthCheckToggled (self, check):
         strengthsensitive = not check.get_active()
-        self.widgets["strengthImage"].set_sensitive(strengthsensitive)
         self.widgets["strengthConfigVBox"].set_sensitive(strengthsensitive)        
         
     def onRatingCenterSliderChanged (self, slider):
