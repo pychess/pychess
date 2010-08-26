@@ -1553,6 +1553,7 @@ class SeekChallengeSection (ParrentListSection):
             for i in range(1,4):
                 self.__loadSeekEditor(i)
                 self.__updateSeekEditor(i)
+                self.__saveSeekEditor(i)
                 self.__writeSavedSeeks(i)
 
         self.__updateYourRatingHBox()
