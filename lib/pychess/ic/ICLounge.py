@@ -995,6 +995,7 @@ class SeekChallengeSection (ParrentListSection):
         self.connection = connection
         
         self.finger = None
+        conf.set("numberOfFingers", 0)
         glock.glock_connect(self.connection.fm, "fingeringFinished",
             lambda fm, finger: self.onFinger(fm, finger))
         self.connection.fm.finger(self.connection.getUsername())
@@ -1531,7 +1532,9 @@ class SeekChallengeSection (ParrentListSection):
         if not finger.getName() == self.connection.getUsername(): return
         self.finger = finger
         
-        if conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) is 1:
+        numfingers = conf.get("numberOfFingers", 0) + 1
+        conf.set("numberOfFingers", numfingers)
+        if conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) is 1 and numfingers is 1:
             standard = self.__getRating(TYPE_STANDARD)
             blitz = self.__getRating(TYPE_BLITZ)
             lightning = self.__getRating(TYPE_LIGHTNING)
@@ -1549,6 +1552,7 @@ class SeekChallengeSection (ParrentListSection):
             
             for i in range(1,4):
                 self.__loadSeekEditor(i)
+                self.__updateSeekEditor(i)
                 self.__writeSavedSeeks(i)
 
         self.__updateYourRatingHBox()
@@ -1587,6 +1591,7 @@ class SeekChallengeSection (ParrentListSection):
 
         gametype, ratingtype = self.__getGameTypes()
         rating = self.__getRating(ratingtype)
+        if rating is None: return
         rating = self.__clamp(rating)
         self.lastdifference = rating - center
         
