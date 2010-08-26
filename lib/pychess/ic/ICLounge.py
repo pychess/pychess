@@ -1048,8 +1048,9 @@ class SeekChallengeSection (ParrentListSection):
         self.seeknumber = 1
         self.widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
         self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
-        self.widgets["challengeDialog"].connect("response", self.onSendChallengeButtonResponse)
-        self.widgets["editSeekDialog"].connect("response", self.onSeekEditorButtonResponse)
+        self.widgets["challengeDialog"].connect("delete-event", self.onChallengeDialogResponse)
+        self.widgets["challengeDialog"].connect("response", self.onChallengeDialogResponse)
+        self.widgets["editSeekDialog"].connect("response", self.onEditSeekDialogResponse)
         
         seekSelection = self.widgets["seektreeview"].get_selection()
         seekSelection.connect_after("changed", self.onSeekSelectionChanged)
@@ -1119,10 +1120,10 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
 
-    def onSendChallengeButtonResponse (self, dialog, response):
+    def onChallengeDialogResponse (self, dialog, response):
         self.widgets["challengeDialog"].hide()
         if response is not 5:
-            return
+            return True
         
         if self.widgets["challenge3Radio"].get_active():
             self.__loadSeekEditor(3)
@@ -1140,7 +1141,7 @@ class SeekChallengeSection (ParrentListSection):
         self.__showSeekEditor(seeknumber, challengemode=True)
         self.onPlayerSelectionChanged(self.widgets["playertreeview"].get_selection())
         
-    def onSeekEditorButtonResponse (self, dialog, response):
+    def onEditSeekDialogResponse (self, dialog, response):
         self.widgets["editSeekDialog"].hide()
         if response != gtk.RESPONSE_OK:
             return
