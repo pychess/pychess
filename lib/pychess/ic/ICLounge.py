@@ -611,10 +611,13 @@ class SeekGraphSection (ParrentListSection):
         type = seek["r"] == "u" and 1 or 0
 
         text = "%s (%s)" % (seek["w"], seek["rt"])
+        if seek["cp"]:  # remove from testing/ficsmanagers.py as well when removing this
+            text += " (%s)" % _("Computer Player")
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         text += "\n%s %s" % (rated, seek["tp"])
         text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
-
+        if seek["manual"]:
+            text += "\n%s" % _("Manual Acceptance")
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
