@@ -275,8 +275,7 @@ class NewsSection(Section):
             label.set_ellipsize(pango.ELLIPSIZE_END)
             expander = gtk.Expander()
             expander.set_label_widget(label)
-            gtk.Tooltips().set_tip(expander, title)
-
+            expander.set_tooltip_text(title)
             textview = gtk.TextView ()
             textview.set_wrap_mode (gtk.WRAP_WORD)
             textview.set_editable (False)
