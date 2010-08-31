@@ -1,0 +1,38 @@
+#!/usr/bin/python
+#
+# PyChess startup script
+#
+
+import os, sys
+import pygtk
+pygtk.require("2.0")
+
+if not "HOME" in os.environ:
+    os.environ["HOME"] = os.path.expanduser("~")
+
+# Import datalocation functions and ensure access to codebase
+try:
+    from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
+except ImportError:
+    print "ERROR: Could not import modules."
+    print "Please try to run pychess as stated in the INSTALL file"
+    sys.exit(1)
+
+# Set up translations
+import __builtin__, gettext, gtk.glade
+if isInstalled():
+    #gettext.install("pychess", unicode=1, names=('ngettext',)) # requires Python >= 2.5
+    gettext.install("pychess", unicode=1)
+    t = gettext.translation("pychess", fallback=True)
+    gtk.glade.bindtextdomain("pychess")
+else:
+    #gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+    t = gettext.translation("pychess", localedir=addDataPrefix("lang"), fallback=True)
+    gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
+__builtin__.__dict__["ngettext"] = t.ungettext
+gtk.glade.textdomain("pychess")
+
+# Let's rumble!
+import pychess.Main
+pychess.Main.run(sys.argv[1:])
