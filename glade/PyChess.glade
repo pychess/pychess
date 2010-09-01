@@ -2404,7 +2404,7 @@ No sound</property>
                                             <child>
                                               <widget class="GtkLabel" id="label2">
                                                 <property name="visible">True</property>
-                                                <property name="label">Ac_tive</property>
+                                                <property name="label" translatable="yes">Ac_tive</property>
                                                 <property name="use_underline">True</property>
                                               </widget>
                                               <packing>
