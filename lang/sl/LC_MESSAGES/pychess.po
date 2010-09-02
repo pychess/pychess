@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: template\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-30 19:17+0200\n"
-"PO-Revision-Date: 2010-08-30 19:56+0200\n"
+"POT-Creation-Date: 2010-09-02 10:07+0200\n"
+"PO-Revision-Date: 2010-09-02 10:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -339,8 +339,8 @@ msgstr "Splošno"
 msgid ""
 "<b>Note:</b> Changes to analyzers will be applied to the next game started."
 msgstr ""
-"<b>Opomba:</b> Spremembe v analiziranju bodo uporabljene ob naslednjem "
-"zagonu igre."
+"<b>Opomba:</b> Spremembe v analiziranju bodo na voljo ob naslednjem zagonu "
+"igre."
 
 #: glade/PyChess.glade:1464
 msgid "<b>Chess Engines</b>"
@@ -372,7 +372,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1626
 msgid "<b>Analyzing</b>"
-msgstr "<b>Analiziraj z</b>"
+msgstr "<b>Analiziraj</b>"
 
 #: glade/PyChess.glade:1649
 msgid "Computer _Opponents"
@@ -380,7 +380,7 @@ msgstr "Računalniški nasprotnik"
 
 #: glade/PyChess.glade:1674
 msgid "_Use sounds in PyChess"
-msgstr "_Uporabi zvok v PyChess"
+msgstr "_Uporabi zvoke v PyChess"
 
 #: glade/PyChess.glade:1753
 msgid ""
@@ -439,6 +439,10 @@ msgstr "Zvoki"
 #: glade/PyChess.glade:2361
 msgid "Uninstall"
 msgstr "Odstrani"
+
+#: glade/PyChess.glade:2407
+msgid "Ac_tive"
+msgstr "Živo"
 
 #: glade/PyChess.glade:2451
 msgid "<b>Installed Sidepanels</b>"
@@ -738,7 +742,7 @@ msgstr "Črni"
 
 #: glade/fics_lounge.glade:2012
 msgid "<b>Your Color</b>"
-msgstr "Tvoja barva:"
+msgstr "<b>Tvoja barva</b>"
 
 #: glade/fics_lounge.glade:2066
 msgid "Play normal chess rules"
@@ -963,6 +967,10 @@ msgstr "Nasvet dneva"
 #: glade/tipoftheday.glade:55
 msgid "<b>Tip of the Day:</b>"
 msgstr "<b>Nasvet dneva:</b>"
+
+#: glade/tipoftheday.glade:69
+msgid "Show tips at startup"
+msgstr "Prikaži nasvete ob zagonu"
 
 #: lib/pychess/Main.py:173
 msgid "http://en.wikipedia.org/wiki/Chess"
@@ -2191,8 +2199,7 @@ msgid ""
 "Variants</b>."
 msgstr ""
 "Lahko pričneš z novo igro z <b>Igra</b> > <b>Nova igra</b>, v oknu Nova "
-"igra, "
-"kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Različica "
+"igra, kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Različica "
 "šaha</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
@@ -2222,9 +2229,8 @@ msgid ""
 "Do you know that you can call flag when the clock is with you, <b>Actions</"
 "b> > <b>Call Flag</b>."
 msgstr ""
-"Lahko pozoveš, da je padla zastavica, ko je nasprotniku potekel čas, <b>"
-"Dejanja</"
-"b> > <b>Sporoči padec zastavice</b>."
+"Lahko pozoveš, da je padla zastavica, ko je nasprotniku potekel čas, "
+"<b>Dejanja</b> > <b>Sporoči padec zastavice</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid "Pressing <b>Ctrl+Z</b> to offer opponent the possible rollback moves."
@@ -2241,8 +2247,8 @@ msgstr ""
 #: lib/pychess/widgets/tipOfTheDay.py:59
 msgid "<b>Hint mode</b> analyzing your game, enable this type <b>Ctrl+H</b>."
 msgstr ""
-"<b>Svetovalni način</b> analizira tvojo igro, omogoči to vrsto z <b>Ctrl+H<"
-"/b>"
+"<b>Svetovalni način</b> analizira tvojo igro, omogoči to vrsto z <b>Ctrl+H</"
+"b>"
 
 #: lib/pychess/widgets/tipOfTheDay.py:60
 msgid ""
@@ -2257,18 +2263,17 @@ msgid ""
 "<b>Settings</b> > <b>Preferences</b> > <b>Sound tab</b>, enable <b>Use "
 "sounds in PyChess</b> and choose your preferred sounds."
 msgstr ""
-"Lahko igraš šah s poslušanjem zvokov igre, za to uporabi,<b>Nastavitve</b> > "
-"<b>Možnosti</b> > <b>Zavihek Zvok</b>, omogoči <b>Uporabi zvoke v PyChess</"
-"b> in izberi željene zvoke."
+"Lahko igraš šah s poslušanjem zvokov igre, za to uporabi, <b>Nastavitve</b> "
+"> <b>Možnosti</b> > <b>Zavihek Zvoki</b>, omogoči <b>Uporabi zvoke v "
+"PyChess</b> in izberi željene zvoke."
 
 #: lib/pychess/widgets/tipOfTheDay.py:62
 msgid ""
 "Do you know that you can help translate Pychess in your language, <b>Help</"
 "b> > <b>Translate Pychess</b>."
 msgstr ""
-"Ali veš, da lahko pomagaš prevesti PyChess v tvoj jezik, <b>Pomoč</b> > <b>"
-"Prevedi "
-"Pychess</b>."
+"Ali veš, da lahko pomagaš prevesti PyChess v tvoj jezik, <b>Pomoč</b> > "
+"<b>Prevedi Pychess</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:63
 msgid "Do you know that it is possible to finish a chess game in just 2 turns?"
@@ -2623,5 +2628,4 @@ msgid ""
 "game progress"
 msgstr ""
 "Panel rezultatov poskuša vrednotiti položaj in prikazati graf poteka igre"
-
 
