@@ -524,7 +524,7 @@ msgstr "_Műveletek"
 # Offer Draw
 #: glade/PyChess.glade:193
 msgid "Offer _Abort"
-msgstr "_Döntetlen ajánlása"
+msgstr "_Megszakítás ajánlása"
 
 #: glade/PyChess.glade:201
 msgid "Offer Ad_journment"
