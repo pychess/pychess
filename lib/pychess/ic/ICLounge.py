@@ -408,28 +408,34 @@ class SeekTabSection (ParrentListSection):
         if model[path][8] == "grey": return False
         else: return True
     
+    def __isAChallengeOrOurSeek (self, row):
+        gameno = row[0]
+        textcolor = row[8]
+        if (gameno is not None and gameno.startswith("C")) or (textcolor == "grey"):
+            return True
+        else:
+            return False
+    
     def compareFunction (self, model, iter0, iter1, column):
-        gameno0 = model.get_value(iter0, 0)
-        gameno1 = model.get_value(iter1, 0)
-        textcolor0 = model.get_value(iter0, 8)
-        textcolor1 = model.get_value(iter1, 8)
+        row0 = list(model[model.get_path(iter0)])
+        row1 = list(model[model.get_path(iter1)])
         is_ascending = True if self.tv.get_column(column-1).get_sort_order() is \
                                gtk.SORT_ASCENDING else False
-        if (gameno0 is not None and gameno0.startswith("C")) or (textcolor0 == "grey"):
+        if self.__isAChallengeOrOurSeek(row0) and not self.__isAChallengeOrOurSeek(row1):
             if is_ascending: return -1
             else: return 1
-        elif (gameno1 is not None and gameno1.startswith("C")) or (textcolor1 == "grey"):
+        elif self.__isAChallengeOrOurSeek(row1) and not self.__isAChallengeOrOurSeek(row0):
             if is_ascending: return 1
             else: return -1
         elif column is 6:
             return self.timeCompareFunction(model, iter0, iter1, column)
         else:
-            value0 = model.get_value(iter0, column)
+            value0 = row0[column]
             value0 = value0.lower() if isinstance(value0, str) else value0
-            value1 = model.get_value(iter1, column)
+            value1 = row1[column]
             value1 = value1.lower() if isinstance(value1, str) else value1
             return cmp(value0, value1)
-        
+    
     def onAddSeek (self, seek):
         time = _("%(min)s min") % {'min': seek["t"]}
         if seek["i"] != "0":
@@ -437,12 +443,14 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         textcolor = "grey" if seek["w"] == self.connection.getUsername() else "black"
-        ti = self.store.append ([seek["gameno"], pix, seek["w"],
-                                int(seek["rt"]), rated, seek["tp"], time,
-                                float(seek["t"] + "." + seek["i"]), textcolor])
+        seek_ = [seek["gameno"], pix, seek["w"], int(seek["rt"]), rated, seek["tp"],
+                 time, float(seek["t"] + "." + seek["i"]), textcolor]
         if textcolor == "grey":
+            ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
             self.widgets["clearSeeksButton"].set_sensitive(True)
+        else:
+            ti = self.store.append(seek_)
         self.seeks [seek["gameno"]] = ti
         count = len(self.seeks)
         postfix = count == 1 and _("Active Seek") or _("Active Seeks")
