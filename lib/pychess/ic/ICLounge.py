@@ -643,23 +643,16 @@ class SeekGraphSection (ParrentListSection):
 ########################################################################
 # Initialize Players List                                              #
 ########################################################################
-
+    
 class PlayerTabSection (ParrentListSection):
 
-    peoplepix = load_icon(15, "stock_people", "system-users")
-    bookpix = load_icon(15, "stock_book_blue", "accessories-dictionary")
-    easypix = load_icon(15, "weather-few-clouds")
-    advpix = load_icon(15, "weather-overcast")
-    exppix = load_icon(15, "weather-storm")
-    cmppix = load_icon(15, "stock_notebook", "computer")
-
+    players = {}
+    
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
 
         self.widgets = widgets
         self.connection = connection
-
-        self.players = {}
 
         self.tv = self.widgets["playertreeview"]
         self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
@@ -682,27 +675,78 @@ class PlayerTabSection (ParrentListSection):
         self.widgets["private_chat_button"].connect("clicked", self.onPrivateChatClicked)
         self.widgets["private_chat_button"].set_sensitive(False)
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
-
+    
+    @classmethod
+    def getIconForRating (cls, rating, size=15):
+        assert type(rating) == int, "rating not an int: %s" % str(rating)
+        if rating >= 1900:
+            icon = load_icon(size, "weather-storm")
+        elif rating >= 1600:
+            icon = load_icon(size, "weather-showers")
+        elif rating >= 1300:
+            icon = load_icon(size, "weather-overcast")
+        elif rating >= 1000:
+            icon = load_icon(size, "weather-few-clouds")
+        else:
+            icon = load_icon(size, "weather-clear")
+        return icon
+    
+    @classmethod
+    def __getPlayerIcon (cls, player, size=15):
+        assert type(size) == int, "size not an int: %s" % str(size)
+        computericon = load_icon(size, "stock_notebook", "computer")
+        guesticon = load_icon(size, "stock_people", "system-users")
+        
+        if "C" in player["titles"]:
+            icon = computericon
+        elif "U" in player["titles"]:
+            icon = guesticon
+        else:
+            icon = cls.getIconForRating(player["rating"], size)
+        #else:
+        #    icon = load_icon(size, "stock_book_blue", "accessories-dictionary")  # admin
+        
+        return icon
+    
+    @classmethod
+    def getPlayerIcon (cls, playername, size=15):
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        
+        try:
+            player = cls.players[playername]
+        except KeyError:
+            return load_icon(size, "stock_people", "system-users")  # guest icon
+        player = player[1]
+        
+        return cls.__getPlayerIcon(player, size)
+    
+    @classmethod
+    def playerIsAGuest (cls, playername):
+        "Throws KeyError if player removed from self.players before lookup"
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        player = cls.players[playername]
+        player = player[1]
+        if "U" in player["titles"]:
+            return True
+        else:
+            return False
+    
+    @classmethod
+    def playerIsAComputer (cls, playername):
+        "Throws KeyError if player removed from self.players before lookup"
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        player = cls.players[playername]
+        player = player[1]
+        if "C" in player["titles"]:
+            return True
+        else:
+            return False
+    
     def onPlayerAdd (self, player):
         if player["name"] in self.players: return
-        rating = player["rating"]
-        title = player["title"]
-        if title & 0x02:
-            title = PlayerTabSection.cmppix
-        elif not rating:
-            title = PlayerTabSection.peoplepix
-        else:
-            if rating < 1300:
-                title = PlayerTabSection.easypix
-            elif rating < 1600:
-                title = PlayerTabSection.advpix
-            else:
-                title = PlayerTabSection.exppix
-        #else:
-        #    # Admins gets a book picture
-        #    title = PlayerTabSection.bookpix
-        ti = self.store.append ([title, player["name"], rating])
-        self.players [player["name"]] = ti
+        icon = self.__getPlayerIcon(player)       
+        ti = self.store.append ([icon, player["name"], player["rating"]])
+        self.players[player["name"]] = [ti, player]
         count = len(self.players)
         postfix = count == 1 and _("Player Ready") or _("Players Ready")
         self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
@@ -710,10 +754,10 @@ class PlayerTabSection (ParrentListSection):
     def onPlayerRemove (self, name):
         if not name in self.players:
             return
-        ti = self.players [name]
+        ti = self.players[name][0]
         if not self.store.iter_is_valid(ti):
             return
-        self.store.remove (ti)
+        self.store.remove(ti)
         del self.players[name]
         count = len(self.players)
         postfix = count == 1 and _("Player Ready") or _("Players Ready")
@@ -946,12 +990,6 @@ RATING_SLIDER_STEP = 25
     
 class SeekChallengeSection (ParrentListSection):
     
-    novicepix = load_icon(15, "weather-clear")
-    beginnerpix = load_icon(15, "weather-few-clouds")
-    intermediatepix = load_icon(15, "weather-overcast")
-    advancedpix = load_icon(15, "weather-showers")
-    expertpix = load_icon(15, "weather-storm")
-    
     variants = {
         SHUFFLECHESS : TYPE_WILD,
         FISCHERRANDOMCHESS : TYPE_WILD,
@@ -1109,11 +1147,17 @@ class SeekChallengeSection (ParrentListSection):
         model, iter = self.widgets["playertreeview"].get_selection().get_selected()
         if iter == None: return
         playername = model.get_value(iter, 1)
-        
+        playerrating = model.get_value(iter, 2)
         self.challengee = playername
-        playertitle = model.get_value(iter, 0)
-        self.challengee_is_guest = playertitle == PlayerTabSection.peoplepix
+        try:
+            self.challengee_is_guest = PlayerTabSection.playerIsAGuest(playername)
+            challengee_is_computer = PlayerTabSection.playerIsAComputer(playername)
+        except KeyError:
+            self.challengee_is_guest = False
+            challengee_is_computer = False
         self.in_challenge_mode = True
+        icon = PlayerTabSection.getPlayerIcon(playername, 22)
+        
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeeks(i)
@@ -1126,11 +1170,20 @@ class SeekChallengeSection (ParrentListSection):
             seeknumber = 1
         self.__updateSeekEditor(seeknumber, challengemode=True)
         
-        self.widgets["challengeeNameLabel"].set_markup("<big><b>%s</b></big>" % playername)
+        markup = "<big><b>%s</b></big>" % playername
+        if self.challengee_is_guest:
+            markup += " <big>(%s)</big>" % _("Unregistered")
+        else:
+            playerrating = str(playerrating) if playerrating > 0 else _("Unrated")
+            markup += " <big>(%s)</big>" % playerrating
+            if challengee_is_computer:
+                markup += " <big>(%s)</big>" % _("Computer Player")
+        self.widgets["challengeeNameLabel"].set_markup(markup)
+        self.widgets["challengeeImage"].set_from_pixbuf(icon)
         title = _("Challenge: ") + playername
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
-
+    
     def onChallengeDialogResponse (self, dialog, response):
         self.widgets["challengeDialog"].hide()
         if response is not 5:
@@ -1374,20 +1427,7 @@ class SeekChallengeSection (ParrentListSection):
             else:
                 self.widgets["seek%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
                 self.widgets["challenge%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
-
-    def __getPixbufForRating (self, rating):
-        assert type(rating) == int, "rating not an int: %s" % str(rating)
-        if rating >= 1900:
-            return self.expertpix
-        elif rating >= 1600:
-            return self.advancedpix
-        elif rating >= 1300:
-            return self.intermediatepix
-        elif rating >= 1000:
-            return self.beginnerpix
-        else:
-            return self.novicepix
-        
+    
     def __updateRatingRangeBox (self):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
         tolerance = int(self.widgets["toleranceSlider"].get_value()) * RATING_SLIDER_STEP
@@ -1401,7 +1441,7 @@ class SeekChallengeSection (ParrentListSection):
         
         for widgetName, rating in (("ratingRangeMinImage", minRating),
                                    ("ratingRangeMaxImage", maxRating)):
-            pixbuf = self.__getPixbufForRating(rating)
+            pixbuf = PlayerTabSection.getIconForRating(rating)
             self.widgets[widgetName].set_from_pixbuf(pixbuf)
         
         self.widgets["ratingRangeMinImage"].show()
@@ -1447,7 +1487,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["yourRatingImage"].clear()
             self.widgets["yourRatingLabel"].set_label(_("Unrated"))
             return
-        pixbuf = self.__getPixbufForRating(rating)
+        pixbuf = PlayerTabSection.getIconForRating(rating)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
         self.widgets["yourRatingLabel"].set_label(str(rating))
         
@@ -1595,7 +1635,7 @@ class SeekChallengeSection (ParrentListSection):
         
     def onRatingCenterSliderChanged (self, slider):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
-        pixbuf = self.__getPixbufForRating(center)
+        pixbuf = PlayerTabSection.getIconForRating(center)
         self.widgets["ratingCenterLabel"].set_label("%d" % (center))
         self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)        
         self.__updateRatingRangeBox()

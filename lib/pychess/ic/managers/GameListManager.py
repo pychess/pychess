@@ -6,7 +6,9 @@ from pychess.Utils.const import *
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\- ]{1,4})"
-names = "(\w+)(?:\((\w+)\))?"
+titleslist = "(?:GM|IM|FM|WGM|WIM|TM|SR|TD|CA|C|U|D|B|T|\*)"
+titles = "((?:\(%s\))+)?" % titleslist
+names = "([a-zA-Z]+)%s" % titles
 mf = "(?:([mf]{1,2})\s?)?"
 ratingSplit = re.compile("P|E| ")
 
@@ -67,6 +69,33 @@ shortTypes = { "b": _("Blitz"),
 
 supportedShorts = ("b","l","s","w","L")
 
+hexToTitle = { 0x1 : "U",
+               0x2 : "C",
+               0x4 : "GM",
+               0x8 : "IM",
+               0x10 : "FM",
+               0x20 : "WGM",
+               0x40 : "WIM",
+               0x80 : "WFM" }
+
+# From FICS 'help who':
+translatedTitles = { 
+                    "*": _("Administrator"),
+                    "B": _("Blindfold Account"),
+                    "C": _("Computer Account"),
+                    "T": _("Team Account"),
+                    "U": _("Unregistered User"),
+                    "CA": _("Chess Advisor"),
+                    "SR": _("Service Representative"),
+                    "TD": _("Tournament Director"),
+                    "TM": _("Mamer Manager"),
+                    "FM": _("FIDE Master"),
+                    "IM": _("International Master"),
+                    "GM": _("Grand Master"),
+                    "WIM": _("Women's International Master"),
+                    "WGM": _("Women's Grand Master"),
+                    }
+
 def convertName (typename):
     # Try common
     if typename in standards:
@@ -84,16 +113,6 @@ def convertName (typename):
         return a + " " + b
     # Otherwise forget about it
     return typename[0].upper() + typename[1:]
-
-#0x1 - unregistered
-#0x2 - computer
-#0x4 - GM
-#0x8 - IM
-#0x10 - FM
-#0x20 - WGM
-#0x40 - WIM
-#0x80 - WFM
-
 #typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
 
 
@@ -217,6 +236,11 @@ class GameListManager (GObject):
                 seek["rmin"], seek["rmax"] = value.split("-")
             elif key == "ti":
                 seek["cp"] = bool(int(value) & 2) # 0x2 - computer
+                title = ""
+                for hex in hexToTitle.keys():
+                    if int(value, 16) & hex:
+                        title += "(" + hexToTitle[hex] + ")"
+                seek["title"] = title
             elif key == "rt":
                 if value[-1] in (" ", "P", "E"):
                     seek[key] = value[:-1]
@@ -257,7 +281,11 @@ class GameListManager (GObject):
     ###
     
     def on_player_list (self, match):
-        handle, title, ratings = match.groups()
+        handle, titlehex, ratings = match.groups()
+        titles = []
+        for hex in hexToTitle.keys():
+            if int(titlehex, 16) & hex:
+                titles.append(hexToTitle[hex])
         numratings = 0
         ratingtotal = 0
         for rating in ratingSplit.split(ratings):
@@ -265,7 +293,7 @@ class GameListManager (GObject):
                 numratings += 1
                 ratingtotal += int(rating)
         mean = numratings > 0 and ratingtotal/numratings or 0
-        self.emit("addPlayer", {"name": handle, "rating": mean, "title":int(title,16)})
+        self.emit("addPlayer", {"name": handle, "rating": mean, "titles": titles})
         self.players.add(handle)
     
     def on_player_remove (self, match):
@@ -276,6 +304,9 @@ class GameListManager (GObject):
     
     def on_player_add (self, matches):
         name, title, blitz, std, wild, light, bug = matches[0].groups()
+        titles = []
+        if title:
+            titles = re.findall(titleslist, title)
         numratings = 0
         ratingtotal = 0
         for rating in (blitz, std, wild, light, bug):
@@ -283,7 +314,7 @@ class GameListManager (GObject):
                 numratings += 1
                 ratingtotal += int(rating)
         mean = numratings > 0 and ratingtotal/numratings or 0
-        self.emit("addPlayer", {"name":name, "title":0, "rating":mean})
+        self.emit("addPlayer", {"name": name, "titles": titles, "rating": mean})
         self.players.add(name)
     
     ###

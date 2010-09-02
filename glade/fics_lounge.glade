@@ -2334,16 +2334,27 @@ b) you change the variant or the time control</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="challengeeNameLabel">
+              <widget class="GtkImage" id="challengeeImage">
                 <property name="visible">True</property>
-                <property name="xpad">6</property>
-                <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;mgatto&lt;/b&gt;&lt;/big&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="xpad">7</property>
+                <property name="stock">gtk-orientation-portrait</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="challengeeNameLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;mgatto&lt;/b&gt; (1337)&lt;/big&gt;</property>
+                <property name="use_markup">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </widget>
