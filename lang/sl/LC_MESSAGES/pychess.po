@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: template\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-02 10:07+0200\n"
-"PO-Revision-Date: 2010-09-02 10:17+0200\n"
+"POT-Creation-Date: 2010-09-02 19:46+0200\n"
+"PO-Revision-Date: 2010-09-02 20:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -2199,7 +2199,7 @@ msgid ""
 "Variants</b>."
 msgstr ""
 "Lahko pričneš z novo igro z <b>Igra</b> > <b>Nova igra</b>, v oknu Nova "
-"igra, kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Različica "
+"igra, kjer lahko izbereš <b>Igralce</b>, <b>Nadzor časa</b> in <b>Različice "
 "šaha</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
@@ -2234,28 +2234,25 @@ msgstr ""
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid "Pressing <b>Ctrl+Z</b> to offer opponent the possible rollback moves."
-msgstr "Pritisni <b>Ctrl+Z,</b> da omogočiš nasprotniku vrnitev poteze."
+msgstr "Pritisni <b>Ctrl+Z,</b> da prosiš nasprotnika za povrnitev potez."
 
 #: lib/pychess/widgets/tipOfTheDay.py:58
 msgid ""
 "To play on <b>Fullscreen mode</b>, just type <b>F11</b>. Coming back, F11 "
 "again."
 msgstr ""
-"Za igro v <b>Celozaslonskem načinu</b>, pritisni <b>F11</b>. Za vrnitev "
+"Za igro na <b>Celotnem zaslonu</b>, pritisni <b>F11</b>. Za vrnitev "
 "ponovno F11."
 
 #: lib/pychess/widgets/tipOfTheDay.py:59
 msgid "<b>Hint mode</b> analyzing your game, enable this type <b>Ctrl+H</b>."
-msgstr ""
-"<b>Svetovalni način</b> analizira tvojo igro, omogoči to vrsto z <b>Ctrl+H</"
-"b>"
+msgstr "<b>Svetovalni način</b> analizira tvojo igro, omogoči z <b>Ctrl+H</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:60
 msgid ""
 "<b>Spy mode</b> analyzing the oponnent game, enable this type <b>Ctrl+Y</b>."
 msgstr ""
-"<b>Vohunski način</b> analizira nasprotnikovo igro, omogoči to vrsto z "
-"<b>Ctrl+Y</b>."
+"<b>Vohunski način</b> analizira nasprotnikovo igro, omogoči z <b>Ctrl+Y</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:61
 msgid ""
@@ -2272,7 +2269,7 @@ msgid ""
 "Do you know that you can help translate Pychess in your language, <b>Help</"
 "b> > <b>Translate Pychess</b>."
 msgstr ""
-"Ali veš, da lahko pomagaš prevesti PyChess v tvoj jezik, <b>Pomoč</b> > "
+"Ali veš, da lahko pomagaš prevesti PyChess v svoj jezik, <b>Pomoč</b> > "
 "<b>Prevedi Pychess</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:63
