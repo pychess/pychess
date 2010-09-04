@@ -128,7 +128,7 @@ def game_ended (gamemodel, reason, gmwidg):
     
     
     md = gtk.MessageDialog()
-    md.set_markup(_("<b><big>%s</big></b>") % m1)
+    md.set_markup("<b><big>%s</big></b>" % m1)
     md.format_secondary_markup(m2)
     
     if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
