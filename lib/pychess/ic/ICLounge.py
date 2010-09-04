@@ -1272,9 +1272,9 @@ class SeekChallengeSection (ParrentListSection):
         if isUntimedGame:
             seek["time"] = _("Untimed")
         elif gain > 0:
-            seek["time"] = "%d min + %d sec/move" % (min, gain)
+            seek["time"] = _("%d min + %d sec/move") % (min, gain)
         else:
-            seek["time"] = "%d min" % min
+            seek["time"] = _("%d min") % min
         
         if variant != NORMALCHESS and not isUntimedGame:
             seek["variant"] = "%s" % variants[variant].name
