@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-04 13:49+0200\n"
+"POT-Creation-Date: 2010-09-04 15:36+0200\n"
 "PO-Revision-Date: 2010-09-01 23:32+0000\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <>\n"
@@ -1148,9 +1148,8 @@ msgid " min"
 msgstr " perc"
 
 #: lib/pychess/ic/ICLounge.py:622 lib/pychess/ic/ICLounge.py:1180
-#, fuzzy
 msgid "Computer Player"
-msgstr "Világos"
+msgstr "Sakkmotor"
 
 #: lib/pychess/ic/ICLounge.py:625
 #, python-format
@@ -1158,9 +1157,8 @@ msgid "%(min)s min + %(sec)s sec"
 msgstr "%(min)s perc + %(sec)s mp"
 
 #: lib/pychess/ic/ICLounge.py:627
-#, fuzzy
 msgid "Manual Acceptance"
-msgstr "Ellenfél elfogadása kézileg"
+msgstr "Kézi elfogadás"
 
 # In context "1 Player Ready"
 #: lib/pychess/ic/ICLounge.py:751 lib/pychess/ic/ICLounge.py:763
@@ -1245,9 +1243,8 @@ msgstr ""
 "játszhatnak értékelt játszmákat."
 
 #: lib/pychess/ic/ICLounge.py:1175
-#, fuzzy
 msgid "Unregistered"
-msgstr "Nem értékelt"
+msgstr "Nem regisztrált"
 
 #: lib/pychess/ic/ICLounge.py:1183
 msgid "Challenge: "
@@ -1262,10 +1259,11 @@ msgid "Edit Seek: "
 msgstr "Keresés: "
 
 #: lib/pychess/ic/ICLounge.py:1275
-msgid "%d min + %d sec/move"
-msgstr "%d perc + %d mp/lépés"
+msgid "%(minutes)d min + %(gain)d sec/move"
+msgstr "%(minutes)d perc + %(gain)d mp/lépés"
 
 #: lib/pychess/ic/ICLounge.py:1277
+#, python-format
 msgid "%d min"
 msgstr "%d perc"
 
@@ -2312,61 +2310,59 @@ msgstr "Értékelt játszma"
 
 #: lib/pychess/ic/managers/GameListManager.py:83
 msgid "Administrator"
-msgstr ""
+msgstr "Adminisztrátor"
 
 #: lib/pychess/ic/managers/GameListManager.py:84
-#, fuzzy
 msgid "Blindfold Account"
 msgstr "Vak"
 
 #: lib/pychess/ic/managers/GameListManager.py:85
-#, fuzzy
 msgid "Computer Account"
-msgstr "Sakkmotorok"
+msgstr "Sakkmotor"
 
 #: lib/pychess/ic/managers/GameListManager.py:86
 msgid "Team Account"
-msgstr ""
+msgstr "Csapat"
 
 #: lib/pychess/ic/managers/GameListManager.py:87
 msgid "Unregistered User"
-msgstr ""
+msgstr "Nem regisztrált"
 
 #: lib/pychess/ic/managers/GameListManager.py:88
 msgid "Chess Advisor"
-msgstr ""
+msgstr "Tanácsadó"
 
 #: lib/pychess/ic/managers/GameListManager.py:89
 msgid "Service Representative"
-msgstr ""
+msgstr "Szolgáltató képviselője"
 
 #: lib/pychess/ic/managers/GameListManager.py:90
 msgid "Tournament Director"
-msgstr ""
+msgstr "Verseny igazgató"
 
 #: lib/pychess/ic/managers/GameListManager.py:91
 msgid "Mamer Manager"
-msgstr ""
+msgstr "Mamer menedzser"
 
 #: lib/pychess/ic/managers/GameListManager.py:92
 msgid "FIDE Master"
-msgstr ""
+msgstr "FIDE mester"
 
 #: lib/pychess/ic/managers/GameListManager.py:93
 msgid "International Master"
-msgstr ""
+msgstr "Nemzetközi mester"
 
 #: lib/pychess/ic/managers/GameListManager.py:94
 msgid "Grand Master"
-msgstr ""
+msgstr "Nagymester"
 
 #: lib/pychess/ic/managers/GameListManager.py:95
 msgid "Women's International Master"
-msgstr ""
+msgstr "Női nemzetközi mester"
 
 #: lib/pychess/ic/managers/GameListManager.py:96
 msgid "Women's Grand Master"
-msgstr ""
+msgstr "Női nagymester"
 
 #: lib/pychess/Utils/lutils/lmove.py:231
 msgid "the move is an empty string"
@@ -2680,146 +2676,3 @@ msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the "
 "game progress"
 msgstr "Grafikus állásértékelés"
-
-#~ msgid "23, 5000"
-#~ msgstr "23, 5000"
-
-#~ msgid "1000"
-#~ msgstr "1000"
-
-#~ msgid " - "
-#~ msgstr " - "
-
-#~ msgid "1400"
-#~ msgstr "1400"
-
-#~ msgid "±200"
-#~ msgstr "±200"
-
-#~ msgid "<big><b>mgatto</b></big>"
-#~ msgstr "<big><b>mgatto</b></big>"
-
-#~ msgid "<b><big>%s</big></b>"
-#~ msgstr "<b><big>%s</big></b>"
-
-#~ msgid ""
-#~ "Don't Care\n"
-#~ "Want White\n"
-#~ "Want Black"
-#~ msgstr ""
-#~ "Mindegy\n"
-#~ "Világos\n"
-#~ "Sötét"
-
-#~ msgid "Game Time:"
-#~ msgstr "Időkontrol:"
-
-# Please change only the actual text
-#~ msgid ""
-#~ "15 min + 10\tNormal\n"
-#~ "5 min + 2\tBlitz\n"
-#~ "1 min + 0\tLightning\n"
-#~ "Custom"
-#~ msgstr ""
-#~ "15 perc + 10\tRapidl\n"
-#~ "5 perc + 2\tSchnell\n"
-#~ "1 perc + 0\tVillám\n"
-#~ "Egyéni"
-
-# Please only change the actual text
-#~ msgid ""
-#~ "0 → 1300\t\tEasy\n"
-#~ "1300 → 1600\tAdvanced\n"
-#~ "1600 → 9999\tExpert"
-#~ msgstr ""
-#~ "0 → 1300\t\tKezdő\n"
-#~ "1300 → 1600\tHaladó\n"
-#~ "1600 → 9999\tProfi"
-
-#~ msgid "Seek Panel"
-#~ msgstr "Keresés panel"
-
-#~ msgid "Show _Console"
-#~ msgstr "Konzol"
-
-#~ msgid "Custom Time Setting"
-#~ msgstr "Egyéni időkontrol"
-
-#~ msgid "PyChess - Internet Chess Chat"
-#~ msgstr "PyChess - Internet sakk: FICS"
-
-#~ msgid "Lobais:"
-#~ msgstr "Lobais"
-
-#~ msgid "Current Channel:"
-#~ msgstr "Aktuális csatorna:"
-
-#~ msgid "4  -  Guest Chat"
-#~ msgstr "4  -  Vendég csevegés"
-
-#~ msgid "66 Players"
-#~ msgstr "66 Játékos"
-
-#~ msgid "Channel 4"
-#~ msgstr "4-es csatorna"
-
-#~ msgid "Channel 1"
-#~ msgstr "1-es csatorna"
-
-#~ msgid "Amaranth"
-#~ msgstr "Amaranth"
-
-#~ msgid "Player Rating"
-#~ msgstr "Értékszám"
-
-#~ msgid ""
-#~ "While you fight different local chessengines, PyChess keeps track of your "
-#~ "results."
-#~ msgstr ""
-#~ "Mialatt különféle sakkmotorokkal játszol, a PyChess megjegyzi az "
-#~ "eredményeidet."
-
-#~ msgid "Password:"
-#~ msgstr "_Jelszó:"
-
-#~ msgid "Easy"
-#~ msgstr "Kezdő"
-
-#~ msgid "Advanced"
-#~ msgstr "Haladó"
-
-#~ msgid "Expert"
-#~ msgstr "Profi"
-
-#~ msgid "Want White"
-#~ msgstr "Világos"
-
-#~ msgid "Want Black"
-#~ msgstr "Sötét"
-
-# Combo item to create a new custom time setting
-#~ msgid "New Custom"
-#~ msgstr "Új egyéni"
-
-# Label for a custom time setting
-#~ msgid "Custom"
-#~ msgstr "Egyéni"
-
-#~ msgid "You've got a draw offer. Accept?"
-#~ msgstr "Döntetlent ajánlatot kaptál. Elfogadod?"
-
-#~ msgid "You've got an abort offer. Accept?"
-#~ msgstr "Megszakítás ajánlatot kaptál. Elfogadod?"
-
-#~ msgid "You've got an adjourn offer. Accept?"
-#~ msgstr "Elhalasztás ajánlatot kaptál. Elfogadod?"
-
-#~ msgid "You can't undo a game, which has ended in an unnatural way."
-#~ msgstr ""
-#~ "Nem rendes játszmavégződés esetén a lépés visszavonása nem lehetséges."
-
-#~ msgid "Locate Engine"
-#~ msgstr "Helyi sakkmotor"
-
-#~ msgid "Minutes"
-#~ msgstr "Perc"
