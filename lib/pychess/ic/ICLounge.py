@@ -1272,7 +1272,7 @@ class SeekChallengeSection (ParrentListSection):
         if isUntimedGame:
             seek["time"] = _("Untimed")
         elif gain > 0:
-            seek["time"] = _("%d min + %d sec/move") % (min, gain)
+            seek["time"] = _("%(minutes)d min + %(gain)d sec/move") % {'minutes' : min, 'gain' : gain}
         else:
             seek["time"] = _("%d min") % min
         
