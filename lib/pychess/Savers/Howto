@@ -1,0 +1,25 @@
+A saver is a module for saving/loading chessgames in a specific fileformat.
+
+[[ Essential attributes ]]
+
+* A function for saving "def save (file, history)" which saves data from the history object to the fileobject.
+
+* A function for loading "def load (file, history)" which loads data from the fileobject to the historyobject.
+Important: The history object might not be clear, so you should remember to call the .reset method. This is choosen because some savers might want to call reset without "mvlist=True" for perforance reasons.
+Also try to detect if the file contains errors before you start editing the history object (and resets it) as the user might want to continue his current game, if the file can't be opened.
+
+* A string list/tuple called "__endings__" That contains the endings this format can seen with. e.g. ("fen","epd") or ("pgn",).
+
+* A string called "__label__" that pychess should use in the savemenu. Might be "Chess Game" or "Chess Position".
+The endings will be added automaticly, so __label__="Chess Position" and __endings__=("fen","epd") will be shown as "Chess Position (.fen, .epd)".
+You should also add _() around the string. This will make it translateable for gnugettext.
+
+[[ Optional attributes ]]
+
+* A function for appending to a file "def append (file, history)". It should be used by formats, which support having multiple games in one file, to append a game to file rather than overwriting the file.
+Note: As the file parameter will have been created with the 'a' parameter, this function will for most formats be equal to the save function.
+
+
+[[ Document notes ]]
+
+It is not yet defined how to specify which of multiple games in a file to load
