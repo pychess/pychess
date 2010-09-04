@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyChess 0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-02 00:25+0200\n"
+"POT-Creation-Date: 2010-09-04 13:49+0200\n"
 "PO-Revision-Date: 2010-09-01 23:32+0000\n"
 "Last-Translator: Bajusz Tamás <btami@freemail.hu>\n"
 "Language-Team: Hungarian <>\n"
@@ -61,10 +61,6 @@ msgstr "_Név:"
 msgid "Log on as _Guest"
 msgstr "Bejelentkezés _vendégként"
 
-#: glade/fics_logon.glade:237
-msgid "23, 5000"
-msgstr "23, 5000"
-
 #: glade/fics_logon.glade:252
 msgid "Po_rts:"
 msgstr "_Portok:"
@@ -86,192 +82,176 @@ msgid "_Accept"
 msgstr "_Elfogadás"
 
 # Chess clock setting
-#: glade/fics_lounge.glade:269 glade/fics_lounge.glade:2495
+#: glade/fics_lounge.glade:270 glade/fics_lounge.glade:2507
 msgid "Lightning:"
 msgstr "Villám"
 
-#: glade/fics_lounge.glade:291 glade/fics_lounge.glade:2517
+#: glade/fics_lounge.glade:292 glade/fics_lounge.glade:2529
 msgid "Standard:"
 msgstr "Standard"
 
 # Chess clock setting
-#: glade/fics_lounge.glade:314 glade/fics_lounge.glade:2540
+#: glade/fics_lounge.glade:315 glade/fics_lounge.glade:2552
 msgid "Blitz:"
 msgstr "Schnell"
 
-#: glade/fics_lounge.glade:337
+#: glade/fics_lounge.glade:338
 msgid "2 min, Fischer Random, 1800↓, Black"
 msgstr "2 perc, Fischer Random, 1800↓, Sötét"
 
-#: glade/fics_lounge.glade:356
+#: glade/fics_lounge.glade:357
 msgid "10 min + 6 sec/move, 1400↑, White"
 msgstr "10 perc + 6 mp/lépés, 1400↑, Világos"
 
-#: glade/fics_lounge.glade:375
+#: glade/fics_lounge.glade:376
 msgid "5 min, 1200-1800, Manual"
 msgstr "5 perc, 1200-1800, Kézi"
 
-#: glade/fics_lounge.glade:423
+#: glade/fics_lounge.glade:424
 msgid "Send seek"
 msgstr "Keresés elküldése"
 
-#: glade/fics_lounge.glade:455
+#: glade/fics_lounge.glade:456
 msgid "Create Seek"
 msgstr "Keresés"
 
-#: glade/fics_lounge.glade:472
+#: glade/fics_lounge.glade:473
 msgid "_Seeks / Challenges"
 msgstr "Keresések/Kihívások"
 
-#: glade/fics_lounge.glade:489 lib/pychess/ic/ICLounge.py:187
-#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:657
+#: glade/fics_lounge.glade:490 lib/pychess/ic/ICLounge.py:187
+#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:660
 msgid "Rating"
 msgstr "Értékszám"
 
 # Column header in the seeks table
-#: glade/fics_lounge.glade:512
+#: glade/fics_lounge.glade:513
 msgid "Time"
 msgstr "Idő"
 
-#: glade/fics_lounge.glade:534
+#: glade/fics_lounge.glade:535
 msgid "Seek _Graph"
 msgstr "Keresések grafikusan"
 
 # In context "x Players Ready" where x > 1
-#: glade/fics_lounge.glade:557
+#: glade/fics_lounge.glade:558
 msgid "0 Players Ready"
 msgstr "0 játékos"
 
-#: glade/fics_lounge.glade:592
+#: glade/fics_lounge.glade:593
 msgid "Challenge"
 msgstr "Kihívás"
 
-#: glade/fics_lounge.glade:622
+#: glade/fics_lounge.glade:623
 msgid "Start P_rivate Chat"
 msgstr "Magán csevegés"
 
-#: glade/fics_lounge.glade:664
+#: glade/fics_lounge.glade:665
 msgid "_Player List"
 msgstr "Játékosok"
 
-#: glade/fics_lounge.glade:702
+#: glade/fics_lounge.glade:703
 msgid "_Observe"
 msgstr "_Megtekint"
 
-#: glade/fics_lounge.glade:744
+#: glade/fics_lounge.glade:745
 msgid "_Game List"
 msgstr "Játszmák"
 
-#: glade/fics_lounge.glade:795
+#: glade/fics_lounge.glade:796
 msgid "Pre_view"
 msgstr "_Megnéz"
 
-#: glade/fics_lounge.glade:836
+#: glade/fics_lounge.glade:837
 msgid "A_bort"
 msgstr "_Megszakít"
 
-#: glade/fics_lounge.glade:877
+#: glade/fics_lounge.glade:878
 msgid "_Draw"
 msgstr "_Döntetlen"
 
-#: glade/fics_lounge.glade:931 glade/PyChess.glade:267
+#: glade/fics_lounge.glade:932 glade/PyChess.glade:267
 msgid "R_esign"
 msgstr "F_eladás"
 
-#: glade/fics_lounge.glade:984
+#: glade/fics_lounge.glade:985
 msgid "_Resume"
 msgstr "_Folytatás"
 
-#: glade/fics_lounge.glade:1036
+#: glade/fics_lounge.glade:1037
 msgid "_Adjourned"
 msgstr "Halasztott"
 
-#: glade/fics_lounge.glade:1133
+#: glade/fics_lounge.glade:1134
 msgid "<b>News</b>"
 msgstr "<b>Hírek</b>"
 
-#: glade/fics_lounge.glade:1164
+#: glade/fics_lounge.glade:1165
 msgid "Show _Chat"
 msgstr "_Csevegés"
 
-#: glade/fics_lounge.glade:1178
+#: glade/fics_lounge.glade:1179
 msgid "_Log Off"
 msgstr "_Kijelentkezés"
 
-#: glade/fics_lounge.glade:1197
+#: glade/fics_lounge.glade:1198
 msgid "<b>Tools</b>"
 msgstr "<b>Eszközök</b>"
 
-#: glade/fics_lounge.glade:1227
+#: glade/fics_lounge.glade:1228
 msgid "Edit Seek"
 msgstr "Keresés"
 
-#: glade/fics_lounge.glade:1284 lib/pychess/ic/ICLounge.py:1210
-#: lib/pychess/ic/ICLounge.py:1343 lib/pychess/ic/ICLounge.py:1352
-#: lib/pychess/ic/managers/GameListManager.py:51
-#: lib/pychess/ic/managers/GameListManager.py:58
+#: glade/fics_lounge.glade:1285 lib/pychess/ic/ICLounge.py:1273
+#: lib/pychess/ic/ICLounge.py:1406 lib/pychess/ic/ICLounge.py:1415
+#: lib/pychess/ic/managers/GameListManager.py:53
+#: lib/pychess/ic/managers/GameListManager.py:60
 msgid "Untimed"
 msgstr "Időkontrol nélküli"
 
-#: glade/fics_lounge.glade:1328
+#: glade/fics_lounge.glade:1329
 msgid "Minutes:  "
 msgstr "Perc:   "
 
 # "Gain" as in "gain per move"
-#: glade/fics_lounge.glade:1351
+#: glade/fics_lounge.glade:1352
 msgid "   Gain:  "
 msgstr "Jóváírás: "
 
-#: glade/fics_lounge.glade:1381
+#: glade/fics_lounge.glade:1382
 msgid "Time control:  "
 msgstr "Időkontrol:    "
 
-#: glade/fics_lounge.glade:1392 lib/pychess/ic/ICLounge.py:1345
-#: lib/pychess/ic/ICLounge.py:1352 lib/pychess/Utils/const.py:44
-#: lib/pychess/ic/managers/GameListManager.py:52
-#: lib/pychess/ic/managers/GameListManager.py:60
+#: glade/fics_lounge.glade:1393 lib/pychess/ic/ICLounge.py:1408
+#: lib/pychess/ic/ICLounge.py:1415 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/managers/GameListManager.py:54
+#: lib/pychess/ic/managers/GameListManager.py:62
 msgid "Standard"
 msgstr "Standard"
 
-#: glade/fics_lounge.glade:1424 glade/newInOut.glade:417
+#: glade/fics_lounge.glade:1425 glade/newInOut.glade:417
 msgid "<b>Time Control</b>"
 msgstr "<b>Időkontrol</b>"
 
 # In context: Your color: "Don't Care"
-#: glade/fics_lounge.glade:1476 glade/fics_lounge.glade:1926
+#: glade/fics_lounge.glade:1477 glade/fics_lounge.glade:1927
 msgid "Don't care"
 msgstr "Mindegy"
 
-#: glade/fics_lounge.glade:1530
+#: glade/fics_lounge.glade:1531
 msgid "Your strength: "
 msgstr "Erősséged:"
 
-#: glade/fics_lounge.glade:1555 glade/fics_lounge.glade:1745
-msgid "1200"
-msgstr "1200"
-
 # Chess clock setting
-#: glade/fics_lounge.glade:1566
+#: glade/fics_lounge.glade:1567
 msgid "(Blitz)"
 msgstr "(Schnell)"
 
-#: glade/fics_lounge.glade:1592
+#: glade/fics_lounge.glade:1593
 msgid "Opponent's strength: "
 msgstr "Ellenfél erőssége:"
 
-#: glade/fics_lounge.glade:1617
-msgid "1000"
-msgstr "1000"
-
-#: glade/fics_lounge.glade:1627
-msgid " - "
-msgstr " - "
-
-#: glade/fics_lounge.glade:1652
-msgid "1400"
-msgstr "1400"
-
-#: glade/fics_lounge.glade:1679
+#: glade/fics_lounge.glade:1680
 msgid ""
 "When this button is in the \"locked\" state, the relationship\n"
 "between \"Opponent's strength\" and \"Your strength\" will be\n"
@@ -285,95 +265,91 @@ msgstr ""
 "a) az értékszámod az adott típusú keresésben megváltozik\n"
 "b) megváltoztatod a sakk variánst vagy az időkontrolt."
 
-#: glade/fics_lounge.glade:1713
+#: glade/fics_lounge.glade:1714
 msgid "Center:"
 msgstr "Közép:"
 
-#: glade/fics_lounge.glade:1789
+#: glade/fics_lounge.glade:1746
+msgid "1200"
+msgstr "1200"
+
+#: glade/fics_lounge.glade:1790
 msgid "Tolerance:"
 msgstr "Eltérés:"
 
-#: glade/fics_lounge.glade:1806
-msgid "±200"
-msgstr "±200"
-
-#: glade/fics_lounge.glade:1836 lib/pychess/ic/ICLounge.py:1609
+#: glade/fics_lounge.glade:1837 lib/pychess/ic/ICLounge.py:1659
 msgid "Hide"
 msgstr "Elrejt"
 
-#: glade/fics_lounge.glade:1874
+#: glade/fics_lounge.glade:1875
 msgid "<b>Opponent Strength</b>"
 msgstr "<b>Ellenfél erőssége</b>"
 
-#: glade/fics_lounge.glade:1959 lib/pychess/ic/ICLounge.py:1230
+#: glade/fics_lounge.glade:1960 lib/pychess/ic/ICLounge.py:1293
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/ionest.py:114 lib/pychess/widgets/TaskerManager.py:146
 msgid "White"
 msgstr "Világos"
 
-#: glade/fics_lounge.glade:1981 lib/pychess/ic/ICLounge.py:1232
+#: glade/fics_lounge.glade:1982 lib/pychess/ic/ICLounge.py:1295
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/ionest.py:114 lib/pychess/widgets/TaskerManager.py:147
 msgid "Black"
 msgstr "Sötét"
 
-#: glade/fics_lounge.glade:2012
+#: glade/fics_lounge.glade:2013
 msgid "<b>Your Color</b>"
 msgstr "Szín:"
 
-#: glade/fics_lounge.glade:2066
+#: glade/fics_lounge.glade:2067
 msgid "Play normal chess rules"
 msgstr "Standard"
 
-#: glade/fics_lounge.glade:2099
+#: glade/fics_lounge.glade:2100
 msgid "Play"
 msgstr " "
 
-#: glade/fics_lounge.glade:2121
+#: glade/fics_lounge.glade:2122
 msgid "Asymmetric Random\t"
 msgstr "Aszimmetrikus kevert"
 
-#: glade/fics_lounge.glade:2150 glade/newInOut.glade:586
+#: glade/fics_lounge.glade:2151 glade/newInOut.glade:586
 msgid "<b>Chess Variant</b>"
 msgstr "<b>Sakkvariánsok</b>"
 
-#: glade/fics_lounge.glade:2204
+#: glade/fics_lounge.glade:2205
 msgid "Rated game"
 msgstr "Értékelt játszma"
 
-#: glade/fics_lounge.glade:2218
+#: glade/fics_lounge.glade:2219
 msgid "Manually accept opponent"
 msgstr "Ellenfél elfogadása kézileg"
 
-#: glade/fics_lounge.glade:2243
+#: glade/fics_lounge.glade:2244
 msgid "<b>Options</b>"
 msgstr "<b>Beállítások</b>"
 
-#: glade/fics_lounge.glade:2309
+#: glade/fics_lounge.glade:2310
 msgid "Challenge: <Player>"
 msgstr "Kihívás: <Játékos>"
 
-#: glade/fics_lounge.glade:2326
+#: glade/fics_lounge.glade:2327
 msgid "<big>Challenge:</big>"
 msgstr "<b>Kihívás:</b>"
 
-#: glade/fics_lounge.glade:2339
-msgid "<big><b>mgatto</b></big>"
-msgstr "<big><b>mgatto</b></big>"
-
-#: glade/fics_lounge.glade:2563
+#: glade/fics_lounge.glade:2575
 msgid "2 min, Fischer Random, Black"
 msgstr "2 perc, Fischer Random, Sötét"
 
-#: glade/fics_lounge.glade:2583
+#: glade/fics_lounge.glade:2595
 msgid "10 min + 6 sec/move, White"
 msgstr "10 perc + 6 mp/lépés, Világos"
 
-#: glade/fics_lounge.glade:2603
+#: glade/fics_lounge.glade:2615
 msgid "5 min"
 msgstr "5 perc"
 
-#: glade/fics_lounge.glade:2675
+#: glade/fics_lounge.glade:2687
 msgid "Send Challenge"
 msgstr "Kihívás elküldése"
 
@@ -1121,134 +1097,145 @@ msgstr ""
 msgid "Register now"
 msgstr "Regisztrálj most!"
 
-#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:657
+#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:660
 #: lib/pychess/widgets/preferencesDialog.py:78
 msgid "Name"
 msgstr "Név"
 
-#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:438
-#: lib/pychess/ic/ICLounge.py:536 lib/pychess/ic/ICLounge.py:614
-#: lib/pychess/ic/ICLounge.py:1235
+#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:443
+#: lib/pychess/ic/ICLounge.py:543 lib/pychess/ic/ICLounge.py:623
+#: lib/pychess/ic/ICLounge.py:1298
 msgid "Rated"
 msgstr "Értékelt"
 
-#: lib/pychess/ic/ICLounge.py:376
+#: lib/pychess/ic/ICLounge.py:375
 msgid "Type"
 msgstr "Típus"
 
-#: lib/pychess/ic/ICLounge.py:376
+#: lib/pychess/ic/ICLounge.py:375
 msgid "Clock"
 msgstr "Idő"
 
-#: lib/pychess/ic/ICLounge.py:435 lib/pychess/ic/ICLounge.py:533
+#: lib/pychess/ic/ICLounge.py:440 lib/pychess/ic/ICLounge.py:540
 #, python-format
 msgid "%(min)s min"
 msgstr "%(min)s perc"
 
-#: lib/pychess/ic/ICLounge.py:437 lib/pychess/ic/ICLounge.py:535
+#: lib/pychess/ic/ICLounge.py:442 lib/pychess/ic/ICLounge.py:542
 #, python-format
 msgid " + %(sec)s sec"
 msgstr " + %(sec)s mp"
 
-#: lib/pychess/ic/ICLounge.py:438 lib/pychess/ic/ICLounge.py:536
-#: lib/pychess/ic/ICLounge.py:614 lib/pychess/ic/ICLounge.py:1438
+#: lib/pychess/ic/ICLounge.py:443 lib/pychess/ic/ICLounge.py:543
+#: lib/pychess/ic/ICLounge.py:623 lib/pychess/ic/ICLounge.py:1177
+#: lib/pychess/ic/ICLounge.py:1488
 msgid "Unrated"
 msgstr "Nem értékelt"
 
-#: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:463
-#: lib/pychess/ic/ICLounge.py:542 lib/pychess/ic/ICLounge.py:553
+#: lib/pychess/ic/ICLounge.py:456 lib/pychess/ic/ICLounge.py:470
+#: lib/pychess/ic/ICLounge.py:549 lib/pychess/ic/ICLounge.py:560
 msgid "Active Seek"
 msgstr "keresés"
 
-#: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:463
-#: lib/pychess/ic/ICLounge.py:469 lib/pychess/ic/ICLounge.py:502
-#: lib/pychess/ic/ICLounge.py:542 lib/pychess/ic/ICLounge.py:553
+#: lib/pychess/ic/ICLounge.py:456 lib/pychess/ic/ICLounge.py:470
+#: lib/pychess/ic/ICLounge.py:476 lib/pychess/ic/ICLounge.py:509
+#: lib/pychess/ic/ICLounge.py:549 lib/pychess/ic/ICLounge.py:560
 msgid "Active Seeks"
 msgstr "keresés"
 
-#: lib/pychess/ic/ICLounge.py:583
+#: lib/pychess/ic/ICLounge.py:590
 msgid " min"
 msgstr " perc"
 
-#: lib/pychess/ic/ICLounge.py:616
+#: lib/pychess/ic/ICLounge.py:622 lib/pychess/ic/ICLounge.py:1180
+#, fuzzy
+msgid "Computer Player"
+msgstr "Világos"
+
+#: lib/pychess/ic/ICLounge.py:625
 #, python-format
 msgid "%(min)s min + %(sec)s sec"
 msgstr "%(min)s perc + %(sec)s mp"
 
+#: lib/pychess/ic/ICLounge.py:627
+#, fuzzy
+msgid "Manual Acceptance"
+msgstr "Ellenfél elfogadása kézileg"
+
 # In context "1 Player Ready"
-#: lib/pychess/ic/ICLounge.py:697 lib/pychess/ic/ICLounge.py:709
+#: lib/pychess/ic/ICLounge.py:751 lib/pychess/ic/ICLounge.py:763
 msgid "Player Ready"
 msgstr "játékos"
 
 # In context "x Players Ready" where x > 1
-#: lib/pychess/ic/ICLounge.py:697 lib/pychess/ic/ICLounge.py:709
+#: lib/pychess/ic/ICLounge.py:751 lib/pychess/ic/ICLounge.py:763
 msgid "Players Ready"
 msgstr "játékos"
 
-#: lib/pychess/ic/ICLounge.py:747
+#: lib/pychess/ic/ICLounge.py:801
 msgid "White Player"
 msgstr "Világos"
 
-#: lib/pychess/ic/ICLounge.py:747
+#: lib/pychess/ic/ICLounge.py:801
 msgid "Black Player"
 msgstr "Sötét"
 
-#: lib/pychess/ic/ICLounge.py:748
+#: lib/pychess/ic/ICLounge.py:802
 msgid "Game Type"
 msgstr "Játszma típusa"
 
-#: lib/pychess/ic/ICLounge.py:800 lib/pychess/ic/ICLounge.py:817
-#: lib/pychess/ic/ICLounge.py:818
+#: lib/pychess/ic/ICLounge.py:854 lib/pychess/ic/ICLounge.py:871
+#: lib/pychess/ic/ICLounge.py:872
 msgid "Private"
 msgstr "Magán"
 
-#: lib/pychess/ic/ICLounge.py:806 lib/pychess/ic/ICLounge.py:833
+#: lib/pychess/ic/ICLounge.py:860 lib/pychess/ic/ICLounge.py:887
 msgid "Game Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/ICLounge.py:806 lib/pychess/ic/ICLounge.py:833
+#: lib/pychess/ic/ICLounge.py:860 lib/pychess/ic/ICLounge.py:887
 msgid "Games Running"
 msgstr "játszma"
 
-#: lib/pychess/ic/ICLounge.py:872
+#: lib/pychess/ic/ICLounge.py:926
 msgid "Your color"
 msgstr "Szín"
 
-#: lib/pychess/ic/ICLounge.py:872
+#: lib/pychess/ic/ICLounge.py:926
 msgid "Opponent"
 msgstr "Ellenfél"
 
-#: lib/pychess/ic/ICLounge.py:873
+#: lib/pychess/ic/ICLounge.py:927
 msgid "Is online"
 msgstr "Elérhető"
 
-#: lib/pychess/ic/ICLounge.py:873
+#: lib/pychess/ic/ICLounge.py:927
 msgid "Length"
 msgstr "Hossz"
 
-#: lib/pychess/ic/ICLounge.py:873
+#: lib/pychess/ic/ICLounge.py:927
 msgid "Date/Time"
 msgstr "Dátum/Idő"
 
-#: lib/pychess/ic/ICLounge.py:896
+#: lib/pychess/ic/ICLounge.py:950
 msgid "Online"
 msgstr "Elérhető"
 
-#: lib/pychess/ic/ICLounge.py:896
+#: lib/pychess/ic/ICLounge.py:950
 msgid "Offline"
 msgstr "Nem elérhető"
 
 # Chess clock setting
-#: lib/pychess/ic/ICLounge.py:1072 lib/pychess/ic/ICLounge.py:1347
-#: lib/pychess/ic/ICLounge.py:1353 lib/pychess/Utils/const.py:44
+#: lib/pychess/ic/ICLounge.py:1120 lib/pychess/ic/ICLounge.py:1410
+#: lib/pychess/ic/ICLounge.py:1416 lib/pychess/Utils/const.py:44
 #: lib/pychess/widgets/newGameDialog.py:145
-#: lib/pychess/ic/managers/GameListManager.py:49
-#: lib/pychess/ic/managers/GameListManager.py:56
-#: lib/pychess/ic/managers/GameListManager.py:305
+#: lib/pychess/ic/managers/GameListManager.py:51
+#: lib/pychess/ic/managers/GameListManager.py:58
+#: lib/pychess/ic/managers/GameListManager.py:336
 msgid "Blitz"
 msgstr "Schnell"
 
-#: lib/pychess/ic/ICLounge.py:1085
+#: lib/pychess/ic/ICLounge.py:1133
 msgid ""
 "The chain button is disabled because you are logged in as a guest. Guests "
 "can't establish ratings, and the chain button's state has no effect when "
@@ -1257,90 +1244,103 @@ msgstr ""
 "Ez a gomb le van tiltva vendégként bejelentkezettek esetén, mert Azok nem "
 "játszhatnak értékelt játszmákat."
 
-#: lib/pychess/ic/ICLounge.py:1120
+#: lib/pychess/ic/ICLounge.py:1175
+#, fuzzy
+msgid "Unregistered"
+msgstr "Nem értékelt"
+
+#: lib/pychess/ic/ICLounge.py:1183
 msgid "Challenge: "
 msgstr "Kihívás: "
 
-#: lib/pychess/ic/ICLounge.py:1163 lib/pychess/ic/ICLounge.py:1166
+#: lib/pychess/ic/ICLounge.py:1226 lib/pychess/ic/ICLounge.py:1229
 msgid "This option is not applicable because you're challenging a player"
 msgstr "Kihívás esetén ennek nincs értelme."
 
-#: lib/pychess/ic/ICLounge.py:1179
+#: lib/pychess/ic/ICLounge.py:1242
 msgid "Edit Seek: "
 msgstr "Keresés: "
 
-#: lib/pychess/ic/ICLounge.py:1238
+#: lib/pychess/ic/ICLounge.py:1275
+msgid "%d min + %d sec/move"
+msgstr "%d perc + %d mp/lépés"
+
+#: lib/pychess/ic/ICLounge.py:1277
+msgid "%d min"
+msgstr "%d perc"
+
+#: lib/pychess/ic/ICLounge.py:1301
 msgid "Manual"
 msgstr "Kézi"
 
 # Chess clock setting
-#: lib/pychess/ic/ICLounge.py:1349 lib/pychess/ic/ICLounge.py:1353
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:50
-#: lib/pychess/ic/managers/GameListManager.py:57
+#: lib/pychess/ic/ICLounge.py:1412 lib/pychess/ic/ICLounge.py:1416
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:52
+#: lib/pychess/ic/managers/GameListManager.py:59
 msgid "Lightning"
 msgstr "Villám"
 
-#: lib/pychess/ic/ICLounge.py:1468
+#: lib/pychess/ic/ICLounge.py:1518
 msgid "You can't play rated games because you are logged in as a guest"
 msgstr "Nem játszhatsz értékelt játszmákat vendégként."
 
-#: lib/pychess/ic/ICLounge.py:1472
+#: lib/pychess/ic/ICLounge.py:1522
 msgid "You can't play rated games because \"Untimed\" is checked, "
 msgstr ""
 "Nem játszhatsz értékelt játszmát, mert az \"Időkontrol nélkül\" van "
 "bejelölve, "
 
-#: lib/pychess/ic/ICLounge.py:1473
+#: lib/pychess/ic/ICLounge.py:1523
 msgid "and on FICS, untimed games can't be rated"
 msgstr "és a FICS-en az időkontrol nélküli játszmák nem lehetnek értékeltek."
 
-#: lib/pychess/ic/ICLounge.py:1477
+#: lib/pychess/ic/ICLounge.py:1527
 msgid "This option is not available because you're challenging a guest, "
 msgstr "Ez az opció tiltva van, mivel egy vendéget hívtál ki, "
 
-#: lib/pychess/ic/ICLounge.py:1478
+#: lib/pychess/ic/ICLounge.py:1528
 msgid "and guests can't play rated games"
 msgstr "és a vendégek nem játszhatnak értékelt játszmákat."
 
-#: lib/pychess/ic/ICLounge.py:1492 lib/pychess/widgets/newGameDialog.py:237
+#: lib/pychess/ic/ICLounge.py:1542 lib/pychess/widgets/newGameDialog.py:237
 msgid "Blindfold"
 msgstr "Vak"
 
-#: lib/pychess/ic/ICLounge.py:1493 lib/pychess/widgets/newGameDialog.py:238
+#: lib/pychess/ic/ICLounge.py:1543 lib/pychess/widgets/newGameDialog.py:238
 msgid "Odds"
 msgstr "Előnyadás"
 
-#: lib/pychess/ic/ICLounge.py:1494 lib/pychess/Variants/shuffle.py:33
+#: lib/pychess/ic/ICLounge.py:1544 lib/pychess/Variants/shuffle.py:33
 #: lib/pychess/widgets/newGameDialog.py:239
-#: lib/pychess/ic/managers/GameListManager.py:22
+#: lib/pychess/ic/managers/GameListManager.py:24
 msgid "Shuffle"
 msgstr "Kevert alapállás"
 
-#: lib/pychess/ic/ICLounge.py:1495 lib/pychess/widgets/newGameDialog.py:240
-#: lib/pychess/ic/managers/GameListManager.py:54
+#: lib/pychess/ic/ICLounge.py:1545 lib/pychess/widgets/newGameDialog.py:240
+#: lib/pychess/ic/managers/GameListManager.py:56
 msgid "Other"
 msgstr "Egyéb"
 
-#: lib/pychess/ic/ICLounge.py:1575
+#: lib/pychess/ic/ICLounge.py:1625
 msgid "You can't select a variant because \"Untimed\" is checked, "
 msgstr ""
 "Nem játszhatsz sakk variánsokat, mert az \"Időkontrol nélkül\" van "
 "bejelölve, "
 
-#: lib/pychess/ic/ICLounge.py:1576
+#: lib/pychess/ic/ICLounge.py:1626
 msgid "and on FICS, untimed games have to be normal chess rules"
 msgstr ""
 "és a FICS-en az időkontrol nélküli játszmák csak standard játszmák lehetnek."
 
-#: lib/pychess/ic/ICLounge.py:1611
+#: lib/pychess/ic/ICLounge.py:1661
 msgid "Change Tolerance"
 msgstr "Eltérés"
 
-#: lib/pychess/ic/ICLounge.py:1659
+#: lib/pychess/ic/ICLounge.py:1709
 msgid "You can only have 3 outstanding seeks"
 msgstr "Csak 3 keresés megengedett"
 
-#: lib/pychess/ic/ICLounge.py:1660
+#: lib/pychess/ic/ICLounge.py:1710
 msgid ""
 "You can only have 3 outstanding seeks at the same time. If you want to add a "
 "new seek you must clear your currently active seeks. Clear your seeks?"
@@ -1348,7 +1348,7 @@ msgstr ""
 "Csak 3 keresés megengedett. Ha újat szeretnél, akkor előbb törölni kell az "
 "aktuális aktív kereséseidet. Törlöd a kereséseket?"
 
-#: lib/pychess/ic/ICLounge.py:1692 lib/pychess/ic/ICLounge.py:1696
+#: lib/pychess/ic/ICLounge.py:1742 lib/pychess/ic/ICLounge.py:1746
 #: lib/pychess/widgets/newGameDialog.py:318
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
@@ -1637,33 +1637,33 @@ msgstr "Sikertelen lépés: %s."
 msgid "Died"
 msgstr "Vége"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:61
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:63
 msgid "Wild"
 msgstr "Vad"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:17
-#: lib/pychess/ic/managers/GameListManager.py:64
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:19
+#: lib/pychess/ic/managers/GameListManager.py:66
 msgid "Bughouse"
 msgstr "Négykezes"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:18
-#: lib/pychess/ic/managers/GameListManager.py:63
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:20
+#: lib/pychess/ic/managers/GameListManager.py:65
 msgid "Crazyhouse"
 msgstr "Őrültek háza"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:19
-#: lib/pychess/ic/managers/GameListManager.py:66
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:21
+#: lib/pychess/ic/managers/GameListManager.py:68
 msgid "Suicide"
 msgstr "Öngyilkos"
 
 #: lib/pychess/Utils/const.py:45 lib/pychess/Variants/losers.py:14
-#: lib/pychess/ic/managers/GameListManager.py:53
-#: lib/pychess/ic/managers/GameListManager.py:65
+#: lib/pychess/ic/managers/GameListManager.py:55
+#: lib/pychess/ic/managers/GameListManager.py:67
 msgid "Losers"
 msgstr "Lúzer"
 
-#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:20
-#: lib/pychess/ic/managers/GameListManager.py:62
+#: lib/pychess/Utils/const.py:45 lib/pychess/ic/managers/GameListManager.py:22
+#: lib/pychess/ic/managers/GameListManager.py:64
 msgid "Atomic"
 msgstr "Atom"
 
@@ -1853,7 +1853,7 @@ msgid "The reason is unknown"
 msgstr "(ismeretlen ok)"
 
 #: lib/pychess/Variants/asymmetricrandom.py:92
-#: lib/pychess/ic/managers/GameListManager.py:24
+#: lib/pychess/ic/managers/GameListManager.py:26
 msgid "Asymmetric Random"
 msgstr "Aszimmetrikus kevert"
 
@@ -1862,8 +1862,8 @@ msgid "Corner"
 msgstr "Sarok"
 
 #: lib/pychess/Variants/fischerandom.py:219
-#: lib/pychess/ic/managers/GameListManager.py:28
-#: lib/pychess/ic/managers/GameListManager.py:304
+#: lib/pychess/ic/managers/GameListManager.py:30
+#: lib/pychess/ic/managers/GameListManager.py:335
 msgid "Fischer Random"
 msgstr "Fischer random"
 
@@ -1881,12 +1881,12 @@ msgid "Pawn odds"
 msgstr "Gyalog előny"
 
 #: lib/pychess/Variants/pawnspassed.py:21
-#: lib/pychess/ic/managers/GameListManager.py:27
+#: lib/pychess/ic/managers/GameListManager.py:29
 msgid "Pawns Passed"
 msgstr "Gyalogok a félpályán túl"
 
 #: lib/pychess/Variants/pawnspushed.py:21
-#: lib/pychess/ic/managers/GameListManager.py:26
+#: lib/pychess/ic/managers/GameListManager.py:28
 msgid "Pawns Pushed"
 msgstr "Összetolt gyalogok"
 
@@ -1895,7 +1895,7 @@ msgid "Queen odds"
 msgstr "Vezér előny"
 
 #: lib/pychess/Variants/randomchess.py:35
-#: lib/pychess/ic/managers/GameListManager.py:23
+#: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Random"
 msgstr "Egyszerű kevert"
 
@@ -1904,7 +1904,7 @@ msgid "Rook odds"
 msgstr "Bástya előny"
 
 #: lib/pychess/Variants/upsidedown.py:21
-#: lib/pychess/ic/managers/GameListManager.py:25
+#: lib/pychess/ic/managers/GameListManager.py:27
 msgid "Upside Down"
 msgstr "Fejjel lefele"
 
@@ -1951,11 +1951,6 @@ msgstr "Betöltött játszma"
 #: lib/pychess/widgets/gamenanny.py:110
 msgid "Saved game"
 msgstr "Mentett játszma"
-
-#: lib/pychess/widgets/gamenanny.py:131
-#, python-format
-msgid "<b><big>%s</big></b>"
-msgstr "<b><big>%s</big></b>"
 
 #: lib/pychess/widgets/gamenanny.py:136
 msgid "Offer Rematch"
@@ -2303,17 +2298,75 @@ msgstr "Sakk bekiabálás"
 msgid "Unofficial channel %d"
 msgstr "Nem hivatalos csatorna %d"
 
-#: lib/pychess/ic/managers/GameListManager.py:15
+#: lib/pychess/ic/managers/GameListManager.py:17
 msgid "Opposite Kings"
 msgstr "Szembenálló királyok"
 
-#: lib/pychess/ic/managers/GameListManager.py:16
+#: lib/pychess/ic/managers/GameListManager.py:18
 msgid "Limited Shuffle"
 msgstr "Egyszerű kevert"
 
-#: lib/pychess/ic/managers/GameListManager.py:59
+#: lib/pychess/ic/managers/GameListManager.py:61
 msgid "Examined Game"
 msgstr "Értékelt játszma"
+
+#: lib/pychess/ic/managers/GameListManager.py:83
+msgid "Administrator"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:84
+#, fuzzy
+msgid "Blindfold Account"
+msgstr "Vak"
+
+#: lib/pychess/ic/managers/GameListManager.py:85
+#, fuzzy
+msgid "Computer Account"
+msgstr "Sakkmotorok"
+
+#: lib/pychess/ic/managers/GameListManager.py:86
+msgid "Team Account"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:87
+msgid "Unregistered User"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:88
+msgid "Chess Advisor"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:89
+msgid "Service Representative"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:90
+msgid "Tournament Director"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:91
+msgid "Mamer Manager"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:92
+msgid "FIDE Master"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:93
+msgid "International Master"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:94
+msgid "Grand Master"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:95
+msgid "Women's International Master"
+msgstr ""
+
+#: lib/pychess/ic/managers/GameListManager.py:96
+msgid "Women's Grand Master"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/lmove.py:231
 msgid "the move is an empty string"
@@ -2627,6 +2680,27 @@ msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the "
 "game progress"
 msgstr "Grafikus állásértékelés"
+
+#~ msgid "23, 5000"
+#~ msgstr "23, 5000"
+
+#~ msgid "1000"
+#~ msgstr "1000"
+
+#~ msgid " - "
+#~ msgstr " - "
+
+#~ msgid "1400"
+#~ msgstr "1400"
+
+#~ msgid "±200"
+#~ msgstr "±200"
+
+#~ msgid "<big><b>mgatto</b></big>"
+#~ msgstr "<big><b>mgatto</b></big>"
+
+#~ msgid "<b><big>%s</big></b>"
+#~ msgstr "<b><big>%s</big></b>"
 
 #~ msgid ""
 #~ "Don't Care\n"
