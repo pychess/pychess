@@ -453,8 +453,7 @@ class SeekTabSection (ParrentListSection):
             ti = self.store.append(seek_)
         self.seeks [seek["gameno"]] = ti
         count = len(self.seeks)
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
 
     def onRemoveSeek (self, gameno):
         if not gameno in self.seeks:
@@ -467,13 +466,12 @@ class SeekTabSection (ParrentListSection):
         self.store.remove (treeiter)
         del self.seeks[gameno]
         count = len(self.seeks)
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
 
     def onClearSeeks (self):
         self.store.clear()
         self.seeks = {}
-        self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: 0"))
 
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
@@ -506,7 +504,7 @@ class SeekTabSection (ParrentListSection):
         self.widgets["challengeExpander"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
-        self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: 0"))
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
@@ -546,8 +544,7 @@ class ChallengeTabSection (ParrentListSection):
                                 float(match["t"] + "." + match["i"]), "black"])
         self.challenges [index] = ti
         count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
 
     def onChallengeRemove (self, index):
@@ -557,8 +554,7 @@ class ChallengeTabSection (ParrentListSection):
         self.store.remove (ti)
         del self.challenges [index]
         count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])-1
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
 
 ########################################################################
 # Initialize Seek Graph                                                #
@@ -748,8 +744,7 @@ class PlayerTabSection (ParrentListSection):
         ti = self.store.append ([icon, player["name"], player["rating"]])
         self.players[player["name"]] = [ti, player]
         count = len(self.players)
-        postfix = count == 1 and _("Player Ready") or _("Players Ready")
-        self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["playersOnlineLabel"].set_text(_("Players ready: %d") % count)
 
     def onPlayerRemove (self, name):
         if not name in self.players:
@@ -760,8 +755,7 @@ class PlayerTabSection (ParrentListSection):
         self.store.remove(ti)
         del self.players[name]
         count = len(self.players)
-        postfix = count == 1 and _("Player Ready") or _("Players Ready")
-        self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["playersOnlineLabel"].set_text(_("Players ready: %d") % count)
 
     def onPrivateChatClicked (self, button):
         model, iter = self.widgets["playertreeview"].get_selection().get_selected()
@@ -857,8 +851,7 @@ class GameTabSection (ParrentListSection):
                                 game["bn"], type, length])
         self.games[game["gameno"]] = ti
         count = len(self.games)
-        postfix = count == 1 and _("Game Running") or _("Games Running")
-        self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onWasPrivate (self, gameno):
         # When observable games were added to the list later than the latest
@@ -884,8 +877,7 @@ class GameTabSection (ParrentListSection):
         self.store.remove (ti)
         del self.games[gameno]
         count = len(self.games)
-        postfix = count == 1 and _("Game Running") or _("Games Running")
-        self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onObserveClicked (self, widget, *args):
         model, paths = self.tv.get_selection().get_selected_rows()
