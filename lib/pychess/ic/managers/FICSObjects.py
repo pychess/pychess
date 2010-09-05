@@ -79,6 +79,21 @@ class FICSPlayer (GObject):
                 r +=  self.ratings[type].__repr__() + ")"
         return r
     
+    def isAvailableForGame (self):    
+        if self.status in \
+            (IC_STATUS_PLAYING, IC_STATUS_BUSY, IC_STATUS_OFFLINE,
+             IC_STATUS_RUNNING_SIMUL_MATCH, IC_STATUS_NOT_AVAILABLE,
+             IC_STATUS_EXAMINING, IC_STATUS_IN_TOURNAMENT):
+            return False
+        else:
+            return True
+    
+    def isObservable (self):
+        if self.status in (IC_STATUS_PLAYING, IC_STATUS_EXAMINING):
+            return True
+        else:
+            return False
+        
     def isGuest (self):
         if "U" in self.titles:
             return True

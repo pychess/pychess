@@ -541,14 +541,12 @@ class SeekTabSection (ParrentListSection):
 
     def onPlayingGame (self):
         self.widgets["seekListContent"].set_sensitive(False)
-        self.widgets["challengeExpander"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
         self.__updateActiveSeeksLabel()
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
-        self.widgets["challengeExpander"].set_sensitive(True)
         self.connection.glm.refreshSeeks()
 
 ########################################################################
@@ -773,14 +771,17 @@ class PlayerTabSection (ParrentListSection):
             self.connection.bm.observe(playersonline[player].game.gameno)
         
     def onSelectionChanged (self, selection):
-        isAnythingSelected = selection.get_selected()[1] != None
-        self.widgets["private_chat_button"].set_sensitive(isAnythingSelected)
-        playername = self.getSelectedPlayerName()
-        if playername is None: return
-        player = FICSPlayer(playername)
-        playersonline = self.connection.playersonline
-        if player in playersonline:
-            self.widgets["observe_button"].set_sensitive(playersonline[player].game!=None)
+        player = self.getSelectedPlayerName()
+        if player is not None:
+            try:
+                player = self.connection.playersonline[FICSPlayer(player)]
+            except KeyError:
+                player = None
+        self.widgets["private_chat_button"].set_sensitive(player is not None)
+        self.widgets["observe_button"].set_sensitive(
+            player is not None and player.isObservable())
+        self.widgets["challengeButton"].set_sensitive(
+            player is not None and player.isAvailableForGame())
         
 ########################################################################
 # Initialize Games List                                                #
@@ -1118,9 +1119,6 @@ class SeekChallengeSection (ParrentListSection):
         
         seekSelection = self.widgets["seektreeview"].get_selection()
         seekSelection.connect_after("changed", self.onSeekSelectionChanged)
-        playerSelection = self.widgets["playertreeview"].get_selection()
-        playerSelection.connect_after("changed", self.onPlayerSelectionChanged)
-        self.onPlayerSelectionChanged(playerSelection)
         
         for widget in ("seek1Radio", "seek2Radio", "seek3Radio",
                        "challenge1Radio", "challenge2Radio", "challenge3Radio"):
@@ -1209,7 +1207,6 @@ class SeekChallengeSection (ParrentListSection):
     
     def onChallengeRadioConfigButtonClicked (self, configimage, seeknumber):
         self.__showSeekEditor(seeknumber, challengemode=True)
-        self.onPlayerSelectionChanged(self.widgets["playertreeview"].get_selection())
         
     def onEditSeekDialogResponse (self, dialog, response):
         self.widgets["editSeekDialog"].hide()
@@ -1256,13 +1253,6 @@ class SeekChallengeSection (ParrentListSection):
         # You can't press "Accept" button when nobody are selected
         isAnythingSelected = selection.get_selected()[1] != None
         self.widgets["acceptButton"].set_sensitive(isAnythingSelected)
-    
-    def onPlayerSelectionChanged (self, selection):
-        model, iter = selection.get_selected()
-        
-        # You can't press challengebutton when nobody is selected
-        isAnythingSelected = iter != None
-        self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
     
     #-------------------------------------------------------- Seek Editor
     
