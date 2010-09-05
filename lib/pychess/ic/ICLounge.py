@@ -70,7 +70,6 @@ class ICLounge (GObject):
             NewsSection(w,c),
 
             SeekTabSection(w,c),
-            ChallengeTabSection(w,c),
             SeekGraphSection(w,c),
             PlayerTabSection(w,c),
             GameTabSection(w,c),
@@ -364,8 +363,10 @@ class SeekTabSection (ParrentListSection):
         self.connection = connection
 
         self.seeks = {}
+        self.challenges = {}
 
         self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
+        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
@@ -397,6 +398,10 @@ class SeekTabSection (ParrentListSection):
                 self.listPublisher.put((self.onAddSeek, seek)) )
         self.connection.glm.connect("removeSeek", lambda glm, gameno:
                 self.listPublisher.put((self.onRemoveSeek, gameno)) )
+        self.connection.om.connect("onChallengeAdd", lambda om, index, match:
+                self.listPublisher.put((self.onChallengeAdd, index, match)) )
+        self.connection.om.connect("onChallengeRemove", lambda om, index:
+                self.listPublisher.put((self.onChallengeRemove, index)) )
         self.connection.glm.connect("clearSeeks", lambda glm:
                 self.listPublisher.put((self.onClearSeeks,)) )
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
@@ -435,6 +440,10 @@ class SeekTabSection (ParrentListSection):
             value1 = row1[column]
             value1 = value1.lower() if isinstance(value1, str) else value1
             return cmp(value0, value1)
+
+    def __updateActiveSeeksLabel (self):
+        count = len(self.seeks) + len(self.challenges)
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
     
     def onAddSeek (self, seek):
         time = _("%(min)s min") % {'min': seek["t"]}
@@ -452,9 +461,8 @@ class SeekTabSection (ParrentListSection):
         else:
             ti = self.store.append(seek_)
         self.seeks [seek["gameno"]] = ti
-        count = len(self.seeks)
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
-
+        self.__updateActiveSeeksLabel()
+        
     def onRemoveSeek (self, gameno):
         if not gameno in self.seeks:
             # We ignore removes we haven't added, as it seams fics sends a
@@ -465,13 +473,32 @@ class SeekTabSection (ParrentListSection):
             return
         self.store.remove (treeiter)
         del self.seeks[gameno]
-        count = len(self.seeks)
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
+        self.__updateActiveSeeksLabel()
+
+    def onChallengeAdd (self, index, match):
+        time = _("%(min)s min") % {'min': match["t"]}
+        if match["i"] != "0":
+            time += _(" + %(sec)s sec") % {'sec': match["i"]}
+        rated = match["r"] == "u" and _("Unrated") or _("Rated")
+        ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
+                                int(match["rt"]), rated, match["tp"], time,
+                                float(match["t"] + "." + match["i"]), "black"])
+        self.challenges[index] = ti
+        self.__updateActiveSeeksLabel()
+        self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
+
+    def onChallengeRemove (self, index):
+        if not index in self.challenges: return
+        ti = self.challenges[index]
+        if not self.store.iter_is_valid(ti): return
+        self.store.remove(ti)
+        del self.challenges[index]
+        self.__updateActiveSeeksLabel()
 
     def onClearSeeks (self):
         self.store.clear()
         self.seeks = {}
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: 0"))
+        self.__updateActiveSeeksLabel()
 
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
@@ -504,57 +531,12 @@ class SeekTabSection (ParrentListSection):
         self.widgets["challengeExpander"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: 0"))
+        self.__updateActiveSeeksLabel()
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
         self.widgets["challengeExpander"].set_sensitive(True)
         self.connection.glm.refreshSeeks()
-
-########################################################################
-# Initialize Challenge List                                            #
-########################################################################
-
-class ChallengeTabSection (ParrentListSection):
-
-    def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-
-        self.widgets = widgets
-        self.connection = connection
-
-        self.challenges = {}
-
-        self.store = self.widgets["seektreeview"].get_model().get_model()
-        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
-
-        self.connection.om.connect("onChallengeAdd", lambda om, index, match:
-                self.listPublisher.put((self.onChallengeAdd, index, match)) )
-
-        self.connection.om.connect("onChallengeRemove", lambda om, index:
-                self.listPublisher.put((self.onChallengeRemove, index)) )
-
-    def onChallengeAdd (self, index, match):
-        time = _("%(min)s min") % {'min': match["t"]}
-        if match["i"] != "0":
-            time += _(" + %(sec)s sec") % {'sec': match["i"]}
-        rated = match["r"] == "u" and _("Unrated") or _("Rated")
-        ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
-                                int(match["rt"]), rated, match["tp"], time,
-                                float(match["t"] + "." + match["i"]), "black"])
-        self.challenges [index] = ti
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
-        self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
-
-    def onChallengeRemove (self, index):
-        if not index in self.challenges: return
-        ti = self.challenges [index]
-        if not self.store.iter_is_valid(ti): return
-        self.store.remove (ti)
-        del self.challenges [index]
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])-1
-        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
 
 ########################################################################
 # Initialize Seek Graph                                                #
