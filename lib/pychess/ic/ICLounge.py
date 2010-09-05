@@ -528,14 +528,12 @@ class SeekTabSection (ParrentListSection):
 
     def onPlayingGame (self):
         self.widgets["seekListContent"].set_sensitive(False)
-        self.widgets["challengeExpander"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
         self.__updateActiveSeeksLabel()
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
-        self.widgets["challengeExpander"].set_sensitive(True)
         self.connection.glm.refreshSeeks()
 
 ########################################################################
@@ -674,15 +672,16 @@ class PlayerTabSection (ParrentListSection):
         assert type(size) == int, "size not an int: %s" % str(size)
         computericon = load_icon(size, "stock_notebook", "computer")
         guesticon = load_icon(size, "stock_people", "system-users")
+        adminicon = load_icon(size, "stock_book_blue", "accessories-dictionary")
         
-        if "C" in player["titles"]:
-            icon = computericon
-        elif "U" in player["titles"]:
+        if "U" in player["titles"]:
             icon = guesticon
+        elif "C" in player["titles"]:
+            icon = computericon
+        elif "*" in player["titles"]:
+            icon = adminicon
         else:
             icon = cls.getIconForRating(player["rating"], size)
-        #else:
-        #    icon = load_icon(size, "stock_book_blue", "accessories-dictionary")  # admin
         
         return icon
     
@@ -751,6 +750,7 @@ class PlayerTabSection (ParrentListSection):
     def onSelectionChanged (self, selection):
         isAnythingSelected = selection.get_selected()[1] != None
         self.widgets["private_chat_button"].set_sensitive(isAnythingSelected)
+        self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
 
 ########################################################################
 # Initialize Games List                                                #
