@@ -70,7 +70,6 @@ class ICLounge (GObject):
             NewsSection(w,c),
 
             SeekTabSection(w,c),
-            ChallengeTabSection(w,c),
             SeekGraphSection(w,c),
             PlayerTabSection(w,c),
             GameTabSection(w,c),
@@ -275,8 +274,7 @@ class NewsSection(Section):
             label.set_ellipsize(pango.ELLIPSIZE_END)
             expander = gtk.Expander()
             expander.set_label_widget(label)
-            gtk.Tooltips().set_tip(expander, title)
-
+            expander.set_tooltip_text(title)
             textview = gtk.TextView ()
             textview.set_wrap_mode (gtk.WRAP_WORD)
             textview.set_editable (False)
@@ -365,8 +363,10 @@ class SeekTabSection (ParrentListSection):
         self.connection = connection
 
         self.seeks = {}
+        self.challenges = {}
 
         self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
+        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
@@ -398,6 +398,10 @@ class SeekTabSection (ParrentListSection):
                 self.listPublisher.put((self.onAddSeek, seek)) )
         self.connection.glm.connect("removeSeek", lambda glm, gameno:
                 self.listPublisher.put((self.onRemoveSeek, gameno)) )
+        self.connection.om.connect("onChallengeAdd", lambda om, index, match:
+                self.listPublisher.put((self.onChallengeAdd, index, match)) )
+        self.connection.om.connect("onChallengeRemove", lambda om, index:
+                self.listPublisher.put((self.onChallengeRemove, index)) )
         self.connection.glm.connect("clearSeeks", lambda glm:
                 self.listPublisher.put((self.onClearSeeks,)) )
         self.connection.bm.connect("playBoardCreated", lambda bm, board:
@@ -409,28 +413,38 @@ class SeekTabSection (ParrentListSection):
         if model[path][8] == "grey": return False
         else: return True
     
+    def __isAChallengeOrOurSeek (self, row):
+        gameno = row[0]
+        textcolor = row[8]
+        if (gameno is not None and gameno.startswith("C")) or (textcolor == "grey"):
+            return True
+        else:
+            return False
+    
     def compareFunction (self, model, iter0, iter1, column):
-        gameno0 = model.get_value(iter0, 0)
-        gameno1 = model.get_value(iter1, 0)
-        textcolor0 = model.get_value(iter0, 8)
-        textcolor1 = model.get_value(iter1, 8)
+        row0 = list(model[model.get_path(iter0)])
+        row1 = list(model[model.get_path(iter1)])
         is_ascending = True if self.tv.get_column(column-1).get_sort_order() is \
                                gtk.SORT_ASCENDING else False
-        if (gameno0 is not None and gameno0.startswith("C")) or (textcolor0 == "grey"):
+        if self.__isAChallengeOrOurSeek(row0) and not self.__isAChallengeOrOurSeek(row1):
             if is_ascending: return -1
             else: return 1
-        elif (gameno1 is not None and gameno1.startswith("C")) or (textcolor1 == "grey"):
+        elif self.__isAChallengeOrOurSeek(row1) and not self.__isAChallengeOrOurSeek(row0):
             if is_ascending: return 1
             else: return -1
         elif column is 6:
             return self.timeCompareFunction(model, iter0, iter1, column)
         else:
-            value0 = model.get_value(iter0, column)
+            value0 = row0[column]
             value0 = value0.lower() if isinstance(value0, str) else value0
-            value1 = model.get_value(iter1, column)
+            value1 = row1[column]
             value1 = value1.lower() if isinstance(value1, str) else value1
             return cmp(value0, value1)
-        
+
+    def __updateActiveSeeksLabel (self):
+        count = len(self.seeks) + len(self.challenges)
+        self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
+    
     def onAddSeek (self, seek):
         time = _("%(min)s min") % {'min': seek["t"]}
         if seek["i"] != "0":
@@ -438,17 +452,17 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         textcolor = "grey" if seek["w"] == self.connection.getUsername() else "black"
-        ti = self.store.append ([seek["gameno"], pix, seek["w"],
-                                int(seek["rt"]), rated, seek["tp"], time,
-                                float(seek["t"] + "." + seek["i"]), textcolor])
+        seek_ = [seek["gameno"], pix, seek["w"], int(seek["rt"]), rated, seek["tp"],
+                 time, float(seek["t"] + "." + seek["i"]), textcolor]
         if textcolor == "grey":
+            ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
             self.widgets["clearSeeksButton"].set_sensitive(True)
+        else:
+            ti = self.store.append(seek_)
         self.seeks [seek["gameno"]] = ti
-        count = len(self.seeks)
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-
+        self.__updateActiveSeeksLabel()
+        
     def onRemoveSeek (self, gameno):
         if not gameno in self.seeks:
             # We ignore removes we haven't added, as it seams fics sends a
@@ -459,14 +473,32 @@ class SeekTabSection (ParrentListSection):
             return
         self.store.remove (treeiter)
         del self.seeks[gameno]
-        count = len(self.seeks)
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
+        self.__updateActiveSeeksLabel()
+
+    def onChallengeAdd (self, index, match):
+        time = _("%(min)s min") % {'min': match["t"]}
+        if match["i"] != "0":
+            time += _(" + %(sec)s sec") % {'sec': match["i"]}
+        rated = match["r"] == "u" and _("Unrated") or _("Rated")
+        ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
+                                int(match["rt"]), rated, match["tp"], time,
+                                float(match["t"] + "." + match["i"]), "black"])
+        self.challenges[index] = ti
+        self.__updateActiveSeeksLabel()
+        self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
+
+    def onChallengeRemove (self, index):
+        if not index in self.challenges: return
+        ti = self.challenges[index]
+        if not self.store.iter_is_valid(ti): return
+        self.store.remove(ti)
+        del self.challenges[index]
+        self.__updateActiveSeeksLabel()
 
     def onClearSeeks (self):
         self.store.clear()
         self.seeks = {}
-        self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
+        self.__updateActiveSeeksLabel()
 
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
@@ -496,62 +528,13 @@ class SeekTabSection (ParrentListSection):
 
     def onPlayingGame (self):
         self.widgets["seekListContent"].set_sensitive(False)
-        self.widgets["challengeExpander"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
-        self.widgets["activeSeeksLabel"].set_text("0 %s" % _("Active Seeks"))
+        self.__updateActiveSeeksLabel()
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
-        self.widgets["challengeExpander"].set_sensitive(True)
         self.connection.glm.refreshSeeks()
-
-########################################################################
-# Initialize Challenge List                                            #
-########################################################################
-
-class ChallengeTabSection (ParrentListSection):
-
-    def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-
-        self.widgets = widgets
-        self.connection = connection
-
-        self.challenges = {}
-
-        self.store = self.widgets["seektreeview"].get_model().get_model()
-        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
-
-        self.connection.om.connect("onChallengeAdd", lambda om, index, match:
-                self.listPublisher.put((self.onChallengeAdd, index, match)) )
-
-        self.connection.om.connect("onChallengeRemove", lambda om, index:
-                self.listPublisher.put((self.onChallengeRemove, index)) )
-
-    def onChallengeAdd (self, index, match):
-        time = _("%(min)s min") % {'min': match["t"]}
-        if match["i"] != "0":
-            time += _(" + %(sec)s sec") % {'sec': match["i"]}
-        rated = match["r"] == "u" and _("Unrated") or _("Rated")
-        ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
-                                int(match["rt"]), rated, match["tp"], time,
-                                float(match["t"] + "." + match["i"]), "black"])
-        self.challenges [index] = ti
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])+1
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
-        self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
-
-    def onChallengeRemove (self, index):
-        if not index in self.challenges: return
-        ti = self.challenges [index]
-        if not self.store.iter_is_valid(ti): return
-        self.store.remove (ti)
-        del self.challenges [index]
-        count = int(self.widgets["activeSeeksLabel"].get_text().split()[0])-1
-        postfix = count == 1 and _("Active Seek") or _("Active Seeks")
-        self.widgets["activeSeeksLabel"].set_text("%d %s" % (count, postfix))
 
 ########################################################################
 # Initialize Seek Graph                                                #
@@ -611,10 +594,13 @@ class SeekGraphSection (ParrentListSection):
         type = seek["r"] == "u" and 1 or 0
 
         text = "%s (%s)" % (seek["w"], seek["rt"])
+        if seek["cp"]:  # remove from testing/ficsmanagers.py as well when removing this
+            text += " (%s)" % _("Computer Player")
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         text += "\n%s %s" % (rated, seek["tp"])
         text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
-
+        if seek["manual"]:
+            text += "\n%s" % _("Manual Acceptance")
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
@@ -633,23 +619,16 @@ class SeekGraphSection (ParrentListSection):
 ########################################################################
 # Initialize Players List                                              #
 ########################################################################
-
+    
 class PlayerTabSection (ParrentListSection):
 
-    peoplepix = load_icon(15, "stock_people", "system-users")
-    bookpix = load_icon(15, "stock_book_blue", "accessories-dictionary")
-    easypix = load_icon(15, "weather-few-clouds")
-    advpix = load_icon(15, "weather-overcast")
-    exppix = load_icon(15, "weather-storm")
-    cmppix = load_icon(15, "stock_notebook", "computer")
-
+    players = {}
+    
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
 
         self.widgets = widgets
         self.connection = connection
-
-        self.players = {}
 
         self.tv = self.widgets["playertreeview"]
         self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
@@ -672,42 +651,92 @@ class PlayerTabSection (ParrentListSection):
         self.widgets["private_chat_button"].connect("clicked", self.onPrivateChatClicked)
         self.widgets["private_chat_button"].set_sensitive(False)
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
-
+    
+    @classmethod
+    def getIconForRating (cls, rating, size=15):
+        assert type(rating) == int, "rating not an int: %s" % str(rating)
+        if rating >= 1900:
+            icon = load_icon(size, "weather-storm")
+        elif rating >= 1600:
+            icon = load_icon(size, "weather-showers")
+        elif rating >= 1300:
+            icon = load_icon(size, "weather-overcast")
+        elif rating >= 1000:
+            icon = load_icon(size, "weather-few-clouds")
+        else:
+            icon = load_icon(size, "weather-clear")
+        return icon
+    
+    @classmethod
+    def __getPlayerIcon (cls, player, size=15):
+        assert type(size) == int, "size not an int: %s" % str(size)
+        computericon = load_icon(size, "stock_notebook", "computer")
+        guesticon = load_icon(size, "stock_people", "system-users")
+        adminicon = load_icon(size, "stock_book_blue", "accessories-dictionary")
+        
+        if "U" in player["titles"]:
+            icon = guesticon
+        elif "C" in player["titles"]:
+            icon = computericon
+        elif "*" in player["titles"]:
+            icon = adminicon
+        else:
+            icon = cls.getIconForRating(player["rating"], size)
+        
+        return icon
+    
+    @classmethod
+    def getPlayerIcon (cls, playername, size=15):
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        
+        try:
+            player = cls.players[playername]
+        except KeyError:
+            return load_icon(size, "stock_people", "system-users")  # guest icon
+        player = player[1]
+        
+        return cls.__getPlayerIcon(player, size)
+    
+    @classmethod
+    def playerIsAGuest (cls, playername):
+        "Throws KeyError if player removed from self.players before lookup"
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        player = cls.players[playername]
+        player = player[1]
+        if "U" in player["titles"]:
+            return True
+        else:
+            return False
+    
+    @classmethod
+    def playerIsAComputer (cls, playername):
+        "Throws KeyError if player removed from self.players before lookup"
+        assert type(playername) == str, "playername not a str: %s" % str(playername)
+        player = cls.players[playername]
+        player = player[1]
+        if "C" in player["titles"]:
+            return True
+        else:
+            return False
+    
     def onPlayerAdd (self, player):
         if player["name"] in self.players: return
-        rating = player["rating"]
-        title = player["title"]
-        if title & 0x02:
-            title = PlayerTabSection.cmppix
-        elif not rating:
-            title = PlayerTabSection.peoplepix
-        else:
-            if rating < 1300:
-                title = PlayerTabSection.easypix
-            elif rating < 1600:
-                title = PlayerTabSection.advpix
-            else:
-                title = PlayerTabSection.exppix
-        #else:
-        #    # Admins gets a book picture
-        #    title = PlayerTabSection.bookpix
-        ti = self.store.append ([title, player["name"], rating])
-        self.players [player["name"]] = ti
+        icon = self.__getPlayerIcon(player)       
+        ti = self.store.append ([icon, player["name"], player["rating"]])
+        self.players[player["name"]] = [ti, player]
         count = len(self.players)
-        postfix = count == 1 and _("Player Ready") or _("Players Ready")
-        self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["playersOnlineLabel"].set_text(_("Players ready: %d") % count)
 
     def onPlayerRemove (self, name):
         if not name in self.players:
             return
-        ti = self.players [name]
+        ti = self.players[name][0]
         if not self.store.iter_is_valid(ti):
             return
-        self.store.remove (ti)
+        self.store.remove(ti)
         del self.players[name]
         count = len(self.players)
-        postfix = count == 1 and _("Player Ready") or _("Players Ready")
-        self.widgets["playersOnlineLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["playersOnlineLabel"].set_text(_("Players ready: %d") % count)
 
     def onPrivateChatClicked (self, button):
         model, iter = self.widgets["playertreeview"].get_selection().get_selected()
@@ -721,6 +750,7 @@ class PlayerTabSection (ParrentListSection):
     def onSelectionChanged (self, selection):
         isAnythingSelected = selection.get_selected()[1] != None
         self.widgets["private_chat_button"].set_sensitive(isAnythingSelected)
+        self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
 
 ########################################################################
 # Initialize Games List                                                #
@@ -803,8 +833,7 @@ class GameTabSection (ParrentListSection):
                                 game["bn"], type, length])
         self.games[game["gameno"]] = ti
         count = len(self.games)
-        postfix = count == 1 and _("Game Running") or _("Games Running")
-        self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onWasPrivate (self, gameno):
         # When observable games were added to the list later than the latest
@@ -830,8 +859,7 @@ class GameTabSection (ParrentListSection):
         self.store.remove (ti)
         del self.games[gameno]
         count = len(self.games)
-        postfix = count == 1 and _("Game Running") or _("Games Running")
-        self.widgets["gamesRunningLabel"].set_text("%d %s" % (count, postfix))
+        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onObserveClicked (self, widget, *args):
         model, paths = self.tv.get_selection().get_selected_rows()
@@ -935,12 +963,6 @@ class AdjournedTabSection (ParrentListSection):
 RATING_SLIDER_STEP = 25
     
 class SeekChallengeSection (ParrentListSection):
-    
-    novicepix = load_icon(15, "weather-clear")
-    beginnerpix = load_icon(15, "weather-few-clouds")
-    intermediatepix = load_icon(15, "weather-overcast")
-    advancedpix = load_icon(15, "weather-showers")
-    expertpix = load_icon(15, "weather-storm")
     
     variants = {
         SHUFFLECHESS : TYPE_WILD,
@@ -1099,11 +1121,17 @@ class SeekChallengeSection (ParrentListSection):
         model, iter = self.widgets["playertreeview"].get_selection().get_selected()
         if iter == None: return
         playername = model.get_value(iter, 1)
-        
+        playerrating = model.get_value(iter, 2)
         self.challengee = playername
-        playertitle = model.get_value(iter, 0)
-        self.challengee_is_guest = playertitle == PlayerTabSection.peoplepix
+        try:
+            self.challengee_is_guest = PlayerTabSection.playerIsAGuest(playername)
+            challengee_is_computer = PlayerTabSection.playerIsAComputer(playername)
+        except KeyError:
+            self.challengee_is_guest = False
+            challengee_is_computer = False
         self.in_challenge_mode = True
+        icon = PlayerTabSection.getPlayerIcon(playername, 22)
+        
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeeks(i)
@@ -1116,11 +1144,20 @@ class SeekChallengeSection (ParrentListSection):
             seeknumber = 1
         self.__updateSeekEditor(seeknumber, challengemode=True)
         
-        self.widgets["challengeeNameLabel"].set_markup("<big><b>%s</b></big>" % playername)
+        markup = "<big><b>%s</b></big>" % playername
+        if self.challengee_is_guest:
+            markup += " <big>(%s)</big>" % _("Unregistered")
+        else:
+            playerrating = str(playerrating) if playerrating > 0 else _("Unrated")
+            markup += " <big>(%s)</big>" % playerrating
+            if challengee_is_computer:
+                markup += " <big>(%s)</big>" % _("Computer Player")
+        self.widgets["challengeeNameLabel"].set_markup(markup)
+        self.widgets["challengeeImage"].set_from_pixbuf(icon)
         title = _("Challenge: ") + playername
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
-
+    
     def onChallengeDialogResponse (self, dialog, response):
         self.widgets["challengeDialog"].hide()
         if response is not 5:
@@ -1209,9 +1246,9 @@ class SeekChallengeSection (ParrentListSection):
         if isUntimedGame:
             seek["time"] = _("Untimed")
         elif gain > 0:
-            seek["time"] = "%d min + %d sec/move" % (min, gain)
+            seek["time"] = _("%(minutes)d min + %(gain)d sec/move") % {'minutes' : min, 'gain' : gain}
         else:
-            seek["time"] = "%d min" % min
+            seek["time"] = _("%d min") % min
         
         if variant != NORMALCHESS and not isUntimedGame:
             seek["variant"] = "%s" % variants[variant].name
@@ -1364,20 +1401,7 @@ class SeekChallengeSection (ParrentListSection):
             else:
                 self.widgets["seek%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
                 self.widgets["challenge%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
-
-    def __getPixbufForRating (self, rating):
-        assert type(rating) == int, "rating not an int: %s" % str(rating)
-        if rating >= 1900:
-            return self.expertpix
-        elif rating >= 1600:
-            return self.advancedpix
-        elif rating >= 1300:
-            return self.intermediatepix
-        elif rating >= 1000:
-            return self.beginnerpix
-        else:
-            return self.novicepix
-        
+    
     def __updateRatingRangeBox (self):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
         tolerance = int(self.widgets["toleranceSlider"].get_value()) * RATING_SLIDER_STEP
@@ -1391,7 +1415,7 @@ class SeekChallengeSection (ParrentListSection):
         
         for widgetName, rating in (("ratingRangeMinImage", minRating),
                                    ("ratingRangeMaxImage", maxRating)):
-            pixbuf = self.__getPixbufForRating(rating)
+            pixbuf = PlayerTabSection.getIconForRating(rating)
             self.widgets[widgetName].set_from_pixbuf(pixbuf)
         
         self.widgets["ratingRangeMinImage"].show()
@@ -1437,7 +1461,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["yourRatingImage"].clear()
             self.widgets["yourRatingLabel"].set_label(_("Unrated"))
             return
-        pixbuf = self.__getPixbufForRating(rating)
+        pixbuf = PlayerTabSection.getIconForRating(rating)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
         self.widgets["yourRatingLabel"].set_label(str(rating))
         
@@ -1585,7 +1609,7 @@ class SeekChallengeSection (ParrentListSection):
         
     def onRatingCenterSliderChanged (self, slider):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
-        pixbuf = self.__getPixbufForRating(center)
+        pixbuf = PlayerTabSection.getIconForRating(center)
         self.widgets["ratingCenterLabel"].set_label("%d" % (center))
         self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)        
         self.__updateRatingRangeBox()

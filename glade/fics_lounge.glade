@@ -126,6 +126,7 @@
                           <widget class="GtkExpander" id="seekExpander">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="expanded">True</property>
                             <child>
                               <widget class="GtkAlignment" id="alignment1">
                                 <property name="visible">True</property>
@@ -1552,7 +1553,7 @@
                                                             <property name="visible">True</property>
                                                             <property name="xalign">0</property>
                                                             <property name="xpad">1</property>
-                                                            <property name="label" translatable="yes">1200</property>
+                                                            <property name="label">1200</property>
                                                           </widget>
                                                           <packing>
                                                             <property name="expand">False</property>
@@ -1614,7 +1615,7 @@
                                                             <property name="visible">True</property>
                                                             <property name="xalign">0</property>
                                                             <property name="xpad">1</property>
-                                                            <property name="label" translatable="yes">1000</property>
+                                                            <property name="label">1000</property>
                                                           </widget>
                                                           <packing>
                                                             <property name="expand">False</property>
@@ -1624,7 +1625,7 @@
                                                         <child>
                                                           <widget class="GtkLabel" id="dashLabel">
                                                             <property name="visible">True</property>
-                                                            <property name="label" translatable="yes"> - </property>
+                                                            <property name="label"> - </property>
                                                           </widget>
                                                           <packing>
                                                             <property name="expand">False</property>
@@ -1649,7 +1650,7 @@
                                                             <property name="visible">True</property>
                                                             <property name="xalign">0</property>
                                                             <property name="xpad">1</property>
-                                                            <property name="label" translatable="yes">1400</property>
+                                                            <property name="label">1400</property>
                                                             <property name="width_chars">5</property>
                                                           </widget>
                                                           <packing>
@@ -1803,7 +1804,7 @@ b) you change the variant or the time control</property>
                                                         <property name="visible">True</property>
                                                         <property name="xalign">0</property>
                                                         <property name="xpad">1</property>
-                                                        <property name="label" translatable="yes">&#xB1;200</property>
+                                                        <property name="label">&#xB1;200</property>
                                                       </widget>
                                                     </child>
                                                   </widget>
@@ -2333,16 +2334,27 @@ b) you change the variant or the time control</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="challengeeNameLabel">
+              <widget class="GtkImage" id="challengeeImage">
                 <property name="visible">True</property>
-                <property name="xpad">6</property>
-                <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;mgatto&lt;/b&gt;&lt;/big&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="xpad">7</property>
+                <property name="stock">gtk-orientation-portrait</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="challengeeNameLabel">
+                <property name="visible">True</property>
+                <property name="label">&lt;big&gt;&lt;b&gt;mgatto&lt;/b&gt; (1337)&lt;/big&gt;</property>
+                <property name="use_markup">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </widget>
