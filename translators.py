@@ -45,3 +45,4 @@ with open(FILENAME,'w') as file:
         print >> file, language, "translators:"
         for per in extraTranslators[lang] + pers:
             print >> file, per
+
