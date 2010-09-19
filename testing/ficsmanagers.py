@@ -168,19 +168,19 @@ class GameListManagerTests(EmittingTestCase):
         
         lines = ['<s> 10 w=warbly ti=00 rt=1291  t=3 i=0 r=r tp=blitz c=? rr=1200-1400 a=t f=t']
         expectedResult = {'gameno':'10', 'tp':_("Blitz"), 'rmin':'1200', 'rmax':'1400',
-                          'cp':False, 'rt':'1291', 'manual':False,
+                          'cp':False, 'rt':'1291', 'manual':False, 'title': '',
                           'w':'warbly', 'r':'r', 't':'3', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
         
         lines = ['<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f']
         expectedResult = {'gameno':'124', 'tp':_("Blitz"), 'rmin':'0', 'rmax':'9999',
-                          'cp':True, 'rt':'1637', 'manual':False,
+                          'cp':True, 'rt':'1637', 'manual':False, 'title': '(C)',
                           'w':'leaderbeans', 'r':'u', 't':'3', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
 
         lines = ['<s> 14 w=microknight ti=00 rt=1294  t=15 i=0 r=u tp=standard c=? rr=1100-1450 a=f f=f']
         expectedResult = {'gameno':'14', 'tp':_("Standard"), 'rmin':'1100', 'rmax':'1450',
-                          'cp':False, 'rt':'1294', 'manual':True,
+                          'cp':False, 'rt':'1294', 'manual':True, 'title': '',
                           'w':'microknight', 'r':'u', 't':'15', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
