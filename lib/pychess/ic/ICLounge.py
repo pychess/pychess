@@ -106,7 +106,7 @@ class ICLounge (GObject):
                     sections[i].__del__()
         sections = None
         if self.connection != None:
-            self.connection.disconnect()
+            self.connection.close()
         self.connection = None
         self.widgets = None
 #        import objgraph

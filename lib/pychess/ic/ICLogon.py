@@ -94,7 +94,7 @@ class ICLogon:
     
     def onCancel (self, widget, hide):
         if self.connection and self.connection.isConnecting():
-            self.connection.disconnect()
+            self.connection.close()
             self.connection = None
             self.showNormal()
         if hide:

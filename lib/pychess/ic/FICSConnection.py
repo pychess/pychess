@@ -83,7 +83,7 @@ class Connection (GObject, PooledThread):
     def cancel (self):
         raise NotImplementedError()
     
-    def disconnect (self):
+    def close (self):
         raise NotImplementedError()
     
     def getUsername (self):
@@ -220,7 +220,7 @@ class FICSConnection (Connection):
         finally:
             self.emit("disconnected")
     
-    def disconnect (self):
+    def close (self):
         self.emit("disconnecting")
         if self.isConnected():
             try:
