@@ -578,7 +578,7 @@ class PyChessFICS(PyChess):
         print message
     
     def __onLogOut (self, autoLogoutManager):
-        self.connection.disconnect()
+        self.connection.close()
         #sys.exit()
     
     def __onAddPlayer (self, gameListManager, player):
