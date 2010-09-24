@@ -122,7 +122,8 @@ class ICPlayer (Player):
             ply, sanmove = item
             if ply < board1.ply:
                 # This should only happen in an observed game
-                self.emit("offer", Offer(TAKEBACK_FORCE, param=ply))
+                board1 = self.gamemodel.getBoardAtPly(max(ply-1, 0))
+                self.lastPly = board1.ply
             
             try:
                 move = parseSAN (board1, sanmove)
@@ -152,6 +153,7 @@ class ICPlayer (Player):
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
+            self.lastPly = gamemodel.boards[-1].ply
             self.queue.put("int")
     
     def putMessage (self, text):
