@@ -54,6 +54,7 @@ class OfferManager (GObject):
     __gsignals__ = {
         'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
         'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'onOfferDeclined' : (SIGNAL_RUN_FIRST, None, (object,)),
         'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str, object)),
         'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
         'onActionError' : (SIGNAL_RUN_FIRST, None, (object, int)),
@@ -84,16 +85,24 @@ class OfferManager (GObject):
                     ficsstring)
         
         self.connection.expect_line (self.notEnoughMovesToUndo,
-                "There are (?:(no)|only (\d+) half) moves in your game\.")
+            "There are (?:(no)|only (\d+) half) moves in your game\.")
         
         self.connection.expect_line (self.noOffersToAccept,
-                "There are no ([^ ]+) offers to (accept).")
+            "There are no ([^ ]+) offers to (accept).")
+        
+        self.connection.expect_line (self.onOfferDeclined,
+            "\w+ declines the (draw|takeback|pause|unpause|abort|adjourn) request\.")
         
         self.lastPly = 0
         self.offers = {}
         
         self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse & !atomic")
         self.connection.lvm.setVariable("pendinfo", True)
+    
+    def onOfferDeclined (self, match):
+        type = match.groups()[0]
+        offer = Offer(strToOfferType[type])
+        self.emit("onOfferDeclined", offer)
     
     def noOffersToAccept (self, match):
         offertype, request = match.groups()
@@ -153,11 +162,11 @@ class OfferManager (GObject):
                 self.emit("onChallengeAdd", index, match)
         
         else:
-            print "OfferManager.onOfferAdd(): emitting offer=%s" % offer
+            log.debug("OfferManager.onOfferAdd(): emitting offer=%s\n" % offer)
             self.emit("onOfferAdd", offer)
     
     def onOfferRemove (self, match):
-        print "OfferManager.onOfferRemove(): match.string=%s" % match.string
+        log.debug("OfferManager.onOfferRemove(): match.string=%s\n" % match.string)
         index = int(match.groups()[0])
         if not index in self.offers:
             return
