@@ -20,7 +20,7 @@ class BoardControl (gtk.EventBox):
     
     __gsignals__ = {
         'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
-        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int, object))
+        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object))
     }
     
     def __init__(self, gamemodel, actionMenuItems):

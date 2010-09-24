@@ -204,7 +204,7 @@ def on_game_started (gamemodel, gmwidg):
 #===============================================================================
 
 def offer_callback (player, offer, gamemodel, gmwidg):
-    if offer.offerType == DRAW_OFFER:
+    if offer.type == DRAW_OFFER:
         if gamemodel.status != RUNNING:
             return # If the offer has already been handled by
                    # Gamemodel and the game was drawn, we need

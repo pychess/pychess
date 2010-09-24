@@ -71,54 +71,54 @@ class ICGameModel (GameModel):
         else: opPlayer = self.players[WHITE]
         
         
-        if self.status not in UNFINISHED_STATES and offer.offerType in INGAME_ACTIONS:
+        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
             player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
         
         # TODO: if game is over and opponent is online, send through resume offer
-        elif self.status not in UNFINISHED_STATES and offer.offerType in \
+        elif self.status not in UNFINISHED_STATES and offer.type in \
            (TAKEBACK_OFFER, RESUME_OFFER):
             player.offerError(offer, ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED)
         
-#        elif offer.offerType == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
+#        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
 #           self.reason in UNRESUMEABLE_REASONS:
 #            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
         
-        elif offer.offerType == RESUME_OFFER and self.status != PAUSED:
+        elif offer.type == RESUME_OFFER and self.status != PAUSED:
             player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
 
         # This is only sent by ServerPlayers when observing
-        elif offer.offerType == TAKEBACK_FORCE:
+        elif offer.type == TAKEBACK_FORCE:
             self.undoMoves(self.ply - offer.param)
         
-        elif offer.offerType == CHAT_ACTION:
+        elif offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
         
-        elif offer.offerType in (RESIGNATION, FLAG_CALL):
+        elif offer.type in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
         
-        elif offer.offerType == ABORT_OFFER:
+        elif offer.type == ABORT_OFFER:
             self.connection.om.abort()
         
-        elif offer.offerType == ADJOURN_OFFER:
+        elif offer.type == ADJOURN_OFFER:
             self.connection.om.adjourn()
         
-        elif offer.offerType in OFFERS:
-            if offer not in self.offerMap:
-                self.offerMap[offer] = player
+        elif offer.type in OFFERS:
+            if offer not in self.offers:
+                self.offers[offer] = player
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
-            # we want to remove the old one from offerMap
-            for of in self.offerMap.keys():
-                if offer.offerType == of.offerType and offer != of:
-                    del self.offerMap[of]
+            # we want to remove the old one from self.offers
+            for offer_ in self.offers.keys():
+                if offer.type == offer_.type and offer != offer_:
+                    del self.offers[offer_]
     
     def acceptRecieved (self, player, offer):
         if player.__type__ == LOCAL:
-            if offer not in self.offerMap or self.offerMap[offer] == player:
+            if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                self.connection.om.accept(offer.offerType)
-                del self.offerMap[offer]
+                self.connection.om.accept(offer.type)
+                del self.offers[offer]
         
         # We don't handle any ServerPlayer calls here, as the fics server will
         # know automatically if he/she accepts an offer, and will simply send
