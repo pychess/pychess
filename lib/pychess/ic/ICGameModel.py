@@ -98,10 +98,6 @@ class ICGameModel (GameModel):
         
         elif offer.type == RESUME_OFFER and self.status != PAUSED:
             player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
-
-        # This is only sent by ServerPlayers when observing
-        elif offer.type == TAKEBACK_FORCE:
-            self.undoMoves(self.ply - offer.param)
         
         elif offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
