@@ -1,8 +1,8 @@
-
 from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
+from pychess.Players.Human import Human
 
 class ICGameModel (GameModel):
     
@@ -11,19 +11,28 @@ class ICGameModel (GameModel):
         self.connection = connection
         self.gameno = gameno
         
-        self.connection.bm.connect("boardUpdate", self.onBoardUpdate)
-        self.connection.bm.connect("obsGameEnded", self.onGameEnded)
-        self.connection.bm.connect("curGameEnded", self.onGameEnded)
-        self.connection.bm.connect("gamePaused", self.onGamePaused)
-        
-        self.connection.om.connect("onActionError", self.onActionError)
-        
-        self.connection.connect("disconnected", self.onDisconnected)
-        
-        self.connect("game_terminated", self.afterGameEnded)
+        connections = self.connections
+        connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
+        connections[connection.bm].append(connection.bm.connect("obsGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect("curGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
+        connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
+        connections[connection].append(connection.connect("disconnected", self.onDisconnected))
         
         self.inControl = True
         self.rated = rated
+    
+    def __disconnect (self):
+        if self.connections is None: return
+        for obj in self.connections:
+            # Humans need to stay connected post-game so that "GUI > Actions" works
+            if isinstance(obj, Human):
+                continue
+            
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+        self.connections = None
     
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
@@ -39,13 +48,9 @@ class ICGameModel (GameModel):
             self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, gameno, wname, bname, status, reason):
-        if gameno == self.gameno and len(self.players) >= 2 and wname == self.players[0].getICHandle() \
-           and bname == self.players[1].getICHandle():
-            self.end (status, reason)
-    
-    def afterGameEnded (self, self_):
-        if not self.inControl:
-            self.connection.bm.unobserve(self.gameno)
+        if gameno == self.gameno and len(self.players) >= 2 and \
+            wname == self.players[0].getICHandle() and bname == self.players[1].getICHandle():
+            self.end(status, reason)
     
     def setPlayers (self, players):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:
@@ -138,7 +143,12 @@ class ICGameModel (GameModel):
     
     def end (self, status, reason):
         if self.status in UNFINISHED_STATES:
-            if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
+            self.__disconnect()
+            
+            if self.inControl:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
+            else:
+                self.connection.bm.unobserve(self.gameno)
+        
         GameModel.end(self, status, reason)
