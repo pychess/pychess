@@ -6,6 +6,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toAN, ParsingError, listToSan
 from pychess.Utils.const import *
 from pychess.Variants import variants
+from pychess.System.Log import log
 
 class ICPlayer (Player):
     __type__ = REMOTE
@@ -26,10 +27,10 @@ class ICPlayer (Player):
         connections[connection.bm].append(connection.bm.connect_after("boardUpdate", self.__boardUpdate))
         connections[connection.om].append(connection.om.connect("onOfferAdd", self.__onOfferAdd))
         connections[connection.om].append(connection.om.connect("onOfferRemove", self.__onOfferRemove))
+        connections[connection.om].append(connection.om.connect("onOfferDeclined", self.__onOfferDeclined))
         connections[connection.cm].append(connection.cm.connect("privateMessage", self.__onPrivateMessage))
         
-        self.offerToIndex = {}
-        self.indexToOffer = {}
+        self.offers = {}
         self.lastPly = -1
     
     def getICHandle (self):
@@ -41,12 +42,24 @@ class ICPlayer (Player):
     
     def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
-            self.indexToOffer[offer.index] = offer
+            log.debug("ICPlayer.__onOfferAdd(): emitting offer: self.gameno=%s self.name=%s offer=%s\n" % \
+                (self.gameno, self.name, offer))
+            self.offers[offer.index] = offer
             self.emit ("offer", offer)
     
+    def __onOfferDeclined (self, om, offer):
+        for offer_ in self.gamemodel.offers.keys():
+            if offer.type == offer_.type:
+                offer.param = offer_.param
+        log.debug("ICPlayer.__onOfferDeclined(): emitting decline for offer=%s\n" % offer)
+        self.emit("decline", offer)
+    
     def __onOfferRemove (self, om, offer):
-        if offer.index in self.indexToOffer:
-            self.emit ("withdraw", self.indexToOffer[offer.index])
+        if offer.index in self.offers:
+            log.debug("ICPlayer.__onOfferRemove(): emitting withdraw: self.gameno=%s self.name=%s offer=%s\n" % \
+                (self.gameno, self.name, offer))
+            self.emit ("withdraw", self.offers[offer.index])
+            del self.offers[offer.index]
     
     def __onPrivateMessage (self, cm, name, title, isadmin, text):
         if name == self.name:
@@ -160,10 +173,12 @@ class ICPlayer (Player):
         self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
     
     def offer (self, offer):
+        log.debug("ICPlayer.offer: sending offer command with offer=%s\n" % offer)
         self.connection.om.offer(offer, self.lastPly)
     
     def offerDeclined (self, offer):
-        pass
+        log.debug("ICPlayer.offerDeclined: sending decline for offer=%s\n" % offer)
+        self.connection.om.decline(offer)
     
     def offerWithdrawn (self, offer):
         pass
