@@ -61,6 +61,14 @@ class ICGameModel (GameModel):
         if paused:
             self.pause()
         else: self.resume()
+        
+        # we have to do this here rather than in acceptRecieved(), because
+        # sometimes FICS pauses/unpauses a game clock without telling us that the
+        # original offer was "accepted"/"received", such as when one player offers
+        # "pause" and the other player responds not with "accept" but "pause"
+        for offer in self.offers.keys():
+            if offer.type in (PAUSE_OFFER, RESUME_OFFER):
+                del self.offers[offer]
     
     def onDisconnected (self, connection):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -122,7 +130,7 @@ class ICGameModel (GameModel):
             if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                self.connection.om.accept(offer.type)
+                self.connection.om.accept(offer)
                 del self.offers[offer]
         
         # We don't handle any ServerPlayer calls here, as the fics server will
