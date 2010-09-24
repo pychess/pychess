@@ -154,10 +154,10 @@ class GameListManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
         
         self.connection.expect_line (self.on_player_list,
-                "<wa> ([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?)+)")
+                "<wa> ([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?){2,})")
         self.connection.expect_line (self.on_player_remove, "<wd> %s" % names)
         self.connection.expect_line (self.on_player_list,
-                "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?)+)")
+                "([A-Za-z]+)[\^~:\#. &](\\d{2})((?:\\d{1,4}[P E]?){2,})")
         self.connection.expect_line (self.on_player_remove,
                 "%s is no longer available for matches." % names)
         self.connection.expect_fromto (self.on_player_add,
