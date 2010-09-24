@@ -268,6 +268,9 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
                 analyzer.connect("analyze", on_analyze))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("game_changed", on_game_change))
+        gmwidg.gamemodel.chacons.append(
+                gmwidg.gamemodel.connect("moves_undoing",
+                                         lambda model, moves: on_game_change(model)))
     
     else:
         if hasattr (gmwidg.gamemodel, "anacons"):
