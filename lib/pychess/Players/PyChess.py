@@ -661,15 +661,15 @@ class PyChessFICS(PyChess):
         #match = {"tp": type, "w": fname, "rt": rating, "r": rated, "t": mins, "i": incr}
         offerManager.acceptIndex(index)
     
-    def __onOfferAdd (self, offerManager, index, offer):
-        if offer.offerType in (PAUSE_OFFER, RESUME_OFFER, ADJOURN_OFFER):
-            offerManager.acceptIndex(index)
-        elif offer.offerType in (TAKEBACK_OFFER,):
-            offerManager.declineIndex(index)
-        elif offer.offerType in (DRAW_OFFER, ABORT_OFFER, SWITCH_OFFER):
+    def __onOfferAdd (self, offerManager, offer):
+        if offer.type in (PAUSE_OFFER, RESUME_OFFER, ADJOURN_OFFER):
+            offerManager.accept(offer)
+        elif offer.type in (TAKEBACK_OFFER,):
+            offerManager.decline(offer)
+        elif offer.type in (DRAW_OFFER, ABORT_OFFER, SWITCH_OFFER):
             if self.scr <= 0:
-                offerManager.acceptIndex(index)
-            else: offerManager.declineIndex(index)
+                offerManager.accept(offer)
+            else: offerManager.decline(offer)
     
     #===========================================================================
     # Playing

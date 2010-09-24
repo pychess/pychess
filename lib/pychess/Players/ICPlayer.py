@@ -39,18 +39,18 @@ class ICPlayer (Player):
     #    Handle signals from the connection
     #===========================================================================
     
-    def __onOfferAdd (self, om, index, offer):
+    def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
-            self.indexToOffer[index] = offer
+            self.indexToOffer[offer.index] = offer
             self.emit ("offer", offer)
     
-    def __onOfferRemove (self, om, index):
-        if index in self.indexToOffer:
-            self.emit ("withdraw", self.indexToOffer[index])
+    def __onOfferRemove (self, om, offer):
+        if offer.index in self.indexToOffer:
+            self.emit ("withdraw", self.indexToOffer[offer.index])
     
     def __onPrivateMessage (self, cm, name, title, isadmin, text):
         if name == self.name:
-            self.emit("offer", Offer(CHAT_ACTION, text))
+            self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
@@ -111,7 +111,7 @@ class ICPlayer (Player):
             ply, sanmove = item
             if ply < board1.ply:
                 # This should only happen in an observed game
-                self.emit("offer", Offer(TAKEBACK_FORCE, ply))
+                self.emit("offer", Offer(TAKEBACK_FORCE, param=ply))
             
             try:
                 move = parseSAN (board1, sanmove)
