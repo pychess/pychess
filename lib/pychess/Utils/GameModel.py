@@ -1,4 +1,4 @@
-
+from collections import defaultdict
 from threading import RLock
 import traceback
 import cStringIO
@@ -49,6 +49,8 @@ class GameModel (GObject, PooledThread):
         self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
+
+        self.connections = defaultdict(list)  # mainly for IC subclasses
         
         today = datetime.date.today()
         self.tags = {
@@ -78,10 +80,10 @@ class GameModel (GObject, PooledThread):
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
-            player.connect("offer", self.offerRecieved)
-            player.connect("withdraw", self.withdrawRecieved)
-            player.connect("decline", self.declineRecieved)
-            player.connect("accept", self.acceptRecieved)
+            self.connections[player].append(player.connect("offer", self.offerRecieved))
+            self.connections[player].append(player.connect("withdraw", self.withdrawRecieved))
+            self.connections[player].append(player.connect("decline", self.declineRecieved))
+            self.connections[player].append(player.connect("accept", self.acceptRecieved))
     
     def setSpectactors (self, spectactors):
         assert self.status == WAITING_TO_START

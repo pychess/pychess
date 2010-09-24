@@ -1,4 +1,4 @@
-
+from collections import defaultdict
 from Queue import Queue
 
 from Player import Player, PlayerIsDead, TurnInterrupt
@@ -20,13 +20,13 @@ class ICPlayer (Player):
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
-        self.connection = self.gamemodel.connection
+        self.connection = connection = self.gamemodel.connection
         
-        self.conids = {}
-        self.conids["boardUpdate"] = self.connection.bm.connect("boardUpdate", self.__boardUpdate)
-        self.conids["onOfferAdd"] = self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
-        self.conids["onOfferRemove"] = self.connection.om.connect("onOfferRemove", self.__onOfferRemove)
-        self.conids["privateMessage"] = self.connection.cm.connect("privateMessage", self.__onPrivateMessage)
+        self.connections = connections = defaultdict(list)
+        connections[connection.bm].append(connection.bm.connect_after("boardUpdate", self.__boardUpdate))
+        connections[connection.om].append(connection.om.connect("onOfferAdd", self.__onOfferAdd))
+        connections[connection.om].append(connection.om.connect("onOfferRemove", self.__onOfferRemove))
+        connections[connection.cm].append(connection.cm.connect("privateMessage", self.__onPrivateMessage))
         
         self.offerToIndex = {}
         self.indexToOffer = {}
@@ -73,22 +73,20 @@ class ICPlayer (Player):
     #    Ending the game
     #===========================================================================
     
-    def __disconnect_conids(self):
-        if self.connection.bm.handler_is_connected(self.conids["boardUpdate"]):
-            self.connection.bm.disconnect(self.conids["boardUpdate"])
-        if self.connection.om.handler_is_connected(self.conids["onOfferAdd"]):
-            self.connection.om.disconnect(self.conids["onOfferAdd"])
-        if self.connection.om.handler_is_connected(self.conids["onOfferRemove"]):
-            self.connection.om.disconnect(self.conids["onOfferRemove"])
-        if self.connection.cm.handler_is_connected(self.conids["privateMessage"]):
-            self.connection.cm.disconnect(self.conids["privateMessage"])
-    
+    def __disconnect (self):
+        if self.connections is None: return
+        for obj in self.connections:
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+        self.connections = None
+        
     def end (self, status, reason):
-        self.__disconnect_conids()
+        self.__disconnect()
         self.queue.put("del")
     
     def kill (self, reason):
-        self.__disconnect_conids()
+        self.__disconnect()
         self.queue.put("del")
     
     #===========================================================================
