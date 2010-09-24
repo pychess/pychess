@@ -266,7 +266,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def offer (self, offer):
-        if offer.offerType == DRAW_OFFER:
+        if offer.type == DRAW_OFFER:
             self.emit("decline", offer)
         else:
             self.emit("accept", offer)

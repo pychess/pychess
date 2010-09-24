@@ -52,9 +52,9 @@ for k,v in strToOfferType.iteritems():
 class OfferManager (GObject):
     
     __gsignals__ = {
-        'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (str,object)),
-        'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
-        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str,object)),
+        'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str, object)),
         'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
         'onActionError' : (SIGNAL_RUN_FIRST, None, (object, int)),
     }
@@ -90,39 +90,47 @@ class OfferManager (GObject):
                 "There are no ([^ ]+) offers to (accept).")
         
         self.lastPly = 0
-        self.indexType = {}
+        self.offers = {}
         
         self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse & !atomic")
         self.connection.lvm.setVariable("pendinfo", True)
     
     def noOffersToAccept (self, match):
-        offerstr, type = match.groups()
-        if type == "accept":
+        offertype, request = match.groups()
+        if request == "accept":
             error = ACTION_ERROR_NONE_TO_ACCEPT
-        elif type == "withdraw":
+        elif request == "withdraw":
             error = ACTION_ERROR_NONE_TO_WITHDRAW
-        elif type == "decline":
+        elif request == "decline":
             error = ACTION_ERROR_NONE_TO_DECLINE
-        offerType = strToOfferType[offerstr]
-        self.emit("onActionError", Offer(offerType), error)
+        offer = Offer(strToOfferType[offertype])
+        self.emit("onActionError", offer, error)
     
     def notEnoughMovesToUndo (self, match):
-        param = match.groups()[0] or match.groups()[1]
-        if param == "no": param = 0
-        else: param = int(param)
-        offer = Offer(TAKEBACK_OFFER, self.lastPly-param)
+        ply = match.groups()[0] or match.groups()[1]
+        if ply == "no": ply = 0
+        else: ply = int(ply)
+        offer = Offer(TAKEBACK_OFFER, param=self.lastPly-ply)
         self.emit("onActionError", offer, ACTION_ERROR_TOO_LARGE_UNDO)
     
     def onOfferAdd (self, match):
         tofrom, index, offertype, parameters = match.groups()
-        
         if tofrom == "t":
-            # IcGameModel keeps track of the offers we've sent ourselves, so we
+            # ICGameModel keeps track of the offers we've sent ourselves, so we
             # don't need this
             return
+        if offertype not in strToOfferType:
+            log.error("Declining unknown offer type: offertype=%s parameters=%s index=%s" % \
+                (offertype, parameters, index))
+            print >> self.connection.client, "decline", index
+        offertype = strToOfferType[offertype]
+        if offertype == TAKEBACK_OFFER:
+            offer = Offer(offertype, param=int(parameters), index=int(index))
+        else:
+            offer = Offer(offertype, index=int(index))
+        self.offers[offer.index] = offer
         
-        self.indexType[index] = offertype
-        if offertype == "match":
+        if offer.type == MATCH_OFFER:
             if matchreUntimed.match(parameters) != None:
                 fname, frating, col, tname, trating, rated, type = \
                     matchreUntimed.match(parameters).groups()
@@ -135,7 +143,7 @@ class OfferManager (GObject):
                     type = type_short
             
             if type.split()[-1] in unsupportedtypes:
-                self.declineIndex(index)
+                self.decline(offer)
             else:
                 rating = frating.strip()
                 rating = rating.isdigit() and rating or "0"
@@ -144,26 +152,20 @@ class OfferManager (GObject):
                          "r": rated, "t": mins, "i": incr}
                 self.emit("onChallengeAdd", index, match)
         
-        elif offertype in strToOfferType:
-            offerType = strToOfferType[offertype]
-            if offerType == TAKEBACK_OFFER:
-                offer = Offer(offerType, int(parameters))
-            else: offer = Offer(offerType)
-            self.emit("onOfferAdd", index, offer)
-        
         else:
-            log.error("Unknown offer type: #", index, offertype, "whith" + \
-                      "parameters:", parameters, ". Declining")
-            print >> self.connection.client, "decline", index
+            print "OfferManager.onOfferAdd(): emitting offer=%s" % offer
+            self.emit("onOfferAdd", offer)
     
     def onOfferRemove (self, match):
-        index = match.groups()[0]
-        if not index in self.indexType:
+        print "OfferManager.onOfferRemove(): match.string=%s" % match.string
+        index = int(match.groups()[0])
+        if not index in self.offers:
             return
-        if self.indexType[index] == "match":
+        if self.offers[index].type == MATCH_OFFER:
             self.emit("onChallengeRemove", index)
-        else: self.emit("onOfferRemove", index)
-        del self.indexType[index]
+        else:
+            self.emit("onOfferRemove", self.offers[index])
+        del self.offers[index]
     
     ###
     
@@ -177,21 +179,27 @@ class OfferManager (GObject):
     
     def offer (self, offer, ply):
         self.lastPly = ply
-        s = offerTypeToStr[offer.offerType]
-        if offer.offerType == TAKEBACK_OFFER:
-            s += " " + str(ply-offer.param)
+        s = offerTypeToStr[offer.type]
+        if offer.type == TAKEBACK_OFFER:
+            s += " " + str(ply - offer.param)
         print >> self.connection.client, s
     
     ###
     
-    def withdraw (self, type):
-        print >> self.connection.client, "withdraw t", offerTypeToStr[type]
+    def withdraw (self, offer):
+        print >> self.connection.client, "withdraw t", offerTypeToStr[offer.type]
     
-    def accept (self, type):
-        print >> self.connection.client, "accept t", offerTypeToStr[type]
+    def accept (self, offer):
+        if offer.index != None:
+            self.acceptIndex(offer.index)
+        else:
+            print >> self.connection.client, "accept t", offerTypeToStr[offer.type]
     
-    def decline (self, type):
-        print >> self.connection.client, "decline t", offerTypeToStr[type]
+    def decline (self, offer):
+        if offer.index != None:
+            self.declineIndex(offer.index)
+        else:
+            print >> self.connection.client, "decline t", offerTypeToStr[offer.type]
     
     def acceptIndex (self, index):
         print >> self.connection.client, "accept", index

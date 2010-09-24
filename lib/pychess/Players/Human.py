@@ -138,7 +138,7 @@ class Human (Player):
             else:
                 if self.gamemodel.boards[-1].color != self.color:
                     return
-        self.emit("offer", Offer(action, param))
+        self.emit("offer", Offer(action, param=param))
     
     #===========================================================================
     #    Send the player move updates
@@ -204,14 +204,14 @@ class Human (Player):
         self.emit("messageRecieved", text)
     
     def sendMessage (self, text):
-        self.emit("offer", Offer(CHAT_ACTION, text))
+        self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     #===========================================================================
     #    Offer handling
     #===========================================================================
     
     def offer (self, offer):
-        title, description, takesParam = OFFER_MESSAGES[offer.offerType]
+        title, description, takesParam = OFFER_MESSAGES[offer.type]
         if takesParam:
             title = title % offer.param
             description = description % offer.param
@@ -224,31 +224,31 @@ class Human (Player):
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, responsecb)
     
     def offerDeclined (self, offer):
-        if offer.offerType not in ACTION_NAMES:
+        if offer.type not in ACTION_NAMES:
             return
-        title = _("%s was declined by your opponent") % ACTION_NAMES[offer.offerType]
+        title = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
         description = _("You can try to send the offer to your opponent later in the game again.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerWithdrawn (self, offer):
-        if offer.offerType not in ACTION_NAMES:
+        if offer.type not in ACTION_NAMES:
             return
-        title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.offerType]
+        title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
         description = _("Your opponent seems to have changed his or her mind.")
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerError (self, offer, error):
-        if offer.offerType not in ACTION_NAMES:
+        if offer.type not in ACTION_NAMES:
             return
-        actionName = ACTION_NAMES[offer.offerType]
+        actionName = ACTION_NAMES[offer.type]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
             title = _("Unable to accept %s") % actionName.lower()
             description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
         elif error == ACTION_ERROR_REQUIRES_UNFINISHED_GAME or \
            error == ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
-            if offer.offerType not in ACTION_ACTIONS: return
+            if offer.type not in ACTION_ACTIONS: return
             title = _("Game is not running")
-            description = ERROR_MESSAGES[error] % ACTION_ACTIONS[offer.offerType]
+            description = ERROR_MESSAGES[error] % ACTION_ACTIONS[offer.type]
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
              error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either
