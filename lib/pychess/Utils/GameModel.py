@@ -8,7 +8,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from pychess.System.ThreadPool import PooledThread
+from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.System import glock
@@ -16,6 +16,11 @@ from pychess.Variants.normal import NormalChess
 
 from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
 from const import *
+
+def inthread (f):
+    def newFunction(*args, **kw):
+        pool.start(f, *args, **kw)
+    return newFunction
 
 class GameModel (GObject, PooledThread):
     
@@ -406,20 +411,17 @@ class GameModel (GObject, PooledThread):
         if self.timemodel:
             self.timemodel.pause()
     
+    @inthread
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """
         
-        glock.release()
         self.applyingMoveLock.acquire()
-        glock.acquire()
         try:
             self.__pause()
             self.status = PAUSED
         finally:
-            glock.release()
             self.applyingMoveLock.release()
-            glock.acquire()
     
     def __resume (self):
         for player in self.players:
@@ -433,15 +435,13 @@ class GameModel (GObject, PooledThread):
             self.timemodel.resume()
         self.emit("game_resumed")
     
+    @inthread
     def resume (self):
-        glock.release()
         self.applyingMoveLock.acquire()
-        glock.acquire()
         try:
             self.__resume()
             self.status = RUNNING
         finally:
-            glock.release()
             self.applyingMoveLock.release()
     
     def end (self, status, reason):

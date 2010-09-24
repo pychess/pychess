@@ -194,4 +194,14 @@ class GameListManagerTests(EmittingTestCase):
                  '<sr> 124']
         self.runAndAssertEquals('removeSeek', lines, ('124',))
     
+    def test4 (self):
+        # This test case should be implemented when the ficsmanager.py unit testing
+        # is able to chain managers like the real fics code does. This is because
+        # this test case tests verifies that this line is caught in BoardManager.py
+        # rather than being accidentally caught by the on_player_list() regex in
+        # GameManager.py (or elsewhere).
+        #
+        #lines = ['Game 342: Game clock paused.']
+        pass
+    
     # And so on...
