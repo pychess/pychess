@@ -105,12 +105,6 @@ class ICGameModel (GameModel):
         elif offer.type in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
         
-        elif offer.type == ABORT_OFFER:
-            self.connection.om.abort()
-        
-        elif offer.type == ADJOURN_OFFER:
-            self.connection.om.adjourn()
-        
         elif offer.type in OFFERS:
             if offer not in self.offers:
                 self.offers[offer] = player
