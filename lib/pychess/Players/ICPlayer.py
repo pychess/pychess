@@ -1,4 +1,4 @@
-
+from collections import defaultdict
 from Queue import Queue
 
 from Player import Player, PlayerIsDead, TurnInterrupt
@@ -6,6 +6,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.Move import parseSAN, toAN, ParsingError, listToSan
 from pychess.Utils.const import *
 from pychess.Variants import variants
+from pychess.System.Log import log
 
 class ICPlayer (Player):
     __type__ = REMOTE
@@ -20,16 +21,16 @@ class ICPlayer (Player):
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
-        self.connection = self.gamemodel.connection
+        self.connection = connection = self.gamemodel.connection
         
-        self.conids = {}
-        self.conids["boardUpdate"] = self.connection.bm.connect("boardUpdate", self.__boardUpdate)
-        self.conids["onOfferAdd"] = self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
-        self.conids["onOfferRemove"] = self.connection.om.connect("onOfferRemove", self.__onOfferRemove)
-        self.conids["privateMessage"] = self.connection.cm.connect("privateMessage", self.__onPrivateMessage)
+        self.connections = connections = defaultdict(list)
+        connections[connection.bm].append(connection.bm.connect_after("boardUpdate", self.__boardUpdate))
+        connections[connection.om].append(connection.om.connect("onOfferAdd", self.__onOfferAdd))
+        connections[connection.om].append(connection.om.connect("onOfferRemove", self.__onOfferRemove))
+        connections[connection.om].append(connection.om.connect("onOfferDeclined", self.__onOfferDeclined))
+        connections[connection.cm].append(connection.cm.connect("privateMessage", self.__onPrivateMessage))
         
-        self.offerToIndex = {}
-        self.indexToOffer = {}
+        self.offers = {}
         self.lastPly = -1
     
     def getICHandle (self):
@@ -39,18 +40,30 @@ class ICPlayer (Player):
     #    Handle signals from the connection
     #===========================================================================
     
-    def __onOfferAdd (self, om, index, offer):
+    def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
-            self.indexToOffer[index] = offer
+            log.debug("ICPlayer.__onOfferAdd(): emitting offer: self.gameno=%s self.name=%s offer=%s\n" % \
+                (self.gameno, self.name, offer))
+            self.offers[offer.index] = offer
             self.emit ("offer", offer)
     
-    def __onOfferRemove (self, om, index):
-        if index in self.indexToOffer:
-            self.emit ("withdraw", self.indexToOffer[index])
+    def __onOfferDeclined (self, om, offer):
+        for offer_ in self.gamemodel.offers.keys():
+            if offer.type == offer_.type:
+                offer.param = offer_.param
+        log.debug("ICPlayer.__onOfferDeclined(): emitting decline for offer=%s\n" % offer)
+        self.emit("decline", offer)
+    
+    def __onOfferRemove (self, om, offer):
+        if offer.index in self.offers:
+            log.debug("ICPlayer.__onOfferRemove(): emitting withdraw: self.gameno=%s self.name=%s offer=%s\n" % \
+                (self.gameno, self.name, offer))
+            self.emit ("withdraw", self.offers[offer.index])
+            del self.offers[offer.index]
     
     def __onPrivateMessage (self, cm, name, title, isadmin, text):
         if name == self.name:
-            self.emit("offer", Offer(CHAT_ACTION, text))
+            self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
@@ -73,22 +86,20 @@ class ICPlayer (Player):
     #    Ending the game
     #===========================================================================
     
-    def __disconnect_conids(self):
-        if self.connection.bm.handler_is_connected(self.conids["boardUpdate"]):
-            self.connection.bm.disconnect(self.conids["boardUpdate"])
-        if self.connection.om.handler_is_connected(self.conids["onOfferAdd"]):
-            self.connection.om.disconnect(self.conids["onOfferAdd"])
-        if self.connection.om.handler_is_connected(self.conids["onOfferRemove"]):
-            self.connection.om.disconnect(self.conids["onOfferRemove"])
-        if self.connection.cm.handler_is_connected(self.conids["privateMessage"]):
-            self.connection.cm.disconnect(self.conids["privateMessage"])
-    
+    def __disconnect (self):
+        if self.connections is None: return
+        for obj in self.connections:
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+        self.connections = None
+        
     def end (self, status, reason):
-        self.__disconnect_conids()
+        self.__disconnect()
         self.queue.put("del")
     
     def kill (self, reason):
-        self.__disconnect_conids()
+        self.__disconnect()
         self.queue.put("del")
     
     #===========================================================================
@@ -111,7 +122,8 @@ class ICPlayer (Player):
             ply, sanmove = item
             if ply < board1.ply:
                 # This should only happen in an observed game
-                self.emit("offer", Offer(TAKEBACK_FORCE, ply))
+                board1 = self.gamemodel.getBoardAtPly(max(ply-1, 0))
+                self.lastPly = board1.ply
             
             try:
                 move = parseSAN (board1, sanmove)
@@ -141,6 +153,7 @@ class ICPlayer (Player):
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
+            self.lastPly = gamemodel.boards[-1].ply
             self.queue.put("int")
     
     def putMessage (self, text):
@@ -162,10 +175,12 @@ class ICPlayer (Player):
         self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
     
     def offer (self, offer):
+        log.debug("ICPlayer.offer: sending offer command with offer=%s\n" % offer)
         self.connection.om.offer(offer, self.lastPly)
     
     def offerDeclined (self, offer):
-        pass
+        log.debug("ICPlayer.offerDeclined: sending decline for offer=%s\n" % offer)
+        self.connection.om.decline(offer)
     
     def offerWithdrawn (self, offer):
         pass

@@ -3,6 +3,7 @@ from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
+from pychess.Players.Human import Human
 
 class ICGameModel (GameModel):
     
@@ -11,19 +12,28 @@ class ICGameModel (GameModel):
         self.connection = connection
         self.gameno = gameno
         
-        self.connection.bm.connect("boardUpdate", self.onBoardUpdate)
-        self.connection.bm.connect("obsGameEnded", self.onGameEnded)
-        self.connection.bm.connect("curGameEnded", self.onGameEnded)
-        self.connection.bm.connect("gamePaused", self.onGamePaused)
-        
-        self.connection.om.connect("onActionError", self.onActionError)
-        
-        self.connection.connect("disconnected", self.onDisconnected)
-        
-        self.connect("game_terminated", self.afterGameEnded)
+        connections = self.connections
+        connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
+        connections[connection.bm].append(connection.bm.connect("obsGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect("curGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
+        connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
+        connections[connection].append(connection.connect("disconnected", self.onDisconnected))
         
         self.inControl = True
         self.rated = rated
+    
+    def __disconnect (self):
+        if self.connections is None: return
+        for obj in self.connections:
+            # Humans need to stay connected post-game so that "GUI > Actions" works
+            if isinstance(obj, Human):
+                continue
+            
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+        self.connections = None
     
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
@@ -44,10 +54,6 @@ class ICGameModel (GameModel):
            ficsgame.bplayer.name == self.players[1].getICHandle():
             self.end(ficsgame.result, ficsgame.reason)
     
-    def afterGameEnded (self, self_):
-        if not self.inControl:
-            self.connection.bm.unobserve(self.gameno)
-    
     def setPlayers (self, players):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:
             self.inControl = False
@@ -57,6 +63,14 @@ class ICGameModel (GameModel):
         if paused:
             self.pause()
         else: self.resume()
+        
+        # we have to do this here rather than in acceptRecieved(), because
+        # sometimes FICS pauses/unpauses a game clock without telling us that the
+        # original offer was "accepted"/"received", such as when one player offers
+        # "pause" and the other player responds not with "accept" but "pause"
+        for offer in self.offers.keys():
+            if offer.type in (PAUSE_OFFER, RESUME_OFFER):
+                del self.offers[offer]
     
     def onDisconnected (self, connection):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -72,54 +86,44 @@ class ICGameModel (GameModel):
         else: opPlayer = self.players[WHITE]
         
         
-        if self.status not in UNFINISHED_STATES and offer.offerType in INGAME_ACTIONS:
+        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
             player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
         
         # TODO: if game is over and opponent is online, send through resume offer
-        elif self.status not in UNFINISHED_STATES and offer.offerType in \
+        elif self.status not in UNFINISHED_STATES and offer.type in \
            (TAKEBACK_OFFER, RESUME_OFFER):
             player.offerError(offer, ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED)
         
-#        elif offer.offerType == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
+#        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
 #           self.reason in UNRESUMEABLE_REASONS:
 #            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
         
-        elif offer.offerType == RESUME_OFFER and self.status != PAUSED:
+        elif offer.type == RESUME_OFFER and self.status != PAUSED:
             player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
-
-        # This is only sent by ServerPlayers when observing
-        elif offer.offerType == TAKEBACK_FORCE:
-            self.undoMoves(self.ply - offer.param)
         
-        elif offer.offerType == CHAT_ACTION:
+        elif offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
         
-        elif offer.offerType in (RESIGNATION, FLAG_CALL):
+        elif offer.type in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
         
-        elif offer.offerType == ABORT_OFFER:
-            self.connection.om.abort()
-        
-        elif offer.offerType == ADJOURN_OFFER:
-            self.connection.om.adjourn()
-        
-        elif offer.offerType in OFFERS:
-            if offer not in self.offerMap:
-                self.offerMap[offer] = player
+        elif offer.type in OFFERS:
+            if offer not in self.offers:
+                self.offers[offer] = player
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
-            # we want to remove the old one from offerMap
-            for of in self.offerMap.keys():
-                if offer.offerType == of.offerType and offer != of:
-                    del self.offerMap[of]
+            # we want to remove the old one from self.offers
+            for offer_ in self.offers.keys():
+                if offer.type == offer_.type and offer != offer_:
+                    del self.offers[offer_]
     
     def acceptRecieved (self, player, offer):
         if player.__type__ == LOCAL:
-            if offer not in self.offerMap or self.offerMap[offer] == player:
+            if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                self.connection.om.accept(offer.offerType)
-                del self.offerMap[offer]
+                self.connection.om.accept(offer)
+                del self.offers[offer]
         
         # We don't handle any ServerPlayer calls here, as the fics server will
         # know automatically if he/she accepts an offer, and will simply send
@@ -139,7 +143,12 @@ class ICGameModel (GameModel):
     
     def end (self, status, reason):
         if self.status in UNFINISHED_STATES:
-            if self.players[0].__type__ != REMOTE or self.players[1].__type__ != REMOTE:
+            self.__disconnect()
+            
+            if self.inControl:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
+            else:
+                self.connection.bm.unobserve(self.gameno)
+        
         GameModel.end(self, status, reason)
