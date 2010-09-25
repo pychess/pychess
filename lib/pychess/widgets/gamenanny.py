@@ -204,7 +204,7 @@ def on_game_started (gamemodel, gmwidg):
 #===============================================================================
 
 def offer_callback (player, offer, gamemodel, gmwidg):
-    if offer.offerType == DRAW_OFFER:
+    if offer.type == DRAW_OFFER:
         if gamemodel.status != RUNNING:
             return # If the offer has already been handled by
                    # Gamemodel and the game was drawn, we need
@@ -268,6 +268,9 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
                 analyzer.connect("analyze", on_analyze))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("game_changed", on_game_change))
+        gmwidg.gamemodel.chacons.append(
+                gmwidg.gamemodel.connect("moves_undoing",
+                                         lambda model, moves: on_game_change(model)))
     
     else:
         if hasattr (gmwidg.gamemodel, "anacons"):

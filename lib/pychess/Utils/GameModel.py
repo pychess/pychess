@@ -1,4 +1,4 @@
-
+from collections import defaultdict
 from threading import RLock
 import traceback
 import cStringIO
@@ -8,7 +8,7 @@ from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from pychess.System.ThreadPool import PooledThread
+from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.System import glock
@@ -16,6 +16,11 @@ from pychess.Variants.normal import NormalChess
 
 from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
 from const import *
+
+def inthread (f):
+    def newFunction(*args, **kw):
+        pool.start(f, *args, **kw)
+    return newFunction
 
 class GameModel (GObject, PooledThread):
     
@@ -49,6 +54,8 @@ class GameModel (GObject, PooledThread):
         self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
+
+        self.connections = defaultdict(list)  # mainly for IC subclasses
         
         today = datetime.date.today()
         self.tags = {
@@ -61,7 +68,7 @@ class GameModel (GObject, PooledThread):
         }
         
         # Keeps track of offers, so that accepts can be spotted
-        self.offerMap = {}
+        self.offers = {}
         # True if the game has been changed since last save
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
@@ -78,10 +85,10 @@ class GameModel (GObject, PooledThread):
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
-            player.connect("offer", self.offerRecieved)
-            player.connect("withdraw", self.withdrawRecieved)
-            player.connect("decline", self.declineRecieved)
-            player.connect("accept", self.acceptRecieved)
+            self.connections[player].append(player.connect("offer", self.offerRecieved))
+            self.connections[player].append(player.connect("withdraw", self.withdrawRecieved))
+            self.connections[player].append(player.connect("decline", self.declineRecieved))
+            self.connections[player].append(player.connect("accept", self.acceptRecieved))
     
     def setSpectactors (self, spectactors):
         assert self.status == WAITING_TO_START
@@ -136,28 +143,28 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if self.status not in UNFINISHED_STATES and offer.offerType in INGAME_ACTIONS:
+        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
             player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
         
-        elif offer.offerType == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
+        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
            self.reason in UNRESUMEABLE_REASONS:
             player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
         
-        elif offer.offerType == RESUME_OFFER and self.status != PAUSED:
+        elif offer.type == RESUME_OFFER and self.status != PAUSED:
             player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
         
-        elif offer.offerType == HURRY_ACTION:
+        elif offer.type == HURRY_ACTION:
             opPlayer.hurry()
         
-        elif offer.offerType == CHAT_ACTION:
+        elif offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
         
-        elif offer.offerType == RESIGNATION:
+        elif offer.type == RESIGNATION:
             if player == self.players[WHITE]:
                 self.end(BLACKWON, WON_RESIGN)
             else: self.end(WHITEWON, WON_RESIGN)
         
-        elif offer.offerType == FLAG_CALL:
+        elif offer.type == FLAG_CALL:
             if not self.timemodel:
                 player.offerError(offer, ACTION_ERROR_NO_CLOCK)
                 return
@@ -182,34 +189,34 @@ class GameModel (GObject, PooledThread):
             else:
                 player.offerError(offer, ACTION_ERROR_NOT_OUT_OF_TIME)
         
-        elif offer.offerType == DRAW_OFFER and isClaimableDraw(self.boards[-1]):
+        elif offer.type == DRAW_OFFER and isClaimableDraw(self.boards[-1]):
             reason = getStatus(self.boards[-1])[1]
             self.end(DRAW, reason)
         
-        elif offer.offerType == TAKEBACK_OFFER and offer.param < self.lowply:
+        elif offer.type == TAKEBACK_OFFER and offer.param < self.lowply:
             player.offerError(offer, ACTION_ERROR_TOO_LARGE_UNDO)
         
-        elif offer.offerType == TAKEBACK_OFFER and self.status != RUNNING and (
+        elif offer.type == TAKEBACK_OFFER and self.status != RUNNING and (
                                                    self.status not in UNDOABLE_STATES or
                                                    self.reason not in UNDOABLE_REASONS):
             player.offerError(offer, ACTION_ERROR_GAME_ENDED)
         
-        elif offer.offerType in OFFERS:
-            if offer not in self.offerMap:
-                self.offerMap[offer] = player
+        elif offer.type in OFFERS:
+            if offer not in self.offers:
+                self.offers[offer] = player
                 opPlayer.offer(offer)
             # If we updated an older offer, we want to delete the old one
-            for of in self.offerMap.keys():
-                if offer.offerType == of.offerType and offer != of:
-                    del self.offerMap[of]
+            for offer_ in self.offers.keys():
+                if offer.type == offer_.type and offer != offer_:
+                    del self.offers[offer_]
     
     def withdrawRecieved (self, player, offer):
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer in self.offerMap and self.offerMap[offer] == player:
-            del self.offerMap[offer]
+        if offer in self.offers and self.offers[offer] == player:
+            del self.offers[offer]
             opPlayer.offerWithdrawn(offer)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
@@ -219,8 +226,8 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer in self.offerMap and self.offerMap[offer] == opPlayer:
-            del self.offerMap[offer]
+        if offer in self.offers and self.offers[offer] == opPlayer:
+            del self.offers[offer]
             opPlayer.offerDeclined(offer)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
@@ -230,20 +237,20 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if offer in self.offerMap and self.offerMap[offer] == opPlayer:
-            if offer.offerType == DRAW_OFFER:
+        if offer in self.offers and self.offers[offer] == opPlayer:
+            if offer.type == DRAW_OFFER:
                 self.end(DRAW, DRAW_AGREE)
-            elif offer.offerType == TAKEBACK_OFFER:
+            elif offer.type == TAKEBACK_OFFER:
                 self.undoMoves(self.ply - offer.param)
-            elif offer.offerType == ADJOURN_OFFER:
+            elif offer.type == ADJOURN_OFFER:
                 self.end(ADJOURNED, ADJOURNED_AGREEMENT)
-            elif offer.offerType == ABORT_OFFER:
+            elif offer.type == ABORT_OFFER:
                 self.end(ABORTED, ABORTED_AGREEMENT)
-            elif offer.offerType == PAUSE_OFFER:
+            elif offer.type == PAUSE_OFFER:
                 self.pause()
-            elif offer.offerType == RESUME_OFFER:
+            elif offer.type == RESUME_OFFER:
                 self.resume()
-            del self.offerMap[offer]
+            del self.offers[offer]
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
     
@@ -404,20 +411,17 @@ class GameModel (GObject, PooledThread):
         if self.timemodel:
             self.timemodel.pause()
     
+    @inthread
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectactors will be ignored. """
         
-        glock.release()
         self.applyingMoveLock.acquire()
-        glock.acquire()
         try:
             self.__pause()
             self.status = PAUSED
         finally:
-            glock.release()
             self.applyingMoveLock.release()
-            glock.acquire()
     
     def __resume (self):
         for player in self.players:
@@ -431,15 +435,13 @@ class GameModel (GObject, PooledThread):
             self.timemodel.resume()
         self.emit("game_resumed")
     
+    @inthread
     def resume (self):
-        glock.release()
         self.applyingMoveLock.acquire()
-        glock.acquire()
         try:
             self.__resume()
             self.status = RUNNING
         finally:
-            glock.release()
             self.applyingMoveLock.release()
     
     def end (self, status, reason):

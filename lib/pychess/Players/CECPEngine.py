@@ -506,7 +506,7 @@ class CECPEngine (ProtocolEngine):
     #===========================================================================
     
     def offer (self, offer):
-        if offer.offerType == DRAW_OFFER:
+        if offer.type == DRAW_OFFER:
             if self.features["draw"]:
                 print >> self.engine, "draw"
         else:
@@ -517,7 +517,7 @@ class CECPEngine (ProtocolEngine):
             # We don't keep track if engine draws are offers or accepts. We just
             # Always assume they are accepts, and if they are not, we get this
             # error and emit offer instead
-            if offer.offerType == DRAW_OFFER and \
+            if offer.type == DRAW_OFFER and \
                     error == ACTION_ERROR_NONE_TO_ACCEPT:
                 self.emit("offer", Offer(DRAW_OFFER))
     
