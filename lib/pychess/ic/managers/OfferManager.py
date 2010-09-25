@@ -218,9 +218,3 @@ class OfferManager (GObject):
     
     def playIndex (self, index):
         print >> self.connection.client, "play", index
-    
-    def abort (self):
-        print >> self.connection.client, "abort"
-    
-    def adjourn (self):
-        print >> self.connection.client, "adjourn"
