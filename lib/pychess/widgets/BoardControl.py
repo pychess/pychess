@@ -43,6 +43,7 @@ class BoardControl (gtk.EventBox):
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
         
+        self.selected_last = None
         self.stateLock = threading.Lock()
         self.normalState = NormalState(self)
         self.selectedState = SelectedState(self)
@@ -323,17 +324,8 @@ class ActiveState (BoardState):
         
         # When in the mixed active/selected state
         elif self.view.selected:
-            # Unselect when releasing on an already selected cord
-            if cord == self.view.active == self.view.selected:
-                self.view.hover = cord
-                self.view.selected = None
-                self.view.active = None
-                self.view.draggedPiece = None
-                self.view.startAnimation()
-                self.parent.setStateNormal()
-            
             # Move when releasing on a good cord
-            elif self.validate(self.view.selected, cord):
+            if self.validate(self.view.selected, cord):
                 self.parent.setStateNormal()
                 # It is important to emit_move_signal after setting state
                 # as listeners of the function probably will lock the board
@@ -341,23 +333,18 @@ class ActiveState (BoardState):
                 self.parent.emit_move_signal(self.view.selected, cord)
                 self.view.selected = None
                 self.view.active = None
-
-            # Select it if it is friendly            
-            elif self.getBoard()[cord] and \
-                    self.getBoard()[cord].color == self.getBoard().color:
-                self.view.selected = cord
+            elif cord == self.view.active == self.view.selected == self.parent.selected_last:
+                # user clicked (press+release) same piece twice, so unselect it
+                self.view.active = None
+                self.view.selected = None
+                self.view.draggedPiece = None
+                self.view.startAnimation()
+                self.parent.setStateNormal()
+            else:  # leave last selected piece selected
                 self.view.active = None
                 self.view.draggedPiece = None
                 self.view.startAnimation()
                 self.parent.setStateSelected()
-
-            # Unselect when releasing on a nonactive cord
-            else:
-                self.view.selected = None
-                self.view.active = None
-                self.view.draggedPiece = None
-                self.view.startAnimation()
-                self.parent.setStateNormal()
         
         # Selecting if releasing on the active cord
         elif cord == self.view.active:
@@ -381,6 +368,8 @@ class ActiveState (BoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
+        
+        self.parent.selected_last = self.view.selected
     
     def motion (self, x, y):
         if not self.getBoard()[self.view.active]:
@@ -429,13 +418,18 @@ class SelectedState (BoardState):
                self.getBoard()[cord] != None and \
                self.getBoard()[cord].color == self.getBoard().color and \
                not self.validate(self.view.selected, cord):
-                # re-select new cord
-                self.view.selected = cord
+                # corner case encountered:
+                # user clicked (press+release) a piece, then clicked (no release yet)
+                # a different piece and dragged it somewhere else. Since
+                # ActiveState.release() will use self.view.selected as the source piece
+                # rather than self.view.active, we need to update it here
+                self.view.selected = cord   # re-select new cord
+            
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
-        # Unselecting by pressing an inactive cord
-        else:
+        
+        else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
 
@@ -482,6 +476,8 @@ class LockedActiveState (LockedBoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
+        
+        self.parent.selected_last = self.view.selected
     
     def motion (self, x, y):
         if not self.getBoard()[self.view.active]:
@@ -540,12 +536,13 @@ class LockedSelectedState (LockedBoardState):
                self.getBoard()[cord] != None and \
                self.getBoard()[cord].color != self.getBoard().color and \
                not self.isAPotentiallyLegalNextMove(self.view.selected, cord):
-                # re-select new cord
-                self.view.selected = cord
+                # corner-case encountered (see comment in SelectedState.press)
+                self.view.selected = cord  # re-select new cord
+            
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
-        # Unselecting by pressing an inactive cord
-        else:
+        
+        else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
