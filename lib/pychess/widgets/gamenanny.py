@@ -136,7 +136,10 @@ def game_ended (gamemodel, reason, gmwidg):
             md.add_button(_("Offer Rematch"), 0)
         else:
             md.add_button(_("Play Rematch"), 1)
-            md.add_button(_("Undo two moves"), 2)
+            if gamemodel.ply > 1:
+                md.add_button(_("Undo two moves"), 2)
+            elif gamemodel.ply == 1:
+                md.add_button(_("Undo one move"), 2)
     
     def cb (messageDialog, responseId):
         if responseId == 0:
@@ -148,7 +151,10 @@ def game_ended (gamemodel, reason, gmwidg):
             from pychess.widgets.newGameDialog import createRematch
             createRematch(gamemodel)
         elif responseId == 2:
-            offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
+            if gamemodel.curplayer.__type__ == LOCAL and gamemodel.ply > 1:
+                offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
+            else:
+                offer = Offer(TAKEBACK_OFFER, gamemodel.ply-1)
             if gamemodel.players[0].__type__ == LOCAL:
                 gamemodel.players[0].emit("offer", offer)
             else: gamemodel.players[1].emit("offer", offer)
