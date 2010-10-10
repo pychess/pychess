@@ -431,6 +431,7 @@ def parseAN (board, an):
     except KeyError, e:
         raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
+    flag = NORMAL_MOVE
     if len(an) == 5:
         #The a7a8q variant
         flag = chr2Sign[an[4].lower()] + 2
@@ -456,7 +457,6 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
-    else: flag = NORMAL_MOVE
 
     return newMove (fcord, tcord, flag)
 
