@@ -233,7 +233,6 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move is too short"), board.asFen())
     
     notat = san
-    color = board.color
     
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]
@@ -253,22 +252,34 @@ def parseSAN (board, san):
     
     notat = notat.replace("0","O").replace("o","O")
     if notat.startswith("O-O"):
-        if color == WHITE:
+        if board.color == WHITE:
             fcord = board.ini_kings[0] #E1
             if notat == "O-O":
                 flag = KING_CASTLE
-                tcord = G1
+                if board.variant == FISCHERRANDOMCHESS:
+                    tcord = board.ini_rooks[0][1]
+                else:
+                    tcord = G1
             else:
                 flag = QUEEN_CASTLE
-                tcord = C1
+                if board.variant == FISCHERRANDOMCHESS:
+                    tcord = board.ini_rooks[0][0]
+                else:
+                    tcord = C1
         else:
             fcord = board.ini_kings[1] #E8
             if notat == "O-O":
                 flag = KING_CASTLE
-                tcord = G8
+                if board.variant == FISCHERRANDOMCHESS:
+                    tcord = board.ini_rooks[1][1]
+                else:
+                    tcord = G8
             else:
                 flag = QUEEN_CASTLE
-                tcord = C8
+                if board.variant == FISCHERRANDOMCHESS:
+                    tcord = board.ini_rooks[1][0]
+                else:
+                    tcord = C8
         
         return newMove (fcord, tcord, flag)
     
