@@ -346,20 +346,20 @@ class ActiveState (BoardState):
                 self.view.startAnimation()
                 self.parent.setStateSelected()
         
-        # Selecting if releasing on the active cord
-        elif cord == self.view.active:
-            self.view.selected = cord
-            self.view.active = None
-            self.view.draggedPiece = None
-            self.view.startAnimation()
-            self.parent.setStateSelected()
-        
         # If dragged and released on a possible cord
         elif self.validate(self.view.active, cord):
             self.parent.setStateNormal()
             self.view.draggedPiece = None
             self.parent.emit_move_signal(self.view.active, cord)
             self.view.active = None
+        
+        # Select last piece user tried to move or that was selected
+        elif self.view.active or self.view.selected:
+            self.view.selected = self.view.active if self.view.active else self.view.selected
+            self.view.active = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.parent.setStateSelected()
         
         # Send back, if dragging to a not possible cord
         else:
@@ -464,8 +464,16 @@ class LockedActiveState (LockedBoardState):
 
     def release (self, x, y):
         cord = self.point2Cord(x,y)
-        if cord == self.view.active:
-            self.view.selected = cord
+        if cord == self.view.active == self.view.selected == self.parent.selected_last:
+            # user clicked (press+release) same piece twice, so unselect it
+            self.view.active = None
+            self.view.selected = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.parent.setStateNormal()
+        elif self.view.active or self.view.selected:
+            # Select last piece user tried to move or that was selected
+            self.view.selected = self.view.active if self.view.active else self.view.selected
             self.view.active = None
             self.view.draggedPiece = None
             self.view.startAnimation()
