@@ -213,8 +213,12 @@ class Human (Player):
     def offer (self, offer):
         title, description, takesParam = OFFER_MESSAGES[offer.type]
         if takesParam:
-            title = title % offer.param
-            description = description % offer.param
+            param = offer.param
+            if offer.type == TAKEBACK_OFFER and \
+                    self.gamemodel.players[1-self.color].__type__ is not REMOTE:
+                param = self.gamemodel.ply - offer.param
+            title = title % param
+            description = description % param
         
         def responsecb (dialog, response):
             if response == gtk.RESPONSE_YES:
