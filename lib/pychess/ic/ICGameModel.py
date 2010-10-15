@@ -31,31 +31,46 @@ class ICGameModel (GameModel):
             
             for handler_id in self.connections[obj]:
                 if obj.handler_is_connected(handler_id):
+                    log.debug("ICGameModel.__disconnect: object=%s handler_id=%s\n" % \
+                        (repr(obj), repr(handler_id)))
                     obj.disconnect(handler_id)
         self.connections = None
     
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
+        log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
+                  "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s\n") % \
+                  (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname), \
+                   str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
         if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
            or bname != self.players[1].getICHandle():
             return
+        log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply\n" % \
+            (id(self), str(self.players)))
         
         if self.timemodel:
+            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel\n" % \
+                (id(self), str(self.players)))
             self.timemodel.updatePlayer (WHITE, wms/1000.)
             self.timemodel.updatePlayer (BLACK, bms/1000.)
         
         if ply < self.ply:
-            log.debug("TAKEBACK self.ply: %d, ply: %d" % (self.ply, ply))
+            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s self.ply=%d ply=%d: TAKEBACK\n" % \
+                (id(self), str(self.players), self.ply, ply))
             self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, gameno, wname, bname, status, reason):
         if gameno == self.gameno and len(self.players) >= 2 and \
             wname == self.players[0].getICHandle() and bname == self.players[1].getICHandle():
+            log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s bname=%s" + \
+                       " status=%s reason=%s: calling self.end()\n") % \
+                      (str(id(self)), repr(self.players), str(gameno), str(wname), str(bname), \
+                       str(status), str(reason)))
             self.end(status, reason)
     
     def setPlayers (self, players):
         if [player.__type__ for player in players] == [REMOTE, REMOTE]:
             self.inControl = False
-        GameModel.setPlayers (self, players)
+        GameModel.setPlayers(self, players)
     
     def onGamePaused (self, bm, gameno, paused):
         if paused:
@@ -79,10 +94,10 @@ class ICGameModel (GameModel):
     ############################################################################
     
     def offerRecieved (self, player, offer):
+        log.debug("ICGameModel.offerRecieved: offerer=%s, offer=%s\n" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
-        
         
         if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
             player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
@@ -107,6 +122,7 @@ class ICGameModel (GameModel):
         
         elif offer.type in OFFERS:
             if offer not in self.offers:
+                log.debug("ICGameModel.offerRecieved: %s.offer(offer=%s)\n" % (repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
@@ -116,10 +132,12 @@ class ICGameModel (GameModel):
                     del self.offers[offer_]
     
     def acceptRecieved (self, player, offer):
+        log.debug("ICGameModel.acceptRecieved: accepter=%s offer=%s\n" % (repr(player), offer))
         if player.__type__ == LOCAL:
             if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
+                log.debug("ICGameModel.acceptRecieved: connection.om.accept(offer=%s)" % offer)
                 self.connection.om.accept(offer)
                 del self.offers[offer]
         
