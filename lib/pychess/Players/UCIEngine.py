@@ -1,12 +1,14 @@
+from __future__ import with_statement
+import collections
 from copy import copy
 import Queue
+from threading import RLock
 
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
-from pychess.Utils.GameModel import GameModel
-from pychess.Utils.logic import validate, getMoveKillingKing
+from pychess.Utils.logic import validate, getMoveKillingKing, getStatus
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.Log import log
@@ -34,8 +36,16 @@ class UCIEngine (ProtocolEngine):
         self.incr = 0
         self.timeHandicap = 1 
         
+        self.moveLock = RLock()
+        # none of the following variables should be changed or used in a
+        # condition statement without holding the above self.moveLock
         self.pondermove = None
         self.ignoreNext = False
+        self.waitingForMove = False
+        self.needBestmove = False
+        self.readyForStop = False   # keeps track of whether we already sent a 'stop' command
+        self.commands = collections.deque()
+        
         self.board = None
         self.uciok = False
         
@@ -138,8 +148,9 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def putMove (self, board1, move, board2):
-        if not self.readyMoves:
-            return
+        log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
+            (board1, move, board2, self.board), self.defname)
+        if not self.readyMoves: return
         
         self.board = board1
         
@@ -149,31 +160,41 @@ class UCIEngine (ProtocolEngine):
         self._searchNow()
     
     def makeMove (self, board1, move, board2):
-        
+        log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s\n" % \
+            (move, self.pondermove, board1, board2, self.board), self.defname)
         assert self.readyMoves
         
-        self.board = board1
-        
-        ponderhit = False
-        
-        if board2 and self.pondermove:
-            if self.pondermove and move == self.pondermove:
-                print >> self.engine, "ponderhit"
+        with self.moveLock:
+            self.board = board1
+            self.waitingForMove = True
+            ponderhit = False
+            
+            if board2 and self.pondermove and move == self.pondermove:
                 ponderhit = True
-            else:
+            elif board2 and self.pondermove:
                 self.ignoreNext = True
                 print >> self.engine, "stop"
-        
-        if not ponderhit:
-            self._searchNow()
+            
+            self._searchNow(ponderhit=ponderhit)
         
         # Parse outputs
-        r = self.returnQueue.get()
-        if r == "del":
-            raise PlayerIsDead
-        if r == "int":
-            raise TurnInterrupt
-        return r
+        try:
+            r = self.returnQueue.get()
+            if r == "del":
+                raise PlayerIsDead
+            if r == "int":
+                with self.moveLock:
+                    self.pondermove = None
+                    self.ignoreNext = True
+                    self.needBestmove = True
+                    self.hurry()
+                    raise TurnInterrupt
+            return r
+        finally:
+            with self.moveLock:
+                self.waitingForMove = False
+                # empty the queue of any moves received post-undo/TurnInterrupt
+                self.returnQueue.queue.clear()
     
     def updateTime (self, secs, opsecs):
         if self.color == WHITE:
@@ -248,18 +269,34 @@ class UCIEngine (ProtocolEngine):
             self._searchNow()
     
     def hurry (self):
-        print >> self.engine, "stop"
+        log.debug("hurry: self.waitingForMove=%s self.readyForStop=%s\n" % \
+            (self.waitingForMove, self.readyForStop), self.defname)
+        # sending this more than once per move will crash most engines
+        # so we need to send only the first one, and then ignore every "hurry" request
+        # after that until there is another outstanding "position..go"
+        with self.moveLock:
+            if self.waitingForMove and self.readyForStop:
+                print >> self.engine, "stop"
+                self.readyForStop = False
     
-    def undoMoves (self, moves, gamemodel):
-        # Not really necessary in UCI, but for the analyzer, it needs to keep up
-        # with the latest trends
+    def playerUndoMoves (self, moves, gamemodel):
+        log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
         
-        if self.mode not in (ANALYZING, INVERSE_ANALYZING):
-            if gamemodel.curplayer != self and moves % 2 == 1:
-                # Interrupt if we were searching, but should no longer do so
-                self.returnQueue.put("int")
-        else:
-            self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
+        if (gamemodel.curplayer != self and moves % 2 == 1) or \
+                (gamemodel.curplayer == self and moves % 2 == 0):
+            # Interrupt if we were searching but should no longer do so, or
+            # if it is was our move before undo and it is still our move after undo
+            # since we need to send the engine the new FEN in makeMove()
+            log.debug("playerUndoMoves: putting 'int' into self.returnQueue=%s\n" % \
+                self.returnQueue.queue, self.defname)
+            self.returnQueue.put("int")
+    
+    def spectatorUndoMoves (self, moves, gamemodel):
+        log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+        
+        self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
     
     #===========================================================================
     #    Offer handling
@@ -306,27 +343,49 @@ class UCIEngine (ProtocolEngine):
     def _newGame (self):
         print >> self.engine, "ucinewgame"
     
-    def _searchNow (self):
-        if self.mode == NORMAL:
-            print >> self.engine, "position fen", self.board.asFen()
+    def _searchNow (self, ponderhit=False):
+        log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s\n" % \
+            (self.needBestmove, ponderhit, self.board), self.defname)
+        with self.moveLock:
+            commands = []
             
-            if self.strength <= 3:
-                print >> self.engine, "go depth %d" % self.strength
+            if ponderhit:
+                commands.append("ponderhit")
+                
+            elif self.mode == NORMAL:
+                commands.append("position fen %s" % self.board.asFen())
+                if self.strength <= 3:
+                    commands.append("go depth %d" % self.strength)
+                else:
+                    commands.append("go wtime %d btime %d winc %d binc %d" % \
+                                    (self.wtime, self.btime, self.incr, self.incr))
+                
             else:
-                print >> self.engine, "go wtime", self.wtime, "btime", self.btime, \
-                                      "winc", self.incr, "binc", self.incr
-        
-        else:
-            print >> self.engine, "stop"
-            if self.mode == INVERSE_ANALYZING:
-                if self.board.board.opIsChecked():
-                    # Many engines don't like positions able to take down enemy
-                    # king. Therefore we just return the "kill king" move
-                    # automaticaly
-                    self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
-                    return
-            print >> self.engine, "position fen", self.board.asFen()
-            print >> self.engine, "go infinite"
+                if self.mode == INVERSE_ANALYZING:
+                    if self.board.board.opIsChecked():
+                        # Many engines don't like positions able to take down enemy
+                        # king. Therefore we just return the "kill king" move
+                        # automaticaly
+                        self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
+                        return
+                
+                print >> self.engine, "stop"
+                if self.board.asFen() == FEN_START:
+                    commands.append("position startpos")
+                else:
+                    commands.append("position fen %s" % self.board.asFen())
+                commands.append("go infinite")
+            
+            if self.needBestmove:
+                self.commands.append(commands)
+                log.debug("_searchNow: self.needBestmove==True, appended to self.commands=%s\n" % \
+                    self.commands, self.defname)
+            else:
+                for command in commands:
+                    print >> self.engine, command
+                if self.board.asFen() != FEN_START and getStatus(self.board)[1] != WON_MATE:
+                    self.needBestmove = True
+                    self.readyForStop = True
     
     def _startPonder (self):
         print >> self.engine, "position fen", self.board.asFen(), \
@@ -343,9 +402,7 @@ class UCIEngine (ProtocolEngine):
             self.__parseLine(line)
     
     def __parseLine (self, line):
-        if not self.connected:
-            return
-        
+        if not self.connected: return
         parts = line.split()
         if not parts: return
         
@@ -390,31 +447,53 @@ class UCIEngine (ProtocolEngine):
         
         #---------------------------------------------------------------- A Move
         if self.mode == NORMAL and parts[0] == "bestmove":
-            
-            if self.ignoreNext:
-                self.ignoreNext = False
+            with self.moveLock:
+                self.needBestmove = False
+                self.__sendQueuedGo()
+                
+                if self.ignoreNext:
+                    log.debug("__parseLine: line='%s' self.ignoreNext==True, returning\n" % \
+                        line.strip(), self.defname)
+                    self.ignoreNext = False
+                    self.readyForStop = True
+                    return
+                
+                if not self.waitingForMove:
+                    log.warn("__parseLine: self.waitingForMove==False, ignoring move=%s\n" % \
+                        parts[1], self.defname)
+                    self.pondermove = None
+                    return
+                self.waitingForMove = False
+                
+                move = parseAN(self.board, parts[1])
+                
+                if not validate(self.board, move):
+                    # This is critical. To avoid game stalls, we need to resign on
+                    # behalf of the engine.
+                    log.error("__parseLine: move=%s didn't validate, putting 'del' in returnQueue. self.board=%s\n" % \
+                        (repr(move), self.board), self.defname)
+                    self.returnQueue.put('del')
+                    return
+                
+                self.board = self.board.move(move)
+                log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
+                    (move, self.board), self.defname)
+                
+                if self.getOption('Ponder'):
+                    if len(parts) == 4 and self.board:
+                        self.pondermove = parseAN(self.board, parts[3])
+                        # Engines don't always check for everything in their ponders
+                        if validate(self.board, self.pondermove):
+                            self._startPonder()
+                        else:
+                            self.pondermove = None
+                    else:
+                        self.pondermove = None
+                
+                self.returnQueue.put(move)
+                log.debug("__parseLine: put move=%s into self.returnQueue=%s\n" % \
+                    (move, self.returnQueue.queue), self.defname)
                 return
-            
-            move = parseAN(self.board, parts[1])
-            
-            if not validate(self.board, move):
-                # This is critical. To avoid game stalls, we need to resign on
-                # behalf of the engine.
-                self.returnQueue.put('del')
-                return
-            
-            self.board = self.board.move(move)
-            
-            if self.getOption('Ponder'):
-                if len(parts) == 4 and self.board:
-                    self.pondermove = parseAN(self.board, parts[3])
-                    # Engines don't always check for everything in their ponders
-                    if validate(self.board, self.pondermove):
-                        self._startPonder()
-                    else: self.pondermove = None
-                else: self.pondermove = None
-            
-            self.returnQueue.put(move)
         
         #----------------------------------------------------------- An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
@@ -424,6 +503,7 @@ class UCIEngine (ProtocolEngine):
             else:
                 score = int(parts[parts.index("score")+2])
                 if scoretype == 'mate':
+#                    print >> self.engine, "stop"
                     score = MATE_VALUE-abs(score)
                     score *= score/abs(score) # sign
             
@@ -433,13 +513,32 @@ class UCIEngine (ProtocolEngine):
             except ParsingError, e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("Ignored (%s) from analyzer: ParsingError%s\n" %
-                          (' '.join(movstrs),e), self.defname)
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s\n" % \
+                    (' '.join(movstrs),e), self.defname)
                 return
             
             self.emit("analyze", moves, score)
             return
-    
+        
+        #-----------------------------------------------  An Analyzer bestmove
+        if self.mode != NORMAL and parts[0] == "bestmove":
+            with self.moveLock:
+                log.debug("__parseLine: processing analyzer bestmove='%s'\n" % \
+                    line.strip(), self.defname)
+                self.needBestmove = False
+                self.__sendQueuedGo(sendlast=True)
+                return
+        
+        #  Stockfish complaining it received a 'stop' without a corresponding 'position..go'
+        if line.strip() == "Unknown command: stop":
+            with self.moveLock:
+                log.debug("__parseLine: processing '%s'\n" % line.strip(), self.defname)
+                self.ignoreNext = False
+                self.needBestmove = False
+                self.readyForStop = False
+                self.__sendQueuedGo()
+                return
+        
         #* score
         #* cp <x>
         #    the score from the engine's point of view in centipawns.
@@ -451,6 +550,26 @@ class UCIEngine (ProtocolEngine):
         #* upperbound
         #   the score is just an upper bound.
     
+    def __sendQueuedGo (self, sendlast=False):
+        """ Sends the next position...go or ponderhit command set which was queued (if any).
+        
+        sendlast -- If True, send the last position-go queued rather than the first,
+        and discard the others (intended for analyzers)
+        """
+        with self.moveLock:
+            if len(self.commands) > 0:
+                if sendlast:
+                    commands = self.commands.pop()
+                    self.commands.clear()
+                else:
+                    commands = self.commands.popleft()
+                
+                for command in commands:
+                    print >> self.engine, command
+                self.needBestmove = True
+                self.readyForStop = True
+                log.debug("__sendQueuedGo: sent queued go=%s\n" % commands, self.defname)
+
     #===========================================================================
     #    Info
     #===========================================================================
