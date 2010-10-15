@@ -2,8 +2,8 @@ from collections import defaultdict
 from Queue import Queue
 
 from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Utils.Move import parseSAN, toAN, ParsingError
 from pychess.Utils.Offer import Offer
-from pychess.Utils.Move import parseSAN, toAN, ParsingError, listToSan
 from pychess.Utils.const import *
 from pychess.Variants import variants
 from pychess.System.Log import log
@@ -66,16 +66,24 @@ class ICPlayer (Player):
             self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
+        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s self.lastply=%d %s %s %s %d %d %s %s %d %d\n" % \
+            (id(self), self, self.lastPly, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
+        
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
             and wname == self.gamemodel.players[0].getICHandle() \
             and bname == self.gamemodel.players[1].getICHandle():
+            log.debug("ICPlayer.__boardUpdate: id=%d self=%s self.lastply=%d gameno=%s: this is my move\n" % \
+                (id(self), self, self.lastPly, gameno))
             
             # In some cases (like lost on time) the last move is resent
             if ply <= self.gamemodel.ply:
                 return
             self.lastPly = ply
+            
             if 1-curcol == self.color:
-                self.queue.put((self.lastPly,lastmove))
+                log.debug("ICPlayer.__boardUpdate: id=%d self=%s lastply=%d: putting move=%s in queue\n" % \
+                    (id(self), self, ply, lastmove))
+                self.queue.put((self.lastPly, lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
                 # game/player thread has recieved the move.
                 # Specifically this ensures that we aren't killed due to end of
@@ -124,13 +132,19 @@ class ICPlayer (Player):
                 # This should only happen in an observed game
                 board1 = self.gamemodel.getBoardAtPly(max(ply-1, 0))
                 self.lastPly = board1.ply
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s\n" % \
+                (id(self), self, ply, sanmove))
             
             try:
                 move = parseSAN (board1, sanmove)
+                log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s\n" % \
+                    (id(self), self, move))
             except ParsingError, e:
                 raise
             return move
         finally:
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s\n" % \
+                (id(self), self, move))
             self.okqueue.put("ok")
     
     #===========================================================================
@@ -149,7 +163,9 @@ class ICPlayer (Player):
         # should look, and we don't need to set anything
         pass
     
-    def undoMoves (self, movecount, gamemodel):
+    def playerUndoMoves (self, movecount, gamemodel):
+        log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d\n" % \
+            (id(self), self, movecount))
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:

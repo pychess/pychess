@@ -186,12 +186,13 @@ class Human (Player):
         if self.board.view.model.curplayer == self:
             self.gmwidg.setLocked(False)
     
-    def undoMoves (self, movecount, gamemodel):
+    def playerUndoMoves (self, movecount, gamemodel):
         #If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1:
             # If it is no longer us to move, we raise TurnInterruprt in order to
             # let GameModel continue the game.
             if gamemodel.curplayer != self:
+                log.debug("Human.playerUndoMoves(): putting TurnInterrupt into self.queue\n")
                 self.queue.put("int")
         
         # If the movecount is even, we have to ensure the board is unlocked.
