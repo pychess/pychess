@@ -1,0 +1,16 @@
+syntax: glob
+*.mo
+*.pyc
+
+syntax: regexp
+^\.pydevproject$
+syntax: regexp
+\.pydevproject$
+syntax: regexp
+^\.project$
+syntax: regexp
+\.project$
+syntax: regexp
+^[^/]+.launch$
+syntax: regexp
+^\.settings/org\.eclipse\.core\.resources\.prefs
