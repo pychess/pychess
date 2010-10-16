@@ -1,0 +1,86 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.Savers.ChessFile</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.Savers.html"><font color="#ffffff">Savers</font></a>.ChessFile</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/Savers/ChessFile.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/Savers/ChessFile.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="pychess.Savers.ChessFile.html#ChessFile">ChessFile</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ChessFile">class <strong>ChessFile</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>This&nbsp;class&nbsp;descripes&nbsp;an&nbsp;opened&nbsp;chessfile.<br>
+It&nbsp;is&nbsp;lazy&nbsp;in&nbsp;the&nbsp;sense&nbsp;of&nbsp;not&nbsp;parsing&nbsp;any&nbsp;games,<br>
+that&nbsp;the&nbsp;user&nbsp;don't&nbsp;request.<br>
+It&nbsp;has&nbsp;no&nbsp;catching.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ChessFile-__init__"><strong>__init__</strong></a>(self, games)</dt><dd><tt>Games&nbsp;should&nbsp;be&nbsp;a&nbsp;list&nbsp;of&nbsp;the&nbsp;raw&nbsp;file&nbsp;data,<br>
+splitted&nbsp;such&nbsp;that&nbsp;games[0]&nbsp;is&nbsp;used&nbsp;for&nbsp;game&nbsp;0&nbsp;etc.</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-__len__"><strong>__len__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ChessFile-get_date"><strong>get_date</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;a&nbsp;tuple&nbsp;(year,month,day)&nbsp;of&nbsp;the&nbsp;game&nbsp;date<br>
+Default&nbsp;is&nbsp;current&nbsp;time&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_elo"><strong>get_elo</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;a&nbsp;tuple&nbsp;of&nbsp;the&nbsp;players&nbsp;rating&nbsp;in&nbsp;ELO&nbsp;format<br>
+Default&nbsp;is&nbsp;1600&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_event"><strong>get_event</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;event&nbsp;at&nbsp;which&nbsp;the&nbsp;game&nbsp;took&nbsp;place<br>
+Could&nbsp;be&nbsp;"World&nbsp;Chess&nbsp;Cup"&nbsp;or&nbsp;"My&nbsp;local&nbsp;tournament"<br>
+Default&nbsp;is&nbsp;"?"&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_player_names"><strong>get_player_names</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;a&nbsp;tuple&nbsp;of&nbsp;the&nbsp;players&nbsp;names<br>
+Default&nbsp;is&nbsp;("Unknown",&nbsp;"Unknown")&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_result"><strong>get_result</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;game<br>
+Can&nbsp;be&nbsp;any&nbsp;of:&nbsp;RUNNING,&nbsp;DRAW,&nbsp;WHITEWON&nbsp;or&nbsp;BLACKWON<br>
+Default&nbsp;is&nbsp;RUNNING&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_round"><strong>get_round</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;round&nbsp;of&nbsp;the&nbsp;event&nbsp;at&nbsp;which&nbsp;the&nbsp;game&nbsp;took&nbsp;place<br>
+Pgn&nbsp;supports&nbsp;having&nbsp;subrounds&nbsp;like&nbsp;2.1.5,<br>
+but&nbsp;as&nbsp;of&nbsp;writing,&nbsp;only&nbsp;the&nbsp;first&nbsp;int&nbsp;is&nbsp;returned.<br>
+Default&nbsp;is&nbsp;1&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-get_site"><strong>get_site</strong></a>(self, gameno)</dt><dd><tt>Returns&nbsp;the&nbsp;a&nbsp;location&nbsp;at&nbsp;which&nbsp;the&nbsp;game&nbsp;took&nbsp;place<br>
+Default&nbsp;is&nbsp;"?"&nbsp;if&nbsp;nothing&nbsp;is&nbsp;specified&nbsp;in&nbsp;the&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="ChessFile-loadToHistory"><strong>loadToHistory</strong></a>(self, gameno, position, history<font color="#909090">=None</font>)</dt><dd><tt>Load&nbsp;the&nbsp;data&nbsp;of&nbsp;game&nbsp;"gameno"&nbsp;into&nbsp;the&nbsp;history&nbsp;object<br>
+If&nbsp;no&nbsp;history&nbsp;object&nbsp;is&nbsp;specified,&nbsp;a&nbsp;clear&nbsp;one<br>
+will&nbsp;be&nbsp;created,&nbsp;loaded&nbsp;and&nbsp;returned</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>RUNNING</strong> = 0</td></tr></table>
+</body></html>
