@@ -5,6 +5,7 @@ __builtin__.__dict__['_'] = lambda s: s
 
 modules_to_test = (
     "bitboard",
+    "draw",
     "eval",
     "fen",
     "frc_castling",
