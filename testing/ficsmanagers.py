@@ -1,4 +1,5 @@
 import unittest
+import datetime
 
 from pychess.Utils.const import WHITE
 from pychess.ic.FICSConnection import Connection
@@ -73,8 +74,9 @@ class AdjournManagerTests(EmittingTestCase):
                  ' 1: W mgatto          N [ wr  2   2] 31-31 W18  --- Wed Dec 23, 06:58 PST 2009',
                  'fics% ']
         
+        gametime = datetime.datetime(2009, 12, 23, 6, 58).strftime("%x %H:%M")
         expectedResult = [{"color":WHITE, "opponent":'mgatto', "online":False, "length":34,
-                           "time":'12/23/2009 06:58', "minutes":2, "gain":2}]
+                           "time":gametime, "minutes":2, "gain":2}]
         
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
@@ -89,10 +91,12 @@ class AdjournManagerTests(EmittingTestCase):
                  ' 2: W PyChess       Y [psu  2  12] 39-39 W3   C20 Sun Jan 11, 17:40 ??? 2009',
                  'fics% ']
         
+        gametime1 = datetime.datetime(1997, 11, 23, 6, 14).strftime("%x %H:%M")
+        gametime2 = datetime.datetime(2009, 1, 11, 17, 40).strftime("%x %H:%M")
         expectedResult = [{"color":WHITE, "opponent":'TheDane', "online":False, "length":3,
-                           "time":'11/23/1997 06:14', "minutes":2, "gain":12},
+                           "time":gametime1, "minutes":2, "gain":12},
                           {"color":WHITE, "opponent":'PyChess', "online":True, "length":4,
-                           "time":'01/11/2009 17:40', "minutes":2, "gain":12}]
+                           "time":gametime2, "minutes":2, "gain":12}]
         
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
