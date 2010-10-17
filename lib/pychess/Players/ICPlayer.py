@@ -186,6 +186,13 @@ class ICPlayer (Player):
     
     def offer (self, offer):
         log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))
+        if offer.type == TAKEBACK_OFFER:
+            # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
+            indexes = self.offers.keys()
+            for index in indexes:
+                if self.offers[index].type == TAKEBACK_OFFER:
+                    log.debug("ICPlayer.offer: del self.offers[%s] %s\n" % (index, offer))
+                    del self.offers[index]
         self.connection.om.offer(offer, self.gamemodel.ply)
     
     def offerDeclined (self, offer):
