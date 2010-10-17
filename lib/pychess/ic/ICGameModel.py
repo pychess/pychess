@@ -56,6 +56,13 @@ class ICGameModel (GameModel):
         if ply < self.ply:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s self.ply=%d ply=%d: TAKEBACK\n" % \
                 (id(self), str(self.players), self.ply, ply))
+            offers = self.offers.keys()
+            for offer in offers:
+                if offer.type == TAKEBACK_OFFER:
+                    # There can only be 1 outstanding takeback offer for both players on FICS,
+                    # (a counter-offer by the offeree for a takeback for a different number of
+                    # moves replaces the initial offer) so we can safely remove all of them
+                    del self.offers[offer]
             self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, gameno, wname, bname, status, reason):
@@ -137,7 +144,7 @@ class ICGameModel (GameModel):
             if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                log.debug("ICGameModel.acceptRecieved: connection.om.accept(%s)" % offer)
+                log.debug("ICGameModel.acceptRecieved: connection.om.accept(%s)\n" % offer)
                 self.connection.om.accept(offer)
                 del self.offers[offer]
         

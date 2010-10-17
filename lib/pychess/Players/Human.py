@@ -232,6 +232,7 @@ class Human (Player):
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, responsecb)
     
     def offerDeclined (self, offer):
+        log.debug("Human.offerDeclined: self=%s %s\n" % (self, offer))
         if offer.type not in ACTION_NAMES:
             return
         title = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
@@ -239,6 +240,7 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerWithdrawn (self, offer):
+        log.debug("Human.offerWithdrawn: self=%s %s\n" % (self, offer))
         if offer.type not in ACTION_NAMES:
             return
         title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
@@ -246,6 +248,7 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerError (self, offer, error):
+        log.debug("Human.offerError: self=%s error=%s %s\n" % (self, error, offer))
         if offer.type not in ACTION_NAMES:
             return
         actionName = ACTION_NAMES[offer.type]
