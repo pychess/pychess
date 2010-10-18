@@ -1,9 +1,17 @@
 import os
 import re
+import sys
 
 import gtk
-import rsvg
 import cairo
+try:
+    import rsvg
+except ImportError:
+    print 'ERROR: Could not load the rsvg module.'
+    print 'You need to install the rsvg package which is called python-rsvg in'
+    print 'Debian/Ubuntu and gnome-python2-rsvg in RPM based distributions like Fedora'
+    sys.exit(1)
+
 
 class OverlayWindow (gtk.Window):
     """ This class knows about being an overlaywindow and some svg stuff """
