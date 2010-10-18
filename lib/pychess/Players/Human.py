@@ -145,6 +145,7 @@ class Human (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
+        log.debug("Human.makeMove: move=%s, %s %s\n" % (move, board1, board2))
         self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
@@ -187,12 +188,13 @@ class Human (Player):
             self.gmwidg.setLocked(False)
     
     def playerUndoMoves (self, movecount, gamemodel):
+        log.debug("Human.playerUndoMoves: movecount=%s\n" % movecount)
         #If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1:
             # If it is no longer us to move, we raise TurnInterruprt in order to
             # let GameModel continue the game.
             if gamemodel.curplayer != self:
-                log.debug("Human.playerUndoMoves(): putting TurnInterrupt into self.queue\n")
+                log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.queue\n")
                 self.queue.put("int")
         
         # If the movecount is even, we have to ensure the board is unlocked.
@@ -212,6 +214,7 @@ class Human (Player):
     #===========================================================================
     
     def offer (self, offer):
+        log.debug("Human.offer: self=%s %s\n" % (self, offer))
         title, description, takesParam = OFFER_MESSAGES[offer.type]
         if takesParam:
             param = offer.param
@@ -229,6 +232,7 @@ class Human (Player):
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, responsecb)
     
     def offerDeclined (self, offer):
+        log.debug("Human.offerDeclined: self=%s %s\n" % (self, offer))
         if offer.type not in ACTION_NAMES:
             return
         title = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
@@ -236,6 +240,7 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerWithdrawn (self, offer):
+        log.debug("Human.offerWithdrawn: self=%s %s\n" % (self, offer))
         if offer.type not in ACTION_NAMES:
             return
         title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
@@ -243,6 +248,7 @@ class Human (Player):
         self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
     
     def offerError (self, offer, error):
+        log.debug("Human.offerError: self=%s error=%s %s\n" % (self, error, offer))
         if offer.type not in ACTION_NAMES:
             return
         actionName = ACTION_NAMES[offer.type]

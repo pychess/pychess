@@ -106,6 +106,15 @@ class GameModel (GObject, PooledThread):
         self.undoLock = RLock()
         self.undoQueue = Queue.Queue()
     
+    def __repr__ (self):
+        s = ""
+        s += "ply=%s" % str(self.ply)
+        s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
+        s += ", players=%s" % str(self.players)
+        if len(self.boards) > 0:
+            s += ", %s" % self.boards[-1]
+        return s
+    
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
         self.players = players
@@ -164,7 +173,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def offerRecieved (self, player, offer):
-        log.debug("GameModel.offerRecieved: offerer=%s offer=%s\n" % (repr(player), offer))
+        log.debug("GameModel.offerRecieved: offerer=%s %s\n" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -228,7 +237,7 @@ class GameModel (GObject, PooledThread):
         
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug("GameModel.offerRecieved: doing %s.offer(offer=%s)\n" % \
+                log.debug("GameModel.offerRecieved: doing %s.offer(%s)\n" % \
 					(repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -238,7 +247,7 @@ class GameModel (GObject, PooledThread):
                     del self.offers[offer_]
     
     def withdrawRecieved (self, player, offer):
-        log.debug("GameModel.withdrawRecieved: withdrawer=%s offer=%s\n" % \
+        log.debug("GameModel.withdrawRecieved: withdrawer=%s %s\n" % \
 			(repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -251,20 +260,20 @@ class GameModel (GObject, PooledThread):
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
     
     def declineRecieved (self, player, offer):
-        log.debug("GameModel.declineRecieved: decliner=%s offer=%s\n" % (repr(player), offer))
+        log.debug("GameModel.declineRecieved: decliner=%s %s\n" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
         if offer in self.offers and self.offers[offer] == opPlayer:
             del self.offers[offer]
-            log.debug("GameModel.declineRecieved: declining offer=%s\n" % offer)
+            log.debug("GameModel.declineRecieved: declining %s\n" % offer)
             opPlayer.offerDeclined(offer)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
     
     def acceptRecieved (self, player, offer):
-        log.debug("GameModel.acceptRecieved: accepter=%s offer=%s\n" % (repr(player), offer))
+        log.debug("GameModel.acceptRecieved: accepter=%s %s\n" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]

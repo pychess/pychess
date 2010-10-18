@@ -372,7 +372,7 @@ class BoardView (gtk.DrawingArea):
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
                             if piece.piece == KNIGHT:
-                            	#print mod, x, piece.x
+                                #print mod, x, piece.x
                                 newx = piece.x + (x-piece.x)*mod**(1.5)
                                 newy = piece.y + (y-piece.y)*mod
                             else:

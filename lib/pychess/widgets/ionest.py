@@ -34,7 +34,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
          A Savers.something module with a load function capable of loading it,
          An int of the game in file you want to load,
          The position from where to start the game) """
-
+    log.debug("ionest.generalStart: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
     worker = GtkWorker (lambda w:
             workfunc(w, gamemodel, player0tup, player1tup, loaddata))
 
@@ -60,6 +60,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     worker.execute()
 
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
+    log.debug("ionest.workfunc: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
     gmwidg = gamewidget.GameWidget(gamemodel)
 
     player0 = {}
@@ -191,6 +192,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
         gamemodel.start()
 
+    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel={ %s }\n" % \
+        (gmwidg, gamemodel))
     return gmwidg, gamemodel
 
 ################################################################################
