@@ -1727,6 +1727,7 @@ class CreatedBoards (Section):
         self.connection.gamesinprogress.connect("FICSObsGameCreated", self.onObserveGameCreated)
 
     def onGameCreated (self, bm, ficsgame):
+        log.debug("ICLounge.playBoardCreated: %s\n" % board)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:

@@ -29,7 +29,7 @@ class EvalTestCase(unittest.TestCase):
         self.assertEqual(scorew, scoreb)
     
     def test4(self):
-        """Testing symetry of each function"""
+        """Testing eval symmetry of each function"""
         funcs = (f for f in dir(leval) if f.startswith("eval"))
         funcs = (getattr(leval,f) for f in funcs)
         funcs = (f for f in funcs if callable(f) and f != leval.evalMaterial)
@@ -41,7 +41,7 @@ class EvalTestCase(unittest.TestCase):
         for func in funcs:
             sw = func(self.board, WHITE, phasew)
             sb = func(self.board, BLACK, phaseb)
-            print func, sw, sb
+            #print func, sw, sb
             self.assertEqual(sw, sb)
     
 if __name__ == '__main__':

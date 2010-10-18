@@ -31,7 +31,6 @@ class ICPlayer (Player):
         connections[connection.cm].append(connection.cm.connect("privateMessage", self.__onPrivateMessage))
         
         self.offers = {}
-        self.lastPly = -1
     
     def getICHandle (self):
         return self.name
@@ -42,7 +41,7 @@ class ICPlayer (Player):
     
     def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
-            log.debug("ICPlayer.__onOfferAdd(): emitting offer: self.gameno=%s self.name=%s offer=%s\n" % \
+            log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s\n" % \
                 (self.gameno, self.name, offer))
             self.offers[offer.index] = offer
             self.emit ("offer", offer)
@@ -51,12 +50,12 @@ class ICPlayer (Player):
         for offer_ in self.gamemodel.offers.keys():
             if offer.type == offer_.type:
                 offer.param = offer_.param
-        log.debug("ICPlayer.__onOfferDeclined(): emitting decline for offer=%s\n" % offer)
+        log.debug("ICPlayer.__onOfferDeclined: emitting decline for %s\n" % offer)
         self.emit("decline", offer)
     
     def __onOfferRemove (self, om, offer):
         if offer.index in self.offers:
-            log.debug("ICPlayer.__onOfferRemove(): emitting withdraw: self.gameno=%s self.name=%s offer=%s\n" % \
+            log.debug("ICPlayer.__onOfferRemove: emitting withdraw: self.gameno=%s self.name=%s %s\n" % \
                 (self.gameno, self.name, offer))
             self.emit ("withdraw", self.offers[offer.index])
             del self.offers[offer.index]
@@ -66,24 +65,23 @@ class ICPlayer (Player):
             self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
-        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s self.lastply=%d %s %s %s %d %d %s %s %d %d\n" % \
-            (id(self), self, self.lastPly, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
+        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d\n" % \
+            (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
             and wname == self.gamemodel.players[0].getICHandle() \
             and bname == self.gamemodel.players[1].getICHandle():
-            log.debug("ICPlayer.__boardUpdate: id=%d self=%s self.lastply=%d gameno=%s: this is my move\n" % \
-                (id(self), self, self.lastPly, gameno))
+            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move\n" % \
+                (id(self), self, gameno))
             
             # In some cases (like lost on time) the last move is resent
             if ply <= self.gamemodel.ply:
                 return
-            self.lastPly = ply
             
             if 1-curcol == self.color:
-                log.debug("ICPlayer.__boardUpdate: id=%d self=%s lastply=%d: putting move=%s in queue\n" % \
+                log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue\n" % \
                     (id(self), self, ply, lastmove))
-                self.queue.put((self.lastPly, lastmove))
+                self.queue.put((ply, lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
                 # game/player thread has recieved the move.
                 # Specifically this ensures that we aren't killed due to end of
@@ -115,8 +113,6 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        self.lastPly = board1.ply
-        
         if board2 and self.gamemodel.inControl:
             self.connection.bm.sendMove (toAN (board2, move))
         
@@ -131,7 +127,6 @@ class ICPlayer (Player):
             if ply < board1.ply:
                 # This should only happen in an observed game
                 board1 = self.gamemodel.getBoardAtPly(max(ply-1, 0))
-                self.lastPly = board1.ply
             log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s\n" % \
                 (id(self), self, ply, sanmove))
             
@@ -169,7 +164,6 @@ class ICPlayer (Player):
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
-            self.lastPly = gamemodel.boards[-1].ply
             self.queue.put("int")
     
     def putMessage (self, text):
@@ -191,11 +185,18 @@ class ICPlayer (Player):
         self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
     
     def offer (self, offer):
-        log.debug("ICPlayer.offer: sending offer command with offer=%s\n" % offer)
-        self.connection.om.offer(offer, self.lastPly)
+        log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))
+        if offer.type == TAKEBACK_OFFER:
+            # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
+            indexes = self.offers.keys()
+            for index in indexes:
+                if self.offers[index].type == TAKEBACK_OFFER:
+                    log.debug("ICPlayer.offer: del self.offers[%s] %s\n" % (index, offer))
+                    del self.offers[index]
+        self.connection.om.offer(offer, self.gamemodel.ply)
     
     def offerDeclined (self, offer):
-        log.debug("ICPlayer.offerDeclined: sending decline for offer=%s\n" % offer)
+        log.debug("ICPlayer.offerDeclined: sending decline for %s\n" % offer)
         self.connection.om.decline(offer)
     
     def offerWithdrawn (self, offer):

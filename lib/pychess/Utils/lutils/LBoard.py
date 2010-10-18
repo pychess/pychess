@@ -159,33 +159,8 @@ class LBoard:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
-                    if moveNoChr == "1" and \
-                        self.variant == FISCHERRANDOMCHESS:
-                            if piece == KING:
-                                self.ini_kings[color] = cord
-                            elif piece == ROOK:
-                                if self.ini_rooks[color][0] is None:
-                                    self.ini_rooks[color][0] = cord
-                                else:
-                                    self.ini_rooks[color][1] = cord
                     cord += 1
         
-        # Help tests/movegen.py in positions having no 4 rooks
-        # or moveNoChr is not 1
-        if self.variant == FISCHERRANDOMCHESS:
-            if self.ini_rooks[0][0] is None:
-                self.ini_rooks[0][0] = A1
-            if self.ini_rooks[0][1] is None:
-                self.ini_rooks[0][1] = H1
-            if self.ini_rooks[1][0] is None:
-                self.ini_rooks[1][0] = A8
-            if self.ini_rooks[1][1] is None:
-                self.ini_rooks[1][1] = H8
-            if self.ini_kings[BLACK] is None:
-                self.ini_kings[BLACK] = self.kings[BLACK]
-            if self.ini_kings[WHITE] is None:
-                self.ini_kings[WHITE] = self.kings[WHITE]
-
         # Parse active color field
         
         if colChr.lower() == "w":
@@ -200,13 +175,19 @@ class LBoard:
                 if char in reprFile:
                     if char < reprCord[self.kings[BLACK]][0]:
                         castling |= B_OOO
+                        self.ini_rooks[1][0] = reprFile.index(char) + 56
                     else:
                         castling |= B_OO
+                        self.ini_rooks[1][1] = reprFile.index(char) + 56
+                    self.ini_kings[BLACK] = self.kings[BLACK]
                 elif char in [c.upper() for c in reprFile]:
                     if char < reprCord[self.kings[WHITE]][0].upper():
                         castling |= W_OOO
+                        self.ini_rooks[0][0] = reprFile.index(char.lower())
                     else:
                         castling |= W_OO
+                        self.ini_rooks[0][1] = reprFile.index(char.lower())
+                    self.ini_kings[WHITE] = self.kings[WHITE]
             else:
                 if char == "K":
                     castling |= W_OO
@@ -217,7 +198,7 @@ class LBoard:
                 elif char == "q":
                     castling |= B_OOO
         self.setCastling(castling)
-        
+
         # Parse en passant target sqaure
         
         if epChr == "-":

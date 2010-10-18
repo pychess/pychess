@@ -4,8 +4,20 @@
 #
 
 import os, sys
+if sys.version_info < (2, 5, 0):
+    print 'ERROR: PyChess requires Python >= 2.5'
+    sys.exit(1)
+
 import pygtk
 pygtk.require("2.0")
+
+try:
+    import rsvg
+except ImportError:
+    print 'ERROR: Could not load the rsvg module.'
+    print 'You need to install the rsvg package which is called python-rsvg in'
+    print 'Debian/Ubuntu and gnome-python2-rsvg in RPM based distributions like Fedora'
+    sys.exit(1)
 
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
@@ -19,18 +31,13 @@ except ImportError:
     sys.exit(1)
 
 # Set up translations
-import __builtin__, gettext, gtk.glade
+import gettext, gtk.glade
 if isInstalled():
-    #gettext.install("pychess", unicode=1, names=('ngettext',)) # requires Python >= 2.5
-    gettext.install("pychess", unicode=1)
-    t = gettext.translation("pychess", fallback=True)
+    gettext.install("pychess", unicode=1, names=('ngettext',))
     gtk.glade.bindtextdomain("pychess")
 else:
-    #gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
-    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-    t = gettext.translation("pychess", localedir=addDataPrefix("lang"), fallback=True)
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
-__builtin__.__dict__["ngettext"] = t.ungettext
 gtk.glade.textdomain("pychess")
 
 # Let's rumble!

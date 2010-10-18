@@ -23,6 +23,7 @@ pygtk
 pygobject
 pycairo
 gnome-python-desktop
+python-rsvg (if it's in a separate package in your distribution)
 gnome-icon-theme
 gst-python (OPTIONAL for sound)
 gmpy (OPTIONAL for stronger play)

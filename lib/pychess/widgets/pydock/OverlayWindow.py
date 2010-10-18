@@ -1,9 +1,11 @@
 import os
 import re
+import sys
 
 import gtk
-import rsvg
 import cairo
+import rsvg
+
 
 class OverlayWindow (gtk.Window):
     """ This class knows about being an overlaywindow and some svg stuff """
