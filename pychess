@@ -11,6 +11,14 @@ if sys.version_info < (2, 5, 0):
 import pygtk
 pygtk.require("2.0")
 
+try:
+    import rsvg
+except ImportError:
+    print 'ERROR: Could not load the rsvg module.'
+    print 'You need to install the rsvg package which is called python-rsvg in'
+    print 'Debian/Ubuntu and gnome-python2-rsvg in RPM based distributions like Fedora'
+    sys.exit(1)
+
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
 
