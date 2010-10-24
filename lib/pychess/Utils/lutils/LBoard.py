@@ -160,7 +160,15 @@ class LBoard:
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
                     cord += 1
-        
+
+            if self.variant == FISCHERRANDOMCHESS:
+                # Save ranks fo find outermost rooks
+                # if KkQq was used in castling rights
+                if r == 0:
+                    rank8 = rank
+                elif r == 7:
+                    rank1 = rank
+
         # Parse active color field
         
         if colChr.lower() == "w":
@@ -188,6 +196,22 @@ class LBoard:
                         castling |= W_OO
                         self.ini_rooks[0][1] = reprFile.index(char.lower())
                     self.ini_kings[WHITE] = self.kings[WHITE]
+                elif char == "K":
+                    castling |= W_OO
+                    self.ini_rooks[0][1] = rank1.rfind('R')
+                    self.ini_kings[WHITE] = self.kings[WHITE]
+                elif char == "Q":
+                    castling |= W_OOO
+                    self.ini_rooks[0][0] = rank1.find('R')
+                    self.ini_kings[WHITE] = self.kings[WHITE]
+                elif char == "k":
+                    castling |= B_OO
+                    self.ini_rooks[1][1] = rank8.rfind('r')
+                    self.ini_kings[BLACK] = self.kings[BLACK]
+                elif char == "q":
+                    castling |= B_OOO
+                    self.ini_rooks[1][0] = rank8.find('r')
+                    self.ini_kings[BLACK] = self.kings[BLACK]
             else:
                 if char == "K":
                     castling |= W_OO
