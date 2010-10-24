@@ -296,6 +296,13 @@ class GameWidget (gobject.GObject):
 # Main handling of gamewidgets                                                 #
 ################################################################################
 
+def splitit(widget):
+    if not hasattr(widget, 'get_children'):
+        return
+    for child in widget.get_children():
+        splitit(child)
+        widget.remove(child)
+
 def delGameWidget (gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
     gmwidg.emit("closed")
@@ -313,8 +320,13 @@ def delGameWidget (gmwidg):
     
     if headbook.get_n_pages() == 0:
         mainvbox = widgets["mainvbox"]
-        mainvbox.remove(mainvbox.get_children()[2])
+        
+        centerVBox = mainvbox.get_children()[2]
+        for child in centerVBox.get_children():
+            centerVBox.remove(child)
+        mainvbox.remove(centerVBox)
         mainvbox.remove(mainvbox.get_children()[1])
+        
         mainvbox.pack_end(background)
         background.show()
     
@@ -343,8 +355,6 @@ def _ensureReadForGameWidgets ():
     # Initing center
     
     centerVBox = gtk.VBox()
-    #centerVBox.set_spacing(3)
-    #centerVBox.set_border_width(3)
     
     # The message area
     
