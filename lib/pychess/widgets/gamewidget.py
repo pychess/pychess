@@ -257,7 +257,9 @@ class GameWidget (gobject.GObject):
     def showMessage (self, messageDialog, vertical=False):
         if self.messageSock.child:
             self.messageSock.remove(self.messageSock.child)
-        message, separator, hbuttonbox = messageDialog.child.get_children()
+        
+        message = messageDialog.child.get_children()[0]
+        hbuttonbox = messageDialog.child.get_children()[-1]
         
         if vertical:
             buttonbox = gtk.VButtonBox()
