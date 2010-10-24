@@ -238,7 +238,7 @@ class GameModel (GObject, PooledThread):
         elif offer.type in OFFERS:
             if offer not in self.offers:
                 log.debug("GameModel.offerRecieved: doing %s.offer(%s)\n" % \
-					(repr(opPlayer), offer))
+                    (repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
             # If we updated an older offer, we want to delete the old one
@@ -248,7 +248,7 @@ class GameModel (GObject, PooledThread):
     
     def withdrawRecieved (self, player, offer):
         log.debug("GameModel.withdrawRecieved: withdrawer=%s %s\n" % \
-			(repr(player), offer))
+            (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -431,8 +431,7 @@ class GameModel (GObject, PooledThread):
                 if self.timemodel:
                     self.timemodel.tap()
                     
-                if not self.checkStatus():
-                    pass
+                self.checkStatus()
                 
                 self.emit("game_changed")
                 
@@ -447,8 +446,9 @@ class GameModel (GObject, PooledThread):
         status, reason = getStatus(self.boards[-1])
         
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.end(status, reason)
-            return False
+            if not (status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES)):
+                self.end(status, reason)
+                return
         
         if status != self.status and self.status in UNDOABLE_STATES \
                 and self.reason in UNDOABLE_REASONS:
@@ -456,9 +456,7 @@ class GameModel (GObject, PooledThread):
             self.status = status
             self.reason = UNKNOWN_REASON
             self.emit("game_unended")
-        
-        return True
-    
+   
     def __pause (self):
         for player in self.players:
             player.pause()
