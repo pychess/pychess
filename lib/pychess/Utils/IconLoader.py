@@ -1,14 +1,13 @@
 from gtk import icon_theme_get_default, ICON_LOOKUP_USE_BUILTIN
+from pychess.System.Log import log
 
 it = icon_theme_get_default()
-def load_icon(size, name, alternative=None):
+def load_icon(size, *alternatives):
+    alternatives = list(alternatives)
+    name = alternatives.pop(0)
     try:
         return it.load_icon(name, size, ICON_LOOKUP_USE_BUILTIN)
     except:
-        if alternative is not None:
-            try:
-                return it.load_icon(alternative, size, ICON_LOOKUP_USE_BUILTIN)
-            except:
-                print "no %s icon in icon-theme-gnome" % alternative
-        else:
-            print "no %s icon in icon-theme-gnome" % name
+        if alternatives:
+            return load_icon(size, *alternatives)
+        log.warn("no %s icon in icon-theme-gnome" % name)
