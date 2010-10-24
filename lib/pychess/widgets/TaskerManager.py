@@ -208,7 +208,7 @@ class NewGameTasker (gtk.Alignment):
         else: ionest.generalStart(gamemodel, player1tup, player0tup)
 
 
-big_start = load_icon(48, "stock_init", "gnome-globe")
+big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
 class InternetGameTasker (gtk.Alignment):
     
