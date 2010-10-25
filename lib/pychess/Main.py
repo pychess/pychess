@@ -248,6 +248,16 @@ class PyChess:
             widgets["aboutdialog1"].set_version(VERSION_NAME+" r"+line4)
         else:
             widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        
+        with open(prefix.addDataPrefix("ARTISTS")) as f:
+            widgets["aboutdialog1"].set_artists(f.read().splitlines())
+        with open(prefix.addDataPrefix("AUTHORS")) as f:
+            widgets["aboutdialog1"].set_authors(f.read().splitlines())
+        with open(prefix.addDataPrefix("DOCUMENTERS")) as f:
+            widgets["aboutdialog1"].set_documenters(f.read().splitlines())
+        with open(prefix.addDataPrefix("TRANSLATORS")) as f:
+            widgets["aboutdialog1"].set_translator_credits(f.read())
+            
         def callback(button, *args):
             widgets["aboutdialog1"].hide()
             return True
