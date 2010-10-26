@@ -155,10 +155,8 @@ class ICGameModel (GameModel):
         # us the result.
     
     def checkStatus (self):
-        if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
-            return False
-        return True
-    
+        pass
+
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)
     
