@@ -1,302 +1,300 @@
-PyChess is translated into 51 languages.
-We deeply thank everyone who has been involved.
+[af] Afrikaans
+     Thomas Fogwill
 
-Afrikaans translators:
-Thomas Fogwill
+[ar] Arabic
+     Ahmad Farghal
+     Aymen AlSalem
+     صقر بن عبدالله
 
-Arabic translators:
-Ahmad Farghal
-Aymen AlSalem
-صقر بن عبدالله
+[az] Azerbaijani
+     Elxan İsmayılov
 
-Azerbaijani translators:
-Elxan İsmayılov
+[bg] Bulgarian
+     B.U.S.T.T.E.R.
+     Daniel Stoyanov
+     svilborg
 
-Bulgarian translators:
-B.U.S.T.T.E.R.
-Daniel Stoyanov
-svilborg
+[bn] Bengali
+     Kaustav Das Modak
+     Scio
 
-Bengali translators:
-Kaustav Das Modak
-Scio
+[br] Breton
+     Ronan Le Déroff
 
-Breton translators:
-Ronan Le Déroff
+[ca] Catalan
+     Miquel Serralta Riera
+     Norbux
+     spin_555
 
-Catalan translators:
-Miquel Serralta Riera
-Norbux
-spin_555
+[cs] Czech
+     Augustin
+     Jakub Žáček
+     Jan Tojnar
+     Konki
+     Kuvaly [LCT]
+     Pavel Chovancik
+     Peter Surňák
 
-Czech translators:
-Augustin
-Jakub Žáček
-Jan Tojnar
-Konki
-Kuvaly [LCT]
-Pavel Chovancik
-Peter Surňák
+[da] Danish
+     GonzoDark
+     Thomas Dybdahl Ahle
 
-Danish translators:
-GonzoDark
-Thomas Dybdahl Ahle
+[de] German
+     Alexcey
+     Andreas Kostyrka
+     Cyron
+     Janek Thomaschewski
+     Keruskerfuerst
+     Martin S.
+     Norbert Fabritius
+     S. Karl Kochs D.
+     Thomas Dybdahl Ahle
+     Yarin Kaul
 
-German translators:
-Alexcey
-Andreas Kostyrka
-Cyron
-Janek Thomaschewski
-Keruskerfuerst
-Martin S.
-Norbert Fabritius
-S. Karl Kochs D.
-Thomas Dybdahl Ahle
-Yarin Kaul
+[el] Greek
+     Athanasia Tziola
+     Edward Karavakis
+     George Kontis
+     Leonardo Gregianin
+     Nick Agianniotis
+     attikon (Ion)
+     Γεώργιος Γεωργάς
 
-Greek translators:
-Athanasia Tziola
-Edward Karavakis
-George Kontis
-Leonardo Gregianin
-Nick Agianniotis
-attikon (Ion)
-Γεώργιος Γεωργάς
+[en_CA] English (Canada)
+     Dan Klassen
 
-English (Canada) translators:
-Dan Klassen
+[en_GB] English (United Kingdom)
+     Alex Denvir
+     Ivan Lucas
+     Me
 
-English (United Kingdom) translators:
-Alex Denvir
-Ivan Lucas
-Me
+[es] Spanish
+     Felipe Morales
+     Jorge González
+     Joshua Nobles
+     Leonardo Gregianin
+     Manuel Kaufmann
+     Paco Molinero
+     Perberos
+     Roberto Barbé
+     Thomas Dybdahl Ahle
+     replicant
+     sagos
+     skarevoluti
+     starmaker
 
-Spanish translators:
-Felipe Morales
-Jorge González
-Joshua Nobles
-Leonardo Gregianin
-Manuel Kaufmann
-Paco Molinero
-Perberos
-Roberto Barbé
-Thomas Dybdahl Ahle
-replicant
-sagos
-skarevoluti
-starmaker
+[et] Estonian
+     AMt6lk
+     gert7
 
-Estonian translators:
-AMt6lk
-gert7
+[eu] Basque
+     Leonardo Gregianin
 
-Basque translators:
-Leonardo Gregianin
+[fa] Persian
+     Artin
 
-Persian translators:
-Artin
+[fi] Finnish
+     Jouni Mettala
+     Lartza
 
-Finnish translators:
-Jouni Mettala
-Lartza
+[fr] French
+     Bodinux
+     Cyriaque
+     ElseSystem
+     Guillaume Lemaître
+     Matthieu Bizien
+     Maxime
+     Phnx
+     Pierre Rudloff
+     Pierre Slamich
+     SuperBOB
+     Thibault Févry
+     Thomas Dybdahl Ahle
+     Thomas Grim
+     mitsurugi
+     reminoushka
+     royto
+     stephane_plop
 
-French translators:
-Bodinux
-Cyriaque
-ElseSystem
-Guillaume Lemaître
-Matthieu Bizien
-Maxime
-Phnx
-Pierre Rudloff
-Pierre Slamich
-SuperBOB
-Thibault Févry
-Thomas Dybdahl Ahle
-Thomas Grim
-mitsurugi
-reminoushka
-royto
-stephane_plop
+[ga] Irish
+     Seanan
 
-Irish translators:
-Seanan
+[gl] Galician
+     Leonardo Gregianin
+     Manuel A. Vázquez Diz
 
-Galician translators:
-Leonardo Gregianin
-Manuel A. Vázquez Diz
+[he] Hebrew
+     Leonardo Gregianin
 
-Hebrew translators:
-Leonardo Gregianin
+[hi] Hindi
+     Leonardo Gregianin
 
-Hindi translators:
-Leonardo Gregianin
+[hr] Croatian
+     Ilija Pavlic
+     Sinisa Radalj
 
-Croatian translators:
-Ilija Pavlic
-Sinisa Radalj
+[hu] Hungarian
+     Bajusz Tamás
+     Mice Teeth
+     Thomas Dybdahl Ahle
 
-Hungarian translators:
-Bajusz Tamás
-Bajusz Tamás
-Mice Teeth
-Thomas Dybdahl Ahle
+[id] Indonesian
+     Arief Setiadi Wibowo
+     rotyyu
 
-Indonesian translators:
-Arief Setiadi Wibowo
-rotyyu
+[is] Icelandic
+     Rúnar Freyr Þorsteinsson
 
-Icelandic translators:
-Rúnar Freyr Þorsteinsson
+[it] Italian
+     Aldo Latino
+     Clasprea
+     Edoardo Mercone
+     Leonardo Gregianin
+     Matteo Bertini
+     Milo Casagrande
+     Simone Oberti
+     Stefano Maggiolo
+     Thomas Dybdahl Ahle
+     Weldzar
+     ltlollo
 
-Italian translators:
-Aldo Latino
-Clasprea
-Leonardo Gregianin
-Matteo Bertini
-Milo Casagrande
-Simone Oberti
-Stefano Maggiolo
-Thomas Dybdahl Ahle
-Weldzar
-ltlollo
+[ja] Japanese
+     Leonardo Gregianin
+     Michael Mathurin
 
-Japanese translators:
-Leonardo Gregianin
-Michael Mathurin
+[jbo] Lojban
+     Qantourisc
 
-Lojban translators:
-Qantourisc
+[jv] Javanese
+     Arief Setiadi Wibowo
+     Rahman Yusri Aftian
 
-Javanese translators:
-Arief Setiadi Wibowo
-Rahman Yusri Aftian
+[ko] Korean
+     Eon S. Jeon
+     Para
 
-Korean translators:
-Eon S. Jeon
-Para
+[ku] Kurdish
+     Omer Ensari
 
-Kurdish translators:
-Omer Ensari
+[ml] Malayalam
+     Saji Nediyanchath
 
-Malayalam translators:
-Saji Nediyanchath
+[nb] Norwegian Bokmal
+     Marstein
+     Monjako
+     Ole Christian Norum
+     Tom Eriksen
 
-Norwegian Bokmal translators:
-Marstein
-Monjako
-Ole Christian Norum
-Tom Eriksen
+[nl] Dutch
+     Daniil Sorokin
+     Jan Willems
+     ThijsVermeir
+     Wouter Stomp
+     domkop
+     rob
 
-Dutch translators:
-Daniil Sorokin
-Jan Willems
-ThijsVermeir
-Wouter Stomp
-domkop
-rob
+[oc] Occitan (post 1500)
+     Cédric VALMARY (Tot en òc)
 
-Occitan (post 1500) translators:
-Cédric VALMARY (Tot en òc)
+[pl] Polish
+     Jacek Sowiński
+     Krzysztof Tataradziński
+     Krzysztof Wittek
+     Leonardo Gregianin
+     Marcin Szepczyński (czepol)
+     Marcin Wolak
+     Merdyn
+     Michał Trzebiatowski
+     Thomas Dybdahl Ahle
+     Wojtek Jamrozy
+     qoqosz
+     Łukasz Cieśnik
 
-Polish translators:
-Jacek Sowiński
-Krzysztof Tataradziński
-Krzysztof Wittek
-Leonardo Gregianin
-Marcin Szepczyński (czepol)
-Marcin Wolak
-Merdyn
-Michał Trzebiatowski
-Thomas Dybdahl Ahle
-Wojtek Jamrozy
-qoqosz
-Łukasz Cieśnik
+[pt] Portuguese
+     Dark_Webster
+     Joao Trindade
+     Leonardo Gregianin
+     Luis Reis
+     Nuno Messeder Ferreira
+     Tiago Silva
+     Unode
 
-Portuguese translators:
-Dark_Webster
-Joao Trindade
-Leonardo Gregianin
-Luis Reis
-Nuno Messeder Ferreira
-Tiago Silva
-Unode
+[pt_BR] Brazilian Portuguese
+     Enrico Nicoletto
+     George S. Silva (Zathara)
+     Gustavo Grasso
+     Leonardo Gregianin
+     Raphael Ottoni
+     Thomas Dybdahl Ahle
+     golfinho
 
-Brazilian Portuguese translators:
-Enrico Nicoletto
-George S. Silva (Zathara)
-Gustavo Grasso
-Leonardo Gregianin
-Raphael Ottoni
-Thomas Dybdahl Ahle
-golfinho
+[ro] Romanian
+     Adi Roiban
+     Ionuț Jula
+     Ursache Dogariu Daniel
 
-Romanian translators:
-Adi Roiban
-Ionuț Jula
-Ursache Dogariu Daniel
+[ru] Russian
+     Alexandre Prokoudine
+     Ivan Kliouchenkov
+     Leonardo Gregianin
+     Pavel V. Kulikov
+     Roman A. aka BasicXP
+     Thomas Dybdahl Ahle
+     microsort
+     ssergeje
 
-Russian translators:
-Alexandre Prokoudine
-Ivan Kliouchenkov
-Leonardo Gregianin
-Pavel V. Kulikov
-Roman A. aka BasicXP
-Thomas Dybdahl Ahle
-microsort
-ssergeje
+[si] Sinhalese
+     Samith Sandanayake
 
-Sinhalese translators:
-Samith Sandanayake
+[sk] Slovak
+     DAG Software
+     Tomáš Hledík
+     blackmore
+     misko
+     pe3k
 
-Slovak translators:
-DAG Software
-Tomáš Hledík
-blackmore
-misko
-pe3k
+[sl] Slovenian
+     Igor
+     Danijel Forstneric
+     grofaty
 
-Slovenian translators:
-Igor
-Danijel Forstneric
-grofaty
+[sv] Swedish
+     Björn_Nilsson
+     Calle
+     Gustaf Gustafsson
+     Leonardo Gregianin
+     Mikael Olofsson
+     Zirro
+     nairobie
+     togga
 
-Swedish translators:
-Björn_Nilsson
-Calle
-Gustaf Gustafsson
-Leonardo Gregianin
-Mikael Olofsson
-Zirro
-nairobie
-togga
+[tr] Turkish
+     Baris Akkurt
+     Cengiz Can
+     Leonardo Gregianin
+     Mert Bozkurt
+     Mustafa Yılmaz
+     Selim Sercan Suerkan
+     Yahuda
+     denz
+     dmXE
+     hasan k
+     ryukun
+     xealous
 
-Turkish translators:
-Baris Akkurt
-Cengiz Can
-Leonardo Gregianin
-Mert Bozkurt
-Mustafa Yılmaz
-Selim Sercan Suerkan
-Yahuda
-denz
-dmXE
-hasan k
-ryukun
-xealous
+[vi] Vietnamese
+     Nguyen Quang Chien
 
-Vietnamese translators:
-Nguyen Quang Chien
+[wa] Walloon
+     ThijsVermeir
 
-Walloon translators:
-ThijsVermeir
+[zh_CN] Chinese (Simplified)
+     Chen Tao
+     Gavin Huang
+     Ryan Li
+     Scott Wang
+     冯超
 
-Chinese (Simplified) translators:
-Chen Tao
-Gavin Huang
-Ryan Li
-Scott Wang
-冯超
+[zu] Zulu
+     Xolani1990
 
-Zulu translators:
-Xolani1990
