@@ -40,7 +40,7 @@
                             <property name="yalign">0</property>
                             <property name="use_markup">True</property>
                             <property name="wrap">True</property>
-                            <property name="selectable">True</property>
+                            <property name="selectable">False</property>
                           </widget>
                         </child>
                       </widget>
@@ -48,16 +48,6 @@
                   </widget>
                 </child>
               </widget>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Tip of the Day:&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </widget>
-              <packing>
-                <property name="type">label_item</property>
-              </packing>
             </child>
           </widget>
           <packing>

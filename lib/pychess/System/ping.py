@@ -27,10 +27,16 @@ class Pinger (GObject):
         self.subproc = None
         
         self.expression = re.compile("time=([\d\.]+) (m?s)")
+
+        # We need untranslated error messages in regexp search
+        # below, so have to use deferred translation here
+        def _(msg): return msg
+        error = _("Destination Host Unreachable")
         self.errorExprs = (
-            re.compile("(Destination Host Unreachable)"),
+            re.compile("(%s)" % error),
         )
-        
+        del _
+
         self.restartsOnDead = 3
         self.deadCount = 0
     
@@ -56,7 +62,8 @@ class Pinger (GObject):
             for expr in self.errorExprs:
                 match = expr.search(line)
                 if match:
-                    self.emit("error", match.groups()[0])
+                    msg = match.groups()[0]
+                    self.emit("error", _(msg))
     
     def __handleDead (self, subprocess):
         if self.deadCount < self.restartsOnDead:

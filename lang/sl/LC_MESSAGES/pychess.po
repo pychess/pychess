@@ -6,14 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: template\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-04 17:25+0200\n"
-"PO-Revision-Date: 2010-09-04 17:27+0200\n"
+"POT-Creation-Date: 2010-10-21 21:54+0200\n"
+"PO-Revision-Date: 2010-10-21 21:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.1\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
 "n%100==4 ? 2 : 3);\n"
 
@@ -552,8 +553,8 @@ msgstr "Ustvari poizvedbo"
 msgid "_Seeks / Challenges"
 msgstr "Poizvedbe / Izzivalci"
 
-#: glade/fics_lounge.glade:490 lib/pychess/ic/ICLounge.py:187
-#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:656
+#: glade/fics_lounge.glade:490 lib/pychess/ic/ICLounge.py:186
+#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:636
 msgid "Rating"
 msgstr "Rang"
 
@@ -629,8 +630,8 @@ msgstr "<b>Orodja</b>"
 msgid "Edit Seek"
 msgstr "Uredi povpraševanje"
 
-#: glade/fics_lounge.glade:1285 lib/pychess/ic/ICLounge.py:1265
-#: lib/pychess/ic/ICLounge.py:1398 lib/pychess/ic/ICLounge.py:1407
+#: glade/fics_lounge.glade:1285 lib/pychess/ic/ICLounge.py:1247
+#: lib/pychess/ic/ICLounge.py:1380 lib/pychess/ic/ICLounge.py:1389
 #: lib/pychess/ic/managers/GameListManager.py:53
 #: lib/pychess/ic/managers/GameListManager.py:60
 msgid "Untimed"
@@ -649,7 +650,7 @@ msgid "Time control:  "
 msgstr "Nadzor časa:  "
 
 #: glade/fics_lounge.glade:1393 lib/pychess/Utils/const.py:44
-#: lib/pychess/ic/ICLounge.py:1400 lib/pychess/ic/ICLounge.py:1407
+#: lib/pychess/ic/ICLounge.py:1382 lib/pychess/ic/ICLounge.py:1389
 #: lib/pychess/ic/managers/GameListManager.py:54
 #: lib/pychess/ic/managers/GameListManager.py:62
 msgid "Standard"
@@ -700,7 +701,7 @@ msgstr "1200"
 msgid "Tolerance:"
 msgstr "Odstopanje:"
 
-#: glade/fics_lounge.glade:1837 lib/pychess/ic/ICLounge.py:1651
+#: glade/fics_lounge.glade:1837 lib/pychess/ic/ICLounge.py:1633
 msgid "Hide"
 msgstr "Skrij"
 
@@ -709,14 +710,14 @@ msgid "<b>Opponent Strength</b>"
 msgstr "<b>Nasprotnikova moč</b>"
 
 #: glade/fics_lounge.glade:1960 lib/pychess/Utils/const.py:24
-#: lib/pychess/ic/ICLounge.py:1285 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/TaskerManager.py:146 lib/pychess/widgets/ionest.py:114
+#: lib/pychess/ic/ICLounge.py:1267 lib/pychess/widgets/ChessClock.py:18
+#: lib/pychess/widgets/TaskerManager.py:146 lib/pychess/widgets/ionest.py:115
 msgid "White"
 msgstr "Beli"
 
 #: glade/fics_lounge.glade:1982 lib/pychess/Utils/const.py:24
-#: lib/pychess/ic/ICLounge.py:1287 lib/pychess/widgets/ChessClock.py:18
-#: lib/pychess/widgets/TaskerManager.py:147 lib/pychess/widgets/ionest.py:114
+#: lib/pychess/ic/ICLounge.py:1269 lib/pychess/widgets/ChessClock.py:18
+#: lib/pychess/widgets/TaskerManager.py:147 lib/pychess/widgets/ionest.py:115
 msgid "Black"
 msgstr "Črni"
 
@@ -864,19 +865,19 @@ msgstr "Napredovanje"
 msgid "<b><big>Promote pawn to what?</big></b>"
 msgstr "<b><big>Povišaj kmeta v?</big></b>"
 
-#: glade/promotion.glade:59 lib/pychess/Utils/const.py:116
+#: glade/promotion.glade:59 lib/pychess/Utils/const.py:128
 msgid "Queen"
 msgstr "Kraljica"
 
-#: glade/promotion.glade:102 lib/pychess/Utils/const.py:116
+#: glade/promotion.glade:102 lib/pychess/Utils/const.py:128
 msgid "Rook"
 msgstr "Trnjava"
 
-#: glade/promotion.glade:144 lib/pychess/Utils/const.py:116
+#: glade/promotion.glade:144 lib/pychess/Utils/const.py:128
 msgid "Bishop"
 msgstr "Tekač"
 
-#: glade/promotion.glade:186 lib/pychess/Utils/const.py:116
+#: glade/promotion.glade:186 lib/pychess/Utils/const.py:128
 msgid "Knight"
 msgstr "Konj"
 
@@ -900,7 +901,7 @@ msgstr "Izberi igre, ki jih želiš shraniti:"
 msgid "If you don't save, new changes to your games will be permanently lost."
 msgstr "Če ne shraniš, bodo nove spremembe trajno izgubljene."
 
-#: glade/saveGamesDialog.glade:124 lib/pychess/widgets/ionest.py:433
+#: glade/saveGamesDialog.glade:124 lib/pychess/widgets/ionest.py:436
 msgid "Close _without Saving"
 msgstr "Zapri _brez shranjevanja"
 
@@ -1157,11 +1158,11 @@ msgstr "Ne moreš nadaljevati igre, ki ni bila zaustavljena."
 msgid "You can not %s on FICS when the game is over."
 msgstr "Ne morev %s on FICS, ko je igra končana."
 
-#: lib/pychess/Players/Human.py:176
+#: lib/pychess/Players/Human.py:177
 msgid "Your opponent asks you to hurry!"
 msgstr "Nasprotnik te je pozval, da pohitiš!"
 
-#: lib/pychess/Players/Human.py:177
+#: lib/pychess/Players/Human.py:178
 msgid ""
 "Generally this means nothing, as the game is timebased, but if you want to "
 "please your opponent, perhaps you should get going."
@@ -1169,41 +1170,41 @@ msgstr ""
 "Ponavati to nič ne pomeni, ker je igra nastavljena na čas, vendar če želiš "
 "ustreči nasprotniku, bi morda moral nadaljevati."
 
-#: lib/pychess/Players/Human.py:229
+#: lib/pychess/Players/Human.py:238
 #, python-format
 msgid "%s was declined by your opponent"
 msgstr "%s je bil zavrjen od nasprotnika"
 
-#: lib/pychess/Players/Human.py:230
+#: lib/pychess/Players/Human.py:239
 msgid "You can try to send the offer to your opponent later in the game again."
 msgstr "Nasprotniku lahko kasneje še enkrat pošlješ ponudbo."
 
-#: lib/pychess/Players/Human.py:236
+#: lib/pychess/Players/Human.py:246
 #, python-format
 msgid "%s was withdrawn by your opponent"
 msgstr "%s je bil preklican od nasprotnika"
 
-#: lib/pychess/Players/Human.py:237
+#: lib/pychess/Players/Human.py:247
 msgid "Your opponent seems to have changed his or her mind."
 msgstr "Nasprotnik si je premislil."
 
-#: lib/pychess/Players/Human.py:245
+#: lib/pychess/Players/Human.py:256
 #, python-format
 msgid "Unable to accept %s"
 msgstr "Ne morem sprejeti %s"
 
-#: lib/pychess/Players/Human.py:246
+#: lib/pychess/Players/Human.py:257
 #, python-format
 msgid ""
 "PyChess was unable to get the %s offer accepted. Probably because it has "
 "been withdrawn."
 msgstr "PyChess ne more sprejeti %s. Verjetno zaradi neodločenosti."
 
-#: lib/pychess/Players/Human.py:250
+#: lib/pychess/Players/Human.py:261
 msgid "Game is not running"
 msgstr "Igra ne teče"
 
-#: lib/pychess/Players/Human.py:258
+#: lib/pychess/Players/Human.py:269
 #, python-format
 msgid "%s returns an error"
 msgstr "%s je sporočil napako"
@@ -1221,7 +1222,7 @@ msgstr "Ne morem naložiti diagrama '%s'"
 msgid "Chess Position"
 msgstr "Položaj šaha"
 
-#: lib/pychess/Savers/epd.py:139 lib/pychess/ic/ICLounge.py:229
+#: lib/pychess/Savers/epd.py:139 lib/pychess/ic/ICLounge.py:228
 msgid "Unknown"
 msgstr "Neznan"
 
@@ -1236,8 +1237,8 @@ msgstr "Šahovska igra"
 #: lib/pychess/Savers/pgn.py:189 lib/pychess/Savers/pgn.py:304
 #, python-format
 msgid ""
-"The game can't be read to end, because of an error parsing move %(moveno)s '%"
-"(notation)s'."
+"The game can't be read to end, because of an error parsing move %(moveno)s "
+"'%(notation)s'."
 msgstr ""
 "Igra ne more biti prebrana do konca, ker je nastala napaka pri analizi "
 "premika %(moveno)s '%(notation)s'."
@@ -1247,20 +1248,24 @@ msgstr ""
 msgid "The move failed because %s."
 msgstr "Premik je spodletel zaradi %s."
 
-#: lib/pychess/System/ping.py:70
+#: lib/pychess/System/ping.py:34
+msgid "Destination Host Unreachable"
+msgstr "Ciljni strežnik je nedosegljiv"
+
+#: lib/pychess/System/ping.py:77
 msgid "Died"
 msgstr "Umrl"
 
-#: lib/pychess/Utils/GameModel.py:55
+#: lib/pychess/Utils/GameModel.py:85
 msgid "Local Event"
 msgstr "Krajevni dogodek"
 
-#: lib/pychess/Utils/GameModel.py:56
+#: lib/pychess/Utils/GameModel.py:86
 msgid "Local Site"
 msgstr "Lokalna stran"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1112
-#: lib/pychess/ic/ICLounge.py:1402 lib/pychess/ic/ICLounge.py:1408
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1094
+#: lib/pychess/ic/ICLounge.py:1384 lib/pychess/ic/ICLounge.py:1390
 #: lib/pychess/widgets/newGameDialog.py:145
 #: lib/pychess/ic/managers/GameListManager.py:51
 #: lib/pychess/ic/managers/GameListManager.py:58
@@ -1268,8 +1273,8 @@ msgstr "Lokalna stran"
 msgid "Blitz"
 msgstr "Bliskovito"
 
-#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1404
-#: lib/pychess/ic/ICLounge.py:1408
+#: lib/pychess/Utils/const.py:44 lib/pychess/ic/ICLounge.py:1386
+#: lib/pychess/ic/ICLounge.py:1390
 #: lib/pychess/ic/managers/GameListManager.py:52
 #: lib/pychess/ic/managers/GameListManager.py:59
 msgid "Lightning"
@@ -1305,35 +1310,35 @@ msgstr "Izgubarji"
 msgid "Atomic"
 msgstr "Atomski"
 
-#: lib/pychess/Utils/const.py:116
+#: lib/pychess/Utils/const.py:128
 msgid "Pawn"
 msgstr "Kmet"
 
-#: lib/pychess/Utils/const.py:116
+#: lib/pychess/Utils/const.py:128
 msgid "King"
 msgstr "Kralj"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "P"
 msgstr "P"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "N"
 msgstr "S"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "B"
 msgstr "L"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "R"
 msgstr "T"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "Q"
 msgstr "D"
 
-#: lib/pychess/Utils/const.py:124
+#: lib/pychess/Utils/const.py:136
 msgid "K"
 msgstr "K"
 
@@ -1527,7 +1532,7 @@ msgstr "Naključen"
 msgid "Rook odds"
 msgstr "Trnjava prednosti"
 
-#: lib/pychess/Variants/shuffle.py:33 lib/pychess/ic/ICLounge.py:1536
+#: lib/pychess/Variants/shuffle.py:33 lib/pychess/ic/ICLounge.py:1518
 #: lib/pychess/widgets/newGameDialog.py:239
 #: lib/pychess/ic/managers/GameListManager.py:24
 msgid "Shuffle"
@@ -1587,19 +1592,19 @@ msgstr "Samodejna odjava"
 msgid "You have been logged out because you were idle more than 60 minutes"
 msgstr "Samodejno si bil odjavljen, ker si bil nedejaven več kot 60 minut"
 
-#: lib/pychess/ic/ICLounge.py:187
+#: lib/pychess/ic/ICLounge.py:186
 msgid "Win"
 msgstr "Zmaga"
 
-#: lib/pychess/ic/ICLounge.py:187
+#: lib/pychess/ic/ICLounge.py:186
 msgid "Draw"
 msgstr "Neodločeno"
 
-#: lib/pychess/ic/ICLounge.py:187
+#: lib/pychess/ic/ICLounge.py:186
 msgid "Loss"
 msgstr "Poraz"
 
-#: lib/pychess/ic/ICLounge.py:196
+#: lib/pychess/ic/ICLounge.py:195
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the following variants at "
 "all time controls:\n"
@@ -1607,39 +1612,39 @@ msgstr ""
 "Na FICS, tvoj \"Neurejen\" rang zajema vse sledeče različice vse časovne "
 "možnosti:\n"
 
-#: lib/pychess/ic/ICLounge.py:197
+#: lib/pychess/ic/ICLounge.py:196
 msgid "Shuffle, Fischer Random, Random, Asymmetric Random\n"
 msgstr "Trik, Fischer naključna, Naključna, Asimetrično naključen\n"
 
-#: lib/pychess/ic/ICLounge.py:198
+#: lib/pychess/ic/ICLounge.py:197
 msgid "Upside Down, Pawns Pushed, Pawns Passed\n"
 msgstr "Zgoraj navzdol, Pritisk kmetov, Kmeti so zaobšli\n"
 
-#: lib/pychess/ic/ICLounge.py:199
+#: lib/pychess/ic/ICLounge.py:198
 msgid "Pawn Odds, Knight Odds, Rook Odds, Queen Odds"
 msgstr "Kmet prednosti, Konja prednosti, Trnjava prednosti, Kraljica prednosti"
 
-#: lib/pychess/ic/ICLounge.py:210
+#: lib/pychess/ic/ICLounge.py:209
 msgid "Email"
 msgstr "E-pošta"
 
-#: lib/pychess/ic/ICLounge.py:215
+#: lib/pychess/ic/ICLounge.py:214
 msgid "Spent"
 msgstr "Potrošiti"
 
-#: lib/pychess/ic/ICLounge.py:217
+#: lib/pychess/ic/ICLounge.py:216
 msgid "online in total"
 msgstr "skupaj prijavljenih"
 
-#: lib/pychess/ic/ICLounge.py:221
+#: lib/pychess/ic/ICLounge.py:220
 msgid "Ping"
 msgstr "Ping"
 
-#: lib/pychess/ic/ICLounge.py:222
+#: lib/pychess/ic/ICLounge.py:221
 msgid "Connecting"
 msgstr "Povezujem"
 
-#: lib/pychess/ic/ICLounge.py:240
+#: lib/pychess/ic/ICLounge.py:239
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest is not able to play rated games, and thus the offer of games will be "
@@ -1648,128 +1653,123 @@ msgstr ""
 "Trenutno si povezan kot gost.\n"
 "Gost ne more igrati rangiranih iger in zato je ponudba iger manjša."
 
-#: lib/pychess/ic/ICLounge.py:245
+#: lib/pychess/ic/ICLounge.py:244
 msgid "Register now"
 msgstr "Registriraj se sedaj"
 
-#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:656
+#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:636
 #: lib/pychess/widgets/preferencesDialog.py:78
 msgid "Name"
 msgstr "Ime"
 
-#: lib/pychess/ic/ICLounge.py:374 lib/pychess/ic/ICLounge.py:443
-#: lib/pychess/ic/ICLounge.py:541 lib/pychess/ic/ICLounge.py:619
-#: lib/pychess/ic/ICLounge.py:1290
+#: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:452
+#: lib/pychess/ic/ICLounge.py:482 lib/pychess/ic/ICLounge.py:599
+#: lib/pychess/ic/ICLounge.py:1272
 msgid "Rated"
 msgstr "Rangiran"
 
-#: lib/pychess/ic/ICLounge.py:375
+#: lib/pychess/ic/ICLounge.py:376
 msgid "Type"
 msgstr "Tip"
 
-#: lib/pychess/ic/ICLounge.py:375
+#: lib/pychess/ic/ICLounge.py:376
 msgid "Clock"
 msgstr "Ura"
 
-#: lib/pychess/ic/ICLounge.py:440 lib/pychess/ic/ICLounge.py:538
-#, python-format
-msgid "%(min)s min"
-msgstr "%(min)s min"
-
-#: lib/pychess/ic/ICLounge.py:442 lib/pychess/ic/ICLounge.py:540
-#, python-format
-msgid " + %(sec)s sec"
-msgstr " + %(sec)s sec"
-
-#: lib/pychess/ic/ICLounge.py:443 lib/pychess/ic/ICLounge.py:541
-#: lib/pychess/ic/ICLounge.py:619 lib/pychess/ic/ICLounge.py:1169
-#: lib/pychess/ic/ICLounge.py:1480
-msgid "Unrated"
-msgstr "Nerangiran"
-
-#: lib/pychess/ic/ICLounge.py:456 lib/pychess/ic/ICLounge.py:469
-#: lib/pychess/ic/ICLounge.py:547 lib/pychess/ic/ICLounge.py:557
+#: lib/pychess/ic/ICLounge.py:446
 #, python-format
 msgid "Active seeks: %d"
 msgstr "Živa iskanja: %d"
 
-#: lib/pychess/ic/ICLounge.py:474 lib/pychess/ic/ICLounge.py:507
-msgid "Active seeks: 0"
-msgstr "Živa iskanja: 0"
+#: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:479
+#, python-format
+msgid "%(min)s min"
+msgstr "%(min)s min"
 
-#: lib/pychess/ic/ICLounge.py:586
+#: lib/pychess/ic/ICLounge.py:451 lib/pychess/ic/ICLounge.py:481
+#, python-format
+msgid " + %(sec)s sec"
+msgstr " + %(sec)s sec"
+
+#: lib/pychess/ic/ICLounge.py:452 lib/pychess/ic/ICLounge.py:482
+#: lib/pychess/ic/ICLounge.py:599 lib/pychess/ic/ICLounge.py:1151
+#: lib/pychess/ic/ICLounge.py:1462
+msgid "Unrated"
+msgstr "Nerangiran"
+
+#: lib/pychess/ic/ICLounge.py:566
 msgid " min"
 msgstr " min"
 
-#: lib/pychess/ic/ICLounge.py:618 lib/pychess/ic/ICLounge.py:1172
+#: lib/pychess/ic/ICLounge.py:598 lib/pychess/ic/ICLounge.py:1154
 msgid "Computer Player"
 msgstr "Računalniški igralec"
 
-#: lib/pychess/ic/ICLounge.py:621
+#: lib/pychess/ic/ICLounge.py:601
 #, python-format
 msgid "%(min)s min + %(sec)s sec"
 msgstr "%(min)s min + %(sec)s sec"
 
-#: lib/pychess/ic/ICLounge.py:623
+#: lib/pychess/ic/ICLounge.py:603
 msgid "Manual Acceptance"
 msgstr "Ročna odobritev"
 
-#: lib/pychess/ic/ICLounge.py:747 lib/pychess/ic/ICLounge.py:758
+#: lib/pychess/ic/ICLounge.py:728 lib/pychess/ic/ICLounge.py:739
 #, python-format
 msgid "Players ready: %d"
 msgstr "Igralci pripravljeni: %d"
 
-#: lib/pychess/ic/ICLounge.py:795
+#: lib/pychess/ic/ICLounge.py:777
 msgid "White Player"
 msgstr "Beli igralec"
 
-#: lib/pychess/ic/ICLounge.py:795
+#: lib/pychess/ic/ICLounge.py:777
 msgid "Black Player"
 msgstr "Črni igralec"
 
-#: lib/pychess/ic/ICLounge.py:796
+#: lib/pychess/ic/ICLounge.py:778
 msgid "Game Type"
 msgstr "Tip igre"
 
-#: lib/pychess/ic/ICLounge.py:848 lib/pychess/ic/ICLounge.py:864
-#: lib/pychess/ic/ICLounge.py:865
+#: lib/pychess/ic/ICLounge.py:830 lib/pychess/ic/ICLounge.py:846
+#: lib/pychess/ic/ICLounge.py:847
 msgid "Private"
 msgstr "Zasebno"
 
-#: lib/pychess/ic/ICLounge.py:854 lib/pychess/ic/ICLounge.py:880
+#: lib/pychess/ic/ICLounge.py:836 lib/pychess/ic/ICLounge.py:862
 #, python-format
 msgid "Games running: %d"
 msgstr "Igre tečejo: %d"
 
-#: lib/pychess/ic/ICLounge.py:918
+#: lib/pychess/ic/ICLounge.py:900
 msgid "Your color"
 msgstr "Tvoja barva"
 
-#: lib/pychess/ic/ICLounge.py:918
+#: lib/pychess/ic/ICLounge.py:900
 msgid "Opponent"
 msgstr "Nasprotnik"
 
-#: lib/pychess/ic/ICLounge.py:919
+#: lib/pychess/ic/ICLounge.py:901
 msgid "Is online"
 msgstr "Je sedaj prijavljen"
 
-#: lib/pychess/ic/ICLounge.py:919
+#: lib/pychess/ic/ICLounge.py:901
 msgid "Length"
 msgstr "Dolžina"
 
-#: lib/pychess/ic/ICLounge.py:919
+#: lib/pychess/ic/ICLounge.py:901
 msgid "Date/Time"
 msgstr "Datum/Čas"
 
-#: lib/pychess/ic/ICLounge.py:942
+#: lib/pychess/ic/ICLounge.py:924
 msgid "Online"
 msgstr "Prijavljen"
 
-#: lib/pychess/ic/ICLounge.py:942
+#: lib/pychess/ic/ICLounge.py:924
 msgid "Offline"
 msgstr "Odjavljen"
 
-#: lib/pychess/ic/ICLounge.py:1125
+#: lib/pychess/ic/ICLounge.py:1107
 msgid ""
 "The chain button is disabled because you are logged in as a guest. Guests "
 "can't establish ratings, and the chain button's state has no effect when "
@@ -1779,88 +1779,88 @@ msgstr ""
 "imeti ranga, zato je gumb verige brez učinka, ker ne obstaja rang, na "
 "katerega bi se navezoval \"Moč nasprotnika\""
 
-#: lib/pychess/ic/ICLounge.py:1167
+#: lib/pychess/ic/ICLounge.py:1149
 msgid "Unregistered"
 msgstr "Neregistriran"
 
-#: lib/pychess/ic/ICLounge.py:1175
+#: lib/pychess/ic/ICLounge.py:1157
 msgid "Challenge: "
 msgstr "Izziv:"
 
-#: lib/pychess/ic/ICLounge.py:1218 lib/pychess/ic/ICLounge.py:1221
+#: lib/pychess/ic/ICLounge.py:1200 lib/pychess/ic/ICLounge.py:1203
 msgid "This option is not applicable because you're challenging a player"
 msgstr "Ta možnost ni na voljo, ker izzivate igralca"
 
-#: lib/pychess/ic/ICLounge.py:1234
+#: lib/pychess/ic/ICLounge.py:1216
 msgid "Edit Seek: "
 msgstr "Uredi povpraševanje: "
 
-#: lib/pychess/ic/ICLounge.py:1267
+#: lib/pychess/ic/ICLounge.py:1249
 #, python-format
 msgid "%(minutes)d min + %(gain)d sec/move"
 msgstr "%(minutes)d min + %(gain)d sec/potezo"
 
-#: lib/pychess/ic/ICLounge.py:1269
+#: lib/pychess/ic/ICLounge.py:1251
 #, python-format
 msgid "%d min"
 msgstr "%d min"
 
-#: lib/pychess/ic/ICLounge.py:1293
+#: lib/pychess/ic/ICLounge.py:1275
 msgid "Manual"
 msgstr "Ročno"
 
-#: lib/pychess/ic/ICLounge.py:1510
+#: lib/pychess/ic/ICLounge.py:1492
 msgid "You can't play rated games because you are logged in as a guest"
 msgstr "Ne morete igrati rangirane igre, ker ste prijavljeni kot gost"
 
-#: lib/pychess/ic/ICLounge.py:1514
+#: lib/pychess/ic/ICLounge.py:1496
 msgid "You can't play rated games because \"Untimed\" is checked, "
 msgstr ""
 "Ne morete igrati rangirane igre, ker je možnost \"Brez časa\" omogočena, "
 
-#: lib/pychess/ic/ICLounge.py:1515
+#: lib/pychess/ic/ICLounge.py:1497
 msgid "and on FICS, untimed games can't be rated"
 msgstr "in na FICS igre brez časa nimajo ranga"
 
-#: lib/pychess/ic/ICLounge.py:1519
+#: lib/pychess/ic/ICLounge.py:1501
 msgid "This option is not available because you're challenging a guest, "
 msgstr "Ta možnost ni na voljo, ker izzivate gosta, "
 
-#: lib/pychess/ic/ICLounge.py:1520
+#: lib/pychess/ic/ICLounge.py:1502
 msgid "and guests can't play rated games"
 msgstr "in gostje ne morejo igrati rangiranih iger"
 
-#: lib/pychess/ic/ICLounge.py:1534 lib/pychess/widgets/newGameDialog.py:237
+#: lib/pychess/ic/ICLounge.py:1516 lib/pychess/widgets/newGameDialog.py:237
 msgid "Blindfold"
 msgstr "Na slepo"
 
-#: lib/pychess/ic/ICLounge.py:1535 lib/pychess/widgets/newGameDialog.py:238
+#: lib/pychess/ic/ICLounge.py:1517 lib/pychess/widgets/newGameDialog.py:238
 msgid "Odds"
 msgstr "Neenako"
 
-#: lib/pychess/ic/ICLounge.py:1537 lib/pychess/widgets/newGameDialog.py:240
+#: lib/pychess/ic/ICLounge.py:1519 lib/pychess/widgets/newGameDialog.py:240
 #: lib/pychess/ic/managers/GameListManager.py:56
 msgid "Other"
 msgstr "Drugo"
 
-#: lib/pychess/ic/ICLounge.py:1617
+#: lib/pychess/ic/ICLounge.py:1599
 msgid "You can't select a variant because \"Untimed\" is checked, "
 msgstr "Ne morete izbrati različice, ker je izbrana možnost \"Brez časa\", "
 
-#: lib/pychess/ic/ICLounge.py:1618
+#: lib/pychess/ic/ICLounge.py:1600
 msgid "and on FICS, untimed games have to be normal chess rules"
 msgstr ""
 "in na FICS igre brez časa morajo potekati po navadnih šahovskih pravilih"
 
-#: lib/pychess/ic/ICLounge.py:1653
+#: lib/pychess/ic/ICLounge.py:1635
 msgid "Change Tolerance"
 msgstr "Spremeni odstopanje"
 
-#: lib/pychess/ic/ICLounge.py:1701
+#: lib/pychess/ic/ICLounge.py:1683
 msgid "You can only have 3 outstanding seeks"
 msgstr "Lahko imaš le 3 čakajoča povpraševanja"
 
-#: lib/pychess/ic/ICLounge.py:1702
+#: lib/pychess/ic/ICLounge.py:1684
 msgid ""
 "You can only have 3 outstanding seeks at the same time. If you want to add a "
 "new seek you must clear your currently active seeks. Clear your seeks?"
@@ -1869,7 +1869,7 @@ msgstr ""
 "povpraševanje, moraš počistiti obstoječa povpraševanja. Ali počistim "
 "obstoječa povpraševanja?"
 
-#: lib/pychess/ic/ICLounge.py:1734 lib/pychess/ic/ICLounge.py:1738
+#: lib/pychess/ic/ICLounge.py:1716 lib/pychess/ic/ICLounge.py:1720
 #: lib/pychess/widgets/TaskerManager.py:197
 #: lib/pychess/widgets/TaskerManager.py:199
 #: lib/pychess/widgets/newGameDialog.py:318
@@ -1936,20 +1936,25 @@ msgstr "Ponudi revanšo"
 msgid "Play Rematch"
 msgstr "Igraj revanšo"
 
-#: lib/pychess/widgets/gamenanny.py:139
+#: lib/pychess/widgets/gamenanny.py:140
 msgid "Undo two moves"
 msgstr "Razveljavi dve potezi"
 
-#: lib/pychess/widgets/gamenanny.py:214
+#: lib/pychess/widgets/gamenanny.py:142
+#, fuzzy
+msgid "Undo one move"
+msgstr "Razveljavi dve potezi"
+
+#: lib/pychess/widgets/gamenanny.py:220
 msgid "You sent a draw offer"
 msgstr "Poslal si ponudbo o neodločenosti"
 
-#: lib/pychess/widgets/gamenanny.py:225
+#: lib/pychess/widgets/gamenanny.py:231
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
 msgstr "<big><b>Stroj, %s, se je prekinil</b></big>"
 
-#: lib/pychess/widgets/gamenanny.py:226
+#: lib/pychess/widgets/gamenanny.py:232
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -1987,62 +1992,62 @@ msgstr ""
 "Tvoje nastavitve panela so bile ponastavljene. Če se ta težava ponavlja, "
 "prijavi težavo razvijalcem programa"
 
-#: lib/pychess/widgets/ionest.py:72 lib/pychess/widgets/ionest.py:112
-#: lib/pychess/widgets/ionest.py:129
+#: lib/pychess/widgets/ionest.py:73 lib/pychess/widgets/ionest.py:113
+#: lib/pychess/widgets/ionest.py:130
 msgid "vs"
 msgstr "nasproti"
 
-#: lib/pychess/widgets/ionest.py:154
+#: lib/pychess/widgets/ionest.py:155
 #: lib/pychess/widgets/preferencesDialog.py:43
 msgid "Guest"
 msgstr "Gost"
 
-#: lib/pychess/widgets/ionest.py:177
+#: lib/pychess/widgets/ionest.py:178
 msgid "Correct the move, or start playing with what could be read"
 msgstr "Popravi potezo, ali začni igrati, kar je lahko prebrano"
 
-#: lib/pychess/widgets/ionest.py:208 lib/pychess/widgets/newGameDialog.py:391
+#: lib/pychess/widgets/ionest.py:211 lib/pychess/widgets/newGameDialog.py:391
 msgid "Open Game"
 msgstr "Odpri igro"
 
-#: lib/pychess/widgets/ionest.py:210
+#: lib/pychess/widgets/ionest.py:213
 msgid "Save Game"
 msgstr "Shrani igro"
 
-#: lib/pychess/widgets/ionest.py:217
+#: lib/pychess/widgets/ionest.py:220
 msgid "All Files"
 msgstr "Vse datoteke"
 
-#: lib/pychess/widgets/ionest.py:220
+#: lib/pychess/widgets/ionest.py:223
 msgid "Detect type automatically"
 msgstr "Samodejno zaznaj tip"
 
-#: lib/pychess/widgets/ionest.py:224
+#: lib/pychess/widgets/ionest.py:227
 msgid "All Chess Files"
 msgstr "Vse šahovske datoteke"
 
-#: lib/pychess/widgets/ionest.py:281 lib/pychess/widgets/ionest.py:389
+#: lib/pychess/widgets/ionest.py:284 lib/pychess/widgets/ionest.py:392
 msgid "vs."
 msgstr "nasproti"
 
-#: lib/pychess/widgets/ionest.py:298
+#: lib/pychess/widgets/ionest.py:301
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
 msgstr "<big><b>Neznan tip datoteke '%s'</b></big>"
 
-#: lib/pychess/widgets/ionest.py:299
+#: lib/pychess/widgets/ionest.py:302
 #, python-format
 msgid ""
 "Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'."
 msgstr ""
 "Neznožen shraniti '%(uri)s', ker PyChess ne pozna formata '%(ending)s'."
 
-#: lib/pychess/widgets/ionest.py:313
+#: lib/pychess/widgets/ionest.py:316
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
 msgstr "<big><b>Ne morem shraniti datoteke '%s'</b></big>"
 
-#: lib/pychess/widgets/ionest.py:315
+#: lib/pychess/widgets/ionest.py:318
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
@@ -2050,42 +2055,42 @@ msgstr ""
 "Nimaš ustreznih pravic za shranjevanje datoteke.\n"
 "Prosim preveri ali si določil pravo pot in poskusi znova."
 
-#: lib/pychess/widgets/ionest.py:323
+#: lib/pychess/widgets/ionest.py:326
 msgid "_Replace"
 msgstr "_Zamenjaj"
 
-#: lib/pychess/widgets/ionest.py:327
+#: lib/pychess/widgets/ionest.py:330
 msgid "File exists"
 msgstr "Datoteka obstaja"
 
-#: lib/pychess/widgets/ionest.py:329
+#: lib/pychess/widgets/ionest.py:332
 #, python-format
 msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace it?</b></"
 "big>"
 msgstr "<big><b>Daoteka '%s' že obstaja. Ali jo želiš zamenjati?</b></big>"
 
-#: lib/pychess/widgets/ionest.py:330
+#: lib/pychess/widgets/ionest.py:333
 #, python-format
 msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr "Datoteka že obstaja v '%s'. Če jo zamenjaš, bo vsebina prepisana."
 
-#: lib/pychess/widgets/ionest.py:345
+#: lib/pychess/widgets/ionest.py:348
 msgid "Could not save the file"
 msgstr "Ne morem shraniti datoteke"
 
-#: lib/pychess/widgets/ionest.py:346
+#: lib/pychess/widgets/ionest.py:349
 msgid "<big><b>PyChess was not able to save the game</b></big>"
 msgstr "<big><b>PyChess ne more shraniti igre</b></big>"
 
-#: lib/pychess/widgets/ionest.py:347
+#: lib/pychess/widgets/ionest.py:350
 #, python-format
 msgid "The error was: %s"
 msgstr "Napaka: %s"
 
-#: lib/pychess/widgets/ionest.py:375
+#: lib/pychess/widgets/ionest.py:378
 #, python-format
 msgid "There is %d game with unsaved moves."
 msgid_plural "There are %d games with unsaved moves."
@@ -2094,11 +2099,11 @@ msgstr[1] "Obstaja %d igri z neshranjenimi potezami."
 msgstr[2] "Obstaja %d igre z neshranjenimi potezami."
 msgstr[3] "Obstaja %d iger z neshranjenimi potezami."
 
-#: lib/pychess/widgets/ionest.py:378
+#: lib/pychess/widgets/ionest.py:381
 msgid "Save moves before closing?"
 msgstr "Shrani poteze pred zapiranjem?"
 
-#: lib/pychess/widgets/ionest.py:395
+#: lib/pychess/widgets/ionest.py:398
 #, python-format
 msgid "_Save %d document"
 msgid_plural "_Save %d documents"
@@ -2107,11 +2112,11 @@ msgstr[1] "_Shrani %d dokumenta"
 msgstr[2] "_Shrani %d dokumente"
 msgstr[3] "_Shrani %d dokumentov"
 
-#: lib/pychess/widgets/ionest.py:441
+#: lib/pychess/widgets/ionest.py:444
 msgid "<b><big>Save the current game before you close it?</big></b>"
 msgstr "<b><big>Shrani trenutno igro preden zaprem?</big></b>"
 
-#: lib/pychess/widgets/ionest.py:443
+#: lib/pychess/widgets/ionest.py:446
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
@@ -2279,11 +2284,11 @@ msgstr "premik je prazen niz"
 msgid "the move is too short"
 msgstr "poteza je prekratka"
 
-#: lib/pychess/Utils/lutils/lmove.py:252
+#: lib/pychess/Utils/lutils/lmove.py:251
 msgid "the move needs a piece and a cord"
 msgstr "poteza potrebuje figuro in premik"
 
-#: lib/pychess/Utils/lutils/lmove.py:285
+#: lib/pychess/Utils/lutils/lmove.py:296
 #, python-format
 msgid "the captured cord (%s) is incorrect"
 msgstr "zavzeta notacija (%s) je napačna"
@@ -2668,6 +2673,9 @@ msgid ""
 "game progress"
 msgstr ""
 "Panel rezultatov poskuša vrednotiti položaj in prikazati graf poteka igre"
+
+#~ msgid "Active seeks: 0"
+#~ msgstr "Živa iskanja: 0"
 
 #~ msgid "23, 5000"
 #~ msgstr "23, 5000"
