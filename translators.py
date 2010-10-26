@@ -11,7 +11,7 @@ extraTranslators = collections.defaultdict(list)
 FILENAME = 'TRANSLATORS'
 POOLSIZE = 7
 
-extraTranslators["hu"] = ["Bajusz Tamás"]
+#extraTranslators["hu"] = ["Bajusz Tamás"]
 extraTranslators["sl"] = ["Igor"]
 
 ###########################
@@ -25,7 +25,7 @@ import re
 print "Getting data from Rosetta Launchpad..."
 data = urlopen('http://translations.launchpad.net/pychess/trunk/+translations').read()
 langs = re.findall('/pychess/trunk/\+pots/pychess/(.*?)/\+translate', data)
-langs.sort()    
+langs.sort()
 
 def findContributors(lang):
     site = "https://translations.launchpad.net/pychess/trunk/+pots/pychess/%s/+translate" % lang
@@ -37,12 +37,11 @@ def findContributors(lang):
     return [language, pers]
 
 with open(FILENAME,'w') as file:
-    print >> file, "PyChess is translated into %s languages." % len(langs)
-    print >> file, "We deeply thank everyone who has been involved."
     pool = Pool(POOLSIZE)
-    for lang, (language, pers) in zip(langs, pool.map(findContributors, langs)):
-        print >> file
-        print >> file, language, "translators:"
+    contributors = pool.map(findContributors, langs)
+    for lang, (language, pers) in zip(langs, contributors):
+        print >> file, "[%s] %s" % (lang, language)
         for per in extraTranslators[lang] + pers:
-            print >> file, per
+            print >> file, "     " + per
+        print >> file
 
