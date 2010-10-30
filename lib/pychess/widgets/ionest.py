@@ -80,7 +80,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     anaengines = list(discoverer.getAnalyzers())
     specs = {}
     engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
-    if engine == None: engine = anaengines[0]
+    if engine is None: engine = anaengines[0]
     if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
        gamemodel.variant.standard_rules:
         if conf.get("analyzer_check", True):
@@ -92,7 +92,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     else:
         gamemodel.hintEngineSupportsVariant = False
     engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
-    if engine == None: engine = anaengines[0]
+    if engine is None: engine = anaengines[0]
     if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
        gamemodel.variant.standard_rules:
         if conf.get("inv_analyzer_check", True):
@@ -115,7 +115,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             name0, name1 = _("White"), _("Black")
         else: name0, name1 = name0_name1
 
-        if color == None:
+        if color is None:
             name0 = repr(players[WHITE])
             name0 += player0["rating"] and " "+player0["rating"] or ""
             name1 = repr(players[BLACK])
