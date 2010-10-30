@@ -80,7 +80,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     anaengines = list(discoverer.getAnalyzers())
     specs = {}
     engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
-    if not engine: engine = anaengines[0]
+    if engine == None: engine = anaengines[0]
     if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
        gamemodel.variant.standard_rules:
         if conf.get("analyzer_check", True):
@@ -92,7 +92,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     else:
         gamemodel.hintEngineSupportsVariant = False
     engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
-    if not engine: engine = anaengines[0]
+    if engine == None: engine = anaengines[0]
     if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) or \
        gamemodel.variant.standard_rules:
         if conf.get("inv_analyzer_check", True):
