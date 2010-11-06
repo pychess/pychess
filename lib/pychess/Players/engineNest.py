@@ -158,7 +158,7 @@ class EngineDiscoverer (GObject, PooledThread):
             PYTHONPATH as well as the directory from where the 'os' module is
             imported """
         
-        if engine.find('vm') != None:
+        if engine.find('vm') is not None:
             vmpath = searchPath(engine.find('vm').get('binname'), access=os.R_OK|os.X_OK)
             if engine.get('binname') != "PyChess.py":
                 path = searchPath(engine.get('binname'), access=os.R_OK)
@@ -262,14 +262,14 @@ class EngineDiscoverer (GObject, PooledThread):
         vmpath, path = rundata
         
         # Check if filename is not set, or if it has changed
-        if engine.find("path") == None or engine.find("path").text != path:
+        if engine.find("path") is None or engine.find("path").text != path:
             return True
         # If the engine failed last time, we'll recheck it as well
         if engine.get('recheck') == "true":
             return True
         
         # Check if md5sum is not set, or if it has changed
-        if engine.find("md5") == None:
+        if engine.find("md5") is None:
             return True
         with open(path) as f:
             md5sum = md5(f.read()).hexdigest()
@@ -412,7 +412,7 @@ class EngineDiscoverer (GObject, PooledThread):
             list = self.getEngines().values()
         for engine in list:
             md5 = engine.find('md5')
-            if md5 == None: continue
+            if md5 is None: continue
             if md5.text.strip() == md5sum:
                 return engine
     
@@ -433,17 +433,17 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
-        if engine == None:
+        if engine is None:
             return Thread.getName(self)
         
         nametag = engine.find("meta/name")
-        if nametag != None:
+        if nametag is not None:
             return nametag.text.strip()
         return engine.get('binname')
     
     def getCountry (self, engine):
         country = engine.find('meta/country')
-        if country != None:
+        if country is not None:
             return country.text.strip()
         return None
    
@@ -453,7 +453,7 @@ class EngineDiscoverer (GObject, PooledThread):
         
         path = xmlengine.find('path').text.strip()
         args = [a.get('value') for a in xmlengine.findall('args/arg')]
-        if xmlengine.find('vm') != None:
+        if xmlengine.find('vm') is not None:
             vmpath = xmlengine.find('vm/path').text.strip()
             vmargs = [a.get('value') for a in xmlengine.findall('vm/args/arg')]
             args = vmargs+[path]+args
