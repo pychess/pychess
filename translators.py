@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import collections
-extraTranslators = collections.defaultdict(list)
 
 #############################
 # Configuration starts here #
@@ -10,9 +9,6 @@ extraTranslators = collections.defaultdict(list)
 
 FILENAME = 'TRANSLATORS'
 POOLSIZE = 7
-
-#extraTranslators["hu"] = ["Bajusz Tamás"]
-extraTranslators["sl"] = ["Igor"]
 
 ###########################
 # Configuration ends here #
@@ -41,7 +37,7 @@ with open(FILENAME,'w') as file:
     contributors = pool.map(findContributors, langs)
     for lang, (language, pers) in zip(langs, contributors):
         print >> file, "[%s] %s" % (lang, language)
-        for per in extraTranslators[lang] + pers:
+        for per in pers:
             print >> file, "     " + per
         print >> file
 
