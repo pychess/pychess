@@ -18,11 +18,11 @@ VERSION = pychess.VERSION
 
 DESC = "Gnome chess game"
 
-LONG_DESC = """PyChess is a gtk chess client, originally developed for gnome, but running well under all other linux desktops.
+LONG_DESC = """PyChess is a Gtk chess client, originally developed for Gnome, but running well under all other Linux desktops.
 (Which we know of, at least). PyChess is 100% python code, from the top of the UI to the bottom of the chess engine, and all code
 is licensed under the GNU General Public License.
 
-The goal of PyChess is to provide an advanced chess client for linux following the Gnome Human Interface Guidelines. The client should be usable
+The goal of PyChess is to provide an advanced chess client for Linux following the Gnome Human Interface Guidelines. The client should be usable
 to those new to chess, who just want to play a short game and get back to their work, as well as those who wants to use the computer to further
 enhance their play."""
 
