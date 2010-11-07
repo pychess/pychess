@@ -10,7 +10,7 @@ from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 from pychess.System import conf, glock, uistuff, prefix, SubProcess
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
-from pychess.Utils.const import HINT, NAME, SPY, VERSION, VERSION_NAME
+from pychess.Utils.const import HINT, NAME, SPY
 from pychess.Utils import book # Kills pychess if no sqlite available
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
@@ -25,6 +25,7 @@ from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
 from pychess.ic import ICLogon
+from pychess import VERSION, VERSION_NAME
 
 ################################################################################
 # gameDic - containing the gamewidget:gamemodel of all open games              #

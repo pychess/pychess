@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import gettext
-gettext.install("pychess", localedir="lang", unicode=1)
-
 from imp import load_module, find_module
-const = load_module("const", *find_module("const",["lib/pychess/Utils"]))
+pychess = load_module("pychess", *find_module("pychess",["lib"]))
 
 from distutils.core import setup
 from glob import glob
@@ -14,9 +11,10 @@ from os.path import isdir, isfile
 import os
 import sys
 
-# to run "setup.py register" change name to "NAME+VERSION_NAME" because already exist in pypi
+# To run "setup.py register" change name to "NAME+VERSION_NAME"
+# because pychess from another author already exist in pypi.
 NAME = "pychess"
-VERSION = const.VERSION
+VERSION = pychess.VERSION
 
 DESC = "Gnome chess game"
 
