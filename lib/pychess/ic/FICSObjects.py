@@ -6,8 +6,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
 from pychess.Variants import variants
-#from GameListManager import *
-from FingerManager import type2Type
+from pychess.ic.managers.FingerManager import type2Type
 
 wildVariants = (SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, ASYMMETRICRANDOMCHESS,
                 UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS)
@@ -200,7 +199,9 @@ class FICSPlayer (GObject):
                 numratings += 1
         return numratings > 0 and ratingtotal / numratings or 0
     
-    # FIXME: this isn't accurate at all because of inflated standard ratings and needs work
+    # FIXME: this isn't very accurate because of inflated standard ratings
+    # and deflated lightning ratings and needs work
+    # IDEA: use rank in addition to rating to determine strength
     def getStrength (self):
         if self.ratings.has_key(TYPE_BLITZ) and self.ratings[TYPE_BLITZ].deviation != None and \
            self.ratings[TYPE_BLITZ].deviation not in (DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL):

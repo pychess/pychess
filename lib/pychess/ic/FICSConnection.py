@@ -17,7 +17,7 @@ from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
-from managers.FICSObjects import FICSPlayersOnline, FICSGamesInProgress
+from FICSObjects import FICSPlayersOnline, FICSGamesInProgress
 
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction

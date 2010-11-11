@@ -1,6 +1,6 @@
 from pychess.Utils.const import *
 
-class Rating:
+class Rating (object):
     def __init__(self, ratingtype, elo, deviation = None, wins = 0, losses = 0,
                                   draws = 0, bestElo = 0, bestTime = 0):
         self.type = ratingtype

@@ -11,7 +11,7 @@ from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
-from pychess.ic.managers.FICSObjects import FICSPlayer
+from pychess.ic.FICSObjects import FICSPlayer
 
 TYPE_PERSONAL, TYPE_CHANNEL = range(2)
 

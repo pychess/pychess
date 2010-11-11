@@ -7,7 +7,7 @@ from pychess.System.Log import log
 from pychess.Utils.const import *
 from GameListManager import strToVariant, unsupportedWilds
 from pychess.Variants import variants
-from FICSObjects import FICSPlayer, FICSGame, FICSBoard
+from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard
 from pychess.ic.VerboseTelnet import *
 
 names = "(\w+)"
