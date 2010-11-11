@@ -149,13 +149,15 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
 
     def setFromConf ():
         try:
-            set_value(conf.getStrict(key))
+            v = conf.getStrict(key)
         except TypeError:
-            log.warn("Key '%s' from conf had the wrong type '%s', ignored" % \
+            log.warn("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" % \
                      (key, type(conf.getStrict(key))))
             if first_value != None:
                 conf.set(key, first_value)
             else: conf.set(key, get_value())
+        else:
+            set_value(v)
     
     def callback(*args):
         if not conf.hasKey(key) or conf.getStrict(key) != get_value():
@@ -173,7 +175,8 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
 # sets of values/configurations and which also aren't instant save like in
 # uistuff.keep(), but rather are saved later if and when the user clicks
 # the dialog's OK button
-def loadDialogWidget (widget, widget_name, config_number, get_value_=None, set_value_=None, first_value=None):
+def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
+                      set_value_=None, first_value=None):
     key = widget_name + "-" + str(config_number)
     
     if widget == None:
@@ -199,18 +202,21 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None, set_v
     
     if conf.hasKey(key):
         try:
-            set_value(conf.getStrict(key))
+            v = conf.getStrict(key)
         except TypeError:
-            log.warn("Key '%s' from conf had the wrong type '%s', ignored" % \
+            log.warn("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" % \
                      (key, type(conf.getStrict(key))))
             if first_value != None:
                 conf.set(key, first_value)
             else: conf.set(key, get_value())
+        else:
+            set_value(v)
     elif first_value != None:
         conf.set(key, first_value)
         set_value(conf.getStrict(key))
     else:
-        log.warn("Didn't load widget \"%s\": no conf value and no first_value arg" % widget_name)
+        log.warn("Didn't load widget \"%s\": no conf value and no first_value arg" % \
+                 widget_name)
 
 def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
     key = widget_name + "-" + str(config_number)
