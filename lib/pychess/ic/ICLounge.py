@@ -973,10 +973,6 @@ class SeekChallengeSection (ParrentListSection):
         PAWNSPUSHEDCHESS : TYPE_WILD,
         PAWNSPASSEDCHESS : TYPE_WILD,
         LOSERSCHESS : TYPE_LOSERS,
-        PAWNODDSCHESS : TYPE_WILD,
-        KNIGHTODDSCHESS : TYPE_WILD,
-        ROOKODDSCHESS : TYPE_WILD,
-        QUEENODDSCHESS : TYPE_WILD,
     }
     
     seekEditorWidgets = (
@@ -1514,7 +1510,6 @@ class SeekChallengeSection (ParrentListSection):
         combo.set_model(model)
         
         groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
-                      VARIANTS_ODDS: _("Odds"),
                       VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other")}
         ficsvariants = [v for k, v in variants.iteritems() if k in self.variants.keys()]
@@ -1539,7 +1534,8 @@ class SeekChallengeSection (ParrentListSection):
             path = model.get_path(combo.get_active_iter())
             return pathToVariant[path]
         def comboSetter (combo, variant):
-            assert variant in variants, "not a variant: \"%s\"" % str(variant)
+            assert variant in self.variants.keys(), \
+                "not a supported FICS variant: \"%s\"" % str(variant)
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
     
