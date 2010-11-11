@@ -2,7 +2,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
 from pychess.System.Log import log
-from FICSObjects import FICSPlayer, FICSGame
+from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 
 #types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
@@ -192,6 +192,7 @@ class GameListManager (GObject):
         self.connection.lvm.setVariable("pin", True)
         self.connection.lvm.setVariable("allresults", True)
         
+        # TODO: This makes login take alot longer... maybe gobject.timeout_add it?
         self.who()
         
         #b: blitz      l: lightning   u: untimed      e: examined game

@@ -31,7 +31,7 @@ from pychess.Savers import pgn, fen
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
-from managers.FICSObjects import *
+from FICSObjects import *
 from ICGameModel import ICGameModel
 from pychess.Utils.Rating import Rating
 
@@ -763,12 +763,14 @@ class PlayerTabSection (ParrentListSection):
                 #TODO: isadmin og type
     
     def onObserveClicked (self, button):
-        playername = self.getSelectedPlayerName()
-        if playername is None: return
-        player = FICSPlayer(playername)
-        playersonline = self.connection.playersonline
-        if player in playersonline and playersonline[player].game:
-            self.connection.bm.observe(playersonline[player].game.gameno)
+        player = self.getSelectedPlayerName()
+        if player is None: return
+        try:
+            player = self.connection.playersonline[FICSPlayer(player)]
+        except KeyError:
+            player = None
+        if player is not None and player.game is not None:
+            self.connection.bm.observe(player.game.gameno)
         
     def onSelectionChanged (self, selection):
         player = self.getSelectedPlayerName()
@@ -1254,7 +1256,8 @@ class SeekChallengeSection (ParrentListSection):
     
     def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
-        min, gain, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
+        min, gain, variant, ratingrange, color, rated, manual = \
+            self.__getSeekEditorDialogValues()
         isUntimedGame = True if min is 0 else False
         radioText = self.__getNameOfTimeControl(min, gain)
         self.savedSeekRadioTexts[seeknumber-1] = radioText
@@ -1264,7 +1267,8 @@ class SeekChallengeSection (ParrentListSection):
         if isUntimedGame:
             seek["time"] = _("Untimed")
         elif gain > 0:
-            seek["time"] = _("%(minutes)d min + %(gain)d sec/move") % {'minutes' : min, 'gain' : gain}
+            seek["time"] = _("%(minutes)d min + %(gain)d sec/move") % \
+                {'minutes' : min, 'gain' : gain}
         else:
             seek["time"] = _("%d min") % min
         
@@ -1726,7 +1730,7 @@ class CreatedBoards (Section):
         self.connection.gamesinprogress.connect("FICSObsGameCreated", self.onObserveGameCreated)
 
     def onGameCreated (self, bm, ficsgame):
-        log.debug("ICLounge.playBoardCreated: %s\n" % board)
+        log.debug("ICLounge.playBoardCreated: %s\n" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:
