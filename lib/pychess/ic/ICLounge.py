@@ -372,19 +372,21 @@ class SeekTabSection (ParrentListSection):
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
-        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float, str)
+        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns (self.tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
-                         _("Type"), _("Clock"), "", "", hide=[0,7,8], pix=[1] )
+        self.addColumns (self.tv, "gameno", "", _("Name"), _("Rating"),
+                         _("Rated"), _("Type"), _("Clock"), "gametime",
+                         "textcolor", "tooltip", hide=[0,7,8,9], pix=[1] )
         self.tv.set_search_column(2)
-        for i in range(2,7):
+        self.tv.set_tooltip_column(9,)
+        for i in range(1, 7):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-        for n in range(1,6):
+        for n in range(1, 6):
             column = self.tv.get_column(n)
             for cellrenderer in column.get_cell_renderers():
                 column.add_attribute(cellrenderer, "foreground", 8)
@@ -394,6 +396,7 @@ class SeekTabSection (ParrentListSection):
         self.selection.connect("changed", self.onSelectionChanged)
         self.widgets["clearSeeksButton"].connect("clicked", self.onClearSeeksClicked)
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
+        self.widgets["declineButton"].connect("clicked", self.onDeclineClicked)
         self.tv.connect("row-activated", self.row_activated)
         
         self.connection.glm.connect("addSeek", lambda glm, seek:
@@ -460,8 +463,15 @@ class SeekTabSection (ParrentListSection):
         nametitle = ficsplayer.name + ficsplayer.getTitles()
         textcolor = "grey" if ficsplayer.name == self.connection.getUsername() \
                            else "black"
-        seek_ = [seek["gameno"], pix, nametitle, int(seek["rt"]), rated, seek["tp"],
-                 time, float(seek["t"] + "." + seek["i"]), textcolor]
+        is_rated = False if seek["r"] == "u" else True
+        is_computer = ficsplayer.isComputer()
+        tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
+            seek["rt"], is_computer, is_rated, seek["manual"],
+            seek["tp"], seek["t"], seek["i"])
+        seek_ = [seek["gameno"], pix, nametitle, int(seek["rt"]), rated,
+                 seek["tp"], time, float(seek["t"] + "." + seek["i"]),
+                 textcolor, tooltiptext]
+
         if textcolor == "grey":
             ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
@@ -493,9 +503,17 @@ class SeekTabSection (ParrentListSection):
         except KeyError:
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
-        ti = self.store.prepend(["C"+index, self.chaPix, nametitle,
-                                int(match["rt"]), rated, match["tp"], time,
-                                float(match["t"] + "." + match["i"]), "black"])
+        is_rated = False if match["r"] == "u" else True
+        is_computer = ficsplayer.isComputer()
+        is_manual = False
+        tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
+            match["rt"], is_computer, is_rated, is_manual, match["tp"],
+            match["t"], match["i"])
+        ti = self.store.prepend (["C"+index, self.chaPix, nametitle,
+                                  int(match["rt"]), rated, match["tp"], time,
+                                  float(match["t"] + "." + match["i"]),
+                                  "black", tooltiptext])
+
         self.challenges[index] = ti
         self.__updateActiveSeeksLabel()
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
@@ -522,6 +540,14 @@ class SeekTabSection (ParrentListSection):
         else:
             self.connection.om.playIndex(gameno)
 
+    def onDeclineClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        gameno = model.get_value(iter, 0)
+        if gameno.startswith("C"):
+            gameno = gameno[1:]
+        self.connection.om.declineIndex(gameno)
+        
     def onClearSeeksClicked (self, button):
         print >> self.connection.client, "unseek"
         self.widgets["clearSeeksButton"].set_sensitive(False)
@@ -601,6 +627,21 @@ class SeekGraphSection (ParrentListSection):
     def onSpotClicked (self, graph, name):
         self.connection.bm.play(name)
 
+    @classmethod
+    def getSeekTooltipText (cls, name, rating, is_computer, is_rated, is_manual,
+                            gametype, min, gain):
+        if int(rating) == 0:
+            rating = _("Unrated")
+        text = "%s (%s)" % (name, rating)
+        if is_computer:  # remove from testing/ficsmanagers.py as well when removing this
+            text += " (%s)" % _("Computer Player")
+        rated = _("Rated") if is_rated else _("Unrated")
+        text += "\n%s %s" % (rated, gametype)
+        text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': min, 'sec': gain}
+        if is_manual:
+            text += "\n%s" % _("Manual Acceptance")
+        return text
+    
     def onSeekAdd (self, seek):
         x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
@@ -610,14 +651,9 @@ class SeekGraphSection (ParrentListSection):
         except KeyError:
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
-        text = "%s (%s)" % (nametitle, seek["rt"])
-        if seek["cp"]:  # remove from testing/ficsmanagers.py as well when removing this
-            text += " (%s)" % _("Computer Player")
-        rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-        text += "\n%s %s" % (rated, seek["tp"])
-        text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
-        if seek["manual"]:
-            text += "\n%s" % _("Manual Acceptance")
+        is_rated = False if seek["r"] == "u" else True
+        text = self.getSeekTooltipText(nametitle, seek["rt"], seek["cp"], is_rated,
+                                       seek["manual"], seek["tp"], seek["t"], seek["i"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
@@ -1248,9 +1284,16 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["editSeekDialog"].present()
     
     def onSeekSelectionChanged (self, selection):
-        # You can't press "Accept" button when nobody are selected
-        isAnythingSelected = selection.get_selected()[1] != None
-        self.widgets["acceptButton"].set_sensitive(isAnythingSelected)
+        model, iter = selection.get_selected()
+        a_seek_is_selected = False
+        selection_is_challenge = False
+        if iter != None:
+            a_seek_is_selected = True
+            gameno = model.get_value(iter, 0)
+            if gameno.startswith("C"):
+                selection_is_challenge = True
+        self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
+        self.widgets["declineButton"].set_sensitive(selection_is_challenge)
     
     #-------------------------------------------------------- Seek Editor
     
