@@ -13,6 +13,7 @@ from urllib import urlopen, urlencode
 from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
+import pychess
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.book import getOpenings
@@ -242,7 +243,7 @@ class PyChessCECP(PyChess):
             "draw": 1,
             "sigterm": 1,
             "variants": "normal,nocastle,fischerandom",
-            "myname": "PyChess %s" % VERSION
+            "myname": "PyChess %s" % pychess.VERSION
         }
     
     def makeReady(self):
@@ -538,7 +539,7 @@ class PyChessFICS(PyChess):
         self.connection.lvm.setVariable("autoflag", True)
         
         self.connection.fm.setFingerNote(1,
-            "PyChess is the chess engine bundled with the PyChess %s " % VERSION +
+            "PyChess is the chess engine bundled with the PyChess %s " % pychess.VERSION +
             "chess client. This instance is owned by %s, but acts " % self.owner +
             "quite autonomously.")
         
