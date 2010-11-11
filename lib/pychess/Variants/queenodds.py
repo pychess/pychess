@@ -14,6 +14,7 @@ class QueenOddsBoard(Board):
 
 
 class QueenOddsChess:
+    __desc__ = _("One player starts with one less queen piece")
     name = _("Queen odds")
     cecp_name = "normal"
     board = QueenOddsBoard
