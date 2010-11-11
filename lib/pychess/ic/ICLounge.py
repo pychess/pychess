@@ -1664,6 +1664,9 @@ class SeekChallengeSection (ParrentListSection):
     def onVariantComboChanged (self, combo):
         self.widgets["variantRadio"].set_active(True)            
         self.__updateYourRatingHBox()
+        min, gain, variant, ratingrange, color, rated, manual = \
+            self.__getSeekEditorDialogValues()
+        self.widgets["variantCombo"].set_tooltip_text(variants[variant].__desc__)
 
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
