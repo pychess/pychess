@@ -2,6 +2,7 @@ import re, socket
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
+import pychess
 from pychess.System.Log import log
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
@@ -175,7 +176,7 @@ class FICSConnection (Connection):
             self.lvm = ListAndVarManager(self)
             while not self.lvm.isReady():
                 self.client.handleSomeText(self.predictions)
-            self.lvm.setVariable("interface", NAME+" "+VERSION)
+            self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
             
             # FIXME: Some managers use each other to avoid regexp collapse. To
             # avoid having to init the in a specific order, connect calls should
