@@ -6,7 +6,8 @@ from pychess.Utils.const import *
 
 def testRepetition (board):
     if len(board.history) >= 8:
-        if [h[4] for h in itertools.islice(board.history, 0, None, 2)].count(board.hash) >= 2:
+        hash_list = [h[4] for h in itertools.islice(board.history, 0, None, 2) if h is not None]
+        if hash_list.count(board.hash) >= 2:
             return True
     return False
 
