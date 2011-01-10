@@ -559,7 +559,7 @@ class CECPEngine (ProtocolEngine):
         
         if self.features["san"]:
             print >> self.engine, toSAN(board, move)
-        else: print >> self.engine, toAN(board, move)
+        else: print >> self.engine, toAN(board, move, short=True)
     
     def __tellEngineToMoveNow (self):
         if self.features["sigint"]:
