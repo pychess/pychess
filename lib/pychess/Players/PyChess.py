@@ -238,6 +238,7 @@ class PyChessCECP(PyChess):
         self.features = {
             "setboard": 1,
             "analyze": 1,
+            "san": 1,
             "usermove": 1,
             "reuse": 0,
             "draw": 1,
