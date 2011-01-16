@@ -322,7 +322,7 @@
                 <child>
                   <widget class="GtkButton" id="createNewButton">
                     <property name="label" translatable="yes" context="yes">S_ign up</property>
-                    <property name="width_request">85</property>
+                    <property name="width_request">100</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="can_default">True</property>
@@ -338,7 +338,7 @@
             <child>
               <widget class="GtkButton" id="cancelButton">
                 <property name="label">gtk-cancel</property>
-                <property name="width_request">85</property>
+                <property name="width_request">100</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -353,7 +353,7 @@
             <child>
               <widget class="GtkButton" id="connectButton">
                 <property name="label">gtk-connect</property>
-                <property name="width_request">85</property>
+                <property name="width_request">100</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="has_focus">True</property>
@@ -371,7 +371,7 @@
             <child>
               <widget class="GtkButton" id="stopButton">
                 <property name="label">gtk-stop</property>
-                <property name="width_request">85</property>
+                <property name="width_request">100</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
