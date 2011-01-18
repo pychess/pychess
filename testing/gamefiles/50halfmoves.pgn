@@ -1,0 +1,23 @@
+[White "Thomas Dybdahl Ahle"]
+[WhiteNA "Unknown"]
+[Black "Thomas Dybdahl Ahle"]
+[BlackNA "Unknown"]
+[BlackType "human"]
+[WhiteType "human"]
+[RulesVariation "Standard"]
+[Date "2006.12.05"]
+[Time "06:58:39"]
+[Site "localhost.localdomain"]
+[Event "Knights Computer Chess Game"]
+[Round "-"]
+[Result "1/2-1/2"]
+[PlyCount "91"]
+
+1. a4 a5 2. b4 b6 3. c4 c5 4. d4 d5 5. e4 e5 6. f4 f5 7. g4 g5 8. h4 h5 9. bxa5
+bxa5 10. cxd5 cxd4 11. exf5 exf4 12. gxh5 gxh4 13. d6 d3 14. f6 f3 15. h6 h3
+16. d7+ Bxd7 17. f7+ Kxf7 18. h7 Rxh7 19. Qxd3 f2+ 20. Kxf2 h2 21. Rxh2 Rg7 22.
+Rh3 Rg6 23. Rh4 Rf6+ 24. Ke2 Re6+ 25. Kd2 Rd6 26. Rh5 Rc6 27. Rh6 Rc7 28. Rh5
+Rb7 29. Rh4 Rba7 30. Rh3 Ra6 31. Rg3 Rb6 32. Rg2 Rb7 33. Rf2+ Ke8 34. Kd1 Qe7
+35. Qd2 Nf6 36. Rf3 Raa7 37. Rg3 Rb6 38. Rg4 Rba6 39. Rf4 Rb7 40. Rf3 Rab6 41.
+Rf4 Ra7 42. Rf5 Rba6 43. Rf3 Rb6 44. Rf5 Ra8 45. Rf3 Rc6 46. Rg3 1/2-1/2
+
