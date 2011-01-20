@@ -508,8 +508,8 @@
     <property name="type_hint">normal</property>
     <property name="copyright">Copyright &#xA9; 2006-2010</property>
     <property name="comments" translatable="yes">Chess client for the Gnome desktop</property>
-    <property name="website">http://code.google.com/p/pychess/</property>
-    <property name="website_label">http://code.google.com/p/pychess/</property>
+    <property name="website">http://code.google.com/p/pychess</property>
+    <property name="website_label">http://code.google.com/p/pychess</property>
     <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
 the Free Software Foundation; either version 2 of the License, or 
