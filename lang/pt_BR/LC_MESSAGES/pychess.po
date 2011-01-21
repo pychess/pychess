@@ -8,20 +8,21 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-27 08:42+0200\n"
-"PO-Revision-Date: 2010-11-28 03:35+0000\n"
+"PO-Revision-Date: 2011-01-21 02:01+0000\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2011-01-16 03:16+0000\n"
-"X-Generator: Launchpad (build 12200)\n"
+"X-Launchpad-Export-Date: 2011-01-21 02:04+0000\n"
+"X-Generator: Launchpad (build 12214)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
 msgstr ""
-"<big><b>PyChess está verificando seus engines de xadrez. Por favor espere.</b></big>"
+"<big><b>PyChess está verificando seus motores de xadrez. Por favor "
+"espere.</b></big>"
 
 #: glade/discovererDialog.glade:70
 msgid "PyChess.py:"
@@ -666,7 +667,8 @@ msgstr "Es_conder abas quando houver somente um jogo aberto"
 msgid ""
 "If set, this hides the tab in the top of the playing window, when it is not "
 "needed."
-msgstr "Se marcado, a aba será escondida do topo da janela que estiver jogando."
+msgstr ""
+"Se marcado, a aba será escondida do topo da janela que estiver jogando."
 
 #: glade/PyChess.glade:940
 msgid "Auto _rotate board to current human player"
@@ -677,8 +679,8 @@ msgid ""
 "If set, the board will turn after each move, to show the natural view for "
 "the current player."
 msgstr ""
-"Se marcado, o tabuleiro será rotacionado depois de cada movimento, para mostrar a visualização natural "
-"do jogador atual."
+"Se marcado, o tabuleiro será rotacionado depois de cada movimento, para "
+"mostrar a visualização natural do jogador atual."
 
 #: glade/PyChess.glade:957
 msgid "Face _to Face display mode"
@@ -689,8 +691,8 @@ msgid ""
 "If set, the black pieces will be head down, suitable for playing against "
 "friends on mobile devices."
 msgstr ""
-"Se marcado, as peças pretas ficarão de cabeça para baixo, suitable para jogar contra "
-"amigos em aparelhos móveis."
+"Se marcado, as peças pretas ficarão de cabeça para baixo, adequado para "
+"jogar contra amigos em aparelhos móveis."
 
 #: glade/PyChess.glade:973
 msgid "Sho_w cords"
@@ -701,8 +703,8 @@ msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
 msgstr ""
-"Se marcado, o tabuleiro mostrará as coordenadas de cada campo do xadrez."
-"Isto é utilizado para a notação do xadrez."
+"Se marcado, o tabuleiro mostrará as coordenadas de cada campo do xadrez.Isto "
+"é utilizado para a notação do xadrez."
 
 #: glade/PyChess.glade:989
 msgid "Prefer figures in _notation"
@@ -713,8 +715,8 @@ msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
 msgstr ""
-"Se marcado, o PyChess utilizará figuras para mostrar as peças movidas, ao invés "
-"de letras maiúsculas."
+"Se marcado, o PyChess utilizará figuras para mostrar as peças movidas, ao "
+"invés de letras maiúsculas."
 
 #: glade/PyChess.glade:1005
 msgid "Auto ca_ll flag"
@@ -725,8 +727,8 @@ msgid ""
 "If set, PyChess will automatically end games, where a player has exceeded "
 "his or her timelimit."
 msgstr ""
-"Se marcado, o PyChess terminará os jogos automaticamente quando um jogador exceder "
-"seu tempo limite."
+"Se marcado, o PyChess terminará os jogos automaticamente quando um jogador "
+"exceder seu tempo limite."
 
 #: glade/PyChess.glade:1031
 msgid "<b>General Display Options</b>"
@@ -775,7 +777,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1296
 msgid "<b>Chess Engines</b>"
-msgstr "Engine de Xadrez"
+msgstr "Motores de Xadrez"
 
 #: glade/PyChess.glade:1329
 msgid "Use _analyzer"
@@ -1350,7 +1352,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:21
 msgid "Your opponent wants to adjourn the game. Accept?"
-msgstr "Seu adversário quer agendar para outra data o jogo. Aceita?"
+msgstr "Seu adversário quer agendar o jogo para outra data. Aceita?"
 
 #: lib/pychess/Players/Human.py:22
 msgid ""
@@ -1539,14 +1541,12 @@ msgstr ""
 #: lib/pychess/Players/Human.py:238
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr "%s foi aceito por seu adversário"
+msgstr "%s foi recusado por seu adversário"
 
 #: lib/pychess/Players/Human.py:239
 msgid ""
 "You can try to send the offer to your opponent later in the game again."
-msgstr ""
-"Você pode tentar enviar uma oferta mais tarde a seu adversário no jogo outra "
-"vez."
+msgstr "Você pode tentar enviar uma oferta mais tarde a seu adversário."
 
 #: lib/pychess/Players/Human.py:246
 #, python-format
@@ -1619,7 +1619,7 @@ msgstr "Endereço de destino inacessível"
 
 #: lib/pychess/System/ping.py:77
 msgid "Died"
-msgstr ""
+msgstr "Encerrado"
 
 #: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:63
 msgid "Wild"
@@ -1824,7 +1824,7 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:42 lib/pychess/Utils/repr.py:43
 #, python-format
 msgid "Because the %(white)s engine died"
-msgstr "Porque o processo do engine %(white)s morreu"
+msgstr "Porque o processo do motor de xadrez %(white)s foi encerrado"
 
 #: lib/pychess/Utils/repr.py:44
 msgid "Because the connection to the server was lost"
@@ -1956,7 +1956,7 @@ msgstr "Você enviou uma oferta de empate"
 #: lib/pychess/widgets/gamenanny.py:231
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr "<big><b>Engine %s, foi encerrado</b></big>"
+msgstr "<big><b>Motor de xadrez %s, foi encerrado</b></big>"
 
 #: lib/pychess/widgets/gamenanny.py:232
 msgid ""
@@ -1965,10 +1965,10 @@ msgid ""
 "You can try to start a new game with the engine, or try to play against "
 "another one."
 msgstr ""
-"PyChess perdeu a conexão com o engine de xadrez, provavelmente porque o "
-"processo morreu.\n"
-"Você pode tentar iniciar um novo jogo com o engine, ou tentar jogar contra "
-"outro."
+"PyChess perdeu a conexão com o motor de xadrez, provavelmente porque o "
+"processo foi encerrado.\n"
+"Você pode tentar iniciar um novo jogo com o motor de xadrez, ou tentar jogar "
+"contra outro."
 
 #: lib/pychess/widgets/gamewidget.py:190
 msgid "Jump to initial position"
@@ -2305,11 +2305,11 @@ msgstr ""
 
 #: lib/pychess/ic/managers/ChatManager.py:123
 msgid "Shout"
-msgstr ""
+msgstr "Shout"
 
 #: lib/pychess/ic/managers/ChatManager.py:124
 msgid "Chess Shout"
-msgstr ""
+msgstr "Xadrez Shout"
 
 #: lib/pychess/ic/managers/ChatManager.py:134
 #, python-format
@@ -2524,12 +2524,12 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:470
 #, python-format
 msgid "%(color)s got a double pawn %(place)s"
-msgstr ""
+msgstr "%(color)s tem um peão duplo %(place)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:471
 #, python-format
 msgid "%(color)s got new double pawns %(place)s"
-msgstr ""
+msgstr "%(color)s tem novos peões duplos %(place)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:478
 #, python-format
