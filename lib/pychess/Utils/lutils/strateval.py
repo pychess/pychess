@@ -127,7 +127,7 @@ def prefix_type (model, ply, phase):
     flag = FLAG(model.getMoveAtPly(ply-1).move)
 
     if flag in PROMOTIONS:
-        yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
+        yield _("promotes a Pawn to a %s") % reprPiece[flag-2]
 
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
         yield _("castles")
