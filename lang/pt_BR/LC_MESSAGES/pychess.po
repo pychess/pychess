@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-27 08:42+0200\n"
-"PO-Revision-Date: 2011-01-29 19:26+0000\n"
+"PO-Revision-Date: 2011-01-21 02:01+0000\n"
 "Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2011-01-29 19:28+0000\n"
-"X-Generator: Launchpad (build 12274)\n"
+"X-Launchpad-Export-Date: 2011-01-21 02:04+0000\n"
+"X-Generator: Launchpad (build 12214)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -179,7 +179,7 @@ msgstr "_Reiniciar"
 
 #: glade/fics_lounge.glade:1037
 msgid "_Adjourned"
-msgstr "_Agendar"
+msgstr ""
 
 #: glade/fics_lounge.glade:1134
 msgid "<b>News</b>"
@@ -2412,15 +2412,15 @@ msgstr "empates"
 
 #: lib/pychess/Utils/lutils/strateval.py:43
 msgid "mates"
-msgstr "fazem xeque-mate"
+msgstr "mates"
 
 #: lib/pychess/Utils/lutils/strateval.py:47
 msgid "puts opponent in check"
-msgstr "colocam o adversário em xeque"
+msgstr "colocar o adversário em xeque"
 
 #: lib/pychess/Utils/lutils/strateval.py:71
 msgid "improves king safety"
-msgstr "melhoram a segurança do Rei"
+msgstr "melhora a segurança do Rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:73
 msgid "slightly improves king safety"
@@ -2428,11 +2428,11 @@ msgstr "melhora ligeiramente a segurança do rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:106
 msgid "moves a rook to an open file"
-msgstr "movem uma torre para uma coluna aberta"
+msgstr "move uma torre para uma casa aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:107
 msgid "moves an rook to a half-open file"
-msgstr "movem uma torre para uma coluna meia aberta"
+msgstr "move uma torre para uma casa meia aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:117
 #: lib/pychess/Utils/lutils/strateval.py:119
@@ -2449,11 +2449,11 @@ msgstr "promove um peão para um %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:133
 msgid "castles"
-msgstr "rocam"
+msgstr "castelos"
 
 #: lib/pychess/Utils/lutils/strateval.py:156
 msgid "takes back material"
-msgstr "voltam peça"
+msgstr "voltar peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:160
 msgid "sacrifies material"
@@ -2461,11 +2461,11 @@ msgstr "sacrifica peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:162
 msgid "exchanges material"
-msgstr "trocam peça"
+msgstr "troca peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:164
 msgid "captures material"
-msgstr "capturam peça"
+msgstr "captura peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:285
 #, python-format
@@ -2485,12 +2485,12 @@ msgstr "aumenta a pressão em %s"
 #: lib/pychess/Utils/lutils/strateval.py:292
 #, python-format
 msgid "defends %s"
-msgstr "defendem %s"
+msgstr "defende %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:329
 #, python-format
 msgid "pins an enemy %(oppiece)s on the %(piece)s at %(cord)s"
-msgstr "ameaçam %(oppiece)s para atacar %(piece)s em %(cord)s"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:362
 #, python-format
@@ -2509,17 +2509,17 @@ msgstr "%(color)s tem um novo peão passado em %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:463
 msgid "half-open"
-msgstr "meio aberta"
+msgstr "meio-jogo"
 
 #: lib/pychess/Utils/lutils/strateval.py:465
 #, python-format
 msgid "in the %(x)s%(y)s file"
-msgstr "na coluna %(x)s%(y)s"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:467
 #, python-format
 msgid "in the %(x)s%(y)s files"
-msgstr "na(s) coluna(s) %(x)s%(y)s"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:470
 #, python-format
@@ -2535,8 +2535,8 @@ msgstr "%(color)s tem novos peões duplos %(place)s"
 #, python-format
 msgid "%(color)s got an isolated pawn in the %(x)s file"
 msgid_plural "%(color)s got isolated pawns in the %(x)s files"
-msgstr[0] "%(color)s tem peão isolado na coluna %(x)s"
-msgstr[1] "%(color)s tem peões isolados nas colunas %(x)s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: lib/pychess/Utils/lutils/strateval.py:485
 #, python-format
