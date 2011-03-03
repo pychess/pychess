@@ -280,7 +280,11 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def __clean(self, rundata, engine):
         """ Grab the engine from the backup and attach the attributes from
-            rundata. The 'new' engine is returned and ready for discovering """
+            rundata. The 'new' engine is returned and ready for discovering.
+        
+            If engine doesn't exist in backup, an 'unsupported engine' warning
+            is logged, and a new engine element is created for it
+        """
         
         vmpath, path = rundata
         
@@ -288,14 +292,21 @@ class EngineDiscoverer (GObject, PooledThread):
             md5sum = md5(f.read()).hexdigest()
         
         ######
-        # Vind the backup engine
+        # Find the backup engine
         ######
         try:
             engine2 = (c for c in self.backup.findall('engine')
                        if c.get('binname') == engine.get('binname')).next()
         except StopIteration:
-            log.warn("Engine '%s' is no longer suported" % engine.get('binname'))
-            return None
+            log.warn("Engine '%s' has not been tested and verified to work with PyChess\n" % \
+                engine.get('binname'))
+            engine2 = fromstring('<engine></engine>')
+            engine2.set('binname', engine.get('binname'))
+            engine2.set('protocol', engine.get('protocol'))
+            if engine.get('protover'):
+                engine2.set('protover', engine.get('protover'))
+            engine2.set('recheck', 'true')
+
         # This doesn't work either. Dammit python
         # engine = any(c for c in self.backup.getchildren()
         #             if c.get('binname') == engine.get('binname'))
@@ -324,7 +335,7 @@ class EngineDiscoverer (GObject, PooledThread):
             # Find the known and installed engines on the system
             ######
             
-            # Validate slihtly
+            # Validate slightly
             if not engine.get("protocol") or not engine.get("binname"):
                 log.warn("Engine '%s' lacks protocol/binname attributes. Skipping\n" % \
                          engine.get('binname'))
