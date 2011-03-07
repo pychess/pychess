@@ -32,7 +32,6 @@ from pychess import VERSION, VERSION_NAME
 # gameDic - containing the gamewidget:gamemodel of all open games              #
 ################################################################################
 gameDic = {}
-chessFiles = {}
 
 class GladeHandlers:
     
@@ -94,7 +93,7 @@ class GladeHandlers:
         ICLogon.run()
     
     def on_load_game1_activate (widget):
-        newGameDialog.LoadFileExtension.run(None, chessFiles)
+        newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate (widget):
         # Not implemented
@@ -294,7 +293,7 @@ class PyChess:
     def handleArgs (self, args):
         if args:
             def do (discoverer):
-                newGameDialog.LoadFileExtension.run(args[0], chessFiles)
+                newGameDialog.LoadFileExtension.run(args[0])
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
 def run (args):
