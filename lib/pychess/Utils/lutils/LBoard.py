@@ -629,7 +629,7 @@ class LBoard:
             b += "\n"
         return b
     
-    def asFen (self):
+    def asFen (self, useXFen=False):
         fenstr = []
         
         rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
@@ -663,7 +663,17 @@ class LBoard:
         if not self.enpassant:
             fenstr.append("-")
         else:
-            fenstr.append(reprCord[self.enpassant])
+            fwdPawns = self.boards[self.color][PAWN]
+            if self.color == WHITE:
+                fwdPawns >>= 8
+            else:
+                fwdPawns <<= 8
+            pawnTargets  = (fwdPawns & ~fileBits[0]) << 1;
+            pawnTargets |= (fwdPawns & ~fileBits[7]) >> 1;
+            if useXFen and not pawnTargets & bitPosArray[self.enpassant]:
+                fenstr.append("-")
+            else:
+                fenstr.append(reprCord[self.enpassant])
         fenstr.append(" ")
         
         fenstr.append(str(self.fifty))
