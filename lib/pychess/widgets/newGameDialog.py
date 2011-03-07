@@ -369,7 +369,7 @@ class LoadFileExtension (_GameInitializationMode):
                 cls.filechooserbutton, opendialog, enddir)
 
     @classmethod
-    def run (cls, uri=None, chessFiles=None):
+    def run (cls, uri=None):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -397,8 +397,6 @@ class LoadFileExtension (_GameInitializationMode):
                 loader = ionest.enddir[uri[uri.rfind(".")+1:]]
                 position = cls.loadSidePanel.get_position()
                 gameno = cls.loadSidePanel.get_gameno()
-                if chessFiles:
-                    chessFiles[uri] = cls.loadSidePanel.chessfile
                 ionest.generalStart(gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
                 ionest.generalStart(gamemodel, p0, p1)
