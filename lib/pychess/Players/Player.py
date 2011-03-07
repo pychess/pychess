@@ -22,7 +22,7 @@ class Player (GObject):
     
     def __init__ (self):
         GObject.__init__(self)
-        self.name = None
+        self.name = ""
     
     def setName (self, name):
         """ __repr__ should return this name """
