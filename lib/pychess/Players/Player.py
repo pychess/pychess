@@ -100,6 +100,18 @@ class Player (GObject):
             current """
         #Optional
     
+    def playerUndoMoves (self, moves, gamemodel):
+        """ Some players undo different depending on whether they are players or
+            spectactors. This is a convenient way to handle that. """  
+        #Optional
+        return self.undoMoves (moves, gamemodel)
+    
+    def spectatorUndoMoves (self, moves, gamemodel):
+        """ Some players undo different depending on whether they are players or
+            spectactors. This is a convenient way to handle that. """  
+        #Optional
+        return self.undoMoves (moves, gamemodel)
+    
     def putMessage (self, message):
         """ Sends the player a chatmessage """
         #Optional
