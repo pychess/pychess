@@ -137,6 +137,16 @@ def onAnalyze(analyzer, pv, score):
         values[game.ply] = (pv, score*(-1)**game.ply)
 
 ###############################################################################
+# Slightly validate arguments 
+
+if len(sys.argv) != 2 or sys.argv[1] == "--help":
+    print "Usage: python blunders.py FILENAME   Analyze the specified pgn file"
+    print "       python blunders.py --help     Display this help and exit"
+    print "Note: You'll probably need to run the scripts with your PYTHONPATH set"
+    print " like 'PYTHONPATH=../lib/ python blunders...'"
+    sys.exit()
+
+###############################################################################
 # Push onto the mainloop and start it
 discoverer.connect('all_engines_discovered', start)
 discoverer.start()
