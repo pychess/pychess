@@ -159,17 +159,23 @@ class EngineDiscoverer (GObject, PooledThread):
             imported """
         
         if engine.find('vm') is not None:
-            vmpath = searchPath(engine.find('vm').get('binname'), access=os.R_OK|os.X_OK)
-            if engine.get('binname') != "PyChess.py":
-                path = searchPath(engine.get('binname'), access=os.R_OK)
-            else:
+            altpath = engine.find('vm').find('path') is not None and \
+                    engine.find('vm').find('path').text.strip()
+            vmpath = searchPath(engine.find('vm').get('binname'),
+                    access=os.R_OK|os.X_OK, altpath = altpath)
+            
+            if engine.get('binname') == "PyChess.py":
                 path = join(abspath(dirname(__file__)), "PyChess.py")
                 if not os.access(path, os.R_OK):
                     path = None
+            else:
+                altpath = engine.find('path') is not None and engine.find('path').text.strip()
+                path = searchPath(engine.get('binname'), access=os.R_OK, altpath=altpath)
             if vmpath and path:
                 return vmpath, path
         else:
-            path = searchPath(engine.get('binname'), access=os.R_OK|os.X_OK)
+            altpath = engine.find('path') is not None and engine.find('path').text.strip()
+            path = searchPath(engine.get('binname'), access=os.R_OK|os.X_OK, altpath=altpath)
             if path:
                 return None, path
         
@@ -349,7 +355,7 @@ class EngineDiscoverer (GObject, PooledThread):
             
             if self.__needClean(rundata, engine):
                 engine2 = self.__clean(rundata, engine)
-                if not engine2:
+                if engine2 is None:
                     # No longer suported
                     continue
                 self.dom.getroot().remove(engine)

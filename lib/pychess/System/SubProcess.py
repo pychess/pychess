@@ -16,7 +16,12 @@ from pychess.System.GtkWorker import EmitPublisher
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
-def searchPath (file, pathvar="PATH", access=os.R_OK):
+def searchPath (file, pathvar="PATH", access=os.R_OK, altpath=None):
+    if altpath and os.path.isfile(altpath):
+        if not os.access (altpath, access):
+            log.warn("Not enough permissions on %s\n" % altpath)
+        else:
+            return altpath
     for dir in os.environ[pathvar].split(os.pathsep):
         dir = os.path.abspath(dir)
         path = os.path.join(dir, file)
