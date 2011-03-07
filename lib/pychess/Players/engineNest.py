@@ -1,6 +1,5 @@
 from __future__ import with_statement 
 
-from xml.parsers.expat import ExpatError
 import os
 from hashlib import md5
 from threading import Thread
@@ -9,6 +8,7 @@ from copy import deepcopy
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
+from xml.etree.ElementTree import ParseError
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
@@ -139,7 +139,7 @@ class EngineDiscoverer (GObject, PooledThread):
             elif c == 1:
                 raise NotImplementedError, "engines.xml is of a newer date. In order" + \
                                 "to run this version of PyChess it must first be removed"
-        except ExpatError, e:
+        except ParseError, e:
             log.warn("engineNest: %s\n" % e)
             self.dom = deepcopy(self.backup)
         except IOError, e:
