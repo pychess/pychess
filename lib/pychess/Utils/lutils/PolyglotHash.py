@@ -2,6 +2,8 @@
 
 # Polyglot opening books are indexed by 64-bit Zobrist hash keys.
 # The standard specifies the following Zobrist seed values.
+# The numbers in this file come from PolyGlot by Fabien Letouzey.
+# PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
 
 pieceHashes = [
   [
