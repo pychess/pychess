@@ -76,7 +76,7 @@ class Sidepanel:
         # the formula we're looking for.
         historyExists = False
         historyIsPlausible = True
-        maxGames = 0
+        maxGames = 1
         for move, weight, games, score in self.openings:
             totalWeight += weight
             maxGames = max(games, maxGames)
