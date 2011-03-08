@@ -287,8 +287,9 @@ class LBoard:
     def setEnpassant (self, epcord):
         # Strip the square if there's no adjacent enemy pawn to make the capture
         if epcord != None:
-            fwdPawns = self.boards[self.color][PAWN]
-            if self.color == WHITE:
+            sideToMove = (epcord >> 3 == 2 and BLACK or WHITE)
+            fwdPawns = self.boards[sideToMove][PAWN]
+            if sideToMove == WHITE:
                 fwdPawns >>= 8
             else:
                 fwdPawns <<= 8
