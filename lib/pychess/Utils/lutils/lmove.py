@@ -589,8 +589,8 @@ def parsePolyglot (board, pg):
     tcord = TCORD(pg)
     fcord = FCORD(pg)
     flag = NORMAL_MOVE
-    if move >> 12:
-        flag = FLAG_PIECE( (move >> 12) + 1 )
+    if pg >> 12:
+        flag = FLAG_PIECE( (pg >> 12) + 1 )
     elif board.arBoard[fcord] == KING:
         if board.arBoard[tcord] == ROOK:
             color = board.color
@@ -598,8 +598,12 @@ def parsePolyglot (board, pg):
             if bitPosArray[tcord] & friends:
                 if board.ini_rooks[color][0] == tcord:
                     flag = QUEEN_CASTLE
+                    if board.variant == NORMALCHESS: # Want e1c1/e8c8
+                        tcord += 2
                 else:
-                    flag = KING_CASTLEs
+                    flag = KING_CASTLE
+                    if board.variant == NORMALCHESS: # Want e1g1/e8g8
+                        tcord -= 1
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
