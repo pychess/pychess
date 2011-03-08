@@ -1,6 +1,7 @@
 import gtk, gobject, cairo
 
 from pychess.System import conf
+from pychess.Utils.const import WHITE
 from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import Move, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
@@ -28,9 +29,9 @@ class Sidepanel:
                 "Move", gtk.CellRendererText(), text=0))
         r = gtk.CellRendererText()
         r.set_property("xalign", 1)
-        self.tv.append_column(gtk.TreeViewColumn("Games", r, text=1))
+        self.tv.append_column(gtk.TreeViewColumn("Popularity", r, text=1))
         self.tv.append_column(gtk.TreeViewColumn(
-                "Win/Draw/Loss", BookCellRenderer(), data=2))
+                "Success", BookCellRenderer(), data=2))
         
         self.boardcontrol = gmwidg.board
         self.board = self.boardcontrol.view
@@ -66,21 +67,38 @@ class Sidepanel:
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
         
-        i = 0
+        totalWeight = 0
+        # Polyglot-formatted books have space for learning data.
+        # Polyglot stores performance history, but this convention is not
+        # required. We will display this info if it passes a sanity-check.
+        # TODO: Maybe this should be smarter. One idea is to switch off the
+        # display for later moves once we see learning data that don't fit
+        # the formula we're looking for.
+        historyExists = False
+        historyIsPlausible = True
+        maxGames = 0
         for move, weight, games, score in self.openings:
-            if not games: continue
-            # TODO: This only works with our own book
-            # In fact, Polyglot books don't store this information.
-            wins, draws = weight - score, 3*score - 2*weight
-            losses = games - wins - draws
-            wins, draws, losses = \
-                    map(lambda x: x/float(games), (wins, draws, losses))
+            totalWeight += weight
+            maxGames = max(games, maxGames)
+            historyExists = historyExists or games > 0
+            historyIsPlausible = historyIsPlausible and score < 2*games < 65536
+
+        for move, weight, games, score in self.openings:
             b = self.board.model.getBoardAtPly(shown)
             if conf.get("figuresInNotation", False):
                 move = toFAN(b, Move(move))
             else:
                 move = toSAN(b, Move(move), True)
-            self.store.append ([move, str(games), (wins,draws,losses)])
+            if weight <= totalWeight / 100:
+                popularity = "?"
+            else:
+                popularity = "%0.1f%%" % (weight*100.0/totalWeight)
+            if not (historyExists and historyIsPlausible):
+                games = 0
+            w =        score*0.5  / maxGames
+            l = (games-score*0.5) / maxGames
+            history = b.color == WHITE and (w, l, games) or (l, w, games)
+            self.store.append ([move, popularity, history])
     
     def selection_changed (self, widget, *args):
         
@@ -103,7 +121,7 @@ class Sidepanel:
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
-        path_col_x_y = treeview.get_path_at_pos (x, y);
+        path_col_x_y = treeview.get_path_at_pos (x, y)
 
         # If we're not pointed at a row, then return FALSE to say
         # "don't show a tip".
@@ -113,16 +131,22 @@ class Sidepanel:
         # Otherwise, ask the TreeView to set up the tip's area according
         # to the row's rectangle.
         path, col, x, y = path_col_x_y
-        treeview.set_tooltip_row(tooltip, path);
+        treeview.set_tooltip_row(tooltip, path)
 
         # And then load it up with some meaningful text.
         iter = self.store.get_iter(path)
-        w, d, l = self.store.get(iter, 2)[0]
-        tooltip.set_markup('Wins: <b>%0.1f%%</b>\nDraws: <b>%0.1f%%</b>\nLoses: <b>%0.1f%%</b>' %
-                           (w*100, d*100, l*100))
+        w_win, b_win, games = self.store.get(iter, 2)[0]
+        if games:
+            history = _("White scores <b>%0.1f</b>%% - <b>%0.1f</b>%%\n") % \
+                      (100*w_win / (w_win + b_win), 100*b_win / (w_win + b_win))
+            if games > 1:
+                confidence = _("Based on %d games") % games
+            else:
+                confidence = _("Based on 1 game")
+            tooltip.set_markup(history + confidence)
+            return True # Show the tip.
         
-        # Return true to say "show the tip".
-        return True;
+        return False
 
 ################################################################################
 # BookCellRenderer                                                             #
@@ -147,8 +171,9 @@ class BookCellRenderer (gtk.GenericCellRenderer):
     def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
         if not self.data: return
         cairo = window.cairo_create()
-        w,d,l = self.data
-        paintGraph(cairo, w, d, l, cell_area)
+        w_win, b_win, games = self.data
+        if games:
+            paintGraph(cairo, w_win, b_win, cell_area)
        
     def on_get_size(self, widget, cell_area=None):
         return (0, 0, width, height)
@@ -161,32 +186,27 @@ gobject.type_register(BookCellRenderer)
 
 from math import ceil
 
-def paintGraph (cairo,win,draw,loss,rect):
-    x,y,w,h = rect.x, rect.y, rect.width, rect.height
+def paintGraph (cairo, w_win, b_win, rect):
+    x,y,w0,h = rect.x, rect.y, rect.width, rect.height
+    w = ceil((w_win + b_win) * w0)
 
-    cairo.save()
-    cairo.rectangle(x,y,ceil(win*w),h)
-    cairo.clip()
-    pathBlock(cairo, x,y,w,h)
-    cairo.set_source_rgb(0.9,0.9,0.9)
-    cairo.fill()
-    cairo.restore()
+    if w_win > 0:
+        cairo.save()
+        cairo.rectangle(x,y,w_win*w0,h)
+        cairo.clip()
+        pathBlock(cairo, x,y,w,h)
+        cairo.set_source_rgb(0.9,0.9,0.9)
+        cairo.fill()
+        cairo.restore()
     
-    cairo.save()
-    cairo.rectangle(x+win*w,y,ceil(draw*w),h)
-    cairo.clip()
-    pathBlock(cairo, x,y,w,h)
-    cairo.set_source_rgb(0.45,0.45,0.45)
-    cairo.fill()
-    cairo.restore()
-    
-    cairo.save()
-    cairo.rectangle(x+win*w+draw*w,y,loss*w,h)
-    cairo.clip()
-    pathBlock(cairo, x,y,w,h)
-    cairo.set_source_rgb(0,0,0)
-    cairo.fill()
-    cairo.restore()
+    if b_win > 0:
+        cairo.save()
+        cairo.rectangle(x+w_win*w0,y,b_win*w0,h)
+        cairo.clip()
+        pathBlock(cairo, x,y,w,h)
+        cairo.set_source_rgb(0,0,0)
+        cairo.fill()
+        cairo.restore()
     
     cairo.save()
     cairo.rectangle(x,y,w,h)
