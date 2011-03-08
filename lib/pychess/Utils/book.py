@@ -5,6 +5,9 @@ from pychess.Utils.const import *
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
 
+# The book probing code is based on that of PolyGlot by Fabien Letouzey.
+# PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
+
 class BookEntry(BigEndianStructure):
     _fields_ = [ ('key', c_uint64),    # the position's hash
                  ('move', c_uint16),   # the candidate move
