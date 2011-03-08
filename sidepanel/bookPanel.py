@@ -2,7 +2,7 @@ import gtk, gobject, cairo
 
 from pychess.System import conf
 from pychess.Utils.book import getOpenings
-from pychess.Utils.Move import parseSAN, toSAN, toFAN
+from pychess.Utils.Move import Move, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
 
 __title__ = _("Opening Book")
@@ -47,8 +47,8 @@ class Sidepanel:
         return self.sw
     
     def shown_changed (self, board, shown):
-        self.openings = getOpenings(self.board.model.getBoardAtPly(shown))
-        self.openings.sort(lambda a, b: sum(b[1:])-sum(a[1:]))
+        self.openings = getOpenings(self.board.model.getBoardAtPly(shown).board)
+        self.openings.sort(key=lambda t: t[1], reverse=True)
         
         self.board.bluearrow = None
         self.store.clear()
@@ -67,17 +67,20 @@ class Sidepanel:
             self.sw.add(self.tv)
         
         i = 0
-        for move, wins, draws, loses in self.openings:
-            games = wins+draws+loses
+        for move, weight, games, score in self.openings:
             if not games: continue
-            wins, draws, loses = \
-                    map(lambda x: x/float(games), (wins, draws, loses))
+            # TODO: This only works with our own book
+            # In fact, Polyglot books don't store this information.
+            wins, draws = weight - score, 3*score - 2*weight
+            losses = games - wins - draws
+            wins, draws, losses = \
+                    map(lambda x: x/float(games), (wins, draws, losses))
             b = self.board.model.getBoardAtPly(shown)
             if conf.get("figuresInNotation", False):
-                move = toFAN(b, parseSAN(b, move))
+                move = toFAN(b, Move(move))
             else:
-                move = toSAN(b, parseSAN(b, move), True)
-            self.store.append ([move, str(games), (wins,draws,loses)])
+                move = toSAN(b, Move(move), True)
+            self.store.append ([move, str(games), (wins,draws,losses)])
     
     def selection_changed (self, widget, *args):
         
@@ -87,8 +90,7 @@ class Sidepanel:
             return
         else: sel = self.tv.get_model().get_path(iter)[0]
         
-        move = parseSAN (
-            self.board.model.boards[self.board.shown], self.openings[sel][0] )
+        move = Move(self.openings[sel][0])
         self.board.bluearrow = move.cords
     
     def row_activated (self, widget, *args):
