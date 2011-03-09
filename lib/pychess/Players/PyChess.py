@@ -17,7 +17,7 @@ import pychess
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.book import getOpenings
-from pychess.Utils.lutils.lsearch import alphaBeta
+from pychess.Utils.lutils.lsearch import alphaBeta, enableEGTB
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmove import *
 from pychess.Utils.lutils.LBoard import LBoard
@@ -37,7 +37,6 @@ class PyChess:
     def __init__ (self):
         self.sd = 10
         self.skipPruneChance = 0
-        self.useegtb = False
         
         self.increment = None
         self.mytime = None
@@ -92,7 +91,6 @@ class PyChess:
         if not mv:
                
             lsearch.skipPruneChance = self.skipPruneChance
-            lsearch.useegtb = self.useegtb
             lsearch.searching = True
             
             if self.mytime == None:
@@ -285,7 +283,7 @@ class PyChessCECP(PyChess):
             
             elif lines[0] == "egtb":
                 # This is a crafty command interpreted a bit loose
-                self.useegtb = True
+                enableEGTB()
             
             elif lines[0] == "level":
                 moves = int(lines[1])
@@ -423,7 +421,7 @@ class PyChessFICS(PyChess):
         self.colors = (WHITE, BLACK, None) 
         # The amount of random challenges, that PyChess sends with each seek
         self.challenges = 10
-        self.useegtb = True
+        enableEGTB()
         
         self.sudos = set()
         self.ownerOnline = False
