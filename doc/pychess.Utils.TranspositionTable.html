@@ -1,0 +1,102 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.Utils.TranspositionTable</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.Utils.html"><font color="#ffffff">Utils</font></a>.TranspositionTable</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/TranspositionTable.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/TranspositionTable.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;is&nbsp;a&nbsp;dictionary,&nbsp;that&nbsp;supports&nbsp;a&nbsp;max&nbsp;of&nbsp;items.<br>
+This&nbsp;is&nbsp;good&nbsp;for&nbsp;the&nbsp;transportation&nbsp;table,&nbsp;as&nbsp;some&nbsp;old&nbsp;entries&nbsp;might&nbsp;not<br>
+be&nbsp;useable&nbsp;any&nbsp;more,&nbsp;as&nbsp;the&nbsp;position&nbsp;has&nbsp;totally&nbsp;changed</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="UserDict.html#UserDict">UserDict.UserDict</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pychess.Utils.TranspositionTable.html#TranspositionTable">TranspositionTable</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TranspositionTable">class <strong>TranspositionTable</strong></a>(<a href="UserDict.html#UserDict">UserDict.UserDict</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TranspositionTable-__init__"><strong>__init__</strong></a>(self, maxSize)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__setitem__"><strong>__setitem__</strong></a>(self, key, item)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-probe"><strong>probe</strong></a>(self, board, depth, alpha, beta)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-record"><strong>record</strong></a>(self, board, moves, depth, score, hashf)</dt></dl>
+
+<hr>
+Methods inherited from <a href="UserDict.html#UserDict">UserDict.UserDict</a>:<br>
+<dl><dt><a name="TranspositionTable-__cmp__"><strong>__cmp__</strong></a>(self, dict)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__contains__"><strong>__contains__</strong></a>(self, key)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__delitem__"><strong>__delitem__</strong></a>(self, key)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__getitem__"><strong>__getitem__</strong></a>(self, key)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__len__"><strong>__len__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-__repr__"><strong>__repr__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-clear"><strong>clear</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-copy"><strong>copy</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-get"><strong>get</strong></a>(self, key, failobj<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-has_key"><strong>has_key</strong></a>(self, key)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-items"><strong>items</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-iteritems"><strong>iteritems</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-iterkeys"><strong>iterkeys</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-itervalues"><strong>itervalues</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-keys"><strong>keys</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-pop"><strong>pop</strong></a>(self, key, *args)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-popitem"><strong>popitem</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-setdefault"><strong>setdefault</strong></a>(self, key, failobj<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-update"><strong>update</strong></a>(self, dict<font color="#909090">=None</font>, **kwargs)</dt></dl>
+
+<dl><dt><a name="TranspositionTable-values"><strong>values</strong></a>(self)</dt></dl>
+
+<hr>
+Class methods inherited from <a href="UserDict.html#UserDict">UserDict.UserDict</a>:<br>
+<dl><dt><a name="TranspositionTable-fromkeys"><strong>fromkeys</strong></a>(cls, iterable, value<font color="#909090">=None</font>)<font color="#909090"><font face="helvetica, arial"> from __builtin__.classobj</font></font></dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2</td></tr></table>
+</body></html>

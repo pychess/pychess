@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="49.934132"
+   height="45.792591"
+   id="svg5624"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docname="dock_center.svg"
+   sodipodi:docbase="/home/thomas/Programmering/workspace/pychess/glade"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="626"
+     inkscape:window-width="872"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="4.4068744"
+     inkscape:cx="33.486485"
+     inkscape:cy="14.470855"
+     inkscape:window-x="427"
+     inkscape:window-y="415"
+     inkscape:current-layer="layer3" />
+  <defs
+     id="defs5626" />
+  <path
+     d="M 3.0840738,1.0266791 C 1.9295033,1.0266791 0.99999845,1.9561839 0.99999845,3.1107648 L 0.99999845,42.708487 C 0.99999845,43.863078 1.9295033,44.792593 3.0840738,44.792593 L 46.850029,44.792593 C 48.00462,44.792593 48.934135,43.863078 48.934135,42.708487 L 48.934135,12.489202 C 48.934135,11.334611 48.00462,10.405106 46.850029,10.405106 L 20.929128,10.405106 C 20.397901,10.405106 19.756822,9.7894681 19.756822,9.195501 L 19.756822,3.1107648 C 19.756822,1.9561839 18.827317,1.0266791 17.672725,1.0266791 L 3.0840738,1.0266791 z "
+     style="fill:#e3ddd4;fill-opacity:1;stroke:#575757;stroke-width:1.9999969;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:36.60930215;stroke-opacity:1"
+     id="path3151" />
+  <path
+     d="M 21.840918,0.99999845 L 36.42958,0.99999845 C 37.584171,0.99999845 38.513676,1.9295033 38.513676,3.0840945 L 38.513676,8.2943398 C 38.513676,9.4489206 37.584171,10.378425 36.42958,10.378425 L 21.840918,10.378425 C 20.686337,10.378425 19.756832,9.4489206 19.756832,8.2943398 L 19.756832,3.0840945 C 19.756832,1.9295033 20.686337,0.99999845 21.840918,0.99999845 z "
+     style="fill:#d4cec5;fill-opacity:1;stroke:#575757;stroke-width:1.9999969;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:36.60930215;stroke-opacity:1"
+     id="path3153" />
+  <path
+     d="M 6.8889217,5.1946646 C 5.9351325,5.1946646 5.1672816,5.9470216 5.1672816,6.8817324 L 5.1672816,38.937106 C 5.1672816,39.87162 5.9351325,40.624194 6.8889217,40.624194 L 43.043415,40.624194 C 43.997194,40.624194 44.765055,39.87162 44.765055,38.937106 L 44.765055,16.148665 C 44.765055,15.213944 43.997194,14.46139 43.043415,14.46139 L 16.606336,14.46139 C 16.167495,14.46139 15.637911,13.963073 15.637911,13.482274 L 15.637911,6.8817324 C 15.637911,5.9470216 14.87006,5.1946646 13.916271,5.1946646 L 6.8889217,5.1946646 z "
+     style="fill:#18b0ff;fill-opacity:1;stroke:#575757;stroke-width:1.9999969;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.99999682, 1.99999682;stroke-dashoffset:0;stroke-opacity:1"
+     id="path4154" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="center"
+     style="display:inline"
+     transform="translate(-4.9497208e-6,3.0402792e-6)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="top"
+     transform="translate(-4.9497208e-6,3.0402792e-6)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="right"
+     transform="translate(-4.9497208e-6,3.0402792e-6)" />
+</svg>
