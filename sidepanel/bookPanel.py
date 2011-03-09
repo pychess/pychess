@@ -58,7 +58,7 @@ class Sidepanel:
         if m.reason in (WON_MATE, DRAW_STALEMATE) and shown == m.ply:
             endings = [] # TODO: Customize the GTK Label
         else:
-            endings = self.egtb.scoreAllMoves(b)
+            endings = self.egtb.scoreAllMoves(b.board)
         
         self.board.bluearrow = None
         self.store.clear()
@@ -117,9 +117,9 @@ class Sidepanel:
     def tabulateEndings (self, board, endings):
         for move, result, depth in endings:
             if conf.get("figuresInNotation", False):
-                move = toFAN(board, Move(move))
+                move = toFAN(board, move)
             else:
-                move = toSAN(board, Move(move), True)
+                move = toSAN(board, move, True)
             
             if result == DRAW:
                 resultStr = _("Draw")

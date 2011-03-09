@@ -286,4 +286,5 @@ def quiescent (board, alpha, beta, ply):
         return [], alpha
 
 def enableEGTB():
+    global egtb
     egtb = EndgameTable()
