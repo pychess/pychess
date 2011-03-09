@@ -33,22 +33,22 @@ class EndgameTable:
                     return result, depth
         return None, None
     
-    def scoreAllMoves (self, board):
+    def scoreAllMoves (self, lBoard):
         """ Return each move's result and depth to mate.
             
-            board: A high-level board structure
+            lBoard: A low-level board structure
             Return value: a list, with best moves first, of:
             move: A high-level move structure
             game_result: Either WHITEWON, DRAW, BLACKWON, or (on failure) None
             depth: Depth to mate, or (if omitDepth or the game is drawn) None
         """
-        pc = self._pieceCounts(board.board)
+        pc = self._pieceCounts(lBoard)
         for provider in self.providers:
             if provider.supports(pc):
-                results = provider.scoreAllMoves(board.board)
+                results = provider.scoreAllMoves(lBoard)
                 if results:
                     ret = []
                     for lMove, result, depth in results:
                         ret.append( (Move(lMove), result, depth) )
-                    return results
+                    return ret
         return []
