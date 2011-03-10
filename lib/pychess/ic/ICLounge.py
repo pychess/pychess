@@ -1430,7 +1430,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["dashLabel"].hide()            
             self.widgets["ratingRangeMinLabel"].set_label("%d↑" % minRating)
         if minRating == 0 and maxRating == 9999:
-            self.widgets["ratingRangeMinLabel"].set_label("Any strength")
+            self.widgets["ratingRangeMinLabel"].set_label(_("Any strength"))
             self.widgets["ratingRangeMinLabel"].show()
     
     def __getGameTypes (self):
