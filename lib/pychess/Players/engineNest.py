@@ -8,7 +8,10 @@ from copy import deepcopy
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
-from xml.etree.ElementTree import ParseError
+try:
+    from xml.etree.ElementTree import ParseError
+except ImportError:
+    from xml.parsers.expat import ExpatError as ParseError
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
