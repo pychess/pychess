@@ -3,12 +3,17 @@ from lutils.egtb_k4it import egtb_k4it
 from lutils.egtb_gaviota import egtb_gaviota
 from lutils.bitboard import bitLength
 
+providers = []
+
 class EndgameTable:
     
     """ Wrap the low-level providers of exact endgame knowledge. """
     
     def __init__ (self):
-        self.providers = [ egtb_gaviota(), egtb_k4it() ]
+        global providers
+        if not providers:
+            providers = [ egtb_gaviota(), egtb_k4it() ]
+        self.providers = providers
     
     def _pieceCounts (self, board):
         return sorted([ bitLength(board.friends[i]) for i in range(2) ])
