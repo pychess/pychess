@@ -124,9 +124,9 @@ class Sidepanel:
             if result == DRAW:
                 resultStr = _("Draw")
             elif (result == WHITEWON) ^ (board.color == WHITE):
-                resultStr = _("Win in %d moves") % depth
-            else:
                 resultStr = _("Loss in %d moves") % depth
+            else:
+                resultStr = _("Win in %d moves") % depth
             self.store.append([move, resultStr, (0, 0, 0)])
 
     def selection_changed (self, widget, *args):
