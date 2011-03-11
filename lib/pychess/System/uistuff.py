@@ -294,17 +294,17 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     # In rare cases, gtk throws some gtk_size_allocation error, which is
     # probably a race condition. To avoid the window forgets its size in
     # these cases, we add this extra hook
-    def callback ():
+    def callback (window):
         loadPosition(window)
     onceWhenReady(window, callback)
 
 # Some properties can only be set, once the window is sufficiently initialized,
 # This function lets you queue your request until that has happened.
 def onceWhenReady(window, func, *args, **kwargs):
-    def cb(window, alloc):
-        func(*args, **kwargs)
+    def cb(window, alloc, func, *args, **kwargs):
+        func(window, *args, **kwargs)
         window.disconnect(handler_id)
-    handler_id = window.connect_after("size-allocate", cb)
+    handler_id = window.connect_after("size-allocate", cb, func, *args, **kwargs)
 
 def getMonitorBounds():
     screen = gtk.gdk.screen_get_default()
@@ -326,7 +326,7 @@ def makeYellow (box):
             gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
             box.allocation.x, box.allocation.y,
             box.allocation.width, box.allocation.height)
-    def cb ():
+    def cb (box):
         box.set_style(tooltipStyle)
         box.connect("expose-event", on_box_expose_event)
     onceWhenReady(box, cb)
