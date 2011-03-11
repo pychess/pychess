@@ -3,7 +3,6 @@ import re
 
 from pychess.Utils.lutils.lmove import newMove, FILE, RANK
 from pychess.Utils.const import *
-from pychess.Utils.lutils.bitboard import bitLength
 from pychess.System.Log import log
 from pychess.System import conf
 
@@ -67,12 +66,12 @@ class egtb_k4it:
                 
                 if result.startswith("Win"):
                     if color == WHITE:
-                        state = (WHITEWON, int(steps))
-                    else: state = (BLACKWON, int(steps))
+                        state = WHITEWON
+                    else: state = BLACKWON
                 elif result.startswith("Lose"):
                     if color == WHITE:
-                        state = (BLACKWON, int(steps))
-                    else: state = (WHITEWON, int(steps))
+                        state = BLACKWON
+                    else: state = WHITEWON
                 
                 moves.append( (move,state,steps) )
             
