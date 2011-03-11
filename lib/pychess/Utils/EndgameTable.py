@@ -1,15 +1,14 @@
-from pychess.Utils.Move import Move
-from pychess.Utils.lutils.egtb_k4it import egtb_k4it
-#from pychess.Utils.lutils.egtb_gaviota import egtb_gaviota
-from pychess.Utils.lutils.bitboard import bitLength
+from Move import Move
+from lutils.egtb_k4it import egtb_k4it
+from lutils.egtb_gaviota import egtb_gaviota
+from lutils.bitboard import bitLength
 
 class EndgameTable:
     
     """ Wrap the low-level providers of exact endgame knowledge. """
     
     def __init__ (self):
-        #self.providers = [ egtb_gaviota(), egtb_k4it() ]
-        self.providers = [ egtb_k4it() ]
+        self.providers = [ egtb_gaviota(), egtb_k4it() ]
     
     def _pieceCounts (self, board):
         return sorted([ bitLength(board.friends[i]) for i in range(2) ])
@@ -39,8 +38,8 @@ class EndgameTable:
             lBoard: A low-level board structure
             Return value: a list, with best moves first, of:
             move: A high-level move structure
-            game_result: Either WHITEWON, DRAW, BLACKWON, or (on failure) None
-            depth: Depth to mate, or (if omitDepth or the game is drawn) None
+            game_result: Either WHITEWON, DRAW, BLACKWON
+            depth: Depth to mate
         """
         pc = self._pieceCounts(lBoard)
         for provider in self.providers:
