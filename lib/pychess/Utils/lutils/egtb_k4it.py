@@ -9,10 +9,10 @@ from pychess.System.Log import log
 URL = "http://www.k4it.de/egtb/fetch.php?action=egtb&fen="
 expression = re.compile("(\d+)-(\d+)-?(\d+)?: (Win in \d+|Draw|Lose in \d+)")
 PROMOTION_FLAGS = {
-    8: QUEEN_PROMOTION,
-    9: ROOK_PROMOTION,
-    10: BISHOP_PROMOTION,
-    11: KNIGHT_PROMOTION
+    2: QUEEN_PROMOTION,
+    3: ROOK_PROMOTION,
+    4: BISHOP_PROMOTION,
+    5: KNIGHT_PROMOTION
 }
 
 table = {}
@@ -39,45 +39,50 @@ def probeEndGameTable (board):
     
     # Parse
     for color, move_data in enumerate(data.split("\nNEXTCOLOR\n")):
-        moves = []
-        for fcord, tcord, promotion, result in expression.findall(move_data):
-            fcord = int(fcord)
-            tcord = int(tcord)
+        try:
+            moves = []
+            for fcord, tcord, promotion, result in expression.findall(move_data):
+                fcord = int(fcord)
+                tcord = int(tcord)
+                
+                if promotion:
+                    flag = PROMOTION_FLAGS[int(promotion)]
+                elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
+                        board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
+                    flag = ENPASSANT
+                else: flag = NORMAL_MOVE
+                
+                move = newMove(fcord, tcord, flag)
+                
+                if result == "Draw":
+                    state = DRAW
+                    steps = 0
+                else:
+                    s, steps = result.split(" in ")
+                    steps = int(steps)
+                
+                if result.startswith("Win"):
+                    if color == WHITE:
+                        state = (WHITEWON, steps)
+                    else: state = (BLACKWON, steps)
+                elif result.startswith("Lose"):
+                    if color == WHITE:
+                        state = (BLACKWON, steps)
+                    else: state = (WHITEWON, steps)
+                
+                moves.append( (move,state,steps) )
             
-            if promotion:
-                flag = PROMOTION_FLAGS[int(promotion)]
-            elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
-                    board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
-                flag = ENPASSANT
-            else: flag = NORMAL_MOVE
-            
-            move = newMove(fcord, tcord, flag)
-            
-            if result == "Draw":
-                state = DRAW
-                steps = 0
-            else:
-                s, steps = result.split(" in ")
-                steps = int(steps)
-            
-            if result.startswith("Win"):
-                if color == WHITE:
-                    state = (WHITEWON, int(steps))
-                else: state = (BLACKWON, int(steps))
-            elif result.startswith("Lose"):
-                if color == WHITE:
-                    state = (BLACKWON, int(steps))
-                else: state = (WHITEWON, int(steps))
-            
-            moves.append( (move,state,steps) )
-        
-        if moves:
-            table[(fen,color)] = moves
-        elif color == board.color and board.opIsChecked():
-            log.warn("Asked endgametable for a won position: %s" % fen)
-        elif color == board.color:
-            log.warn("Unable to get %s data for position: %s.\nData was: %s" %
+            if moves:
+                table[(fen,color)] = moves
+            elif color == board.color and board.opIsChecked():
+                log.warn("Asked endgametable for a won position: %s" % fen)
+            elif color == board.color:
+                log.warn("Couldn't get %s data for position %s.\nData was: %s" %
+                         (reprColor[color], fen, repr(data)))
+        except (KeyError, ValueError):
+            log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
                      (reprColor[color], fen, repr(data)))
+            table[(fen, color)] = [] # Don't try again.
     
     if (fen,board.color) in table:
         return table[(fen,board.color)]
