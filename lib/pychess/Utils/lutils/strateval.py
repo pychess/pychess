@@ -127,7 +127,7 @@ def prefix_type (model, ply, phase):
     flag = FLAG(model.getMoveAtPly(ply-1).move)
 
     if flag in PROMOTIONS:
-        yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
+        yield _("promotes a Pawn to a %s") % reprPiece[PROMOTE_PIECE(flag)]
 
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
         yield _("castles")
@@ -298,14 +298,15 @@ def offencive_moves_pin (model, ply, phase):
 
     board = model.getBoardAtPly(ply).board
     move = model.getMoveAtPly(ply-1).move
+    fcord = FCORD(move)
     tcord = TCORD(move)
     piece = board.arBoard[tcord]
 
     ray = createBoard(0)
     if piece in (BISHOP, QUEEN):
-        ray |= ray45[tcord] | ray135[tcord]
+        ray |= (ray45[tcord] | ray135[tcord]) & ~(ray45[fcord] | ray135[fcord])
     if piece in (ROOK, QUEEN):
-        ray |= ray00[tcord] | ray90[tcord]
+        ray |= (ray00[tcord] | ray90[tcord]) & ~(ray00[fcord] | ray90[fcord])
 
     if ray:
         for c in iterBits(ray & board.friends[board.color]):

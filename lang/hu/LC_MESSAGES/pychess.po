@@ -2612,7 +2612,7 @@ msgstr "Megnyitástár"
 msgid ""
 "The opening book will try to inspire you during the opening phase of the "
 "game by showing you common moves made by chess masters"
-msgstr "A leggyakrabban alkalmazott lépéseket az adott megnyitásban"
+msgstr "A leggyakrabban alkalmazott lépések az adott megnyitásban"
 
 #: sidepanel/bookPanel.py:14
 msgid "Official PyChess panel."
