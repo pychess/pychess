@@ -4,12 +4,12 @@ from bitboard import bitLength
 from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
+def repetitionCount (board):
+    hash_list = [h[4] for h in itertools.islice(board.history, 0, None, 2) if h is not None]
+    return hash_list.count(board.hash) + 1
+
 def testRepetition (board):
-    if len(board.history) >= 8:
-        hash_list = [h[4] for h in itertools.islice(board.history, 0, None, 2) if h is not None]
-        if hash_list.count(board.hash) >= 2:
-            return True
-    return False
+    return (len(board.history) >= 8) and repetitionCount(board) >= 3
 
 def testFifty (board):
     if board.fifty >= 100:
