@@ -3,8 +3,7 @@ from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import evaluateComplete
-from pychess.Utils.lutils.ldraw import repetitionCount
-from pychess.Utils.logic import getStatus
+from pychess.Utils.logic import getStatus, repetitionCount
 
 __label__ = _("Chess Position")
 __endings__ = "epd",
@@ -23,7 +22,7 @@ def save (file, model):
     ############################################################################
     # Repetition count                                                         #
     ############################################################################
-    rc = repetitionCount(model.boards[-1].board)
+    rc = repetitionCount(model.boards[-1])
     
     ############################################################################
     # Centipawn evaluation                                                     #
