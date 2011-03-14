@@ -370,6 +370,7 @@ class CECPEngine (ProtocolEngine):
             if boards[0].asFen() != FEN_START:
                 self.__setBoard(boards[0])
             
+            self.board = boards[-1]
             for board, move in zip(boards[:-1], moves):
                 self.__usermove(board, move)
             

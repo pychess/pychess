@@ -23,10 +23,10 @@ class DrawTestCase(unittest.TestCase):
             model = self.PgnFile1.loadToModel(i)
 
             lboard = model.boards[-2].board
-            self.assertEqual(ldraw.testRepetition(lboard), False)
+            self.assertTrue(ldraw.repetitionCount(lboard) < 3)
 
             lboard = model.boards[-1].board
-            self.assertEqual(ldraw.testRepetition(lboard), True)
+            self.assertEqual(ldraw.repetitionCount(lboard), 3)
 
     def test2(self):
         """Testing the 50 move rule"""
