@@ -1338,7 +1338,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">15 1 240 1 10 10</property>
+                                                <property name="adjustment">15 1 240 1 10 0</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -1361,7 +1361,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">10 0 60 1 10 10</property>
+                                                <property name="adjustment">10 0 60 1 10 0</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>

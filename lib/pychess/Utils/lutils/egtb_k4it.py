@@ -43,45 +43,50 @@ class egtb_k4it:
         
         # Parse
         for color, move_data in enumerate(data.split("\nNEXTCOLOR\n")):
-            moves = []
-            for fcord, tcord, promotion, result in expression.findall(move_data):
-                fcord = int(fcord)
-                tcord = int(tcord)
+            try:
+                moves = []
+                for fcord, tcord, promotion, result in expression.findall(move_data):
+                    fcord = int(fcord)
+                    tcord = int(tcord)
+                    
+                    if promotion:
+                        flag = PROMOTION_FLAGS[int(promotion)]
+                    elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
+                            board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
+                        flag = ENPASSANT
+                    else: flag = NORMAL_MOVE
+                    
+                    move = newMove(fcord, tcord, flag)
+                    
+                    if result == "Draw":
+                        state = DRAW
+                        steps = 0
+                    else:
+                        s, steps = result.split(" in ")
+                        steps = int(steps)
+                    
+                    if result.startswith("Win"):
+                        if color == WHITE:
+                            state = WHITEWON
+                        else: state = BLACKWON
+                    elif result.startswith("Lose"):
+                        if color == WHITE:
+                            state = BLACKWON
+                        else: state = WHITEWON
+                    
+                    moves.append( (move,state,steps) )
                 
-                if promotion:
-                    flag = PROMOTION_FLAGS[int(promotion)]
-                elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
-                        board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
-                    flag = ENPASSANT
-                else: flag = NORMAL_MOVE
-                
-                move = newMove(fcord, tcord, flag)
-                
-                if result == "Draw":
-                    state = DRAW
-                    steps = 0
-                else:
-                    s, steps = result.split(" in ")
-                    steps = int(steps)
-                
-                if result.startswith("Win"):
-                    if color == WHITE:
-                        state = WHITEWON
-                    else: state = BLACKWON
-                elif result.startswith("Lose"):
-                    if color == WHITE:
-                        state = BLACKWON
-                    else: state = WHITEWON
-                
-                moves.append( (move,state,steps) )
-            
-            if moves:
-                self.table[(fen,color)] = moves
-            elif color == board.color and board.opIsChecked():
-                log.warn("Asked endgametable for a won position: %s" % fen)
-            elif color == board.color:
-                log.warn("Unable to get %s data for position: %s.\nData was: %s" %
+                if moves:
+                    self.table[(fen,color)] = moves
+                elif color == board.color and board.opIsChecked():
+                    log.warn("Asked endgametable for a won position: %s" % fen)
+                elif color == board.color:
+                    log.warn("Couldn't get %s data for position %s.\nData was: %s" %
+                             (reprColor[color], fen, repr(data)))
+            except (KeyError, ValueError):
+                log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
                          (reprColor[color], fen, repr(data)))
+                table[(fen, color)] = [] # Don't try again.
         
         if (fen,board.color) in self.table:
             return self.table[(fen,board.color)]

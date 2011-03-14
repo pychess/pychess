@@ -111,28 +111,30 @@ def on_finish():
     mainloop.quit()
 
 def check_blund():
-    print "Undoing", 
+    print
     
     if game.ply+1 in values and game.ply in values:
-        color = game.ply%2
+        color = game.ply % 2
         oldmoves, oldscore = values[game.ply]
         moves, score = values[game.ply+1]
         dif = score-oldscore
-        print game.ply/2+1, dif, toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
         if dif < -100 and color == WHITE:
-            print "White blunder"
-            print "Should have done:", listToSan(game.getBoardAtPly(game.ply),oldmoves)
+            print "White blunder", dif
+            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
+            print
         elif dif > 100 and color == BLACK:
-            print "Black blunder"
-            print "Should have done:", listToSan(game.getBoardAtPly(game.ply),oldmoves)
-    else:
-        print
+            print "Black blunder", dif
+            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
+            print
     
+    movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
+    print "Considering", game.ply//2+1, movename, " ",
     game.undoMoves(1)
 
 def onAnalyze(analyzer, pv, score):
     global values
     sys.stdout.write('.')
+    sys.stdout.flush()
     if score != None:
         values[game.ply] = (pv, score*(-1)**game.ply)
 
