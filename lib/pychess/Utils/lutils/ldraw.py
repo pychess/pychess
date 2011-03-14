@@ -1,15 +1,14 @@
-import itertools
-
 from bitboard import bitLength
 from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
-def repetitionCount (board):
-    hash_list = [h[4] for h in itertools.islice(board.history, 0, None, 2) if h is not None]
-    return hash_list.count(board.hash) + 1
-
-def testRepetition (board):
-    return (len(board.history) >= 8) and repetitionCount(board) >= 3
+def repetitionCount (board, drawThreshold=3):
+    rc = 1
+    for ply in xrange(4, 1+min(len(board.history), board.fifty), 2):
+        if board.history[-ply][4] == board.hash:
+            rc += 1
+            if rc >= drawThreshold: break
+    return rc
 
 def testFifty (board):
     if board.fifty >= 100:
@@ -84,6 +83,7 @@ def testPlayerMatingMaterial (board, color):
 # certain king verus king and pawn posistion is winable.
 
 def test (board):
-    return testRepetition (board) or \
+    """ Test if the position is drawn. Two-fold repetitions are counted. """
+    return repetitionCount (board, drawThreshold=2) > 1 or \
            testFifty (board) or \
            testMaterial (board)
