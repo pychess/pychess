@@ -97,7 +97,7 @@ msgstr "Schnell"
 
 #: glade/fics_lounge.glade:338
 msgid "2 min, Fischer Random, 1800↓, Black"
-msgstr "2 perc, Fischer Random, 1800↓, Sötét"
+msgstr "2 perc, Fischer random, 1800↓, Sötét"
 
 #: glade/fics_lounge.glade:357
 msgid "10 min + 6 sec/move, 1400↑, White"
@@ -339,7 +339,7 @@ msgstr "<b>Kihívás:</b>"
 
 #: glade/fics_lounge.glade:2575
 msgid "2 min, Fischer Random, Black"
-msgstr "2 perc, Fischer Random, Sötét"
+msgstr "2 perc, Fischer random, Sötét"
 
 #: glade/fics_lounge.glade:2595
 msgid "10 min + 6 sec/move, White"
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:196
 msgid "Shuffle, Fischer Random, Random, Asymmetric Random\n"
-msgstr "Kevert, Fischer Random, Asszimmetrikus kevert\n"
+msgstr "Kevert, Fischer random, Véletlen, Asszimmetrikus kevert\n"
 
 #: lib/pychess/ic/ICLounge.py:197
 msgid "Upside Down, Pawns Pushed, Pawns Passed\n"
@@ -1887,7 +1887,7 @@ msgstr "Vezér előny"
 #: lib/pychess/Variants/randomchess.py:35
 #: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Random"
-msgstr "Egyszerű kevert"
+msgstr "Véletlen"
 
 #: lib/pychess/Variants/rookodds.py:17
 msgid "Rook odds"
