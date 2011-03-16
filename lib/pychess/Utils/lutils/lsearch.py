@@ -50,7 +50,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     global egtb
     if egtb:
         tbhits = egtb.scoreAllMoves(board)
-        if egtb:
+        if tbhits:
             move, state, steps = tbhits[0]
             
             if state == DRAW:
