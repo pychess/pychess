@@ -31,6 +31,8 @@ class UCIEngine (ProtocolEngine):
         self.options = {}
         self.optionsToBeSent = {}
         
+        self.uciPosition = "startpos"
+        self.uciPositionListsMoves = False
         self.wtime = 60000
         self.btime = 60000
         self.incr = 0
@@ -147,15 +149,33 @@ class UCIEngine (ProtocolEngine):
     #    Send the player move updates
     #===========================================================================
     
+    def _recordMove(self, board1, move, board2):
+        if self.board == board1:
+            return
+        if not board2:
+            if board1.variant == NORMALCHESS and board1.asFen() == FEN_START:
+                self.uciPosition = "startpos"
+            else:
+                self.uciPosition = "fen " + board1.asFen()
+            self.uciPositionListsMoves = False;
+        if move:
+            if not self.uciPositionListsMoves:
+                self.uciPosition += " moves"
+                self.uciPositionListsMoves = True
+            self.uciPosition += " " + toAN(board2, move, UCI=True)
+        self.board = board1
+    
+    def _recordMoveList(self, model):
+        self._recordMove(model.boards[0], None, None)
+        for board1, move, board2 in zip(model.boards, model.moves, model.boards[:-1]):
+            self._recordMove(board1, move, board2)
+
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
             (board1, move, board2, self.board), self.defname)
+        self._recordMove(board1, move, board2)
+        
         if not self.readyMoves: return
-        
-        self.board = board1
-        
-        if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
         
         self._searchNow()
     
@@ -165,7 +185,7 @@ class UCIEngine (ProtocolEngine):
         assert self.readyMoves
         
         with self.moveLock:
-            self.board = board1
+            self._recordMove(board1, move, board2)
             self.waitingForMove = True
             ponderhit = False
             
@@ -212,10 +232,7 @@ class UCIEngine (ProtocolEngine):
         self.mode = mode
     
     def setOptionInitialBoard (self, model):
-        # UCI always sets the position when searching for a new game, but for
-        # getting analyzers ready to analyze at first ply, it is good to have.
-        self.board = model.getBoardAtPly(model.ply)
-        pass
+        self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
         if variant == FischerRandomChess:
@@ -282,6 +299,7 @@ class UCIEngine (ProtocolEngine):
     def playerUndoMoves (self, moves, gamemodel):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+        self._recordMoveList(model)
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -295,8 +313,10 @@ class UCIEngine (ProtocolEngine):
     def spectatorUndoMoves (self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+        self._recordMoveList(model)
         
-        self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
+        if self.readyMoves:
+            self._searchNow()
     
     #===========================================================================
     #    Offer handling
@@ -353,7 +373,7 @@ class UCIEngine (ProtocolEngine):
                 commands.append("ponderhit")
                 
             elif self.mode == NORMAL:
-                commands.append("position fen %s" % self.board.asFen())
+                commands.append("position %s" % self.uciPosition)
                 if self.strength <= 3:
                     commands.append("go depth %d" % self.strength)
                 else:
@@ -361,6 +381,8 @@ class UCIEngine (ProtocolEngine):
                                     (self.wtime, self.btime, self.incr, self.incr))
                 
             else:
+                print >> self.engine, "stop"
+                
                 if self.mode == INVERSE_ANALYZING:
                     if self.board.board.opIsChecked():
                         # Many engines don't like positions able to take down enemy
@@ -368,12 +390,9 @@ class UCIEngine (ProtocolEngine):
                         # automaticaly
                         self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
                         return
-                
-                print >> self.engine, "stop"
-                if self.board.asFen() == FEN_START:
-                    commands.append("position startpos")
+                    commands.append("position fen %s" % self.board.switchColor().asFen())
                 else:
-                    commands.append("position fen %s" % self.board.asFen())
+                    commands.append("position %s" % self.uciPosition)
                 commands.append("go infinite")
             
             if self.needBestmove:
@@ -383,13 +402,16 @@ class UCIEngine (ProtocolEngine):
             else:
                 for command in commands:
                     print >> self.engine, command
-                if self.board.asFen() != FEN_START and getStatus(self.board)[1] != WON_MATE:
+                if getStatus(self.board)[1] != WON_MATE:
                     self.needBestmove = True
                     self.readyForStop = True
     
     def _startPonder (self):
-        print >> self.engine, "position fen", self.board.asFen(), \
-                                "moves", toAN(self.board, self.pondermove, short=True)
+        uciPos = self.uciPosition
+        if not self.uciPositionListsMoves:
+            uciPos += " moves"
+        print >> self.engine, "position", uciPos, \
+                                toAN(self.board, self.pondermove, UCI=True)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "btime", self.btime, "winc", self.incr, "binc", self.incr
     
@@ -475,7 +497,7 @@ class UCIEngine (ProtocolEngine):
                     self.returnQueue.put('del')
                     return
                 
-                self.board = self.board.move(move)
+                self._recordMove(self.board.move(move), move, self.board)
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
                     (move, self.board), self.defname)
                 
@@ -515,7 +537,9 @@ class UCIEngine (ProtocolEngine):
             
             movstrs = parts[parts.index("pv")+1:]
             try:
-                moves = listToMoves (self.board, movstrs, AN, validate=True, ignoreErrors=False)
+                board = self.board
+                if self.mode == INVERSE_ANALYZING: board = board.switchColor()
+                moves = listToMoves (board, movstrs, AN, validate=True, ignoreErrors=False)
             except ParsingError, e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
