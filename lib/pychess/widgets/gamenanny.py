@@ -248,7 +248,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
         if len(analyzer.getAnalysis()) >= 1:
             if gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]:
-                set_arrow (analyzer.getAnalysis()[0].cords)
+                set_arrow (analyzer.getAnalysis()[0][0][0].cords)
             else: set_arrow (None)
         
         # This is a kludge using pythons ability to asign attributes to an
@@ -261,7 +261,10 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
         if not hasattr (gmwidg.gamemodel, "chacons"):
             gmwidg.gamemodel.chacons = []
         
-        def on_analyze (analyzer, moves, score):
+        def on_analyze (analyzer, analysis):
+            if not analysis:
+                return
+            moves, score = analysis[0]
             if moves and (gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]):
                 set_arrow (moves[0].cords)

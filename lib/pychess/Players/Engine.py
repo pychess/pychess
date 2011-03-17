@@ -15,20 +15,19 @@ class Engine (Player):
     
     __type__ = ARTIFICIAL
     
-    ''' The first argument is the pv list of moves. The second is a score
+    ''' Argument is a vector of analysis lines.
+        The first element is the pv list of moves. The second is a score
         relative to the engine. If no score is known, the value can be None,
         but not 0, which is a draw. '''
     __gsignals__ = {
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object))
+        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
     def __init__(self):
         Player.__init__(self)
         
         self.currentAnalysis = []
-        def on_analysis(self_, analysis, score):
-            if score != None:
-                self.currentScore = score
+        def on_analysis(self_, analysis):
             self.currentAnalysis = analysis
         self.connect('analyze', on_analysis)
     
@@ -82,6 +81,16 @@ class Engine (Player):
     #===========================================================================
     
     def canAnalyze (self):
+        raise NotImplementedError
+    
+    def requestMultiPV (self, setting):
+        """Set the number of analysis lines the engine will give, if possible.
+            
+        If setting is too high, the engine's maximum will be used.
+        The setting will last until the next call to requestMultiPV.
+        Return value: the largest number of lines possible in the current
+        position. This depends on the number of legal moves.
+        """
         raise NotImplementedError
     
     def getAnalysis (self):
