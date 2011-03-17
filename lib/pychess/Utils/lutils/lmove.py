@@ -405,22 +405,24 @@ def parseLAN (board, lan):
 # toAN                                                                         #
 ################################################################################
 
-def toAN (board, move, short=False, UCI=False):
+def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
     """ Returns a Algebraic Notation string of a move
         board should be prior to the move
         
         short -- returns the short variant, e.g. f7f8q rather than f7f8=Q
-        UCI   -- returns the variant UCI expects (implies short)
     """
-    s = reprCord[FCORD(move)] + reprCord[TCORD(move)]
-    if board.variant == FISCHERRANDOMCHESS \
-        and FLAG(move) in (KING_CASTLE, QUEEN_CASTLE):
-        if UCI:
+    fcord = FCORD(move)
+    tcord = TCORD(move)
+    
+    if FLAG(move) in (KING_CASTLE, QUEEN_CASTLE):
+        if castleNotation == CASTLE_SAN:
+            return FLAG(move) == KING_CASTLE and "O-O" or "O-O-O"
+        elif castleNotation == CASTLE_KR:
             rooks = board.ini_rooks[board.color]
             tcord = rooks[FLAG(move) == KING_CASTLE and 1 or 0]
-            s = reprCord[FCORD(move)] + reprCord[tcord]
-        else:
-            return FLAG(move) == KING_CASTLE and "O-O" or "O-O-O"
+        # No treatment needed for CASTLE_KK
+    
+    s = reprCord[fcord] + reprCord[tcord]
     
     if FLAG(move) in PROMOTIONS:
         if short or UCI:
