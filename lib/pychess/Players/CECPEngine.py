@@ -575,7 +575,11 @@ class CECPEngine (ProtocolEngine):
         
         if self.features["san"]:
             print >> self.engine, toSAN(board, move)
-        else: print >> self.engine, toAN(board, move, short=True)
+        else:
+            cn = CASTLE_KK
+            if board.variant == FISCHERRANDOMCHESS:
+                cn = CASTLE_SAN
+            print >> self.engine, toAN(board, move, short=True, castleNotation=cn)
     
     def __tellEngineToMoveNow (self):
         if self.features["sigint"]:

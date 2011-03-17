@@ -114,7 +114,11 @@ class ICPlayer (Player):
     
     def makeMove (self, board1, move, board2):
         if board2 and self.gamemodel.inControl:
-            self.connection.bm.sendMove (toAN (board2, move))
+            # TODO: Will this work if we just always use CASTLE_SAN?
+            cn = CASTLE_KK
+            if board2.variant == FISCHERRANDOMCHESS:
+                cn = CASTLE_SAN
+            self.connection.bm.sendMove (toAN (board2, move, castleNotation=cn))
         
         item = self.queue.get(block=True)
         try:

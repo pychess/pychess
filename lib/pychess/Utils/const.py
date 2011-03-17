@@ -143,6 +143,8 @@ KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION = range(8)
 PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
+# Castling notation types: e.g., O-O, e1g1, e1h1
+CASTLE_SAN, CASTLE_KK, CASTLE_KR = range(3)
 
 FAN_PIECES = [
     ["", "♙", "♘", "♗", "♖", "♕", "♔", ""],

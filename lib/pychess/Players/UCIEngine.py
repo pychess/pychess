@@ -149,7 +149,13 @@ class UCIEngine (ProtocolEngine):
     #    Send the player move updates
     #===========================================================================
     
-    def _recordMove(self, board1, move, board2):
+    def _moveToUCI (self, board, move):
+        cn = CASTLE_KK
+        if board.variant == FISCHERRANDOMCHESS:
+            cn = CASTLE_KR
+        return toAN(board, move, short=True, castleNotation=cn)
+    
+    def _recordMove (self, board1, move, board2):
         if self.board == board1:
             return
         if not board2:
@@ -162,10 +168,10 @@ class UCIEngine (ProtocolEngine):
             if not self.uciPositionListsMoves:
                 self.uciPosition += " moves"
                 self.uciPositionListsMoves = True
-            self.uciPosition += " " + toAN(board2, move, UCI=True)
+            self.uciPosition += " " + self._moveToUCI(board2, move)
         self.board = board1
     
-    def _recordMoveList(self, model):
+    def _recordMoveList (self, model):
         self._recordMove(model.boards[0], None, None)
         for board1, move, board2 in zip(model.boards, model.moves, model.boards[:-1]):
             self._recordMove(board1, move, board2)
@@ -411,7 +417,7 @@ class UCIEngine (ProtocolEngine):
         if not self.uciPositionListsMoves:
             uciPos += " moves"
         print >> self.engine, "position", uciPos, \
-                                toAN(self.board, self.pondermove, UCI=True)
+                                self._moveToUCI(self.board, self.pondermove)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "btime", self.btime, "winc", self.incr, "binc", self.incr
     
