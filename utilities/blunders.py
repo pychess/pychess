@@ -131,12 +131,14 @@ def check_blund():
     print "Considering", game.ply//2+1, movename, " ",
     game.undoMoves(1)
 
-def onAnalyze(analyzer, pv, score):
+def onAnalyze(analyzer, analysis):
     global values
-    sys.stdout.write('.')
-    sys.stdout.flush()
-    if score != None:
-        values[game.ply] = (pv, score*(-1)**game.ply)
+    if analysis:
+        pv, score = analysis[0]
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        if score != None:
+            values[game.ply] = (pv, score*(-1)**game.ply)
 
 ###############################################################################
 # Slightly validate arguments 

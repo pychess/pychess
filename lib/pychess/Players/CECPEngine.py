@@ -258,7 +258,7 @@ class CECPEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [], None)
+                self.emit("analyze", [])
     
     #===========================================================================
     #    Send the player move updates
@@ -290,7 +290,7 @@ class CECPEngine (ProtocolEngine):
                 # Many engines don't like positions able to take down enemy
                 # king. Therefore we just return the "kill king" move
                 # automaticaly
-                self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
+                self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
                 return
             self.__printColor()
             if self.engineIsInNotPlaying: print >> self.engine, "force"
@@ -751,7 +751,7 @@ class CECPEngine (ProtocolEngine):
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
                 if moves and not self.board.board.opIsChecked():
-                    self.emit("analyze", moves, scoreval)
+                    self.emit("analyze", [(moves, scoreval)])
                 
                 return
         
@@ -858,6 +858,9 @@ class CECPEngine (ProtocolEngine):
     def canAnalyze (self):
         assert self.ready, "Still waiting for done=1"
         return self.features["analyze"]
+    
+    def requestMultiPV (self, setting):
+        return 1
     
     def isAnalyzing (self):
         return self.mode in (ANALYZING, INVERSE_ANALYZING)

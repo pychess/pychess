@@ -8,7 +8,7 @@ from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
-from pychess.Utils.logic import validate, getMoveKillingKing, getStatus
+from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMoveCount
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.Log import log
@@ -44,12 +44,15 @@ class UCIEngine (ProtocolEngine):
         self.waitingForMove = False
         self.needBestmove = False
         self.readyForStop = False   # keeps track of whether we already sent a 'stop' command
+        self.multipvSetting  = 1    # MultiPV option sent to the engine
+        self.multipvExpected = 1    # Number of PVs expected (limited by number of legal moves)
         self.commands = collections.deque()
         
         self.gameBoard = Board(setup=True) # board at the end of all moves played
         self.board = Board(setup=True)     # board to send the engine
         self.uciPosition = "startpos"
         self.uciPositionListsMoves = False
+        self.analysis = [ None ]
         
         self.returnQueue = Queue.Queue()
         self.engine.connect("line", self.parseLines)
@@ -90,6 +93,8 @@ class UCIEngine (ProtocolEngine):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
+        
+            self.requestMultiPV(self.multipvSetting)
         
         for option, value in self.optionsToBeSent.iteritems():
             if self.options[option]["default"] != value:
@@ -141,7 +146,7 @@ class UCIEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [], None)
+                self.emit("analyze", [])
     
     #===========================================================================
     #    Send the player move updates
@@ -301,7 +306,7 @@ class UCIEngine (ProtocolEngine):
                 self.readyForStop = False
     
     def playerUndoMoves (self, moves, gamemodel):
-        self._recordMoveList(model)
+        self._recordMoveList(gamemodel)
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -313,7 +318,7 @@ class UCIEngine (ProtocolEngine):
             self.returnQueue.put("int")
     
     def spectatorUndoMoves (self, moves, gamemodel):
-        self._recordMoveList(model)
+        self._recordMoveList(gamemodel)
         
         if self.readyMoves:
             self._searchNow()
@@ -386,12 +391,16 @@ class UCIEngine (ProtocolEngine):
                         # Many engines don't like positions able to take down enemy
                         # king. Therefore we just return the "kill king" move
                         # automaticaly
-                        self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
+                        self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
                         return
                     commands.append("position fen %s" % self.board.asFen())
                 else:
                     commands.append("position %s" % self.uciPosition)
                 commands.append("go infinite")
+            
+            if self.multipvSetting > 1:
+                self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
+            self.analysis = [None] * self.multipvExpected
             
             if self.needBestmove:
                 self.commands.append(commands)
@@ -521,6 +530,9 @@ class UCIEngine (ProtocolEngine):
         
         #----------------------------------------------------------- An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
+            multipv = 1
+            if "multipv" in parts:
+                multipv = int(parts[parts.index("multipv")+1])
             scoretype = parts[parts.index("score")+1]
             if scoretype in ('lowerbound', 'upperbound'):
                 score = None
@@ -541,7 +553,9 @@ class UCIEngine (ProtocolEngine):
                     (' '.join(movstrs),e), self.defname)
                 return
             
-            self.emit("analyze", moves, score)
+            self.analysis[multipv - 1] = (moves, score)
+            if multipv == self.multipvExpected:
+                self.emit("analyze", self.analysis)
             return
         
         #-----------------------------------------------  An Analyzer bestmove
@@ -598,9 +612,32 @@ class UCIEngine (ProtocolEngine):
     #    Info
     #===========================================================================
     
-    def canAnalyze (self):
-        # All UCIEngines can analyze
-        return True
+    def requestMultiPV (self, n):
+        try:
+            multipvMax = int(self.options["MultiPV"]["max"])
+        except (KeyError, ValueError):
+            return 1 # Engine does not support the MultiPV option
+        
+        n = min(n, multipvMax)
+        
+        if self.board.board.opIsChecked():
+            multipvMax = 1 # This can happen with an inverse analyzer
+        else:
+            multipvMax = min(multipvMax, legalMoveCount(self.board))
+        
+        if n != self.multipvSetting:
+            with self.moveLock:
+                self.multipvSetting  = n
+                self.multipvExpected = min(n, multipvMax)
+                if self.readyForStop:
+                    self.ignoreNext = True
+                    print >> self.engine, "stop"
+                    print >> self.engine, "setoption name MultiPV value", n
+                    self._searchNow()
+                else:
+                    print >> self.engine, "setoption name MultiPV value", n
+        
+        return multipvMax
     
     def __repr__ (self):
         if self.name:
