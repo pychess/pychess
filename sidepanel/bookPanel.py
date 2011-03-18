@@ -5,8 +5,25 @@ from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
-from pychess.Utils.Move import Move, toSAN, toFAN, parseAny
+from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
 from pychess.System.prefix import addDataPrefix
+
+# TODO: move this functionality elsewhere
+from pychess.Utils.lutils.ldata import MATE_VALUE
+
+def prettyPrintScore (s):
+    if s is None: return "?"
+    if s == 0: return "0.00"
+    if s > 0:
+       pp = "+"
+    else:
+        pp = "-"
+        s = -s
+    
+    if s >= MATE_VALUE - 1000:
+        return pp + "#" + str(MATE_VALUE - s)
+    else:
+        return pp + "%0.2f" % (s / 100.0)
 
 __title__ = _("Hints")
 
@@ -81,6 +98,69 @@ class OpeningAdvisor(Advisor):
         # TODO: try to find a name for the opening
         return ""
 
+class EngineAdvisor(Advisor):
+    def __init__ (self, store, engine, mode):
+        if mode == ANALYZING:
+            Advisor.__init__(self, store, _("Analysis by %s") % engine)
+            self.tooltip = _("%s will try to predict which move is best and which side has the advantage" % engine)
+        else:
+            Advisor.__init__(self, store, _("Threat analysis by %s") % engine)
+            self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move" % engine)
+        self.engine = engine
+        self.mode = mode
+        self.active = False
+        self.linesExpected   = 1
+        self.linesMax        = 1
+        self.connection = engine.connect("analyze", lambda eng, analysis : self.on_analyze(analysis))
+    
+    def __del__ (self):
+        self.engine.disconnect(self.connection)
+    
+    def shown_changed (self, board, shown):
+        m = board.model
+        b = m.getBoardAtPly(shown)
+        
+        if board.model.ply != shown:
+            if not self.active: return
+            self.active = False
+            parent = self.empty_parent()
+            # TODO: allow user to switch to visible position.
+            self.store.append(parent, ["", ("", 0, None), _("The engine is considering another position.")])
+            return
+        
+        parent = self.empty_parent()
+        self.board = self.mode != INVERSE_ANALYZING and b or b.switchColor()
+        self.engine.requestMultiPV(1)
+        self.active = True
+        self.linesExpected   = 1
+        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
+        self.store.append(parent, ["", ("", 0, None), _("Calculating...")])
+    
+    def pause (self):
+        pass #TODO
+    
+    def on_analyze (self, analysis):
+        if not self.active: return
+        parent = self.empty_parent()
+        for line in analysis:
+            pv, score = line
+            # TODO pretty-print the PV, and honor FAN settings
+            movestr = "?"
+            if pv:
+                movestr = toSAN(self.board, pv[0])
+            pv = " ".join(listToSan(self.board, pv))
+            if self.board.color == BLACK: score = -score
+            # TODO make a move's "goodness" relative to other moves or past scores
+            goodness = (min(max(score, -250), 250) + 250) / 500.0
+            self.store.append(parent, [movestr, (prettyPrintScore(score), 1, goodness), pv])
+        if self.linesExpected <= len(analysis) < self.linesMax:
+            pass # TODO: Offer to add an extra line.
+    
+    def child_tooltip (self, i):
+        if self.active:
+            return _("Engine scores are in units of pawns, from White's point of view.")
+        return ""
+
 class EndgameAdvisor(Advisor):
     def __init__ (self, store):
         Advisor.__init__(self, store, _("Endgame Table"))
@@ -140,17 +220,27 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         
         self.advisors = [ OpeningAdvisor(self.store) ]
-        #if HINT in gmwidg.gamemodel.spectactors:
-            #self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[HINT], ANALYZING))
+        if HINT in gmwidg.gamemodel.spectactors:
+            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[HINT], ANALYZING))
         self.advisors.append(EndgameAdvisor(self.store))
-        #if SPY in gmwidg.gamemodel.spectactors:
-            #self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[SPY], INVERSE_ANALYZING))
+        if SPY in gmwidg.gamemodel.spectactors:
+            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[SPY], INVERSE_ANALYZING))
         
+        self.gmwidg = None # HACK
         self.shown_changed(self.board, 0)
+        self.gmwidg = gmwidg # HACK
         
         return self.sw
     
     def shown_changed (self, board, shown):
+# HACK
+        if self.gmwidg:
+            if HINT in self.gmwidg.gamemodel.spectactors:
+                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectactors[HINT], ANALYZING))
+            if SPY in self.gmwidg.gamemodel.spectactors:
+                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectactors[SPY], INVERSE_ANALYZING))
+            self.gmwidg = None
+# End of HACK
         board.bluearrow = None
         
         if legalMoveCount(board.model.getBoardAtPly(shown)) == 0:
@@ -213,6 +303,8 @@ class Sidepanel:
         # Otherwise, ask the TreeView to set up the tip's area according
         # to the row's rectangle.
         path, col, x, y = path_col_x_y
+        if not path:
+            return False
         treeview.set_tooltip_row(tooltip, path)
         
         # And ask the advisor for some text

@@ -83,6 +83,9 @@ class Engine (Player):
     def canAnalyze (self):
         raise NotImplementedError
     
+    def maxAnalysisLines (self):
+        raise NotImplementedError
+    
     def requestMultiPV (self, setting):
         """Set the number of analysis lines the engine will give, if possible.
             

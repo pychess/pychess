@@ -859,6 +859,9 @@ class CECPEngine (ProtocolEngine):
         assert self.ready, "Still waiting for done=1"
         return self.features["analyze"]
     
+    def maxAnalysisLines (self):
+        return 1
+    
     def requestMultiPV (self, setting):
         return 1
     
