@@ -620,15 +620,9 @@ class UCIEngine (ProtocolEngine):
         
         n = min(n, multipvMax)
         
-        if self.board.board.opIsChecked():
-            multipvMax = 1 # This can happen with an inverse analyzer
-        else:
-            multipvMax = min(multipvMax, legalMoveCount(self.board))
-        
         if n != self.multipvSetting:
             with self.moveLock:
                 self.multipvSetting  = n
-                self.multipvExpected = min(n, multipvMax)
                 if self.readyForStop:
                     self.ignoreNext = True
                     print >> self.engine, "stop"
@@ -637,7 +631,7 @@ class UCIEngine (ProtocolEngine):
                 else:
                     print >> self.engine, "setoption name MultiPV value", n
         
-        return multipvMax
+        return n
     
     def __repr__ (self):
         if self.name:

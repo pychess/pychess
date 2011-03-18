@@ -88,8 +88,7 @@ class Engine (Player):
             
         If setting is too high, the engine's maximum will be used.
         The setting will last until the next call to requestMultiPV.
-        Return value: the largest number of lines possible in the current
-        position. This depends on the number of legal moves.
+        Return value: the setting used.
         """
         raise NotImplementedError
     
