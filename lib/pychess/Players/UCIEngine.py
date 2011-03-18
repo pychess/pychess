@@ -178,7 +178,7 @@ class UCIEngine (ProtocolEngine):
     
     def _recordMoveList (self, model):
         self._recordMove(model.boards[0], None, None)
-        for board1, move, board2 in zip(model.boards, model.moves, model.boards[:-1]):
+        for board1, move, board2 in zip(model.boards[1:], model.moves, model.boards[:-1]):
             self._recordMove(board1, move, board2)
 
     def putMove (self, board1, move, board2):
