@@ -58,7 +58,7 @@ class CECPTests(EmittingTestCase):
         engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, (listToMoves(board,moves), score))
+        self.assertEqual(results, ([(listToMoves(board,moves), score)],))
     
     def setUp (self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
