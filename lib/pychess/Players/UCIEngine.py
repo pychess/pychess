@@ -612,12 +612,14 @@ class UCIEngine (ProtocolEngine):
     #    Info
     #===========================================================================
     
-    def requestMultiPV (self, n):
+    def maxAnalysisLines (self):
         try:
-            multipvMax = int(self.options["MultiPV"]["max"])
+            return int(self.options["MultiPV"]["max"])
         except (KeyError, ValueError):
             return 1 # Engine does not support the MultiPV option
         
+    def requestMultiPV (self, n):
+        multipvMax = self.maxAnalysisLines()
         n = min(n, multipvMax)
         
         if n != self.multipvSetting:
