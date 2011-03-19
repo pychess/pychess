@@ -22,6 +22,7 @@ import sys
 import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
+from pychess.System.protoopen import protoopen
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
@@ -30,7 +31,7 @@ from pychess.Savers import pgn
 ###############################################################################
 # Ask the user for details
 def queryGameno(path):
-    pgnfile = pgn.load(path)
+    pgnfile = pgn.load(protoopen(path))
     print "Selected file %s" % path
     if len(pgnfile) == 0:
         print "The file is empty."
