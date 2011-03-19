@@ -35,7 +35,7 @@ msgstr "gnuchess"
 
 #: glade/fics_logon.glade:7
 msgid "PyChess - Connect to Internet Chess"
-msgstr "PyChess - Kapcsolodós a FICS-hez"
+msgstr "PyChess - Kapcsolódás a FICS-hez"
 
 #: glade/fics_logon.glade:50
 msgid "<b>Title</b>"
@@ -311,7 +311,7 @@ msgstr " "
 
 #: glade/fics_lounge.glade:2122
 msgid "Asymmetric Random\t"
-msgstr "Aszimmetrikus kevert"
+msgstr "Aszimmetrikus kevert\t"
 
 #: glade/fics_lounge.glade:2151 glade/newInOut.glade:586
 msgid "<b>Chess Variant</b>"
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:196
 msgid "Shuffle, Fischer Random, Random, Asymmetric Random\n"
-msgstr "Kevert, Fischer Random, Asszimmetrikus kevert\n"
+msgstr "Kevert, Fischer Random, Véletlen, Asszimmetrikus kevert\n"
 
 #: lib/pychess/ic/ICLounge.py:197
 msgid "Upside Down, Pawns Pushed, Pawns Passed\n"
@@ -1887,7 +1887,7 @@ msgstr "Vezér előny"
 #: lib/pychess/Variants/randomchess.py:35
 #: lib/pychess/ic/managers/GameListManager.py:25
 msgid "Random"
-msgstr "Egyszerű kevert"
+msgstr "Véletlen"
 
 #: lib/pychess/Variants/rookodds.py:17
 msgid "Rook odds"

@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-27 08:42+0200\n"
-"PO-Revision-Date: 2011-01-21 02:01+0000\n"
-"Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
+"PO-Revision-Date: 2011-02-24 12:59+0000\n"
+"Last-Translator: Cristiano Nunes <Unknown>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2011-01-21 02:04+0000\n"
-"X-Generator: Launchpad (build 12214)\n"
+"X-Launchpad-Export-Date: 2011-03-17 13:22+0000\n"
+"X-Generator: Launchpad (build 12611)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -123,7 +123,7 @@ msgstr "Busca_s / Desafios"
 #: glade/fics_lounge.glade:490 lib/pychess/ic/ICLounge.py:186
 #: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:636
 msgid "Rating"
-msgstr "Pontuação"
+msgstr "Classificação"
 
 #: glade/fics_lounge.glade:513
 msgid "Time"
@@ -179,7 +179,7 @@ msgstr "_Reiniciar"
 
 #: glade/fics_lounge.glade:1037
 msgid "_Adjourned"
-msgstr ""
+msgstr "_Agendar"
 
 #: glade/fics_lounge.glade:1134
 msgid "<b>News</b>"
@@ -255,6 +255,11 @@ msgid ""
 "a) your rating for the type of game sought has changed\n"
 "b) you change the variant or the time control"
 msgstr ""
+"Quando este botão estiver no estado \"travado\", a relação\n"
+"entre \"a força do adversário\" e \"a sua força\" será\n"
+"preservada quando\n"
+"a) sua classificação para o tipo de jogo procurado for alterada\n"
+"b) você alterar a variante ou o controle de tempo"
 
 #: glade/fics_lounge.glade:1714
 msgid "Center:"
@@ -484,7 +489,7 @@ msgstr "Salvar Jogo _Como"
 
 #: glade/PyChess.glade:149
 msgid "Player _Rating"
-msgstr "Pontuação do Jogado_r"
+msgstr "Classificação do Jogado_r"
 
 #: glade/PyChess.glade:185
 msgid "_Actions"
@@ -1035,6 +1040,8 @@ msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the following variants at "
 "all time controls:\n"
 msgstr ""
+"No FICS, sua classificação \"Wild\" engloba todas as seguintes variantes em "
+"todos os controles de tempo:\n"
 
 #: lib/pychess/ic/ICLounge.py:196
 msgid "Shuffle, Fischer Random, Random, Asymmetric Random\n"
@@ -1213,6 +1220,10 @@ msgid ""
 "can't establish ratings, and the chain button's state has no effect when "
 "there is no rating to which to tie \"Opponent Strength\" to"
 msgstr ""
+"O botão atual está desativado porque você está logado como convidado. "
+"Convidados não podem estabelecer classificações e o estado do botão atual "
+"não tem nenhum efeito quando não há nenhuma classificação da \"Força do "
+"Adversário\" para"
 
 #: lib/pychess/ic/ICLounge.py:1149
 msgid "Unregistered"
@@ -1348,7 +1359,7 @@ msgid ""
 "the game will end with no rating change."
 msgstr ""
 "Seu adversário solicitou que o jogo seja anulado. Se você aceitar, o jogo "
-"terminará sem nenhuma mudança na pontuação."
+"terminará sem nenhuma mudança na classificação."
 
 #: lib/pychess/Players/Human.py:21
 msgid "Your opponent wants to adjourn the game. Accept?"
@@ -1444,7 +1455,7 @@ msgstr "abandono"
 
 #: lib/pychess/Players/Human.py:48
 msgid "call your opponents flag"
-msgstr ""
+msgstr "chamar bandeira a seu adversário"
 
 #: lib/pychess/Players/Human.py:49
 msgid "offer a draw"
@@ -1607,6 +1618,8 @@ msgid ""
 "The game can't be read to end, because of an error parsing move %(moveno)s "
 "'%(notation)s'."
 msgstr ""
+"O jogo não pode ser lido até o final, devido a um erro de análise do "
+"movimento %(moveno)s '%(notation)s'."
 
 #: lib/pychess/Savers/pgn.py:191 lib/pychess/Savers/pgn.py:306
 #, python-format
@@ -1812,7 +1825,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:38
 msgid "Because of courtesy by a player"
-msgstr ""
+msgstr "Por causa da cortesia de um jogador"
 
 #: lib/pychess/Utils/repr.py:39
 msgid ""
@@ -2318,7 +2331,7 @@ msgstr "Canal não-oficial %d"
 
 #: lib/pychess/ic/managers/GameListManager.py:17
 msgid "Opposite Kings"
-msgstr ""
+msgstr "Rei oposto"
 
 #: lib/pychess/ic/managers/GameListManager.py:18
 msgid "Limited Shuffle"
@@ -2412,27 +2425,27 @@ msgstr "empates"
 
 #: lib/pychess/Utils/lutils/strateval.py:43
 msgid "mates"
-msgstr "mates"
+msgstr "fazem xeque-mate"
 
 #: lib/pychess/Utils/lutils/strateval.py:47
 msgid "puts opponent in check"
-msgstr "colocar o adversário em xeque"
+msgstr "colocam o adversário em xeque"
 
 #: lib/pychess/Utils/lutils/strateval.py:71
 msgid "improves king safety"
-msgstr "melhora a segurança do Rei"
+msgstr "melhoram a segurança do Rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:73
 msgid "slightly improves king safety"
-msgstr "melhora ligeiramente a segurança do rei"
+msgstr "melhoram ligeiramente a segurança do rei"
 
 #: lib/pychess/Utils/lutils/strateval.py:106
 msgid "moves a rook to an open file"
-msgstr "move uma torre para uma casa aberta"
+msgstr "movem uma torre para uma coluna aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:107
 msgid "moves an rook to a half-open file"
-msgstr "move uma torre para uma casa meia aberta"
+msgstr "movem uma torre para uma coluna meia aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:117
 #: lib/pychess/Utils/lutils/strateval.py:119
@@ -2440,32 +2453,32 @@ msgstr "move uma torre para uma casa meia aberta"
 #: lib/pychess/Utils/lutils/strateval.py:124
 #, python-format
 msgid "moves bishop into fianchetto: %s"
-msgstr "move o bispo no fianqueto: %s"
+msgstr "movem o bispo no fianqueto: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:130
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr "promove um peão para um %s"
+msgstr "promovem um peão para %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:133
 msgid "castles"
-msgstr "castelos"
+msgstr "rocam"
 
 #: lib/pychess/Utils/lutils/strateval.py:156
 msgid "takes back material"
-msgstr "voltar peça"
+msgstr "voltam peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:160
 msgid "sacrifies material"
-msgstr "sacrifica peça"
+msgstr "sacrificam peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:162
 msgid "exchanges material"
-msgstr "troca peça"
+msgstr "trocam peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:164
 msgid "captures material"
-msgstr "captura peça"
+msgstr "capturam peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:285
 #, python-format
@@ -2485,12 +2498,12 @@ msgstr "aumenta a pressão em %s"
 #: lib/pychess/Utils/lutils/strateval.py:292
 #, python-format
 msgid "defends %s"
-msgstr "defende %s"
+msgstr "defendem %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:329
 #, python-format
 msgid "pins an enemy %(oppiece)s on the %(piece)s at %(cord)s"
-msgstr ""
+msgstr "ameaçam %(oppiece)s para atacar %(piece)s em %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:362
 #, python-format
@@ -2509,17 +2522,17 @@ msgstr "%(color)s tem um novo peão passado em %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:463
 msgid "half-open"
-msgstr "meio-jogo"
+msgstr "meio aberta"
 
 #: lib/pychess/Utils/lutils/strateval.py:465
 #, python-format
 msgid "in the %(x)s%(y)s file"
-msgstr ""
+msgstr "na coluna %(x)s%(y)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:467
 #, python-format
 msgid "in the %(x)s%(y)s files"
-msgstr ""
+msgstr "na(s) coluna(s) %(x)s%(y)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:470
 #, python-format
@@ -2535,8 +2548,8 @@ msgstr "%(color)s tem novos peões duplos %(place)s"
 #, python-format
 msgid "%(color)s got an isolated pawn in the %(x)s file"
 msgid_plural "%(color)s got isolated pawns in the %(x)s files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(color)s tem peão isolado na coluna %(x)s"
+msgstr[1] "%(color)s tem peões isolados nas colunas %(x)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:485
 #, python-format
