@@ -54,7 +54,7 @@ class Log (gobject.GObject):
         self.publisher.start()
     
     def _format (self, task, message, type):
-        t = time.strftime ("%T")
+        t = time.strftime ("%H:%M:%S")
         return "%s %s %s: %s" % (t, task, labels[type], message.decode("latin-1"))
     
     def _log (self, task, message, type):
