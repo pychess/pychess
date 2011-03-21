@@ -7,7 +7,7 @@ import gobject
 import cairo
 
 if sys.platform == 'win32':
-    from pychess.System.Rsvg import rsvg
+    from pychess.System.WinRsvg import rsvg
 else:
     import rsvg
 
