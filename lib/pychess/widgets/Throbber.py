@@ -1,10 +1,15 @@
+import sys
 import time
 import math
 
 import gtk
 import gobject
 import cairo
-import rsvg
+
+if sys.platform == 'win32':
+    from pychess.System.Rsvg import rsvg
+else:
+    import rsvg
 
 from pychess.System.uistuff import addDataPrefix
 from pychess.System.repeat import repeat_sleep
