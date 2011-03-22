@@ -275,15 +275,15 @@ for px in range(8):
 tropismArray = array('I',tropismTable)
 
 def lookUpTropism (px, py, kx, ky, piece):
-	value = tropismArray[ky + kx*8 + py*8*8 + px*8*8*8]
-	knight = value % 20
-	rook = (value-knight)/20 % 20
-	queen = (value-knight-rook*20)/20/20
-	if piece == knight:
-	    return knight-5
-	if piece == rook:
-	    return rook-5
-	return queen-5
+    value = tropismArray[ky + kx*8 + py*8*8 + px*8*8*8]
+    knight = value % 20
+    rook = (value-knight)/20 % 20
+    queen = (value-knight-rook*20)/20/20
+    if piece == knight:
+        return knight-5
+    if piece == rook:
+        return rook-5
+    return queen-5
 
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
@@ -385,7 +385,7 @@ def evalRookBonus (board):
             if pieceCount <= 6:
                 # We should try to keep the rooks at the back lines 
                 if y in (0,7):
-                	score += piece.color == WHITE and 12 or -12
+                    score += piece.color == WHITE and 12 or -12
 
             # Is this rook on a semi- or completely open file?
             noblack = blackPawnFileBins[x] == 0 and 1 or 0
