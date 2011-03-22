@@ -123,7 +123,7 @@ setup (
     keywords         = 'python gtk chess xboard gnuchess game pgn epd board linux',
     description      = DESC,
     long_description = LONG_DESC,
-    license          = 'GPL2',
+    license          = 'GPL3',
     url              = 'http://pychess.googlepages.com',
     download_url     = 'http://code.google.com/p/pychess/downloads/list',
     package_dir      = {'': 'lib'},
