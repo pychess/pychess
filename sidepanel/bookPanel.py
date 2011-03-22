@@ -123,6 +123,7 @@ class EngineAdvisor(Advisor):
             parent = self.store.get_iter(self.path)
             child = self.store.iter_children(parent)
             del self.store[child]
+            self.offeringExtraPV = False
         while True:
             parent = self.store.get_iter(self.path)
             child = self.store.iter_children(parent)
