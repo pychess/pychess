@@ -119,6 +119,10 @@ class EngineAdvisor(Advisor):
         self.engine.disconnect(self.connection)
     
     def only_child (self):
+        if self.offeringExtraPV:
+            parent = self.store.get_iter(self.path)
+            child = self.store.iter_children(parent)
+            del self.store[child]
         while True:
             parent = self.store.get_iter(self.path)
             child = self.store.iter_children(parent)
@@ -170,6 +174,7 @@ class EngineAdvisor(Advisor):
     def row_activated (self, path):
         if self.active and path[1:] and path[1] == self.linesExpected:
             self.linesExpected += 1
+            self.offeringExtraPV = False
             self.engine.requestMultiPV(self.linesExpected)
             self.store[path] = [None, ("", 0, None), _("Calculating...")]
     
@@ -310,7 +315,7 @@ class Sidepanel:
             if self.board.model.ply != self.board.shown: return
             if b[move.cords[0]].color != b.color: return
             self.board.bluearrow = None
-            self.boardcontrol.emit("piece_moved", move, color)
+            self.boardcontrol.emit("piece_moved", move, b.color)
         else:
             # The row may be tied to a specific action.
             path = self.store.get_path(iter)

@@ -400,6 +400,8 @@ class UCIEngine (ProtocolEngine):
             
             if self.multipvSetting > 1:
                 self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
+            else:
+                self.multipvExpected = 1
             self.analysis = [None] * self.multipvExpected
             
             if self.needBestmove:
