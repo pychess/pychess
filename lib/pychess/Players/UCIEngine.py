@@ -625,13 +625,9 @@ class UCIEngine (ProtocolEngine):
         if n != self.multipvSetting:
             with self.moveLock:
                 self.multipvSetting  = n
-                if self.readyForStop:
-                    self.ignoreNext = True
-                    print >> self.engine, "stop"
-                    print >> self.engine, "setoption name MultiPV value", n
-                    self._searchNow()
-                else:
-                    print >> self.engine, "setoption name MultiPV value", n
+                print >> self.engine, "stop"
+                print >> self.engine, "setoption name MultiPV value", n
+                self._searchNow()
         
         return n
     
