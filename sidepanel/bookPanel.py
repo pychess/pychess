@@ -36,19 +36,25 @@ __about__ = _("Official PyChess panel.")
 class Advisor:
     def __init__ (self, store, name):
         self.store = store
-        iter = store.append(None, ["", ("", 0, None), name])
+        iter = store.append(None, [None, ("", 0, None), name])
         self.path = store.get_path(iter)
     
     def shown_changed (self, board, shown):
+        """ Update the suggestions to match a changed position. """
         raise NotImplementedError
     
     def child_tooltip (self, i):
+        """ Return a tooltip (or empty) string for the given child row. """
         return ""
     
-    def query_tooltip (self, subpath):
-        if not subpath:
+    def row_activated (self, path):
+        """ Act on a double-clicked child row other than a move suggestion. """
+        raise NotImplementedError
+    
+    def query_tooltip (self, path):
+        if not path[1:]:
             return self.tooltip
-        return self.child_tooltip(subpath[0])
+        return self.child_tooltip(path[1])
     
     def empty_parent (self):
         while True:
@@ -56,10 +62,7 @@ class Advisor:
             child = self.store.iter_children(parent)
             if not child:
                 return parent
-            self.store.remove(child)
-    
-    def pause (self):
-        pass
+            del self.store[child]
 
 class OpeningAdvisor(Advisor):
     def __init__ (self, store):
@@ -83,22 +86,19 @@ class OpeningAdvisor(Advisor):
             totalWeight += weight
 
         for move, weight, games, score in openings:
-            if conf.get("figuresInNotation", False):
-                move = toFAN(b, Move(move))
-            else:
-                move = toSAN(b, Move(move), True)
             weight /= totalWeight
-            weightText = "%0.1f%%" % (100 * weight)
             goodness = min(weight * len(openings), 1.0)
+            weight = "%0.1f%%" % (100 * weight)
             
-            variationName = "" # TODO
-            self.store.append (parent, [move, (weightText, 1, goodness), variationName])
+            eco = "" # TODO
+            self.store.append(parent, [Move(move), (weight, 1, goodness), eco])
     
     def child_tooltip (self, i):
         # TODO: try to find a name for the opening
         return ""
 
 class EngineAdvisor(Advisor):
+    # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
     def __init__ (self, store, engine, mode):
         if mode == ANALYZING:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
@@ -111,10 +111,21 @@ class EngineAdvisor(Advisor):
         self.active = False
         self.linesExpected   = 1
         self.linesMax        = 1
+        self.offeringExtraPV = False
+        self.store.append(self.empty_parent(), [None, ("", 0, None), _("Calculating...")])
         self.connection = engine.connect("analyze", lambda eng, analysis : self.on_analyze(analysis))
     
     def __del__ (self):
         self.engine.disconnect(self.connection)
+    
+    def only_child (self):
+        while True:
+            parent = self.store.get_iter(self.path)
+            child = self.store.iter_children(parent)
+            if self.linesExpected == 1:
+                return child
+            self.linesExpected -= 1
+            del self.store[child]
     
     def shown_changed (self, board, shown):
         m = board.model
@@ -123,42 +134,51 @@ class EngineAdvisor(Advisor):
         if board.model.ply != shown:
             if not self.active: return
             self.active = False
-            parent = self.empty_parent()
+            child = self.only_child()
             # TODO: allow user to switch to visible position.
-            self.store.append(parent, ["", ("", 0, None), _("The engine is considering another position.")])
+            self.store[child] = [None, ("", 0, None), _("The engine is considering another position.")]
             return
         
-        parent = self.empty_parent()
-        self.board = self.mode != INVERSE_ANALYZING and b or b.switchColor()
+        child = self.only_child()
+        self.store[child] = [None, ("", 0, None), _("Calculating...")]
+        self.board = b if self.mode != INVERSE_ANALYZING else b.switchColor()
         self.engine.requestMultiPV(1)
         self.active = True
         self.linesExpected   = 1
+        self.offeringExtraPV = False
         self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
-        self.store.append(parent, ["", ("", 0, None), _("Calculating...")])
-    
-    def pause (self):
-        pass #TODO
     
     def on_analyze (self, analysis):
         if not self.active: return
-        parent = self.empty_parent()
-        for line in analysis:
+        for i, line in enumerate(analysis):
             pv, score = line
-            # TODO pretty-print the PV, and honor FAN settings
-            movestr = "?"
+            # TODO pretty-print the PV.
+            move = None
             if pv:
-                movestr = toSAN(self.board, pv[0])
+                move = pv[0]
             pv = " ".join(listToSan(self.board, pv))
             if self.board.color == BLACK: score = -score
             # TODO make a move's "goodness" relative to other moves or past scores
             goodness = (min(max(score, -250), 250) + 250) / 500.0
-            self.store.append(parent, [movestr, (prettyPrintScore(score), 1, goodness), pv])
-        if self.linesExpected <= len(analysis) < self.linesMax:
-            pass # TODO: Offer to add an extra line.
+            self.store[self.path + (i,)] = [move, (prettyPrintScore(score), 1, goodness), pv]
+        
+        if not self.offeringExtraPV and self.linesExpected <= len(analysis) < self.linesMax:
+            parent = self.store.get_iter(self.path)
+            self.store.append(parent, [None, ("", 0, None), _("Double-click for another suggestion.")])
+            self.offeringExtraPV = True
+    
+    def row_activated (self, path):
+        if self.active and path[1:] and path[1] == self.linesExpected:
+            self.linesExpected += 1
+            self.engine.requestMultiPV(self.linesExpected)
+            self.store[path] = [None, ("", 0, None), _("Calculating...")]
     
     def child_tooltip (self, i):
         if self.active:
-            return _("Engine scores are in units of pawns, from White's point of view.")
+            if i < self.linesExpected:
+                return _("Engine scores are in units of pawns, from White's point of view.")
+            else:
+                return _("Adding suggestions can help you find ideas, but slows down the computer's analysis.")
         return ""
 
 class EndgameAdvisor(Advisor):
@@ -175,11 +195,6 @@ class EndgameAdvisor(Advisor):
         
         endings = self.egtb.scoreAllMoves(b.board)
         for move, result, depth in endings:
-            if conf.get("figuresInNotation", False):
-                move = toFAN(b, move)
-            else:
-                move = toSAN(b, move, True)
-            
             if result == DRAW:
                 result = (_("Draw"), 1, 0.5)
                 details = ""
@@ -194,23 +209,37 @@ class EndgameAdvisor(Advisor):
 class Sidepanel:
     
     def load (self, gmwidg):
+        self.boardcontrol = gmwidg.board
+        self.board = self.boardcontrol.view
+        
         widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
         self.sw.unparent()
-        
-        self.store = gtk.TreeStore(str, gobject.TYPE_PYOBJECT, str)
+        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, str)
         self.tv.set_model(self.store)
         
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Move", gtk.CellRendererText(), text=0))
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Strength", StrengthCellRenderer(), data=1))
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Details", gtk.CellRendererText(), text=2))
+        moveRenderer = gtk.CellRendererText()
+        c0 = gtk.TreeViewColumn("Move", moveRenderer)
+        c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
+        c2 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=2)
         
-        self.boardcontrol = gmwidg.board
-        self.board = self.boardcontrol.view
+        def getMoveText(column, cell, store, iter, board):
+            b = board.model.getBoardAtPly(board.shown)
+            move = store[iter][0]
+            if not move:
+                cell.set_property("text", "")
+            elif conf.get("figuresInNotation", False):
+                cell.set_property("text", toFAN(b, move))
+            else:
+                cell.set_property("text", toSAN(b, move, True))
+        
+        c0.set_cell_data_func(moveRenderer, getMoveText, self.board)
+        
+        self.tv.append_column(c0)
+        self.tv.append_column(c1)
+        self.tv.append_column(c2)
+        
         self.board.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
@@ -251,8 +280,6 @@ class Sidepanel:
                 self.sw.add_with_viewport(label)
                 self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
                 self.sw.show_all()
-                for advisor in self.advisors:
-                    advisor.pause()
             return
         
         for advisor in self.advisors:
@@ -264,32 +291,30 @@ class Sidepanel:
             self.sw.add(self.tv)
 
     def selection_changed (self, widget, *args):
-        # TODO: replace this hack with a call to an advisor method.
         iter = self.tv.get_selection().get_selected()[1]
-        if iter == None:
-            self.board.bluearrow = None
-            return
-        else: sel = self.tv.get_model().get_path(iter)[0]
-        
-        b = self.board.model.getBoardAtPly(self.board.shown)
-        movetext = self.store.get(iter, 0)[0]
-        if not movetext or movetext == "...":
-            return
-        move = parseAny(b, movetext)
-        self.board.bluearrow = move.cords
+        if iter:
+            move = self.store[iter][0]
+            if move:
+                self.board.bluearrow = move.cords
+                return
+        self.board.bluearrow = None
     
     def row_activated (self, widget, *args):
-        # TODO: replace this hack with a call to an advisor method.
         iter = self.tv.get_selection().get_selected()[1]
-        if self.board.model.ply != self.board.shown or iter is None:
+        if iter is None:
             return
-        movetext = self.store.get(iter, 0)[0]
-        if not movetext or movetext == "...":
-            return
-        self.board.bluearrow = None
-        b = self.board.model.boards[-1]
-        move = parseAny(b, movetext)
-        self.boardcontrol.emit("piece_moved", move, b.color)
+        move = self.store[iter][0]
+        if move:
+            # Play the move if it's a suggestion for the next move of the game.
+            b = self.board.model.boards[-1]
+            if self.board.model.ply != self.board.shown: return
+            if b[move.cords[0]].color != b.color: return
+            self.board.bluearrow = None
+            self.boardcontrol.emit("piece_moved", move, color)
+        else:
+            # The row may be tied to a specific action.
+            path = self.store.get_path(iter)
+            self.advisors[path[0]].row_activated(path)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
@@ -309,7 +334,7 @@ class Sidepanel:
         
         # And ask the advisor for some text
         iter = self.store.get_iter(path)
-        text = self.advisors[path[0]].query_tooltip(path[1:])
+        text = self.advisors[path[0]].query_tooltip(path)
         if text:
             tooltip.set_markup(text)
             return True # Show the tip.
