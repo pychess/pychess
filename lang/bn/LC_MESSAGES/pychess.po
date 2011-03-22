@@ -1,16 +1,16 @@
-# Greek translation for pychess
-# Copyright (c) 2007 Rosetta Contributors and Canonical Ltd 2007
+# Bengali translation for pychess
+# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the pychess package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2007.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-10-27 08:42+0200\n"
-"PO-Revision-Date: 2010-02-01 08:48+0000\n"
-"Last-Translator: George Kontis <giormatsis@gmail.com>\n"
-"Language-Team: Greek <el@li.org>\n"
+"PO-Revision-Date: 2010-11-17 17:39+0000\n"
+"Last-Translator: Kaustav Das Modak <kaustav.dasmodak@yahoo.co.in>\n"
+"Language-Team: Bengali <bn@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,7 +24,7 @@ msgstr ""
 
 #: glade/discovererDialog.glade:70
 msgid "PyChess.py:"
-msgstr ""
+msgstr "PyChess.py:"
 
 #: glade/discovererDialog.glade:81
 msgid "ShredderLinuxChess:"
@@ -36,11 +36,11 @@ msgstr ""
 
 #: glade/fics_logon.glade:7
 msgid "PyChess - Connect to Internet Chess"
-msgstr "PyChess - Διαδικτυακή Σύνδεση"
+msgstr "পাইচেস - ইন্টারনেটে সংযুক্ত করো"
 
 #: glade/fics_logon.glade:50
 msgid "<b>Title</b>"
-msgstr ""
+msgstr "<b>শিরোনাম</b>"
 
 #: glade/fics_logon.glade:64
 msgid "text"
@@ -52,15 +52,15 @@ msgstr ""
 
 #: glade/fics_logon.glade:160 glade/taskers.glade:349
 msgid "_Password:"
-msgstr "_Συνθηματικό:"
+msgstr "পাসওয়ার্ড:(_P)"
 
 #: glade/fics_logon.glade:173
 msgid "_Name:"
-msgstr "Ό_νομα:"
+msgstr "নাম:(_N)"
 
 #: glade/fics_logon.glade:217
 msgid "Log on as _Guest"
-msgstr "Συνδεθείτε ως _Επισκέπτης"
+msgstr "অতিথি হিসাবে লগ-অন করো"
 
 #: glade/fics_logon.glade:252
 msgid "Po_rts:"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:8
 msgid "PyChess - Internet Chess: FICS"
-msgstr "PyChess - Διαδικτυακή Σύνδεση: FICS"
+msgstr "পাইচেস - ইন্টারনেট-দাবা: FICS"
 
 #: glade/fics_lounge.glade:59
 msgid "_Clear Seeks"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:82
 msgid "_Accept"
-msgstr "_Αποδοχή"
+msgstr "গ্রহণ করো (_A)"
 
 #: glade/fics_lounge.glade:270 glade/fics_lounge.glade:2507
 msgid "Lightning:"
@@ -108,7 +108,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:424
 msgid "Send seek"
-msgstr "Αποστολή Αναζήτησης"
+msgstr "সন্ধান প্রেরন করো"
 
 #: glade/fics_lounge.glade:456
 msgid "Create Seek"
@@ -121,11 +121,11 @@ msgstr ""
 #: glade/fics_lounge.glade:490 lib/pychess/ic/ICLounge.py:186
 #: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:636
 msgid "Rating"
-msgstr "Βαθμολογία"
+msgstr "রেটিং"
 
 #: glade/fics_lounge.glade:513
 msgid "Time"
-msgstr "Χρόνος"
+msgstr "সময়"
 
 #: glade/fics_lounge.glade:535
 msgid "Seek _Graph"
@@ -149,7 +149,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:703
 msgid "_Observe"
-msgstr "Π_αρακολουθήστε"
+msgstr "পর্যবেক্ষন (_Observe)"
 
 #: glade/fics_lounge.glade:745
 msgid "_Game List"
@@ -181,7 +181,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1134
 msgid "<b>News</b>"
-msgstr "<b>Νέα</b>"
+msgstr "<b>খবর</b>"
 
 #: glade/fics_lounge.glade:1165
 msgid "Show _Chat"
@@ -193,7 +193,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1198
 msgid "<b>Tools</b>"
-msgstr "<b>Εργαλεία</b>"
+msgstr "<b>টুলস</b>"
 
 #: glade/fics_lounge.glade:1228
 msgid "Edit Seek"
@@ -278,13 +278,13 @@ msgstr ""
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/ionest.py:115 lib/pychess/widgets/TaskerManager.py:146
 msgid "White"
-msgstr "Λευκά"
+msgstr ""
 
 #: glade/fics_lounge.glade:1982 lib/pychess/ic/ICLounge.py:1269
 #: lib/pychess/Utils/const.py:24 lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/ionest.py:115 lib/pychess/widgets/TaskerManager.py:147
 msgid "Black"
-msgstr "Μαύρα"
+msgstr ""
 
 #: glade/fics_lounge.glade:2013
 msgid "<b>Your Color</b>"
@@ -364,7 +364,7 @@ msgstr ""
 
 #: glade/newInOut.glade:7 lib/pychess/widgets/newGameDialog.py:356
 msgid "New Game"
-msgstr "Νέο Παιχνίδι"
+msgstr "নতুন খেলা"
 
 #: glade/newInOut.glade:88
 msgid "_Black player:"
@@ -376,7 +376,7 @@ msgstr ""
 
 #: glade/newInOut.glade:201
 msgid "<b>Players</b>"
-msgstr "<b>Παίκτες</b>"
+msgstr "<b>খেলোয়ারগন</b>"
 
 #: glade/newInOut.glade:249
 msgid "_No controls"
@@ -416,43 +416,43 @@ msgstr ""
 
 #: glade/newInOut.glade:938
 msgid "<b>Enter Game Notation</b>"
-msgstr ""
+msgstr "<b>খেলার সংকেতপদ্ধতি নির্দেশ করো</b>"
 
 #: glade/newInOut.glade:1028
 msgid "_Start Game"
-msgstr "Έ_ναρξη Παιχνιδιού"
+msgstr "খেলা আরম্ভ করো (_S)"
 
 #: glade/promotion.glade:7
 msgid "Promotion"
-msgstr "Προαγωγή"
+msgstr "পদোন্নতি"
 
 #: glade/promotion.glade:22
 msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>Προαγωγή του πιονιού σε τι;</big></b>"
+msgstr "<b><big>বড়ের কিসে পদন্নতি হবে?</big></b>"
 
 #: glade/promotion.glade:59 lib/pychess/Utils/const.py:128
 msgid "Queen"
-msgstr "Βασίλισσα"
+msgstr "মন্ত্রী"
 
 #: glade/promotion.glade:102 lib/pychess/Utils/const.py:128
 msgid "Rook"
-msgstr "Πύργος"
+msgstr "নৌকা"
 
 #: glade/promotion.glade:144 lib/pychess/Utils/const.py:128
 msgid "Bishop"
-msgstr "Αξιωματικός"
+msgstr "গজ"
 
 #: glade/promotion.glade:186 lib/pychess/Utils/const.py:128
 msgid "Knight"
-msgstr "Ίππος"
+msgstr "ঘোড়া"
 
 #: glade/PyChess.glade:21
 msgid "_Game"
-msgstr "_Παιχνίδι"
+msgstr "খেলা (_G)"
 
 #: glade/PyChess.glade:27
 msgid "_New Game"
-msgstr "_Νέο Παιxνίδι"
+msgstr "নতুন খেলা (_N)"
 
 #: glade/PyChess.glade:43
 msgid "Play _Internet Chess"
@@ -460,7 +460,7 @@ msgstr ""
 
 #: glade/PyChess.glade:64
 msgid "_Load Game"
-msgstr "_Φόρτωση Παιχνιδιού"
+msgstr "খেলা লোড করো(_L)"
 
 #: glade/PyChess.glade:80
 msgid "Setup Position"
@@ -472,19 +472,19 @@ msgstr ""
 
 #: glade/PyChess.glade:100
 msgid "_Save Game"
-msgstr "Α_ποθήκευση Παιχνιδιού"
+msgstr "খেলা সেভ করো (_S)"
 
 #: glade/PyChess.glade:117
 msgid "Save Game _As"
-msgstr "Αποθήκευση Παιχνιδιού Ω_ς"
+msgstr "অন্য নামে খেলা সেভ করো (_A)"
 
 #: glade/PyChess.glade:149
 msgid "Player _Rating"
-msgstr ""
+msgstr "খেলোয়ারের রেটিং"
 
 #: glade/PyChess.glade:185
 msgid "_Actions"
-msgstr "Ε_νέργειες"
+msgstr "ক্রিয়াসমূহ (_K)"
 
 #: glade/PyChess.glade:193
 msgid "Offer _Abort"
@@ -496,7 +496,7 @@ msgstr ""
 
 #: glade/PyChess.glade:209
 msgid "Offer _Draw"
-msgstr "Πρόταση για Ι_σοπαλία"
+msgstr "ড্র অফার করো (_D)"
 
 #: glade/PyChess.glade:218
 msgid "Offer _Pause"
@@ -512,7 +512,7 @@ msgstr ""
 
 #: glade/PyChess.glade:258
 msgid "_Call Flag"
-msgstr ""
+msgstr "কল ফ্ল্যাগ (_C)"
 
 #: glade/PyChess.glade:276
 msgid "Ask to _Move"
@@ -520,11 +520,11 @@ msgstr ""
 
 #: glade/PyChess.glade:288
 msgid "_View"
-msgstr "Προ_βολή"
+msgstr "প্রদর্শন (_V)"
 
 #: glade/PyChess.glade:294
 msgid "_Rotate Board"
-msgstr "Π_εριστροφή Σκακιέρας"
+msgstr "বোর্ড ঘোরাও (_R)"
 
 #: glade/PyChess.glade:311
 msgid "_Fullscreen"
@@ -540,15 +540,15 @@ msgstr ""
 
 #: glade/PyChess.glade:353
 msgid "_Log Viewer"
-msgstr ""
+msgstr "লগ প্রদর্শক (_L)"
 
 #: glade/PyChess.glade:367
 msgid "_Hint mode"
-msgstr "Λειτουργία Σ_υμβουλής"
+msgstr "হিন্ট মোড(_H)"
 
 #: glade/PyChess.glade:377
 msgid "Sp_y mode"
-msgstr "Λειτουργία _Κατασκοπίας"
+msgstr "স্পাই মোড (_Y)"
 
 #: glade/PyChess.glade:390
 msgid "S_ettings"
@@ -556,11 +556,11 @@ msgstr ""
 
 #: glade/PyChess.glade:410
 msgid "_Help"
-msgstr "_Βοήθεια"
+msgstr "সহায়িকা (_H)"
 
 #: glade/PyChess.glade:416
 msgid "About Chess"
-msgstr "Σχετικά με το Σκάκι"
+msgstr "দাবা সম্বন্ধে"
 
 #: glade/PyChess.glade:430
 msgid "How to Play"
@@ -576,7 +576,7 @@ msgstr ""
 
 #: glade/PyChess.glade:510
 msgid "Chess client for the Gnome desktop"
-msgstr ""
+msgstr "গাহনোম ডেস্কটপ-এর জন্য দাবা ক্লায়েন্ট"
 
 #: glade/PyChess.glade:513
 msgid ""
@@ -594,49 +594,34 @@ msgid ""
 "along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
 "51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
 msgstr ""
-"Το PyChess είναι ελεύθερο λογισμικό. Η επεξεργασία και αναδιανομή του\n"
-"είναι δυνατή υπό τους όρους της δεύτερης έκδοσης της GNU General Public\n"
-"License όπως δημοσιεύθηκε από το Free Software Foundation, ή (κατ' "
-"επιλογήν)\n"
-"οποιαδήποτε μεταγενέστερη έκδοση της άδειας αυτής.\n"
-"Το PyChess διανέμεται με την ελπίδα ότι θα φανεί χρήσιμο, αλλά ΧΩΡΙΣ\n"
-"ΚΑΜΙΑ ΕΓΓΥΗΣΗ ΠΟΙΟΤΗΤΑΣ Η ΚΑΛΗΣ ΛΕΙΤΟΥΡΓΙΑΣ. Για περισσότερες πληροφορίες\n"
-"δείτε την GNU General Public License.\n"
-"\n"
-"Μαζί με το PyChess παραλαμβάνετε και ένα αντίτυπο της GNU General\n"
-"Public License. Εάν όχι, απευθυνθείτε γραπτώς στην εξής διεύθυνση\n"
-"\n"
-"Free Software Foundation, Inc.,\n"
-"51 Franklin St, Fifth Floor\n"
-"Boston, MA 02110-1301 USA"
 
 #: glade/PyChess.glade:547
 msgid "Game information"
-msgstr "Πληροφορίες Παιχνιδιού"
+msgstr "খেলার তথ্যাবলী"
 
 #: glade/PyChess.glade:615
 msgid "Event:"
-msgstr "Συμβάν:"
+msgstr "ইভেন্ট:"
 
 #: glade/PyChess.glade:628
 msgid "Site:"
-msgstr "Ιστοσελίδα:"
+msgstr "সাইট:"
 
 #: glade/PyChess.glade:651
 msgid "Round:"
-msgstr "Γύρος"
+msgstr "রাউন্ড:"
 
 #: glade/PyChess.glade:688
 msgid "<b>Game data</b>"
-msgstr "<b>Δεδομένα Παιχνιδιού</b>"
+msgstr "খেলার ডাটা"
 
 #: glade/PyChess.glade:739
 msgid "<b>Date of game</b>"
-msgstr "<b>Ημερομηνία Παιχνιδιού</b>"
+msgstr "<b>খেলার তারিখ</b>"
 
 #: glade/PyChess.glade:806
 msgid "Preferences"
-msgstr "Προτιμήσεις"
+msgstr "পছন্দসমূহ"
 
 #: glade/PyChess.glade:841
 msgid "The displayed name of the first human player, e.g., John."
@@ -656,7 +641,7 @@ msgstr ""
 
 #: glade/PyChess.glade:924
 msgid "_Hide tabs when only one game is open"
-msgstr "Α_πόκρυψη καρτελών όταν είναι ανοιχτό μόνο ένα παιχνίδι"
+msgstr "একটি মাত্র খেলা খোলা থাকলে ট্যাবগুলি লুকোনো থাকুক (_H)"
 
 #: glade/PyChess.glade:928
 msgid ""
@@ -716,7 +701,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1031
 msgid "<b>General Display Options</b>"
-msgstr "<b>Γενικές Επιλογές Προβολής</b>"
+msgstr "<b>সাধারণ ডিস্প্লে অপশান্সমূহ</b>"
 
 #: glade/PyChess.glade:1064
 msgid "F_ull board animation"
@@ -744,7 +729,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1125
 msgid "<b>Animation</b>"
-msgstr ""
+msgstr "<b>অ্যানিমেশন</b>"
 
 #: glade/PyChess.glade:1144
 msgid "_General"
@@ -757,31 +742,35 @@ msgstr ""
 
 #: glade/PyChess.glade:1296
 msgid "<b>Chess Engines</b>"
-msgstr ""
+msgstr "<b>চেস ইঞ্জিন্স্‌</b>"
 
 #: glade/PyChess.glade:1329
 msgid "Use _analyzer"
-msgstr ""
+msgstr "অ্যানালাইজার ব্যাবহার করা হোক (_a)"
 
 #: glade/PyChess.glade:1363
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "nessesary for the hint mode to work</b>"
 msgstr ""
+"অ্যানালাইজার-টি ব্যাকগ্রাউন্ড-এ চলবে এবং খেলাটি অ্যানালাইজ করবে। <b>এটি "
+"হিন্ট্‌-মোড-এর জন্য প্রয়োজন।</b>"
 
 #: glade/PyChess.glade:1393
 msgid "Use _inverted analyzer"
-msgstr ""
+msgstr "ইনভার্টেড অ্যানালাইজার ব্যাবহার করা হোক (_a)"
 
 #: glade/PyChess.glade:1427
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is nessesary for the spy mode to work</b>"
 msgstr ""
+"ইনভার্টেড অ্যানালাইজার-টি খেলাটি অ্যানালাইজ করবে যেন প্রতিপক্ষ দান দিতে "
+"চলেছে। <b>এটি  স্পাই-মোড-এর জন্য প্রয়োজন।</b>"
 
 #: glade/PyChess.glade:1458
 msgid "<b>Analyzing</b>"
-msgstr ""
+msgstr "<b>অ্যানালাইজ করা হচ্ছে</b>"
 
 #: glade/PyChess.glade:1481
 msgid "Computer _Opponents"
@@ -789,7 +778,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1506
 msgid "_Use sounds in PyChess"
-msgstr "_Χρήση Ήχων στο PyChess"
+msgstr "পাইচেস-এ শব্দ ব্যাবহার করা হোক (_U)"
 
 #: glade/PyChess.glade:1585
 msgid ""
@@ -797,46 +786,49 @@ msgid ""
 "Select sound file...\n"
 "No sound"
 msgstr ""
+"বীপ\n"
+"শব্দের ফাইল-টি সিলেক্ট করো...\n"
+"কোন শব্দ নেই"
 
 #: glade/PyChess.glade:1788
 msgid "A player _checks:"
-msgstr ""
+msgstr "একজন খেলোয়ার চেক করছে: (_c)"
 
 #: glade/PyChess.glade:1802
 msgid "A player _moves:"
-msgstr ""
+msgstr "একজন খেলোয়ার দান দিচ্ছে: (_m)"
 
 #: glade/PyChess.glade:1814
 msgid "Game is _drawn:"
-msgstr ""
+msgstr "খেলাটি ড্র হয়েছে: (_d)"
 
 #: glade/PyChess.glade:1828
 msgid "Game is _lost:"
-msgstr "_Χάσατε:"
+msgstr "খেলাটি হারা হয়েছে: (_l)"
 
 #: glade/PyChess.glade:1842
 msgid "Game is _won:"
-msgstr "_Νικήσατε:"
+msgstr "খেলাটি জেতা হয়েছে: (_w)"
 
 #: glade/PyChess.glade:1856
 msgid "A player c_aptures:"
-msgstr ""
+msgstr "একজন খেলোয়ার ঘুঁটি খেয়েছে: (_a)"
 
 #: glade/PyChess.glade:1883
 msgid "Game is _set-up:"
-msgstr ""
+msgstr "খেলাটি সেট-আপ করা হয়েছে: (_S)"
 
 #: glade/PyChess.glade:1931
 msgid "_Observed moves:"
-msgstr ""
+msgstr "পর্যবেক্ষিত দানসমূহ: (_O)"
 
 #: glade/PyChess.glade:1945
 msgid "Observed _ends:"
-msgstr ""
+msgstr "পর্যবেক্ষিত অন্তসমূহ: (_O)"
 
 #: glade/PyChess.glade:2042
 msgid "<b>Play Sound When...</b>"
-msgstr "<b>Αναπαραγωγή Ήχου Όταν...</b>"
+msgstr "<b>শব্দ কর যখন...</b>"
 
 #: glade/PyChess.glade:2066
 msgid "_Sounds"
@@ -923,7 +915,7 @@ msgstr ""
 
 #: lib/pychess/Main.py:173
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://bn.wikipedia.org/wiki/দাবা"
 
 #: lib/pychess/Main.py:176
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
@@ -935,12 +927,12 @@ msgstr ""
 
 #: lib/pychess/ic/FICSConnection.py:102
 msgid "The connection was broken - got \"end of file\" message"
-msgstr ""
+msgstr "যোগাযোগ বিচ্ছিন্ন হল — \"end of file\" মেসেজ পাওয়া গেছে"
 
 #: lib/pychess/ic/FICSConnection.py:103
 #, python-format
 msgid "'%s' is not a registered name"
-msgstr ""
+msgstr "'%s' কোন রেজিস্টার করা নাম নয়"
 
 #: lib/pychess/ic/FICSConnection.py:104
 msgid "The entered password was invalid.\n"
@@ -960,15 +952,15 @@ msgstr ""
 
 #: lib/pychess/ic/ICLogon.py:118 lib/pychess/ic/ICLogon.py:124
 msgid "Connection Error"
-msgstr ""
+msgstr "সংযোগে ত্রুটি"
 
 #: lib/pychess/ic/ICLogon.py:120
 msgid "Log on Error"
-msgstr ""
+msgstr "লগ-অন-এ ত্রুটি"
 
 #: lib/pychess/ic/ICLogon.py:122
 msgid "Connection was closed"
-msgstr ""
+msgstr "সংযোগ বন্ধ করা হয়েছে"
 
 #: lib/pychess/ic/ICLogon.py:128
 msgid "Address Error"
@@ -1014,27 +1006,27 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:209
 msgid "Email"
-msgstr "Ηλεκτρονικό Ταχυδρομείο"
+msgstr "ইমেইল"
 
 #: lib/pychess/ic/ICLounge.py:214
 msgid "Spent"
-msgstr ""
+msgstr "ব্যায় করা হয়েছে"
 
 #: lib/pychess/ic/ICLounge.py:216
 msgid "online in total"
-msgstr ""
+msgstr "অনলাইন মোট"
 
 #: lib/pychess/ic/ICLounge.py:220
 msgid "Ping"
-msgstr ""
+msgstr "পিং করুন"
 
 #: lib/pychess/ic/ICLounge.py:221
 msgid "Connecting"
-msgstr ""
+msgstr "সংযুক্ত করা হচ্ছে"
 
 #: lib/pychess/ic/ICLounge.py:228 lib/pychess/Savers/epd.py:139
 msgid "Unknown"
-msgstr ""
+msgstr "অজ্ঞাত"
 
 #: lib/pychess/ic/ICLounge.py:239
 msgid ""
@@ -1045,26 +1037,26 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:244
 msgid "Register now"
-msgstr "Δήλωση τώρα"
+msgstr "রেজিস্টার কর"
 
 #: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:636
 #: lib/pychess/widgets/preferencesDialog.py:78
 msgid "Name"
-msgstr "Όνομα"
+msgstr "নাম"
 
 #: lib/pychess/ic/ICLounge.py:375 lib/pychess/ic/ICLounge.py:452
 #: lib/pychess/ic/ICLounge.py:482 lib/pychess/ic/ICLounge.py:599
 #: lib/pychess/ic/ICLounge.py:1272
 msgid "Rated"
-msgstr ""
+msgstr "রেট করা"
 
 #: lib/pychess/ic/ICLounge.py:376
 msgid "Type"
-msgstr "Τύπος"
+msgstr "ধরণ"
 
 #: lib/pychess/ic/ICLounge.py:376
 msgid "Clock"
-msgstr "Ρολόι"
+msgstr "ঘড়ি"
 
 #: lib/pychess/ic/ICLounge.py:446
 #, python-format
@@ -1085,7 +1077,7 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:599 lib/pychess/ic/ICLounge.py:1151
 #: lib/pychess/ic/ICLounge.py:1462
 msgid "Unrated"
-msgstr ""
+msgstr "রেট না করা"
 
 #: lib/pychess/ic/ICLounge.py:566
 msgid " min"
@@ -1111,15 +1103,15 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:777
 msgid "White Player"
-msgstr "Λευκός Παίκτης"
+msgstr "সাদা-খেলোয়ার"
 
 #: lib/pychess/ic/ICLounge.py:777
 msgid "Black Player"
-msgstr "Μαύρος Παίκτης"
+msgstr "কালো-খেলোয়ার"
 
 #: lib/pychess/ic/ICLounge.py:778
 msgid "Game Type"
-msgstr "Τύπος Παιχνιδιού"
+msgstr "খেলার ধরন"
 
 #: lib/pychess/ic/ICLounge.py:830 lib/pychess/ic/ICLounge.py:846
 #: lib/pychess/ic/ICLounge.py:847
@@ -1137,7 +1129,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:900
 msgid "Opponent"
-msgstr ""
+msgstr "প্রতিদ্বন্দি"
 
 #: lib/pychess/ic/ICLounge.py:901
 msgid "Is online"
@@ -1166,7 +1158,7 @@ msgstr ""
 #: lib/pychess/ic/managers/GameListManager.py:58
 #: lib/pychess/ic/managers/GameListManager.py:336
 msgid "Blitz"
-msgstr ""
+msgstr "ব্লিটজ্‌"
 
 #: lib/pychess/ic/ICLounge.py:1107
 msgid ""
@@ -1209,7 +1201,7 @@ msgstr ""
 #: lib/pychess/Utils/const.py:44 lib/pychess/ic/managers/GameListManager.py:52
 #: lib/pychess/ic/managers/GameListManager.py:59
 msgid "Lightning"
-msgstr ""
+msgstr "লাইটনিং"
 
 #: lib/pychess/ic/ICLounge.py:1492
 msgid "You can't play rated games because you are logged in as a guest"
@@ -1464,7 +1456,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:177
 msgid "Your opponent asks you to hurry!"
-msgstr ""
+msgstr "আপনার প্রতিদ্বন্দি আপনাকে তারা দিচ্ছেন!"
 
 #: lib/pychess/Players/Human.py:178
 msgid ""
@@ -1523,15 +1515,15 @@ msgstr ""
 
 #: lib/pychess/Savers/epd.py:8
 msgid "Chess Position"
-msgstr ""
+msgstr "দাবার অবস্থান"
 
 #: lib/pychess/Savers/fen.py:8
 msgid "Simple Chess Position"
-msgstr ""
+msgstr "সাধারণ দাবার অবস্থান"
 
 #: lib/pychess/Savers/pgn.py:14
 msgid "Chess Game"
-msgstr "Παρτίδα Σκακιού"
+msgstr ""
 
 #: lib/pychess/Savers/pgn.py:189 lib/pychess/Savers/pgn.py:304
 #, python-format
@@ -1617,7 +1609,7 @@ msgstr ""
 
 #: lib/pychess/Utils/GameModel.py:85
 msgid "Local Event"
-msgstr "Τοπικό Γεγονός"
+msgstr ""
 
 #: lib/pychess/Utils/GameModel.py:86
 msgid "Local Site"
@@ -1625,7 +1617,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:4
 msgid "The game ended in a draw"
-msgstr "Το παιχνίδι έληξε ισοπαλία"
+msgstr "খেলাটি ড্র-এ অন্ত হয়েছে"
 
 #: lib/pychess/Utils/repr.py:5
 #, python-format
@@ -1639,15 +1631,15 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:7
 msgid "The game has been killed"
-msgstr ""
+msgstr "খেলাটি মারা হয়েছে"
 
 #: lib/pychess/Utils/repr.py:8
 msgid "The game has been adjourned"
-msgstr ""
+msgstr "খেলাটি স্থগিত হয়েছে"
 
 #: lib/pychess/Utils/repr.py:9
 msgid "The game has been aborted"
-msgstr ""
+msgstr "খেলাটি বন্ধ করা হয়েছে"
 
 #: lib/pychess/Utils/repr.py:13
 msgid "Because neither player has sufficient material to mate"
@@ -1779,7 +1771,7 @@ msgstr ""
 
 #: lib/pychess/Variants/normal.py:5 lib/pychess/widgets/newGameDialog.py:149
 msgid "Normal"
-msgstr ""
+msgstr "নরমাল"
 
 #: lib/pychess/Variants/pawnodds.py:17
 msgid "Pawn odds"
@@ -1851,11 +1843,11 @@ msgstr ""
 
 #: lib/pychess/widgets/gamenanny.py:98 lib/pychess/widgets/gamenanny.py:99
 msgid "Loaded game"
-msgstr ""
+msgstr "লোড করা খেলা"
 
 #: lib/pychess/widgets/gamenanny.py:110
 msgid "Saved game"
-msgstr ""
+msgstr "সেভ করা খেলা"
 
 #: lib/pychess/widgets/gamenanny.py:136
 msgid "Offer Rematch"
@@ -1875,12 +1867,12 @@ msgstr ""
 
 #: lib/pychess/widgets/gamenanny.py:220
 msgid "You sent a draw offer"
-msgstr ""
+msgstr "তুমি একটি ড্র-এর অফার পাঠালে"
 
 #: lib/pychess/widgets/gamenanny.py:231
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr ""
+msgstr "<big><b>ইঞ্জিন, %s, মারা গেছে</b></big>"
 
 #: lib/pychess/widgets/gamenanny.py:232
 msgid ""
@@ -1889,6 +1881,10 @@ msgid ""
 "You can try to start a new game with the engine, or try to play against "
 "another one."
 msgstr ""
+"পাইচেস-এর ইঞ্জিন-এর সঙ্গে যোগাযোগ বিচ্ছিন্ন হয়েছে, হয়ত ইঞ্জিন-টি মারা গেছে।\n"
+"\n"
+"তুমি ইঞ্জিন-টির সঙ্গে একটি নতুন খেলা আরম্ভ করতে পারো, অথবা একে অপরের সঙ্গে "
+"খেলতে পারো."
 
 #: lib/pychess/widgets/gamewidget.py:190
 msgid "Jump to initial position"
@@ -1919,7 +1915,7 @@ msgstr ""
 #: lib/pychess/widgets/ionest.py:73 lib/pychess/widgets/ionest.py:113
 #: lib/pychess/widgets/ionest.py:130
 msgid "vs"
-msgstr "εναντίων"
+msgstr "বনাম"
 
 #: lib/pychess/widgets/ionest.py:155
 #: lib/pychess/widgets/preferencesDialog.py:43
@@ -1932,23 +1928,23 @@ msgstr ""
 
 #: lib/pychess/widgets/ionest.py:211 lib/pychess/widgets/newGameDialog.py:391
 msgid "Open Game"
-msgstr "'Ανοιγμα Παιχνιδιού"
+msgstr "খেলা খোলো"
 
 #: lib/pychess/widgets/ionest.py:213
 msgid "Save Game"
-msgstr "Αποθήκευση παιχνιδιού"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:220
 msgid "All Files"
-msgstr "Αρχεία"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:223
 msgid "Detect type automatically"
-msgstr "Αυτόματος εντοπισμός τύπου"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:227
 msgid "All Chess Files"
-msgstr "Αρχεία Σκακιού"
+msgstr "দাবার সব ফাইল"
 
 #: lib/pychess/widgets/ionest.py:284 lib/pychess/widgets/ionest.py:392
 msgid "vs."
@@ -1968,23 +1964,21 @@ msgstr ""
 #: lib/pychess/widgets/ionest.py:316
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
-msgstr "<big><b>Αδύνατη η αποθήκευση του αρχείου '%s'</b></big>"
+msgstr "<big><b>'%s' ফাইল সংরক্ষণ করা সম্ভব হচ্ছেনা</b></big>"
 
 #: lib/pychess/widgets/ionest.py:318
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr ""
-"Δεν έχετε τα απαραίτητα δικαιώματα για την αποθήκευση του αρχείου.\n"
-"Βεβαιωθείτε οτι ακολουθείσατε την σωστή διαδρομή (path) και ξαναπροσπαθήστε."
 
 #: lib/pychess/widgets/ionest.py:326
 msgid "_Replace"
-msgstr "_Αντικατάσταση"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:330
 msgid "File exists"
-msgstr "Το αρχείο υπάρχει ήδη"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:332
 #, python-format
@@ -2033,7 +2027,7 @@ msgstr[1] ""
 
 #: lib/pychess/widgets/ionest.py:444
 msgid "<b><big>Save the current game before you close it?</big></b>"
-msgstr "<b><big>Αποθήκευση υπάρχοντος παιχνιδιού πρίν το κλείσιμο;</big></b>"
+msgstr ""
 
 #: lib/pychess/widgets/ionest.py:446
 msgid ""
@@ -2052,7 +2046,7 @@ msgstr ""
 #: lib/pychess/widgets/newGameDialog.py:81
 #: lib/pychess/widgets/newGameDialog.py:82
 msgid "Human Being"
-msgstr "Άνθρωπος"
+msgstr "মানুষ"
 
 #: lib/pychess/widgets/newGameDialog.py:147
 msgid "Rapid"
@@ -2060,11 +2054,11 @@ msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:197
 msgid "Minutes:"
-msgstr "Λεπτά:"
+msgstr "মিনিট:"
 
 #: lib/pychess/widgets/newGameDialog.py:201
 msgid "Gain:"
-msgstr "Κέρδος"
+msgstr "লাভ:"
 
 #: lib/pychess/widgets/newGameDialog.py:214
 #, python-format
@@ -2083,7 +2077,7 @@ msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:475
 msgid "Enter Game"
-msgstr ""
+msgstr "খেলা শুরু করুণ"
 
 #: lib/pychess/widgets/preferencesDialog.py:76
 msgid "Flag"
@@ -2552,7 +2546,7 @@ msgstr ""
 
 #: sidepanel/historyPanel.py:15
 msgid "Move History"
-msgstr "Ιστορικό Κινήσεων"
+msgstr ""
 
 #: sidepanel/historyPanel.py:18
 msgid ""
@@ -2562,7 +2556,7 @@ msgstr ""
 
 #: sidepanel/scorePanel.py:14
 msgid "Score"
-msgstr "Σκορ"
+msgstr ""
 
 #: sidepanel/scorePanel.py:18
 msgid ""
@@ -2570,101 +2564,32 @@ msgid ""
 "game progress"
 msgstr ""
 
-#~ msgid "<b>Open game</b>"
-#~ msgstr "<b>Άνοιγμα Παιχνιδιού</b>"
-
-#~ msgid "<b>Initial position</b>"
-#~ msgstr "<b>Αρχική Θέση</b>"
-
-#~ msgid "<b>Alarm</b>"
-#~ msgstr "<b>Συναγερμός</b>"
-
-#~ msgid "Hours:"
-#~ msgstr "Ώρες:"
-
-#~ msgid "<b>Difficulty</b>"
-#~ msgstr "<b>Δυσκολία</b>"
-
-#~ msgid "Game has time"
-#~ msgstr "Το παιχνίδι έχει χρόνο"
-
-#~ msgid ""
-#~ "Your opponent has offered you a draw. If you accept it the game will end "
-#~ "with score 1/2 - 1/2."
-#~ msgstr ""
-#~ "Ο αντίπαλος σας προτείνει ισοπαλία. Αν την αποδεχτείτε το παιχνίδι θα λήξει "
-#~ "με σκορ 1/2 - 1/2."
-
-#~ msgid "caused by insufficient material"
-#~ msgstr "προκλήθηκε απο ανεπαρκές υλικό"
-
-#~ msgid "as the last 50 moves brought nothing new"
-#~ msgstr "καθώς οι τελευταίες 50 κινήσεις δεν έφεραν κάτι καινούριο"
-
-#~ msgid "as the same position was repeated three times in a row"
-#~ msgstr "καθώς η ίδια κίνηση επαναλήφθηκε τρείς φορές στην σειρά"
-
-#~ msgid "because of stalemate"
-#~ msgstr "εξαιτίας αδιέξοδου (πατ)"
-
-#~ msgid "as the players agreed to"
-#~ msgstr "καθώς οι παίκτες συμφώνησαν"
-
-#~ msgid "as opponent resigned"
-#~ msgstr "επειδή ο αντίπαλος παραιτήθηκε"
-
-#~ msgid "as opponent ran out of time"
-#~ msgstr "επειδή ο αντίπαλος ξεπέρασε το όριο χρόνου"
-
-#~ msgid "Beginner"
-#~ msgstr "Αρχάριος"
-
-#~ msgid "Expert"
-#~ msgstr "Ειδήμων"
-
-#~ msgid "Intermediate"
-#~ msgstr "Προχωρημένος"
-
-#, python-format
-#~ msgid "<big><b>There are %d games with unsaved changes:</b></big>"
-#~ msgstr "<big><b>Υπάρχουν %d παιχνίδια με μη αποθηκευμένες αλλαγές:</b></big>"
-
 #~ msgid "Create New"
-#~ msgstr "Δημιουργία Νέου"
-
-#~ msgid "Logging on to Server"
-#~ msgstr "Συνδέομαι στον Διακομιστή"
-
-#~ msgid "<b>Log On</b>"
-#~ msgstr "<b>Σύνδεση</b>"
-
-#~ msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
-#~ msgstr ""
-#~ "<b>Προσοχή!</b> Η υποστήριξη του FICS στο PyChess είναι ακόμα ελλειπής."
+#~ msgstr "নতুন তৈরি করো"
 
 #~ msgid "<u>Learn more</u>"
-#~ msgstr "<u>Μάθετε Περισσότερα</u>"
+#~ msgstr "আরো শেখো"
 
 #~ msgid "Your Color:"
-#~ msgstr "Το χρώμα σας:"
+#~ msgstr "তোমার রং"
 
 #~ msgid "Game Time:"
-#~ msgstr "Χρόνος Παρτίδας:"
+#~ msgstr "খেলার সময়:"
 
 #~ msgid "Opp Strength:"
-#~ msgstr "Δύναμη Αντιπάλου:"
+#~ msgstr "প্রতিপক্ষ ক্ষ্মমতা:"
 
 #~ msgid ""
 #~ "Don't Care\n"
 #~ "Want White\n"
 #~ "Want Black"
 #~ msgstr ""
-#~ "Αδιάφορο\n"
-#~ "Θέλω Λευκά\n"
-#~ "Θέλω Μαύρα"
+#~ "যে কোনো\n"
+#~ "সাদা চাই\n"
+#~ "কালো চাই"
 
 #~ msgid "Rated Game"
-#~ msgstr "Βαθμολογία Παρτίδας"
+#~ msgstr "রেটেড খেলা"
 
 #~ msgid ""
 #~ "15 min + 10\tNormal\n"
@@ -2672,135 +2597,73 @@ msgstr ""
 #~ "1 min + 0\tLightning\n"
 #~ "Custom"
 #~ msgstr ""
-#~ "15 min + 10\tΦυσιολογικό\n"
-#~ "5 min + 2\tΑιφνιδιαστικό\n"
-#~ "1 min + 0\tΚεραυνοβόλο"
-
-#~ msgid "Seek Panel"
-#~ msgstr "Αναζήτηση Πίνακα"
-
-#~ msgid "Seeks / Challenges"
-#~ msgstr "Αναζητήσεις / Προκλήσεις"
-
-#~ msgid "Game List"
-#~ msgstr "Λίστα Παιχνιδιών"
-
-#~ msgid "Show Info Window"
-#~ msgstr "Προβολή Παραθύρου Πληροφοριών"
-
-#~ msgid "Seek Graph"
-#~ msgstr "Αναζήτηση Γραφήματος"
-
-#~ msgid "Player List"
-#~ msgstr "Λίστα Παικτών"
-
-#~ msgid "Challenge Panel"
-#~ msgstr "Πίνακας Πρόκλησης"
-
-#~ msgid "Send challenge"
-#~ msgstr "Αποστολή Πρόκλησης"
-
-#~ msgid "Custom Time Setting"
-#~ msgstr "Προσωπική Ρύθμιση Χρόνου"
-
-#~ msgid "FICS Warning"
-#~ msgstr "Προειδοποίηση FICS"
-
-#~ msgid "Show Chat"
-#~ msgstr "Προβολή Συζήτησης"
-
-#~ msgid "Show Console"
-#~ msgstr "Προβολή Τερματικού"
-
-#~ msgid "Log Off"
-#~ msgstr "Αποσύνδεση"
-
-#~ msgid "White Player:"
-#~ msgstr "Λευκός Παίκτης:"
-
-#~ msgid "Black Player:"
-#~ msgstr "Μαύρος Παίκτης:"
-
-#~ msgid "Seconds:"
-#~ msgstr "Δευτερόλεπτα:"
-
-#~ msgid "_Resign"
-#~ msgstr "_Παραίτηση"
-
-#~ msgid "_Force to move"
-#~ msgstr "Εξαναγκασμένη _Κίνηση"
-
-#~ msgid "_Pause"
-#~ msgstr "Π_αύση"
-
-#~ msgid "_Preferences"
-#~ msgstr "Π_ροτιμήσεις"
-
-#~ msgid "Undo"
-#~ msgstr "Αναίρεση"
-
-#~ msgid "_Side Panel"
-#~ msgstr "Πλάγια Σ_τήλη"
-
-#~ msgid "Translate PyChess..."
-#~ msgstr "Μεταφράστε το PyChess..."
-
-#~ msgid "How to play"
-#~ msgstr "Οδηγίες Παιχνιδιού"
-
-#~ msgid "<big>PyChess FICS incompleteness</big>"
-#~ msgstr "<big>Ατέλεια PyChess FICS</big>"
-
-#~ msgid "<b>Name of first human player:</b>"
-#~ msgstr "<b>Όνομα πρώτου παίκτη:</b>"
-
-#~ msgid "<b>Name of second human player:</b>"
-#~ msgstr "<b>Όνομα δεύτερου παίκτη:</b>"
-
-#~ msgid "_Auto rotate board to current human player"
-#~ msgstr "_Αυτόματη περιστροφή σκακιέρας στον εκάστοτε παίκτη"
-
-#~ msgid "General"
-#~ msgstr "Γενικά"
-
-#~ msgid "Player Rating"
-#~ msgstr "Βαθμολογία Παίκτη"
-
-#~ msgid "Sounds"
-#~ msgstr "Ήχοι"
-
-#~ msgid "Black player won the game"
-#~ msgstr "Ο μαύρος παίκτης κέρδισε το παιχνίδι"
-
-#~ msgid "White player won the game"
-#~ msgstr "Ο λευκός παίκτης κέρδισε το παιχνίδι"
-
-#~ msgid "by no known reason"
-#~ msgstr "χωρίς προφανή λόγο"
-
-#~ msgid "Don't Care"
-#~ msgstr "Αδιάφορο"
-
-#~ msgid "Want White"
-#~ msgstr "Θέλω Λευκά"
-
-#~ msgid "Easy"
-#~ msgstr "Εύκολο"
-
-#~ msgid "Advanced"
-#~ msgstr "Προχωρημένο"
-
-#~ msgid "Want Black"
-#~ msgstr "Θέλω Μαύρα"
+#~ "১৫ মিনিট + ১০\tসাধারন\n"
+#~ "৫ মিনিট + ২\tব্লিটজ\n"
+#~ "১ মিনিট + ০\tলাইটনিং\n"
+#~ "পছন্দমত"
 
 #~ msgid ""
 #~ "0 → 1300\t\tEasy\n"
 #~ "1300 → 1600\tAdvanced\n"
 #~ "1600 → 9999\tExpert"
 #~ msgstr ""
-#~ "0 → 1300\t\tΕύκολο\n"
-#~ "1300 → 1600\tΠροχωρημένο\n"
-#~ "1600 → 9999\tΓια ειδήμονες"
+#~ "০ → ১৩০০\tসহজ\n"
+#~ "১৩০০ → ১৬০০\tপরিণত\n"
+#~ "১৬০০ → ৯৯৯৯\tদক্ষ"
+
+#~ msgid "Seek Panel"
+#~ msgstr "সন্ধান প্যানেল"
+
+#~ msgid "Seeks / Challenges"
+#~ msgstr "সন্ধান / চ্যালেঞ্জ"
+
+#~ msgid "Player List"
+#~ msgstr "খেলোয়ারদের তালিকা"
+
+#~ msgid "Game List"
+#~ msgstr "খেলার তালিকা"
+
+#~ msgid "Show Info Window"
+#~ msgstr "তথ্য-উইন্ডো দেখাও"
+
+#~ msgid "Seek Graph"
+#~ msgstr "সন্ধান চিত্র-লেখ"
+
+#~ msgid "Challenge Panel"
+#~ msgstr "চ্যালেঞ্জ প্যানেল"
+
+#~ msgid "Send challenge"
+#~ msgstr "চ্যালেঞ্জ পাঠাও"
+
+#~ msgid "Custom Time Setting"
+#~ msgstr "পরিবর্তিত সময় সেটিংস"
+
+#~ msgid "FICS Warning"
+#~ msgstr "FICS সাবধানবানী"
+
+#~ msgid "<big>PyChess FICS incompleteness</big>"
+#~ msgstr "<big>পাইচেস-এর FICS অসম্পুর্ণতা</big>"
+
+#~ msgid "Show Chat"
+#~ msgstr "চ্যাট দেখাও"
+
+#~ msgid "<b>Caution:</b> FICS support in PyChess is still incomplete."
+#~ msgstr "<b>সাবধান:</b> পাইচেস-এর FICS সাপোর্ট এখনও সম্পুর্ন নয়।"
+
+#~ msgid "<b>Log On</b>"
+#~ msgstr "<b>লগ-অন</b>"
+
+#~ msgid "Logging on to Server"
+#~ msgstr "সারভার-এ লগ-অন করা হচ্ছে"
+
+#~ msgid "Log Off"
+#~ msgstr "লগ-অফ"
+
+#~ msgid "Show Console"
+#~ msgstr "কনসোল দেখাও"
+
+#~ msgid "<b>Open game</b>"
+#~ msgstr "<b>খেলা খোলো</b>"
 
 #~ msgid ""
 #~ "PyChess 0.8 Phillidor comes with an incomplete implementation of the FICS "
@@ -2808,23 +2671,353 @@ msgstr ""
 #~ "Unfortunatly not all of the protocol has yet been implemented, why you need "
 #~ "to take a little caution when using this implementation."
 #~ msgstr ""
-#~ "Το PyChess 0,8 Phillidor έρχεται με ελλιπή εφαρμογή του πρωτοκόλλου FICS, το "
-#~ "οποίο σας επιτρέπει να παίξετε με άλλους ανθρώπους στο διαδίκτυο.\n"
-#~ "Δυστυχώς δεν  έχει ακόμα εφαρμοστεί όλο το πρωτοκόλλο, θα πρέπει να πάρετε "
-#~ "μια μικρή προφύλαξη κατά τη χρήση αυτής της εφαρμογής."
+#~ "পাইচেস 0.8 ফিলিডর এর FICS সাপোর্ট এখনও সম্পুর্ন নয়, যদিও অনলাইন কোনো "
+#~ "প্রতিপক্ষের সঙ্গে খেলা সম্ভব।\n"
+#~ "কিন্তু প্রোটোকল-টির সম্পুর্ণরূপে প্রয়গ করা না হওয়ায় কিছু সাবধানতা অবলম্বন "
+#~ "করা উচিত।"
 
 #~ msgid "<b>General</b>"
-#~ msgstr "<b>Γενικά</b>"
+#~ msgstr "<b>সাধারণ</b>"
 
 #~ msgid "<b>Chatting</b>"
-#~ msgstr "<b>Συνομιλία δωματίου</b>"
+#~ msgstr "<b>চ্যাটিং</b>"
 
 #~ msgid ""
 #~ "People on FICS chat a lot. However as this is not yet available in PyChess "
 #~ "you will appear mute.\n"
 #~ "Some people might findt this offensive."
 #~ msgstr ""
-#~ "Οι συνομιλίες δωματιών συζήτησης  σε FICS είναι διαδεδομένες . Ωστόσο, "
-#~ "δεδομένου ότι αυτό δεν είναι ακόμα διαθέσιμο στο PyChess θα εμφανιστείτε σε "
-#~ "σίγαση.\n"
-#~ "Μερικοί άνθρωποι μπορεί  αυτό να το εκλάβουν σαν επιθετική στάση."
+#~ "FICS-এ লোকজন অনেক চ্যাট করেন। কিন্তু যেহেতু এটা পাইচেস-এ আপাতত সম্ভব নয়, "
+#~ "আপনাকে মূক হিসাবে চিহ্নিত করা হবে।\n"
+#~ "এটা কেউ কেউ আপত্তিকর মনে করতে পারেন।"
+
+#~ msgid "<b>Adjourning</b>"
+#~ msgstr "<b>আ্যজর্নিং</b>"
+
+#~ msgid ""
+#~ "FICS uses the idea of Adjourning, which is a way to save the game on the "
+#~ "server to later continue the play.\n"
+#~ "This version of PyChess doesn't support this feature, and will auto decline "
+#~ "requests from opponents who wants to use this feature."
+#~ msgstr ""
+#~ "FICS-এ আ্যজর্নিং সম্ভব, যেটা কোনো খেলা চলার সময় সেটিকে সারভার-এ সেভ করে "
+#~ "স্থগিত রেখে পরে আবার খেলা যায়।\n"
+#~ "কিন্তু পাইচেস-এর এই সংস্করনে এটা সাপোর্টেড নয়, তাই প্রতিপক্ষের স্থগিত রাখার "
+#~ "অনুরোধ নিজে থেকেই অস্বিকার করা হবে।"
+
+#~ msgid "<b>Initial position</b>"
+#~ msgstr "<b>প্রারম্ভিক অবস্থান</b>"
+
+#~ msgid "White Player:"
+#~ msgstr "সাদা:"
+
+#~ msgid "<b>Alarm</b>"
+#~ msgstr "<b>সতর্কধ্বনি</b>"
+
+#~ msgid "Hours:"
+#~ msgstr "ঘন্টা:"
+
+#~ msgid "Black Player:"
+#~ msgstr "কালো:"
+
+#~ msgid "<b>Difficulty</b>"
+#~ msgstr "<b>কাঠিন্য</b>"
+
+#~ msgid "Game has time"
+#~ msgstr "খেলাটির সময় নির্দিষ্ট"
+
+#~ msgid "Seconds:"
+#~ msgstr "সেকেন্ড:"
+
+#~ msgid "_Play Internet Chess"
+#~ msgstr "ইন্টারনেট-দাবা খেলো(_P)"
+
+#~ msgid "_Resign"
+#~ msgstr "হার স্বীকার করো(_R)"
+
+#~ msgid "Set up Position"
+#~ msgstr "অবস্থান ঠিক করো"
+
+#~ msgid "_Force to move"
+#~ msgstr "দান দিতে বাধ্য করো (_F)"
+
+#~ msgid "Enter game notation"
+#~ msgstr "খেলার সংকেতপদ্ধতি নির্দেশ করো"
+
+#~ msgid "_Pause"
+#~ msgstr "সাময়িক বিরতি (_S)"
+
+#~ msgid "_Preferences"
+#~ msgstr "পছন্দতালিকা (_P)"
+
+#~ msgid "Undo"
+#~ msgstr "আন-ডু"
+
+#~ msgid "_Side Panel"
+#~ msgstr "সাইড প্যানেল (_S)"
+
+#~ msgid "How to play"
+#~ msgstr "কিকরে খেলতে হয়"
+
+#~ msgid "Translate PyChess..."
+#~ msgstr "পাইচেস ভাসান্তরিত কর"
+
+#~ msgid "<b>Name of first human player:</b>"
+#~ msgstr "<b>প্রথম মানুষ খেলোয়ারের নাম:</b>"
+
+#~ msgid "<b>Name of second human player:</b>"
+#~ msgstr "<b>দ্বিতীয় মানুষ খেলোয়ারের নাম:</b>"
+
+#~ msgid "_Auto rotate board to current human player"
+#~ msgstr "স্বয়ঙ্ক্রিয় ভাবে বর্তমান মানুষ খেলোয়ারের দিকে বোর্ড ঘোরানো হোক (_A)"
+
+#~ msgid "_Full board animation"
+#~ msgstr "সম্পুর্ণ বোর্ডের অ্যানিমেশান দেখানো হোক (_F)"
+
+#~ msgid "_Prefer figures in notation"
+#~ msgstr "সঙ্কেতসমূহে ফিগারস্‌-এ প্রাধান্য দেওয়া হোক (_P)"
+
+#~ msgid "_Show cords"
+#~ msgstr "স্থানাঙ্ক দেখানো হোক (_S)"
+
+#~ msgid "General"
+#~ msgstr "সাধারণ"
+
+#~ msgid "_No animation"
+#~ msgstr "কোন অ্যানিমেশান না দেখান হোক (_N)"
+
+#~ msgid "_Only animate moves"
+#~ msgstr "কেবলমাত্র দানগুলি অ্যানিমেট করা হোক (_O)"
+
+#~ msgid "Computer Opponents"
+#~ msgstr "কম্পিউটার প্রতিপক্ষ"
+
+#~ msgid "Player Rating"
+#~ msgstr "খেলোয়ারের রেটিং"
+
+#~ msgid "Sounds"
+#~ msgstr "শব্দসমূহ"
+
+#~ msgid "Black player won the game"
+#~ msgstr "কালো-খেলোয়ার খেলাটি জিতেছেন"
+
+#~ msgid "White player won the game"
+#~ msgstr "সাদা-খেলোয়ার খেলাটি জিতেছেন"
+
+#~ msgid ""
+#~ "While you fight different local chessengines, PyChess keeps track of your "
+#~ "results."
+#~ msgstr ""
+#~ "বিভিন্ন চেস-ইঞ্জিন-এর বিরুদ্ধে খেলা কালীন পাইচেস তোমার সাফল্য ট্র্যাক করে।"
+
+#~ msgid "as game exceed the max length"
+#~ msgstr "কারন খেলাটি সর্বাধিক দৈর্ঘ্য অতিক্রম করেছিল"
+
+#~ msgid "caused by insufficient material"
+#~ msgstr "অপর্যাপ্ত মেটিরিয়াল-এর জন্য"
+
+#~ msgid "as the last 50 moves brought nothing new"
+#~ msgstr "কারন শেষ ৫০টি দানএ নতুন কিছুই আসেনি"
+
+#~ msgid "as the same position was repeated three times in a row"
+#~ msgstr "কারন একই দান পরপর তিনবার দেওয়ার হয়েছিল"
+
+#~ msgid "as opponent resigned"
+#~ msgstr "প্রতিপক্ষ হার স্বীকার করেছিল"
+
+#~ msgid "because of stalemate"
+#~ msgstr "স্টেলমেট-এর জন্য"
+
+#~ msgid "as the players agreed to"
+#~ msgstr "কারন খেলোয়াররা সহমত"
+
+#~ msgid "as decided by an admin"
+#~ msgstr "কারন অ্যাডমিন্‌ ঠিক করেছিল"
+
+#~ msgid "as both players ran out of time"
+#~ msgstr "কারন দুই খেলোয়ারের-ই সময় শেষ হয়ে গেছিল"
+
+#~ msgid "by courtesy by a player"
+#~ msgstr "এক খেলোয়ারের সৌজন্যে"
+
+#~ msgid "by no known reason"
+#~ msgstr "কোন অজ্ঞাত কারনে"
+
+#~ msgid "as the black engine died"
+#~ msgstr "কারন কালো-ইঞ্জিন-টি মারা গেছিল"
+
+#~ msgid "as the white engine died"
+#~ msgstr "কারন সাদা-ইঞ্জিন-টি মারা গেছিল"
+
+#~ msgid "in the early phase of the game"
+#~ msgstr "খেলাটির প্রথমের দিকে"
+
+#~ msgid "as the server was shut down"
+#~ msgstr "কারন সার্ভার-টি বন্ধ করে দেওয়া হয়েছিল"
+
+#~ msgid "as opponent ran out of time"
+#~ msgstr "কারন প্রতিপক্ষের সময় শেষ হয়ে গেছিল"
+
+#~ msgid "on a mate"
+#~ msgstr "মেট-এ"
+
+#~ msgid "as opponent disconnected"
+#~ msgstr "কারন প্রতিপক্ষ যোগাযোগ বিচ্ছিন্ন করেছিল"
+
+#~ msgid "as a player lost connection"
+#~ msgstr "কারন একজন খেলোয়ারের যোগাযোগ হয়েছিল"
+
+#~ msgid "Connection was broken"
+#~ msgstr "সংযোগ বিচ্ছিন্ন হয়েছে"
+
+#~ msgid ""
+#~ "You are currently logged in as a guest.\n"
+#~ "A guest is not able to play rated games, and thus the offer of games is be "
+#~ "smaller."
+#~ msgstr ""
+#~ "তুমি এখন অথিতিরূপে লগ-ইন করে আছো।\n"
+#~ "একজন অথিতি রেট করা খেলা খেলতে পারবে না, তাই খেলার সংখ্যা কম হবে।."
+
+#~ msgid "Active Seek"
+#~ msgstr "অ্যাক্টিভ-সীক"
+
+#~ msgid "Active Seeks"
+#~ msgstr "অ্যাক্টিভ-সীক-সমূহ"
+
+#~ msgid "Player Ready"
+#~ msgstr "খেলোয়ার রেডি"
+
+#~ msgid "Players Ready"
+#~ msgstr "খেলোয়ারেরা রেডি"
+
+#~ msgid "New Custom"
+#~ msgstr "নতুন কাস্টম্‌"
+
+#~ msgid "Don't Care"
+#~ msgstr "মত অভিন্ন"
+
+#~ msgid "Want White"
+#~ msgstr "সাদা চাই"
+
+#~ msgid "Easy"
+#~ msgstr "সহজ"
+
+#~ msgid "Advanced"
+#~ msgstr "উন্নত"
+
+#~ msgid "Expert"
+#~ msgstr "অভিজ্ঞ"
+
+#~ msgid "Want Black"
+#~ msgstr "কালো চাই"
+
+#~ msgid "Custom"
+#~ msgstr "কাস্টম্‌"
+
+#~ msgid "Names can only consist of lower and upper case letters"
+#~ msgstr "নামের অক্ষর যেকোন হরফে হতে পারে"
+
+#~ msgid "Game Running"
+#~ msgstr "চলন্ত খেলা"
+
+#~ msgid "Games Running"
+#~ msgstr "চলন্ত খেলাসমূহ"
+
+#~ msgid "You've got an abort offer. Accept?"
+#~ msgstr "তুমি একটি খেলা-বন্ধের অফার পেয়েছ। স্বীকার কর?"
+
+#~ msgid "You've got a draw offer. Accept?"
+#~ msgstr "তুমি একটি ড্র-এর অফার পেয়েছ। স্বীকার কর?"
+
+#~ msgid ""
+#~ "The entered password was invalid.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "পাসওয়ার্ড-টি ভ্যালিড ছিল না।\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "Your opponent has offered you a draw. If you accept it the game will end "
+#~ "with score 1/2 - 1/2."
+#~ msgstr ""
+#~ "প্রতিপক্ষ তোমাকে ড্র-এর অফার করেছে। স্বীকার করলে খেলাটি 1/2 - 1/2 স্কোর-এ "
+#~ "অন্ত হবে।"
+
+#, python-format
+#~ msgid ""
+#~ "Your opponent wants to undo back to halfmove %s.. If you accept, the game "
+#~ "will continue from the earlier position."
+#~ msgstr ""
+#~ "প্রতিপক্ষ খেলাটির %s অর্ধাংশ অবধি দান ফেরত নিতে চায়। স্বীকার করলে খেলাটি "
+#~ "আগের অবস্থান থেকে চলতে থাকবে।"
+
+#~ msgid ""
+#~ "Your opponent has offered you to abort the game. If you accept, the game "
+#~ "will end with no rating change."
+#~ msgstr ""
+#~ "প্রতিপক্ষ তোমাকে খেলা-বন্ধের অফার করেছে। স্বীকার করলে খেলাটি রেটিং "
+#~ "অপরিবর্তিত রেখে অন্ত হবে।"
+
+#~ msgid "You've got an adjourn offer. Accept?"
+#~ msgstr "তুমি একটি খেলা-স্থগিতের অফার পেয়েছ। স্বীকার কর?"
+
+#~ msgid ""
+#~ "Your opponent has offered you to adjourn the game. If you accept, the game "
+#~ "will adjourned, and you can later resume it (If your opponent is online and "
+#~ "willing)."
+#~ msgstr ""
+#~ "প্রতিপক্ষ তোমাকে খেলা-স্থগিতের অফার করেছে। স্বীকার করলে খেলাটি স্থগিত হবে "
+#~ "এবং পরে তুমি খেলাটি আবার চালাতে পারো, যদি প্রতিপক্ষ অনলাইন এবং ঐচ্ছিক থাকে।"
+
+#~ msgid "Your opponent wants to undo. Accept?"
+#~ msgstr "প্রতিপক্ষ দান ফেরত নিতে চায়। স্বীকার কর?"
+
+#~ msgid "the abort offer"
+#~ msgstr "বন্ধের-অফার-টি"
+
+#~ msgid "the adjourn offer"
+#~ msgstr "স্থগিতের-অফার-টি"
+
+#~ msgid "the flag call"
+#~ msgstr "ফ্ল্যাগ-কল-টি"
+
+#~ msgid "the pause offer"
+#~ msgstr "পস-এর-অফার-টি"
+
+#~ msgid ""
+#~ "Your opponent wants to resume the game. If you accept, the game clock will "
+#~ "start counting down from where it was left."
+#~ msgstr ""
+#~ "প্রতিপক্ষ তোমাকে খেলা পুনরারম্ভ করার অফার করেছে। স্বীকার করলে খেলাটি এবং "
+#~ "ঘড়িটি পুনরায় আগের অবস্থা থেকে চলতে থাকবে।"
+
+#~ msgid "the resignation"
+#~ msgstr "হারস্বীকার্য্যটি"
+
+#~ msgid "Your opponent offers you a pause. Accept?"
+#~ msgstr "প্রতিপক্ষ খেলা পস করার অফার করেছে। স্বীকার কর?"
+
+#~ msgid ""
+#~ "Your opponent wants to make a break. If you accept the game clock will be "
+#~ "paused until on of you accept a resume offer"
+#~ msgstr ""
+#~ "প্রতিপক্ষ তোমাকে খেলা পস করার অফার করেছে। স্বীকার করলে খেলাটি স্থগিত হবে এবং "
+#~ "ঘড়িটি থামানো হবে যতক্ষন তুমি পুনরারম্ভের অফারটি স্বীকার করছ।"
+
+#~ msgid "Your opponent wants to resume. Accept?"
+#~ msgstr "প্রতিপক্ষ খেলা পুনরারম্ভ করার অফার করেছে। স্বীকার কর?"
+
+#~ msgid "You can't switch color during the game."
+#~ msgstr "খেলা চলাকালীন রং পাল্টানো যাবেনা।"
+
+#~ msgid "The clock hasn't yet been started."
+#~ msgstr "ঘড়ি এখনো শুরু করা হয়নি"
+
+#~ msgid "Your Color"
+#~ msgstr "আপনার রং"
+
+#~ msgid "Connect to FICS"
+#~ msgstr "FICS-এ সংযোগস্থাপণ"
+
+#~ msgid "Set up Game"
+#~ msgstr "খেলা তৈরি করুণ"

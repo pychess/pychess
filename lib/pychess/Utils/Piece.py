@@ -5,10 +5,10 @@ class Piece:
     def __init__ (self, color, piece):
         self.color = color
         self.piece = piece
-    	
-    	self.opacity = 1.0
-    	self.x = None
-    	self.y = None
+        
+        self.opacity = 1.0
+        self.x = None
+        self.y = None
     
     # Sign is a deprecated synonym for piece
     def _set_sign (self, sign):

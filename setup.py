@@ -110,7 +110,7 @@ for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d
 PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
             "pychess.Players", "pychess.Savers", "pychess.System",
             "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
-			"pychess.widgets", "pychess.widgets.pydock" ]
+            "pychess.widgets", "pychess.widgets.pydock" ]
 # Setup
 
 setup (
