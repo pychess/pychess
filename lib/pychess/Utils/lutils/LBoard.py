@@ -1,7 +1,7 @@
-
 from array import array
 
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor
 from ldata import *
 from attack import isAttacked
 from bitboard import *

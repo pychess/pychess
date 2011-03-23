@@ -20,6 +20,7 @@ from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.Utils.const import *
+from pychess.Utils.repr import typeName
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer

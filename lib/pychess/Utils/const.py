@@ -19,7 +19,6 @@ EASY, INTERMEDIATE, EXPERT = range(3)
 
 # Player colors
 WHITE, BLACK = range(2)
-reprColor = [_("White"), _("Black")]
 
 ################################################################################
 # Game values                                                                  #
@@ -38,9 +37,6 @@ TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE, \
     TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC, TYPE_UNTIMED = range(10)
 isLightning = lambda secs, incr: secs + incr * 40 < 3*60
 isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
-
-typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
-            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
 
 # Chess variants
 NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, \
@@ -123,7 +119,6 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
-reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
 
 # Is sliding piece
 sliders = [ False, False, False, True, True, True, False, False ]
@@ -131,7 +126,6 @@ sliders = [ False, False, False, True, True, True, False, False ]
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 
 ################################################################################
 # Move values                                                                  #
