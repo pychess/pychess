@@ -824,9 +824,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2042
 msgid "<b>Play Sound When...</b>"
-msgstr ""
-"Copy text   \t\r\n"
-"<b>Spela ljud när...</b>"
+msgstr "<b>Spela ljud när...</b>"
 
 #: glade/PyChess.glade:2066
 msgid "_Sounds"
@@ -930,9 +928,7 @@ msgstr ""
 #: lib/pychess/ic/FICSConnection.py:103
 #, python-format
 msgid "'%s' is not a registered name"
-msgstr ""
-"Copy text   \t\r\n"
-"'%s' är inte ett registrerat namn"
+msgstr "'%s' är inte ett registrerat namn"
 
 #: lib/pychess/ic/FICSConnection.py:104
 msgid "The entered password was invalid.\n"
