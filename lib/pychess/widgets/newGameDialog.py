@@ -22,7 +22,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
-from pychess.Utile.repr import localReprSign
+from pychess.Utils.repr import localReprSign
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
