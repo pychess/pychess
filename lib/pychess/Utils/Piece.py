@@ -1,5 +1,6 @@
-from const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
-from const import reprSign, reprColor, reprPiece
+from pychess.Utils.const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
+from pychess.Utils.repr import reprSign, reprColor, reprPiece
+
 
 class Piece:
     def __init__ (self, color, piece):

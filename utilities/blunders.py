@@ -11,8 +11,7 @@
 
 ###############################################################################
 # Set up important things
-import glib, gobject, __builtin__
-__builtin__.__dict__["_"] = lambda x:x
+import glib, gobject
 gobject.threads_init()
 mainloop = glib.MainLoop()
 
