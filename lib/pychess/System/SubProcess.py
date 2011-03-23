@@ -1,4 +1,5 @@
 import os
+import sys
 import signal
 import errno
 import time
@@ -90,7 +91,8 @@ class SubProcess (gobject.GObject):
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
-        channel.set_flags(gobject.IO_FLAG_NONBLOCK)
+        if sys.platform != "win32":
+            channel.set_flags(gobject.IO_FLAG_NONBLOCK)
         if callback:
             tag = channel.add_watch(callbackflag, callback, isstderr)
             self.__channelTags.append(tag)
