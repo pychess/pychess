@@ -1,6 +1,7 @@
 from __future__ import with_statement 
 
 import os
+import sys
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
@@ -162,10 +163,13 @@ class EngineDiscoverer (GObject, PooledThread):
             imported """
         
         if engine.find('vm') is not None:
-            altpath = engine.find('vm').find('path') is not None and \
-                    engine.find('vm').find('path').text.strip()
-            vmpath = searchPath(engine.find('vm').get('binname'),
-                    access=os.R_OK|os.X_OK, altpath = altpath)
+            if sys.platform == "win32":
+                vmpath = sys.executable
+            else:
+                altpath = engine.find('vm').find('path') is not None and \
+                        engine.find('vm').find('path').text.strip()
+                vmpath = searchPath(engine.find('vm').get('binname'),
+                        access=os.R_OK|os.X_OK, altpath = altpath)
             
             if engine.get('binname') == "PyChess.py":
                 path = join(abspath(dirname(__file__)), "PyChess.py")
