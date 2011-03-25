@@ -256,11 +256,12 @@ class UCIEngine (ProtocolEngine):
     def setOptionStrength (self, strength):
         self.strength = strength
         
-        if self.hasOption('UCI_LimitStrength') and self.hasOption('UCI_Elo'):
+        if self.hasOption('UCI_LimitStrength') and strength <= 6:
             self.setOption('UCI_LimitStrength', True)
-            if strength <= 6:
+            if self.hasOption('UCI_Elo'):
                 self.setOption('UCI_Elo', 300 * strength + 200)
-        else:
+        
+        if not self.hasOption('UCI_Elo') or strength == 7:
             self.timeHandicap = th = 0.01 * 10**(strength/4.)
             self.wtime = int(max(self.wtime*th, 1))
             self.btime = int(max(self.btime*th, 1))
@@ -380,8 +381,8 @@ class UCIEngine (ProtocolEngine):
                 if self.strength <= 3:
                     commands.append("go depth %d" % self.strength)
                 else:
-                    commands.append("go wtime %d btime %d winc %d binc %d" % \
-                                    (self.wtime, self.btime, self.incr, self.incr))
+                    commands.append("go wtime %d winc %d btime %d binc %d" % \
+                                    (self.wtime, self.incr, self.btime, self.incr))
                 
             else:
                 print >> self.engine, "stop"
@@ -422,7 +423,7 @@ class UCIEngine (ProtocolEngine):
         print >> self.engine, "position", uciPos, \
                                 self._moveToUCI(self.board, self.pondermove)
         print >> self.engine, "go ponder wtime", self.wtime, \
-            "btime", self.btime, "winc", self.incr, "binc", self.incr
+            "winc", self.incr, "btime", self.btime, "binc", self.incr
     
     #===========================================================================
     #    Parsing from engine
