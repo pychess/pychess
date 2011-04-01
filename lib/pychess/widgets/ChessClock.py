@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
 
 from math import ceil, pi, cos, sin
-import cairo, gtk, pango, gobject
+import cairo, gtk, pango
 from gtk import gdk
 
+from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.Utils.const import WHITE, BLACK
 
@@ -133,14 +134,16 @@ class ChessClock (gtk.DrawingArea):
         context.show_layout(layout1)
     
     def redraw_canvas(self):
-        def redraw (self):
-            if self.window:
-                a = self.get_allocation()
-                rect = gdk.Rectangle(0, 0, a.width, a.height)
-                self.window.invalidate_rect(rect, True)
-                self.window.process_updates(True)
         if self.window:
-            gobject.idle_add(redraw, self, priority=gobject.PRIORITY_HIGH)
+            glock.acquire()
+            try:
+                if self.window:
+                    a = self.get_allocation()
+                    rect = gdk.Rectangle(0, 0, a.width, a.height)
+                    self.window.invalidate_rect(rect, True)
+                    self.window.process_updates(True)
+            finally:
+                glock.release()
     
     def setModel (self, model):
         self.model = model
