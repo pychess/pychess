@@ -14,6 +14,7 @@ class PawnOddsBoard(Board):
 
 
 class PawnOddsChess:
+    __desc__ = _("One player starts with one less pawn piece")
     name = _("Pawn odds")
     cecp_name = "normal"
     board = PawnOddsBoard

@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import os
 import webbrowser
 import math
@@ -10,7 +9,7 @@ from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 from pychess.System import conf, glock, uistuff, prefix, SubProcess
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
-from pychess.System.Log import log
+from pychess.System.Log import log, start_thread_dump
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.Utils import book # Kills pychess if no sqlite available
 from pychess.widgets import newGameDialog
@@ -195,9 +194,9 @@ dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
 
 
 class PyChess:
-    def __init__(self, args):
+    def __init__(self, chess_file):
         self.initGlade()
-        self.handleArgs(args)
+        self.handleArgs(chess_file)
     
     def initGlade(self):
         #=======================================================================
@@ -290,14 +289,14 @@ class PyChess:
         tasker.packTaskers (NewGameTasker(), InternetGameTasker())
         return tasker
     
-    def handleArgs (self, args):
-        if args:
+    def handleArgs (self, chess_file):
+        if chess_file:
             def do (discoverer):
-                newGameDialog.LoadFileExtension.run(args[0])
+                newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (args):
-    PyChess(args)
+def run (thread_debug, chess_file):
+    PyChess(chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
@@ -306,5 +305,7 @@ def run (args):
     
     # Start logging
     log.debug("Started\n")
+    if thread_debug:
+        start_thread_dump()
     
     gtk.main()
