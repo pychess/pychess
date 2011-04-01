@@ -359,7 +359,7 @@ class InfoPanel (gtk.Notebook, Panel):
         def __init__ (self, id, text, chatView, connection):
             gtk.Alignment.__init__(self, xscale=1, yscale=1)
             self.cm = connection.cm
-            self.add(gtk.Label(_("Recieving list of players")))
+            self.add(gtk.Label(_("Receiving list of players")))
             
             chatView.connect("messageAdded", self.onMessageAdded)
             self.store = gtk.ListStore(object, # (r,g,b) Color tuple
@@ -478,7 +478,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
     def start (self):
         for id, name in self.connection.cm.getChannels():
             id = self.compileId(id, TYPE_CHANNEL)
-            self.channelsList.addRow(id, name, TYPE_CHANNEL)
+            self.channelsList.addRow(id, str(id) + ": " + name, TYPE_CHANNEL)
         
         for id, name in self.connection.cm.getChannels():
             if id in self.connection.cm.getJoinedChannels():
@@ -501,6 +501,8 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
     def onAdd (self, list, id, text, type):
         if id in list:
             list.removeRow(id)
+        if type == TYPE_CHANNEL:
+            text = str(id) + ": " + text
         self.joinedList.addRow(id, text, type)
         self.emit('conversationAdded', id, text, type)
         if type == TYPE_CHANNEL:

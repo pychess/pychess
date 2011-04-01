@@ -40,6 +40,30 @@ else:
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
 
+# Parse command-line options
+import pychess
+thread_debug = False
+chess_file = sys.argv[1] if len(sys.argv) > 1 else None
+try:
+    import argparse
+except ImportError:
+    print "argparse library not found, so thread debugging will be turned off"
+else:
+    version = "%s (%s)" % (pychess.VERSION, pychess.VERSION_NAME)
+    description = "The PyChess chess client, version %s." % version
+    
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('--version', action='version',
+                        version="%(prog)s" + " %s" % version)
+    parser.add_argument('--thread-debug', action='store_true',
+                        help='turn on thread debugging')
+    parser.add_argument('chess_file', nargs='?', metavar='chessfile',
+        help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
+    
+    args = parser.parse_args()
+    thread_debug = args.thread_debug
+    chess_file = args.chess_file
+
 # Let's rumble!
 import pychess.Main
-pychess.Main.run(sys.argv[1:])
+pychess.Main.run(thread_debug, chess_file)

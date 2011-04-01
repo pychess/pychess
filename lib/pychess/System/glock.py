@@ -1,6 +1,9 @@
 import traceback
 from threading import RLock, currentThread
 from gtk.gdk import threads_enter, threads_leave
+import time
+
+gdklocks = {}
 _rlock = RLock()
 
 def has():
@@ -11,15 +14,19 @@ def has():
 
 def acquire():
     me = currentThread()
+    if me.ident not in gdklocks:
+        gdklocks[me.ident] = 0
     # Ensure we don't deadlock if another thread is waiting on threads_enter
     # while we wait on _rlock.acquire()
     if me.getName() == "MainThread" and not has():
         threads_leave()
+        gdklocks[me.ident] -= 1
     # Acquire the lock, if it is not ours, or add one to the recursive counter
     _rlock.acquire()
     # If it is the first time we lock, we will acquire the gdklock
     if _rlock._RLock__count == 1:
         threads_enter()
+        gdklocks[me.ident] += 1
 
 def release():
     me = currentThread()
@@ -29,16 +36,19 @@ def release():
     if me.getName() == "MainThread":
         if not has():
             threads_leave()
-        else: _rlock.release()
+            gdklocks[me.ident] -= 1
+        else:
+            _rlock.release()
     # If this is the last unlock, we also free the gdklock.
     elif has():
         if _rlock._RLock__count == 1:
             threads_leave()
+            gdklocks[me.ident] -= 1
         _rlock.release()
     else:
-        print "Warning: Releasing nonowned glock has no effect\n" + \
-                "Traceback was: %s" % traceback.extract_stack()        
-        
+        t = time.strftime("%H:%M:%S")
+        print "%s %s: %s: Warning: Releasing nonowned glock has no effect\n" + \
+            "Traceback was: %s" % (t, me.ident, me.name, traceback.extract_stack())
 
 def glock_connect(emitter, signal, function, *args, **kwargs):
     def handler(emitter, *extra):
