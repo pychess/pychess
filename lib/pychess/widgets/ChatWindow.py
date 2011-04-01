@@ -483,7 +483,10 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         for id, name in self.connection.cm.getChannels():
             if id in self.connection.cm.getJoinedChannels():
                 id = self.compileId(id, TYPE_CHANNEL)
-                self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
+                if id.isdigit():
+                    self.onAdd(self.channelsList, id, str(id)+": "+name, TYPE_CHANNEL)
+                else:
+                    self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
         
         for name in self.connection.glm.getPlayerlist():
             id = self.compileId(name, TYPE_PERSONAL)
@@ -501,8 +504,6 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
     def onAdd (self, list, id, text, type):
         if id in list:
             list.removeRow(id)
-        if type == TYPE_CHANNEL:
-            text = str(id) + ": " + text
         self.joinedList.addRow(id, text, type)
         self.emit('conversationAdded', id, text, type)
         if type == TYPE_CHANNEL:
