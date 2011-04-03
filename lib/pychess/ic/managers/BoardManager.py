@@ -103,6 +103,7 @@ class BoardManager (GObject):
         # don't unobserve games when we start a new game
         self.connection.lvm.setVariable("unobserve", "3")
         self.connection.lvm.setVariable("formula", "")
+        self.connection.lvm.autoFlagNotify(None)
         
         # gameinfo <g1> doesn't really have any interesting info, at least not
         # until we implement crasyhouse and stuff

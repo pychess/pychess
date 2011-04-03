@@ -6,6 +6,7 @@ from pychess.System.glock import gdklocks
 from pychess.System.ThreadPool import pool
 
 MAXFILES = 10
+DEBUG = True
 labels = {LOG_DEBUG: "Debug", LOG_LOG: "Log", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
 
 class LogPipe:
@@ -82,7 +83,8 @@ class Log (gobject.GObject):
             print message
     
     def debug (self, message, task="Default"):
-        self._log (task, message, LOG_DEBUG)
+        if DEBUG:
+            self._log (task, message, LOG_DEBUG)
     
     def log (self, message, task="Default"):
         self._log (task, message, LOG_LOG)
