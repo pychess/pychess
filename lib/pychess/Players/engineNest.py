@@ -1,7 +1,7 @@
 from __future__ import with_statement 
 
-from xml.parsers.expat import ExpatError
 import os
+import sys
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
@@ -9,6 +9,10 @@ from copy import deepcopy
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
+try:
+    from xml.etree.ElementTree import ParseError
+except ImportError:
+    from xml.parsers.expat import ExpatError as ParseError
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
@@ -139,7 +143,7 @@ class EngineDiscoverer (GObject, PooledThread):
             elif c == 1:
                 raise NotImplementedError, "engines.xml is of a newer date. In order" + \
                                 "to run this version of PyChess it must first be removed"
-        except ExpatError, e:
+        except ParseError, e:
             log.warn("engineNest: %s\n" % e)
             self.dom = deepcopy(self.backup)
         except IOError, e:
@@ -159,17 +163,23 @@ class EngineDiscoverer (GObject, PooledThread):
             imported """
         
         if engine.find('vm') is not None:
-            vmpath = searchPath(engine.find('vm').get('binname'), access=os.R_OK|os.X_OK)
-            if engine.get('binname') != "PyChess.py":
-                path = searchPath(engine.get('binname'), access=os.R_OK)
-            else:
+            altpath = engine.find('vm').find('path') is not None and \
+                    engine.find('vm').find('path').text.strip()
+            vmpath = searchPath(engine.find('vm').get('binname'),
+                    access=os.R_OK|os.X_OK, altpath = altpath)
+            
+            if engine.get('binname') == "PyChess.py":
                 path = join(abspath(dirname(__file__)), "PyChess.py")
                 if not os.access(path, os.R_OK):
                     path = None
+            else:
+                altpath = engine.find('path') is not None and engine.find('path').text.strip()
+                path = searchPath(engine.get('binname'), access=os.R_OK, altpath=altpath)
             if vmpath and path:
                 return vmpath, path
         else:
-            path = searchPath(engine.get('binname'), access=os.R_OK|os.X_OK)
+            altpath = engine.find('path') is not None and engine.find('path').text.strip()
+            path = searchPath(engine.get('binname'), access=os.R_OK|os.X_OK, altpath=altpath)
             if path:
                 return None, path
         
@@ -280,7 +290,11 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def __clean(self, rundata, engine):
         """ Grab the engine from the backup and attach the attributes from
-            rundata. The 'new' engine is returned and ready for discovering """
+            rundata. The 'new' engine is returned and ready for discovering.
+        
+            If engine doesn't exist in backup, an 'unsupported engine' warning
+            is logged, and a new engine element is created for it
+        """
         
         vmpath, path = rundata
         
@@ -288,14 +302,21 @@ class EngineDiscoverer (GObject, PooledThread):
             md5sum = md5(f.read()).hexdigest()
         
         ######
-        # Vind the backup engine
+        # Find the backup engine
         ######
         try:
             engine2 = (c for c in self.backup.findall('engine')
                        if c.get('binname') == engine.get('binname')).next()
         except StopIteration:
-            log.warn("Engine '%s' is no longer suported" % engine.get('binname'))
-            return None
+            log.warn("Engine '%s' has not been tested and verified to work with PyChess\n" % \
+                engine.get('binname'))
+            engine2 = fromstring('<engine></engine>')
+            engine2.set('binname', engine.get('binname'))
+            engine2.set('protocol', engine.get('protocol'))
+            if engine.get('protover'):
+                engine2.set('protover', engine.get('protover'))
+            engine2.set('recheck', 'true')
+
         # This doesn't work either. Dammit python
         # engine = any(c for c in self.backup.getchildren()
         #             if c.get('binname') == engine.get('binname'))
@@ -324,7 +345,7 @@ class EngineDiscoverer (GObject, PooledThread):
             # Find the known and installed engines on the system
             ######
             
-            # Validate slihtly
+            # Validate slightly
             if not engine.get("protocol") or not engine.get("binname"):
                 log.warn("Engine '%s' lacks protocol/binname attributes. Skipping\n" % \
                          engine.get('binname'))
@@ -338,7 +359,7 @@ class EngineDiscoverer (GObject, PooledThread):
             
             if self.__needClean(rundata, engine):
                 engine2 = self.__clean(rundata, engine)
-                if not engine2:
+                if engine2 is None:
                     # No longer suported
                     continue
                 self.dom.getroot().remove(engine)

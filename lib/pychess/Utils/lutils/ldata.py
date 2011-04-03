@@ -567,13 +567,13 @@ for cord in xrange(8):
 MAXBITBOARD = (1<<64)-1
 
 for r in xrange(A2,A8+1,8):
-	for cord in iterBits(ray00[r]):
-		attack00[cord] = dict((map >> 8, ray >> 8)
+    for cord in iterBits(ray00[r]):
+        attack00[cord] = dict((map >> 8, ray >> 8)
                               for map,ray in attack00[cord-8].iteritems())
 
 for r in xrange(B1,H1+1):
-	for cord in iterBits(ray90[r]):
-		attack90[cord] = dict((map >> 1, ray >> 1)
+    for cord in iterBits(ray90[r]):
+        attack90[cord] = dict((map >> 1, ray >> 1)
                               for map,ray in attack90[cord-1].iteritems())
 
 # Bottom right

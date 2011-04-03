@@ -230,11 +230,12 @@ class UCIEngine (ProtocolEngine):
     def setOptionStrength (self, strength):
         self.strength = strength
         
-        if self.hasOption('UCI_LimitStrength') and self.hasOption('UCI_Elo'):
+        if self.hasOption('UCI_LimitStrength') and strength <= 6:
             self.setOption('UCI_LimitStrength', True)
-            if strength <= 6:
+            if self.hasOption('UCI_Elo'):
                 self.setOption('UCI_Elo', 300 * strength + 200)
-        else:
+        
+        if not self.hasOption('UCI_Elo') or strength == 7:
             self.timeHandicap = th = 0.01 * 10**(strength/4.)
             self.wtime = int(max(self.wtime*th, 1))
             self.btime = int(max(self.btime*th, 1))
@@ -373,7 +374,7 @@ class UCIEngine (ProtocolEngine):
                 if self.board.asFen() == FEN_START:
                     commands.append("position startpos")
                 else:
-                    commands.append("position fen %s" % self.board.asFen())
+                    commands.append("position fen %s" % self.board.asXFen())
                 commands.append("go infinite")
             
             if self.needBestmove:
@@ -388,7 +389,7 @@ class UCIEngine (ProtocolEngine):
                     self.readyForStop = True
     
     def _startPonder (self):
-        print >> self.engine, "position fen", self.board.asFen(), \
+        print >> self.engine, "position fen", self.board.asXFen(), \
                                 "moves", toAN(self.board, self.pondermove, short=True)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "btime", self.btime, "winc", self.incr, "binc", self.incr
@@ -480,15 +481,21 @@ class UCIEngine (ProtocolEngine):
                     (move, self.board), self.defname)
                 
                 if self.getOption('Ponder'):
+                    self.pondermove = None
+                    # An engine may send an empty ponder line, simply to clear.
                     if len(parts) == 4 and self.board:
-                        self.pondermove = parseAN(self.board, parts[3])
-                        # Engines don't always check for everything in their ponders
-                        if validate(self.board, self.pondermove):
-                            self._startPonder()
+                        # Engines don't always check for everything in their
+                        # ponders. Hence we need to validate.
+                        # But in some cases, what they send may not even be
+                        # correct AN - specially in the case of promotion.
+                        try:
+                            pondermove = parseAN(self.board, parts[3])
+                        except ParsingError:
+                            pass
                         else:
-                            self.pondermove = None
-                    else:
-                        self.pondermove = None
+                            if validate(self.board, pondermove):
+                                self.pondermove = pondermove
+                                self._startPonder()
                 
                 self.returnQueue.put(move)
                 log.debug("__parseLine: put move=%s into self.returnQueue=%s\n" % \
@@ -504,8 +511,8 @@ class UCIEngine (ProtocolEngine):
                 score = int(parts[parts.index("score")+2])
                 if scoretype == 'mate':
 #                    print >> self.engine, "stop"
-                    score = MATE_VALUE-abs(score)
-                    score *= score/abs(score) # sign
+                    sign = score/abs(score)
+                    score = sign * (MATE_VALUE-abs(score))
             
             movstrs = parts[parts.index("pv")+1:]
             try:

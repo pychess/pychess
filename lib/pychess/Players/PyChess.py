@@ -238,10 +238,12 @@ class PyChessCECP(PyChess):
         self.features = {
             "setboard": 1,
             "analyze": 1,
+            "san": 1,
             "usermove": 1,
             "reuse": 0,
             "draw": 1,
             "sigterm": 1,
+            "colors": 1,
             "variants": "normal,nocastle,fischerandom",
             "myname": "PyChess %s" % pychess.VERSION
         }
@@ -374,7 +376,8 @@ class PyChessCECP(PyChess):
                 if self.analyzing:
                     self.__analyze()
             
-            elif lines[0] in ("xboard", "otim", "hard", "easy", "nopost", "post"):
+            elif lines[0] in ("xboard", "otim", "hard", "easy", "nopost", "post",
+                              "accepted", "rejected"):
                 pass
             
             else: print "Warning (unknown command):", line

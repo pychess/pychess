@@ -1,22 +1,7 @@
 """ This is a threadsafe wrapper sqlite.
     It is not classbased, so only one database can be open at a time """
 
-try:
-    # Python >= 2.5 has sqlite3 package in the standard library
-    import sqlite3 as sqlite
-except ImportError:
-    try:
-        # Python < 2.5
-        import pysqlite2.dbapi2 as sqlite
-    except ImportError:
-        print """
-PyChess was not able to import pysqlite2 which is a dependency to run the game.
-PySqlite can be downloaded at http://initd.org/tracker/pysqlite
-or on many packagesystems perhaps under the name python-sqlite2
-"""
-        import sys
-        sys.exit()
-    
+import sqlite3 as sqlite
 import Queue, time, os
 from threading import Thread
 

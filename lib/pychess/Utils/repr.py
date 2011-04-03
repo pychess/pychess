@@ -1,5 +1,19 @@
 from const import *
 
+import __builtin__
+if '_' not in __builtin__.__dict__:
+    __builtin__.__dict__['_'] = lambda s: s
+
+
+reprColor = [_("White"), _("Black")]
+
+reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
+
+localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
+
+typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
+            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
+
 reprResult_long = {
     DRAW: _("The game ended in a draw"),
     WHITEWON: _("%(white)s won the game"),

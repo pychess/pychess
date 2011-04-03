@@ -72,9 +72,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     # We don't adjudicate draws. Clients may have different rules for that.
     if ply > 0:
-    	if ldraw.test(board):
-        	last = 2
-	        return [], 0
+        if ldraw.test(board):
+            last = 2
+            return [], 0
     
     ############################################################################
     # Look up transposition table                                              #

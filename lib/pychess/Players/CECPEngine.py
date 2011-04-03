@@ -103,11 +103,11 @@ class CECPEngine (ProtocolEngine):
             "time":      1,
             "draw":      1,
             "sigint":    0,
-            "sigterm":   1,
-            "reuse":     1,
+            "sigterm":   0,
+            "reuse":     0,
             "analyze":   0,
             "myname":    ', '.join(self.defname),
-            "variants":  "",
+            "variants":  None,
             "colors":    1,
             "ics":       0,
             "name":      0,
@@ -118,6 +118,11 @@ class CECPEngine (ProtocolEngine):
             "smp":       0,
             "egt":       '',
         }
+        
+        self.supported_features = [
+            "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
+            "analyze", "myname", "variants", "colors", "pause", "done"
+        ]
         
         self.board = None
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
@@ -276,6 +281,7 @@ class CECPEngine (ProtocolEngine):
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
             self.__printColor()
+            if self.engineIsInNotPlaying: print >> self.engine, "force"
         
         self.__usermove(board2, move)
         
@@ -287,6 +293,7 @@ class CECPEngine (ProtocolEngine):
                 self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
                 return
             self.__printColor()
+            if self.engineIsInNotPlaying: print >> self.engine, "force"
     
     def makeMove (self, board1, move, board2):
         """ Gets a move from the engine (for player engines).
@@ -335,8 +342,9 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def updateTime (self, secs, opsecs):
-        print >> self.engine, "time", int(secs*100*self.timeHandicap)
-        print >> self.engine, "otim", int(opsecs*100)
+        if self.features["time"]:
+            print >> self.engine, "time", int(secs*100*self.timeHandicap)
+            print >> self.engine, "otim", int(opsecs*100)
     
     #===========================================================================
     #    Standard options
@@ -362,6 +370,7 @@ class CECPEngine (ProtocolEngine):
             if boards[0].asFen() != FEN_START:
                 self.__setBoard(boards[0])
             
+            self.board = boards[-1]
             for board, move in zip(boards[:-1], moves):
                 self.__usermove(board, move)
             
@@ -371,6 +380,7 @@ class CECPEngine (ProtocolEngine):
             if self.mode == INVERSE_ANALYZING:
                 self.board = self.board.switchColor()
                 self.__printColor()
+                if self.engineIsInNotPlaying: print >> self.engine, "force"
             
             #if self.mode in (ANALYZING, INVERSE_ANALYZING) or \
             #        gamemodel.boards[-1].color == self.color:
@@ -385,9 +395,13 @@ class CECPEngine (ProtocolEngine):
             self.boardLock.release()
     
     def setOptionVariant (self, variant):
+        if self.features["variants"] is None:
+            log.warn("setOptionVariant: engine doesn't support variants\n", self.defname)
+            return
+        
         if variant in variants.values() and not variant.standard_rules:
             assert variant.cecp_name in self.features["variants"], \
-                    "%s dosn't support %s variant" % (self, variant.cecp_name)
+                    "%s doesn't support %s variant" % (self, variant.cecp_name)
             self.optionQueue.append("variant %s" % variant.cecp_name)
     
         #==================================================#
@@ -496,6 +510,7 @@ class CECPEngine (ProtocolEngine):
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
             self.__printColor()
+            if self.engineIsInNotPlaying: print >> self.engine, "force"
         
         for i in xrange(moves):
             print >> self.engine, "undo"
@@ -505,6 +520,7 @@ class CECPEngine (ProtocolEngine):
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
             self.__printColor()
+            if self.engineIsInNotPlaying: print >> self.engine, "force"
     
     @semisynced
     def playerUndoMoves (self, moves, gamemodel):
@@ -559,7 +575,7 @@ class CECPEngine (ProtocolEngine):
         
         if self.features["san"]:
             print >> self.engine, toSAN(board, move)
-        else: print >> self.engine, toAN(board, move)
+        else: print >> self.engine, toAN(board, move, short=True)
     
     def __tellEngineToMoveNow (self):
         if self.features["sigint"]:
@@ -571,6 +587,7 @@ class CECPEngine (ProtocolEngine):
         self.engineIsInNotPlaying = True
     
     def __tellEngineToPlayCurrentColorAndMakeMove (self):
+        self.__printColor()
         print >> self.engine, "go"
         self.engineIsInNotPlaying = False
     
@@ -580,6 +597,7 @@ class CECPEngine (ProtocolEngine):
         if inverse:
             self.board = self.board.setColor(1-self.color)
             self.__printColor()
+            if self.engineIsInNotPlaying: print >> self.engine, "force"
             self.mode = INVERSE_ANALYZING
         else:
             self.mode = ANALYZING
@@ -593,13 +611,10 @@ class CECPEngine (ProtocolEngine):
             print >> self.engine, "noise 0"
     
     def __printColor (self):
-        #if self.features["colors"]:
-        if self.board.color == WHITE:
-            print >> self.engine, "white"
-        else: print >> self.engine, "black"
-        if self.engineIsInNotPlaying: print >> self.engine, "force"
-        #elif self.features["playother"]:
-        #    print >> self.engine, "playother"
+        if self.features["colors"] or self.mode == INVERSE_ANALYZING:
+            if self.board.color == WHITE:
+                print >> self.engine, "white"
+            else: print >> self.engine, "black"
     
     def __setBoard (self, board):
         if self.features["setboard"]:
@@ -799,6 +814,11 @@ class CECPEngine (ProtocolEngine):
                 else:
                     # All nonquoted values are ints
                     value = int(value)
+                
+                if key in self.supported_features:
+                    print >> self.engine, "accepted %s" % key
+                else:
+                    print >> self.engine, "rejected %s" % key
                 
                 if key == "done":
                     if value == 1:

@@ -353,10 +353,17 @@ class BoardView (gtk.DrawingArea):
     shown = property(_get_shown, _set_shown)
     
     def runAnimation (self, redrawMisc=False):
-        
-        """ The animationsystem in pychess is very loosely inspired by the one of chessmonk. The idea is, that every piece has a place in an array (the board.data one) for where to be drawn. If a piece is to be animated, it can set its x and y properties, to some cord (or part cord like 0.42 for 42% right to file 0). Each time runAnimation is run, it will set those x and y properties a little closer to the location in the array. When it has reached its final location, x and y will be set to None.
-        _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
-        
+        """
+        The animationsystem in pychess is very loosely inspired by the one of
+        chessmonk. The idea is, that every piece has a place in an array (the
+        board.data one) for where to be drawn. If a piece is to be animated, it
+        can set its x and y properties, to some cord (or part cord like 0.42 for
+        42% right to file 0). Each time runAnimation is run, it will set those x
+        and y properties a little closer to the location in the array. When it
+        has reached its final location, x and y will be set to None. _set_shown,
+        which starts the animation, also sets a timestamp for the acceleration
+        to work properply.
+        """
         self.animationLock.acquire()
         try:
             paintBox = None

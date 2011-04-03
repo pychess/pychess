@@ -11,8 +11,7 @@
 
 ###############################################################################
 # Set up important things
-import glib, gobject, __builtin__
-__builtin__.__dict__["_"] = lambda x:x
+import glib, gobject
 gobject.threads_init()
 mainloop = glib.MainLoop()
 
@@ -22,6 +21,7 @@ import sys
 import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
+from pychess.System.protoopen import protoopen
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
@@ -30,7 +30,7 @@ from pychess.Savers import pgn
 ###############################################################################
 # Ask the user for details
 def queryGameno(path):
-    pgnfile = pgn.load(path)
+    pgnfile = pgn.load(protoopen(path))
     print "Selected file %s" % path
     if len(pgnfile) == 0:
         print "The file is empty."
@@ -111,30 +111,42 @@ def on_finish():
     mainloop.quit()
 
 def check_blund():
-    print "Undoing", 
+    print
     
     if game.ply+1 in values and game.ply in values:
-        color = game.ply%2
+        color = game.ply % 2
         oldmoves, oldscore = values[game.ply]
         moves, score = values[game.ply+1]
         dif = score-oldscore
-        print game.ply/2+1, dif, toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
         if dif < -100 and color == WHITE:
-            print "White blunder"
-            print "Should have done:", listToSan(game.getBoardAtPly(game.ply),oldmoves)
+            print "White blunder", dif
+            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
+            print
         elif dif > 100 and color == BLACK:
-            print "Black blunder"
-            print "Should have done:", listToSan(game.getBoardAtPly(game.ply),oldmoves)
-    else:
-        print
+            print "Black blunder", dif
+            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
+            print
     
+    movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
+    print "Considering", game.ply//2+1, movename, " ",
     game.undoMoves(1)
 
 def onAnalyze(analyzer, pv, score):
     global values
     sys.stdout.write('.')
+    sys.stdout.flush()
     if score != None:
         values[game.ply] = (pv, score*(-1)**game.ply)
+
+###############################################################################
+# Slightly validate arguments 
+
+if len(sys.argv) != 2 or sys.argv[1] == "--help":
+    print "Usage: python blunders.py FILENAME   Analyze the specified pgn file"
+    print "       python blunders.py --help     Display this help and exit"
+    print "Note: You'll probably need to run the scripts with your PYTHONPATH set"
+    print " like 'PYTHONPATH=../lib/ python blunders...'"
+    sys.exit()
 
 ###############################################################################
 # Push onto the mainloop and start it

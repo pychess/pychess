@@ -14,7 +14,7 @@ class LimitedDict (UserDict):
         self.lock = Lock()
         
     def __setitem__ (self, key, item):
-    	self.lock.acquire()
+        self.lock.acquire()
         try:
             if not key in self:
                 if len(self) >= self.maxSize:
