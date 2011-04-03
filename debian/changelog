@@ -1,0 +1,81 @@
+pychess (0.8) gutsy; urgency=low
+
+  * Philidor final
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Mon, 18 Feb 2008 15:15:47 +0100
+
+pychess (0.8-beta4) gutsy; urgency=low
+
+  * Philidor Beta 4
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Fri, 18 Jan 2008 13:51:08 +0100
+
+pychess (0.8-beta3) gutsy; urgency=low
+
+  * Philidor Beta 3 - Christmas time
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Wed, 26 Dec 2007 21:38:58 +0100
+
+pychess (0.8-beta2) gutsy; urgency=low
+
+  * PyChess Philidor beta 2
+
+ -- Thijs Vermeir <thijsvermeir@gmail.com>  Tue, 20 Nov 2007 16:26:25 +0100
+
+pychess (0.6.1-1ubuntu1) gutsy; urgency=low
+
+  * Apply Glade widget patch provided by upstream (LP: #128300)
+  * Change maintainter to MOTU
+
+ -- Scott Kitterman <scott@kitterman.com>  Sun, 09 Sep 2007 11:06:54 -0400
+
+pychess (0.6.1-1) unstable; urgency=low
+
+  [ Varun Hiremath ]
+  * New upstream release
+
+  [ Torsten Werner ]
+  * Fix debian/watch.
+
+ -- Torsten Werner <twerner@debian.org>  Thu, 14 Jun 2007 21:34:50 +0200
+
+pychess (0.6.0.final-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Varun Hiremath <varunhiremath@gmail.com>  Fri, 13 Apr 2007 14:54:28 +0530
+
+pychess (0.6.0.beta5-3) unstable; urgency=low
+
+  * debian/control: change section from python to games (Closes: #415825)
+
+ -- Varun Hiremath <varunhiremath@gmail.com>  Fri, 23 Mar 2007 15:40:25 +0530
+
+pychess (0.6.0.beta5-2) unstable; urgency=high
+
+  * Add python-glade2 to Depends in debian/control (Closes: #408005)
+
+ -- Varun Hiremath <varunhiremath@gmail.com>  Tue, 23 Jan 2007 17:02:20 +0530
+
+pychess (0.6.0.beta5-1) unstable; urgency=low
+
+  [ Varun Hiremath ]
+  * New upstream release
+
+  [ Torsten Werner ]
+  * Fixed debian/watch.
+
+ -- Torsten Werner <twerner@debian.org>  Sat, 13 Jan 2007 10:28:20 +0100
+
+pychess (0.6.0.beta4-1) unstable; urgency=low
+
+  [ Varun Hiremath ]
+  * Initial release (Closes: #398600)
+
+  [ Torsten Werner ]
+  * Add myself to Uploaders in debian/control.
+  * Clean up debian/rules a bit.
+  * Modify download address in debian/copyright.
+  * Add Depends: gnome-icon-theme.
+
+ -- Torsten Werner <twerner@debian.org>  Thu, 28 Dec 2006 00:01:40 +0100
