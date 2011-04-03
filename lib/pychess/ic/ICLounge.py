@@ -174,10 +174,13 @@ class UserInfoSection(Section):
             table.props.column_spacing = 12
             table.props.row_spacing = 4
 
-            def label(value, xalign=0):
+            def label(value, xalign=0, is_error=False):
                 if type(value) == float:
                     value = str(int(value))
-                label = gtk.Label(value)
+                if is_error:
+                    label = gtk.Label('<span foreground="red">' + value + "</span>")
+                else:
+                    label = gtk.Label(value)
                 label.props.xalign = xalign
                 return label
 
@@ -205,12 +208,17 @@ class UserInfoSection(Section):
 
                 table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
                 row += 1
-
+            
+            if finger.getSanctions() != "":
+                table.attach(label(_("Sanctions")+":", is_error=True), 0, 1, row, row+1)
+                table.attach(label(finger.getSanctions()), 1, 6, row, row+1)
+                row += 1
+            
             if finger.getEmail():
                 table.attach(label(_("Email")+":"), 0, 1, row, row+1)
                 table.attach(label(finger.getEmail()), 1, 6, row, row+1)
                 row += 1
-
+            
             if finger.getCreated():
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
                 s = strftime("%Y %B %d ", localtime(time()))
