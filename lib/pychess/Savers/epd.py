@@ -3,7 +3,7 @@ from pychess.Utils.Piece import Piece
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import evaluateComplete
-from pychess.Utils.logic import getStatus
+from pychess.Utils.logic import getStatus, repetitionCount
 
 __label__ = _("Chess Position")
 __endings__ = "epd",
@@ -22,13 +22,7 @@ def save (file, model):
     ############################################################################
     # Repetition count                                                         #
     ############################################################################
-    rc = 1
-    if len(model.boards) >= 5 and model.boards[-1].board.hash == \
-                                  model.boards[-5].board.hash:
-        rc = 2
-        if len(model.boards) >= 9 and model.boards[-5].board.hash == \
-                                      model.boards[-9].board.hash:
-            rc = 3 # If rc == 3, we have a draw by three fold repetition
+    rc = repetitionCount(model.boards[-1])
     
     ############################################################################
     # Centipawn evaluation                                                     #
@@ -112,7 +106,7 @@ class EpdFile (ChessFile):
         model.boards = [model.variant.board(setup=fen)]
         model.status = WAITING_TO_START
         
-        # rc i kinda broken
+        # rc is kinda broken
         #if "rc" in opcodes:
         #    model.boards[0].board.rc = int(opcodes["rc"])
         

@@ -111,12 +111,12 @@ pieces = {
 parsedPieces = [[[], [], [], [], [], [], []], \
                 [[], [], [], [], [], [], []]]
 for color in (WHITE, BLACK):
-	for piece in range(PAWN, KING+1):
-	    list = []
-	    thep = [0,0]
-	    for g1, g2 in elemExpr.findall(pieces[color][piece]):
-	        if not g1 or not g2: continue
-	        points = [float(s) for s in spaceExpr.split(g2)]
-	        list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
-	        thep = points[-2:]
-	    parsedPieces[color][piece] = {size:list}
+    for piece in range(PAWN, KING+1):
+        list = []
+        thep = [0,0]
+        for g1, g2 in elemExpr.findall(pieces[color][piece]):
+            if not g1 or not g2: continue
+            points = [float(s) for s in spaceExpr.split(g2)]
+            list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
+            thep = points[-2:]
+        parsedPieces[color][piece] = {size:list}

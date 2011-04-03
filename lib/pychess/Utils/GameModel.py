@@ -305,14 +305,10 @@ class GameModel (GObject, PooledThread):
         assert self.status == WAITING_TO_START
 
         uriIsFile = type(uri) != str
-        from pychess.Main import chessFiles
-        if chessFiles.has_key(uri):
-            chessfile = chessFiles[uri]
-        else:
-            if not uriIsFile:
-                chessfile = loader.load(protoopen(uri))
-            else: 
-                chessfile = loader.load(uri)
+        if not uriIsFile:
+            chessfile = loader.load(protoopen(uri))
+        else: 
+            chessfile = loader.load(uri)
         
         self.emit("game_loading", uri)
         try:

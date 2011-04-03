@@ -22,7 +22,7 @@ class Player (GObject):
     
     def __init__ (self):
         GObject.__init__(self)
-        self.name = None
+        self.name = ""
     
     def setName (self, name):
         """ __repr__ should return this name """
@@ -99,6 +99,18 @@ class Player (GObject):
         """ Undo 'moves' moves and makes the latest board in gamemodel the
             current """
         #Optional
+    
+    def playerUndoMoves (self, moves, gamemodel):
+        """ Some players undo different depending on whether they are players or
+            spectactors. This is a convenient way to handle that. """  
+        #Optional
+        return self.undoMoves (moves, gamemodel)
+    
+    def spectatorUndoMoves (self, moves, gamemodel):
+        """ Some players undo different depending on whether they are players or
+            spectactors. This is a convenient way to handle that. """  
+        #Optional
+        return self.undoMoves (moves, gamemodel)
     
     def putMessage (self, message):
         """ Sends the player a chatmessage """

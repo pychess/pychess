@@ -15,7 +15,7 @@ def getOpenings (board):
         "select move,wins,draws,loses from openings where fen = '%s'" % \
                                                                  fen(board))
 
-#	#	#	CREATION	#	#	#
+#    #    #    CREATION    #    #    #
 
 def stripBrackets (string):
     brackets = 0
@@ -34,18 +34,18 @@ def stripBrackets (string):
     return result
 
 if __name__ == "__main__":
-	MAXMOVES = 14
-	PROFILE = False
-	FILESMAX = 0
-	from pychess.Utils.History import History
-	from pychess.Utils.Move import movePool, parseSAN, toSAN
-	from time import time
-	import re
-	tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
-	movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
-	comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
-	resultDic = {"1-0":0, "1/2-1/2":1, "0-1":2}
-	
+    MAXMOVES = 14
+    PROFILE = False
+    FILESMAX = 0
+    from pychess.Utils.History import History
+    from pychess.Utils.Move import movePool, parseSAN, toSAN
+    from time import time
+    import re
+    tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
+    movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
+    comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
+    resultDic = {"1-0":0, "1/2-1/2":1, "0-1":2}
+    
 def load (file):
     files = []
     inTags = False
@@ -73,8 +73,8 @@ def load (file):
         number = str(i).rjust(len(max))
         procent = ("%.1f%%" % (i/float(len(files))*100)).rjust(4)
         if i == 0:
-        	estimation = "N/A etr"
-        	speed = "N/A g/s"
+            estimation = "N/A etr"
+            speed = "N/A g/s"
         else:
             s = round((time()-start)/i*(len(files)-i))
             estimation = ("%d:%02d etr" % (s / 60, s % 60)).rjust(5)

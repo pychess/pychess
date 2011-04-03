@@ -22,6 +22,7 @@ from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.Utils.const import *
+from pychess.Utils.repr import typeName
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.GameModel import GameModel
@@ -1500,7 +1501,7 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["dashLabel"].hide()            
             self.widgets["ratingRangeMinLabel"].set_label("%d↑" % minRating)
         if minRating == 0 and maxRating == 9999:
-            self.widgets["ratingRangeMinLabel"].set_label("Any strength")
+            self.widgets["ratingRangeMinLabel"].set_label(_("Any strength"))
             self.widgets["ratingRangeMinLabel"].show()
     
     def __getGameTypes (self):
