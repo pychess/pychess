@@ -46,6 +46,7 @@ class FingerObject:
         self.__totalTimeOnline = 0
         self.__created = 0 # Since field from % of life online
         self.__email = ""
+        self.__sanctions = ""
         self.__adminLevel = ""
         self.__timeseal = False
         self.__notes = [""]*10
@@ -101,6 +102,11 @@ class FingerObject:
         """ Returns the email adress of the user.
             This will probably only be set for the logged in user """
         return self.__email
+    
+    def getSanctions(self):
+        """ Returns any sanctions the user has against them. This is usually
+            an empty string """
+        return self.__sanctions
 
     def getAdminLevel(self):
         """ Returns the admin level as a string
@@ -173,13 +179,13 @@ class FingerObject:
     def setCreated(self, value):
         """ Use relative seconds """
         self.__created = value
-
-    def getStatus(self):
-        return self.__status
     
     def setEmail(self, value):
         self.__email = value
 
+    def setSanctions(self, value):
+        self.__sanctions = value
+        
     def setAdminLevel(self, value):
         self.__adminLevel = value
 
@@ -229,6 +235,7 @@ class FingerManager (GObject):
             "rating +RD +win +loss +draw +total +best",
             "(?P<gametype>%s) +(?P<ratings>.+)" % types,
             "Email *: (?P<email>.+)",
+            "Sanctions *: (?P<sanctions>.+)",
             "Total time online: (?P<tto>.+)",
             "% of life online:  [\d\.]+  \(since (?P<created>.+?)\)", 
             "Timeseal [ \\d] : (?P<timeseal>Off|On)",
@@ -314,6 +321,8 @@ class FingerManager (GObject):
                 finger.setRating(type, rating)
             elif groupdict["email"] != None:
                 finger.setEmail(groupdict["email"])
+            elif groupdict["sanctions"] != None:
+                finger.setSanctions(groupdict["sanctions"])
             elif groupdict["tto"] != None:
                 finger.setTotalTimeOnline(self.parseTime(groupdict["tto"]))
             elif groupdict["created"] != None:
