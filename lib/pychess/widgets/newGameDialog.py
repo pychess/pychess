@@ -22,6 +22,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
+from pychess.Utils.repr import localReprSign
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
@@ -162,13 +163,22 @@ class _GameInitializationMode:
                 variant = conf.get("ngvariant1", FISCHERRANDOMCHESS)
             else:
                 variant = conf.get("ngvariant2", LOSERSCHESS)
+            variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)            
+            variant2 = conf.get("ngvariant2", LOSERSCHESS)
+            cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
             uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
         conf.notify_add("ngvariant1", updateCombos)
         conf.notify_add("ngvariant2", updateCombos)
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
+        cls.widgets["playNormalRadio"].set_tooltip_text(variants[NORMALCHESS].__desc__)
         cls.widgets["playVariant1Radio"].connect("toggled", updateCombos)
+        variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+        cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
         cls.widgets["playVariant2Radio"].connect("toggled", updateCombos)
+        variant2 = conf.get("ngvariant2", LOSERSCHESS)
+        cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
 
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
@@ -259,7 +269,7 @@ class _GameInitializationMode:
         def callback (selection):
             model, iter = selection.get_selected()
             if iter:
-                radiobutton.set_label("%s" % model.get(iter, 0))
+                radiobutton.set_label("%s" % model.get(iter, 0) + _(" chess"))
                 path = model.get_path(iter)
                 variant = pathToVariant[path]
                 conf.set(confid, variant)

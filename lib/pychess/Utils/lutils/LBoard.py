@@ -1,7 +1,7 @@
-
 from array import array
 
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor
 from ldata import *
 from attack import isAttacked
 from bitboard import *
@@ -59,6 +59,9 @@ class LBoard:
         #  castling:   The castling availability in the position               #
         #  hash:       The hash of the position                                #
         #  fifty:      A counter for the fifty moves rule                      #
+        #                                                                      #
+        #  Early entries may be None instead of tuples if the information is   #
+        #  not available (e.g. if the board was loaded from a position).       #
         ########################################################################
         self.history = []
 

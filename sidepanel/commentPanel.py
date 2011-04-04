@@ -7,6 +7,7 @@ from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.glock import *
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor, reprPiece
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
 from pychess.Utils.lutils.lmovegen import genCaptures

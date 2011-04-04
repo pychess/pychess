@@ -20,6 +20,7 @@ from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.Utils.const import *
+from pychess.Utils.repr import typeName
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer
@@ -173,10 +174,13 @@ class UserInfoSection(Section):
             table.props.column_spacing = 12
             table.props.row_spacing = 4
 
-            def label(value, xalign=0):
+            def label(value, xalign=0, is_error=False):
                 if type(value) == float:
                     value = str(int(value))
-                label = gtk.Label(value)
+                if is_error:
+                    label = gtk.Label('<span foreground="red">' + value + "</span>")
+                else:
+                    label = gtk.Label(value)
                 label.props.xalign = xalign
                 return label
 
@@ -204,12 +208,17 @@ class UserInfoSection(Section):
 
                 table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
                 row += 1
-
+            
+            if finger.getSanctions() != "":
+                table.attach(label(_("Sanctions")+":", is_error=True), 0, 1, row, row+1)
+                table.attach(label(finger.getSanctions()), 1, 6, row, row+1)
+                row += 1
+            
             if finger.getEmail():
                 table.attach(label(_("Email")+":"), 0, 1, row, row+1)
                 table.attach(label(finger.getEmail()), 1, 6, row, row+1)
                 row += 1
-
+            
             if finger.getCreated():
                 table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
                 s = strftime("%Y %B %d ", localtime(time()))
@@ -370,20 +379,26 @@ class SeekTabSection (ParrentListSection):
         self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
-        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float, str)
+        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, str, str, float, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns (self.tv, "GameNo", "", _("Name"), _("Rating"), _("Rated"),
-                         _("Type"), _("Clock"), "", "", hide=[0,7,8], pix=[1] )
+        self.addColumns (self.tv, "gameno", "", _("Name"), _("Rating"),
+                         _("Rated"), _("Type"), _("Clock"), "gametime",
+                         "textcolor", "tooltip", hide=[0,7,8,9], pix=[1] )
         self.tv.set_search_column(2)
-        for i in range(2,7):
+        self.tv.set_tooltip_column(9,)
+        for i in range(1, 7):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-        for n in range(1,6):
+        for n in range(1, 6):
             column = self.tv.get_column(n)
+#            t = "%d" % n
+#            if column is not None:
+#                t += " %s" % column.get_title()
+#            print t
             for cellrenderer in column.get_cell_renderers():
                 column.add_attribute(cellrenderer, "foreground", 8)
         self.selection = self.tv.get_selection()
@@ -392,6 +407,7 @@ class SeekTabSection (ParrentListSection):
         self.selection.connect("changed", self.onSelectionChanged)
         self.widgets["clearSeeksButton"].connect("clicked", self.onClearSeeksClicked)
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
+        self.widgets["declineButton"].connect("clicked", self.onDeclineClicked)
         self.tv.connect("row-activated", self.row_activated)
         
         self.connection.glm.connect("addSeek", lambda glm, seek:
@@ -452,8 +468,14 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         textcolor = "grey" if seek["w"] == self.connection.getUsername() else "black"
-        seek_ = [seek["gameno"], pix, seek["w"], int(seek["rt"]), rated, seek["tp"],
-                 time, float(seek["t"] + "." + seek["i"]), textcolor]
+        is_rated = False if seek["r"] == "u" else True
+        is_computer = True if "(C)" in seek["title"] else False
+        tooltiptext = SeekGraphSection.getSeekTooltipText(seek["w"],
+            seek["rt"], is_computer, is_rated, seek["manual"],
+            seek["tp"], seek["t"], seek["i"])
+        seek_ = [seek["gameno"], pix, seek["w"], int(seek["rt"]), rated,
+                 seek["tp"], time, float(seek["t"] + "." + seek["i"]),
+                 textcolor, tooltiptext]
         if textcolor == "grey":
             ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
@@ -480,9 +502,16 @@ class SeekTabSection (ParrentListSection):
         if match["i"] != "0":
             time += _(" + %(sec)s sec") % {'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
+        is_rated = False if match["r"] == "u" else True
+        is_computer = False
+        is_manual = False
+        tooltiptext = SeekGraphSection.getSeekTooltipText(match["w"],
+            match["rt"], is_computer, is_rated, is_manual, match["tp"],
+            match["t"], match["i"])
         ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
-                                int(match["rt"]), rated, match["tp"], time,
-                                float(match["t"] + "." + match["i"]), "black"])
+                                  int(match["rt"]), rated, match["tp"], time,
+                                  float(match["t"] + "." + match["i"]),
+                                  "black", tooltiptext])
         self.challenges[index] = ti
         self.__updateActiveSeeksLabel()
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
@@ -509,6 +538,14 @@ class SeekTabSection (ParrentListSection):
         else:
             self.connection.om.playIndex(gameno)
 
+    def onDeclineClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        gameno = model.get_value(iter, 0)
+        if gameno.startswith("C"):
+            gameno = gameno[1:]
+        self.connection.om.declineIndex(gameno)
+        
     def onClearSeeksClicked (self, button):
         print >> self.connection.client, "unseek"
         self.widgets["clearSeeksButton"].set_sensitive(False)
@@ -588,19 +625,28 @@ class SeekGraphSection (ParrentListSection):
     def onSpotClicked (self, graph, name):
         self.connection.bm.play(name)
 
+    @classmethod
+    def getSeekTooltipText (cls, name, rating, is_computer, is_rated, is_manual,
+                            gametype, min, gain):
+        if int(rating) == 0:
+            rating = _("Unrated")
+        text = "%s (%s)" % (name, rating)
+        if is_computer:  # remove from testing/ficsmanagers.py as well when removing this
+            text += " (%s)" % _("Computer Player")
+        rated = _("Rated") if is_rated else _("Unrated")
+        text += "\n%s %s" % (rated, gametype)
+        text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': min, 'sec': gain}
+        if is_manual:
+            text += "\n%s" % _("Manual Acceptance")
+        return text
+    
     def onSeekAdd (self, seek):
         x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
-
-        text = "%s (%s)" % (seek["w"], seek["rt"])
-        if seek["cp"]:  # remove from testing/ficsmanagers.py as well when removing this
-            text += " (%s)" % _("Computer Player")
-        rated = seek["r"] == "u" and _("Unrated") or _("Rated")
-        text += "\n%s %s" % (rated, seek["tp"])
-        text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': seek["t"], 'sec': seek["i"]}
-        if seek["manual"]:
-            text += "\n%s" % _("Manual Acceptance")
+        is_rated = False if seek["r"] == "u" else True
+        text = self.getSeekTooltipText(seek["w"], seek["rt"], seek["cp"], is_rated,
+                                       seek["manual"], seek["tp"], seek["t"], seek["i"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
@@ -1217,9 +1263,16 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["editSeekDialog"].present()
     
     def onSeekSelectionChanged (self, selection):
-        # You can't press "Accept" button when nobody are selected
-        isAnythingSelected = selection.get_selected()[1] != None
-        self.widgets["acceptButton"].set_sensitive(isAnythingSelected)
+        model, iter = selection.get_selected()
+        a_seek_is_selected = False
+        selection_is_challenge = False
+        if iter != None:
+            a_seek_is_selected = True
+            gameno = model.get_value(iter, 0)
+            if gameno.startswith("C"):
+                selection_is_challenge = True
+        self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
+        self.widgets["declineButton"].set_sensitive(selection_is_challenge)
     
     def onPlayerSelectionChanged (self, selection):
         model, iter = selection.get_selected()
@@ -1660,6 +1713,9 @@ class SeekChallengeSection (ParrentListSection):
     def onVariantComboChanged (self, combo):
         self.widgets["variantRadio"].set_active(True)            
         self.__updateYourRatingHBox()
+        min, gain, variant, ratingrange, color, rated, manual = \
+            self.__getSeekEditorDialogValues()
+        self.widgets["variantCombo"].set_tooltip_text(variants[variant].__desc__)
 
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
@@ -1673,9 +1729,10 @@ class ErrorMessages (Section):
     def __init__ (self, widgets, connection):
         self.connection = connection
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
+        self.connection.bm.connect("matchDeclined", self.matchDeclined)
     
     @glock.glocked
-    def tooManySeeks (self, om):
+    def tooManySeeks (self, bm):
         title = _("You can only have 3 outstanding seeks")
         description = _("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?")
         d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
@@ -1684,8 +1741,18 @@ class ErrorMessages (Section):
         def response (dialog, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-            dialog.hide()
+            dialog.destroy()
         d.connect("response", response)
+        d.show()
+    
+    @glock.glocked
+    def matchDeclined (self, bm, decliner):
+        title = _("%s declines the match offer") % decliner
+        description = _("%s has declined your offer for a match.") % decliner
+        d = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
+        d.set_markup ("<big><b>%s</b></big>" % title)
+        d.format_secondary_text (description)
+        d.connect("response", lambda dialog, response: dialog.destroy())
         d.show()
 
 ############################################################################

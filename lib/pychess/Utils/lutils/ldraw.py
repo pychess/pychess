@@ -5,6 +5,8 @@ from pychess.Utils.const import *
 def repetitionCount (board, drawThreshold=3):
     rc = 1
     for ply in xrange(4, 1+min(len(board.history), board.fifty), 2):
+        if board.history[-ply] is None:
+            break # Game started from a position; early history is unavailable.
         if board.history[-ply][4] == board.hash:
             rc += 1
             if rc >= drawThreshold: break

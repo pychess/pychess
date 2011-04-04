@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <glade-interface>
   <!-- interface-requires gtk+ 2.10 -->
   <!-- interface-naming-policy toplevel-contextual -->
@@ -10,7 +10,6 @@
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -18,7 +17,6 @@
             <child>
               <widget class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">12</property>
                 <child>
                   <widget class="GtkNotebook" id="notebook">
@@ -28,7 +26,6 @@
                       <widget class="GtkVBox" id="seekListContent">
                         <property name="visible">True</property>
                         <property name="border_width">6</property>
-                        <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <widget class="GtkHBox" id="hbox17">
@@ -90,6 +87,29 @@
                                 <property name="position">2</property>
                               </packing>
                             </child>
+                            <child>
+                              <widget class="GtkButton" id="declineButton">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
+                                <property name="has_default">True</property>
+                                <property name="receives_default">True</property>
+                                <child>
+                                  <widget class="GtkLabel" id="label7">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">6</property>
+                                    <property name="label" translatable="yes">_Decline</property>
+                                    <property name="use_underline">True</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
@@ -135,7 +155,6 @@
                                 <child>
                                   <widget class="GtkVBox" id="vbox2">
                                     <property name="visible">True</property>
-                                    <property name="orientation">vertical</property>
                                     <property name="spacing">10</property>
                                     <child>
                                       <widget class="GtkTable" id="table1">
@@ -335,7 +354,7 @@
                                               <widget class="GtkLabel" id="seek3RadioLabel">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">2 min, Fischer Random, 1800&#x2193;, Black</property>
+                                                <property name="label" translatable="yes">2 min, Fischer Random, 1800↓, Black</property>
                                               </widget>
                                             </child>
                                           </widget>
@@ -354,7 +373,7 @@
                                               <widget class="GtkLabel" id="seek2RadioLabel">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">10 min + 6 sec/move, 1400&#x2191;, White</property>
+                                                <property name="label" translatable="yes">10 min + 6 sec/move, 1400↑, White</property>
                                               </widget>
                                             </child>
                                           </widget>
@@ -545,7 +564,6 @@
                       <widget class="GtkVBox" id="vbox5">
                         <property name="visible">True</property>
                         <property name="border_width">6</property>
-                        <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <widget class="GtkHBox" id="hbox18">
@@ -675,7 +693,6 @@
                       <widget class="GtkVBox" id="vbox6">
                         <property name="visible">True</property>
                         <property name="border_width">6</property>
-                        <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <widget class="GtkHBox" id="hbox19">
@@ -755,7 +772,6 @@
                       <widget class="GtkVBox" id="vbox9">
                         <property name="visible">True</property>
                         <property name="border_width">6</property>
-                        <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <widget class="GtkHBox" id="hbox9">
@@ -1056,7 +1072,6 @@
             <child>
               <widget class="GtkVBox" id="vbox7">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">12</property>
                 <child>
                   <widget class="GtkFrame" id="frame1">
@@ -1108,7 +1123,6 @@
                             <child>
                               <widget class="GtkVBox" id="newsVBox">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -1158,7 +1172,6 @@
                         <child>
                           <widget class="GtkVBox" id="vbox8">
                             <property name="visible">True</property>
-                            <property name="orientation">vertical</property>
                             <property name="spacing">3</property>
                             <child>
                               <widget class="GtkButton" id="show_chat_button">
@@ -1230,16 +1243,13 @@
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <widget class="GtkVBox" id="vbox14">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <widget class="GtkFrame" id="timeFrame">
                 <property name="visible">True</property>
@@ -1261,7 +1271,7 @@
                             <property name="xpad">5</property>
                             <property name="ypad">5</property>
                             <property name="pixel_size">48</property>
-                            <property name="icon_name">appointment-soon</property>
+                            <property name="icon_name">stock_alarm</property>
                             <property name="icon-size">6</property>
                           </widget>
                           <packing>
@@ -1278,7 +1288,6 @@
                             <child>
                               <widget class="GtkVBox" id="timeControlVBox">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkCheckButton" id="untimedCheck">
@@ -1316,7 +1325,6 @@
                                     <child>
                                       <widget class="GtkVBox" id="timeControlConfigVBox">
                                         <property name="visible">True</property>
-                                        <property name="orientation">vertical</property>
                                         <property name="spacing">2</property>
                                         <property name="homogeneous">True</property>
                                         <child>
@@ -1337,7 +1345,7 @@
                                               <widget class="GtkSpinButton" id="minutesSpin">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
-                                                <property name="invisible_char">&#x25CF;</property>
+                                                <property name="invisible_char">●</property>
                                                 <property name="adjustment">15 1 240 1 10 0</property>
                                               </widget>
                                               <packing>
@@ -1360,7 +1368,7 @@
                                               <widget class="GtkSpinButton" id="gainSpin">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
-                                                <property name="invisible_char">&#x25CF;</property>
+                                                <property name="invisible_char">●</property>
                                                 <property name="adjustment">10 0 60 1 10 0</property>
                                               </widget>
                                               <packing>
@@ -1470,7 +1478,6 @@
                             <child>
                               <widget class="GtkVBox" id="strengthVBox">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkCheckButton" id="strengthCheck">
@@ -1509,14 +1516,12 @@
                                     <child>
                                       <widget class="GtkVBox" id="strengthConfigVBox">
                                         <property name="visible">True</property>
-                                        <property name="orientation">vertical</property>
                                         <child>
                                           <widget class="GtkHBox" id="hbox4">
                                             <property name="visible">True</property>
                                             <child>
                                               <widget class="GtkVBox" id="vbox3">
                                                 <property name="visible">True</property>
-                                                <property name="orientation">vertical</property>
                                                 <child>
                                                   <widget class="GtkAlignment" id="alignment5">
                                                     <property name="visible">True</property>
@@ -1582,7 +1587,6 @@
                                                 <child>
                                                   <widget class="GtkVBox" id="opponentStrengthVBox">
                                                     <property name="visible">True</property>
-                                                    <property name="orientation">vertical</property>
                                                     <child>
                                                       <widget class="GtkHBox" id="hbox5">
                                                         <property name="visible">True</property>
@@ -1804,7 +1808,7 @@ b) you change the variant or the time control</property>
                                                         <property name="visible">True</property>
                                                         <property name="xalign">0</property>
                                                         <property name="xpad">1</property>
-                                                        <property name="label">&#xB1;200</property>
+                                                        <property name="label">±200</property>
                                                       </widget>
                                                     </child>
                                                   </widget>
@@ -1920,7 +1924,6 @@ b) you change the variant or the time control</property>
                             <child>
                               <widget class="GtkVBox" id="vbox32">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkRadioButton" id="nocolorRadio">
@@ -2060,7 +2063,6 @@ b) you change the variant or the time control</property>
                             <child>
                               <widget class="GtkVBox" id="vbox2">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkRadioButton" id="noVariantRadio">
@@ -2198,7 +2200,6 @@ b) you change the variant or the time control</property>
                             <child>
                               <widget class="GtkVBox" id="vbox1">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <property name="spacing">3</property>
                                 <child>
                                   <widget class="GtkCheckButton" id="ratedGameCheck">
@@ -2312,11 +2313,9 @@ b) you change the variant or the time control</property>
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">1</property>
         <child>
           <widget class="GtkHBox" id="hbox1">
@@ -2372,7 +2371,6 @@ b) you change the variant or the time control</property>
             <child>
               <widget class="GtkVBox" id="vbox3">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">10</property>
                 <child>
                   <widget class="GtkTable" id="table2">

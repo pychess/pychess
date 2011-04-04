@@ -7,21 +7,15 @@ import math
 import gtk
 
 from pychess.Utils.Offer import Offer
-#from pychess.Utils.GameModel import GameModel
-#from pychess.Utils.TimeModel import TimeModel
-
 from pychess.Utils.const import *
-import pychess.ic.ICGameModel
 from pychess.Utils.repr import *
 from pychess.System import conf
 from pychess.System import glock
+from pychess.System.Log import log
 
 from pychess.widgets import preferencesDialog
 
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
-from gamewidget import MENU_ITEMS, ACTION_MENU_ITEMS
-from pychess.ic.ICGameModel import ICGameModel
-
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown, MENU_ITEMS
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -45,37 +39,21 @@ def nurseGame (gmwidg, gamemodel):
     gamemodel.connect("game_ended", game_ended, gmwidg)
     gamemodel.connect("game_unended", game_unended, gmwidg)
     gamemodel.connect("game_resumed", game_unended, gmwidg)
+    gamemodel.connect("game_changed", game_changed, gmwidg)
+    gamemodel.connect("game_paused", game_paused, gmwidg)
 
 #===============================================================================
 # Gamewidget signals
 #===============================================================================
 
 def on_gmwidg_infront (gmwidg):
-    # Set right sensitivity states in menubar, when tab is switched
-    auto = gmwidg.gamemodel.players[0].__type__ != LOCAL and \
-            gmwidg.gamemodel.players[1].__type__ != LOCAL
-    for item in ACTION_MENU_ITEMS:
-        getWidgets()[item].props.sensitive = not auto
-    
     for widget in MENU_ITEMS:
-        sensitive = False
-        if widget == 'abort':
-            if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
-                sensitive = True
-        elif widget == 'adjourn':
-            if isinstance(gmwidg.gamemodel, pychess.ic.ICGameModel.ICGameModel):
-                sensitive = True
-        elif widget == 'hint_mode':
-            if gmwidg.gamemodel.hintEngineSupportsVariant and conf.get("analyzer_check", True):
-                sensitive = True
-        elif widget == 'spy_mode':
-            if gmwidg.gamemodel.spyEngineSupportsVariant and conf.get("inv_analyzer_check", True):
-                sensitive = True
-        elif widget == 'show_sidepanels':
-            if not isDesignGWShown():
-                sensitive = True
-        else: sensitive = True
-        getWidgets()[widget].set_property('sensitive', sensitive)
+        if widget in gmwidg.menuitems:
+            continue
+        elif widget == 'show_sidepanels' and isDesignGWShown():
+            getWidgets()[widget].set_property('sensitive', False)
+        else:
+            getWidgets()[widget].set_property('sensitive', True)
     
     # Change window title
     getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
@@ -91,25 +69,6 @@ def on_gmwidg_title_changed (gmwidg):
 #===============================================================================
 # Gamemodel signals
 #===============================================================================
-
-# Connect game_loaded, game_saved and game_ended to statusbar
-def game_loaded (gamemodel, uri, gmwidg):
-    if type(uri) in (str, unicode):
-        s = "%s: %s" % (_("Loaded game"), str(uri))
-    else: s = _("Loaded game")
-    
-    glock.acquire()
-    try:
-        gmwidg.status(s)
-    finally:
-        glock.release()
-
-def game_saved (gamemodel, uri, gmwidg):
-    glock.acquire()
-    try:
-        gmwidg.status("%s: %s" % (_("Saved game"), str(uri)))
-    finally:
-        glock.release()
 
 def game_ended (gamemodel, reason, gmwidg):
     
@@ -172,14 +131,39 @@ def game_ended (gamemodel, reason, gmwidg):
     finally:
         glock.release()
 
-def game_unended (gamemodel, gmwidg):
+def _set_statusbar (gamewidget, message):
+    assert type(message) is str or type(message) is unicode
     glock.acquire()
     try:
-        print "sending hideMessage"
-        gmwidg.hideMessage()
-        gmwidg.status("")
+        gamewidget.status(message)
     finally:
         glock.release()
+    
+def game_paused (gamemodel, gmwidg):
+    _set_statusbar(gmwidg, _("The game is paused"))
+    
+def game_changed (gamemodel, gmwidg):
+    _set_statusbar(gmwidg, "")
+    
+def game_unended (gamemodel, gmwidg):
+    log.debug("gamenanny.game_unended: %s\n" % gamemodel.boards[-1])
+    glock.acquire()
+    try:
+        gmwidg.hideMessage()
+    finally:
+        glock.release()
+    _set_statusbar(gmwidg, "")
+
+# Connect game_loaded, game_saved and game_ended to statusbar
+def game_loaded (gamemodel, uri, gmwidg):
+    if type(uri) in (str, unicode):
+        s = "%s: %s" % (_("Loaded game"), str(uri))
+    else: s = _("Loaded game")
+    
+    _set_statusbar(gmwidg, s)
+
+def game_saved (gamemodel, uri, gmwidg):
+    _set_statusbar(gmwidg, "%s: %s" % (_("Saved game"), str(uri)))
 
 def on_game_started (gamemodel, gmwidg):
     on_gmwidg_infront(gmwidg)  # setup menu items sensitivity
@@ -210,16 +194,28 @@ def on_game_started (gamemodel, gmwidg):
 #===============================================================================
 
 def offer_callback (player, offer, gamemodel, gmwidg):
-    if offer.type == DRAW_OFFER:
-        if gamemodel.status != RUNNING:
-            return # If the offer has already been handled by
-                   # Gamemodel and the game was drawn, we need
-                   # to do nothing
-        glock.acquire()
-        try:
-            gmwidg.status(_("You sent a draw offer"))
-        finally:
-            glock.release()
+    if gamemodel.status != RUNNING:
+        # If the offer has already been handled by Gamemodel and the game was
+        # drawn, we need to do nothing
+        return
+
+    message = ""
+    if offer.type == ABORT_OFFER:
+        message = _("You sent an abort offer")
+    elif offer.type == ADJOURN_OFFER:
+        message = _("You sent an adjournment offer")
+    elif offer.type == DRAW_OFFER:
+        message = _("You sent a draw offer")
+    elif offer.type == PAUSE_OFFER:
+        message = _("You sent a pause offer")
+    elif offer.type == RESUME_OFFER:
+        message = _("You sent a resume offer")
+    elif offer.type == ABORT_OFFER:
+        message = _("You sent an undo offer")
+    elif offer.type == HURRY_ACTION:
+        message = _("You asked your opponent to move")
+    
+    _set_statusbar(gmwidg, message)
 
 #===============================================================================
 # Subfunctions
@@ -277,6 +273,9 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
                 analyzer.connect("analyze", on_analyze))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("game_changed", on_game_change))
+        gmwidg.gamemodel.chacons.append(
+                gmwidg.gamemodel.connect("game_ended",
+                                         lambda model, reason: on_game_change(model)))
         gmwidg.gamemodel.chacons.append(
                 gmwidg.gamemodel.connect("moves_undoing",
                                          lambda model, moves: on_game_change(model)))

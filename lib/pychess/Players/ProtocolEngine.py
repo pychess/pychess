@@ -4,6 +4,7 @@ from threading import Condition, Lock, RLock
 from pychess.System.Log import log
 from pychess.Players.Engine import Engine
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor
 
 class ProtocolEngine (Engine):
     
