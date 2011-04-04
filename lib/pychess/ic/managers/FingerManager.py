@@ -55,7 +55,7 @@ class FingerObject:
         self.__opponent = ""
         self.__silence = False
         self.__titles = None
-       
+        
         self.__rating = {}
     
     def getName (self):
@@ -148,7 +148,7 @@ class FingerObject:
         return self.__rating[type]
     
     def getTitles(self):
-        return self.__titles    
+        return self.__titles
     
     def setName(self, value):
         self.__name = value
@@ -310,11 +310,13 @@ class FingerManager (GObject):
                 type = type2Type[groupdict["gametype"].lower()]
                 ratings = groupdict["ratings"].split()
                 del ratings[5] # We don't need the totals field
+                ratings[1] = float(ratings[1])
                 if len(ratings) == 5:
-                    rating = Rating(type, *map(float,ratings))
+                    args = map(int, ratings)
+                    rating = Rating(type, *args)
                 else:
                     bestTime = self.parseShortDate(ratings[6][1:-1])
-                    args = map(float,ratings[:6]) + [bestTime]
+                    args = map(int,ratings[:6]) + [bestTime]
                     rating = Rating(type, *args)
                 finger.setRating(type, rating)
             elif groupdict["email"] != None:
