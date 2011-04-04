@@ -95,7 +95,7 @@ def start(discoverer):
     game.setPlayers([DummyPlayer(), DummyPlayer()])
     analyzer = discoverer.initAnalyzerEngine(analyzer, ANALYZING, game.variant)
     analyzer.connect('analyze', onAnalyze)
-    game.setSpectactors({0: analyzer})
+    game.setSpectators({0: analyzer})
     game.loadAndStart(sys.argv[1], pgn, gameno, -1)
     
     def cb():

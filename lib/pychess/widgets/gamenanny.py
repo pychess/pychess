@@ -230,10 +230,10 @@ def engineDead (engine, gmwidg):
     d.show_all()
 
 def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
-    if not analyzerType in gmwidg.gamemodel.spectactors:
+    if not analyzerType in gmwidg.gamemodel.spectators:
         return
     
-    analyzer = gmwidg.gamemodel.spectactors[analyzerType]
+    analyzer = gmwidg.gamemodel.spectators[analyzerType]
     
     if analyzerType == HINT:
         arrow = gmwidg.board.view._set_greenarrow
