@@ -255,11 +255,11 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         
         self.advisors = [ OpeningAdvisor(self.store) ]
-        if HINT in gmwidg.gamemodel.spectactors:
-            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[HINT], ANALYZING))
+        if HINT in gmwidg.gamemodel.spectators:
+            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectators[HINT], ANALYZING))
         self.advisors.append(EndgameAdvisor(self.store))
-        if SPY in gmwidg.gamemodel.spectactors:
-            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectactors[SPY], INVERSE_ANALYZING))
+        if SPY in gmwidg.gamemodel.spectators:
+            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
         
         self.gmwidg = None # HACK
         self.shown_changed(self.board, 0)
@@ -270,10 +270,10 @@ class Sidepanel:
     def shown_changed (self, board, shown):
 # HACK
         if self.gmwidg:
-            if HINT in self.gmwidg.gamemodel.spectactors:
-                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectactors[HINT], ANALYZING))
-            if SPY in self.gmwidg.gamemodel.spectactors:
-                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectactors[SPY], INVERSE_ANALYZING))
+            if HINT in self.gmwidg.gamemodel.spectators:
+                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectators[HINT], ANALYZING))
+            if SPY in self.gmwidg.gamemodel.spectators:
+                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
             self.gmwidg = None
 # End of HACK
         board.bluearrow = None

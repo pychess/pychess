@@ -154,7 +154,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
     # Setting game
     gamemodel.setPlayers(players)
-    gamemodel.setSpectactors(specs)
+    gamemodel.setSpectators(specs)
 
     # Starting
     if loaddata:
@@ -171,7 +171,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
     else:
         if gamemodel.variant.need_initial_board:
-            for player in gamemodel.players + gamemodel.spectactors.values():
+            for player in gamemodel.players + gamemodel.spectators.values():
                 player.setOptionInitialBoard(gamemodel)
 
         gamemodel.start()
