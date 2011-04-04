@@ -14,10 +14,10 @@ class RookOddsBoard(Board):
 
 
 class RookOddsChess:
+    __desc__ = _("One player starts with one less rook piece")
     name = _("Rook odds")
     cecp_name = "normal"
     board = RookOddsBoard
     need_initial_board = True
     standard_rules = True
     variant_group = VARIANTS_ODDS
-

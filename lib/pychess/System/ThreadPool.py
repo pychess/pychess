@@ -1,5 +1,9 @@
 """ This is a pool for reusing threads """
 
+import htmlentitydefs
+import inspect
+import os
+import re
 import sys as sys_
 import traceback, cStringIO, atexit
 import threading
@@ -7,6 +11,8 @@ from threading import Thread, currentThread, Condition, Lock
 import Queue
 
 import glock
+import GtkWorker
+import pychess
 
 if not hasattr(Thread, "_Thread__bootstrap_inner"):
     class SafeThread (Thread):
@@ -47,11 +53,32 @@ class ThreadPool:
                 a = self.queue.get()
         
         a.func = lambda: func(*args, **kw)
+        a.name = self._getThreadName(a, func)
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
         
         self.lock.release()
+        
+    def _getThreadName (self, thread, func):
+        framerecord = inspect.stack()[2]
+#        d = os.path.basename(os.path.dirname(framerecord[1]))
+        f = os.path.basename(framerecord[1])
+#        f = os.sep.join((d, f))
+        caller = ":".join([str(v) for v in (f,) + framerecord[2:4]])
+        module = inspect.getmodule(func)
+        lineno = inspect.getsourcelines(func)[1]
+        callee = ":".join((module.__name__, str(lineno), func.__name__))
+        if module is GtkWorker or "repeat" in str(module):
+            framerecord = inspect.stack()[3]
+#            d = os.path.basename(os.path.dirname(framerecord[1]))
+            f = os.path.basename(framerecord[1])
+#            f = os.sep.join((d, f))
+            callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
+        s = caller + " -- " + callee
+        for repl in ("pychess.", "System.", "Players."):
+            s = s.replace(repl, "")
+        return s
     
     class Worker (threading.Thread):
         def __init__ (self, queue):
@@ -96,6 +123,7 @@ class ThreadPool:
                     
                     self.wcond.acquire()
                     self.wcond.wait()
+                    self.wcond.release()
             except:
                 #self.threads -= 1
                 if self.running:

@@ -4,6 +4,11 @@ l=CDLL('librsvg-2-2.dll')
 g=CDLL('libgobject-2.0-0.dll')
 g.g_type_init()
 
+
+class Props():
+    def __init__(self, dimension):
+        self.width, self.height = dimension
+    
 class rsvgHandle():
     class RsvgDimensionData(Structure):
         _fields_ = [("width", c_int),
@@ -20,7 +25,7 @@ class rsvgHandle():
         self.path = path
         error = ''
         self.handle = l.rsvg_handle_new_from_file(self.path,error)
-
+        self.props = Props(self.get_dimension_data())
 
     def get_dimension_data(self):
         svgDim = self.RsvgDimensionData()

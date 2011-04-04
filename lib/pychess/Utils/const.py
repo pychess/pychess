@@ -19,7 +19,6 @@ EASY, INTERMEDIATE, EXPERT = range(3)
 
 # Player colors
 WHITE, BLACK = range(2)
-reprColor = [_("White"), _("Black")]
 
 ################################################################################
 # Game values                                                                  #
@@ -39,9 +38,6 @@ TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE, \
 isLightning = lambda secs, incr: secs + incr * 40 < 3*60
 isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
 
-typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
-            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
-
 # Chess variants
 NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, \
 ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, \
@@ -52,15 +48,11 @@ QUEENODDSCHESS = range(14)
 VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER = range(4)
 
 # Action errors
-ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \
+ACTION_ERROR_NOT_OUT_OF_TIME, \
     ACTION_ERROR_CLOCK_NOT_STARTED, ACTION_ERROR_SWITCH_UNDERWAY, \
     ACTION_ERROR_CLOCK_NOT_PAUSED, ACTION_ERROR_TOO_LARGE_UNDO, \
     ACTION_ERROR_NONE_TO_ACCEPT, ACTION_ERROR_NONE_TO_WITHDRAW, \
-    ACTION_ERROR_NONE_TO_DECLINE, ACTION_ERROR_GAME_ENDED, \
-    ACTION_ERROR_REQUIRES_UNFINISHED_GAME, \
-    ACTION_ERROR_UNRESUMEABLE_POSITION, \
-    ACTION_ERROR_RESUME_REQUIRES_PAUSED, \
-    ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED = range(14)
+    ACTION_ERROR_NONE_TO_DECLINE, = range(8)
 
 # Game state reasons
 ABORTED_ADJUDICATION, ABORTED_AGREEMENT, ABORTED_COURTESY, ABORTED_EARLY, \
@@ -123,7 +115,6 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
-reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
 
 # Is sliding piece
 sliders = [ False, False, False, True, True, True, False, False ]
@@ -131,7 +122,6 @@ sliders = [ False, False, False, True, True, True, False, False ]
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 
 ################################################################################
 # Move values                                                                  #

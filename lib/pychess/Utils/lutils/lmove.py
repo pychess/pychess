@@ -5,6 +5,7 @@ import re
 from ldata import *
 from validator import validateMove
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprPiece, localReprSign
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7

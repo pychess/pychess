@@ -1,6 +1,7 @@
 from __future__ import with_statement 
 
 import os
+import sys
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath

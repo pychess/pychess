@@ -3,6 +3,7 @@ import re
 
 from pychess.Utils.lutils.lmove import newMove, FILE, RANK
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor
 from pychess.System.Log import log
 from pychess.System import conf
 

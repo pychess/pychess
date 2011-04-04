@@ -40,7 +40,7 @@ class ICPlayer (Player):
     #===========================================================================
     
     def __onOfferAdd (self, om, offer):
-        if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
+        if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame():
             log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s\n" % \
                 (self.gameno, self.name, offer))
             self.offers[offer.index] = offer
@@ -113,7 +113,7 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        if board2 and self.gamemodel.inControl:
+        if board2 and not self.gamemodel.isObservationGame():
             # TODO: Will this work if we just always use CASTLE_SAN?
             cn = CASTLE_KK
             if board2.variant == FISCHERRANDOMCHESS:

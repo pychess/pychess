@@ -103,7 +103,7 @@ class ChatView (gtk.VPaned):
             All text will be in a gray color """
         tb = self.readView.get_buffer()
         iter = tb.get_iter_at_mark(tb.get_mark("logMark"))
-        time = strftime("%T", localtime(timestamp))
+        time = strftime("%H:%M:%S", localtime(timestamp))
         self.__addMessage(iter, time, sender, text)
         tb.insert(iter, "\n")
     
@@ -113,7 +113,7 @@ class ChatView (gtk.VPaned):
         # Messages have linebreak before the text. This is opposite to log
         # messages
         if tb.props.text: tb.insert(iter, "\n")
-        self.__addMessage(iter, strftime("%T"), sender, text)
+        self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
     
     def disable (self, message):
         """ Sets the write field insensitive, in cases where the channel is

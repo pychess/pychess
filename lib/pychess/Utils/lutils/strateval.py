@@ -1,4 +1,3 @@
-
 """
     This module differs from leval in that it is not optimized for speed.
     It checks differences between last and current board, and returns not
@@ -8,6 +7,7 @@
 
 import leval
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor, reprPiece
 from lmove import *
 from lmovegen import *
 from lsort import staticExchangeEvaluate

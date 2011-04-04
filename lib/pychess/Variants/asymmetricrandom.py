@@ -1,17 +1,9 @@
 # AsymmetricRandom Chess
-# This is FICS wild/4 (http://www.freechess.org/Help/HelpFiles/wild.html)
-# * Randomly chosen pieces (two queens or three rooks possible)
-# * Exactly one king of each color
-# * Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT
-#              THAT THE BISHOPS ARE BALANCED
-# * No castling
-# * Black's arrangement DOES NOT mirrors white's
 
 import random
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
-
 
 class AsymmetricRandomBoard(Board):
     variant = ASYMMETRICRANDOMCHESS
@@ -89,6 +81,13 @@ class AsymmetricRandomBoard(Board):
 
 
 class AsymmetricRandomChess:
+    __desc__ = \
+        _("FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+          "* Randomly chosen pieces (two queens or three rooks possible)\n" +
+          "* Exactly one king of each color\n" +
+          "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n" +
+          "* No castling\n" +
+          "* Black's arrangement DOES NOT mirrors white's")
     name = _("Asymmetric Random")
     cecp_name = "unknown"
     board = AsymmetricRandomBoard
