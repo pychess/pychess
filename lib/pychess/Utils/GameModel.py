@@ -13,6 +13,7 @@ from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.System import glock
+from pychess.Utils.Move import Move
 from pychess.Variants.normal import NormalChess
 
 from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
@@ -54,12 +55,14 @@ class GameModel (GObject, PooledThread):
         "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        "moves_undone":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_unended":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
         "game_terminated":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "game_paused":   (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "game_resumed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
     }
@@ -96,9 +99,6 @@ class GameModel (GObject, PooledThread):
         self.needsSave = False
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
-        
-        self.hintEngineSupportsVariant = False
-        self.spyEngineSupportsVariant = False
         
         self.spectactors = {}
         
@@ -148,6 +148,14 @@ class GameModel (GObject, PooledThread):
             raise
     curplayer = property(_get_curplayer)
     
+    def _get_waitingplayer (self):
+        try:
+            return self.players[1 - self.getBoardAtPly(self.ply).color]
+        except IndexError:
+            log.error("%s %s\n" % (self.players, 1 - self.getBoardAtPly(self.ply).color))
+            raise
+    waitingplayer = property(_get_waitingplayer)
+    
     def _plyToIndex (self, ply):
         index = ply - self.lowply
         if index < 0:
@@ -168,6 +176,12 @@ class GameModel (GObject, PooledThread):
             log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
     
+    def isObservationGame (self):
+        if self.players[0].__type__ == LOCAL or self.players[1].__type__ == LOCAL:
+            return False
+        else:
+            return True
+        
     ############################################################################
     # Offer management                                                         #
     ############################################################################
@@ -178,17 +192,7 @@ class GameModel (GObject, PooledThread):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
-            player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
-        
-        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
-                self.reason in UNRESUMEABLE_REASONS:
-            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
-        
-        elif offer.type == RESUME_OFFER and self.status != PAUSED:
-            player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
-        
-        elif offer.type == HURRY_ACTION:
+        if offer.type == HURRY_ACTION:
             opPlayer.hurry()
         
         elif offer.type == CHAT_ACTION:
@@ -200,19 +204,12 @@ class GameModel (GObject, PooledThread):
             else: self.end(WHITEWON, WON_RESIGN)
         
         elif offer.type == FLAG_CALL:
-            if not self.timemodel:
-                player.offerError(offer, ACTION_ERROR_NO_CLOCK)
-                return
-            
-            if player == self.players[WHITE]:
-                opcolor = BLACK
-            else: opcolor = WHITE
-            
-            if self.timemodel.getPlayerTime (opcolor) <= 0:
-                if self.timemodel.getPlayerTime (1-opcolor) <= 0:
+            assert self.timemodel is not None            
+            if self.timemodel.getPlayerTime(1-player.color) <= 0:
+                if self.timemodel.getPlayerTime(player.color) <= 0:
                     self.end(DRAW, DRAW_CALLFLAG)
-                elif not playerHasMatingMaterial(self.boards[-1], (1-opcolor)):
-                    if opcolor == WHITE:
+                elif not playerHasMatingMaterial(self.boards[-1], 1-player.color):
+                    if 1-player.color == WHITE:
                         self.end(DRAW, DRAW_BLACKINSUFFICIENTANDWHITETIME)
                     else:
                         self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)
@@ -230,10 +227,6 @@ class GameModel (GObject, PooledThread):
         
         elif offer.type == TAKEBACK_OFFER and offer.param < self.lowply:
             player.offerError(offer, ACTION_ERROR_TOO_LARGE_UNDO)
-        
-        elif offer.type == TAKEBACK_OFFER and self.status != RUNNING and \
-                (self.status not in UNDOABLE_STATES or self.reason not in UNDOABLE_REASONS):
-            player.offerError(offer, ACTION_ERROR_GAME_ENDED)
         
         elif offer.type in OFFERS:
             if offer not in self.offers:
@@ -415,6 +408,7 @@ class GameModel (GObject, PooledThread):
             
             log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock\n" % \
                 (id(self), str(self.players), self.ply))
+            assert isinstance(move, Move), "%s" % repr(move)
             self.applyingMoveLock.acquire()
             try:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s\n" % \
@@ -475,6 +469,7 @@ class GameModel (GObject, PooledThread):
             self.status = PAUSED
         finally:
             self.applyingMoveLock.release()
+        self.emit("game_paused")
     
     def __resume (self):
         for player in self.players:
@@ -492,8 +487,8 @@ class GameModel (GObject, PooledThread):
     def resume (self):
         self.applyingMoveLock.acquire()
         try:
-            self.__resume()
             self.status = RUNNING
+            self.__resume()
         finally:
             self.applyingMoveLock.release()
     
@@ -593,6 +588,8 @@ class GameModel (GObject, PooledThread):
             log.debug("GameModel.undoMoves: releasing self.applyingMoveLock\n")
             self.applyingMoveLock.release()
         
+        self.emit("moves_undone", moves)
+    
     def isChanged (self):
         if self.ply == 0:
             return False

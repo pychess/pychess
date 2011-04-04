@@ -7,7 +7,7 @@ import signal
 import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
-from pychess.System import conf, glock, uistuff, prefix, SubProcess
+from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log, start_thread_dump
 from pychess.Utils.const import HINT, NAME, SPY
@@ -215,8 +215,9 @@ class PyChess:
                                GladeHandlers.__dict__["on_gmwidg_created"])
         
         #---------------------- The only menuitems that need special initing
-        uistuff.keep(widgets["hint_mode"], "hint_mode")
-        uistuff.keep(widgets["spy_mode"], "spy_mode")
+        for widget in ("hint_mode", "spy_mode"):
+            widgets[widget].set_active(False)
+            widgets[widget].set_sensitive(False)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
         
         #=======================================================================
@@ -295,7 +296,7 @@ class PyChess:
                 newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (thread_debug, chess_file):
+def run (no_debug, glock_debug, thread_debug, chess_file):
     PyChess(chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
@@ -304,6 +305,8 @@ def run (thread_debug, chess_file):
     gtk.gdk.threads_init()
     
     # Start logging
+    Log.DEBUG = False if no_debug is True else True
+    glock.debug = glock_debug
     log.debug("Started\n")
     if thread_debug:
         start_thread_dump()

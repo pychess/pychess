@@ -62,21 +62,24 @@ class ThreadPool:
         
     def _getThreadName (self, thread, func):
         framerecord = inspect.stack()[2]
-        d = os.path.basename(os.path.dirname(framerecord[1]))
+#        d = os.path.basename(os.path.dirname(framerecord[1]))
         f = os.path.basename(framerecord[1])
-        f = os.sep.join((d, f))
+#        f = os.sep.join((d, f))
         caller = ":".join([str(v) for v in (f,) + framerecord[2:4]])
         module = inspect.getmodule(func)
         lineno = inspect.getsourcelines(func)[1]
         callee = ":".join((module.__name__, str(lineno), func.__name__))
         if module is GtkWorker or "repeat" in str(module):
             framerecord = inspect.stack()[3]
-            d = os.path.basename(os.path.dirname(framerecord[1]))
+#            d = os.path.basename(os.path.dirname(framerecord[1]))
             f = os.path.basename(framerecord[1])
-            f = os.sep.join((d, f))
+#            f = os.sep.join((d, f))
             callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
-        return caller + " -- " + callee
-        
+        s = caller + " -- " + callee
+        for repl in ("pychess.", "System.", "Players."):
+            s = s.replace(repl, "")
+        return s
+    
     class Worker (threading.Thread):
         def __init__ (self, queue):
             Thread.__init__(self)

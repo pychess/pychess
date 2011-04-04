@@ -7,7 +7,9 @@ import cStringIO
 
 import gtk, gobject
 
+from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.System.Log import log
 from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
@@ -17,6 +19,8 @@ from pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
+from pychess.ic.ICGameModel import ICGameModel
+from pychess.Players.Human import Human
 
 
 ################################################################################
@@ -88,6 +92,97 @@ for panel in sidePanels:
 docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 
 ################################################################################
+# Main menubar MenuItem classes to keep track of menu widget states            #
+################################################################################
+
+class GtkMenuItem (object):
+    def __init__ (self, name, gamewidget, sensitive=False, label=None):
+        assert type(sensitive) is bool
+        assert label is None or type(label) is str
+        self.name = name
+        self.gamewidget = gamewidget
+        self._sensitive = sensitive
+        self._label = label
+        
+    @property
+    def sensitive (self):
+        return self._sensitive
+    @sensitive.setter
+    def sensitive (self, sensitive):
+        assert type(sensitive) is bool
+        self._sensitive = sensitive
+        self._set_widget("sensitive", sensitive)
+        
+    @property
+    def label (self):
+        return self._label
+    @label.setter
+    def label (self, label):
+        assert isinstance(label, str) or isinstance(label, unicode)
+        self._label = label
+        self._set_widget("label", label)
+    
+    def _set_widget (self, property, value):
+        if not self.gamewidget.isInFront(): return
+        if widgets[self.name].get_property(property) != value:
+#            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
+            glock.acquire()
+            try:
+                widgets[self.name].set_property(property, value)
+            finally:
+                glock.release()
+    
+    def update (self):
+        self._set_widget("sensitive", self._sensitive)
+        if self._label is not None:
+            self._set_widget("label", self._label)
+
+class GtkMenuToggleButton (GtkMenuItem):
+    def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
+        assert type(active) is bool
+        GtkMenuItem.__init__(self, name, gamewidget, sensitive, label)
+        self._active = active
+
+    @property
+    def active (self):
+        return self._active
+    @active.setter
+    def active (self, active):
+        assert type(active) is bool
+        self._active = active
+        self._set_widget("active", active)
+
+    def update (self):
+        GtkMenuItem.update(self)
+        self._set_widget("active", self._active)
+
+class MenuItemsDict (dict):
+    """
+    Keeps track of menubar menuitem widgets that need to be managed on a game
+    by game basis. Each menuitem writes through its respective widget state to
+    the GUI if we are encapsulated in the gamewidget that's focused/infront
+    """
+    
+    VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
+    
+    class ReadOnlyDictException (Exception): pass
+
+    def __init__ (self, gamewidget):
+        dict.__init__(self)
+        for item in ACTION_MENU_ITEMS:
+            dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
+        for item in self.VIEW_MENU_ITEMS:
+            dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget))
+        gamewidget.connect("infront", self.on_gamewidget_infront)
+    
+    def __setitem__ (self, item, value):
+        raise self.ReadOnlyDictException()
+    
+    def on_gamewidget_infront (self, gamewidget):
+        for menuitem in self:
+            self[menuitem].update()
+        
+################################################################################
 # The holder class for tab releated widgets                                    #
 ################################################################################
 
@@ -117,6 +212,17 @@ class GameWidget (gobject.GObject):
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
         
+        self.menuitems = MenuItemsDict(self)
+        gamemodel.connect("game_started", self.game_started)
+        gamemodel.connect("game_ended", self.game_ended)
+        gamemodel.connect("game_changed", self.game_changed)
+        gamemodel.connect("game_paused", self.game_paused)
+        gamemodel.connect("game_resumed", self.game_resumed)
+        gamemodel.connect("moves_undone", self.moves_undone)
+        gamemodel.connect("game_unended", self.game_unended)        
+        if gamemodel.timemodel:
+            gamemodel.timemodel.connect("zero_reached", self.zero_reached)
+        
         # Some stuff in the sidepanels .load functions might change UI, so we
         # need glock
         # TODO: Really?
@@ -128,6 +234,147 @@ class GameWidget (gobject.GObject):
     
     def __del__ (self):
         self.board.__del__()
+    
+    def _update_menu_abort (self):
+        if self.gamemodel.isObservationGame():
+            self.menuitems["abort"].sensitive = False
+        elif isinstance(self.gamemodel, ICGameModel) \
+           and self.gamemodel.status in UNFINISHED_STATES:
+            if self.gamemodel.ply < 2:
+                self.menuitems["abort"].label = _("Abort")
+            else:
+                self.menuitems["abort"].label = _("Offer Abort")
+            self.menuitems["abort"].sensitive = True
+        else:
+            self.menuitems["abort"].sensitive = False
+
+    def _update_menu_adjourn (self):
+        # TODO: if remote opponent player is a guest, disable "adjourn"
+        self.menuitems["adjourn"].sensitive = \
+            isinstance(self.gamemodel, ICGameModel) and \
+            self.gamemodel.connection.isRegistred() and \
+            self.gamemodel.status in UNFINISHED_STATES and \
+            not self.gamemodel.isObservationGame()
+    
+    def _update_menu_draw (self):
+        self.menuitems["draw"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
+            and not self.gamemodel.isObservationGame()
+        
+        def can_win (color):
+            if self.gamemodel.timemodel:
+                return playerHasMatingMaterial(self.gamemodel.boards[-1], color) and \
+                    self.gamemodel.timemodel.getPlayerTime(color) > 0
+            else:
+                return playerHasMatingMaterial(self.gamemodel.boards[-1], color)
+        if isClaimableDraw(self.gamemodel.boards[-1]) or not \
+                (can_win(self.gamemodel.players[0].color) or \
+                 can_win(self.gamemodel.players[1].color)):
+            self.menuitems["draw"].label = _("Claim Draw")
+        
+    def _update_menu_resign (self):
+        self.menuitems["resign"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
+            and not self.gamemodel.isObservationGame()
+    
+    def _update_menu_pause_and_resume (self):
+        self.menuitems["pause1"].sensitive = self.gamemodel.status == RUNNING \
+            and not self.gamemodel.isObservationGame()
+        self.menuitems["resume1"].sensitive = self.gamemodel.status == PAUSED \
+            and not self.gamemodel.isObservationGame()
+        # TODO: if IC game is over and opponent is available, enable Resume
+    
+    def _update_menu_undo (self):
+        if self.gamemodel.isObservationGame():
+            self.menuitems["undo1"].sensitive = False
+        elif isinstance(self.gamemodel, ICGameModel):
+            if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.ply > 0:
+                self.menuitems["undo1"].sensitive = True
+            else:
+                self.menuitems["undo1"].sensitive = False
+        elif self.gamemodel.ply > 0 \
+           and self.gamemodel.status in UNDOABLE_STATES + (RUNNING,):
+                self.menuitems["undo1"].sensitive = True
+        else:
+            self.menuitems["undo1"].sensitive = False
+    
+    def _update_menu_ask_to_move (self):
+        if self.gamemodel.isObservationGame():
+            self.menuitems["ask_to_move"].sensitive = False
+        elif isinstance(self.gamemodel, ICGameModel):
+            self.menuitems["ask_to_move"].sensitive = False
+        elif self.gamemodel.waitingplayer.__type__ == LOCAL \
+           and self.gamemodel.status in UNFINISHED_STATES \
+           and self.gamemodel.status != PAUSED:
+            self.menuitems["ask_to_move"].sensitive = True
+        else:
+            self.menuitems["ask_to_move"].sensitive = False
+    
+    def game_started (self, gamemodel):
+        self._update_menu_abort()
+        self._update_menu_adjourn()
+        self._update_menu_draw()
+        self._update_menu_pause_and_resume()
+        self._update_menu_resign()
+        self._update_menu_undo()
+        self._update_menu_ask_to_move()
+        
+        activate_hint = False
+        activate_spy = False
+        if HINT in gamemodel.spectactors and not \
+                (isinstance(self.gamemodel, ICGameModel) and
+                 self.gamemodel.isObservationGame() is False):
+            activate_hint = True
+        if SPY in gamemodel.spectactors and not \
+                (isinstance(self.gamemodel, ICGameModel) and
+                 self.gamemodel.isObservationGame() is False):
+            activate_spy = True
+        self.menuitems["hint_mode"].active = activate_hint
+        self.menuitems["hint_mode"].sensitive = HINT in gamemodel.spectactors
+        self.menuitems["spy_mode"].active = activate_spy
+        self.menuitems["spy_mode"].sensitive = SPY in gamemodel.spectactors
+    
+    def game_ended (self, gamemodel, reason):
+        for item in self.menuitems:
+            self.menuitems[item].sensitive = False
+        self._update_menu_undo()
+    
+    def game_changed (self, gamemodel):
+        self._update_menu_abort()
+        self._update_menu_ask_to_move()
+        self._update_menu_draw()
+        self._update_menu_pause_and_resume()
+        self._update_menu_undo()
+    
+    def game_paused (self, gamemodel):
+        self._update_menu_pause_and_resume()
+        self._update_menu_undo()
+        self._update_menu_ask_to_move()
+    
+    def game_resumed (self, gamemodel):
+        self._update_menu_pause_and_resume()
+        self._update_menu_undo()
+        self._update_menu_ask_to_move()
+    
+    def moves_undone (self, gamemodel, moves):
+        self.game_changed(gamemodel)
+    
+    def game_unended (self, gamemodel):
+        self.game_started(gamemodel)
+    
+    def zero_reached (self, timemodel, color):
+        if self.gamemodel.status not in UNFINISHED_STATES: return
+        
+        if self.gamemodel.players[0].__type__ == LOCAL \
+           and self.gamemodel.players[1].__type__ == LOCAL:
+            self.menuitems["call_flag"].sensitive = True
+            return
+        
+        for player in self.gamemodel.players:
+            opplayercolor = BLACK if player == self.gamemodel.players[WHITE] else WHITE
+            if player.__type__ == LOCAL and opplayercolor == color:
+                log.debug("gamewidget.zero_reached: LOCAL player=%s, color=%s\n" % \
+                          (repr(player), str(color)))
+                self.menuitems["call_flag"].sensitive = True
+                break
     
     def initTabcontents(self):
         tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
@@ -219,14 +466,19 @@ class GameWidget (gobject.GObject):
         return statusbar, stat_hbox
     
     def setLocked (self, locked):
-        """ Makes the board insensitive and turns of the tab ready indicator """
+        """ Makes the board insensitive and turns off the tab ready indicator """
+        log.debug("GameWidget.setLocked: %s locked=%s\n" % (self.gamemodel.players, str(locked)))
         self.board.setLocked(locked)
         if not self.tabcontent.get_children(): return
+        if len(self.tabcontent.child.get_children()) < 2:
+            log.warn("GameWidget.setLocked: Not removing last tabcontent child\n")
+            return
         self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
         if not locked:
             self.tabcontent.child.pack_start(createImage(light_on), expand=False)
         else: self.tabcontent.child.pack_start(createImage(light_off), expand=False)
         self.tabcontent.show_all()
+        log.debug("GameWidget.setLocked: %s: returning\n" % self.gamemodel.players)
     
     def setTabText (self, text):
         self.tabcontent.child.get_children()[1].set_text(text)
@@ -291,6 +543,8 @@ class GameWidget (gobject.GObject):
     
     def hideMessage (self):
         self.messageSock.hide()
+        if self == cur_gmwidg():
+            notebooks["messageArea"].hide()
 
 ################################################################################
 # Main handling of gamewidgets                                                 #
@@ -495,7 +749,7 @@ def attachGameWidget (gmwidg):
     def callback (notebook, gpointer, page_num, gmwidg):
         if notebook.get_nth_page(page_num) == gmwidg.notebookKey:
             gmwidg.emit("infront")
-    headbook.connect("switch-page", callback, gmwidg)
+    headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
     
     messageSockAlign = createAlignment(4,4,0,4)

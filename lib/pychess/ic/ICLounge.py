@@ -1729,9 +1729,10 @@ class ErrorMessages (Section):
     def __init__ (self, widgets, connection):
         self.connection = connection
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
+        self.connection.bm.connect("matchDeclined", self.matchDeclined)
     
     @glock.glocked
-    def tooManySeeks (self, om):
+    def tooManySeeks (self, bm):
         title = _("You can only have 3 outstanding seeks")
         description = _("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?")
         d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
@@ -1740,8 +1741,18 @@ class ErrorMessages (Section):
         def response (dialog, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-            dialog.hide()
+            dialog.destroy()
         d.connect("response", response)
+        d.show()
+    
+    @glock.glocked
+    def matchDeclined (self, bm, decliner):
+        title = _("%s declines the match offer") % decliner
+        description = _("%s has declined your offer for a match.") % decliner
+        d = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
+        d.set_markup ("<big><b>%s</b></big>" % title)
+        d.format_secondary_text (description)
+        d.connect("response", lambda dialog, response: dialog.destroy())
         d.show()
 
 ############################################################################

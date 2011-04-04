@@ -10,6 +10,7 @@ class ICGameModel (GameModel):
         GameModel.__init__(self, timemodel, variant)
         self.connection = connection
         self.gameno = gameno
+        self.rated = rated
         
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
@@ -18,9 +19,6 @@ class ICGameModel (GameModel):
         connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection].append(connection.connect("disconnected", self.onDisconnected))
-        
-        self.inControl = True
-        self.rated = rated
     
     def __disconnect (self):
         if self.connections is None: return
@@ -75,8 +73,6 @@ class ICGameModel (GameModel):
             self.end(status, reason)
     
     def setPlayers (self, players):
-        if [player.__type__ for player in players] == [REMOTE, REMOTE]:
-            self.inControl = False
         GameModel.setPlayers(self, players)
     
     def onGamePaused (self, bm, gameno, paused):
@@ -106,22 +102,7 @@ class ICGameModel (GameModel):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
-            player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
-        
-        # TODO: if game is over and opponent is online, send through resume offer
-        elif self.status not in UNFINISHED_STATES and offer.type in \
-           (TAKEBACK_OFFER, RESUME_OFFER):
-            player.offerError(offer, ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED)
-        
-#        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
-#           self.reason in UNRESUMEABLE_REASONS:
-#            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
-        
-        elif offer.type == RESUME_OFFER and self.status != PAUSED:
-            player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
-        
-        elif offer.type == CHAT_ACTION:
+        if offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
         
         elif offer.type in (RESIGNATION, FLAG_CALL):
@@ -166,10 +147,10 @@ class ICGameModel (GameModel):
         if self.status in UNFINISHED_STATES:
             self.__disconnect()
             
-            if self.inControl:
+            if self.isObservationGame():
+                self.connection.bm.unobserve(self.gameno)
+            else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
-            else:
-                self.connection.bm.unobserve(self.gameno)
         
         GameModel.end(self, status, reason)
