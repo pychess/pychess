@@ -53,9 +53,10 @@ class BoardManager (GObject):
         'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (str, str, str, int, int)),
         'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (str,)),
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (str, bool)),
-        'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ())
+        'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
+        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (str,)),
     }
-    
+
     def __init__ (self, connection):
         GObject.__init__(self)
         
@@ -66,7 +67,11 @@ class BoardManager (GObject):
         self.connection.expect_line (self.onWasPrivate,
                 "Sorry, game (\d+) is a private game\.")
         
-        self.connection.expect_line (self.tooManySeeks, "You can only have 3 active seeks.")
+        self.connection.expect_line (self.tooManySeeks,
+                                     "You can only have 3 active seeks.")
+        
+        self.connection.expect_line (self.matchDeclined,
+                                     "%s declines the match offer." % names)
         
         self.connection.expect_n_lines (self.playBoardCreated,
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -206,6 +211,10 @@ class BoardManager (GObject):
     
     def tooManySeeks (self, match):
         self.emit("tooManySeeks")
+    
+    def matchDeclined (self, match):
+        decliner, = match.groups()
+        self.emit("matchDeclined", decliner)
     
     def __parseType (self, type):
         if type in strToVariant.keys():
