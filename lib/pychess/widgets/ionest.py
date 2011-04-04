@@ -68,8 +68,10 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     for player, playertup in ((player0, player0tup), (player1, player1tup)):
         player["name"] = playertup[3]
         player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+playertup[4]+")" or None
-        player["tabtext"] = player["rating"] and player["name"] + " " + player["rating"] \
-                or player["name"]
+        player["title"] = len(playertup) > 5 and playertup[5] or None
+        player["nametitle"] = player["title"] and player["name"] + player["title"] or player["name"]
+        player["tabtext"] = player["rating"] and player["nametitle"] + " " + player["rating"] \
+                or player["nametitle"]
     text = [ player0["tabtext"], _("vs"), player1["tabtext"] ]
     gmwidg.setTabText(" ".join(text))
 
@@ -107,14 +109,18 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
         if color is None:
             name0 = repr(players[WHITE])
+            name0 += player0["title"] and player0["title"] or ""
             name0 += player0["rating"] and " "+player0["rating"] or ""
             name1 = repr(players[BLACK])
+            name1 += player1["title"] and player1["title"] or ""
             name1 += player1["rating"] and " "+player1["rating"] or ""
         elif color == WHITE:
             name0 = repr(players[WHITE])
+            name0 += player0["title"] and player0["title"] or ""
             name0 += player0["rating"] and " "+player0["rating"] or ""
         elif color == BLACK:
             name1 = repr(players[BLACK])
+            name1 += player1["title"] and player1["title"] or ""
             name1 += player1["rating"] and " "+player1["rating"] or ""
 
         gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
