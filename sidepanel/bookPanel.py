@@ -247,14 +247,19 @@ class Sidepanel:
         c2 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=2)
         
         def getMoveText(column, cell, store, iter, board):
-            b = board.model.getBoardAtPly(board.shown)
             move = store[iter][0]
-            if not move:
+            b = board.model.getBoardAtPly(board.shown)
+            # Make sure the board's side to move matches the move.
+            piece = move and b[move.cords[0]]
+            if not piece:
                 cell.set_property("text", "")
-            elif conf.get("figuresInNotation", False):
-                cell.set_property("text", toFAN(b, move))
             else:
-                cell.set_property("text", toSAN(b, move, True))
+                if b.color != b[move.cords[0]].color:
+                    b = b.switchColor()
+                if conf.get("figuresInNotation", False):
+                    cell.set_property("text", toFAN(b, move))
+                else:
+                    cell.set_property("text", toSAN(b, move, True))
         
         c0.set_cell_data_func(moveRenderer, getMoveText, self.board)
         
