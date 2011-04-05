@@ -41,7 +41,7 @@ class Advisor:
     
     def shown_changed (self, board, shown):
         """ Update the suggestions to match a changed position. """
-        raise NotImplementedError
+        pass
     
     def child_tooltip (self, i):
         """ Return a tooltip (or empty) string for the given child row. """
@@ -49,7 +49,7 @@ class Advisor:
     
     def row_activated (self, path):
         """ Act on a double-clicked child row other than a move suggestion. """
-        raise NotImplementedError
+        pass
     
     def query_tooltip (self, path):
         if not path[1:]:
@@ -113,7 +113,7 @@ class EngineAdvisor(Advisor):
         self.linesMax        = 1
         self.offeringExtraPV = False
         self.store.append(self.empty_parent(), [None, ("", 0, None), _("Calculating...")])
-        self.connection = engine.connect("analyze", lambda eng, analysis : self.on_analyze(analysis))
+        self.connection = engine.connect("analyze", self.on_analyze)
     
     def __del__ (self):
         self.engine.disconnect(self.connection)
@@ -153,7 +153,7 @@ class EngineAdvisor(Advisor):
         self.offeringExtraPV = False
         self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
     
-    def on_analyze (self, analysis):
+    def on_analyze (self, engine, analysis):
         if not self.active: return
         for i, line in enumerate(analysis):
             pv, score = line
