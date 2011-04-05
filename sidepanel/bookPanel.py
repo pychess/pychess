@@ -43,6 +43,10 @@ class Advisor:
         """ Update the suggestions to match a changed position. """
         pass
     
+    def game_changed (self, board, model):
+        """ Update the suggestions after a player move / undo. """
+        pass
+    
     def child_tooltip (self, i):
         """ Return a tooltip (or empty) string for the given child row. """
         return ""
@@ -109,6 +113,7 @@ class EngineAdvisor(Advisor):
         self.engine = engine
         self.mode = mode
         self.active = False
+        self.analysisIsFresh = True
         self.linesExpected   = 1
         self.linesMax        = 1
         self.offeringExtraPV = False
@@ -124,13 +129,17 @@ class EngineAdvisor(Advisor):
             child = self.store.iter_children(parent)
             del self.store[child]
             self.offeringExtraPV = False
-        while True:
+        for line in xrange(self.linesExpected):
             parent = self.store.get_iter(self.path)
             child = self.store.iter_children(parent)
-            if self.linesExpected == 1:
+            if line == self.linesExpected - 1:
                 return child
-            self.linesExpected -= 1
             del self.store[child]
+    
+    def game_changed (self, board, model):
+        self.analysisIsFresh = False
+        if (model.ply == board.shown):
+            self.shown_changed(board, board.shown) # Undo doesn't emit shown_changed
     
     def shown_changed (self, board, shown):
         m = board.model
@@ -144,20 +153,27 @@ class EngineAdvisor(Advisor):
             self.store[child] = [None, ("", 0, None), _("The engine is considering another position.")]
             return
         
-        child = self.only_child()
-        self.store[child] = [None, ("", 0, None), _("Calculating...")]
         self.board = b if self.mode != INVERSE_ANALYZING else b.switchColor()
-        self.engine.requestMultiPV(1)
         self.active = True
-        self.linesExpected   = 1
-        self.offeringExtraPV = False
-        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
+        if self.analysisIsFresh and self.engine.getAnalysis():
+            # Allocate rows for the analysis lines
+            for line in xrange(self.linesExpected-1):
+                parent = self.store.get_iter(self.path)
+                self.store.append(parent, [None, ("", 0, None), _("Calculating...")])
+            self.on_analyze(self.engine, self.engine.getAnalysis())
+        else:
+            child = self.only_child()
+            self.store[child] = [None, ("", 0, None), _("Calculating...")]
+            self.engine.requestMultiPV(1)
+            self.linesExpected   = 1
+            self.offeringExtraPV = False
+            self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
     
     def on_analyze (self, engine, analysis):
+        self.analysisIsFresh = True
         if not self.active: return
         for i, line in enumerate(analysis):
             pv, score = line
-            # TODO pretty-print the PV.
             move = None
             if pv:
                 move = pv[0]
@@ -247,6 +263,8 @@ class Sidepanel:
         self.tv.append_column(c2)
         
         self.board.connect("shown_changed", self.shown_changed)
+        self.board.model.connect("game_changed", self.game_changed)
+        self.board.model.connect("moves_undone", lambda model, moves: self.game_changed(model))
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
@@ -266,6 +284,10 @@ class Sidepanel:
         self.gmwidg = gmwidg # HACK
         
         return self.sw
+    
+    def game_changed (self, model):
+        for advisor in self.advisors:
+            advisor.game_changed(self.board, model)
     
     def shown_changed (self, board, shown):
 # HACK
