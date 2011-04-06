@@ -4,7 +4,6 @@ import signal
 import errno
 import time
 import threading
-import subprocess
 
 import gtk
 import gobject
@@ -12,7 +11,6 @@ import gobject
 from pychess.Utils.const import *
 from Log import log
 from which import which
-from pychess.System.Popen import Popen
 from pychess.System.ThreadPool import pool
 from pychess.System import glock
 from pychess.System.GtkWorker import EmitPublisher
@@ -69,19 +67,16 @@ class SubProcess (gobject.GObject):
         log.debug(path+"\n", self.defname)
         
         argv = [str(u) for u in [self.path]+self.args]
-        #self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
-                #child_setup=self.__setup,
-                #standard_input=True, standard_output=True, standard_error=True,
-                #flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
+        self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
+                child_setup=self.__setup,
+                standard_input=True, standard_output=True, standard_error=True,
+                flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
         
-        #self.__channelTags = []
-        #self.inChannel = self._initChannel(stdin, None, None, False)
-        #readFlags = gobject.IO_IN|gobject.IO_HUP#|gobject.IO_ERR
-        #self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
-        #self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
-        
-        self.proc = Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        self.pid = self.proc.pid
+        self.__channelTags = []
+        self.inChannel = self._initChannel(stdin, None, None, False)
+        readFlags = gobject.IO_IN|gobject.IO_HUP#|gobject.IO_ERR
+        self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
+        self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
         self.channelsClosed = False
         self.channelsClosedLock = threading.Lock()
@@ -111,16 +106,13 @@ class SubProcess (gobject.GObject):
         finally:
             self.channelsClosedLock.release()
 
-        #for tag in self.__channelTags:
-            #gobject.source_remove(tag)
-        #for channel in (self.inChannel, self.outChannel, self.errChannel):
-            #try:
-                #channel.close()
-            #except gobject.GError, error:
-                #pass
-        self.proc._close('stdin')
-        self.proc._close('stdout')
-        #self.proc._close('stderr')
+        for tag in self.__channelTags:
+            gobject.source_remove(tag)
+        for channel in (self.inChannel, self.outChannel, self.errChannel):
+            try:
+                channel.close()
+            except gobject.GError, error:
+                pass
     
     def __setup (self):
         os.nice(15)
@@ -155,27 +147,17 @@ class SubProcess (gobject.GObject):
             
             self.linePublisher.put(line)
 
-    def readline(self, timeout=None):
-        x = time.time() + 10
-        while time.time() < x :
-            data = self.proc.recv()
-            print 'read!!!', data
-            log.warn('read!!!', self.defname)
-            self.linePublisher.put(data)
-            time.sleep(0.1)
-        
     def write (self, data):
         if self.channelsClosed:
             log.warn("Chan closed for %r" % data, self.defname)
             return
         log.log(data, self.defname)
-        #self.inChannel.write(data)
-        #if data.endswith("\n"):
-            #try:
-                #self.inChannel.flush()
-            #except gobject.GError, e:
-                #log.error(str(e)+". Last line wasn't sent.\n", self.defname)
-        self.proc.send(data)
+        self.inChannel.write(data)
+        if data.endswith("\n"):
+            try:
+                self.inChannel.flush()
+            except gobject.GError, e:
+                log.error(str(e)+". Last line wasn't sent.\n", self.defname)
 
     def _wait4exit (self):
         try:
