@@ -186,9 +186,9 @@ class EngineAdvisor(Advisor):
             if pv:
                 move = pv[0]
             pv = " ".join(listToSan(self.board, pv))
-            if self.board.color == BLACK: score = -score
             # TODO make a move's "goodness" relative to other moves or past scores
             goodness = (min(max(score, -250), 250) + 250) / 500.0
+            if self.board.color == BLACK: score = -score
             self.store[self.path + (i,)] = [(self.board, move), (prettyPrintScore(score), 1, goodness), pv]
         
         if not self.offeringExtraPV and self.linesExpected <= len(analysis) < self.linesMax:
