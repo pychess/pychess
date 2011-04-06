@@ -100,7 +100,7 @@ class GameModel (GObject, PooledThread):
         # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
         
-        self.spectactors = {}
+        self.spectators = {}
         
         self.applyingMoveLock = RLock()
         self.undoLock = RLock()
@@ -124,9 +124,9 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("decline", self.declineRecieved))
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
     
-    def setSpectactors (self, spectactors):
+    def setSpectators (self, spectators):
         assert self.status == WAITING_TO_START
-        self.spectactors = spectactors
+        self.spectators = spectators
     
     ############################################################################
     # Board stuff                                                              #
@@ -320,8 +320,8 @@ class GameModel (GObject, PooledThread):
         if self.status == RUNNING:
             for player in self.players:
                 player.setOptionInitialBoard(self)
-            for spectactor in self.spectactors.values():
-                spectactor.setOptionInitialBoard(self)
+            for spectator in self.spectators.values():
+                spectator.setOptionInitialBoard(self)
             
             if self.timemodel:
                 self.timemodel.setMovingColor(self.boards[-1].color)
@@ -366,7 +366,7 @@ class GameModel (GObject, PooledThread):
             return
         self.status = RUNNING
         
-        for player in self.players + self.spectactors.values():
+        for player in self.players + self.spectators.values():
             player.start()
         
         self.emit("game_started")
@@ -425,8 +425,8 @@ class GameModel (GObject, PooledThread):
                 
                 self.emit("game_changed")
                 
-                for spectactor in self.spectactors.values():
-                    spectactor.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
+                for spectator in self.spectators.values():
+                    spectator.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock\n")
                 self.applyingMoveLock.release()
@@ -451,8 +451,8 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.pause()
         try:
-            for spectactor in self.spectactors.values():
-                spectactor.pause()
+            for spectator in self.spectators.values():
+                spectator.pause()
         except NotImplementedError:
             pass
         if self.timemodel:
@@ -461,7 +461,7 @@ class GameModel (GObject, PooledThread):
     @inthread
     def pause (self):
         """ Players will raise NotImplementedError if they doesn't support
-            pause. Spectactors will be ignored. """
+            pause. Spectators will be ignored. """
         
         self.applyingMoveLock.acquire()
         try:
@@ -475,8 +475,8 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.resume()
         try:
-            for spectactor in self.spectactors.values():
-                spectactor.resume()
+            for spectator in self.spectators.values():
+                spectator.resume()
         except NotImplementedError:
             pass
         if self.timemodel:
@@ -521,8 +521,8 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.end(self.status, reason)
         
-        for spectactor in self.spectactors.values():
-            spectactor.end(self.status, reason)
+        for spectator in self.spectators.values():
+            spectator.end(self.status, reason)
         
         if self.timemodel:
             self.timemodel.end()
@@ -536,8 +536,8 @@ class GameModel (GObject, PooledThread):
             for player in self.players:
                 player.end(self.status, self.reason)
             
-            for spectactor in self.spectactors.values():
-                spectactor.end(self.status, self.reason)
+            for spectator in self.spectators.values():
+                spectator.end(self.status, self.reason)
             
             if self.timemodel:
                 self.timemodel.end()
@@ -552,7 +552,7 @@ class GameModel (GObject, PooledThread):
     @undolocked
     def undoMoves (self, moves):
         """ Undo and remove moves number of moves from the game history from
-            the GameModel, players, and any spectactors """
+            the GameModel, players, and any spectators """
         if self.ply < 1 or moves < 1: return
         if self.ply - moves < 0:
             # There is no way in the current threaded/asynchronous design
@@ -576,7 +576,7 @@ class GameModel (GObject, PooledThread):
             
             for player in self.players:
                 player.playerUndoMoves(moves, self)
-            for spectator in self.spectactors.values():
+            for spectator in self.spectators.values():
                 spectator.spectatorUndoMoves(moves, self)
             
             log.debug("GameModel.undoMoves: undoing timemodel\n")

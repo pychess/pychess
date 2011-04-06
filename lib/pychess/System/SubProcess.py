@@ -146,7 +146,7 @@ class SubProcess (gobject.GObject):
                 else: log.debug(line, self.defname)
             
             self.linePublisher.put(line)
-    
+
     def write (self, data):
         if self.channelsClosed:
             log.warn("Chan closed for %r" % data, self.defname)
@@ -158,7 +158,7 @@ class SubProcess (gobject.GObject):
                 self.inChannel.flush()
             except gobject.GError, e:
                 log.error(str(e)+". Last line wasn't sent.\n", self.defname)
-    
+
     def _wait4exit (self):
         try:
             pid, code = os.waitpid(self.pid, 0)
@@ -172,7 +172,8 @@ class SubProcess (gobject.GObject):
     
     def sendSignal (self, sign):
         try:
-            os.kill(self.pid, signal.SIGCONT)
+            if sys.platform != "win32":
+                os.kill(self.pid, signal.SIGCONT)
             os.kill(self.pid, sign)
         except OSError, error:
             if error.errno == errno.ESRCH:
@@ -206,7 +207,8 @@ class SubProcess (gobject.GObject):
         self.sendSignal(signal.SIGSTOP)
     
     def resume (self):
-        self.sendSignal(signal.SIGCONT)
+        if sys.platform != "win32":
+            self.sendSignal(signal.SIGCONT)
     
     def sigkill (self):
         self.sendSignal(signal.SIGKILL)
