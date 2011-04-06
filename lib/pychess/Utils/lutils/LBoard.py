@@ -75,13 +75,16 @@ class LBoard:
         self.pawnhash = 0
         
         ########################################################################
-        #  The format of history is a list of tupples of the following fields  #
+        #  The format of history is a list of tuples of the following fields   #
         #  move:       The move that was applied to get the position           #
         #  tpiece:     The piece the move captured, == EMPTY for normal moves  #
         #  enpassant:  cord which can be captured by enpassant or None         #
         #  castling:   The castling availability in the position               #
         #  hash:       The hash of the position                                #
         #  fifty:      A counter for the fifty moves rule                      #
+        #                                                                      #
+        #  Early entries may be None instead of tuples if the information is   #
+        #  not available (e.g. if the board was loaded from a position).       #
         ########################################################################
         self.history = []
 

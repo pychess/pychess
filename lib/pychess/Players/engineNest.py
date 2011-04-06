@@ -518,27 +518,26 @@ class EngineDiscoverer (GObject, PooledThread):
 discoverer = EngineDiscoverer()
 
 if __name__ == "__main__":
+    import glib, gobject
+    gobject.threads_init()
+    mainloop = glib.MainLoop()
 
-    discoverer = EngineDiscoverer()
+#    discoverer = EngineDiscoverer()
 
-    def discovering_started (discoverer, list):
-        print "discovering_started", list
+    def discovering_started (discoverer, binnames):
+        print "discovering_started", binnames
     discoverer.connect("discovering_started", discovering_started)
 
-    from threading import RLock
-    rlock = RLock()
-
-    def engine_discovered (discoverer, str, object):
-        rlock.acquire()
-        try:
-            print "engine_discovered", str, object.toprettyxml()
-        finally:
-            rlock.release()
+    def engine_discovered (discoverer, binname, engine):
+        sys.stdout.write(".")
     discoverer.connect("engine_discovered", engine_discovered)
 
     def all_engines_discovered (discoverer):
         print "all_engines_discovered"
+        print discoverer.getEngines().keys()
+        mainloop.quit()
     discoverer.connect("all_engines_discovered", all_engines_discovered)
-
+    
     discoverer.start()
-    discoverer.getEngines()
+
+    mainloop.run()

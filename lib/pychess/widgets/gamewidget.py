@@ -319,18 +319,18 @@ class GameWidget (gobject.GObject):
         
         activate_hint = False
         activate_spy = False
-        if HINT in gamemodel.spectactors and not \
+        if HINT in gamemodel.spectators and not \
                 (isinstance(self.gamemodel, ICGameModel) and
                  self.gamemodel.isObservationGame() is False):
             activate_hint = True
-        if SPY in gamemodel.spectactors and not \
+        if SPY in gamemodel.spectators and not \
                 (isinstance(self.gamemodel, ICGameModel) and
                  self.gamemodel.isObservationGame() is False):
             activate_spy = True
         self.menuitems["hint_mode"].active = activate_hint
-        self.menuitems["hint_mode"].sensitive = HINT in gamemodel.spectactors
+        self.menuitems["hint_mode"].sensitive = HINT in gamemodel.spectators
         self.menuitems["spy_mode"].active = activate_spy
-        self.menuitems["spy_mode"].sensitive = SPY in gamemodel.spectactors
+        self.menuitems["spy_mode"].sensitive = SPY in gamemodel.spectators
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:
