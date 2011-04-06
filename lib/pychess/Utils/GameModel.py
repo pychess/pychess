@@ -124,9 +124,9 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("decline", self.declineRecieved))
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
     
-    def setSpectators (self, spectactors):
+    def setSpectators (self, spectators):
         assert self.status == WAITING_TO_START
-        self.spectators = spectactors
+        self.spectators = spectators
     
     ############################################################################
     # Board stuff                                                              #
@@ -320,7 +320,7 @@ class GameModel (GObject, PooledThread):
         if self.status == RUNNING:
             for player in self.players:
                 player.setOptionInitialBoard(self)
-            for spectator in self.spectactors.values():
+            for spectator in self.spectators.values():
                 spectator.setOptionInitialBoard(self)
             
             if self.timemodel:
@@ -425,7 +425,7 @@ class GameModel (GObject, PooledThread):
                 
                 self.emit("game_changed")
                 
-                for spectator in self.spectactors.values():
+                for spectator in self.spectators.values():
                     spectator.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock\n")
@@ -451,7 +451,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.pause()
         try:
-            for spectator in self.spectactors.values():
+            for spectator in self.spectators.values():
                 spectator.pause()
         except NotImplementedError:
             pass
@@ -475,7 +475,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.resume()
         try:
-            for spectator in self.spectactors.values():
+            for spectator in self.spectators.values():
                 spectator.resume()
         except NotImplementedError:
             pass
@@ -521,7 +521,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players:
             player.end(self.status, reason)
         
-        for spectator in self.spectactors.values():
+        for spectator in self.spectators.values():
             spectator.end(self.status, reason)
         
         if self.timemodel:
@@ -536,7 +536,7 @@ class GameModel (GObject, PooledThread):
             for player in self.players:
                 player.end(self.status, self.reason)
             
-            for spectator in self.spectactors.values():
+            for spectator in self.spectators.values():
                 spectator.end(self.status, self.reason)
             
             if self.timemodel:
