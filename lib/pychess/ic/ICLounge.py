@@ -178,7 +178,8 @@ class UserInfoSection(Section):
                 if type(value) == float:
                     value = str(int(value))
                 if is_error:
-                    label = gtk.Label('<span foreground="red">' + value + "</span>")
+                    label = gtk.Label()
+                    label.set_markup('<span size="larger" foreground="red">' + value + "</span>")
                 else:
                     label = gtk.Label(value)
                 label.props.xalign = xalign
