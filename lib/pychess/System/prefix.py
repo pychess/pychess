@@ -61,6 +61,10 @@ def getUserDataPrefix ():
     return join(get_user_data_dir(), pychess)
 def addUserDataPrefix (subpath):
     return join(getUserDataPrefix(), subpath)
+def getEngineDataPrefix ():
+    return join(getUserDataPrefix(), "engines")
+def addEngineDataPrefix (subpath):
+    return join(getEngineDataPrefix(), subpath)
 def getUserConfigPrefix ():
     return join(get_user_config_dir(), pychess)
 def addUserConfigPrefix (subpath):
@@ -70,6 +74,7 @@ def getUserCachePrefix ():
 def addUserCachePrefix (subpath):
     return join(getUserCachePrefix(), subpath)
 
-for directory in (getUserDataPrefix(), getUserConfigPrefix(), getUserCachePrefix()):
+for directory in (getUserDataPrefix(), getEngineDataPrefix(),
+                  getUserConfigPrefix(), getUserCachePrefix()):
     if not isdir(directory):
         makedirs(directory, mode=0700)
