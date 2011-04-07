@@ -18,7 +18,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addUserConfigPrefix
+from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
 from pychess.System.ThreadPool import pool, PooledThread
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
@@ -481,7 +481,8 @@ class EngineDiscoverer (GObject, PooledThread):
             path = vmpath
         
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
+                                getEngineDataPrefix())
         engine = attrToProtocol[protocol](subprocess, color, protover)
         
         if protocol == "uci":
