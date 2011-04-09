@@ -47,7 +47,7 @@ class SubProcess (gobject.GObject):
         "died": (gobject.SIGNAL_RUN_FIRST, None, ())
     }
     
-    def __init__(self, path, args=[], warnwords=[], env=None, chdir=None):
+    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
         gobject.GObject.__init__(self)
         
         self.path = path
