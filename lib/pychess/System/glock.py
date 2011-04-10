@@ -4,7 +4,7 @@ from gtk.gdk import threads_enter, threads_leave
 import time
 from pychess.System.prefix import addUserDataPrefix
 #logfile = open(addUserDataPrefix(time.strftime("%Y-%m-%d_%H-%M-%S") + "-glocks.log"), "w")
-debug = True
+debug = False
 debug_stream = sys.stdout
 gdklocks = {}
 _rlock = RLock()
