@@ -61,7 +61,10 @@ class ThreadPool:
         self.lock.release()
         
     def _getThreadName (self, thread, func):
-        framerecord = inspect.stack()[2]
+        try:
+            framerecord = inspect.stack()[2]
+        except TypeError:
+            return ""
 #        d = os.path.basename(os.path.dirname(framerecord[1]))
         f = os.path.basename(framerecord[1])
 #        f = os.sep.join((d, f))
