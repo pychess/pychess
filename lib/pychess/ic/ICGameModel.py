@@ -63,14 +63,16 @@ class ICGameModel (GameModel):
                     del self.offers[offer]
             self.undoMoves(self.ply-ply)
     
-    def onGameEnded (self, bm, gameno, wname, bname, status, reason):
-        if gameno == self.gameno and len(self.players) >= 2 and \
-            wname == self.players[0].getICHandle() and bname == self.players[1].getICHandle():
-            log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s bname=%s" + \
-                       " status=%s reason=%s: calling self.end()\n") % \
-                      (str(id(self)), repr(self.players), str(gameno), str(wname), str(bname), \
-                       str(status), str(reason)))
-            self.end(status, reason)
+    def onGameEnded (self, bm, ficsgame):
+        if ficsgame.gameno == self.gameno and len(self.players) >= 2 and \
+           ficsgame.wplayer.name == self.players[0].getICHandle() and \
+           ficsgame.bplayer.name == self.players[1].getICHandle():
+            log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s" + \
+                       " bname=%s status=%s reason=%s: calling self.end()\n") % \
+                      (str(id(self)), repr(self.players), str(ficsgame.gameno),
+                       ficsgame.wplayer.name, ficsgame.bplayer.name,
+                       str(ficsgame.result), str(ficsgame.reason)))
+            self.end(ficsgame.result, ficsgame.reason)
     
     def setPlayers (self, players):
         GameModel.setPlayers(self, players)
