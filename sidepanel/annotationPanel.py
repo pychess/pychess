@@ -94,7 +94,7 @@ class Sidepanel(gtk.TextView):
 #                self.board.load_node(ni["node"])
 # TODO
                 try:
-                    self.boardview.shown = self.gamemodel.boards.index(ni["node"])
+                    self.boardview.shown = self.gamemodel.boards.index(ni["node"]) + self.gamemodel.lowply
                 except:
                     print 'TODO: boardview.shown'
                 self.update_selected_node()
@@ -109,7 +109,7 @@ class Sidepanel(gtk.TextView):
             for ni in self.nodeIters:
     # TODO
     #            if ni["node"] == self.board.node:
-                if ni["node"] == self.gamemodel.boards[self.boardview.shown]:
+                if ni["node"] == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
                     start = self.textbuffer.get_iter_at_offset(ni["start"])
                     end = self.textbuffer.get_iter_at_offset(ni["end"])
                     self.textbuffer.apply_tag_by_name("selected", start, end)
@@ -286,7 +286,8 @@ class Sidepanel(gtk.TextView):
             self.insert_header(self.gamemodel)
             if self.gamemodel.comment:
                 self.insert_comment(self.gamemodel.comment)
-            self.insert_nodes(self.gamemodel.boards[self.gamemodel.lowply], result=reprResult[self.gamemodel.status])
+#            self.insert_nodes(self.gamemodel.boards[self.gamemodel.lowply], result=reprResult[self.gamemodel.status])
+            self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
     def game_loaded(self, model, uri):
         self.update()
