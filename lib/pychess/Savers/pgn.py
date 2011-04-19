@@ -328,7 +328,10 @@ class PGNFile (ChessFile):
 
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
-            model.status = self.get_result(gameno)
+            
+            # Apply result from .pgn if the last position was loaded
+            if position == -1 and len(model.moves) == position:
+                model.status = self.get_result(gameno)
 
         if error:
             raise error
