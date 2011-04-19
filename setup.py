@@ -117,7 +117,7 @@ setup (
     name             = NAME,
     version          = VERSION,
     author           = 'Pychess team',
-    author_email     = 'pychess-people at googlegroups com',
+    author_email     = 'pychess-people@googlegroups.com',
     maintainer       = 'Thomas Dybdahl Ahle',
     classifiers      = CLASSIFIERS,
     keywords         = 'python gtk chess xboard gnuchess game pgn epd board linux',
