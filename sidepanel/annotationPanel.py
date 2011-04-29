@@ -286,7 +286,6 @@ class Sidepanel(gtk.TextView):
             self.insert_header(self.gamemodel)
             if self.gamemodel.comment:
                 self.insert_comment(self.gamemodel.comment)
-#            self.insert_nodes(self.gamemodel.boards[self.gamemodel.lowply], result=reprResult[self.gamemodel.status])
             self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
     def game_loaded(self, model, uri):
