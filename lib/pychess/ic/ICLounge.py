@@ -473,7 +473,7 @@ class SeekTabSection (ParrentListSection):
         is_computer = True if "(C)" in seek["title"] else False
         tooltiptext = SeekGraphSection.getSeekTooltipText(seek["w"],
             seek["rt"], is_computer, is_rated, seek["manual"],
-            seek["tp"], seek["t"], seek["i"])
+            seek["tp"], seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
         seek_ = [seek["gameno"], pix, seek["w"], int(seek["rt"]), rated,
                  seek["tp"], time, float(seek["t"] + "." + seek["i"]),
                  textcolor, tooltiptext]
@@ -508,7 +508,7 @@ class SeekTabSection (ParrentListSection):
         is_manual = False
         tooltiptext = SeekGraphSection.getSeekTooltipText(match["w"],
             match["rt"], is_computer, is_rated, is_manual, match["tp"],
-            match["t"], match["i"])
+            match["t"], match["i"], rmin=match["rmin"], rmax=match["rmax"])
         ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
                                   int(match["rt"]), rated, match["tp"], time,
                                   float(match["t"] + "." + match["i"]),
@@ -628,7 +628,7 @@ class SeekGraphSection (ParrentListSection):
 
     @classmethod
     def getSeekTooltipText (cls, name, rating, is_computer, is_rated, is_manual,
-                            gametype, min, gain):
+                            gametype, min, gain, rmin=0, rmax=9999):
         if int(rating) == 0:
             rating = _("Unrated")
         text = "%s (%s)" % (name, rating)
@@ -637,6 +637,9 @@ class SeekGraphSection (ParrentListSection):
         rated = _("Rated") if is_rated else _("Unrated")
         text += "\n%s %s" % (rated, gametype)
         text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': min, 'sec': gain}
+        rrtext = SeekChallengeSection.getRatingRangeDisplayText(rmin, rmax)
+        if rrtext:
+            text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
         if is_manual:
             text += "\n%s" % _("Manual Acceptance")
         return text
@@ -647,7 +650,8 @@ class SeekGraphSection (ParrentListSection):
         type = seek["r"] == "u" and 1 or 0
         is_rated = False if seek["r"] == "u" else True
         text = self.getSeekTooltipText(seek["w"], seek["rt"], seek["cp"], is_rated,
-                                       seek["manual"], seek["tp"], seek["t"], seek["i"])
+                                       seek["manual"], seek["tp"], seek["t"],
+                                       seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
@@ -1283,6 +1287,21 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["challengeButton"].set_sensitive(isAnythingSelected)
     
     #-------------------------------------------------------- Seek Editor
+    @staticmethod
+    def getRatingRangeDisplayText (rmin=0, rmax=9999):
+        assert type(rmin) is type(int()) and rmin >= 0 and rmin <= 9999, rmin
+        assert type(rmax) is type(int()) and rmax >= 0 and rmax <= 9999, rmax
+        if rmin > 0:
+            text = "%d" % rmin
+            if rmax == 9999:
+                text += "↑"
+            else:
+                text += "-%d" % rmax
+        elif rmax != 9999:
+            text = "%d↓" % rmax
+        else:
+            text = None
+        return text
     
     def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
@@ -1303,15 +1322,9 @@ class SeekChallengeSection (ParrentListSection):
         if variant != NORMALCHESS and not isUntimedGame:
             seek["variant"] = "%s" % variants[variant].name
         
-        if ratingrange[0] > 0:
-            ratingText = "%d" % ratingrange[0]
-            if ratingrange[1] == 9999:
-                ratingText += "↑"
-            else:
-                ratingText += "-%d" % ratingrange[1]
-            seek["rating"] = ratingText
-        elif ratingrange[1] != 9999:
-            seek["rating"] = "%d↓" % ratingrange[1]
+        rrtext = self.getRatingRangeDisplayText(ratingrange[0], ratingrange[1])
+        if rrtext:
+            seek["rating"] = rrtext
         
         if color == WHITE:
             seek["color"] = _("White")

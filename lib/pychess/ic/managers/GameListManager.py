@@ -234,6 +234,8 @@ class GameListManager (GObject):
                 seek[key] = convertName(value)
             if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
+                seek["rmin"] = int(seek["rmin"])
+                seek["rmax"] = int(seek["rmax"])                
             elif key == "ti":
                 seek["cp"] = bool(int(value) & 2) # 0x2 - computer
                 title = ""
