@@ -933,12 +933,12 @@ class GameTabSection (ParrentListSection):
         for path in paths:
             rowiter = model.get_iter(path)
             if gameno == model.get_value(rowiter, 0):
-                gametype = model.get_value(rowiter, 4)
+                gametype = model.get_value(rowiter, 6)
                 if not _("Private") in gametype:
                     gametype += ", " + _("Private")
                     childmodel = model.get_model()
                     childrowiter = model.convert_iter_to_child_iter(None, rowiter)
-                    childmodel.set_value(childrowiter, 4, gametype)
+                    childmodel.set_value(childrowiter, 6, gametype)
                 break
 
     def onGameRemove (self, gameno):
