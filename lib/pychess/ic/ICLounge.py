@@ -862,6 +862,10 @@ class GameTabSection (ParrentListSection):
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
 
+        self.selection = self.tv.get_selection()
+        self.selection.connect("changed", self.onSelectionChanged)
+        self.onSelectionChanged(self.selection)
+
         def typeCompareFunction (treemodel, iter0, iter1):
             return cmp (treemodel.get_value(iter0, 5),
                         treemodel.get_value(iter1, 5))
@@ -896,6 +900,11 @@ class GameTabSection (ParrentListSection):
 
         self.connection.bm.connect("obsGameUnobserved", lambda bm, gameno:
                 self.listPublisher.put((self.onGameUnobserved, gameno)) )
+
+    def onSelectionChanged (self, selection):
+        numrows = selection.count_selected_rows()
+        a_row_is_selected = True if numrows > 0 else False
+        self.widgets["observeButton"].set_sensitive(a_row_is_selected)
 
     def onGameAdd (self, ficsgame):
         gametype = ficsgame.game_type.display_text
