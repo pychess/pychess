@@ -92,9 +92,6 @@ class Human (Player):
         if self.gamemodel.timemodel:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
     
-    def getICHandle (self):
-        return self.ichandle
-    
     #===========================================================================
     #    Handle signals from the board
     #===========================================================================
