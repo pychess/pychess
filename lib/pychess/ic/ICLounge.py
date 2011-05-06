@@ -867,9 +867,9 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         def typeCompareFunction (treemodel, iter0, iter1):
-            return cmp (treemodel.get_value(iter0, 5),
-                        treemodel.get_value(iter1, 5))
-        self.tv.get_model().set_sort_func(4, typeCompareFunction)
+            return cmp (treemodel.get_value(iter0, 7),
+                        treemodel.get_value(iter1, 7))
+        self.tv.get_model().set_sort_func(6, typeCompareFunction)
 
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
@@ -885,19 +885,14 @@ class GameTabSection (ParrentListSection):
 
         self.connection.glm.connect("addGame", lambda glm, ficsgame:
                 self.listPublisher.put((self.onGameAdd, ficsgame)) )
-
         self.connection.glm.connect("removeGame", lambda glm, ficsgame:
                 self.listPublisher.put((self.onGameRemove, ficsgame.gameno)) )
-
         self.connection.bm.connect("wasPrivate", lambda bm, game:
                 self.listPublisher.put((self.onWasPrivate, game)) )
-
         self.widgets["observeButton"].connect ("clicked", self.onObserveClicked)
         self.tv.connect("row-activated", self.onObserveClicked)
-
         self.connection.bm.connect("obsGameCreated", lambda bm, ficsgame:
                 self.listPublisher.put((self.onGameObserved, ficsgame)) )
-
         self.connection.bm.connect("obsGameUnobserved", lambda bm, gameno:
                 self.listPublisher.put((self.onGameUnobserved, gameno)) )
 
