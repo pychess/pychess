@@ -651,7 +651,7 @@ class SeekGraphSection (ParrentListSection):
         if rrtext:
             text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
         if is_manual:
-            text += "\n%s" % _("Manual Acceptance")
+            text += "\n%s" % _("Manual Accept")
         return text
     
     def onSeekAdd (self, seek):
