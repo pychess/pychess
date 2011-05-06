@@ -69,8 +69,8 @@ class ICPlayer (Player):
             (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
-            and wname == self.gamemodel.players[0].getICHandle() \
-            and bname == self.gamemodel.players[1].getICHandle():
+            and wname == self.gamemodel.players[0].ichandle \
+            and bname == self.gamemodel.players[1].ichandle:
             log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move\n" % \
                 (id(self), self, gameno))
             

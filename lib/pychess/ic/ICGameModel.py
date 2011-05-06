@@ -39,8 +39,8 @@ class ICGameModel (GameModel):
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s\n") % \
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname), \
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
-        if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
-           or bname != self.players[1].getICHandle():
+        if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].ichandle \
+           or bname != self.players[1].ichandle:
             return
         log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply\n" % \
             (id(self), str(self.players)))
@@ -65,8 +65,8 @@ class ICGameModel (GameModel):
     
     def onGameEnded (self, bm, ficsgame):
         if ficsgame.gameno == self.gameno and len(self.players) >= 2 and \
-           ficsgame.wplayer.name == self.players[0].getICHandle() and \
-           ficsgame.bplayer.name == self.players[1].getICHandle():
+           ficsgame.wplayer.name == self.players[0].ichandle and \
+           ficsgame.bplayer.name == self.players[1].ichandle:
             log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s" + \
                        " bname=%s status=%s reason=%s: calling self.end()\n") % \
                       (str(id(self)), repr(self.players), str(ficsgame.gameno),
