@@ -852,7 +852,7 @@ class GameTabSection (ParrentListSection):
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
 
         self.tv = self.widgets["gametreeview"]
-        self.store = gtk.ListStore(str, gtk.gdk.Pixbuf, str, int, str, int, str, int)
+        self.store = gtk.ListStore(int, gtk.gdk.Pixbuf, str, int, str, int, str, int)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.addColumns (
