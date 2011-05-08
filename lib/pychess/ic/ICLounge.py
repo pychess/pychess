@@ -1819,51 +1819,66 @@ class CreatedBoards (Section):
         self.connection.gamesinprogress.connect("FICSObsGameCreated", self.onObserveGameCreated)
 
     def onGameCreated (self, bm, ficsgame):
-        log.debug("ICLounge.playBoardCreated: %s\n" % ficsgame)
+        log.debug("ICLounge.onGameCreated: %s\n" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:
-            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc, bsecs=ficsgame.board.bms/1000.)
-        game = ICGameModel (self.connection, ficsgame.gameno, timemodel, variants[ficsgame.variant], ficsgame.rated)
-        game.connect("game_started", lambda gamemodel: self.connection.bm.onGameModelStarted(ficsgame.gameno))
-
+            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
+                                   bsecs=ficsgame.board.bms/1000.)
+        gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
+        gamemodel.connect("game_started", lambda gamemodel:
+                     self.connection.bm.onGameModelStarted(ficsgame.gameno))
+        
         if ficsgame.wplayer.name.lower() == self.connection.getUsername().lower():
-            player0tup = (LOCAL, Human, (WHITE, "", ficsgame.wplayer.name), _("Human"),
-                          str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
-            player1tup = (REMOTE, ICPlayer, (game, ficsgame.bplayer.name, ficsgame.gameno, BLACK), ficsgame.bplayer.name,
-                          str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
+            player0tup = (LOCAL, Human, (WHITE, "", ficsgame.wplayer.name,
+                          ficsgame.wplayer.getRatingForCurrentGame()), _("Human"),
+                          ficsgame.wplayer.getRatingForCurrentGame(),
+                          ficsgame.wplayer.getTitles())
+            player1tup = (REMOTE, ICPlayer, (gamemodel, ficsgame.bplayer.name,
+                ficsgame.gameno, BLACK, ficsgame.bplayer.getRatingForCurrentGame()),
+                ficsgame.bplayer.name, ficsgame.bplayer.getRatingForCurrentGame(),
+                ficsgame.bplayer.getTitles())
         else:
-            player1tup = (LOCAL, Human, (BLACK, "", ficsgame.bplayer.name), _("Human"),
-                          str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
+            player1tup = (LOCAL, Human, (BLACK, "", ficsgame.bplayer.name,
+                          ficsgame.bplayer.getRatingForCurrentGame()), _("Human"),
+                          ficsgame.bplayer.getRatingForCurrentGame(),
+                          ficsgame.bplayer.getTitles())
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
-            player0 = ICPlayer(game, ficsgame.wplayer.name, ficsgame.gameno, WHITE)
+            player0 = ICPlayer(gamemodel, ficsgame.wplayer.name, ficsgame.gameno, WHITE,
+                               icrating=ficsgame.wplayer.getRatingForCurrentGame())
             player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
-                          str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
-
+                          ficsgame.wplayer.getRatingForCurrentGame(),
+                          ficsgame.wplayer.getTitles())
+        
         if not ficsgame.board.fen:
-            ionest.generalStart(game, player0tup, player1tup)
+            ionest.generalStart(gamemodel, player0tup, player1tup)
         else:
-            ionest.generalStart(game, player0tup, player1tup,
+            ionest.generalStart(gamemodel, player0tup, player1tup,
                                 (StringIO(ficsgame.board.fen), fen, 0, -1))
 
     def onObserveGameCreated (self, bm, ficsgame):
+        log.debug("ICLounge.onObserveGameCreated: %s\n" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:
-            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc, ficsgame.board.bms/1000.)
-        game = ICGameModel (self.connection, ficsgame.gameno, timemodel, variants[ficsgame.variant], ficsgame.rated)
-        game.connect("game_started", lambda gamemodel: self.connection.bm.onGameModelStarted(ficsgame.gameno))
-
+            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
+                                   ficsgame.board.bms/1000.)
+        gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
+        gamemodel.connect("game_started", lambda gamemodel:
+                     self.connection.bm.onGameModelStarted(ficsgame.gameno))
+        
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
-        player0 = ICPlayer(game, ficsgame.wplayer.name, ficsgame.gameno, WHITE)
-        player1 = ICPlayer(game, ficsgame.bplayer.name, ficsgame.gameno, BLACK)
-
+        player0 = ICPlayer(gamemodel, ficsgame.wplayer.name, ficsgame.gameno, WHITE)
+        player1 = ICPlayer(gamemodel, ficsgame.bplayer.name, ficsgame.gameno, BLACK)
+        
         player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
-                      str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
+                      ficsgame.wplayer.getRatingForCurrentGame(),
+                      ficsgame.wplayer.getTitles())
         player1tup = (REMOTE, lambda:player1, (), ficsgame.bplayer.name,
-                      str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
-
-        ionest.generalStart(game, player0tup, player1tup,
+                      ficsgame.bplayer.getRatingForCurrentGame(),
+                      ficsgame.bplayer.getTitles())
+        
+        ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
