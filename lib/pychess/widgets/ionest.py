@@ -182,7 +182,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
         gamemodel.start()
 
-    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel={ %s }\n" % \
+    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s\n" % \
         (gmwidg, gamemodel))
     return gmwidg, gamemodel
 
