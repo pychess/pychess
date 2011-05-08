@@ -113,6 +113,8 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
+        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s\n" % \
+            (id(self), self, move, board1, board2))
         if board2 and not self.gamemodel.isObservationGame():
             self.connection.bm.sendMove (toAN (board2, move))
         

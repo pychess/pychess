@@ -107,13 +107,17 @@ class GameModel (GObject, PooledThread):
         self.undoQueue = Queue.Queue()
     
     def __repr__ (self):
-        s = ""
-        s += "ply=%s" % str(self.ply)
+        s = "<GameModel at %s" % id(self)
+        s += " (ply=%s" % self.ply
+        if len(self.moves) > 0:
+            s += ", move=%s" % self.moves[-1]
+        s += ", variant=%s" % self.variant.name
         s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
         s += ", players=%s" % str(self.players)
+        s += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
-            s += ", %s" % self.boards[-1]
-        return s
+            s += "\nboard=%s" % self.boards[-1]
+        return s + ")>"
     
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
@@ -361,6 +365,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def run (self):
+        log.debug("GameModel.run: Starting. self=%s\n" % self)
         # Avoid racecondition when self.start is called while we are in self.end
         if self.status != WAITING_TO_START:
             return
@@ -369,6 +374,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players + self.spectators.values():
             player.start()
         
+        log.debug("GameModel.run: emitting 'game_started' self=%s\n" % self)
         self.emit("game_started")
         
         while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
@@ -448,6 +454,7 @@ class GameModel (GObject, PooledThread):
             self.emit("game_unended")
    
     def __pause (self):
+        log.debug("GameModel.__pause: %s\n" % self)
         for player in self.players:
             player.pause()
         try:

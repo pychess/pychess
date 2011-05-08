@@ -133,7 +133,8 @@ class Human (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, %s %s\n" % (move, board1, board2))
+        log.debug("Human.makeMove: move=%s, board1=%s board2=%s\n" % \
+            (move, board1, board2))
         self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
