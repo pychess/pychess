@@ -920,9 +920,9 @@ class GameTabSection (ParrentListSection):
 #               str(ficsgame.bplayer.name + ficsgame.bplayer.getTitles()), str(brating), type(brating), str(gametype), type(gametype), str(length))
         ti = self.store.append ([ficsgame.gameno, self.clearpix,
                                  ficsgame.wplayer.name + ficsgame.wplayer.getTitles(),
-                                 ficsgame.wplayer.getGameRating() or 0,
+                                 ficsgame.wplayer.getRatingForCurrentGame() or 0,
                                  ficsgame.bplayer.name + ficsgame.bplayer.getTitles(),
-                                 ficsgame.bplayer.getGameRating() or 0, gametype, length])
+                                 ficsgame.bplayer.getRatingForCurrentGame() or 0, gametype, length])
         self.games[ficsgame.gameno] = ti
         count = len(self.games)
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
@@ -1780,17 +1780,17 @@ class CreatedBoards (Section):
 
         if ficsgame.wplayer.name.lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, "", ficsgame.wplayer.name), _("Human"),
-                          str(ficsgame.wplayer.getGameRating() or ""), ficsgame.wplayer.getTitles())
+                          str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
             player1tup = (REMOTE, ICPlayer, (game, ficsgame.bplayer.name, ficsgame.gameno, BLACK), ficsgame.bplayer.name,
-                          str(ficsgame.bplayer.getGameRating() or ""), ficsgame.bplayer.getTitles())
+                          str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
         else:
             player1tup = (LOCAL, Human, (BLACK, "", ficsgame.bplayer.name), _("Human"),
-                          str(ficsgame.bplayer.getGameRating() or ""), ficsgame.wplayer.getTitles())
+                          str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
             player0 = ICPlayer(game, ficsgame.wplayer.name, ficsgame.gameno, WHITE)
             player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
-                          str(ficsgame.wplayer.getGameRating() or ""), ficsgame.bplayer.getTitles())
+                          str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
 
         if not ficsgame.board.fen:
             ionest.generalStart(game, player0tup, player1tup)
@@ -1812,9 +1812,9 @@ class CreatedBoards (Section):
         player1 = ICPlayer(game, ficsgame.bplayer.name, ficsgame.gameno, BLACK)
 
         player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
-                      str(ficsgame.wplayer.getGameRating() or ""), ficsgame.wplayer.getTitles())
+                      str(ficsgame.wplayer.getRatingForCurrentGame() or ""), ficsgame.wplayer.getTitles())
         player1tup = (REMOTE, lambda:player1, (), ficsgame.bplayer.name,
-                      str(ficsgame.bplayer.getGameRating() or ""), ficsgame.bplayer.getTitles())
+                      str(ficsgame.bplayer.getRatingForCurrentGame() or ""), ficsgame.bplayer.getTitles())
 
         ionest.generalStart(game, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
