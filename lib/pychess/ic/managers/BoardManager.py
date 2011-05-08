@@ -3,8 +3,8 @@ from gobject import *
 import threading
 
 from pychess.System.Log import log
+from pychess.Savers.pgn import msToClockTimeTag
 from pychess.Utils.const import *
-from pychess.Variants import variants
 from pychess.ic import *
 from pychess.ic.VerboseTelnet import *
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard
@@ -13,17 +13,22 @@ names = "(\w+)"
 titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
 ratings = "\(([-0-9 +]+|UNR)\)"
+
+weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
+months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+# "Thu Oct 14, 20:36 PDT 2010"
+dates = "(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
+    ("|".join(weekdays), "|".join(months))
+
+moveListHeader1Str = "%s %s vs. %s %s --- %s" % (names, ratings, names, ratings, dates)
+moveListHeader1 = re.compile(moveListHeader1Str)
+moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
+    ratedexp
+moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
-
-moveListNames = re.compile("%s %s vs. %s %s --- .*" %
-        (names, ratings, names, ratings))
-
-moveListOther = re.compile(
-        "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." %
-        ratedexp, re.IGNORECASE)
-
-moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +\(\d+:[\d\.]+\) *(?:%s +\(\d+:[\d\.]+\))?" %
-        (sanmove, sanmove))
+movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
+moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
+    (sanmove, movetime, sanmove, movetime))
 
 fileToEpcord = (("a3","b3","c3","d3","e3","f3","g3","h3"),
                 ("a6","b6","c6","d6","e6","f6","g6","h6"))
@@ -36,11 +41,100 @@ relations = { "-4": IC_POS_INITIAL,
                "1": IC_POS_ME_TO_MOVE,
                "0": IC_POS_OBSERVING }
 
-# TODO: Fischer and other wild
-#Creating: Lobais (----) GuestGFDC (++++) unrated wild/fr 2 12
-#{Game 155 (Lobais vs. GuestGFDC) Creating unrated wild/fr match.}
-
-#<12> bqrknbnr pppppppp -------- -------- -------- -------- PPPPPPPP BQRKNBNR W -1 1 1 1 1 0 155 Lobais GuestGFDC 1 2 12 39 39 120 120 1 none (0:00) none 0 0 0
+def parse_reason (result, reason, wname=None):
+    """
+    Parse the result value and reason line string for the reason and return
+    the result and reason the game ended.
+    
+    result -- The result of the game, if known. It can be "None", but if it
+    is "DRAW", then wname must be supplied
+    """
+    if result in (WHITEWON, BLACKWON):
+        if "resigns" in reason:
+            reason = WON_RESIGN
+        elif "disconnection" in reason:
+            reason = WON_DISCONNECTION
+        elif "time" in reason:
+            reason = WON_CALLFLAG
+        elif "checkmated" in reason:
+            reason = WON_MATE
+        elif "adjudication" in reason:
+            reason = WON_ADJUDICATION
+        else:
+            reason = UNKNOWN_REASON
+    elif result == DRAW:
+        assert wname is not None
+        if "repetition" in reason:
+            reason = DRAW_REPITITION
+        elif "material" in reason and "time" in reason:
+            if (wname + " ran out of time").lower() in reason:
+                reason = DRAW_BLACKINSUFFICIENTANDWHITETIME
+            else:
+                reason = DRAW_WHITEINSUFFICIENTANDBLACKTIME
+        elif "material" in reason:
+            reason = DRAW_INSUFFICIENT
+        elif "time" in reason:
+            reason = DRAW_CALLFLAG
+        elif "agreement" in reason:
+            reason = DRAW_AGREE
+        elif "stalemate" in reason:
+            reason = DRAW_STALEMATE
+        elif "50" in reason:
+            reason = DRAW_50MOVES
+        elif "length" in reason:
+            # FICS has a max game length on 800 moves
+            reason = DRAW_LENGTH
+        elif "adjudication" in reason:
+            reason = DRAW_ADJUDICATION
+        else:
+            reason = UNKNOWN_REASON
+    elif result == ADJOURNED or "adjourned" in reason:
+        result = ADJOURNED
+        if "courtesy" in reason:
+            if "white" in reason:
+                reason = ADJOURNED_COURTESY_WHITE
+            else:
+                reason = ADJOURNED_COURTESY_BLACK
+        elif "agreement" in reason:
+            reason = ADJOURNED_AGREEMENT
+        elif "connection" in reason:
+            if "white" in reason:
+                reason = ADJOURNED_LOST_CONNECTION_WHITE
+            elif "black" in reason:
+                reason = ADJOURNED_LOST_CONNECTION_BLACK
+            else:
+                reason = ADJOURNED_LOST_CONNECTION
+        elif "server" in reason:
+            reason = ADJOURNED_SERVER_SHUTDOWN
+        else:
+            reason = UNKNOWN_REASON
+    elif "aborted" in reason:
+        result = ABORTED
+        if "agreement" in reason:
+            reason = ABORTED_AGREEMENT
+        elif "moves" in reason:
+            # lost connection and too few moves; game aborted *
+            reason = ABORTED_EARLY
+        elif "move" in reason:
+            # Game aborted on move 1 *
+            reason = ABORTED_EARLY
+        elif "shutdown" in reason:
+            reason = ABORTED_SERVER_SHUTDOWN
+        elif "adjudication" in reason:
+            reason = ABORTED_ADJUDICATION
+        else:
+            reason = UNKNOWN_REASON
+    elif "courtesyadjourned" in reason:
+        result = ADJOURNED
+        reason = ADJOURNED_COURTESY
+    elif "courtesyaborted" in reason:
+        result = ABORTED
+        reason = ABORTED_COURTESY
+    else:
+        result = UNKNOWN_STATE
+        reason = UNKNOWN_REASON
+    
+    return result, reason
 
 class BoardManager (GObject):
     
@@ -56,7 +150,10 @@ class BoardManager (GObject):
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (str,)),
     }
-
+    
+    castleSigns = {}
+    queuedStyle12s = {}
+    
     def __init__ (self, connection):
         GObject.__init__(self)
         
@@ -91,11 +188,9 @@ class BoardManager (GObject):
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
         
-        self.queuedStyle12s = {}
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
         self.ourGameno = ""
-        self.castleSigns = {}
         
         # The ms ivar makes the remaining second fields in style12 use ms
         self.connection.lvm.setVariable("ms", True)
@@ -117,7 +212,8 @@ class BoardManager (GObject):
         # We don't use deltamoves as fisc won't send them with variants
         #self.connection.lvm.setVariable("compressmove", True)
     
-    def __parseStyle12 (self, line, castleSigns=None):
+    @classmethod
+    def parseStyle12 (cls, line, castleSigns=None):
         fields = line.split()
         
         curcol = fields[8] == "B" and BLACK or WHITE
@@ -199,7 +295,7 @@ class BoardManager (GObject):
         
         castleSigns = self.castleSigns[gameno]
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.__parseStyle12(style12, castleSigns)
+                self.parseStyle12(style12, castleSigns)
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
     def onGameModelStarted (self, gameno):
@@ -216,7 +312,8 @@ class BoardManager (GObject):
         decliner, = match.groups()
         self.emit("matchDeclined", decliner)
     
-    def __generateCastleSigns (self, style12, game_type):
+    @classmethod
+    def generateCastleSigns (cls, style12, game_type):
         if game_type.variant_type == FISCHERRANDOMCHESS:
             backrow = style12.split()[0]
             leftside = backrow.find("r")
@@ -225,9 +322,10 @@ class BoardManager (GObject):
         else:
             return ("k", "q")
     
-    def __parseDigits(self, rating):
+    @staticmethod
+    def parseRating (rating):
         if rating:
-            m = re.match("[0-9]+", rating)
+            m = re.match("[0-9]{2,}", rating)
             if m: return m.group(0)
             else: return None
         else: return None
@@ -237,91 +335,230 @@ class BoardManager (GObject):
         gameno, wname, bname, rated, type = matchlist[1].groups()
         style12 = matchlist[-1].groups()[0]
         gameno = int(gameno)
+        wrating = self.parseRating(wrating)
+        brating = self.parseRating(brating)
         rated = rated == "rated"
         game_type = GAME_TYPES[type]
-        castleSigns = self.__generateCastleSigns(style12, game_type)
         
+        castleSigns = self.generateCastleSigns(style12, game_type)
         self.castleSigns[gameno] = castleSigns
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.__parseStyle12(style12, castleSigns)
+                self.parseStyle12(style12, castleSigns)
         
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        game_type=game_type, min=int(min), inc=int(inc),
+        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname),
+                        rated=rated, game_type=game_type, min=int(min), inc=int(inc),
                         board=FICSBoard(wms, bms, fen=fen))
+        if wrating:
+            game.wplayer.addRating(game_type.rating_type, int(wrating))
+        if brating:
+            game.bplayer.addRating(game_type.rating_type, int(brating))
         
         self.ourGameno = gameno
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.gamemodelStartedEvents[gameno].clear()
         self.emit("gameCreated", game)
     
-    def onObserveGameCreated (self, matchlist):
-        # Get info from match
-        gameno = int(matchlist[0].groups()[0])
-        wname, wrating, bname, brating = moveListNames.match(matchlist[2]).groups()
+    @classmethod
+    def parseGame (cls, matchlist, in_progress=False):
+        """ 
+        Parses the header and movelist for an observed or stored game from its
+        re matchlist and returns a board dictionary.
         
-        rated, type, min, inc = moveListOther.match(matchlist[3]).groups()
+        in_progress - should be True for an observed game matchlist, and False
+        for stored/adjourned games
+        """
+        #################   observed game movelist example:
+        #        Movelist for game 64:
+        #        
+        #        Ajido (2281) vs. IMgooeyjim (2068) --- Thu Oct 14, 20:36 PDT 2010
+        #        Rated standard match, initial time: 15 minutes, increment: 3 seconds.
+        #        
+        #        Move  Ajido                   IMgooeyjim         
+        #        ----  ---------------------   ---------------------
+        #          1.  d4      (0:00.000)      Nf6     (0:00.000)   
+        #          2.  c4      (0:04.061)      g6      (0:00.969)   
+        #          3.  Nc3     (0:13.280)      Bg7     (0:06.422)   
+        #              {Still in progress} *
+        #
+        ##################   stored game example:
+        #        BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008
+        #        Rated blitz match, initial time: 5 minutes, increment: 0 seconds.
+        #
+        #        Move  BwanaSlei               mgatto
+        #        ----  ---------------------   ---------------------
+        #        1.  e4      (0:00.000)      c5      (0:00.000)
+        #        2.  d4      (0:05.750)      cxd4    (0:03.020)
+        #        ...
+        #        23.  Qxf3    (1:05.500)
+        #             {White lost connection; game adjourned} *
+        #
+        ################## stored wild/3 game with style12:
+        #        kurushi (1626) vs. mgatto (1627) --- Thu Nov  4, 10:33 PDT 2010
+        #        Rated wild/3 match, initial time: 3 minutes, increment: 0 seconds.
+        #        
+        #        <12> nqbrknrn pppppppp -------- -------- -------- -------- PPPPPPPP NQBRKNRN W -1 0 0 0 0 0 17 kurushi mgatto -4 3 0 39 39 169403 45227 1 none (0:00.000) none 0 1 0
+        #        
+        #        Move  kurushi                 mgatto             
+        #        ----  ---------------------   ---------------------
+        #          1.  Nb3     (0:00.000)      d5      (0:00.000)   
+        #          2.  Nhg3    (0:00.386)      e5      (0:03.672)   
+        #         ...
+        #         28.  Rxd5    (0:00.412)   
+        #              {Black lost connection; game adjourned} *
+        #                
+        ##################  stored game movelist following stored game(s):
+        #        Stored games for mgatto:
+        #        C Opponent       On Type          Str  M    ECO Date
+        #        1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010
+        #        2: W gbtami          N [ wr  5   0] 32-34 W14  --- Thu Oct 21, 00:14 PDT 2010
+        #        
+        #        mgatto (1233) vs. BabyLurking (1455) --- Fri Nov  5, 04:33 PDT 2010
+        #        Rated blitz match, initial time: 5 minutes, increment: 0 seconds.
+        #        
+        #        Move  mgatto             BabyLurking
+        #        ----  ----------------   ----------------
+        #        1.  Nf3     (0:00)     d5      (0:00)
+        #        2.  d4      (0:03)     Nf6     (0:00)
+        #        3.  c4      (0:03)     e6      (0:00)
+        #        {White lost connection; game adjourned} *
+        #
+        ################### stored game movelist following stored game(s):
+        ###   Note: A wild stored game in this format won't be parseable into a board because
+        ###   it doesn't come with a style12 that has the start position, so we warn and return
+        ###################
+        #        Stored games for mgatto:
+        #        C Opponent       On Type          Str  M    ECO Date
+        #        1: W gbtami          N [ wr  5   0] 32-34 W14  --- Thu Oct 21, 00:14 PDT 2010
+        #        
+        #        mgatto (1627) vs. gbtami (1881) --- Thu Oct 21, 00:10 PDT 2010
+        #        Rated wild/fr match, initial time: 5 minutes, increment: 0 seconds.
+        #        
+        #        Move  mgatto             gbtami
+        #        ----  ----------------   ----------------
+        #        1.  d4      (0:00)     b6      (0:00)
+        #        2.  b3      (0:06)     d5      (0:03)
+        #        3.  c4      (0:08)     e6      (0:03)
+        #        4.  e3      (0:04)     dxc4    (0:02)
+        #        5.  bxc4    (0:02)     g6      (0:09)
+        #        6.  Nd3     (0:12)     Bg7     (0:02)
+        #        7.  Nc3     (0:10)     Ne7     (0:03)
+        #        8.  Be2     (0:08)     c5      (0:05)
+        #        9.  a4      (0:07)     cxd4    (0:38)
+        #        10.  exd4    (0:06)     Bxd4    (0:03)
+        #        11.  O-O     (0:10)     Qc6     (0:06)
+        #        12.  Bf3     (0:16)     Qxc4    (0:04)
+        #        13.  Bxa8    (0:03)     Rxa8    (0:14)
+        #        {White lost connection; game adjourned} *
+        #
+        ##################   other reasons the game could be stored/adjourned:
+        #        Game courtesyadjourned by (Black|White)
+        #        Still in progress                    # This one must be a FICS bug
+        #        Game adjourned by mutual agreement
+        #        (White|Black) lost connection; game adjourned
+        #        Game adjourned by ((server shutdown)|(adjudication)|(simul holder))
         
-        game_type = GAME_TYPES[type]
+        index = 0
+        if in_progress:
+            gameno = int(matchlist[index].groups()[0])
+            index += 2
+        header1 = matchlist[index] if isinstance(matchlist[index], str) \
+            else matchlist[index].group()
+        wname, wrating, bname, brating, weekday, month, day, hour, minute, \
+            timezone, year =  moveListHeader1.match(header1).groups()
+        wrating = cls.parseRating(wrating)
+        brating = cls.parseRating(brating)
+        rated, game_type, minutes, increment = \
+            moveListHeader2.match(matchlist[index+1]).groups()
+        game_type = GAME_TYPES[game_type]
+        reason = matchlist[-1].group().lower()
+        result = None if in_progress else ADJOURNED
+        result, reason = parse_reason(result, reason)
         
-        if matchlist[5].startswith("<12>"):
-            style12 = matchlist[5][5:]
-            castleSigns = self.__generateCastleSigns(style12, game_type)
-            gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                    self.__parseStyle12(style12, castleSigns)
+        index += 3
+        if matchlist[index].startswith("<12>"):
+            style12 = matchlist[index][5:]
+            castleSigns = cls.generateCastleSigns(style12, game_type)
+            gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, \
+                fen = cls.parseStyle12(style12, castleSigns)
             initialfen = fen
-            movesstart = 9
+            movesstart = index + 4
         else:
+            if game_type.rating_type == TYPE_WILD:
+                # we need a style12 start position to correctly parse a wild/* board
+                log.error("BoardManager.parseGame: no style12 for %s board.\n" % game_type.fics_name)
+                return None
             castleSigns = ("k", "q")
             initialfen = None
-            movesstart = 7
+            movesstart = index + 2
         
-        self.castleSigns[gameno] = castleSigns
+        if in_progress:
+            cls.castleSigns[gameno] = castleSigns
         
         moves = {}
-        for moveline in matchlist[movesstart:-1]:
-            match = moveListMoves.match(moveline)
-            if not match:
-                log.error("Line %s could not be macthed by regexp" % moveline)
-                continue
-            moveno, wmove, bmove = match.groups()
+        wms = bms = int(minutes) * 60 * 1000
+        for line in matchlist[movesstart:-1]:
+            if not moveListMoves.match(line):
+                log.error("BoardManager.parseGame: unmatched line: \"%s\"\n" % \
+                          repr(line))
+                raise
+            moveno, wmove, wmin, wsec, wmsec, bmove, bmin, bsec, bmsec = \
+                moveListMoves.match(line).groups()
             ply = int(moveno)*2-2
+            # TODO: add {[%emt 3.889]} move time PGN tags to each move
             if wmove:
                 moves[ply] = wmove
+                wms -= (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
+                if wmsec is not None:
+                    wms -= int(wmsec)
             if bmove:
                 moves[ply+1] = bmove
+                bms -= (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
+                if bmsec is not None:
+                    bms -= int(bmsec)
         
-        # Apply queued board updates
-        for style12 in self.queuedStyle12s[gameno]:
-            gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                    self.__parseStyle12(style12, castleSigns)
-            if lastmove == None:
-                continue
-            moves[ply-1] = lastmove
-            # Updated the queuedMoves in case there has been a takeback
-            for moveply in moves.keys():
-                if moveply > ply-1:
-                    del moves[moveply]
-                
-        # Create game
+        if in_progress:
+            # Apply queued board updates
+            for style12 in cls.queuedStyle12s[gameno]:
+                gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
+                        cls.parseStyle12(style12, castleSigns)
+                if lastmove == None: continue
+                moves[ply-1] = lastmove
+                # Updated the queuedMoves in case there has been a takeback
+                for moveply in moves.keys():
+                    if moveply > ply-1:
+                        del moves[moveply]
+            del cls.queuedStyle12s[gameno]
+        
         pgnHead = [
-            ("Event", "Ficsgame"),
-            ("Site", "Internet"),
+            ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
+            ("Site", "FICS"),
             ("White", wname),
-            ("Black", bname)
+            ("Black", bname),
+            ("TimeControl", "%d+%s" % (int(minutes) * 60, increment)),
+            ("Result", "*"),
+            ("WhiteClock", msToClockTimeTag(wms)),
+            ("BlackClock", msToClockTimeTag(bms)),
         ]
+        if wrating:
+            pgnHead += [ ("WhiteElo", wrating) ]
+        if brating:
+            pgnHead += [ ("BlackElo", brating) ]
+        if year and month and day and hour and minute:
+            pgnHead += [
+                ("Year", int(year)),
+                ("Month", months.index(month)+1),
+                ("Day", int(day)),
+                ("Time", "%02d:%02d:00" % (int(hour), int(minute))),
+            ]
         if initialfen:
             pgnHead += [
                 ("SetUp", "1"),
                 ("FEN", initialfen)
             ]
-            if game_type.variant_type != NORMALCHESS:
-                pgnHead += [("Variant", variants[game_type.variant_type].name)]
-        
-        if wrating not in ("0", "UNR", "----"):
-            pgnHead.append(("WhiteElo", wrating))
-        if brating not in ("0", "UNR", "----"):
-            pgnHead.append(("BlackElo", brating))
-        
+        if game_type.variant_type == FISCHERRANDOMCHESS:
+            pgnHead += [ ("Variant", "Fischerandom") ]
+            # FR is the only variant used in this tag by the PGN generator @ ficsgames.com
+            # They put all the other wild/* stuff in the "Event" header
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
         moves = moves.items()
@@ -330,32 +567,35 @@ class BoardManager (GObject):
             if ply % 2 == 0:
                 pgn += "%d. " % (ply/2+1)
             pgn += move + " "
-        pgn += "\n"
+        pgn += "*\n"
         
-        if gameno in self.queuedStyle12s:
-            style12 = self.queuedStyle12s[gameno][-1]
-            gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                    self.__parseStyle12(style12, castleSigns)
-        else:
-            wms = bms = int(min)*60*1000
-            gain = int(inc)
-
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        game_type=game_type, min=int(min), inc=int(inc),
+        # TODO: init FICSLiveGame or FICSAdjournedGame instead
+        game = FICSGame(0, FICSPlayer(wname), FICSPlayer(bname),
+                        rated=rated.lower() == "rated", game_type=game_type,
+                        min=int(minutes), inc=int(increment),
                         board=FICSBoard(wms, bms, pgn=pgn))
-        del self.queuedStyle12s[gameno]
+        if wrating:
+            game.wplayer.addRating(game_type.rating_type, int(wrating))
+        if brating:
+            game.bplayer.addRating(game_type.rating_type, int(brating))
+        if in_progress:
+            game.gameno = gameno
+        else:
+            game.reason = reason
         
+        return game
+        
+    def onObserveGameCreated (self, matchlist):
+        game = self.parseGame(matchlist, in_progress=True)
         self.emit ("obsGameCreated", game)
         
-        if gameno in self.gamemodelStartedEvents:
-            self.gamemodelStartedEvents[gameno].wait()
-        for emit in self.queuedEmits[gameno]:
+        if game.gameno in self.gamemodelStartedEvents:
+            self.gamemodelStartedEvents[game.gameno].wait()
+        for emit in self.queuedEmits[game.gameno]:
             emit()        
-        del self.queuedEmits[gameno]
-        
+        del self.queuedEmits[game.gameno]
+    
     def onGameEnd (self, glm, game):
-        # glm, gameno, wname, bname, result, reason
-        
         if game.gameno == self.ourGameno:
             if game.gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[game.gameno].wait()

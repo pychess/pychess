@@ -2,6 +2,8 @@ import unittest
 import datetime
 
 from pychess.Utils.const import WHITE
+from pychess.ic import *
+from pychess.ic.FICSObjects import *
 from pychess.ic.FICSConnection import Connection
 from pychess.ic.VerboseTelnet import PredictionsTelnet
 from pychess.ic.managers.AdjournManager import AdjournManager
@@ -112,20 +114,28 @@ class AdjournManagerTests(EmittingTestCase):
         
         signal = 'onGamePreview'
         
-        lines = ['Move  PyChess            selman',
-                 '----  ----------------   ----------------',
+        lines = ['BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008',
+                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
+                 '',
+                 'Move  BwanaSlei               mgatto',
+                 '----  ---------------------   ---------------------',
                  '  1.  e4      (0:00.000)     c5      (0:00.000)',  
                  '  2.  Nf3     (0:00.000) ',
                  '      {White lost connection; game adjourned} *',
                  'fics% ']
         
-        expectedPgn = '[Event "Ficsgame"]\n[Site "Internet"]\n[White "PyChess"]\n[Black "selman"]\n'
-        expectedPgn += '1. e4 c5 2. Nf3 *'
-        
-        # Notice: argument two and three (secs and gain) are set to the
-        #         default (60, 0) values, as time is normally read from the
-        #         adjournment list
-        expectedResults = (expectedPgn, 60, 0, 'PyChess', 'selman')
+        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "BwanaSlei"]\n' \
+                      '[Black "mgatto"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
+                      '[WhiteClock "0:05:00.000"]\n[BlackClock "0:05:00.000"]\n' \
+                      '[WhiteElo "1137"]\n[BlackElo "1336"]\n[Year "2008"]\n' \
+                      '[Month "11"]\n[Day "5"]\n[Time "20:56:00"]\n'
+        expectedPgn += '1. e4 c5 2. Nf3 *\n'
+        game = FICSGame(0, FICSPlayer("BwanaSlei"), FICSPlayer("mgatto"),
+                        rated=True, game_type=GAME_TYPES["blitz"], min=5, inc=0,
+                        board=FICSBoard(300000, 300000, expectedPgn), reason=11)
+        game.wplayer.addRating(TYPE_BLITZ, 1137)
+        game.bplayer.addRating(TYPE_BLITZ, 1336)
+        expectedResults = (game,)
         
         self.runAndAssertEquals(signal, lines, expectedResults)
     
@@ -134,22 +144,30 @@ class AdjournManagerTests(EmittingTestCase):
         
         signal = 'onGamePreview'
         
-        lines = ['    C Opponent       On Type          Str  M    ECO Date',
-                 ' 1: B PyChess         N [ bu  2  12] 39-39 W2   C20 Sun Jan 11, 11:25 PST 2009',
-                 
-                 'Move  PyChess            Lobais',  
+        lines = ['C Opponent       On Type          Str  M    ECO Date',
+                 '1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010',
+                 '',
+                 'mgatto (1233) vs. BabyLurking (1455) --- Fri Nov  5, 04:33 PDT 2010',
+                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
+                 '',
+                 'Move  mgatto             BabyLurking',
                  '----  ----------------   ----------------',
-                 '  1.  e4      (0:00)     e5      (0:00)  ',
-                 '      {Game adjourned by mutual agreement} *']
+                 '1.  Nf3     (0:00)     d5      (0:00)',
+                 '2.  d4      (0:03)     Nf6     (0:00)',
+                 '3.  c4      (0:03)     e6      (0:00)',
+                 '    {Game adjourned by mutual agreement} *']
         
-        expectedPgn = '[Event "Ficsgame"]\n[Site "Internet"]\n[White "PyChess"]\n[Black "Lobais"]\n'
-        expectedPgn += '1. e4 e5 *'
-        
-        # Notice: argument two and three (secs and gain) are set to the
-        #         original game values. These are not likely the same as they
-        #         wore, when the game was adjourned
-        expectedResults = (expectedPgn, 120, 12, 'PyChess', 'Lobais')
-        
+        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "mgatto"]\n' \
+                      '[Black "BabyLurking"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
+                      '[WhiteClock "0:04:54.000"]\n[BlackClock "0:05:00.000"]\n' \
+                      '[WhiteElo "1233"]\n[BlackElo "1455"]\n[Year "2010"]\n[Month "11"]' \
+                      '\n[Day "5"]\n[Time "04:33:00"]\n1. Nf3 d5 2. d4 Nf6 3. c4 e6 *\n'
+        game = FICSGame(0, FICSPlayer("mgatto"), FICSPlayer("BabyLurking"),
+                        rated=True, game_type=GAME_TYPES["blitz"], min=5, inc=0,
+                        board=FICSBoard(294000, 300000, expectedPgn), reason=6)
+        game.wplayer.addRating(TYPE_BLITZ, 1233)
+        game.bplayer.addRating(TYPE_BLITZ, 1455)
+        expectedResults = (game,)
         self.runAndAssertEquals(signal, lines, expectedResults)
 
 ###############################################################################

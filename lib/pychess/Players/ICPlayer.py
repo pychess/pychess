@@ -11,13 +11,14 @@ from pychess.System.Log import log
 class ICPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, gamemodel, name, gameno, color):
+    def __init__ (self, gamemodel, name, gameno, color, icrating=None):
         Player.__init__(self)
         
         self.queue = Queue()
         self.okqueue = Queue()
         
-        self.name = name
+        self.name = self.ichandle = name
+        self.icrating = icrating
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel

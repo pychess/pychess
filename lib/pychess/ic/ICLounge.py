@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import Queue
-from cStringIO import StringIO
+from StringIO import StringIO
 from time import strftime, localtime, time
 from math import e
 from operator import attrgetter
@@ -972,16 +972,14 @@ class GameTabSection (ParrentListSection):
 ########################################################################
 # Initialize Adjourned List                                            #
 ########################################################################
-# We skip adjourned games until Staunton
 
 class AdjournedTabSection (ParrentListSection):
 
     def __init__ (self, widgets, connection):
         ParrentListSection.__init__(self)
         self.connection = connection
+        self.widgets = widgets
         self.opponents = {}
-
-        # Set up the treeview
 
         self.wpix = load_icon(16, "stock_draw-rounded-square-unfilled", "computer")
         self.bpix = load_icon(16, "stock_draw-rounded-square", "computer")
@@ -989,10 +987,11 @@ class AdjournedTabSection (ParrentListSection):
         self.tv = widgets["adjournedtreeview"]
         self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns (self.tv, _("Your color"), _("Opponent"),
-                                  _("Is online"), _("Length"), _("Date/Time"), pix=[0])
-
-        # Connect to adjourmentlist signals
+        self.addColumns (self.tv, _("Your Color"), _("Opponent"),
+                                  _("Is Online"), _("Length"), _("Date/Time"), pix=[0])
+        self.selection = self.tv.get_selection()
+        self.selection.connect("changed", self.onSelectionChanged)
+        self.onSelectionChanged(self.selection)
 
         self.connection.adm.connect("onAdjournmentsList", lambda glm, adjournments:
                 self.listPublisher.put((self.onAdjournmentsList, adjournments)) )
@@ -1001,14 +1000,28 @@ class AdjournedTabSection (ParrentListSection):
         self.connection.bm.connect("curGameEnded", lambda bm, game:
                 self.listPublisher.put((self.onCurGameEnded, game.result)))
 
-        # Set up buttons
-
+        widgets["resignButton"].connect("clicked", self.onResignButtonClicked)
+        widgets["abortButton"].connect("clicked", self.onAbortButtonClicked)
+        widgets["drawButton"].connect("clicked", self.onDrawButtonClicked)
+        widgets["resumeButton"].connect("clicked", self.onResumeButtonClicked)
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
-        self.connection.adm.connect("onGamePreview", lambda adm, pgn, secs, gain, wname, bname:
-                self.listPublisher.put((self.onGamePreview, pgn, secs, gain, wname, bname)))
+        self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
+        self.connection.adm.connect("onGamePreview", lambda adm, board:
+            self.listPublisher.put((self.onGamePreview, board)))
 
+    def onSelectionChanged (self, selection):
+        model, iter = selection.get_selected()
+        a_row_is_selected = False
+        if iter != None:
+            a_row_is_selected = True
+        for button in ("resignButton", "abortButton", "drawButton", "resumeButton",
+                       "previewButton"):
+            self.widgets[button].set_sensitive(a_row_is_selected)
 
     def onAdjournmentsList (self, adjournments):
+        self.store.clear()
+        self.opponents.clear()
+        
         for adjourn in adjournments:
             if adjourn["opponent"].lower() in self.opponents:
                 continue
@@ -1024,30 +1037,62 @@ class AdjournedTabSection (ParrentListSection):
             self.opponents.clear()
             self.connection.adm.queryAdjournments()
 
+    def onResignButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        opponent = model.get_value(iter, 1)
+        self.connection.adm.resign(opponent)
+    
+    def onDrawButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        opponent = model.get_value(iter, 1)
+        self.connection.adm.draw(opponent)
+    
+    def onAbortButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        opponent = model.get_value(iter, 1)
+        self.connection.adm.abort(opponent)
+    
+    def onResumeButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        opponent = model.get_value(iter, 1)
+        self.connection.adm.resume(opponent)
+    
     def onPreviewButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         opponent = model.get_value(iter, 1)
         self.connection.adm.queryMoves(opponent)
 
-    def onGamePreview (self, pgn, secs, gain, wname, bname):
-        print pgn
-
-        #if not connection.registered:
-        #    widgets["notebook"].remove_page(4)
-        #else:
-        #    tv = widgets["adjournedtreeview"]
-        #    astore = gtk.ListStore (str, str, str, str)
-        #    tv.set_model (gtk.TreeModelSort (astore))
-        #    addColumns (tv, _("Opponent"), _("Status"), _("% Played"), _("Date"))
-        #
-        #    def on_adjourn_add (glm, game):
-        #        def call ():
-        #            ti = astore.append ([game["opponent"], game["opstatus"],
-        #                             "%d %%" % game["procPlayed"], game["date"]])
-        #        listPublisher.put(call)
-        #    glm.connect("addAdjourn", on_adjourn_add)
-
+    def onGamePreview (self, ficsgame):
+        log.debug("ICLounge.onGamePreview: %s\n" % ficsgame)
+        if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
+            timemodel = None
+        else:
+            timemodel = TimeModel(ficsgame.board.wms/1000., ficsgame.inc,
+                                  bsecs=ficsgame.board.bms/1000.)
+        gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
+        
+        # The players need to start listening for moves IN this method if they
+        # want to be noticed of all moves the FICS server sends us from now on
+        player0 = ICPlayer(gamemodel, ficsgame.wplayer.name, -1, WHITE,
+            icrating=ficsgame.wplayer.getRating(ficsgame.game_type.rating_type).elo)
+        player1 = ICPlayer(gamemodel, ficsgame.bplayer.name, -1, BLACK,
+            icrating=ficsgame.bplayer.getRating(ficsgame.game_type.rating_type).elo)
+        
+        player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
+            ficsgame.wplayer.getRating(ficsgame.game_type.rating_type).elo)
+        player1tup = (REMOTE, lambda:player1, (), ficsgame.bplayer.name,
+            ficsgame.bplayer.getRating(ficsgame.game_type.rating_type).elo)
+        
+        ionest.generalStart(gamemodel, player0tup, player1tup,
+                            (StringIO(ficsgame.board.pgn), pgn, 0, -1))
+        gamemodel.connect("game_started", lambda gamemodel:
+                          gamemodel.end(ADJOURNED, ficsgame.reason))
+        
 ############################################################################
 # Initialize "Create Seek" and "Challenge" panels, and "Edit Seek:" dialog #
 ############################################################################
