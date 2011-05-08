@@ -1,13 +1,10 @@
-
 import re
-
 from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
-from pychess.ic.managers.GameListManager import convertName
-from GameListManager import variantToSeek, unsupportedWilds
+from pychess.ic import *
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -29,8 +26,6 @@ matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
 #
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
-
-unsupportedtypes = (unsupportedWilds.keys())
 
 strToOfferType = {
     "draw": DRAW_OFFER,
@@ -153,13 +148,13 @@ class OfferManager (GObject):
                 if not type or "adjourned" in type:
                     type = type_short
             
-            if type.split()[-1] in unsupportedtypes:
+            if type.split()[-1] not in GAME_TYPES.keys():
                 self.decline(offer)
             else:
                 rating = frating.strip()
                 rating = rating.isdigit() and rating or "0"
                 rated = rated == "unrated" and "u" or "r"
-                match = {"tp": convertName(type), "w": fname, "rt": rating,
+                match = {"tp": type_to_display_text(type), "w": fname, "rt": rating,
                          "r": rated, "t": mins, "i": incr}
                 self.emit("onChallengeAdd", index, match)
         
@@ -180,15 +175,19 @@ class OfferManager (GObject):
     
     ###
     
-    def challenge (self, playerName, startmin, incsec, rated, color=None, variant=NORMALCHESS):
+    def challenge (self, playerName, game_type, startmin, incsec, rated, color=None):
         log.debug("OfferManager.challenge: %s %s %s %s %s %s\n" % \
-            (playerName, startmin, incsec, rated, color, variant))
+            (playerName, game_type, startmin, incsec, rated, color))
         rchar = rated and "r" or "u"
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
-        print >> self.connection.client, "match %s %d %d %s %s %s" % \
-                (playerName, startmin, incsec, rchar, cchar, variantToSeek[variant])
+        s = "match %s %d %d %s %s" % \
+            (playerName, startmin, incsec, rchar, cchar)
+        if isinstance(game_type, VariantGameType):
+            s += " " + game_type.seek_text
+        print s
+        print >> self.connection.client, s
     
     def offer (self, offer, curply):
         log.debug("OfferManager.offer: curply=%s %s\n" % (curply, offer))
