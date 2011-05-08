@@ -80,18 +80,27 @@ class GameModel (GObject, PooledThread):
         self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
-
+        
         self.connections = defaultdict(list)  # mainly for IC subclasses
         
-        today = datetime.date.today()
+        now = datetime.datetime.now()
         self.tags = {
             "Event": _("Local Event"),
             "Site":  _("Local Site"),
             "Round": 1,
-            "Year":  today.year,
-            "Month": today.month,
-            "Day":   today.day
+            "Year":  now.year,
+            "Month": now.month,
+            "Day":   now.day,
+            "Time":  "%02d:%02d:00" % (now.hour, now.minute),
         }
+        if self.timemodel:
+            self.tags["TimeControl"] = \
+                "%d+%d" % (self.timemodel.getInitialTime(), self.timemodel.gain)
+#### do this upon time_changed or game_changed?
+#            self.tags["WhiteClock"] = \
+#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(wms)
+#            self.tags["BlackClock"] = \
+#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(bms)
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
@@ -127,6 +136,8 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("withdraw", self.withdrawRecieved))
             self.connections[player].append(player.connect("decline", self.declineRecieved))
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
+        self.tags["White"] = str(self.players[WHITE])
+        self.tags["Black"] = str(self.players[BLACK])
     
     def setSpectators (self, spectators):
         assert self.status == WAITING_TO_START

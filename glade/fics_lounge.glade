@@ -937,7 +937,7 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button21">
+                              <widget class="GtkButton" id="abortButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -956,7 +956,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label59">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">A_bort</property>
+                                            <property name="label" translatable="yes">Offer A_bort</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>
@@ -978,7 +978,7 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button23">
+                              <widget class="GtkButton" id="drawButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -997,7 +997,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label60">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">_Draw</property>
+                                            <property name="label" translatable="yes">Offer _Draw</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>
@@ -1019,7 +1019,7 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button22">
+                              <widget class="GtkButton" id="resignButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -1073,7 +1073,7 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button24">
+                              <widget class="GtkButton" id="resumeButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -1104,7 +1104,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label57">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">_Resume</property>
+                                            <property name="label" translatable="yes">Offer _Resume</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>

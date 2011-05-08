@@ -2,10 +2,10 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
-from pychess.System.Log import log
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
+from pychess.ic.managers.BoardManager import parse_reason
+from pychess.System.Log import log
 
-#types = "(blitz|lightning|standard)"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\- ]{1,4})"
@@ -198,83 +198,8 @@ class GameListManager (GObject):
     
     def on_game_remove (self, match):
         gameno, wname, bname, person, comment, result = match.groups()
-        result = reprResult.index(result)
-        parts = set(re.findall("\w+",comment))
-        if result in (WHITEWON, BLACKWON):
-            if "resigns" in parts:
-                reason = WON_RESIGN
-            elif "disconnection" in parts:
-                reason = WON_DISCONNECTION
-            elif "time" in parts:
-                reason = WON_CALLFLAG
-            elif "checkmated" in parts:
-                reason = WON_MATE
-            elif "adjudication" in parts:
-                reason = WON_ADJUDICATION
-            else:
-                reason = UNKNOWN_REASON
-        elif result == DRAW:
-            if "repetition" in parts:
-                reason = DRAW_REPITITION
-            elif "material" in parts and "time" in parts:
-                if re.search(wname + " ran out of time", comment, re.IGNORECASE):
-                    reason = DRAW_BLACKINSUFFICIENTANDWHITETIME
-                else:
-                    reason = DRAW_WHITEINSUFFICIENTANDBLACKTIME
-            elif "material" in parts:
-                reason = DRAW_INSUFFICIENT
-            elif "time" in parts:
-                reason = DRAW_CALLFLAG
-            elif "agreement" in parts:
-                reason = DRAW_AGREE
-            elif "stalemate" in parts:
-                reason = DRAW_STALEMATE
-            elif "50" in parts:
-                reason = DRAW_50MOVES
-            elif "length" in parts:
-                # FICS has a max game length on 800 moves
-                reason = DRAW_LENGTH
-            elif "adjudication" in parts:
-                reason = DRAW_ADJUDICATION
-            else:
-                reason = UNKNOWN_REASON
-        elif "adjourned" in parts:
-            result = ADJOURNED
-            if "connection" in parts:
-                reason = ADJOURNED_LOST_CONNECTION
-            elif "agreement" in parts:
-                reason = ADJOURNED_AGREEMENT
-            elif "shutdown" in parts:
-                reason = ADJOURNED_SERVER_SHUTDOWN
-            else:
-                reason = UNKNOWN_REASON
-        elif "aborted" in parts:
-            result = ABORTED
-            if "agreement" in parts:
-                reason = ABORTED_AGREEMENT
-            elif "moves" in parts:
-                # lost connection and too few moves; game aborted *
-                reason = ABORTED_EARLY
-            elif "move" in parts:
-                # Game aborted on move 1 *
-                reason = ABORTED_EARLY
-            elif "shutdown" in parts:
-                reason = ABORTED_SERVER_SHUTDOWN
-            elif "adjudication" in parts:
-                reason = ABORTED_ADJUDICATION
-            else:
-                reason = UNKNOWN_REASON
-        elif "courtesyadjourned" in parts:
-            result = ADJOURNED
-            reason = ADJOURNED_COURTESY
-        elif "courtesyaborted" in parts:
-            result = ABORTED
-            reason = ABORTED_COURTESY
-        else:
-            result = UNKNOWN_STATE
-            reason = UNKNOWN_REASON
-        
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname),
+        result, reason = parse_reason(reprResult.index(result), comment, wname=wname)
+        game = FICSGame(int(gameno), FICSPlayer(wname), FICSPlayer(bname),
                         result=result, reason=reason)
         self.emit("removeGame", game)
     
@@ -449,7 +374,7 @@ class GameListManager (GObject):
            bscore, curcolor, moveno, eco, date = match.groups()
         opstatus = opponentIsOnline == "Y" and "Online" or "Offline"
         procPlayed = (int(wscore)+int(bscore))*100/79
-        self.emit ("addAdjourn", {"opponent": opponent, "opstatus": opstatus, "date": date,
+        self.emit("addAdjourn", {"opponent": opponent, "opstatus": opstatus, "date": date,
                                   "procPlayed": procPlayed })
     
     ###
