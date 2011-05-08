@@ -1,4 +1,3 @@
-import pprint
 from gobject import *
 
 from pychess.Utils.const import *
@@ -19,6 +18,7 @@ class FICSPlayer (GObject):
                   suicidedeviation=None, losersrating=None, losersdeviation=None,
                   atomicrating=None, atomicdeviation=None):
         assert name != None
+        GObject.__init__(self)
         self.name = name
         if titles == None:
             self.titles = []
@@ -42,8 +42,8 @@ class FICSPlayer (GObject):
                 ratingobj = Rating(type, rating, deviation=deviation)
                 self.setRating(type, ratingobj)
         
-        log.debug("FICSPlayer.init():\n")
-        log.debug("\t Initializing new player: %s\n" % repr(self))
+#        log.debug("FICSPlayer.init():\n")
+#        log.debug("\t Initializing new player: %s\n" % repr(self))
     
     def __hash__ (self):
         """ Two players are equal if the first 10 characters of their name match.
@@ -142,34 +142,34 @@ class FICSPlayer (GObject):
                 r += "(" + title + ")"
         return r
 
-    def getRating (self, type):
-        if self.ratings.has_key(type):
-            return self.ratings[type]
+    def getRating (self, rating_type):
+        if rating_type in self.ratings:
+            return self.ratings[rating_type]
         else:
             return None
         
-    def setRating (self, type, ratingobj):
-        self.ratings[type] = ratingobj
+    def setRating (self, rating_type, ratingobj):
+        self.ratings[rating_type] = ratingobj
         
-    def updateRating (self, type, ratingobj):
-        if self.ratings.has_key(type):
-            self.ratings[type].update(ratingobj)
+    def updateRating (self, rating_type, ratingobj):
+        if rating_type in self.ratings:
+            self.ratings[rating_type].update(ratingobj)
         else:
-            self.setRating(type, ratingobj)
+            self.setRating(rating_type, ratingobj)
         
-    def addRating (self, type, rating):
+    def addRating (self, rating_type, rating):
         if rating == None: return
-        ratingobj = Rating(type, rating)
-        self.ratings[type] = ratingobj
+        ratingobj = Rating(rating_type, rating)
+        self.ratings[rating_type] = ratingobj
         
     def update (self, ficsplayer):
         assert self == ficsplayer
-        log.debug("FICSPlayer.update():\n")
-        log.debug("\t Merging ficsplayer: %s\n" % repr(ficsplayer))
-        log.debug("\t With self: %s\n" % repr(self))
+#        log.debug("FICSPlayer.update():\n")
+#        log.debug("\t Merging ficsplayer: %s\n" % repr(ficsplayer))
+#        log.debug("\t With self: %s\n" % repr(self))
         for title in ficsplayer.titles:
             if title not in self.titles:
-                log.debug("\t appending title: %s\n" % title)
+#                log.debug("\t appending title: %s\n" % title)
                 self.titles.append(title)
         if self.status != ficsplayer.status:
             self.status = ficsplayer.status
@@ -226,27 +226,9 @@ class FICSPlayer (GObject):
 #        else:
 #            return self.getRating(TYPE_LIGHTNING)
     
-    def getGameRating (self):
-        game = self.game
-        if game == None: return None
-        assert game.variant != None and game.variant in wildVariants + (LOSERSCHESS, NORMALCHESS)
-        
-        if game.variant == NORMALCHESS:
-            if game.min == None or game.inc == None:
-                rating = self.getRating(TYPE_BLITZ)
-            else:
-                gainminutes = game.inc > 0 and (game.inc*60)-1 or 0
-                if ((game.min*60) + gainminutes) >= (15*60):
-                    rating = self.getRating(TYPE_STANDARD)
-                elif ((game.min*60) + gainminutes) >= (3*60):
-                    rating = self.getRating(TYPE_BLITZ)
-                else:
-                    rating = self.getRating(TYPE_LIGHTNING)
-        elif game.variant in wildVariants:
-            rating = self.getRating(TYPE_WILD)    
-        elif game.variant == LOSERSCHESS:
-            rating = self.getRating(TYPE_LOSERS)
-        
+    def getRatingForCurrentGame (self):
+        if self.game == None: return None
+        rating = self.getRating(self.game.game_type.rating_type)
         if rating != None:
             return rating.elo
         else:
@@ -342,16 +324,16 @@ class FICSPlayersOnline (GObject):
             del self.players[hash(player)]
         
     def addPlayer (self, glm, player):
-        log.debug("FICSPlayersOnline.addPlayer():\n")
+#        log.debug("FICSPlayersOnline.addPlayer():\n")
         if player in self:
-            log.debug("\t player updated: " + repr(player) + "\n")
-            log.debug("\t old player: " + repr(self[player]) + "\n")
+#            log.debug("\t player updated: " + repr(player) + "\n")
+#            log.debug("\t old player: " + repr(self[player]) + "\n")
             self[player].update(player)
-            log.debug("\t new player: " + repr(self[player]) + "\n")
+#            log.debug("\t new player: " + repr(self[player]) + "\n")
             self.emit('FICSPlayerChanged', self[player])
         else:
             self.__add(player)
-            log.debug("player added: " + repr(self[player]) + "\n")
+#            log.debug("player added: " + repr(self[player]) + "\n")
             self.emit('FICSPlayerEntered', self[player])
         
     def delPlayer (self, glm, player):
@@ -361,11 +343,11 @@ class FICSPlayersOnline (GObject):
             self.emit('FICSPlayerExited', player)
     
     def gameCreated (self, gip, game):
-        log.debug("FICSPlayersOnline.gameCreated():\n")
-        log.debug("Updating players in game: %s\n" % repr(game))
+#        log.debug("FICSPlayersOnline.gameCreated():\n")
+#        log.debug("Updating players in game: %s\n" % repr(game))
         for player in (game.wplayer, game.bplayer):
             if player in self:
-                log.debug("Updating player: %s\n" % repr(player))
+#                log.debug("Updating player: %s\n" % repr(player))
                 self[player].status = IC_STATUS_PLAYING
                 self[player].game = game
                 self.emit('FICSPlayerChanged', self[player])
@@ -466,21 +448,21 @@ class FICSGamesInProgress (GObject):
             raise KeyError
     
     def addGame (self, glm, game):
-        log.debug("FICSGamesInProgress.addGame():\n")
-        log.debug("\t Adding game: %s\n" % repr(game))
+#        log.debug("FICSGamesInProgress.addGame():\n")
+#        log.debug("\t Adding game: %s\n" % repr(game))
         if game.wplayer in self.connection.playersonline:
-            log.debug("\t Found wplayer in playersonline: %s\n" \
-                      % repr(self.connection.playersonline[game.wplayer]))
+#            log.debug("\t Found wplayer in playersonline: %s\n" \
+#                      % repr(self.connection.playersonline[game.wplayer]))
             game.wplayer = self.connection.playersonline[game.wplayer]
         else:
-            log.debug("\t Adding game.wplayer to playersonline: %s\n" % repr(game.wplayer))
+#            log.debug("\t Adding game.wplayer to playersonline: %s\n" % repr(game.wplayer))
             self.connection.playersonline.addPlayer(glm, game.wplayer)
         if game.bplayer in self.connection.playersonline:
-            log.debug("\t Found bplayer in playersonline: %s\n" \
-                      % repr(self.connection.playersonline[game.bplayer]))
+#            log.debug("\t Found bplayer in playersonline: %s\n" \
+#                      % repr(self.connection.playersonline[game.bplayer]))
             game.bplayer = self.connection.playersonline[game.bplayer]
         else:
-            log.debug("\t Adding game.bplayer to playersonline: %s\n" % repr(game.bplayer))
+#            log.debug("\t Adding game.bplayer to playersonline: %s\n" % repr(game.bplayer))
             self.connection.playersonline.addPlayer(glm, game.bplayer)
         if not self.games.has_key(game.gameno):
             self.games[game.gameno] = game

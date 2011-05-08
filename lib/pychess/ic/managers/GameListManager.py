@@ -352,18 +352,18 @@ class GameListManager (GObject):
                                 suiciderating=suicide, suicidedeviation=suicidedev,
                                 losersrating=losers, losersdeviation=losersdev,
                                 atomicrating=atomic, atomicdeviation=atomicdev)
-        log.debug("GLM.on_player_connect():\n")
-        log.debug(match.string + "\n")
-        log.debug(repr(ficsplayer) + "\n")
+#        log.debug("GLM.on_player_connect():\n")
+#        log.debug(match.string + "\n")
+#        log.debug(repr(ficsplayer) + "\n")
         self.emit("playerConnected", ficsplayer)
         if name not in self.players:
             self.players.add(name)
     
     def on_player_disconnect (self, match):
         name = match.groups()[0]
-        log.debug("GLM.on_player_disconnect():\n")
-        log.debug(match.string + "\n")
-        log.debug(name + "\n")
+#        log.debug("GLM.on_player_disconnect():\n")
+#        log.debug(match.string + "\n")
+#        log.debug(name + "\n")
         self.emit("playerDisconnected", FICSPlayer(name))
         if name in self.players:
             self.players.remove(name)
