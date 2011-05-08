@@ -11,12 +11,10 @@ class FICSPlayer (GObject):
     __gsignals__ = {
         'ratingChanged' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
     }
-    def __init__ (self, name, titles=None, status=None, blitzrating=None, blitzdeviation=None,
-                  stdrating=None, stddeviation=None, lightrating=None, lightdeviation=None,
-                  wildrating=None, wilddeviation=None, bughouserating=None, bughousedeviation=None,
-                  crazyhouserating=None, crazyhousedeviation=None, suiciderating=None,
-                  suicidedeviation=None, losersrating=None, losersdeviation=None,
-                  atomicrating=None, atomicdeviation=None):
+    def __init__ (self, name, titles=None, status=None, blitzrating=None,
+                  blitzdeviation=None, stdrating=None, stddeviation=None,
+                  lightrating=None, lightdeviation=None, wildrating=None,
+                  wilddeviation=None, losersrating=None, losersdeviation=None):
         assert name != None
         GObject.__init__(self)
         self.name = name
@@ -29,15 +27,12 @@ class FICSPlayer (GObject):
         self.game = None
 #        self.online = False
         
-        for type, rating, deviation in ((TYPE_BLITZ, blitzrating, blitzdeviation),
-                                        (TYPE_STANDARD, stdrating, stddeviation),
-                                        (TYPE_LIGHTNING, lightrating, lightdeviation),
-                                        (TYPE_WILD, wildrating, wilddeviation),
-                                        (TYPE_BUGHOUSE, bughouserating, bughousedeviation),
-                                        (TYPE_CRAZYHOUSE, crazyhouserating, crazyhousedeviation),
-                                        (TYPE_SUICIDE, suiciderating, suicidedeviation),
-                                        (TYPE_LOSERS, losersrating, losersdeviation),
-                                        (TYPE_ATOMIC, atomicrating, atomicdeviation)):
+        for type, rating, deviation in \
+            ((TYPE_BLITZ, blitzrating, blitzdeviation),
+             (TYPE_STANDARD, stdrating, stddeviation),
+             (TYPE_LIGHTNING, lightrating, lightdeviation),
+             (TYPE_WILD, wildrating, wilddeviation),
+             (TYPE_LOSERS, losersrating, losersdeviation)):
             if rating and rating > 0:
                 ratingobj = Rating(type, rating, deviation=deviation)
                 self.setRating(type, ratingobj)

@@ -56,10 +56,10 @@ class GameListManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
 
         self.connection.expect_line (self.on_player_connect,
-                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])"*9)
+                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])"*5)
         self.connection.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
         self.connection.expect_line (self.on_player_whoI,
-                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])"*9)
+                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])"*5)
         self.connection.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
         self.connection.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
         self.connection.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
@@ -98,7 +98,7 @@ class GameListManager (GObject):
         print >> self.connection.client, "stored"
     
     def who (self):
-        print >> self.connection.client, "who IsblwzLSBx"
+        print >> self.connection.client, "who IsblwL"
         # the previous who command won't get title info such as (TM)
         print >> self.connection.client, "who"
     
@@ -241,8 +241,7 @@ class GameListManager (GObject):
     
     def on_player_connect (self, match):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-            wild, wilddev, bug, bugdev, crazy, crazydev, suicide, suicidedev, \
-            losers, losersdev, atomic, atomicdev = match.groups()
+            wild, wilddev, losers, losersdev = match.groups()
         # TODO: should all of the following shit be done in FICSPlayer?
         status = self.__getStatus(status)
         # TODO: titles = self.__parseTitleHex(title)? Put it in FICSPlayer?
@@ -258,26 +257,14 @@ class GameListManager (GObject):
         lightdev = self.__getDeviation(lightdev)
         wild = self.__parseDigits(wild) and int(self.__parseDigits(wild)) or 0
         wilddev = self.__getDeviation(wilddev)
-        bug = self.__parseDigits(bug) and int(self.__parseDigits(bug)) or 0
-        bugdev = self.__getDeviation(bugdev)
-        crazy = self.__parseDigits(crazy) and int(self.__parseDigits(crazy)) or 0
-        crazydev = self.__getDeviation(crazydev)
-        suicide = self.__parseDigits(suicide) and int(self.__parseDigits(suicide)) or 0
-        suicidedev = self.__getDeviation(suicidedev)
         losers = self.__parseDigits(losers) and int(self.__parseDigits(losers)) or 0
         losersdev = self.__getDeviation(losersdev)
-        atomic = self.__parseDigits(atomic) and int(self.__parseDigits(atomic)) or 0
-        atomicdev = self.__getDeviation(atomicdev)
         ficsplayer = FICSPlayer(name, status=status, titles=titles,
                                 blitzrating=blitz, blitzdeviation=blitzdev,
                                 stdrating=std, stddeviation=stddev,
                                 lightrating=light, lightdeviation=lightdev,
                                 wildrating=wild, wilddeviation=wilddev,
-                                bughouserating=bug, bughousedeviation=bugdev,
-                                crazyhouserating=crazy, crazyhousedeviation=crazydev,
-                                suiciderating=suicide, suicidedeviation=suicidedev,
-                                losersrating=losers, losersdeviation=losersdev,
-                                atomicrating=atomic, atomicdeviation=atomicdev)
+                                losersrating=losers, losersdeviation=losersdev)
 #        log.debug("GLM.on_player_connect():\n")
 #        log.debug(match.string + "\n")
 #        log.debug(repr(ficsplayer) + "\n")
@@ -296,8 +283,7 @@ class GameListManager (GObject):
     
     def on_player_whoI (self, match):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-            wild, wilddev, bug, bugdev, crazy, crazydev, suicide, suicidedev, \
-            losers, losersdev, atomic, atomicdev = match.groups()
+            wild, wilddev, losers, losersdev = match.groups()
         status = self.__getStatus(status)
         titles = []
         for hex in HEX_TO_TITLE:
@@ -311,26 +297,14 @@ class GameListManager (GObject):
         lightdev = self.__getDeviation(lightdev)
         wild = self.__parseDigits(wild) and int(self.__parseDigits(wild)) or 0
         wilddev = self.__getDeviation(wilddev)
-        bug = self.__parseDigits(bug) and int(self.__parseDigits(bug)) or 0
-        bugdev = self.__getDeviation(bugdev)
-        crazy = self.__parseDigits(crazy) and int(self.__parseDigits(crazy)) or 0
-        crazydev = self.__getDeviation(crazydev)
-        suicide = self.__parseDigits(suicide) and int(self.__parseDigits(suicide)) or 0
-        suicidedev = self.__getDeviation(suicidedev)
         losers = self.__parseDigits(losers) and int(self.__parseDigits(losers)) or 0
         losersdev = self.__getDeviation(losersdev)
-        atomic = self.__parseDigits(atomic) and int(self.__parseDigits(atomic)) or 0
-        atomicdev = self.__getDeviation(atomicdev)
         ficsplayer = FICSPlayer(name, status=status, titles=titles,
                                 blitzrating=blitz, blitzdeviation=blitzdev,
                                 stdrating=std, stddeviation=stddev,
                                 lightrating=light, lightdeviation=lightdev,
                                 wildrating=wild, wilddeviation=wilddev,
-                                bughouserating=bug, bughousedeviation=bugdev,
-                                crazyhouserating=crazy, crazyhousedeviation=crazydev,
-                                suiciderating=suicide, suicidedeviation=suicidedev,
-                                losersrating=losers, losersdeviation=losersdev,
-                                atomicrating=atomic, atomicdeviation=atomicdev)
+                                losersrating=losers, losersdeviation=losersdev)
         self.emit("playerWhoI", ficsplayer)
         if name not in self.players:
             self.players.add(name)
@@ -362,10 +336,9 @@ class GameListManager (GObject):
         std = self.__parseDigits(std) and int(self.__parseDigits(std)) or 0
         wild = self.__parseDigits(wild) and int(self.__parseDigits(wild)) or 0
         light = self.__parseDigits(light) and int(self.__parseDigits(light)) or 0
-        bug = self.__parseDigits(bug) and int(self.__parseDigits(bug)) or 0
         ficsplayer = FICSPlayer(name, status=IC_STATUS_AVAILABLE, titles=titles,
                                 blitzrating=blitz, stdrating=std, wildrating=wild,
-                                lightrating=light, bughouserating=bug)
+                                lightrating=light)
         self.emit("playerAvailable", ficsplayer)
     
     ###
