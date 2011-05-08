@@ -47,12 +47,12 @@ class BoardManager (GObject):
     __gsignals__ = {
         'gameCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
         'obsGameCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (str,)),
-        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (str, int, int, str, str, str, str, int, int)),
+        'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (int,)),
+        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
         'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
         'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (str,)),
-        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (str, bool)),
+        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (int,)),
+        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (str,)),
     }
@@ -121,7 +121,7 @@ class BoardManager (GObject):
         fields = line.split()
         
         curcol = fields[8] == "B" and BLACK or WHITE
-        gameno = fields[15]
+        gameno = int(fields[15])
         relation = relations[fields[18]]
         ply = int(fields[25])*2 - (curcol == WHITE and 2 or 1)
         lastmove = fields[28] != "none" and fields[28] or None
@@ -188,7 +188,7 @@ class BoardManager (GObject):
     
     def onStyle12 (self, match):
         style12 = match.groups()[0]
-        gameno = style12.split()[15]
+        gameno = int(style12.split()[15])
         
         if gameno in self.queuedStyle12s:
             self.queuedStyle12s[gameno].append(style12)
@@ -207,7 +207,7 @@ class BoardManager (GObject):
     
     def onWasPrivate (self, match):
         gameno, = match.groups()
-        self.emit("wasPrivate", gameno)
+        self.emit("wasPrivate", int(gameno))
     
     def tooManySeeks (self, match):
         self.emit("tooManySeeks")
@@ -236,7 +236,7 @@ class BoardManager (GObject):
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
         gameno, wname, bname, rated, type = matchlist[1].groups()
         style12 = matchlist[-1].groups()[0]
-        
+        gameno = int(gameno)
         rated = rated == "rated"
         game_type = GAME_TYPES[type]
         castleSigns = self.__generateCastleSigns(style12, game_type)
@@ -256,8 +256,7 @@ class BoardManager (GObject):
     
     def onObserveGameCreated (self, matchlist):
         # Get info from match
-        gameno = matchlist[0].groups()[0]
-        
+        gameno = int(matchlist[0].groups()[0])
         wname, wrating, bname, brating = moveListNames.match(matchlist[2]).groups()
         
         rated, type, min, inc = moveListOther.match(matchlist[3]).groups()
@@ -377,6 +376,7 @@ class BoardManager (GObject):
     
     def onGamePause (self, match):
         gameno, state = match.groups()
+        gameno = int(gameno)
         if gameno in self.queuedEmits:
             self.queuedEmits[gameno].append(lambda:self.emit("gamePaused", gameno, state=="paused"))
         else:
@@ -386,9 +386,11 @@ class BoardManager (GObject):
     
     def onUnobserveGame (self, match):
         gameno, = match.groups()
+        gameno = int(gameno)
         del self.gamemodelStartedEvents[gameno]
         self.emit("obsGameUnobserved", gameno)
-    
+        # TODO: delete self.castleSigns[gameno] ?
+        
     ############################################################################
     #   Interacting                                                            #
     ############################################################################
@@ -411,11 +413,11 @@ class BoardManager (GObject):
             self.queuedEmits[gameno] = []
             self.gamemodelStartedEvents[gameno] = threading.Event()
             self.gamemodelStartedEvents[gameno].clear()
-            print >> self.connection.client, "observe %s" % gameno
-            print >> self.connection.client, "moves %s" % gameno
+            print >> self.connection.client, "observe %d" % gameno
+            print >> self.connection.client, "moves %d" % gameno
     
     def unobserve (self, gameno):
-        print >> self.connection.client, "unobserve %s" % gameno
+        print >> self.connection.client, "unobserve %d" % gameno
     
     def play (self, seekno):
         print >> self.connection.client, "play %s" % seekno
