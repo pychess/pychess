@@ -19,6 +19,11 @@ class ICGameModel (GameModel):
         connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection].append(connection.connect("disconnected", self.onDisconnected))
+        
+        rated = "rated" if ficsgame.rated else "unrated"
+        # This is in the format that ficsgame.com writes these PGN headers
+        self.tags["Event"] = "FICS %s %s game" % (rated, ficsgame.game_type.fics_name)
+        self.tags["Site"] = "FICS"
 
     def __repr__ (self):
         s = GameModel.__repr__(self)
@@ -82,6 +87,10 @@ class ICGameModel (GameModel):
     
     def setPlayers (self, players):
         GameModel.setPlayers(self, players)
+        if self.players[WHITE].icrating:
+            self.tags["WhiteElo"] = self.players[WHITE].icrating
+        if self.players[BLACK].icrating:
+            self.tags["BlackElo"] = self.players[BLACK].icrating
     
     def onGamePaused (self, bm, gameno, paused):
         if paused:

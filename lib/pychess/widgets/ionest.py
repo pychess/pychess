@@ -67,7 +67,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     player1 = {}
     for player, playertup in ((player0, player0tup), (player1, player1tup)):
         player["name"] = playertup[3]
-        player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+playertup[4]+")" or None
+        player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+str(playertup[4])+")" or None
         player["title"] = len(playertup) > 5 and playertup[5] or None
         player["nametitle"] = player["title"] and player["name"] + player["title"] or player["name"]
         player["tabtext"] = player["rating"] and player["nametitle"] + " " + player["rating"] \
@@ -138,10 +138,12 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             # Until PyChess has a proper profiles system, as discussed on the
             # issue tracker, we need to give human players special treatment
             ichandle = None
+            icrating = None
             if len(args) > 2:
                 ichandle = args[2]
+                icrating = args[3]
                 args = [ v for v in args[0:2] ]
-            player = func(gmwidg, ichandle=ichandle, *args)
+            player = func(gmwidg, ichandle=ichandle, icrating=icrating, *args)
             players.append(player)
             if i == 0 or (i == 1 and player0tup[0] != LOCAL):
                 key = "firstName"

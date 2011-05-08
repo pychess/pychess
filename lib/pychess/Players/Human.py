@@ -73,7 +73,7 @@ class Human (Player):
         "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
-    def __init__ (self, gmwidg, color, name, ichandle=None):
+    def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
         Player.__init__(self)
         
         self.defname = "Human"
@@ -88,6 +88,7 @@ class Human (Player):
         ]
         self.setName(name)
         self.ichandle = ichandle
+        self.icrating = icrating
         
         if self.gamemodel.timemodel:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
