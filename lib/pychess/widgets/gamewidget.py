@@ -96,13 +96,14 @@ docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 ################################################################################
 
 class GtkMenuItem (object):
-    def __init__ (self, name, gamewidget, sensitive=False, label=None):
+    def __init__ (self, name, gamewidget, sensitive=False, label=None, tooltip=None):
         assert type(sensitive) is bool
         assert label is None or type(label) is str
         self.name = name
         self.gamewidget = gamewidget
         self._sensitive = sensitive
         self._label = label
+        self._tooltip = tooltip
         
     @property
     def sensitive (self):
@@ -112,7 +113,7 @@ class GtkMenuItem (object):
         assert type(sensitive) is bool
         self._sensitive = sensitive
         self._set_widget("sensitive", sensitive)
-        
+    
     @property
     def label (self):
         return self._label
@@ -122,10 +123,19 @@ class GtkMenuItem (object):
         self._label = label
         self._set_widget("label", label)
     
+    @property
+    def tooltip (self):
+        return self._tooltip
+    @tooltip.setter
+    def tooltip (self, tooltip):
+        assert isinstance(tooltip, str) or isinstance(tooltip, unicode)
+        self._tooltip = tooltip
+        self._set_widget("tooltip-text", tooltip)
+    
     def _set_widget (self, property, value):
         if not self.gamewidget.isInFront(): return
         if widgets[self.name].get_property(property) != value:
-#            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
+            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
             glock.acquire()
             try:
                 widgets[self.name].set_property(property, value)
@@ -136,6 +146,8 @@ class GtkMenuItem (object):
         self._set_widget("sensitive", self._sensitive)
         if self._label is not None:
             self._set_widget("label", self._label)
+        if self._tooltip is not None:
+            self._set_widget("tooltip-text", self._tooltip)
 
 class GtkMenuToggleButton (GtkMenuItem):
     def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
@@ -242,20 +254,33 @@ class GameWidget (gobject.GObject):
            and self.gamemodel.status in UNFINISHED_STATES:
             if self.gamemodel.ply < 2:
                 self.menuitems["abort"].label = _("Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("This game can be automatically aborted without rating loss because there has not yet been two moves made")
             else:
                 self.menuitems["abort"].label = _("Offer Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("Your opponent must agree to abort the game because there has been two or more moves made")
             self.menuitems["abort"].sensitive = True
         else:
             self.menuitems["abort"].sensitive = False
+            self.menuitems["abort"].tooltip = ""
 
     def _update_menu_adjourn (self):
-        # TODO: if remote opponent player is a guest, disable "adjourn"
         self.menuitems["adjourn"].sensitive = \
             isinstance(self.gamemodel, ICGameModel) and \
-            self.gamemodel.connection.isRegistred() and \
             self.gamemodel.status in UNFINISHED_STATES and \
-            not self.gamemodel.isObservationGame()
-    
+            not self.gamemodel.isObservationGame() and \
+            not self.gamemodel.hasGuestPlayers()
+        
+        if isinstance(self.gamemodel, ICGameModel) and \
+            self.gamemodel.status in UNFINISHED_STATES and \
+            not self.gamemodel.isObservationGame() and \
+            self.gamemodel.hasGuestPlayers():
+            self.menuitems["adjourn"].tooltip = \
+                _("This game can not be adjourned because one or both players are guests")
+        else:
+            self.menuitems["adjourn"].tooltip = ""
+
     def _update_menu_draw (self):
         self.menuitems["draw"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
             and not self.gamemodel.isObservationGame()

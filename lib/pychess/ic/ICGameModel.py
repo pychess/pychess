@@ -45,6 +45,12 @@ class ICGameModel (GameModel):
                     obj.disconnect(handler_id)
         self.connections = None
     
+    def hasGuestPlayers (self):
+        for player in (self.ficsgame.wplayer, self.ficsgame.bplayer):
+            if player.isGuest():
+                return True
+        return False
+    
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s\n") % \
