@@ -6,10 +6,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
 from pychess.Variants import variants
-from pychess.ic.managers.FingerManager import type2Type
-
-wildVariants = (SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, ASYMMETRICRANDOMCHESS,
-                UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS)
+from pychess.ic import *
 
 class FICSPlayer (GObject):
     __gsignals__ = {
@@ -69,14 +66,14 @@ class FICSPlayer (GObject):
         if self.status != None:
             r += ", status = %i" % self.status
         if self.game != None:
-            r += ", game = game.gameno = %s" % self.game.gameno
-        for type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE,
-                     TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC):
-            if self.ratings.has_key(type):
-                typename = [ k for (k, v) in type2Type.iteritems() if type2Type[k] == type ][0]
-                r += ", ratings[%s] = (" % typename
-                r +=  self.ratings[type].__repr__() + ")"
-        return r
+            r += ", self.game.gameno = %d" % self.game.gameno
+        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD,
+                            TYPE_LOSERS):
+            if rating_type in self.ratings:
+                r += ", ratings[%s] = (" % \
+                    GAME_TYPES_BY_RATING_TYPE[rating_type].display_text
+                r +=  self.ratings[rating_type].__repr__() + ")"
+        return "<FICSPlayer " + r + ">"
     
     def isAvailableForGame (self):    
         if self.status in \
@@ -216,7 +213,7 @@ class FICSPlayer (GObject):
 #        # TODO: figure out exactly what to do with unsupported game types
 #        assert seek != None
 #        gainminutes = seek.inc > 0 and (seek.inc*60)-1 or 0
-#        if seek.variant and seek.variant in wildVariants:
+#        if seek.variant and seek.variant in VARIANT_GAME_TYPES:
 #            return self.getRating(TYPE_WILD)           
 #        elif seek.variant and seek.variant == LOSERSCHESS:
 #            return self.getRating(TYPE_LOSERS)
@@ -261,9 +258,8 @@ class FICSPlayer (GObject):
 #        """
 #        game = self.game
 #        if game == None or rating == None: return
-#        assert game.variant != None and game.variant in wildVariants + (LOSERSCHESS, NORMALCHESS)
 #        
-#        if game.variant == NORMALCHESS:
+#        if game.variant_type == NORMALCHESS:
 #            if game.min == None or game.inc == None:
 #                # try the type
 #                if game.type == "Blitz":
@@ -282,10 +278,8 @@ class FICSPlayer (GObject):
 #                    ratingobj = Rating(TYPE_BLITZ, rating)
 #                else:
 #                    ratingobj = Rating(TYPE_LIGHTNING, rating)
-#        elif game.variant in wildVariants:
+#        elif game.variant_type in VARIANT_GAME_TYPES:
 #            ratingobj = Rating(TYPE_WILD, rating)
-#        elif game.variant == LOSERSCHESS:
-#            ratingobj = Rating(TYPE_LOSERS, rating)
 #
 #        self.setRating(type, ratingobj)
 
@@ -397,39 +391,29 @@ class FICSBoard:
         assert fen != None or pgn != None
         self.fen = fen
         self.pgn = pgn
-        
-class FICSGame:
-    def __init__ (self, gameno, wplayer, bplayer, rated=False, variant=NORMALCHESS,
-                  type=_("Standard"), min=None, inc=None, private=False, result=None,
-                  reason=None, board=None):
+
+class FICSGame (GObject):
+    def __init__ (self, gameno, wplayer, bplayer, rated=False,
+                  game_type=None, min=None, inc=None,
+                  private=False, result=None, reason=None, board=None):
+        assert type(gameno) is type(int()), gameno
+        assert isinstance(wplayer, FICSPlayer), wplayer
+        assert isinstance(bplayer, FICSPlayer), bplayer
+        assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
+            or game_type in GAME_TYPES.values(), game_type
+        assert board is None or isinstance(board, FICSBoard), board
+        GObject.__init__(self)
         self.gameno = gameno
         self.wplayer = wplayer
         self.bplayer = bplayer
         self.rated = rated
-        self.variant = variant
-        self.type = type
+        self.game_type = game_type
         self.min = min  # not always set ("game created ..." message doesn't specify)
         self.inc = inc  # not always set ("game created ..." message doesn't specify)
         self.private = private
         self.result = result
         self.reason = reason
         self.board = board
-    
-#    def getGameType (self):
-#        assert self.variant in wildVariants + (LOSERSCHESS, NORMALCHESS)
-#
-#        if self.variant != NORMALCHESS:
-#            return variants[self.variant].name
-#        else:
-#            gainminutes = self.inc > 0 and (self.inc*60)-1 or 0
-#            if self.min == None or self.inc == None:
-#                rating = self.getRating(TYPE_BLITZ)
-#            elif ((self.game.min*60) + gainminutes) >= (15*60):
-#                rating = self.getRating(TYPE_STANDARD)
-#            elif ((self.game.min*60) + gainminutes) >= (3*60):
-#                rating = self.getRating(TYPE_BLITZ)
-#            else:
-#                rating = self.getRating(TYPE_LIGHTNING)            
         
     def __eq__ (self, game):
         if type(self) == type(game) and self.gameno == game.gameno \
@@ -439,9 +423,10 @@ class FICSGame:
             return False
     
     def __repr__ (self):
-        r = "gameno=%s, wplayer=%s, bplayer=%s" % (self.gameno, repr(self.wplayer), repr(self.bplayer))
+        r = "<FICSGame gameno=%s, wplayer={%s}, bplayer={%s}" % \
+            (self.gameno, repr(self.wplayer), repr(self.bplayer))
         r += self.rated and ", rated=True" or ", rated=False"
-        r += ", type=%s" % self.type
+        r += ", game_type=%s" % self.game_type
         r += self.private and ", private=True" or ", private=False"
         if self.min != None:
             r += ", min=%i" % self.min
@@ -450,7 +435,7 @@ class FICSGame:
         if self.result != None:
             r += ", result=%i" % self.result
         if self.reason != None:
-            r += ", reason=%i" % self.reason
+            r += ", reason=%i>" % self.reason
         return r
 
 class FICSGamesInProgress (GObject):
@@ -516,15 +501,17 @@ class FICSGamesInProgress (GObject):
             self.emit('FICSGameEnded', game)
 
 class FICSSeek:
-    def __init__ (self, name, min, inc, rated, color, variant, rmin=0, rmax=9999):
+    def __init__ (self, name, min, inc, rated, color, game_type, rmin=0, rmax=9999):
+        assert game_type in GAME_TYPES, game_type
         self.seeker = name
         self.min = min
         self.inc = inc
         self.rated = rated
         self.color = color
-        self.variant = variant
-        self.rmin = rmin  # minimum rating one has to have to accept seek
-        self.rmax = rmax  # maximum rating one has to have to accept seek
+        self.game_type = game_type
+        self.rmin = rmin  # minimum rating one has to have to be offered this seek
+        self.rmax = rmax  # maximum rating one has to have to be offered this seek
+        
 #
 #if __name__ == "main":
 #    def

@@ -1,6 +1,7 @@
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
+from pychess.ic import *
 from pychess.System.Log import log
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 
@@ -13,118 +14,6 @@ titles = "((?:\(%s\))+)?" % titleslist
 names = "([a-zA-Z]+)%s" % titles
 mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
-
-unsupportedWilds = { # We need to disable wild 0 and 1, as they allow castling even
-                # when the king starts out in the d row. 
-                "wild/0": _("Opposite Kings"),
-                "wild/1": _("Limited Shuffle"),
-                "bughouse": _("Bughouse"),
-                "crazyhouse": _("Crazyhouse"),
-                "suicide": _("Suicide"),
-                "atomic": _("Atomic") }
-
-wilds = { "wild/2": _("Shuffle"),
-          "wild/3": _("Random"),
-          "wild/4": _("Asymmetric Random"),
-          "wild/5": _("Upside Down"),
-          "wild/8": _("Pawns Pushed"),
-          "wild/8a": _("Pawns Passed"),
-          "wild/fr": _("Fischer Random") }
-
-strToVariant = { "wild/2": SHUFFLECHESS,
-                 "wild/3": RANDOMCHESS,
-                 "wild/4": ASYMMETRICRANDOMCHESS,
-                 "wild/5": UPSIDEDOWNCHESS,
-                 "wild/8": PAWNSPUSHEDCHESS,
-                 "wild/8a": PAWNSPASSEDCHESS,
-                 "wild/fr": FISCHERRANDOMCHESS,
-                 "losers": LOSERSCHESS }
-
-variantToSeek = { NORMALCHESS : "",
-                  SHUFFLECHESS : "wild 2",
-                  RANDOMCHESS: "wild 3",
-                  ASYMMETRICRANDOMCHESS: "wild 4",
-                  UPSIDEDOWNCHESS : "wild 5",
-                  PAWNSPUSHEDCHESS : "wild 8",
-                  PAWNSPASSEDCHESS : "wild 8a",
-                  FISCHERRANDOMCHESS : "wild fr",
-                  LOSERSCHESS : "losers" }
-
-standards = { "blitz": _("Blitz"),
-              "lightning": _("Lightning"),
-              "untimed": _("Untimed"),
-              "standard": _("Standard"),
-              "losers": _("Losers"),
-              "nonstandard": _("Other")}
-
-shortTypes = { "b": _("Blitz"),
-               "l": _("Lightning"),
-               "u": _("Untimed"),
-               "e": _("Examined Game"),
-               "s": _("Standard"),
-               "w": _("Wild"),
-               "x": _("Atomic"),
-               "z": _("Crazyhouse"),
-               "B": _("Bughouse"),
-               "L": _("Losers"),
-               "S": _("Suicide") }
-
-shortToRatingType = { "b": TYPE_BLITZ,
-                      "l": TYPE_LIGHTNING,
-                      "s": TYPE_STANDARD,
-                      "w": TYPE_WILD,
-                      "L": TYPE_LOSERS,
-                      "u": TYPE_STANDARD }
-
-supportedShorts = ("b", "l", "s", "w", "L", "u")
-
-hexToTitle = { 0x1 : "U",
-               0x2 : "C",
-               0x4 : "GM",
-               0x8 : "IM",
-               0x10 : "FM",
-               0x20 : "WGM",
-               0x40 : "WIM",
-               0x80 : "WFM" }
-
-# From FICS 'help who':
-translatedTitles = { 
-                    "*": _("Administrator"),
-                    "B": _("Blindfold Account"),
-                    "C": _("Computer Account"),
-                    "T": _("Team Account"),
-                    "U": _("Unregistered User"),
-                    "CA": _("Chess Advisor"),
-                    "SR": _("Service Representative"),
-                    "TD": _("Tournament Director"),
-                    "TM": _("Mamer Manager"),
-                    "FM": _("FIDE Master"),
-                    "IM": _("International Master"),
-                    "GM": _("Grand Master"),
-                    "WIM": _("Women's International Master"),
-                    "WGM": _("Women's Grand Master"),
-                    }
-
-def convertName (typename):
-    # Try common
-    if typename in standards:
-        return standards[typename]
-    # Get rid of 'Loaded from'
-    typename = typename.split()[-1]
-    # Try wilds
-    if typename in wilds:
-        return wilds[typename]
-    # Default solution for eco/A00 and a few others
-    if "/" in typename:
-        a, b = typename.split("/")
-        a = a[0].upper() + a[1:]
-        b = b[0].upper() + b[1:]
-        return a + " " + b
-    # Otherwise forget about it
-    return typename[0].upper() + typename[1:]
-
-#typedic = {"b":_("Blitz"), "s":_("Standard"), "l":_("Lightning")}
-
 
 class GameListManager (GObject):
     
@@ -160,7 +49,7 @@ class GameListManager (GObject):
         
         self.connection.expect_line (self.on_game_list,
                 "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
-                % (ratings, ratings, "|".join(supportedShorts)))
+                % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
         self.connection.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.connection.expect_line (self.on_game_remove,
@@ -212,18 +101,22 @@ class GameListManager (GObject):
         print >> self.connection.client, "who IsblwzLSBx"
         # the previous who command won't get title info such as (TM)
         print >> self.connection.client, "who"
-                
-    ###
     
-    def seek (self, startmin, incsec, rated, ratings=(0,9999), color=None, variant=NORMALCHESS, manual=False):
+    def seek (self, startmin, incsec, game_type, rated, ratings=(0,9999),
+              color=None, manual=False):
+        log.debug("GameListManager.seek: %s %s %s %s %s %s %s\n" % \
+            (startmin, incsec, game_type, rated, str(ratings), color, manual))
         rchar = rated and "r" or "u"
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
-        print "seek %d %d %s %s %d-%d %s %s" % \
-            (startmin, incsec, rchar, cchar, ratings[0], ratings[1], variantToSeek[variant], manual and "m" or "")        
-        print >> self.connection.client, "seek %d %d %s %s %d-%d %s %s" % \
-                (startmin, incsec, rchar, cchar, ratings[0], ratings[1], variantToSeek[variant], manual and "m" or "")
+        manual = "m" if manual else ""
+        s = "seek %d %d %s %s %d-%d %s" % \
+            (startmin, incsec, rchar, cchar, ratings[0], ratings[1], manual)
+        if isinstance(game_type, VariantGameType):
+            s += " " + game_type.seek_text
+        print s        
+        print >> self.connection.client, s
     
     def refreshSeeks (self):
         print >> self.connection.client, "iset seekinfo 1"
@@ -237,8 +130,8 @@ class GameListManager (GObject):
         parts = match.groups()[0].split(" ")
         # The <s> message looks like:
         # <s> index w=name_from ti=titles rt=rating t=time i=increment
-        #     r=rated('r')/unrated('u') tp=type("fr"/"4","blitz") c=color
-        #     rr=rating_range(lower-upper) a=automatic?('t'/'f')
+        #     r=rated('r')/unrated('u') tp=type("wild/fr", "wild/4","blitz")
+        #     c=color rr=rating_range(lower-upper) a=automatic?('t'/'f')
         #     f=formula_checked('t'/f')
         
         seek = {"gameno": parts[0]}
@@ -246,9 +139,8 @@ class GameListManager (GObject):
             if key in ('w','r','t','i'):
                 seek[key] = value
             if key == "tp":
-                if value in unsupportedWilds:
-                    return
-                seek[key] = convertName(value)
+                if value not in GAME_TYPES: return
+                seek[key] = type_to_display_text(value)
             if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
                 seek["rmin"] = int(seek["rmin"])
@@ -256,9 +148,10 @@ class GameListManager (GObject):
             elif key == "ti":
                 seek["cp"] = bool(int(value) & 2) # 0x2 - computer
                 title = ""
-                for hex in hexToTitle.keys():
+                for hex in HEX_TO_TITLE.keys():
                     if int(value, 16) & hex:
-                        title += "(" + hexToTitle[hex] + ")"
+                        title += "(" + \
+                            TITLE_TYPE_DISPLAY_TEXTS_SHORT[HEX_TO_TITLE[hex]] + ")"
                 seek["title"] = title
             elif key == "rt":
                 if value[-1] in (" ", "P", "E"):
@@ -282,27 +175,25 @@ class GameListManager (GObject):
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, inc, \
            wmin, wsec, bmin, bsec, wmat, bmat, color, movno = match.groups()
-        if shorttype not in supportedShorts: return
+        if shorttype not in GAME_TYPES_BY_SHORT_FICS_NAME: return
+        game_type = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
         rated = rated == "r"
-        type = shortTypes[shorttype]
-        min = int(min)
-        inc = int(inc)
         private = private == "p"
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        type=type, min=min, inc=inc, private=private)
+        game = FICSGame(int(gameno), FICSPlayer(wname), FICSPlayer(bname), rated=rated,
+            game_type=game_type, min=int(min), inc=int(inc), private=private)
         wrating = self.__parseDigits(wrating) and int(self.__parseDigits(wrating)) or 0
         brating = self.__parseDigits(brating) and int(self.__parseDigits(brating)) or 0
-        game.wplayer.addRating(shortToRatingType[shorttype], wrating)
-        game.bplayer.addRating(shortToRatingType[shorttype], brating)
+        game.wplayer.addRating(game_type.rating_type, wrating)
+        game.bplayer.addRating(game_type.rating_type, brating)
         self.emit("addGame", game)
     
     def on_game_add (self, match):
         gameno, wname, bname, rated, type = match.groups()
-        if type in unsupportedWilds: return
+        if type not in GAME_TYPES: return
+        game_type = GAME_TYPES[type]
         rated = rated == "rated"
-        type = convertName(type)
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        type=type, private=False)
+        game = FICSGame(int(gameno), FICSPlayer(wname), FICSPlayer(bname), rated=rated,
+                        game_type=game_type, private=False)
         self.emit("addGame", game)
     
     def on_game_remove (self, match):
@@ -430,9 +321,9 @@ class GameListManager (GObject):
         status = self.__getStatus(status)
         # TODO: titles = self.__parseTitleHex(title)? Put it in FICSPlayer?
         titles = []
-        for hex in hexToTitle.keys():
+        for hex in HEX_TO_TITLE:
             if int(titlehex, 16) & hex:
-                titles.append(hexToTitle[hex])
+                titles.append(TITLE_TYPE_DISPLAY_TEXTS_SHORT[HEX_TO_TITLE[hex]])
         blitz = self.__parseDigits(blitz) and int(self.__parseDigits(blitz)) or 0
         blitzdev = self.__getDeviation(blitzdev)
         std = self.__parseDigits(std) and int(self.__parseDigits(std)) or 0
@@ -483,9 +374,9 @@ class GameListManager (GObject):
             losers, losersdev, atomic, atomicdev = match.groups()
         status = self.__getStatus(status)
         titles = []
-        for hex in hexToTitle.keys():
+        for hex in HEX_TO_TITLE:
             if int(titlehex, 16) & hex:
-                titles.append(hexToTitle[hex])
+                titles.append(TITLE_TYPE_DISPLAY_TEXTS_SHORT[HEX_TO_TITLE[hex]])
         blitz = self.__parseDigits(blitz) and int(self.__parseDigits(blitz)) or 0
         blitzdev = self.__getDeviation(blitzdev)
         std = self.__parseDigits(std) and int(self.__parseDigits(std)) or 0
@@ -567,6 +458,6 @@ class GameListManager (GObject):
         self.emit("clearSeeks")
 
 if __name__ == "__main__":
-    assert convertName("Loaded from eco/a00") == convertName("eco/a00") == "Eco A00"
-    assert convertName("wild/fr") == _("Fischer Random")
-    assert convertName("blitz") == _("Blitz")
+    assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"
+    assert type_to_display_text("wild/fr") == Variants.variants[FISCHERRANDOMCHESS].name
+    assert type_to_display_text("blitz") == GAME_TYPES["blitz"].display_text

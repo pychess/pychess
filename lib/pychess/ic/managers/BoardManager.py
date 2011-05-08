@@ -1,14 +1,13 @@
-
 import re
 from gobject import *
 import threading
 
 from pychess.System.Log import log
 from pychess.Utils.const import *
-from GameListManager import strToVariant, unsupportedWilds
 from pychess.Variants import variants
-from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard
+from pychess.ic import *
 from pychess.ic.VerboseTelnet import *
+from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard
 
 names = "(\w+)"
 titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
@@ -217,17 +216,8 @@ class BoardManager (GObject):
         decliner, = match.groups()
         self.emit("matchDeclined", decliner)
     
-    def __parseType (self, type):
-        if type in strToVariant.keys():
-            variant = strToVariant[type]
-        elif type in unsupportedWilds.keys():
-            raise RuntimeError, "We don't support %s yet :X" % type
-        else:
-            variant = NORMALCHESS
-        return variant
-    
-    def __generateCastleSigns (self, style12, variant):
-        if variant == FISCHERRANDOMCHESS:
+    def __generateCastleSigns (self, style12, game_type):
+        if game_type.variant_type == FISCHERRANDOMCHESS:
             backrow = style12.split()[0]
             leftside = backrow.find("r")
             rightside = backrow.find("r", leftside+1)
@@ -248,15 +238,15 @@ class BoardManager (GObject):
         style12 = matchlist[-1].groups()[0]
         
         rated = rated == "rated"
-        variant = self.__parseType(type)
-        castleSigns = self.__generateCastleSigns(style12, variant)
+        game_type = GAME_TYPES[type]
+        castleSigns = self.__generateCastleSigns(style12, game_type)
         
         self.castleSigns[gameno] = castleSigns
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.__parseStyle12(style12, castleSigns)
         
         game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        variant=variant, min=int(min), inc=int(inc),
+                        game_type=game_type, min=int(min), inc=int(inc),
                         board=FICSBoard(wms, bms, fen=fen))
         
         self.ourGameno = gameno
@@ -272,11 +262,11 @@ class BoardManager (GObject):
         
         rated, type, min, inc = moveListOther.match(matchlist[3]).groups()
         
-        variant = self.__parseType(type)
+        game_type = GAME_TYPES[type]
         
         if matchlist[5].startswith("<12>"):
             style12 = matchlist[5][5:]
-            castleSigns = self.__generateCastleSigns(style12, variant)
+            castleSigns = self.__generateCastleSigns(style12, game_type)
             gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                     self.__parseStyle12(style12, castleSigns)
             initialfen = fen
@@ -325,8 +315,8 @@ class BoardManager (GObject):
                 ("SetUp", "1"),
                 ("FEN", initialfen)
             ]
-            if variant != NORMALCHESS:
-                pgnHead += [("Variant", variants[variant].name)]
+            if game_type.variant_type != NORMALCHESS:
+                pgnHead += [("Variant", variants[game_type.variant_type].name)]
         
         if wrating not in ("0", "UNR", "----"):
             pgnHead.append(("WhiteElo", wrating))
@@ -352,7 +342,7 @@ class BoardManager (GObject):
             gain = int(inc)
 
         game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname), rated=rated,
-                        variant=variant, min=int(min), inc=int(inc),
+                        game_type=game_type, min=int(min), inc=int(inc),
                         board=FICSBoard(wms, bms, pgn=pgn))
         del self.queuedStyle12s[gameno]
         

@@ -11,6 +11,7 @@ import gtk, gobject, pango, re
 from gtk.gdk import pixbuf_new_from_file
 from gobject import GObject, SIGNAL_RUN_FIRST
 
+from pychess.ic import *
 from pychess.System import conf, glock, uistuff
 from pychess.System.GtkWorker import Publisher
 from pychess.System.prefix import addDataPrefix
@@ -22,10 +23,9 @@ from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.Utils.const import *
-from pychess.Utils.repr import typeName
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.GameModel import GameModel
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
@@ -194,15 +194,14 @@ class UserInfoSection(Section):
                     table.attach(label(item, xalign=1), i+1,i+2,0,1)
                 row += 1
 
-                for type_, rating in finger.getRating().iteritems():
-                    ratinglabel = label(typeName[type_] + ":")
+                for rating_type, rating in finger.getRating().iteritems():
+                    ratinglabel = label( \
+                        GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
                     table.attach(ratinglabel, 0, 1, row, row+1)
-                    if type_ is TYPE_WILD:
+                    if rating_type is TYPE_WILD:
                         ratinglabel.set_tooltip_text(
                         _("On FICS, your \"Wild\" rating encompasses all of the following variants at all time controls:\n") +
-                        _("Shuffle, Fischer Random, Random, Asymmetric Random\n") +
-                        _("Upside Down, Pawns Pushed, Pawns Passed\n") +
-                        _("Pawn Odds, Knight Odds, Rook Odds, Queen Odds"))
+                        ", ".join([gt.display_text for gt in WildGameType.instances()]))
                     table.attach(label(rating.elo, xalign=1), 1, 2, row, row+1)
                     table.attach(label(rating.wins, xalign=1), 2, 3, row, row+1)
                     table.attach(label(rating.draws, xalign=1), 3, 4, row, row+1)
@@ -899,20 +898,22 @@ class GameTabSection (ParrentListSection):
                 self.listPublisher.put((self.onGameUnobserved, gameno)) )
 
     def onGameAdd (self, ficsgame):
-        gametype = ficsgame.type
-
+        gametype = ficsgame.game_type.display_text
+        
         if ficsgame.min != None:
             length = ficsgame.min*60 + ficsgame.inc*40
-        elif "lightning" in ficsgame.type.lower():
+        elif ficsgame.game_type.rating_type == TYPE_LIGHTNING:
             length = 100
-        elif "blitz" in ficsgame.type.lower():
+        elif ficsgame.game_type.rating_type == TYPE_BLITZ:
             length = 9*60
-        else:
+        elif ficsgame.game_type.rating_type == TYPE_STANDARD:
             length = 15*60
-
+        else:
+            length = 0
+        
         if ficsgame.private == True:
             gametype += ", " + _("Private")
-
+        
 #        print "GameTab.onGameAdd():"
 #        print "gameno = %s, wname = %s, wrating = %s, bname = %s, brating = %s (type=%s), type = %s (type=%s), length = %s" \
 #            % (str(ficsgame.gameno), str(ficsgame.wplayer.name + ficsgame.wplayer.getTitles()), str(wrating),
@@ -1055,17 +1056,6 @@ RATING_SLIDER_STEP = 25
     
 class SeekChallengeSection (ParrentListSection):
     
-    variants = {
-        SHUFFLECHESS : TYPE_WILD,
-        FISCHERRANDOMCHESS : TYPE_WILD,
-        RANDOMCHESS: TYPE_WILD,
-        ASYMMETRICRANDOMCHESS: TYPE_WILD,
-        UPSIDEDOWNCHESS : TYPE_WILD,
-        PAWNSPUSHEDCHESS : TYPE_WILD,
-        PAWNSPASSEDCHESS : TYPE_WILD,
-        LOSERSCHESS : TYPE_LOSERS,
-    }
-    
     seekEditorWidgets = (
         "untimedCheck", "minutesSpin", "gainSpin",
         "strengthCheck", "chainAlignment", "ratingCenterSlider", "toleranceSlider", "toleranceHBox",
@@ -1174,7 +1164,7 @@ class SeekChallengeSection (ParrentListSection):
         
         self.lastdifference = 0
         self.loading_seek_editor = False
-        self.savedSeekRadioTexts = [_("Blitz"), _("Blitz"), _("Blitz")]
+        self.savedSeekRadioTexts = [ GAME_TYPES["blitz"].display_text ] * 3
         
         for i in range(1,4):
             self.__loadSeekEditor(i)
@@ -1197,8 +1187,8 @@ class SeekChallengeSection (ParrentListSection):
         else:
             self.__loadSeekEditor(1)
         
-        min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
-        self.connection.glm.seek(min, incr, rated, ratingrange, color, variant, manual)
+        min, incr, gametype, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
+        self.connection.glm.seek(min, incr, gametype, rated, ratingrange, color, manual)
 
     def onChallengeButtonClicked (self, button):
         playername = PlayerTabSection.getSelectedPlayerName()
@@ -1247,8 +1237,8 @@ class SeekChallengeSection (ParrentListSection):
             self.__loadSeekEditor(2)
         else:
             self.__loadSeekEditor(1)
-        min, incr, variant, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
-        self.connection.om.challenge(self.challengee.name, min, incr, rated, color, variant)
+        min, incr, gametype, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
+        self.connection.om.challenge(self.challengee.name, gametype, min, incr, rated, color)
     
     def onSeekRadioConfigButtonClicked (self, configimage, seeknumber): 
         self.__showSeekEditor(seeknumber)
@@ -1310,6 +1300,7 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["declineButton"].set_sensitive(selection_is_challenge)
     
     #-------------------------------------------------------- Seek Editor
+    
     @staticmethod
     def getRatingRangeDisplayText (rmin=0, rmax=9999):
         assert type(rmin) is type(int()) and rmin >= 0 and rmin <= 9999, rmin
@@ -1328,24 +1319,23 @@ class SeekChallengeSection (ParrentListSection):
     
     def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
-        min, gain, variant, ratingrange, color, rated, manual = \
+        min, gain, gametype, ratingrange, color, rated, manual = \
             self.__getSeekEditorDialogValues()
-        isUntimedGame = True if min is 0 else False
-        radioText = self.__getNameOfTimeControl(min, gain)
-        self.savedSeekRadioTexts[seeknumber-1] = radioText
+        self.savedSeekRadioTexts[seeknumber-1] = \
+            time_control_to_gametype(min, gain).display_text
         self.__writeSeekRadioLabels()
         seek = {}
         
-        if isUntimedGame:
-            seek["time"] = _("Untimed")
+        if gametype == GAME_TYPES["untimed"]:
+            seek["time"] = gametype.display_text
         elif gain > 0:
             seek["time"] = _("%(minutes)d min + %(gain)d sec/move") % \
                 {'minutes' : min, 'gain' : gain}
         else:
             seek["time"] = _("%d min") % min
         
-        if variant != NORMALCHESS and not isUntimedGame:
-            seek["variant"] = "%s" % variants[variant].name
+        if isinstance(gametype, VariantGameType):
+            seek["variant"] = "%s" % gametype.display_text
         
         rrtext = self.getRatingRangeDisplayText(ratingrange[0], ratingrange[1])
         if rrtext:
@@ -1356,7 +1346,7 @@ class SeekChallengeSection (ParrentListSection):
         elif color == BLACK:
             seek["color"] = _("Black")
         
-        if rated and not isUntimedGame:
+        if rated and gametype != GAME_TYPES["untimed"]:
             seek["rated"] = _("Rated")
         
         if manual:
@@ -1439,40 +1429,17 @@ class SeekChallengeSection (ParrentListSection):
 
         if self.widgets["noVariantRadio"].get_active() or \
            self.widgets["untimedCheck"].get_active():
-            variant = NORMALCHESS
+            gametype = time_control_to_gametype(min, incr)
         else:
             variant_combo_getter = self.seekEditorWidgetGettersSetters["variantCombo"][0]
             variant = variant_combo_getter(self.widgets["variantCombo"])
+            gametype = VARIANT_GAME_TYPES[variant]
 
         rated = self.widgets["ratedGameCheck"].get_active() and \
                    not self.widgets["untimedCheck"].get_active()
         manual = self.widgets["manualAcceptCheck"].get_active()
         
-        return min, incr, variant, ratingrange, color, rated, manual
-    
-    def __getTypeOfTimeControl (self, minutes, gain):
-        assert type(minutes) == int and type(gain) == int
-        assert minutes >= 0 and gain >= 0
-        gainminutes = gain > 0 and (gain*60)-1 or 0
-        if minutes is 0:
-            return TYPE_UNTIMED
-        elif (minutes*60) + gainminutes >= (15*60):
-            return TYPE_STANDARD
-        elif (minutes*60) + gainminutes >= (3*60):
-            return TYPE_BLITZ
-        else:
-            return TYPE_LIGHTNING
-        
-    def __getNameOfTimeControl (self, minutes, gain):
-        time_control = self.__getTypeOfTimeControl(minutes, gain)
-        if time_control is TYPE_UNTIMED:
-            return _("Untimed")
-        elif time_control is TYPE_STANDARD:
-            return _("Standard")
-        elif time_control is TYPE_BLITZ:
-            return _("Blitz")
-        else:
-            return _("Lightning")
+        return min, incr, gametype, ratingrange, color, rated, manual
         
     def __writeSeekRadioLabels (self):
         gameTypes = { _("Untimed"): [0, 1], _("Standard"): [0, 1],
@@ -1526,26 +1493,23 @@ class SeekChallengeSection (ParrentListSection):
             self.widgets["ratingRangeMinLabel"].set_label(_("Any strength"))
             self.widgets["ratingRangeMinLabel"].show()
     
-    def __getGameTypes (self):
+    def __getGameType (self):
         if self.widgets["untimedCheck"].get_active():
-            gametype = self.__getNameOfTimeControl(0, 0)
-            ratingtype = self.__getTypeOfTimeControl(0, 0)
+            gametype = GAME_TYPES["untimed"]
         elif self.widgets["noVariantRadio"].get_active():
             min = int(self.widgets["minutesSpin"].get_value())
             gain = int(self.widgets["gainSpin"].get_value())
-            gametype = self.__getNameOfTimeControl(min, gain)
-            ratingtype = self.__getTypeOfTimeControl(min, gain)
+            gametype = time_control_to_gametype(min, gain)
         else:
             variant_combo_getter = self.seekEditorWidgetGettersSetters["variantCombo"][0]
             variant = variant_combo_getter(self.widgets["variantCombo"])
-            gametype = variants[variant].name
-            ratingtype = self.variants[variant]
-        return gametype, ratingtype
+            gametype = VARIANT_GAME_TYPES[variant]
+        return gametype
         
     def __updateYourRatingHBox (self):
-        gametype, ratingtype = self.__getGameTypes()
-        self.widgets["yourRatingNameLabel"].set_label("(" + gametype + ")")
-        rating = self.__getRating(ratingtype)
+        gametype = self.__getGameType()
+        self.widgets["yourRatingNameLabel"].set_label("(" + gametype.display_text + ")")
+        rating = self.__getRating(gametype.rating_type)
         if rating is None:
             self.widgets["yourRatingImage"].clear()
             self.widgets["yourRatingLabel"].set_label(_("Unrated"))
@@ -1602,10 +1566,9 @@ class SeekChallengeSection (ParrentListSection):
         combo.add_attribute(cellRenderer, 'text', 0)
         combo.set_model(model)
         
-        groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
-                      VARIANTS_SHUFFLE: _("Shuffle"),
+        groupNames = {VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other")}
-        ficsvariants = [v for k, v in variants.iteritems() if k in self.variants.keys()]
+        ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
@@ -1627,7 +1590,7 @@ class SeekChallengeSection (ParrentListSection):
             path = model.get_path(combo.get_active_iter())
             return pathToVariant[path]
         def comboSetter (combo, variant):
-            assert variant in self.variants.keys(), \
+            assert variant in VARIANT_GAME_TYPES, \
                 "not a supported FICS variant: \"%s\"" % str(variant)
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
@@ -1674,7 +1637,7 @@ class SeekChallengeSection (ParrentListSection):
     def onTimeSpinChanged (self, spin):
         minutes = self.widgets["minutesSpin"].get_value_as_int()
         gain = self.widgets["gainSpin"].get_value_as_int()
-        name = self.__getNameOfTimeControl(minutes, gain)
+        name = time_control_to_gametype(minutes, gain).display_text
         self.widgets["timeControlNameLabel"].set_label("%s" % name)
         self.__updateYourRatingHBox()
     
@@ -1703,8 +1666,7 @@ class SeekChallengeSection (ParrentListSection):
         self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)        
         self.__updateRatingRangeBox()
 
-        gametype, ratingtype = self.__getGameTypes()
-        rating = self.__getRating(ratingtype)
+        rating = self.__getRating(self.__getGameType().rating_type)
         if rating is None: return
         rating = self.__clamp(rating)
         self.lastdifference = rating - center
@@ -1753,9 +1715,10 @@ class SeekChallengeSection (ParrentListSection):
     def onVariantComboChanged (self, combo):
         self.widgets["variantRadio"].set_active(True)            
         self.__updateYourRatingHBox()
-        min, gain, variant, ratingrange, color, rated, manual = \
+        min, gain, gametype, ratingrange, color, rated, manual = \
             self.__getSeekEditorDialogValues()
-        self.widgets["variantCombo"].set_tooltip_text(variants[variant].__desc__)
+        self.widgets["variantCombo"].set_tooltip_text(
+            variants[gametype.variant_type].__desc__)
 
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
