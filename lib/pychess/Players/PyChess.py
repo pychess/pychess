@@ -14,6 +14,7 @@ from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
 import pychess
+from pychess.ic import *
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.book import getOpenings

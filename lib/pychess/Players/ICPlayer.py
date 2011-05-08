@@ -182,9 +182,8 @@ class ICPlayer (Player):
         else:
             min = 0
             inc = 0
-        rated = self.gamemodel.rated
-        variant = [ k for (k, v) in variants.iteritems() if variants[k] == self.gamemodel.variant ][0]
-        self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
+        self.connection.om.challenge(self.name, self.gamemodel.ficsgame.game_type,
+                                     min, inc, self.gamemodel.ficsgame.rated)
     
     def offer (self, offer):
         log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))

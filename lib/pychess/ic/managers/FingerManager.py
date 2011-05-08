@@ -1,11 +1,11 @@
-
 from threading import RLock
 from gobject import *
+import re
 from time import time
+from pychess.ic import *
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
-import re
 
 types = "(?:blitz|standard|lightning|wild|bughouse|crazyhouse|suicide|losers|atomic)"
 rated = "(rated|unrated)"
@@ -19,18 +19,6 @@ mf = "(?:([mf]{1,2})\s?)?"
 times = "[, ]*".join("(?:(\d+) %s)?" % s for s in ("days", "hrs", "mins", "secs"))
 # "73 days, 5 hrs, 55 mins"
 # ('73', '5', '55', None)
-
-type2Type = {
-    "blitz": TYPE_BLITZ,
-    "standard": TYPE_STANDARD,
-    "lightning": TYPE_LIGHTNING,
-    "wild": TYPE_WILD,
-    "bughouse": TYPE_BUGHOUSE,
-    "crazyhouse": TYPE_CRAZYHOUSE,
-    "suicide": TYPE_SUICIDE,
-    "losers": TYPE_LOSERS,
-    "atomic": TYPE_ATOMIC
-}
 
 class FingerObject:
     
@@ -307,18 +295,18 @@ class FingerManager (GObject):
                 finger.setStatus(IC_STATUS_BUSY)
                 finger.setBusyMessage(groupdict["busymessage"])
             elif groupdict["gametype"] != None:
-                type = type2Type[groupdict["gametype"].lower()]
+                gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower()]
                 ratings = groupdict["ratings"].split()
                 del ratings[5] # We don't need the totals field
                 ratings[1] = float(ratings[1])
                 if len(ratings) == 5:
                     args = map(int, ratings)
-                    rating = Rating(type, *args)
+                    rating = Rating(gametype.rating_type, *args)
                 else:
                     bestTime = self.parseShortDate(ratings[6][1:-1])
                     args = map(int,ratings[:6]) + [bestTime]
-                    rating = Rating(type, *args)
-                finger.setRating(type, rating)
+                    rating = Rating(gametype.rating_type, *args)
+                finger.setRating(gametype.rating_type, rating)
             elif groupdict["email"] != None:
                 finger.setEmail(groupdict["email"])
             elif groupdict["sanctions"] != None:
