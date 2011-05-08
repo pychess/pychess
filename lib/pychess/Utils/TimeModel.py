@@ -3,6 +3,7 @@ from time import time
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System import repeat
+from pychess.System.Log import log
 
 class TimeModel (GObject):
     
@@ -38,6 +39,11 @@ class TimeModel (GObject):
         self.connect('player_changed', self.__zerolistener, 'player_changed')
         self.connect('pause_changed', self.__zerolistener, 'pause_changed')
         self.heap = []
+    
+    def __repr__ (self):
+        s = "<TimeModel object at %s (White: %s Black: %s)>" % \
+            (id(self), str(self.getPlayerTime(WHITE)), str(self.getPlayerTime(BLACK)))
+        return s
     
     def __zerolistener(self, *args):
         # If we are called by a sleeper (rather than a signal) we need to pop
@@ -119,6 +125,7 @@ class TimeModel (GObject):
         self.ended = True
     
     def pause (self):
+        log.debug("TimeModel.pause: self=%s\n" % self)
         if self.paused: return
         self.paused = True
         
@@ -130,6 +137,7 @@ class TimeModel (GObject):
         self.emit("pause_changed", True)
     
     def resume (self):
+        log.debug("TimeModel.resume: self=%s\n" % self)
         if not self.paused: return
         
         self.paused = False
