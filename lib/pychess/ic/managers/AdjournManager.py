@@ -89,7 +89,7 @@ class AdjournManager (GObject):
         if game is None: return
         self.emit("onGamePreview", game)
     
-    def __onAdjournedGameResigned (self):
+    def __onAdjournedGameResigned (self, match):
         self.queryAdjournments()
     
     def queryAdjournments (self):
