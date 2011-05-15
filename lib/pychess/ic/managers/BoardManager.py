@@ -469,6 +469,8 @@ class BoardManager (GObject):
         brating = cls.parseRating(brating)
         rated, game_type, minutes, increment = \
             moveListHeader2.match(matchlist[index+1]).groups()
+        minutes = int(minutes)
+        increment = int(increment)
         game_type = GAME_TYPES[game_type]
         reason = matchlist[-1].group().lower()
         result = None if in_progress else ADJOURNED
@@ -495,7 +497,7 @@ class BoardManager (GObject):
             cls.castleSigns[gameno] = castleSigns
         
         moves = {}
-        wms = bms = int(minutes) * 60 * 1000
+        wms = bms = minutes * 60 * 1000
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
                 log.error("BoardManager.parseGame: unmatched line: \"%s\"\n" % \
@@ -510,11 +512,15 @@ class BoardManager (GObject):
                 wms -= (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
                 if wmsec is not None:
                     wms -= int(wmsec)
+                if int(moveno) > 1 and increment > 0:
+                    wms += (increment * 1000)
             if bmove:
                 moves[ply+1] = bmove
                 bms -= (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
                 if bmsec is not None:
                     bms -= int(bmsec)
+                if int(moveno) > 1 and increment > 0:
+                    bms += (increment * 1000)
         
         if in_progress:
             # Apply queued board updates
@@ -534,7 +540,7 @@ class BoardManager (GObject):
             ("Site", "FICS"),
             ("White", wname),
             ("Black", bname),
-            ("TimeControl", "%d+%s" % (int(minutes) * 60, increment)),
+            ("TimeControl", "%d+%d" % (minutes * 60, increment)),
             ("Result", "*"),
             ("WhiteClock", msToClockTimeTag(wms)),
             ("BlackClock", msToClockTimeTag(bms)),
@@ -572,7 +578,7 @@ class BoardManager (GObject):
         # TODO: init FICSLiveGame or FICSAdjournedGame instead
         game = FICSGame(0, FICSPlayer(wname), FICSPlayer(bname),
                         rated=rated.lower() == "rated", game_type=game_type,
-                        min=int(minutes), inc=int(increment),
+                        min=minutes, inc=increment,
                         board=FICSBoard(wms, bms, pgn=pgn))
         if wrating:
             game.wplayer.addRating(game_type.rating_type, int(wrating))
