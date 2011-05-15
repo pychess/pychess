@@ -362,7 +362,7 @@ class BoardManager (GObject):
     def parseGame (cls, matchlist, in_progress=False):
         """ 
         Parses the header and movelist for an observed or stored game from its
-        re matchlist and returns a board dictionary.
+        re matchlist and returns a FICSGame.
         
         in_progress - should be True for an observed game matchlist, and False
         for stored/adjourned games
