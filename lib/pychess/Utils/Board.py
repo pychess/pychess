@@ -23,12 +23,12 @@ class Board:
         self.board = LBoard(self.variant)
 
         self.movestr = ""    # algebraic notation of the move
+        self.moveobj = None
         self.comments = []
         self.annotations = []
         self.variations = []
-        self.parent = None
         self.next = None
-        self.previous = None
+        self.prev = None
         
         if setup:
             if setup == True:
