@@ -94,6 +94,7 @@ class GameModel (GObject, PooledThread):
         }
         self.gameno = 0
         self.comment = ""
+        self.variations = []
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
@@ -173,7 +174,9 @@ class GameModel (GObject, PooledThread):
     
     def getMoveAtPly (self, ply):
         try:
-            return self.moves[self._plyToIndex(ply)]
+            print 'o', self.moves[self._plyToIndex(ply)]
+            print 'n', self.boards[self._plyToIndex(ply)].moveobj
+            return self.boards[self._plyToIndex(ply)+1].moveobj
         except IndexError:
             log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
