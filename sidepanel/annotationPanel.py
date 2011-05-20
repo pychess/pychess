@@ -91,12 +91,9 @@ class Sidepanel(gtk.TextView):
         offset = it.get_offset()
         for ni in self.nodeIters:
             if offset >= ni["start"] and offset < ni["end"]:
-#                self.board.load_node(ni["node"])
-# TODO
-                try:
+                if ni["node"] in self.gamemodel.boards:
                     self.boardview.shown = self.gamemodel.boards.index(ni["node"]) + self.gamemodel.lowply
-                except:
-                    print 'TODO: boardview.shown'
+                else:
                     for vari in self.gamemodel.variations:
                         if ni["node"] in vari:
                             self.gamemodel.boards = vari
@@ -109,21 +106,16 @@ class Sidepanel(gtk.TextView):
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
-        try:
-            start = None    
-            for ni in self.nodeIters:
-    # TODO
-    #            if ni["node"] == self.board.node:
-                if ni["node"] == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
-                    start = self.textbuffer.get_iter_at_offset(ni["start"])
-                    end = self.textbuffer.get_iter_at_offset(ni["end"])
-                    self.textbuffer.apply_tag_by_name("selected", start, end)
-                    break
-            
-            if start:
-                self.textview.scroll_to_iter(start, 0, use_align=False, yalign=0.1)
-        except:
-            print "TODO: boardview.shown"
+        start = None    
+        for ni in self.nodeIters:
+            if ni["node"] == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
+                start = self.textbuffer.get_iter_at_offset(ni["start"])
+                end = self.textbuffer.get_iter_at_offset(ni["end"])
+                self.textbuffer.apply_tag_by_name("selected", start, end)
+                break
+        
+        if start:
+            self.textview.scroll_to_iter(start, 0, use_align=False, yalign=0.1)
 
     # Recursively insert the node tree
     def insert_nodes(self, node, level=0, ply=0, result=None):
@@ -160,13 +152,9 @@ class Sidepanel(gtk.TextView):
                 buf.apply_tag_by_name("variation-uneven", startIter, endIter)
 
             buf.apply_tag_by_name("margin", startIter, endIter)
-# TODO      
-#            if node == self.board.node:
-            try:
-                if node == self.gamemodel.boards[self.boardview.shown]:
-                    buf.apply_tag_by_name("selected", startIter, endIter)
-            except:
-                print "TODO: boardview.shown"
+
+            if node == self.gamemodel.boards[self.boardview.shown]:
+                buf.apply_tag_by_name("selected", startIter, endIter)
             
             ni = {}
             ni["node"] = node

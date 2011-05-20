@@ -190,12 +190,12 @@ def parse_string(string, model, board, position, variation=False):
                     error = LoadingError (errstr1, errstr2)
                     break
 
+                board.moveobj = move
                 board = boards[-1].move(move)
 
                 if m.group(MOVE_COUNT):
                     board.movestr = m.group(MOVE_COUNT).rstrip()
                 board.movestr += mstr
-                board.moveobj = move
 
                 if m.group(MOVE_COMMENT):
                     board.movestr += m.group(MOVE_COMMENT)
@@ -209,7 +209,6 @@ def parse_string(string, model, board, position, variation=False):
 
                 if not variation:
                     model.moves.append(move)
-                    model.boards.append(board)
 
             elif group == COMMENT_REST:
                 last_board.comments.append(text[1:])
@@ -236,7 +235,7 @@ def parse_string(string, model, board, position, variation=False):
         if error:
             raise error
 
-    return boards[1:]
+    return boards
 
 
 class PGNFile (ChessFile):
@@ -309,19 +308,19 @@ class PGNFile (ChessFile):
                 model.boards.append(model.boards[-1].move(move))
         else:
             model.notation_string = self.games[gameno][1]
-            model.boards += parse_string(model.notation_string, model, model.boards[-1], position)
+            model.boards = parse_string(model.notation_string, model, model.boards[-1], position)
 
             def walk(node, path):
                 if node.next is None:
-                    model.variations.append(path+[node])
+                    model.variations.append(path[1:]+[node])
                 else:
                     walk(node.next, path+[node])
 
                 if node.variations: 
                     for vari in node.variations:
-                        walk(vari[0], list(path))
+                        walk(vari[1], list(path))
 
-            walk(model.boards[1], [])
+            walk(model.boards[0], [])
 
         if model.timemodel:
             if quick_parse:
@@ -442,7 +441,9 @@ if __name__ == '__main__':
 
     model = pgnfile.loadToModel(-1, quick_parse=True)
     print model.moves
+    #print model.boards
 
     model = pgnfile.loadToModel(-1, quick_parse=False)
+    #print [(board.moveobj, board) for board in model.boards]
     for path in model.variations:
         print [board.movestr for board in path]
