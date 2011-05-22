@@ -94,6 +94,7 @@ class Sidepanel(gtk.TextView):
                 if ni["node"] in self.gamemodel.boards:
                     self.boardview.shown = self.gamemodel.boards.index(ni["node"]) + self.gamemodel.lowply
                 else:
+                    self.boardview.shown = self.gamemodel.lowply
                     for vari in self.gamemodel.variations:
                         if ni["node"] in vari:
                             self.gamemodel.boards = vari
@@ -153,9 +154,9 @@ class Sidepanel(gtk.TextView):
 
             buf.apply_tag_by_name("margin", startIter, endIter)
 
-            if node == self.gamemodel.boards[self.boardview.shown]:
+            if node == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
                 buf.apply_tag_by_name("selected", startIter, endIter)
-            
+                
             ni = {}
             ni["node"] = node
             ni["start"] = startIter.get_offset()        

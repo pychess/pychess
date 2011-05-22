@@ -190,8 +190,8 @@ def parse_string(string, model, board, position, variation=False):
                     error = LoadingError (errstr1, errstr2)
                     break
 
-                board.moveobj = move
                 board = boards[-1].move(move)
+                board.moveobj = move
 
                 if m.group(MOVE_COUNT):
                     board.movestr = m.group(MOVE_COUNT).rstrip()
