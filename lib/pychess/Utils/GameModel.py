@@ -419,17 +419,19 @@ class GameModel (GObject, PooledThread):
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
-                newBoard.previous = self.boards[-1]
+                newBoard.prev = self.boards[-1]
                 if self.ply % 2 == 0:
                     move_count = str((self.ply+1)/2 + 1)+"."
                 else:
                     move_count = ""
                 newBoard.movestr = move_count + toSAN(self.boards[-1], move)
-
+                newBoard.moveobj = move
+                
                 self.boards[-1].next = newBoard
                 self.boards.append(newBoard)
                 self.moves.append(move)
-                
+                self.variations[0].append(newBoard)
+
                 if self.timemodel:
                     self.timemodel.tap()
                     
