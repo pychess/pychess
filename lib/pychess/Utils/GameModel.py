@@ -174,7 +174,7 @@ class GameModel (GObject, PooledThread):
     
     def getMoveAtPly (self, ply):
         try:
-            return self.boards[self._plyToIndex(ply)].moveobj
+            return self.boards[self._plyToIndex(ply)+1].moveobj
         except IndexError:
             log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
