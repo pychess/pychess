@@ -112,14 +112,14 @@ class Sidepanel(gtk.TextView):
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
-        start = None    
+        start = None
         for ni in self.nodeIters:
             if ni["node"] == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 end = self.textbuffer.get_iter_at_offset(ni["end"])
                 self.textbuffer.apply_tag_by_name("selected", start, end)
                 break
-        
+
         if start:
             self.textview.scroll_to_iter(start, 0, use_align=False, yalign=0.1)
 
@@ -285,7 +285,7 @@ class Sidepanel(gtk.TextView):
             self.insert_header(self.gamemodel)
             if self.gamemodel.comment:
                 self.insert_comment(self.gamemodel.comment)
-            self.insert_nodes(self.gamemodel.boards[1], result=reprResult[self.gamemodel.status])
+            self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
     def game_loaded(self, model, uri):
         self.update()

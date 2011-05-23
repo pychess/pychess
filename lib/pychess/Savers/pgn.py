@@ -214,7 +214,7 @@ def parse_string(string, model, board, position, variation=False):
                 last_board.comments.append(text[1:])
 
             elif group == COMMENT_BRACE:
-                if board.prev is None:
+                if len(model.moves) == 0:
                     model.comment = text[1:-1].replace('\r\n', ' ')
                 else:
                     last_board.comments.append(text[1:-1].replace('\r\n', ' '))

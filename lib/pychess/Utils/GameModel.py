@@ -94,7 +94,7 @@ class GameModel (GObject, PooledThread):
         }
         self.gameno = 0
         self.comment = ""
-        self.variations = []
+        self.variations = [[]]
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
