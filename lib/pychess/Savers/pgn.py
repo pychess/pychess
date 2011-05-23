@@ -282,6 +282,7 @@ class PGNFile (ChessFile):
                 model.boards = [Board(setup=True)]
 
         del model.moves[:]
+        del model.variations[:]
         model.status = WAITING_TO_START
         model.reason = UNKNOWN_REASON
 

@@ -1210,11 +1210,11 @@ class BoardView (gtk.DrawingArea):
     
     def showFirst (self):
         self.shown = self.model.lowply
-    
+
     def showPrevious (self):
         if self.shown > self.model.lowply:
             self.shown -= 1
-    
+
     def showNext (self):
         if self.shown < self.model.ply:
             self.shown += 1
