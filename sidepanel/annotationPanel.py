@@ -281,7 +281,7 @@ class Sidepanel(gtk.TextView):
     def update(self):
         self.textbuffer.set_text('')
         self.nodeIters = []
-        if len(self.gamemodel.boards) > self.gamemodel.lowply:
+        if self.boardview.shown >= self.gamemodel.lowply:
             self.insert_header(self.gamemodel)
             if self.gamemodel.comment:
                 self.insert_comment(self.gamemodel.comment)
