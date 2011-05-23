@@ -313,7 +313,7 @@ class PGNFile (ChessFile):
 
             def walk(node, path):
                 if node.next is None:
-                    model.variations.append(path[1:]+[node])
+                    model.variations.append(path+[node])
                 else:
                     walk(node.next, path+[node])
 
@@ -445,6 +445,6 @@ if __name__ == '__main__':
     #print model.boards
 
     model = pgnfile.loadToModel(-1, quick_parse=False)
-    #print [(board.moveobj, board) for board in model.boards]
+    print [board.moveobj for board in model.boards]
     for path in model.variations:
         print [board.movestr for board in path]
