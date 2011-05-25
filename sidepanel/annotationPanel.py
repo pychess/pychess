@@ -91,18 +91,23 @@ class Sidepanel(gtk.TextView):
         offset = it.get_offset()
         for ni in self.nodeIters:
             if offset >= ni["start"] and offset < ni["end"]:
-                if ni["node"] in self.gamemodel.boards:
-                    self.boardview.shown = self.gamemodel.boards.index(ni["node"]) + self.gamemodel.lowply
+                board = ni["node"]
+                if board in self.gamemodel.boards:
+                    self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
                 else:
-                    self.boardview.shown = self.gamemodel.lowply
                     for vari in self.gamemodel.variations:
-                        if ni["node"] in vari:
-                            self.gamemodel.boards = vari
+                        if board in vari:
+                            # Go back to the common board of variations to let animation system work
+                            board_in_vari = board
+                            while board_in_vari not in self.gamemodel.boards:
+                                board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
+                            self.boardview.shown = board_in_vari.ply
                             break
-                    self.boardview.shown = self.gamemodel.boards.index(ni["node"]) + self.gamemodel.lowply
+                    self.gamemodel.boards = vari
+                    self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
 
                 # Back to the main line if needed...
-                if ni["node"] in self.gamemodel.variations[0]:
+                if board in self.gamemodel.variations[0]:
                     self.gamemodel.boards = self.gamemodel.variations[0]
 
                 self.update_selected_node()
