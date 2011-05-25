@@ -94,7 +94,7 @@ class GameModel (GObject, PooledThread):
         }
         self.gameno = 0
         self.comment = ""
-        self.variations = [[]]
+        self.variations = [self.boards]
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
@@ -430,7 +430,6 @@ class GameModel (GObject, PooledThread):
                 self.boards[-1].next = newBoard
                 self.boards.append(newBoard)
                 self.moves.append(move)
-                self.variations[0].append(newBoard)
 
                 if self.timemodel:
                     self.timemodel.tap()
