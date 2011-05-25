@@ -346,6 +346,11 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = self.model.getMoveAtPly(self.shown-1)
         else:
             self.lastMove = None
+
+        # Back to the main line if needed...
+        if self.model.boards != self.model.variations[0]:
+            if self.model.getBoardAtPly(self.shown) in self.model.variations[0]:
+                self.model.boards = self.model.variations[0]
        
         self.runAnimation(redrawMisc=True)
         repeat(self.runAnimation)
@@ -1211,18 +1216,9 @@ class BoardView (gtk.DrawingArea):
     def showFirst (self):
         self.shown = self.model.lowply
 
-        # Back to the main line if needed...
-        if self.model.boards != self.model.variations[0]:
-            self.model.boards = self.model.variations[0]
-
     def showPrevious (self):
         if self.shown > self.model.lowply:
             self.shown -= 1
-
-        # Back to the main line if needed...
-        if self.model.boards != self.model.variations[0]:
-            if self.model.getBoardAtPly(self.shown) in self.model.variations[0]:
-                self.model.boards = self.model.variations[0]
 
     def showNext (self):
         if self.shown < self.model.ply:

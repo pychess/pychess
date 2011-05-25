@@ -106,10 +106,6 @@ class Sidepanel(gtk.TextView):
                     self.gamemodel.boards = vari
                     self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
 
-                # Back to the main line if needed...
-                if board in self.gamemodel.variations[0]:
-                    self.gamemodel.boards = self.gamemodel.variations[0]
-
                 self.update_selected_node()
                 break
         return True

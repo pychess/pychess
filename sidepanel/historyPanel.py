@@ -103,7 +103,11 @@ class Sidepanel:
         iter = selection.get_selected()[1]
         if iter == None: return
         if self.frozen.on: return
-        #print "sel changed. updating shown"
+
+        # Back to the main line if needed...
+        if self.board.model.boards != self.board.model.variations[0]:
+            self.board.model.boards = self.board.model.variations[0]
+
         row = tree.get_model().get_path(iter)[0]
         if self.board.model.lowply & 1:
             self.board.shown = self.board.model.lowply + row*2 + col
