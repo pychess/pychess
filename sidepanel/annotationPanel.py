@@ -1,3 +1,5 @@
+import datetime
+
 import gtk
 import pango
 
@@ -216,13 +218,11 @@ class Sidepanel(gtk.TextView):
         buf.insert(end_iter(), " ")
 
     def insert_header(self, gm):
-        # TODO: divide the panel into two window
-        # a header above, and the movetex below
         buf = self.textbuffer
         end_iter = buf.get_end_iter
 
         try:
-            text = "\n" + gm.tags['White']
+            text = gm.tags['White']
         except:
             # pgn not processed yet
             return
@@ -261,11 +261,12 @@ class Sidepanel(gtk.TextView):
 
         round = gm.tags['Round']
         if round and round != "?":
-            text += ', round ' + round
+            text += ', ' + _('round %s') % round
 
         game_date = gm.tags['Date']
         if not '?' in game_date:
-            text += ', ' + game_date
+            y, m, d = map(int, game_date.split('.'))
+            text += ', ' + datetime.date(y, m, d).strftime('%x')
         elif not '?' in game_date[:4]:
             text += ', ' + game_date[:4]
         buf.insert_with_tags_by_name(end_iter(), text, "head1")
