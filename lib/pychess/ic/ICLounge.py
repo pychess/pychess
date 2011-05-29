@@ -20,6 +20,7 @@ from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.widgets.preferencesDialog import SoundTab
+from pychess.widgets.InfoBar import *
 from pychess.Utils.const import *
 from pychess.Utils.repr import typeName
 from pychess.Utils.IconLoader import load_icon
@@ -44,6 +45,10 @@ class ICLounge (GObject):
         self.connection = c
         self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
+        self.infobar = InfoBar()
+        self.infobar.hide()
+        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
+            expand=False, fill=False)
 
         def on_window_delete (window, event):
             self.close()
@@ -82,9 +87,9 @@ class ICLounge (GObject):
 
             SeekChallengeSection(w,c),
             
-            # This is not really a section. It handles error messages which
+            # This is not really a section. It handles server messages which
             # don't correspond to a running game
-            ErrorMessages(w,c),
+            Messages(w,c, self.infobar),
             
             # This is not really a section. Merely a pair of BoardManager connects
             # which takes care of ionest and stuff when a new game is started or
@@ -1738,38 +1743,44 @@ class ConsoleWindow:
         pass
 
 ############################################################################
-# Relay server error messages to the user which aren't part of a game      #
+# Relay server messages to the user which aren't part of a game            #
 ############################################################################
 
-class ErrorMessages (Section):
-    def __init__ (self, widgets, connection):
+class Messages (Section):
+    def __init__ (self, widgets, connection, infobar):
         self.connection = connection
+        self.infobar = infobar
+        self.messages = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
-    
+        self.connection.bm.connect("playBoardCreated", self.onPlayBoardCreated)
+        
     @glock.glocked
     def tooManySeeks (self, bm):
-        title = _("You can only have 3 outstanding seeks")
-        description = _("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?")
-        d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
-        d.set_markup ("<big><b>%s</b></big>" % title)
-        d.format_secondary_text (description)
-        def response (dialog, response):
+        label = gtk.Label(_("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
+        label.set_width_chars(70)
+        label.set_line_wrap(True)
+        def response_cb (infobar, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-            dialog.destroy()
-        d.connect("response", response)
-        d.show()
+        message = InfoBarMessage(gtk.MESSAGE_WARNING, label, response_cb,
+                                 (gtk.STOCK_YES, gtk.RESPONSE_YES),
+                                 (gtk.STOCK_NO, gtk.RESPONSE_NO))
+        self.infobar.push_message(message)
+        self.messages.append(message)
+    
+    @glock.glocked
+    def onPlayBoardCreated (self, bm, board):
+        for message in self.messages:
+            message.dismiss()
+        self.messages = []
+        return False
     
     @glock.glocked
     def matchDeclined (self, bm, decliner):
-        title = _("%s declines the match offer") % decliner
-        description = _("%s has declined your offer for a match.") % decliner
-        d = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
-        d.set_markup ("<big><b>%s</b></big>" % title)
-        d.format_secondary_text (description)
-        d.connect("response", lambda dialog, response: dialog.destroy())
-        d.show()
+        label = gtk.Label(_("%s has declined your offer for a match") % decliner)
+        message = InfoBarMessage(gtk.MESSAGE_INFO, label, None)
+        self.infobar.push_message(message)
 
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #
