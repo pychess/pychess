@@ -270,7 +270,11 @@ class Sidepanel(gtk.TextView):
         game_date = gm.tags['Date']
         if not '?' in game_date:
             y, m, d = map(int, game_date.split('.'))
-            text += ', ' + datetime.date(y, m, d).strftime('%x')
+            # strftime() is limited to > 1900 dates
+            try:
+                text += ', ' + datetime.date(y, m, d).strftime('%x')
+            except ValueError:
+                text += ', ' + game_date
         elif not '?' in game_date[:4]:
             text += ', ' + game_date[:4]
         buf.insert_with_tags_by_name(end_iter(), text, "head1")
