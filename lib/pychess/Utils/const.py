@@ -201,6 +201,13 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 # Brush types. Send piece object for Piece brush
 CLEAR, ENPAS = range(2)
 
+# Main menu items
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
+                     "call_flag", "resign", "ask_to_move")
+VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
+
 ################################################################################
 # Subprocess                                                                   #
 ################################################################################

@@ -14,6 +14,7 @@ from pychess.System.Log import log
 from pychess.System import glock, conf, prefix
 from ChessClock import ChessClock
 from BoardControl import BoardControl
+from MenuItemsDict import MenuItemsDict
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.System.prefix import addUserConfigPrefix
@@ -55,12 +56,6 @@ media_rewind = load_icon(16, "gtk-media-rewind-ltr")
 media_forward = load_icon(16, "gtk-media-forward-ltr")
 media_next = load_icon(16, "gtk-media-next-ltr")
 
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
-ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
-                     "call_flag", "resign", "ask_to_move")
-VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
-
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
 files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
@@ -91,97 +86,6 @@ for panel in sidePanels:
 
 docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 
-################################################################################
-# Main menubar MenuItem classes to keep track of menu widget states            #
-################################################################################
-
-class GtkMenuItem (object):
-    def __init__ (self, name, gamewidget, sensitive=False, label=None):
-        assert type(sensitive) is bool
-        assert label is None or type(label) is str
-        self.name = name
-        self.gamewidget = gamewidget
-        self._sensitive = sensitive
-        self._label = label
-        
-    @property
-    def sensitive (self):
-        return self._sensitive
-    @sensitive.setter
-    def sensitive (self, sensitive):
-        assert type(sensitive) is bool
-        self._sensitive = sensitive
-        self._set_widget("sensitive", sensitive)
-        
-    @property
-    def label (self):
-        return self._label
-    @label.setter
-    def label (self, label):
-        assert isinstance(label, str) or isinstance(label, unicode)
-        self._label = label
-        self._set_widget("label", label)
-    
-    def _set_widget (self, property, value):
-        if not self.gamewidget.isInFront(): return
-        if widgets[self.name].get_property(property) != value:
-#            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
-            glock.acquire()
-            try:
-                widgets[self.name].set_property(property, value)
-            finally:
-                glock.release()
-    
-    def update (self):
-        self._set_widget("sensitive", self._sensitive)
-        if self._label is not None:
-            self._set_widget("label", self._label)
-
-class GtkMenuToggleButton (GtkMenuItem):
-    def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
-        assert type(active) is bool
-        GtkMenuItem.__init__(self, name, gamewidget, sensitive, label)
-        self._active = active
-
-    @property
-    def active (self):
-        return self._active
-    @active.setter
-    def active (self, active):
-        assert type(active) is bool
-        self._active = active
-        self._set_widget("active", active)
-
-    def update (self):
-        GtkMenuItem.update(self)
-        self._set_widget("active", self._active)
-
-class MenuItemsDict (dict):
-    """
-    Keeps track of menubar menuitem widgets that need to be managed on a game
-    by game basis. Each menuitem writes through its respective widget state to
-    the GUI if we are encapsulated in the gamewidget that's focused/infront
-    """
-    
-    VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
-    
-    class ReadOnlyDictException (Exception): pass
-
-    def __init__ (self, gamewidget):
-        dict.__init__(self)
-        for item in ACTION_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
-        for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget))
-        gamewidget.connect("infront", self.on_gamewidget_infront)
-    
-    def __setitem__ (self, item, value):
-        raise self.ReadOnlyDictException()
-    
-    def on_gamewidget_infront (self, gamewidget):
-        for menuitem in self:
-            self[menuitem].update()
-        
 ################################################################################
 # The holder class for tab releated widgets                                    #
 ################################################################################
