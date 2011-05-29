@@ -214,10 +214,7 @@ def parse_string(string, model, board, position, variation=False):
                 last_board.comments.append(text[1:])
 
             elif group == COMMENT_BRACE:
-                if len(model.moves) == 0:
-                    model.comment = text[1:-1].replace('\r\n', ' ')
-                else:
-                    last_board.comments.append(text[1:-1].replace('\r\n', ' '))
+                last_board.comments.append(text[1:-1].replace('\r\n', ' '))
 
             elif group == COMMENT_NAG:
                 board.movestr += nag_replace(text)
@@ -433,7 +430,10 @@ GAME = """
 [Black "?"]
 [Result "*"]
 
-1. e4 e5 2. Nf3 (2. f4 d5) Nc6 (2... Nf6 3. Nc3 (3. d3)) (2... d6) 3. Bc4
+{Initial main line comment}1. e4 e5 2. Nf3 {comment on move 2. Nf3}
+({Initial variation comment for 2.f4} 2. f4 d5)
+Nc6 (2... Nf6 3. Nc3 (3. d3 (3. Bc4)))
+({Initial variation comment for 2... d6} 2... d6) 3. Bc4
 """ 
 
 

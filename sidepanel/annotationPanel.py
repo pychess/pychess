@@ -139,6 +139,11 @@ class Sidepanel(gtk.TextView):
                 break
             
             if not node.movestr:
+                for comment in node.comments:
+                    if node.ply == self.gamemodel.lowply:
+                        self.insert_comment(comment + "\n", level)
+                    else:
+                        self.insert_comment(comment, level)
                 node = node.next
                 continue
             
@@ -172,9 +177,8 @@ class Sidepanel(gtk.TextView):
             self.nodeIters.append(ni)
             
             # Comments
-            if len(node.comments) > 0:
-                for comment in node.comments:
-                    self.insert_comment(comment, level)
+            for comment in node.comments:
+                self.insert_comment(comment, level)
 
             new_line = False
 
