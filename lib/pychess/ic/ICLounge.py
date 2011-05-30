@@ -19,6 +19,8 @@ from pychess.widgets import ionest
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
+from pychess.widgets.preferencesDialog import SoundTab
+from pychess.widgets.InfoBar import *
 from pychess.Utils.const import *
 from pychess.Utils.repr import typeName
 from pychess.Utils.IconLoader import load_icon
@@ -43,6 +45,10 @@ class ICLounge (GObject):
         self.connection = c
         self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
+        self.infobar = InfoBar()
+        self.infobar.hide()
+        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
+            expand=False, fill=False)
 
         def on_window_delete (window, event):
             self.close()
@@ -70,7 +76,7 @@ class ICLounge (GObject):
             UserInfoSection(w,c),
             NewsSection(w,c),
 
-            SeekTabSection(w,c),
+            SeekTabSection(w,c, self.infobar),
             SeekGraphSection(w,c),
             PlayerTabSection(w,c),
             GameTabSection(w,c),
@@ -81,9 +87,9 @@ class ICLounge (GObject):
 
             SeekChallengeSection(w,c),
             
-            # This is not really a section. It handles error messages which
+            # This is not really a section. It handles server messages which
             # don't correspond to a running game
-            ErrorMessages(w,c),
+            Messages(w,c, self.infobar),
             
             # This is not really a section. Merely a pair of BoardManager connects
             # which takes care of ionest and stuff when a new game is started or
@@ -366,12 +372,14 @@ class ParrentListSection (Section):
 
 class SeekTabSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection):
+    def __init__ (self, widgets, connection, infobar):
         ParrentListSection.__init__(self)
 
         self.widgets = widgets
         self.connection = connection
-
+        self.infobar = infobar
+        self.messages = {}
+        
         self.seeks = {}
         self.challenges = {}
 
@@ -497,8 +505,9 @@ class SeekTabSection (ParrentListSection):
         self.store.remove (treeiter)
         del self.seeks[gameno]
         self.__updateActiveSeeksLabel()
-
+    
     def onChallengeAdd (self, index, match):
+        SoundTab.playAction("aPlayerChecks")
         time = _("%(min)s min") % {'min': match["t"]}
         if match["i"] != "0":
             time += _(" + %(sec)s sec") % {'sec': match["i"]}
@@ -506,9 +515,31 @@ class SeekTabSection (ParrentListSection):
         is_rated = False if match["r"] == "u" else True
         is_computer = False
         is_manual = False
+        
+        # TODO: differentiate between challenges and manual-seek-accepts
+        content = gtk.HBox()
+        icon = gtk.Image()
+        icon.set_from_pixbuf(PlayerTabSection.getPlayerIcon(match["w"], 22))
+        content.pack_start(icon, expand=False, fill=False, padding=4)
+        label = gtk.Label()
+        label.set_markup(PlayerTabSection.getPlayerMarkup(match["w"], match["rt"]))
+        content.pack_start(label, expand=False, fill=False)
+        content.pack_start(gtk.Label(_(" challenges you to a %s %s game of %s") % \
+            (rated, match["tp"], time)), expand=False, fill=False)
+        def callback (infobar, response):
+            if response == gtk.RESPONSE_ACCEPT:
+                self.connection.om.acceptIndex(index)
+            elif response == gtk.RESPONSE_NO:
+                self.connection.om.declineIndex(index)
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, callback,
+                                 ("Accept", gtk.RESPONSE_ACCEPT),
+                                 ("Decline", gtk.RESPONSE_NO))
+        self.messages[index] = message
+        self.infobar.push_message(message)
+        
         tooltiptext = SeekGraphSection.getSeekTooltipText(match["w"],
             match["rt"], is_computer, is_rated, is_manual, match["tp"],
-            match["t"], match["i"], rmin=match["rmin"], rmax=match["rmax"])
+            match["t"], match["i"])
         ti = self.store.prepend (["C"+index, self.chaPix, match["w"],
                                   int(match["rt"]), rated, match["tp"], time,
                                   float(match["t"] + "." + match["i"]),
@@ -519,6 +550,9 @@ class SeekTabSection (ParrentListSection):
 
     def onChallengeRemove (self, index):
         if not index in self.challenges: return
+        if index in self.messages:
+            self.messages[index].dismiss()
+            del self.messages[index]
         ti = self.challenges[index]
         if not self.store.iter_is_valid(ti): return
         self.store.remove(ti)
@@ -533,19 +567,26 @@ class SeekTabSection (ParrentListSection):
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        gameno = model.get_value(iter, 0)
-        if gameno.startswith("C"):
-            self.connection.om.acceptIndex(gameno[1:])
+        index = model.get_value(iter, 0)
+        if index.startswith("C"):
+            index = index[1:]
+            self.connection.om.acceptIndex(index)
         else:
-            self.connection.om.playIndex(gameno)
+            self.connection.om.playIndex(index)
+        if index in self.messages:
+            self.messages[index].dismiss()
+            del self.messages[index]
 
     def onDeclineClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        gameno = model.get_value(iter, 0)
-        if gameno.startswith("C"):
-            gameno = gameno[1:]
-        self.connection.om.declineIndex(gameno)
+        index = model.get_value(iter, 0)
+        if index.startswith("C"):
+            index = index[1:]
+        self.connection.om.declineIndex(index)
+        if index in self.messages:
+            self.messages[index].dismiss()
+            del self.messages[index]
         
     def onClearSeeksClicked (self, button):
         print >> self.connection.client, "unseek"
@@ -554,8 +595,8 @@ class SeekTabSection (ParrentListSection):
     def row_activated (self, treeview, path, view_column):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        gameno = model.get_value(iter, 0)
-        if gameno != self.lastSeekSelected: return
+        index = model.get_value(iter, 0)
+        if index != self.lastSeekSelected: return
         if path != model.get_path(iter): return
         self.onAcceptClicked(None)
 
@@ -563,8 +604,14 @@ class SeekTabSection (ParrentListSection):
         model, iter = self.widgets["seektreeview"].get_selection().get_selected()
         if iter == None: return
         self.lastSeekSelected = model.get_value(iter, 0)
-
+    
+    def _clear_messages (self):
+        for message in self.messages.values():
+            message.dismiss()
+        self.messages = {}
+    
     def onPlayingGame (self):
+        self._clear_messages()
         self.widgets["seekListContent"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.store.clear()
@@ -747,6 +794,18 @@ class PlayerTabSection (ParrentListSection):
         player = player[1]
         
         return cls.__getPlayerIcon(player, size)
+    
+    @classmethod
+    def getPlayerMarkup (cls, name, rating):
+        markup = "<big><b>%s</b></big>" % name
+        if cls.playerIsAGuest(name):
+            markup += " <big>(%s)</big>" % _("Unregistered")
+        else:
+            rating = str(rating) if rating > 0 else _("Unrated")
+            markup += " <big>(%s)</big>" % rating
+            if cls.playerIsAComputer(name):
+                markup += " <big>(%s)</big>" % _("Computer Player")
+        return markup
     
     @classmethod
     def playerIsAGuest (cls, playername):
@@ -1172,12 +1231,9 @@ class SeekChallengeSection (ParrentListSection):
         self.challengee = playername
         try:
             self.challengee_is_guest = PlayerTabSection.playerIsAGuest(playername)
-            challengee_is_computer = PlayerTabSection.playerIsAComputer(playername)
         except KeyError:
             self.challengee_is_guest = False
-            challengee_is_computer = False
         self.in_challenge_mode = True
-        icon = PlayerTabSection.getPlayerIcon(playername, 22)
         
         for i in range(1,4):
             self.__loadSeekEditor(i)
@@ -1191,16 +1247,10 @@ class SeekChallengeSection (ParrentListSection):
             seeknumber = 1
         self.__updateSeekEditor(seeknumber, challengemode=True)
         
-        markup = "<big><b>%s</b></big>" % playername
-        if self.challengee_is_guest:
-            markup += " <big>(%s)</big>" % _("Unregistered")
-        else:
-            playerrating = str(playerrating) if playerrating > 0 else _("Unrated")
-            markup += " <big>(%s)</big>" % playerrating
-            if challengee_is_computer:
-                markup += " <big>(%s)</big>" % _("Computer Player")
-        self.widgets["challengeeNameLabel"].set_markup(markup)
-        self.widgets["challengeeImage"].set_from_pixbuf(icon)
+        self.widgets["challengeeNameLabel"].set_markup(
+            PlayerTabSection.getPlayerMarkup(playername, playerrating))
+        self.widgets["challengeeImage"].set_from_pixbuf(
+            PlayerTabSection.getPlayerIcon(playername, 22))
         title = _("Challenge: ") + playername
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
@@ -1736,38 +1786,44 @@ class ConsoleWindow:
         pass
 
 ############################################################################
-# Relay server error messages to the user which aren't part of a game      #
+# Relay server messages to the user which aren't part of a game            #
 ############################################################################
 
-class ErrorMessages (Section):
-    def __init__ (self, widgets, connection):
+class Messages (Section):
+    def __init__ (self, widgets, connection, infobar):
         self.connection = connection
+        self.infobar = infobar
+        self.messages = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
-    
+        self.connection.bm.connect("playBoardCreated", self.onPlayBoardCreated)
+        
     @glock.glocked
     def tooManySeeks (self, bm):
-        title = _("You can only have 3 outstanding seeks")
-        description = _("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?")
-        d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO)
-        d.set_markup ("<big><b>%s</b></big>" % title)
-        d.format_secondary_text (description)
-        def response (dialog, response):
+        label = gtk.Label(_("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
+        label.set_width_chars(70)
+        label.set_line_wrap(True)
+        def response_cb (infobar, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-            dialog.destroy()
-        d.connect("response", response)
-        d.show()
+        message = InfoBarMessage(gtk.MESSAGE_WARNING, label, response_cb,
+                                 (gtk.STOCK_YES, gtk.RESPONSE_YES),
+                                 (gtk.STOCK_NO, gtk.RESPONSE_NO))
+        self.infobar.push_message(message)
+        self.messages.append(message)
+    
+    @glock.glocked
+    def onPlayBoardCreated (self, bm, board):
+        for message in self.messages:
+            message.dismiss()
+        self.messages = []
+        return False
     
     @glock.glocked
     def matchDeclined (self, bm, decliner):
-        title = _("%s declines the match offer") % decliner
-        description = _("%s has declined your offer for a match.") % decliner
-        d = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
-        d.set_markup ("<big><b>%s</b></big>" % title)
-        d.format_secondary_text (description)
-        d.connect("response", lambda dialog, response: dialog.destroy())
-        d.show()
+        label = gtk.Label(_("%s has declined your offer for a match") % decliner)
+        message = InfoBarMessage(gtk.MESSAGE_INFO, label, None)
+        self.infobar.push_message(message)
 
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #
