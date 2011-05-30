@@ -93,7 +93,6 @@ class GameModel (GObject, PooledThread):
             "Day":   today.day
         }
         self.gameno = 0
-        self.comment = ""
         self.variations = [self.boards]
         
         # Keeps track of offers, so that accepts can be spotted

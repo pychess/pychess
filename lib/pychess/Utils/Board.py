@@ -25,7 +25,6 @@ class Board:
         self.movestr = ""    # algebraic notation of the move
         self.moveobj = None
         self.comments = []
-        self.annotations = []
         self.variations = []
         self.next = None
         self.prev = None
