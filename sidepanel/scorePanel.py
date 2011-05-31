@@ -117,6 +117,8 @@ class Sidepanel:
         print "----------------------"
         
     def shown_changed (self, boardview, shown):
+        if self.boardview.model.getBoardAtPly(shown) not in self.boardview.model.variations[0]:
+            return
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)
             self.plot.redraw()
