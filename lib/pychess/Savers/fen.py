@@ -22,7 +22,7 @@ from ChessFile import ChessFile
 
 class FenFile (ChessFile):
     
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position, model=None, quick_parse=True):
         if not model: model = GameModel()
         
         # We have to set full move number to 1 to make sure LBoard and GameModel
