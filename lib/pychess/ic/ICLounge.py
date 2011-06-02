@@ -483,11 +483,11 @@ class SeekTabSection (ParrentListSection):
         is_rated = False if seek["r"] == "u" else True
         is_computer = ficsplayer.isComputer()
         tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
-            seek["rt"], is_computer, is_rated, seek["manual"],
-            seek["tp"], seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
+            seek["rt"], is_computer, is_rated, seek["manual"], seek["gametype"],
+            seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
         seek_ = [seek["gameno"], pix, nametitle, int(seek["rt"]), rated,
-                 seek["tp"], time, float(seek["t"] + "." + seek["i"]),
-                 textcolor, tooltiptext]
+            seek["gametype"].display_text, time,
+            float(seek["t"] + "." + seek["i"]), textcolor, tooltiptext]
 
         if textcolor == "grey":
             ti = self.store.prepend(seek_)
@@ -522,37 +522,41 @@ class SeekTabSection (ParrentListSection):
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
         is_rated = False if match["r"] == "u" else True
-        is_computer = ficsplayer.isComputer()
         is_manual = False
         
         # TODO: differentiate between challenges and manual-seek-accepts
+        # (wait until seeks are comparable FICSSeek objects to do this)
         content = gtk.HBox()
         icon = gtk.Image()
-        icon.set_from_pixbuf(ficsplayer.getIcon(size=22))
+        icon.set_from_pixbuf(
+            ficsplayer.getIcon(size=22, gametype=match["gametype"]))
         content.pack_start(icon, expand=False, fill=False, padding=4)
         label = gtk.Label()
-        label.set_markup(ficsplayer.getMarkup())
+        label.set_markup(ficsplayer.getMarkup(gametype=match["gametype"]))
         content.pack_start(label, expand=False, fill=False)
-        content.pack_start(gtk.Label(_(" challenges you to a %s %s game of %s") % \
-            (rated, match["tp"], time)), expand=False, fill=False)
+        if match["is_adjourned"]:
+            text = _(" would like to resume your adjourned %s %s game of %s")
+        else:
+            text = _(" challenges you to a %s %s game of %s")
+        label = gtk.Label(text % (rated, match["gametype"].display_text, time))
+        content.pack_start(label, expand=False, fill=False)
         def callback (infobar, response):
             if response == gtk.RESPONSE_ACCEPT:
                 self.connection.om.acceptIndex(index)
             elif response == gtk.RESPONSE_NO:
                 self.connection.om.declineIndex(index)
         message = InfoBarMessage(gtk.MESSAGE_INFO, content, callback,
-                                 ("Accept", gtk.RESPONSE_ACCEPT),
-                                 ("Decline", gtk.RESPONSE_NO))
+                                 (_("Accept"), gtk.RESPONSE_ACCEPT),
+                                 (_("Decline"), gtk.RESPONSE_NO))
         self.messages[index] = message
         self.infobar.push_message(message)
         
         tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
-            match["rt"], is_computer, is_rated, is_manual, match["tp"],
-            match["t"], match["i"])
+            match["rt"], ficsplayer.isComputer(), is_rated, is_manual,
+            match["gametype"], match["t"], match["i"])
         ti = self.store.prepend (["C"+index, self.chaPix, nametitle,
-                                  int(match["rt"]), rated, match["tp"], time,
-                                  float(match["t"] + "." + match["i"]),
-                                  "black", tooltiptext])
+            int(match["rt"]), rated, match["gametype"].display_text, time,
+            float(match["t"] + "." + match["i"]), "black", tooltiptext])
         self.challenges[index] = ti
         self.__updateActiveSeeksLabel()
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
@@ -691,7 +695,7 @@ class SeekGraphSection (ParrentListSection):
         if is_computer:  # remove from testing/ficsmanagers.py as well when removing this
             text += " (%s)" % _("Computer Player")
         rated = _("Rated") if is_rated else _("Unrated")
-        text += "\n%s %s" % (rated, gametype)
+        text += "\n%s %s" % (rated, gametype.display_text)
         text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': min, 'sec': gain}
         rrtext = SeekChallengeSection.getRatingRangeDisplayText(rmin, rmax)
         if rrtext:
@@ -710,9 +714,9 @@ class SeekGraphSection (ParrentListSection):
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
         is_rated = False if seek["r"] == "u" else True
-        text = self.getSeekTooltipText(nametitle, seek["rt"], seek["cp"], is_rated,
-                                       seek["manual"], seek["tp"], seek["t"],
-                                       seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
+        text = self.getSeekTooltipText(nametitle, seek["rt"], seek["cp"],
+            is_rated, seek["manual"], seek["gametype"], seek["t"], seek["i"],
+            rmin=seek["rmin"], rmax=seek["rmax"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):
