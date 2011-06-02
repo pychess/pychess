@@ -212,6 +212,8 @@ class UCIEngine (ProtocolEngine):
         self.mode = mode
     
     def setOptionInitialBoard (self, model):
+        log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
+            (self, model), self.defname)
         # UCI always sets the position when searching for a new game, but for
         # getting analyzers ready to analyze at first ply, it is good to have.
         self.board = model.getBoardAtPly(model.ply)
@@ -249,6 +251,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def pause (self):
+        log.debug("pause: self=%s\n" % self, self.defname)
         self.engine.pause()
         return
         
@@ -258,6 +261,7 @@ class UCIEngine (ProtocolEngine):
             print >> self.engine, "stop"
     
     def resume (self):
+        log.debug("resume: self=%s\n" % self, self.defname)
         self.engine.resume()
         return
         

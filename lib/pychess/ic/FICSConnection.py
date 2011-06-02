@@ -17,6 +17,7 @@ from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
+from FICSObjects import FICSPlayersOnline, FICSGamesInProgress
 
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction
@@ -191,6 +192,10 @@ class FICSConnection (Connection):
             self.cm = ChatManager(self)
             self.alm = AutoLogOutManager(self)
             self.adm = AdjournManager(self)
+            self.playersonline = FICSPlayersOnline(self)
+            self.gamesinprogress = FICSGamesInProgress(self)
+            self.playersonline.start()
+            self.gamesinprogress.start()
             
             self.connecting = False
             self.connected = True

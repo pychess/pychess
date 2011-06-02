@@ -1,24 +1,16 @@
-
 import re
 import datetime
-
 from gobject import *
 
+from BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.Utils.const import *
-
-names = "\w+(?:\([A-Z\*]+\))*"
-weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
-months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-
-sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
-moveListMoves = re.compile("(\d+)\. +%s +\([\d:\.]+\) *(?:%s +\([\d:\.]+\))?" %
-        (sanmove, sanmove))
+from pychess.System.Log import log
 
 class AdjournManager (GObject):
     
     __gsignals__ = {
         'onAdjournmentsList' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'onGamePreview' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,int,int,str,str)),
+        'onGamePreview' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
     }
     
     def __init__ (self, connection):
@@ -31,19 +23,23 @@ class AdjournManager (GObject):
                                      self.connection.username)
         
         self.connection.expect_fromto (self.__onSmovesResponse,
-                                       "Move\s+(%s)\s+(%s)" % (names,names),
-                                       "{(.*[gG]ame adjourned.*)} \*")
+                                       moveListHeader1Str,
+#                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
+                                        "\s*{.*(?:(?:[Gg]ame.*adjourned)|(?:Still in progress)).*}\s*\*")
         
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
-                                        "\s*\d+: (B|W) (%s)\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|[A-Z]\d+)\s+(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" %
-                                        (names, "|".join(weekdays), "|".join(months))) 
+                                        "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|[A-Z]\d+)\s+%s" %
+                                        (names, dates)) 
+        
+        self.connection.expect_line (self.__onAdjournedGameResigned,
+                                     "You have resigned the game\.")
         
         self.adjournments = []
         
         #TODO: Connect to {Game 67 (MAd vs. Sandstrom) Game adjourned by mutual agreement} *
         #TODO: Connect to adjourned game as adjudicated
-        #TODO: Connect to player has resigned ajourned game
+        #TODO: connect to "Dildo, with whom you have an adjourned game, has logged on"
     
     def __onStoredResponseYES (self, matchlist):
         #Stored games of User: 
@@ -89,48 +85,12 @@ class AdjournManager (GObject):
         self.emit("onAdjournmentsList", [])
     
     def __onSmovesResponse (self, matchlist):
-        #Move  PyChess            selman             
-        #----  ----------------   ----------------
-        #  1.  e4      (0:00.000)     c5      (0:00.000)  
-        #  2.  Nf3     (0:00.000) 
-        #      {White lost connection; game adjourned} *
-        
-        white_name, black_name = matchlist[0].groups()
-        end_reason = matchlist[-1].groups()
-        
-        pgnHead = [
-            ("Event", "Ficsgame"),
-            ("Site", "Internet"),
-            ("White", white_name),
-            ("Black", black_name)]
-        pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
-        
-        pgnlist = []
-        for line in matchlist[2:-1]:
-            if not moveListMoves.match(line):
-                print "HER!->", repr(line)
-            
-            moveno, wmove, bmove = moveListMoves.match(line).groups()
-            pgnlist.append(moveno+".")
-            pgnlist.append(wmove)
-            if bmove:
-                pgnlist.append(bmove)
-        pgnlist.append("*")
-        pgn += " ".join(pgnlist)
-        
-        if white_name.lower() == self.connection.username.lower():
-            opponent = black_name
-        else: opponent = white_name
-        for adjournment in self.adjournments:
-            if adjournment["opponent"].lower() == opponent.lower():
-                 secs = adjournment["minutes"]*60
-                 gain = adjournment["gain"]
-                 break
-        else:
-            secs = 60
-            gain = 0
-        
-        self.emit("onGamePreview", pgn, secs, gain, white_name, black_name)
+        game = BoardManager.parseGame(matchlist, in_progress=False)
+        if game is None: return
+        self.emit("onGamePreview", game)
+    
+    def __onAdjournedGameResigned (self, match):
+        self.queryAdjournments()
     
     def queryAdjournments (self):
         print >> self.connection.client, "stored"
@@ -140,7 +100,41 @@ class AdjournManager (GObject):
     
     def challenge (self, playerName):
         print >> self.connection.client, "match %s" % playerName
-
+    
+    def _weHaveAdjournedGameWith (self, playername):
+        for adjournment in self.adjournments:
+            if playername == adjournment["opponent"]:
+                return True
+        return False
+    
+    def resign (self, playername):
+        if not self._weHaveAdjournedGameWith(playername):
+            log.warn("AdjournManager.resign: no stored game vs %s\n" % playername)
+            return
+        log.log("AdjournManager.resign: resigning stored game vs %s\n" % playername)
+        print >> self.connection.client, "resign %s" % playername
+    
+    def draw (self, playername):
+        if not self._weHaveAdjournedGameWith(playername):
+            log.warn("AdjournManager.draw: no stored game vs %s\n" % playername)
+            return
+        log.log("AdjournManager.draw: offering %s draw for stored game\n" % playername)
+        print >> self.connection.client, "sdraw %s" % playername
+    
+    def abort (self, playername):
+        if not self._weHaveAdjournedGameWith(playername):
+            log.warn("AdjournManager.abort: no stored game vs %s\n" % playername)
+            return
+        log.log("AdjournManager.abort: offering %s abort for stored game\n" % playername)
+        print >> self.connection.client, "sabort %s" % playername
+    
+    def resume (self, playername):
+        if not self._weHaveAdjournedGameWith(playername):
+            log.warn("AdjournManager.resume: no stored game vs %s\n" % playername)
+            return
+        log.log("AdjournManager.resume: offering %s resume for stored game\n" % playername)
+        print >> self.connection.client, "match %s" % playername
+    
 #(a)  Users who have more than 15 stored games are restricted from starting new
 #games.  If this situation happens to you, review your stored games and see
 #which ones might be eligible for adjudication (see "help adjudication").
