@@ -3,6 +3,7 @@ import time
 import gtk
 import gobject
 import pango
+import re
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
@@ -10,6 +11,7 @@ from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
+from pychess.ic.FICSObjects import FICSPlayer
 
 TYPE_PERSONAL, TYPE_CHANNEL = range(2)
 
@@ -307,21 +309,24 @@ class InfoPanel (gtk.Notebook, Panel):
         def __init__ (self, id, text, chatView, connection):
             gtk.Alignment.__init__(self, xscale=1, yscale=1)
             self.add(gtk.Label(_("Loading player data")))
+
+            m = re.match("(\w+)\W*", text)
+            playername = m.groups()[0]
             
             self.fm = connection.fm
             self.handle_id = glock_connect(self.fm, "fingeringFinished",
-                                           self.onFingeringFinished, text)
+                                           self.onFingeringFinished, playername)
             
-            self.fm.finger(text)
+            self.fm.finger(playername)
         
-        def onFingeringFinished (self, fm, finger, text):
+        def onFingeringFinished (self, fm, finger, playername):
             if not isinstance(self.get_child(), gtk.Label) or \
-                    finger.getName().lower() != text.lower():
+                    finger.getName().lower() != playername.lower():
                 return
             self.fm.disconnect(self.handle_id)
             
             label = gtk.Label()
-            label.set_markup("<b>%s</b>" % text)
+            label.set_markup("<b>%s</b>" % playername)
             widget = gtk.Frame()
             widget.set_label_widget(label)
             widget.set_shadow_type(gtk.SHADOW_NONE)
@@ -490,7 +495,12 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         
         for name in self.connection.glm.getPlayerlist():
             id = self.compileId(name, TYPE_PERSONAL)
-            self.playersList.addRow(id, name, TYPE_PERSONAL)
+            try:
+                ficsplayer = self.connection.playersonline[FICSPlayer(name)]
+            except KeyError:
+                continue
+            self.playersList.addRow(id, ficsplayer.name + ficsplayer.getTitles(),
+                                    TYPE_PERSONAL)
     
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:
