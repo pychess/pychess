@@ -11,9 +11,6 @@ reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen")
 
 localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 
-typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
-            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
-
 reprResult_long = {
     DRAW: _("The game ended in a draw"),
     WHITEWON: _("%(white)s won the game"),
@@ -43,9 +40,13 @@ reprReason_long = {
     WON_NOMATERIAL: _("Because %(loser)s lost all pieces but the king"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
-    ADJOURNED_AGREEMENT: _("Because the players agreed to"),
+    ADJOURNED_AGREEMENT: _("Because both players agreed to adjourn the game"),
     ADJOURNED_SERVER_SHUTDOWN: _("Because the server was shutdown"),
     ADJOURNED_COURTESY: _("Because a player lost connection and the other player requested adjournment"),
+    ADJOURNED_COURTESY_WHITE: _("Because %(black)s lost connection to the server and %(white)s requested adjournment"),
+    ADJOURNED_COURTESY_BLACK: _("Because %(white)s lost connection to the server and %(black)s requested adjournment"),
+    ADJOURNED_LOST_CONNECTION_WHITE: _("Because %(white)s lost connection to the server"),
+    ADJOURNED_LOST_CONNECTION_BLACK: _("Because %(black)s lost connection to the server"),
 
     ABORTED_ADJUDICATION: _("Because of adjudication by an admin"),
     ABORTED_AGREEMENT: _("Because the players agreed to"),

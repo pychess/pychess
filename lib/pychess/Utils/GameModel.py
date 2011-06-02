@@ -80,18 +80,27 @@ class GameModel (GObject, PooledThread):
         self.reason = UNKNOWN_REASON
         
         self.timemodel = timemodel
-
+        
         self.connections = defaultdict(list)  # mainly for IC subclasses
         
-        today = datetime.date.today()
+        now = datetime.datetime.now()
         self.tags = {
             "Event": _("Local Event"),
             "Site":  _("Local Site"),
             "Round": 1,
-            "Year":  today.year,
-            "Month": today.month,
-            "Day":   today.day
+            "Year":  now.year,
+            "Month": now.month,
+            "Day":   now.day,
+            "Time":  "%02d:%02d:00" % (now.hour, now.minute),
         }
+        if self.timemodel:
+            self.tags["TimeControl"] = \
+                "%d+%d" % (self.timemodel.getInitialTime(), self.timemodel.gain)
+#### do this upon time_changed or game_changed?
+#            self.tags["WhiteClock"] = \
+#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(wms)
+#            self.tags["BlackClock"] = \
+#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(bms)
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
@@ -107,13 +116,17 @@ class GameModel (GObject, PooledThread):
         self.undoQueue = Queue.Queue()
     
     def __repr__ (self):
-        s = ""
-        s += "ply=%s" % str(self.ply)
+        s = "<GameModel at %s" % id(self)
+        s += " (ply=%s" % self.ply
+        if len(self.moves) > 0:
+            s += ", move=%s" % self.moves[-1]
+        s += ", variant=%s" % self.variant.name
         s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
         s += ", players=%s" % str(self.players)
+        s += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
-            s += ", %s" % self.boards[-1]
-        return s
+            s += "\nboard=%s" % self.boards[-1]
+        return s + ")>"
     
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
@@ -123,6 +136,8 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("withdraw", self.withdrawRecieved))
             self.connections[player].append(player.connect("decline", self.declineRecieved))
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
+        self.tags["White"] = str(self.players[WHITE])
+        self.tags["Black"] = str(self.players[BLACK])
     
     def setSpectators (self, spectators):
         assert self.status == WAITING_TO_START
@@ -361,6 +376,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def run (self):
+        log.debug("GameModel.run: Starting. self=%s\n" % self)
         # Avoid racecondition when self.start is called while we are in self.end
         if self.status != WAITING_TO_START:
             return
@@ -369,6 +385,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players + self.spectators.values():
             player.start()
         
+        log.debug("GameModel.run: emitting 'game_started' self=%s\n" % self)
         self.emit("game_started")
         
         while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
@@ -448,6 +465,7 @@ class GameModel (GObject, PooledThread):
             self.emit("game_unended")
    
     def __pause (self):
+        log.debug("GameModel.__pause: %s\n" % self)
         for player in self.players:
             player.pause()
         try:
