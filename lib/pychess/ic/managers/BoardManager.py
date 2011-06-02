@@ -139,7 +139,7 @@ def parse_reason (result, reason, wname=None):
 class BoardManager (GObject):
     
     __gsignals__ = {
-        'gameCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
+        'playGameCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
         'obsGameCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
         'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (int,)),
         'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
@@ -170,7 +170,7 @@ class BoardManager (GObject):
         self.connection.expect_line (self.matchDeclined,
                                      "%s declines the match offer." % names)
         
-        self.connection.expect_n_lines (self.onGameCreated,
+        self.connection.expect_n_lines (self.onPlayGameCreated,
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
             % (names, ratings, names, ratings, ratedexp),
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
@@ -330,7 +330,7 @@ class BoardManager (GObject):
             else: return None
         else: return None
     
-    def onGameCreated (self, matchlist):
+    def onPlayGameCreated (self, matchlist):
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
         gameno, wname, bname, rated, type = matchlist[1].groups()
         style12 = matchlist[-1].groups()[0]
@@ -356,7 +356,7 @@ class BoardManager (GObject):
         self.ourGameno = gameno
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.gamemodelStartedEvents[gameno].clear()
-        self.emit("gameCreated", game)
+        self.emit("playGameCreated", game)
     
     @classmethod
     def parseGame (cls, matchlist, in_progress=False):
