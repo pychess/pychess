@@ -11,18 +11,21 @@ names = "\w+(?:\([A-Z\*]+\))*"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\])?"
 ratings = "\(([0-9\ \-\+]{4})\)"
+loaded_from = "(?: Loaded from (wild.*))?"
+adjourned = "(?: (\(adjourned\)))?"
 
 matchreUntimed = re.compile ("(\w+) %s %s ?(\w+) %s %s (untimed)\s*" % \
                                   (ratings, colors, ratings, rated) )
-matchre = re.compile ("(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)\s*(.*)" % \
-                                  (ratings, colors, ratings, rated) )
+matchre = re.compile(
+    "(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)%s%s" % \
+    (ratings, colors, ratings, rated, loaded_from, adjourned))
 
 #<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) [black] GuestNXMP (----) unrated blitz 2 12
 #<pf> 16 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated wild 2 12 Loaded from wild/fr
 #<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)
 #<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12
 #<pf> 45 w=GuestYDDR t=match p=GuestYDDR (----) mgatto (1358) unrated untimed
-
+#<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)
 #
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
@@ -126,7 +129,7 @@ class OfferManager (GObject):
             # don't need this
             return
         if offertype not in strToOfferType:
-            log.error("OfferManager.onOfferAdd: Declining unknown offer type: " + \
+            log.warn("OfferManager.onOfferAdd: Declining unknown offer type: " + \
                 "offertype=%s parameters=%s index=%s\n" % (offertype, parameters, index))
             print >> self.connection.client, "decline", index
         offertype = strToOfferType[offertype]
@@ -137,26 +140,39 @@ class OfferManager (GObject):
         self.offers[offer.index] = offer
         
         if offer.type == MATCH_OFFER:
+            is_adjourned = False
             if matchreUntimed.match(parameters) != None:
                 fname, frating, col, tname, trating, rated, type = \
                     matchreUntimed.match(parameters).groups()
                 mins = "0"
                 incr = "0"
+                gametype = GAME_TYPES["untimed"]
             else:
-                fname, frating, col, tname, trating, rated, type_short, mins, incr, type = \
-                    matchre.match(parameters).groups()
-                if not type or "adjourned" in type:
-                    type = type_short
+                fname, frating, col, tname, trating, rated, gametype, mins, \
+                    incr, wildtype, adjourned = matchre.match(parameters).groups()
+                if (wildtype and "adjourned" in wildtype) or \
+                        (adjourned and "adjourned" in adjourned):
+                    is_adjourned = True
+                if wildtype and "wild" in wildtype:
+                    gametype = wildtype
+                    
+                try:
+                    gametype = GAME_TYPES[gametype]
+                except KeyError:
+                    log.warn("OfferManager.onOfferAdd: auto-declining " + \
+                        "unknown offer type: '%s'\n" % gametype)
+                    self.decline(offer)
+                    del self.offers[offer.index]
+                    return
             
-            if type.split()[-1] not in GAME_TYPES.keys():
-                self.decline(offer)
-            else:
-                rating = frating.strip()
-                rating = rating.isdigit() and rating or "0"
-                rated = rated == "unrated" and "u" or "r"
-                match = {"tp": type_to_display_text(type), "w": fname, "rt": rating,
-                         "r": rated, "t": mins, "i": incr}
-                self.emit("onChallengeAdd", index, match)
+            # TODO: get the ficsplayer and update their rating to this one
+            # rather than emitting it in match 
+            rating = frating.strip()
+            rating = rating.isdigit() and rating or "0"
+            rated = rated == "unrated" and "u" or "r"
+            match = {"gametype": gametype, "w": fname, "rt": rating,
+                "r": rated, "t": mins, "i": incr, "is_adjourned": is_adjourned}
+            self.emit("onChallengeAdd", index, match)
         
         else:
             log.debug("OfferManager.onOfferAdd: emitting onOfferAdd: %s\n" % offer)

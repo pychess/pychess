@@ -139,8 +139,9 @@ class GameListManager (GObject):
             if key in ('w','r','t','i'):
                 seek[key] = value
             if key == "tp":
-                if value not in GAME_TYPES: return
-                seek[key] = type_to_display_text(value)
+                try:
+                    seek["gametype"] = GAME_TYPES[value]
+                except KeyError: return
             if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
                 seek["rmin"] = int(seek["rmin"])

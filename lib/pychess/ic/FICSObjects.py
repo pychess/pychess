@@ -123,7 +123,7 @@ class FICSPlayer (GObject):
         else:
             return load_icon(size, "weather-clear")
     
-    def getIcon (self, size=15):
+    def getIcon (self, size=15, gametype=None):
         assert type(size) == int, "size not an int: %s" % str(size)
         
         if self.isGuest():
@@ -133,14 +133,26 @@ class FICSPlayer (GObject):
         elif self.isAdmin():
             return load_icon(size, "stock_book_blue", "accessories-dictionary")
         else:
-            return self.getIconByRating(self.getStrength(), size)
+            if gametype:
+                rating = self.getRating(gametype.rating_type)
+                rating = rating.elo if rating is not None else 0
+            else:
+                rating = self.getStrength()
+            return self.getIconByRating(rating, size)
     
-    def getMarkup (self):
+    def getMarkup (self, gametype=None):
         markup = "<big><b>%s</b></big>" % self.name
         if self.isGuest():
             markup += " <big>(%s)</big>" % _("Unregistered")
         else:
-            rating = self.getStrength() if self.getStrength() > 0 else _("Unrated")
+            if gametype:
+                rating = self.getRating(gametype.rating_type)
+                rating = rating.elo if rating is not None else 0
+            else:
+                rating = self.getStrength()
+            if rating < 1:
+                rating = _("Unrated")
+            
             markup += " <big>(%s)</big>" % rating
             if self.isComputer():
                 markup += " <big>(%s)</big>" % _("Computer Player")
