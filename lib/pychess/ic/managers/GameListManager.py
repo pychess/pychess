@@ -68,12 +68,6 @@ class GameListManager (GObject):
         self.connection.expect_line (self.on_adjourn_add,
                 "\d+: (W|B) (\w+)\s+(N|Y) \[ (\w+)\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(\w+)\s+(.*)")
         
-        #self.connection.expect_fromto (self.gameCreated,
-        #        "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)" %
-        #            (names, ratings, names, ratings, rated),
-        #        "{Game (\d+)\s.*")
-        
-        
         self.connection.lvm.setVariable("seekinfo", True)
         self.connection.lvm.setVariable("seekremove", True)
         #self.connection.lvm.setVariable("seek", False)
@@ -350,11 +344,6 @@ class GameListManager (GObject):
         procPlayed = (int(wscore)+int(bscore))*100/79
         self.emit("addAdjourn", {"opponent": opponent, "opstatus": opstatus, "date": date,
                                   "procPlayed": procPlayed })
-    
-    ###
-    
-    def gameCreated (self, match):
-        self.emit("clearSeeks")
 
 if __name__ == "__main__":
     assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"

@@ -27,15 +27,15 @@ class FICSPlayer (GObject):
         self.game = None
 #        self.online = False
         
-        for type, rating, deviation in \
+        for rating_type, rating, deviation in \
             ((TYPE_BLITZ, blitzrating, blitzdeviation),
              (TYPE_STANDARD, stdrating, stddeviation),
              (TYPE_LIGHTNING, lightrating, lightdeviation),
              (TYPE_WILD, wildrating, wilddeviation),
              (TYPE_LOSERS, losersrating, losersdeviation)):
             if rating and rating > 0:
-                ratingobj = Rating(type, rating, deviation=deviation)
-                self.setRating(type, ratingobj)
+                ratingobj = Rating(rating_type, rating, deviation=deviation)
+                self.setRating(rating_type, ratingobj)
         
 #        log.debug("FICSPlayer.init():\n")
 #        log.debug("\t Initializing new player: %s\n" % repr(self))
@@ -191,8 +191,8 @@ class FICSPlayer (GObject):
                 self.titles.append(title)
         if self.status != ficsplayer.status:
             self.status = ficsplayer.status
-        for type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE,
-                     TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC):
+        for type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD,
+                     TYPE_LOSERS):
             if ficsplayer.ratings.has_key(type) and self.ratings.has_key(type):
                 self.ratings[type].update(ficsplayer.ratings[type])
             elif ficsplayer.ratings.has_key(type):
@@ -226,23 +226,6 @@ class FICSPlayer (GObject):
             return self.ratings[TYPE_LIGHTNING].elo
         else:
             return self.getRatingMean()
-        
-#    def getRatingBySeek (self, seek):
-#        # TODO: figure out exactly what to do with unsupported game types
-#        assert seek != None
-#        gainminutes = seek.inc > 0 and (seek.inc*60)-1 or 0
-#        if seek.variant and seek.variant in VARIANT_GAME_TYPES:
-#            return self.getRating(TYPE_WILD)           
-#        elif seek.variant and seek.variant == LOSERSCHESS:
-#            return self.getRating(TYPE_LOSERS)
-#        elif seek.variant and seek.variant != NORMALCHESS:
-#            raise
-#        elif (seek.min*60) + gainminutes >= (15*60):
-#            return self.getRating(TYPE_STANDARD)
-#        elif (seek.min*60) + gainminutes >= (3*60):
-#            return self.getRating(TYPE_BLITZ)
-#        else:
-#            return self.getRating(TYPE_LIGHTNING)
     
     def getRatingForCurrentGame (self):
         if self.game == None: return None
@@ -251,51 +234,6 @@ class FICSPlayer (GObject):
             return rating.elo
         else:
             return None
-        
-#    def addGameRating (self, rating):
-#        """ Adds a rating to the player based on the type of the game they're playing
-#            Note: self.game has to be set for this to work
-#        """
-#        game = self.game
-#        if game == None or rating == None: return
-#        
-#        if game.variant_type == NORMALCHESS:
-#            if game.min == None or game.inc == None:
-#                # try the type
-#                if game.type == "Blitz":
-#                    ratingobj = Rating(TYPE_BLITZ, rating)
-#                elif game.type == "Standard":
-#                    ratingobj = Rating(TYPE_STANDARD, rating)
-#                elif game.type == "Lightning":
-#                    ratingobj = Rating(TYPE_LIGHTNING, rating)
-#                else:
-#                    return
-#            else:
-#                gainminutes = game.inc > 0 and (game.inc*60)-1 or 0
-#                if ((game.min*60) + gainminutes) >= (15*60):
-#                    ratingobj = Rating(TYPE_STANDARD, rating)
-#                elif ((game.min*60) + gainminutes) >= (3*60):
-#                    ratingobj = Rating(TYPE_BLITZ, rating)
-#                else:
-#                    ratingobj = Rating(TYPE_LIGHTNING, rating)
-#        elif game.variant_type in VARIANT_GAME_TYPES:
-#            ratingobj = Rating(TYPE_WILD, rating)
-#
-#        self.setRating(type, ratingobj)
-
-#class Singleton(gobject.GObjectMeta):
-#    """ Copied from http://burtonini.com/bzr/shackleton/sources.py
-#    And in the class using this class you'd put:
-#    __metaclass__ = Singleton
-#    """
-#    def __init__(klass, name, bases, dict):
-#        gobject.GObjectMeta.__init__(klass, name, bases, dict)
-#        klass.__instance = None
-#
-#    def __call__(klass, *args, **kwargs):
-#        if klass.__instance is None:
-#            klass.__instance = gobject.GObjectMeta.__call__(klass, *args, **kwargs)
-#        return klass.__instance
 
 class FICSPlayersOnline (GObject):
     __gsignals__ = {
@@ -320,26 +258,34 @@ class FICSPlayersOnline (GObject):
         self.connection.gamesinprogress.connect("FICSGameEnded", self.gameEnded)
 
     def __getitem__ (self, player):
-        if self.players.has_key(hash(player)):
+        if type(player) is not FICSPlayer: raise TypeError
+        if hash(player) in self.players:
             return self.players[hash(player)]
         else:
             raise KeyError
+
+    def __setitem__ (self, key_player, value_player):
+        if type(key_player) is not FICSPlayer: raise TypeError
+        if type(value_player) is not FICSPlayer: raise TypeError
+        if key_player != value_player:
+            raise Exception("Players are not the same: %s %s" % 
+                            (repr(key_player), repr(value_player)))
+        if hash(value_player) in self.players:
+            raise Exception("Player %s already exists in %s" % 
+                            (repr(value_player), str(self)))
+        self.players[hash(value_player)] = value_player
+    
+    def __delitem__ (self, player):
+        if type(player) is not FICSPlayer: raise TypeError
+        if player in self:
+            del self.players[hash(player)]
     
     def __contains__ (self, player):
-        if self.players.has_key(hash(player)):
+        if type(player) is not FICSPlayer: raise TypeError
+        if hash(player) in self.players:
             return True
         else:
             return False
-    
-    def __add (self, player):
-        if not player in self:
-            self.players[hash(player)] = player
-        else:
-            raise Exception("Player %s already exists in %s" % (repr(player), str(self)))
-
-    def __del (self, player):
-        if player in self:
-            del self.players[hash(player)]
         
     def addPlayer (self, glm, player):
 #        log.debug("FICSPlayersOnline.addPlayer():\n")
@@ -350,14 +296,14 @@ class FICSPlayersOnline (GObject):
 #            log.debug("\t new player: " + repr(self[player]) + "\n")
             self.emit('FICSPlayerChanged', self[player])
         else:
-            self.__add(player)
+            self[player] = player
 #            log.debug("player added: " + repr(self[player]) + "\n")
             self.emit('FICSPlayerEntered', self[player])
         
     def delPlayer (self, glm, player):
         if player in self:
             player = self[player]
-            self.__del(player)
+            del self[player]
             self.emit('FICSPlayerExited', player)
     
     def gameCreated (self, gip, game):
@@ -396,7 +342,7 @@ class FICSGame (GObject):
     def __init__ (self, gameno, wplayer, bplayer, rated=False,
                   game_type=None, min=None, inc=None,
                   private=False, result=None, reason=None, board=None):
-        assert type(gameno) is type(int()), gameno
+        assert type(gameno) is int, gameno
         assert isinstance(wplayer, FICSPlayer), wplayer
         assert isinstance(bplayer, FICSPlayer), bplayer
         assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
@@ -455,12 +401,12 @@ class FICSGamesInProgress (GObject):
 
     def start (self):
         self.connection.glm.connect("addGame", self.addGame)
-        self.connection.bm.connect("gameCreated", self.gameCreated)
+        self.connection.bm.connect("playGameCreated", self.playGameCreated)
         self.connection.bm.connect("obsGameCreated", self.obsGameCreated)
         self.connection.glm.connect("removeGame", self.removeGame)
 
     def __getitem__ (self, gameno):
-        if self.games.has_key(gameno):
+        if gameno in self.games:
             return self.games[gameno]
         else:
             raise KeyError
@@ -482,23 +428,23 @@ class FICSGamesInProgress (GObject):
         else:
 #            log.debug("\t Adding game.bplayer to playersonline: %s\n" % repr(game.bplayer))
             self.connection.playersonline.addPlayer(glm, game.bplayer)
-        if not self.games.has_key(game.gameno):
+        if game.gameno not in self.games:
             self.games[game.gameno] = game
             self.emit('FICSGameCreated', game)
+        
+    def removeGame (self, glm, game):
+        if game.gameno in self.games:
+            game = self.games[game.gameno]
+            del self.games[game.gameno]
+            self.emit('FICSGameEnded', game)
     
-    def gameCreated (self, glm, game):
+    def playGameCreated (self, glm, game):
         self.addGame(glm, game)
         self.emit('FICSPlayGameCreated', game)
     
     def obsGameCreated (self, glm, game):
         self.addGame(glm, game)
         self.emit('FICSObsGameCreated', game)
-        
-    def removeGame (self, glm, game):
-        if self.games.has_key(game.gameno):
-            game = self.games[game.gameno]
-            del self.games[game.gameno]
-            self.emit('FICSGameEnded', game)
 
 class FICSSeek:
     def __init__ (self, name, min, inc, rated, color, game_type, rmin=0, rmax=9999):

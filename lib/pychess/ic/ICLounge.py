@@ -426,7 +426,7 @@ class SeekTabSection (ParrentListSection):
                 self.listPublisher.put((self.onChallengeRemove, index)) )
         self.connection.glm.connect("clearSeeks", lambda glm:
                 self.listPublisher.put((self.onClearSeeks,)) )
-        self.connection.bm.connect("gameCreated", lambda bm, game:
+        self.connection.bm.connect("playGameCreated", lambda bm, game:
                 self.listPublisher.put((self.onPlayingGame,)) )
         self.connection.bm.connect("curGameEnded", lambda bm, game:
                 self.listPublisher.put((self.onCurGameEnded,)) )
@@ -677,7 +677,7 @@ class SeekGraphSection (ParrentListSection):
         self.connection.glm.connect("clearSeeks", lambda glm:
                 self.listPublisher.put((self.onSeekClear,)) )
 
-        self.connection.bm.connect("gameCreated", lambda bm, game:
+        self.connection.bm.connect("playGameCreated", lambda bm, game:
                 self.listPublisher.put((self.onPlayingGame,)) )
 
         self.connection.bm.connect("curGameEnded", lambda bm, game:
@@ -1826,7 +1826,7 @@ class Messages (Section):
         self.messages = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
-        self.connection.bm.connect("gameCreated", self.onPlayGameCreated)
+        self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         
     @glock.glocked
     def tooManySeeks (self, bm):
@@ -1863,11 +1863,11 @@ class CreatedBoards (Section):
 
     def __init__ (self, widgets, connection):
         self.connection = connection
-        self.connection.gamesinprogress.connect("FICSPlayGameCreated", self.onGameCreated)
+        self.connection.gamesinprogress.connect("FICSPlayGameCreated", self.onPlayGameCreated)
         self.connection.gamesinprogress.connect("FICSObsGameCreated", self.onObserveGameCreated)
 
-    def onGameCreated (self, bm, ficsgame):
-        log.debug("ICLounge.onGameCreated: %s\n" % ficsgame)
+    def onPlayGameCreated (self, bm, ficsgame):
+        log.debug("ICLounge.onPlayGameCreated: %s\n" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:

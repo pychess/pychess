@@ -530,7 +530,7 @@ class PyChessFICS(PyChess):
         self.connection.glm.connect("removePlayer", self.__onRemovePlayer)
         self.connection.cm.connect("privateMessage", self.__onTell)
         self.connection.alm.connect("logOut", self.__onLogOut)
-        self.connection.bm.connect("gameCreated", self.__onGameCreated)
+        self.connection.bm.connect("playGameCreated", self.__onGameCreated)
         self.connection.bm.connect("curGameEnded", self.__onGameEnded)
         self.connection.bm.connect("boardUpdate", self.__onBoardUpdate)
         self.connection.om.connect("onChallengeAdd", self.__onChallengeAdd)
