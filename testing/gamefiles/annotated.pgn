@@ -1,0 +1,12 @@
+[Event "Test Event"]
+[Site "Test Site"]
+[Date "2011.12.31"]
+[Round "1.2"]
+[White "Test Player1"]
+[Black "Test Player2"]
+[Result "*"]
+
+{Initial main line comment}1. e4 e5 2. Nf3 {comment on move 2. Nf3}
+({Initial variation comment for 2.f4} 2. f4 d5)
+Nc6 (2... Nf6 3. Nc3 (3. d3 (3. Bc4 Bc5)))
+({Initial variation comment for 2... d6} 2... d6) 3. Bc4
