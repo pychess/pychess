@@ -301,9 +301,16 @@ class Sidepanel(gtk.TextView):
     def shown_changed (self, board, shown):
         self.update_selected_node()
 
-    def moves_undoing (self, game, moves):
+    def moves_undoing(self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        # TODO: for i in xrange(moves):
+        start = self.textbuffer.get_start_iter()
+        end = self.textbuffer.get_end_iter()
+        for ni in reversed(self.nodeIters):
+            if ni["node"] == self.gamemodel.boards[-2]:
+                start = self.textbuffer.get_iter_at_offset(ni["start"])
+                break
+        self.textbuffer.delete(start, end)
+        
 
     def game_changed (self, game):
         node = game.getBoardAtPly(game.ply)
