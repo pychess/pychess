@@ -585,6 +585,7 @@ class GameModel (GObject, PooledThread):
             
             del self.boards[-moves:]
             del self.moves[-moves:]
+            self.boards[-1].next = None
             
             for player in self.players:
                 player.playerUndoMoves(moves, self)
