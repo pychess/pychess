@@ -947,9 +947,18 @@ class GameTabSection (ParrentListSection):
                 self.listPublisher.put((self.onGameUnobserved, gameno)) )
 
     def onSelectionChanged (self, selection):
-        numrows = selection.count_selected_rows()
-        a_row_is_selected = True if numrows > 0 else False
-        self.widgets["observeButton"].set_sensitive(a_row_is_selected)
+        model, paths = selection.get_selected_rows()
+        a_selected_game_is_observable = False
+        for path in paths:
+            rowiter = model.get_iter(path)
+            gameno = model.get_value(rowiter, 0)
+            try:
+                game = self.connection.gamesinprogress[int(gameno)]
+            except KeyError: continue
+            if not game.private:
+                a_selected_game_is_observable = True
+                break        
+        self.widgets["observeButton"].set_sensitive(a_selected_game_is_observable)
 
     def onGameAdd (self, ficsgame):
         gametype = ficsgame.game_type.display_text

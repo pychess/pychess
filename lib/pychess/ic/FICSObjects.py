@@ -80,10 +80,10 @@ class FICSPlayer (GObject):
             return True
     
     def isObservable (self):
-        if self.status in (IC_STATUS_PLAYING, IC_STATUS_EXAMINING):
+        if self.status in (IC_STATUS_PLAYING, IC_STATUS_EXAMINING) and \
+                self.game is not None and not self.game.private:
             return True
-        else:
-            return False
+        else: return False
         
     def isGuest (self):
         if "U" in self.titles:
