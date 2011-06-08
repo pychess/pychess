@@ -1,0 +1,33 @@
+This package was debianized by Varun Hiremath <varunhiremath@gmail.com> on
+Thu, 16 Nov 2006 10:53:35 +0530.
+
+It was downloaded from http://code.google.com/p/pychess/downloads/list .
+
+Upstream Authors: 
+Thomas Dybdahl Ahle <lobais@gmail.com>,
+Norbert Fabritius,
+Thijs Vermeir,
+Wojciech Halicki-Piszko,
+Bajusz Tamás,
+Pierre Boulenguez,
+Leonardo Gregianin
+
+Copyright: (C) 2006 Thomas Dybdahl Ahle <lobais@gmail.com>
+
+License:
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    On Debian systems, you can find the GPL license in:
+    /usr/share/common-licenses/GPL
+
+The Debian packaging is (C) 2006, Varun Hiremath <varunhiremath@gmail.com> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
