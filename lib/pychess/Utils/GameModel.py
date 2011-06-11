@@ -429,6 +429,7 @@ class GameModel (GObject, PooledThread):
                 self.boards[-1].next = newBoard
                 self.boards.append(newBoard)
                 self.moves.append(move)
+                self.variations[0].append(newBoard)
 
                 if self.timemodel:
                     self.timemodel.tap()
@@ -585,6 +586,7 @@ class GameModel (GObject, PooledThread):
             
             del self.boards[-moves:]
             del self.moves[-moves:]
+            del self.variations[0][-moves:]
             self.boards[-1].next = None
             
             for player in self.players:
