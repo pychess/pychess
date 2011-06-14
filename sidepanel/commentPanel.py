@@ -81,7 +81,7 @@ class Sidepanel:
         self.boardview.shown = self.gamemodel.lowply+row
     
     def shown_changed (self, boardview, shown):
-        if self.gamemodel.getBoardAtPly(shown) not in self.gamemodel.variations[0]:
+        if not self.gamemodel.isMainlineBoard(shown):
             return
         row = shown - self.gamemodel.lowply
         iter = self.store.get_iter(row)

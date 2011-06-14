@@ -183,6 +183,10 @@ class GameModel (GObject, PooledThread):
             return False
         else:
             return True
+
+
+    def isMainlineBoard(self, ply):
+        return self.getBoardAtPly(ply) in self.variations[0]
         
     ############################################################################
     # Offer management                                                         #
@@ -426,10 +430,10 @@ class GameModel (GObject, PooledThread):
                 newBoard.movestr = move_count + toSAN(self.boards[-1], move)
                 newBoard.moveobj = move
                 
+                self.boards = self.variations[0]
                 self.boards[-1].next = newBoard
                 self.boards.append(newBoard)
                 self.moves.append(move)
-                self.variations[0].append(newBoard)
 
                 if self.timemodel:
                     self.timemodel.tap()
@@ -584,9 +588,9 @@ class GameModel (GObject, PooledThread):
             self.emit("moves_undoing", moves)
             self.needsSave = True
             
+            self.boards = self.variations[0]
             del self.boards[-moves:]
             del self.moves[-moves:]
-            del self.variations[0][-moves:]
             self.boards[-1].next = None
             
             for player in self.players:

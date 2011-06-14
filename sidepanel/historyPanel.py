@@ -161,7 +161,7 @@ class Sidepanel:
         view.get_model().append([notat])
     
     def shown_changed (self, board, shown):
-        if board.model.getBoardAtPly(shown) not in board.model.variations[0]:
+        if not board.model.isMainlineBoard(shown):
             return
         if shown <= board.model.lowply:
             #print "Or is it me?"
