@@ -349,7 +349,7 @@ class BoardView (gtk.DrawingArea):
 
         # Back to the main line if needed...
         if self.model.boards != self.model.variations[0]:
-            if self.model.getBoardAtPly(self.shown) in self.model.variations[0]:
+            if self.model.isMainlineBoard(self.shown):
                 self.model.boards = self.model.variations[0]
        
         self.runAnimation(redrawMisc=True)
