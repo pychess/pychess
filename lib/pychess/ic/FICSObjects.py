@@ -104,7 +104,7 @@ class FICSPlayer (GObject):
             return False
 
     @classmethod
-    def getIconByRating (cls, rating, size=15):
+    def getIconByRating (cls, rating, size=16):
         assert type(rating) == int, "rating not an int: %s" % str(rating)
         
         if rating >= 1900:
@@ -118,15 +118,15 @@ class FICSPlayer (GObject):
         else:
             return load_icon(size, "weather-clear")
     
-    def getIcon (self, size=15, gametype=None):
+    def getIcon (self, size=16, gametype=None):
         assert type(size) == int, "size not an int: %s" % str(size)
         
         if self.isGuest():
             return load_icon(size, "stock_people", "system-users")
         elif self.isComputer():
-            return load_icon(size, "stock_notebook", "computer")
+            return load_icon(size, "computer", "stock_notebook")
         elif self.isAdmin():
-            return load_icon(size, "stock_book_blue", "accessories-dictionary")
+            return load_icon(size, "security-high", "stock_book_blue")
         else:
             if gametype:
                 rating = self.getRating(gametype.rating_type)
