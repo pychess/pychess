@@ -1,11 +1,13 @@
 from pychess.Utils.const import *
+import gobject
 
-class Rating (object):
-    def __init__(self, ratingtype, elo, deviation = None, wins = 0, losses = 0,
-                                  draws = 0, bestElo = 0, bestTime = 0):
+class Rating (gobject.GObject):
+    def __init__(self, ratingtype, elo, deviation=DEVIATION_NONE, wins=0,
+                 losses=0, draws=0, bestElo=0, bestTime=0):
+        gobject.GObject.__init__(self)
         self.type = ratingtype
         for v in (elo, deviation, wins, losses, draws, bestElo, bestTime):
-            assert v == None or type(v) == type(0), v
+            assert v == None or type(v) == int, v
         self.elo = elo
         self.deviation = deviation
         self.wins = wins
@@ -14,23 +16,11 @@ class Rating (object):
         self.bestElo = bestElo
         self.bestTime = bestTime
     
-    def update (self, rating):
-        if self.type != rating.type:
-            raise
-        elif self.elo != rating.elo:
-            self.elo = rating.elo
-        elif rating.deviation != None and self.deviation != rating.deviation:
-            self.deviation = rating.deviation
-        elif rating.wins > 0 and self.wins != rating.wins:
-            self.wins = rating.wins
-        elif rating.losses > 0 and self.losses != rating.losses:
-            self.losses = rating.losses
-        elif rating.draws > 0 and self.draws != rating.draws:
-            self.draws = rating.draws
-        elif rating.bestElo > 0 and self.bestElo != rating.bestElo:
-            self.bestElo = rating.bestElo
-        elif rating.bestTime > 0 and self.bestTime != rating.bestTime:
-            self.bestTime = rating.bestTime
+    def get_elo (self):
+        return self._elo
+    def set_elo (self, elo):
+        self._elo = elo
+    elo = gobject.property(get_elo, set_elo)
     
     def __repr__ (self):
         r = "type=%s, elo=%s" % (self.type, self.elo)
@@ -47,3 +37,26 @@ class Rating (object):
         if self.bestTime > 0:
             r += ", bestTime=%s" % str(self.bestTime)
         return r
+    
+    def copy (self):
+        return Rating(self.type, self.elo, deviation=self.deviation,
+            wins=self.wins, losses=self.losses, draws=self.draws,
+            bestElo=self.bestElo, bestTime=self.bestTime)
+    
+    def update (self, rating):
+        if self.type != rating.type:
+            raise TypeError
+        elif self.elo != rating.elo:
+            self.elo = rating.elo
+        elif self.deviation != rating.deviation:
+            self.deviation = rating.deviation
+        elif self.wins != rating.wins:
+            self.wins = rating.wins
+        elif self.losses != rating.losses:
+            self.losses = rating.losses
+        elif self.draws != rating.draws:
+            self.draws = rating.draws
+        elif self.bestElo != rating.bestElo:
+            self.bestElo = rating.bestElo
+        elif self.bestTime != rating.bestTime:
+            self.bestTime = rating.bestTime

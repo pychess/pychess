@@ -511,7 +511,8 @@ class PyChessFICS(PyChess):
         #color = random.choice(self.colors)
         self.extendlog(["Seeking %d %d" % (minute, gain)])
         self.connection.glm.seek(minute, gain, True)
-        opps = random.sample(self.connection.glm.getPlayerlist(), self.challenges)
+        opps = random.sample(self.connection.players.get_online_playernames(),
+                             self.challenges)
         self.extendlog("Challenging %s" % op for op in opps)
         for player in opps:
             self.connection.om.challenge(player, minute, gain, True)

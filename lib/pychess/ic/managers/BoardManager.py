@@ -7,12 +7,12 @@ from pychess.Savers.pgn import msToClockTimeTag
 from pychess.Utils.const import *
 from pychess.ic import *
 from pychess.ic.VerboseTelnet import *
-from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard
+from pychess.ic.FICSObjects import *
 
 names = "(\w+)"
 titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
-ratings = "\(([-0-9 +]+|UNR)\)"
+ratings = "\(\s*([-0-9+]+|UNR)\)"
 
 weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
@@ -139,16 +139,15 @@ def parse_reason (result, reason, wname=None):
 class BoardManager (GObject):
     
     __gsignals__ = {
-        'playGameCreated'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'wasPrivate'          : (SIGNAL_RUN_FIRST, None, (int,)),
+        'playGameCreated'     : (SIGNAL_RUN_FIRST, None, (object,)),
+        'obsGameCreated'      : (SIGNAL_RUN_FIRST, None, (object,)),
         'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
         'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
         'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (int,)),
+        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (object,)),
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
-        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (str,)),
+        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     castleSigns = {}
@@ -180,8 +179,6 @@ class BoardManager (GObject):
         self.connection.expect_fromto (self.onObserveGameCreated,
             "Movelist for game (\d+):", "{Still in progress} \*")
         
-        self.connection.glm.connect("removeGame", self.onGameEnd)
-        
         self.connection.expect_line (self.onGamePause,
                 "Game (\d+): Game clock (paused|resumed)\.")
         
@@ -211,7 +208,10 @@ class BoardManager (GObject):
         
         # We don't use deltamoves as fisc won't send them with variants
         #self.connection.lvm.setVariable("compressmove", True)
-    
+
+    def start (self):    
+        self.connection.games.connect("FICSGameEnded", self.onGameEnd)
+        
     @classmethod
     def parseStyle12 (cls, line, castleSigns=None):
         fields = line.split()
@@ -302,14 +302,21 @@ class BoardManager (GObject):
         self.gamemodelStartedEvents[gameno].set()
     
     def onWasPrivate (self, match):
-        gameno, = match.groups()
-        self.emit("wasPrivate", int(gameno))
+        # When observable games were added to the list later than the latest
+        # full send, private information will not be known.
+        gameno = int(match.groups()[0])
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError: return
+        game.private = True
     
     def tooManySeeks (self, match):
         self.emit("tooManySeeks")
     
     def matchDeclined (self, match):
         decliner, = match.groups()
+        decliner = self.connection.players.get(FICSPlayer(decliner),
+                                               create=False, emit=False)
         self.emit("matchDeclined", decliner)
     
     @classmethod
@@ -326,9 +333,9 @@ class BoardManager (GObject):
     def parseRating (rating):
         if rating:
             m = re.match("[0-9]{2,}", rating)
-            if m: return m.group(0)
-            else: return None
-        else: return None
+            if m: return int(m.group(0))
+            else: return 0
+        else: return 0
     
     def onPlayGameCreated (self, matchlist):
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
@@ -344,25 +351,33 @@ class BoardManager (GObject):
         self.castleSigns[gameno] = castleSigns
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
-        
-        game = FICSGame(gameno, FICSPlayer(wname), FICSPlayer(bname),
-                        rated=rated, game_type=game_type, min=int(min), inc=int(inc),
-                        board=FICSBoard(wms, bms, fen=fen))
-        if wrating:
-            game.wplayer.addRating(game_type.rating_type, int(wrating))
-        if brating:
-            game.bplayer.addRating(game_type.rating_type, int(brating))
+
+        wplayer = self.connection.players.get(FICSPlayer(wname))
+        bplayer = self.connection.players.get(FICSPlayer(bname))
+        for player, rating in ((wplayer, wrating), (bplayer, brating)):
+            if player.ratings[game_type.rating_type].elo != rating:
+                player.ratings[game_type.rating_type].elo = rating
+        game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated,
+            game_type=game_type, min=int(min), inc=int(inc),
+            board=FICSBoard(wms, bms, fen=fen))
+        game = self.connection.games.get(game)
+
+        for player in (wplayer, bplayer):
+            if player.status != IC_STATUS_PLAYING:
+                player.status = IC_STATUS_PLAYING
+            if player.game != game:
+                player.game = game
         
         self.ourGameno = gameno
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.gamemodelStartedEvents[gameno].clear()
         self.emit("playGameCreated", game)
     
-    @classmethod
-    def parseGame (cls, matchlist, in_progress=False):
+    def parseGame (self, matchlist, gameclass, in_progress=False):
         """ 
         Parses the header and movelist for an observed or stored game from its
-        re matchlist and returns a FICSGame.
+        matchlist (an re.match object) into a gameclass (FICSGame or subclass
+        of) object.
         
         in_progress - should be True for an observed game matchlist, and False
         for stored/adjourned games
@@ -465,8 +480,8 @@ class BoardManager (GObject):
             else matchlist[index].group()
         wname, wrating, bname, brating, weekday, month, day, hour, minute, \
             timezone, year =  moveListHeader1.match(header1).groups()
-        wrating = cls.parseRating(wrating)
-        brating = cls.parseRating(brating)
+        wrating = self.parseRating(wrating)
+        brating = self.parseRating(brating)
         rated, game_type, minutes, increment = \
             moveListHeader2.match(matchlist[index+1]).groups()
         minutes = int(minutes)
@@ -479,9 +494,9 @@ class BoardManager (GObject):
         index += 3
         if matchlist[index].startswith("<12>"):
             style12 = matchlist[index][5:]
-            castleSigns = cls.generateCastleSigns(style12, game_type)
+            castleSigns = self.generateCastleSigns(style12, game_type)
             gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, \
-                fen = cls.parseStyle12(style12, castleSigns)
+                fen = self.parseStyle12(style12, castleSigns)
             initialfen = fen
             movesstart = index + 4
         else:
@@ -494,7 +509,7 @@ class BoardManager (GObject):
             movesstart = index + 2
         
         if in_progress:
-            cls.castleSigns[gameno] = castleSigns
+            self.castleSigns[gameno] = castleSigns
         
         moves = {}
         wms = bms = minutes * 60 * 1000
@@ -524,16 +539,16 @@ class BoardManager (GObject):
         
         if in_progress:
             # Apply queued board updates
-            for style12 in cls.queuedStyle12s[gameno]:
+            for style12 in self.queuedStyle12s[gameno]:
                 gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                        cls.parseStyle12(style12, castleSigns)
+                        self.parseStyle12(style12, castleSigns)
                 if lastmove == None: continue
                 moves[ply-1] = lastmove
                 # Updated the queuedMoves in case there has been a takeback
                 for moveply in moves.keys():
                     if moveply > ply-1:
                         del moves[moveply]
-            del cls.queuedStyle12s[gameno]
+            del self.queuedStyle12s[gameno]
         
         pgnHead = [
             ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
@@ -545,9 +560,9 @@ class BoardManager (GObject):
             ("WhiteClock", msToClockTimeTag(wms)),
             ("BlackClock", msToClockTimeTag(bms)),
         ]
-        if wrating:
+        if wrating != 0:
             pgnHead += [ ("WhiteElo", wrating) ]
-        if brating:
+        if brating != 0:
             pgnHead += [ ("BlackElo", brating) ]
         if year and month and day and hour and minute:
             pgnHead += [
@@ -563,8 +578,9 @@ class BoardManager (GObject):
             ]
         if game_type.variant_type == FISCHERRANDOMCHESS:
             pgnHead += [ ("Variant", "Fischerandom") ]
-            # FR is the only variant used in this tag by the PGN generator @ ficsgames.com
-            # They put all the other wild/* stuff in the "Event" header
+            # FR is the only variant used in this tag by the PGN generator @
+            # ficsgames.com. They put all the other wild/* stuff only in the
+            # "Event" header.
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
         moves = moves.items()
@@ -575,24 +591,24 @@ class BoardManager (GObject):
             pgn += move + " "
         pgn += "*\n"
         
-        # TODO: init FICSLiveGame or FICSAdjournedGame instead
-        game = FICSGame(0, FICSPlayer(wname), FICSPlayer(bname),
-                        rated=rated.lower() == "rated", game_type=game_type,
-                        min=minutes, inc=increment,
-                        board=FICSBoard(wms, bms, pgn=pgn))
-        if wrating:
-            game.wplayer.addRating(game_type.rating_type, int(wrating))
-        if brating:
-            game.bplayer.addRating(game_type.rating_type, int(brating))
+        wplayer = self.connection.players.get(FICSPlayer(wname))
+        bplayer = self.connection.players.get(FICSPlayer(bname))
+        for player, rating in ((wplayer, wrating), (bplayer, brating)):
+            if player.ratings[game_type.rating_type].elo != rating:
+                player.ratings[game_type.rating_type].elo = rating
+        game = gameclass(wplayer, bplayer, game_type=game_type,
+            rated=(rated.lower() == "rated"), min=minutes, inc=increment,
+            board=FICSBoard(wms, bms, pgn=pgn))
         if in_progress:
             game.gameno = gameno
         else:
             game.reason = reason
+        game = self.connection.games.get(game, emit=False)
         
         return game
         
     def onObserveGameCreated (self, matchlist):
-        game = self.parseGame(matchlist, in_progress=True)
+        game = self.parseGame(matchlist, FICSGame, in_progress=True)
         self.emit ("obsGameCreated", game)
         
         if game.gameno in self.gamemodelStartedEvents:
@@ -601,21 +617,23 @@ class BoardManager (GObject):
             emit()        
         del self.queuedEmits[game.gameno]
     
-    def onGameEnd (self, glm, game):
+    def onGameEnd (self, games, game):
         if game.gameno == self.ourGameno:
             if game.gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.ourGameno = ""
-            # update player info on players that changed rating/status while we were playing
-            # because we can't get rating change info when playing a game
-            # TODO: This should probably be called at the FICSGames level in FICSPlayers upon
-            # recieving the playGameFinished signal from FICSGames
+            # update player info on players that changed rating/status while we
+            # were playing because we can't get rating change info when playing
+            # a game TODO: This should probably be called at the FICSGames level
+            # in FICSPlayers upon recieving the playGameFinished signal from
+            # FICSGames
             self.connection.glm.who()
             del self.gamemodelStartedEvents[game.gameno]
         else:
             if game.gameno in self.queuedEmits:
-                self.queuedEmits[game.gameno].append(lambda:self.emit("obsGameEnded", game))
+                self.queuedEmits[game.gameno].append(
+                    lambda:self.emit("obsGameEnded", game))
             elif game.gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[game.gameno].wait()
                 self.emit("obsGameEnded", game)
@@ -624,17 +642,20 @@ class BoardManager (GObject):
         gameno, state = match.groups()
         gameno = int(gameno)
         if gameno in self.queuedEmits:
-            self.queuedEmits[gameno].append(lambda:self.emit("gamePaused", gameno, state=="paused"))
+            self.queuedEmits[gameno].append(
+                lambda:self.emit("gamePaused",gameno, state=="paused"))
         else:
             if gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[gameno].wait()
             self.emit("gamePaused", gameno, state=="paused")
     
     def onUnobserveGame (self, match):
-        gameno, = match.groups()
-        gameno = int(gameno)
+        gameno = int(match.groups()[0])
         del self.gamemodelStartedEvents[gameno]
-        self.emit("obsGameUnobserved", gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError: return
+        self.emit("obsGameUnobserved", game)
         # TODO: delete self.castleSigns[gameno] ?
         
     ############################################################################
@@ -653,17 +674,18 @@ class BoardManager (GObject):
     def callflag (self):
         print >> self.connection.client, "flag"
     
-    def observe (self, gameno):
-        if not gameno in self.gamemodelStartedEvents:
-            self.queuedStyle12s[gameno] = []
-            self.queuedEmits[gameno] = []
-            self.gamemodelStartedEvents[gameno] = threading.Event()
-            self.gamemodelStartedEvents[gameno].clear()
-            print >> self.connection.client, "observe %d" % gameno
-            print >> self.connection.client, "moves %d" % gameno
+    def observe (self, game):
+        if not game.gameno in self.gamemodelStartedEvents:
+            self.queuedStyle12s[game.gameno] = []
+            self.queuedEmits[game.gameno] = []
+            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.gamemodelStartedEvents[game.gameno].clear()
+            print >> self.connection.client, "observe %d" % game.gameno
+            print >> self.connection.client, "moves %d" % game.gameno
     
-    def unobserve (self, gameno):
-        print >> self.connection.client, "unobserve %d" % gameno
+    def unobserve (self, game):
+        if game.gameno is not None:
+            print >> self.connection.client, "unobserve %d" % game.gameno
     
     def play (self, seekno):
         print >> self.connection.client, "play %s" % seekno
