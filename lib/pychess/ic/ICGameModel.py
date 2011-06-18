@@ -81,14 +81,10 @@ class ICGameModel (GameModel):
             self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, ficsgame):
-        if ficsgame.gameno == self.ficsgame.gameno and len(self.players) >= 2 and \
-           ficsgame.wplayer.name == self.players[0].ichandle and \
-           ficsgame.bplayer.name == self.players[1].ichandle:
-            log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s" + \
-                       " bname=%s status=%s reason=%s: calling self.end()\n") % \
-                      (str(id(self)), repr(self.players), str(ficsgame.gameno),
-                       ficsgame.wplayer.name, ficsgame.bplayer.name,
-                       str(ficsgame.result), str(ficsgame.reason)))
+        if ficsgame == self.ficsgame and len(self.players) >= 2:
+            log.debug(
+                "ICGameModel.onGameEnded: self.players=%s ficsgame=%s\n" % \
+                (repr(self.players), repr(ficsgame)))
             self.end(ficsgame.result, ficsgame.reason)
     
     def setPlayers (self, players):
@@ -171,7 +167,7 @@ class ICGameModel (GameModel):
             self.__disconnect()
             
             if self.isObservationGame():
-                self.connection.bm.unobserve(self.ficsgame.gameno)
+                self.connection.bm.unobserve(self.ficsgame)
             else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)

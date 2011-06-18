@@ -84,7 +84,7 @@ class ICLounge (GObject):
             SeekGraphSection(w,c),
             PlayerTabSection(w,c),
             GameTabSection(w,c),
-            AdjournedTabSection(w,c),
+            AdjournedTabSection(w,c, self.infobar),
 
             ChatWindow(w,c),
             #ConsoleWindow(w,c),
@@ -125,9 +125,21 @@ class ICLounge (GObject):
 # Initialize Sections                                                          #
 ################################################################################
 
-class Section:
-    pass
-
+class Section (object):
+    def get_infobarmessage_content (self, player, text, gametype=None):
+        content = gtk.HBox()
+        icon = gtk.Image()
+        icon.set_from_pixbuf(player.getIcon(size=22, gametype=gametype))
+        content.pack_start(icon, expand=False, fill=False, padding=4)
+        label = gtk.Label()
+        label.set_markup(player.getMarkup(gametype=gametype))
+        content.pack_start(label, expand=False, fill=False)
+        label = gtk.Label()
+        label.set_markup(text)
+        content.pack_start(label, expand=False, fill=False)
+        
+        return content
+    
 ############################################################################
 # Initialize Various smaller sections                                      #
 ############################################################################
@@ -474,7 +486,7 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         try:
-            ficsplayer = self.connection.playersonline[FICSPlayer(seek["w"])]
+            ficsplayer = self.connection.players[FICSPlayer(seek["w"])]
         except KeyError:
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
@@ -517,7 +529,7 @@ class SeekTabSection (ParrentListSection):
             time += _(" + %(sec)s sec") % {'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
         try:
-            ficsplayer = self.connection.playersonline[FICSPlayer(match["w"])]
+            ficsplayer = self.connection.players[FICSPlayer(match["w"])]
         except KeyError:
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
@@ -526,28 +538,23 @@ class SeekTabSection (ParrentListSection):
         
         # TODO: differentiate between challenges and manual-seek-accepts
         # (wait until seeks are comparable FICSSeek objects to do this)
-        content = gtk.HBox()
-        icon = gtk.Image()
-        icon.set_from_pixbuf(
-            ficsplayer.getIcon(size=22, gametype=match["gametype"]))
-        content.pack_start(icon, expand=False, fill=False, padding=4)
-        label = gtk.Label()
-        label.set_markup(ficsplayer.getMarkup(gametype=match["gametype"]))
-        content.pack_start(label, expand=False, fill=False)
         if match["is_adjourned"]:
-            text = _(" would like to resume your adjourned %s %s game of %s")
+            text = _(" would like to resume your adjourned <b>%s</b> " + \
+                "<b>%s</b> game.") % (time, match["gametype"].display_text)
         else:
-            text = _(" challenges you to a %s %s game of %s")
-        label = gtk.Label(text % (rated, match["gametype"].display_text, time))
-        content.pack_start(label, expand=False, fill=False)
+            text = _(" challenges you to a <b>%s</b> %s <b>%s</b> game.") \
+                % (time, rated.lower(), match["gametype"].display_text)
+        content = self.get_infobarmessage_content(ficsplayer, text,
+                                                  gametype=match["gametype"])
         def callback (infobar, response):
             if response == gtk.RESPONSE_ACCEPT:
                 self.connection.om.acceptIndex(index)
             elif response == gtk.RESPONSE_NO:
                 self.connection.om.declineIndex(index)
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, callback,
-                                 (_("Accept"), gtk.RESPONSE_ACCEPT),
-                                 (_("Decline"), gtk.RESPONSE_NO))
+        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
+                                 (_("Accept Challenge"), gtk.RESPONSE_ACCEPT),
+                                 (_("Decline Challenge"), gtk.RESPONSE_NO),
+                                 (_("Ignore Challenge"), gtk.RESPONSE_CANCEL))
         self.messages[index] = message
         self.infobar.push_message(message)
         
@@ -709,7 +716,7 @@ class SeekGraphSection (ParrentListSection):
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
         try:
-            ficsplayer = self.connection.playersonline[FICSPlayer(seek["w"])]
+            ficsplayer = self.connection.players[FICSPlayer(seek["w"])]
         except KeyError:
             return
         nametitle = ficsplayer.name + ficsplayer.getTitles()
@@ -736,7 +743,8 @@ class SeekGraphSection (ParrentListSection):
 # Initialize Players List                                              #
 ########################################################################
 
-PLAYERADDED, PLAYERCHANGED, PLAYERREMOVED = range(3)
+PLAYERADDED, PLAYERREMOVED, STATUSCHANGED, BLITZCHANGED, STDCHANGED, \
+    LIGHTCHANGED = range(6)
 
 class PlayerTabSection (ParrentListSection):
     
@@ -751,62 +759,85 @@ class PlayerTabSection (ParrentListSection):
         self.players = {}
         
         self.tv = widgets["playertreeview"]
-        self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, int, int, int, str)
+        self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
+                                   int, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns(self.tv, "", _("Name"), _("Blitz"), _("Standard"), _("Lightning"), _("Status"), pix=[0])
+        self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
+                        _("Standard"), _("Lightning"), _("Status"), hide=[0],
+                        pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
-        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 0)
+        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
 
-        connection.playersonline.connect("FICSPlayerEntered", self.onPlayerAdded)
-        connection.playersonline.connect("FICSPlayerChanged", self.onPlayerChanged)
-        connection.playersonline.connect("FICSPlayerExited", self.onPlayerRemoved)
+        connection.players.connect("FICSPlayerEntered", self.onPlayerAdded)
+        connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
 
         widgets["private_chat_button"].connect("clicked", self.onPrivateChatClicked)
         widgets["private_chat_button"].set_sensitive(False)
         widgets["observe_button"].connect("clicked", self.onObserveClicked)
         widgets["observe_button"].set_sensitive(False)
-        glock.glock_connect_after(self.tv.get_selection(), "changed", self.onSelectionChanged)
+        glock.glock_connect_after(self.tv.get_selection(), "changed",
+                                  self.onSelectionChanged)
 
         self.playerUpdates = Queue.Queue()
         def cb ():
             self.listPublisher.put((self.processPlayerUpdates,))
             return True
         gobject.timeout_add(1000 * 5, cb)
-        
-    def getColumnValues (self, player):
-        icon = player.getIcon()
-        nametitle = player.name + player.getTitles()
-        blitz = player.getRating(TYPE_BLITZ)
-        if blitz: blitz = blitz.elo
-        else: blitz = 0
-        std = player.getRating(TYPE_STANDARD)
-        if std: std = std.elo
-        else: std = 0
-        light = player.getRating(TYPE_LIGHTNING)
-        if light: light = light.elo
-        else: light = 0
-        status = ""
-        if player.status == IC_STATUS_AVAILABLE:
-            status = _("Available")
-        elif player.status == IC_STATUS_PLAYING:
-            status = _("Playing")
-        elif player.status == IC_STATUS_IDLE:
-            status = _("Idle")
-        elif player.status == IC_STATUS_EXAMINING:
-            status = _("Examining")
-        elif player.status == IC_STATUS_NOT_AVAILABLE:
-            status = _("Not Available")
-        elif player.status == IC_STATUS_RUNNING_SIMUL_MATCH:
-            status = _("Running Simul Match")
-        elif player.status == IC_STATUS_IN_TOURNAMENT:
-            status = _("In Tournament")
-        return icon, nametitle, blitz, std, light, status
-
+    
+    def _process_update (self, updatetype, player):
+        if updatetype == PLAYERADDED:
+            if player in self.players: return
+            ti = self.store.append([player, player.getIcon(),
+                player.name + player.getTitles(), player.blitz, player.standard,
+                player.lightning, player.display_status])
+            self.players[player] = { "ti": ti }
+            self.players[player]["status"] = player.connect(
+                "notify::status", self.status_changed)
+            self.players[player]["game"] = player.connect(
+                "notify::game", self.status_changed)
+            if player.game:
+                self.players[player]["private"] = player.game.connect(
+                    "notify::private", self.private_changed, player)
+            for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING):
+                self.players[player][rt] = player.ratings[rt].connect(
+                    "notify::elo", self.elo_changed, player)
+        elif player in self.players and \
+                self.store.iter_is_valid(self.players[player]["ti"]):
+            ti = self.players[player]["ti"]
+            if updatetype == PLAYERREMOVED:
+                self.store.remove(ti)
+                if player.handler_is_connected(self.players[player]["status"]):
+                    player.disconnect(self.players[player]["status"])
+                if player.handler_is_connected(self.players[player]["game"]):
+                    player.disconnect(self.players[player]["game"])
+                if player.game and player.game.handler_is_connected(
+                        self.players[player]["private"]):
+                    player.game.disconnect(self.players[player]["private"])
+                for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING):
+                    if player.ratings[rt].handler_is_connected(
+                            self.players[player][rt]):
+                        player.ratings[rt].disconnect(self.players[player][rt])
+                del self.players[player]
+            elif updatetype == STATUSCHANGED:
+#                if player.game:
+#                    log.debug("status changed: %s %s\n" % (player, player.game))
+                self.store.set(ti, 6, player.display_status)
+                if player.status == IC_STATUS_PLAYING and player.game and \
+                        "private" not in self.players[player]:
+                    self.players[player]["private"] = player.game.connect(
+                        "notify::private", self.private_changed, player)
+            elif updatetype == BLITZCHANGED:
+                self.store.set(ti, 3, player.blitz)
+            elif updatetype == STDCHANGED:
+                self.store.set(ti, 4, player.standard)
+            elif updatetype == LIGHTCHANGED:
+                self.store.set(ti, 5, player.lightning)
+            
     def processPlayerUpdates (self):
         while True:
             try:
@@ -815,22 +846,7 @@ class PlayerTabSection (ParrentListSection):
                 break
             else:
                 player, updatetype = playerupdate
-                if updatetype in (PLAYERADDED, PLAYERCHANGED):
-                    icon, nametitle, blitz, std, light, status = self.getColumnValues(player)
-                    if player.name in self.players:
-                        ti = self.players[player.name]
-                        if self.store.iter_is_valid(ti):
-                            self.store.set(ti, 0, icon, 1, nametitle, 2, blitz, 3, std, 4, light, 5, status)
-                        else:
-                            del self.players[player.name]
-                    else:  # add him
-                        ti = self.store.append([icon, nametitle, blitz, std, light, status])
-                        self.players[player.name] = ti                        
-                elif updatetype == PLAYERREMOVED and player.name in self.players:
-                    ti = self.players[player.name]
-                    if self.store.iter_is_valid(ti):
-                        self.store.remove(ti)
-                    del self.players[player.name]
+                self._process_update(updatetype, player)
         
         count = len(self.players)
         self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
@@ -840,44 +856,49 @@ class PlayerTabSection (ParrentListSection):
         
     def onPlayerRemoved (self, ficspo, player):
         self.playerUpdates.put((player, PLAYERREMOVED))
-
-    def onPlayerChanged (self, ficspo, player):
-        self.playerUpdates.put((player, PLAYERCHANGED))
+    
+    def status_changed (self, player, property):
+        self.playerUpdates.put((player, STATUSCHANGED))
+        return False
+    
+    def private_changed (self, game, property, player):
+        self.status_changed(player, property)
+        return False
+    
+    def elo_changed (self, rating, prop, player):
+        if rating.type == TYPE_BLITZ: updatetype = BLITZCHANGED
+        elif rating.type == TYPE_STANDARD: updatetype = STDCHANGED
+        elif rating.type == TYPE_LIGHTNING: updatetype = LIGHTCHANGED
+        else: return  # Ignore other stuff for now
+        self.playerUpdates.put((player, updatetype))
     
     @classmethod
-    def getSelectedPlayerName (cls):
+    def getSelectedPlayer (cls):
         model, iter = cls.widgets["playertreeview"].get_selection().get_selected()
         if iter == None: return None
-        playername = model.get_value(iter, 1)
-        m = re.match("(\w+)\W*", playername)
-        playername = m.groups()[0]
-        return playername
+        return model.get_value(iter, 0)
     
     def onPrivateChatClicked (self, button):
-        playername = self.getSelectedPlayerName()
-        if playername is None: return
+        player = self.getSelectedPlayer()
+        if player is None: return
         for section in sections:
             if isinstance(section, ChatWindow):
-                section.openChatWithPlayer(playername)
+                section.openChatWithPlayer(player.name)
                 #TODO: isadmin og type
     
     def onObserveClicked (self, button):
-        player = self.getSelectedPlayerName()
-        if player is None: return
-        try:
-            player = self.connection.playersonline[FICSPlayer(player)]
-        except KeyError:
-            player = None
+#        log.debug("onObserveClicked: gbtami=%s\n" % \
+#            self.connection.players[FICSPlayer("gbtami")])
+#        gbtami = self.connection.players.get(FICSPlayer("gbtami"))
+#        self.connection.players[FICSPlayer("gbtami")].online = True
+#        log.debug("onObserveClicked: online set: gbtami=%s\n" % \
+#            self.connection.players[FICSPlayer("gbtami")])
+        player = self.getSelectedPlayer()
         if player is not None and player.game is not None:
-            self.connection.bm.observe(player.game.gameno)
+            self.connection.bm.observe(player.game)
         
     def onSelectionChanged (self, selection):
-        player = self.getSelectedPlayerName()
-        if player is not None:
-            try:
-                player = self.connection.playersonline[FICSPlayer(player)]
-            except KeyError:
-                player = None
+        player = self.getSelectedPlayer()
         self.widgets["private_chat_button"].set_sensitive(player is not None)
         self.widgets["observe_button"].set_sensitive(
             player is not None and player.isObservable())
@@ -902,11 +923,11 @@ class GameTabSection (ParrentListSection):
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
 
         self.tv = self.widgets["gametreeview"]
-        self.store = gtk.ListStore(int, gtk.gdk.Pixbuf, str, int, str, int, str, int)
+        self.store = gtk.ListStore(FICSGame, gtk.gdk.Pixbuf, str, int, str, int, str, int)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.addColumns (
-                self.tv, "GameNo", "", _("White Player"), _("Rating"),
+                self.tv, "FICSGame", "", _("White Player"), _("Rating"),
                 _("Black Player"), _("Rating"),
                 _("Game Type"), "Time", hide=[0,7], pix=[1] )
         self.tv.get_column(0).set_sort_column_id(0)
@@ -933,104 +954,88 @@ class GameTabSection (ParrentListSection):
             return True
         self.tv.set_search_equal_func (searchCallback)
 
-        self.connection.glm.connect("addGame", lambda glm, ficsgame:
-                self.listPublisher.put((self.onGameAdd, ficsgame)) )
-        self.connection.glm.connect("removeGame", lambda glm, ficsgame:
-                self.listPublisher.put((self.onGameRemove, ficsgame.gameno)) )
-        self.connection.bm.connect("wasPrivate", lambda bm, game:
-                self.listPublisher.put((self.onWasPrivate, game)) )
+        self.connection.games.connect("FICSGameCreated", lambda games, game:
+                self.listPublisher.put((self.onGameAdd, game)) )
+        self.connection.games.connect("FICSGameEnded", lambda games, game:
+                self.listPublisher.put((self.onGameRemove, game)) )
         self.widgets["observeButton"].connect ("clicked", self.onObserveClicked)
         self.tv.connect("row-activated", self.onObserveClicked)
-        self.connection.bm.connect("obsGameCreated", lambda bm, ficsgame:
-                self.listPublisher.put((self.onGameObserved, ficsgame)) )
-        self.connection.bm.connect("obsGameUnobserved", lambda bm, gameno:
-                self.listPublisher.put((self.onGameUnobserved, gameno)) )
+        self.connection.bm.connect("obsGameCreated", lambda bm, game:
+                self.listPublisher.put((self.onGameObserved, game)) )
+        self.connection.bm.connect("obsGameUnobserved", lambda bm, game:
+                self.listPublisher.put((self.onGameUnobserved, game)) )
 
     def onSelectionChanged (self, selection):
         model, paths = selection.get_selected_rows()
         a_selected_game_is_observable = False
         for path in paths:
             rowiter = model.get_iter(path)
-            gameno = model.get_value(rowiter, 0)
-            try:
-                game = self.connection.gamesinprogress[int(gameno)]
-            except KeyError: continue
+            game = model.get_value(rowiter, 0)
             if not game.private:
                 a_selected_game_is_observable = True
                 break        
         self.widgets["observeButton"].set_sensitive(a_selected_game_is_observable)
+    
+    def _update_gamesrunning_label (self):
+        count = len(self.games)
+        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
-    def onGameAdd (self, ficsgame):
-        gametype = ficsgame.game_type.display_text
-        
-        if ficsgame.min != None:
-            length = ficsgame.min*60 + ficsgame.inc*40
-        elif ficsgame.game_type.rating_type == TYPE_LIGHTNING:
+    def onGameAdd (self, game):
+#        log.debug("GameTabSection.onGameAdd: %s\n" % repr(game))
+        if game.min != None:
+            length = game.min*60 + game.inc*40
+        elif game.game_type.rating_type == TYPE_LIGHTNING:
             length = 100
-        elif ficsgame.game_type.rating_type == TYPE_BLITZ:
+        elif game.game_type.rating_type == TYPE_BLITZ:
             length = 9*60
-        elif ficsgame.game_type.rating_type == TYPE_STANDARD:
+        elif game.game_type.rating_type == TYPE_STANDARD:
             length = 15*60
         else:
             length = 0
         
-        if ficsgame.private == True:
-            gametype += ", " + _("Private")
+        ti = self.store.append ([game, self.clearpix,
+                                 game.wplayer.name + game.wplayer.getTitles(),
+                                 game.wplayer.getRatingForCurrentGame() or 0,
+                                 game.bplayer.name + game.bplayer.getTitles(),
+                                 game.bplayer.getRatingForCurrentGame() or 0,
+                                 game.display_text, length])
+        self.games[game] = { "ti": ti }
+        self.games[game]["private_cid"] = game.connect("notify::private",
+                                                       self.private_changed)
+        self._update_gamesrunning_label()
+    
+    @glock.glocked
+    def private_changed (self, game, property):
+        if game in self.games and \
+                self.store.iter_is_valid(self.games[game]["ti"]):
+            self.store.set(self.games[game]["ti"], 6, game.display_text)
+        self.onSelectionChanged(self.tv.get_selection())
+        return False
         
-#        print "GameTab.onGameAdd():"
-#        print "gameno = %s, wname = %s, wrating = %s, bname = %s, brating = %s (type=%s), type = %s (type=%s), length = %s" \
-#            % (str(ficsgame.gameno), str(ficsgame.wplayer.name + ficsgame.wplayer.getTitles()), str(wrating),
-#               str(ficsgame.bplayer.name + ficsgame.bplayer.getTitles()), str(brating), type(brating), str(gametype), type(gametype), str(length))
-        ti = self.store.append ([ficsgame.gameno, self.clearpix,
-                                 ficsgame.wplayer.name + ficsgame.wplayer.getTitles(),
-                                 ficsgame.wplayer.getRatingForCurrentGame() or 0,
-                                 ficsgame.bplayer.name + ficsgame.bplayer.getTitles(),
-                                 ficsgame.bplayer.getRatingForCurrentGame() or 0, gametype, length])
-        self.games[ficsgame.gameno] = ti
-        count = len(self.games)
-        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
-
-    def onWasPrivate (self, gameno):
-        # When observable games were added to the list later than the latest
-        # full send, private information will not be known.
-        model, paths = self.tv.get_selection().get_selected_rows()
-        for path in paths:
-            rowiter = model.get_iter(path)
-            if gameno == model.get_value(rowiter, 0):
-                gametype = model.get_value(rowiter, 6)
-                if not _("Private") in gametype:
-                    gametype += ", " + _("Private")
-                    childmodel = model.get_model()
-                    childrowiter = model.convert_iter_to_child_iter(None, rowiter)
-                    childmodel.set_value(childrowiter, 6, gametype)
-                break
-
-    def onGameRemove (self, gameno):
-        if not gameno in self.games:
-            return
-        ti = self.games[gameno]
-        if not self.store.iter_is_valid(ti):
-            return
-        self.store.remove (ti)
-        del self.games[gameno]
-        count = len(self.games)
-        self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
+    def onGameRemove (self, game):
+        if game not in self.games: return
+        if self.store.iter_is_valid(self.games[game]["ti"]):
+            self.store.remove(self.games[game]["ti"])
+        if game.handler_is_connected(self.games[game]["private_cid"]):
+            game.disconnect(self.games[game]["private_cid"])
+        del self.games[game]
+        self._update_gamesrunning_label()
 
     def onObserveClicked (self, widget, *args):
         model, paths = self.tv.get_selection().get_selected_rows()
         for path in paths:
             rowiter = model.get_iter(path)
-            gameno = model.get_value(rowiter, 0)
-            self.connection.bm.observe(gameno)
+            game = model.get_value(rowiter, 0)
+            self.connection.bm.observe(game)
 
-    def onGameObserved (self, ficsgame):
-        threeiter = self.games[ficsgame.gameno]
-        self.store.set_value (threeiter, 1, self.recpix)
+    def onGameObserved (self, game):
+        treeiter = self.games[game]["ti"]
+        self.store.set_value(treeiter, 1, self.recpix)
 
-    def onGameUnobserved (self, gameno):
-        if gameno in self.games:
-            threeiter = self.games[gameno]
-            self.store.set_value(threeiter, 1, self.clearpix)
+    def onGameUnobserved (self, game):
+        if game in self.games:
+            treeiter = self.games[game]["ti"]
+            self.store.set_value(treeiter, 1, self.clearpix)
 
 ########################################################################
 # Initialize Adjourned List                                            #
@@ -1038,30 +1043,32 @@ class GameTabSection (ParrentListSection):
 
 class AdjournedTabSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection):
+    def __init__ (self, widgets, connection, infobar):
         ParrentListSection.__init__(self)
         self.connection = connection
         self.widgets = widgets
-        self.opponents = {}
-
+        self.infobar = infobar
+        self.games = {}
+        self.messages = {}
+        
         self.wpix = load_icon(16, "stock_draw-rounded-square-unfilled", "computer")
         self.bpix = load_icon(16, "stock_draw-rounded-square", "computer")
 
         self.tv = widgets["adjournedtreeview"]
-        self.store = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, str)
+        self.store = gtk.ListStore(FICSAdjournedGame, gtk.gdk.Pixbuf, str, str,
+                                   str, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.addColumns (self.tv, _("Your Color"), _("Opponent"),
-                                  _("Is Online"), _("Length"), _("Date/Time"), pix=[0])
+        self.addColumns (self.tv, "FICSAdjournedGame", _("Your Color"),
+            _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
+            _("Date/Time"), hide=[0], pix=[1])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
 
-        self.connection.adm.connect("onAdjournmentsList", lambda glm, adjournments:
-                self.listPublisher.put((self.onAdjournmentsList, adjournments)) )
-        self.connection.adm.queryAdjournments()
-
-        self.connection.bm.connect("curGameEnded", lambda bm, game:
-                self.listPublisher.put((self.onCurGameEnded, game.result)))
+        self.connection.adm.connect("adjournedGameAdded", lambda adm, game:
+                self.listPublisher.put((self.onAdjournedGameAdded, game)) )
+        self.connection.games.connect("FICSAdjournedGameRemoved", lambda games, game:
+                self.listPublisher.put((self.onAdjournedGameRemoved, game)) )
 
         widgets["resignButton"].connect("clicked", self.onResignButtonClicked)
         widgets["abortButton"].connect("clicked", self.onAbortButtonClicked)
@@ -1069,9 +1076,10 @@ class AdjournedTabSection (ParrentListSection):
         widgets["resumeButton"].connect("clicked", self.onResumeButtonClicked)
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
-        self.connection.adm.connect("onGamePreview", lambda adm, board:
-            self.listPublisher.put((self.onGamePreview, board)))
-
+        self.connection.adm.connect("adjournedGamePreview", lambda adm, game:
+            self.listPublisher.put((self.onGamePreview, game)))
+        self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
+        
     def onSelectionChanged (self, selection):
         model, iter = selection.get_selected()
         a_row_is_selected = False
@@ -1080,55 +1088,93 @@ class AdjournedTabSection (ParrentListSection):
         for button in ("resignButton", "abortButton", "drawButton", "resumeButton",
                        "previewButton"):
             self.widgets[button].set_sensitive(a_row_is_selected)
-
-    def onAdjournmentsList (self, adjournments):
-        self.store.clear()
-        self.opponents.clear()
+    
+    @glock.glocked
+    def onPlayGameCreated (self, bm, board):
+        for message in self.messages.values():
+            message.dismiss()
+        self.messages = {}
+        return False
+    
+    @glock.glocked
+    def online_changed (self, player, property, game):
+        log.debug("AdjournedTabSection.online_changed: %s %s\n" % \
+            (repr(player), repr(game)))
+        if game in self.games and \
+                self.store.iter_is_valid(self.games[game]["ti"]):
+            self.store.set(self.games[game]["ti"], 3, player.display_online)
         
-        for adjourn in adjournments:
-            if adjourn["opponent"].lower() in self.opponents:
-                continue
-            pix = (self.wpix, self.bpix)[adjourn["color"]]
-            opstatus = adjourn["online"] and _("Online") or _("Offline")
-            ti = self.store.append ([pix, adjourn["opponent"],
-                                     opstatus, adjourn["length"], adjourn["time"]])
-            self.opponents[adjourn["opponent"].lower()] = ti
-
-    def onCurGameEnded (self, result):
-        if result == ADJOURNED:
-            self.store.clear()
-            self.opponents.clear()
-            self.connection.adm.queryAdjournments()
-
+        if player.online and player.adjournment:
+            text = _(" with whom you have an adjourned <b>%s</b> <b>%s</b> " + \
+                "game has arrived.")  % \
+                (game.display_timecontrol, game.game_type.display_text)
+            content = self.get_infobarmessage_content(player, text,
+                                                      gametype=game.game_type)
+            def callback (infobar, response):
+                if response == gtk.RESPONSE_ACCEPT:
+                    print >> self.connection.client, "match %s" % player.name
+                elif response == gtk.RESPONSE_HELP:
+                    self.connection.adm.queryMoves(game)
+            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
+                (_("Request Continuation"), gtk.RESPONSE_ACCEPT),
+                (_("Examine Adjourned Game"), gtk.RESPONSE_HELP),
+                (_("Do Nothing"), gtk.RESPONSE_NO))
+            self.messages[player] = message
+            self.infobar.push_message(message)
+        elif player in self.messages:
+            self.messages[player].dismiss()
+        
+    def onAdjournedGameAdded (self, game):
+        if game not in self.games:
+            pix = (self.wpix, self.bpix)[game.our_color]
+            ti = self.store.append([game, pix, game.opponent.name,
+                game.opponent.display_online, game.display_timecontrol,
+                game.game_type.display_text, game.display_time])
+            self.games[game] = {}
+            self.games[game]["ti"] = ti
+            self.games[game]["online_cid"] = game.opponent.connect(
+                "notify::online", self.online_changed, game)
+    
+    def onAdjournedGameRemoved (self, game):
+        if game in self.games:
+            if self.store.iter_is_valid(self.games[game]["ti"]):
+                self.store.remove(self.games[game]["ti"])
+            if game.opponent.handler_is_connected(self.games[game]["online_cid"]):
+                game.opponent.disconnect(self.games[game]["online_cid"])
+            if game.opponent in self.messages:
+                self.messages[game.opponent].dismiss()
+                del self.messages[game.opponent]
+            del self.games[game]
+    
     def onResignButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        opponent = model.get_value(iter, 1)
-        self.connection.adm.resign(opponent)
+        game = model.get_value(iter, 0)
+        self.connection.adm.resign(game)
     
     def onDrawButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        opponent = model.get_value(iter, 1)
-        self.connection.adm.draw(opponent)
+        game = model.get_value(iter, 0)
+        self.connection.adm.draw(game)
     
     def onAbortButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        opponent = model.get_value(iter, 1)
-        self.connection.adm.abort(opponent)
+        game = model.get_value(iter, 0)
+        self.connection.adm.abort(game)
     
     def onResumeButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        opponent = model.get_value(iter, 1)
-        self.connection.adm.resume(opponent)
+        game = model.get_value(iter, 0)
+        self.connection.adm.resume(game)
     
     def onPreviewButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
-        opponent = model.get_value(iter, 1)
-        self.connection.adm.queryMoves(opponent)
+        game = model.get_value(iter, 0)
+        self.connection.adm.queryMoves(game)
 
     def onGamePreview (self, ficsgame):
         log.debug("ICLounge.onGamePreview: %s\n" % ficsgame)
@@ -1299,12 +1345,8 @@ class SeekChallengeSection (ParrentListSection):
         self.connection.glm.seek(min, incr, gametype, rated, ratingrange, color, manual)
 
     def onChallengeButtonClicked (self, button):
-        playername = PlayerTabSection.getSelectedPlayerName()
-        if playername is None: return
-        try:
-            player = self.connection.playersonline[FICSPlayer(playername)]
-        except KeyError:
-            return
+        player = PlayerTabSection.getSelectedPlayer()
+        if player is None: return
         self.challengee = player
         self.in_challenge_mode = True
         
@@ -1839,13 +1881,13 @@ class Messages (Section):
         
     @glock.glocked
     def tooManySeeks (self, bm):
-        label = gtk.Label(_("You can only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
+        label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
         label.set_width_chars(70)
         label.set_line_wrap(True)
         def response_cb (infobar, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-        message = InfoBarMessage(gtk.MESSAGE_WARNING, label, response_cb,
+        message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb,
                                  (gtk.STOCK_YES, gtk.RESPONSE_YES),
                                  (gtk.STOCK_NO, gtk.RESPONSE_NO))
         self.infobar.push_message(message)
@@ -1859,9 +1901,10 @@ class Messages (Section):
         return False
     
     @glock.glocked
-    def matchDeclined (self, bm, decliner):
-        label = gtk.Label(_("%s has declined your offer for a match") % decliner)
-        message = InfoBarMessage(gtk.MESSAGE_INFO, label, None)
+    def matchDeclined (self, bm, player):
+        text = _(" has declined your offer for a match.")
+        content = self.get_infobarmessage_content(player, text)
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
         self.infobar.push_message(message)
 
 ############################################################################
@@ -1872,8 +1915,8 @@ class CreatedBoards (Section):
 
     def __init__ (self, widgets, connection):
         self.connection = connection
-        self.connection.gamesinprogress.connect("FICSPlayGameCreated", self.onPlayGameCreated)
-        self.connection.gamesinprogress.connect("FICSObsGameCreated", self.onObserveGameCreated)
+        self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
+        self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
 
     def onPlayGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onPlayGameCreated: %s\n" % ficsgame)
