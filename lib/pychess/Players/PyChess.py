@@ -14,6 +14,7 @@ from pychess.System.prefix import addDataPrefix
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
 import pychess
+from pychess.ic import *
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.book import getOpenings
@@ -510,7 +511,8 @@ class PyChessFICS(PyChess):
         #color = random.choice(self.colors)
         self.extendlog(["Seeking %d %d" % (minute, gain)])
         self.connection.glm.seek(minute, gain, True)
-        opps = random.sample(self.connection.glm.getPlayerlist(), self.challenges)
+        opps = random.sample(self.connection.players.get_online_playernames(),
+                             self.challenges)
         self.extendlog("Challenging %s" % op for op in opps)
         for player in opps:
             self.connection.om.challenge(player, minute, gain, True)
@@ -529,7 +531,7 @@ class PyChessFICS(PyChess):
         self.connection.glm.connect("removePlayer", self.__onRemovePlayer)
         self.connection.cm.connect("privateMessage", self.__onTell)
         self.connection.alm.connect("logOut", self.__onLogOut)
-        self.connection.bm.connect("playBoardCreated", self.__onPlayBoardCreated)
+        self.connection.bm.connect("playGameCreated", self.__onGameCreated)
         self.connection.bm.connect("curGameEnded", self.__onGameEnded)
         self.connection.bm.connect("boardUpdate", self.__onBoardUpdate)
         self.connection.om.connect("onChallengeAdd", self.__onChallengeAdd)
@@ -679,19 +681,19 @@ class PyChessFICS(PyChess):
     # Playing
     #===========================================================================
     
-    def __onPlayBoardCreated (self, boardManager, board):
+    def __onGameCreated (self, boardManager, ficsgame):
         
-        self.mytime = int(board["mins"])*60
-        self.increment = int(board["incr"])
-        self.gameno = board["gameno"]
+        self.mytime = int(ficsgame.min)*60
+        self.increment = int(ficsgame.inc)
+        self.gameno = ficsgame.gameno
         self.lastPly = -1
         
         self.acceptedTimesettings.append((self.mytime, self.increment))
         
         self.tellHome("Starting a game (%s, %s) gameno: %s" %
-                (board["wname"], board["bname"], board["gameno"]))
+                (ficsgame.wplayer.name, ficsgame.bplayer.name, ficsgame.gameno))
         
-        if board["bname"].lower() == self.connection.getUsername().lower():
+        if ficsgame.bplayer.name.lower() == self.connection.getUsername().lower():
             self.playingAs = BLACK
         else:
             self.playingAs = WHITE
@@ -707,8 +709,8 @@ class PyChessFICS(PyChess):
         self.worker.connect("done", self.__onMoveCalculated)
         self.worker.execute()
     
-    def __onGameEnded (self, boardManager, gameno, wname, bname, result, reason):
-        self.tellHome(reprResult_long[result] + " " + reprReason_long[reason])
+    def __onGameEnded (self, boardManager, ficsgame):
+        self.tellHome(reprResult_long[ficsgame.result] + " " + reprReason_long[ficsgame.reason])
         lsearch.searching = False
         if self.worker:
             self.worker.cancel()
