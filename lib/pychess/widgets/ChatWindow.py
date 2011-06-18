@@ -116,6 +116,7 @@ class TextImageTree (gtk.TreeView):
         self.get_selection().connect("changed", self.selection_changed)
     
     def addRow (self, id, text, type):
+        if id in self.id2iter: return
         iter = self.props.model.append([id, text, type])
         self.id2iter[id] = iter
         self.idSet.add(id)
@@ -497,20 +498,17 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
                 else:
                     self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
         
-        for name in self.connection.glm.getPlayerlist():
-            id = self.compileId(name, TYPE_PERSONAL)
-            try:
-                ficsplayer = self.connection.playersonline[FICSPlayer(name)]
-            except KeyError:
-                continue
-            self.playersList.addRow(id, ficsplayer.name + ficsplayer.getTitles(),
-                                    TYPE_PERSONAL)
+        for player in self.connection.players.itervalues():
+            if player.online:
+                id = self.compileId(player.name, TYPE_PERSONAL)
+                self.playersList.addRow(id, player.name + player.getTitles(),
+                                        TYPE_PERSONAL)
         
-        self.connection.playersonline.connect("FICSPlayerEntered",
+        self.connection.players.connect("FICSPlayerEntered",
             lambda players, player: self.playersList.addRow(
             self.compileId(player.name, TYPE_PERSONAL),
             player.name + player.getTitles(), TYPE_PERSONAL))
-        self.connection.playersonline.connect("FICSPlayerExited",
+        self.connection.players.connect("FICSPlayerExited",
             lambda players, player: self.playersList.removeRow(
             self.compileId(player.name, TYPE_PERSONAL)))
     
