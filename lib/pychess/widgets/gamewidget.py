@@ -146,20 +146,33 @@ class GameWidget (gobject.GObject):
            and self.gamemodel.status in UNFINISHED_STATES:
             if self.gamemodel.ply < 2:
                 self.menuitems["abort"].label = _("Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("This game can be automatically aborted without rating loss because there has not yet been two moves made")
             else:
                 self.menuitems["abort"].label = _("Offer Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("Your opponent must agree to abort the game because there has been two or more moves made")
             self.menuitems["abort"].sensitive = True
         else:
             self.menuitems["abort"].sensitive = False
+            self.menuitems["abort"].tooltip = ""
 
     def _update_menu_adjourn (self):
-        # TODO: if remote opponent player is a guest, disable "adjourn"
         self.menuitems["adjourn"].sensitive = \
             isinstance(self.gamemodel, ICGameModel) and \
-            self.gamemodel.connection.isRegistred() and \
             self.gamemodel.status in UNFINISHED_STATES and \
-            not self.gamemodel.isObservationGame()
-    
+            not self.gamemodel.isObservationGame() and \
+            not self.gamemodel.hasGuestPlayers()
+        
+        if isinstance(self.gamemodel, ICGameModel) and \
+            self.gamemodel.status in UNFINISHED_STATES and \
+            not self.gamemodel.isObservationGame() and \
+            self.gamemodel.hasGuestPlayers():
+            self.menuitems["adjourn"].tooltip = \
+                _("This game can not be adjourned because one or both players are guests")
+        else:
+            self.menuitems["adjourn"].tooltip = ""
+
     def _update_menu_draw (self):
         self.menuitems["draw"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
             and not self.gamemodel.isObservationGame()

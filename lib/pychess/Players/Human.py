@@ -73,7 +73,7 @@ class Human (Player):
         "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
-    def __init__ (self, gmwidg, color, name, ichandle=None):
+    def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
         Player.__init__(self)
         
         self.defname = "Human"
@@ -88,12 +88,10 @@ class Human (Player):
         ]
         self.setName(name)
         self.ichandle = ichandle
+        self.icrating = icrating
         
         if self.gamemodel.timemodel:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
-    
-    def getICHandle (self):
-        return self.ichandle
     
     #===========================================================================
     #    Handle signals from the board
@@ -133,7 +131,8 @@ class Human (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, %s %s\n" % (move, board1, board2))
+        log.debug("Human.makeMove: move=%s, board1=%s board2=%s\n" % \
+            (move, board1, board2))
         self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)

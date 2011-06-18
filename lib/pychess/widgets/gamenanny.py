@@ -71,7 +71,8 @@ def on_gmwidg_title_changed (gmwidg):
 #===============================================================================
 
 def game_ended (gamemodel, reason, gmwidg):
-    
+    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s\n" % \
+        (reason, gmwidg, gamemodel))
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
                "mover": gamemodel.curplayer}
