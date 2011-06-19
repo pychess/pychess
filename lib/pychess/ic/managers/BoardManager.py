@@ -625,10 +625,8 @@ class BoardManager (GObject):
             self.ourGameno = ""
             # update player info on players that changed rating/status while we
             # were playing because we can't get rating change info when playing
-            # a game TODO: This should probably be called at the FICSGames level
-            # in FICSPlayers upon recieving the playGameFinished signal from
-            # FICSGames
-            self.connection.glm.who()
+            # a game
+            print >> self.connection.client, "who IsblwL"
             del self.gamemodelStartedEvents[game.gameno]
         else:
             if game.gameno in self.queuedEmits:
