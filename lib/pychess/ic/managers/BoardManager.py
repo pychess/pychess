@@ -315,8 +315,7 @@ class BoardManager (GObject):
     
     def matchDeclined (self, match):
         decliner, = match.groups()
-        decliner = self.connection.players.get(FICSPlayer(decliner),
-                                               create=False, emit=False)
+        decliner = self.connection.players.get(FICSPlayer(decliner), create=False)
         self.emit("matchDeclined", decliner)
     
     @classmethod
