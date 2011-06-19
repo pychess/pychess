@@ -134,14 +134,15 @@ TYPE_ADMINISTRATOR, TYPE_BLINDFOLD, TYPE_COMPUTER, \
     TYPE_TEAM, TYPE_UNREGISTERED, TYPE_CHESS_ADVISOR, \
     TYPE_SERVICE_REPRESENTATIVE, TYPE_TOURNAMENT_DIRECTOR, TYPE_MAMER_MANAGER, \
     TYPE_GRAND_MASTER, TYPE_INTERNATIONAL_MASTER, TYPE_FIDE_MASTER, \
-    TYPE_WOMAN_GRAND_MASTER, TYPE_WOMAN_INTERNATIONAL_MASTER = range(14)
+    TYPE_WOMAN_GRAND_MASTER, TYPE_WOMAN_INTERNATIONAL_MASTER, \
+    TYPE_DUMMY_ACCOUNT = range(15)
 
 TITLE_TYPE_DISPLAY_TEXTS = (
     _("Administrator"), _("Blindfold Account"), _("Computer Account"),
     _("Team Account"), _("Unregistered User"), _("Chess Advisor"),
     _("Service Representative"), _("Tournament Director"), _("Mamer Manager"),
     _("Grand Master"), _("International Master"), _("FIDE Master"),
-    _("Woman Grand Master"), _("Woman International Master"),
+    _("Woman Grand Master"), _("Woman International Master"), _("Dummy Account"),
 )
 
 TITLE_TYPE_DISPLAY_TEXTS_SHORT = (
@@ -149,7 +150,7 @@ TITLE_TYPE_DISPLAY_TEXTS_SHORT = (
     _("T"), _("U"), _("CA"),
     _("SR"), _("TD"), _("TM"),
     _("GM"), _("IM"), _("FM"),
-    _("WGM"), _("WIM"),
+    _("WGM"), _("WIM"), _("D")
 )
 
 TITLES = {  # From FICS 'help who'
@@ -167,6 +168,7 @@ TITLES = {  # From FICS 'help who'
     "FM": TYPE_FIDE_MASTER,
     "WIM": TYPE_WOMAN_INTERNATIONAL_MASTER,
     "WGM": TYPE_WOMAN_GRAND_MASTER,
+    "D":   TYPE_DUMMY_ACCOUNT,
 }
 
 HEX_TO_TITLE = {

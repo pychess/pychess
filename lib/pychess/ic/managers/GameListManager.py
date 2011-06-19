@@ -268,7 +268,8 @@ class GameListManager (GObject):
         _titles = set()
         if titles:
             for title in titleslist_re.findall(titles):
-                _titles.add(TITLES[title])
+                if title in TITLES:
+                    _titles.add(TITLES[title])
         return _titles
     
     def on_player_connect (self, match):
