@@ -501,13 +501,13 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         for player in self.connection.players.itervalues():
             if player.online:
                 id = self.compileId(player.name, TYPE_PERSONAL)
-                self.playersList.addRow(id, player.name + player.getTitles(),
+                self.playersList.addRow(id, player.name + player.display_titles(),
                                         TYPE_PERSONAL)
         
         self.connection.players.connect("FICSPlayerEntered",
             lambda players, player: self.playersList.addRow(
             self.compileId(player.name, TYPE_PERSONAL),
-            player.name + player.getTitles(), TYPE_PERSONAL))
+            player.name + player.display_titles(), TYPE_PERSONAL))
         self.connection.players.connect("FICSPlayerExited",
             lambda players, player: self.playersList.removeRow(
             self.compileId(player.name, TYPE_PERSONAL)))
