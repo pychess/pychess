@@ -743,9 +743,6 @@ class SeekGraphSection (ParrentListSection):
 # Initialize Players List                                              #
 ########################################################################
 
-PLAYERADDED, PLAYERREMOVED, STATUSCHANGED, BLITZCHANGED, STDCHANGED, \
-    LIGHTCHANGED, WILDCHANGED = range(7)
-
 class PlayerTabSection (ParrentListSection):
     
     widgets = []
@@ -782,98 +779,82 @@ class PlayerTabSection (ParrentListSection):
         widgets["observe_button"].set_sensitive(False)
         glock.glock_connect_after(self.tv.get_selection(), "changed",
                                   self.onSelectionChanged)
-
-        self.playerUpdates = Queue.Queue()
-        def cb ():
-            self.listPublisher.put((self.processPlayerUpdates,))
-            return True
-        gobject.timeout_add(1000 * 5, cb)
     
-    def _process_update (self, updatetype, player):
-        if updatetype == PLAYERADDED:
-            if player in self.players: return
-            ti = self.store.append([player, player.getIcon(),
-                player.name + player.getTitles(), player.blitz, player.standard,
-                player.lightning, player.wild, player.display_status])
-            self.players[player] = { "ti": ti }
-            self.players[player]["status"] = player.connect(
-                "notify::status", self.status_changed)
-            self.players[player]["game"] = player.connect(
-                "notify::game", self.status_changed)
-            if player.game:
-                self.players[player]["private"] = player.game.connect(
-                    "notify::private", self.private_changed, player)
-            for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
-                self.players[player][rt] = player.ratings[rt].connect(
-                    "notify::elo", self.elo_changed, player)
-        elif player in self.players and \
-                self.store.iter_is_valid(self.players[player]["ti"]):
-            ti = self.players[player]["ti"]
-            if updatetype == PLAYERREMOVED:
-                self.store.remove(ti)
-                if player.handler_is_connected(self.players[player]["status"]):
-                    player.disconnect(self.players[player]["status"])
-                if player.handler_is_connected(self.players[player]["game"]):
-                    player.disconnect(self.players[player]["game"])
-                if player.game and player.game.handler_is_connected(
-                        self.players[player]["private"]):
-                    player.game.disconnect(self.players[player]["private"])
-                for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
-                    if player.ratings[rt].handler_is_connected(
-                            self.players[player][rt]):
-                        player.ratings[rt].disconnect(self.players[player][rt])
-                del self.players[player]
-            elif updatetype == STATUSCHANGED:
-#                if player.game:
-#                    log.debug("status changed: %s %s\n" % (player, player.game))
-                self.store.set(ti, 7, player.display_status)
-                if player.status == IC_STATUS_PLAYING and player.game and \
-                        "private" not in self.players[player]:
-                    self.players[player]["private"] = player.game.connect(
-                        "notify::private", self.private_changed, player)
-            elif updatetype == BLITZCHANGED:
-                self.store.set(ti, 3, player.blitz)
-            elif updatetype == STDCHANGED:
-                self.store.set(ti, 4, player.standard)
-            elif updatetype == LIGHTCHANGED:
-                self.store.set(ti, 5, player.lightning)
-            elif updatetype == WILDCHANGED:
-                self.store.set(ti, 6, player.wild)
-            
-    def processPlayerUpdates (self):
-        while True:
-            try:
-                playerupdate = self.playerUpdates.get_nowait()
-            except Queue.Empty:
-                break
-            else:
-                player, updatetype = playerupdate
-                self._process_update(updatetype, player)
+    @glock.glocked
+    def onPlayerAdded (self, players, player):
+        if player in self.players: return
+        
+        ti = self.store.append([player, player.getIcon(),
+            player.name + player.getTitles(), player.blitz, player.standard,
+            player.lightning, player.wild, player.display_status])
+        self.players[player] = { "ti": ti }
+        self.players[player]["status"] = player.connect(
+            "notify::status", self.status_changed)
+        self.players[player]["game"] = player.connect(
+            "notify::game", self.status_changed)
+        if player.game:
+            self.players[player]["private"] = player.game.connect(
+                "notify::private", self.private_changed, player)
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
+            self.players[player][rt] = player.ratings[rt].connect(
+                "notify::elo", self.elo_changed, player)
         
         count = len(self.players)
         self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
-
-    def onPlayerAdded (self, ficspo, player):
-        self.playerUpdates.put((player, PLAYERADDED))
         
-    def onPlayerRemoved (self, ficspo, player):
-        self.playerUpdates.put((player, PLAYERREMOVED))
+    @glock.glocked
+    def onPlayerRemoved (self, players, player):
+        if player not in self.players: return
+
+        if self.store.iter_is_valid(self.players[player]["ti"]):
+            ti = self.players[player]["ti"]
+            self.store.remove(ti)
+        if player.handler_is_connected(self.players[player]["status"]):
+            player.disconnect(self.players[player]["status"])
+        if player.handler_is_connected(self.players[player]["game"]):
+            player.disconnect(self.players[player]["game"])
+        if player.game and player.game.handler_is_connected(
+                self.players[player]["private"]):
+            player.game.disconnect(self.players[player]["private"])
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
+            if player.ratings[rt].handler_is_connected(
+                    self.players[player][rt]):
+                player.ratings[rt].disconnect(self.players[player][rt])
+        del self.players[player]
+        
+        count = len(self.players)
+        self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
     
+    @glock.glocked
     def status_changed (self, player, property):
-        self.playerUpdates.put((player, STATUSCHANGED))
+        if player not in self.players: return
+        if self.store.iter_is_valid(self.players[player]["ti"]):
+            self.store.set(self.players[player]["ti"], 7, player.display_status)
+        if player.status == IC_STATUS_PLAYING and player.game and \
+                "private" not in self.players[player]:
+            self.players[player]["private"] = player.game.connect(
+                "notify::private", self.private_changed, player)
         return False
     
     def private_changed (self, game, property, player):
         self.status_changed(player, property)
         return False
     
+    @glock.glocked
     def elo_changed (self, rating, prop, player):
-        if rating.type == TYPE_BLITZ: updatetype = BLITZCHANGED
-        elif rating.type == TYPE_STANDARD: updatetype = STDCHANGED
-        elif rating.type == TYPE_LIGHTNING: updatetype = LIGHTCHANGED
-        elif rating.type == TYPE_WILD: updatetype = WILDCHANGED
+        if player not in self.players: return
+        if not self.store.iter_is_valid(self.players[player]["ti"]): return
+        ti = self.players[player]["ti"]
+
+        if rating.type == TYPE_BLITZ:
+            self.store.set(ti, 3, player.blitz)
+        elif rating.type == TYPE_STANDARD:
+            self.store.set(ti, 4, player.standard)
+        elif rating.type == TYPE_LIGHTNING:
+            self.store.set(ti, 5, player.lightning)
+        elif rating.type == TYPE_WILD:
+            self.store.set(ti, 6, player.wild)
         else: return  # Ignore other stuff for now
-        self.playerUpdates.put((player, updatetype))
     
     @classmethod
     def getSelectedPlayer (cls):
