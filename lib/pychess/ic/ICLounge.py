@@ -486,19 +486,16 @@ class SeekTabSection (ParrentListSection):
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
         try:
-            ficsplayer = self.connection.players[FICSPlayer(seek["w"])]
-        except KeyError:
-            return
-        nametitle = ficsplayer.name + ficsplayer.getTitles()
-        textcolor = "grey" if ficsplayer.name == self.connection.getUsername() \
+            player = self.connection.players[FICSPlayer(seek["w"])]
+        except KeyError: return
+        textcolor = "grey" if player.name == self.connection.getUsername() \
                            else "black"
         is_rated = False if seek["r"] == "u" else True
-        is_computer = ficsplayer.isComputer()
-        tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
-            seek["rt"], is_computer, is_rated, seek["manual"], seek["gametype"],
+        tooltiptext = SeekGraphSection.getSeekTooltipText(player,
+            seek["rt"], is_rated, seek["manual"], seek["gametype"],
             seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
-        seek_ = [seek["gameno"], pix, nametitle, int(seek["rt"]), rated,
-            seek["gametype"].display_text, time,
+        seek_ = [seek["gameno"], pix, player.name + player.display_titles(),
+            int(seek["rt"]), rated, seek["gametype"].display_text, time,
             float(seek["t"] + "." + seek["i"]), textcolor, tooltiptext]
 
         if textcolor == "grey":
@@ -529,10 +526,10 @@ class SeekTabSection (ParrentListSection):
             time += _(" + %(sec)s sec") % {'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
         try:
-            ficsplayer = self.connection.players[FICSPlayer(match["w"])]
+            player = self.connection.players[FICSPlayer(match["w"])]
         except KeyError:
             return
-        nametitle = ficsplayer.name + ficsplayer.getTitles()
+        nametitle = player.name + player.display_titles()
         is_rated = False if match["r"] == "u" else True
         is_manual = False
         
@@ -544,7 +541,7 @@ class SeekTabSection (ParrentListSection):
         else:
             text = _(" challenges you to a <b>%s</b> %s <b>%s</b> game.") \
                 % (time, rated.lower(), match["gametype"].display_text)
-        content = self.get_infobarmessage_content(ficsplayer, text,
+        content = self.get_infobarmessage_content(player, text,
                                                   gametype=match["gametype"])
         def callback (infobar, response):
             if response == gtk.RESPONSE_ACCEPT:
@@ -558,9 +555,8 @@ class SeekTabSection (ParrentListSection):
         self.messages[index] = message
         self.infobar.push_message(message)
         
-        tooltiptext = SeekGraphSection.getSeekTooltipText(nametitle,
-            match["rt"], ficsplayer.isComputer(), is_rated, is_manual,
-            match["gametype"], match["t"], match["i"])
+        tooltiptext = SeekGraphSection.getSeekTooltipText(player, match["rt"],
+            is_rated, is_manual, match["gametype"], match["t"], match["i"])
         ti = self.store.prepend (["C"+index, self.chaPix, nametitle,
             int(match["rt"]), rated, match["gametype"].display_text, time,
             float(match["t"] + "." + match["i"]), "black", tooltiptext])
@@ -694,13 +690,15 @@ class SeekGraphSection (ParrentListSection):
         self.connection.bm.play(name)
 
     @classmethod
-    def getSeekTooltipText (cls, name, rating, is_computer, is_rated, is_manual,
+    def getSeekTooltipText (cls, player, rating, is_rated, is_manual,
                             gametype, min, gain, rmin=0, rmax=9999):
+        text = "%s" % player.name
         if int(rating) == 0:
-            rating = _("Unrated")
-        text = "%s (%s)" % (name, rating)
-        if is_computer:  # remove from testing/ficsmanagers.py as well when removing this
-            text += " (%s)" % _("Computer Player")
+            if not player.isGuest():
+                text += " (" + _("Unrated") + ")"
+        else:
+            text += " (%s)" % rating
+        text += "%s" % player.display_titles(long=True)
         rated = _("Rated") if is_rated else _("Unrated")
         text += "\n%s %s" % (rated, gametype.display_text)
         text += "\n" + _("%(min)s min + %(sec)s sec") % {'min': min, 'sec': gain}
@@ -716,12 +714,10 @@ class SeekGraphSection (ParrentListSection):
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
         try:
-            ficsplayer = self.connection.players[FICSPlayer(seek["w"])]
-        except KeyError:
-            return
-        nametitle = ficsplayer.name + ficsplayer.getTitles()
+            player = self.connection.players[FICSPlayer(seek["w"])]
+        except KeyError: return
         is_rated = False if seek["r"] == "u" else True
-        text = self.getSeekTooltipText(nametitle, seek["rt"], seek["cp"],
+        text = self.getSeekTooltipText(player, seek["rt"],
             is_rated, seek["manual"], seek["gametype"], seek["t"], seek["i"],
             rmin=seek["rmin"], rmax=seek["rmax"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
@@ -785,13 +781,15 @@ class PlayerTabSection (ParrentListSection):
         if player in self.players: return
         
         ti = self.store.append([player, player.getIcon(),
-            player.name + player.getTitles(), player.blitz, player.standard,
+            player.name + player.display_titles(), player.blitz, player.standard,
             player.lightning, player.wild, player.display_status])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
             "notify::status", self.status_changed)
         self.players[player]["game"] = player.connect(
             "notify::game", self.status_changed)
+        self.players[player]["titles"] = player.connect(
+            "notify::titles", self.titles_changed)
         if player.game:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
@@ -809,10 +807,9 @@ class PlayerTabSection (ParrentListSection):
         if self.store.iter_is_valid(self.players[player]["ti"]):
             ti = self.players[player]["ti"]
             self.store.remove(ti)
-        if player.handler_is_connected(self.players[player]["status"]):
-            player.disconnect(self.players[player]["status"])
-        if player.handler_is_connected(self.players[player]["game"]):
-            player.disconnect(self.players[player]["game"])
+        for key in ("status", "game", "titles"):
+            if player.handler_is_connected(self.players[player][key]):
+                player.disconnect(self.players[player][key])
         if player.game and player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
@@ -836,6 +833,15 @@ class PlayerTabSection (ParrentListSection):
                 "notify::private", self.private_changed, player)
         return False
     
+    @glock.glocked
+    def titles_changed (self, player, property):
+        if player not in self.players: return
+        if not self.store.iter_is_valid(self.players[player]["ti"]): return
+        self.store.set(self.players[player]["ti"], 1, player.getIcon())
+        self.store.set(self.players[player]["ti"], 2,
+                       player.name + player.display_titles())
+        return False
+        
     def private_changed (self, game, property, player):
         self.status_changed(player, property)
         return False
@@ -845,6 +851,7 @@ class PlayerTabSection (ParrentListSection):
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
+        self.store.set(ti, 1, player.getIcon())
 
         if rating.type == TYPE_BLITZ:
             self.store.set(ti, 3, player.blitz)
@@ -978,11 +985,11 @@ class GameTabSection (ParrentListSection):
             length = 0
         
         ti = self.store.append ([game, self.clearpix,
-                                 game.wplayer.name + game.wplayer.getTitles(),
-                                 game.wplayer.getRatingForCurrentGame() or 0,
-                                 game.bplayer.name + game.bplayer.getTitles(),
-                                 game.bplayer.getRatingForCurrentGame() or 0,
-                                 game.display_text, length])
+            game.wplayer.name + game.wplayer.display_titles(),
+            game.wplayer.getRatingForCurrentGame() or 0,
+            game.bplayer.name + game.bplayer.display_titles(),
+            game.bplayer.getRatingForCurrentGame() or 0,
+            game.display_text, length])
         self.games[game] = { "ti": ti }
         self.games[game]["private_cid"] = game.connect("notify::private",
                                                        self.private_changed)
@@ -1917,23 +1924,23 @@ class CreatedBoards (Section):
             player0tup = (LOCAL, Human, (WHITE, "", ficsgame.wplayer.name,
                           ficsgame.wplayer.getRatingForCurrentGame()), _("Human"),
                           ficsgame.wplayer.getRatingForCurrentGame(),
-                          ficsgame.wplayer.getTitles())
+                          ficsgame.wplayer.display_titles())
             player1tup = (REMOTE, ICPlayer, (gamemodel, ficsgame.bplayer.name,
                 ficsgame.gameno, BLACK, ficsgame.bplayer.getRatingForCurrentGame()),
                 ficsgame.bplayer.name, ficsgame.bplayer.getRatingForCurrentGame(),
-                ficsgame.bplayer.getTitles())
+                ficsgame.bplayer.display_titles())
         else:
             player1tup = (LOCAL, Human, (BLACK, "", ficsgame.bplayer.name,
                           ficsgame.bplayer.getRatingForCurrentGame()), _("Human"),
                           ficsgame.bplayer.getRatingForCurrentGame(),
-                          ficsgame.bplayer.getTitles())
+                          ficsgame.bplayer.display_titles())
             # If the remote player is WHITE, we need to init him right now, so
             # we can catch fast made moves
             player0 = ICPlayer(gamemodel, ficsgame.wplayer.name, ficsgame.gameno, WHITE,
                                icrating=ficsgame.wplayer.getRatingForCurrentGame())
             player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
                           ficsgame.wplayer.getRatingForCurrentGame(),
-                          ficsgame.wplayer.getTitles())
+                          ficsgame.wplayer.display_titles())
         
         if not ficsgame.board.fen:
             ionest.generalStart(gamemodel, player0tup, player1tup)
@@ -1959,10 +1966,10 @@ class CreatedBoards (Section):
         
         player0tup = (REMOTE, lambda:player0, (), ficsgame.wplayer.name,
                       ficsgame.wplayer.getRatingForCurrentGame(),
-                      ficsgame.wplayer.getTitles())
+                      ficsgame.wplayer.display_titles())
         player1tup = (REMOTE, lambda:player1, (), ficsgame.bplayer.name,
                       ficsgame.bplayer.getRatingForCurrentGame(),
-                      ficsgame.bplayer.getTitles())
+                      ficsgame.bplayer.display_titles())
         
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))

@@ -258,17 +258,18 @@ class GameListManager (GObject):
             return DEVIATION_NONE
     
     def __parseTitleHex (self, titlehex):
-        titles = []
+        titles = set()
         for hex in HEX_TO_TITLE:
             if int(titlehex, 16) & hex:
-                titles.append(TITLE_TYPE_DISPLAY_TEXTS_SHORT[HEX_TO_TITLE[hex]])
+                titles.add(HEX_TO_TITLE[hex])
         return titles
     
     def __parseTitles (self, titles):
+        _titles = set()
         if titles:
-            return titleslist_re.findall(titles)   
-        else:
-            return []
+            for title in titleslist_re.findall(titles):
+                _titles.add(TITLES[title])
+        return _titles
     
     def on_player_connect (self, match):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
@@ -277,7 +278,7 @@ class GameListManager (GObject):
         copy = player.copy()
         copy.online = True
         copy.status = self.__parseStatus(status)
-        copy.titles = self.__parseTitleHex(titlehex)        
+        copy.titles |= self.__parseTitleHex(titlehex)        
 
         for ratingtype, elo, dev in \
                 ((TYPE_BLITZ, blitz, blitzdev),
@@ -303,7 +304,7 @@ class GameListManager (GObject):
             copy = player.copy()
             copy.online = True
             copy.status = self.__parseStatus(status)
-            copy.titles = self.__parseTitles(titles)
+            copy.titles |= self.__parseTitles(titles)
             copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
             player.update(copy)
     
@@ -311,7 +312,7 @@ class GameListManager (GObject):
         name, titles = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
-        copy.titles = self.__parseTitles(titles)
+        copy.titles |= self.__parseTitles(titles)
         # we get here after players start a game, so we make sure that we don't
         # overwrite IC_STATUS_PLAYING
         if copy.game is None and copy.status != IC_STATUS_PLAYING:
@@ -324,7 +325,7 @@ class GameListManager (GObject):
         copy = player.copy()
         copy.online = True
         copy.status = IC_STATUS_AVAILABLE
-        copy.titles = self.__parseTitles(titles)
+        copy.titles |= self.__parseTitles(titles)
         copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
         copy.ratings[TYPE_STANDARD].elo = self.parseRating(std)
         copy.ratings[TYPE_LIGHTNING].elo = self.parseRating(light)

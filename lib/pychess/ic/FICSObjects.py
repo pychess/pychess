@@ -21,7 +21,7 @@ class FICSPlayer (GObject):
         self.game = None
         self.adjournment = False
         if titles is None:
-            self.titles = []
+            self.titles = set()
         else:
             self.titles = titles
         if ratings is None:
@@ -81,6 +81,21 @@ class FICSPlayer (GObject):
     def set_game (self, game):
         self._game = game
     game = gobject.property(get_game, set_game)
+        
+    def get_titles (self):
+        return self._titles
+    def set_titles (self, titles):
+        self._titles = titles
+    titles = gobject.property(get_titles, set_titles)
+    
+    def display_titles (self, long=False):
+        r = ""
+        for title in self.titles:
+            if long:
+                r += " (" + TITLE_TYPE_DISPLAY_TEXTS[title] + ")"
+            else:
+                r += "(" + TITLE_TYPE_DISPLAY_TEXTS_SHORT[title] + ")"
+        return r
 
     @property
     def blitz (self):
@@ -115,11 +130,7 @@ class FICSPlayer (GObject):
             return False
         
     def __repr__ (self):
-        r = "name='%s'" % self.name
-        if self.titles:
-            r += ", titles = "
-            for title in self.titles:
-                r += "(" + title + ")"
+        r = "name='%s'" % self.name + self.display_titles()
         r += ", online=%s" % repr(self.online)
         r += ", adjournment=%s" % repr(self.adjournment)
         r += ", status=%i" % self.status
@@ -152,15 +163,15 @@ class FICSPlayer (GObject):
         else: return False
         
     def isGuest (self):
-        if "U" in self.titles: return True
+        if TYPE_UNREGISTERED in self.titles: return True
         else: return False
 
     def isComputer (self):    
-        if "C" in self.titles: return True
+        if TYPE_COMPUTER in self.titles: return True
         else: return False
 
     def isAdmin (self):    
-        if "*" in self.titles: return True
+        if TYPE_ADMINISTRATOR in self.titles: return True
         else: return False
 
     @classmethod
@@ -196,7 +207,8 @@ class FICSPlayer (GObject):
     def getMarkup (self, gametype=None):
         markup = "<big><b>%s</b></big>" % self.name
         if self.isGuest():
-            markup += " <big>(%s)</big>" % _("Unregistered")
+            markup += " <big>(%s)</big>" % \
+                TITLE_TYPE_DISPLAY_TEXTS[TYPE_UNREGISTERED]
         else:
             if gametype:
                 rating = self.getRating(gametype.rating_type)
@@ -208,15 +220,9 @@ class FICSPlayer (GObject):
             
             markup += " <big>(%s)</big>" % rating
             if self.isComputer():
-                markup += " <big>(%s)</big>" % _("Computer Player")
+                markup += " <big>(%s)</big>" % \
+                    TITLE_TYPE_DISPLAY_TEXTS[TYPE_COMPUTER]
         return markup
-    
-    def getTitles (self):
-        r = ""
-        if self.titles:
-            for title in self.titles:
-                r += "(" + title + ")"
-        return r
 
     def getRating (self, rating_type):
         if rating_type in self.ratings:
@@ -234,9 +240,7 @@ class FICSPlayer (GObject):
     
     def copy (self):
         player = FICSPlayer(self.name, online=self.online, status=self.status,
-                            ratings={})
-        for item in self.titles:
-            player.titles.append(item)
+            titles=self.titles.copy(), ratings={})
         for ratingtype, rating in self.ratings.iteritems():
             player.ratings[ratingtype] = rating.copy()
         player.game = self.game
@@ -253,9 +257,8 @@ class FICSPlayer (GObject):
             self.game = player.game
         if self.adjournment != player.adjournment:
             self.adjournment = player.adjournment
-        for title in player.titles:
-            if title not in self.titles:
-                self.titles.append(title)
+        if not self.titles >= player.titles:
+            self.titles |= player.titles
         for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
                            TYPE_WILD, TYPE_LOSERS):
             self.ratings[ratingtype].update(player.ratings[ratingtype])
@@ -264,14 +267,14 @@ class FICSPlayer (GObject):
         ratingtotal = 0
         numratings = 0
         for ratingtype in self.ratings:
-            if self.ratings[ratingtype].deviation == None or \
-               self.ratings[ratingtype].deviation == DEVIATION_NONE:
+            if self.ratings[ratingtype].elo == 0: continue
+            if self.ratings[ratingtype].deviation == DEVIATION_NONE:
                 ratingtotal += self.ratings[ratingtype].elo * 3
                 numratings += 3
-            if self.ratings[ratingtype].deviation == DEVIATION_ESTIMATED:
+            elif self.ratings[ratingtype].deviation == DEVIATION_ESTIMATED:
                 ratingtotal += self.ratings[ratingtype].elo * 2
                 numratings += 2
-            if self.ratings[ratingtype].deviation == DEVIATION_PROVISIONAL:
+            elif self.ratings[ratingtype].deviation == DEVIATION_PROVISIONAL:
                 ratingtotal += self.ratings[ratingtype].elo * 1
                 numratings += 1
         return numratings > 0 and ratingtotal / numratings or 0
@@ -280,11 +283,11 @@ class FICSPlayer (GObject):
     # and deflated lightning ratings and needs work
     # IDEA: use rank in addition to rating to determine strength
     def getStrength (self):
-        if self.ratings.has_key(TYPE_BLITZ) and self.ratings[TYPE_BLITZ].deviation != None and \
-           self.ratings[TYPE_BLITZ].deviation not in (DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL):
+        if TYPE_BLITZ in self.ratings and \
+                self.ratings[TYPE_BLITZ].deviation == DEVIATION_NONE:
             return self.ratings[TYPE_BLITZ].elo
-        elif self.ratings.has_key(TYPE_LIGHTNING) and self.ratings[TYPE_LIGHTNING].deviation != None and \
-           self.ratings[TYPE_LIGHTNING].deviation not in (DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL):
+        elif TYPE_LIGHTNING in self.ratings and \
+                self.ratings[TYPE_LIGHTNING].deviation == DEVIATION_NONE:
             return self.ratings[TYPE_LIGHTNING].elo
         else:
             return self.getRatingMean()
