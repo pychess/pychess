@@ -744,7 +744,7 @@ class SeekGraphSection (ParrentListSection):
 ########################################################################
 
 PLAYERADDED, PLAYERREMOVED, STATUSCHANGED, BLITZCHANGED, STDCHANGED, \
-    LIGHTCHANGED = range(6)
+    LIGHTCHANGED, WILDCHANGED = range(7)
 
 class PlayerTabSection (ParrentListSection):
     
@@ -760,11 +760,11 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv = widgets["playertreeview"]
         self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
-                                   int, str)
+                                   int, int, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
-                        _("Standard"), _("Lightning"), _("Status"), hide=[0],
-                        pix=[1])
+            _("Standard"), _("Lightning"), _("Wild"), _("Status"), hide=[0],
+            pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
@@ -794,7 +794,7 @@ class PlayerTabSection (ParrentListSection):
             if player in self.players: return
             ti = self.store.append([player, player.getIcon(),
                 player.name + player.getTitles(), player.blitz, player.standard,
-                player.lightning, player.display_status])
+                player.lightning, player.wild, player.display_status])
             self.players[player] = { "ti": ti }
             self.players[player]["status"] = player.connect(
                 "notify::status", self.status_changed)
@@ -803,7 +803,7 @@ class PlayerTabSection (ParrentListSection):
             if player.game:
                 self.players[player]["private"] = player.game.connect(
                     "notify::private", self.private_changed, player)
-            for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING):
+            for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
                 self.players[player][rt] = player.ratings[rt].connect(
                     "notify::elo", self.elo_changed, player)
         elif player in self.players and \
@@ -818,7 +818,7 @@ class PlayerTabSection (ParrentListSection):
                 if player.game and player.game.handler_is_connected(
                         self.players[player]["private"]):
                     player.game.disconnect(self.players[player]["private"])
-                for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING):
+                for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
                     if player.ratings[rt].handler_is_connected(
                             self.players[player][rt]):
                         player.ratings[rt].disconnect(self.players[player][rt])
@@ -826,7 +826,7 @@ class PlayerTabSection (ParrentListSection):
             elif updatetype == STATUSCHANGED:
 #                if player.game:
 #                    log.debug("status changed: %s %s\n" % (player, player.game))
-                self.store.set(ti, 6, player.display_status)
+                self.store.set(ti, 7, player.display_status)
                 if player.status == IC_STATUS_PLAYING and player.game and \
                         "private" not in self.players[player]:
                     self.players[player]["private"] = player.game.connect(
@@ -837,6 +837,8 @@ class PlayerTabSection (ParrentListSection):
                 self.store.set(ti, 4, player.standard)
             elif updatetype == LIGHTCHANGED:
                 self.store.set(ti, 5, player.lightning)
+            elif updatetype == WILDCHANGED:
+                self.store.set(ti, 6, player.wild)
             
     def processPlayerUpdates (self):
         while True:
@@ -869,6 +871,7 @@ class PlayerTabSection (ParrentListSection):
         if rating.type == TYPE_BLITZ: updatetype = BLITZCHANGED
         elif rating.type == TYPE_STANDARD: updatetype = STDCHANGED
         elif rating.type == TYPE_LIGHTNING: updatetype = LIGHTCHANGED
+        elif rating.type == TYPE_WILD: updatetype = WILDCHANGED
         else: return  # Ignore other stuff for now
         self.playerUpdates.put((player, updatetype))
     
