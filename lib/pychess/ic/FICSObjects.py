@@ -61,8 +61,9 @@ class FICSPlayer (GObject):
             status = _("Available")
         elif self.status == IC_STATUS_PLAYING:
             status = _("Playing")
-            if self.game is not None and self.game.private:
-                status += " (" + _("Private") + ")"
+            game = self.game
+            if game is not None:
+                status += " " + game.display_text
         elif self.status == IC_STATUS_IDLE:
             status = _("Idle")
         elif self.status == IC_STATUS_EXAMINING:
