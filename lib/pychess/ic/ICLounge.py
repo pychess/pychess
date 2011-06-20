@@ -776,7 +776,8 @@ class PlayerTabSection (ParrentListSection):
         widgets["observe_button"].set_sensitive(False)
         glock.glock_connect_after(self.tv.get_selection(), "changed",
                                   self.onSelectionChanged)
-    
+        self.onSelectionChanged(None)
+        
     @glock.glocked
     def onPlayerAdded (self, players, player):
         if player in self.players: return
