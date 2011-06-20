@@ -106,7 +106,8 @@ class ICLounge (GObject):
 
     def present (self):
         self.widgets["fics_lounge"].present()
-
+    
+    @glock.glocked
     def close (self):
         if self.widgets != None:
             self.widgets["fics_lounge"].hide()
