@@ -123,7 +123,7 @@ class Sidepanel:
         assert game.ply > 0, "Can't undo when ply <= 0"
         for i in xrange(moves):
             try:
-                row, view, other = self._ply_to_row_col_other(game.ply-i)
+                row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
                 model = view.get_model()
                 model.remove(model.get_iter((row,)))
                 if view == self.left:
@@ -168,15 +168,19 @@ class Sidepanel:
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
-        #print "shown changed", shown 
+            
         row, col, other = self._ply_to_row_col_other(shown)
-        
+
         with self.frozen:
             other.get_selection().unselect_all()
-            col.get_selection().select_iter(col.get_model().get_iter(row))
-            col.set_cursor((row,))
-            col.scroll_to_cell((row,), None, False)
-            col.grab_focus()
+            try:
+                col.get_selection().select_iter(col.get_model().get_iter(row))
+                col.set_cursor((row,))
+                col.scroll_to_cell((row,), None, False)
+                col.grab_focus()
+            except ValueError:
+                pass
+                # deleted variations by moves_undoing
     
     def _ply_to_row_col_other (self, ply):
         col = ply & 1 and self.left or self.right
