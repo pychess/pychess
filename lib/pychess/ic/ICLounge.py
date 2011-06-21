@@ -521,6 +521,7 @@ class SeekTabSection (ParrentListSection):
         self.__updateActiveSeeksLabel()
     
     def onChallengeAdd (self, index, match):
+        log.debug("onChallengeAdd: %s\n" % match)
         SoundTab.playAction("aPlayerChecks")
         time = _("%(min)s min") % {'min': match["t"]}
         if match["i"] != "0":
@@ -880,12 +881,13 @@ class PlayerTabSection (ParrentListSection):
                 #TODO: isadmin og type
     
     def onObserveClicked (self, button):
-#        log.debug("onObserveClicked: gbtami=%s\n" % \
-#            self.connection.players[FICSPlayer("gbtami")])
 #        gbtami = self.connection.players.get(FICSPlayer("gbtami"))
-#        self.connection.players[FICSPlayer("gbtami")].online = True
-#        log.debug("onObserveClicked: online set: gbtami=%s\n" % \
-#            self.connection.players[FICSPlayer("gbtami")])
+#        log.debug("onObserveClicked: gbtami=%s\n" % gbtami)
+#        gbtami.ratings[TYPE_BLITZ].elo = 1600
+#        gbtami.ratings[TYPE_WILD].elo = 1700
+#        gbtami.online = True
+#        log.debug("onObserveClicked: online set: gbtami=%s\n" % gbtami)
+        
         player = self.getSelectedPlayer()
         if player is not None and player.game is not None:
             self.connection.bm.observe(player.game)
@@ -1088,6 +1090,27 @@ class AdjournedTabSection (ParrentListSection):
             message.dismiss()
         self.messages = {}
         return False
+
+    def _infobar_adjourned_message (self, game, player):
+        if player not in self.messages:
+            text = _(" with whom you have an adjourned <b>%s</b> <b>%s</b> " + \
+                "game is online.")  % \
+                (game.display_timecontrol, game.game_type.display_text)
+            content = self.get_infobarmessage_content(player, text,
+                                                      gametype=game.game_type)
+            def callback (infobar, response):
+                if response == gtk.RESPONSE_ACCEPT:
+                    print >> self.connection.client, "match %s" % player.name
+                elif response == gtk.RESPONSE_HELP:
+                    self.connection.adm.queryMoves(game)
+                del self.messages[player]
+
+            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
+                (_("Request Continuation"), gtk.RESPONSE_ACCEPT),
+                (_("Examine Adjourned Game"), gtk.RESPONSE_HELP),
+                (_("Do Nothing"), gtk.RESPONSE_NO))
+            self.messages[player] = message
+            self.infobar.push_message(message)
     
     @glock.glocked
     def online_changed (self, player, property, game):
@@ -1098,24 +1121,9 @@ class AdjournedTabSection (ParrentListSection):
             self.store.set(self.games[game]["ti"], 3, player.display_online)
         
         if player.online and player.adjournment:
-            text = _(" with whom you have an adjourned <b>%s</b> <b>%s</b> " + \
-                "game has arrived.")  % \
-                (game.display_timecontrol, game.game_type.display_text)
-            content = self.get_infobarmessage_content(player, text,
-                                                      gametype=game.game_type)
-            def callback (infobar, response):
-                if response == gtk.RESPONSE_ACCEPT:
-                    print >> self.connection.client, "match %s" % player.name
-                elif response == gtk.RESPONSE_HELP:
-                    self.connection.adm.queryMoves(game)
-            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
-                (_("Request Continuation"), gtk.RESPONSE_ACCEPT),
-                (_("Examine Adjourned Game"), gtk.RESPONSE_HELP),
-                (_("Do Nothing"), gtk.RESPONSE_NO))
-            self.messages[player] = message
-            self.infobar.push_message(message)
-        elif player in self.messages:
-            self.messages[player].dismiss()
+            self._infobar_adjourned_message(game, player)
+
+        return False
         
     def onAdjournedGameAdded (self, game):
         if game not in self.games:
@@ -1127,6 +1135,11 @@ class AdjournedTabSection (ParrentListSection):
             self.games[game]["ti"] = ti
             self.games[game]["online_cid"] = game.opponent.connect(
                 "notify::online", self.online_changed, game)
+        
+        if game.opponent.online:
+            self._infobar_adjourned_message(game, game.opponent)
+        
+        return False
     
     def onAdjournedGameRemoved (self, game):
         if game in self.games:
@@ -1138,6 +1151,8 @@ class AdjournedTabSection (ParrentListSection):
                 self.messages[game.opponent].dismiss()
                 del self.messages[game.opponent]
             del self.games[game]
+        
+        return False
     
     def onResignButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()

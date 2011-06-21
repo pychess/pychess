@@ -173,8 +173,6 @@ class GameListManager (GObject):
                 player.status = IC_STATUS_PLAYING
             if player.game != game:
                 player.game = game
-                if game.private:
-                    log.debug("on_game_list: private game: %s\n" % game)
             rating = self.parseRating(rating)
             if player.ratings[gametype.rating_type].elo != rating:
                 player.ratings[gametype.rating_type].elo = rating
