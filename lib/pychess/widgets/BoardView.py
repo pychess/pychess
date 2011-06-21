@@ -198,10 +198,20 @@ class BoardView (gtk.DrawingArea):
                     self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
-        self.shown = model.ply-moves
+        if model.boards == model.variations[0]:
+            self.shown = model.ply-moves
+        else:
+            # Go back to the mainline to let animation system work
+            board = model.getBoardAtPly(self.shown)
+            while board not in model.variations[0]:
+                board = model.boards[board.ply-model.lowply-1]
+            self.shown = board.ply
+            self.model.boards = self.model.variations[0]
+            self.shown = model.ply-moves
     
     def game_loading (self, model, uri):
         self.autoUpdateShown = False
+
     def game_loaded (self, model, uri):
         self.autoUpdateShown = True
         self._shown = model.ply
