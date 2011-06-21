@@ -250,10 +250,6 @@ class FICSPlayer (GObject):
         
     def update (self, player):
         if not isinstance(player, FICSPlayer): raise TypeError
-        if self.online != player.online:
-            self.online = player.online
-        if self.status != player.status:
-            self.status = player.status
         if self.game != player.game:
             self.game = player.game
         if self.adjournment != player.adjournment:
@@ -263,6 +259,11 @@ class FICSPlayer (GObject):
         for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
                            TYPE_WILD, TYPE_LOSERS):
             self.ratings[ratingtype].update(player.ratings[ratingtype])
+        if self.status != player.status:
+            self.status = player.status
+        # do last so rating info is there when notifications are generated
+        if self.online != player.online:
+            self.online = player.online
         
     def getRatingMean (self):
         ratingtotal = 0
