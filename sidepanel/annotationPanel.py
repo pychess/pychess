@@ -246,7 +246,7 @@ class Sidepanel(gtk.TextView):
             # pgn not processed yet
             return
         buf.insert_with_tags_by_name(end_iter(), text, "head2")
-        white_elo = gm.tags['WhiteElo']
+        white_elo = gm.tags.get('WhiteElo')
         if white_elo:
             buf.insert_with_tags_by_name(end_iter(), " %s" % white_elo, "head1")
 
@@ -254,7 +254,7 @@ class Sidepanel(gtk.TextView):
 
         text = gm.tags['Black']
         buf.insert_with_tags_by_name(end_iter(), text, "head2")
-        black_elo = gm.tags['BlackElo']
+        black_elo = gm.tags.get('BlackElo')
         if black_elo:
             buf.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
             
@@ -262,7 +262,7 @@ class Sidepanel(gtk.TextView):
         buf.insert_with_tags_by_name(end_iter(), result, "head2")
 
         text = ""
-        eco = gm.tags['ECO']
+        eco = gm.tags.get('ECO')
         if eco:
             text += eco
 
