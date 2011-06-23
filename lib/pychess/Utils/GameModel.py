@@ -95,6 +95,7 @@ class GameModel (GObject, PooledThread):
             "Month": now.month,
             "Day":   now.day,
             "Time":  "%02d:%02d:00" % (now.hour, now.minute),
+            "Result": "*",
         }
 
         if self.timemodel:
