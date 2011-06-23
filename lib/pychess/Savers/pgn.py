@@ -381,7 +381,11 @@ class PGNFile (ChessFile):
                 if node.variations: 
                     for vari in node.variations:
                         walk(vari[1], list(path))
-
+            
+            # Collect all variation paths into a list of board lists
+            # where the first one will be the boards of mainline game.
+            # model.boards will allways point to the current shown variation
+            # which will be model.variations[0] when we are in the mainline.
             walk(model.boards[0], [])
 
         if model.timemodel:
