@@ -282,15 +282,17 @@ class Sidepanel(gtk.TextView):
         if round and round != "?":
             text += ', ' + _('round %s') % round
 
-        game_date = gm.tags['Date']
-        if game_date and not '?' in game_date:
+        game_date = gm.tags.get('Date')
+        if game_date is None:
+            game_date = "%02d.%02d.%02d" % (gm.tags['Year'], gm.tags['Month'], gm.tags['Day'])
+        if not '?' in game_date:
             y, m, d = map(int, game_date.split('.'))
             # strftime() is limited to > 1900 dates
             try:
                 text += ', ' + datetime.date(y, m, d).strftime('%x')
             except ValueError:
                 text += ', ' + game_date
-        elif game_date and not '?' in game_date[:4]:
+        elif not '?' in game_date[:4]:
             text += ', ' + game_date[:4]
         buf.insert_with_tags_by_name(end_iter(), text, "head1")
 
