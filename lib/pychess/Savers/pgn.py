@@ -27,26 +27,57 @@ def wrap (string, length):
         last += i + 1
     return "\n".join(lines)
 
+def msToClockTimeTag (ms):
+    """ 
+    Converts milliseconds to a chess clock time string in 'WhiteClock'/
+    'BlackClock' PGN header format
+    """
+    msec = ms % 1000
+    sec = ((ms - msec) % (1000 * 60)) / 1000
+    min = ((ms - sec*1000 - msec) % (1000*60*60)) / (1000*60)
+    hour = ((ms - min*1000*60 - sec*1000 - msec) % (1000*60*60*24)) / (1000*60*60)
+    return "%01d:%02d:%02d.%03d" % (hour, min, sec, msec)
+
+def parseClockTimeTag (tag):
+    """ 
+    Parses 'WhiteClock'/'BlackClock' PGN headers and returns the time the
+    player playing that color has left on their clock in milliseconds
+    """
+    match = re.match("(\d{1,2}).(\d\d).(\d\d).(\d\d\d)", tag)
+    if match:
+        hour, min, sec, msec = match.groups()
+        return int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
+    
 def save (file, model):
 
     status = reprResult[model.status]
 
     print >> file, '[Event "%s"]' % model.tags["Event"]
     print >> file, '[Site "%s"]' % model.tags["Site"]
-    print >> file, '[Round "%s"]' % model.tags["Round"]
     print >> file, '[Date "%04d.%02d.%02d"]' % \
-            (model.tags["Year"], model.tags["Month"], model.tags["Day"])
+        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"]))
+    print >> file, '[Round "%s"]' % model.tags["Round"]
     print >> file, '[White "%s"]' % repr(model.players[WHITE])
     print >> file, '[Black "%s"]' % repr(model.players[BLACK])
     print >> file, '[Result "%s"]' % status
-
+    if "WhiteElo" in model.tags:
+        print >> file, '[WhiteElo "%s"]' % model.tags["WhiteElo"]
+    if "BlackElo" in model.tags:
+        print >> file, '[BlackElo "%s"]' % model.tags["BlackElo"]
+    if "TimeControl" in model.tags:
+        print >> file, '[TimeControl "%s"]' % model.tags["TimeControl"]
+    if "Time" in model.tags:
+        print >> file, '[Time "%s"]' % str(model.tags["Time"])
+    if model.timemodel:
+        print >> file, '[WhiteClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000))
+        print >> file, '[BlackClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000))
     if issubclass(model.variant, FischerRandomChess):
         print >> file, '[Variant "Fischerandom"]'
-
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
-
     print >> file
 
     result = []
@@ -251,21 +282,54 @@ class PGNFile (ChessFile):
         if moves and moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
             del moves[-1]
         return moves
-
+    
     def loadToModel (self, gameno, position=-1, model=None, quick_parse=True):
         if not model:
             model = GameModel()
 
+        # the seven mandatory PGN headers
         model.tags['Event'] = self._getTag(gameno, 'Event')
         model.tags['Site'] = self._getTag(gameno, 'Site')
         model.tags['Date'] = self._getTag(gameno, 'Date')
-        model.tags['Round'] = self._getTag(gameno, 'Round')
+        model.tags['Round'] = self.get_round(gameno)
         model.tags['White'], model.tags['Black'] = self.get_player_names(gameno)
-        model.tags['WhiteElo'] = self._getTag(gameno, 'WhiteElo')
-        model.tags['BlackElo'] = self._getTag(gameno, 'BlackElo')
         model.tags['Result'] = reprResult[self.get_result(gameno)]
-        model.tags['ECO'] = self._getTag(gameno, "ECO")
-
+        
+        pgnHasYearMonthDay = True
+        for tag in ('Year', 'Month', 'Day'):
+            if not self._getTag(gameno, tag):
+                pgnHasYearMonthDay = False
+                break
+        if model.tags['Date'] and not pgnHasYearMonthDay:
+            date_match = re.match(".*(\d{4}).(\d{2}).(\d{2}).*", model.tags['Date'])
+            if date_match:
+                year, month, day = date_match.groups()
+                model.tags['Year'] = year
+                model.tags['Month'] = month
+                model.tags['Day'] = day
+                
+        # non-mandatory headers
+        for tag in ('Time', 'WhiteElo', 'BlackElo', 'TimeControl', 'ECO'):
+            if self._getTag(gameno, tag):
+                model.tags[tag] = self._getTag(gameno, tag)
+        
+        # TODO: enable this when NewGameDialog is altered to give user option of
+        # whether to use PGN's clock time, or their own custom time. Also,
+        # dialog should set+insensitize variant based on the variant of the
+        # game selected in the dialog
+#        if model.timemodel:
+#            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
+#                if self._getTag(gameno, tag):
+#                    try:
+#                        ms = parseClockTimeTag(self._getTag(gameno, tag))
+#                        model.timemodel.intervals[color][0] = ms / 1000
+#                    except ValueError: 
+#                        raise LoadingError( \
+#                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
+#            if model.tags['TimeControl']:
+#                minutes, gain = parseTimeControlTag(model.tags['TimeControl'])
+#                model.timemodel.gain = gain
+        
         fenstr = self._getTag(gameno, "FEN")
         variant = self._getTag(gameno, "Variant")
         if variant and ("fischer" in variant.lower() or "960" in variant):
@@ -332,7 +396,7 @@ class PGNFile (ChessFile):
                 [model.timemodel.intervals[0][0]]*(whites+1),
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
-            log.debug("intervals %s\n" % model.timemodel.intervals)
+            log.debug("pgn.loadToModel: intervals %s\n" % model.timemodel.intervals)
 
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
