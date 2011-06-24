@@ -775,8 +775,7 @@ class PlayerTabSection (ParrentListSection):
         widgets["private_chat_button"].set_sensitive(False)
         widgets["observe_button"].connect("clicked", self.onObserveClicked)
         widgets["observe_button"].set_sensitive(False)
-        glock.glock_connect_after(self.tv.get_selection(), "changed",
-                                  self.onSelectionChanged)
+        self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
         
     @glock.glocked
@@ -830,10 +829,18 @@ class PlayerTabSection (ParrentListSection):
         if player not in self.players: return
         if self.store.iter_is_valid(self.players[player]["ti"]):
             self.store.set(self.players[player]["ti"], 7, player.display_status)
+        
         if player.status == IC_STATUS_PLAYING and player.game and \
                 "private" not in self.players[player]:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
+        elif player.status != IC_STATUS_PLAYING and \
+                "private" in self.players[player]:
+            game = player.game
+            if game and game.handler_is_connected(self.players[player]["private"]):
+                game.disconnect(self.players[player]["private"]) 
+            del self.players[player]["private"]
+        
         return False
     
     @glock.glocked
@@ -847,6 +854,7 @@ class PlayerTabSection (ParrentListSection):
         
     def private_changed (self, game, property, player):
         self.status_changed(player, property)
+        self.onSelectionChanged(self.tv.get_selection())
         return False
     
     @glock.glocked
@@ -891,7 +899,8 @@ class PlayerTabSection (ParrentListSection):
         player = self.getSelectedPlayer()
         if player is not None and player.game is not None:
             self.connection.bm.observe(player.game)
-        
+    
+    @glock.glocked
     def onSelectionChanged (self, selection):
         player = self.getSelectedPlayer()
         self.widgets["private_chat_button"].set_sensitive(player is not None)
