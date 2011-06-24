@@ -1,0 +1,41 @@
+Source: pychess
+Section: games
+Priority: optional
+Maintainer: Thijs Vermeir <thijsvermeir@gmail.com>
+XS-Python-Version: >= 2.5
+Build-Depends: debhelper (>= 5.0.38), cdbs (>= 0.4.43), python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6), quilt
+Standards-Version: 3.7.2
+
+Package: pychess
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
+ gnome-icon-theme (>= 2.20.0), python-gtk2, python-gtksourceview2,
+ python-glade2, python-gst0.10, python-rsvg, python-cairo,
+ python-gobject
+XB-Python-Version: ${python:Versions}
+Description: chess graphical user interface for several chess engines
+ The goal of pychess, is to provide a fully featured, nice looking,
+ easy to use chess client for the gnome-desktop.
+ .
+ The client should be usable both to those totally new to chess, and
+ those who want to use a computer to further enchance their play.
+ .
+ Features include:
+  CECP and UCI Engine support
+  Free online play on the FICS chess servers
+  Read and writes the PGN, EPD and FEN chess fileformats
+  Builtin python based engine
+  Undo and pause functions
+  Board and piece animation
+  Drag and drop
+  Tabbed interface
+  Hints and spyarrows
+  Openingbook sidepanel using sqlite
+  Scoreplot sidepanel
+  "Enter game" in pgn dialog
+  Internationalised or figure pieces in notation
+  Optional sounds
+  Legal move highlighting
+  A nice and accesible look.
+ .
+  Homepage: http://pychess.googlepages.com/
