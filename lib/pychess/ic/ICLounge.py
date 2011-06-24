@@ -130,7 +130,7 @@ class Section (object):
     def get_infobarmessage_content (self, player, text, gametype=None):
         content = gtk.HBox()
         icon = gtk.Image()
-        icon.set_from_pixbuf(player.getIcon(size=22, gametype=gametype))
+        icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
         content.pack_start(icon, expand=False, fill=False, padding=4)
         label = gtk.Label()
         label.set_markup(player.getMarkup(gametype=gametype))
@@ -1371,7 +1371,7 @@ class SeekChallengeSection (ParrentListSection):
         self.__updateSeekEditor(seeknumber, challengemode=True)
         
         self.widgets["challengeeNameLabel"].set_markup(player.getMarkup())
-        self.widgets["challengeeImage"].set_from_pixbuf(player.getIcon(size=22))
+        self.widgets["challengeeImage"].set_from_pixbuf(player.getIcon(size=32))
         title = _("Challenge: ") + player.name
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()

@@ -218,11 +218,11 @@ class FICSPlayer (GObject):
                 rating = self.getStrength()
             if rating < 1:
                 rating = _("Unrated")
-            
             markup += " <big>(%s)</big>" % rating
-            if self.isComputer():
-                markup += " <big>(%s)</big>" % \
-                    TITLE_TYPE_DISPLAY_TEXTS[TYPE_COMPUTER]
+            
+            if self.display_titles() != "":
+                markup += "<big>%s</big>" % self.display_titles(long=True)
+            
         return markup
 
     def getRating (self, rating_type):
