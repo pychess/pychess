@@ -198,10 +198,20 @@ class BoardView (gtk.DrawingArea):
                     self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
-        self.shown = model.ply-moves
+        if model.boards == model.variations[0]:
+            self.shown = model.ply-moves
+        else:
+            # Go back to the mainline to let animation system work
+            board = model.getBoardAtPly(self.shown)
+            while board not in model.variations[0]:
+                board = model.boards[board.ply-model.lowply-1]
+            self.shown = board.ply
+            self.model.boards = self.model.variations[0]
+            self.shown = model.ply-moves
     
     def game_loading (self, model, uri):
         self.autoUpdateShown = False
+
     def game_loaded (self, model, uri):
         self.autoUpdateShown = True
         self._shown = model.ply
@@ -346,6 +356,11 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = self.model.getMoveAtPly(self.shown-1)
         else:
             self.lastMove = None
+
+        # Back to the main line if needed...
+        if self.model.boards != self.model.variations[0]:
+            if self.model.isMainlineBoard(self.shown):
+                self.model.boards = self.model.variations[0]
        
         self.runAnimation(redrawMisc=True)
         repeat(self.runAnimation)
@@ -949,7 +964,8 @@ class BoardView (gtk.DrawingArea):
             self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
                              (.447,.624,.812,0.9), (.204,.396,.643,1))
         
-        if self.shown != self.model.ply:
+        if self.shown != self.model.ply or \
+           self.model.boards != self.model.variations[0]:
             return
         
         if self.greenarrow:
@@ -1210,11 +1226,11 @@ class BoardView (gtk.DrawingArea):
     
     def showFirst (self):
         self.shown = self.model.lowply
-    
+
     def showPrevious (self):
         if self.shown > self.model.lowply:
             self.shown -= 1
-    
+
     def showNext (self):
         if self.shown < self.model.ply:
             self.shown += 1
