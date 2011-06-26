@@ -358,11 +358,13 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = None
 
         # Back to the main line if needed...
+        stayInVariation = True
         if self.model.boards != self.model.variations[0]:
             if self.model.isMainlineBoard(self.shown):
                 self.model.boards = self.model.variations[0]
+                stayInVariation = False
        
-        self.runAnimation(redrawMisc=True)
+        self.runAnimation(redrawMisc=stayInVariation)
         repeat(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
