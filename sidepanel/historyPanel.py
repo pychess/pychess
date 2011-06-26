@@ -86,7 +86,7 @@ class Sidepanel:
         
         def figuresInNotationCallback (none):
             game = self.board.model
-            for board, move in zip(game.boards, game.moves):
+            for board, move in zip(game.variations[0], game.moves):
                 if conf.get("figuresInNotation", False):
                     notat = toFAN(board, move)
                 else: notat = toSAN(board, move, True)
