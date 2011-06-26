@@ -160,13 +160,7 @@ class Sidepanel(gtk.TextView):
             
             ply += 1
 
-            movestr = node.movestr
-            if fan:
-                if node.color == BLACK:
-                    movestr = lmove.san2WhiteFanRegex.sub(lmove.san2WhiteFanFunc, node.movestr)
-                else:
-                    movestr = lmove.san2BlackFanRegex.sub(lmove.san2BlackFanFunc, node.movestr)
-            buf.insert(end_iter(), movestr + " ")
+            buf.insert(end_iter(), self.__movestr(node, fan) + " ")
             
             startIter = buf.get_iter_at_offset(start)
             endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -334,15 +328,30 @@ class Sidepanel(gtk.TextView):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
+        fan = conf.get("figuresInNotation", False)
 
-        buf.insert(end_iter(), node.movestr + " ")
+        buf.insert(end_iter(), self.__movestr(node, fan) + " ")
+
         startIter = buf.get_iter_at_offset(start)
         endIter = buf.get_iter_at_offset(end_iter().get_offset())
+
         buf.apply_tag_by_name("node", startIter, endIter)
 
         ni = {}
         ni["node"] = node
         ni["start"] = startIter.get_offset()        
         ni["end"] = end_iter().get_offset()
+
         self.nodeIters.append(ni)
         self.update_selected_node()
+
+
+    def __movestr(self, node, fan):
+        if fan:
+            if node.color == BLACK:
+                movestr = lmove.san2WhiteFanRegex.sub(lmove.san2WhiteFanFunc, node.movestr)
+            else:
+                movestr = lmove.san2BlackFanRegex.sub(lmove.san2BlackFanFunc, node.movestr)
+        else:
+            movestr = node.movestr
+        return movestr
