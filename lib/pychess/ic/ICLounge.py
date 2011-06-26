@@ -68,7 +68,7 @@ class ICLounge (GObject):
             self.emit("autoLogout")
         self.connection.alm.connect("logOut", on_autoLogout)
         self.connection.connect("disconnected", lambda connection: self.close())
-        self.connection.connect("error", lambda connection: self.close())
+        self.connection.connect("error", self.on_connection_error)
         
         if self.connection.isRegistred():
             numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
@@ -106,6 +106,10 @@ class ICLounge (GObject):
 
     def present (self):
         self.widgets["fics_lounge"].present()
+    
+    def on_connection_error (self, connection, error):
+        log.warn("ICLounge.on_connection_error: %s\n" % repr(error))
+        self.close()
     
     @glock.glocked
     def close (self):
