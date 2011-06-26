@@ -120,7 +120,7 @@ class BoardPreview:
         self.boardview.animationLock.acquire()
         try:
             try:
-                self.chessfile.loadToModel(sel, -1, self.gamemodel)
+                self.chessfile.loadToModel(sel, -1, self.gamemodel, False)
             except LoadingError, e:
                 #TODO: Pressent this a little nicer
                 print e
