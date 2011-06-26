@@ -30,6 +30,7 @@ class Sidepanel(gtk.TextView):
         
         self.nodeIters = []
         self.oldWidth = 0
+        self.autoUpdateSelected = True
         
         self.connect("motion-notify-event", self.motion_notify_event)
         self.connect("button-press-event", self.button_press_event)
@@ -109,9 +110,11 @@ class Sidepanel(gtk.TextView):
                             board_in_vari = board
                             while board_in_vari not in self.gamemodel.boards:
                                 board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
+                            self.autoUpdateSelected = False
                             self.boardview.shown = board_in_vari.ply
                             break
                     self.gamemodel.boards = vari
+                    self.autoUpdateSelected = True
                     self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
 
                 self.update_selected_node()
@@ -310,7 +313,8 @@ class Sidepanel(gtk.TextView):
         self.update()
             
     def shown_changed (self, board, shown):
-        self.update_selected_node()
+        if self.autoUpdateSelected:
+            self.update_selected_node()
 
     def moves_undoing(self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
