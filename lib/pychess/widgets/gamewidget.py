@@ -606,7 +606,9 @@ def _ensureReadForGameWidgets ():
         leaf.setDockable(False)
         
         # NE
-        leaf = leaf.dock(docks["historyPanel"][1], EAST, docks["historyPanel"][0], "historyPanel")
+        leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
+        conf.set("historyPanel", True)
+        leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")
         conf.set("historyPanel", True)
         leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
         conf.set("scorePanel", True)

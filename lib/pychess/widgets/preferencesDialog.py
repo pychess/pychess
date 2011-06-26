@@ -446,7 +446,13 @@ class PanelTab:
             leaf.dock(docks[name][1], EAST, docks[name][0], name)
         else:
             conf.set(name, False)
-            notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            try:
+                notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            except AttributeError:
+                # A new panel appeared in the panels directory
+                conf.set(name, True)
+                leaf = notebooks["board"].get_parent().get_parent()
+                leaf.dock(docks[name][1], EAST, docks[name][0], name)
     
     def showit(self):
         from pychess.widgets.gamewidget import showDesignGW

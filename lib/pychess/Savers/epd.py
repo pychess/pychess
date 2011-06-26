@@ -73,7 +73,7 @@ from ChessFile import ChessFile, LoadingError
 
 class EpdFile (ChessFile):
     
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position, model=None, quick_parse=True):
         if not model: model = GameModel()
         
         fieldlist = self.games[gameno].split(" ")

@@ -103,10 +103,12 @@ class BoardControl (gtk.EventBox):
         elif key == "ask_to_move":
             self.emit("action", HURRY_ACTION, None)
         elif key == "undo1":
-            if self.view.model.curplayer.__type__ == LOCAL \
-               and self.view.model.ply > 1:
+            curColor = self.view.model.variations[0][-1].color
+            curPlayer = self.view.model.players[curColor]
+            if curPlayer.__type__ == LOCAL and self.view.model.ply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
-            else: self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
+            else:
+                self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
         elif key == "pause1":
             self.emit("action", PAUSE_OFFER, None)
         elif key == "resume1":
