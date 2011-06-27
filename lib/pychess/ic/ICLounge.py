@@ -848,6 +848,9 @@ class PlayerTabSection (ParrentListSection):
                 game.disconnect(self.players[player]["private"]) 
             del self.players[player]["private"]
         
+        if player == self.getSelectedPlayer():
+            self.onSelectionChanged(None)
+            
         return False
     
     @glock.glocked
