@@ -203,7 +203,7 @@ def parse_string(string, model, board, position, variation=False):
         if parenthesis == 0:
             if group == FULL_MOVE:
                 if not variation:
-                    if position != -1 and model.ply >= position:
+                    if position != -1 and board.ply >= position:
                         break
 
                 mstr = m.group(MOVE)
