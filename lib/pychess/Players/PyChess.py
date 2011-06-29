@@ -1,37 +1,38 @@
 #!/usr/bin/python
 
-print "feature done=0"
-
+from pychess.System import glock
+from pychess.System.GtkWorker import GtkWorker
+from pychess.System.Log import log
+from pychess.System.ThreadPool import pool
+from pychess.System.prefix import addDataPrefix, isInstalled
+from pychess.System.repeat import repeat_sleep
+from pychess.Utils.book import getOpenings
+from pychess.Utils.const import *
+from pychess.Utils.lutils import leval, lsearch
+from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmove import determineAlgebraicNotation, parseSAN, \
+    listToSan, toSAN, parseAny, toLAN
+from pychess.Utils.lutils.lsearch import alphaBeta
+from pychess.Utils.lutils.validator import validateMove
+from pychess.Utils.repr import reprResult_long, reprReason_long
+from pychess.ic import FICSConnection
+from pychess.widgets import LogDialog
 from time import time
-import sys, os
-import random, math
-import subprocess
+from urllib import urlopen, urlencode
 import email.Utils
 import gettext
-from urllib import urlopen, urlencode
+import gtk.glade
+import math
+import pychess
+import random
+import signal
+import subprocess
+import sys
 
-from pychess.System.prefix import addDataPrefix
+print "feature done=0"
+
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
-import pychess
-from pychess.ic import *
-from pychess.Utils.const import *
-from pychess.Utils.repr import reprResult_long, reprReason_long
-from pychess.Utils.book import getOpenings
-from pychess.Utils.lutils.lsearch import alphaBeta
-from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.lmove import *
-from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils import leval
-from pychess.Utils.lutils.validator import validateMove
-
-from pychess.System.GtkWorker import GtkWorker
-from pychess.System import glock
-from pychess.System.repeat import repeat_sleep
-from pychess.System.ThreadPool import pool
-from pychess.System.Log import log
-
-from pychess.ic.FICSConnection import FICSConnection
 
 class PyChess:
     
@@ -217,7 +218,7 @@ class PyChess:
             lsearch.nodes = 0
             lsearch.movesearches = 0
     
-    def __analyze2 ():
+    def __analyze2 (self):
         import profile
         profile.runctx("self.__analyze2()", locals(), globals(), "/tmp/pychessprofile")
         from pstats import Stats
@@ -458,7 +459,7 @@ class PyChessFICS(PyChess):
             return int(tri)
         elif tri > mode:
             return int(math.ceil(tri))
-        return int(math.round(tri))
+        return int(round(tri))
     
     def sendChallenges(self):
         if self.connection.bm.isPlaying():
@@ -802,10 +803,9 @@ if __name__ == "__main__":
     elif len(sys.argv) == 5 and sys.argv[1] == "fics":
         pychess = PyChessFICS(*sys.argv[2:])
         
-        import signal, gtk
+        
         signal.signal(signal.SIGINT, gtk.main_quit)
-        import gettext, gtk.glade
-        from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
+        
         if isInstalled():
             gettext.install("pychess", unicode=1)
             gtk.glade.bindtextdomain("pychess")
@@ -815,9 +815,9 @@ if __name__ == "__main__":
         gtk.glade.textdomain("pychess")
         
         # Start logging
-        from pychess.System.Log import log
+        
         log.debug("Started\n")
-        from pychess.widgets import LogDialog
+        
         LogDialog.show()
         
     else:

@@ -1,9 +1,8 @@
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Piece import Piece
-from pychess.Utils.Move import Move
+from ChessFile import ChessFile, LoadingError
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
-from pychess.Utils.lutils.leval import evaluateComplete
 from pychess.Utils.logic import getStatus, repetitionCount
+from pychess.Utils.lutils.leval import evaluateComplete
 
 __label__ = _("Chess Position")
 __endings__ = "epd",
@@ -69,7 +68,6 @@ def save (file, model):
 def load (file):
     return EpdFile ([line for line in map(str.strip, file) if line])
 
-from ChessFile import ChessFile, LoadingError
 
 class EpdFile (ChessFile):
     

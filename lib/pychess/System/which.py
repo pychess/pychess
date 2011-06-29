@@ -203,7 +203,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     elif path is None:
         path = os.environ.get('PATH', os.defpath).split(os.pathsep)
         if _windows and not os.curdir in path:
-           path.insert(0, os.curdir) # current directory is always searched first on Windows
+            path.insert(0, os.curdir) # current directory is always searched first on Windows
     elif isinstance(path, basestring):
         path = path.split(os.pathsep)
 
