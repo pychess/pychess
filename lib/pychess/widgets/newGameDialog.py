@@ -325,8 +325,11 @@ class _GameInitializationMode:
                     playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
                             (engine, color, diffi, variant, secs, incr), name))
                 else:
-                    playertups.append((LOCAL, Human, (color, ""), _("Human")))
-
+                    if not playertups or playertups[0][0] != LOCAL:
+                        name = conf.get("firstName", _("You"))
+                    else: name = conf.get("secondName", _("Guest"))
+                    playertups.append((LOCAL, Human, (color, name), name))
+            
             if secs > 0:
                 timemodel = TimeModel (secs, incr)
             else: timemodel = None
@@ -530,6 +533,9 @@ class ImageButton(gtk.DrawingArea):
             self.window.process_updates(True)
 
 def createRematch (gamemodel):
+    """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
+        new game, based on the info in gamemodel """
+    
     if gamemodel.timemodel:
         secs = gamemodel.timemodel.intervals[0][WHITE]
         gain = gamemodel.timemodel.gain
@@ -543,9 +549,9 @@ def createRematch (gamemodel):
     bp = gamemodel.players[BLACK]
 
     if wp.__type__ == LOCAL:
-        player1tup = (wp.__type__, wp.__class__, (BLACK, ""), repr(wp))
+        player1tup = (wp.__type__, wp.__class__, (BLACK, repr(wp)), repr(wp))
         if bp.__type__ == LOCAL:
-            player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
+            player0tup = (bp.__type__, bp.__class__, (WHITE, repr(wp)), repr(bp))
         else:
             binname = bp.engine.path.split("/")[-1]
             if binname == "python":

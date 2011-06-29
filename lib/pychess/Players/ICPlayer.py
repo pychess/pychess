@@ -5,19 +5,19 @@ from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN, ParsingError
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
-from pychess.Variants import variants
 from pychess.System.Log import log
 
 class ICPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, gamemodel, name, gameno, color, icrating=None):
+    def __init__ (self, gamemodel, ichandle, gameno, color, name, icrating=None):
         Player.__init__(self)
         
         self.queue = Queue()
         self.okqueue = Queue()
         
-        self.name = self.ichandle = name
+        self.setName(name)
+        self.ichandle = name
         self.icrating = icrating
         self.color = color
         self.gameno = gameno
