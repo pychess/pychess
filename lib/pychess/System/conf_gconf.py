@@ -16,13 +16,13 @@ def get (key):
     key = normpath(GDIR+key)
     value = c.get(key)
     if value.type == gconf.VALUE_BOOL:
-        return v.get_bool()
+        return value.get_bool()
     if value.type == gconf.VALUE_FLOAT:
-        return v.get_float()
+        return value.get_float()
     if value.type == gconf.VALUE_INT:
-        return v.get_int()
+        return value.get_int()
     if value.type == gconf.VALUE_STRING:
-        return v.get_string()
+        return value.get_string()
 
 def set (key, value):
     key = normpath(GDIR+key)
