@@ -13,7 +13,7 @@ NORTH, EAST, SOUTH, WEST, CENTER = range(POSITIONS_COUNT)
 
 class DockComponent (object):
     def dock (self, widget, position, title, id):
-        abstract
+        raise NotImplementedError
 
 class TabReceiver (gtk.Alignment):
     __instances = []
@@ -33,10 +33,10 @@ class TabReceiver (gtk.Alignment):
         return iter(self.__instances)
     
     def showArrows (self):
-        abstract
+        raise NotImplementedError
     
     def hideArrows (self):
-        abstract
+        raise NotImplementedError
 
 class DockComposite (DockComponent):
     def __del__ (self):
@@ -44,19 +44,19 @@ class DockComposite (DockComponent):
             component.__del__()
     
     def changeComponent (self, old, new):
-        abstract
+        raise NotImplementedError
     
     def removeComponent (self, component):
-        abstract
+        raise NotImplementedError
     
     def getComponents (self):
-        abstract
+        raise NotImplementedError
     
     def getPosition (self):
         """ Returns NORTH or SOUTH if the children are packed vertically.
             Returns WEST or EAST if the children are packed horizontally.
             Returns CENTER if there is only one child """
-        abstract
+        raise NotImplementedError
 
 class DockLeaf (DockComponent, TabReceiver):
     def __del__ (self):
@@ -66,26 +66,26 @@ class DockLeaf (DockComponent, TabReceiver):
         """ Removes the widget from the leaf, and if it is the only widget, it
             removes the leaf as well.
             Returns (title, id) of the widget """
-        abstract
+        raise NotImplementedError
     
     def getPanels (self):
         """ Returns a list of (widget, title, id) tuples """
-        abstract
+        raise NotImplementedError
     
     def getCurrentPanel (self):
         """ Returns the panel id currently shown """
-        abstract
+        raise NotImplementedError
     
     def setCurrentPanel (self, id):
-        abstract
+        raise NotImplementedError
     
     def setDockable (self, dockable):
         """ If the leaf is not dockable it won't be moveable and won't accept
             new panels """
-        abstract
+        raise NotImplementedError
     
     def isDockable (self):
-        abstract
+        raise NotImplementedError
 
 class TopDock (DockComposite, TabReceiver):
     def __init__ (self, id):
@@ -120,12 +120,12 @@ class TopDock (DockComposite, TabReceiver):
             </dock>
         </docks>
         """
-        abstract
+        raise NotImplementedError
     
     def loadFromXML (self, xmlpath, idToWidget):
         """ idTowidget is a dictionary {id: (widget,title)}
             asserts that self.id is in the xmlfile """
-        abstract
+        raise NotImplementedError
     
     def getId(self):
         return self.__id
