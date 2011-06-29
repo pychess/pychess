@@ -6,6 +6,7 @@ from log_picker.sending import LOCAL
 from pychess import Savers
 from pychess.Players.engineNest import discoverer
 from pychess.Savers.ChessFile import LoadingError
+from pychess.Savers import *
 from pychess.System import conf
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.Log import log
