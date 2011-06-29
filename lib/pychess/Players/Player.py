@@ -6,7 +6,7 @@ class PlayerIsDead (Exception):
     pass
 
 class TurnInterrupt (Exception):
-    """ Used instead of returning a move, when a players turn is interupted.
+    """ Used instead of returning a move, when a players turn is interrupted.
         Currently this will only happen when undoMoves changes the current
         player """
     pass
@@ -17,7 +17,8 @@ class Player (GObject):
         "offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         "decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        "name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
     }
     
     def __init__ (self):
@@ -29,6 +30,7 @@ class Player (GObject):
     def setName (self, name):
         """ __repr__ should return this name """
         self.name = name
+        self.emit("name_changed")
     
     def __repr__ (self):
         return self.name

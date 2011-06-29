@@ -13,6 +13,7 @@ import conf_configParser as confmodule
 
 def notify_add (key, func, *args):
     """The signature for func must be self, client, *args, **kwargs"""
+    assert isinstance(key, str)
     return confmodule.notify_add(key, func, args)
 
 def notify_remove (conid):

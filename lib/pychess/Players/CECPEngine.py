@@ -1,23 +1,25 @@
-import re
-import time
 from threading import RLock
 import Queue
 import itertools
+import re
+import time
 
-from pychess.Utils.Move import *
-from pychess.Utils.Board import Board
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Offer import Offer
-from pychess.Utils.logic import validate, getMoveKillingKing
-from pychess.Utils.const import *
-from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.Savers.pgn import movre as movere
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
+from pychess.Utils.Move import Move
+from pychess.Utils.Board import Board
+from pychess.Utils.Cord import Cord
+from pychess.Utils.Move import toSAN, toAN, parseAny, listToMoves
+from pychess.Utils.Offer import Offer
+from pychess.Utils.const import *
+from pychess.Utils.logic import validate, getMoveKillingKing
+from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
-from pychess.Savers.pgn import movre as movere
 
-from ProtocolEngine import ProtocolEngine
 from Player import PlayerIsDead, TurnInterrupt
+from ProtocolEngine import ProtocolEngine
 
 def isdigits (strings):
     for s in strings:
@@ -123,6 +125,8 @@ class CECPEngine (ProtocolEngine):
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
             "analyze", "myname", "variants", "colors", "pause", "done"
         ]
+        
+        self.name = None
         
         self.board = None
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
@@ -833,6 +837,8 @@ class CECPEngine (ProtocolEngine):
                     return
                 
                 self.features[key] = value
+                if key == "myname" and not self.name:
+                    self.setName(value)
         
         # A hack to get better names in protover 1.
         # Unfortunately it wont work for now, as we don't read any lines from
@@ -842,14 +848,12 @@ class CECPEngine (ProtocolEngine):
                 basis = self.defname[0]
                 name = ' '.join(itertools.dropwhile(lambda part: basis not in part, parts))
                 self.features['myname'] = name
-        
+                if not self.name:
+                    self.setName(name)
     
     #===========================================================================
     #    Info
     #===========================================================================
-    
-    def setName (self, name):
-        self.name = name
     
     def canAnalyze (self):
         assert self.ready, "Still waiting for done=1"
