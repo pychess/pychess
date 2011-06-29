@@ -363,6 +363,9 @@ class GameModel (GObject, PooledThread):
         except LoadingError, e:
             error = e
         else: error = None
+        if self.players:
+            self.players[WHITE].setName(self.tags["White"])
+            self.players[BLACK].setName(self.tags["Black"])
         self.emit("game_loaded", uri)
         
         self.needsSave = False
