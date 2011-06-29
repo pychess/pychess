@@ -8,14 +8,13 @@ import gtk
 
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
-from pychess.Utils.repr import *
+from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.System import conf
 from pychess.System import glock
 from pychess.System.Log import log
-
 from pychess.widgets import preferencesDialog
 
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown, MENU_ITEMS
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -96,10 +95,11 @@ def game_ended (gamemodel, reason, gmwidg):
             md.add_button(_("Offer Rematch"), 0)
         else:
             md.add_button(_("Play Rematch"), 1)
-            if gamemodel.ply > 1:
-                md.add_button(_("Undo two moves"), 2)
-            elif gamemodel.ply == 1:
-                md.add_button(_("Undo one move"), 2)
+            if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
+                if gamemodel.ply == 1:
+                    md.add_button(_("Undo one move"), 2)
+                elif gamemodel.ply > 1:
+                    md.add_button(_("Undo two moves"), 2)
     
     def cb (messageDialog, responseId):
         if responseId == 0:
@@ -108,6 +108,7 @@ def game_ended (gamemodel, reason, gmwidg):
             else:
                 gamemodel.players[1].offerRematch()
         elif responseId == 1:
+            # newGameDialog uses ionest uses gamenanny uses newGameDialog...
             from pychess.widgets.newGameDialog import createRematch
             createRematch(gamemodel)
         elif responseId == 2:

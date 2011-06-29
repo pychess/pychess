@@ -1,7 +1,6 @@
 import os.path
 import gettext
 import locale
-from time import sleep
 from cStringIO import StringIO
 from operator import attrgetter
 from itertools import groupby

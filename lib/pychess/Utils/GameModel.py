@@ -12,7 +12,6 @@ from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
-from pychess.System import glock
 from pychess.Utils.Move import Move, toSAN
 from pychess.Variants.normal import NormalChess
 
@@ -371,16 +370,19 @@ class GameModel (GObject, PooledThread):
             self.uri = uri
         else: self.uri = None
         
+        # Even if the game "starts ended", the players should still be moved
+        # to the last position, so analysis is correct, and a possible "undo"
+        # will work as expected. 
+        for spectator in self.spectators.values():
+            spectator.setOptionInitialBoard(self)
+        for player in self.players:
+            player.setOptionInitialBoard(self)
+        if self.timemodel:
+            self.timemodel.setMovingColor(self.boards[-1].color)
+        
         if self.status == RUNNING:
-            for player in self.players:
-                player.setOptionInitialBoard(self)
-            for spectator in self.spectators.values():
-                spectator.setOptionInitialBoard(self)
-            
-            if self.timemodel:
-                self.timemodel.setMovingColor(self.boards[-1].color)
-                if self.ply >= 2:
-                    self.timemodel.start()
+            if self.timemodel and self.ply >= 2:
+                self.timemodel.start()
             
             self.status = WAITING_TO_START
             self.start()
