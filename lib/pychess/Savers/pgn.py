@@ -1,15 +1,17 @@
 import re
 from datetime import date
 
-from pychess.Utils.Move import *
-from pychess.Utils.const import *
 from pychess.System.Log import log
-from pychess.Utils.logic import getStatus
-from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Board import Board
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.Move import listToSan, parseAny
+from pychess.Utils.const import *
+from pychess.Utils.logic import getStatus
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ChessFile import ChessFile, LoadingError
+
 
 __label__ = _("Chess Game")
 __endings__ = "pgn",
