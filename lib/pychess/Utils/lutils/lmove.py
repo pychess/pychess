@@ -547,6 +547,12 @@ def parseFAN (board, fan):
             else: tocord = san[1:]
             tcord = cordDic[tocord]
             
+            # If the capture is made by a pawn, SAN notation requires us to add
+            # the file of from_file of that pawn before the x.
+            # We do that by searching for a pawn that could have done the
+            # capture. If this isn't unique, FAN should already have the file
+            # specified.
+            # Unfortunately we need a circular import for the search.
             from lmovegen import genAllMoves
             board_clone = board.clone()
             for altmove in genAllMoves(board_clone):
@@ -554,7 +560,7 @@ def parseFAN (board, fan):
                         TCORD(altmove) == tcord:
                     board_clone.applyMove(altmove)
                     if not board_clone.opIsChecked():
-                        san = reprFile(mfcord) + san
+                        san = reprFile(FCORD(altmove)) + san
                     board_clone.popMove()
                     # We know there is only one pawn which can move to tcord, so
                     # we stop work here

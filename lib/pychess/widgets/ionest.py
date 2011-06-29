@@ -1,25 +1,21 @@
 """ The task of this module, is to save, load and init new games """
 
-import os
-from StringIO import StringIO
-
-import gtk
-import gobject
-
-from pychess.System.Log import log
-from pychess.System import conf
-from pychess.System.protoopen import isWriteable
-from pychess.System.GtkWorker import GtkWorker
-from pychess.System.uistuff import GladeWidgets
-from pychess.System import conf
-from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import *
-from pychess.Players.engineNest import discoverer
+from gettext import ngettext
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from log_picker.sending import LOCAL
 from pychess import Savers
-from pychess.Savers import *
+from pychess.Players.engineNest import discoverer
 from pychess.Savers.ChessFile import LoadingError
-from pychess.widgets import gamewidget
-from pychess.widgets import gamenanny
+from pychess.Savers import *
+from pychess.System import conf
+from pychess.System.GtkWorker import GtkWorker
+from pychess.System.Log import log
+from pychess.System.protoopen import isWriteable
+from pychess.System.uistuff import GladeWidgets
+from pychess.Utils.const import *
+from pychess.widgets import gamenanny, gamewidget
+import gtk
+import os
 
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
@@ -462,7 +458,6 @@ def closeGame (gmwidg, game):
 # Signal handler                                                               #
 ################################################################################
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Handler (GObject):
     """ The goal of this class, is to provide signal handling for the ionest

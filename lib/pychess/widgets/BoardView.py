@@ -231,7 +231,7 @@ class BoardView (gtk.DrawingArea):
                     sound = "gameIsLost"
             elif model.status == BLACKWON:
                 if model.players[1].__type__ == LOCAL:
-                     sound = "gameIsWon"
+                    sound = "gameIsWon"
                 elif model.players[0].__type__ == LOCAL:
                     sound = "gameIsLost"
             elif model.status in (ABORTED, KILLED):

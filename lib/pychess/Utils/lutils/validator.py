@@ -1,7 +1,7 @@
-from lmove import *
 from pychess.Utils.const import *
-from bitboard import *
-from attack import *
+from pychess.Utils.lutils.attack import isAttacked
+from pychess.Utils.lutils.bitboard import bitPosArray, clearBit
+from pychess.Utils.lutils.ldata import moveArray, fromToRay
 
 ################################################################################
 #   Validate move                                                              #
