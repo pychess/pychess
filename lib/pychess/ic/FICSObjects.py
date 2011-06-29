@@ -1,13 +1,15 @@
-from gobject import *
 import datetime
+import gobject
+from gobject import GObject, SIGNAL_RUN_FIRST
 
-from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
-from pychess.System.Log import log
-from pychess.Variants import variants
-from pychess.ic import *
-    
+from pychess.Utils.const import *
+from pychess.ic import TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, \
+    TYPE_LOSERS, TITLE_TYPE_DISPLAY_TEXTS, TITLE_TYPE_DISPLAY_TEXTS_SHORT, \
+    GAME_TYPES_BY_RATING_TYPE, TYPE_UNREGISTERED, TYPE_COMPUTER, TYPE_ADMINISTRATOR, \
+    GAME_TYPES_BY_FICS_NAME, GAME_TYPES
+
 class FICSPlayer (GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_OFFLINE,
                   game=None, titles=None, ratings=None):
@@ -38,6 +40,17 @@ class FICSPlayer (GObject):
     def set_online (self, online):
         self._online = online
     online = gobject.property(get_online, set_online)
+    
+    @property
+    def long_name(self):
+        name = self.name
+        title = self.display_titles()
+        if title:
+            name += " %s" % title
+        rating = self.getRatingForCurrentGame()
+        if rating:
+            name += " %d" % rating
+        return name
     
     @property
     def display_online (self):
@@ -304,8 +317,8 @@ class FICSPlayer (GObject):
 
 class FICSPlayers (GObject):
     __gsignals__ = {
-        'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'FICSPlayerExited' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSPlayerExited' : (SIGNAL_RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
@@ -553,9 +566,9 @@ class FICSAdjournedGame (FICSGame):
 
 class FICSGames (GObject):
     __gsignals__ = {
-        'FICSGameCreated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'FICSGameEnded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'FICSAdjournedGameRemoved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'FICSGameCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSGameEnded' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSAdjournedGameRemoved' : (SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
