@@ -271,7 +271,7 @@ class UserInfoSection(Section):
                 label0.props.wrap = True
                 label0.props.width_request = 300
                 vbox.add(label0)
-                eventbox = uistuff.initLabelLinks(_("Register now"),
+                eventbox = uistuff.LinkLabel(_("Register now"),
                         "http://www.freechess.org/Register/index.html")
                 vbox.add(eventbox)
 

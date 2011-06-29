@@ -104,8 +104,7 @@ class Connection (GObject, PooledThread):
 EOF = _("The connection was broken - got \"end of file\" message")
 NOTREG = _("'%s' is not a registered name")
 BADPAS = _("The entered password was invalid.\n" + \
-           "If you have forgot your password, try logging in as a guest and open chat on channel 4. Write \"I've forgotten my password\" to get help.\n"+\
-           "If that is by some reason not possible, please email: support@freechess.org")
+           "If you have forgot your password, go to http://www.freechess.org/cgi-bin/Utilities/requestPassword.cgi to request a new one over email.")
 
 class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password=""):
