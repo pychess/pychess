@@ -130,7 +130,7 @@ def pinnedOnKing (board, cord, color):
  
     #  Path from piece to king is blocked, so no pin
     if clearBit(fromToRay[kingCord][cord], cord) & blocker:
-       return False
+        return False
     
     b = (rays[kingCord][dir] ^ fromToRay[kingCord][cord]) & blocker
     if not b: return False

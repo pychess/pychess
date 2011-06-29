@@ -1,13 +1,24 @@
-import os.path
 
-from pychess.Utils.const import *
+################################################################################
+# This module is deprecated and uses no longer existing APIs.
+# After work has been made towards supporting general book formats, its
+# usefulness may also be disputed.
+################################################################################
+
 from pychess.System import tsqlite
+from pychess.System.ThreadPool import pool
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.const import *
+from time import time
+import atexit
+import os.path
+import re
+import sys
+
 
 path = os.path.join(addDataPrefix("open.db"))
 tsqlite.connect(path)
 
-import atexit
 atexit.register(tsqlite.close)
 
 def getOpenings (board):
@@ -37,10 +48,8 @@ if __name__ == "__main__":
     MAXMOVES = 14
     PROFILE = False
     FILESMAX = 0
-    from pychess.Utils.History import History
     from pychess.Utils.Move import movePool, parseSAN, toSAN
-    from time import time
-    import re
+    
     tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
     movre = re.compile(r"([a-hxOKQRBN0-8+#=-]{2,7})\s")
     comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
@@ -132,8 +141,6 @@ def remake ():
             tsqlite.execSQL (sql2 % (res, res, fenstr, move))
         else: tsqlite.execSQL (sql3 % (res, fenstr, move))
     
-    import sys
-    from System.ThreadPool import pool
     for fenstr, move, score in load(open(sys.argv[1])):
         pool.start(toDb,fenstr, move, resd[score])
     

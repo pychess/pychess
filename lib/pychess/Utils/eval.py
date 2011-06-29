@@ -4,11 +4,11 @@
 
 pieceValues = [0, 900, 500, 350, 300, 100]
 
+from array import array
 from pychess.Utils.const import *
 
 # these tables will be used for positional bonuses: #
 
-from array import array
 
 whiteknight = array('b', [
             -20, -35,-10, -10, -10,-10, -35, -20,
@@ -339,7 +339,6 @@ def evalMaterial (board):
                 / ( 6400 * ( numPawns[WHITE] + 1 ) )
         return val
 
-#from validator import findKings
 def evalKingTropism (board):
     """ All other things being equal, having your Knights, Queens and Rooks close
         to the opponent's king is a good thing """
@@ -347,7 +346,7 @@ def evalKingTropism (board):
     score = 0
     
     try:
-        wking, bking = findKings(board)
+        wking, bking = board.kings
         wky, wkx = wking.cords
         bky, bkx = bking.cords
     except:
@@ -410,7 +409,7 @@ def evalDevelopment (board):
     
     # Test endgame
     if pieceCount <= 8:
-        wking, bking = findKings(board)
+        wking, bking = board.kings
         score += endking[wking.y*8+wking.x]
         score -= endking[bking.y*8+bking.x]
         return score
@@ -468,12 +467,11 @@ def evalCastling (board):
                     score -= 10*mod
                 break
         
-        castled = color == BLACK and BLACK_CASTLED or WHITE_CASTLED
-        kside = color == BLACK and BLACK_OO or WHITE_OO
-        qside = color == BLACK and BLACK_OOO or WHITE_OOO
+        kside = color == BLACK and B_OO or W_OO
+        qside = color == BLACK and B_OOO or W_OOO
         
         # Being castled deserves a bonus
-        if board.castling & castled:
+        if board.hasCastled[color]:
             score += 15*mod
             continue
         

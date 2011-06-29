@@ -1,8 +1,5 @@
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Board import Board
-from pychess.Utils.Piece import Piece
-from pychess.Utils.Move import Move
-from pychess.Utils.const import *
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.const import WAITING_TO_START
 from pychess.Utils.logic import getStatus
 
 __label__ = _("Simple Chess Position")
