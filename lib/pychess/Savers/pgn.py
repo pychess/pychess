@@ -342,9 +342,7 @@ class PGNFile (ChessFile):
 
         del model.moves[:]
         del model.variations[:]
-        model.status = WAITING_TO_START
-        model.reason = UNKNOWN_REASON
-
+        
         error = None
         if quick_parse:
             movstrs = self._getMoves (gameno)
@@ -399,14 +397,23 @@ class PGNFile (ChessFile):
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
             log.debug("pgn.loadToModel: intervals %s\n" % model.timemodel.intervals)
-
-        if model.status == WAITING_TO_START:
-            model.status, model.reason = getStatus(model.boards[-1])
-            
-            # Apply result from .pgn if the last position was loaded
-            if position == -1 and len(model.moves) == position:
-                model.status = self.get_result(gameno)
-
+        
+        
+        # Find the physical status of the game
+        model.status, model.reason = getStatus(model.boards[-1])
+        
+        # Apply result from .pgn if the last position was loaded
+        if position == -1 or len(model.moves) == position:
+            status = self.get_result(gameno)
+            if status in (WHITEWON, BLACKWON) and status != model.status:
+                model.status = status
+                model.reason = WON_RESIGN
+            elif status == DRAW:
+                model.status = DRAW
+                model.reason = DRAW_AGREE
+        
+        # If parsing gave an error we throw it now, to enlarge our possibility
+        # of being able to continue the game from where it failed.
         if error:
             raise error
 

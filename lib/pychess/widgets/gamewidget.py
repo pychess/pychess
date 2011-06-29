@@ -1,27 +1,29 @@
 
 """ This module handles the tabbed layout in PyChess """
 
-import imp, os
-import traceback
-import cStringIO
-
-import gtk, gobject
-
-from pychess.Utils.const import *
-from pychess.Utils.IconLoader import load_icon
-from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
-from pychess.System.Log import log
-from pychess.System import glock, conf, prefix
-from ChessClock import ChessClock
 from BoardControl import BoardControl
+from ChessClock import ChessClock
 from MenuItemsDict import MenuItemsDict
-from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, EAST, SOUTH
+from pychess.System import glock, conf, prefix
+from pychess.System.Log import log
+from pychess.System.glock import glock_connect
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.const import *
+from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.Players.Human import Human
+from pydock.PyDockTop import PyDockTop
+from pydock.__init__ import CENTER, EAST, SOUTH
+import cStringIO
+import gtk
+import gobject
+import imp
+import os
+import traceback
+
+
 
 
 ################################################################################
@@ -123,7 +125,9 @@ class GameWidget (gobject.GObject):
         gamemodel.connect("game_paused", self.game_paused)
         gamemodel.connect("game_resumed", self.game_resumed)
         gamemodel.connect("moves_undone", self.moves_undone)
-        gamemodel.connect("game_unended", self.game_unended)        
+        gamemodel.connect("game_unended", self.game_unended)
+        gamemodel.connect("players_changed", self.players_changed)
+        self.players_changed(gamemodel)
         if gamemodel.timemodel:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
@@ -276,6 +280,18 @@ class GameWidget (gobject.GObject):
     
     def game_unended (self, gamemodel):
         self.game_started(gamemodel)
+    
+    def players_changed (self, gamemodel):
+        for player in gamemodel.players:
+            self.name_changed(player)
+            # Notice that this may connect the same player many times. In
+            # normal use that shouldn't be a problem.
+            glock_connect(player, "name_changed", self.name_changed)
+    
+    def name_changed (self, player):
+        newText = self._formatVsText()
+        if newText != self.getTabText():
+            self.setTabText(newText)
     
     def zero_reached (self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES: return
@@ -462,6 +478,10 @@ class GameWidget (gobject.GObject):
         self.messageSock.hide()
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
+    
+    def _formatVsText (self):
+        return (" "+_("vs")+" ").join(map(repr, self.gamemodel.players))
+
 
 ################################################################################
 # Main handling of gamewidgets                                                 #
