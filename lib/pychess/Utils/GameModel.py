@@ -52,19 +52,47 @@ class GameModel (GObject, PooledThread):
         It also has the task of controlling players actions and moves """
     
     __gsignals__ = {
+        # game_started is emitted when control is given to the players for the
+        # first time. Notice this is after players.start has been called.
         "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # game_changed is emitted when a move has been made.
         "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # moves_undoig is emitted when a undoMoves call has been accepted, but
+        # before anywork has been done to execute it.
         "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        # moves_undone is emitted after n moves have been undone in the
+        # gamemodel and the players.
         "moves_undone":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        # game_unended is emitted if moves have been undone, such that the game
+        # which had previously ended, is now again active.
         "game_unended":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # game_loading is emitted if the GameModel is about to load in a chess
+        # game from a file. 
         "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        # game_loaded is emitted after the chessformat handler has loaded in
+        # all the moves from a file to the game model.
         "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        # game_saved is emitted in the end of model.save()
         "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        # game_ended is emitted if the models state has been changed to an
+        # "ended state"
         "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+        # game_terminated is emitted if the game was terminated. That is all
+        # players and clocks were stopped, and it is no longer possible to
+        # resume the game, even by undo.
         "game_terminated":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # game_paused is emitted if the game was successfully paused.
         "game_paused":   (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # game_paused is emitted if the game was successfully resumed from a
+        # pause.
         "game_resumed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int))
+        # action_error is currently only emitted by ICGameModel, in the case
+        # the "web model" didn't accept the action you were trying to do.
+        "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
+        # players_changed is emitted if the players list was changed.
+        "players_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # spectators_changed is emitted if the spectators list was changed.
+        "spectators_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
     }
     
     def __init__ (self, timemodel=None, variant=NormalChess):
@@ -101,12 +129,10 @@ class GameModel (GObject, PooledThread):
         if self.timemodel:
             self.tags["TimeControl"] = \
                 "%d+%d" % (self.timemodel.getInitialTime(), self.timemodel.gain)
-#### do this upon time_changed or game_changed?
-#            self.tags["WhiteClock"] = \
-#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(wms)
-#            self.tags["BlackClock"] = \
-#                "%(hour)01d:%(min)02d:%(sec)02d.%(msec)03d" % msToClockDict(bms)
-
+            # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
+            # on the gamemodel, but simply written or read during saving/
+            # loading from pgn. If you want to know the time left for a player,
+            # check the time model.
         
         # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
@@ -144,10 +170,12 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
         self.tags["White"] = str(self.players[WHITE])
         self.tags["Black"] = str(self.players[BLACK])
+        self.emit("players_changed")
     
     def setSpectators (self, spectators):
         assert self.status == WAITING_TO_START
         self.spectators = spectators
+        self.emit("spectators_changed")
     
     ############################################################################
     # Board stuff                                                              #
@@ -470,6 +498,11 @@ class GameModel (GObject, PooledThread):
                 self.applyingMoveLock.release()
     
     def checkStatus (self):
+        """ Updates self.status so it fits with what getStatus(boards[-1])
+            would return. That is, if the game is e.g. check mated this will
+            call mode.end(), or if moves have been undone from an otherwise
+            ended position, this will call __resume and emit game_unended. """
+         
         log.debug("GameModel.checkStatus:\n")
         status, reason = getStatus(self.boards[-1])
         

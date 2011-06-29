@@ -2,11 +2,10 @@
 
 from gettext import ngettext
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
-from log_picker.sending import LOCAL
 from pychess import Savers
 from pychess.Players.engineNest import discoverer
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import *
+from pychess.Savers import * # This needs an import all not to break autoloading
 from pychess.System import conf
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.Log import log
@@ -58,19 +57,39 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     log.debug("ionest.workfunc: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
     gmwidg = gamewidget.GameWidget(gamemodel)
-
-    player0 = {}
-    player1 = {}
-    for player, playertup in ((player0, player0tup), (player1, player1tup)):
-        player["name"] = playertup[3]
-        player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+str(playertup[4])+")" or None
-        player["title"] = len(playertup) > 5 and playertup[5] or None
-        player["nametitle"] = player["title"] and player["name"] + player["title"] or player["name"]
-        player["tabtext"] = player["rating"] and player["nametitle"] + " " + player["rating"] \
-                or player["nametitle"]
-    text = [ player0["tabtext"], _("vs"), player1["tabtext"] ]
-    gmwidg.setTabText(" ".join(text))
-
+    
+    # We want to show the game quickly, but the players take some time to start
+    gmwidg.setTabText("%s %s %s" % (player0tup[3], _("vs"), player1tup[3]))
+    worker.publish((gmwidg,gamemodel))
+    
+    # Initing players
+    players = []
+    for i, playertup in enumerate((player0tup, player1tup)):
+        type, func, args, prename = playertup
+        if type != LOCAL:
+            players.append(func(*args))
+            #if type == ARTIFICIAL:
+            #    def readyformoves (player, color):
+            #        gmwidg.setTabText(gmwidg._formatVsText())
+            #    players[i].connect("readyForMoves", readyformoves, i)
+        else:
+            # Until PyChess has a proper profiles system, as discussed on the
+            # issue tracker, we need to give human players special treatment
+            player = func(gmwidg, *args)
+            players.append(player)
+            
+            # Connect to conf
+            if i == 0 or (i == 1 and player0tup[0] != LOCAL):
+                key = "firstName"
+                alt = _("You")
+            else:
+                key = "secondName"
+                alt = _("Guest")
+            if prename == conf.get(key, alt):
+                conf.notify_add(key, lambda *a:player.setName(conf.get(key,alt)))
+    
+    gamemodel.setPlayers(players)
+    
     # Init analyze engines
     anaengines = list(discoverer.getAnalyzers())
     specs = {}
@@ -91,75 +110,10 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                                                     gamemodel.variant)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
-
-    worker.publish((gmwidg,gamemodel))
-
-    # For updating names
-    players = []
-    def updateTitle (color=None):
-
-        name0_name1 = gmwidg.getTabText().split(" %s "%_("vs"))
-        if not name0_name1:
-            name0, name1 = _("White"), _("Black")
-        else: name0, name1 = name0_name1
-
-        if color is None:
-            name0 = repr(players[WHITE])
-            name0 += player0["title"] and player0["title"] or ""
-            name0 += player0["rating"] and " "+player0["rating"] or ""
-            name1 = repr(players[BLACK])
-            name1 += player1["title"] and player1["title"] or ""
-            name1 += player1["rating"] and " "+player1["rating"] or ""
-        elif color == WHITE:
-            name0 = repr(players[WHITE])
-            name0 += player0["title"] and player0["title"] or ""
-            name0 += player0["rating"] and " "+player0["rating"] or ""
-        elif color == BLACK:
-            name1 = repr(players[BLACK])
-            name1 += player1["title"] and player1["title"] or ""
-            name1 += player1["rating"] and " "+player1["rating"] or ""
-
-        gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
-
-    # Initing players
-    for i, playertup in enumerate((player0tup, player1tup)):
-        type, func, args = (playertup[0:3])
-        if type != LOCAL:
-            players.append(func(*args))
-            if type == ARTIFICIAL:
-                def readyformoves (player, color):
-                    updateTitle(color)
-                players[i].connect("readyForMoves", readyformoves, i)
-        else:
-            # Until PyChess has a proper profiles system, as discussed on the
-            # issue tracker, we need to give human players special treatment
-            ichandle = None
-            icrating = None
-            if len(args) > 2:
-                ichandle = args[2]
-                icrating = args[3]
-                args = [ v for v in args[0:2] ]
-            player = func(gmwidg, ichandle=ichandle, icrating=icrating, *args)
-            players.append(player)
-            if i == 0 or (i == 1 and player0tup[0] != LOCAL):
-                key = "firstName"
-                alt = conf.username
-            else:
-                key = "secondName"
-                alt = _("Guest")
-            player.setName(conf.get(key, alt))
-
-            def callback (none, color, key, alt):
-                players[color].setName(conf.get(key, alt))
-                updateTitle(color)
-            conf.notify_add(key, callback, i, key, alt)
-
-    worker.publish(updateTitle)
-
+    
     # Setting game
-    gamemodel.setPlayers(players)
     gamemodel.setSpectators(specs)
-
+    
     # Starting
     if loaddata:
         try:
@@ -179,7 +133,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 player.setOptionInitialBoard(gamemodel)
 
         gamemodel.start()
-
+    
     log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s\n" % \
         (gmwidg, gamemodel))
     return gmwidg, gamemodel
