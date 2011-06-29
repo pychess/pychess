@@ -1,19 +1,12 @@
-import socket
-from socket import SHUT_RDWR
-import webbrowser
-import re
-
-import gtk, gobject, sys
-
-from pychess.System.repeat import repeat_sleep
-from pychess.System.ThreadPool import pool
-from pychess.System import gstreamer, uistuff, glock
-from pychess.System.prefix import addDataPrefix
-from pychess.System import uistuff
-from pychess.Utils.const import *
-
 from FICSConnection import FICSConnection, LogOnError
 from ICLounge import ICLounge
+from pychess.System import glock, uistuff
+from pychess.Utils.const import *
+import gtk
+import gobject
+import re
+import socket
+import webbrowser
 
 dialog = None
 def run():
