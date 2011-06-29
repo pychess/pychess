@@ -365,12 +365,17 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def setBoard (self, boards, moves):
         # Notice: If this method is to be called while playing, the engine will
-        # need 'new' and an arrangement simmilar to that of 'pause' to avoid
+        # need 'new' and an arrangement similar to that of 'pause' to avoid
         # the current thought move to appear
         
         self.boardLock.acquire()
         try:
+            if self.mode == INVERSE_ANALYZING:
+                self.board = self.board.switchColor()
+                self.__printColor()
+            
             self.__tellEngineToStopPlayingCurrentColor()
+            
             if boards[0].asFen() != FEN_START:
                 self.__setBoard(boards[0])
             
@@ -384,17 +389,11 @@ class CECPEngine (ProtocolEngine):
             if self.mode == INVERSE_ANALYZING:
                 self.board = self.board.switchColor()
                 self.__printColor()
-                if self.engineIsInNotPlaying: print >> self.engine, "force"
+                if self.engineIsInNotPlaying:
+                    print >> self.engine, "force"
             
-            #if self.mode in (ANALYZING, INVERSE_ANALYZING) or \
-            #        gamemodel.boards[-1].color == self.color:
-            #    self.board = gamemodel.boards[-1]
-            #    if self.mode == ANALYZING:
-            #        self.analyze()
-            #    elif self.mode == INVERSE_ANALYZING:
-            #        self.analyze(inverse=True)
-            #    else:
-            #        self.movenext = True
+            # The called of setBoard will have to repost/analyze the
+            # analyzer engines at this point.
         finally:
             self.boardLock.release()
     
