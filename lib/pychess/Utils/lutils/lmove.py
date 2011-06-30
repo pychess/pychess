@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import re
+import string
 
 from ldata import *
 from validator import validateMove
@@ -477,93 +477,30 @@ def parseAN (board, an):
 ################################################################################
 
 san2WhiteFanDic = {
-    "K": FAN_PIECES[WHITE][KING],
-    "Q": FAN_PIECES[WHITE][QUEEN],
-    "R": FAN_PIECES[WHITE][ROOK],
-    "B": FAN_PIECES[WHITE][BISHOP],
-    "N": FAN_PIECES[WHITE][KNIGHT],
-    "+": "†",
-    "#": "‡"
+    ord(u"K"): FAN_PIECES[WHITE][KING],
+    ord(u"Q"): FAN_PIECES[WHITE][QUEEN],
+    ord(u"R"): FAN_PIECES[WHITE][ROOK],
+    ord(u"B"): FAN_PIECES[WHITE][BISHOP],
+    ord(u"N"): FAN_PIECES[WHITE][KNIGHT],
+    ord(u"+"): u"†",
+    ord(u"#"): u"‡"
 }
-san2WhiteFanRegex = re.compile(
-    "(%s)" % "|".join(re.escape(k) for k in san2WhiteFanDic.keys()) )
-san2WhiteFanFunc = lambda match: san2WhiteFanDic[match.group()]
 
 san2BlackFanDic = {
-    "K": FAN_PIECES[BLACK][KING],
-    "Q": FAN_PIECES[BLACK][QUEEN],
-    "R": FAN_PIECES[BLACK][ROOK],
-    "B": FAN_PIECES[BLACK][BISHOP],
-    "N": FAN_PIECES[BLACK][KNIGHT],
-    "+": "†",
-    "#": "‡"
+    ord(u"K"): FAN_PIECES[BLACK][KING],
+    ord(u"Q"): FAN_PIECES[BLACK][QUEEN],
+    ord(u"R"): FAN_PIECES[BLACK][ROOK],
+    ord(u"B"): FAN_PIECES[BLACK][BISHOP],
+    ord(u"N"): FAN_PIECES[BLACK][KNIGHT],
+    ord(u"+"): u"†",
+    ord(u"#"): u"‡"
 }
-san2BlackFanRegex = re.compile(
-    "(%s)" % "|".join(re.escape(k) for k in san2BlackFanDic.keys()) )
-san2BlackFanFunc = lambda match: san2BlackFanDic[match.group()]
 
 def toFAN (board, move):
     """ Returns a Figurine Algebraic Notation string of a move """
     
-    lan = toSAN (board, move)
-    
+    san = unicode(toSAN (board, move))
     if board.color == WHITE:
-        lan = san2WhiteFanRegex.sub(san2WhiteFanFunc, lan)
+        return san.translate(san2WhiteFanDic)
     else:
-        lan = san2BlackFanRegex.sub(san2BlackFanFunc, lan)
-    
-    return lan
-
-################################################################################
-# parseFAN                                                                     #
-################################################################################
-
-fan2SanDic = {}
-for k, v in san2WhiteFanDic.iteritems():
-    fan2SanDic[v] = k
-for k, v in san2BlackFanDic.iteritems():
-    fan2SanDic[v] = k
-
-fan2SanRegex = re.compile(
-    "(%s)" % "|".join(re.escape(k) for k in fan2SanDic.keys()) )
-fan2SanFunc = lambda match: fan2SanDic[match.group()]
-
-def parseFAN (board, fan):
-    """ Parse a Long/Expanded Algebraic Notation string """
-    
-    san = fan2SanRegex.sub(fan2SanFunc, fan)
-    
-    pawnFan = FAN_PIECES[board.color][PAWN]
-    if san[0] == pawnFan:
-        san = san.replace(pawnFan, "")
-        # If the pawn file has been omitted from a capture fan notation, it
-        # means that there was only one pawn able to move to the end cord. We
-        # just need to find it.
-        if san[0] == "x":
-            # We need to find the endcord ourselves. Can't wait for parseSAN
-            i = san.find("=")
-            if i >= 0:
-                tocord = san[1:i]
-            else: tocord = san[1:]
-            tcord = cordDic[tocord]
-            
-            # If the capture is made by a pawn, SAN notation requires us to add
-            # the file of from_file of that pawn before the x.
-            # We do that by searching for a pawn that could have done the
-            # capture. If this isn't unique, FAN should already have the file
-            # specified.
-            # Unfortunately we need a circular import for the search.
-            from lmovegen import genAllMoves
-            board_clone = board.clone()
-            for altmove in genAllMoves(board_clone):
-                if board_clone.arBoard[FCORD(altmove)] == PAWN and \
-                        TCORD(altmove) == tcord:
-                    board_clone.applyMove(altmove)
-                    if not board_clone.opIsChecked():
-                        san = reprFile(FCORD(altmove)) + san
-                    board_clone.popMove()
-                    # We know there is only one pawn which can move to tcord, so
-                    # we stop work here
-                    break
-    
-    return parseSAN (board, san)
+        return san.translate(san2BlackFanDic)
