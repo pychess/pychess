@@ -179,7 +179,8 @@ class Sidepanel(gtk.TextView):
 
             buf.apply_tag_by_name("margin", startIter, endIter)
 
-            if node == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
+            if self.boardview.shown >= self.gamemodel.lowply and \
+               node == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
                 buf.apply_tag_by_name("selected", startIter, endIter)
                 
             ni = {}
@@ -305,9 +306,8 @@ class Sidepanel(gtk.TextView):
     def update(self):
         self.textbuffer.set_text('')
         self.nodeIters = []
-        if self.boardview.shown >= self.gamemodel.lowply:
-            self.insert_header(self.gamemodel)
-            self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
+        self.insert_header(self.gamemodel)
+        self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
     def game_loaded(self, model, uri):
         self.update()
