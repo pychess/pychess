@@ -126,7 +126,7 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
         start = None
         for ni in self.nodeIters:
-            if ni["node"] == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
+            if ni["node"] == self.gamemodel.getBoardAtPly(self.boardview.shown):
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 end = self.textbuffer.get_iter_at_offset(ni["end"])
                 self.textbuffer.apply_tag_by_name("selected", start, end)
@@ -180,7 +180,7 @@ class Sidepanel(gtk.TextView):
             buf.apply_tag_by_name("margin", startIter, endIter)
 
             if self.boardview.shown >= self.gamemodel.lowply and \
-               node == self.gamemodel.boards[self.boardview.shown - self.gamemodel.lowply]:
+               node == self.gamemodel.getBoardAtPly(self.boardview.shown):
                 buf.apply_tag_by_name("selected", startIter, endIter)
                 
             ni = {}
