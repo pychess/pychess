@@ -108,11 +108,6 @@ def parseLAN (board, lan):
     
     return Move (lmove.parseLAN (board.board, lan))
 
-def parseFAN (board, lan):
-    """ Parse a Long/Expanded Algebraic Notation string """
-    
-    return Move (lmove.parseFAN (board.board, lan))
-
 def parseAN (board, an):
     """ Parse an Algebraic Notation string """
     
