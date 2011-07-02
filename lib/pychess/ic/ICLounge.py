@@ -554,10 +554,13 @@ class SeekTabSection (ParrentListSection):
                 self.connection.om.acceptIndex(index)
             elif response == gtk.RESPONSE_NO:
                 self.connection.om.declineIndex(index)
-        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
-                                 (_("Accept Challenge"), gtk.RESPONSE_ACCEPT),
-                                 (_("Decline Challenge"), gtk.RESPONSE_NO),
-                                 (_("Ignore Challenge"), gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
+        message.add_button(InfoBarMessageButton(_("Accept Challenge"),
+                                                gtk.RESPONSE_ACCEPT))
+        message.add_button(InfoBarMessageButton(_("Decline Challenge"),
+                                                gtk.RESPONSE_NO))
+        message.add_button(InfoBarMessageButton(_("Ignore Challenge"),
+                                                gtk.RESPONSE_CANCEL))
         self.messages[index] = message
         self.infobar.push_message(message)
         
@@ -876,7 +879,8 @@ class PlayerTabSection (ParrentListSection):
             self.store.set(ti, 5, player.lightning)
         elif rating.type == TYPE_WILD:
             self.store.set(ti, 6, player.wild)
-        else: return  # Ignore other stuff for now
+        
+        return False
     
     @classmethod
     def getSelectedPlayer (cls):
@@ -892,18 +896,11 @@ class PlayerTabSection (ParrentListSection):
                 section.openChatWithPlayer(player.name)
                 #TODO: isadmin og type
     
-    def onObserveClicked (self, button):
-#        gbtami = self.connection.players.get(FICSPlayer("gbtami"))
-#        log.debug("onObserveClicked: gbtami=%s\n" % gbtami)
-#        gbtami.ratings[TYPE_BLITZ].elo = 1600
-#        gbtami.ratings[TYPE_WILD].elo = 1700
-#        gbtami.online = True
-#        log.debug("onObserveClicked: online set: gbtami=%s\n" % gbtami)
-        
+    def onObserveClicked (self, button):        
         player = self.getSelectedPlayer()
         if player is not None and player.game is not None:
             self.connection.bm.observe(player.game)
-    
+            
     @glock.glocked
     def onSelectionChanged (self, selection):
         player = self.getSelectedPlayer()
@@ -1104,6 +1101,16 @@ class AdjournedTabSection (ParrentListSection):
         self.messages = {}
         return False
 
+    def _update_infobarmessagebutton_sensitivity (self, message, player):
+        button = message.buttons[0]
+        if player.isAvailableForGame():
+            button.sensitive = True
+            button.tooltip = ""
+        else:
+            button.sensitive = False
+            button.tooltip = _("%s is %s") % \
+                (player.name, player.display_status.lower())
+        
     def _infobar_adjourned_message (self, game, player):
         if player not in self.messages:
             text = _(" with whom you have an adjourned <b>%s</b> <b>%s</b> " + \
@@ -1118,13 +1125,17 @@ class AdjournedTabSection (ParrentListSection):
                     self.connection.adm.queryMoves(game)
                 del self.messages[player]
 
-            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback,
-                (_("Request Continuation"), gtk.RESPONSE_ACCEPT),
-                (_("Examine Adjourned Game"), gtk.RESPONSE_HELP),
-                (_("Do Nothing"), gtk.RESPONSE_NO))
+            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
+            message.add_button(InfoBarMessageButton(_("Request Continuation"),
+                                                    gtk.RESPONSE_ACCEPT))
+            message.add_button(InfoBarMessageButton(_("Examine Adjourned Game"),
+                                                    gtk.RESPONSE_HELP))
+            message.add_button(InfoBarMessageButton(_("Do Nothing"),
+                                                    gtk.RESPONSE_NO))
+            self._update_infobarmessagebutton_sensitivity(message, player)
             self.messages[player] = message
             self.infobar.push_message(message)
-    
+            
     @glock.glocked
     def online_changed (self, player, property, game):
         log.debug("AdjournedTabSection.online_changed: %s %s\n" % \
@@ -1135,7 +1146,24 @@ class AdjournedTabSection (ParrentListSection):
         
         if player.online and player.adjournment:
             self._infobar_adjourned_message(game, player)
-
+        elif not player.online and player in self.messages:
+            self.messages[player].dismiss()
+            # calling message.dismiss() might cause it to be removed from
+            # self.messages in another callback, so we re-check
+            if player in self.messages:
+                del self.messages[player]
+        
+        return False
+        
+    @glock.glocked
+    def status_changed (self, player, property, game):
+        log.debug("AdjournedTabSection.status_changed: %s %s\n" % \
+            (repr(player), repr(game)))
+        try:
+            message = self.messages[player]
+        except KeyError:
+            return False
+        self._update_infobarmessagebutton_sensitivity(message, player)
         return False
         
     def onAdjournedGameAdded (self, game):
@@ -1148,6 +1176,8 @@ class AdjournedTabSection (ParrentListSection):
             self.games[game]["ti"] = ti
             self.games[game]["online_cid"] = game.opponent.connect(
                 "notify::online", self.online_changed, game)
+            self.games[game]["status_cid"] = game.opponent.connect(
+                "notify::status", self.status_changed, game)
         
         if game.opponent.online:
             self._infobar_adjourned_message(game, game.opponent)
@@ -1160,9 +1190,12 @@ class AdjournedTabSection (ParrentListSection):
                 self.store.remove(self.games[game]["ti"])
             if game.opponent.handler_is_connected(self.games[game]["online_cid"]):
                 game.opponent.disconnect(self.games[game]["online_cid"])
+            if game.opponent.handler_is_connected(self.games[game]["status_cid"]):
+                game.opponent.disconnect(self.games[game]["status_cid"])
             if game.opponent in self.messages:
                 self.messages[game.opponent].dismiss()
-                del self.messages[game.opponent]
+                if game.opponent in self.messages:
+                    del self.messages[game.opponent]
             del self.games[game]
         
         return False
@@ -1908,11 +1941,11 @@ class Messages (Section):
         def response_cb (infobar, response):
             if response == gtk.RESPONSE_YES:
                 print >> self.connection.client, "unseek"
-        message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb,
-                                 (gtk.STOCK_YES, gtk.RESPONSE_YES),
-                                 (gtk.STOCK_NO, gtk.RESPONSE_NO))
-        self.infobar.push_message(message)
+        message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_YES, gtk.RESPONSE_YES))
+        message.add_button(InfoBarMessageButton(gtk.STOCK_NO, gtk.RESPONSE_NO))
         self.messages.append(message)
+        self.infobar.push_message(message)
     
     @glock.glocked
     def onPlayGameCreated (self, bm, board):
@@ -1926,6 +1959,9 @@ class Messages (Section):
         text = _(" has declined your offer for a match.")
         content = self.get_infobarmessage_content(player, text)
         message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
         self.infobar.push_message(message)
 
 ############################################################################

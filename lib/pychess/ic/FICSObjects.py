@@ -401,6 +401,7 @@ class FICSPlayers (GObject):
             player = self[player]
             if player.adjournment:
                 player.online = False
+                player.status = IC_STATUS_OFFLINE
             else:
                 del self[player]
             self.emit('FICSPlayerExited', player)
@@ -491,9 +492,12 @@ class FICSGame (GObject):
         
     @property
     def display_text (self):
-        text = self.game_type.display_text
-        if self.private:
-            text += " (" + _("Private") + ")"
+        text = ""
+        gametype = self.game_type
+        if gametype is not None:
+            text += gametype.display_text
+            if self.private:
+                text += " (" + _("Private") + ")"
         return text
     
     @property
