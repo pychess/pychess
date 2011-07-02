@@ -414,6 +414,8 @@ class UCIEngine (ProtocolEngine):
         #---------------------------------------------------------- Initializing
         if parts[0] == "id":
             self.ids[parts[1]] = " ".join(parts[2:])
+            if parts[1] == "name":
+                self.setName(self.ids["name"])
             return
         
         if parts[0] == "uciok":

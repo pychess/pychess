@@ -18,10 +18,15 @@ class TimeModel (GObject):
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs, gain, bsecs=-1):
+    def __init__ (self, secs, gain, bsecs=-1, minutes=-1):
         GObject.__init__(self)
         
         if bsecs < 0: bsecs = secs
+        if minutes < 0:
+            minutes = secs / 60
+        self.minutes = minutes  # The number of minutes for the original starting
+            # time control (not necessarily where the game was resumed,
+            # i.e. self.intervals[0][0])
         self.intervals = [[secs],[bsecs]]
         self.gain = gain
         
@@ -214,3 +219,10 @@ class TimeModel (GObject):
     
     def getInitialTime (self):
         return self.intervals[WHITE][0]
+        
+    @property
+    def display_text (self):
+        t = ("%d " % self.minutes) + _("min")
+        if self.gain != 0:
+            t += (" + %d " % self.gain) + _("sec")
+        return t

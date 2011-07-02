@@ -288,8 +288,22 @@ class GameWidget (gobject.GObject):
             # normal use that shouldn't be a problem.
             glock_connect(player, "name_changed", self.name_changed)
     
+    @property
+    def display_text (self):
+        vs = " " + _("vs") + " "
+        if isinstance(self.gamemodel, ICGameModel):
+            ficsgame = self.gamemodel.ficsgame
+            t = vs.join((ficsgame.wplayer.long_name(game_type=ficsgame.game_type),
+                         ficsgame.bplayer.long_name(game_type=ficsgame.game_type)))
+        else:
+            t = vs.join(map(repr, self.gamemodel.players))
+        
+        if self.gamemodel.display_text != "":
+            t += " " + self.gamemodel.display_text
+        return t
+    
     def name_changed (self, player):
-        newText = self._formatVsText()
+        newText = self.display_text
         if newText != self.getTabText():
             self.setTabText(newText)
     
@@ -478,9 +492,6 @@ class GameWidget (gobject.GObject):
         self.messageSock.hide()
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
-    
-    def _formatVsText (self):
-        return (" "+_("vs")+" ").join(map(repr, self.gamemodel.players))
 
 
 ################################################################################

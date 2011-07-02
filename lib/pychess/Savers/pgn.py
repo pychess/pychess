@@ -328,6 +328,7 @@ class PGNFile (ChessFile):
 #                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
 #            if model.tags['TimeControl']:
 #                minutes, gain = parseTimeControlTag(model.tags['TimeControl'])
+#                model.timemodel.minutes = minutes
 #                model.timemodel.gain = gain
         
         fenstr = self._getTag(gameno, "FEN")

@@ -17,7 +17,7 @@ class ICPlayer (Player):
         self.okqueue = Queue()
         
         self.setName(name)
-        self.ichandle = name
+        self.ichandle = ichandle
         self.icrating = icrating
         self.color = color
         self.gameno = gameno
@@ -183,8 +183,9 @@ class ICPlayer (Player):
         else:
             min = 0
             inc = 0
-        self.connection.om.challenge(self.name, self.gamemodel.ficsgame.game_type,
-                                     min, inc, self.gamemodel.ficsgame.rated)
+        self.connection.om.challenge(self.ichandle,
+            self.gamemodel.ficsgame.game_type, min, inc,
+            self.gamemodel.ficsgame.rated)
     
     def offer (self, offer):
         log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))

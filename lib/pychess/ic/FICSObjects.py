@@ -34,23 +34,29 @@ class FICSPlayer (GObject):
                 self.setRating(ratingtype, ratingobj)
         else:
             self.ratings = ratings
+    
+    def long_name (self, game_type=None):
+        name = self.name
+        
+        if game_type is None:
+            rating = self.getRatingForCurrentGame()
+        else:
+            rating = self.getRating(game_type.rating_type)
+            if rating is not None:
+                rating = rating.elo
+        if rating:
+            name += " (%d)" % rating
+            
+        title = self.display_titles()
+        if title:
+            name += " %s" % title
+        return name
         
     def get_online (self):
         return self._online
     def set_online (self, online):
         self._online = online
     online = gobject.property(get_online, set_online)
-    
-    @property
-    def long_name(self):
-        name = self.name
-        title = self.display_titles()
-        if title:
-            name += " %s" % title
-        rating = self.getRatingForCurrentGame()
-        if rating:
-            name += " %d" % rating
-        return name
     
     @property
     def display_online (self):
@@ -108,7 +114,7 @@ class FICSPlayer (GObject):
             if long:
                 r += " (" + TITLE_TYPE_DISPLAY_TEXTS[title] + ")"
             else:
-                r += "(" + TITLE_TYPE_DISPLAY_TEXTS_SHORT[title] + ")"
+                r += " (" + TITLE_TYPE_DISPLAY_TEXTS_SHORT[title] + ")"
         return r
 
     @property
