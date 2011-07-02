@@ -59,7 +59,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     gmwidg = gamewidget.GameWidget(gamemodel)
     
     # We want to show the game quickly, but the players take some time to start
-    gmwidg.setTabText("%s %s %s" % (player0tup[3], _("vs"), player1tup[3]))
+    gmwidg.setTabText("%s %s %s %s" % (player0tup[3], _("vs"), player1tup[3],
+                                       gamemodel.display_text))
     worker.publish((gmwidg,gamemodel))
     
     # Initing players
@@ -70,7 +71,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
             players.append(func(*args))
             #if type == ARTIFICIAL:
             #    def readyformoves (player, color):
-            #        gmwidg.setTabText(gmwidg._formatVsText())
+            #        gmwidg.setTabText(gmwidg.display_text))
             #    players[i].connect("readyForMoves", readyformoves, i)
         else:
             # Until PyChess has a proper profiles system, as discussed on the

@@ -14,6 +14,7 @@ from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
 from pychess.Variants.normal import NormalChess
+from pychess.Variants import variants
 
 from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
 from const import *
@@ -127,7 +128,7 @@ class GameModel (GObject, PooledThread):
 
         if self.timemodel:
             self.tags["TimeControl"] = \
-                "%d+%d" % (self.timemodel.getInitialTime(), self.timemodel.gain)
+                "%d+%d" % (self.timemodel.minutes*60, self.timemodel.gain)
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
             # on the gamemodel, but simply written or read during saving/
             # loading from pgn. If you want to know the time left for a player,
@@ -159,6 +160,18 @@ class GameModel (GObject, PooledThread):
             s += "\nboard=%s" % self.boards[-1]
         return s + ")>"
     
+    @property
+    def display_text (self):
+        if self.variant == NormalChess and self.timemodel is None:
+            return "[ " + _("Untimed") + " ]"
+        else:
+            t = "[ "
+            if self.variant != NormalChess:
+                t += self.variant.name + " "
+            if self.timemodel is not None:
+                t += self.timemodel.display_text + " "
+            return t + "]"
+        
     def setPlayers (self, players):
         assert self.status == WAITING_TO_START
         self.players = players

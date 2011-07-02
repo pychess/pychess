@@ -1239,20 +1239,22 @@ class AdjournedTabSection (ParrentListSection):
             timemodel = None
         else:
             timemodel = TimeModel(ficsgame.board.wms/1000., ficsgame.inc,
-                                  bsecs=ficsgame.board.bms/1000.)
+                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.min)
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
         
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on.
         # Hence the lazy loading is skipped.
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
-        player0 = ICPlayer(gamemodel, wplayer.name, -1, WHITE, wplayer.long_name,
-                           wplayer.getRatingForCurrentGame())
-        player1 = ICPlayer(gamemodel, bplayer.name, -1, BLACK, bplayer.long_name,
-                           bplayer.getRatingForCurrentGame())
+        player0 = ICPlayer(gamemodel, wplayer.name, -1, WHITE,
+            wplayer.long_name(game_type=ficsgame.game_type),
+            icrating=wplayer.getRating(ficsgame.game_type.rating_type).elo)
+        player1 = ICPlayer(gamemodel, bplayer.name, -1, BLACK,
+            bplayer.long_name(game_type=ficsgame.game_type),
+            icrating=bplayer.getRating(ficsgame.game_type.rating_type).elo)
         
-        player0tup = (REMOTE, lambda:player0, (), wplayer.long_name)
-        player1tup = (REMOTE, lambda:player1, (), bplayer.long_name)
+        player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
+        player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())
         
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
@@ -1984,7 +1986,7 @@ class CreatedBoards (Section):
             timemodel = None
         else:
             timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
-                                   bsecs=ficsgame.board.bms/1000.)
+                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.min)
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
@@ -1993,21 +1995,21 @@ class CreatedBoards (Section):
         
         # We start
         if wplayer.name.lower() == self.connection.getUsername().lower():
-            player0tup = (LOCAL, Human, (WHITE, wplayer.long_name, wplayer.name,
-                          wplayer.getRatingForCurrentGame()), wplayer.long_name)
+            player0tup = (LOCAL, Human, (WHITE, wplayer.long_name(), wplayer.name,
+                          wplayer.getRatingForCurrentGame()), wplayer.long_name())
             player1tup = (REMOTE, ICPlayer, (gamemodel, bplayer.name,
-                ficsgame.gameno, BLACK, bplayer.long_name,
-                bplayer.getRatingForCurrentGame()), bplayer.long_name)
+                ficsgame.gameno, BLACK, bplayer.long_name(),
+                bplayer.getRatingForCurrentGame()), bplayer.long_name())
         
         # She starts
         else:
-            player1tup = (LOCAL, Human, (BLACK, bplayer.long_name, bplayer.name,
-                          bplayer.getRatingForCurrentGame()), bplayer.long_name)
+            player1tup = (LOCAL, Human, (BLACK, bplayer.long_name(), bplayer.name,
+                          bplayer.getRatingForCurrentGame()), bplayer.long_name())
             # If the remote player is WHITE, we need to init her right now, so
             # we can catch fast made moves. Sorry lazy loading.
             player0 = ICPlayer(gamemodel, wplayer.name, ficsgame.gameno, WHITE,
-                               wplayer.long_name, wplayer.getRatingForCurrentGame())
-            player0tup = (REMOTE, lambda:player0, (), wplayer.long_name)
+                               wplayer.long_name(), wplayer.getRatingForCurrentGame())
+            player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
         
         if not ficsgame.board.fen:
             ionest.generalStart(gamemodel, player0tup, player1tup)
@@ -2021,7 +2023,7 @@ class CreatedBoards (Section):
             timemodel = None
         else:
             timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
-                                   ficsgame.board.bms/1000.)
+                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.min)
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
@@ -2030,12 +2032,12 @@ class CreatedBoards (Section):
         # want to be noticed of all moves the FICS server sends us from now on
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
         player0 = ICPlayer(gamemodel, wplayer.name, ficsgame.gameno,
-                           WHITE, wplayer.long_name, wplayer.getRatingForCurrentGame())
+                           WHITE, wplayer.long_name(), wplayer.getRatingForCurrentGame())
         player1 = ICPlayer(gamemodel, bplayer.name, ficsgame.gameno,
-                           BLACK, bplayer.long_name, bplayer.getRatingForCurrentGame())
+                           BLACK, bplayer.long_name(), bplayer.getRatingForCurrentGame())
         
-        player0tup = (REMOTE, lambda:player0, (), wplayer.long_name)
-        player1tup = (REMOTE, lambda:player1, (), bplayer.long_name)
+        player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
+        player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())
         
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
