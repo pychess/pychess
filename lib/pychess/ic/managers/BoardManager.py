@@ -597,7 +597,8 @@ class BoardManager (GObject):
         bplayer = self.connection.players.get(FICSPlayer(bname))
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type].elo != rating:
+                    player.ratings[game_type.rating_type].elo != rating and \
+                    player.ratings[game_type.rating_type].elo == 0:
                 player.ratings[game_type.rating_type].elo = rating
         game = gameclass(wplayer, bplayer, game_type=game_type,
             rated=(rated.lower() == "rated"), min=minutes, inc=increment,
