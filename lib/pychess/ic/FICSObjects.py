@@ -144,7 +144,7 @@ class FICSPlayer (GObject):
             return False
         
     def __repr__ (self):
-        r = "name='%s'" % self.name + self.display_titles()
+        r = "name='%s'" % (self.name + self.display_titles())
         r += ", online=%s" % repr(self.online)
         r += ", adjournment=%s" % repr(self.adjournment)
         r += ", status=%i" % self.status
