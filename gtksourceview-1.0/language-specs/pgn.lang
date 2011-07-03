@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<language _name="PGN" version="1.0" _section="Other" mimetypes="application/x-chess-pgn">
+	
+	<string _name="String" style="String">
+		<start-regex>&quot;</start-regex>
+		<end-regex>&quot;</end-regex>
+	</string>
+
+	<string _name="String 2" style="String">
+		<start-regex>&apos;</start-regex>
+		<end-regex>&apos;</end-regex>
+	</string>
+
+	<line-comment _name="Line Comment" style="Comment">
+		<start-regex>;</start-regex>
+	</line-comment>
+    
+    <line-comment _name="Special Line" style="Others">
+        <start-regex>^%</start-regex>
+    </line-comment>
+    
+	<block-comment _name="Block Comment" style="Comment">
+		<start-regex>\{</start-regex>
+        <end-regex>\}</end-regex>
+	</block-comment>
+    
+    <keyword-list _name = "Standard Bracketed Fields" style="Keyword"
+                                                        case-sensitive="TRUE">
+		<keyword>Event</keyword>
+		<keyword>Site</keyword>
+		<keyword>Date</keyword>
+		<keyword>Round</keyword>
+		<keyword>White</keyword>
+		<keyword>Black</keyword>
+		<keyword>Result</keyword>
+	</keyword-list>
+    
+    <keyword-list _name = "Other Bracketed Fields" style="Keyword"
+                                                        case-sensitive="FALSE">
+		<!-- Player related information -->
+		<keyword>WhiteTitle</keyword>
+		<keyword>BlackTitle</keyword>
+		<keyword>WhiteElo</keyword>
+		<keyword>BlackElo</keyword>
+		<keyword>WhiteUSCF</keyword>
+		<keyword>BlackUSCF</keyword>
+		<keyword>WhiteNA</keyword>
+		<keyword>BlackNA</keyword>
+		<keyword>WhiteType</keyword>
+		<keyword>BlackType</keyword>
+		
+		<!-- Event related information -->
+		<keyword>EventDate</keyword>
+		<keyword>EventSponsor</keyword>
+		<keyword>Section</keyword>
+		<keyword>Stage</keyword>
+		<keyword>Board</keyword>
+		
+		<!-- Opening information (locale specific) -->
+		<keyword>Opening</keyword>
+		<keyword>Variation</keyword>
+		<keyword>SubVariation</keyword>
+		
+		<!-- Opening information (third party vendors) -->
+		<keyword>ECO</keyword>
+		<keyword>NIC</keyword>
+		
+		<!-- Time and date related information -->
+		<keyword>Time</keyword>
+		<keyword>UTCTime</keyword>
+		<keyword>UTCDate</keyword>
+		
+		<!-- Time control -->
+		<keyword>TimeControl</keyword>
+		
+		<!-- Alternative starting positions -->
+		<keyword>SetUp</keyword>
+		<keyword>FEN</keyword>
+		
+		<!-- Game conclusion -->
+		<keyword>Termination</keyword>
+		
+		<!-- Miscellaneous -->
+		<keyword>Annotator</keyword>
+		<keyword>Mode</keyword>
+		<keyword>PlyCount</keyword>
+	</keyword-list>
+    
+    <pattern-item _name = "Annotation Glyph !" style="Comment">
+		<regex>![^!]</regex></pattern-item>
+	<pattern-item _name = "Annotation Glyph ?" style="Comment">
+		<regex>\?[^\?]</regex></pattern-item>
+	<pattern-item _name = "Annotation Glyph !!" style="Comment">
+		<regex>!!</regex></pattern-item>
+	<pattern-item _name = "Annotation Glyph ??" style="Comment">
+		<regex>\?\?</regex></pattern-item>
+	<pattern-item _name = "Annotation Glyph !?" style="Comment">
+		<regex>!\?</regex></pattern-item>
+	<pattern-item _name = "Annotation Glyph ?!" style="Comment">
+		<regex>\?!</regex></pattern-item>
+    
+    <pattern-item _name = "Numeric Annotation Glyph" style="Comment">
+		<regex>\$[0-9]+</regex></pattern-item>
+    
+    <block-comment _name="Variant" style="Preprocessor">
+		<start-regex>\(</start-regex>
+        <end-regex>\)</end-regex>
+	</block-comment>
+    
+    <pattern-item _name="Numeric" style="Base-N Integer">
+		<regex>\b[0-9]+\s*\.</regex>
+	</pattern-item>
+
+</language>
