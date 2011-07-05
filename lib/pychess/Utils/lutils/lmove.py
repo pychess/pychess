@@ -504,3 +504,19 @@ def toFAN (board, move):
         return san.translate(san2WhiteFanDic)
     else:
         return san.translate(san2BlackFanDic)
+
+################################################################################
+# parseFAN                                                                     #
+################################################################################
+
+fan2SanDic = {}
+for k, v in san2WhiteFanDic.iteritems():
+    fan2SanDic[ord(v)] = unichr(k)
+for k, v in san2BlackFanDic.iteritems():
+    fan2SanDic[ord(v)] = unichr(k)
+
+def parseFAN (board, fan):
+    """ Parse a Figurine Algebraic Notation string """
+
+    san = fan.translate(fan2SanDic)
+    return parseSAN (board, san)
