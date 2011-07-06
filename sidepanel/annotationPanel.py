@@ -48,14 +48,17 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.create_tag("margin", left_margin=4)
         self.textbuffer.create_tag("variation-margin", left_margin=20)
 
-    def load (self, gmwidg):
+    def load(self, gmwidg):
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
         __widget__.add(self.textview)
 
         self.boardview = gmwidg.board.view
         glock_connect(self.boardview.model, "game_changed", self.game_changed)
+        glock_connect(self.boardview.model, "game_started", self.game_started)
+        glock_connect(self.boardview.model, "game_ended", self.game_ended)
         glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
+        glock_connect(self.boardview.model, "players_changed", self.players_changed)
         self.boardview.connect("shown_changed", self.shown_changed)
 
         self.gamemodel = gmwidg.board.view.model
@@ -63,7 +66,7 @@ class Sidepanel(gtk.TextView):
 
         # Connect to preferences
         
-        def figuresInNotationCallback (none):
+        def figuresInNotationCallback(none):
             self.update()
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
 
@@ -237,11 +240,13 @@ class Sidepanel(gtk.TextView):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
 
-        try:
-            text = gm.tags['White']
-        except:
-            # pgn not processed yet
-            return
+        #try:
+        #    text = gm.tags['White']
+        #except:
+        #    # pgn not processed yet
+        #    return
+        text = repr(gm.players[0])
+
         buf.insert_with_tags_by_name(end_iter(), text, "head2")
         white_elo = gm.tags.get('WhiteElo')
         if white_elo:
@@ -249,14 +254,19 @@ class Sidepanel(gtk.TextView):
 
         buf.insert_with_tags_by_name(end_iter(), " - ", "head1")
 
-        text = gm.tags['Black']
+        #text = gm.tags['Black']
+        text = repr(gm.players[1])
         buf.insert_with_tags_by_name(end_iter(), text, "head2")
         black_elo = gm.tags.get('BlackElo')
         if black_elo:
             buf.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
-            
-        result = ' ' + gm.tags['Result'] + '\n'
-        buf.insert_with_tags_by_name(end_iter(), result, "head2")
+
+        status = reprResult[gm.status]
+        if status != '*':
+            result = status
+        else:
+            result = gm.tags['Result']
+        buf.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""
         eco = gm.tags.get('ECO')
@@ -302,10 +312,24 @@ class Sidepanel(gtk.TextView):
         self.insert_header(self.gamemodel)
         self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
-    def game_loaded(self, model, uri):
+    def game_loaded(self, gamemodel, uri):
         self.update()
-            
-    def shown_changed (self, board, shown):
+
+    def game_started(self, gamemodel):
+        self.update()
+
+    def game_ended(self, gamemodel, reason):
+        self.update()
+
+    def players_changed (self, gamemodel):
+        for player in gamemodel.players:
+            self.name_changed(player)
+            glock_connect(player, "name_changed", self.name_changed)
+
+    def name_changed (self, player):
+        self.update()
+
+    def shown_changed(self, board, shown):
         if self.autoUpdateSelected:
             self.update_selected_node()
 
@@ -318,9 +342,8 @@ class Sidepanel(gtk.TextView):
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 break
         self.textbuffer.delete(start, end)
-        
 
-    def game_changed (self, game):
+    def game_changed(self, game):
         node = game.getBoardAtPly(game.ply)
         buf = self.textbuffer
         end_iter = buf.get_end_iter
@@ -341,7 +364,6 @@ class Sidepanel(gtk.TextView):
 
         self.nodeIters.append(ni)
         self.update_selected_node()
-
 
     def __movestr(self, node, fan):
         move = Move(node.board.history[-1][0])
