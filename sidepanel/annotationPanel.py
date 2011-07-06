@@ -18,7 +18,7 @@ __desc__ = _("Annotated game")
 class Sidepanel(gtk.TextView):
     def __init__(self):
         gtk.TextView.__init__(self)
-        
+
         self.set_editable(False)
         self.set_cursor_visible(False)
         self.set_wrap_mode(gtk.WRAP_WORD)
@@ -344,6 +344,9 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.delete(start, end)
 
     def game_changed(self, game):
+        if game.status != RUNNING:
+            return
+
         node = game.getBoardAtPly(game.ply)
         buf = self.textbuffer
         end_iter = buf.get_end_iter
