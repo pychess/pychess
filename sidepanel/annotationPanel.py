@@ -34,7 +34,6 @@ class Sidepanel(gtk.TextView):
         
         self.connect("motion-notify-event", self.motion_notify_event)
         self.connect("button-press-event", self.button_press_event)
-        self.connect("expose-event", self.on_expose)
         
         self.textbuffer = self.get_buffer()
         
@@ -51,7 +50,7 @@ class Sidepanel(gtk.TextView):
 
     def load (self, gmwidg):
         __widget__ = gtk.ScrolledWindow()
-        __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_ALWAYS) #AUTOMATIC)
+        __widget__.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
         __widget__.add(self.textview)
 
         self.boardview = gmwidg.board.view
@@ -296,12 +295,6 @@ class Sidepanel(gtk.TextView):
 
         buf.insert(end_iter(), "\n\n")
 
-    def on_expose(self, widget, data):
-        w = self.textview.get_allocation().width
-        if not w == self.oldWidth:
-            self.update()
-            self.oldWidth = w
-    
     # Update the entire notation tree
     def update(self):
         self.textbuffer.set_text('')
