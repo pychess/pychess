@@ -498,7 +498,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
                 else:
                     self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
         
-        for player in self.connection.players.itervalues():
+        for player in self.connection.players.values():
             if player.online:
                 id = self.compileId(player.name, TYPE_PERSONAL)
                 self.playersList.addRow(id, player.name + player.display_titles(),
