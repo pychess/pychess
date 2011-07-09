@@ -33,15 +33,13 @@ class ICGameModel (GameModel):
 
     @property
     def display_text (self):
-        if self.ficsgame.game_type.display_text or self.timemodel.display_text:
-            t = "[ "
-            if self.ficsgame.game_type.display_text:
-                t += self.ficsgame.game_type.display_text + " "
-            if self.timemodel:
-                t += self.timemodel.display_text + " "
-            return t + "]"
-        else:
-            return ""
+        t = "[ "
+        if self.timemodel:
+            t += self.timemodel.display_text + " "
+        t += self.ficsgame.display_rated.lower() + " "
+        if self.ficsgame.game_type.display_text:
+            t += self.ficsgame.game_type.display_text + " "
+        return t + "]"
     
     def __disconnect (self):
         if self.connections is None: return
