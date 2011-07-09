@@ -377,7 +377,7 @@ class PanelTab:
         from pychess.widgets.gamewidget import sidePanels
         store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
         for panel in sidePanels:
-            checked = conf.get(panel.__name__, True)
+            checked = conf.get(panel.__name__, False)
             panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))

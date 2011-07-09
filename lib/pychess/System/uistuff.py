@@ -60,6 +60,10 @@ def genColor (n, startpoint=0):
     # [0.6..0.8]. This ensures a consistent lightness over all colors.
     rgb = colorsys.hsv_to_rgb(h, 1, 1)
     rgb = colorsys.hsv_to_rgb(h, 1, (1-rgb[1])*0.2+0.6)
+    # This algorithm ought to balance colors more precisely, but it overrates
+    # the lightness of yellow, and nearly makes it black
+    # yiq = colorsys.rgb_to_yiq(*rgb)
+    # rgb = colorsys.yiq_to_rgb(.125, yiq[1], yiq[2])
     return rgb
 
 

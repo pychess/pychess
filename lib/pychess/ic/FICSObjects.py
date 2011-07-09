@@ -314,6 +314,10 @@ class FICSPlayer (GObject):
             return self.getRatingMean()
     
     def getRatingForCurrentGame (self):
+        """
+        Note: This will not work for adjourned or history games since
+        player.game is not set in those cases
+        """
         if self.game == None: return None
         rating = self.getRating(self.game.game_type.rating_type)
         if rating != None:
