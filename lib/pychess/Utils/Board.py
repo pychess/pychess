@@ -23,7 +23,7 @@ class Board:
         self.board = LBoard(self.variant)
 
         self.movecount = ""
-        self.punctuation = ""
+        self.nags = []
         self.comments = []
         self.variations = []
         self.next = None

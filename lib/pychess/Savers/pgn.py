@@ -1,10 +1,12 @@
+# -*- coding: UTF-8 -*-
+
 import re
 from datetime import date
 
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.Move import listToSan, parseAny
+from pychess.Utils.Move import listToSan, parseAny, toSAN, Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.lmove import ParsingError
@@ -62,6 +64,8 @@ def save (file, model):
     print >> file, '[White "%s"]' % repr(model.players[WHITE])
     print >> file, '[Black "%s"]' % repr(model.players[BLACK])
     print >> file, '[Result "%s"]' % status
+    if "ECO" in model.tags:
+        print >> file, '[ECO "%s"]' % model.tags["ECO"]
     if "WhiteElo" in model.tags:
         print >> file, '[WhiteElo "%s"]' % model.tags["WhiteElo"]
     if "BlackElo" in model.tags:
@@ -80,22 +84,62 @@ def save (file, model):
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
+    print >> file, '[PlyCount "%s"]' % (model.ply-model.lowply)
+    if "EventDate" in model.tags:
+        print >> file, '[EventDate "%s"]' % model.tags["EventDate"]
+    if "Annotator" in model.tags:
+        print >> file, '[Annotator "%s"]' % model.tags["Annotator"]
     print >> file
 
     result = []
-    sanmvs = listToSan(model.boards[0], model.moves)
-    for i in range(0, len(sanmvs)):
-        ply = i + model.lowply
-        if ply % 2 == 0:
-            result.append("%d." % (ply/2+1))
-        elif i == 0:
-            result.append("%d..." % (ply/2+1))
-        result.append(sanmvs[i])
+    walk(model.boards[0], result)
+            
     result = " ".join(result)
     result = wrap(result, 80)
-
     print >> file, result, status
     file.close()
+
+def walk(node, result):
+    def store(text):
+        if len(result) > 1 and result[-1] == "(":
+            result[-1] = "(%s" % text
+        elif text == ")":
+            result[-1] = "%s)" % result[-1]
+        else:
+            result.append(text)
+
+    while True: 
+        if node is None:
+            break
+        
+        if node.prev is None:
+            for comment in node.comments:
+                store("{%s}" % comment)
+            node = node.next
+            continue
+
+        move = Move(node.board.history[-1][0])
+        movestr = toSAN(node.prev, move)
+        if node.movecount:
+            store(node.movecount)
+        store(movestr)
+
+        for nag in node.nags:
+            if nag:
+                store(nag)
+
+        for comment in node.comments:
+            store("{%s}" % comment)
+
+        for var in node.variations:
+            store("(")
+            walk(var[0], result)
+            store(")")
+
+        if node.next:
+            node = node.next
+        else:
+            break
 
 def stripBrackets (string):
     brackets = 0
@@ -245,10 +289,13 @@ def parse_string(string, model, board, position, variation=False):
                 last_board.comments.append(text[1:])
 
             elif group == COMMENT_BRACE:
-                last_board.comments.append(text[1:-1].replace('\r\n', ' '))
+                comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
+                comm = comm[1:-1].splitlines()
+                comment = ' '.join([line.strip() for line in comm])
+                last_board.comments.append(comment)
 
             elif group == COMMENT_NAG:
-                board.punctuation += nag_replace(text)
+                board.nags.append(text)
 
             elif group == RESULT:
                 if text == "1/2":
@@ -309,7 +356,7 @@ class PGNFile (ChessFile):
                 model.tags['Day'] = day
                 
         # non-mandatory headers
-        for tag in ('Time', 'WhiteElo', 'BlackElo', 'TimeControl', 'ECO'):
+        for tag in ('Annotator', 'ECO', 'EventDate', 'Time', 'WhiteElo', 'BlackElo', 'TimeControl'):
             if self._getTag(gameno, tag):
                 model.tags[tag] = self._getTag(gameno, tag)
         
@@ -368,8 +415,8 @@ class PGNFile (ChessFile):
                 model.moves.append(move)
                 model.boards.append(model.boards[-1].move(move))
         else:
-            model.notation_string = self.games[gameno][1]
-            model.boards = parse_string(model.notation_string, model, model.boards[-1], position)
+            notation_string = self.games[gameno][1]
+            model.boards = parse_string(notation_string, model, model.boards[-1], position)
 
             def walk(node, path):
                 if node.next is None:
@@ -406,7 +453,7 @@ class PGNFile (ChessFile):
         model.status, model.reason = getStatus(model.boards[-1])
         
         # Apply result from .pgn if the last position was loaded
-        if position == -1 or len(model.moves) == position:
+        if position == -1 or len(model.moves) == position - model.lowply:
             status = self.get_result(gameno)
             if status in (WHITEWON, BLACKWON) and status != model.status:
                 model.status = status
@@ -474,53 +521,40 @@ class PGNFile (ChessFile):
             return pgn2Const[self._getTag(no,"Result")]
         return RUNNING
 
+nag2symbolDict = {
+    "$0": "",
+    "$1": "!",
+    "$2": "?",
+    "$3": "!!",
+    "$4": "??",
+    "$5": "!?",
+    "$6": "?!",
+    "$7": "□",
+    "$8": "□",
+    "$9": "??",
+    "$10": "=",
+    "$11": "=",
+    "$12": "=",
+    "$13": "∞",
+    "$14": "+=",
+    "$15": "=+",
+    "$16": "±",
+    "$17": "∓",
+    "$18": "+-",
+    "$19": "-+",
+    "$20": "+--",
+    "$21": "--+",
+    "$22": "⨀",
+    "$23": "⨀",
+}
 
-def nag_replace(nag):
-    if nag == "$0": return ""
-    elif nag == "$1": return "!"
-    elif nag == "$2": return "?"
-    elif nag == "$3": return "!!"
-    elif nag == "$4": return "??"
-    elif nag == "$5": return "!?"
-    elif nag == "$6": return "?!"
-    elif nag == "$11": return "="
-    elif nag == "$14": return "+="
-    elif nag == "$15": return "=+"
-    elif nag == "$16": return "+/-"
-    elif nag == "$17": return "-/+"
-    elif nag == "$18": return "+-"
-    elif nag == "$19": return "-+"
-    elif nag == "$20": return "+--"
-    elif nag == "$21": return "--+"
-    else: return nag
+symbol2nagDict = {}
+for k, v in nag2symbolDict.iteritems():
+    if v not in symbol2nagDict:
+        symbol2nagDict[v] = k
 
+def nag2symbol(nag):
+    return nag2symbolDict.get(nag, nag)
 
-KEEPENDS = True
-
-GAME = """
-[Event "?"]
-[Site "?"]
-[Date "????.??.??"]
-[Round "?"]
-[White "?"]
-[Black "?"]
-[Result "*"]
-
-{Initial main line comment}1. e4 e5 2. Nf3 {comment on move 2. Nf3}
-({Initial variation comment for 2.f4} 2. f4 d5)
-Nc6 (2... Nf6 3. Nc3 (3. d3 (3. Bc4)))
-({Initial variation comment for 2... d6} 2... d6) 3. Bc4
-""" 
-
-
-if __name__ == '__main__':
-    pgnfile = load(GAME.splitlines(KEEPENDS))
-
-    model = pgnfile.loadToModel(-1, quick_parse=True)
-    print model.moves
-    #print model.boards
-
-    model = pgnfile.loadToModel(-1, quick_parse=False)
-    print [board.moveobj for board in model.boards]
-    for path in model.variations:
-        print [board.movestr for board in path]
+def symbol2nag(symbol):
+    return symbol2nagDict[symbol]
