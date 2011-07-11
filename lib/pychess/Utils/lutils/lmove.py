@@ -137,13 +137,29 @@ def toSAN (board, move, localRepr=False):
     
     # Has to be importet at calltime, as lmovegen imports lmove
     from lmovegen import genAllMoves
+
+    def check_or_mate():
+        board_clone = board.clone()
+        board_clone.applyMove(move)
+        sign = ""
+        if board_clone.isChecked():
+            for altmove in genAllMoves (board_clone):
+                board_clone.applyMove(altmove)
+                if board_clone.opIsChecked():
+                    board_clone.popMove()
+                    continue
+                sign = "+"
+                break
+            else:
+                sign = "#"
+        return sign
     
     flag = move >> 12
     
     if flag == KING_CASTLE:
-        return "O-O"
+        return "O-O%s" % check_or_mate()
     elif flag == QUEEN_CASTLE:
-        return "O-O-O"
+        return "O-O-O%s" % check_or_mate()
     
     fcord = (move >> 6) & 63
     tcord = move & 63
@@ -207,20 +223,7 @@ def toSAN (board, move, localRepr=False):
         else:
             notat += "="+reprSign[PROMOTE_PIECE(flag)]
     
-    board_clone = board.clone()
-    board_clone.applyMove(move)
-    if board_clone.isChecked():
-        for altmove in genAllMoves (board_clone):
-            board_clone.applyMove(altmove)
-            if board_clone.opIsChecked():
-                board_clone.popMove()
-                continue
-            notat += "+"
-            break
-        else:
-            notat += "#"
-    
-    return notat
+    return "%s%s" % (notat, check_or_mate())
 
 ################################################################################
 # parseSan                                                                     #
