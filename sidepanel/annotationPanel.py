@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import datetime
 
 import gtk
@@ -8,6 +10,7 @@ from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import Move, toSAN, toFAN
+from pychess.Savers.pgn import nag2symbol, symbol2nag
 
 __title__ = _("Annotation")
 __active__ = True
@@ -96,12 +99,13 @@ class Sidepanel(gtk.TextView):
 
     def button_press_event(self, widget, event):
         (wx, wy) = event.get_coords()
-        
         (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
+        node = None
         for ni in self.nodeIters:
             if offset >= ni["start"] and offset < ni["end"]:
+                node = ni
                 board = ni["node"]
                 if board in self.gamemodel.boards:
                     self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
@@ -121,7 +125,115 @@ class Sidepanel(gtk.TextView):
 
                 self.update_selected_node()
                 break
+
+        if event.button == 3:
+            menu = gtk.Menu()
+            if node is not None:
+                if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].comments:
+                    menuitem = gtk.MenuItem(_("Add start comment"))
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
+                    menu.append(menuitem)
+
+                if not board.comments:
+                    menuitem = gtk.MenuItem(_("Add comment"))
+                    menuitem.connect('activate', self.edit_comment, board)
+                    menu.append(menuitem)
+                else:
+                    menuitem = gtk.MenuItem(_("Edit comment"))
+                    menuitem.connect('activate', self.edit_comment, board)
+                    menu.append(menuitem)
+
+                symbol_menu1 = gtk.Menu()
+                for symbol in ("!", "?", "!?", "?!", "!!", "??"):
+                    menuitem = gtk.MenuItem(symbol)
+                    menuitem.connect('activate', self.symbol_menu1_activate, board, symbol)
+                    symbol_menu1.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Add move symbol"))
+                menuitem.set_submenu(symbol_menu1)
+                menu.append(menuitem)
+                
+                symbol_menu2 = gtk.Menu()
+                for symbol in ("=", "∞", "+=", "=+", "±", "∓", "+-", "-+"):
+                    menuitem = gtk.MenuItem(symbol)
+                    menuitem.connect('activate', self.symbol_menu2_activate, board, symbol)
+                    symbol_menu2.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Add evaluation symbol"))
+                menuitem.set_submenu(symbol_menu2)
+                menu.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Remove symols"))
+                menuitem.connect('activate', self.remove_symbols, board)
+                menu.append(menuitem)
+
+            else:
+                if self.gamemodel.boards[0].comments:
+                    menuitem = gtk.MenuItem(_("Edit start comment"))
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
+                    menu.append(menuitem)
+                else:
+                    menuitem = gtk.MenuItem(_("Add start comment"))
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
+                    menu.append(menuitem)
+
+            menu.show_all()
+            menu.popup( None, None, None, event.button, event.time)
         return True
+
+    def edit_comment(self, widget, board):
+        dialog = gtk.Dialog(_("Edit comment"),
+                     None,
+                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                     (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        textedit = gtk.TextView()
+        textedit.set_editable(True)
+        textedit.set_cursor_visible(True)
+        textedit.set_wrap_mode(gtk.WRAP_WORD)
+
+        textbuffer = textedit.get_buffer()
+        textbuffer.set_text(' '.join(board.comments))
+        
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.add(textedit)
+
+        dialog.vbox.add(sw)
+        dialog.resize(300, 200)
+        dialog.show_all()
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_ACCEPT:
+            dialog.destroy()
+            (iter_first, iter_last) = textbuffer.get_bounds()
+            board.comments = []
+            board.comments.append(textbuffer.get_text(iter_first, iter_last))
+            self.update()
+        else:
+            dialog.destroy()
+
+    def symbol_menu1_activate(self, widget, board, symbol):
+        if len(board.nags) == 0:
+            board.nags.append(symbol2nag(symbol))
+        else:
+            board.nags[0] = symbol2nag(symbol)
+        self.update()
+
+    def symbol_menu2_activate(self, widget, board, symbol):
+        if len(board.nags) == 0:
+            board.nags.append("")
+            board.nags.append(symbol2nag(symbol))
+        if len(board.nags) == 1:
+            board.nags.append(symbol2nag(symbol))
+        else:
+            board.nags[1] = symbol2nag(symbol)
+        self.update()
+
+    def remove_symbols(self, widget, board):
+        board.nags = []
+        self.update()
 
     # Update the selected node highlight
     def update_selected_node(self):
@@ -145,13 +257,13 @@ class Sidepanel(gtk.TextView):
 
         fan = conf.get("figuresInNotation", False)
         
-        while (1): 
+        while True: 
             start = end_iter().get_offset()
             
-            if not node:
+            if node is None:
                 break
             
-            if not node.prev:
+            if node.prev is None:
                 for comment in node.comments:
                     if node.ply == self.gamemodel.lowply:
                         self.insert_comment(comment + "\n", level)
@@ -374,4 +486,5 @@ class Sidepanel(gtk.TextView):
             movestr = toFAN(node.prev, move)
         else:
             movestr =  toSAN(node.prev, move, True)
-        return "%s%s%s" % (node.movecount, movestr, node.punctuation)
+        nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
+        return "%s %s%s" % (node.movecount, movestr, nagsymbols)
