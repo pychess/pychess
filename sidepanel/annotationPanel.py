@@ -32,6 +32,7 @@ class Sidepanel(gtk.TextView):
         self.textview = self
         
         self.nodeIters = []
+        self.commentIters = []
         self.oldWidth = 0
         self.autoUpdateSelected = True
         
@@ -94,6 +95,10 @@ class Sidepanel(gtk.TextView):
             if offset >= ni["start"] and offset < ni["end"]:
                 event.window.set_cursor(self.cursor_hand)
                 return True
+        for ci in self.commentIters:
+            if offset >= ci["start"] and offset < ci["end"]:
+                event.window.set_cursor(self.cursor_hand)
+                return True
         event.window.set_cursor(self.cursor_standard)
         return True
 
@@ -102,33 +107,42 @@ class Sidepanel(gtk.TextView):
         (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
+
         node = None
         for ni in self.nodeIters:
             if offset >= ni["start"] and offset < ni["end"]:
                 node = ni
                 board = ni["node"]
-                if board in self.gamemodel.boards:
-                    self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
-                else:
-                    for vari in self.gamemodel.variations:
-                        if board in vari:
-                            # Go back to the common board of variations to let animation system work
-                            board_in_vari = board
-                            while board_in_vari not in self.gamemodel.boards:
-                                board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
-                            self.autoUpdateSelected = False
-                            self.boardview.shown = board_in_vari.ply
-                            break
-                    self.gamemodel.boards = vari
-                    self.autoUpdateSelected = True
-                    self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
+                if event.button == 1:
+                    if board in self.gamemodel.boards:
+                        self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
+                    else:
+                        for vari in self.gamemodel.variations:
+                            if board in vari:
+                                # Go back to the common board of variations to let animation system work
+                                board_in_vari = board
+                                while board_in_vari not in self.gamemodel.boards:
+                                    board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
+                                self.autoUpdateSelected = False
+                                self.boardview.shown = board_in_vari.ply
+                                break
+                        self.gamemodel.boards = vari
+                        self.autoUpdateSelected = True
+                        self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
 
-                self.update_selected_node()
+                    self.update_selected_node()
                 break
+        
+        if node is None and event.button == 1:
+            for ci in self.commentIters:
+                if offset >= ci["start"] and offset < ci["end"]:
+                    board = ci["node"]
+                    self.edit_comment(board=ci["node"])
+                    break
 
-        if event.button == 3:
-            menu = gtk.Menu()
+        elif event.button == 3:
             if node is not None:
+                menu = gtk.Menu()
                 if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].comments:
                     menuitem = gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
@@ -167,21 +181,11 @@ class Sidepanel(gtk.TextView):
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
 
-            else:
-                if self.gamemodel.boards[0].comments:
-                    menuitem = gtk.MenuItem(_("Edit start comment"))
-                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
-                    menu.append(menuitem)
-                else:
-                    menuitem = gtk.MenuItem(_("Add start comment"))
-                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
-                    menu.append(menuitem)
-
-            menu.show_all()
-            menu.popup( None, None, None, event.button, event.time)
+                menu.show_all()
+                menu.popup( None, None, None, event.button, event.time)
         return True
 
-    def edit_comment(self, widget, board):
+    def edit_comment(self, widget=None, board=None):
         dialog = gtk.Dialog(_("Edit comment"),
                      None,
                      gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -209,7 +213,9 @@ class Sidepanel(gtk.TextView):
             dialog.destroy()
             (iter_first, iter_last) = textbuffer.get_bounds()
             board.comments = []
-            board.comments.append(textbuffer.get_text(iter_first, iter_last))
+            comment = textbuffer.get_text(iter_first, iter_last)
+            if comment:
+                board.comments.append(comment)
             self.update()
         else:
             dialog.destroy()
@@ -266,9 +272,9 @@ class Sidepanel(gtk.TextView):
             if node.prev is None:
                 for comment in node.comments:
                     if node.ply == self.gamemodel.lowply:
-                        self.insert_comment(comment + "\n", level)
+                        self.insert_comment(comment + "\n", node, level)
                     else:
-                        self.insert_comment(comment, level)
+                        self.insert_comment(comment, node, level)
                 node = node.next
                 continue
             
@@ -277,7 +283,7 @@ class Sidepanel(gtk.TextView):
             
             ply += 1
 
-            buf.insert(end_iter(), self.__movestr(node, fan) + " ")
+            buf.insert(end_iter(), self.__movestr(node, fan))
             
             startIter = buf.get_iter_at_offset(start)
             endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -299,13 +305,15 @@ class Sidepanel(gtk.TextView):
                 
             ni = {}
             ni["node"] = node
-            ni["start"] = startIter.get_offset()        
+            ni["start"] = start       
             ni["end"] = end_iter().get_offset()
             self.nodeIters.append(ni)
             
+            buf.insert(end_iter(), " ")
+
             # Comments
             for comment in node.comments:
-                self.insert_comment(comment, level)
+                self.insert_comment(comment, node, level)
 
             new_line = False
 
@@ -339,13 +347,23 @@ class Sidepanel(gtk.TextView):
         if result and result != "*":
             buf.insert_with_tags_by_name(end_iter(), " "+result, "node")
 
-    def insert_comment(self, comment, level=0):
+    def insert_comment(self, comment, node, level=0):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
+        start = end_iter().get_offset()
+
         if level > 0:
             buf.insert_with_tags_by_name(end_iter(), comment, "comment", "margin")
         else:
             buf.insert_with_tags_by_name(end_iter(), comment, "comment")
+
+        ci = {}
+        ci["node"] = node
+        ci["comment"] = comment
+        ci["start"] = start     
+        ci["end"] = end_iter().get_offset()
+        self.commentIters.append(ci)
+        
         buf.insert(end_iter(), " ")
 
     def insert_header(self, gm):
@@ -487,4 +505,4 @@ class Sidepanel(gtk.TextView):
         else:
             movestr =  toSAN(node.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
-        return "%s %s%s" % (node.movecount, movestr, nagsymbols)
+        return "%s%s%s" % (node.movecount, movestr, nagsymbols)
