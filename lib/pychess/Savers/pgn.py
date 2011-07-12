@@ -6,7 +6,7 @@ from datetime import date
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.Move import listToSan, parseAny, toSAN, Move
+from pychess.Utils.Move import parseAny, toSAN, Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.lmove import ParsingError
