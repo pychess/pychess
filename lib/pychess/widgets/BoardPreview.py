@@ -107,6 +107,7 @@ class BoardPreview:
     def on_selection_changed (self, selection):
         iter = selection.get_selected()[1]
         if iter == None:
+            print 'iitt'
             self.gamemodel.boards = [Board(FEN_EMPTY)]
             del self.gamemodel.moves[:]
             self.boardview.shown = 0
