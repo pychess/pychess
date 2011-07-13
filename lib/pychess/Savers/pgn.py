@@ -202,7 +202,7 @@ def load (file):
         if not line: continue
         elif line.startswith("%"): continue
 
-        if line.startswith("["):
+        if line.startswith("[") and line.rstrip("\r\n").endswith("]"):
             if not inTags:
                 files.append(["",""])
                 inTags = True
