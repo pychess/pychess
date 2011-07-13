@@ -93,7 +93,7 @@ INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, \
                   ADJOURN_OFFER, PAUSE_OFFER, SWITCH_OFFER, HURRY_ACTION)
 
 # A few nice to have boards
-FEN_EMPTY = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
+FEN_EMPTY = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
 FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 ################################################################################
