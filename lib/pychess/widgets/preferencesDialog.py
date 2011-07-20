@@ -171,7 +171,7 @@ class EngineTab:
             
             def set_value (combobox, value):
                 engine = discoverer.getEngineByMd5(value)
-                if engine is not None:
+                if engine is None:
                     combobox.set_active(0)
                 else:
                     try:
