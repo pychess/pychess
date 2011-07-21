@@ -99,6 +99,8 @@ backup = """
     <engine protocol="cecp" protover="1" binname="amundsen">
         <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
+    <engine protocol="uci" protover="1" binname="robbolito">
+        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
     <engine protocol="uci" protover="1" binname="stockfish">
@@ -111,12 +113,17 @@ backup = """
         <meta><country>fr</country></meta></engine>
     <engine protocol="uci" protover="1" binname="toga2">
         <meta><country>de</country></meta></engine>
-    <engine protocol="uci" protover="1" binname="rybka">
-        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="hiarcs">
         <meta><country>gb</country></meta></engine>
     <engine protocol="uci" protover="1" binname="diablo">
         <meta><country>us</country><author>Marcus Predaski</author></meta></engine>
+
+    <engine protocol="uci" protover="1" binname="Houdini.exe">
+        <meta><country>be</country></meta>
+        <vm binname="wine"/></engine>
+    <engine protocol="uci" protover="1" binname="Rybka.exe">
+        <meta><country>ru</country></meta>
+        <vm binname="wine"/></engine>
 </engines>
 """ % ENGINES_XML_API_VERSION
 
