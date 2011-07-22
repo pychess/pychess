@@ -32,9 +32,7 @@ def create_test(lines, result, gameno):
 #PgnFile = load(open('/home/tamas/PGN/Alekhine.pgn'))
 PgnFile = load(open('gamefiles/world_matches.pgn'))
 for i, game in enumerate(PgnFile.games):
-    #20 is chaotic
-    #229 two comments for a move and a variation between them
-    print "%s/%s" % (i, len(PgnFile.games))
+    print "%s/%s" % (i+1, len(PgnFile.games))
     model = PgnFile.loadToModel(i, quick_parse=False)
     result = []
     walk(model.boards[0], result)
