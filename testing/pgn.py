@@ -8,42 +8,51 @@ from pychess.Utils.const import *
 
 
 class PgnTestCase(unittest.TestCase):
-    
-    def setUp(self):
-        self.PgnFile = load(open('gamefiles/world_matches.pgn'))
-
-    def testPGN(self):
-        """Testing pgn file"""
-        for i, game in enumerate(self.PgnFile.games):
-            print i
-            if i in (20, 109, 111, 157, 195, 197, 229) or i>229:
-                #20 is chaotic
-                #109 8. Nge2 is unnecessary, koz Nce2 leaves the king in check
-                #111 10. Nde2 (same)
-                #157 6. Nge2 (same)
-                #229 two comments for a move and a variation between them
-                # TODO: analyse remaining failures (i>229)
-                continue
-
-            model = self.PgnFile.loadToModel(i, quick_parse=False)
-            result = []
-            walk(model.boards[0], result)
-            result = " ".join(result)
-            status = reprResult[model.status]
-            
-            lines = game[1].replace('(\r\n', '(').replace('\r\n)', ')')
-            lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
-            lines = lines.splitlines()
-            lines = [line.strip() for line in lines]
-            self.assertEqual(' '.join(lines), "%s %s" % (result, status))
-    
-    def testMovre(self):
+    def test_movre(self):
         """Testing movre regexp"""
         moves = "e4 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# "+ \
                 "0-0-0 O-O-O 0-0 O-O Ka1 Kxf8 Kxd4+ "+ \
                 "Qc3 Rxh8 B1xg7 Nhxg2 Qe4xd5 Rb7+ Bxg4# N8xb2+ Qaxb7# Qd5xe4+"
         
         self.assertEqual(' '.join(movre.findall(moves)), ' '.join(moves.split()))
+
+def create_test(lines, result, gameno):
+    def test_expected(self):
+        for orig, new in zip(lines.split(), result.split()):
+            # Seems most .PGN unnecessary contains unambiguous notation
+            # when second move candidate is invalid (leaves king in check)
+            # f.e.: 1.e4 e5 2.d4 Nf6 3.Nc3 Bb4 Nge2
+            if len(orig) == len(new)+1 and orig[0] == new[0] and orig[2:] == new[1:]:
+                print 
+                print 'In game %s: %s %s' % (gameno, orig, new)
+            else:
+                self.assertEqual(orig, new)
+    return test_expected
+
+#PgnFile = load(open('/home/tamas/PGN/Alekhine.pgn'))
+PgnFile = load(open('gamefiles/world_matches.pgn'))
+for i, game in enumerate(PgnFile.games):
+    #20 is chaotic
+    #229 two comments for a move and a variation between them
+    print "%s/%s" % (i, len(PgnFile.games))
+    model = PgnFile.loadToModel(i, quick_parse=False)
+    result = []
+    walk(model.boards[0], result)
+    result = " ".join(result)
+    status = reprResult[model.status]
+    
+    lines = game[1].replace('.   ', '. ').replace('  }', '}').replace(' }', '}')
+    lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
+    lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
+    lines = lines.splitlines()
+    lines = [line.strip() for line in lines]
+    lines = ' '.join(lines)
+    result = "%s %s" % (result, status)
+
+    test_method = create_test(lines, result, i)
+    test_method.__name__ = 'test_game_%d' % i
+    setattr (PgnTestCase, test_method.__name__, test_method)
+
 
 if __name__ == '__main__':
     unittest.main()
