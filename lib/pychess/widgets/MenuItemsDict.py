@@ -7,13 +7,14 @@ from pychess.Utils.const import ACTION_MENU_ITEMS
 ################################################################################
 
 class GtkMenuItem (object):
-    def __init__ (self, name, gamewidget, sensitive=False, label=None):
+    def __init__ (self, name, gamewidget, sensitive=False, label=None, tooltip=None):
         assert type(sensitive) is bool
         assert label is None or type(label) is str
         self.name = name
         self.gamewidget = gamewidget
         self._sensitive = sensitive
         self._label = label
+        self._tooltip = tooltip
         
     @property
     def sensitive (self):
@@ -33,6 +34,15 @@ class GtkMenuItem (object):
         self._label = label
         self._set_widget("label", label)
     
+    @property
+    def tooltip (self):
+        return self._tooltip
+    @tooltip.setter
+    def tooltip (self, tooltip):
+        assert isinstance(tooltip, str) or isinstance(tooltip, unicode)
+        self._tooltip = tooltip
+        self._set_widget("tooltip-text", tooltip)
+    
     def _set_widget (self, property, value):
         if not self.gamewidget.isInFront(): return
         if gamewidget.widgets[self.name].get_property(property) != value:
@@ -47,6 +57,8 @@ class GtkMenuItem (object):
         self._set_widget("sensitive", self._sensitive)
         if self._label is not None:
             self._set_widget("label", self._label)
+        if self._tooltip is not None:
+            self._set_widget("tooltip-text", self._tooltip)
 
 class GtkMenuToggleButton (GtkMenuItem):
     def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
