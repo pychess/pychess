@@ -12,7 +12,7 @@ from pychess.Savers.ChessFile import LoadingError
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
         return string
-    return string[:maxlen-3] + "..."
+    return string[:maxlen-1] + "…"
 
 class BoardPreview:
     
