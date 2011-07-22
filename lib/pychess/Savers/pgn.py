@@ -112,9 +112,11 @@ def walk(node, result):
         if node is None:
             break
         
+        # Initial game or variation comment
         if node.prev is None:
-            for comment in node.comments:
-                store("{%s}" % comment)
+            for child in node.children:
+                if isinstance(child, str):
+                    store("{%s}" % child)
             node = node.next
             continue
 
@@ -128,13 +130,15 @@ def walk(node, result):
             if nag:
                 store(nag)
 
-        for comment in node.comments:
-            store("{%s}" % comment)
-
-        for var in node.variations:
-            store("(")
-            walk(var[0], result)
-            store(")")
+        for child in node.children:
+            if isinstance(child, str):
+                # comment
+                store("{%s}" % child)
+            else:
+                # variations
+                store("(")
+                walk(child[0], result)
+                store(")")
 
         if node.next:
             node = node.next
@@ -237,7 +241,7 @@ def parse_string(string, model, board, position, variation=False):
         if group == VARIATION_END:
             parenthesis -= 1
             if parenthesis == 0:
-                v_last_board.variations.append(parse_string(v_string[:-1], model, board.prev, position, variation=True))
+                v_last_board.children.append(parse_string(v_string[:-1], model, board.prev, position, variation=True))
                 v_string = ""
                 continue
 
@@ -273,7 +277,7 @@ def parse_string(string, model, board, position, variation=False):
                     board.movecount = m.group(MOVE_COUNT).rstrip()
 
                 if m.group(MOVE_COMMENT):
-                    board.punctuation += m.group(MOVE_COMMENT)
+                    board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
 
                 if last_board:
                     board.prev = last_board
@@ -286,13 +290,13 @@ def parse_string(string, model, board, position, variation=False):
                     model.moves.append(move)
 
             elif group == COMMENT_REST:
-                last_board.comments.append(text[1:])
+                last_board.children.append(text[1:])
 
             elif group == COMMENT_BRACE:
                 comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
                 comm = comm[1:-1].splitlines()
                 comment = ' '.join([line.strip() for line in comm])
-                last_board.comments.append(comment)
+                last_board.children.append(comment)
 
             elif group == COMMENT_NAG:
                 board.nags.append(text)
@@ -424,9 +428,10 @@ class PGNFile (ChessFile):
                 else:
                     walk(node.next, path+[node])
 
-                if node.variations: 
-                    for vari in node.variations:
-                        walk(vari[1], list(path))
+                if node.children: 
+                    for child in node.children:
+                        if isinstance(child, list):
+                            walk(child[1], list(path))
             
             # Collect all variation paths into a list of board lists
             # where the first one will be the boards of mainline game.
