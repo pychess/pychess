@@ -397,7 +397,8 @@ class EngineDiscoverer (GObject, PooledThread):
         # toBeRechecked = self.dom.findall('engine[recheck=true]')
         
         def count(self_, binname, engine, wentwell):
-            self.toBeRechecked[engine] = True
+            if wentwell:
+                self.toBeRechecked[engine] = True
             if all(self.toBeRechecked.values()):
                 self.emit("all_engines_discovered")
         self.connect("engine_discovered", count, True)
