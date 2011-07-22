@@ -136,25 +136,30 @@ class Sidepanel(gtk.TextView):
         if node is None and event.button == 1:
             for ci in self.commentIters:
                 if offset >= ci["start"] and offset < ci["end"]:
-                    board = ci["node"]
-                    self.edit_comment(board=ci["node"])
+                    self.edit_comment(board=ci["node"], index=ci["index"])
                     break
 
         elif event.button == 3:
             if node is not None:
                 menu = gtk.Menu()
-                if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].comments:
+                position = -1
+                for index, child in enumerate(board.children):
+                    if isinstance(child, str):
+                        position = index
+                        break
+
+                if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].children:
                     menuitem = gtk.MenuItem(_("Add start comment"))
-                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0])
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0], 0)
                     menu.append(menuitem)
 
-                if not board.comments:
+                if position == -1:
                     menuitem = gtk.MenuItem(_("Add comment"))
-                    menuitem.connect('activate', self.edit_comment, board)
+                    menuitem.connect('activate', self.edit_comment, board, 0)
                     menu.append(menuitem)
                 else:
                     menuitem = gtk.MenuItem(_("Edit comment"))
-                    menuitem.connect('activate', self.edit_comment, board)
+                    menuitem.connect('activate', self.edit_comment, board, position)
                     menu.append(menuitem)
 
                 symbol_menu1 = gtk.Menu()
@@ -185,7 +190,7 @@ class Sidepanel(gtk.TextView):
                 menu.popup( None, None, None, event.button, event.time)
         return True
 
-    def edit_comment(self, widget=None, board=None):
+    def edit_comment(self, widget=None, board=None, index=0):
         dialog = gtk.Dialog(_("Edit comment"),
                      None,
                      gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -198,7 +203,11 @@ class Sidepanel(gtk.TextView):
         textedit.set_wrap_mode(gtk.WRAP_WORD)
 
         textbuffer = textedit.get_buffer()
-        textbuffer.set_text(' '.join(board.comments))
+        if not board.children:
+            board.children.append("")
+        elif not isinstance(board.children[index], str):
+            board.children.insert(index, "")
+        textbuffer.set_text(board.children[index])
         
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -212,34 +221,45 @@ class Sidepanel(gtk.TextView):
         if response == gtk.RESPONSE_ACCEPT:
             dialog.destroy()
             (iter_first, iter_last) = textbuffer.get_bounds()
-            board.comments = []
             comment = textbuffer.get_text(iter_first, iter_last)
-            if comment:
-                board.comments.append(comment)
-            self.update()
+            if board.children[index] != comment:
+                board.children[index] = comment
+                self.gamemodel.needsSave = True
+                self.update()
         else:
             dialog.destroy()
 
     def symbol_menu1_activate(self, widget, board, symbol):
         if len(board.nags) == 0:
             board.nags.append(symbol2nag(symbol))
+            self.gamemodel.needsSave = True
         else:
-            board.nags[0] = symbol2nag(symbol)
-        self.update()
+            if board.nags[0] != symbol2nag(symbol):
+                board.nags[0] = symbol2nag(symbol)
+                self.gamemodel.needsSave = True
+        if self.gamemodel.needsSave:
+            self.update()
 
     def symbol_menu2_activate(self, widget, board, symbol):
         if len(board.nags) == 0:
             board.nags.append("")
             board.nags.append(symbol2nag(symbol))
+            self.gamemodel.needsSave = True
         if len(board.nags) == 1:
             board.nags.append(symbol2nag(symbol))
+            self.gamemodel.needsSave = True
         else:
-            board.nags[1] = symbol2nag(symbol)
-        self.update()
+            if board.nags[1] != symbol2nag(symbol):
+                board.nags[1] = symbol2nag(symbol)
+                self.gamemodel.needsSave = True
+        if self.gamemodel.needsSave:
+            self.update()
 
     def remove_symbols(self, widget, board):
-        board.nags = []
-        self.update()
+        if board.nags:
+            board.nags = []
+            self.update()
+            self.gamemodel.needsSave = True
 
     # Update the selected node highlight
     def update_selected_node(self):
@@ -269,12 +289,14 @@ class Sidepanel(gtk.TextView):
             if node is None:
                 break
             
+            # Initial game or variation comment
             if node.prev is None:
-                for comment in node.comments:
-                    if node.ply == self.gamemodel.lowply:
-                        self.insert_comment(comment + "\n", node, level)
-                    else:
-                        self.insert_comment(comment, node, level)
+                for index, child in enumerate(node.children):
+                    if isinstance(child, str):
+                        if node.ply == self.gamemodel.lowply:
+                            self.insert_comment(child + "\n", node, index, level)
+                        else:
+                            self.insert_comment(child, node, index, level)
                 node = node.next
                 continue
             
@@ -311,33 +333,33 @@ class Sidepanel(gtk.TextView):
             
             buf.insert(end_iter(), " ")
 
-            # Comments
-            for comment in node.comments:
-                self.insert_comment(comment, node, level)
-
-            new_line = False
-
-            # Variations
-            if level == 0 and len(node.variations):
-                buf.insert(end_iter(), "\n")
-                new_line = True
-            
-            for var in node.variations:
-                if level == 0:
-                    buf.insert_with_tags_by_name(end_iter(), "[", "variation-toplevel", "variation-margin")
-                elif (level+1) % 2 == 0:
-                    buf.insert_with_tags_by_name(end_iter(), " (", "variation-even", "variation-margin")
+            for index, child in enumerate(node.children):
+                if isinstance(child, str):
+                    # comment
+                    self.insert_comment(child, node, index, level)
                 else:
-                    buf.insert_with_tags_by_name(end_iter(), " (", "variation-uneven", "variation-margin")
-                
-                self.insert_nodes(var[0], level+1, ply-1)
+                    # variation
+                    new_line = False
 
-                if level == 0:
-                    buf.insert(end_iter(), "]\n")
-                elif (level+1) % 2 == 0:
-                    buf.insert_with_tags_by_name(end_iter(), ") ", "variation-even", "variation-margin")
-                else:
-                    buf.insert_with_tags_by_name(end_iter(), ") ", "variation-uneven", "variation-margin")
+                    if level == 0:
+                        buf.insert(end_iter(), "\n")
+                        new_line = True
+                    
+                    if level == 0:
+                        buf.insert_with_tags_by_name(end_iter(), "[", "variation-toplevel", "variation-margin")
+                    elif (level+1) % 2 == 0:
+                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-even", "variation-margin")
+                    else:
+                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-uneven", "variation-margin")
+                    
+                    self.insert_nodes(child[0], level+1, ply-1)
+
+                    if level == 0:
+                        buf.insert(end_iter(), "]\n")
+                    elif (level+1) % 2 == 0:
+                        buf.insert_with_tags_by_name(end_iter(), ") ", "variation-even", "variation-margin")
+                    else:
+                        buf.insert_with_tags_by_name(end_iter(), ") ", "variation-uneven", "variation-margin")
             
             if node.next:
                 node = node.next
@@ -347,7 +369,7 @@ class Sidepanel(gtk.TextView):
         if result and result != "*":
             buf.insert_with_tags_by_name(end_iter(), " "+result, "node")
 
-    def insert_comment(self, comment, node, level=0):
+    def insert_comment(self, comment, node, index, level=0):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
@@ -360,6 +382,7 @@ class Sidepanel(gtk.TextView):
         ci = {}
         ci["node"] = node
         ci["comment"] = comment
+        ci["index"] = index
         ci["start"] = start     
         ci["end"] = end_iter().get_offset()
         self.commentIters.append(ci)

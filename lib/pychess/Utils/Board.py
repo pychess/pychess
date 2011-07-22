@@ -24,8 +24,8 @@ class Board:
 
         self.movecount = ""
         self.nags = []
-        self.comments = []
-        self.variations = []
+        # children can contain comments and variations
+        self.children = []
         self.next = None
         self.prev = None
         
