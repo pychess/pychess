@@ -50,7 +50,9 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.create_tag("variation-uneven", foreground="darkred", style="italic")
         self.textbuffer.create_tag("selected", background_full_height=True, background="black", foreground="white")
         self.textbuffer.create_tag("margin", left_margin=4)
-        self.textbuffer.create_tag("variation-margin", left_margin=20)
+        self.textbuffer.create_tag("variation-margin0", left_margin=20)
+        self.textbuffer.create_tag("variation-margin1", left_margin=36)
+        self.textbuffer.create_tag("variation-margin2", left_margin=52)
 
     def load(self, gmwidg):
         __widget__ = gtk.ScrolledWindow()
@@ -312,14 +314,16 @@ class Sidepanel(gtk.TextView):
             
             if level == 0:
                 buf.apply_tag_by_name("node", startIter, endIter)
+                buf.apply_tag_by_name("margin", startIter, endIter)
             elif level == 1:
                 buf.apply_tag_by_name("variation-toplevel", startIter, endIter)
+                buf.apply_tag_by_name("variation-margin0", startIter, endIter)
             elif level % 2 == 0:
                 buf.apply_tag_by_name("variation-even", startIter, endIter)
+                buf.apply_tag_by_name("variation-margin1", startIter, endIter)
             else:
                 buf.apply_tag_by_name("variation-uneven", startIter, endIter)
-
-            buf.apply_tag_by_name("margin", startIter, endIter)
+                buf.apply_tag_by_name("variation-margin2", startIter, endIter)
 
             if self.boardview.shown >= self.gamemodel.lowply and \
                node == self.gamemodel.getBoardAtPly(self.boardview.shown):
@@ -333,33 +337,32 @@ class Sidepanel(gtk.TextView):
             
             buf.insert(end_iter(), " ")
 
+            new_line = False
             for index, child in enumerate(node.children):
                 if isinstance(child, str):
                     # comment
                     self.insert_comment(child, node, index, level)
                 else:
                     # variation
-                    new_line = False
-
-                    if level == 0:
+                    if not new_line:
                         buf.insert(end_iter(), "\n")
                         new_line = True
                     
                     if level == 0:
-                        buf.insert_with_tags_by_name(end_iter(), "[", "variation-toplevel", "variation-margin")
+                        buf.insert_with_tags_by_name(end_iter(), "[", "variation-toplevel", "variation-margin0")
                     elif (level+1) % 2 == 0:
-                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-even", "variation-margin")
+                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-even", "variation-margin1")
                     else:
-                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-uneven", "variation-margin")
+                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-uneven", "variation-margin2")
                     
                     self.insert_nodes(child[0], level+1, ply-1)
 
                     if level == 0:
                         buf.insert(end_iter(), "]\n")
                     elif (level+1) % 2 == 0:
-                        buf.insert_with_tags_by_name(end_iter(), ") ", "variation-even", "variation-margin")
+                        buf.insert_with_tags_by_name(end_iter(), ")\n", "variation-even", "variation-margin1")
                     else:
-                        buf.insert_with_tags_by_name(end_iter(), ") ", "variation-uneven", "variation-margin")
+                        buf.insert_with_tags_by_name(end_iter(), ")\n", "variation-uneven", "variation-margin2")
             
             if node.next:
                 node = node.next
@@ -421,14 +424,14 @@ class Sidepanel(gtk.TextView):
             result = gm.tags['Result']
         buf.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
-        text = ""
         eco = gm.tags.get('ECO')
         if eco:
-            text += eco
+            buf.insert_with_tags_by_name(end_iter(), eco, "head2")
 
+        text = ""
         event = gm.tags['Event']
         if event and event != "?":
-            if len(text) > 0:
+            if eco:
                 text += ', '
             text += event
 
@@ -440,12 +443,14 @@ class Sidepanel(gtk.TextView):
 
         round = gm.tags['Round']
         if round and round != "?":
-            text += ', ' + _('round %s') % round
+            if len(text) > 0:
+                text += ', '
+            text += _('round %s') % round
 
         game_date = gm.tags.get('Date')
         if game_date is None:
             game_date = "%02d.%02d.%02d" % (gm.tags['Year'], gm.tags['Month'], gm.tags['Day'])
-        if not '?' in game_date:
+        if (not '?' in game_date) and game_date.count('.') == 2:
             y, m, d = map(int, game_date.split('.'))
             # strftime() is limited to > 1900 dates
             try:
