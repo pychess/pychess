@@ -193,7 +193,13 @@ pattern = re.compile(r"""
     |(\()                # variation start
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
-    |(([0-9]{1,3}[.]+\s*)*([a-hxOoKQRBN0-8+#=-]{2,7})([\?!]{1,2})*)    # move (full, count, move with ?!, ?!)
+    |(
+    ([0-9]{1,3}\s*[.]*\s*)?
+    ([a-hxOoKQRBN1-8+#=]{2,7}
+    |O\-O(?:\-O)?
+    |0\-0(?:\-0)?)
+    ([\?!]{1,2})*
+    )    # move (full, count, move with ?!, ?!)
     """, re.VERBOSE | re.DOTALL)
 
 
@@ -206,12 +212,15 @@ def load (file):
         if not line: continue
         elif line.startswith("%"): continue
 
-        if line.startswith("[") and line.rstrip("\r\n").endswith("]"):
-            if not inTags:
-                files.append(["",""])
-                inTags = True
-            files[-1][0] += line
-
+        if line.startswith("["):
+            if tagre.match(line) is not None:
+                if not inTags:
+                    files.append(["",""])
+                    inTags = True
+                files[-1][0] += line
+            else:
+                if not inTags:
+                    files[-1][1] += line
         else:
             inTags = False
             if not files:
@@ -263,8 +272,8 @@ def parse_string(string, model, board, position, variation=False):
                     notation, reason, boardfen = e.args
                     ply = boards[-1].ply
                     if ply % 2 == 0:
-                        moveno = "%d." % (i/2+1)
-                    else: moveno = "%d..." % (i/2+1)
+                        moveno = "%d." % (ply/2+1)
+                    else: moveno = "%d..." % (ply/2+1)
                     errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                 'moveno': moveno, 'notation': notation}
                     errstr2 = _("The move failed because %s.") % reason
@@ -274,7 +283,13 @@ def parse_string(string, model, board, position, variation=False):
                 board = boards[-1].move(move)
 
                 if m.group(MOVE_COUNT):
-                    board.movecount = m.group(MOVE_COUNT).rstrip()
+                    ply = boards[-1].ply
+                    if ply % 2 == 0:
+                        mvcount = "%d." % (ply/2+1)
+                    else:
+                        mvcount = "%d..." % (ply/2+1)
+                        
+                    board.movecount = mvcount
 
                 if m.group(MOVE_COMMENT):
                     board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
@@ -431,7 +446,8 @@ class PGNFile (ChessFile):
                 if node.children: 
                     for child in node.children:
                         if isinstance(child, list):
-                            walk(child[1], list(path))
+                            if len(child) > 1:
+                                walk(child[1], list(path))
             
             # Collect all variation paths into a list of board lists
             # where the first one will be the boards of mainline game.

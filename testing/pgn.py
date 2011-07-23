@@ -23,14 +23,22 @@ def create_test(lines, result, gameno):
             # when second move candidate is invalid (leaves king in check)
             # f.e.: 1.e4 e5 2.d4 Nf6 3.Nc3 Bb4 Nge2
             if len(orig) == len(new)+1 and orig[0] == new[0] and orig[2:] == new[1:]:
-                print 
-                print 'In game %s: %s %s' % (gameno, orig, new)
-            else:
-                self.assertEqual(orig, new)
+                continue
+
+            if orig[-1] in "?!" and new[-1] not in "?!":
+                # pgn export format uses nag
+                break
+            elif orig == "0-0" or orig == "0-0-0":
+                continue
+
+            self.assertEqual(orig, new)
+
     return test_expected
 
-#PgnFile = load(open('/home/tamas/PGN/Alekhine.pgn'))
-PgnFile = load(open('gamefiles/world_matches.pgn'))
+#PgnFile = load(open('/home/tamas/PGN/russian_chess.pgn'))
+#PgnFile = load(open('/home/tamas/PGN/kasp_top.pgn'))
+PgnFile = load(open('/home/tamas/PGN/hartwig.pgn'))
+#PgnFile = load(open('gamefiles/world_matches.pgn'))
 for i, game in enumerate(PgnFile.games):
     print "%s/%s" % (i+1, len(PgnFile.games))
     model = PgnFile.loadToModel(i, quick_parse=False)
@@ -39,7 +47,12 @@ for i, game in enumerate(PgnFile.games):
     result = " ".join(result)
     status = reprResult[model.status]
     
-    lines = game[1].replace('.   ', '. ').replace('  }', '}').replace(' }', '}')
+    lines = game[1].replace('.   ', '. ').replace('.  ', '. ')
+    lines = lines.replace('\r\n', ' ')
+    lines = lines.replace('  )', ')').replace(' )', ')')
+    lines = lines.replace('(  ', '(').replace('( ', '(')
+    lines = lines.replace('  }', '}').replace(' }', '}')
+    lines = lines.replace('{  ', '{').replace('{ ', '{')
     lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
     lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
     lines = lines.splitlines()
@@ -48,7 +61,7 @@ for i, game in enumerate(PgnFile.games):
     result = "%s %s" % (result, status)
 
     test_method = create_test(lines, result, i)
-    test_method.__name__ = 'test_game_%d' % i
+    test_method.__name__ = 'test_game_%d' % (i+1)
     setattr (PgnTestCase, test_method.__name__, test_method)
 
 
