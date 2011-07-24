@@ -37,8 +37,8 @@ def create_test(lines, result, gameno):
 
 #PgnFile = load(open('/home/tamas/PGN/russian_chess.pgn'))
 #PgnFile = load(open('/home/tamas/PGN/kasp_top.pgn'))
-PgnFile = load(open('/home/tamas/PGN/hartwig.pgn'))
-#PgnFile = load(open('gamefiles/world_matches.pgn'))
+#PgnFile = load(open('/home/tamas/PGN/hartwig.pgn'))
+PgnFile = load(open('gamefiles/world_matches.pgn'))
 for i, game in enumerate(PgnFile.games):
     print "%s/%s" % (i+1, len(PgnFile.games))
     model = PgnFile.loadToModel(i, quick_parse=False)
