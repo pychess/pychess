@@ -162,7 +162,7 @@ def stripBrackets (string):
     return result
 
 
-tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.+?)\"\]")
+tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.*?)\"\]")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
 movre = re.compile(r"""
     (                   # group start
@@ -221,6 +221,8 @@ def load (file):
             else:
                 if not inTags:
                     files[-1][1] += line
+                else:
+                    print "Warning: ignored invalid tag pair %s" % line
         else:
             inTags = False
             if not files:
