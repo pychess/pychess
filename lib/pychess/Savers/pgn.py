@@ -255,6 +255,7 @@ def parse_string(string, model, board, position, variation=False):
             if parenthesis == 0:
                 v_last_board.children.append(parse_string(v_string[:-1], model, board.prev, position, variation=True))
                 v_string = ""
+                prev_group = VARIATION_END
                 continue
 
         elif group == VARIATION_START:
