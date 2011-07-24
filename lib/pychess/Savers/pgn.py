@@ -244,6 +244,7 @@ def parse_string(string, model, board, position, variation=False):
     error = None
     parenthesis = 0
     v_string = ""
+    prev_group = -1
     for i, m in enumerate(re.finditer(pattern, string)):
         group, text = m.lastindex, m.group(m.lastindex)
         if parenthesis > 0:
@@ -284,14 +285,15 @@ def parse_string(string, model, board, position, variation=False):
 
                 board = boards[-1].move(move)
 
-                if m.group(MOVE_COUNT):
-                    ply = boards[-1].ply
-                    if ply % 2 == 0:
-                        mvcount = "%d." % (ply/2+1)
-                    else:
-                        mvcount = "%d..." % (ply/2+1)
-                        
-                    board.movecount = mvcount
+                #if m.group(MOVE_COUNT):
+                ply = boards[-1].ply
+                if ply % 2 == 0:
+                    mvcount = "%d." % (ply/2+1)
+                elif prev_group != FULL_MOVE:
+                    mvcount = "%d..." % (ply/2+1)
+                else:
+                    mvcount = ""        
+                board.movecount = mvcount
 
                 if m.group(MOVE_COMMENT):
                     board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
@@ -327,6 +329,9 @@ def parse_string(string, model, board, position, variation=False):
 
             else:
                 print "Unknown:",text
+
+        if group != COMMENT_NAG:
+            prev_group = group
 
         if error:
             raise error
