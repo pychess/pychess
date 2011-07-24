@@ -351,14 +351,14 @@ class Sidepanel(gtk.TextView):
                     if level == 0:
                         buf.insert_with_tags_by_name(end_iter(), "[", "variation-toplevel", "variation-margin0")
                     elif (level+1) % 2 == 0:
-                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-even", "variation-margin1")
+                        buf.insert_with_tags_by_name(end_iter(), "(", "variation-even", "variation-margin1")
                     else:
-                        buf.insert_with_tags_by_name(end_iter(), " (", "variation-uneven", "variation-margin2")
+                        buf.insert_with_tags_by_name(end_iter(), "(", "variation-uneven", "variation-margin2")
                     
                     self.insert_nodes(child[0], level+1, ply-1)
 
                     if level == 0:
-                        buf.insert(end_iter(), "]\n")
+                        buf.insert_with_tags_by_name(end_iter(), "]\n", "variation-toplevel", "variation-margin0")
                     elif (level+1) % 2 == 0:
                         buf.insert_with_tags_by_name(end_iter(), ")\n", "variation-even", "variation-margin1")
                     else:
