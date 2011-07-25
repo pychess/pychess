@@ -115,7 +115,7 @@ def walk(node, result):
         # Initial game or variation comment
         if node.prev is None:
             for child in node.children:
-                if isinstance(child, str):
+                if isinstance(child, basestring):
                     store("{%s}" % child)
             node = node.next
             continue
@@ -131,7 +131,7 @@ def walk(node, result):
                 store(nag)
 
         for child in node.children:
-            if isinstance(child, str):
+            if isinstance(child, basestring):
                 # comment
                 store("{%s}" % child)
             else:
@@ -217,10 +217,10 @@ def load (file):
                 if not inTags:
                     files.append(["",""])
                     inTags = True
-                files[-1][0] += line
+                files[-1][0] += line.decode("latin_1")
             else:
                 if not inTags:
-                    files[-1][1] += line
+                    files[-1][1] += line.decode('latin_1')
                 else:
                     print "Warning: ignored invalid tag pair %s" % line
         else:
@@ -229,8 +229,8 @@ def load (file):
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
                 files.append(["",""])
-            files[-1][1] += line
-
+            files[-1][1] += line.decode('latin_1')
+                
     return PGNFile (files)
 
 
