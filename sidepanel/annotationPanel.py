@@ -146,7 +146,7 @@ class Sidepanel(gtk.TextView):
                 menu = gtk.Menu()
                 position = -1
                 for index, child in enumerate(board.children):
-                    if isinstance(child, str):
+                    if isinstance(child, basestring):
                         position = index
                         break
 
@@ -294,7 +294,7 @@ class Sidepanel(gtk.TextView):
             # Initial game or variation comment
             if node.prev is None:
                 for index, child in enumerate(node.children):
-                    if isinstance(child, str):
+                    if isinstance(child, basestring):
                         if node.ply == self.gamemodel.lowply:
                             self.insert_comment(child + "\n", node, index, level)
                         else:
@@ -339,7 +339,7 @@ class Sidepanel(gtk.TextView):
 
             new_line = False
             for index, child in enumerate(node.children):
-                if isinstance(child, str):
+                if isinstance(child, basestring):
                     # comment
                     self.insert_comment(child, node, index, level)
                 else:
