@@ -207,7 +207,7 @@ class Sidepanel(gtk.TextView):
         textbuffer = textedit.get_buffer()
         if not board.children:
             board.children.append("")
-        elif not isinstance(board.children[index], str):
+        elif not isinstance(board.children[index], basestring):
             board.children.insert(index, "")
         textbuffer.set_text(board.children[index])
         
