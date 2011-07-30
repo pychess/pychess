@@ -307,7 +307,8 @@ class Sidepanel(gtk.TextView):
             
             ply += 1
 
-            buf.insert(end_iter(), self.__movestr(node, fan))
+            movestr = self.__movestr(node, fan)
+            buf.insert(end_iter(), movestr)
             
             startIter = buf.get_iter_at_offset(start)
             endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -533,4 +534,5 @@ class Sidepanel(gtk.TextView):
         else:
             movestr =  toSAN(node.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
-        return "%s%s%s" % (node.movecount, movestr, nagsymbols)
+        # To prevent wrap castling we will use hyphen bullet (U+2043)
+        return "%s%s%s" % (node.movecount, movestr.replace("-","⁃"), nagsymbols)
