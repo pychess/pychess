@@ -41,6 +41,60 @@ def genCastles (board):
             move = generateOne (BLACK, 0, C8, D8) 
             if move: yield move
 
+def genPieceMoves(board, piece):
+    """"
+    Used by parseSAN only to accelerate it a bit
+    King castes are not generated!
+    """
+    
+    friends = board.friends[board.color]
+    notfriends = ~friends
+    if piece == KNIGHT:
+        knights = board.boards[board.color][KNIGHT]
+        knightMoves = moveArray[KNIGHT]
+        for cord in iterBits(knights):
+            for c in iterBits(knightMoves[cord] & notfriends):
+                yield newMove(cord, c)
+
+    elif piece == KING:
+        kings = board.boards[board.color][KING]
+        kingMoves = moveArray[KING]
+        cord = firstBit( kings )
+        for c in iterBits(kingMoves[cord] & notfriends):
+            yield newMove(cord, c)
+
+    elif piece == BISHOP:
+        blocker = board.blocker
+        bishops = board.boards[board.color][BISHOP]
+        for cord in iterBits(bishops):
+            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                          attack135[cord][ray135[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
+
+    elif piece == ROOK:
+        blocker = board.blocker
+        rooks = board.boards[board.color][ROOK]
+        for cord in iterBits(rooks):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
+
+    elif piece == QUEEN:
+        blocker = board.blocker
+        queens = board.boards[board.color][QUEEN]
+        for cord in iterBits(queens):
+            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                          attack135[cord][ray135[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
+        for cord in iterBits(queens):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
+
 def genAllMoves (board):
     
     blocker = board.blocker

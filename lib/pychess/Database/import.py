@@ -237,8 +237,10 @@ if __name__ == "__main__":
                 if file[-4:].lower() == ".pgn":
                     imp.do_import(os.path.join(arg, file), conn)
     else:
-        imp.do_import(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../../testing/gamefiles', "annotated.pgn"), conn)
-        imp.do_import(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../../testing/gamefiles', "dortmund.pgn"), conn)
-        imp.do_import(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../../testing/gamefiles', "world_matches.pgn"), conn)
+        path = os.path.abspath(os.path.dirname(__file__))
+        #path = "/home/tamas/gbtami-database/lib/pychess/Database"
+        imp.do_import(os.path.join(path, '../../../testing/gamefiles', "annotated.pgn"), conn)
+        imp.do_import(os.path.join(path, '../../../testing/gamefiles', "dortmund.pgn"), conn)
+        imp.do_import(os.path.join(path, '../../../testing/gamefiles', "world_matches.pgn"), conn)
         
     print_db(conn)
