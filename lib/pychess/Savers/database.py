@@ -36,7 +36,7 @@ def walk(node, arr, txt):
         if node.prev is None:
             for child in node.children:
                 if isinstance(child, basestring):
-                    arr.append(-1)
+                    arr.append(COMMENT)
                     txt.append(child)
             node = node.next
             continue

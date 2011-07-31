@@ -6,10 +6,10 @@ from datetime import date
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.Move import parseAny, toSAN, Move
+from pychess.Utils.Move import toSAN, Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
-from pychess.Utils.lutils.lmove import ParsingError
+from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ChessFile import ChessFile, LoadingError
@@ -487,7 +487,7 @@ class PGNFile (ChessFile):
 
                     mstr = m.group(MOVE)
                     try:
-                        move = parseAny (boards[-1], mstr)
+                        move = Move(parseSAN(boards[-1].board, mstr))
                     except ParsingError, e:
                         notation, reason, boardfen = e.args
                         ply = boards[-1].ply
@@ -502,6 +502,7 @@ class PGNFile (ChessFile):
 
                     board = boards[-1].move(move)
 
+                    # TODO: is this realy belongs here?
                     ply = boards[-1].ply
                     if ply % 2 == 0:
                         mvcount = "%d." % (ply/2+1)

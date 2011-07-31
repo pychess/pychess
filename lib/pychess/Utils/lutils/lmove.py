@@ -237,7 +237,7 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move is too short"), board.asFen())
     
     notat = san
-    
+
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]
     
@@ -311,7 +311,7 @@ def parseSAN (board, san):
         
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
-    
+
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
     # want to know
     frank = None
@@ -325,11 +325,24 @@ def parseSAN (board, san):
     if notat and notat[0] in reprRank:
         frank = int(notat[0])-1
         notat = notat[1:]
-    
+
+    if piece == PAWN:
+        if (ffile is not None) and ffile != FILE(tcord):
+            # capture
+            if board.color == WHITE:
+                return newMove(tcord-7 if ffile > FILE(tcord) else tcord-9, tcord, flag)
+            else:
+                return newMove(tcord+7 if ffile < FILE(tcord) else tcord+9, tcord, flag)
+        else:
+            if board.color == WHITE:
+                return newMove(tcord-16 if RANK(tcord)==3 and not (board.boards[WHITE][PAWN] & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8, tcord, flag)
+            else:
+                return newMove(tcord+16 if RANK(tcord)==4 and not (board.boards[BLACK][PAWN] & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8, tcord, flag)
+
     # We find all pieces who could have done it. (If san was legal, there should
     # never be more than one)
-    from lmovegen import genAllMoves
-    for move in genAllMoves(board):
+    from lmovegen import genPieceMoves
+    for move in genPieceMoves(board, piece):
         if TCORD(move) != tcord:
             continue
         f = FCORD(move)
