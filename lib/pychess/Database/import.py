@@ -79,6 +79,16 @@ class PgnImport():
         try:
             for i, game in enumerate(cf.games):
                 print i
+                movelist = array("h")
+                comments = []
+                model = cf.loadToModel(i, quick_parse=False)
+                database_walk(model.boards[0], movelist, comments)
+                
+                if not movelist:
+                    if (not comments) and (cf._getTag(i, 'White') is None) and (cf._getTag(i, 'Black') is None):
+                        print "empty game"
+                        continue
+                
                 game_event = self.get_id(cf._getTag(i, 'Event'), self.event_dict, self.event_data, EVENT)
 
                 game_site = self.get_id(cf._getTag(i, 'Site'), self.site_dict, self.site_data, SITE)
@@ -125,35 +135,29 @@ class PgnImport():
                 annotator = cf._getTag(i, "Annotator")
                 annotator = self.get_id(annotator, self.player_dict, self.player_data, PLAYER)
 
-                model = cf.loadToModel(i, quick_parse=False)
+                self.game_data.append({
+                    'event_id': game_event,
+                    'site_id': game_site,
+                    'date_year': game_year,
+                    'date_month': game_month,
+                    'date_day': game_day,
+                    'round': game_round,
+                    'white_id': white,
+                    'black_id': black,
+                    'result': result,
+                    'white_elo': white_elo,
+                    'black_elo': black_elo,
+                    'ply_count': ply_count,
+                    'eco': eco,
+                    'fen': fen,
+                    'variant': variant,
+                    'board': board,
+                    'annotator_id': annotator,
+                    'movelist': movelist.tostring(),
+                    'comments': u"|".join(comments),
+                    })
 
-                movelist = array("h")
-                comments = []
-                database_walk(model.boards[0], movelist, comments)
-                
-                if len(self.game_data) < CHUNK:
-                    self.game_data.append({
-                        'event_id': game_event,
-                        'site_id': game_site,
-                        'date_year': game_year,
-                        'date_month': game_month,
-                        'date_day': game_day,
-                        'round': game_round,
-                        'white_id': white,
-                        'black_id': black,
-                        'result': result,
-                        'white_elo': white_elo,
-                        'black_elo': black_elo,
-                        'ply_count': ply_count,
-                        'eco': eco,
-                        'fen': fen,
-                        'variant': variant,
-                        'board': board,
-                        'annotator_id': annotator,
-                        'movelist': movelist.tostring(),
-                        'comments': "|".join(comments),
-                        })
-                else:
+                if len(self.game_data) >= CHUNK:
                     if self.event_data:
                         conn.execute(self.ins_event, self.event_data)
                         self.event_data = []
