@@ -2,13 +2,15 @@
 
 from array import array
 
-from sqlalchemy import create_engine, select, and_
+from sqlalchemy import create_engine, select, insert, and_
 
 from pgn import PGNFile
-from pychess.Utils.const import reprResult
+from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import Move
+from pychess.Utils.const import *
 from pychess.Database.model import engine, metadata, event, site, player, game
+from pychess.Variants.fischerandom import FischerRandomChess
 
 __label__ = _("PyChess database")
 __endings__ = "pdb",
@@ -16,16 +18,76 @@ __append__ = True
 
 COMMENT, VARI_START, VARI_END, NAG = -1, -2, -3, -4
 
+
 def save (file, model):
     movelist = array("h")
     comments = []
     walk(model.boards[0], movelist, comments)
+
+    game_event = model.tags["Event"]
+    game_site = model.tags["Site"]
+    year, month, day = int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])
+    game_round = model.tags.get("Round")
+    white = repr(model.players[WHITE])
+    black = repr(model.players[BLACK])
+    result = model.status
+    eco = model.tags.get("ECO")
+    board = int(model.tags.get("Board")) if model.tags.get("Board") else None
+    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
+    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
+    variant = 1 if issubclass(model.variant, FischerRandomChess) else None
+    fen = model.boards[0].asFen() if model.boards[0].asFen() != FEN_START else None
+    annotator = model.tags.get("Annotator")
+    ply_count = model.ply-model.lowply
+
+    def get_id(table, name):
+        if not name:
+            return None
+
+        s = select([table.c.id], table.c.name==name.decode("utf_8"))
+        result = conn.execute(s)
+        id_ = result.scalar()
+        if id_ is None:
+            result = conn.execute(table.insert().values(name=name.decode("utf_8")))
+            id_ = result.inserted_primary_key[0]
+        return id_
+
+    conn = engine.connect()
+
+    event_id = get_id(event, game_event)
+    site_id = get_id(site, game_site)
+    white_id = get_id(player, white)
+    black_id = get_id(player, black)
+    annotator_id = get_id(player, annotator)
+
+    new_values = {
+        'event_id': event_id,
+        'site_id': site_id,
+        'date_year': year,
+        'date_month': month,
+        'date_day': day,
+        'round': game_round,
+        'white_id': white_id,
+        'black_id': black_id,
+        'result': result,
+        'white_elo': white_elo,
+        'black_elo': black_elo,
+        'ply_count': ply_count,
+        'eco': eco,
+        'board': board,
+        'fen': fen,
+        'variant': variant,
+        'annotator_id': annotator_id,
+        'movelist': movelist.tostring(),
+        'comments': "|".join(comments).decode("utf_8"),
+        }
+
     if hasattr(model, "game_id") and model.game_id is not None:
-        # append
-        pass
+        result = conn.execute(game.update().where(game.c.id==model.game_id).values(new_values))
     else:
-        # replace
-        pass
+        result = conn.execute(game.insert().values(new_values))
+        model.game_id = result.inserted_primary_key
+
 
 def walk(node, arr, txt):
     while True: 
@@ -63,6 +125,7 @@ def walk(node, arr, txt):
         else:
             break
 
+
 def load(file):
     pl1 = player.alias()
     pl2 = player.alias()
@@ -72,17 +135,20 @@ def load(file):
                 event.c.name.label('Event'), site.c.name.label('Site'), game.c.round.label('Round'), 
                 game.c.date_year.label('Year'), game.c.date_month.label('Month'), game.c.date_day.label('Day'),
                 game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'), game.c.eco.label('ECO'),
-                game.c.fen.label('FEN'), game.c.variant.label('Variant'), pl3.c.name.label('Annotator')],
-                and_(game.c.white_id==pl1.c.id, game.c.black_id==pl2.c.id,
-                     game.c.event_id==event.c.id, game.c.site_id==site.c.id,
-                     game.c.annotator_id==pl3.c.id))
-                 
+                game.c.fen.label('Board'), game.c.fen.label('FEN'), game.c.variant.label('Variant'), pl3.c.name.label('Annotator')],
+                from_obj=[
+                    game.outerjoin(pl1, game.c.white_id==pl1.c.id)\
+                        .outerjoin(pl2, game.c.black_id==pl2.c.id)\
+                        .outerjoin(event, game.c.event_id==event.c.id)\
+                        .outerjoin(site, game.c.site_id==site.c.id)\
+                        .outerjoin(pl3, game.c.annotator_id==pl3.c.id)])
+
     conn = engine.connect()
     result = conn.execute(s)
 
     colnames = result.keys()
     games = result.fetchall()
-    
+
     return Database(games, colnames, engine)
 
 
@@ -94,7 +160,7 @@ class Database(PGNFile):
         self.comments = []
 
     def get_movetext(self, gameno):
-        s = select([game.c.movelist, game.c.comments], and_(game.c.id==self.games[gameno][0]))
+        s = select([game.c.movelist, game.c.comments], game.c.id==self.games[gameno][0])
         conn = self.engine.connect()
         result = conn.execute(s).first()
         self.comments = result[1].split("|")

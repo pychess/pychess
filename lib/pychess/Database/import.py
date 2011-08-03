@@ -95,11 +95,7 @@ class PgnImport():
                 else:
                     game_year, game_month, game_day = None, None, None
 
-                # TODO
-                try:
-                    game_round = int(cf._getTag(i, 'Round'))
-                except:
-                    game_round = None
+                game_round = cf._getTag(i, 'Round')
 
                 white, black = cf.get_player_names(i)
                 white = self.get_id(white, self.player_dict, self.player_data, PLAYER)
@@ -107,23 +103,24 @@ class PgnImport():
 
                 result = cf.get_result(i)
  
-                try:
-                    white_elo = int(cf._getTag(i, 'WhiteElo'))
-                    black_elo = int(cf._getTag(i, 'BlackElo'))
-                except:
-                    white_elo = None
-                    black_elo = None
+                white_elo = cf._getTag(i, 'WhiteElo')
+                white_elo = int(white_elo) if white_elo else None
+                
+                black_elo = cf._getTag(i, 'BlackElo')
+                black_elo = int(black_elo) if black_elo else None
  
                 ply_count = cf._getTag(i, "PlyCount")
  
                 event_date = cf._getTag(i, 'EventDate')
  
                 eco = cf._getTag(i, "ECO")
-                if eco:
-                    eco = eco[:3]
+                eco = eco[:3] if eco else None
+
                 fen = cf._getTag(i, "FEN")
  
                 variant = cf.get_variant(i)
+                
+                board = cf._getTag(i, "Board")
                 
                 annotator = cf._getTag(i, "Annotator")
                 annotator = self.get_id(annotator, self.player_dict, self.player_data, PLAYER)
@@ -151,6 +148,7 @@ class PgnImport():
                         'eco': eco,
                         'fen': fen,
                         'variant': variant,
+                        'board': board,
                         'annotator_id': annotator,
                         'movelist': movelist.tostring(),
                         'comments': "|".join(comments),

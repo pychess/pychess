@@ -212,6 +212,10 @@ def getOpenAndSaveDialogs():
 def saveGame (game):
     if not game.isChanged():
         return
+    # TODO: autosave?
+    game.save(None, Savers.database, append=False)
+    return
+    
     if game.uri and isWriteable (game.uri):
         saveGameSimple (game.uri, game)
     else:
