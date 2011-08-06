@@ -312,6 +312,12 @@ def parseSAN (board, san):
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
 
+    if piece == KING:
+        if board.color == WHITE:
+            return newMove(board.kings[WHITE], tcord, flag)
+        else:
+            return newMove(board.kings[BLACK], tcord, flag)
+
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
     # want to know
     frank = None
@@ -342,17 +348,11 @@ def parseSAN (board, san):
     # We find all pieces who could have done it. (If san was legal, there should
     # never be more than one)
     from lmovegen import genPieceMoves
-    for move in genPieceMoves(board, piece):
-        if TCORD(move) != tcord:
-            continue
+    for move in genPieceMoves(board, piece, tcord):
         f = FCORD(move)
-        if board.arBoard[f] != piece:
-            continue
         if frank != None and frank != RANK(f):
             continue
         if ffile != None and ffile != FILE(f):
-            continue
-        if flag in PROMOTIONS and FLAG(move) != flag:
             continue
         
         board_clone = board.clone()
