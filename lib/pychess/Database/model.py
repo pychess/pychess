@@ -77,4 +77,4 @@ def ini_collection():
     
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
-    ini_connection()
+    ini_collection()
