@@ -3,6 +3,7 @@
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Sequence, Integer, String, SmallInteger, CHAR, LargeBinary, UnicodeText
 
+from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix 
 
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
@@ -19,10 +20,25 @@ site = Table('site', metadata,
     Column('name', String(256))
     )
 
+annotator = Table('annotator', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('name', String(256))
+    )
+
 player = Table('player', metadata,
     Column('id', Integer, primary_key=True),
+    Column('name', String(256), index=True),
+    Column('fideid', Integer),
+    Column('fed', CHAR(3)),
+    Column('title', CHAR(3)),
+    Column('elo', SmallInteger),
+    Column('born', Integer),
+    )
+
+collection = Table('collection', metadata,
+    Column('id', Integer, primary_key=True),
     Column('name', String(256)),
-    Column('fideid', Integer)
+    Column('source', String(256))
     )
 
 game = Table('game', metadata,
@@ -44,10 +60,21 @@ game = Table('game', metadata,
     Column('fen', String(128)),
     Column('variant', SmallInteger),
     Column('annotator_id', Integer),
+    Column('collection_id', Integer),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
     )
 
+def ini_collection():
+    conn = engine.connect()
+    new_values = [
+        {"id": LOCAL, "name": u"Local game"},
+        {"id": ARTIFICIAL, "name": u"Chess engine(s)"},
+        {"id": REMOTE, "name": u"ICS game"},
+        ]
+    conn.execute(collection.insert(), new_values)
+    conn.close()
+    
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
-
+    ini_connection()
