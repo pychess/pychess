@@ -9,7 +9,7 @@ from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
-from pychess.Database.model import engine, metadata, event, site, player, game
+from pychess.Database.model import engine, metadata, event, site, player, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
 
 __label__ = _("PyChess database")
@@ -37,7 +37,7 @@ def save (file, model):
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
     variant = 1 if issubclass(model.variant, FischerRandomChess) else None
     fen = model.boards[0].asFen() if model.boards[0].asFen() != FEN_START else None
-    annotator = model.tags.get("Annotator")
+    game_annotator = model.tags.get("Annotator")
     ply_count = model.ply-model.lowply
 
     def get_id(table, name):
@@ -53,40 +53,55 @@ def save (file, model):
         return id_
 
     conn = engine.connect()
+    trans = conn.begin()
+    try:
+        event_id = get_id(event, game_event)
+        site_id = get_id(site, game_site)
+        white_id = get_id(player, white)
+        black_id = get_id(player, black)
+        annotator_id = get_id(annotator, game_annotator)
+        
+        wt = model.players[WHITE].__type__
+        bt = model.players[BLACK].__type__
+        if REMOTE in (wt, bt):
+            collection_id = REMOTE
+        elif ARTIFICIAL in (wt, bt):
+            collection_id = ARTIFICIAL
+        else:
+            collection_id = LOCAL
 
-    event_id = get_id(event, game_event)
-    site_id = get_id(site, game_site)
-    white_id = get_id(player, white)
-    black_id = get_id(player, black)
-    annotator_id = get_id(player, annotator)
+        new_values = {
+            'event_id': event_id,
+            'site_id': site_id,
+            'date_year': year,
+            'date_month': month,
+            'date_day': day,
+            'round': game_round,
+            'white_id': white_id,
+            'black_id': black_id,
+            'result': result,
+            'white_elo': white_elo,
+            'black_elo': black_elo,
+            'ply_count': ply_count,
+            'eco': eco,
+            'board': board,
+            'fen': fen,
+            'variant': variant,
+            'annotator_id': annotator_id,
+            'collection_id': collection_id, 
+            'movelist': movelist.tostring(),
+            'comments': "|".join(comments).decode("utf_8"),
+            }
 
-    new_values = {
-        'event_id': event_id,
-        'site_id': site_id,
-        'date_year': year,
-        'date_month': month,
-        'date_day': day,
-        'round': game_round,
-        'white_id': white_id,
-        'black_id': black_id,
-        'result': result,
-        'white_elo': white_elo,
-        'black_elo': black_elo,
-        'ply_count': ply_count,
-        'eco': eco,
-        'board': board,
-        'fen': fen,
-        'variant': variant,
-        'annotator_id': annotator_id,
-        'movelist': movelist.tostring(),
-        'comments': "|".join(comments).decode("utf_8"),
-        }
-
-    if hasattr(model, "game_id") and model.game_id is not None:
-        result = conn.execute(game.update().where(game.c.id==model.game_id).values(new_values))
-    else:
-        result = conn.execute(game.insert().values(new_values))
-        model.game_id = result.inserted_primary_key
+        if hasattr(model, "game_id") and model.game_id is not None:
+            result = conn.execute(game.update().where(game.c.id==model.game_id).values(new_values))
+        else:
+            result = conn.execute(game.insert().values(new_values))
+            model.game_id = result.inserted_primary_key[0]
+        trans.commit()
+    except:
+        trans.rollback()
+        raise
 
 
 def walk(node, arr, txt):
@@ -129,26 +144,25 @@ def walk(node, arr, txt):
 def load(file):
     pl1 = player.alias()
     pl2 = player.alias()
-    pl3 = player.alias()
 
     s = select([game.c.id.label("Id"), pl1.c.name.label('White'), pl2.c.name.label('Black'), game.c.result.label('Result'),
                 event.c.name.label('Event'), site.c.name.label('Site'), game.c.round.label('Round'), 
                 game.c.date_year.label('Year'), game.c.date_month.label('Month'), game.c.date_day.label('Day'),
                 game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'), game.c.eco.label('ECO'),
-                game.c.fen.label('Board'), game.c.fen.label('FEN'), game.c.variant.label('Variant'), pl3.c.name.label('Annotator')],
+                game.c.fen.label('Board'), game.c.fen.label('FEN'), game.c.variant.label('Variant'), annotator.c.name.label('Annotator')],
                 from_obj=[
                     game.outerjoin(pl1, game.c.white_id==pl1.c.id)\
                         .outerjoin(pl2, game.c.black_id==pl2.c.id)\
                         .outerjoin(event, game.c.event_id==event.c.id)\
                         .outerjoin(site, game.c.site_id==site.c.id)\
-                        .outerjoin(pl3, game.c.annotator_id==pl3.c.id)])
+                        .outerjoin(annotator, game.c.annotator_id==annotator.c.id)])
 
     conn = engine.connect()
     result = conn.execute(s)
 
     colnames = result.keys()
     games = result.fetchall()
-
+    print "loaded %s games" % len(games)
     return Database(games, colnames, engine)
 
 
