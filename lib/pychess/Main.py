@@ -314,7 +314,7 @@ def run (no_debug, glock_debug, thread_debug, pgn_import, chess_file):
             if os.path.isfile(chess_file):
                 imp.do_import(chess_file)
         elif os.path.exists(chess_file):
-            for file in os.listdir(chess_file):
+            for file in sorted(os.listdir(chess_file)):
                 if file[-4:].lower() in (".pgn", ".zip"):
                     imp.do_import(os.path.join(chess_file, file))
     else:

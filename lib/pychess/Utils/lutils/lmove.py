@@ -240,6 +240,9 @@ def parseSAN (board, san):
 
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]
+        # If '++' was used in place of #
+        if notat[-1] == "+":
+            notat = notat[:-1]
     
     flag = NORMAL_MOVE
     
@@ -333,34 +336,53 @@ def parseSAN (board, san):
         notat = notat[1:]
 
     if piece == PAWN:
+        pawns = board.boards[WHITE][PAWN] if board.color == WHITE else board.boards[BLACK][PAWN]
+            
         if (ffile is not None) and ffile != FILE(tcord):
             # capture
             if board.color == WHITE:
-                return newMove(tcord-7 if ffile > FILE(tcord) else tcord-9, tcord, flag)
+                fcord = tcord-7 if ffile > FILE(tcord) else tcord-9
             else:
-                return newMove(tcord+7 if ffile < FILE(tcord) else tcord+9, tcord, flag)
+                fcord = tcord+7 if ffile < FILE(tcord) else tcord+9
         else:
             if board.color == WHITE:
-                return newMove(tcord-16 if RANK(tcord)==3 and not (board.boards[WHITE][PAWN] & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8, tcord, flag)
+                fcord = tcord-16 if RANK(tcord)==3 and not (pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8
             else:
-                return newMove(tcord+16 if RANK(tcord)==4 and not (board.boards[BLACK][PAWN] & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8, tcord, flag)
+                fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
+        if fcord in iterBits(pawns):
+            return newMove(fcord, tcord, flag)
+    else:
+        # We find all pieces who could have done it. (If san was legal, there should
+        # never be more than one)
+        from lmovegen import genPieceMoves
+        for move in genPieceMoves(board, piece, tcord):
+            f = FCORD(move)
+            if frank != None and frank != RANK(f):
+                continue
+            if ffile != None and ffile != FILE(f):
+                continue
+            
+            board_clone = board.clone()
+            board_clone.applyMove(move)
+            if board_clone.opIsChecked():
+                continue
+            return move
 
-    # We find all pieces who could have done it. (If san was legal, there should
-    # never be more than one)
+    # If the piece letter was omitted (not  a canonical SAN)
     from lmovegen import genPieceMoves
-    for move in genPieceMoves(board, piece, tcord):
-        f = FCORD(move)
-        if frank != None and frank != RANK(f):
-            continue
-        if ffile != None and ffile != FILE(f):
-            continue
-        
-        board_clone = board.clone()
-        board_clone.applyMove(move)
-        if board_clone.opIsChecked():
-            continue
-        
-        return move
+    for piece in (KNIGHT, BISHOP, ROOK, QUEEN):
+        for move in genPieceMoves(board, piece, tcord):
+            f = FCORD(move)
+            if frank != None and frank != RANK(f):
+                continue
+            if ffile != None and ffile != FILE(f):
+                continue
+            
+            board_clone = board.clone()
+            board_clone.applyMove(move)
+            if board_clone.opIsChecked():
+                continue
+            return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
     raise ParsingError, (san, errstring, board.asFen())
