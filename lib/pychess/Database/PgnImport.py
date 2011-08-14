@@ -11,6 +11,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
 
 from pychess.Utils.const import *
+from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers.pgn import load as pgn_load
 from pychess.Savers.database import walk as database_walk
 from pychess.Database.model import engine, metadata, collection, event,\
@@ -117,6 +118,7 @@ class PgnImport():
         return next_id
 
     def do_import(self, filename):
+        print filename
         # collect new names not in they dict yet
         self.collection_data = []
         self.event_data = []
@@ -144,10 +146,14 @@ class PgnImport():
             trans = self.conn.begin()
             try:
                 for i, game in enumerate(cf.games):
-                    print i+1
+                    #print i
                     movelist = array("h")
                     comments = []
-                    model = cf.loadToModel(i, quick_parse=False)
+                    try:
+                        model = cf.loadToModel(i, quick_parse=False)
+                    except LoadingError, e:
+                        print e
+                        continue
                     database_walk(model.boards[0], movelist, comments)
                     
                     if not movelist:
@@ -180,10 +186,10 @@ class PgnImport():
                     result = cf.get_result(i)
      
                     white_elo = cf._getTag(i, 'WhiteElo')
-                    white_elo = int(white_elo) if white_elo else None
+                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
                     
                     black_elo = cf._getTag(i, 'BlackElo')
-                    black_elo = int(black_elo) if black_elo else None
+                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
      
                     ply_count = cf._getTag(i, "PlyCount")
      
@@ -249,7 +255,7 @@ class PgnImport():
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
-                        print pgnfile, CHUNK
+                        print pgnfile, i+1
                     
                 if self.collection_data:
                     self.conn.execute(self.ins_collection, self.collection_data)

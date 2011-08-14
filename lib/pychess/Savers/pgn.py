@@ -197,7 +197,8 @@ pattern = re.compile(r"""
     ([0-9]{1,3}\s*[.]*\s*)?
     ([a-hxOoKQRBN1-8+#=]{2,7}
     |O\-O(?:\-O)?
-    |0\-0(?:\-0)?)
+    |0\-0(?:\-0)?
+    |\-\-)               # non standard '--' is used for null move inside variations
     ([\?!]{1,2})*
     )    # move (full, count, move with ?!, ?!)
     """, re.VERBOSE | re.DOTALL)
@@ -300,16 +301,34 @@ class PGNFile (ChessFile):
 #                model.timemodel.gain = gain
         
         fenstr = self._getTag(gameno, "FEN")
-        if self.get_variant(gameno):
-            from pychess.Variants.fischerandom import FRCBoard
-            model.variant = FischerRandomChess
-            model.boards = [FRCBoard(fenstr)]
-        else:
-            if fenstr:
-                model.boards = [Board(fenstr)]
-            else:
-                model.boards = [Board(setup=True)]
+        variant = self.get_variant(gameno)
 
+        # Fixes for some non statndard Chess960 .pgn
+        if variant==0 and (fenstr is not None) and "Chess960" in model.tags["Event"]:
+            model.tags["Variant"] = "Fischerandom"
+            variant = 1
+            parts = fenstr.split()
+            parts[0] = parts[0].replace(".", "/").replace("0", "")
+            if len(parts) == 1:
+                parts.append("w")
+                parts.append("-")
+                parts.append("-")
+            fenstr = " ".join(parts)
+
+        if fenstr:
+            try:
+                if variant:
+                    from pychess.Variants.fischerandom import FRCBoard
+                    model.variant = FischerRandomChess
+                    model.boards = [FRCBoard(fenstr)]
+                else:
+                    model.boards = [Board(fenstr)]
+            except SyntaxError, e:
+                model.boards = [Board(FEN_EMPTY)]
+                raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
+        else:
+            model.boards = [Board(setup=True)]
+            
         del model.moves[:]
         del model.variations[:]
         
@@ -468,7 +487,7 @@ class PGNFile (ChessFile):
 
             if group == VARIATION_END:
                 parenthesis -= 1
-                if parenthesis == 0:
+                if parenthesis == 0 and board.prev is not None:
                     v_last_board.children.append(self.parse_string(v_string[:-1], model, board.prev, position, variation=True))
                     v_string = ""
                     prev_group = VARIATION_END
@@ -489,16 +508,20 @@ class PGNFile (ChessFile):
                     try:
                         move = Move(parseSAN(boards[-1].board, mstr))
                     except ParsingError, e:
-                        notation, reason, boardfen = e.args
-                        ply = boards[-1].ply
-                        if ply % 2 == 0:
-                            moveno = "%d." % (ply/2+1)
-                        else: moveno = "%d..." % (ply/2+1)
-                        errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
-                                    'moveno': moveno, 'notation': notation}
-                        errstr2 = _("The move failed because %s.") % reason
-                        error = LoadingError (errstr1, errstr2)
-                        break
+                        if mstr == "--":
+                            print "Ignoring rest of the variation after non standard '--' null move..."
+                            break
+                        else:
+                            notation, reason, boardfen = e.args
+                            ply = boards[-1].ply
+                            if ply % 2 == 0:
+                                moveno = "%d." % (ply/2+1)
+                            else: moveno = "%d..." % (ply/2+1)
+                            errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                                        'moveno': moveno, 'notation': notation}
+                            errstr2 = _("The move failed because %s.") % reason
+                            error = LoadingError (errstr1, errstr2)
+                            break
 
                     board = boards[-1].move(move)
 
@@ -550,8 +573,8 @@ class PGNFile (ChessFile):
             if group != COMMENT_NAG:
                 prev_group = group
 
-            if error:
-                raise error
+        if error:
+            raise error
 
         return boards
 
