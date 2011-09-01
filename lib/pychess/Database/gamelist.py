@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
 
-import gtk
+import gtk, gobject
 
-from pychess.Database.model import pychess_pdb
+from sqlalchemy import select, func, and_, or_
+
+from pychess.Database.model import engine, game, player, pl1, pl2, pychess_pdb
 from pychess.Savers.database import load
 from pychess.Utils.const import *
 from pychess.System.prefix import addDataPrefix
@@ -13,20 +15,30 @@ from pychess.Utils.GameModel import GameModel
 
 
 class GameList(gtk.TreeView):
+
+    STEP = 50
+
     def __init__(self):
         gtk.TreeView.__init__(self)
         
-        self.store = gtk.ListStore(int, str, str, str, str, str, str, str, str, str, str)
-        model = gtk.TreeModelSort(self.store)
-        model.set_sort_column_id(0, gtk.SORT_ASCENDING)
-        self.set_model(model)
+        self.offset = 0
+        self.orderby = None
+        self.where = None
+        self.count = 0
+        self.conn = engine.connect()
+        
+        self.liststore = gtk.ListStore(int, str, str, str, str, str, str, str, str, str, str)
+        self.modelsort = gtk.TreeModelSort(self.liststore)
+        
+        self.modelsort.set_sort_column_id(0, gtk.SORT_ASCENDING)
+        self.set_model(self.modelsort)
         self.get_selection().set_mode(gtk.SELECTION_BROWSE)
         self.set_headers_visible(True)
         self.set_rules_hint(True)
         self.set_search_column(1)
         
-        cols = ("No", "White", "W Elo", "Black", "B Elo",
-                "Result", "Event", "Site", "Round", "Date", "ECO")
+        cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
+                _("Result"), _("Event"), _("Site"), _("Round"), _("Date"), _("ECO"))
         for i, col in enumerate(cols):
             r = gtk.CellRendererText()
             column = gtk.TreeViewColumn(col, r, text=i)
@@ -42,42 +54,143 @@ class GameList(gtk.TreeView):
         self.columns_autosize()
         self.gameno = 0
         self.uri = pychess_pdb
-        self.chessfile = None
-        
+
+        self.chessfile = load(open(self.uri))
+        self.build_query()
+
         w = gtk.Window(gtk.WINDOW_TOPLEVEL)
         w.set_title(_("PyChess Game Database"))
-        w.set_size_request(1200, 400)
+        w.set_size_request(1000, 400)
+
+        hbox = gtk.HBox()
+
+        self.playerlist = gtk.ListStore(str)
+
+        self.match = set()
+        completion = gtk.EntryCompletion()
+        completion.set_model(self.playerlist)
+        completion.set_text_column(0)
+
+        for player in self.chessfile.players:
+            self.playerlist.append(player)
+            
+        entry = gtk.Entry()
+        entry.set_completion(completion)
+        entry.connect('activate', self.activate_entry)
+        
+        hbox.pack_start(entry, False, False, 0)
+
+        toolbar = gtk.Toolbar()
+        hbox.pack_start(toolbar, True, True, 0)
+
+        firstButton = gtk.ToolButton(gtk.STOCK_MEDIA_PREVIOUS);
+        toolbar.insert(firstButton, -1)
+
+        prevButton = gtk.ToolButton(gtk.STOCK_MEDIA_REWIND)
+        toolbar.insert(prevButton, -1)
+
+        nextButton = gtk.ToolButton(gtk.STOCK_MEDIA_FORWARD)
+        toolbar.insert(nextButton, -1)
+
+        lastButton = gtk.ToolButton(gtk.STOCK_MEDIA_NEXT);
+        toolbar.insert(lastButton, -1)
+
+        firstButton.connect("clicked", self.on_first_clicked)
+        prevButton.connect("clicked", self.on_prev_clicked)
+        nextButton.connect("clicked", self.on_next_clicked)
+        lastButton.connect("clicked", self.on_last_clicked)
+
         vbox = gtk.VBox()
+        vbox.pack_start(hbox, False, False, 0)
+
         sw = gtk.ScrolledWindow()
+        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         sw.add(self)
         vbox.pack_start(sw)
         w.add(vbox)
         w.show_all()
+
+    def build_query(self):
+        self.query = self.chessfile.select
+        
+        if self.where is None:
+            self.count = self.chessfile.count
+        else:
+            s = select([func.count(game.c.id)],\
+                from_obj=[
+                    game.outerjoin(pl1, game.c.white_id==pl1.c.id)\
+                        .outerjoin(pl2, game.c.black_id==pl2.c.id)])
+            self.count = self.conn.execute(s.where(self.where)).scalar()
+            self.query = self.query.where(self.where)
+        print "%s game(s) match to query" % self.count
+
+        if self.orderby is not None:
+            self.query = self.query.order_by(self.orderby)
+        
+    def activate_entry(self, entry):
+        text = entry.get_text()
+        self.where = or_(pl1.c.name.startswith(text), pl2.c.name.startswith(text))
+        self.offset = 0
+        self.build_query()
+        self.load_games()
+
+    def on_first_clicked(self, widget):
+        self.offset = 0
+        self.load_games()
+
+    def on_prev_clicked(self, widget):
+        if self.offset - self.STEP >= 0:
+            self.offset = self.offset - self.STEP
+            self.load_games()
+
+    def on_next_clicked(self, widget):
+        if self.offset + self.STEP <= self.count:
+            self.offset = self.offset + self.STEP
+            self.load_games()
+
+    def on_last_clicked(self, widget):
+        self.offset = (self.count // self.STEP) * self.STEP
+        self.load_games()
         
     def column_clicked(self, col, data):
         self.set_search_column(data)
         
     def load_games(self):
-        self.store.clear()
-        self.chessfile = cf = load(open(self.uri))
-        games = cf.games
-        for i, game in enumerate(games):
-            wname, bname = cf.get_player_names(i)
-            welo = cf._getTag(i, "WhiteElo")
-            belo = cf._getTag(i, "BlackElo")
-            result = cf.get_result(i)
-            result = "½-½" if result==DRAW else reprResult[cf.get_result(i)]
-            event = cf._getTag(i, 'Event')
-            site = cf._getTag(i, 'Site')
-            round = cf._getTag(i, "Round")
-            date = cf._getTag(i, "Date")
-            eco = cf._getTag(i, "ECO")
-            self.store.append([i, wname, welo, bname, belo,
-                               result, event, site, round, date, eco])
+        self.liststore.clear()
+
+        getTag = self.chessfile._getTag
+        getResult = self.chessfile.get_result
+        getPlayers = self.chessfile.get_player_names
+        add = self.liststore.append
+
+        query = self.query.offset(self.offset).limit(self.STEP)
+        
+        result = self.conn.execute(query)
+        self.chessfile.games = result.fetchall()
+        print "%s selected" % len(self.chessfile.games)
+        self.id_list = []
+        for i in range(len(self.chessfile.games)):
+            game_id = self.chessfile.games[i]["Id"]
+            self.id_list.append(game_id)
+            wname, bname = getPlayers(i)
+            welo = getTag(i, "WhiteElo")
+            belo = getTag(i, "BlackElo")
+            result = getResult(i)
+            result = "½-½" if result==DRAW else reprResult[result]
+            event = getTag(i, 'Event')
+            site = getTag(i, 'Site')
+            round_ = getTag(i, "Round")
+            date = getTag(i, "Date")
+            eco = getTag(i, "ECO")
+            add([game_id, wname, welo, bname, belo, result, event, site, round_, date, eco])
         self.set_cursor(0)
     
     def row_activated (self, widget, path, col):
-        gameno = path[0]
+        print self.modelsort.convert_path_to_child_path(path)[0]
+        game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
+        print "game_id=%s" % game_id
+        gameno = self.id_list.index(game_id)
+        print "gameno=%s" % gameno
         position = -1
 
         gamemodel = GameModel()

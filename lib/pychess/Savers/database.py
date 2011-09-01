@@ -2,14 +2,14 @@
 
 from array import array
 
-from sqlalchemy import create_engine, select, insert, and_
+from sqlalchemy import create_engine, select, insert, func, and_
 
 from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
-from pychess.Database.model import engine, metadata, event, site, player, game, annotator
+from pychess.Database.model import engine, metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
 
 __label__ = _("PyChess database")
@@ -142,9 +142,16 @@ def walk(node, arr, txt):
 
 
 def load(file):
-    pl1 = player.alias()
-    pl2 = player.alias()
-
+    conn = engine.connect()
+    
+    s = select([func.count(game.c.id)])
+    count = conn.execute(s).scalar()
+    print "Database contains %s games" % count
+    s = select([player.c.name])
+    result = conn.execute(s)
+    players = result.fetchall()
+    print "Database contains %s players" % len(players)
+    
     s = select([game.c.id.label("Id"), pl1.c.name.label('White'), pl2.c.name.label('Black'), game.c.result.label('Result'),
                 event.c.name.label('Event'), site.c.name.label('Site'), game.c.round.label('Round'), 
                 game.c.date_year.label('Year'), game.c.date_month.label('Month'), game.c.date_day.label('Day'),
@@ -157,25 +164,24 @@ def load(file):
                         .outerjoin(site, game.c.site_id==site.c.id)\
                         .outerjoin(annotator, game.c.annotator_id==annotator.c.id)])
 
-    conn = engine.connect()
     result = conn.execute(s)
-
     colnames = result.keys()
-    games = result.fetchall()
-    print "loaded %s games" % len(games)
-    return Database(games, colnames, engine)
+    result.close()
+    return Database([], colnames, s, count, players)
 
 
 class Database(PGNFile):
-    def __init__ (self, games, colnames, engine):
+    def __init__ (self, games, colnames, select, count, players):
         PGNFile.__init__(self, games)
         self.colnames = colnames
-        self.engine = engine
+        self.select = select
+        self.count = count
+        self.players = players
         self.comments = []
 
     def get_movetext(self, gameno):
         s = select([game.c.movelist, game.c.comments], game.c.id==self.games[gameno][0])
-        conn = self.engine.connect()
+        conn = engine.connect()
         result = conn.execute(s).first()
         self.comments = result[1].split("|")
         arr = array("h")

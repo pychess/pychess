@@ -35,6 +35,9 @@ player = Table('player', metadata,
     Column('born', Integer),
     )
 
+pl1 = player.alias()
+pl2 = player.alias()
+
 collection = Table('collection', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256)),
