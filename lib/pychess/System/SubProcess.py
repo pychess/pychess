@@ -25,12 +25,7 @@ def searchPath (file, access=os.R_OK, altpath=None):
         else:
             return altpath
 
-    try:
-        return which(file, mode=access)
-    except IOError:
-        log.log("%s not found\n" % file)
-
-    return None
+    return which(file, mode=access)
 
 subprocesses = []
 def finishAllSubprocesses ():
