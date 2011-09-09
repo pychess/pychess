@@ -207,7 +207,7 @@ msgstr "Keresés"
 #: lib/pychess/ic/managers/GameListManager.py:53
 #: lib/pychess/ic/managers/GameListManager.py:60
 msgid "Untimed"
-msgstr "Időkontrol nélküli"
+msgstr "Időkontroll nélküli"
 
 #: glade/fics_lounge.glade:1329
 msgid "Minutes:  "
@@ -220,7 +220,7 @@ msgstr "Jóváírás: "
 
 #: glade/fics_lounge.glade:1382
 msgid "Time control:  "
-msgstr "Időkontrol:    "
+msgstr "Időkontroll:    "
 
 #: glade/fics_lounge.glade:1393 lib/pychess/ic/ICLounge.py:1382
 #: lib/pychess/ic/ICLounge.py:1389 lib/pychess/Utils/const.py:44
@@ -231,7 +231,7 @@ msgstr "Standard"
 
 #: glade/fics_lounge.glade:1425 glade/newInOut.glade:417
 msgid "<b>Time Control</b>"
-msgstr "<b>Időkontrol</b>"
+msgstr "<b>Időkontroll</b>"
 
 # In context: Your color: "Don't Care"
 #: glade/fics_lounge.glade:1477 glade/fics_lounge.glade:1927
@@ -263,7 +263,7 @@ msgstr ""
 "az \"Ellenfél erőssége\" és az \"Erősséged\" között\n"
 "megőrződik, amikor\n"
 "a) az értékszámod az adott típusú keresésben megváltozik\n"
-"b) megváltoztatod a sakk variánst vagy az időkontrolt."
+"b) megváltoztatod a sakk variánst vagy az időkontrollt."
 
 #: glade/fics_lounge.glade:1714
 msgid "Center:"
@@ -391,7 +391,7 @@ msgstr "<b>Játékosok</b>"
 
 #: glade/newInOut.glade:249
 msgid "_No controls"
-msgstr "Időkontrol nélkül"
+msgstr "Időkontroll nélkül"
 
 #: glade/newInOut.glade:283
 msgid "Blitz:\t5 min"
@@ -1041,7 +1041,7 @@ msgid ""
 "all time controls:\n"
 msgstr ""
 "A FICS-en a \"Vad\" értékszám magában foglalja a következő sakkvariánsokat "
-"minden időkontrol mellett:\n"
+"minden időkontroll mellett:\n"
 
 #: lib/pychess/ic/ICLounge.py:196
 msgid "Shuffle, Fischer Random, Random, Asymmetric Random\n"
@@ -1273,12 +1273,12 @@ msgstr "Nem játszhatsz értékelt játszmákat vendégként."
 #: lib/pychess/ic/ICLounge.py:1496
 msgid "You can't play rated games because \"Untimed\" is checked, "
 msgstr ""
-"Nem játszhatsz értékelt játszmát, mert az \"Időkontrol nélkül\" van "
+"Nem játszhatsz értékelt játszmát, mert az \"Időkontroll nélkül\" van "
 "bejelölve, "
 
 #: lib/pychess/ic/ICLounge.py:1497
 msgid "and on FICS, untimed games can't be rated"
-msgstr "és a FICS-en az időkontrol nélküli játszmák nem lehetnek értékeltek."
+msgstr "és a FICS-en az időkontroll nélküli játszmák nem lehetnek értékeltek."
 
 #: lib/pychess/ic/ICLounge.py:1501
 msgid "This option is not available because you're challenging a guest, "
@@ -1310,13 +1310,13 @@ msgstr "Egyéb"
 #: lib/pychess/ic/ICLounge.py:1599
 msgid "You can't select a variant because \"Untimed\" is checked, "
 msgstr ""
-"Nem játszhatsz sakk variánsokat, mert az \"Időkontrol nélkül\" van "
+"Nem játszhatsz sakk variánsokat, mert az \"Időkontroll nélkül\" van "
 "bejelölve, "
 
 #: lib/pychess/ic/ICLounge.py:1600
 msgid "and on FICS, untimed games have to be normal chess rules"
 msgstr ""
-"és a FICS-en az időkontrol nélküli játszmák csak standard játszmák lehetnek."
+"és a FICS-en az időkontroll nélküli játszmák csak standard játszmák lehetnek."
 
 #: lib/pychess/ic/ICLounge.py:1635
 msgid "Change Tolerance"
@@ -1537,7 +1537,7 @@ msgid ""
 "Generally this means nothing, as the game is timebased, but if you want to "
 "please your opponent, perhaps you should get going."
 msgstr ""
-"Általában ez nem jelent semmi különöset, mivel a játszma időkontrol alatt "
+"Általában ez nem jelent semmi különöset, mivel a játszma időkontroll alatt "
 "folyik, de ha kedves akarsz lenni hozzá, léphetsz gyorsabban is."
 
 # Some offer was decline by your opponent
