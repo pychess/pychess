@@ -549,11 +549,11 @@ class SeekTabSection (ParrentListSection):
         # TODO: differentiate between challenges and manual-seek-accepts
         # (wait until seeks are comparable FICSSeek objects to do this)
         if match["is_adjourned"]:
-            text = _(" would like to resume your adjourned <b>%s</b> " + \
-                "<b>%s</b> game.") % (time, match["gametype"].display_text)
+            text = _(" would like to resume your adjourned <b>%(time)s</b> " + \
+                "<b>%(gametype)s</b> game.") % {"time": time, "gametype": match["gametype"].display_text}
         else:
-            text = _(" challenges you to a <b>%s</b> %s <b>%s</b> game.") \
-                % (time, rated.lower(), match["gametype"].display_text)
+            text = _(" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game.") \
+                % {"time": time, "rated": rated.lower(), "gametype": match["gametype"].display_text}
         content = self.get_infobarmessage_content(player, text,
                                                   gametype=match["gametype"])
         def callback (infobar, response):
@@ -1118,14 +1118,14 @@ class AdjournedTabSection (ParrentListSection):
             button.tooltip = ""
         else:
             button.sensitive = False
-            button.tooltip = _("%s is %s") % \
-                (player.name, player.display_status.lower())
+            button.tooltip = _("%(player)s is %(status)s") % \
+                {"player": player.name, "status": player.display_status.lower()}
         
     def _infobar_adjourned_message (self, game, player):
         if player not in self.messages:
-            text = _(" with whom you have an adjourned <b>%s</b> <b>%s</b> " + \
+            text = _(" with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> " + \
                 "game is online.")  % \
-                (game.display_timecontrol, game.game_type.display_text)
+                {"timecontrol": game.display_timecontrol, "gametype": game.game_type.display_text}
             content = self.get_infobarmessage_content(player, text,
                                                       gametype=game.game_type)
             def callback (infobar, response):
