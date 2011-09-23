@@ -164,6 +164,7 @@ def stripBrackets (string):
 
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.*?)\"\]")
 comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
+# old regexp used for quick parsing, without comments and variations
 movre = re.compile(r"""
     (                   # group start
     (?:                 # non grouping parenthesis start
@@ -186,6 +187,7 @@ COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
 VARIATION_START, VARIATION_END, \
 RESULT, FULL_MOVE, MOVE_COUNT, MOVE, MOVE_COMMENT = range(1,11)
 
+# new regexp
 pattern = re.compile(r"""
     (\;.*?[\n\r])        # comment, rest of line style
     |(\{.*?\})           # comment, between {} 
@@ -332,7 +334,7 @@ class PGNFile (ChessFile):
         del model.moves[:]
         del model.variations[:]
         
-        error = None
+        self.error = None
         if quick_parse:
             movstrs = self._getMoves (gameno)
             for i, mstr in enumerate(movstrs):
@@ -349,7 +351,7 @@ class PGNFile (ChessFile):
                     errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                 'moveno': moveno, 'notation': notation}
                     errstr2 = _("The move failed because %s.") % reason
-                    error = LoadingError (errstr1, errstr2)
+                    self.error = LoadingError (errstr1, errstr2)
                     break
                 model.moves.append(move)
                 model.boards.append(model.boards[-1].move(move))
@@ -405,8 +407,8 @@ class PGNFile (ChessFile):
         
         # If parsing gave an error we throw it now, to enlarge our possibility
         # of being able to continue the game from where it failed.
-        if error:
-            raise error
+        if self.error:
+            raise self.error
 
         return model
 
@@ -476,7 +478,6 @@ class PGNFile (ChessFile):
         last_board = board
         boards.append(board)
 
-        error = None
         parenthesis = 0
         v_string = ""
         prev_group = -1
@@ -520,7 +521,7 @@ class PGNFile (ChessFile):
                             errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                         'moveno': moveno, 'notation': notation}
                             errstr2 = _("The move failed because %s.") % reason
-                            error = LoadingError (errstr1, errstr2)
+                            self.error = LoadingError (errstr1, errstr2)
                             break
 
                     board = boards[-1].move(move)
@@ -572,9 +573,6 @@ class PGNFile (ChessFile):
 
             if group != COMMENT_NAG:
                 prev_group = group
-
-        if error:
-            raise error
 
         return boards
 
