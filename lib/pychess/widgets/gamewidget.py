@@ -638,7 +638,7 @@ def _ensureReadForGameWidgets ():
         
         # NE
         leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
-        conf.set("historyPanel", True)
+        conf.set("annotationPanel", True)
         leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")
         conf.set("historyPanel", True)
         leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
