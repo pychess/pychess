@@ -102,6 +102,7 @@ class EpdFile (ChessFile):
         else: fen += " 1"
         
         model.boards = [model.variant.board(setup=fen)]
+        model.variations = [model.boards]
         model.status = WAITING_TO_START
         
         # rc is kinda broken

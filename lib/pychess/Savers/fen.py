@@ -30,6 +30,7 @@ class FenFile (ChessFile):
         fen = self.games[gameno]
         
         model.boards = [model.variant.board(setup=fen)]
+        model.variations = [model.boards]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
         
