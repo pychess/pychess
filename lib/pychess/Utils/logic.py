@@ -52,43 +52,48 @@ def getStatus (board):
         if ldraw.testMaterial (lboard):
             return DRAW, DRAW_INSUFFICIENT
     
-    if ldraw.repetitionCount (lboard) >= 3:
-        return DRAW, DRAW_REPITITION
-    
-    if ldraw.testFifty (lboard):
-        return DRAW, DRAW_50MOVES
-    
     board_clone = lboard.clone()
+    hasMove = False
     for move in lmovegen.genAllMoves (board_clone):
         board_clone.applyMove(move)
         if board_clone.opIsChecked():
             board_clone.popMove()
             continue
         board_clone.popMove()
-        return RUNNING, UNKNOWN_REASON
-    
-    if lboard.isChecked():
-        if board.variant == LOSERSCHESS:
-            if board.color == WHITE:
-                status = WHITEWON
-            else:
-                status = BLACKWON
-        else:
-            if board.color == WHITE:
-                status = BLACKWON
-            else:
-                status = WHITEWON
-        return status, WON_MATE
-    
-    if board.variant == LOSERSCHESS:
-        if board.color == WHITE:
-            status = WHITEWON
-        else:
-            status = BLACKWON
-        return status, DRAW_STALEMATE
-    else:
-        return DRAW, DRAW_STALEMATE
+        hasMove = True
+        break
 
+    if not hasMove:
+        if lboard.isChecked():
+            if board.variant == LOSERSCHESS:
+                if board.color == WHITE:
+                    status = WHITEWON
+                else:
+                    status = BLACKWON
+            else:
+                if board.color == WHITE:
+                    status = BLACKWON
+                else:
+                    status = WHITEWON
+            return status, WON_MATE
+        else:
+            if board.variant == LOSERSCHESS:
+                if board.color == WHITE:
+                    status = WHITEWON
+                else:
+                    status = BLACKWON
+                return status, DRAW_STALEMATE
+            else:
+                return DRAW, DRAW_STALEMATE
+
+    if ldraw.repetitionCount (lboard) >= 3:
+        return DRAW, DRAW_REPITITION
+    
+    if ldraw.testFifty (lboard):
+        return DRAW, DRAW_50MOVES
+
+    return RUNNING, UNKNOWN_REASON
+    
 def standard_validate (board, move):
     return validateMove (board.board, move.move) and \
            not board.willLeaveInCheck(move)
