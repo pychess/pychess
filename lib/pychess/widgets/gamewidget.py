@@ -62,10 +62,8 @@ path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
 files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
 sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
-pref_sidePanels = []
-for panel in sidePanels:
-    if conf.get(panel.__name__, True):
-        pref_sidePanels.append(panel)
+
+dockLocation = addUserConfigPrefix("pydock.xml")
 
 ################################################################################
 # Initialize module variables                                                  #
@@ -575,7 +573,6 @@ def _ensureReadForGameWidgets ():
     dockAlign.show()
     dock.show()
     
-    dockLocation = addUserConfigPrefix("pydock.xml")
     for panel in sidePanels:
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
@@ -638,19 +635,13 @@ def _ensureReadForGameWidgets ():
         
         # NE
         leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
-        conf.set("annotationPanel", True)
         leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")
-        conf.set("historyPanel", True)
         leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
-        conf.set("scorePanel", True)
         
         # SE
         leaf = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0], "bookPanel")
-        conf.set("bookPanel", True)
         leaf = leaf.dock(docks["commentPanel"][1], CENTER, docks["commentPanel"][0], "commentPanel")
-        conf.set("commentPanel", True)
         leaf = leaf.dock(docks["chatPanel"][1], CENTER, docks["chatPanel"][0], "chatPanel")
-        conf.set("chatPanel", True)
     
     def unrealize (dock):
         # unhide the panel before saving so its configuration is saved correctly
