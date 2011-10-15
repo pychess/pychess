@@ -521,9 +521,14 @@ class GameModel (GObject, PooledThread):
          
         log.debug("GameModel.checkStatus:\n")
         status, reason = getStatus(self.boards[-1])
-        
+         
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            if not (status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES)):
+            engine_engine = self.players[WHITE].__type__ == ARTIFICIAL and self.players[BLACK].__type__ == ARTIFICIAL
+            if status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES):
+                if engine_engine:
+                    self.end(status, reason)
+                    return
+            else:
                 self.end(status, reason)
                 return
         
