@@ -243,6 +243,11 @@ class GameModel (GObject, PooledThread):
         else:
             return True
 
+    def isEngine2EngineGame (self):
+        if self.players[0].__type__ == ARTIFICIAL and self.players[1].__type__ == ARTIFICIAL:
+            return True
+        else:
+            return False
 
     def isMainlineBoard(self, ply):
         return self.getBoardAtPly(ply) in self.variations[0]
