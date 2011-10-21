@@ -142,7 +142,10 @@ class GameWidget (gobject.GObject):
         self.board.__del__()
     
     def _update_menu_abort (self):
-        if self.gamemodel.isObservationGame():
+        if self.gamemodel.isEngine2EngineGame():
+            self.menuitems["abort"].sensitive = True
+            self.menuitems["abort"].tooltip = ""
+        elif self.gamemodel.isObservationGame():
             self.menuitems["abort"].sensitive = False
         elif isinstance(self.gamemodel, ICGameModel) \
            and self.gamemodel.status in UNFINISHED_STATES:
@@ -196,9 +199,9 @@ class GameWidget (gobject.GObject):
     
     def _update_menu_pause_and_resume (self):
         self.menuitems["pause1"].sensitive = self.gamemodel.status == RUNNING \
-            and not self.gamemodel.isObservationGame()
+            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
         self.menuitems["resume1"].sensitive = self.gamemodel.status == PAUSED \
-            and not self.gamemodel.isObservationGame()
+            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
         # TODO: if IC game is over and opponent is available, enable Resume
     
     def _update_menu_undo (self):
