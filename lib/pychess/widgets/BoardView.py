@@ -18,6 +18,8 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
+                                       HiddenPiecesChess, AllWhiteChess
 from pychess.Variants.fischerandom import FischerRandomChess
 import preferencesDialog
 
@@ -711,6 +713,15 @@ class BoardView (gtk.DrawingArea):
         return matrices
     
     def __drawPiece(self, context, piece, x, y):
+        if self.model.variant == BlindfoldChess:
+            return
+        elif self.model.variant == HiddenPawnsChess:
+            if piece.piece == PAWN:
+                return
+        elif self.model.variant == HiddenPiecesChess:
+            if piece.piece != PAWN:
+                return
+
         xc, yc, square, s = self.square
         
         if not conf.get("faceToFace", False):
@@ -725,7 +736,7 @@ class BoardView (gtk.DrawingArea):
         context.transform(invmatrix)
         drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
-                    s-CORD_PADDING*2)
+                    s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteChess)
         context.transform(matrix)
     
     def drawPieces(self, context, r):
