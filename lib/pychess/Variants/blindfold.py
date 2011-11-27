@@ -39,7 +39,7 @@ class HiddenPiecesBoard(Board):
 class HiddenPiecesChess:
     __desc__ = _("Classic chess rules with hidden pieces\n" +
                  "http://en.wikipedia.org/wiki/Blindfold_chess")
-    name = _("Hiden pieces")
+    name = _("Hidden pieces")
     cecp_name = "normal"
     board = HiddenPiecesBoard
     need_initial_board = False
