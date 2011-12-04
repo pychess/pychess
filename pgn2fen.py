@@ -60,13 +60,13 @@ if __name__ == '__main__':
     # Several eco list contains only eco+name pairs, so
     # we will use base ECO line move lists(FEN) from en eco.pgn 
     print "processing en eco.pgn"
-    feed("../../../lang/en/eco.pgn", "en")
+    feed("lang/en/eco.pgn", "en")
     
-    for lang in [d for d in os.listdir("../../../lang") if os.path.isdir("../../../lang/"+d)]:
+    for lang in [d for d in os.listdir("lang") if os.path.isdir("lang/"+d)]:
         if lang == "en":
             continue
             
-        pgnfile = "../../../lang/%s/eco.pgn" % lang
+        pgnfile = "lang/%s/eco.pgn" % lang
         if os.path.isfile(pgnfile):
             print "processing %s eco.pgn" % lang
             feed(pgnfile, lang)
