@@ -13,7 +13,7 @@ from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
-from pychess.Utils.eco import eco_lookup
+from pychess.Utils.eco import get_eco
 from pychess.Variants.normal import NormalChess
 from pychess.Variants import variants
 
@@ -194,7 +194,7 @@ class GameModel (GObject, PooledThread):
 
     def setOpening(self):
         if self.isMainlineBoard(self.ply):
-            opening = eco_lookup.get(self.getBoardAtPly(self.ply).asFen())
+            opening = get_eco(self.getBoardAtPly(self.ply).asFen())
             if opening is not None:
                 self.tags["ECO"] = opening[0]
                 self.tags["Opening"] = opening[1]

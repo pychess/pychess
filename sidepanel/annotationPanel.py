@@ -462,8 +462,8 @@ class Sidepanel(gtk.TextView):
             buf.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
             opening = gm.tags.get('Opening')
             if opening:
-                opening = ", ".join(opening)
-                buf.insert_with_tags_by_name(end_iter(), " - " + opening, "head2")
+                buf.insert_with_tags_by_name(end_iter(), " - ", "head1")
+                buf.insert_with_tags_by_name(end_iter(), opening, "head2")
 
         buf.insert(end_iter(), "\n\n")
 
