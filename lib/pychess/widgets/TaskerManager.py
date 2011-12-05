@@ -1,25 +1,25 @@
+import gtk
+import pango
 import math
+import random
 
-import gtk, pango
 from gtk.gdk import pixbuf_new_from_file
-from gobject import SIGNAL_RUN_FIRST
 
-from pychess.System.prefix import addDataPrefix
-from pychess.System import uistuff
-from pychess.System.glock import glock_connect_after 
-from ToggleComboBox import ToggleComboBox
-from Background import giveBackground
-
-from pychess.Utils.IconLoader import load_icon
-from pychess.Utils.GameModel import GameModel
-from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
-from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, NORMALCHESS
-from pychess.ic import ICLogon
-from pychess.widgets import ionest
-from pychess.widgets import newGameDialog
+from pychess.System import uistuff, conf
+from pychess.System.glock import glock_connect_after
+from pychess.System.prefix import addDataPrefix
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
 from pychess.Variants import variants
+from pychess.ic import ICLogon
+from pychess.widgets import ionest, newGameDialog
+
+from Background import giveBackground
+from ToggleComboBox import ToggleComboBox
 
 class TaskerManager (gtk.Table):
     
@@ -145,6 +145,7 @@ class NewGameTasker (gtk.Alignment):
         combo = ToggleComboBox()
         combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
         combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
+        combo.addItem(_("Random"), pixbuf_new_from_file(addDataPrefix("glade/random.png")))
         combo.setMarkup("<b>", "</b>")
         widgets["colorDock"].add(combo)
         uistuff.keep(combo, "newgametasker_colorcombo")
@@ -189,14 +190,18 @@ class NewGameTasker (gtk.Alignment):
     
     def startClicked (self, button):
         color = self.widgets["colorDock"].child.active
+        if color == 2:
+            color = random.choice([WHITE, BLACK])
         opponent = self.widgets["opponentDock"].child.active
         difficulty = int(self.widgets["skillSlider"].get_value())
         
         gamemodel = GameModel(TimeModel(5*60, 0))
         
-        player0tup = (LOCAL, Human, (color, ""), _("Human"))
+        name = conf.get("firstName", _("You"))
+        player0tup = (LOCAL, Human, (color, name), name)
         if opponent == 0:
-            player1tup = (LOCAL, Human, (1-color, ""), _("Human"))
+            name = conf.get("secondName", _("Guest"))
+            player1tup = (LOCAL, Human, (1-color, name), name)
         else:
             engine = discoverer.getEngineN (opponent-1)
             name = discoverer.getName(engine)

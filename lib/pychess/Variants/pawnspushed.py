@@ -1,11 +1,9 @@
 # Pawns Pushed Chess
-# Pawns start on 4th and 5th ranks rather than 2nd and 7th
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
 
 PAWNSPUSHEDSTART = "rnbqkbnr/8/8/pppppppp/PPPPPPPP/8/8/RNBQKBNR w - - 0 1"
-
 
 class PawnsPushedBoard(Board):
     variant = PAWNSPUSHEDCHESS
@@ -18,6 +16,8 @@ class PawnsPushedBoard(Board):
 
 
 class PawnsPushedChess:
+    __desc__ = _("FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "Pawns start on 4th and 5th ranks rather than 2nd and 7th")
     name = _("Pawns Pushed")
     cecp_name = "normal"
     board = PawnsPushedBoard

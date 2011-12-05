@@ -17,6 +17,7 @@ from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
+from FICSObjects import FICSPlayers, FICSGames
 
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction
@@ -103,8 +104,7 @@ class Connection (GObject, PooledThread):
 EOF = _("The connection was broken - got \"end of file\" message")
 NOTREG = _("'%s' is not a registered name")
 BADPAS = _("The entered password was invalid.\n" + \
-           "If you have forgot your password, try logging in as a guest and open chat on channel 4. Write \"I've forgotten my password\" to get help.\n"+\
-           "If that is by some reason not possible, please email: support@freechess.org")
+           "If you have forgot your password, go to http://www.freechess.org/cgi-bin/Utilities/requestPassword.cgi to request a new one over email.")
 
 class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password=""):
@@ -137,7 +137,9 @@ class FICSConnection (Connection):
                                              "enter the server as",
                                              "Try again.")
                 if got == 0:
+                    self.client.sensitive = True
                     print >> self.client, self.password
+                    self.client.sensitive = False
                     self.registred = True
                 # No such name
                 elif got == 1:
@@ -191,6 +193,11 @@ class FICSConnection (Connection):
             self.cm = ChatManager(self)
             self.alm = AutoLogOutManager(self)
             self.adm = AdjournManager(self)
+            self.players = FICSPlayers(self)
+            self.games = FICSGames(self)
+            self.bm.start()
+            self.players.start()
+            self.games.start()
             
             self.connecting = False
             self.connected = True

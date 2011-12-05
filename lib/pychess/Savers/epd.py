@@ -1,9 +1,8 @@
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Piece import Piece
-from pychess.Utils.Move import Move
+from ChessFile import ChessFile, LoadingError
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+from pychess.Utils.logic import getStatus, repetitionCount
 from pychess.Utils.lutils.leval import evaluateComplete
-from pychess.Utils.logic import getStatus
 
 __label__ = _("Chess Position")
 __endings__ = "epd",
@@ -22,13 +21,7 @@ def save (file, model):
     ############################################################################
     # Repetition count                                                         #
     ############################################################################
-    rc = 1
-    if len(model.boards) >= 5 and model.boards[-1].board.hash == \
-                                  model.boards[-5].board.hash:
-        rc = 2
-        if len(model.boards) >= 9 and model.boards[-5].board.hash == \
-                                      model.boards[-9].board.hash:
-            rc = 3 # If rc == 3, we have a draw by three fold repetition
+    rc = repetitionCount(model.boards[-1])
     
     ############################################################################
     # Centipawn evaluation                                                     #
@@ -75,11 +68,10 @@ def save (file, model):
 def load (file):
     return EpdFile ([line for line in map(str.strip, file) if line])
 
-from ChessFile import ChessFile, LoadingError
 
 class EpdFile (ChessFile):
     
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position, model=None, quick_parse=True):
         if not model: model = GameModel()
         
         fieldlist = self.games[gameno].split(" ")
@@ -110,9 +102,10 @@ class EpdFile (ChessFile):
         else: fen += " 1"
         
         model.boards = [model.variant.board(setup=fen)]
+        model.variations = [model.boards]
         model.status = WAITING_TO_START
         
-        # rc i kinda broken
+        # rc is kinda broken
         #if "rc" in opcodes:
         #    model.boards[0].board.rc = int(opcodes["rc"])
         

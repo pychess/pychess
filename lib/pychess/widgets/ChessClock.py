@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 from math import ceil, pi, cos, sin
-
+import cairo, gtk, pango
 from gtk import gdk
-import gtk, time, pango
-import cairo
 
 from pychess.System import glock
 from pychess.System.repeat import repeat_sleep

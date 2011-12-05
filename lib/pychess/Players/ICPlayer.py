@@ -5,19 +5,20 @@ from Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN, ParsingError
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
-from pychess.Variants import variants
 from pychess.System.Log import log
 
 class ICPlayer (Player):
     __type__ = REMOTE
     
-    def __init__ (self, gamemodel, name, gameno, color):
+    def __init__ (self, gamemodel, ichandle, gameno, color, name, icrating=None):
         Player.__init__(self)
         
         self.queue = Queue()
         self.okqueue = Queue()
         
-        self.name = name
+        self.setName(name)
+        self.ichandle = ichandle
+        self.icrating = icrating
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
@@ -40,7 +41,7 @@ class ICPlayer (Player):
     #===========================================================================
     
     def __onOfferAdd (self, om, offer):
-        if self.gamemodel.status in UNFINISHED_STATES and self.gamemodel.inControl == True:
+        if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame():
             log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s\n" % \
                 (self.gameno, self.name, offer))
             self.offers[offer.index] = offer
@@ -69,8 +70,8 @@ class ICPlayer (Player):
             (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
-            and wname == self.gamemodel.players[0].getICHandle() \
-            and bname == self.gamemodel.players[1].getICHandle():
+            and wname == self.gamemodel.players[0].ichandle \
+            and bname == self.gamemodel.players[1].ichandle:
             log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move\n" % \
                 (id(self), self, gameno))
             
@@ -113,7 +114,9 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        if board2 and self.gamemodel.inControl:
+        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s\n" % \
+            (id(self), self, move, board1, board2))
+        if board2 and not self.gamemodel.isObservationGame():
             self.connection.bm.sendMove (toAN (board2, move))
         
         item = self.queue.get(block=True)
@@ -180,9 +183,9 @@ class ICPlayer (Player):
         else:
             min = 0
             inc = 0
-        rated = self.gamemodel.rated
-        variant = [ k for (k, v) in variants.iteritems() if variants[k] == self.gamemodel.variant ][0]
-        self.connection.om.challenge(self.name, min, inc, rated, variant=variant)
+        self.connection.om.challenge(self.ichandle,
+            self.gamemodel.ficsgame.game_type, min, inc,
+            self.gamemodel.ficsgame.rated)
     
     def offer (self, offer):
         log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))

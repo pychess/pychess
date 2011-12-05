@@ -1,4 +1,3 @@
-
 """
     This module differs from leval in that it is not optimized for speed.
     It checks differences between last and current board, and returns not
@@ -6,13 +5,17 @@
     Can be used for commenting on board changes.
 """
 
-import leval
-from pychess.Utils.const import *
-from lmove import *
-from lmovegen import *
-from lsort import staticExchangeEvaluate
+from gettext import ngettext
 from ldata import *
-from validator import validateMove
+from pychess.Utils.const import *
+from pychess.Utils.lutils.attack import staticExchangeEvaluate, getAttacks, \
+    defends
+from pychess.Utils.lutils.lmove import TCORD, FCORD, FLAG, PROMOTE_PIECE, toSAN, \
+    newMove
+from pychess.Utils.lutils.lmovegen import genCaptures, genAllMoves
+from pychess.Utils.lutils.validator import validateMove
+from pychess.Utils.repr import reprColor, reprPiece
+import leval
 
 
 def join(items):
@@ -127,7 +130,7 @@ def prefix_type (model, ply, phase):
     flag = FLAG(model.getMoveAtPly(ply-1).move)
 
     if flag in PROMOTIONS:
-        yield _("promotes a Pawn to a %s") % reprPiece[flag-3]
+        yield _("promotes a Pawn to a %s") % reprPiece[PROMOTE_PIECE(flag)]
 
     elif flag in (KING_CASTLE, QUEEN_CASTLE):
         yield _("castles")
@@ -298,14 +301,15 @@ def offencive_moves_pin (model, ply, phase):
 
     board = model.getBoardAtPly(ply).board
     move = model.getMoveAtPly(ply-1).move
+    fcord = FCORD(move)
     tcord = TCORD(move)
     piece = board.arBoard[tcord]
 
     ray = createBoard(0)
     if piece in (BISHOP, QUEEN):
-        ray |= ray45[tcord] | ray135[tcord]
+        ray |= (ray45[tcord] | ray135[tcord]) & ~(ray45[fcord] | ray135[fcord])
     if piece in (ROOK, QUEEN):
-        ray |= ray00[tcord] | ray90[tcord]
+        ray |= (ray00[tcord] | ray90[tcord]) & ~(ray00[fcord] | ray90[fcord])
 
     if ray:
         for c in iterBits(ray & board.friends[board.color]):

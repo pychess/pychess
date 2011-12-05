@@ -212,6 +212,8 @@ class UCIEngine (ProtocolEngine):
         self.mode = mode
     
     def setOptionInitialBoard (self, model):
+        log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
+            (self, model), self.defname)
         # UCI always sets the position when searching for a new game, but for
         # getting analyzers ready to analyze at first ply, it is good to have.
         self.board = model.getBoardAtPly(model.ply)
@@ -230,11 +232,12 @@ class UCIEngine (ProtocolEngine):
     def setOptionStrength (self, strength):
         self.strength = strength
         
-        if self.hasOption('UCI_LimitStrength') and self.hasOption('UCI_Elo'):
+        if self.hasOption('UCI_LimitStrength') and strength <= 6:
             self.setOption('UCI_LimitStrength', True)
-            if strength <= 6:
+            if self.hasOption('UCI_Elo'):
                 self.setOption('UCI_Elo', 300 * strength + 200)
-        else:
+        
+        if not self.hasOption('UCI_Elo') or strength == 7:
             self.timeHandicap = th = 0.01 * 10**(strength/4.)
             self.wtime = int(max(self.wtime*th, 1))
             self.btime = int(max(self.btime*th, 1))
@@ -248,6 +251,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def pause (self):
+        log.debug("pause: self=%s\n" % self, self.defname)
         self.engine.pause()
         return
         
@@ -257,6 +261,7 @@ class UCIEngine (ProtocolEngine):
             print >> self.engine, "stop"
     
     def resume (self):
+        log.debug("resume: self=%s\n" % self, self.defname)
         self.engine.resume()
         return
         
@@ -409,6 +414,8 @@ class UCIEngine (ProtocolEngine):
         #---------------------------------------------------------- Initializing
         if parts[0] == "id":
             self.ids[parts[1]] = " ".join(parts[2:])
+            if parts[1] == "name":
+                self.setName(self.ids["name"])
             return
         
         if parts[0] == "uciok":
@@ -480,15 +487,21 @@ class UCIEngine (ProtocolEngine):
                     (move, self.board), self.defname)
                 
                 if self.getOption('Ponder'):
+                    self.pondermove = None
+                    # An engine may send an empty ponder line, simply to clear.
                     if len(parts) == 4 and self.board:
-                        self.pondermove = parseAN(self.board, parts[3])
-                        # Engines don't always check for everything in their ponders
-                        if validate(self.board, self.pondermove):
-                            self._startPonder()
+                        # Engines don't always check for everything in their
+                        # ponders. Hence we need to validate.
+                        # But in some cases, what they send may not even be
+                        # correct AN - specially in the case of promotion.
+                        try:
+                            pondermove = parseAN(self.board, parts[3])
+                        except ParsingError:
+                            pass
                         else:
-                            self.pondermove = None
-                    else:
-                        self.pondermove = None
+                            if validate(self.board, pondermove):
+                                self.pondermove = pondermove
+                                self._startPonder()
                 
                 self.returnQueue.put(move)
                 log.debug("__parseLine: put move=%s into self.returnQueue=%s\n" % \
@@ -504,8 +517,8 @@ class UCIEngine (ProtocolEngine):
                 score = int(parts[parts.index("score")+2])
                 if scoretype == 'mate':
 #                    print >> self.engine, "stop"
-                    score = MATE_VALUE-abs(score)
-                    score *= score/abs(score) # sign
+                    sign = score/abs(score)
+                    score = sign * (MATE_VALUE-abs(score))
             
             movstrs = parts[parts.index("pv")+1:]
             try:

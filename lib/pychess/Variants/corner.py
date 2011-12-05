@@ -1,17 +1,9 @@
 # Corner Chess
-# http://brainking.com/en/GameRules?tp=2
-# * placement of the pieces on the 1st and 8th row are randomized
-# * the king is in the right hand corner 
-# * bishops must start on opposite color squares
-# * black's starting position is obtained by rotating white's position 180 degrees around the board's center.
-# * No castling
-
 
 import random
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
-
 
 class CornerBoard(Board):
     variant = CORNERCHESS
@@ -34,8 +26,14 @@ class CornerBoard(Board):
         
         return tmp
 
-
 class CornerChess:
+    __desc__ = \
+        _("http://brainking.com/en/GameRules?tp=2\n" +
+          "* Placement of the pieces on the 1st and 8th row are randomized\n" +
+          "* The king is in the right hand corner\n" +
+          "* Bishops must start on opposite color squares\n" +
+          "* Black's starting position is obtained by rotating white's position 180 degrees around the board's center\n" +
+          "* No castling")
     name = _("Corner")
     cecp_name = "nocastle"
     board = CornerBoard

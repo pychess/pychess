@@ -1,20 +1,15 @@
-
-import re
-import webbrowser
-import colorsys
-from math import log as ln, ceil
-import Queue
-
-import gobject
-import gtk.glade
-import pango
-
-from pychess.System import glock
-from pychess.System import conf
+from pychess.System import conf, glock
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
+import Queue
+import colorsys
+import gtk.glade
+import pango
+import re
+import webbrowser
+
 
 def createCombo (combo, data):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
@@ -56,14 +51,25 @@ def updateCombo (combo, data):
     combo.set_active(new_active)
 
 
+# int.bit_length() new in Python 2.7, so we have to use an equivalent
+def int_bit_length(i):
+    s = bin(i)       # binary representation:  bin(-37) --> '-0b100101'
+    s = s.lstrip('-0b') # remove leading zeros and minus sign
+    return len(s)       # len('100101') --> 6
+
 def genColor (n, startpoint=0):
     assert n >= 1
     # This splits the 0 - 1 segment in the pizza way
-    h = (2*n-1)/(2**ceil(ln(n)/ln(2)))-1
+    h = (2*n-1)/(2.**int_bit_length(n-1))-1
     h = (h + startpoint) % 1
-    # We set saturation based on the amount of green, in the range 0.6 to 0.8
+    # We set saturation based on the amount of green, scaled to the interval
+    # [0.6..0.8]. This ensures a consistent lightness over all colors.
     rgb = colorsys.hsv_to_rgb(h, 1, 1)
     rgb = colorsys.hsv_to_rgb(h, 1, (1-rgb[1])*0.2+0.6)
+    # This algorithm ought to balance colors more precisely, but it overrates
+    # the lightness of yellow, and nearly makes it black
+    # yiq = colorsys.rgb_to_yiq(*rgb)
+    # rgb = colorsys.yiq_to_rgb(.125, yiq[1], yiq[2])
     return rgb
 
 
@@ -264,40 +270,55 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     window.connect("delete-event", savePosition, "delete-event")
     
     def loadPosition (window):
+        width, height = window.get_size_request()
+        
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
             width = conf.getStrict(key+"_width")
             height = conf.getStrict(key+"_height")
-            window.set_size_request(width, height)
+            window.resize(width, height)
+        
         elif defaultSize:
             width, height = defaultSize
-            window.set_size_request(width, height)
+            window.resize(width, height)
         
         if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
             window.move(conf.getStrict(key+"_x"),
                         conf.getStrict(key+"_y"))
         
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
-            width, height = window.get_size_request()
-            x = int(gtk.gdk.screen_width()/2-width/2)
+            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
+            x = int(monitor_width/2-width/2) + monitor_x
             if defaultPosition == POSITION_CENTER:
-                y = int(gtk.gdk.screen_height()/2-height/2)
+                y = int(monitor_height/2-height/2) + monitor_y
             else:
                 # Place the window on the upper golden ratio line
-                y = int(gtk.gdk.screen_height()/2.618-height/2)
+                y = int(monitor_height/2.618-height/2) + monitor_y
             window.move(x, y)
+        
     loadPosition(window)
     
     # In rare cases, gtk throws some gtk_size_allocation error, which is
     # probably a race condition. To avoid the window forgets its size in
     # these cases, we add this extra hook
-    def callback (window, *args):
-        # Disconnect ourselves to get run_once effect
-        window.disconnect(handle_id)
+    def callback (window):
         loadPosition(window)
-        gobject.idle_add(window.set_size_request, -1, -1)
-    handle_id = window.connect("size-allocate", callback)
+    onceWhenReady(window, callback)
 
+# Some properties can only be set, once the window is sufficiently initialized,
+# This function lets you queue your request until that has happened.
+def onceWhenReady(window, func, *args, **kwargs):
+    def cb(window, alloc, func, *args, **kwargs):
+        func(window, *args, **kwargs)
+        window.disconnect(handler_id)
+    handler_id = window.connect_after("size-allocate", cb, func, *args, **kwargs)
 
+def getMonitorBounds():
+    screen = gtk.gdk.screen_get_default()
+    root_window = screen.get_root_window()
+    mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+    current_monitor_number = screen.get_monitor_at_point(mouse_x,mouse_y)
+    monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
+    return monitor_geometry.x, monitor_geometry.y, monitor_geometry.width, monitor_geometry.height
 
 
 tooltip = gtk.Window(gtk.WINDOW_POPUP)
@@ -311,10 +332,10 @@ def makeYellow (box):
             gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
             box.allocation.x, box.allocation.y,
             box.allocation.width, box.allocation.height)
-    def cb (box, a):
+    def cb (box):
         box.set_style(tooltipStyle)
         box.connect("expose-event", on_box_expose_event)
-    box.connect_after("size-allocate", cb)
+    onceWhenReady(box, cb)
 
 
 
@@ -369,7 +390,7 @@ def initTexviewLinks (textview, text):
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter and iter.has_tag(tag) and \
-                    tag.props.foreground_gdk.red == 65535:
+                    tag.props.foreground_gdk.red == 0xffff:
                 if type == "link":
                     webbrowser.open(link)
                 else: webbrowser.open("mailto:"+link)
@@ -395,7 +416,7 @@ def initTexviewLinks (textview, text):
 
 
 
-def initLabelLinks (text, url):
+def LinkLabel (text, url):
     label = gtk.Label()
     
     eventbox = gtk.EventBox()

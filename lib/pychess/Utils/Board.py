@@ -21,6 +21,13 @@ class Board:
     def __init__ (self, setup=False):
         self.data = [[None]*8 for i in xrange(8)]
         self.board = LBoard(self.variant)
+
+        self.movecount = ""
+        self.nags = []
+        # children can contain comments and variations
+        self.children = []
+        self.next = None
+        self.prev = None
         
         if setup:
             if setup == True:

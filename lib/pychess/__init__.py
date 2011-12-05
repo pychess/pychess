@@ -1,2 +1,2 @@
-VERSION = "0.10rc1"
+VERSION = "0.10.1beta2"
 VERSION_NAME = "Staunton"

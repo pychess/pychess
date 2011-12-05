@@ -1,4 +1,5 @@
 import os
+import sys
 import signal
 import errno
 import time
@@ -9,6 +10,7 @@ import gobject
 
 from pychess.Utils.const import *
 from Log import log
+from which import which
 from pychess.System.ThreadPool import pool
 from pychess.System import glock
 from pychess.System.GtkWorker import EmitPublisher
@@ -16,21 +18,14 @@ from pychess.System.GtkWorker import EmitPublisher
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
-def searchPath (file, pathvar="PATH", access=os.R_OK, altpath=None):
+def searchPath (file, access=os.R_OK, altpath=None):
     if altpath and os.path.isfile(altpath):
         if not os.access (altpath, access):
             log.warn("Not enough permissions on %s\n" % altpath)
         else:
             return altpath
-    for dir in os.environ[pathvar].split(os.pathsep):
-        dir = os.path.abspath(dir)
-        path = os.path.join(dir, file)
-        if os.path.isfile(path):
-            if not os.access (path, access):
-                log.warn("Not enough permissions on %s\n" % path)
-            else:
-                return path
-    return None
+
+    return which(file, mode=access)
 
 subprocesses = []
 def finishAllSubprocesses ():
@@ -47,7 +42,7 @@ class SubProcess (gobject.GObject):
         "died": (gobject.SIGNAL_RUN_FIRST, None, ())
     }
     
-    def __init__(self, path, args=[], warnwords=[], env=None):
+    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
         gobject.GObject.__init__(self)
         
         self.path = path
@@ -68,7 +63,7 @@ class SubProcess (gobject.GObject):
         
         argv = [str(u) for u in [self.path]+self.args]
         self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
-                child_setup=self.__setup,
+                working_directory=chdir, child_setup=self.__setup,
                 standard_input=True, standard_output=True, standard_error=True,
                 flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
         
@@ -90,7 +85,8 @@ class SubProcess (gobject.GObject):
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
-        channel.set_flags(gobject.IO_FLAG_NONBLOCK)
+        if sys.platform != "win32":
+            channel.set_flags(gobject.IO_FLAG_NONBLOCK)
         if callback:
             tag = channel.add_watch(callbackflag, callback, isstderr)
             self.__channelTags.append(tag)
@@ -145,7 +141,7 @@ class SubProcess (gobject.GObject):
                 else: log.debug(line, self.defname)
             
             self.linePublisher.put(line)
-    
+
     def write (self, data):
         if self.channelsClosed:
             log.warn("Chan closed for %r" % data, self.defname)
@@ -157,7 +153,7 @@ class SubProcess (gobject.GObject):
                 self.inChannel.flush()
             except gobject.GError, e:
                 log.error(str(e)+". Last line wasn't sent.\n", self.defname)
-    
+
     def _wait4exit (self):
         try:
             pid, code = os.waitpid(self.pid, 0)
@@ -171,7 +167,8 @@ class SubProcess (gobject.GObject):
     
     def sendSignal (self, sign):
         try:
-            os.kill(self.pid, signal.SIGCONT)
+            if sys.platform != "win32":
+                os.kill(self.pid, signal.SIGCONT)
             os.kill(self.pid, sign)
         except OSError, error:
             if error.errno == errno.ESRCH:
@@ -205,7 +202,8 @@ class SubProcess (gobject.GObject):
         self.sendSignal(signal.SIGSTOP)
     
     def resume (self):
-        self.sendSignal(signal.SIGCONT)
+        if sys.platform != "win32":
+            self.sendSignal(signal.SIGCONT)
     
     def sigkill (self):
         self.sendSignal(signal.SIGKILL)

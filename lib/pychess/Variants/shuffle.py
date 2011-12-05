@@ -1,15 +1,9 @@
 # Shuffle Chess
-# nocastle variant in xboard terms: http://tim-mann.org/xboard/engine-intf.html#8
-# This is FICS wild/2 (http://www.freechess.org/Help/HelpFiles/wild.html)
-# * Random arrangement of the pieces behind the pawns
-# * No castling
-# * Black's arrangement mirrors white's
 
 import random
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
-
 
 class ShuffleBoard(Board):
     variant = SHUFFLECHESS
@@ -28,8 +22,12 @@ class ShuffleBoard(Board):
         
         return tmp
 
-
 class ShuffleChess:
+    __desc__ = _("xboard nocastle: http://tim-mann.org/xboard/engine-intf.html#8\n" +
+                 "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "* Random arrangement of the pieces behind the pawns\n" +
+                 "* No castling\n" +
+                 "* Black's arrangement mirrors white's")
     name = _("Shuffle")
     cecp_name = "nocastle"
     board = ShuffleBoard

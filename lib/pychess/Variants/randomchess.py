@@ -1,16 +1,9 @@
 # Random Chess
-# This is FICS wild/3 (http://www.freechess.org/Help/HelpFiles/wild.html)
-# * Randomly chosen pieces (two queens or three rooks possible)
-# * Exactly one king of each color
-# * Pieces placed randomly behind the pawns
-# * No castling
-# * Black's arrangement mirrors white's
 
 import random
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
-
 
 class RandomBoard(Board):
     variant = RANDOMCHESS
@@ -32,6 +25,12 @@ class RandomBoard(Board):
 
 
 class RandomChess:
+    __desc__ = _("FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "* Randomly chosen pieces (two queens or three rooks possible)\n" +
+                 "* Exactly one king of each color\n" +
+                 "* Pieces placed randomly behind the pawns\n" +
+                 "* No castling\n" +
+                 "* Black's arrangement mirrors white's")
     name = _("Random")
     cecp_name = "unknown"
     board = RandomBoard

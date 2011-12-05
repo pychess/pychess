@@ -18,6 +18,8 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
+                                       HiddenPiecesChess, AllWhiteChess
 from pychess.Variants.fischerandom import FischerRandomChess
 import preferencesDialog
 
@@ -198,10 +200,20 @@ class BoardView (gtk.DrawingArea):
                     self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
-        self.shown = model.ply-moves
+        if model.boards == model.variations[0]:
+            self.shown = model.ply-moves
+        else:
+            # Go back to the mainline to let animation system work
+            board = model.getBoardAtPly(self.shown)
+            while board not in model.variations[0]:
+                board = model.boards[board.ply-model.lowply-1]
+            self.shown = board.ply
+            self.model.boards = self.model.variations[0]
+            self.shown = model.ply-moves
     
     def game_loading (self, model, uri):
         self.autoUpdateShown = False
+
     def game_loaded (self, model, uri):
         self.autoUpdateShown = True
         self._shown = model.ply
@@ -221,7 +233,7 @@ class BoardView (gtk.DrawingArea):
                     sound = "gameIsLost"
             elif model.status == BLACKWON:
                 if model.players[1].__type__ == LOCAL:
-                     sound = "gameIsWon"
+                    sound = "gameIsWon"
                 elif model.players[0].__type__ == LOCAL:
                     sound = "gameIsLost"
             elif model.status in (ABORTED, KILLED):
@@ -346,17 +358,31 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = self.model.getMoveAtPly(self.shown-1)
         else:
             self.lastMove = None
+
+        # Back to the main line if needed...
+        stayInVariation = True
+        if self.model.boards != self.model.variations[0]:
+            if self.model.isMainlineBoard(self.shown):
+                self.model.boards = self.model.variations[0]
+                stayInVariation = False
        
-        self.runAnimation(redrawMisc=True)
+        self.runAnimation(redrawMisc=stayInVariation)
         repeat(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
     
     def runAnimation (self, redrawMisc=False):
-        
-        """ The animationsystem in pychess is very loosely inspired by the one of chessmonk. The idea is, that every piece has a place in an array (the board.data one) for where to be drawn. If a piece is to be animated, it can set its x and y properties, to some cord (or part cord like 0.42 for 42% right to file 0). Each time runAnimation is run, it will set those x and y properties a little closer to the location in the array. When it has reached its final location, x and y will be set to None.
-        _set_shown, which starts the animation, also sets a timestamp for the acceleration to work properply. """
-        
+        """
+        The animationsystem in pychess is very loosely inspired by the one of
+        chessmonk. The idea is, that every piece has a place in an array (the
+        board.data one) for where to be drawn. If a piece is to be animated, it
+        can set its x and y properties, to some cord (or part cord like 0.42 for
+        42% right to file 0). Each time runAnimation is run, it will set those x
+        and y properties a little closer to the location in the array. When it
+        has reached its final location, x and y will be set to None. _set_shown,
+        which starts the animation, also sets a timestamp for the acceleration
+        to work properply.
+        """
         self.animationLock.acquire()
         try:
             paintBox = None
@@ -687,6 +713,15 @@ class BoardView (gtk.DrawingArea):
         return matrices
     
     def __drawPiece(self, context, piece, x, y):
+        if self.model.variant == BlindfoldChess:
+            return
+        elif self.model.variant == HiddenPawnsChess:
+            if piece.piece == PAWN:
+                return
+        elif self.model.variant == HiddenPiecesChess:
+            if piece.piece != PAWN:
+                return
+
         xc, yc, square, s = self.square
         
         if not conf.get("faceToFace", False):
@@ -701,7 +736,7 @@ class BoardView (gtk.DrawingArea):
         context.transform(invmatrix)
         drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
-                    s-CORD_PADDING*2)
+                    s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteChess)
         context.transform(matrix)
     
     def drawPieces(self, context, r):
@@ -942,7 +977,8 @@ class BoardView (gtk.DrawingArea):
             self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
                              (.447,.624,.812,0.9), (.204,.396,.643,1))
         
-        if self.shown != self.model.ply:
+        if self.shown != self.model.ply or \
+           self.model.boards != self.model.variations[0]:
             return
         
         if self.greenarrow:
@@ -1203,11 +1239,11 @@ class BoardView (gtk.DrawingArea):
     
     def showFirst (self):
         self.shown = self.model.lowply
-    
+
     def showPrevious (self):
         if self.shown > self.model.lowply:
             self.shown -= 1
-    
+
     def showNext (self):
         if self.shown < self.model.ply:
             self.shown += 1

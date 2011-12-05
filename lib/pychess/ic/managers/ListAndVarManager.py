@@ -125,7 +125,7 @@ class ListAndVarManager:
                 else:
                     self.variables[k] = v
                     if k not in self.variablesBackup:
-                         self.variablesBackup[k] = v
+                        self.variablesBackup[k] = v
         # Unlock if people are waiting of the backup and we've got the normal
         # variable backup set. The interface variables automatically reset
         if not self.varLock._Semaphore__value and self.variablesBackup:

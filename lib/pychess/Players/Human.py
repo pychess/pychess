@@ -6,7 +6,6 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.System import glock, conf
-from pychess.widgets.gamewidget import cur_gmwidg
 
 from Player import Player, PlayerIsDead, TurnInterrupt
 
@@ -57,8 +56,6 @@ ACTION_ACTIONS = {
 }
 
 ERROR_MESSAGES = {
-    ACTION_ERROR_NO_CLOCK:
-        _("The game hasn't got a clock."),
     ACTION_ERROR_NOT_OUT_OF_TIME:
         _("Your opponent is not out of time."),
     ACTION_ERROR_CLOCK_NOT_STARTED:
@@ -67,16 +64,6 @@ ERROR_MESSAGES = {
         _("You can't switch colors during the game."),
     ACTION_ERROR_TOO_LARGE_UNDO:
         _("You have tried to undo too many moves."),
-    ACTION_ERROR_GAME_ENDED:
-        _("You can not offer a takeback because your opponent is not available."),
-    ACTION_ERROR_REQUIRES_UNFINISHED_GAME:
-        _("You can not %s when the game is over."),
-    ACTION_ERROR_UNRESUMEABLE_POSITION:
-        _("The game can not be resumed because the current position is not legally playable."),
-    ACTION_ERROR_RESUME_REQUIRES_PAUSED:
-        _("You can not resume a game that is not paused."),
-    ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
-        _("You can not %s on FICS when the game is over."),
 }
 
 class Human (Player):
@@ -86,7 +73,7 @@ class Human (Player):
         "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
-    def __init__ (self, gmwidg, color, name, ichandle=None):
+    def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
         Player.__init__(self)
         
         self.defname = "Human"
@@ -101,12 +88,10 @@ class Human (Player):
         ]
         self.setName(name)
         self.ichandle = ichandle
+        self.icrating = icrating
         
         if self.gamemodel.timemodel:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
-    
-    def getICHandle (self):
-        return self.ichandle
     
     #===========================================================================
     #    Handle signals from the board
@@ -117,7 +102,7 @@ class Human (Player):
                 self.gamemodel.status == RUNNING and \
                 timemodel.getPlayerTime(1-self.color) <= 0:
             log.log('Automatically sending flag call on behalf of player %s.' % self.name)
-            self.emit("offer", Offer(FLAG_CALL)) 
+            self.emit("offer", Offer(FLAG_CALL))
     
     def piece_moved (self, board, move, color):
         if color != self.color:
@@ -127,8 +112,9 @@ class Human (Player):
     def emit_action (self, action, param):
         # If there are two or more tabs open, we have to ensure us that it is
         # us who are in the active tab, and not the others
-        if self.gmwidg != cur_gmwidg():
-            return
+        if not self.gmwidg.isInFront(): return
+        log.debug("Human.emit_action: self.name=%s, action=%s\n" % (self.name, action))
+        
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
         if self.gamemodel.players[1-self.color].__type__ == LOCAL:
@@ -145,13 +131,15 @@ class Human (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, %s %s\n" % (move, board1, board2))
+        log.debug("Human.makeMove: move=%s, board1=%s board2=%s\n" % \
+            (move, board1, board2))
         self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
         if item == "del":
             raise PlayerIsDead, "Killed by foreign forces"
         if item == "int":
+            log.debug("Human.makeMove: %s: raise TurnInterrupt" % self)
             raise TurnInterrupt
         return item
     
@@ -184,11 +172,12 @@ class Human (Player):
     
     @glock.glocked
     def resume (self):
+        log.debug("Human.resume: %s\n" % (self))
         if self.board.view.model.curplayer == self:
             self.gmwidg.setLocked(False)
     
     def playerUndoMoves (self, movecount, gamemodel):
-        log.debug("Human.playerUndoMoves: movecount=%s\n" % movecount)
+        log.debug("Human.playerUndoMoves:  movecount=%s self=%s\n" % (movecount, self))
         #If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1:
             # If it is no longer us to move, we raise TurnInterruprt in order to
@@ -201,6 +190,7 @@ class Human (Player):
         # This is because it might have been locked by the game ending, but
         # perhaps we have now undone some moves, and it is no longer ended.
         elif movecount % 2 == 0 and gamemodel.curplayer == self:
+            log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked\n" % (self))
             self.gmwidg.setLocked(False)
     
     def putMessage (self, text):
@@ -255,11 +245,6 @@ class Human (Player):
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
             title = _("Unable to accept %s") % actionName.lower()
             description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
-        elif error == ACTION_ERROR_REQUIRES_UNFINISHED_GAME or \
-           error == ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED:
-            if offer.type not in ACTION_ACTIONS: return
-            title = _("Game is not running")
-            description = ERROR_MESSAGES[error] % ACTION_ACTIONS[offer.type]
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
              error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either

@@ -13,6 +13,8 @@ from pawnodds import PawnOddsChess
 from knightodds import KnightOddsChess
 from rookodds import RookOddsChess
 from queenodds import QueenOddsChess
+from blindfold import BlindfoldChess, HiddenPawnsChess, \
+                      HiddenPiecesChess, AllWhiteChess
 
 variants = {NORMALCHESS : NormalChess,
             CORNERCHESS : CornerChess,
@@ -28,4 +30,8 @@ variants = {NORMALCHESS : NormalChess,
             KNIGHTODDSCHESS : KnightOddsChess,
             ROOKODDSCHESS : RookOddsChess,
             QUEENODDSCHESS : QueenOddsChess,
+            ALLWHITECHESS : AllWhiteChess,
+            BLINDFOLDCHESS : BlindfoldChess,
+            HIDDENPAWNSCHESS : HiddenPawnsChess,
+            HIDDENPIECESCHESS : HiddenPiecesChess,
             }

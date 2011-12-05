@@ -71,7 +71,7 @@ class InformationWindow:
         textview = cls._getPageFromTag(tag)["textview"]
         
         if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
-            t = time.strftime("%T",time.localtime(timestamp))
+            t = time.strftime("%H:%M:%S", time.localtime(timestamp))
             textview.get_buffer().insert_with_tags_by_name(
                 textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(LOG_LOG))
             cls.tagToTime[tag] = timestamp
