@@ -16,9 +16,9 @@ if mofile is None:
 else:
     lang = mofile.split(os.sep)[-3]
 
-def get_eco(fen):
+def get_eco(hash):
     cur = conn.cursor()
-    cur.execute("select eco, name from openings where fen='%s' and lang='%s'" % (fen, lang))
-    row = cur.fetchone()
-    return row
+    select = "select eco, name from openings where hash=? and lang=?"
+    cur.execute(select, (buffer(hex(hash)), lang))
+    return cur.fetchone()
     

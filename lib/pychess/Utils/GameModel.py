@@ -198,7 +198,7 @@ class GameModel (GObject, PooledThread):
             return
 
         if self.isMainlineBoard(self.ply):
-            opening = get_eco(self.getBoardAtPly(self.ply).asFen())
+            opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
             if opening is not None:
                 self.tags["ECO"] = opening[0]
                 self.tags["Opening"] = opening[1]

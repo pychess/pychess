@@ -16,7 +16,7 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     c.execute("drop table if exists openings")
-    c.execute("create table openings(fen text, base integer, eco text, lang text, name text)")
+    c.execute("create table openings(hash blob, base integer, eco text, lang text, name text)")
 
     def feed(pgnfile, lang):
         cf = load(open(pgnfile))
@@ -45,20 +45,20 @@ if __name__ == '__main__':
                 cu.execute("select * from openings where eco=? and lang='en' and base=1", (eco,))
                 res = cu.fetchone()
                 if res is not None:
-                    fen = res[0]
+                    hash = res[0]
             else:
-                fen = model.boards[-1].asFen()
+                hash = buffer(hex(model.boards[-1].board.hash))
                 
             if name:
-                rows.append((fen, base, eco, lang, name))
+                rows.append((hash, base, eco, lang, name))
                 
             old_eco = eco
-            
-        c.executemany("insert into openings(fen, base, eco, lang, name) values (?, ?, ?, ?, ?)", rows)
+                
+        c.executemany("insert into openings(hash, base, eco, lang, name) values (?, ?, ?, ?, ?)", rows)
         conn.commit()
 
     # Several eco list contains only eco+name pairs, so
-    # we will use base ECO line move lists(FEN) from en eco.pgn 
+    # we will use base ECO line positions from en eco.pgn 
     print "processing en eco.pgn"
     feed("lang/en/eco.pgn", "en")
     
