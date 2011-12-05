@@ -198,7 +198,10 @@ class GameModel (GObject, PooledThread):
             return
 
         if self.isMainlineBoard(self.ply):
-            opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
+            if self.ply > 0:
+                opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
+            else:
+                opening = ("", "")
             if opening is not None:
                 self.tags["ECO"] = opening[0]
                 self.tags["Opening"] = opening[1]
@@ -702,6 +705,7 @@ class GameModel (GObject, PooledThread):
                 self.timemodel.undoMoves(moves)
             
             self.checkStatus()
+            self.setOpening()
         finally:
             log.debug("GameModel.undoMoves: releasing self.applyingMoveLock\n")
             self.applyingMoveLock.release()
