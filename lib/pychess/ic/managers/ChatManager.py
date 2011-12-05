@@ -244,7 +244,7 @@ class ChatManager (GObject):
     
     def getPeopleInChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            people = self.connection.glm.getPlayerlist()
+            people = self.connection.players.get_online_playernames()
             self.emit('recievedNames', channel, people)
         print >> self.connection.client, "inchannel %s" % channel
     

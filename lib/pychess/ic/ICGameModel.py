@@ -3,13 +3,14 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
+from pychess.ic import GAME_TYPES
 
 class ICGameModel (GameModel):
-    
-    def __init__ (self, connection, gameno, timemodel, variant, rated=False):
-        GameModel.__init__(self, timemodel, variant)
+    def __init__ (self, connection, ficsgame, timemodel):
+        assert ficsgame.game_type in GAME_TYPES.values()
+        GameModel.__init__(self, timemodel, ficsgame.game_type.variant)
         self.connection = connection
-        self.gameno = gameno
+        self.ficsgame = ficsgame
         
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
@@ -19,8 +20,26 @@ class ICGameModel (GameModel):
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection].append(connection.connect("disconnected", self.onDisconnected))
         
-        self.inControl = True
-        self.rated = rated
+        rated = "rated" if ficsgame.rated else "unrated"
+        # This is in the format that ficsgame.com writes these PGN headers
+        self.tags["Event"] = "FICS %s %s game" % (rated, ficsgame.game_type.fics_name)
+        self.tags["Site"] = "FICS"
+
+    def __repr__ (self):
+        s = GameModel.__repr__(self)
+        s = s.replace("<GameModel", "<ICGameModel")
+        s = s.replace(", players=", ", ficsgame=%s, players=" % self.ficsgame)
+        return s
+
+    @property
+    def display_text (self):
+        t = "[ "
+        if self.timemodel:
+            t += self.timemodel.display_text + " "
+        t += self.ficsgame.display_rated.lower() + " "
+        if self.ficsgame.game_type.display_text:
+            t += self.ficsgame.game_type.display_text + " "
+        return t + "]"
     
     def __disconnect (self):
         if self.connections is None: return
@@ -36,13 +55,19 @@ class ICGameModel (GameModel):
                     obj.disconnect(handler_id)
         self.connections = None
     
+    def hasGuestPlayers (self):
+        for player in (self.ficsgame.wplayer, self.ficsgame.bplayer):
+            if player.isGuest():
+                return True
+        return False
+    
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s\n") % \
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname), \
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
-        if gameno != self.gameno or len(self.players) < 2 or wname != self.players[0].getICHandle() \
-           or bname != self.players[1].getICHandle():
+        if gameno != self.ficsgame.gameno or len(self.players) < 2 or wname != self.players[0].ichandle \
+           or bname != self.players[1].ichandle:
             return
         log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply\n" % \
             (id(self), str(self.players)))
@@ -65,19 +90,19 @@ class ICGameModel (GameModel):
                     del self.offers[offer]
             self.undoMoves(self.ply-ply)
     
-    def onGameEnded (self, bm, gameno, wname, bname, status, reason):
-        if gameno == self.gameno and len(self.players) >= 2 and \
-            wname == self.players[0].getICHandle() and bname == self.players[1].getICHandle():
-            log.debug(("ICGameModel.onGameEnded: id=%s self.players=%s gameno=%s wname=%s bname=%s" + \
-                       " status=%s reason=%s: calling self.end()\n") % \
-                      (str(id(self)), repr(self.players), str(gameno), str(wname), str(bname), \
-                       str(status), str(reason)))
-            self.end(status, reason)
+    def onGameEnded (self, bm, ficsgame):
+        if ficsgame == self.ficsgame and len(self.players) >= 2:
+            log.debug(
+                "ICGameModel.onGameEnded: self.players=%s ficsgame=%s\n" % \
+                (repr(self.players), repr(ficsgame)))
+            self.end(ficsgame.result, ficsgame.reason)
     
     def setPlayers (self, players):
-        if [player.__type__ for player in players] == [REMOTE, REMOTE]:
-            self.inControl = False
         GameModel.setPlayers(self, players)
+        if self.players[WHITE].icrating:
+            self.tags["WhiteElo"] = self.players[WHITE].icrating
+        if self.players[BLACK].icrating:
+            self.tags["BlackElo"] = self.players[BLACK].icrating
     
     def onGamePaused (self, bm, gameno, paused):
         if paused:
@@ -106,22 +131,7 @@ class ICGameModel (GameModel):
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
-        if self.status not in UNFINISHED_STATES and offer.type in INGAME_ACTIONS:
-            player.offerError(offer, ACTION_ERROR_REQUIRES_UNFINISHED_GAME)
-        
-        # TODO: if game is over and opponent is online, send through resume offer
-        elif self.status not in UNFINISHED_STATES and offer.type in \
-           (TAKEBACK_OFFER, RESUME_OFFER):
-            player.offerError(offer, ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED)
-        
-#        elif offer.type == RESUME_OFFER and self.status in (DRAW, WHITEWON,BLACKWON) and \
-#           self.reason in UNRESUMEABLE_REASONS:
-#            player.offerError(offer, ACTION_ERROR_UNRESUMEABLE_POSITION)
-        
-        elif offer.type == RESUME_OFFER and self.status != PAUSED:
-            player.offerError(offer, ACTION_ERROR_RESUME_REQUIRES_PAUSED)
-        
-        elif offer.type == CHAT_ACTION:
+        if offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
         
         elif offer.type in (RESIGNATION, FLAG_CALL):
@@ -166,10 +176,10 @@ class ICGameModel (GameModel):
         if self.status in UNFINISHED_STATES:
             self.__disconnect()
             
-            if self.inControl:
+            if self.isObservationGame():
+                self.connection.bm.unobserve(self.ficsgame)
+            else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
-            else:
-                self.connection.bm.unobserve(self.gameno)
         
         GameModel.end(self, status, reason)

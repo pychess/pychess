@@ -4,11 +4,11 @@
 
 pieceValues = [0, 900, 500, 350, 300, 100]
 
+from array import array
 from pychess.Utils.const import *
 
 # these tables will be used for positional bonuses: #
 
-from array import array
 
 whiteknight = array('b', [
             -20, -35,-10, -10, -10,-10, -35, -20,
@@ -275,15 +275,15 @@ for px in range(8):
 tropismArray = array('I',tropismTable)
 
 def lookUpTropism (px, py, kx, ky, piece):
-	value = tropismArray[ky + kx*8 + py*8*8 + px*8*8*8]
-	knight = value % 20
-	rook = (value-knight)/20 % 20
-	queen = (value-knight-rook*20)/20/20
-	if piece == knight:
-	    return knight-5
-	if piece == rook:
-	    return rook-5
-	return queen-5
+    value = tropismArray[ky + kx*8 + py*8*8 + px*8*8*8]
+    knight = value % 20
+    rook = (value-knight)/20 % 20
+    queen = (value-knight-rook*20)/20/20
+    if piece == knight:
+        return knight-5
+    if piece == rook:
+        return rook-5
+    return queen-5
 
 def evaluateComplete (board, color=WHITE):
     """ A detailed evaluation function, taking into account
@@ -339,7 +339,6 @@ def evalMaterial (board):
                 / ( 6400 * ( numPawns[WHITE] + 1 ) )
         return val
 
-#from validator import findKings
 def evalKingTropism (board):
     """ All other things being equal, having your Knights, Queens and Rooks close
         to the opponent's king is a good thing """
@@ -347,7 +346,7 @@ def evalKingTropism (board):
     score = 0
     
     try:
-        wking, bking = findKings(board)
+        wking, bking = board.kings
         wky, wkx = wking.cords
         bky, bkx = bking.cords
     except:
@@ -385,7 +384,7 @@ def evalRookBonus (board):
             if pieceCount <= 6:
                 # We should try to keep the rooks at the back lines 
                 if y in (0,7):
-                	score += piece.color == WHITE and 12 or -12
+                    score += piece.color == WHITE and 12 or -12
 
             # Is this rook on a semi- or completely open file?
             noblack = blackPawnFileBins[x] == 0 and 1 or 0
@@ -410,7 +409,7 @@ def evalDevelopment (board):
     
     # Test endgame
     if pieceCount <= 8:
-        wking, bking = findKings(board)
+        wking, bking = board.kings
         score += endking[wking.y*8+wking.x]
         score -= endking[bking.y*8+bking.x]
         return score
@@ -468,12 +467,11 @@ def evalCastling (board):
                     score -= 10*mod
                 break
         
-        castled = color == BLACK and BLACK_CASTLED or WHITE_CASTLED
-        kside = color == BLACK and BLACK_OO or WHITE_OO
-        qside = color == BLACK and BLACK_OOO or WHITE_OOO
+        kside = color == BLACK and B_OO or W_OO
+        qside = color == BLACK and B_OOO or W_OOO
         
         # Being castled deserves a bonus
-        if board.castling & castled:
+        if board.hasCastled[color]:
             score += 15*mod
             continue
         

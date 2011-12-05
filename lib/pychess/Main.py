@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import os
 import webbrowser
 import math
@@ -8,9 +7,9 @@ import signal
 import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
-from pychess.System import conf, glock, uistuff, prefix, SubProcess
+from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
-from pychess.System.Log import log
+from pychess.System.Log import log, start_thread_dump
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
@@ -31,7 +30,6 @@ from pychess import VERSION, VERSION_NAME
 # gameDic - containing the gamewidget:gamemodel of all open games              #
 ################################################################################
 gameDic = {}
-chessFiles = {}
 
 class GladeHandlers:
     
@@ -93,7 +91,7 @@ class GladeHandlers:
         ICLogon.run()
     
     def on_load_game1_activate (widget):
-        newGameDialog.LoadFileExtension.run(None, chessFiles)
+        newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate (widget):
         # Not implemented
@@ -195,9 +193,9 @@ dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
 
 
 class PyChess:
-    def __init__(self, args):
+    def __init__(self, chess_file):
         self.initGlade()
-        self.handleArgs(args)
+        self.handleArgs(chess_file)
     
     def initGlade(self):
         #=======================================================================
@@ -216,8 +214,9 @@ class PyChess:
                                GladeHandlers.__dict__["on_gmwidg_created"])
         
         #---------------------- The only menuitems that need special initing
-        uistuff.keep(widgets["hint_mode"], "hint_mode")
-        uistuff.keep(widgets["spy_mode"], "spy_mode")
+        for widget in ("hint_mode", "spy_mode"):
+            widgets[widget].set_active(False)
+            widgets[widget].set_sensitive(False)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
         
         #=======================================================================
@@ -231,8 +230,14 @@ class PyChess:
         widgets["Background"].show_all()
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+        # To get drag in the whole window, we add it to the menu and the
+        # background. If it can be gotten to work, the drag_dest_set_proxy
+        # method is very interesting.
         widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        # The following two should really be set in the glade file
+        widgets["menubar1"].set_events(widgets["menubar1"].get_events() | gtk.gdk.DRAG_STATUS)
+        widgets["Background"].set_events(widgets["Background"].get_events() | gtk.gdk.DRAG_STATUS)
         
         #=======================================================================
         # Init 'minor' dialogs
@@ -290,14 +295,14 @@ class PyChess:
         tasker.packTaskers (NewGameTasker(), InternetGameTasker())
         return tasker
     
-    def handleArgs (self, args):
-        if args:
+    def handleArgs (self, chess_file):
+        if chess_file:
             def do (discoverer):
-                newGameDialog.LoadFileExtension.run(args[0], chessFiles)
+                newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (args):
-    PyChess(args)
+def run (no_debug, glock_debug, thread_debug, chess_file):
+    PyChess(chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
@@ -305,6 +310,10 @@ def run (args):
     gtk.gdk.threads_init()
     
     # Start logging
+    Log.DEBUG = False if no_debug is True else True
+    glock.debug = glock_debug
     log.debug("Started\n")
+    if thread_debug:
+        start_thread_dump()
     
     gtk.main()

@@ -130,7 +130,7 @@ def pinnedOnKing (board, cord, color):
  
     #  Path from piece to king is blocked, so no pin
     if clearBit(fromToRay[kingCord][cord], cord) & blocker:
-       return False
+        return False
     
     b = (rays[kingCord][dir] ^ fromToRay[kingCord][cord]) & blocker
     if not b: return False
@@ -138,7 +138,7 @@ def pinnedOnKing (board, cord, color):
     cord1 = cord > kingCord and firstBit (b) or lastBit (b)
 
     #  If diagonal
-    if dir <= 3 and	bitPosArray[cord1] & \
+    if dir <= 3 and    bitPosArray[cord1] & \
             (board.boards[opcolor][QUEEN] | board.boards[opcolor][BISHOP]):
         return True
    

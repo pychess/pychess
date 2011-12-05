@@ -1,5 +1,4 @@
 # Chess960 (Fischer Random Chess)
-# http://en.wikipedia.org/wiki/Chess960
 
 import random
 from copy import copy
@@ -11,7 +10,6 @@ from pychess.Utils.Piece import Piece
 from pychess.Utils.lutils.bitboard import *
 from pychess.Utils.lutils.attack import *
 from pychess.Utils.lutils.lmove import newMove, FLAG, PROMOTE_PIECE
-
 
 class FRCBoard(Board):
     variant = FISCHERRANDOMCHESS
@@ -216,6 +214,8 @@ class FRCBoard(Board):
 
 
 class FischerRandomChess:
+    __desc__ = _("http://en.wikipedia.org/wiki/Chess960\n" +
+                 "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html")
     name = _("Fischer Random")
     cecp_name = "fischerandom"
     board = FRCBoard

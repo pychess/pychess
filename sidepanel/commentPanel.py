@@ -7,6 +7,7 @@ from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.glock import *
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor, reprPiece
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
 from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
 from pychess.Utils.lutils.lmovegen import genCaptures
@@ -80,9 +81,16 @@ class Sidepanel:
         self.boardview.shown = self.gamemodel.lowply+row
     
     def shown_changed (self, boardview, shown):
+        if not self.gamemodel.isMainlineBoard(shown):
+            return
         row = shown - self.gamemodel.lowply
-        iter = self.store.get_iter(row)
-        self.tv.get_selection().select_iter(iter)
+
+        try:
+            iter = self.store.get_iter(row)
+            self.tv.get_selection().select_iter(iter)
+        except ValueError:
+            pass
+            # deleted variations by moves_undoing
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
@@ -92,6 +100,7 @@ class Sidepanel:
     
     def game_started (self, model):
         self.game_changed(model)
+
     def game_changed (self, model):
         for ply in xrange(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))

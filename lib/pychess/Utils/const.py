@@ -19,7 +19,6 @@ EASY, INTERMEDIATE, EXPERT = range(3)
 
 # Player colors
 WHITE, BLACK = range(2)
-reprColor = [_("White"), _("Black")]
 
 ################################################################################
 # Game values                                                                  #
@@ -33,45 +32,34 @@ reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "?", "*", "?", "?"]
 UNDOABLE_STATES = (DRAW, WHITEWON, BLACKWON)
 UNFINISHED_STATES = (WAITING_TO_START, PAUSED, RUNNING, UNKNOWN_STATE)
 
-# Game types
-TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, TYPE_BUGHOUSE, \
-    TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC, TYPE_UNTIMED = range(10)
-isLightning = lambda secs, incr: secs + incr * 40 < 3*60
-isBlitz = lambda secs, incr: secs + incr * 40 < 15*60
-
-typeName = (_("Blitz"), _("Standard"), _("Lightning"), _("Wild"), _("Bughouse"),
-            _("Crazyhouse"), _("Suicide"), _("Losers"), _("Atomic"))
-
 # Chess variants
 NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, \
 ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, \
-LOSERSCHESS, PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, \
-QUEENODDSCHESS = range(14)
+LOSERSCHESS, PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, \
+BLINDFOLDCHESS, HIDDENPAWNSCHESS, HIDDENPIECESCHESS, ALLWHITECHESS = range(18)
 
 # Chess variant groups
 VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER = range(4)
 
 # Action errors
-ACTION_ERROR_NO_CLOCK, ACTION_ERROR_NOT_OUT_OF_TIME, \
+ACTION_ERROR_NOT_OUT_OF_TIME, \
     ACTION_ERROR_CLOCK_NOT_STARTED, ACTION_ERROR_SWITCH_UNDERWAY, \
     ACTION_ERROR_CLOCK_NOT_PAUSED, ACTION_ERROR_TOO_LARGE_UNDO, \
     ACTION_ERROR_NONE_TO_ACCEPT, ACTION_ERROR_NONE_TO_WITHDRAW, \
-    ACTION_ERROR_NONE_TO_DECLINE, ACTION_ERROR_GAME_ENDED, \
-    ACTION_ERROR_REQUIRES_UNFINISHED_GAME, \
-    ACTION_ERROR_UNRESUMEABLE_POSITION, \
-    ACTION_ERROR_RESUME_REQUIRES_PAUSED, \
-    ACTION_ERROR_UNSUPPORTED_FICS_WHEN_GAME_FINISHED = range(14)
+    ACTION_ERROR_NONE_TO_DECLINE, = range(8)
 
 # Game state reasons
 ABORTED_ADJUDICATION, ABORTED_AGREEMENT, ABORTED_COURTESY, ABORTED_EARLY, \
     ABORTED_SERVER_SHUTDOWN, ADJOURNED_COURTESY, \
 ADJOURNED_AGREEMENT, ADJOURNED_LOST_CONNECTION, ADJOURNED_SERVER_SHUTDOWN, \
+    ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK, \
+    ADJOURNED_LOST_CONNECTION_WHITE, ADJOURNED_LOST_CONNECTION_BLACK, \
 DRAW_50MOVES, DRAW_ADJUDICATION, DRAW_AGREE, DRAW_CALLFLAG, DRAW_INSUFFICIENT, \
     DRAW_LENGTH, DRAW_REPITITION, DRAW_STALEMATE, \
-DRAW_BLACKINSUFFICIENTANDWHITETIME, DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
+    DRAW_BLACKINSUFFICIENTANDWHITETIME, DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
 WON_ADJUDICATION, WON_CALLFLAG, WON_DISCONNECTION, WON_MATE, WON_RESIGN, \
     WON_NOMATERIAL, \
-WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(29)
+WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(33)
 
 UNDOABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH,
                     DRAW_REPITITION, DRAW_STALEMATE, DRAW_AGREE, DRAW_CALLFLAG, \
@@ -105,7 +93,7 @@ INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, \
                   ADJOURN_OFFER, PAUSE_OFFER, SWITCH_OFFER, HURRY_ACTION)
 
 # A few nice to have boards
-FEN_EMPTY = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
+FEN_EMPTY = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
 FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 ################################################################################
@@ -123,7 +111,6 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
-reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
 
 # Is sliding piece
 sliders = [ False, False, False, True, True, True, False, False ]
@@ -131,7 +118,6 @@ sliders = [ False, False, False, True, True, True, False, False ]
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
 
 ################################################################################
 # Move values                                                                  #
@@ -145,8 +131,8 @@ PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTIO
 SAN, LAN, FAN, AN = range(4)
 
 FAN_PIECES = [
-    ["", "♙", "♘", "♗", "♖", "♕", "♔", ""],
-    ["", "♟", "♞", "♝", "♜", "♛", "♚", ""]
+    ["", u"♙", u"♘", u"♗", u"♖", u"♕", u"♔", ""],
+    ["", u"♟", u"♞", u"♝", u"♜", u"♛", u"♚", ""]
 ]
 
 ################################################################################
@@ -195,8 +181,13 @@ IC_CONNECTED, IC_DISCONNECTED = range(2)
 IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
 IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING, IC_POS_INITIAL = range(7)
 
-IC_STATUS_PLAYING, IC_STATUS_ACTIVE, IC_STATUS_BUSY, \
-    IC_STATUS_OFFLINE = range(4)
+# Rating deviations
+DEVIATION_NONE, DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL = range(3)
+
+IC_STATUS_PLAYING, IC_STATUS_ACTIVE, IC_STATUS_BUSY, IC_STATUS_OFFLINE, \
+IC_STATUS_AVAILABLE, IC_STATUS_NOT_AVAILABLE, IC_STATUS_EXAMINING, \
+IC_STATUS_IDLE, IC_STATUS_IN_TOURNAMENT, IC_STATUS_RUNNING_SIMUL_MATCH, \
+IC_STATUS_UNKNOWN = range(11)
 
 ################################################################################
 # User interface                                                               #
@@ -210,6 +201,20 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 
 # Brush types. Send piece object for Piece brush
 CLEAR, ENPAS = range(2)
+
+# Main menu items
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
+                     "call_flag", "resign", "ask_to_move")
+VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
+
+# Main menu items
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
+                     "call_flag", "resign", "ask_to_move")
+VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
 
 ################################################################################
 # Subprocess                                                                   #

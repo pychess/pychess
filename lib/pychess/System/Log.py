@@ -1,9 +1,12 @@
-import os, sys, time, gobject
+import os, sys, time, gobject, traceback, threading
 from GtkWorker import EmitPublisher, Publisher
 from prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
+from pychess.System.glock import gdklocks
+from pychess.System.ThreadPool import pool
 
 MAXFILES = 10
+DEBUG = True
 labels = {LOG_DEBUG: "Debug", LOG_LOG: "Log", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
 
 class LogPipe:
@@ -54,7 +57,7 @@ class Log (gobject.GObject):
         self.publisher.start()
     
     def _format (self, task, message, type):
-        t = time.strftime ("%T")
+        t = time.strftime ("%H:%M:%S")
         return "%s %s %s: %s" % (t, task, labels[type], message.decode("latin-1"))
     
     def _log (self, task, message, type):
@@ -80,7 +83,8 @@ class Log (gobject.GObject):
             print message
     
     def debug (self, message, task="Default"):
-        self._log (task, message, LOG_DEBUG)
+        if DEBUG:
+            self._log (task, message, LOG_DEBUG)
     
     def log (self, message, task="Default"):
         self._log (task, message, LOG_LOG)
@@ -104,3 +108,26 @@ log = Log(addUserDataPrefix(newName))
 
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")
+
+def start_thread_dump ():
+    def thread_dumper ():
+        def dump_threads ():
+            id2name = {}
+            for thread in threading.enumerate():
+                id2name[thread.ident] = thread.name
+            
+            stacks = []
+            for thread_id, frame in sys._current_frames().items():
+                stack = traceback.format_list(traceback.extract_stack(frame))
+                if thread_id in gdklocks:
+                    stacks.append("Thread GdkLock count: %s" % str(gdklocks[thread_id]))
+                stacks.append("Thread: %s (%d)" % (id2name[thread_id], thread_id))
+                stacks.append("".join(stack))
+            
+            log.debug("\n".join(stacks))
+        
+        while 1:
+            dump_threads()
+            time.sleep(10)
+    
+    pool.start(thread_dumper)

@@ -46,7 +46,7 @@ def newtheme (widget, oldstyle):
     # Check if a cache has been saved
     temppng = addUserCachePrefix("temp.png")
     if path.isfile(temppng):
-        f = open(temppng)
+        f = open(temppng, "rb")
         # Check if the cache was made while using the same theme
         if [ord(c) for c in f.read(6)] == colors:
             surface = cairo.ImageSurface.create_from_png(f)
@@ -71,7 +71,7 @@ def newtheme (widget, oldstyle):
     
     # Save a cache for later use. Save 'newcolor' in the frist three pixels
     # to check for theme changes between two instances
-    f = open(temppng, "w")
+    f = open(temppng, "wb")
     for color in colors:
         f.write(chr(color))
     surface.write_to_png(f)

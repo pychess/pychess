@@ -1,5 +1,4 @@
 # Pawns Passed Chess
-# White pawns start on 5th rank and black pawns on the 4th rank
 
 from pychess.Utils.const import *
 from pychess.Utils.Board import Board
@@ -18,6 +17,8 @@ class PawnsPassedBoard(Board):
 
 
 class PawnsPassedChess:
+    __desc__ = _("FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "White pawns start on 5th rank and black pawns on the 4th rank")
     name = _("Pawns Passed")
     cecp_name = "normal"
     board = PawnsPassedBoard

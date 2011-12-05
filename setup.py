@@ -110,20 +110,20 @@ for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d
 PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
             "pychess.Players", "pychess.Savers", "pychess.System",
             "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
-			"pychess.widgets", "pychess.widgets.pydock" ]
+            "pychess.widgets", "pychess.widgets.pydock" ]
 # Setup
 
 setup (
     name             = NAME,
     version          = VERSION,
     author           = 'Pychess team',
-    author_email     = 'pychess-people at googlegroups com',
+    author_email     = 'pychess-people@googlegroups.com',
     maintainer       = 'Thomas Dybdahl Ahle',
     classifiers      = CLASSIFIERS,
     keywords         = 'python gtk chess xboard gnuchess game pgn epd board linux',
     description      = DESC,
     long_description = LONG_DESC,
-    license          = 'GPL2',
+    license          = 'GPL3',
     url              = 'http://pychess.googlepages.com',
     download_url     = 'http://code.google.com/p/pychess/downloads/list',
     package_dir      = {'': 'lib'},

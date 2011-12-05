@@ -1,5 +1,16 @@
 from const import *
 
+import __builtin__
+if '_' not in __builtin__.__dict__:
+    __builtin__.__dict__['_'] = lambda s: s
+
+
+reprColor = [_("White"), _("Black")]
+
+reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"), _("Queen"), _("King"), "BPawn"]
+
+localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
+
 reprResult_long = {
     DRAW: _("The game ended in a draw"),
     WHITEWON: _("%(white)s won the game"),
@@ -29,9 +40,13 @@ reprReason_long = {
     WON_NOMATERIAL: _("Because %(loser)s lost all pieces but the king"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
-    ADJOURNED_AGREEMENT: _("Because the players agreed to"),
+    ADJOURNED_AGREEMENT: _("Because both players agreed to adjourn the game"),
     ADJOURNED_SERVER_SHUTDOWN: _("Because the server was shutdown"),
     ADJOURNED_COURTESY: _("Because a player lost connection and the other player requested adjournment"),
+    ADJOURNED_COURTESY_WHITE: _("Because %(black)s lost connection to the server and %(white)s requested adjournment"),
+    ADJOURNED_COURTESY_BLACK: _("Because %(white)s lost connection to the server and %(black)s requested adjournment"),
+    ADJOURNED_LOST_CONNECTION_WHITE: _("Because %(white)s lost connection to the server"),
+    ADJOURNED_LOST_CONNECTION_BLACK: _("Because %(black)s lost connection to the server"),
 
     ABORTED_ADJUDICATION: _("Because of adjudication by an admin"),
     ABORTED_AGREEMENT: _("Because the players agreed to"),

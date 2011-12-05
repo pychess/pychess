@@ -1,7 +1,7 @@
 from __future__ import with_statement 
 
-from xml.parsers.expat import ExpatError
 import os
+import sys
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
@@ -9,12 +9,16 @@ from copy import deepcopy
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
+try:
+    from xml.etree.ElementTree import ParseError
+except ImportError:
+    from xml.parsers.expat import ExpatError as ParseError
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addUserConfigPrefix
+from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
 from pychess.System.ThreadPool import pool, PooledThread
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
@@ -95,6 +99,8 @@ backup = """
     <engine protocol="cecp" protover="1" binname="amundsen">
         <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
+    <engine protocol="uci" protover="1" binname="robbolito">
+        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
     <engine protocol="uci" protover="1" binname="stockfish">
@@ -107,12 +113,17 @@ backup = """
         <meta><country>fr</country></meta></engine>
     <engine protocol="uci" protover="1" binname="toga2">
         <meta><country>de</country></meta></engine>
-    <engine protocol="uci" protover="1" binname="rybka">
-        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="hiarcs">
         <meta><country>gb</country></meta></engine>
     <engine protocol="uci" protover="1" binname="diablo">
         <meta><country>us</country><author>Marcus Predaski</author></meta></engine>
+
+    <engine protocol="uci" protover="1" binname="Houdini.exe">
+        <meta><country>be</country></meta>
+        <vm binname="wine"/></engine>
+    <engine protocol="uci" protover="1" binname="Rybka.exe">
+        <meta><country>ru</country></meta>
+        <vm binname="wine"/></engine>
 </engines>
 """ % ENGINES_XML_API_VERSION
 
@@ -139,7 +150,7 @@ class EngineDiscoverer (GObject, PooledThread):
             elif c == 1:
                 raise NotImplementedError, "engines.xml is of a newer date. In order" + \
                                 "to run this version of PyChess it must first be removed"
-        except ExpatError, e:
+        except ParseError, e:
             log.warn("engineNest: %s\n" % e)
             self.dom = deepcopy(self.backup)
         except IOError, e:
@@ -386,7 +397,8 @@ class EngineDiscoverer (GObject, PooledThread):
         # toBeRechecked = self.dom.findall('engine[recheck=true]')
         
         def count(self_, binname, engine, wentwell):
-            self.toBeRechecked[engine] = True
+            if wentwell:
+                self.toBeRechecked[engine] = True
             if all(self.toBeRechecked.values()):
                 self.emit("all_engines_discovered")
         self.connect("engine_discovered", count, True)
@@ -477,7 +489,8 @@ class EngineDiscoverer (GObject, PooledThread):
             path = vmpath
         
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
+                                getEngineDataPrefix())
         engine = attrToProtocol[protocol](subprocess, color, protover)
         
         if protocol == "uci":
@@ -514,27 +527,26 @@ class EngineDiscoverer (GObject, PooledThread):
 discoverer = EngineDiscoverer()
 
 if __name__ == "__main__":
+    import glib, gobject
+    gobject.threads_init()
+    mainloop = glib.MainLoop()
 
-    discoverer = EngineDiscoverer()
+#    discoverer = EngineDiscoverer()
 
-    def discovering_started (discoverer, list):
-        print "discovering_started", list
+    def discovering_started (discoverer, binnames):
+        print "discovering_started", binnames
     discoverer.connect("discovering_started", discovering_started)
 
-    from threading import RLock
-    rlock = RLock()
-
-    def engine_discovered (discoverer, str, object):
-        rlock.acquire()
-        try:
-            print "engine_discovered", str, object.toprettyxml()
-        finally:
-            rlock.release()
+    def engine_discovered (discoverer, binname, engine):
+        sys.stdout.write(".")
     discoverer.connect("engine_discovered", engine_discovered)
 
     def all_engines_discovered (discoverer):
         print "all_engines_discovered"
+        print discoverer.getEngines().keys()
+        mainloop.quit()
     discoverer.connect("all_engines_discovered", all_engines_discovered)
-
+    
     discoverer.start()
-    discoverer.getEngines()
+
+    mainloop.run()

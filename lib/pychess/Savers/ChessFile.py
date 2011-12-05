@@ -17,7 +17,7 @@ class ChessFile:
         self.games = games
         self.sourceUri = None
     
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position, model=None, quick_parse=True):
         """ Load the data of game "gameno" into the gamemodel
             If no model is specified, a new one will be created, loaded and
             returned """

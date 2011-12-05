@@ -1,12 +1,15 @@
 """ This is a pool for reusing threads """
 
-import sys as sys_
-import traceback, cStringIO, atexit
-import threading
-from threading import Thread, currentThread, Condition, Lock
+from threading import Thread, Condition, Lock
+import GtkWorker
 import Queue
-
-import glock
+import inspect
+import os
+import sys
+import threading
+import traceback
+import cStringIO
+import atexit
 
 if not hasattr(Thread, "_Thread__bootstrap_inner"):
     class SafeThread (Thread):
@@ -14,14 +17,14 @@ if not hasattr(Thread, "_Thread__bootstrap_inner"):
             try:
                 self._Thread__bootstrap_inner()
             except:
-                if self.__daemonic and (sys_ is None or sys_.__doc__ is None):
+                if self.__daemonic and (sys is None or sys.__doc__ is None):
                     return
                 raise
     setattr(SafeThread, "_Thread__bootstrap_inner", SafeThread._Thread__bootstrap)
     setattr(SafeThread, "_Thread__bootstrap", SafeThread.encaps)
     threading.Thread = SafeThread
 
-maxThreads = sys_.maxint
+maxThreads = sys.maxint
 
 class ThreadPool:
     def __init__ (self):
@@ -47,11 +50,35 @@ class ThreadPool:
                 a = self.queue.get()
         
         a.func = lambda: func(*args, **kw)
+        a.name = self._getThreadName(a, func)
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
         
         self.lock.release()
+        
+    def _getThreadName (self, thread, func):
+        try:
+            framerecord = inspect.stack()[2]
+        except TypeError:
+            return ""
+#        d = os.path.basename(os.path.dirname(framerecord[1]))
+        f = os.path.basename(framerecord[1])
+#        f = os.sep.join((d, f))
+        caller = ":".join([str(v) for v in (f,) + framerecord[2:4]])
+        module = inspect.getmodule(func)
+        lineno = inspect.getsourcelines(func)[1]
+        callee = ":".join((module.__name__, str(lineno), func.__name__))
+        if module is GtkWorker or "repeat" in str(module):
+            framerecord = inspect.stack()[3]
+#            d = os.path.basename(os.path.dirname(framerecord[1]))
+            f = os.path.basename(framerecord[1])
+#            f = os.sep.join((d, f))
+            callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
+        s = caller + " -- " + callee
+        for repl in ("pychess.", "System.", "Players."):
+            s = s.replace(repl, "")
+        return s
     
     class Worker (threading.Thread):
         def __init__ (self, queue):
@@ -85,8 +112,9 @@ class ThreadPool:
                             #    print e
                             #    pass
                             
+                            _, _, exc_traceback = sys.exc_info()
                             list = self.tracestack[:-2] + \
-                                    traceback.extract_tb(sys_.exc_traceback)[2:]
+                                    traceback.extract_tb(exc_traceback)[2:]
                             error = "".join(traceback.format_list(list))
                             print error.rstrip()
                             print str(e.__class__), e
@@ -96,6 +124,7 @@ class ThreadPool:
                     
                     self.wcond.acquire()
                     self.wcond.wait()
+                    self.wcond.release()
             except:
                 #self.threads -= 1
                 if self.running:

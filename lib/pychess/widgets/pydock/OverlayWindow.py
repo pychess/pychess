@@ -4,7 +4,11 @@ import sys
 
 import gtk
 import cairo
-import rsvg
+
+if sys.platform == 'win32':
+    from pychess.System.WinRsvg import rsvg
+else:
+    import rsvg
 
 
 class OverlayWindow (gtk.Window):

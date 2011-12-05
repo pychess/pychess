@@ -1,4 +1,5 @@
 import sys, os
+from xml.dom import minidom
 import gtk
 
 from pychess.System.prefix import addDataPrefix
@@ -171,7 +172,7 @@ class EngineTab:
             
             def set_value (combobox, value):
                 engine = discoverer.getEngineByMd5(value)
-                if not engine:
+                if engine is None:
                     combobox.set_active(0)
                 else:
                     try:
@@ -373,11 +374,19 @@ class PanelTab:
     def __init__ (self, widgets):
         # Put panels in trees
         self.widgets = widgets
+
+        from pychess.widgets.gamewidget import sidePanels, dockLocation
+
+        saved_panels = []
+        xmlOK = os.path.isfile(dockLocation)
+        if xmlOK:
+            doc = minidom.parse(dockLocation)
+            for elem in doc.getElementsByTagName("panel"):
+                saved_panels.append(elem.getAttribute("id"))
         
-        from pychess.widgets.gamewidget import sidePanels
         store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
         for panel in sidePanels:
-            checked = conf.get(panel.__name__, True)
+            checked = True if not xmlOK else panel.__name__ in saved_panels
             panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
@@ -441,12 +450,15 @@ class PanelTab:
         from pychess.widgets.pydock import EAST
         
         if active:
-            conf.set(name, True)
             leaf = notebooks["board"].get_parent().get_parent()
             leaf.dock(docks[name][1], EAST, docks[name][0], name)
         else:
-            conf.set(name, False)
-            notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            try:
+                notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            except AttributeError:
+                # A new panel appeared in the panels directory
+                leaf = notebooks["board"].get_parent().get_parent()
+                leaf.dock(docks[name][1], EAST, docks[name][0], name)
     
     def showit(self):
         from pychess.widgets.gamewidget import showDesignGW
@@ -460,10 +472,12 @@ class PanelTab:
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
             self.showit()
         else: self.hideit()
+
     def __on_show_window(self, widget):
         notebook = self.widgets['notebook1']
         page_num = notebook.get_current_page()
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
             self.showit()
+
     def __on_hide_window(self, widget):
         self.hideit()

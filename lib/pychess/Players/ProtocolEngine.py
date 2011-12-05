@@ -1,9 +1,10 @@
-from gobject import GObject, SIGNAL_RUN_FIRST
-from threading import Condition, Lock, RLock
+from gobject import SIGNAL_RUN_FIRST
+from threading import Condition
 
 from pychess.System.Log import log
 from pychess.Players.Engine import Engine
 from pychess.Utils.const import *
+from pychess.Utils.repr import reprColor
 
 class ProtocolEngine (Engine):
     
