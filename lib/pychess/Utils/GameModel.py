@@ -193,6 +193,10 @@ class GameModel (GObject, PooledThread):
         self.emit("spectators_changed")
 
     def setOpening(self):
+        # TODO: Is this correct for pychess_book.bin ?
+        if self.ply > 20:
+            return
+
         if self.isMainlineBoard(self.ply):
             opening = get_eco(self.getBoardAtPly(self.ply).asFen())
             if opening is not None:
