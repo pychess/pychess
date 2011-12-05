@@ -80,6 +80,8 @@ class PyChess:
         choice = None
         for move, weight, histGames, histScore in getOpenings(self.board):
             totalWeight += weight
+            if totalWeight == 0:
+                break
             if not move or random.randrange(totalWeight) < weight:
                 choice = move
         return choice
