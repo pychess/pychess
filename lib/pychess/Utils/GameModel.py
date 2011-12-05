@@ -519,14 +519,15 @@ class GameModel (GObject, PooledThread):
                 if self.timemodel:
                     self.timemodel.tap()
                 
-                self.setOpening()
-                
                 self.checkStatus()
                 
                 self.emit("game_changed")
                 
                 for spectator in self.spectators.values():
                     spectator.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
+
+                self.setOpening()
+
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock\n")
                 self.applyingMoveLock.release()
