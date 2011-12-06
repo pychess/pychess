@@ -31,7 +31,7 @@ except ImportError:
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
 if "PYTHONPATH" in os.environ:
-	os.environ["PYTHONPATH"] = os.path.abspath(os.environ["PYTHONPATH"])
+    os.environ["PYTHONPATH"] = os.path.abspath(os.environ["PYTHONPATH"])
 
 
 ###############################################################################
