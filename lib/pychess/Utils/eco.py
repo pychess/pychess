@@ -10,7 +10,7 @@ conn = sqlite3.connect(path, check_same_thread = False)
 
 atexit.register(conn.close)
 
-mofile = gettext.find('pychess')
+mofile = gettext.find('pychess', localedir=addDataPrefix("lang"))
 if mofile is None:
     lang = "en"
 else:
