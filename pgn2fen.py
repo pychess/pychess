@@ -16,7 +16,7 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     c.execute("drop table if exists openings")
-    c.execute("create table openings(hash blob, base integer, eco text, lang text, name text)")
+    c.execute("create table openings(hash blob, base integer, eco text, lang text, opening text, variation text)")
 
     def feed(pgnfile, lang):
         cf = load(open(pgnfile))
@@ -26,17 +26,14 @@ if __name__ == '__main__':
             model = cf.loadToModel(i, quick_parse=True)
 
             eco = cf._getTag(i, "ECO")[:3]
-            name = ""
-
+            
             opening = cf._getTag(i, "Opening")
-            if opening is not None:
-                name += opening
+            if opening is None:
+                opening = ""
 
             variation = cf._getTag(i, "Variation")
-            if variation is not None:
-                if name:
-                    name += ", "
-                name += variation
+            if variation is None:
+                variation = ""
             
             base = int(old_eco != eco)
             
@@ -49,12 +46,12 @@ if __name__ == '__main__':
             else:
                 hash = buffer(hex(model.boards[-1].board.hash))
                 
-            if name:
-                rows.append((hash, base, eco, lang, name))
+            if opening:
+                rows.append((hash, base, eco, lang, opening, variation))
                 
             old_eco = eco
                 
-        c.executemany("insert into openings(hash, base, eco, lang, name) values (?, ?, ?, ?, ?)", rows)
+        c.executemany("insert into openings(hash, base, eco, lang, opening, variation) values (?, ?, ?, ?, ?, ?)", rows)
         conn.commit()
 
     # Several eco list contains only eco+name pairs, so
