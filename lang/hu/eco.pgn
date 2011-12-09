@@ -95,7 +95,7 @@
 1. a4
 
 [ECO "A00"]
-[Opening "Crab Opening"]
+[Opening "Crab megnyitás"]
 
 1. a4 e5 2. h4
 
@@ -110,7 +110,7 @@
 1. d3
 
 [ECO "A00"]
-[Opening "Mieses Opening"]
+[Opening "Mieses megnyitás"]
 
 1. d3 e5
 
@@ -750,12 +750,40 @@
 *
 
 [ECO "B20"]
-[Opening "Sicilian védelem"]
+[Opening "Szicíliai védelem"]
 
 *
 
 [ECO "B21"]
-[Opening "Szicíliai, Grand Prix-támadás és Smith-Morra-áldozat, benne a Szibériai csapda"]
+[Opening "Szicíliai"]
+[Variation "Grand Prix támadás"]
+
+1. e4 c5 2. f4
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel"]
+
+1. e4 c5 2. d4
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Andreaschek csel"]
+
+1. e4 c5 2. d4 cxd4 3. Nf3 e5 4. c3
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel"]
+
+1. e4 c5 2. d4 cxd4 3. c3
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel, csikágói védelem"]
+
+1. e4 c5 2. d4 cxd4 3. c3 dxc3 4. Nxc3 Nc6 5. Nf3 d6 6. Bc4 e6 7. O-O a6 8.
+Qe2 b5 9. Bb3 Ra7
 
 *
 
@@ -910,7 +938,7 @@
 *
 
 [ECO "B53"]
-[Opening "Szicíliai Sicilian, Chekhover-változat"]
+[Opening "Szicíliai, Chekhover-változat"]
 
 *
 
@@ -930,9 +958,23 @@
 *
 
 [ECO "B57"]
-[Opening "Szicíliai, Sozin (a scheveningeni nem), beleértve: Magnus Smith-csapda"]
+[Opening "Szicíliai"]
+[Variation "Szozin, nem Scheveningeni"]
 
-*
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4
+
+[ECO "B57"]
+[Opening "Szicíliai"]
+[Variation "Magnus Smith csapda"]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4 g6 7. Nxc6 bxc6
+8. e5
+
+[ECO "B57"]
+[Opening "Szicíliai"]
+[Variation "Szozin, Benkö változat"]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4 Qb6
 
 [ECO "B58"]
 [Opening "Szicíliai, klasszikus"]
@@ -975,22 +1017,22 @@
 *
 
 [ECO "B66"]
-[Opening "Szicíliai Sicilian, Richter-Rauzer, Rauzer-támadás, 7...a6"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6"]
 
 *
 
 [ECO "B67"]
-[Opening "Szicíliai Sicilian, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 8...Fd7"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 8...Fd7"]
 
 *
 
 [ECO "B68"]
-[Opening "Szicíliai Sicilian, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 9...Fe7"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 9...Fe7"]
 
 *
 
 [ECO "B69"]
-[Opening "Szicíliai Sicilian, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 11.Fxf6"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 11.Fxf6"]
 
 *
 
@@ -1075,22 +1117,22 @@
 *
 
 [ECO "B86"]
-[Opening "Szicíliai, Sozin-támadás"]
+[Opening "Szicíliai, Szozin-támadás"]
 
 *
 
 [ECO "B87"]
-[Opening "Sozin ...a6-tal és ...b5-tel"]
+[Opening "Szozin ...a6-tal és ...b5-tel"]
 
 *
 
 [ECO "B88"]
-[Opening "Szicíliai, Sozin, Leonhardt-változat"]
+[Opening "Szicíliai, Szozin, Leonhardt-változat"]
 
 *
 
 [ECO "B89"]
-[Opening "Szicíliai, Sozin, 7.Fe3"]
+[Opening "Szicíliai, Szozin, 7.Fe3"]
 
 *
 
@@ -1245,14 +1287,93 @@
 *
 
 [ECO "C20"]
-[Opening "Királygyalog-játék (benne az Alapin-megnyitás, a Lopez-megnyitás, a Napóleon-megnyitás, a portugál megnyitás és a Parham-támadás)"]
+[Opening "Királygyalog-játék"]
 
-*
+1. e4 e5
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Indiai megnyitás"]
+
+1. e4 e5 2. d3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Mengarini megnyitás"]
+
+1. e4 e5 2. a3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "King's head megnyitás"]
+
+1. e4 e5 2. f3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Patzer megnyitás"]
+
+1. e4 e5 2. Qh5
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Napóleon megnyitás"]
+
+1. e4 e5 2. Qf3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Lopez megnyitás"]
+
+1. e4 e5 2. c3
+
+[ECO "C20"]
+[Opening "Alapin megnyitás"]
+
+1. e4 e5 2. Ne2
 
 [ECO "C21"]
-[Opening "Centrumjáték (benne a dán csel)"]
+[Opening "Centrumjáték"]
 
-*
+1. e4 e5 2. d4 exd4
+
+[ECO "C21"]
+[Opening "Centrumjáték, Kieseritsky változat"]
+
+1. e4 e5 2. d4 exd4 3. Nf3 c5 4. Bc4 b5
+
+[ECO "C21"]
+[Opening "Halász-csel"]
+
+1. e4 e5 2. d4 exd4 3. f4
+
+[ECO "C21"]
+[Opening "Dán csel"]
+
+1. e4 e5 2. d4 exd4 3. c3
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Collijn véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 dxc3 4. Bc4 cxb2 5. Bxb2 Qe7
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Schlechter véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 dxc3 4. Bc4 cxb2 5. Bxb2 d5
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Soerensen véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 d5
+
+[ECO "C21"]
+[Opening "Centrumjáték"]
+
+1. e4 e5 2. d4 exd4 3. Qxd4
 
 [ECO "C22"]
 [Opening "Centrumjáték"]
@@ -1290,9 +1411,55 @@
 *
 
 [ECO "C29"]
-[Opening "Bécsi játék, Kaufmann-változat (beleértve a würzburgi csapdát)"]
+[Opening "Bécsi játék"]
 
-*
+1. e4 e5 2. Nc3 Nf6 3. f4 d5
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Kaufmann változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Nf3 Bg4 6. Qe2
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Breyer változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Nf3 Be7
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Paulsen támadás"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Bardeleben változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3 f5
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Heyde változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3 f5 6. d4
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. d3
+
+[ECO "C29"]
+[Opening "Bécsi játék, Wurzburger csapda"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. d3 Qh4+ 6. g3 Nxg3 7. Nf3 Qh5
+8. Nxd5
+
+[ECO "C29"]
+[Opening "Bécsi játék, Steinitz változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. d3
 
 [ECO "C30"]
 [Opening "Királycsel"]
@@ -1340,14 +1507,81 @@
 *
 
 [ECO "C39"]
-[Opening "Elfogadott királycsel, Allagier- és Kiesertsky-cselek, beleértve a Rice-csel"]
+[Opening "Elfogadott királycsel"]
 
 *
 
 [ECO "C40"]
-[Opening "Királyhuszár-megnyitás (benne a Gunderam-védelem, a Greco-védelem, a Damiano-védelem, az elefántcsel, a lett csel)"]
+[Opening "Királyhuszár-megnyitás"]
 
-*
+1. e4 e5 2. Nf3
+
+[ECO "C40"]
+[Opening "Gunderam védelem"]
+
+1. e4 e5 2. Nf3 Qe7
+
+[ECO "C40"]
+[Opening "Greco védelem"]
+
+1. e4 e5 2. Nf3 Qf6
+
+[ECO "C40"]
+[Opening "Damiano védelem"]
+
+1. e4 e5 2. Nf3 f6
+
+[ECO "C40"]
+[Opening "Királyhuszár ellencsel (elefánt csel)"]
+
+1. e4 e5 2. Nf3 d5
+
+[ECO "C40"]
+[Opening "Királyhuszár ellencsel"]
+[Variation "Maroczy gambit"]
+
+1. e4 e5 2. Nf3 d5 3. exd5 Bd6
+
+[ECO "C40"]
+[Opening "Latvian ellencsel"]
+
+1. e4 e5 2. Nf3 f5
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Nimzovich változat"]
+
+1. e4 e5 2. Nf3 f5 3. Nxe5 Qf6 4. d4 d6 5. Nc4 fxe4 6. Ne3
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Fraser védelem"]
+
+1. e4 e5 2. Nf3 f5 3. Nxe5 Nc6
+
+[ECO "C40"]
+[Opening "Litván gambit, 3.Bc4"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Behting változat"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 Qg5 5. Nf7 Qxg2 6. Rf1 d5 7. Nxh8
+Nf6
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Polerio változat"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 d5
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "corkscrew ellencsel"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 Nf6
 
 [ECO "C41"]
 [Opening "Philidor-védelem"]
@@ -1355,7 +1589,7 @@
 *
 
 [ECO "C42"]
-[Opening "Petrov-védelem, benne a Marshall-csapda"]
+[Opening "Petrov-védelem"]
 
 *
 
@@ -1365,7 +1599,7 @@
 *
 
 [ECO "C44"]
-[Opening "Királygyalog-játék (benne a Ponziani-megnyitás, a Fordított magyar megnyitás az ír csel, a Konsztantyinopolszkij-védelem és a skót játék egy része"]
+[Opening "Királygyalog-játék"]
 
 *
 
@@ -1375,7 +1609,7 @@
 *
 
 [ECO "C46"]
-[Opening "Háromhuszáros játék, benne a Müller-Schulze-csel"]
+[Opening "Háromhuszáros játék"]
 
 *
 
@@ -1395,7 +1629,7 @@
 *
 
 [ECO "C50"]
-[Opening "Királygyalog játék, benne Blackburne shillinges csele, a magyar védelem, az olasz csel, a Légal-csapda, a Rousseau-csel és a Giuoco Pianissimo"]
+[Opening "Királygyalog játék"]
 
 *
 
@@ -1430,7 +1664,7 @@
 *
 
 [ECO "C57"]
-[Opening "Kéthuszáros védelem, benne a sültmáj-támadás"]
+[Opening "Kéthuszáros védelem"]
 
 *
 
@@ -1470,7 +1704,7 @@
 *
 
 [ECO "C65"]
-[Opening "Spanyol megnyitás, berlini védelem, benne a Mortimer-csapda"]
+[Opening "Spanyol megnyitás, berlini védelem"]
 
 *
 
@@ -1645,7 +1879,7 @@
 *
 
 [ECO "D00"]
-[Opening "Vezérgyalog-játék (benne a Blackmar-Diemer-csel, a Halosar-csapda és mások)"]
+[Opening "Vezérgyalog-játék"]
 
 *
 
@@ -1670,12 +1904,12 @@
 *
 
 [ECO "D05"]
-[Opening "Vezérgyalog-játék, Zukertort-változat (benne a Colle-rendszer)"]
+[Opening "Vezérgyalog-játék, Zukertort-változat"]
 
 *
 
 [ECO "D06"]
-[Opening "Vezércsel (benne a balti védelem, a Marshall-védelem és a szimmetrikus védelem)"]
+[Opening "Vezércsel"]
 
 *
 
@@ -1975,7 +2209,7 @@
 *
 
 [ECO "D66"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Fd3 vonal, benne a Rubinstein-csapda"]
+[Opening "Elhárított vezércsel; Ortodox védelem, Fd3 vonal"]
 
 *
 
@@ -2150,7 +2384,7 @@
 *
 
 [ECO "E00"]
-[Opening "Vezérgyalog játek (benne az újindiai támadás, a Trompowski-támadás, a katalán megnyitás és mások)"]
+[Opening "Vezérgyalog játek"]
 
 *
 
