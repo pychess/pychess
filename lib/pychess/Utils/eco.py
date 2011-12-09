@@ -18,7 +18,7 @@ else:
 
 def get_eco(hash):
     cur = conn.cursor()
-    select = "select eco, name from openings where hash=? and lang=?"
+    select = "select eco, opening, variation from openings where hash=? and lang=?"
     cur.execute(select, (buffer(hex(hash)), lang))
     return cur.fetchone()
     

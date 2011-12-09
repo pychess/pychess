@@ -205,6 +205,7 @@ class GameModel (GObject, PooledThread):
             if opening is not None:
                 self.tags["ECO"] = opening[0]
                 self.tags["Opening"] = opening[1]
+                self.tags["Variation"] = opening[2]
                 self.emit("opening_changed")
     
     ############################################################################
