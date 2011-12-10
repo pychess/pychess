@@ -1543,7 +1543,7 @@ Qe2 b5 9. Bb3 Ra7
 1. e4 e5 2. Nf3 d5 3. exd5 Bd6
 
 [ECO "C40"]
-[Opening "Latvian ellencsel"]
+[Opening "Litván ellencsel"]
 
 1. e4 e5 2. Nf3 f5
 
@@ -1914,67 +1914,67 @@ Nf6
 *
 
 [ECO "D07"]
-[Opening "Vezércsel; Csigorin-védelem"]
+[Opening "Vezércsel, Csigorin-védelem"]
 
 *
 
 [ECO "D08"]
-[Opening "Vezércsel; Albin-ellencsel és Lasker-csapda"]
+[Opening "Vezércsel, Albin-ellencsel és Lasker-csapda"]
 
 *
 
 [ECO "D09"]
-[Opening "Vezércsel; Albin-ellencsel, 5.g3"]
+[Opening "Vezércsel, Albin-ellencsel, 5.g3"]
 
 *
 
 [ECO "D10"]
-[Opening "Vezércsel; Szláv védelem"]
+[Opening "Vezércsel, Szláv védelem"]
 
 *
 
 [ECO "D11"]
-[Opening "Vezércsel; Szláv védelem, 3.Hf3"]
+[Opening "Vezércsel, Szláv védelem, 3.Hf3"]
 
 *
 
 [ECO "D12"]
-[Opening "Vezércsel; Szláv védelem, 4.e3 Ff5"]
+[Opening "Vezércsel, Szláv védelem, 4.e3 Ff5"]
 
 *
 
 [ECO "D13"]
-[Opening "Vezércsel; Szláv védelem, csereváltozat"]
+[Opening "Vezércsel, Szláv védelem, csereváltozat"]
 
 *
 
 [ECO "D14"]
-[Opening "Vezércsel; Szláv védelem, csereváltozat"]
+[Opening "Vezércsel, Szláv védelem, csereváltozat"]
 
 *
 
 [ECO "D15"]
-[Opening "Vezércsel; Szláv védelem, 4.Hc3"]
+[Opening "Vezércsel, Szláv védelem, 4.Hc3"]
 
 *
 
 [ECO "D16"]
-[Opening "Vezércsel; Elfogadott szlav védelem, Alapin-változat"]
+[Opening "Vezércsel, Elfogadott szlav védelem, Alapin-változat"]
 
 *
 
 [ECO "D17"]
-[Opening "Vezércsel; Szláv védelem, Cseh védelem"]
+[Opening "Vezércsel, Szláv védelem, Cseh védelem"]
 
 *
 
 [ECO "D18"]
-[Opening "Vezércsel; Holland változat"]
+[Opening "Vezércsel, Holland változat"]
 
 *
 
 [ECO "D19"]
-[Opening "Vezércsel; Holand változat"]
+[Opening "Vezércsel, Holand változat"]
 
 *
 
@@ -1989,7 +1989,7 @@ Nf6
 *
 
 [ECO "D22"]
-[Opening "Elfogadott vezércsel; Aljehin-védelem"]
+[Opening "Elfogadott vezércsel, Aljehin-védelem"]
 
 *
 
@@ -2009,22 +2009,22 @@ Nf6
 *
 
 [ECO "D26"]
-[Opening "Elfogadott vezércsel; klasszikus változat"]
+[Opening "Elfogadott vezércsel, klasszikus változat"]
 
 *
 
 [ECO "D27"]
-[Opening "Elfogadott vezércsel; klasszikus változat"]
+[Opening "Elfogadott vezércsel, klasszikus változat"]
 
 *
 
 [ECO "D28"]
-[Opening "Elfogadott vezércsel; klasszikus változat 7.Ve2"]
+[Opening "Elfogadott vezércsel, klasszikus változat 7.Ve2"]
 
 *
 
 [ECO "D29"]
-[Opening "Elfogadott vezércsel; klasszikus változat 8...Fb7"]
+[Opening "Elfogadott vezércsel, klasszikus változat 8...Fb7"]
 
 *
 
@@ -2039,102 +2039,102 @@ Nf6
 *
 
 [ECO "D32"]
-[Opening "Elhárított vezércsel; Tarrasch-védelem"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem"]
 
 *
 
 [ECO "D33"]
-[Opening "Elhárított vezércsel; Tarrasch-védelem, Schlechter-Rubinstein-rendszer"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem, Schlechter-Rubinstein-rendszer"]
 
 *
 
 [ECO "D34"]
-[Opening "Elhárított vezércsel; Tarrasch-védelem, 7...Fe7"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem, 7...Fe7"]
 
 *
 
 [ECO "D35"]
-[Opening "Elhárított vezércsel; csereváltozat"]
+[Opening "Elhárított vezércsel, csereváltozat"]
 
 *
 
 [ECO "D36"]
-[Opening "Elhárított vezércsel; csereváltozat, pozíciós vonal, 6.Vc2"]
+[Opening "Elhárított vezércsel, csereváltozat, pozíciós vonal, 6.Vc2"]
 
 *
 
 [ECO "D37"]
-[Opening "Elhárított vezércsel; 4.Hf3"]
+[Opening "Elhárított vezércsel, 4.Hf3"]
 
 *
 
 [ECO "D38"]
-[Opening "Elhárított vezércsel; Ragozin-változat"]
+[Opening "Elhárított vezércsel, Ragozin-változat"]
 
 *
 
 [ECO "D39"]
-[Opening "Elhárított vezércsel; Ragozin, bécsi változat"]
+[Opening "Elhárított vezércsel, Ragozin, bécsi változat"]
 
 *
 
 [ECO "D40"]
-[Opening "Elhárított vezércsel; fél-Tarrasch-védelem"]
+[Opening "Elhárított vezércsel, fél-Tarrasch-védelem"]
 
 *
 
 [ECO "D41"]
-[Opening "Elhárított vezércsel; fél-Tarrasch, 5.cd"]
+[Opening "Elhárított vezércsel, fél-Tarrasch, 5.cd"]
 
 *
 
 [ECO "D42"]
-[Opening "Elhárított vezércsel; fél-Tarrasch, 7.Fd3"]
+[Opening "Elhárított vezércsel, fél-Tarrasch, 7.Fd3"]
 
 *
 
 [ECO "D43"]
-[Opening "Elhárított vezércsel; Fél-szláv védelem"]
+[Opening "Elhárított vezércsel, Fél-szláv védelem"]
 
 *
 
 [ECO "D44"]
-[Opening "Elhárított vezércsel; Fél-szláv 5.Fg5 dxc4"]
+[Opening "Elhárított vezércsel, Fél-szláv 5.Fg5 dxc4"]
 
 *
 
 [ECO "D45"]
-[Opening "Elhárított vezércsel; Fél-szláv 5.e3"]
+[Opening "Elhárított vezércsel, Fél-szláv 5.e3"]
 
 *
 
 [ECO "D46"]
-[Opening "Elhárított vezércsel; Fél-szláv 6.Fd3"]
+[Opening "Elhárított vezércsel, Fél-szláv 6.Fd3"]
 
 *
 
 [ECO "D47"]
-[Opening "Elhárított vezércsel; Fél-szláv 7.Fc4"]
+[Opening "Elhárított vezércsel, Fél-szláv 7.Fc4"]
 
 *
 
 [ECO "D48"]
-[Opening "Elhárított vezércsel; meráni, 8...a6"]
+[Opening "Elhárított vezércsel, meráni, 8...a6"]
 
 *
 
 [ECO "D49"]
-[Opening "Elhárított vezércsel; meráni, 11.Hxb5"]
+[Opening "Elhárított vezércsel, meráni, 11.Hxb5"]
 
 *
 
 [ECO "D50"]
-[Opening "Elhárított vezércsel; 4.Fg5"]
+[Opening "Elhárított vezércsel, 4.Fg5"]
 
 *
 
 [ECO "D51"]
-[Opening "Elhárított vezércsel; 4.Fg5 Hbd7 (Cambridge Springs-védelem és elefánt-csapda)"]
+[Opening "Elhárított vezércsel, 4.Fg5 Hbd7 (Cambridge Springs-védelem és elefánt-csapda)"]
 
 *
 
@@ -2144,87 +2144,87 @@ Nf6
 *
 
 [ECO "D53"]
-[Opening "Elhárított vezércsel; 4.Fg5 Fe7"]
+[Opening "Elhárított vezércsel, 4.Fg5 Fe7"]
 
 *
 
 [ECO "D54"]
-[Opening "Elhárított vezércsel; Anti-neoortodox változat"]
+[Opening "Elhárított vezércsel, Anti-neoortodox változat"]
 
 *
 
 [ECO "D55"]
-[Opening "Elhárított vezércsel; 6.Hf3"]
+[Opening "Elhárított vezércsel, 6.Hf3"]
 
 *
 
 [ECO "D56"]
-[Opening "Elhárított vezércsel; Lasker-védelem"]
+[Opening "Elhárított vezércsel, Lasker-védelem"]
 
 *
 
 [ECO "D57"]
-[Opening "Elhárított vezércsel; Lasker-védelem, fö vonal"]
+[Opening "Elhárított vezércsel, Lasker-védelem, fö vonal"]
 
 *
 
 [ECO "D58"]
-[Opening "Elhárított vezércsel; Tartakower-rendszer (Makagonov-Bondarevszkij-rendszer)"]
+[Opening "Elhárított vezércsel, Tartakower-rendszer (Makagonov-Bondarevszkij-rendszer)"]
 
 *
 
 [ECO "D59"]
-[Opening "Elhárított vezércsel; Tartakower (Makagonov-Bondarevszkij), 8.cd Hxd5"]
+[Opening "Elhárított vezércsel, Tartakower (Makagonov-Bondarevszkij), 8.cd Hxd5"]
 
 *
 
 [ECO "D60"]
-[Opening "Elhárított vezércsel; Ortodox védelem"]
+[Opening "Elhárított vezércsel, Ortodox védelem"]
 
 *
 
 [ECO "D61"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Rubinstein-változat"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-változat"]
 
 *
 
 [ECO "D62"]
-[Opening "Elhárított vezércsel; Ortodox védelem, 7.Vc2 c5, 8.cd (Rubinstein)"]
+[Opening "Elhárított vezércsel, Ortodox védelem, 7.Vc2 c5, 8.cd (Rubinstein)"]
 
 *
 
 [ECO "D63"]
-[Opening "Elhárított vezércsel; Ortodox védelem, 7.Bc1"]
+[Opening "Elhárított vezércsel, Ortodox védelem, 7.Bc1"]
 
 *
 
 [ECO "D64"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Rubinstein-támadás (Bc1-gyel)"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-támadás (Bc1-gyel)"]
 
 *
 
 [ECO "D65"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Rubinstein-támadás, fö vonal"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-támadás, fö vonal"]
 
 *
 
 [ECO "D66"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Fd3 vonal"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Fd3 vonal"]
 
 *
 
 [ECO "D67"]
-[Opening "Elhárított vezércsel; Ortodox védelem, Fd3 vonal, Capablanca felszabadító manövere"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Fd3 vonal, Capablanca felszabadító manövere"]
 
 *
 
 [ECO "D68"]
-[Opening "Elhárított vezércsel; Ortodox védelem, klasszikus változat"]
+[Opening "Elhárított vezércsel, Ortodox védelem, klasszikus változat"]
 
 *
 
 [ECO "D69"]
-[Opening "Elhárított vezércsel; Ortodox védelem, klasszikus, 13.dxe5"]
+[Opening "Elhárított vezércsel, Ortodox védelem, klasszikus, 13.dxe5"]
 
 *
 
@@ -2284,7 +2284,7 @@ Nf6
 *
 
 [ECO "D81"]
-[Opening "Grünfeld; orosz változat"]
+[Opening "Grünfeld, orosz változat"]
 
 *
 
@@ -2684,7 +2684,7 @@ Nf6
 *
 
 [ECO "E60"]
-[Opening "King's Indian Defence"]
+[Opening "Királyindiai védelem"]
 
 *
 
