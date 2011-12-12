@@ -1997,49 +1997,49 @@ b3
 1. e4 b6 2. d4 Ba6
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense"]
 
 1. e4 Nc6
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense, Wheeler gambit"]
 
 1. e4 Nc6 2. b4 Nxb4 3. c3 Nc6 4. d4
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense"]
 
 1. e4 Nc6 2. Nf3
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Colorado counter"]
 
 1. e4 Nc6 2. Nf3 f5
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense"]
 
 1. e4 Nc6 2. d4
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense, Marshall gambit"]
 
 1. e4 Nc6 2. d4 d5 3. exd5 Qxd5 4. Nc3
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Nimzovich defense, Bogolyubov variation"]
 
 1. e4 Nc6 2. d4 d5 3. Nc3
 
 [ECO "B00"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Neo-Mongoloid defense"]
 
 1. e4 Nc6 2. d4 f6
@@ -4733,37 +4733,37 @@ Qxg7 Rg8 9. Qxh7 cxd4 10. Ne2
 1. e4 e5
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Indian Opening"]
 
 1. e4 e5 2. d3
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Mengarini's Opening"]
 
 1. e4 e5 2. a3
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "King's head Opening"]
 
 1. e4 e5 2. f3
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Patzer Opening"]
 
 1. e4 e5 2. Qh5
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Napoleon's Opening"]
 
 1. e4 e5 2. Qf3
 
 [ECO "C20"]
-[Opening "KP"]
+[Opening "King's pawn"]
 [Variation "Lopez Opening"]
 
 1. e4 e5 2. c3
@@ -5198,197 +5198,197 @@ exd5 Bg4 9. dxc6
 1. e4 e5 2. f4
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Keene's defense"]
 
 1. e4 e5 2. f4 Qh4+ 3. g3 Qe7
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Mafia defense"]
 
 1. e4 e5 2. f4 c5
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Norwalde variation"]
 
 1. e4 e5 2. f4 Qf6
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Norwalde variation, Buecker gambit"]
 
 1. e4 e5 2. f4 Qf6 3. Nf3 Qxf4 4. Nc3 Bb4 5. Bc4
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical variation"]
 
 1. e4 e5 2. f4 Bc5
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, Svenonius variation"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. Nc3 Nf6 5. Bc4 Nc6 6. d3 Bg4 7. h3 Bxf3 8.
 Qxf3 exf4
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, Hanham variation"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. Nc3 Nd7
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, 4.c3"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. c3
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, Marshall attack"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. c3 Bg4 5. fxe5 dxe5 6. Qa4+
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical counter-gambit"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. c3 f5
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, Reti variation"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. c3 f5 5. fxe5 dxe5 6. d4 exd4 7. Bc4
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, SOldatenkov variation"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. fxe5
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Classical, Heath variation"]
 
 1. e4 e5 2. f4 Bc5 3. Nf3 d6 4. b4
 
 [ECO "C30"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "2...Nf6"]
 
 1. e4 e5 2. f4 Nf6
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer counter-gambit"]
 
 1. e4 e5 2. f4 d5
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Tartakower variation"]
 
 1. e4 e5 2. f4 d5 3. Nf3
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Milner-Barry variation"]
 
 1. e4 e5 2. f4 d5 3. Nc3
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer counter-gambit"]
 
 1. e4 e5 2. f4 d5 3. exd5
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Nimzovich counter-gambit"]
 
 1. e4 e5 2. f4 d5 3. exd5 c6
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, 3...e4"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Rubinstein variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. Nc3 Nf6 5. Qe2
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Nimzovich variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. Bb5+
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, 4.d3"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3
 
 [ECO "C31"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Morphy gambit"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. Nc3 Bb4 6. Bd2 e3
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, 5.de"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Alapin variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4 Nxe4 6. Nf3 Bc5 7. Qe2 Bf2+
 8. Kd1 Qxd5+ 9. Nfd2
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Main line, 7...Bf5"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4 Nxe4 6. Nf3 Bc5 7. Qe2 Bf5
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Tarrasch variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4 Nxe4 6. Nf3 Bc5 7. Qe2 Bf5
 8. g4 O-O
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Charousek gambit"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4 Nxe4 6. Qe2
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Charousek variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. dxe4 Nxe4 6. Qe2 Qxd5 7. Nd2 f5
 8. g4
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Keres variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. Nd2
 
 [ECO "C32"]
-[Opening "KGD"]
+[Opening "King's gambit declined"]
 [Variation "Falkbeer, Reti variation"]
 
 1. e4 e5 2. f4 d5 3. exd5 e4 4. d3 Nf6 5. Qe2
@@ -5399,217 +5399,217 @@ Qxf3 exf4
 1. e4 e5 2. f4 exf4
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Tumbleweed gambit"]
 
 1. e4 e5 2. f4 exf4 3. Kf2
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Orsini gambit"]
 
 1. e4 e5 2. f4 exf4 3. b3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Pawn's gambit (Stamma gambit)"]
 
 1. e4 e5 2. f4 exf4 3. h4
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Schurig gambit"]
 
 1. e4 e5 2. f4 exf4 3. Bd3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Carrera (Basman) gambit"]
 
 1. e4 e5 2. f4 exf4 3. Qe2
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Villemson (Steinitz) gambit"]
 
 1. e4 e5 2. f4 exf4 3. d4
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Keres (Mason-Steinitz) gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nc3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Breyer gambit"]
 
 1. e4 e5 2. f4 exf4 3. Qf3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Lesser Bishop's (Petroff-Jaenisch-Tartakower) gambit"]
 
 1. e4 e5 2. f4 exf4 3. Be2
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit"]
 
 1. e4 e5 2. f4 exf4 3. Bc4
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Chigorin's attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 d5 5. Bxd5 g5 6. g3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Greco variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 Bc5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Classical defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Grimm attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Nc3 Bg7 6. d4 d6 7. e5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Classical defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Nc3 Bg7 6. d4 Ne7
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, McDonnell attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Nc3 Bg7 6. d4 Ne7 7. g3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, McDonnell attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Nc3 Bg7 6. g3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Fraser variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Nc3 Bg7 6. g3 fxg3 7. Qf3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Classical defense, Cozio attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 g5 5. Qf3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Boden defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 Nc6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Bryan counter-gambit"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 b5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Bryan counter-gambit"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 b5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Steinitz defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Ne7
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Maurian defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Nc6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Ruy Lopez defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 c6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Lopez-Gianutio counter-gambit"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 f5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Lopez-Gianutio counter-gambit, Hein variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 f5 4. Qe2 Qh4+ 5. Kd1 fxe4 6. Nc3 Kd8
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Bledow variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 d5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Gifford variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 d5 4. Bxd5 Qh4+ 5. Kf1 g5 6. g3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Boren-Svenonius variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 d5 4. Bxd5 Qh4+ 5. Kf1 Bd6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Anderssen variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 d5 4. Bxd5 c6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Morphy variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 d5 4. Bxd5 Nf6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Cozio (Morphy) defense"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Nf6
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Bogolyubov variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Nf6 4. Nc3
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Paulsen attack"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Nf6 4. Nc3 Bb4 5. e5
 
 [ECO "C33"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bishop's gambit, Jaenisch variation"]
 
 1. e4 e5 2. f4 exf4 3. Bc4 Nf6 4. Nc3 c6
@@ -5620,203 +5620,203 @@ Qxf3 exf4
 1. e4 e5 2. f4 exf4 3. Nf3
 
 [ECO "C34"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Bonsch-Osmolovsky variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Ne7
 
 [ECO "C34"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Gianutio counter-gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 f5
 
 [ECO "C34"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Fischer defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 d6
 
 [ECO "C34"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Becker defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 h6
 
 [ECO "C34"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Schallop defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Nf6
 
 [ECO "C35"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Cunningham defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Be7
 
 [ECO "C35"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Cunningham, Bertin gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Be7 4. Bc4 Bh4+ 5. g3
 
 [ECO "C35"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Cunningham, Three pawns gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Be7 4. Bc4 Bh4+ 5. g3 fxg3 6. O-O gxh2+ 7. Kh1
 
 [ECO "C35"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Cunningham, Euwe defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 Be7 4. Bc4 Nf6
 
 [ECO "C36"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Abbazia defense (Classical defense, Modern defense[!])"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 d5
 
 [ECO "C36"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Abbazia defense, Modern variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 d5 4. exd5 Nf6
 
 [ECO "C36"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Abbazia defense, Botvinnik variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 d5 4. exd5 Nf6 5. Bb5+ c6 6. dxc6 bxc6 7. Bc4
 Nd5
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Quaade gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Nc3
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Rosentreter gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. d4
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Soerensen gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. d4 g4 5. Ne5
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "King's knight's gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Blachly gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Nc6
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Lolli gambit (wild Muzio gambit)"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Bxf7+
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Lolli gambit, Young variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Bxf7+ Kxf7 6. O-O gxf3 7. Qxf3
 Qf6 8. d4 Qxd4+ 9. Be3 Qf6 10. Nc3
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Ghulam Kassim gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. d4
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "MacDonnell gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Nc3
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Salvio gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Ne5
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Silberschmidt gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Ne5 Qh4+ 6. Kf1 Nh6 7. d4 f3
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Salvio gambit, Anderssen counter-attack"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Ne5 Qh4+ 6. Kf1 Nh6 7. d4 d6
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Cochrane gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Ne5 Qh4+ 6. Kf1 f3
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Herzfeld gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. Ne5 Qh4+ 6. Kf1 Nc6
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit, Paulsen variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O gxf3 6. Qxf3 Qf6 7. e5 Qxe5
 8. d3 Bh6 9. Nc3 Ne7 10. Bd2 Nbc6 11. Rae1
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "double Muzio gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O gxf3 6. Qxf3 Qf6 7. e5 Qxe5
 8. Bxf7+
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit, From defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O gxf3 6. Qxf3 Qe7
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit, Holloway defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O gxf3 6. Qxf3 Nc6
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit, Kling and Horwitz counter-attack"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O Qe7
 
 [ECO "C37"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Muzio gambit, Brentano defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 g4 5. O-O d5
@@ -5827,26 +5827,26 @@ Qf6 8. d4 Qxd4+ 9. Be3 Qf6 10. Nc3
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Bg7
 
 [ECO "C38"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Hanstein gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Bg7 5. O-O
 
 [ECO "C38"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Philidor gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Bg7 5. h4
 
 [ECO "C38"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Greco gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Bg7 5. h4 h6 6. d4 d6 7. Nc3 c6 8.
 hxg5 hxg5 9. Rxh8 Bxh8 10. Ne5
 
 [ECO "C38"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Philidor gambit, Schultz variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. Bc4 Bg7 5. h4 h6 6. d4 d6 7. Qd3
@@ -5857,151 +5857,151 @@ hxg5 hxg5 9. Rxh8 Bxh8 10. Ne5
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Horny defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. Qxg4 Nf6
 8. Qxf4 Bd6
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, ThorOld variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. d4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Cook variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. d4 d5 8.
 Bxf4 dxe4 9. Bc4+ Kg7 10. Be5+
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Blackburne gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. Nc3
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Walker attack"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. Bc4+
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Urusov attack"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 h6 6. Nxf7 Kxf7 7. Bc4+ d5 8.
 Bxd5+ Kg7 9. d4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Allgaier, Schlechter defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ng5 Nf6
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Paulsen defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Bg7
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, long whip (Stockwhip, Classical) defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 h5
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, long whip defense, Jaenisch variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 h5 6. Bc4 Rh7 7. d4 Bh6 8.
 Nc3
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Brentano (Campbell) defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 d5
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Brentano defense, Kaplanek variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 d5 6. d4 Nf6 7. exd5 Qxd5 8.
 Nc3 Bb4 9. Kf2
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Brentano defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 d5 6. d4 Nf6 7. Bxf4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Brentano defense, Caro variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 d5 6. d4 Nf6 7. Bxf4 Nxe4 8.
 Nd2
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Salvio (Rosenthal) defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Qe7
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Salvio defense, Cozio variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Qe7 6. d4 f5 7. Bc4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Polerio defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Be7
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Neumann defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Nc6
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Kolisch defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 d6
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Berlin defense"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Nf6
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Berlin defense, Riviere variation"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Nf6 6. Nxg4 d5
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Berlin defense, 6.Bc4"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Nf6 6. Bc4
 
 [ECO "C39"]
-[Opening "KGA"]
+[Opening "King's gambit accepted"]
 [Variation "Kieseritsky, Rice gambit"]
 
 1. e4 e5 2. f4 exf4 3. Nf3 g5 4. h4 g4 5. Ne5 Nf6 6. Bc4 d5 7. exd5 Bd6 8.
@@ -9087,286 +9087,286 @@ c3 d6 9. h3 Na5 10. Bc2 c5 11. d4 Qc7 12. Nbd2 cxd4 13. cxd4
 1. d4 d5 2. c4
 
 [ECO "D06"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Grau (Sahovic) defense"]
 
 1. d4 d5 2. c4 Bf5
 
 [ECO "D06"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Marshall defense"]
 
 1. d4 d5 2. c4 Nf6
 
 [ECO "D06"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Symmetrical (Austrian) defense"]
 
 1. d4 d5 2. c4 c5
 
 [ECO "D07"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Chigorin defense"]
 
 1. d4 d5 2. c4 Nc6
 
 [ECO "D07"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Chigorin defense, Janowski variation"]
 
 1. d4 d5 2. c4 Nc6 3. Nc3 dxc4 4. Nf3
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit"]
 
 1. d4 d5 2. c4 e5
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, Lasker trap"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. e3 Bb4+ 5. Bd2 dxe3
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, Alapin variation"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3 Nc6 5. Nbd2
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, Krenosz variation"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3 Nc6 5. Nbd2 Bg4 6. h3 Bxf3 7. Nxf3 Bb4+
 8. Bd2 Qe7
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, Janowski variation"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3 Nc6 5. Nbd2 f6
 
 [ECO "D08"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, Balogh variation"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3 Nc6 5. Nbd2 Qe7
 
 [ECO "D09"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Albin counter-gambit, 5.g3"]
 
 1. d4 d5 2. c4 e5 3. dxe5 d4 4. Nf3 Nc6 5. g3
 
 [ECO "D10"]
-[Opening "QGD Slav defense"]
+[Opening "Queen's Gambit declined"Slav defense"]
 
 1. d4 d5 2. c4 c6
 
 [ECO "D10"]
-[Opening "QGD Slav defense, Alekhine variation"]
+[Opening "Queen's Gambit declined"Slav defense, Alekhine variation"]
 
 1. d4 d5 2. c4 c6 3. Nc3 dxc4 4. e4
 
 [ECO "D10"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Winawer counter-gambit"]
 
 1. d4 d5 2. c4 c6 3. Nc3 e5
 
 [ECO "D10"]
-[Opening "QGD Slav defense"]
+[Opening "Queen's Gambit declined"Slav defense"]
 [Variation "Exchange variation"]
 
 1. d4 d5 2. c4 c6 3. cxd5
 
 [ECO "D11"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "3.Nf3"]
 
 1. d4 d5 2. c4 c6 3. Nf3
 
 [ECO "D11"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Breyer variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nbd2
 
 [ECO "D11"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "4.e3"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3
 
 [ECO "D12"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "4.e3 Bf5"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3 Bf5
 
 [ECO "D12"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Landau variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3 Bf5 5. cxd5 cxd5 6. Qb3 Qc8 7. Bd2 e6 8.
 Na3
 
 [ECO "D12"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Exchange variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3 Bf5 5. cxd5 cxd5 6. Nc3
 
 [ECO "D12"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Amsterdam variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3 Bf5 5. cxd5 cxd5 6. Nc3 e6 7. Ne5 Nfd7
 
 [ECO "D13"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Exchange variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. cxd5 cxd5
 
 [ECO "D14"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Exchange variation, 6.Bf4 Bf5"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. cxd5 cxd5 5. Nc3 Nc6 6. Bf4 Bf5
 
 [ECO "D14"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Exchange, Trifunovic variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. cxd5 cxd5 5. Nc3 Nc6 6. Bf4 Bf5 7. e3 e6 8.
 Qb3 Bb4
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "4.Nc3"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Suechting variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 Qb6
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Schlechter variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 g6
 
 [ECO "D15"]
-[Opening "QGD Slav accepted"]
+[Opening "Queen's Gambit declined"Slav accepted"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "5.e3 (Alekhine variation)"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. e3
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Slav gambit"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. e4
 
 [ECO "D15"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Tolush-Geller gambit"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. e4 b5 6. e5
 
 [ECO "D16"]
-[Opening "QGD Slav accepted"]
+[Opening "Queen's Gambit declined"Slav accepted"]
 [Variation "Alapin variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4
 
 [ECO "D16"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Smyslov variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Na6 6. e4 Bg4
 
 [ECO "D16"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Soultanbeieff variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 e6
 
 [ECO "D16"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Steiner variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bg4
 
 [ECO "D17"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Czech defense"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5
 
 [ECO "D17"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Krause attack"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. Ne5
 
 [ECO "D17"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Carlsbad variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. Ne5 Nbd7 7. Nxc4 Qc7
 8. g3 e5
 
 [ECO "D17"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Wiesbaden variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. Ne5 e6
 
 [ECO "D18"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Dutch variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3
 
 [ECO "D18"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Dutch, Lasker variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3 Na6
 
 [ECO "D19"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Dutch variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3 e6 7. Bxc4 Bb4 8.
 O-O
 
 [ECO "D19"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Dutch variation, Main line"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3 e6 7. Bxc4 Bb4 8.
 O-O O-O 9. Qe2
 
 [ECO "D19"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined"Slav"]
 [Variation "Dutch, Saemisch variation"]
 
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3 e6 7. Bxc4 Bb4 8.
@@ -9378,55 +9378,55 @@ O-O O-O 9. Qe2 Ne4 10. g4
 1. d4 d5 2. c4 dxc4
 
 [ECO "D20"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "3.e4"]
 
 1. d4 d5 2. c4 dxc4 3. e4
 
 [ECO "D20"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Linares variation"]
 
 1. d4 d5 2. c4 dxc4 3. e4 c5 4. d5 Nf6 5. Nc3 b5
 
 [ECO "D20"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Schwartz defense"]
 
 1. d4 d5 2. c4 dxc4 3. e4 f5
 
 [ECO "D21"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "3.Nf3"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3
 
 [ECO "D21"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Ericson variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 b5
 
 [ECO "D21"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Alekhine defense, Borisenko-Furman variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 a6 4. e4
 
 [ECO "D22"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Alekhine defense"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 a6
 
 [ECO "D22"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Alekhine defense, Alatortsev variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 a6 4. e3 Bg4 5. Bxc4 e6 6. d5
 
 [ECO "D22"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Haberditz variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 a6 4. e3 b5
@@ -9437,7 +9437,7 @@ O-O O-O 9. Qe2 Ne4 10. g4
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6
 
 [ECO "D23"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Mannheim variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. Qa4+
@@ -9473,82 +9473,82 @@ O-O O-O 9. Qe2 Ne4 10. g4
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 Be6
 
 [ECO "D26"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "4...e6"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6
 
 [ECO "D26"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5
 
 [ECO "D26"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Furman variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. Qe2 a6 7. dxc5 Bxc5
 8. O-O Nc6 9. e4 b5 10. e5
 
 [ECO "D26"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical variation, 6.O-O"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O
 
 [ECO "D26"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Steinitz variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O cxd4
 
 [ECO "D27"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, 6...a6"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6
 
 [ECO "D27"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Rubinstein variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. a4
 
 [ECO "D27"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Geller variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. e4
 
 [ECO "D28"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, 7.Qe2"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. Qe2
 
 [ECO "D28"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, 7...b5"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. Qe2 b5
 
 [ECO "D28"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Flohr variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. Qe2 b5 8.
 Bb3 Nc6 9. Rd1 c4 10. Bc2 Nb4 11. Nc3 Nxc2 12. Qxc2 Bb7 13. d5 Qc7
 
 [ECO "D29"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, 8...Bb7"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. Qe2 b5 8.
 Bb3 Bb7
 
 [ECO "D29"]
-[Opening "QGA"]
+[Opening "Queen's Gambit accepted"]
 [Variation "Classical, Smyslov variation"]
 
 1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. Qe2 b5 8.
@@ -9560,575 +9560,575 @@ Bb3 Bb7 9. Rd1 Nbd7 10. Nc3 Bd6
 1. d4 d5 2. c4 e6
 
 [ECO "D30"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined Slav"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. e3 c6 5. Nbd2
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Stonewall variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. e3 c6 5. Nbd2 Ne4 6. Bd3 f5
 
 [ECO "D30"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined Slav"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. e3 c6 5. Nbd2 Nbd7
 
 [ECO "D30"]
-[Opening "QGD Slav"]
+[Opening "Queen's Gambit declined Slav"]
 [Variation "Semmering variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. e3 c6 5. Nbd2 Nbd7 6. Bd3 c5
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Spielmann variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. e3 c6 5. Nbd2 g6
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. Bg5
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Capablanca variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nbd2
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Vienna variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. Bg5 Bb4+
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Capablanca-Duras variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. Bg5 h6
 
 [ECO "D30"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Hastings variation"]
 
 1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. Bg5 h6 5. Bxf6 Qxf6 6. Nc3 c6 7. Qb3
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "3.Nc3"]
 
 1. d4 d5 2. c4 e6 3. Nc3
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Janowski variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 a6
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Alapin variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 b6
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Charousek (Petrosian) variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Be7
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav, Noteboom variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6 4. Nf3 dxc4
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav, Koomen variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6 4. Nf3 dxc4 5. a4 Bb4 6. e3 b5 7. Bd2 Qe7
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav, Junge variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6 4. Nf3 dxc4 5. a4 Bb4 6. e3 b5 7. Bd2 Qb6
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav, Abrahams variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6 4. Nf3 dxc4 5. a4 Bb4 6. e3 b5 7. Bd2 a5
 
 [ECO "D31"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Slav, Marshall gambit"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c6 4. e4
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, von Hennig-Schara gambit"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 cxd4
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch defense, 4.cd ed"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch defense, Tarrasch gambit"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. dxc5 d4 6. Na4 b5
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch defense, Marshall gambit"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. e4
 
 [ECO "D32"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3
 
 [ECO "D33"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Schlechter-Rubinstein system"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3
 
 [ECO "D33"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Folkestone (Swedish) variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 c4
 
 [ECO "D33"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Schlechter-Rubinstein system, Rey Ardid variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 c4 7. e4
 
 [ECO "D33"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Prague variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6
 
 [ECO "D33"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Wagner variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Bg4
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Prague variation, 7...Be7"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Prague variation, Normal position"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7 8.
 O-O O-O
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Reti variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7 8.
 O-O O-O 9. dxc5 Bxc5 10. Na4
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Prague variation, 9.Bg5"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7 8.
 O-O O-O 9. Bg5
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Bogolyubov variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7 8.
 O-O O-O 9. Bg5 Be6 10. Rc1 c4
 
 [ECO "D34"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tarrasch, Stoltz variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 c5 4. cxd5 exd5 5. Nf3 Nc6 6. g3 Nf6 7. Bg2 Be7 8.
 O-O O-O 9. Bg5 Be6 10. Rc1 b6
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "3...Nf6"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Harrwitz attack"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bf4
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange, Saemisch variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Nf3 Nbd7 6. Bf4
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange, positional line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange, chameleon variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 Be7 6. e3 O-O 7. Bd3 Nbd7
 8. Qc2 Re8 9. Nge2 Nf8 10. O-O-O
 
 [ECO "D35"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange, positional line, 5...c6"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 c6
 
 [ECO "D36"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Exchange, positional line, 6.Qc2"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 c6 6. Qc2
 
 [ECO "D37"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "4.Nf3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3
 
 [ECO "D37"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Classical variation (5.Bf4)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 Be7 5. Bf4
 
 [ECO "D38"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Ragozin variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 Bb4
 
 [ECO "D39"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Ragozin, Vienna variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 Bb4 5. Bg5 dxc4
 
 [ECO "D40"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5
 
 [ECO "D40"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, Symmetrical variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. e3 Nc6 6. Bd3 Bd6 7. O-O O-O
 
 [ECO "D40"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, Levenfish variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. e3 Nc6 6. Bd3 Bd6 7. O-O O-O 8.
 Qe2 Qe7 9. dxc5 Bxc5 10. e4
 
 [ECO "D40"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch defense, Pillsbury variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. Bg5
 
 [ECO "D41"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, 5.cd"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. cxd5
 
 [ECO "D41"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, Kmoch variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. cxd5 Nxd5 6. e4 Nxc3 7. bxc3 cxd4
 8. cxd4 Bb4+ 9. Bd2 Bxd2+ 10. Qxd2 O-O 11. Bb5
 
 [ECO "D41"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, San Sebastian variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. cxd5 Nxd5 6. e4 Nxc3 7. bxc3 cxd4
 8. cxd4 Bb4+ 9. Bd2 Qa5
 
 [ECO "D41"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch with e3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. cxd5 Nxd5 6. e3
 
 [ECO "D42"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, 7.Bd3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c5 5. cxd5 Nxd5 6. e3 Nc6 7. Bd3
 
 [ECO "D43"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6
 
 [ECO "D43"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Hastings variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 h6 6. Bxf6 Qxf6 7. Qb3
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "5.Bg5 dc"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Botvinnik system (anti-Meran)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Ekstrom variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4 b5 7. e5 h6 8. Bh4
 g5 9. exf6 gxh4 10. Ne5
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Anti-Meran gambit"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4 b5 7. e5 h6 8. Bh4
 g5 9. Nxg5
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Anti-Meran, Lilienthal variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4 b5 7. e5 h6 8. Bh4
 g5 9. Nxg5 hxg5 10. Bxg5 Nbd7 11. g3
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Anti-Meran, Szabo variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4 b5 7. e5 h6 8. Bh4
 g5 9. Nxg5 hxg5 10. Bxg5 Nbd7 11. Qf3
 
 [ECO "D44"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Anti-Meran, Alatortsev system"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. Bg5 dxc4 6. e4 b5 7. e5 h6 8. Bh4
 g5 9. Nxg5 Nd5
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "5.e3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Stonewall defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Ne4 6. Bd3 f5
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Accelerated Meran (Alekhine variation)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 a6
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "5...Nd7"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Stoltz variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Qc2
 
 [ECO "D45"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Rubinstein (anti-Meran) system"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Ne5
 
 [ECO "D46"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "6.Bd3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3
 
 [ECO "D46"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Bogolyubov variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 Be7
 
 [ECO "D46"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Romih variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 Bb4
 
 [ECO "D46"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Chigorin defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 Bd6
 
 [ECO "D47"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "7.Bc4"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4
 
 [ECO "D47"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5
 
 [ECO "D47"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "neo-Meran (Lundin variation)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 b4
 
 [ECO "D47"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Wade variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 Bb7
 
 [ECO "D48"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, 8...a6"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6
 
 [ECO "D48"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Pirc variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 b4
 
 [ECO "D48"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5
 
 [ECO "D48"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, ReynOlds' variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. d5
 
 [ECO "D48"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Old Main line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Blumenfeld variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Rabinovich variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5 Ng4
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Sozin variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5 Nxe5
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Stahlberg variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5 Nxe5 12. Nxe5 axb5 13. Qf3
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Sozin variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
 Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5 Nxe5 12. Nxe5 axb5 13. O-O
 
 [ECO "D49"]
-[Opening "QGD Semi-Slav"]
+[Opening "Queen's Gambit declined Semi-Slav"]
 [Variation "Meran, Rellstab attack"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 c6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8.
@@ -10136,425 +10136,425 @@ Bd3 a6 9. e4 c5 10. e5 cxd4 11. Nxb5 Nxe5 12. Nxe5 axb5 13. O-O Qd5 14. Qe2
 Ba6 15. Bg5
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "4.Bg5"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Been-Koomen variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c5
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, Krause variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c5 5. Nf3 cxd4 6. Nxd4 e5 7. Ndb5 a6 8.
 Qa4
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch, Primitive Pillsbury variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c5 5. Nf3 cxd4 6. Qxd4
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Semi-Tarrasch"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c5 5. cxd5
 
 [ECO "D50"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Canal (Venice) variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c5 5. cxd5 Qb6
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "4.Bg5 Nbd7"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Rochlin variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. Nf3 c6 6. Rc1 Qa5 7. Bd2
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Alekhine variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. Nf3 c6 6. e4
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Manhattan variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 Bb4
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "5...c6"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6
 
 [ECO "D51"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Capablanca anti-Cambridge Springs variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. a3
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, Bogoljubow variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. Nd2 Bb4 8.
 Qc2
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, Argentine variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. Nd2 Bb4 8.
 Qc2 O-O 9. Bh4
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, Rubinstein variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. Nd2 dxc4
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, Capablanca variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. Bxf6
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, 7.cd"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. cxd5
 
 [ECO "D52"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Cambridge Springs defense, Yugoslav variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. cxd5 Nxd5
 
 [ECO "D53"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "4.Bg5 Be7"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7
 
 [ECO "D53"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 Ne4
 
 [ECO "D53"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "4.Bg5 Be7, 5.e3 O-O"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O
 
 [ECO "D54"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Anti-neo-Orthodox variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Rc1
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "6.Nf3"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Pillsbury attack"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 b6 7. Bd3 Bb7 8.
 cxd5 exd5 9. Ne5
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Neo-Orthodox variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Neo-Orthodox variation, 7.Bxf6"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bxf6
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Petrosian variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bxf6 Bxf6 8.
 Rc1 c6 9. Bd3 Nd7 10. O-O dxc4 11. Bxc4
 
 [ECO "D55"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Neo-Orthodox variation, 7.Bh4"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4
 
 [ECO "D56"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4
 
 [ECO "D56"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker defense, Teichmann variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4 8.
 Bxe7 Qxe7 9. Qc2
 
 [ECO "D56"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker defense, Russian variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4 8.
 Bxe7 Qxe7 9. Qc2 Nf6 10. Bd3 dxc4 11. Bxc4 c5 12. O-O Nc6 13. Rfd1 Bd7
 
 [ECO "D57"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker defense, Main line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4 8.
 Bxe7 Qxe7 9. cxd5 Nxc3 10. bxc3
 
 [ECO "D57"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Lasker defense, Bernstein variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4 8.
 Bxe7 Qxe7 9. cxd5 Nxc3 10. bxc3 exd5 11. Qb3 Qd6
 
 [ECO "D58"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tartakower (Makagonov-Bondarevsky) system"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 b6
 
 [ECO "D59"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tartakower (Makagonov-Bondarevsky) system, 8.cd Nxd5"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 b6 8.
 cxd5 Nxd5
 
 [ECO "D59"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Tartakower variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 b6 8.
 cxd5 Nxd5 9. Bxe7 Qxe7 10. Nxd5 exd5 11. Rc1 Be6
 
 [ECO "D60"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7
 
 [ECO "D60"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Botvinnik variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Bd3
 
 [ECO "D60"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rauzer variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Qb3
 
 [ECO "D61"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Qc2
 
 [ECO "D62"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, 7.Qc2 c5, 8.cd (Rubinstein)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Qc2 c5 8.
 cxd5
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, 7.Rc1"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Pillsbury attack"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 b6 8.
 cxd5 exd5 9. Bd3
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Capablanca variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 b6 8.
 cxd5 exd5 9. Bb5
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Swiss (Henneberger) variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 a6
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Swiss, Karlsbad variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 a6 8.
 cxd5
 
 [ECO "D63"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6
 
 [ECO "D64"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein attack (with Rc1)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Qc2
 
 [ECO "D64"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein attack, Wolf variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Qc2 Ne4
 
 [ECO "D64"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein attack, Karlsbad variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Qc2 a6
 
 [ECO "D64"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein attack, Gruenfeld variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Qc2 a6 9. a3
 
 [ECO "D65"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Rubinstein attack, Main line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Qc2 a6 9. cxd5
 
 [ECO "D66"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3
 
 [ECO "D66"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line, Fianchetto variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 b5
 
 [ECO "D67"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line, Capablanca freeing manoevre"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5
 
 [ECO "D67"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line, Janowski variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. h4
 
 [ECO "D67"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7
 
 [ECO "D67"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line, Alekhine variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. Ne4
 
 [ECO "D67"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Bd3 line, 11.O-O"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O
 
 [ECO "D68"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Classical variation"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O Nxc3 12. Rxc3 e5
 
 [ECO "D68"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Classical, 13.d1b1 (Maroczy)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O Nxc3 12. Rxc3 e5 13. Qb1
 
 [ECO "D68"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Classical, 13.d1c2 (Vidmar)"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
 Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O Nxc3 12. Rxc3 e5 13. Qc2
 
 [ECO "D69"]
-[Opening "QGD"]
+[Opening "Queen's Gambit declined"]
 [Variation "Orthodox defense, Classical, 13.de"]
 
 1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8.
