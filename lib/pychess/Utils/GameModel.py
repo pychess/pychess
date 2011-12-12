@@ -193,8 +193,7 @@ class GameModel (GObject, PooledThread):
         self.emit("spectators_changed")
 
     def setOpening(self):
-        # TODO: Is this correct for pychess_book.bin ?
-        if self.ply > 20:
+        if self.ply > 40:
             return
 
         if self.isMainlineBoard(self.ply):

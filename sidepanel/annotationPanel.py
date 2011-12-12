@@ -464,6 +464,10 @@ class Sidepanel(gtk.TextView):
             if opening:
                 buf.insert_with_tags_by_name(end_iter(), " - ", "head1")
                 buf.insert_with_tags_by_name(end_iter(), opening, "head2")
+            variation = gm.tags.get('Variation')
+            if variation:
+                buf.insert_with_tags_by_name(end_iter(), ", ", "head1")
+                buf.insert_with_tags_by_name(end_iter(), variation, "head2")
 
         buf.insert(end_iter(), "\n\n")
 

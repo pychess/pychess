@@ -22,6 +22,7 @@ if __name__ == '__main__':
         cf = load(open(pgnfile))
         rows = []
         old_eco = ""
+        ply_max = 0
         for i, game in enumerate(cf.games):
             model = cf.loadToModel(i, quick_parse=True)
 
@@ -37,7 +38,9 @@ if __name__ == '__main__':
             
             base = int(old_eco != eco)
             
-            if len(model.moves) == 0:
+            ply = len(model.moves)
+            ply_max = max(ply_max, ply)
+            if ply == 0:
                 cu = conn.cursor()
                 cu.execute("select * from openings where eco=? and lang='en' and base=1", (eco,))
                 res = cu.fetchone()
@@ -54,6 +57,8 @@ if __name__ == '__main__':
         c.executemany("insert into openings(hash, base, eco, lang, opening, variation) values (?, ?, ?, ?, ?, ?)", rows)
         conn.commit()
 
+        print "Max ply was %s" % ply_max
+
     # Several eco list contains only eco+name pairs, so
     # we will use base ECO line positions from en eco.pgn 
     print "processing en eco.pgn"
@@ -67,5 +72,5 @@ if __name__ == '__main__':
         if os.path.isfile(pgnfile):
             print "processing %s eco.pgn" % lang
             feed(pgnfile, lang)
-
+    
     conn.close()
