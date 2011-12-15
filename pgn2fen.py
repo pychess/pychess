@@ -9,6 +9,7 @@ import struct
 
 from pychess.Savers.pgn import load
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.eco import hash_struct
 
 path = os.path.join(addDataPrefix("eco.db"))
 conn = sqlite3.connect(path)
@@ -17,6 +18,8 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     c.execute("drop table if exists openings")
+
+    # Unfortunately sqlite doesn't support uint64, so we have to use blob type to store polyglot-hash values
     c.execute("create table openings(hash blob, base integer, eco text, lang text, opening text, variation text)")
 
     def feed(pgnfile, lang):
@@ -48,7 +51,7 @@ if __name__ == '__main__':
                 if res is not None:
                     hash = res[0]
             else:
-                hash = buffer(struct.pack('Q', model.boards[-1].board.hash))
+                hash = buffer(hash_struct.pack(model.boards[-1].board.hash))
                 
             if opening:
                 rows.append((hash, base, eco, lang, opening, variation))

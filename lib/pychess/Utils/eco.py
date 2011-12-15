@@ -17,9 +17,12 @@ if mofile is None:
 else:
     lang = mofile.split(os.sep)[-3]
 
+# big-endian, unsigned long long (uint64)
+hash_struct = struct.Struct('>Q')
+
 def get_eco(hash):
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
-    cur.execute(select, (buffer(struct.pack('Q', hash)), lang))
+    cur.execute(select, (buffer(hash_struct.pack(hash)), lang))
     return cur.fetchone()
     
