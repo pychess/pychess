@@ -5,6 +5,7 @@
 import os
 import sys
 import sqlite3
+import struct
 
 from pychess.Savers.pgn import load
 from pychess.System.prefix import addDataPrefix
@@ -47,7 +48,7 @@ if __name__ == '__main__':
                 if res is not None:
                     hash = res[0]
             else:
-                hash = buffer(hex(model.boards[-1].board.hash))
+                hash = buffer(struct.pack('Q', model.boards[-1].board.hash))
                 
             if opening:
                 rows.append((hash, base, eco, lang, opening, variation))

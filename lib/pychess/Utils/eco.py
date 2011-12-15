@@ -2,6 +2,7 @@ import os
 import atexit
 import gettext
 import sqlite3
+import struct
 
 from pychess.System.prefix import addDataPrefix
 
@@ -19,6 +20,6 @@ else:
 def get_eco(hash):
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
-    cur.execute(select, (buffer(hex(hash)), lang))
+    cur.execute(select, (buffer(struct.pack('Q', hash)), lang))
     return cur.fetchone()
     
