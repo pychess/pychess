@@ -76,6 +76,14 @@
                       </widget>
                     </child>
                     <child>
+                      <widget class="GtkMenuItem" id="load_recent_game1">
+                        <property name="label" translatable="yes">Load _Recent Game</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_load_recent_game_activate"/>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkMenuItem" id="open_database">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Open _Database</property>

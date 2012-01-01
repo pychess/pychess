@@ -51,10 +51,16 @@ def updateCombo (combo, data):
     combo.set_active(new_active)
 
 
+# int.bit_length() new in Python 2.7, so we have to use an equivalent
+def int_bit_length(i):
+    s = bin(i)       # binary representation:  bin(-37) --> '-0b100101'
+    s = s.lstrip('-0b') # remove leading zeros and minus sign
+    return len(s)       # len('100101') --> 6
+
 def genColor (n, startpoint=0):
     assert n >= 1
     # This splits the 0 - 1 segment in the pizza way
-    h = (2*n-1)/(2.**int.bit_length(n-1))-1
+    h = (2*n-1)/(2.**int_bit_length(n-1))-1
     h = (h + startpoint) % 1
     # We set saturation based on the amount of green, scaled to the interval
     # [0.6..0.8]. This ensures a consistent lightness over all colors.

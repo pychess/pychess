@@ -67,7 +67,7 @@ CLASSIFIERS = [
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 DATA_FILES = [("share/pychess",
-    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "open.db"])]
+    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]

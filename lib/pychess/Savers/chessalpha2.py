@@ -141,6 +141,7 @@ class AlphaFile (ChessFile):
                     board.addPiece(Cord(x,7-y), Piece(col,pie))
         
         model.boards = [board]
+        model.variations = [model.boards]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
         

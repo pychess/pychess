@@ -34,10 +34,11 @@ def drawPiece3 (piece, cc, x, y, psize):
     cc.fill()
     cc.restore()
 
-def drawPieceReal (piece, cc, psize):
+def drawPieceReal (piece, cc, psize, allWhite):
+    color = WHITE if allWhite else piece.color
     
     # Do the actual drawing to the Cairo context
-    for cmd, points in parsedPieces[piece.color][piece.sign][psize]:
+    for cmd, points in parsedPieces[color][piece.sign][psize]:
         if cmd == 'M':
             cc.rel_move_to(*points)
         elif cmd == 'L':
@@ -45,7 +46,7 @@ def drawPieceReal (piece, cc, psize):
         else:
             cc.rel_curve_to(*points)
 
-def drawPiece (piece, cc, x, y, psize):
+def drawPiece (piece, cc, x, y, psize, allWhite=False):
     cc.save()
     cc.move_to(x,y)
     
@@ -54,7 +55,7 @@ def drawPiece (piece, cc, x, y, psize):
                 for cmd, points in parsedPieces[piece.color][piece.sign][size]]
         parsedPieces[piece.color][piece.sign][psize] = list
     
-    drawPieceReal (piece, cc, psize)
+    drawPieceReal (piece, cc, psize, allWhite)
     cc.fill()
     cc.restore()
 

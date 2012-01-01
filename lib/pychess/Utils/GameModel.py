@@ -13,6 +13,7 @@ from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
+from pychess.Utils.eco import get_eco
 from pychess.Variants.normal import NormalChess
 from pychess.Variants import variants
 
@@ -93,6 +94,8 @@ class GameModel (GObject, PooledThread):
         "players_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         # spectators_changed is emitted if the spectators list was changed.
         "spectators_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # opening_changed is emitted if the move changed the opening.
+        "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
     }
     
     def __init__ (self, timemodel=None, variant=NormalChess):
@@ -188,6 +191,21 @@ class GameModel (GObject, PooledThread):
         assert self.status == WAITING_TO_START
         self.spectators = spectators
         self.emit("spectators_changed")
+
+    def setOpening(self):
+        if self.ply > 40:
+            return
+
+        if self.isMainlineBoard(self.ply):
+            if self.ply > 0:
+                opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
+            else:
+                opening = ("", "")
+            if opening is not None:
+                self.tags["ECO"] = opening[0]
+                self.tags["Opening"] = opening[1]
+                self.tags["Variation"] = opening[2]
+                self.emit("opening_changed")
     
     ############################################################################
     # Board stuff                                                              #
@@ -243,6 +261,11 @@ class GameModel (GObject, PooledThread):
         else:
             return True
 
+    def isEngine2EngineGame (self):
+        if self.players[0].__type__ == ARTIFICIAL and self.players[1].__type__ == ARTIFICIAL:
+            return True
+        else:
+            return False
 
     def isMainlineBoard(self, ply):
         return self.getBoardAtPly(ply) in self.variations[0]
@@ -502,13 +525,16 @@ class GameModel (GObject, PooledThread):
 
                 if self.timemodel:
                     self.timemodel.tap()
-                    
+                
                 self.checkStatus()
                 
                 self.emit("game_changed")
                 
                 for spectator in self.spectators.values():
                     spectator.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
+
+                self.setOpening()
+
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock\n")
                 self.applyingMoveLock.release()
@@ -521,9 +547,14 @@ class GameModel (GObject, PooledThread):
          
         log.debug("GameModel.checkStatus:\n")
         status, reason = getStatus(self.boards[-1])
-        
+         
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            if not (status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES)):
+            engine_engine = self.players[WHITE].__type__ == ARTIFICIAL and self.players[BLACK].__type__ == ARTIFICIAL
+            if status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES):
+                if engine_engine:
+                    self.end(status, reason)
+                    return
+            else:
                 self.end(status, reason)
                 return
         
@@ -674,6 +705,7 @@ class GameModel (GObject, PooledThread):
                 self.timemodel.undoMoves(moves)
             
             self.checkStatus()
+            self.setOpening()
         finally:
             log.debug("GameModel.undoMoves: releasing self.applyingMoveLock\n")
             self.applyingMoveLock.release()

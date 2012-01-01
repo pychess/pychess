@@ -22,6 +22,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
 from pychess.Utils.repr import localReprSign
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
@@ -31,7 +32,7 @@ from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
-from pychess.Savers import pgn
+from pychess.Savers import fen, pgn
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
@@ -500,7 +501,14 @@ class EnterNotationExtension (_GameInitializationMode):
                     text = text.replace(sign, reprSign[i+1])
                 text = str(text)
 
-            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), pgn, 0, -1))
+            # First we try if it's just a FEN string
+            try:
+                LBoard(NORMALCHESS).applyFen(text)
+                loadType = fen
+            except:
+                loadType = pgn
+
+            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
         cls._generalRun(_callback)
 
 class ImageButton(gtk.DrawingArea):

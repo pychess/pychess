@@ -93,6 +93,10 @@ class ChatManager (GObject):
         #fics% tell 1 hi
         #You are not in channel 1, auto-adding you if possible.
         
+        # Setting 'Lang' is a workaround for
+        # http://code.google.com/p/pychess/issues/detail?id=376
+        # and can be removed when conversion to FICS block mode is done
+        self.connection.lvm.setVariable("Lang", "English")
         self.connection.lvm.setVariable("kibitz", "0")
         self.connection.lvm.setVariable("ctell", "1")
         self.connection.lvm.setVariable("tell", "1")

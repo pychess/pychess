@@ -212,9 +212,6 @@ class Board:
     def asFen (self):
         return self.board.asFen()
     
-    def asXFen (self):
-        return self.board.asFen(useXFen=True)
-    
     def __repr__ (self):
         return str(self.board)
     

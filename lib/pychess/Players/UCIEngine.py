@@ -378,7 +378,7 @@ class UCIEngine (ProtocolEngine):
                 if self.board.asFen() == FEN_START:
                     commands.append("position startpos")
                 else:
-                    commands.append("position fen %s" % self.board.asXFen())
+                    commands.append("position fen %s" % self.board.asFen())
                 commands.append("go infinite")
             
             if self.needBestmove:
@@ -393,7 +393,7 @@ class UCIEngine (ProtocolEngine):
                     self.readyForStop = True
     
     def _startPonder (self):
-        print >> self.engine, "position fen", self.board.asXFen(), \
+        print >> self.engine, "position fen", self.board.asFen(), \
                                 "moves", toAN(self.board, self.pondermove, short=True)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "btime", self.btime, "winc", self.incr, "binc", self.incr

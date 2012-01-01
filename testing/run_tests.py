@@ -1,7 +1,6 @@
 import unittest
 
 modules_to_test = (
-    'ficsmanagers',
     "bitboard",
     "draw",
     "eval",
@@ -12,6 +11,8 @@ modules_to_test = (
     "movegen",
     "pgn",
     "zobrist",
+    "polyglot",
+    'ficsmanagers',
     'analysis',
     ) 
 

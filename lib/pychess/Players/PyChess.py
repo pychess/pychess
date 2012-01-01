@@ -76,27 +76,24 @@ class PyChess:
         return max(80-x,4)
     
     def __getBestOpening (self):
-        score = 0
-        move = None
-        for m, w, d, l in getOpenings(self.board):
-            s = (w+d/3.0)*random.random()
-            if not move or s > score:
-                move = m
-                score = s
-        return move
+        totalWeight = 0
+        choice = None
+        for move, weight, histGames, histScore in getOpenings(self.board):
+            totalWeight += weight
+            if totalWeight == 0:
+                break
+            if not move or random.randrange(totalWeight) < weight:
+                choice = move
+        return choice
     
     def __go (self, worker):
         """ Finds and prints the best move from the current position """
         
-        # TODO: Length info should be put in the book.
-        # Btw. 10 is not enough. Try 20
-        #if len(self.board.history) < 14:
-        movestr = self.__getBestOpening()
-        if movestr:
-            mvs = [parseSAN(self.board, movestr)]
+        mv = self.__getBestOpening()
+        if mv:
+            mvs = [mv]
         
-        #if len(self.board.history) >= 14 or not movestr:
-        if not movestr:
+        if not mv:
                
             lsearch.skipPruneChance = self.skipPruneChance
             lsearch.useegtb = self.useegtb
