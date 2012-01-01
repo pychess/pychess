@@ -401,7 +401,7 @@ class PGNFile (ChessFile):
             if status in (WHITEWON, BLACKWON) and status != model.status:
                 model.status = status
                 model.reason = WON_RESIGN
-            elif status == DRAW:
+            elif status == DRAW and status != model.status:
                 model.status = DRAW
                 model.reason = DRAW_AGREE
         

@@ -64,6 +64,7 @@ class Sidepanel(gtk.TextView):
         glock_connect(self.boardview.model, "game_started", self.game_started)
         glock_connect(self.boardview.model, "game_ended", self.game_ended)
         glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
+        glock_connect(self.boardview.model, "opening_changed", self.opening_changed)
         glock_connect(self.boardview.model, "players_changed", self.players_changed)
         self.boardview.connect("shown_changed", self.shown_changed)
 
@@ -425,15 +426,9 @@ class Sidepanel(gtk.TextView):
             result = gm.tags['Result']
         buf.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
-        eco = gm.tags.get('ECO')
-        if eco:
-            buf.insert_with_tags_by_name(end_iter(), eco, "head2")
-
         text = ""
         event = gm.tags['Event']
         if event and event != "?":
-            if eco:
-                text += ', '
             text += event
 
         site = gm.tags['Site']
@@ -462,6 +457,18 @@ class Sidepanel(gtk.TextView):
             text += ', ' + game_date[:4]
         buf.insert_with_tags_by_name(end_iter(), text, "head1")
 
+        eco = gm.tags.get('ECO')
+        if eco:
+            buf.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
+            opening = gm.tags.get('Opening')
+            if opening:
+                buf.insert_with_tags_by_name(end_iter(), " - ", "head1")
+                buf.insert_with_tags_by_name(end_iter(), opening, "head2")
+            variation = gm.tags.get('Variation')
+            if variation:
+                buf.insert_with_tags_by_name(end_iter(), ", ", "head1")
+                buf.insert_with_tags_by_name(end_iter(), variation, "head2")
+
         buf.insert(end_iter(), "\n\n")
 
     # Update the entire notation tree
@@ -478,6 +485,9 @@ class Sidepanel(gtk.TextView):
         self.update()
 
     def game_ended(self, gamemodel, reason):
+        self.update()
+
+    def opening_changed(self, gamemodel):
         self.update()
 
     def players_changed (self, gamemodel):

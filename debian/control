@@ -30,7 +30,7 @@ Description: chess graphical user interface for several chess engines
   Drag and drop
   Tabbed interface
   Hints and spyarrows
-  Openingbook sidepanel using sqlite
+  Openingbook sidepanel using Polyglot format
   Scoreplot sidepanel
   "Enter game" in pgn dialog
   Internationalised or figure pieces in notation

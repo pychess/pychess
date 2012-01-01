@@ -12,6 +12,7 @@ from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
 from pychess.Utils.const import *
+from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
 import gtk
 import os
@@ -88,6 +89,12 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 alt = _("Guest")
             if prename == conf.get(key, alt):
                 conf.notify_add(key, lambda *a:player.setName(conf.get(key,alt)))
+
+    if player0tup[0] == ARTIFICIAL and player1tup[0] == ARTIFICIAL:
+        def emit_action (action, param):
+            if gmwidg.isInFront():
+                gamemodel.curplayer.emit("offer", Offer(action, param=param))
+        gmwidg.board.connect("action", lambda b,action,param: emit_action(action, param))
     
     gamemodel.setPlayers(players)
     
