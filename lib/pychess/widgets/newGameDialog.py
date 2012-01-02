@@ -8,14 +8,9 @@ from itertools import groupby
 import gtk
 from cairo import ImageSurface
 
-try:
-    from gtksourceview import SourceBuffer
-    from gtksourceview import SourceView
-    from gtksourceview import SourceLanguagesManager as LanguageManager
-except ImportError:
-    from gtksourceview2 import Buffer as SourceBuffer
-    from gtksourceview2 import View as SourceView
-    from gtksourceview2 import LanguageManager
+from gtksourceview2 import Buffer as SourceBuffer
+from gtksourceview2 import View as SourceView
+from gtksourceview2 import LanguageManager
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
