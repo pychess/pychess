@@ -19,9 +19,18 @@ pygtk.require("2.0")
 try:
     import rsvg
 except ImportError:
-    print 'ERROR: Could not load the rsvg module.'
-    print 'You need to install the rsvg package which is called python-rsvg in'
-    print 'Debian/Ubuntu and gnome-python2-rsvg in RPM based distributions like Fedora'
+    print 'ERROR: Could not load the rsvg python module.'
+    print 'You need to install the rsvg python package which is called '
+    print 'python-rsvg in Debian/Ubuntu and gnome-python2-rsvg in RPM based '
+    print 'distributions like Fedora'
+    sys.exit(1)
+
+try:
+    import gtksourceview2
+except ImportError:
+    print 'ERROR: Could not load the gtksourceview2 python module.'
+    print 'You need to install the gtksourceview2 python package which is '
+    print 'called pygtksourceview in most distributions'
     sys.exit(1)
 
 
