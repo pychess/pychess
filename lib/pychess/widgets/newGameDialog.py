@@ -41,7 +41,7 @@ from pychess.Variants.normal import NormalChess
 # Background.Taskers so they have a similar look.
 #===============================================================================
 
-big_time = load_icon(48, "stock_alarm", "appointment-soon")
+big_time = gtk.gdk.pixbuf_new_from_file(addDataPrefix("glade/stock_alarm.svg"))
 big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute")
 ipeople = load_icon(24, "stock_people", "system-users")
