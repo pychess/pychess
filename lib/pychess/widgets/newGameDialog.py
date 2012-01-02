@@ -8,14 +8,9 @@ from itertools import groupby
 import gtk
 from cairo import ImageSurface
 
-try:
-    from gtksourceview import SourceBuffer
-    from gtksourceview import SourceView
-    from gtksourceview import SourceLanguagesManager as LanguageManager
-except ImportError:
-    from gtksourceview2 import Buffer as SourceBuffer
-    from gtksourceview2 import View as SourceView
-    from gtksourceview2 import LanguageManager
+from gtksourceview2 import Buffer as SourceBuffer
+from gtksourceview2 import View as SourceView
+from gtksourceview2 import LanguageManager
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
@@ -41,7 +36,7 @@ from pychess.Variants.normal import NormalChess
 # Background.Taskers so they have a similar look.
 #===============================================================================
 
-big_time = load_icon(48, "stock_alarm", "appointment-soon")
+big_time = gtk.gdk.pixbuf_new_from_file(addDataPrefix("glade/stock_alarm.svg"))
 big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute")
 ipeople = load_icon(24, "stock_people", "system-users")
