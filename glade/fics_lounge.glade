@@ -1390,8 +1390,7 @@
                             <property name="yalign">0</property>
                             <property name="xpad">5</property>
                             <property name="ypad">5</property>
-                            <property name="pixel_size">48</property>
-                            <property name="icon_name">stock_alarm</property>
+                            <property name="pixbuf">stock_alarm.svg</property>
                             <property name="icon-size">6</property>
                           </widget>
                           <packing>
@@ -2303,8 +2302,7 @@ b) you change the variant or the time control</property>
                             <property name="yalign">0</property>
                             <property name="xpad">5</property>
                             <property name="ypad">5</property>
-                            <property name="pixel_size">48</property>
-                            <property name="icon_name">document-properties</property>
+                            <property name="pixbuf">document-properties.svg</property>
                             <property name="icon-size">6</property>
                           </widget>
                           <packing>
