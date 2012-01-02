@@ -78,8 +78,14 @@ class GladeHandlers:
         gmwidg.connect("closed", GladeHandlers.__dict__["on_gmwidg_closed"])
 
     def on_recent_game_activated (gamemodel, uri):
-        o = urlparse(uri)
-        recentManager.add_full("file://" + o.path, {'mime_type':'application/x-chess-pgn', 'app_name':'pychess', 'app_exec':'pychess', 'group':'pychess'})
+        if isinstance(uri, basestring):
+            o = urlparse(uri)
+            recent_data = {
+                'mime_type':'application/x-chess-pgn',
+                'app_name':'pychess',
+                'app_exec':'pychess',
+                'group':'pychess'}
+            recentManager.add_full("file://" + o.path, recent_data)
     
     def on_gmwidg_closed (gmwidg):
         del gameDic[gmwidg]
