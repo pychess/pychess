@@ -1,6 +1,5 @@
 """ The task of this module, is to save, load and init new games """
 
-from gettext import ngettext
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess import Savers
 from pychess.Players.engineNest import discoverer
