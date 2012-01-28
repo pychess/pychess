@@ -212,7 +212,7 @@ def offer_callback (player, offer, gamemodel, gmwidg):
         message = _("You sent a pause offer")
     elif offer.type == RESUME_OFFER:
         message = _("You sent a resume offer")
-    elif offer.type == ABORT_OFFER:
+    elif offer.type == TAKEBACK_OFFER:
         message = _("You sent an undo offer")
     elif offer.type == HURRY_ACTION:
         message = _("You asked your opponent to move")
