@@ -66,8 +66,11 @@ CLASSIFIERS = [
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
+if not isfile("eco.db"):
+    execfile("pgn2ecodb.py")
+
 DATA_FILES = [("share/pychess",
-    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin"])]
+    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
@@ -97,7 +100,7 @@ if sys.platform == "win32":
     sys.path.append(argv0_path + "\\tools\\i18n")
     import msgfmt
 
-for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
+for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d) and d != "en"]:
     if sys.platform == "win32":
         file = "lang/%s/%s" % (dir,pofile)
         msgfmt.make(file+".po", file+".mo")

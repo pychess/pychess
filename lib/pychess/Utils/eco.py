@@ -4,7 +4,7 @@ import gettext
 import sqlite3
 import struct
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, isInstalled
 
 db_path = os.path.join(addDataPrefix("eco.db"))
 if os.path.exists(db_path):
@@ -15,7 +15,11 @@ else:
     print "Warning: eco.db not find, run pgn2ecodb.sh"
     ECO_OK = False
 
-mofile = gettext.find('pychess', localedir=addDataPrefix("lang"))
+if isInstalled():
+    mofile = gettext.find('pychess')
+else:
+    mofile = gettext.find('pychess', localedir=addDataPrefix("lang"))
+
 if mofile is None:
     lang = "en"
 else:
