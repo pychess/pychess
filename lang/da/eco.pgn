@@ -1,0 +1,2500 @@
+[ECO "A00"]
+[Opening "IrregulÃ¦re Ã¥bninger"]
+
+*
+
+[ECO "A01"]
+[Opening "Nimzowitsch-Larsen angreb"]
+
+*
+
+[ECO "A02"]
+[Opening "Birds åbning"]
+
+*
+
+[ECO "A03"]
+[Opening "Birds åbning"]
+
+*
+
+[ECO "A04"]
+[Opening "Réti åbning"]
+
+*
+
+[ECO "A05"]
+[Opening "Réti åbning, 2..Sf6"]
+
+*
+
+[ECO "A06"]
+[Opening "Réti åbning, 2..d5"]
+
+*
+
+[ECO "A07"]
+[Opening "Réti åbning, Kongeindisk angreb (Barcza system)"]
+
+*
+
+[ECO "A08"]
+[Opening "Réti åbning, Kongeindisk angreb"]
+
+*
+
+[ECO "A09"]
+[Opening "Réti åbning, 2..d5 3. c4"]
+
+*
+
+[ECO "A10"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A11"]
+[Opening "Engelsk, Caro-Kann forsvar"]
+
+*
+
+[ECO "A12"]
+[Opening "Engelsk, Caro-Kann forsvar"]
+
+*
+
+[ECO "A13"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A14"]
+[Opening "Engelsk, Neo-Katalansk afslået"]
+
+*
+
+[ECO "A15"]
+[Opening "Engelsk, 1...Sf6 (Anglo-Indisk forsvar)"]
+
+*
+
+[ECO "A16"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A17"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A18"]
+[Opening "Engelsk, Mikenas-Carls variant"]
+
+*
+
+[ECO "A19"]
+[Opening "Engelsk, Mikenas-Carls, siciliansk variant"]
+
+*
+
+[ECO "A20"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A21"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A22"]
+[Opening "Engelsk"]
+
+*
+
+[ECO "A23"]
+[Opening "Engelsk, Bremen system, Keres variant"]
+
+*
+
+[ECO "A24"]
+[Opening "Engelsk, Bremen system med 3...g6"]
+
+*
+
+[ECO "A25"]
+[Opening "Engelsk, siciliansk med omvendte farver"]
+
+*
+
+[ECO "A26"]
+[Opening "Engelsk, lukkede system"]
+
+*
+
+[ECO "A27"]
+[Opening "Engelsk, trespringer-system"]
+
+*
+
+[ECO "A28"]
+[Opening "Engelsk, firspringer-system"]
+
+*
+
+[ECO "A29"]
+[Opening "Engelsk, firspringer-system, kongefianchetto"]
+
+*
+
+[ECO "A30"]
+[Opening "Engelsk, symmetrisk variant"]
+
+*
+
+[ECO "A31"]
+[Opening "Engelsk, symmetrisk, Benoni opstilling"]
+
+*
+
+[ECO "A32"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A33"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A34"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A35"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A36"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A37"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A38"]
+[Opening "Engelsk, symmetrisk"]
+
+*
+
+[ECO "A39"]
+[Opening "Engelsk, symmetrisk, hovedvariant med d4"]
+
+*
+
+[ECO "A40"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "A41"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "A42"]
+[Opening "Moderne forsvar, Averbakh system"]
+
+*
+
+[ECO "A43"]
+[Opening "Gammelt Benoni forsvar"]
+
+*
+
+[ECO "A44"]
+[Opening "Gammelt Benoni forsvar"]
+
+*
+
+[ECO "A45"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "A46"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "A47"]
+[Opening "Dronningeindisk forsvar"]
+
+*
+
+[ECO "A48"]
+[Opening "Kongeindisk, Øst-indisk forsvar"]
+
+*
+
+[ECO "A49"]
+[Opening "Kongeindisk, fianchetto uden c4"]
+
+*
+
+[ECO "A50"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "A51"]
+[Opening "Budapestergambit afslået"]
+
+*
+
+[ECO "A52"]
+[Opening "Budapestergambit"]
+
+*
+
+[ECO "A53"]
+[Opening "Gammelindisk forsvar"]
+
+*
+
+[ECO "A54"]
+[Opening "Gammelindisk, ukrainsk variant"]
+
+*
+
+[ECO "A55"]
+[Opening "Gammelindisk, hovedvariant"]
+
+*
+
+[ECO "A56"]
+[Opening "Benoni forsvar"]
+
+*
+
+[ECO "A57"]
+[Opening "Benkö gambit"]
+
+*
+
+[ECO "A58"]
+[Opening "Benkö gambit modtaget"]
+
+*
+
+[ECO "A59"]
+[Opening "Benkö gambit, 7. e4"]
+
+*
+
+[ECO "A60"]
+[Opening "Benoni forsvar"]
+
+*
+
+[ECO "A61"]
+[Opening "Benoni forsvar"]
+
+*
+
+[ECO "A62"]
+[Opening "Benoni, fianchetto variant"]
+
+*
+
+[ECO "A63"]
+[Opening "Benoni, fianchetto variant, 9...Sbd7"]
+
+*
+
+[ECO "A64"]
+[Opening "Benoni, fianchetto variant, 11...Te8"]
+
+*
+
+[ECO "A65"]
+[Opening "Benoni, 6. e4"]
+
+*
+
+[ECO "A66"]
+[Opening "Benoni, bondestorm-variant"]
+
+*
+
+[ECO "A67"]
+[Opening "Benoni, Taimanov variant"]
+
+*
+
+[ECO "A68"]
+[Opening "Benoni, firbonde-angreb"]
+
+*
+
+[ECO "A69"]
+[Opening "Benoni, firbonde-angreb, hovedvariant"]
+
+*
+
+[ECO "A70"]
+[Opening "Benoni, klassisk med e4 og Sf3"]
+
+*
+
+[ECO "A71"]
+[Opening "Benoni, klassisk, 8.Lg5"]
+
+*
+
+[ECO "A72"]
+[Opening "Benoni, klassisk uden 9. O-O"]
+
+*
+
+[ECO "A73"]
+[Opening "Benoni, klassisk, 9. O-O"]
+
+*
+
+[ECO "A74"]
+[Opening "Benoni, klassisk, 9...a6, 10. a4"]
+
+*
+
+[ECO "A75"]
+[Opening "Benoni, klassisk med ...a6 og 10...Lg4"]
+
+*
+
+[ECO "A76"]
+[Opening "Benoni, klassisk, 9...Te8"]
+
+*
+
+[ECO "A77"]
+[Opening "Benoni, klassisk, 9...Te8, 10.Sd2"]
+
+*
+
+[ECO "A78"]
+[Opening "Benoni, klassisk med ...Te8 og ...Sa6"]
+
+*
+
+[ECO "A79"]
+[Opening "Benoni, klassisk, 11. f3"]
+
+*
+
+[ECO "A80"]
+[Opening "Hollandsk åbning"]
+
+*
+
+[ECO "A81"]
+[Opening "Hollandsk forsvar"]
+
+*
+
+[ECO "A82"]
+[Opening "Hollandsk, Staunton gambit"]
+
+*
+
+[ECO "A83"]
+[Opening "Hollandsk, Staunton gambit, Stauntons linje"]
+
+*
+
+[ECO "A84"]
+[Opening "Hollandsk forsvar"]
+
+*
+
+[ECO "A85"]
+[Opening "Hollandsk med 2. c4 og 3. Sc3"]
+
+*
+
+[ECO "A86"]
+[Opening "Hollandsk med 2. c4 og 3. g3"]
+
+*
+
+[ECO "A87"]
+[Opening "Hollandsk, Leningrad, hovedvariant"]
+
+*
+
+[ECO "A88"]
+[Opening "Hollandsk, Leningrad, hovedvariant med 7...c6"]
+
+*
+
+[ECO "A89"]
+[Opening "Hollandsk, Leningrad, hovedvariant med Sc6"]
+
+*
+
+[ECO "A90"]
+[Opening "Hollandsk forsvar"]
+
+*
+
+[ECO "A91"]
+[Opening "Hollandsk forsvar"]
+
+*
+
+[ECO "A92"]
+[Opening "Hollandsk forsvar"]
+
+*
+
+[ECO "A93"]
+[Opening "Hollandsk, Stonewall, Botwinnik variant"]
+
+*
+
+[ECO "A94"]
+[Opening "Hollandsk, Stonewall med La3"]
+
+*
+
+[ECO "A95"]
+[Opening "Hollandsk, Stonewall med Sc3"]
+
+*
+
+[ECO "A96"]
+[Opening "Hollandsk, klassisk variant"]
+
+*
+
+[ECO "A97"]
+[Opening "Hollandsk, Ilyin-Genevsky variant"]
+
+*
+
+[ECO "A98"]
+[Opening "Hollandsk, Ilyin-Genevsky variant med Dc2"]
+
+*
+
+[ECO "A99"]
+[Opening "Hollandsk, Ilyin-Genevsky variant med b3"]
+
+*
+
+[ECO "B00"]
+[Opening "Kongebondespil"]
+
+*
+
+[ECO "B01"]
+[Opening "Skandinavisk"]
+
+*
+
+[ECO "B02"]
+[Opening "Aljechins forsvar"]
+
+*
+
+[ECO "B03"]
+[Opening "Aljechins forsvar"]
+
+*
+
+[ECO "B04"]
+[Opening "Aljechins forsvar, Moderne variant"]
+
+*
+
+[ECO "B05"]
+[Opening "Aljechins forsvar, Moderne variant, 4...Lg4"]
+
+*
+
+[ECO "B06"]
+[Opening "Robatsch (Moderne) forsvar"]
+
+*
+
+[ECO "B07"]
+[Opening "Pirc forsvar"]
+
+*
+
+[ECO "B08"]
+[Opening "Pirc, Klassisk (Tospringer-) system"]
+
+*
+
+[ECO "B09"]
+[Opening "Pirc, østrigsk angreb"]
+
+*
+
+[ECO "B10"]
+[Opening "Caro-Kann forsvar"]
+
+*
+
+[ECO "B11"]
+[Opening "Caro-Kann, Tospringer, 3...Lg4"]
+
+*
+
+[ECO "B12"]
+[Opening "Caro-Kann forsvar"]
+
+*
+
+[ECO "B13"]
+[Opening "Caro-Kann, Afbytningsvariant"]
+
+*
+
+[ECO "B14"]
+[Opening "Caro-Kann, Panov-Botvinnik angreb, 5...e6"]
+
+*
+
+[ECO "B15"]
+[Opening "Caro-Kann forsvar"]
+
+*
+
+[ECO "B16"]
+[Opening "Caro-Kann, Bronstein-Larsen variant"]
+
+*
+
+[ECO "B17"]
+[Opening "Caro-Kann, Steinitz variant"]
+
+*
+
+[ECO "B18"]
+[Opening "Caro-Kann, Klassisk variant"]
+
+*
+
+[ECO "B19"]
+[Opening "Caro-Kann, Klassisk, 7...Sd7"]
+
+*
+
+[ECO "B20"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B21"]
+[Opening "Siciliansk, Grand Prix angreb og Smith-Morra Gambit"]
+
+*
+
+[ECO "B22"]
+[Opening "Siciliansk, Alapins variant (2. c3)"]
+
+*
+
+[ECO "B23"]
+[Opening "Siciliansk, Lukket"]
+
+*
+
+[ECO "B24"]
+[Opening "Siciliansk, Lukket"]
+
+*
+
+[ECO "B25"]
+[Opening "Siciliansk, Lukket"]
+
+*
+
+[ECO "B26"]
+[Opening "Siciliansk, Lukket, 6. Le3"]
+
+*
+
+[ECO "B27"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B28"]
+[Opening "Siciliansk, O'Kelly variant"]
+
+*
+
+[ECO "B29"]
+[Opening "Siciliansk, Nimzowitsch-Rubinstein variant"]
+
+*
+
+[ECO "B30"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B31"]
+[Opening "Siciliansk, Nimzowitsch-Rossolimo angreb (med ...g6, uden ...d6)"]
+
+*
+
+[ECO "B32"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B33"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B34"]
+[Opening "Siciliansk, accelereret fianchetto, afbytningsvariant"]
+
+*
+
+[ECO "B35"]
+[Opening "Siciliansk, accelereret fianchetto, moderne variant med Lc4"]
+
+*
+
+[ECO "B36"]
+[Opening "Siciliansk, accelereret fianchetto, Maroczy binding"]
+
+*
+
+[ECO "B37"]
+[Opening "Siciliansk, accelereret fianchetto, Maroczy binding, 5...Lg7"]
+
+*
+
+[ECO "B38"]
+[Opening "Siciliansk, accelereret fianchetto, Maroczy binding, 6. Le3"]
+
+*
+
+[ECO "B39"]
+[Opening "Siciliansk, accelereret fianchetto, Breyer variant"]
+
+*
+
+[ECO "B40"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B41"]
+[Opening "Siciliansk, Kan variant"]
+
+*
+
+[ECO "B42"]
+[Opening "Siciliansk, Kan, 5. Ld3"]
+
+*
+
+[ECO "B43"]
+[Opening "Siciliansk, Kan, 5. Sc3"]
+
+*
+
+[ECO "B44"]
+[Opening "Siciliansk forsvar"]
+
+*
+
+[ECO "B45"]
+[Opening "Siciliansk, Taimanov variant"]
+
+*
+
+[ECO "B46"]
+[Opening "Siciliansk, Taimanov variant"]
+
+*
+
+[ECO "B47"]
+[Opening "Siciliansk, Taimanov (Bastrikov) variant"]
+
+*
+
+[ECO "B48"]
+[Opening "Siciliansk, Taimanov variant"]
+
+*
+
+[ECO "B49"]
+[Opening "Siciliansk, Taimanov variant"]
+
+*
+
+[ECO "B50"]
+[Opening "Siciliansk"]
+
+*
+
+[ECO "B51"]
+[Opening "Siciliansk, Canal-Sokolsky (Nimzowitsch-Rossolimo, Moskva) angreb"]
+
+*
+
+[ECO "B52"]
+[Opening "Siciliansk, Canal-Sokolsky angreb, 3...Ld7"]
+
+*
+
+[ECO "B53"]
+[Opening "Siciliansk, Chekhover variant"]
+
+*
+
+[ECO "B54"]
+[Opening "Siciliansk"]
+
+*
+
+[ECO "B55"]
+[Opening "Siciliansk, Prins variant, Venedig-angreb"]
+
+*
+
+[ECO "B56"]
+[Opening "Siciliansk"]
+
+*
+
+[ECO "B57"]
+[Opening "Siciliansk, Sozin (ikke Scheveningen)"]
+
+*
+
+[ECO "B58"]
+[Opening "Siciliansk, Klassisk"]
+
+*
+
+[ECO "B59"]
+[Opening "Siciliansk, Boleslavsky variant, 7. Sb3"]
+
+*
+
+[ECO "B60"]
+[Opening "Siciliansk, Richter-Rauzer"]
+
+*
+
+[ECO "B61"]
+[Opening "Siciliansk, Richter-Rauzer, Larsen variant, 7. Dd2"]
+
+*
+
+[ECO "B62"]
+[Opening "Siciliansk, Richter-Rauzer, 6...e6"]
+
+*
+
+[ECO "B63"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb"]
+
+*
+
+[ECO "B64"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...Le7 forsvar, 9.f4"]
+
+*
+
+[ECO "B65"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...Le7 forsvar, 9...Sxd4"]
+
+*
+
+[ECO "B66"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...a6"]
+
+*
+
+[ECO "B67"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...a6 forsvar, 8...Ld7"]
+
+*
+
+[ECO "B68"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...a6 forsvar, 9...Le7"]
+
+*
+
+[ECO "B69"]
+[Opening "Siciliansk, Richter-Rauzer, Rauzer angreb, 7...a6 forsvar, 11.Lxf6"]
+
+*
+
+[ECO "B70"]
+[Opening "Siciliansk, Dragevariant"]
+
+*
+
+[ECO "B71"]
+[Opening "Siciliansk, Dragevar., Löwenfisch variant"]
+
+*
+
+[ECO "B72"]
+[Opening "Siciliansk, Dragevar., 6. Le3"]
+
+*
+
+[ECO "B73"]
+[Opening "Siciliansk, Dragevar., klassisk, 8. O-O"]
+
+*
+
+[ECO "B74"]
+[Opening "Siciliansk, Dragevar., klassisk, 9. Sb3"]
+
+*
+
+[ECO "B75"]
+[Opening "Siciliansk, Dragevar., jugoslavisk angreb"]
+
+*
+
+[ECO "B76"]
+[Opening "Siciliansk, Dragevar., jugoslavisk angreb, 7...O-O"]
+
+*
+
+[ECO "B77"]
+[Opening "Siciliansk, Dragevar., jugoslavisk angreb, 9. Lc4"]
+
+*
+
+[ECO "B78"]
+[Opening "Siciliansk, Dragevar., jugoslavisk angreb, 10. O-O-O"]
+
+*
+
+[ECO "B79"]
+[Opening "Siciliansk, Dragevar., jugoslavisk angreb, 12. h4"]
+
+*
+
+[ECO "B80"]
+[Opening "Siciliansk, Scheveningen variant"]
+
+*
+
+[ECO "B81"]
+[Opening "Siciliansk, Scheveningen, Keres angreb"]
+
+*
+
+[ECO "B82"]
+[Opening "Siciliansk, Scheveningen, 6. f4"]
+
+*
+
+[ECO "B83"]
+[Opening "Siciliansk, Scheveningen, 6. Le2"]
+
+*
+
+[ECO "B84"]
+[Opening "Siciliansk, Scheveningen (Paulsen), klassisk variant"]
+
+*
+
+[ECO "B85"]
+[Opening "Siciliansk, Scheveningen, klassisk variant med ...Dc7 and ...Sc6"]
+
+*
+
+[ECO "B86"]
+[Opening "Siciliansk, Sozin angreb"]
+
+*
+
+[ECO "B87"]
+[Opening "Sozin med ...a6 og ...b5"]
+
+*
+
+[ECO "B88"]
+[Opening "Siciliansk, Sozin, Leonhardt variant"]
+
+*
+
+[ECO "B89"]
+[Opening "Siciliansk, Sozin, 7. Le3"]
+
+*
+
+[ECO "B90"]
+[Opening "Siciliansk, Najdorf"]
+
+*
+
+[ECO "B91"]
+[Opening "Siciliansk, Najdorf, Zagreb (fianchetto) variant"]
+
+*
+
+[ECO "B92"]
+[Opening "Siciliansk, Najdorf, Zagreb (fianchetto) variant"]
+
+*
+
+[ECO "B93"]
+[Opening "Siciliansk, Najdorf, 6. f4"]
+
+*
+
+[ECO "B94"]
+[Opening "Siciliansk, Najdorf, 6. Lg5"]
+
+*
+
+[ECO "B95"]
+[Opening "Siciliansk, Najdorf, 6...e6"]
+
+*
+
+[ECO "B96"]
+[Opening "Siciliansk, Najdorf, 7. f4"]
+
+*
+
+[ECO "B97"]
+[Opening "Siciliansk, Najdorf, 7...Db6"]
+
+*
+
+[ECO "B98"]
+[Opening "Siciliansk, Najdorf, 7...Le7"]
+
+*
+
+[ECO "B99"]
+[Opening "Siciliansk, Najdorf, 7...Se7 Hovedvariant"]
+
+*
+
+[ECO "C00"]
+[Opening "Fransk"]
+
+*
+
+[ECO "C01"]
+[Opening "Fransk, afbytningsvariant"]
+
+*
+
+[ECO "C02"]
+[Opening "Fransk, fremrykningsvariant"]
+
+*
+
+[ECO "C03"]
+[Opening "Fransk, Tarrasch"]
+
+*
+
+[ECO "C04"]
+[Opening "Fransk, Tarrasch, Guimard hovedvariant"]
+
+*
+
+[ECO "C05"]
+[Opening "Fransk, Tarrasch, lukket variant"]
+
+*
+
+[ECO "C06"]
+[Opening "Fransk, Tarrasch, lukket variant, hovedvariant"]
+
+*
+
+[ECO "C07"]
+[Opening "Fransk, Tarrasch, åben variant"]
+
+*
+
+[ECO "C08"]
+[Opening "Fransk, Tarrasch, åben, 4.exd5 exd5"]
+
+*
+
+[ECO "C09"]
+[Opening "Fransk, Tarrasch, åben variant, hovedvariant"]
+
+*
+
+[ECO "C10"]
+[Opening "Fransk, Paulsen variant"]
+
+*
+
+[ECO "C11"]
+[Opening "Fransk forsvar"]
+
+*
+
+[ECO "C12"]
+[Opening "Fransk, MacCutcheon variant"]
+
+*
+
+[ECO "C13"]
+[Opening "Fransk, klassisk"]
+
+*
+
+[ECO "C14"]
+[Opening "Fransk, klassisk variant"]
+
+*
+
+[ECO "C15"]
+[Opening "Fransk, Winawer (Nimzowitsch) variant"]
+
+*
+
+[ECO "C16"]
+[Opening "Fransk, Winawer, fremryknings- variant"]
+
+*
+
+[ECO "C17"]
+[Opening "Fransk, Winawer, fremryknings-variant"]
+
+*
+
+[ECO "C18"]
+[Opening "Fransk, Winawer, fremryknings-variant"]
+
+*
+
+[ECO "C19"]
+[Opening "Fransk, Winawer, fremryknings-variant, 6...Se7"]
+
+*
+
+[ECO "C20"]
+[Opening "Kongebondespil"]
+
+*
+
+[ECO "C21"]
+[Opening "centrumsspil"]
+
+*
+
+[ECO "C22"]
+[Opening "centrumsspil"]
+
+*
+
+[ECO "C23"]
+[Opening "Løberåbning"]
+
+*
+
+[ECO "C24"]
+[Opening "Løberåbning, Berlin forsvar"]
+
+*
+
+[ECO "C25"]
+[Opening "Wienerparti"]
+
+*
+
+[ECO "C26"]
+[Opening "Wienerparti, Falkbeer variant"]
+
+*
+
+[ECO "C27"]
+[Opening "Wienerparti"]
+
+*
+
+[ECO "C28"]
+[Opening "Wienerparti"]
+
+*
+
+[ECO "C29"]
+[Opening "Wiener gambit, Kaufmann variant"]
+
+*
+
+[ECO "C30"]
+[Opening "Kongegambit"]
+
+*
+
+[ECO "C31"]
+[Opening "KGD, Falkbeers modgambit"]
+
+*
+
+[ECO "C32"]
+[Opening "KGD, Falkbeer, 5. dxe4"]
+
+*
+
+[ECO "C33"]
+[Opening "Kongegambit modtaget"]
+
+*
+
+[ECO "C34"]
+[Opening "Kongespringer gambit"]
+
+*
+
+[ECO "C35"]
+[Opening "KGA, Cunninghams forsvar"]
+
+*
+
+[ECO "C36"]
+[Opening "KGA, Abbazia forsvar (Klassisk forsvar, Moderne forsvar)"]
+
+*
+
+[ECO "C37"]
+[Opening "KGA, Quaade gambit"]
+
+*
+
+[ECO "C38"]
+[Opening "Kongespringer gambit"]
+
+*
+
+[ECO "C39"]
+[Opening "Kongespringer gambit"]
+
+*
+
+[ECO "C40"]
+[Opening "Kongespringer åbning"]
+
+*
+
+[ECO "C41"]
+[Opening "Philidors forsvar"]
+
+*
+
+[ECO "C42"]
+[Opening "Petrovs forsvar"]
+
+*
+
+[ECO "C43"]
+[Opening "Petrov, moderne (Steinitz) angreb"]
+
+*
+
+[ECO "C44"]
+[Opening "Kongebondespil game"]
+
+*
+
+[ECO "C45"]
+[Opening "Skotsk"]
+
+*
+
+[ECO "C46"]
+[Opening "Trespringerspil"]
+
+*
+
+[ECO "C47"]
+[Opening "Firspringerspil, skotsk variant"]
+
+*
+
+[ECO "C48"]
+[Opening "Firspringerspil, spansk variant"]
+
+*
+
+[ECO "C49"]
+[Opening "Firspringerspil, dobbelt spansk"]
+
+*
+
+[ECO "C50"]
+[Opening "Kongebondespil"]
+
+*
+
+[ECO "C51"]
+[Opening "Evans gambit"]
+
+*
+
+[ECO "C52"]
+[Opening "Evans gambit med 4. ... Lxb4 5. c3 La5"]
+
+*
+
+[ECO "C53"]
+[Opening "Giuoco piano"]
+
+*
+
+[ECO "C54"]
+[Opening "Giuoco piano"]
+
+*
+
+[ECO "C55"]
+[Opening "Tospringer forsvar"]
+
+*
+
+[ECO "C56"]
+[Opening "Tospringer forsvar"]
+
+*
+
+[ECO "C57"]
+[Opening "Tospringer forsvar"]
+
+*
+
+[ECO "C58"]
+[Opening "Tospringer forsvar"]
+
+*
+
+[ECO "C59"]
+[Opening "Tospringer forsvar"]
+
+*
+
+[ECO "C60"]
+[Opening "Spansk"]
+
+*
+
+[ECO "C61"]
+[Opening "Spansk, Bird's forsvar"]
+
+*
+
+[ECO "C62"]
+[Opening "Spansk, gammelt Steinitz forsvar"]
+
+*
+
+[ECO "C63"]
+[Opening "Spansk, Schliemann forsvar"]
+
+*
+
+[ECO "C64"]
+[Opening "Spansk, klassisk (Cordel) forsvar"]
+
+*
+
+[ECO "C65"]
+[Opening "Spansk, Berlin forsvar"]
+
+*
+
+[ECO "C66"]
+[Opening "Spansk, Berlin forsvar, 4. O-O, d6"]
+
+*
+
+[ECO "C67"]
+[Opening "Spansk, Berlin forsvar, åben variant"]
+
+*
+
+[ECO "C68"]
+[Opening "Spansk, afbytningsvariant"]
+
+*
+
+[ECO "C69"]
+[Opening "Spansk, afbytningsvariant, 5. O-O"]
+
+*
+
+[ECO "C70"]
+[Opening "Spansk"]
+
+*
+
+[ECO "C71"]
+[Opening "Spansk, moderne Steinitz forsvar"]
+
+*
+
+[ECO "C72"]
+[Opening "Spansk, moderne Steinitz forsvar 5.0-0"]
+
+*
+
+[ECO "C73"]
+[Opening "Spansk, moderne Steinitz forsvar, Richter variant"]
+
+*
+
+[ECO "C74"]
+[Opening "Spansk, moderne Steinitz forsvar"]
+
+*
+
+[ECO "C75"]
+[Opening "Spansk, moderne Steinitz forsvar"]
+
+*
+
+[ECO "C76"]
+[Opening "Spansk, moderne Steinitz forsvar, fianchetto (Bronstein) variant"]
+
+*
+
+[ECO "C77"]
+[Opening "Spansk, Morphy forsvar"]
+
+*
+
+[ECO "C78"]
+[Opening "Spansk, 5. O-O"]
+
+*
+
+[ECO "C79"]
+[Opening "Spansk, Steinitz forsvar udsat (Russisk forsvar)"]
+
+*
+
+[ECO "C80"]
+[Opening "Spansk, åbent (Tarrasch) forsvar"]
+
+*
+
+[ECO "C81"]
+[Opening "Spansk, åbent, Howell angreb"]
+
+*
+
+[ECO "C82"]
+[Opening "Spansk, åbent, 9. c3"]
+
+*
+
+[ECO "C83"]
+[Opening "Spansk, åbent, klassisk forsvar"]
+
+*
+
+[ECO "C84"]
+[Opening "Spansk, lukket forsvar"]
+
+*
+
+[ECO "C85"]
+[Opening "Spansk, afbytningsvariant dobbelt udsat (DERLD)"]
+
+*
+
+[ECO "C86"]
+[Opening "Spansk, Worrall angreb"]
+
+*
+
+[ECO "C87"]
+[Opening "Spansk, lukket, Averbach variant"]
+
+*
+
+[ECO "C88"]
+[Opening "Spansk, lukket"]
+
+*
+
+[ECO "C89"]
+[Opening "Spansk, Marshalls modangreb"]
+
+*
+
+[ECO "C90"]
+[Opening "Spansk, lukket (med ...d6)"]
+
+*
+
+[ECO "C91"]
+[Opening "Spansk, lukket, 9. d4"]
+
+*
+
+[ECO "C92"]
+[Opening "Spansk, lukket, 9. d4"]
+
+*
+
+[ECO "C93"]
+[Opening "Spansk, lukket, Smyslov forsvar"]
+
+*
+
+[ECO "C94"]
+[Opening "Spansk, Lukket, Breyer forsvar"]
+
+*
+
+[ECO "C95"]
+[Opening "Spansk, lukket, Breyer, 10. d4"]
+
+*
+
+[ECO "C96"]
+[Opening "Spansk, lukket, 8...Sa5"]
+
+*
+
+[ECO "C97"]
+[Opening "Spansk, Lukket, Tschigorin forsvar"]
+
+*
+
+[ECO "C98"]
+[Opening "Spansk, Lukket, Tschigorin, 12...Sc6"]
+
+*
+
+[ECO "C99"]
+[Opening "Spansk, Lukket, Tschigorin, 12...c5d4"]
+
+*
+
+[ECO "D00"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "D01"]
+[Opening "Richter-Veresov Angreb"]
+
+*
+
+[ECO "D02"]
+[Opening "Dronningebondespil, 2. Sf3"]
+
+*
+
+[ECO "D03"]
+[Opening "Torre angreb, Tartakower variant"]
+
+*
+
+[ECO "D04"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "D05"]
+[Opening "Dronningebondespil, Zukertort variant"]
+
+*
+
+[ECO "D06"]
+[Opening "Dronninggambit"]
+
+*
+
+[ECO "D07"]
+[Opening "QGD; Tschigorin forsvar"]
+
+*
+
+[ECO "D08"]
+[Opening "QGD; Albins modgambit"]
+
+*
+
+[ECO "D09"]
+[Opening "QGD; Albins modgambit, 5. g3"]
+
+*
+
+[ECO "D10"]
+[Opening "QGD; Slavisk forsvar"]
+
+*
+
+[ECO "D11"]
+[Opening "QGD; Slavisk forsvar, 3. Sf3"]
+
+*
+
+[ECO "D12"]
+[Opening "QGD; Slavisk forsvar, 4. e3 Lf5"]
+
+*
+
+[ECO "D13"]
+[Opening "QGD; Slavisk forsvar, afbytningsvariant"]
+
+*
+
+[ECO "D14"]
+[Opening "QGD; Slavisk forsvar, afbytningsvariant"]
+
+*
+
+[ECO "D15"]
+[Opening "QGD; Slavisk modtaget, afbytningsvariant, 6. Lf4 Lf5"]
+
+*
+
+[ECO "D16"]
+[Opening "QGD; Slavisk modtaget, Alapin variant"]
+
+*
+
+[ECO "D17"]
+[Opening "QGD; Slavisk forsvar, tjekkisk forsvar"]
+
+*
+
+[ECO "D18"]
+[Opening "QGD; Hollandsk variant"]
+
+*
+
+[ECO "D19"]
+[Opening "QGD; Hollandsk variant"]
+
+*
+
+[ECO "D20"]
+[Opening "Dronninggambit modtaget"]
+
+*
+
+[ECO "D21"]
+[Opening "QGA, 3. Sf3"]
+
+*
+
+[ECO "D22"]
+[Opening "QGA; Aljechin forsvar"]
+
+*
+
+[ECO "D23"]
+[Opening "Dronninggambit modtaget"]
+
+*
+
+[ECO "D24"]
+[Opening "QGA, 4. Sc3"]
+
+*
+
+[ECO "D25"]
+[Opening "QGA, 4. e3"]
+
+*
+
+[ECO "D26"]
+[Opening "QGA; klassisk variant"]
+
+*
+
+[ECO "D27"]
+[Opening "QGA; klassisk variant"]
+
+*
+
+[ECO "D28"]
+[Opening "QGA; klassisk variant 7. De2"]
+
+*
+
+[ECO "D29"]
+[Opening "QGA; klassisk variant 8...Lb7"]
+
+*
+
+[ECO "D30"]
+[Opening "Dronninggambit afslået"]
+
+*
+
+[ECO "D31"]
+[Opening "QGD, 3. Sc3"]
+
+*
+
+[ECO "D32"]
+[Opening "QGD; Tarrasch forsvar"]
+
+*
+
+[ECO "D33"]
+[Opening "QGD; Tarrasch, Schlechter-Rubinstein system"]
+
+*
+
+[ECO "D34"]
+[Opening "QGD; Tarrasch, 7...Le7"]
+
+*
+
+[ECO "D35"]
+[Opening "QGD; 3...Sf6"]
+
+*
+
+[ECO "D36"]
+[Opening "QGD; afbytning, positionsspilsvariant, 6. Dc2"]
+
+*
+
+[ECO "D37"]
+[Opening "QGD; 4. Sf3"]
+
+*
+
+[ECO "D38"]
+[Opening "QGD; Ragozin variant"]
+
+*
+
+[ECO "D39"]
+[Opening "QGD; Ragozin, Wien variant"]
+
+*
+
+[ECO "D40"]
+[Opening "QGD; Semi-Tarrasch forsvar"]
+
+*
+
+[ECO "D41"]
+[Opening "QGD; Semi-Tarrasch, 5. cd"]
+
+*
+
+[ECO "D42"]
+[Opening "QGD; Semi-Tarrasch, 7. Ld3"]
+
+*
+
+[ECO "D43"]
+[Opening "QGD; Semi-slavisk forsvar"]
+
+*
+
+[ECO "D44"]
+[Opening "QGD; Semi-slavisk 5. Lg5 dc"]
+
+*
+
+[ECO "D45"]
+[Opening "QGD; Semi-slavisk 5. e3"]
+
+*
+
+[ECO "D46"]
+[Opening "QGD; Semi-slavisk 6. Ld3"]
+
+*
+
+[ECO "D47"]
+[Opening "QGD; Semi-slavisk 7. Lc4"]
+
+*
+
+[ECO "D48"]
+[Opening "QGD; Meraner, 8...a6"]
+
+*
+
+[ECO "D49"]
+[Opening "QGD; Meraner, 11. Sxb5"]
+
+*
+
+[ECO "D50"]
+[Opening "QGD; 4. Lg5"]
+
+*
+
+[ECO "D51"]
+[Opening "QGD; 4. Lg5 Sbd7"]
+
+*
+
+[ECO "D52"]
+[Opening "QGD"]
+
+*
+
+[ECO "D53"]
+[Opening "QGD; 4. Lg5 Le7"]
+
+*
+
+[ECO "D54"]
+[Opening "QGD; Anti-neo-Ortodoks variant"]
+
+*
+
+[ECO "D55"]
+[Opening "QGD; 6. Sf3"]
+
+*
+
+[ECO "D56"]
+[Opening "QGD; Laskers forsvar"]
+
+*
+
+[ECO "D57"]
+[Opening "QGD; Laskers forsvar, hovedvariant"]
+
+*
+
+[ECO "D58"]
+[Opening "QGD; Tartakower (Makagonov-Bondarevsky) system"]
+
+*
+
+[ECO "D59"]
+[Opening "QGD; Tartakower (Makagonov-Bondarevsky) system, 8. cd Sxd5"]
+
+*
+
+[ECO "D60"]
+[Opening "QGD; Ortodokst forsvar"]
+
+*
+
+[ECO "D61"]
+[Opening "QGD; Ortodokst forsvar, Rubinstein variant"]
+
+*
+
+[ECO "D62"]
+[Opening "QGD; Ortodokst forsvar, 7. Dc2 c5, 8. cd (Rubinstein)"]
+
+*
+
+[ECO "D63"]
+[Opening "QGD; Ortodokst forsvar, 7. Tc1"]
+
+*
+
+[ECO "D64"]
+[Opening "QGD; Ortodokst forsvar, Rubinstein angreb (med Tc1)"]
+
+*
+
+[ECO "D65"]
+[Opening "QGD; Ortodokst forsvar, Rubinstein angreb, Hovedvariant"]
+
+*
+
+[ECO "D66"]
+[Opening "QGD; Ortodokst forsvar, Ld3 varianter"]
+
+*
+
+[ECO "D67"]
+[Opening "QGD; Ortodokst forsvar, Ld3 line, Capablancas befrielsesmanøvre"]
+
+*
+
+[ECO "D68"]
+[Opening "QGD; Ortodokst forsvar, klassisk variant"]
+
+*
+
+[ECO "D69"]
+[Opening "QGD; Ortodokst forsvar, klassisk, 13. dxe5"]
+
+*
+
+[ECO "D70"]
+[Opening "Neo-Grünfeld forsvar"]
+
+*
+
+[ECO "D71"]
+[Opening "Neo-Grünfeld, 5. cd"]
+
+*
+
+[ECO "D72"]
+[Opening "Neo-Grünfeld, 5. cd, hovedvariant"]
+
+*
+
+[ECO "D73"]
+[Opening "Neo-Grünfeld, 5. Sf3"]
+
+*
+
+[ECO "D74"]
+[Opening "Neo-Grünfeld, 6. cd Sxd5, 7. O-O"]
+
+*
+
+[ECO "D75"]
+[Opening "Neo-Grünfeld, 6. cd Sxd5, 7. O-O c5, 8.Sc3"]
+
+*
+
+[ECO "D76"]
+[Opening "Neo-Grünfeld, 6. cd Sxd5, 7. O-O Sb6"]
+
+*
+
+[ECO "D77"]
+[Opening "Neo-Grünfeld, 6. O-O"]
+
+*
+
+[ECO "D78"]
+[Opening "Neo-Grünfeld, 6. O-O c6"]
+
+*
+
+[ECO "D79"]
+[Opening "Neo-Grünfeld, 6. O-O, hovedvariant"]
+
+*
+
+[ECO "D80"]
+[Opening "Grünfeld forsvar"]
+
+*
+
+[ECO "D81"]
+[Opening "Grünfeld; russisk variant"]
+
+*
+
+[ECO "D82"]
+[Opening "Grünfeld 4. Lf4"]
+
+*
+
+[ECO "D83"]
+[Opening "Grünfeld gambit"]
+
+*
+
+[ECO "D84"]
+[Opening "Grünfeld gambit modtaget"]
+
+*
+
+[ECO "D85"]
+[Opening "Grünfeld, afbytningsvariant, Nadanian variant"]
+
+*
+
+[ECO "D86"]
+[Opening "Grünfeld, afbytning, klassisk variant"]
+
+*
+
+[ECO "D87"]
+[Opening "Grünfeld, afbytning, Spassky variant"]
+
+*
+
+[ECO "D88"]
+[Opening "Grünfeld, Spassky variant, hovedvariant, 10...cd, 11. cd"]
+
+*
+
+[ECO "D89"]
+[Opening "Grünfeld, Spassky variant, hovedvariant, 13. Ld3"]
+
+*
+
+[ECO "D90"]
+[Opening "Grünfeld, Trespringervariant"]
+
+*
+
+[ECO "D91"]
+[Opening "Grünfeld, Trespringervariant"]
+
+*
+
+[ECO "D92"]
+[Opening "Grünfeld, 5. Lf4"]
+
+*
+
+[ECO "D93"]
+[Opening "Grünfeld med 5. Lf4 O-O 6. e3"]
+
+*
+
+[ECO "D94"]
+[Opening "Grünfeld, 5. e3"]
+
+*
+
+[ECO "D95"]
+[Opening "Grünfeld med 5. e3 O-O 6. Db3"]
+
+*
+
+[ECO "D96"]
+[Opening "Grünfeld, russisk variant"]
+
+*
+
+[ECO "D97"]
+[Opening "Grünfeld, russisk variant med 7. e4"]
+
+*
+
+[ECO "D98"]
+[Opening "Grünfeld, russisk, Smyslov variant"]
+
+*
+
+[ECO "D99"]
+[Opening "Grünfeld forsvar, Smyslov, hovedvariant"]
+
+*
+
+[ECO "E00"]
+[Opening "Dronningebondespil"]
+
+*
+
+[ECO "E01"]
+[Opening "Katalansk, lukket"]
+
+*
+
+[ECO "E02"]
+[Opening "Katalansk, åbent, 5. Da4"]
+
+*
+
+[ECO "E03"]
+[Opening "Katalansk, åbent, Aljechin variant"]
+
+*
+
+[ECO "E04"]
+[Opening "Katalansk, åbent, 5. Sf3"]
+
+*
+
+[ECO "E05"]
+[Opening "Katalansk, åbent, klassisk linje"]
+
+*
+
+[ECO "E06"]
+[Opening "Katalansk, lukket, 5. Sf3"]
+
+*
+
+[ECO "E07"]
+[Opening "Katalansk, lukket, 6...Sbd7"]
+
+*
+
+[ECO "E08"]
+[Opening "Katalansk, lukket, 7. Dc2"]
+
+*
+
+[ECO "E09"]
+[Opening "Katalansk, lukket, hovedvariant"]
+
+*
+
+[ECO "E10"]
+[Opening "Dronningebondespil 3. Sf3"]
+
+*
+
+[ECO "E11"]
+[Opening "Bogo-Indisk forsvar"]
+
+*
+
+[ECO "E12"]
+[Opening "Dronningeindisk forsvar"]
+
+*
+
+[ECO "E13"]
+[Opening "Dronningeindisk, 4. Sc3, hovedvariant"]
+
+*
+
+[ECO "E14"]
+[Opening "Dronningeindisk, 4. e3"]
+
+*
+
+[ECO "E15"]
+[Opening "Dronningeindisk, 4. g3"]
+
+*
+
+[ECO "E16"]
+[Opening "Dronningeindisk, Capablanca variant"]
+
+*
+
+[ECO "E17"]
+[Opening "Dronningeindisk, 5. Lg2 Le7"]
+
+*
+
+[ECO "E18"]
+[Opening "Dronningeindisk, gammel hovedvariant, 7. Sc3"]
+
+*
+
+[ECO "E19"]
+[Opening "Dronningeindisk, gammel hovedvariant, 9. Dxc3"]
+
+*
+
+[ECO "E20"]
+[Opening "Nimzo-indisk forsvar"]
+
+*
+
+[ECO "E21"]
+[Opening "Nimzo-indisk, Trespringer- variant"]
+
+*
+
+[ECO "E22"]
+[Opening "Nimzo-indisk, Spielmann variant"]
+
+*
+
+[ECO "E23"]
+[Opening "Nimzo-indisk, Spielmann, 4...c5, 5. dc Sc6"]
+
+*
+
+[ECO "E24"]
+[Opening "Nimzo-indisk, Sämisch variant"]
+
+*
+
+[ECO "E25"]
+[Opening "Nimzo-indisk, Sämisch variant, Keres variant"]
+
+*
+
+[ECO "E26"]
+[Opening "Nimzo-indisk, Sämisch variant, 4. a3 Lxc3+ 5. bxc3 c5 6. e3"]
+
+*
+
+[ECO "E27"]
+[Opening "Nimzo-indisk, Sämisch variant, 5...0-0"]
+
+*
+
+[ECO "E28"]
+[Opening "Nimzo-indisk, Sämisch variant, 6. e3"]
+
+*
+
+[ECO "E29"]
+[Opening "Nimzo-indisk, Sämisch variant, hovedvariant"]
+
+*
+
+[ECO "E30"]
+[Opening "Nimzo-indisk, Leningrad variant"]
+
+*
+
+[ECO "E31"]
+[Opening "Nimzo-indisk, Leningrad variant, hovedvariant"]
+
+*
+
+[ECO "E32"]
+[Opening "Nimzo-indisk, klassisk variant"]
+
+*
+
+[ECO "E33"]
+[Opening "Nimzo-indisk, klassisk variant, 4...Sc6"]
+
+*
+
+[ECO "E34"]
+[Opening "Nimzo-indisk, klassisk, Noa variant"]
+
+*
+
+[ECO "E35"]
+[Opening "Nimzo-indisk, klassisk, Noa variant, 5. cxd5 exd5"]
+
+*
+
+[ECO "E36"]
+[Opening "Nimzo-indisk, klassisk, Noa variant, 5. a3"]
+
+*
+
+[ECO "E37"]
+[Opening "Nimzo-indisk, klassisk, Noa variant, Hovedvariant, 7. Dc2"]
+
+*
+
+[ECO "E38"]
+[Opening "Nimzo-indisk, klassisk, 4...c5"]
+
+*
+
+[ECO "E39"]
+[Opening "Nimzo-indisk, klassisk, Pirc variant"]
+
+*
+
+[ECO "E40"]
+[Opening "Nimzo-indisk, 4. e3"]
+
+*
+
+[ECO "E41"]
+[Opening "Nimzo-indisk, 4. e3 c5"]
+
+*
+
+[ECO "E42"]
+[Opening "Nimzo-indisk, 4. e3 c5, 5. Se2 (Rubinstein)"]
+
+*
+
+[ECO "E43"]
+[Opening "Nimzo-indisk, Fischer variant"]
+
+*
+
+[ECO "E44"]
+[Opening "Nimzo-indisk, Fischer variant, 5. Se2"]
+
+*
+
+[ECO "E45"]
+[Opening "Nimzo-indisk, 4. e3, Bronstein (Byrne) variant"]
+
+*
+
+[ECO "E46"]
+[Opening "Nimzo-indisk, 4. e3 O-O"]
+
+*
+
+[ECO "E47"]
+[Opening "Nimzo-indisk, 4. e3 O-O, 5.Ld3"]
+
+*
+
+[ECO "E48"]
+[Opening "Nimzo-indisk, 4. e3 O-O, 5. Ld3 d5"]
+
+*
+
+[ECO "E49"]
+[Opening "Nimzo-indisk, 4. e3, Botvinnik system"]
+
+*
+
+[ECO "E50"]
+[Opening "Nimzo-indisk, 4. e3 e8g8, 5. Sf3, uden ...d5"]
+
+*
+
+[ECO "E51"]
+[Opening "Nimzo-indisk, 4. e3 e8g8, 5. Sf3 d7d5"]
+
+*
+
+[ECO "E52"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant med ...b6"]
+
+*
+
+[ECO "E53"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant med ...c5"]
+
+*
+
+[ECO "E54"]
+[Opening "Nimzo-indisk, 4. e3, Gligoric system med 7...dc"]
+
+*
+
+[ECO "E55"]
+[Opening "Nimzo-indisk, 4. e3, Gligoric system, Bronstein variant"]
+
+*
+
+[ECO "E56"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant med 7...Sc6"]
+
+*
+
+[ECO "E57"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant med 8...dxc4 og 9...Lxc4 cxd4"]
+
+*
+
+[ECO "E58"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant med 8...Lxc3"]
+
+*
+
+[ECO "E59"]
+[Opening "Nimzo-indisk, 4. e3, hovedvariant"]
+
+*
+
+[ECO "E60"]
+[Opening "Kongeindisk forsvar"]
+
+*
+
+[ECO "E61"]
+[Opening "Kongeindisk forsvar, 3. Sc3"]
+
+*
+
+[ECO "E62"]
+[Opening "Kongeindisk, fianchettovariant"]
+
+*
+
+[ECO "E63"]
+[Opening "Kongeindisk, fianchetto, Panno variant"]
+
+*
+
+[ECO "E64"]
+[Opening "Kongeindisk, fianchetto, jugoslavisk system"]
+
+*
+
+[ECO "E65"]
+[Opening "Kongeindisk, jugoslavisk, 7. O-O"]
+
+*
+
+[ECO "E66"]
+[Opening "Kongeindisk, fianchetto, jugoslavisk Panno"]
+
+*
+
+[ECO "E67"]
+[Opening "Kongeindisk, fianchetto med ...Sd7"]
+
+*
+
+[ECO "E68"]
+[Opening "Kongeindisk, fianchetto, klassisk variant, 8.e4"]
+
+*
+
+[ECO "E69"]
+[Opening "Kongeindisk, fianchetto, klassisk hovedvariant"]
+
+*
+
+[ECO "E70"]
+[Opening "Kongeindisk, 4. e4"]
+
+*
+
+[ECO "E71"]
+[Opening "Kongeindisk, Makagonov system (5. h3)"]
+
+*
+
+[ECO "E72"]
+[Opening "Kongeindisk med e4 og g3"]
+
+*
+
+[ECO "E73"]
+[Opening "Kongeindisk, 5. Le2"]
+
+*
+
+[ECO "E74"]
+[Opening "Kongeindisk, Averbakh, 6...c5"]
+
+*
+
+[ECO "E75"]
+[Opening "Kongeindisk, Averbakh, hovedvariant"]
+
+*
+
+[ECO "E76"]
+[Opening "Kongeindisk, firbonde-angreb"]
+
+*
+
+[ECO "E77"]
+[Opening "Kongeindisk, firbonde-angreb, 6. Le2"]
+
+*
+
+[ECO "E78"]
+[Opening "Kongeindisk, firbonde-angreb, med Le2 and Sf3"]
+
+*
+
+[ECO "E79"]
+[Opening "Kongeindisk, firbonde-angreb, hovedvariant"]
+
+*
+
+[ECO "E80"]
+[Opening "Kongeindisk, Sämisch variant"]
+
+*
+
+[ECO "E81"]
+[Opening "Kongeindisk, Sämisch, 5...O-O"]
+
+*
+
+[ECO "E82"]
+[Opening "Kongeindisk, Sämisch, dobbeltfianchetto variant"]
+
+*
+
+[ECO "E83"]
+[Opening "Kongeindisk, Sämisch, 6...Sc6"]
+
+*
+
+[ECO "E84"]
+[Opening "Kongeindisk, Sämisch, Panno hovedvariant"]
+
+*
+
+[ECO "E85"]
+[Opening "Kongeindisk, Sämisch, ortodoks variant"]
+
+*
+
+[ECO "E86"]
+[Opening "Kongeindisk, Sämisch, ortodoks, 7. Sge2 c6"]
+
+*
+
+[ECO "E87"]
+[Opening "Kongeindisk, Sämisch, ortodoks, 7. d5"]
+
+*
+
+[ECO "E88"]
+[Opening "Kongeindisk, Sämisch, ortodoks 7. d5 c6"]
+
+*
+
+[ECO "E89"]
+[Opening "Kongeindisk, Sämisch, ortodoks hovedvariant"]
+
+*
+
+[ECO "E90"]
+[Opening "Kongeindisk, 5. Sf3"]
+
+*
+
+[ECO "E91"]
+[Opening "Kongeindisk, 6. Le2"]
+
+*
+
+[ECO "E92"]
+[Opening "Kongeindisk, klassisk variant"]
+
+*
+
+[ECO "E93"]
+[Opening "Kongeindisk, Petrosjan system, Hovedvariant"]
+
+*
+
+[ECO "E94"]
+[Opening "Kongeindisk, ortodoks variant"]
+
+*
+
+[ECO "E95"]
+[Opening "Kongeindisk, ortodoks, 7...Nbd7, 8.Re1"]
+
+*
+
+[ECO "E96"]
+[Opening "Kongeindisk, ortodoks, 7...Nbd7, Hovedvariant"]
+
+*
+
+[ECO "E97"]
+[Opening "Kongeindisk, ortodoks, Aronin-Taimanov variant (jugoslavisk angreb / Mar del Plata variant)"]
+
+*
+
+[ECO "E98"]
+[Opening "Kongeindisk, ortodoks, Aronin-Taimanov, 9. Se1"]
+
+*
+
+[ECO "E99"]
+[Opening "Kongeindisk, ortodoks, Aronin-Taimanov, hovedvariant"]
+
+*
+
