@@ -1,0 +1,9 @@
+include glade/*.glade glade/*.png glade/*.svg flags/*.png
+include README AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
+include sidepanel/*.py sidepanel/*.glade
+include sounds/*.ogg
+include manpages/pychess.1.gz
+include gtksourceview-1.0/language-specs/pgn.lang
+include pychess_book.bin eco.db
+include pychess.desktop pychess.svg pychess.png
+recursive-include lang *.po
