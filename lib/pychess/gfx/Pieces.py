@@ -1,8 +1,13 @@
 import re
-from pychess.Utils.const import *
 import time
 import math
+
+import cairo
+import rsvg
+
+from pychess.Utils.const import *
 from pychess.System import conf
+from pychess.System.prefix import addDataPrefix
 
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
 spaceExpr = re.compile(r"[\s,]+")
@@ -23,7 +28,7 @@ def parse(n, psize):
             
 # This has double speed at drawing, but when generating new functions, it
 # takes about ten times longer.
-def drawPiece3 (piece, cc, x, y, psize):
+def drawPiece1 (piece, cc, x, y, psize, allWhite=False):
     cc.save()
     cc.move_to(x,y)
     
@@ -34,7 +39,7 @@ def drawPiece3 (piece, cc, x, y, psize):
     cc.fill()
     cc.restore()
 
-def drawPieceReal (piece, cc, psize, allWhite):
+def drawPieceReal (piece, cc, psize, allWhite=False):
     color = WHITE if allWhite else piece.color
     
     # Do the actual drawing to the Cairo context
@@ -46,7 +51,9 @@ def drawPieceReal (piece, cc, psize, allWhite):
         else:
             cc.rel_curve_to(*points)
 
-def drawPiece (piece, cc, x, y, psize, allWhite=False):
+def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
+    """Rendering pieces with draw each time method"""
+
     cc.save()
     cc.move_to(x,y)
     
@@ -59,9 +66,35 @@ def drawPiece (piece, cc, x, y, psize, allWhite=False):
     cc.fill()
     cc.restore()
 
-# This version has proven itself nearly three times as slow as the "draw each time" method. At least when drawing one path only. Might be useful when drawing svg    
-import cairo
-def drawPiece2 (piece, cc, x, y, psize):
+def drawPiece3(piece, context, x, y, psize, allWhite=False):
+    """Rendering pieces using .svg chess figurines"""
+
+    context.save()
+
+    context.rectangle(x, y, psize, psize)
+    context.clip()
+    context.translate(x, y)
+
+    color = WHITE if allWhite else piece.color
+    image = svg_pieces[color][piece.sign]
+    context.scale(1.0*psize/image.props.width, 1.0*psize/image.props.height)
+    
+    image.render_cairo(context)
+    context.restore()
+
+def drawPiece4(piece, context, x, y, psize, allWhite=False):
+    """Rendering pieces using .ttf chessfont figurines"""
+
+    context.select_font_face(chess_font)
+    context.set_font_size(psize)
+    context.move_to(x, y+psize)
+    context.show_text(piece2char[piece.color][piece.sign])
+
+# This version has proven itself nearly three times as slow as the "draw each time" method.
+# At least when drawing one path only. Might be useful when drawing svg    
+def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
+    """Rendering pieces from cache instead of draw each time"""
+
     if not piece in surfaceCache:
         s = cc.get_target().create_similar(cairo.CONTENT_COLOR_ALPHA, int(size), int(size))
         ctx = cairo.Context(s)
@@ -83,11 +116,13 @@ def drawPiece2 (piece, cc, x, y, psize):
     # Or paint() instead of fill().  fill() needs a path, so you should do a
     # rectangle() first.
     
-    
     cc.set_source_surface(surfaceCache[piece], 0, 0)
     cc.fill()
     cc.restore()
+
 surfaceCache = {}
+
+drawPiece = drawPiece4
 
 size = 800.0
 pieces = {
@@ -121,3 +156,31 @@ for color in (WHITE, BLACK):
             list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
             thep = points[-2:]
         parsedPieces[color][piece] = {size:list}
+
+
+pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING)
+pnames = ('pawn','knight','bishop','rook','queen','king')
+
+def get_svg_pieces(svgdir):
+    """Load figurines from .svg files"""
+    rsvg_handles = [[None]*7, [None]*7]
+    for c, color in ((WHITE, 'white'), (BLACK, 'black')):
+        for p, piece in zip(pieces, pnames):
+            rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
+    return rsvg_handles
+    
+svg_pieces = get_svg_pieces('chessmonk')
+
+
+def get_chess_font(name):
+    """Set chess font and char mapping for a chess .ttf"""
+    
+    # TODO: char mappings may differ in .ttf fonts
+    char_map = ('pnbrqk', 'omvtlw')
+    piece_chars = [[None]*7, [None]*7]
+    for color in (WHITE, BLACK):
+        for piece, char in zip(pieces, char_map[color]):
+            piece_chars[color][piece] = char
+    return name, piece_chars
+
+chess_font, piece2char = get_chess_font("Chess Harlequin")

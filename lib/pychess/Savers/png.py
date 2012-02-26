@@ -4,11 +4,13 @@ import os
 
 import gtk
 import cairo
+import rsvg
 
 from pychess.Utils.const import *
 from pychess.gfx.Pieces import drawPiece
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets import gamewidget
+from pychess.System.prefix import addDataPrefix
 
 
 PADDING = 3
@@ -45,6 +47,8 @@ def export(widget, game):
     dialog.add_filter(filter)
     
     response = dialog.run()
+    
+    # TODO: error handling
     if response == gtk.RESPONSE_ACCEPT:
         print dialog.get_filename(), 'selected'
         surface.write_to_png(dialog.get_filename())
@@ -64,7 +68,7 @@ class Diagram(BoardView):
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
                 if piece is not None:
-                    self.__drawPiece(context, piece, x, 7-y)
+                    drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
 
     def __drawBoard(self, context):
         for x in xrange(8):
@@ -72,8 +76,3 @@ class Diagram(BoardView):
                 if (x+y) % 2 == 1:
                     context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
         context.fill()
-
-    def __drawPiece(self, context, piece, x, y):
-        drawPiece(piece, context,
-                  x*SQUARE+PADDING, y*SQUARE+PADDING,
-                  SQUARE-PADDING*2)
