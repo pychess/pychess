@@ -122,7 +122,7 @@ def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
 
 surfaceCache = {}
 
-drawPiece = drawPiece4
+drawPiece = drawPiece3
 
 size = 800.0
 pieces = {
@@ -169,7 +169,7 @@ def get_svg_pieces(svgdir):
             rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
     return rsvg_handles
     
-svg_pieces = get_svg_pieces('chessmonk')
+svg_pieces = get_svg_pieces('celtic')
 
 
 def get_chess_font(name):
