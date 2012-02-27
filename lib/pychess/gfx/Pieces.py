@@ -79,7 +79,10 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     image = svg_pieces[color][piece.sign]
     context.scale(1.0*psize/image.props.width, 1.0*psize/image.props.height)
     
+    context.push_group()
     image.render_cairo(context)
+    context.pop_group_to_source()
+    context.paint_with_alpha(piece.opacity)
     context.restore()
 
 def drawPiece4(piece, context, x, y, psize, allWhite=False):
