@@ -169,7 +169,7 @@ def get_svg_pieces(svgdir):
             rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
     return rsvg_handles
     
-svg_pieces = get_svg_pieces('celtic')
+svg_pieces = get_svg_pieces('cburnett')
 
 
 def get_chess_font(name):
