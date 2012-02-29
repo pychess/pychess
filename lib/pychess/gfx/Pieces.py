@@ -86,13 +86,12 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     context.rectangle(x, y, psize, psize)
     context.clip()
     context.translate(x-offset_x, y-offset_y)
-    
     context.scale(1.0*psize/w, 1.0*psize/h)
     
     context.push_group()
-    pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1].capitalize())
     
     if all_in_one:
+        pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1].capitalize())
         image.render_cairo(context, id=pieceid)
     else:
         image.render_cairo(context)
@@ -203,9 +202,10 @@ def get_chess_font(name):
     return name, piece_chars
 
 
+piece_set = 'pychess'
 #piece_set = 'fantasy_alt'
 #piece_set = 'cburnett'
-piece_set = 'Chess Harlequin'
+#piece_set = 'Chess Harlequin'
 
 if piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
     all_in_one = True
