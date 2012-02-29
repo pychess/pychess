@@ -69,18 +69,34 @@ def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
 def drawPiece3(piece, context, x, y, psize, allWhite=False):
     """Rendering pieces using .svg chess figurines"""
 
+    color = WHITE if allWhite else piece.color
+    if all_in_one:
+        image = svg_pieces
+        w, h = image.props.width/6, image.props.height/2
+        offset_x = piece_ord[piece.sign]*psize
+        offset_y = 0 if color == BLACK else psize
+    else:
+        image = svg_pieces[color][piece.sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
+    
     context.save()
 
     context.rectangle(x, y, psize, psize)
     context.clip()
-    context.translate(x, y)
-
-    color = WHITE if allWhite else piece.color
-    image = svg_pieces[color][piece.sign]
-    context.scale(1.0*psize/image.props.width, 1.0*psize/image.props.height)
+    context.translate(x-offset_x, y-offset_y)
+    
+    context.scale(1.0*psize/w, 1.0*psize/h)
     
     context.push_group()
-    image.render_cairo(context)
+    pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1].capitalize())
+    
+    if all_in_one:
+        image.render_cairo(context, id=pieceid)
+    else:
+        image.render_cairo(context)
+        
     context.pop_group_to_source()
     context.paint_with_alpha(piece.opacity)
     context.restore()
@@ -125,8 +141,6 @@ def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
 
 surfaceCache = {}
 
-drawPiece = drawPiece3
-
 size = 800.0
 pieces = {
     BLACK: {
@@ -161,18 +175,20 @@ for color in (WHITE, BLACK):
         parsedPieces[color][piece] = {size:list}
 
 
+piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING)
 pnames = ('pawn','knight','bishop','rook','queen','king')
 
 def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
     rsvg_handles = [[None]*7, [None]*7]
-    for c, color in ((WHITE, 'white'), (BLACK, 'black')):
-        for p, piece in zip(pieces, pnames):
-            rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
+    if all_in_one:
+        rsvg_handles = rsvg.Handle(addDataPrefix("glade/%s/%s.svg" % (svgdir, svgdir)))
+    else:
+        for c, color in ((WHITE, 'white'), (BLACK, 'black')):
+            for p, piece in zip(pieces, pnames):
+                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
     return rsvg_handles
-    
-svg_pieces = get_svg_pieces('cburnett')
 
 
 def get_chess_font(name):
@@ -186,4 +202,21 @@ def get_chess_font(name):
             piece_chars[color][piece] = char
     return name, piece_chars
 
-chess_font, piece2char = get_chess_font("Chess Harlequin")
+
+#piece_set = 'fantasy_alt'
+#piece_set = 'cburnett'
+piece_set = 'Chess Harlequin'
+
+if piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
+    all_in_one = True
+    drawPiece = drawPiece3
+    svg_pieces = get_svg_pieces(piece_set)
+elif piece_set in ('cburnett', 'chessmonk', 'freestaunton'):
+    all_in_one = False
+    drawPiece = drawPiece3
+    svg_pieces = get_svg_pieces(piece_set)
+elif piece_set in ("Chess Leipzig", "Chess Harlequin", 'Chess Lucena',):
+    drawPiece = drawPiece4
+    chess_font, piece2char = get_chess_font(piece_set)
+else:
+    drawPiece = drawPiece2
