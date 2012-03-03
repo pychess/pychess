@@ -7,6 +7,7 @@ from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
+from pychess.gfx.Pieces import set_piece_theme
 
 firstRun = True
 def run(widgets):
@@ -22,6 +23,7 @@ def initialize(widgets):
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
+    ThemeTab(widgets)
     
     def delete_event (widget, *args):
         widgets["preferences"].hide()
@@ -481,3 +483,42 @@ class PanelTab:
 
     def __on_hide_window(self, widget):
         self.hideit()
+
+
+class ThemeTab:
+    
+    def __init__ (self, widgets):
+        
+        self.widgets = widgets
+
+        themes = self.discover_themes()
+        store = gtk.ListStore(str)
+        for theme in themes:
+            store.append((theme,))
+        
+        self.tv = widgets["themes_treeview"]
+        self.tv.set_model(store)
+        self.tv.append_column(gtk.TreeViewColumn(_('Piece themes'), gtk.CellRendererText(), text=0))
+        self.tv.get_selection().connect('changed', self.selection_changed)
+
+        # Add the board
+        from pychess.widgets.BoardView import BoardView
+        self.boardview = BoardView()
+        self.boardview.set_size_request(170,170)
+        self.widgets["boardPreviewDock"].add(self.boardview)
+        self.boardview.show()
+        self.gamemodel = self.boardview.model
+        self.boardview.gotStarted = True
+
+    def selection_changed(self, treeselection):
+        store, iter = self.tv.get_selection().get_selected()
+        
+        if iter:
+            theme = self.tv.get_model().get(iter, 0)[0]
+            set_piece_theme(theme)
+            self.boardview.gotStarted = True
+            self.boardview.redraw_canvas()
+
+    def discover_themes(self):
+        glade = addDataPrefix("glade")
+        return ('pychess', 'cburnett', 'Chess Harlequin', 'Chess Leipzig')
