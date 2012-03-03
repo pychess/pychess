@@ -12,7 +12,7 @@ import pango
 from pychess.System import glock, conf, gstreamer
 from pychess.System.glock import glock_connect, glock_connect_after
 from pychess.System.repeat import repeat, repeat_sleep
-from pychess.gfx.Pieces import drawPiece
+from pychess.gfx import Pieces
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
@@ -734,7 +734,7 @@ class BoardView (gtk.DrawingArea):
                 matrix = invmatrix = cairo.Matrix(1,0,0,1,0,0)
         
         context.transform(invmatrix)
-        drawPiece(  piece, context,
+        Pieces.drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
                     s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteChess)
         context.transform(matrix)

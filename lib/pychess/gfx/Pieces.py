@@ -201,22 +201,30 @@ def get_chess_font(name):
             piece_chars[color][piece] = char
     return name, piece_chars
 
+all_in_one = None
+drawPiece = None
+svg_pieces = None
+chess_font = None
+piece2char = None
 
-piece_set = 'pychess'
-#piece_set = 'fantasy_alt'
-#piece_set = 'cburnett'
-#piece_set = 'Chess Harlequin'
+def set_piece_theme(piece_set):
+    global all_in_one
+    global drawPiece
+    global svg_pieces
+    global chess_font
+    global piece2char
+    if piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
+        all_in_one = True
+        drawPiece = drawPiece3
+        svg_pieces = get_svg_pieces(piece_set)
+    elif piece_set in ('cburnett', 'chessmonk', 'freestaunton'):
+        all_in_one = False
+        drawPiece = drawPiece3
+        svg_pieces = get_svg_pieces(piece_set)
+    elif piece_set in ("Chess Leipzig", "Chess Harlequin", 'Chess Lucena',):
+        drawPiece = drawPiece4
+        chess_font, piece2char = get_chess_font(piece_set)
+    else:
+        drawPiece = drawPiece2
 
-if piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
-    all_in_one = True
-    drawPiece = drawPiece3
-    svg_pieces = get_svg_pieces(piece_set)
-elif piece_set in ('cburnett', 'chessmonk', 'freestaunton'):
-    all_in_one = False
-    drawPiece = drawPiece3
-    svg_pieces = get_svg_pieces(piece_set)
-elif piece_set in ("Chess Leipzig", "Chess Harlequin", 'Chess Lucena',):
-    drawPiece = drawPiece4
-    chess_font, piece2char = get_chess_font(piece_set)
-else:
-    drawPiece = drawPiece2
+set_piece_theme('pychess')
