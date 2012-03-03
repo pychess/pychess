@@ -1,6 +1,10 @@
 import sys, os
+from os import listdir
+from os.path import isdir, isfile
 from xml.dom import minidom
+
 import gtk
+import pangocairo
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
@@ -510,15 +514,22 @@ class ThemeTab:
         self.gamemodel = self.boardview.model
         self.boardview.gotStarted = True
 
+        #uistuff.keep(self.tv, 'pieceTheme')
+
     def selection_changed(self, treeselection):
         store, iter = self.tv.get_selection().get_selected()
         
         if iter:
             theme = self.tv.get_model().get(iter, 0)[0]
             set_piece_theme(theme)
-            self.boardview.gotStarted = True
             self.boardview.redraw_canvas()
 
     def discover_themes(self):
+        themes = ['pychess']
+        
         glade = addDataPrefix("glade")
-        return ('pychess', 'cburnett', 'Chess Harlequin', 'Chess Leipzig')
+        themes += [d for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
+        
+        font_map = pangocairo.cairo_font_map_get_default()
+        themes += [f.get_name() for f in font_map.list_families() if f.get_name().startswith('Chess')]
+        return themes
