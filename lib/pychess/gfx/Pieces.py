@@ -213,7 +213,9 @@ def set_piece_theme(piece_set):
     global svg_pieces
     global chess_font
     global piece2char
-    if piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
+    if piece_set == 'pychess':
+        drawPiece = drawPiece2
+    elif piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
         all_in_one = True
         drawPiece = drawPiece3
         svg_pieces = get_svg_pieces(piece_set)
@@ -221,10 +223,8 @@ def set_piece_theme(piece_set):
         all_in_one = False
         drawPiece = drawPiece3
         svg_pieces = get_svg_pieces(piece_set)
-    elif piece_set in ("Chess Leipzig", "Chess Harlequin", 'Chess Lucena',):
+    else:
         drawPiece = drawPiece4
         chess_font, piece2char = get_chess_font(piece_set)
-    else:
-        drawPiece = drawPiece2
 
 set_piece_theme('pychess')

@@ -111,6 +111,7 @@ class BoardView (gtk.DrawingArea):
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
         conf.notify_add("faceToFace", self.on_face_to_face)
+        conf.notify_add("pieceTheme", self.on_set_piece_theme)
         self.set_size_request(350,350)
         
         self.animationStart = time()
@@ -253,6 +254,9 @@ class BoardView (gtk.DrawingArea):
         self.showCords = conf.get("showCords", False)
     
     def on_face_to_face (self, *args):
+        self.redraw_canvas()
+
+    def on_set_piece_theme (self, *args):
         self.redraw_canvas()
     
     ###############################
