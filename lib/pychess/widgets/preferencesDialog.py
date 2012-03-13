@@ -527,12 +527,13 @@ class ThemeTab:
         uistuff.keep (widgets["pieceTheme"], "pieceTheme", get_value, set_value)
 
     def discover_themes(self):
-        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/panel_moves.svg"), 16, 16)
+        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/piece_theme_svg.svg"), 16, 16)
         themes = [(ico, 'pychess')]
         
         glade = addDataPrefix("glade")
         themes += [(ico, d) for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
         
+        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/piece_theme_ttf.svg"), 16, 16)
         font_map = pangocairo.cairo_font_map_get_default()
         themes += [(ico, f.get_name()) for f in font_map.list_families() if f.get_name().startswith('Chess')]
         return themes
