@@ -495,41 +495,54 @@ class ThemeTab:
         
         self.widgets = widgets
 
-        themes = self.discover_themes()
-        store = gtk.ListStore(str)
-        for theme in themes:
-            store.append((theme,))
+        self.themes = self.discover_themes()
         
-        self.tv = widgets["themes_treeview"]
-        self.tv.set_model(store)
-        self.tv.append_column(gtk.TreeViewColumn(_('Piece themes'), gtk.CellRendererText(), text=0))
-        self.tv.get_selection().connect('changed', self.selection_changed)
+        uistuff.createCombo(widgets["pieceTheme"], self.themes)
+        conf.set("pieceTheme", conf.get("pieceTheme", 0))
 
         # Add the board
         from pychess.widgets.BoardView import BoardView
         self.boardview = BoardView()
-        self.boardview.set_size_request(170,170)
+        self.boardview.set_size_request(250, 250)
         self.widgets["boardPreviewDock"].add(self.boardview)
         self.boardview.show()
         self.gamemodel = self.boardview.model
         self.boardview.gotStarted = True
 
-        #uistuff.keep(self.tv, 'pieceTheme')
-
-    def selection_changed(self, treeselection):
-        store, iter = self.tv.get_selection().get_selected()
+        def get_value (combobox):
+            theme = self.themes[combobox.get_active()][1]
+            return theme
         
-        if iter:
-            theme = self.tv.get_model().get(iter, 0)[0]
-            set_piece_theme(theme)
-            self.boardview.redraw_canvas()
+        def set_value (combobox, value):
+            if value is None:
+                combobox.set_active(0)
+            else:
+                try:
+                    index = [theme[1] for theme in self.themes].index(value)
+                except ValueError:
+                    index = 0
+                combobox.set_active(index)
+
+        uistuff.keep (widgets["pieceTheme"], "pieceTheme", get_value, set_value)
+
+        def theme_changed(combo):
+            model = combo.get_model()
+            active = combo.get_active()
+            theme = model[active][1]
+
+            if theme:
+                set_piece_theme(theme)
+                self.boardview.redraw_canvas()
+        
+        #widgets["pieceTheme"].connect("changed", theme_changed)
 
     def discover_themes(self):
-        themes = ['pychess']
+        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/panel_moves.svg"), 16, 16)
+        themes = [(ico, 'pychess')]
         
         glade = addDataPrefix("glade")
-        themes += [d for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
+        themes += [(ico, d) for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
         
         font_map = pangocairo.cairo_font_map_get_default()
-        themes += [f.get_name() for f in font_map.list_families() if f.get_name().startswith('Chess')]
+        themes += [(ico, f.get_name()) for f in font_map.list_families() if f.get_name().startswith('Chess')]
         return themes
