@@ -227,4 +227,4 @@ def set_piece_theme(piece_set):
         drawPiece = drawPiece4
         chess_font, piece2char = get_chess_font(piece_set)
 
-set_piece_theme('pychess')
+set_piece_theme(conf.get("pieceTheme", 0))
