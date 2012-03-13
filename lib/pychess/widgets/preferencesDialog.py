@@ -494,23 +494,24 @@ class ThemeTab:
     def __init__ (self, widgets):
         
         self.widgets = widgets
+        conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
 
         self.themes = self.discover_themes()
-        
         uistuff.createCombo(widgets["pieceTheme"], self.themes)
-        conf.set("pieceTheme", conf.get("pieceTheme", 0))
 
         # Add the board
         from pychess.widgets.BoardView import BoardView
         self.boardview = BoardView()
-        self.boardview.set_size_request(250, 250)
+        self.boardview.set_size_request(350, 350)
         self.widgets["boardPreviewDock"].add(self.boardview)
+
         self.boardview.show()
         self.gamemodel = self.boardview.model
         self.boardview.gotStarted = True
 
         def get_value (combobox):
             theme = self.themes[combobox.get_active()][1]
+            set_piece_theme(theme)
             return theme
         
         def set_value (combobox, value):
@@ -522,19 +523,8 @@ class ThemeTab:
                 except ValueError:
                     index = 0
                 combobox.set_active(index)
-
+                
         uistuff.keep (widgets["pieceTheme"], "pieceTheme", get_value, set_value)
-
-        def theme_changed(combo):
-            model = combo.get_model()
-            active = combo.get_active()
-            theme = model[active][1]
-
-            if theme:
-                set_piece_theme(theme)
-                self.boardview.redraw_canvas()
-        
-        #widgets["pieceTheme"].connect("changed", theme_changed)
 
     def discover_themes(self):
         ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/panel_moves.svg"), 16, 16)
