@@ -193,8 +193,15 @@ def get_svg_pieces(svgdir):
 def get_chess_font(name):
     """Set chess font and char mapping for a chess .ttf"""
     
-    # TODO: char mappings may differ in .ttf fonts
-    char_map = ('pnbrqk', 'omvtlw')
+    if name in ('Chess Alpha', 'Chess Berlin'):
+        char_map = ('phbrqk', 'ojntwl')
+    elif name in ('Chess Alpha 2'):
+        char_map = ('ijklmn', 'IJKLMN')
+    elif name in ('Chess Utrecht'):
+        char_map = ('pnbrqk', 'PNBRQK')
+    else:
+        char_map = ('pnbrqk', 'omvtwl')
+
     piece_chars = [[None]*7, [None]*7]
     for color in (WHITE, BLACK):
         for piece, char in zip(pieces, char_map[color]):
@@ -227,4 +234,4 @@ def set_piece_theme(piece_set):
         drawPiece = drawPiece4
         chess_font, piece2char = get_chess_font(piece_set)
 
-set_piece_theme(conf.get("pieceTheme", 0))
+set_piece_theme(conf.get("pieceTheme", "pychess"))
