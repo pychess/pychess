@@ -9,7 +9,7 @@ from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 
-elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
+elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+|[z]\s+")
 spaceExpr = re.compile(r"[\s,]+")
 
 l = []
@@ -48,9 +48,14 @@ def drawPieceReal (piece, cc, psize, allWhite=False):
             cc.rel_move_to(*points)
         elif cmd == 'L':
             cc.rel_line_to(*points)
-        else:
+        elif cmd == 'C':
             cc.rel_curve_to(*points)
-
+        else:
+            if fill_path:
+                cc.set_source_rgb(1,1,1)
+                cc.fill_preserve()
+                cc.set_source_rgb(0,0,0)
+                
 def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
     """Rendering pieces with draw each time method"""
 
@@ -106,8 +111,28 @@ def drawPiece4(piece, context, x, y, psize, allWhite=False):
     context.select_font_face(chess_font)
     context.set_font_size(psize)
     context.move_to(x, y+psize)
-    context.show_text(piece2char[piece.color][piece.sign])
 
+    if fill_path:
+        context.text_path(piece2char[piece.color][piece.sign])
+        close_path = False
+        for cmd, points in context.copy_path():
+            if cmd == 0:
+                context.move_to(*points)
+                if close_path:
+                    context.set_source_rgb(1,1,1)
+                    context.fill_preserve()
+                    context.set_source_rgb(0,0,0)
+                    close_path = False
+            elif cmd == 1:
+                context.line_to(*points)
+            elif cmd == 2:
+                context.curve_to(*points)
+            else:
+                close_path = True
+        context.fill()
+    else:
+        context.show_text(piece2char[piece.color][piece.sign])
+    
 # This version has proven itself nearly three times as slow as the "draw each time" method.
 # At least when drawing one path only. Might be useful when drawing svg    
 def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
@@ -167,10 +192,14 @@ for color in (WHITE, BLACK):
         list = []
         thep = [0,0]
         for g1, g2 in elemExpr.findall(pieces[color][piece]):
-            if not g1 or not g2: continue
-            points = [float(s) for s in spaceExpr.split(g2)]
-            list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
-            thep = points[-2:]
+            if g2:
+                points = [float(s) for s in spaceExpr.split(g2)]
+                list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
+                thep = points[-2:]
+            elif g1 == 'z':
+                list += [('z', (0,0))]
+            else:
+                continue
         parsedPieces[color][piece] = {size:list}
 
 
@@ -207,6 +236,10 @@ def get_chess_font(name):
         for piece, char in zip(pieces, char_map[color]):
             piece_chars[color][piece] = char
     return name, piece_chars
+
+
+# TODO: If we need fill_path=False at all, it can be a checkbox in preferences/themes
+fill_path = True
 
 all_in_one = None
 drawPiece = None
