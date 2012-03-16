@@ -694,6 +694,10 @@ class BoardView (gtk.DrawingArea):
         
         context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
         context.fill()
+        
+        if not self.showCords:
+            context.rectangle(xc, yc, 8*s, 8*s)
+            context.stroke()
     
     ###############################
     #         drawPieces          #
