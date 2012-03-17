@@ -109,12 +109,14 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
 def drawPiece4(piece, context, x, y, psize, allWhite=False):
     """Rendering pieces using .ttf chessfont figurines"""
 
+    color = WHITE if allWhite else piece.color
+
     context.set_font_face(chess_font_face)
     context.set_font_size(psize)
     context.move_to(x, y+psize)
 
     if fill_path:
-        context.text_path(piece2char[piece.color][piece.sign])
+        context.text_path(piece2char[color][piece.sign])
         close_path = False
         for cmd, points in context.copy_path():
             if cmd == 0:
@@ -132,7 +134,7 @@ def drawPiece4(piece, context, x, y, psize, allWhite=False):
                 close_path = True
         context.fill()
     else:
-        context.show_text(piece2char[piece.color][piece.sign])
+        context.show_text(piece2char[color][piece.sign])
     
 # This version has proven itself nearly three times as slow as the "draw each time" method.
 # At least when drawing one path only. Might be useful when drawing svg    

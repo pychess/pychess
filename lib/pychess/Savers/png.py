@@ -60,11 +60,11 @@ def export(widget, game):
 
 class Diagram(BoardView):
     def draw_position(self, context):
-        context.set_source_rgba(0.5, 0.5, 0.5)
+        context.set_source_rgb(0.5, 0.5, 0.5)
         self.__drawBoard (context)
 
         pieces = self.model.getBoardAtPly(self.shown)
-        context.set_source_rgba(0, 0, 0)
+        context.set_source_rgb(0, 0, 0)
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
                 if piece is not None:
@@ -76,3 +76,7 @@ class Diagram(BoardView):
                 if (x+y) % 2 == 1:
                     context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
         context.fill()
+
+        if not self.showCords:
+            context.rectangle(0, 0, 8*SQUARE, 8*SQUARE)
+            context.stroke()
