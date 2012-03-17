@@ -8,6 +8,7 @@ import rsvg
 from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
+from pychess.System.cairoextras import create_cairo_font_face_for_file
 
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+|[z]\s+")
 spaceExpr = re.compile(r"[\s,]+")
@@ -108,7 +109,7 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
 def drawPiece4(piece, context, x, y, psize, allWhite=False):
     """Rendering pieces using .ttf chessfont figurines"""
 
-    context.select_font_face(chess_font)
+    context.set_font_face(chess_font_face)
     context.set_font_size(psize)
     context.move_to(x, y+psize)
 
@@ -211,23 +212,19 @@ def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
     rsvg_handles = [[None]*7, [None]*7]
     if all_in_one:
-        rsvg_handles = rsvg.Handle(addDataPrefix("glade/%s/%s.svg" % (svgdir, svgdir)))
+        rsvg_handles = rsvg.Handle(addDataPrefix("pieces/%s/%s.svg" % (svgdir, svgdir)))
     else:
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
             for p, piece in zip(pieces, pnames):
-                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("glade/%s/%s-%s.svg" % (svgdir, color, piece)))
+                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s-%s.svg" % (svgdir, color, piece)))
     return rsvg_handles
 
 
-def get_chess_font(name):
+def get_chess_font_face(name):
     """Set chess font and char mapping for a chess .ttf"""
     
-    if name in ('Chess Alpha', 'Chess Berlin'):
+    if name in ('alpha', 'berlin', 'cheq'):
         char_map = ('phbrqk', 'ojntwl')
-    elif name in ('Chess Alpha 2'):
-        char_map = ('ijklmn', 'IJKLMN')
-    elif name in ('Chess Utrecht'):
-        char_map = ('pnbrqk', 'PNBRQK')
     else:
         char_map = ('pnbrqk', 'omvtwl')
 
@@ -235,7 +232,9 @@ def get_chess_font(name):
     for color in (WHITE, BLACK):
         for piece, char in zip(pieces, char_map[color]):
             piece_chars[color][piece] = char
-    return name, piece_chars
+    
+    face = create_cairo_font_face_for_file(addDataPrefix("pieces/ttf/%s.ttf" % name))
+    return face, piece_chars
 
 
 # TODO: If we need fill_path=False at all, it can be a checkbox in preferences/themes
@@ -244,15 +243,17 @@ fill_path = True
 all_in_one = None
 drawPiece = None
 svg_pieces = None
-chess_font = None
+chess_font_face = None
 piece2char = None
 
 def set_piece_theme(piece_set):
     global all_in_one
     global drawPiece
     global svg_pieces
-    global chess_font
+    global chess_font_face
     global piece2char
+    
+    piece_set = piece_set.lower()
     if piece_set == 'pychess':
         drawPiece = drawPiece2
     elif piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
@@ -265,6 +266,9 @@ def set_piece_theme(piece_set):
         svg_pieces = get_svg_pieces(piece_set)
     else:
         drawPiece = drawPiece4
-        chess_font, piece2char = get_chess_font(piece_set)
+        try:
+            chess_font_face, piece2char = get_chess_font_face(piece_set)
+        except:
+            drawPiece = drawPiece2
 
 set_piece_theme(conf.get("pieceTheme", "pychess"))
