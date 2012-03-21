@@ -45,16 +45,48 @@ def export(widget, game):
     filter.add_mime_type("image/png")
     filter.add_pattern("*.png")
     dialog.add_filter(filter)
+
+    # Keep running the dialog until the user has canceled it or made an error
+    # free operation
+    while True:
     
-    response = dialog.run()
+        response = dialog.run()
     
-    # TODO: error handling
-    if response == gtk.RESPONSE_ACCEPT:
-        print dialog.get_filename(), 'selected'
-        surface.write_to_png(dialog.get_filename())
-    elif response == gtk.RESPONSE_CANCEL:
-        print 'Closed, no files selected'
-    
+        if response == gtk.RESPONSE_CANCEL:
+            break
+
+        uri = dialog.get_filename()
+        
+        if os.path.isfile(uri):
+            d = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION)
+            d.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, _("_Replace"),
+                        gtk.RESPONSE_ACCEPT)
+
+            d.set_title(_("File exists"))
+            folder, file = os.path.split(uri)
+            d.set_markup(_("<big><b>A file named '%s' already exists. Would you like to replace it?</b></big>") % file)
+            d.format_secondary_text(_("The file already exists in '%s'. If you replace it, its content will be overwritten.") % folder)
+            replaceRes = d.run()
+            d.hide()
+
+            if replaceRes == gtk.RESPONSE_CANCEL:
+                continue
+
+        try:
+            surface.write_to_png(uri)
+        except IOError, e:
+            d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR)
+            d.add_buttons(gtk.STOCK_OK, gtk.RESPONSE_OK)
+            d.set_title(_("Could not save the file"))
+            d.set_markup(_("<big><b>PyChess was not able to export the position</b></big>"))
+            d.format_secondary_text(_("The error was: %s") % ", ".join(str(a) for a in e.args))
+            os.remove(uri)
+            d.run()
+            d.hide()
+            continue
+
+        break
+        
     dialog.destroy()
 
 
