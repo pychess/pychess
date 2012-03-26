@@ -128,6 +128,7 @@ METHODS = (
     # gtk.ToggleComboBox should be listed prior to gtk.ToggleButton, as it is a
     # subclass, but requires different handling
     (ToggleComboBox, ("_get_active", "_set_active", "changed")),
+    (gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
     (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
     (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
     (gtk.Range, ("get_value", "set_value", "value-changed")))
