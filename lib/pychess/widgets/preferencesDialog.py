@@ -3,6 +3,7 @@ from os import listdir
 from os.path import isdir, splitext
 from xml.dom import minidom
 
+import cairo
 import gtk
 
 from pychess.System.prefix import addDataPrefix
@@ -496,34 +497,55 @@ class ThemeTab:
         conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
 
         self.themes = self.discover_themes()
-        uistuff.createCombo(widgets["pieceTheme"], self.themes)
+        
+        store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        
+        from pychess.Savers.png import Diagram
+        SQUARE = 40
+        
+        for icon, theme in self.themes:
+            print theme
+            #set_piece_theme(theme)
 
-        # Add the board
-        from pychess.widgets.BoardView import BoardView
-        self.boardview = BoardView()
-        self.boardview.set_size_request(350, 350)
-        self.widgets["boardPreviewDock"].add(self.boardview)
+            #surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE*8, SQUARE*8)
+            #context = cairo.Context(surface)
+            #d = Diagram()
+            #d.draw_position(context)
 
-        self.boardview.show()
-        self.gamemodel = self.boardview.model
-        self.boardview.gotStarted = True
+            #data = surface.get_data()
+            #pixbuf = gtk.gdk.pixbuf_new_from_data(data, gtk.gdk.COLORSPACE_RGB, True, 8, SQUARE*8, SQUARE*8, 4*SQUARE*8)
+            #store.append((pixbuf, theme))
+            store.append((icon, theme))
+        
+        iconView = self.widgets["pieceTheme"]
+        
+        iconView.set_model(store)
+        iconView.set_pixbuf_column(0)
+        iconView.set_text_column(1)
+        
+        def _get_active(iconview):
+            model = iconview.get_model()
+            selected = iconview.get_selected_items()
 
-        def get_value (combobox):
-            theme = self.themes[combobox.get_active()][1]
+            if len(selected) == 0:
+                return None
+            
+            i = selected[0][0]
+            theme = model[i][1]
             set_piece_theme(theme)
             return theme
         
-        def set_value (combobox, value):
+        def _set_active(iconview, value):
             if value is None:
-                combobox.set_active(0)
+                iconview.select_path((0,))
             else:
                 try:
                     index = [theme[1] for theme in self.themes].index(value)
                 except ValueError:
                     index = 0
-                combobox.set_active(index)
+                iconview.select_path((index,))
                 
-        uistuff.keep (widgets["pieceTheme"], "pieceTheme", get_value, set_value)
+        uistuff.keep (widgets["pieceTheme"], "pieceTheme", _get_active, _set_active)
 
     def discover_themes(self):
         ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/piece_theme_svg.svg"), 16, 16)
