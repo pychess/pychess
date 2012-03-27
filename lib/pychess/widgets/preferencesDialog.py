@@ -1,17 +1,18 @@
 import sys, os
 from os import listdir
-from os.path import isdir, splitext
+from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 
 import cairo
 import gtk
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, getUserDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
+from pychess.Utils.Piece import Piece
 from pychess.Utils.IconLoader import load_icon
-from pychess.gfx.Pieces import set_piece_theme
+from pychess.gfx import Pieces
 
 firstRun = True
 def run(widgets):
@@ -489,7 +490,14 @@ class PanelTab:
         self.hideit()
 
 
+SQUARE = 39
+
 class ThemeTab:
+
+    pieces = ((Piece(WHITE, KING), Piece(WHITE, QUEEN), Piece(WHITE, ROOK), None),
+              (Piece(WHITE, KNIGHT), Piece(WHITE, BISHOP), None, Piece(BLACK, PAWN)),
+              (Piece(WHITE, PAWN), None, Piece(BLACK, BISHOP), Piece(BLACK, KNIGHT)),
+              (None, Piece(BLACK, ROOK), Piece(BLACK, QUEEN), Piece(BLACK, KING)))
     
     def __init__ (self, widgets):
         
@@ -500,23 +508,10 @@ class ThemeTab:
         
         store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         
-        from pychess.Savers.png import Diagram
-        SQUARE = 40
-        
-        for icon, theme in self.themes:
-            print theme
-            #set_piece_theme(theme)
+        for theme in self.themes:
+            pixbuf = self.preview(theme)
+            store.append((pixbuf, theme))
 
-            #surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE*8, SQUARE*8)
-            #context = cairo.Context(surface)
-            #d = Diagram()
-            #d.draw_position(context)
-
-            #data = surface.get_data()
-            #pixbuf = gtk.gdk.pixbuf_new_from_data(data, gtk.gdk.COLORSPACE_RGB, True, 8, SQUARE*8, SQUARE*8, 4*SQUARE*8)
-            #store.append((pixbuf, theme))
-            store.append((icon, theme))
-        
         iconView = self.widgets["pieceTheme"]
         
         iconView.set_model(store)
@@ -526,36 +521,62 @@ class ThemeTab:
         def _get_active(iconview):
             model = iconview.get_model()
             selected = iconview.get_selected_items()
-
+            
             if len(selected) == 0:
-                return None
+                return conf.get("pieceTheme", "pychess")
             
             i = selected[0][0]
             theme = model[i][1]
-            set_piece_theme(theme)
+            Pieces.set_piece_theme(theme)
             return theme
         
         def _set_active(iconview, value):
-            if value is None:
-                iconview.select_path((0,))
-            else:
-                try:
-                    index = [theme[1] for theme in self.themes].index(value)
-                except ValueError:
-                    index = 0
-                iconview.select_path((index,))
+            try:
+                index = self.themes.index(value)
+            except ValueError:
+                index = 0
+            iconview.select_path((index,))
                 
         uistuff.keep (widgets["pieceTheme"], "pieceTheme", _get_active, _set_active)
 
     def discover_themes(self):
-        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/piece_theme_svg.svg"), 16, 16)
-        themes = [(ico, 'Pychess')]
+        themes = ['Pychess']
         
         glade = addDataPrefix("pieces")
-        themes += [(ico, d.capitalize()) for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
+        themes += [d.capitalize() for d in listdir(glade) if isdir(os.path.join(glade,d)) and d != 'ttf']
         
-        ico = gtk.gdk.pixbuf_new_from_file_at_size(addDataPrefix("glade/piece_theme_ttf.svg"), 16, 16)
         ttf = addDataPrefix("pieces/ttf")
-        themes += [(ico, splitext(d)[0].capitalize()) for d in listdir(ttf) if splitext(d)[1] == '.ttf']
-        themes.sort(lambda x,y: cmp(x[1], y[1]))
+        themes += [splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
+        themes.sort()
+        
         return themes
+
+    def preview(self, theme):
+        pngfile = "%s/%s.png" % (getUserDataPrefix(), theme)
+        
+        if not isfile(pngfile):
+            Pieces.set_piece_theme(theme)
+
+            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE*4, SQUARE*4)
+            
+            context = cairo.Context(surface)
+            context.set_source_rgb(0.5, 0.5, 0.5)
+            
+            for x in xrange(4):
+                for y in xrange(4):
+                    if (x+y) % 2 == 1:
+                        context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
+            context.fill()
+
+            context.rectangle(0, 0, 4*SQUARE, 4*SQUARE)
+            context.stroke()
+
+            context.set_source_rgb(0, 0, 0)
+            for y, row in enumerate(self.pieces):
+                for x, piece in enumerate(row):
+                    if piece is not None:
+                        Pieces.drawPiece(piece, context, x*SQUARE, (3-y)*SQUARE, SQUARE)
+
+            surface.write_to_png(pngfile)
+        
+        return gtk.gdk.pixbuf_new_from_file(pngfile)

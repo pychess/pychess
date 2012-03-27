@@ -7,7 +7,7 @@ import cairo
 import rsvg
 
 from pychess.Utils.const import *
-from pychess.gfx.Pieces import drawPiece
+from pychess.gfx import Pieces
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets import gamewidget
 from pychess.System.prefix import addDataPrefix
@@ -100,7 +100,7 @@ class Diagram(BoardView):
         for y, row in enumerate(pieces.data):
             for x, piece in enumerate(row):
                 if piece is not None:
-                    drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
+                    Pieces.drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
 
     def __drawBoard(self, context):
         for x in xrange(8):
