@@ -212,10 +212,11 @@ pnames = ('pawn','knight','bishop','rook','queen','king')
 
 def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
-    rsvg_handles = [[None]*7, [None]*7]
+
     if all_in_one:
         rsvg_handles = rsvg.Handle(addDataPrefix("pieces/%s/%s.svg" % (svgdir, svgdir)))
     else:
+        rsvg_handles = [[None]*7, [None]*7]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
             for p, piece in zip(pieces, pnames):
                 rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s-%s.svg" % (svgdir, color, piece)))
