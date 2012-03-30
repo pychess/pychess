@@ -501,11 +501,14 @@ class ThemeTab:
         store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         
         for theme in self.themes:
-            pngfile = "%s/%s.png" % (getUserDataPrefix(), theme)
+            pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
         
             if isfile(pngfile):
                 pixbuf = gtk.gdk.pixbuf_new_from_file(pngfile)
                 store.append((pixbuf, theme))
+            else:
+                print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
+                break
 
         iconView = self.widgets["pieceTheme"]
         
