@@ -13,7 +13,6 @@ import sys
 
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
 # because pychess from another author already exist in pypi.
-NAME = "pychess"
 VERSION = pychess.VERSION
 
 DESC = "Gnome chess game"
@@ -69,6 +68,9 @@ os.chdir(os.path.abspath(os.path.dirname(__file__)))
 if not isfile("eco.db"):
     execfile("pgn2ecodb.py")
 
+if not isfile(os.path.abspath("pieces/Pychess.png")):
+    execfile("create_theme_preview.py")
+
 DATA_FILES = [("share/pychess",
     ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
 
@@ -89,6 +91,13 @@ DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
 DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
 DATA_FILES += [('share/gtksourceview-1.0/language-specs', ['gtksourceview-1.0/language-specs/pgn.lang'])]
+
+# Piece sets
+DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
+DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
+
+for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
+    DATA_FILES += [("share/pychess/pieces/"+dir, glob('pieces/'+dir+'/*.svg'))]
 
 # Manpages
 DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
@@ -117,7 +126,7 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
 # Setup
 
 setup (
-    name             = NAME,
+    name             = 'pychess',
     version          = VERSION,
     author           = 'Pychess team',
     author_email     = 'pychess-people@googlegroups.com',
