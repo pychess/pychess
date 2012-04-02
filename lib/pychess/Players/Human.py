@@ -7,7 +7,7 @@ from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.System import glock, conf
 
-from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 OFFER_MESSAGES = {
     DRAW_OFFER:

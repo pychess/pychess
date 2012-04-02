@@ -17,7 +17,7 @@ from pychess.System.ThreadPool import pool
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ProtocolEngine import ProtocolEngine
-from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
