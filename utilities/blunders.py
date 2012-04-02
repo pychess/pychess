@@ -128,7 +128,11 @@ def check_blund():
             print
     
     movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
-    print "Considering", game.ply//2+1, movename, " ",
+    if game.ply % 2 == 1:
+        move_suffix = ""
+    else:
+        move_suffix = "..."
+    print "Considering %d%s %s " % ((game.ply+1)//2, move_suffix, movename,),
     game.undoMoves(1)
 
 def onAnalyze(analyzer, pv, score):
