@@ -30,7 +30,7 @@ hash_struct = struct.Struct('>Q')
 
 def get_eco(hash):
     if not ECO_OK:
-        return
+        return None
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
     cur.execute(select, (buffer(hash_struct.pack(hash)), lang))

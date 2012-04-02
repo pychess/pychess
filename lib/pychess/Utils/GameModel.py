@@ -200,7 +200,7 @@ class GameModel (GObject, PooledThread):
             if self.ply > 0:
                 opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
             else:
-                opening = ("", "")
+                opening = ("", "", "")
             if opening is not None:
                 self.tags["ECO"] = opening[0]
                 self.tags["Opening"] = opening[1]
