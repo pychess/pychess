@@ -17,11 +17,13 @@ mainloop = glib.MainLoop()
 
 ###############################################################################
 # Do the rest of the imports
+import atexit
 import sys
 import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
+from pychess.System import SubProcess
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
@@ -81,6 +83,7 @@ class DummyPlayer (Player):
     def offer (self, offer): self.emit('accept', offer)
 
 def start(discoverer):
+    atexit.register(SubProcess.finishAllSubprocesses)
     pgnfile, gameno = queryGameno(sys.argv[1])
     analyzer = queryAnalyzer(list(discoverer.getAnalyzers()))
     secs = queryTime()
