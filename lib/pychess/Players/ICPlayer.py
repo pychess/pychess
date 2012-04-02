@@ -1,7 +1,7 @@
 from collections import defaultdict
 from Queue import Queue
 
-from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN, ParsingError
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
