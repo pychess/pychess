@@ -12,7 +12,7 @@ from pychess.Utils.lutils import leval, lsearch
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import determineAlgebraicNotation, parseSAN, \
     listToSan, toSAN, parseAny, toLAN
-from pychess.Utils.lutils.lsearch import alphaBeta, useEGTB
+from pychess.Utils.lutils.lsearch import alphaBeta, enableEGTB
 from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.ic import FICSConnection
