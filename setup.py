@@ -72,11 +72,7 @@ if not isfile(os.path.abspath("pieces/Pychess.png")):
     execfile("create_theme_preview.py")
 
 DATA_FILES = [("share/pychess",
-<<<<<<< local
     ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
-=======
-    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin"])]
->>>>>>> other
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
