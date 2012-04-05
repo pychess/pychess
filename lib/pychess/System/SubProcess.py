@@ -25,12 +25,7 @@ def searchPath (file, access=os.R_OK, altpath=None):
         else:
             return altpath
 
-    try:
-        return which(file, mode=access)
-    except IOError:
-        log.log("%s not found\n" % file)
-
-    return None
+    return which(file, mode=access)
 
 subprocesses = []
 def finishAllSubprocesses ():
@@ -47,7 +42,7 @@ class SubProcess (gobject.GObject):
         "died": (gobject.SIGNAL_RUN_FIRST, None, ())
     }
     
-    def __init__(self, path, args=[], warnwords=[], env=None):
+    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
         gobject.GObject.__init__(self)
         
         self.path = path
@@ -68,7 +63,7 @@ class SubProcess (gobject.GObject):
         
         argv = [str(u) for u in [self.path]+self.args]
         self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
-                child_setup=self.__setup,
+                working_directory=chdir, child_setup=self.__setup,
                 standard_input=True, standard_output=True, standard_error=True,
                 flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
         

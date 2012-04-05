@@ -4,15 +4,28 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="fics_lounge">
     <property name="visible">True</property>
-    <property name="border_width">12</property>
     <property name="title" translatable="yes">PyChess - Internet Chess: FICS</property>
     <property name="icon_name">pychess</property>
     <child>
-      <widget class="GtkVBox" id="vbox12">
+      <widget class="GtkVBox" id="fics_lounge_vbox">
         <property name="visible">True</property>
         <child>
-          <widget class="GtkHBox" id="hbox1">
+          <widget class="GtkVBox" id="fics_lounge_infobar_vbox">
             <property name="visible">True</property>
+            <child>
+              <placeholder/>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkHBox" id="fics_lounge_content_hbox">
+            <property name="visible">True</property>
+            <property name="border_width">12</property>
             <property name="spacing">12</property>
             <child>
               <widget class="GtkVBox" id="vbox1">
@@ -629,17 +642,45 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="private_chat_button">
+                              <widget class="GtkButton" id="observe_button">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
                                 <property name="receives_default">True</property>
                                 <child>
-                                  <widget class="GtkLabel" id="label66">
+                                  <widget class="GtkAlignment" id="alignment12">
                                     <property name="visible">True</property>
-                                    <property name="xpad">6</property>
-                                    <property name="label" translatable="yes">Start P_rivate Chat</property>
-                                    <property name="use_underline">True</property>
+                                    <property name="xscale">0</property>
+                                    <property name="yscale">0</property>
+                                    <child>
+                                      <widget class="GtkHBox" id="hbox6">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <widget class="GtkImage" id="image1">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-find</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <widget class="GtkLabel" id="label3">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Observe</property>
+                                            <property name="use_underline">True</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </widget>
+                                    </child>
                                   </widget>
                                 </child>
                               </widget>
@@ -647,6 +688,55 @@
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
                                 <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkButton" id="private_chat_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
+                                <property name="receives_default">True</property>
+                                <child>
+                                  <widget class="GtkAlignment" id="alignment14">
+                                    <property name="visible">True</property>
+                                    <property name="xscale">0</property>
+                                    <property name="yscale">0</property>
+                                    <child>
+                                      <widget class="GtkHBox" id="hbox8">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <widget class="GtkImage" id="image9">
+                                            <property name="visible">True</property>
+                                            <property name="icon_name">user-offline</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <widget class="GtkLabel" id="label10">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Start Private Chat</property>
+                                            <property name="use_underline">True</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </widget>
+                                    </child>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                           </widget>
@@ -678,7 +768,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label3">
+                      <widget class="GtkLabel" id="label8">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">_Player List</property>
                         <property name="use_underline">True</property>
@@ -712,13 +802,42 @@
                               <widget class="GtkButton" id="observeButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="can_default">True</property>
+                                <property name="receives_default">True</property>
                                 <child>
-                                  <widget class="GtkLabel" id="label12">
+                                  <widget class="GtkAlignment" id="alignment13">
                                     <property name="visible">True</property>
-                                    <property name="xpad">6</property>
-                                    <property name="label" translatable="yes">_Observe</property>
-                                    <property name="use_underline">True</property>
+                                    <property name="xscale">0</property>
+                                    <property name="yscale">0</property>
+                                    <child>
+                                      <widget class="GtkHBox" id="hbox7">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <widget class="GtkImage" id="image8">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-find</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <widget class="GtkLabel" id="label9">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Observe</property>
+                                            <property name="use_underline">True</property>
+                                          </widget>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </widget>
+                                    </child>
                                   </widget>
                                 </child>
                               </widget>
@@ -757,7 +876,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="label9">
+                      <widget class="GtkLabel" id="label11">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">_Game List</property>
                         <property name="use_underline">True</property>
@@ -782,7 +901,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkAlignment" id="alignment106">
                                     <property name="visible">True</property>
@@ -831,11 +950,11 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button21">
+                              <widget class="GtkButton" id="abortButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkAlignment" id="alignment104">
                                     <property name="visible">True</property>
@@ -850,7 +969,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label59">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">A_bort</property>
+                                            <property name="label" translatable="yes">Offer A_bort</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>
@@ -872,11 +991,11 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button23">
+                              <widget class="GtkButton" id="drawButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkAlignment" id="alignment105">
                                     <property name="visible">True</property>
@@ -891,7 +1010,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label60">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">_Draw</property>
+                                            <property name="label" translatable="yes">Offer _Draw</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>
@@ -913,11 +1032,11 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button22">
+                              <widget class="GtkButton" id="resignButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkAlignment" id="alignment103">
                                     <property name="visible">True</property>
@@ -967,11 +1086,11 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkButton" id="button24">
+                              <widget class="GtkButton" id="resumeButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <child>
                                   <widget class="GtkAlignment" id="alignment102">
                                     <property name="visible">True</property>
@@ -998,7 +1117,7 @@
                                         <child>
                                           <widget class="GtkLabel" id="label57">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">_Resume</property>
+                                            <property name="label" translatable="yes">Offer _Resume</property>
                                             <property name="use_underline">True</property>
                                           </widget>
                                           <packing>
@@ -1177,8 +1296,9 @@
                               <widget class="GtkButton" id="show_chat_button">
                                 <property name="label" translatable="yes">Show _Chat</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">True</property>
                                 <property name="use_underline">True</property>
                               </widget>
                               <packing>
@@ -1230,7 +1350,7 @@
             </child>
           </widget>
           <packing>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </widget>
@@ -1270,8 +1390,7 @@
                             <property name="yalign">0</property>
                             <property name="xpad">5</property>
                             <property name="ypad">5</property>
-                            <property name="pixel_size">48</property>
-                            <property name="icon_name">stock_alarm</property>
+                            <property name="pixbuf">stock_alarm.svg</property>
                             <property name="icon-size">6</property>
                           </widget>
                           <packing>
@@ -2183,8 +2302,7 @@ b) you change the variant or the time control</property>
                             <property name="yalign">0</property>
                             <property name="xpad">5</property>
                             <property name="ypad">5</property>
-                            <property name="pixel_size">48</property>
-                            <property name="icon_name">document-properties</property>
+                            <property name="pixbuf">document-properties.svg</property>
                             <property name="icon-size">6</property>
                           </widget>
                           <packing>

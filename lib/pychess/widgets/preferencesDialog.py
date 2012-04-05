@@ -1,11 +1,16 @@
 import sys, os
+from os import listdir
+from os.path import isdir, isfile, splitext
+from xml.dom import minidom
+
 import gtk
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, getUserDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
+from pychess.gfx import Pieces
 
 firstRun = True
 def run(widgets):
@@ -21,6 +26,7 @@ def initialize(widgets):
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
+    ThemeTab(widgets)
     
     def delete_event (widget, *args):
         widgets["preferences"].hide()
@@ -171,7 +177,7 @@ class EngineTab:
             
             def set_value (combobox, value):
                 engine = discoverer.getEngineByMd5(value)
-                if not engine:
+                if engine is None:
                     combobox.set_active(0)
                 else:
                     try:
@@ -373,11 +379,19 @@ class PanelTab:
     def __init__ (self, widgets):
         # Put panels in trees
         self.widgets = widgets
+
+        from pychess.widgets.gamewidget import sidePanels, dockLocation
+
+        saved_panels = []
+        xmlOK = os.path.isfile(dockLocation)
+        if xmlOK:
+            doc = minidom.parse(dockLocation)
+            for elem in doc.getElementsByTagName("panel"):
+                saved_panels.append(elem.getAttribute("id"))
         
-        from pychess.widgets.gamewidget import sidePanels
         store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
         for panel in sidePanels:
-            checked = conf.get(panel.__name__, True)
+            checked = True if not xmlOK else panel.__name__ in saved_panels
             panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
@@ -441,12 +455,15 @@ class PanelTab:
         from pychess.widgets.pydock import EAST
         
         if active:
-            conf.set(name, True)
             leaf = notebooks["board"].get_parent().get_parent()
             leaf.dock(docks[name][1], EAST, docks[name][0], name)
         else:
-            conf.set(name, False)
-            notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            try:
+                notebooks[name].get_parent().get_parent().undock(notebooks[name])
+            except AttributeError:
+                # A new panel appeared in the panels directory
+                leaf = notebooks["board"].get_parent().get_parent()
+                leaf.dock(docks[name][1], EAST, docks[name][0], name)
     
     def showit(self):
         from pychess.widgets.gamewidget import showDesignGW
@@ -460,10 +477,74 @@ class PanelTab:
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
             self.showit()
         else: self.hideit()
+
     def __on_show_window(self, widget):
         notebook = self.widgets['notebook1']
         page_num = notebook.get_current_page()
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
             self.showit()
+
     def __on_hide_window(self, widget):
         self.hideit()
+
+
+class ThemeTab:
+
+    
+    def __init__ (self, widgets):
+        
+        self.widgets = widgets
+        conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
+
+        self.themes = self.discover_themes()
+        
+        store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        
+        for theme in self.themes:
+            pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
+        
+            if isfile(pngfile):
+                pixbuf = gtk.gdk.pixbuf_new_from_file(pngfile)
+                store.append((pixbuf, theme))
+            else:
+                print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
+                break
+
+        iconView = self.widgets["pieceTheme"]
+        
+        iconView.set_model(store)
+        iconView.set_pixbuf_column(0)
+        iconView.set_text_column(1)
+        
+        def _get_active(iconview):
+            model = iconview.get_model()
+            selected = iconview.get_selected_items()
+            
+            if len(selected) == 0:
+                return conf.get("pieceTheme", "pychess")
+            
+            i = selected[0][0]
+            theme = model[i][1]
+            Pieces.set_piece_theme(theme)
+            return theme
+        
+        def _set_active(iconview, value):
+            try:
+                index = self.themes.index(value)
+            except ValueError:
+                index = 0
+            iconview.select_path((index,))
+                
+        uistuff.keep (widgets["pieceTheme"], "pieceTheme", _get_active, _set_active)
+
+    def discover_themes(self):
+        themes = ['Pychess']
+        
+        pieces = addDataPrefix("pieces")
+        themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d)) and d != 'ttf']
+        
+        ttf = addDataPrefix("pieces/ttf")
+        themes += [splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
+        themes.sort()
+        
+        return themes

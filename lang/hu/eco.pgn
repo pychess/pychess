@@ -1,0 +1,2885 @@
+[ECO "A00"]
+[Opening "Lengyel (Szokolszkij) megnyitás"]
+
+1. b4
+
+[ECO "A00"]
+[Opening "Lengyel"]
+[Variation "Tuebingen változat"]
+
+1. b4 Nh6
+
+[ECO "A00"]
+[Opening "Lengyel"]
+[Variation "Outflank változat"]
+
+1. b4 c6
+
+[ECO "A00"]
+[Opening "Benkö-megnyitás"]
+
+1. g3
+
+[ECO "A00"]
+[Opening "Benkö-megnyitás"]
+[Variation "fordított Aljehin"]
+
+1. g3 e5 2. Nf3
+
+[ECO "A00"]
+[Opening "Grob támadás"]
+
+1. g4
+
+[ECO "A00"]
+[Opening "Grob"]
+[Variation "Spike támadás"]
+
+1. g4 d5 2. Bg2 c6 3. g5
+
+[ECO "A00"]
+[Opening "Grob"]
+[Variation "Fritz-csel"]
+
+1. g4 d5 2. Bg2 Bxg4 3. c4
+
+[ECO "A00"]
+[Opening "Grob"]
+[Variation "Romford ellencsel"]
+
+1. g4 d5 2. Bg2 Bxg4 3. c4 d4
+
+[ECO "A00"]
+[Opening "Clemenz megnyitás"]
+
+1. h3
+
+[ECO "A00"]
+[Opening "Amar megnyitás"]
+
+1. Nh3
+
+[ECO "A00"]
+[Opening "Amar csel"]
+
+1. Nh3 d5 2. g3 e5 3. f4 Bxh3 4. Bxh3 exf4
+
+[ECO "A00"]
+[Opening "Dunszt megnyitás"]
+
+1. Nc3
+
+[ECO "A00"]
+[Opening "Dunszt megnyitás"]
+
+1. Nc3 e5
+
+[ECO "A00"]
+[Opening "Battambang megnyitás"]
+
+1. Nc3 e5 2. a3
+
+[ECO "A00"]
+[Opening "Novoszibirszk megnyitás"]
+
+1. Nc3 c5 2. d4 cxd4 3. Qxd4 Nc6 4. Qh4
+
+[ECO "A00"]
+[Opening "Anderzen megnyitás"]
+
+1. a3
+
+[ECO "A00"]
+[Opening "Ware megnyitás"]
+
+1. a4
+
+[ECO "A00"]
+[Opening "Crab megnyitás"]
+
+1. a4 e5 2. h4
+
+[ECO "A00"]
+[Opening "Zaragóza megnyitás"]
+
+1. c3
+
+[ECO "A00"]
+[Opening "Mieses megnyitás"]
+
+1. d3
+
+[ECO "A00"]
+[Opening "Mieses megnyitás"]
+
+1. d3 e5
+
+[ECO "A00"]
+[Opening "Valencia megnyitás"]
+
+1. d3 e5 2. Nd2
+
+[ECO "A00"]
+[Opening "Venezolana megnyitás"]
+
+1. d3 c5 2. Nc3 Nc6 3. g3
+
+[ECO "A00"]
+[Opening "Van't Kruijs megnyitás"]
+
+1. e3
+
+[ECO "A00"]
+[Opening "Amszterdam támadás"]
+
+1. e3 e5 2. c4 d6 3. Nc3 Nc6 4. b3 Nf6
+
+[ECO "A00"]
+[Opening "Gedult megnyitás"]
+
+1. f3
+
+[ECO "A00"]
+[Opening "Hammerschlag megnyitás"]
+
+1. f3 e5 2. Kf2
+
+[ECO "A00"]
+[Opening "Anti-Borg megnyitás"]
+
+1. h4
+
+[ECO "A00"]
+[Opening "Durkin támadás"]
+
+1. Na3
+
+[ECO "A01"]
+[Opening "Larsen megnyitás"]
+
+*
+
+[ECO "A02"]
+[Opening "Bird megnyitás"]
+
+*
+
+[ECO "A03"]
+[Opening "Bird megnyitása, 1...d5"]
+
+*
+
+[ECO "A04"]
+[Opening "Réti megnyitás"]
+
+*
+
+[ECO "A05"]
+[Opening "Réti megnyitás, 2...Hf6"]
+
+*
+
+[ECO "A06"]
+[Opening "Réti megnyitás, 2...d5"]
+
+*
+
+[ECO "A07"]
+[Opening "Réti megnyitás, Királyindiai támadás (Barcza-rendszer)"]
+
+*
+
+[ECO "A08"]
+[Opening "Réti megnyitás, Királyindiai támadás"]
+
+*
+
+[ECO "A09"]
+[Opening "Réti megnyitás, 2...d5 3.c4"]
+
+*
+
+[ECO "A10"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A11"]
+[Opening "Angol, Caro-Kann védelem"]
+
+*
+
+[ECO "A12"]
+[Opening "Angol, Caro-Kann védelem"]
+
+*
+
+[ECO "A13"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A14"]
+[Opening "Angol, elhárított újkatalán"]
+
+*
+
+[ECO "A15"]
+[Opening "Angol, 1...Hf6 (Anglo-indiai védelem)"]
+
+*
+
+[ECO "A16"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A17"]
+[Opening "Angol megnyitás, sündisznó védelem"]
+
+*
+
+[ECO "A18"]
+[Opening "Angol megnyitás, Mikenas-Carls változat"]
+
+*
+
+[ECO "A19"]
+[Opening "Angol megnyitás, Mikenas-Carls, szicíliai változat"]
+
+*
+
+[ECO "A20"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A21"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A22"]
+[Opening "Angol megnyitás"]
+
+*
+
+[ECO "A23"]
+[Opening "Angol megnyitás, Brémai rendszer, Keres-változat"]
+
+*
+
+[ECO "A24"]
+[Opening "Angol megnyitás, Brémai rendszer 3...g6-tal"]
+
+*
+
+[ECO "A25"]
+[Opening "Angol megnyitás, fordított szicíliai"]
+
+*
+
+[ECO "A26"]
+[Opening "Angol megnyitás, zárt rendszer"]
+
+*
+
+[ECO "A27"]
+[Opening "Angol megnyitás, háromhuszáros rendszer"]
+
+*
+
+[ECO "A28"]
+[Opening "Angol megnyitás, négyhuszáros rendszer"]
+
+*
+
+[ECO "A29"]
+[Opening "Angol megnyitás, négy huszáros, királyszárnyi Fianchetto"]
+
+*
+
+[ECO "A30"]
+[Opening "Angol megnyitás, szimmetrikus változat"]
+
+*
+
+[ECO "A31"]
+[Opening "Angol megnyitás, szimmetrikus, Benoni változat"]
+
+*
+
+[ECO "A32"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A33"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A34"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A35"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A36"]
+[Opening "Angol megnyitás, , szimmetrikus"]
+
+*
+
+[ECO "A37"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A38"]
+[Opening "Angol megnyitás, szimmetrikus"]
+
+*
+
+[ECO "A39"]
+[Opening "Angol megnyitás, szimmetrikus, d4-gyel"]
+
+*
+
+[ECO "A40"]
+[Opening "Vezérgyalog játék"]
+
+*
+
+[ECO "A41"]
+[Opening "Vezérgyalog játék"]
+
+*
+
+[ECO "A42"]
+[Opening "Modern védelem, Averbakh-rendszer"]
+
+*
+
+[ECO "A43"]
+[Opening "Óbenoni védelem"]
+
+*
+
+[ECO "A44"]
+[Opening "Óbenoni védelem"]
+
+*
+
+[ECO "A45"]
+[Opening "Vezérgyalogjáték"]
+
+*
+
+[ECO "A46"]
+[Opening "Vezérgyalogjáték"]
+
+*
+
+[ECO "A47"]
+[Opening "Vezérindiai védelem"]
+
+*
+
+[ECO "A48"]
+[Opening "Királyindiai védelem, kelet-indiai védelem"]
+
+*
+
+[ECO "A49"]
+[Opening "Királyindiai, Fianchetto c4 nélkül"]
+
+*
+
+[ECO "A50"]
+[Opening "Vezérgyalog játék"]
+
+*
+
+[ECO "A51"]
+[Opening "Elhárított Budapesti védelem"]
+
+*
+
+[ECO "A52"]
+[Opening "Budapesti védelem"]
+
+*
+
+[ECO "A53"]
+[Opening "Óindiai védelem"]
+
+*
+
+[ECO "A54"]
+[Opening "Óindiai, ukrán változat"]
+
+*
+
+[ECO "A55"]
+[Opening "Óindiai, föváltozat"]
+
+*
+
+[ECO "A56"]
+[Opening "Benoni védelem"]
+
+*
+
+[ECO "A57"]
+[Opening "Benkö-csel"]
+
+*
+
+[ECO "A58"]
+[Opening "Elfogadott Benkö-csel"]
+
+*
+
+[ECO "A59"]
+[Opening "Benkö csel, 7.e4"]
+
+*
+
+[ECO "A60"]
+[Opening "Benoni védelem"]
+
+*
+
+[ECO "A61"]
+[Opening "Benoni védelem"]
+
+*
+
+[ECO "A62"]
+[Opening "Benoni, Fianchetto változat"]
+
+*
+
+[ECO "A63"]
+[Opening "Benoni, Fianchetto változat, 9...Hbd7"]
+
+*
+
+[ECO "A64"]
+[Opening "Benoni, Fianchetto változat, 11...Re8"]
+
+*
+
+[ECO "A65"]
+[Opening "Benoni, 6.e4"]
+
+*
+
+[ECO "A66"]
+[Opening "Benoni, gyalogroham változat"]
+
+*
+
+[ECO "A67"]
+[Opening "Benoni, Tajmanov változat"]
+
+*
+
+[ECO "A68"]
+[Opening "Benoni, négygyalogos támadás"]
+
+*
+
+[ECO "A69"]
+[Opening "Benoni, négygyalogos támadás, föváltozat"]
+
+*
+
+[ECO "A70"]
+[Opening "Benoni, klasszikus, e4 és Hf3-mal"]
+
+*
+
+[ECO "A71"]
+[Opening "Benoni, klasszikus, 8.Bg5"]
+
+*
+
+[ECO "A72"]
+[Opening "Benoni, klasszikus, 9.O-O nélkül"]
+
+*
+
+[ECO "A73"]
+[Opening "Benoni, klasszikus, 9.O-O"]
+
+*
+
+[ECO "A74"]
+[Opening "Benoni, klasszikus, 9...a6, 10.a4"]
+
+*
+
+[ECO "A75"]
+[Opening "Benoni, klasszikus ...a6 és 10...Fg4-gyel"]
+
+*
+
+[ECO "A76"]
+[Opening "Benoni, klasszikus, 9...Be8"]
+
+*
+
+[ECO "A77"]
+[Opening "Benoni, klasszikus, 9...Be8, 10.Hd2"]
+
+*
+
+[ECO "A78"]
+[Opening "Benoni, klasszikus, Be8 és ...Ha6-tal"]
+
+*
+
+[ECO "A79"]
+[Opening "Benoni, klasszikus, 11.f3"]
+
+*
+
+[ECO "A80"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A81"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A82"]
+[Opening "Holland, Staunton-csel"]
+
+*
+
+[ECO "A83"]
+[Opening "Holland, Staunton-csel, Staunton-változat"]
+
+*
+
+[ECO "A84"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A85"]
+[Opening "Holland védelem, 2.c4 és 3.Hc3"]
+
+*
+
+[ECO "A86"]
+[Opening "Holland védelem, 2.c4 és 3.g3"]
+
+*
+
+[ECO "A87"]
+[Opening "Holland védelem, leningrádi, fö változat"]
+
+*
+
+[ECO "A88"]
+[Opening "Holland védelem, leningrádi, fö változat 7...c6-tal"]
+
+*
+
+[ECO "A89"]
+[Opening "Holland védelem, leningrádi, fö változat Hc6-tal"]
+
+*
+
+[ECO "A90"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A91"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A92"]
+[Opening "Holland védelem"]
+
+*
+
+[ECO "A93"]
+[Opening "Holland védelem, Stonewall, Botwinnik-változat"]
+
+*
+
+[ECO "A94"]
+[Opening "Holland védelem, Dutch, Stonewall Ba3-mal"]
+
+*
+
+[ECO "A95"]
+[Opening "Holland védelem, Dutch, Stonewall Hc3-mal"]
+
+*
+
+[ECO "A96"]
+[Opening "Holland védelem, Dutch, klasszikus változat"]
+
+*
+
+[ECO "A97"]
+[Opening "Holland védelem, Ilyin-Genevsky változat"]
+
+*
+
+[ECO "A98"]
+[Opening "Holland védelem, Ilyin-Genevsky változat Vc2-vel"]
+
+*
+
+[ECO "A99"]
+[Opening "Holland védelem, Ilyin-Genevsky változat b3-mal"]
+
+*
+
+[ECO "B00"]
+[Opening "Királygyalog megnyitás"]
+
+*
+
+[ECO "B01"]
+[Opening "Skandináv védelem"]
+
+*
+
+[ECO "B02"]
+[Opening "Aljehin-védelem"]
+
+*
+
+[ECO "B03"]
+[Opening "Aljehin-védelem 3.d4"]
+
+*
+
+[ECO "B04"]
+[Opening "Aljehin-védelem, modern változat"]
+
+*
+
+[ECO "B05"]
+[Opening "Aljehin-védelem, modern változat, 4...Fg4"]
+
+*
+
+[ECO "B06"]
+[Opening "Robatsch (modern)-védelem"]
+
+*
+
+[ECO "B07"]
+[Opening "Pirc-védelem"]
+
+*
+
+[ECO "B08"]
+[Opening "Pirc, klasszikus (kétcsikós) rendszer"]
+
+*
+
+[ECO "B09"]
+[Opening "Pirc, osztrák támadás"]
+
+*
+
+[ECO "B10"]
+[Opening "Caro-Kann védelem"]
+
+*
+
+[ECO "B11"]
+[Opening "Caro-Kann, kétcsikós, 3...Fg4"]
+
+*
+
+[ECO "B12"]
+[Opening "Caro-Kann védelem"]
+
+*
+
+[ECO "B13"]
+[Opening "Caro-Kann, csereváltozat"]
+
+*
+
+[ECO "B14"]
+[Opening "Caro-Kann, Panov-Botvinnik-támadás, 5...e6"]
+
+*
+
+[ECO "B15"]
+[Opening "Caro-Kann védelem"]
+
+*
+
+[ECO "B16"]
+[Opening "Caro-Kann, Bronstein-Larsen-változat"]
+
+*
+
+[ECO "B17"]
+[Opening "Caro-Kann, Steinitz-változat"]
+
+*
+
+[ECO "B18"]
+[Opening "Caro-Kann, klasszikus változat"]
+
+*
+
+[ECO "B19"]
+[Opening "Caro-Kann, klasszikus, 7...Hd7"]
+
+*
+
+[ECO "B20"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Grand Prix támadás"]
+
+1. e4 c5 2. f4
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel"]
+
+1. e4 c5 2. d4
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Andreaschek csel"]
+
+1. e4 c5 2. d4 cxd4 3. Nf3 e5 4. c3
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel"]
+
+1. e4 c5 2. d4 cxd4 3. c3
+
+[ECO "B21"]
+[Opening "Szicíliai"]
+[Variation "Smith-Morra csel, csikágói védelem"]
+
+1. e4 c5 2. d4 cxd4 3. c3 dxc3 4. Nxc3 Nc6 5. Nf3 d6 6. Bc4 e6 7. O-O a6 8.
+Qe2 b5 9. Bb3 Ra7
+
+*
+
+[ECO "B22"]
+[Opening "Szicíliai védelem, Alapin-változat (2.c3)"]
+
+*
+
+[ECO "B23"]
+[Opening "Szicíliai, zárt"]
+
+*
+
+[ECO "B24"]
+[Opening "Szicíliai, zárt"]
+
+*
+
+[ECO "B25"]
+[Opening "Szicíliai, zárt"]
+
+*
+
+[ECO "B26"]
+[Opening "Szicíliai, zárt, 6.Fe3"]
+
+*
+
+[ECO "B27"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B28"]
+[Opening "Szicíliai, O'Kelly-változat"]
+
+*
+
+[ECO "B29"]
+[Opening "Szicíliai, Nimzovich-Rubinstein-változat"]
+
+*
+
+[ECO "B30"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B31"]
+[Opening "Szicíliai, Nimzovich-Rossolimo-támadás (...g6-tal, ...d6 nélkül)"]
+
+*
+
+[ECO "B32"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B33"]
+[Opening "Szicíliai, Szvesnyikov (Lasker-Pelikan) változat"]
+
+*
+
+[ECO "B34"]
+[Opening "Szicíliai védelem, gyors fianchetto, csereváltozat"]
+
+*
+
+[ECO "B35"]
+[Opening "Szicíliai védelem, gyors fianchetto, modern változat Fc4-gyel"]
+
+*
+
+[ECO "B36"]
+[Opening "Szicíliai védelem, gyors fianchetto, Maróczy-kötés"]
+
+*
+
+[ECO "B37"]
+[Opening "Szicíliai védelem, gyors fianchetto, Maróczy-kötés, 5...Fg7"]
+
+*
+
+[ECO "B38"]
+[Opening "Szicíliai védelem, gyors fianchetto, Maróczy-kötés, 6.Fe3"]
+
+*
+
+[ECO "B39"]
+[Opening "Szicíliai védelem, gyors fianchetto, Breyer-változat"]
+
+*
+
+[ECO "B40"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B41"]
+[Opening "Szicíliai, Kan-változat"]
+
+*
+
+[ECO "B42"]
+[Opening "Szicíliai, Kan, 5.Fd3"]
+
+*
+
+[ECO "B43"]
+[Opening "Szicíliai, Kan, 5.Hh3"]
+
+*
+
+[ECO "B44"]
+[Opening "Szicíliai védelem"]
+
+*
+
+[ECO "B45"]
+[Opening "Szicíliai, Tajmanov-változat"]
+
+*
+
+[ECO "B46"]
+[Opening "Szicíliai, Tajmanov-változat"]
+
+*
+
+[ECO "B47"]
+[Opening "Szicíliai, Tajmanov (Basztrikov) változat"]
+
+*
+
+[ECO "B48"]
+[Opening "Szicíliai, Tajmanov-változat"]
+
+*
+
+[ECO "B49"]
+[Opening "Szicíliai, Tajmanov-változat"]
+
+*
+
+[ECO "B51"]
+[Opening "Szicíliai, Canal-Sokolsky-támadás"]
+
+*
+
+[ECO "B52"]
+[Opening "Szicíliai, Canal-Sokolsky-támadás, 3...Fd7"]
+
+*
+
+[ECO "B53"]
+[Opening "Szicíliai, Chekhover-változat"]
+
+*
+
+[ECO "B54"]
+[Opening "Szicíliai"]
+
+*
+
+[ECO "B55"]
+[Opening "Szicíliai, Prins-változat, Velencei támadás"]
+
+*
+
+[ECO "B56"]
+[Opening "Szicíliai"]
+
+*
+
+[ECO "B57"]
+[Opening "Szicíliai"]
+[Variation "Szozin, nem Scheveningeni"]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4
+
+[ECO "B57"]
+[Opening "Szicíliai"]
+[Variation "Magnus Smith csapda"]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4 g6 7. Nxc6 bxc6
+8. e5
+
+[ECO "B57"]
+[Opening "Szicíliai"]
+[Variation "Szozin, Benkö változat"]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Bc4 Qb6
+
+[ECO "B58"]
+[Opening "Szicíliai, klasszikus"]
+
+*
+
+[ECO "B59"]
+[Opening "Szicíliai, Boleslavsky-változat, 7.Hb3"]
+
+*
+
+[ECO "B60"]
+[Opening "Szicíliai, Richter-Rauzer"]
+
+*
+
+[ECO "B61"]
+[Opening "Szicíliai, Richter-Rauzer, Larsen-változat, 7.Vd2"]
+
+*
+
+[ECO "B62"]
+[Opening "Szicíliai, Richter-Rauzer, 6...e6"]
+
+*
+
+[ECO "B63"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás"]
+
+*
+
+[ECO "B64"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...Fe7 védelem, 9.f4"]
+
+*
+
+[ECO "B65"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...Fe7 védelem, 9...Hxd4"]
+
+*
+
+[ECO "B66"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6"]
+
+*
+
+[ECO "B67"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 8...Fd7"]
+
+*
+
+[ECO "B68"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 9...Fe7"]
+
+*
+
+[ECO "B69"]
+[Opening "Szicíliai, Richter-Rauzer, Rauzer-támadás, 7...a6 védelem, 11.Fxf6"]
+
+*
+
+[ECO "B70"]
+[Opening "Szicíliai, sárkányváltozat"]
+
+*
+
+[ECO "B71"]
+[Opening "Szicíliai, sárkány, Levenfish-változat"]
+
+*
+
+[ECO "B72"]
+[Opening "Szicíliai, sárkány, 6.Fe3"]
+
+*
+
+[ECO "B73"]
+[Opening "Szicíliai, sárkány, klasszikus, 8.O-O"]
+
+*
+
+[ECO "B74"]
+[Opening "Szicíliai, sárkány, klasszikus, 9.Hb3"]
+
+*
+
+[ECO "B75"]
+[Opening "Szicíliai, sárkány, jugoszláv támadás"]
+
+*
+
+[ECO "B76"]
+[Opening "Szicíliai, sárkány, jugoszláv támadás, 7...O-O"]
+
+*
+
+[ECO "B77"]
+[Opening "Szicíliai, sárkány, jugoszláv támadás, 9.Fc4"]
+
+*
+
+[ECO "B78"]
+[Opening "Szicíliai, sárkány, jugoszláv támadás, 10.O-O-O"]
+
+*
+
+[ECO "B79"]
+[Opening "Szicíliai, sárkány, jugoszláv tamadás, 12.h4"]
+
+*
+
+[ECO "B80"]
+[Opening "Szicíliai védelem, scheveningeni változat"]
+
+*
+
+[ECO "B81"]
+[Opening "Szicíliai, scheveningeni, Keresz-támadás"]
+
+*
+
+[ECO "B82"]
+[Opening "Szicíliai, scheveningeni, 6.f4"]
+
+*
+
+[ECO "B83"]
+[Opening "Szicíliai, scheveningeni, 6.fe2"]
+
+*
+
+[ECO "B84"]
+[Opening "Szicíliai, scheveningeni (Paulsen), klasszikus változat"]
+
+*
+
+[ECO "B85"]
+[Opening "Szicíliai, scheveningeni, klasszikus változat ...Vc7-tel és ...Hc6-tal"]
+
+*
+
+[ECO "B86"]
+[Opening "Szicíliai, Szozin-támadás"]
+
+*
+
+[ECO "B87"]
+[Opening "Szozin ...a6-tal és ...b5-tel"]
+
+*
+
+[ECO "B88"]
+[Opening "Szicíliai, Szozin, Leonhardt-változat"]
+
+*
+
+[ECO "B89"]
+[Opening "Szicíliai, Szozin, 7.Fe3"]
+
+*
+
+[ECO "B90"]
+[Opening "Szicíliai, Najdorf"]
+
+*
+
+[ECO "B91"]
+[Opening "Szicíliai, Najdorf, zágrábi (fianchetto) változat (6.g3)"]
+
+*
+
+[ECO "B92"]
+[Opening "Szicíliai, Najdorf, Opocensky-változat (6.Fe2)"]
+
+*
+
+[ECO "B93"]
+[Opening "Szicíliai, Najdorf, 6.f4"]
+
+*
+
+[ECO "B94"]
+[Opening "Szicíliai, Najdorf, 6.Fg5"]
+
+*
+
+[ECO "B95"]
+[Opening "Szicíliai, Najdorf, 6...e6"]
+
+*
+
+[ECO "B96"]
+[Opening "Szicíliai, Najdorf, 7.f4"]
+
+*
+
+[ECO "B97"]
+[Opening "Szicíliai, Najdorf, 7...Vb6 beleértve: Mérgezett gyalog változat"]
+
+*
+
+[ECO "B98"]
+[Opening "Szicíliai, Najdorf, 7...Fe7"]
+
+*
+
+[ECO "B99"]
+[Opening "Szicíliai, Najdorf, 7...Fe7 Fö változat"]
+
+*
+
+[ECO "C00"]
+[Opening "Francia védelem"]
+
+*
+
+[ECO "C01"]
+[Opening "Francia, csereváltozat, Kingston-védelem"]
+
+*
+
+[ECO "C02"]
+[Opening "Francia, elöretórö változat"]
+
+*
+
+[ECO "C03"]
+[Opening "Francia, Tarrasch-változat"]
+
+*
+
+[ECO "C04"]
+[Opening "Francia, Tarrasch, Guimard fö folytatás"]
+
+*
+
+[ECO "C05"]
+[Opening "Francia, Tarrasch, zárt változat"]
+
+*
+
+[ECO "C06"]
+[Opening "Francia, Tarrasch, zárt változat, fö folytatás"]
+
+*
+
+[ECO "C07"]
+[Opening "Francia, Tarrasch, nyílt változat"]
+
+*
+
+[ECO "C08"]
+[Opening "Francia, Tarrasch, nyílt, 4.exd5 exd5"]
+
+*
+
+[ECO "C09"]
+[Opening "Francia, Tarrasch, nyílt változat, fö folytatás"]
+
+*
+
+[ECO "C10"]
+[Opening "Francia, Paulsen-változat"]
+
+*
+
+[ECO "C11"]
+[Opening "Francia védelem"]
+
+*
+
+[ECO "C12"]
+[Opening "Francia, MacCutcheon-változat"]
+
+*
+
+[ECO "C13"]
+[Opening "Francia, klasszikus változat"]
+
+*
+
+[ECO "C14"]
+[Opening "Francia, klasszikus változat"]
+
+*
+
+[ECO "C15"]
+[Opening "Francia, Winawer (Nimzovich)-változat"]
+
+*
+
+[ECO "C16"]
+[Opening "Francia, Winawer, elöretörö változat"]
+
+*
+
+[ECO "C17"]
+[Opening "Francia, Winawer, elöretörö változat"]
+
+*
+
+[ECO "C18"]
+[Opening "Francia, Winawer, elöretörö változat"]
+
+*
+
+[ECO "C19"]
+[Opening "Francia, Winawer, elöretörö változat, 6...He7"]
+
+*
+
+[ECO "C20"]
+[Opening "Királygyalog-játék"]
+
+1. e4 e5
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Indiai megnyitás"]
+
+1. e4 e5 2. d3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Mengarini megnyitás"]
+
+1. e4 e5 2. a3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "King's head megnyitás"]
+
+1. e4 e5 2. f3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Patzer megnyitás"]
+
+1. e4 e5 2. Qh5
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Napóleon megnyitás"]
+
+1. e4 e5 2. Qf3
+
+[ECO "C20"]
+[Opening "Királygyalog"]
+[Variation "Lopez megnyitás"]
+
+1. e4 e5 2. c3
+
+[ECO "C20"]
+[Opening "Alapin megnyitás"]
+
+1. e4 e5 2. Ne2
+
+[ECO "C21"]
+[Opening "Centrumjáték"]
+
+1. e4 e5 2. d4 exd4
+
+[ECO "C21"]
+[Opening "Centrumjáték, Kieseritsky változat"]
+
+1. e4 e5 2. d4 exd4 3. Nf3 c5 4. Bc4 b5
+
+[ECO "C21"]
+[Opening "Halász-csel"]
+
+1. e4 e5 2. d4 exd4 3. f4
+
+[ECO "C21"]
+[Opening "Dán csel"]
+
+1. e4 e5 2. d4 exd4 3. c3
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Collijn véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 dxc3 4. Bc4 cxb2 5. Bxb2 Qe7
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Schlechter véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 dxc3 4. Bc4 cxb2 5. Bxb2 d5
+
+[ECO "C21"]
+[Opening "Dán csel"]
+[Variation "Soerensen véldelem"]
+
+1. e4 e5 2. d4 exd4 3. c3 d5
+
+[ECO "C21"]
+[Opening "Centrumjáték"]
+
+1. e4 e5 2. d4 exd4 3. Qxd4
+
+[ECO "C22"]
+[Opening "Centrumjáték"]
+
+*
+
+[ECO "C23"]
+[Opening "Futómegnyitás"]
+
+*
+
+[ECO "C24"]
+[Opening "Futómegnyitás, berlini védelem"]
+
+*
+
+[ECO "C25"]
+[Opening "Bécsi játék"]
+
+*
+
+[ECO "C26"]
+[Opening "Bécsi játék, Falkbeer-változat"]
+
+*
+
+[ECO "C27"]
+[Opening "Bécsi játék, Drakula-változat"]
+
+*
+
+[ECO "C28"]
+[Opening "Bécsi játék"]
+
+*
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Kaufmann változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Nf3 Bg4 6. Qe2
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Breyer változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Nf3 Be7
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Paulsen támadás"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Bardeleben változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3 f5
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+[Variation "Heyde változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. Qf3 f5 6. d4
+
+[ECO "C29"]
+[Opening "Bécsi játék"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. d3
+
+[ECO "C29"]
+[Opening "Bécsi játék, Wurzburger csapda"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. fxe5 Nxe4 5. d3 Qh4+ 6. g3 Nxg3 7. Nf3 Qh5
+8. Nxd5
+
+[ECO "C29"]
+[Opening "Bécsi játék, Steinitz változat"]
+
+1. e4 e5 2. Nc3 Nf6 3. f4 d5 4. d3
+
+[ECO "C30"]
+[Opening "Királycsel"]
+
+*
+
+[ECO "C31"]
+[Opening "Visszautsaított királycsel"]
+
+*
+
+[ECO "C32"]
+[Opening "Visszautasított királycsel, Felkbeer-ellencsel"]
+
+*
+
+[ECO "C33"]
+[Opening "Elfogadott királycsel"]
+
+*
+
+[ECO "C34"]
+[Opening "Elfogadott királycsel, beleértve a Fischer-védelem"]
+
+*
+
+[ECO "C35"]
+[Opening "Elfogadott királycsel, Cunningham-védelem"]
+
+*
+
+[ECO "C36"]
+[Opening "Elfogadott királycsel, abháziai védelem (kalsszikus védelem, modern védelem)"]
+
+*
+
+[ECO "C37"]
+[Opening "Elfogadott királycsel, Quaade-csel"]
+
+*
+
+[ECO "C38"]
+[Opening "Elfogadott királycsel"]
+
+*
+
+[ECO "C39"]
+[Opening "Elfogadott királycsel"]
+
+*
+
+[ECO "C40"]
+[Opening "Királyhuszár-megnyitás"]
+
+1. e4 e5 2. Nf3
+
+[ECO "C40"]
+[Opening "Gunderam védelem"]
+
+1. e4 e5 2. Nf3 Qe7
+
+[ECO "C40"]
+[Opening "Greco védelem"]
+
+1. e4 e5 2. Nf3 Qf6
+
+[ECO "C40"]
+[Opening "Damiano védelem"]
+
+1. e4 e5 2. Nf3 f6
+
+[ECO "C40"]
+[Opening "Királyhuszár ellencsel (elefánt csel)"]
+
+1. e4 e5 2. Nf3 d5
+
+[ECO "C40"]
+[Opening "Királyhuszár ellencsel"]
+[Variation "Maroczy gambit"]
+
+1. e4 e5 2. Nf3 d5 3. exd5 Bd6
+
+[ECO "C40"]
+[Opening "Litván ellencsel"]
+
+1. e4 e5 2. Nf3 f5
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Nimzovich változat"]
+
+1. e4 e5 2. Nf3 f5 3. Nxe5 Qf6 4. d4 d6 5. Nc4 fxe4 6. Ne3
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Fraser védelem"]
+
+1. e4 e5 2. Nf3 f5 3. Nxe5 Nc6
+
+[ECO "C40"]
+[Opening "Litván gambit, 3.Bc4"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Behting változat"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 Qg5 5. Nf7 Qxg2 6. Rf1 d5 7. Nxh8
+Nf6
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "Polerio változat"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 d5
+
+[ECO "C40"]
+[Opening "Litván"]
+[Variation "corkscrew ellencsel"]
+
+1. e4 e5 2. Nf3 f5 3. Bc4 fxe4 4. Nxe5 Nf6
+
+[ECO "C41"]
+[Opening "Philidor-védelem"]
+
+*
+
+[ECO "C42"]
+[Opening "Petrov-védelem"]
+
+*
+
+[ECO "C43"]
+[Opening "Petrov-védelem, modern (Steinitz-) támadás"]
+
+*
+
+[ECO "C44"]
+[Opening "Királygyalog-játék"]
+
+*
+
+[ECO "C45"]
+[Opening "Skót játék"]
+
+*
+
+[ECO "C46"]
+[Opening "Háromhuszáros játék"]
+
+*
+
+[ECO "C47"]
+[Opening "Négyhuszáros játék, skót változat"]
+
+*
+
+[ECO "C48"]
+[Opening "Négyhuszáros játék, spanyol változat"]
+
+*
+
+[ECO "C49"]
+[Opening "Négyhuszáros játék, dupla spanyol változat"]
+
+*
+
+[ECO "C50"]
+[Opening "Királygyalog játék"]
+
+*
+
+[ECO "C51"]
+[Opening "Evans-csel"]
+
+*
+
+[ECO "C52"]
+[Opening "Evans-csel 4...Fxb4, 5.c3 Fa5-tel"]
+
+*
+
+[ECO "C53"]
+[Opening "Giuoco Piano"]
+
+*
+
+[ECO "C54"]
+[Opening "Giuoco Piano"]
+
+*
+
+[ECO "C55"]
+[Opening "Kéthuszáros védelem"]
+
+*
+
+[ECO "C56"]
+[Opening "Kéthuszáros védelem"]
+
+*
+
+[ECO "C57"]
+[Opening "Kéthuszáros védelem"]
+
+*
+
+[ECO "C58"]
+[Opening "Kéthuszáros védelem"]
+
+*
+
+[ECO "C59"]
+[Opening "Kéthuszáros védelem"]
+
+*
+
+[ECO "C60"]
+[Opening "Spanyol megnyitás"]
+
+*
+
+[ECO "C61"]
+[Opening "Spanyol megnyitás, Bird-védelem"]
+
+*
+
+[ECO "C62"]
+[Opening "Spanyol megnyitás Régi Steinitz-megnyitás"]
+
+*
+
+[ECO "C63"]
+[Opening "Spanyol megnyitás, Schliemann-védelem"]
+
+*
+
+[ECO "C64"]
+[Opening "Spanyol megnyitás, Cordel-védelem (Klasszikus védelem)"]
+
+*
+
+[ECO "C65"]
+[Opening "Spanyol megnyitás, berlini védelem"]
+
+*
+
+[ECO "C66"]
+[Opening "Spanyol megnyitás, berlini védelem, 4.0-0, d6"]
+
+*
+
+[ECO "C67"]
+[Opening "Spanyol megnyitás, berlini védelem, nyílt változat"]
+
+*
+
+[ECO "C68"]
+[Opening "Spanyol megnyitás, csereváltozat"]
+
+*
+
+[ECO "C69"]
+[Opening "Spanyol megnyitás, csereváltozat, 5.0-0"]
+
+*
+
+[ECO "C70"]
+[Opening "Spanyol megnyitás"]
+
+*
+
+[ECO "C71"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem"]
+
+*
+
+[ECO "C72"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem, 5.0-0"]
+
+*
+
+[ECO "C73"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem, Richter-változat"]
+
+*
+
+[ECO "C74"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem"]
+
+*
+
+[ECO "C75"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem"]
+
+*
+
+[ECO "C76"]
+[Opening "Spanyol megnyitás, modern Steinitz-védelem, Bronstein-változat (fianchetto-változat)"]
+
+*
+
+[ECO "C77"]
+[Opening "Spanyol megnyitás, Morphy-védelem"]
+
+*
+
+[ECO "C78"]
+[Opening "Spanyol megnyitás, 5.0-0"]
+
+*
+
+[ECO "C79"]
+[Opening "Spanyol megnyitás, elhárított Steinitz-védelem (orosz védelem)"]
+
+*
+
+[ECO "C80"]
+[Opening "Spanyol megnyitás, nyílt védelem (Tarrasch-védelem)"]
+
+*
+
+[ECO "C81"]
+[Opening "Spanyol megnyitás, nyílt, Howell-támadás"]
+
+*
+
+[ECO "C82"]
+[Opening "Spanyol megnyitás, nyílt, 9.c3"]
+
+*
+
+[ECO "C83"]
+[Opening "Spanyol megnyitás, nyílt, klasszikus védelem"]
+
+*
+
+[ECO "C84"]
+[Opening "Spanyol megnyitás, zárt védelem"]
+
+*
+
+[ECO "C85"]
+[Opening "Spanyol megnyitás, duplán elhárított csereváltozat"]
+
+*
+
+[ECO "C86"]
+[Opening "Spanyol megnyitás. Worrall-támadás"]
+
+*
+
+[ECO "C87"]
+[Opening "Spanyol megnyitás, zárt, Averbach-változat"]
+
+*
+
+[ECO "C88"]
+[Opening "Spanyol megnyitás, zárt"]
+
+*
+
+[ECO "C89"]
+[Opening "Spanyol megnyitás, Marshall-ellentámadás"]
+
+*
+
+[ECO "C90"]
+[Opening "Spanyol megnyitás, zárt, ...d6-tal"]
+
+*
+
+[ECO "C91"]
+[Opening "Spanyol megnyitás, zárt 9.d4"]
+
+*
+
+[ECO "C92"]
+[Opening "Spanyol megnyitás, zárt, 9.h3"]
+
+*
+
+[ECO "C93"]
+[Opening "Spanyol megnyitás, zárt, Szmiszlov-védelem"]
+
+*
+
+[ECO "C94"]
+[Opening "Spanyol megnyitás, zárt, Breyer-védelem"]
+
+*
+
+[ECO "C95"]
+[Opening "Spanyol megnyitás, zárt, Breyer, 10.d4"]
+
+*
+
+[ECO "C96"]
+[Opening "Spanyol megnyitás, zárt, 8...Ha5"]
+
+*
+
+[ECO "C97"]
+[Opening "Spanyol megnyitás, zárt, Csigorin-védelem"]
+
+*
+
+[ECO "C98"]
+[Opening "Spanyol megnyitás, zárt, Csigorin, 12...Hc6"]
+
+*
+
+[ECO "C99"]
+[Opening "Spanyol megnyitás, zárt, Csigorin, 12....c5d4"]
+
+*
+
+[ECO "D00"]
+[Opening "Vezérgyalog-játék"]
+
+*
+
+[ECO "D01"]
+[Opening "Richter-Vereszov-támadás"]
+
+*
+
+[ECO "D02"]
+[Opening "Vezérgyalog-játék, 2.Hf3"]
+
+*
+
+[ECO "D03"]
+[Opening "Torre-támadás, Tartakower-válto9zat"]
+
+*
+
+[ECO "D04"]
+[Opening "Vezérgyalog-játék"]
+
+*
+
+[ECO "D05"]
+[Opening "Vezérgyalog-játék, Zukertort-változat"]
+
+*
+
+[ECO "D06"]
+[Opening "Vezércsel"]
+
+*
+
+[ECO "D07"]
+[Opening "Vezércsel, Csigorin-védelem"]
+
+*
+
+[ECO "D08"]
+[Opening "Vezércsel, Albin-ellencsel és Lasker-csapda"]
+
+*
+
+[ECO "D09"]
+[Opening "Vezércsel, Albin-ellencsel, 5.g3"]
+
+*
+
+[ECO "D10"]
+[Opening "Vezércsel, Szláv védelem"]
+
+*
+
+[ECO "D11"]
+[Opening "Vezércsel, Szláv védelem, 3.Hf3"]
+
+*
+
+[ECO "D12"]
+[Opening "Vezércsel, Szláv védelem, 4.e3 Ff5"]
+
+*
+
+[ECO "D13"]
+[Opening "Vezércsel, Szláv védelem, csereváltozat"]
+
+*
+
+[ECO "D14"]
+[Opening "Vezércsel, Szláv védelem, csereváltozat"]
+
+*
+
+[ECO "D15"]
+[Opening "Vezércsel, Szláv védelem, 4.Hc3"]
+
+*
+
+[ECO "D16"]
+[Opening "Vezércsel, Elfogadott szlav védelem, Alapin-változat"]
+
+*
+
+[ECO "D17"]
+[Opening "Vezércsel, Szláv védelem, Cseh védelem"]
+
+*
+
+[ECO "D18"]
+[Opening "Vezércsel, Holland változat"]
+
+*
+
+[ECO "D19"]
+[Opening "Vezércsel, Holand változat"]
+
+*
+
+[ECO "D20"]
+[Opening "Elfogadott vezércsel"]
+
+*
+
+[ECO "D21"]
+[Opening "Elfogadott vezércsel, 3.Hf3"]
+
+*
+
+[ECO "D22"]
+[Opening "Elfogadott vezércsel, Aljehin-védelem"]
+
+*
+
+[ECO "D23"]
+[Opening "Elfogadott vezércsel"]
+
+*
+
+[ECO "D24"]
+[Opening "Elfogadott vezércsel, 4.Hc3"]
+
+*
+
+[ECO "D25"]
+[Opening "Elfogadott vezércsel, 4.e3"]
+
+*
+
+[ECO "D26"]
+[Opening "Elfogadott vezércsel, klasszikus változat"]
+
+*
+
+[ECO "D27"]
+[Opening "Elfogadott vezércsel, klasszikus változat"]
+
+*
+
+[ECO "D28"]
+[Opening "Elfogadott vezércsel, klasszikus változat 7.Ve2"]
+
+*
+
+[ECO "D29"]
+[Opening "Elfogadott vezércsel, klasszikus változat 8...Fb7"]
+
+*
+
+[ECO "D30"]
+[Opening "Elhárított vezércsel"]
+
+*
+
+[ECO "D31"]
+[Opening "Elhárított vezércsel, 3.Hc3"]
+
+*
+
+[ECO "D32"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem"]
+
+*
+
+[ECO "D33"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem, Schlechter-Rubinstein-rendszer"]
+
+*
+
+[ECO "D34"]
+[Opening "Elhárított vezércsel, Tarrasch-védelem, 7...Fe7"]
+
+*
+
+[ECO "D35"]
+[Opening "Elhárított vezércsel, csereváltozat"]
+
+*
+
+[ECO "D36"]
+[Opening "Elhárított vezércsel, csereváltozat, pozíciós vonal, 6.Vc2"]
+
+*
+
+[ECO "D37"]
+[Opening "Elhárított vezércsel, 4.Hf3"]
+
+*
+
+[ECO "D38"]
+[Opening "Elhárított vezércsel, Ragozin-változat"]
+
+*
+
+[ECO "D39"]
+[Opening "Elhárított vezércsel, Ragozin, bécsi változat"]
+
+*
+
+[ECO "D40"]
+[Opening "Elhárított vezércsel, fél-Tarrasch-védelem"]
+
+*
+
+[ECO "D41"]
+[Opening "Elhárított vezércsel, fél-Tarrasch, 5.cd"]
+
+*
+
+[ECO "D42"]
+[Opening "Elhárított vezércsel, fél-Tarrasch, 7.Fd3"]
+
+*
+
+[ECO "D43"]
+[Opening "Elhárított vezércsel, Fél-szláv védelem"]
+
+*
+
+[ECO "D44"]
+[Opening "Elhárított vezércsel, Fél-szláv 5.Fg5 dxc4"]
+
+*
+
+[ECO "D45"]
+[Opening "Elhárított vezércsel, Fél-szláv 5.e3"]
+
+*
+
+[ECO "D46"]
+[Opening "Elhárított vezércsel, Fél-szláv 6.Fd3"]
+
+*
+
+[ECO "D47"]
+[Opening "Elhárított vezércsel, Fél-szláv 7.Fc4"]
+
+*
+
+[ECO "D48"]
+[Opening "Elhárított vezércsel, meráni, 8...a6"]
+
+*
+
+[ECO "D49"]
+[Opening "Elhárított vezércsel, meráni, 11.Hxb5"]
+
+*
+
+[ECO "D50"]
+[Opening "Elhárított vezércsel, 4.Fg5"]
+
+*
+
+[ECO "D51"]
+[Opening "Elhárított vezércsel, 4.Fg5 Hbd7 (Cambridge Springs-védelem és elefánt-csapda)"]
+
+*
+
+[ECO "D52"]
+[Opening "Elhárított vezércsel"]
+
+*
+
+[ECO "D53"]
+[Opening "Elhárított vezércsel, 4.Fg5 Fe7"]
+
+*
+
+[ECO "D54"]
+[Opening "Elhárított vezércsel, Anti-neoortodox változat"]
+
+*
+
+[ECO "D55"]
+[Opening "Elhárított vezércsel, 6.Hf3"]
+
+*
+
+[ECO "D56"]
+[Opening "Elhárított vezércsel, Lasker-védelem"]
+
+*
+
+[ECO "D57"]
+[Opening "Elhárított vezércsel, Lasker-védelem, fö vonal"]
+
+*
+
+[ECO "D58"]
+[Opening "Elhárított vezércsel, Tartakower-rendszer (Makagonov-Bondarevszkij-rendszer)"]
+
+*
+
+[ECO "D59"]
+[Opening "Elhárított vezércsel, Tartakower (Makagonov-Bondarevszkij), 8.cd Hxd5"]
+
+*
+
+[ECO "D60"]
+[Opening "Elhárított vezércsel, Ortodox védelem"]
+
+*
+
+[ECO "D61"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-változat"]
+
+*
+
+[ECO "D62"]
+[Opening "Elhárított vezércsel, Ortodox védelem, 7.Vc2 c5, 8.cd (Rubinstein)"]
+
+*
+
+[ECO "D63"]
+[Opening "Elhárított vezércsel, Ortodox védelem, 7.Bc1"]
+
+*
+
+[ECO "D64"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-támadás (Bc1-gyel)"]
+
+*
+
+[ECO "D65"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Rubinstein-támadás, fö vonal"]
+
+*
+
+[ECO "D66"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Fd3 vonal"]
+
+*
+
+[ECO "D67"]
+[Opening "Elhárított vezércsel, Ortodox védelem, Fd3 vonal, Capablanca felszabadító manövere"]
+
+*
+
+[ECO "D68"]
+[Opening "Elhárított vezércsel, Ortodox védelem, klasszikus változat"]
+
+*
+
+[ECO "D69"]
+[Opening "Elhárított vezércsel, Ortodox védelem, klasszikus, 13.dxe5"]
+
+*
+
+[ECO "D70"]
+[Opening "Új-Grünfeld-védelem"]
+
+*
+
+[ECO "D71"]
+[Opening "Új-Grünfeld, 5.cxd5"]
+
+*
+
+[ECO "D72"]
+[Opening "Új-Grünfeld, 5.cxd5, föváltozat"]
+
+*
+
+[ECO "D73"]
+[Opening "Új-Grünfeld, 5.Hf3"]
+
+*
+
+[ECO "D74"]
+[Opening "Új-Grünfeld, 6.cxd5 Hxd5, 7.O-O"]
+
+*
+
+[ECO "D75"]
+[Opening "Új-Grünfeld, 6.cxd5 Hxd5, 7.O-O c5, 8.Hc3"]
+
+*
+
+[ECO "D76"]
+[Opening "Új-Grünfeld, 6.cxd5 Hxd5, 7.O-O Hb6"]
+
+*
+
+[ECO "D77"]
+[Opening "Új-Grünfeld, 6.O-O"]
+
+*
+
+[ECO "D78"]
+[Opening "Új-Grünfeld, 6.O-O c6"]
+
+*
+
+[ECO "D79"]
+[Opening "Új-Grünfeld, 6.O-O, föváltozat"]
+
+*
+
+[ECO "D80"]
+[Opening "Grünfeld-védelem"]
+
+*
+
+[ECO "D81"]
+[Opening "Grünfeld, orosz változat"]
+
+*
+
+[ECO "D82"]
+[Opening "Grünfeld, 4.Ff4"]
+
+*
+
+[ECO "D83"]
+[Opening "Grünfeld-csel"]
+
+*
+
+[ECO "D84"]
+[Opening "Elfogadott Grünfeld-csel"]
+
+*
+
+[ECO "D85"]
+[Opening "Grünfeld, csereváltozat"]
+
+*
+
+[ECO "D86"]
+[Opening "Grünfeld, csereváltozat, klasszikus változat"]
+
+*
+
+[ECO "D87"]
+[Opening "Grünfeld, csereváltozat, Spaszkij-változat"]
+
+*
+
+[ECO "D88"]
+[Opening "Grünfeld, Spaszkij-változat, föváltozat, 10...cxd4, 11. cxd4"]
+
+*
+
+[ECO "D89"]
+[Opening "Grünfeld, Spaszkij-változat, föváltozat, 13.Fd3"]
+
+*
+
+[ECO "D90"]
+[Opening "Grünfeld, háromhuszáros változat"]
+
+*
+
+[ECO "D91"]
+[Opening "Grünfeld, 5.Fg5"]
+
+*
+
+[ECO "D92"]
+[Opening "Grünfeld, 5.Ff4"]
+
+*
+
+[ECO "D93"]
+[Opening "Grünfeld, 5.Ff4 O-O 6.e3"]
+
+*
+
+[ECO "D94"]
+[Opening "Grünfeld, 5.e3"]
+
+*
+
+[ECO "D95"]
+[Opening "Grünfeld, 5.e3 O-O 6.Vb3"]
+
+*
+
+[ECO "D96"]
+[Opening "Grünfeld, orosz változat"]
+
+*
+
+[ECO "D97"]
+[Opening "Grünfeld, orosz változat, 7.e4"]
+
+*
+
+[ECO "D98"]
+[Opening "Grünfeld, orosz, Szmiszlov-változat"]
+
+*
+
+[ECO "D99"]
+[Opening "Grünfeld-védelem, Szmiszlov, föváltozat"]
+
+*
+
+[ECO "D70"]
+[Opening "Új-Grünfeld-védelem"]
+
+*
+
+[ECO "E00"]
+[Opening "Vezérgyalog játek"]
+
+*
+
+[ECO "E01"]
+[Opening "Katalán, zárt"]
+
+*
+
+[ECO "E02"]
+[Opening "Katalán, nyílt, 5.Va4"]
+
+*
+
+[ECO "E03"]
+[Opening "Katalán, nyílt, Aljehin-változat"]
+
+*
+
+[ECO "E04"]
+[Opening "Katalán, nyílt, 5.Hf3"]
+
+*
+
+[ECO "E05"]
+[Opening "Katalán, nyílt, klasszikus változat"]
+
+*
+
+[ECO "E06"]
+[Opening "Katalán, zárt, 5.Hf3"]
+
+*
+
+[ECO "E07"]
+[Opening "Katalán, zárt, 6...Hbd7"]
+
+*
+
+[ECO "E08"]
+[Opening "Katalán, zárt, 7.Vc2"]
+
+*
+
+[ECO "E09"]
+[Opening "Katalán, zárt, fö változat"]
+
+*
+
+[ECO "E10"]
+[Opening "Vezérgyalog játék 3.Hf3"]
+
+*
+
+[ECO "E11"]
+[Opening "Bogo-indiai védelem"]
+
+*
+
+[ECO "E12"]
+[Opening "Vezérindiai védelem"]
+
+*
+
+[ECO "E13"]
+[Opening "Vezérindiai, 4.Hc3, fö változat"]
+
+*
+
+[ECO "E14"]
+[Opening "Vezérindiai, 4.e3"]
+
+*
+
+[ECO "E15"]
+[Opening "Vezérindiai, 4.g3"]
+
+*
+
+[ECO "E16"]
+[Opening "Vezérindiai, Capablanca-változat"]
+
+*
+
+[ECO "E17"]
+[Opening "Vezérindiai, 5.Fg2 Fe7"]
+
+*
+
+[ECO "E18"]
+[Opening "Vezérindiai, régi fö változat, 7.Hc3"]
+
+*
+
+[ECO "E19"]
+[Opening "Vezérindiai, régi fö változat, 9.Vxc3"]
+
+*
+
+[ECO "E20"]
+[Opening "Nimzoindiai védelem"]
+
+*
+
+[ECO "E21"]
+[Opening "Nimzoindiai védelem, háromhuszáros változat"]
+
+*
+
+[ECO "E22"]
+[Opening "Nimzoindiai védelem, Spielmann-változat"]
+
+*
+
+[ECO "E23"]
+[Opening "Nimzoindiai védelem, Spielmann, 4...c5, 5.dc Hc6"]
+
+*
+
+[ECO "E24"]
+[Opening "Nimzoindiai védelem, Saemisch-változat"]
+
+*
+
+[ECO "E25"]
+[Opening "Nimzoindiai védelem, Saemisch-változat, Keresz-variáció"]
+
+*
+
+[ECO "E26"]
+[Opening "Nimzoindiai védelem, Saemisch-változat, 4.a3 Fxc3+ 5.bxc3 c5 6.e3"]
+
+*
+
+[ECO "E27"]
+[Opening "Nimzoindiai védelem, Saemisch-változat, 5...0-0"]
+
+*
+
+[ECO "E28"]
+[Opening "Nimzoindiai védelem, Saemisch-változat, 6.e3"]
+
+*
+
+[ECO "E29"]
+[Opening "Nimzoindiai védelem, Saemisch-változat, fö vonal"]
+
+*
+
+[ECO "E30"]
+[Opening "Nimzoindiai védelem, leningrádi változat,"]
+
+*
+
+[ECO "E31"]
+[Opening "Nimzoindiai védelem, leningrádi változat, fö vonal"]
+
+*
+
+[ECO "E32"]
+[Opening "Nimzoindiai védelem, klasszikus változat"]
+
+*
+
+[ECO "E33"]
+[Opening "Nimzoindiai védelem, klasszikus változat, 4...Hc6"]
+
+*
+
+[ECO "E34"]
+[Opening "Nimzoindiai védelem, klasszikus, Noa-variáció"]
+
+*
+
+[ECO "E35"]
+[Opening "Nimzoindiai védelem, klasszikus, Noa-variáció, 5.cxd5 exd5"]
+
+*
+
+[ECO "E36"]
+[Opening "Nimzoindiai védelem, klasszikus, Noa-variáció, 5.a3"]
+
+*
+
+[ECO "E37"]
+[Opening "Nimzoindiai védelem, klasszikus, Noa-variáció, fö változat 7.Vc2"]
+
+*
+
+[ECO "E38"]
+[Opening "Nimzoindiai védelem, klasszikus, 4...c5"]
+
+*
+
+[ECO "E39"]
+[Opening "Nimzoindiai védelem, klasszikus, Pirc-variáció"]
+
+*
+
+[ECO "E40"]
+[Opening "Nimzoindiai védelem, 4.e3"]
+
+*
+
+[ECO "E41"]
+[Opening "Nimzoindiai védelem, 4.e3 c5"]
+
+*
+
+[ECO "E42"]
+[Opening "Nimzoindiai védelem, 4.e3 c5, 5.He2 (Rubinstein)"]
+
+*
+
+[ECO "E43"]
+[Opening "Nimzoindiai védelem, Fischer-variáció"]
+
+*
+
+[ECO "E44"]
+[Opening "Nimzoindiai védelem, Fischer-variáció, 5.He2"]
+
+*
+
+[ECO "E45"]
+[Opening "Nimzoindiai védelem, 4.e3, Bronstein (Byrne)-variáció"]
+
+*
+
+[ECO "E46"]
+[Opening "Nimzoindiai védelem, 4.e3 O-O"]
+
+*
+
+[ECO "E47"]
+[Opening "Nimzoindiai védelem, 4.e3 O-O, 5.Fd3"]
+
+*
+
+[ECO "E48"]
+[Opening "Nimzoindiai védelem, 4.e3 O-O, 5.Fd3 d5"]
+
+*
+
+[ECO "E49"]
+[Opening "Nimzoindiai védelem, 4.e3, Botvinnik-rendszer"]
+
+*
+
+[ECO "E50"]
+[Opening "Nimzoindiai védelem, 4.e3 e8g8, 5.Hf3, ...d5 nélkül"]
+
+*
+
+[ECO "E51"]
+[Opening "Nimzoindiai védelem, 4.e3 e8g8, 5.Hf3 d7d5"]
+
+*
+
+[ECO "E52"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat ...b6-tal"]
+
+*
+
+[ECO "E53"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat ...c5-tel"]
+
+*
+
+[ECO "E54"]
+[Opening "Nimzoindiai védelem, 4.e3, Gligoric-rendszer 7...dc-vel"]
+
+*
+
+[ECO "E55"]
+[Opening "Nimzoindiai védelem, 4.e3, Gligoric-rendszer, Bronstein-variáció"]
+
+*
+
+[ECO "E56"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat 7...Hc6-tal"]
+
+*
+
+[ECO "E57"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat 8...dxc4 és 9...Fxc4 cxd4"]
+
+*
+
+[ECO "E58"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat 8...Fxc3"]
+
+*
+
+[ECO "E59"]
+[Opening "Nimzoindiai védelem, 4.e3, fö változat"]
+
+*
+
+[ECO "E60"]
+[Opening "Királyindiai védelem"]
+
+*
+
+[ECO "E61"]
+[Opening "Királyindiai védelem, 3.Hc3"]
+
+*
+
+[ECO "E62"]
+[Opening "Királyindiai, Fianchetto-változat"]
+
+*
+
+[ECO "E63"]
+[Opening "Királyindiai, Fianchetto, Panno-variáció"]
+
+*
+
+[ECO "E64"]
+[Opening "Királyindiai, Fianchetto, jugoszláv rendszer"]
+
+*
+
+[ECO "E65"]
+[Opening "Királyindiai, jugoszláv, 7.O-O"]
+
+*
+
+[ECO "E66"]
+[Opening "Királyindiai, Fianchetto, jugoszláv Panno"]
+
+*
+
+[ECO "E67"]
+[Opening "Királyindiai, Fianchetto ...Hd7-tel"]
+
+*
+
+[ECO "E68"]
+[Opening "Királyindiai, Fianchetto, klasszikus variáció, 8.e4"]
+
+*
+
+[ECO "E69"]
+[Opening "Királyindiai, Fianchetto, klasszikus fö változat"]
+
+*
+
+[ECO "E70"]
+[Opening "Királyindiai, 4.e4"]
+
+*
+
+[ECO "E71"]
+[Opening "Királyindiai, Makagonov-rendszer (5.h3)"]
+
+*
+
+[ECO "E72"]
+[Opening "Királyindiai e4 & g3-mal"]
+
+*
+
+[ECO "E73"]
+[Opening "Királyindiai, 5.Fe2"]
+
+*
+
+[ECO "E74"]
+[Opening "Királyindiai, Averbah, 6...c5"]
+
+*
+
+[ECO "E75"]
+[Opening "Királyindiai, Averbah, fö változat"]
+
+*
+
+[ECO "E76"]
+[Opening "Királyindiai védelem, négy gyalogos támadás"]
+
+*
+
+[ECO "E77"]
+[Opening "Királyindiai, négy gyalogos támadás, 6.Fe2"]
+
+*
+
+[ECO "E78"]
+[Opening "Királyindiai, négy gyalogos támadás, Fe2-vel és Hf3-mal"]
+
+*
+
+[ECO "E79"]
+[Opening "Királyindiai, négy gyalogos támadás, fö változat"]
+
+*
+
+[ECO "E80"]
+[Opening "Királyindiai, Sämisch-variáció"]
+
+*
+
+[ECO "E81"]
+[Opening "Királyindiai, Sämisch, 5...O-O"]
+
+*
+
+[ECO "E82"]
+[Opening "Királyindiai, Sämisch, dupla fianchetto változat"]
+
+*
+
+[ECO "E83"]
+[Opening "Királyindiai, Sämisch, 6...Hc6"]
+
+*
+
+[ECO "E84"]
+[Opening "Királyindiai, Sämisch, Panno, fö változat"]
+
+*
+
+[ECO "E85"]
+[Opening "Királyindiai, Sämisch, Ortodox változat"]
+
+*
+
+[ECO "E86"]
+[Opening "Királyindiai, Sämisch, Ortodox, 7.Hge2 c6"]
+
+*
+
+[ECO "E87"]
+[Opening "Királyindiai, Sämisch, Ortodox, 7.d5"]
+
+*
+
+[ECO "E88"]
+[Opening "Királyindiai, Sämisch, Ortodox, 7.d5 c6"]
+
+*
+
+[ECO "E89"]
+[Opening "Királyindiai, Sämisch, Ortodox fö változat"]
+
+*
+
+[ECO "E90"]
+[Opening "Királyindiai, 5.Hf3"]
+
+*
+
+[ECO "E91"]
+[Opening "Királyindiai, 6.Fe2"]
+
+*
+
+[ECO "E92"]
+[Opening "Királyindiai, klasszikus variáció"]
+
+*
+
+[ECO "E93"]
+[Opening "Királyindiai, Petroszjan-rendszer, fö változat"]
+
+*
+
+[ECO "E94"]
+[Opening "Királyindiai, Ortodox variáció"]
+
+*
+
+[ECO "E95"]
+[Opening "Királyindiai, Ortodox, 7...Hbd7, 8.Be1"]
+
+*
+
+[ECO "E96"]
+[Opening "Királyindiai Ortodox, 7...Hbd7, fö változat"]
+
+*
+
+[ECO "E97"]
+[Opening "Királyindiai, Ortodox, Aronyin-Tajmanov változat (Jugoszláv támadás / Mar del Plata-változat)"]
+
+*
+
+[ECO "E98"]
+[Opening "Királyindiai, Ortodox, Aronyin-Tajmanov, 9.He1"]
+
+*
+
+[ECO "E99"]
+[Opening "Királyindiai, Orthodox, Aronyin-Tajmanov, fö változat"]
+
+*
+

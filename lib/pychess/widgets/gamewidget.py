@@ -1,26 +1,29 @@
 
 """ This module handles the tabbed layout in PyChess """
 
-import imp, os
-import traceback
-import cStringIO
-
-import gtk, gobject
-
-from pychess.Utils.const import *
-from pychess.Utils.IconLoader import load_icon
-from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
-from pychess.System.Log import log
-from pychess.System import glock, conf, prefix
-from ChessClock import ChessClock
 from BoardControl import BoardControl
-from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, EAST, SOUTH
+from ChessClock import ChessClock
+from MenuItemsDict import MenuItemsDict
+from pychess.System import glock, conf, prefix
+from pychess.System.Log import log
+from pychess.System.glock import glock_connect
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.const import *
+from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.Players.Human import Human
+from pydock.PyDockTop import PyDockTop
+from pydock.__init__ import CENTER, EAST, SOUTH
+import cStringIO
+import gtk
+import gobject
+import imp
+import os
+import traceback
+
+
 
 
 ################################################################################
@@ -55,20 +58,12 @@ media_rewind = load_icon(16, "gtk-media-rewind-ltr")
 media_forward = load_icon(16, "gtk-media-forward-ltr")
 media_next = load_icon(16, "gtk-media-next-ltr")
 
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
-ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
-                     "call_flag", "resign", "ask_to_move")
-VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
-
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
 files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
 sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
-pref_sidePanels = []
-for panel in sidePanels:
-    if conf.get(panel.__name__, True):
-        pref_sidePanels.append(panel)
+
+dockLocation = addUserConfigPrefix("pydock.xml")
 
 ################################################################################
 # Initialize module variables                                                  #
@@ -91,97 +86,6 @@ for panel in sidePanels:
 
 docks = {"board": (gtk.Label("Board"), notebooks["board"])}
 
-################################################################################
-# Main menubar MenuItem classes to keep track of menu widget states            #
-################################################################################
-
-class GtkMenuItem (object):
-    def __init__ (self, name, gamewidget, sensitive=False, label=None):
-        assert type(sensitive) is bool
-        assert label is None or type(label) is str
-        self.name = name
-        self.gamewidget = gamewidget
-        self._sensitive = sensitive
-        self._label = label
-        
-    @property
-    def sensitive (self):
-        return self._sensitive
-    @sensitive.setter
-    def sensitive (self, sensitive):
-        assert type(sensitive) is bool
-        self._sensitive = sensitive
-        self._set_widget("sensitive", sensitive)
-        
-    @property
-    def label (self):
-        return self._label
-    @label.setter
-    def label (self, label):
-        assert isinstance(label, str) or isinstance(label, unicode)
-        self._label = label
-        self._set_widget("label", label)
-    
-    def _set_widget (self, property, value):
-        if not self.gamewidget.isInFront(): return
-        if widgets[self.name].get_property(property) != value:
-#            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
-            glock.acquire()
-            try:
-                widgets[self.name].set_property(property, value)
-            finally:
-                glock.release()
-    
-    def update (self):
-        self._set_widget("sensitive", self._sensitive)
-        if self._label is not None:
-            self._set_widget("label", self._label)
-
-class GtkMenuToggleButton (GtkMenuItem):
-    def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
-        assert type(active) is bool
-        GtkMenuItem.__init__(self, name, gamewidget, sensitive, label)
-        self._active = active
-
-    @property
-    def active (self):
-        return self._active
-    @active.setter
-    def active (self, active):
-        assert type(active) is bool
-        self._active = active
-        self._set_widget("active", active)
-
-    def update (self):
-        GtkMenuItem.update(self)
-        self._set_widget("active", self._active)
-
-class MenuItemsDict (dict):
-    """
-    Keeps track of menubar menuitem widgets that need to be managed on a game
-    by game basis. Each menuitem writes through its respective widget state to
-    the GUI if we are encapsulated in the gamewidget that's focused/infront
-    """
-    
-    VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
-    
-    class ReadOnlyDictException (Exception): pass
-
-    def __init__ (self, gamewidget):
-        dict.__init__(self)
-        for item in ACTION_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
-        for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget))
-        gamewidget.connect("infront", self.on_gamewidget_infront)
-    
-    def __setitem__ (self, item, value):
-        raise self.ReadOnlyDictException()
-    
-    def on_gamewidget_infront (self, gamewidget):
-        for menuitem in self:
-            self[menuitem].update()
-        
 ################################################################################
 # The holder class for tab releated widgets                                    #
 ################################################################################
@@ -219,7 +123,9 @@ class GameWidget (gobject.GObject):
         gamemodel.connect("game_paused", self.game_paused)
         gamemodel.connect("game_resumed", self.game_resumed)
         gamemodel.connect("moves_undone", self.moves_undone)
-        gamemodel.connect("game_unended", self.game_unended)        
+        gamemodel.connect("game_unended", self.game_unended)
+        gamemodel.connect("players_changed", self.players_changed)
+        self.players_changed(gamemodel)
         if gamemodel.timemodel:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
@@ -236,26 +142,42 @@ class GameWidget (gobject.GObject):
         self.board.__del__()
     
     def _update_menu_abort (self):
-        if self.gamemodel.isObservationGame():
+        if self.gamemodel.isEngine2EngineGame():
+            self.menuitems["abort"].sensitive = True
+            self.menuitems["abort"].tooltip = ""
+        elif self.gamemodel.isObservationGame():
             self.menuitems["abort"].sensitive = False
         elif isinstance(self.gamemodel, ICGameModel) \
            and self.gamemodel.status in UNFINISHED_STATES:
             if self.gamemodel.ply < 2:
                 self.menuitems["abort"].label = _("Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("This game can be automatically aborted without rating loss because there has not yet been two moves made")
             else:
                 self.menuitems["abort"].label = _("Offer Abort")
+                self.menuitems["abort"].tooltip = \
+                    _("Your opponent must agree to abort the game because there has been two or more moves made")
             self.menuitems["abort"].sensitive = True
         else:
             self.menuitems["abort"].sensitive = False
+            self.menuitems["abort"].tooltip = ""
 
     def _update_menu_adjourn (self):
-        # TODO: if remote opponent player is a guest, disable "adjourn"
         self.menuitems["adjourn"].sensitive = \
             isinstance(self.gamemodel, ICGameModel) and \
-            self.gamemodel.connection.isRegistred() and \
             self.gamemodel.status in UNFINISHED_STATES and \
-            not self.gamemodel.isObservationGame()
-    
+            not self.gamemodel.isObservationGame() and \
+            not self.gamemodel.hasGuestPlayers()
+        
+        if isinstance(self.gamemodel, ICGameModel) and \
+            self.gamemodel.status in UNFINISHED_STATES and \
+            not self.gamemodel.isObservationGame() and \
+            self.gamemodel.hasGuestPlayers():
+            self.menuitems["adjourn"].tooltip = \
+                _("This game can not be adjourned because one or both players are guests")
+        else:
+            self.menuitems["adjourn"].tooltip = ""
+
     def _update_menu_draw (self):
         self.menuitems["draw"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
             and not self.gamemodel.isObservationGame()
@@ -277,9 +199,9 @@ class GameWidget (gobject.GObject):
     
     def _update_menu_pause_and_resume (self):
         self.menuitems["pause1"].sensitive = self.gamemodel.status == RUNNING \
-            and not self.gamemodel.isObservationGame()
+            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
         self.menuitems["resume1"].sensitive = self.gamemodel.status == PAUSED \
-            and not self.gamemodel.isObservationGame()
+            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
         # TODO: if IC game is over and opponent is available, enable Resume
     
     def _update_menu_undo (self):
@@ -359,6 +281,32 @@ class GameWidget (gobject.GObject):
     
     def game_unended (self, gamemodel):
         self.game_started(gamemodel)
+    
+    def players_changed (self, gamemodel):
+        for player in gamemodel.players:
+            self.name_changed(player)
+            # Notice that this may connect the same player many times. In
+            # normal use that shouldn't be a problem.
+            glock_connect(player, "name_changed", self.name_changed)
+    
+    @property
+    def display_text (self):
+        vs = " " + _("vs") + " "
+        if isinstance(self.gamemodel, ICGameModel):
+            ficsgame = self.gamemodel.ficsgame
+            t = vs.join((ficsgame.wplayer.long_name(game_type=ficsgame.game_type),
+                         ficsgame.bplayer.long_name(game_type=ficsgame.game_type)))
+        else:
+            t = vs.join(map(repr, self.gamemodel.players))
+        
+        if self.gamemodel.display_text != "":
+            t += " " + self.gamemodel.display_text
+        return t
+    
+    def name_changed (self, player):
+        newText = self.display_text
+        if newText != self.getTabText():
+            self.setTabText(newText)
     
     def zero_reached (self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES: return
@@ -546,6 +494,7 @@ class GameWidget (gobject.GObject):
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
 
+
 ################################################################################
 # Main handling of gamewidgets                                                 #
 ################################################################################
@@ -627,7 +576,6 @@ def _ensureReadForGameWidgets ():
     dockAlign.show()
     dock.show()
     
-    dockLocation = addUserConfigPrefix("pydock.xml")
     for panel in sidePanels:
         hbox = gtk.HBox()
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
@@ -689,18 +637,14 @@ def _ensureReadForGameWidgets ():
         leaf.setDockable(False)
         
         # NE
-        leaf = leaf.dock(docks["historyPanel"][1], EAST, docks["historyPanel"][0], "historyPanel")
-        conf.set("historyPanel", True)
+        leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
+        leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")
         leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
-        conf.set("scorePanel", True)
         
         # SE
         leaf = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0], "bookPanel")
-        conf.set("bookPanel", True)
         leaf = leaf.dock(docks["commentPanel"][1], CENTER, docks["commentPanel"][0], "commentPanel")
-        conf.set("commentPanel", True)
         leaf = leaf.dock(docks["chatPanel"][1], CENTER, docks["chatPanel"][0], "chatPanel")
-        conf.set("chatPanel", True)
     
     def unrealize (dock):
         # unhide the panel before saving so its configuration is saved correctly

@@ -406,12 +406,12 @@ for fcord in xrange(120):
             b = 0
             tcord = fcord
             while True:
-               tcord += d
-               t = map[tcord]
-               if t == -1:
-                   break
-               rays[f][ray] = setBit (rays[f][ray], t)
-               directions[f][t] = ray
+                tcord += d
+                t = map[tcord]
+                if t == -1:
+                    break
+                rays[f][ray] = setBit (rays[f][ray], t)
+                directions[f][t] = ray
 
 ################################################################################
 #  The FromToRay[b2][f6] gives the diagonal ray from c3 to f6;                 #

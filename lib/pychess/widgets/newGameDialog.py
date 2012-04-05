@@ -1,7 +1,6 @@
 import os.path
 import gettext
 import locale
-from time import sleep
 from cStringIO import StringIO
 from operator import attrgetter
 from itertools import groupby
@@ -9,20 +8,16 @@ from itertools import groupby
 import gtk
 from cairo import ImageSurface
 
-try:
-    from gtksourceview import SourceBuffer
-    from gtksourceview import SourceView
-    from gtksourceview import SourceLanguagesManager as LanguageManager
-except ImportError:
-    from gtksourceview2 import Buffer as SourceBuffer
-    from gtksourceview2 import View as SourceView
-    from gtksourceview2 import LanguageManager
+from gtksourceview2 import Buffer as SourceBuffer
+from gtksourceview2 import View as SourceView
+from gtksourceview2 import LanguageManager
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
 from pychess.Utils.repr import localReprSign
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
@@ -32,7 +27,7 @@ from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
-from pychess.Savers import pgn
+from pychess.Savers import fen, pgn
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
@@ -41,7 +36,7 @@ from pychess.Variants.normal import NormalChess
 # Background.Taskers so they have a similar look.
 #===============================================================================
 
-big_time = load_icon(48, "stock_alarm", "appointment-soon")
+big_time = gtk.gdk.pixbuf_new_from_file(addDataPrefix("glade/stock_alarm.svg"))
 big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute")
 ipeople = load_icon(24, "stock_people", "system-users")
@@ -325,8 +320,11 @@ class _GameInitializationMode:
                     playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
                             (engine, color, diffi, variant, secs, incr), name))
                 else:
-                    playertups.append((LOCAL, Human, (color, ""), _("Human")))
-
+                    if not playertups or playertups[0][0] != LOCAL:
+                        name = conf.get("firstName", _("You"))
+                    else: name = conf.get("secondName", _("Guest"))
+                    playertups.append((LOCAL, Human, (color, name), name))
+            
             if secs > 0:
                 timemodel = TimeModel (secs, incr)
             else: timemodel = None
@@ -498,7 +496,14 @@ class EnterNotationExtension (_GameInitializationMode):
                     text = text.replace(sign, reprSign[i+1])
                 text = str(text)
 
-            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), pgn, 0, -1))
+            # First we try if it's just a FEN string
+            try:
+                LBoard(NORMALCHESS).applyFen(text)
+                loadType = fen
+            except:
+                loadType = pgn
+
+            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
         cls._generalRun(_callback)
 
 class ImageButton(gtk.DrawingArea):
@@ -530,6 +535,9 @@ class ImageButton(gtk.DrawingArea):
             self.window.process_updates(True)
 
 def createRematch (gamemodel):
+    """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
+        new game, based on the info in gamemodel """
+    
     if gamemodel.timemodel:
         secs = gamemodel.timemodel.intervals[0][WHITE]
         gain = gamemodel.timemodel.gain
@@ -543,9 +551,9 @@ def createRematch (gamemodel):
     bp = gamemodel.players[BLACK]
 
     if wp.__type__ == LOCAL:
-        player1tup = (wp.__type__, wp.__class__, (BLACK, ""), repr(wp))
+        player1tup = (wp.__type__, wp.__class__, (BLACK, repr(wp)), repr(wp))
         if bp.__type__ == LOCAL:
-            player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
+            player0tup = (bp.__type__, bp.__class__, (WHITE, repr(wp)), repr(bp))
         else:
             binname = bp.engine.path.split("/")[-1]
             if binname == "python":

@@ -12,7 +12,7 @@ from pychess.Savers.ChessFile import LoadingError
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
         return string
-    return string[:maxlen-3] + "..."
+    return string[:maxlen-1] + "…"
 
 class BoardPreview:
     
@@ -28,7 +28,7 @@ class BoardPreview:
         
         # Treeview
         self.list = self.widgets["gamesTree"]
-        self.list.set_model(gtk.ListStore(str,str,str))
+        self.list.set_model(gtk.ListStore(str, str,str,str))
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.list.get_selection().set_mode(gtk.SELECTION_BROWSE)
         self.list.get_selection().connect_after(
@@ -40,10 +40,11 @@ class BoardPreview:
         self.list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
         
         self.list.append_column(gtk.TreeViewColumn(None, renderer, text=1))
+        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=2))
         
         renderer = gtk.CellRendererText()
         renderer.set_property("xalign",1)
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=2))
+        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=3))
         
         # Connect buttons
         self.widgets["first_button"].connect("clicked", self.on_first_button)
@@ -99,7 +100,7 @@ class BoardPreview:
             names = [ellipsize (name, 9) for name in names]
             result = reprResult[chessfile.get_result (gameno)]
             result = result.replace("1/2","½")
-            self.list.get_model().append (names+[result])
+            self.list.get_model().append (["%s." % (gameno+1)]+names+[result])
         
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
@@ -120,7 +121,7 @@ class BoardPreview:
         self.boardview.animationLock.acquire()
         try:
             try:
-                self.chessfile.loadToModel(sel, -1, self.gamemodel)
+                self.chessfile.loadToModel(sel, -1, self.gamemodel, False)
             except LoadingError, e:
                 #TODO: Pressent this a little nicer
                 print e

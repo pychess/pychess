@@ -1,8 +1,5 @@
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Board import Board
-from pychess.Utils.Piece import Piece
-from pychess.Utils.Move import Move
-from pychess.Utils.const import *
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.const import WAITING_TO_START
 from pychess.Utils.logic import getStatus
 
 __label__ = _("Simple Chess Position")
@@ -22,7 +19,7 @@ from ChessFile import ChessFile
 
 class FenFile (ChessFile):
     
-    def loadToModel (self, gameno, position, model=None):
+    def loadToModel (self, gameno, position, model=None, quick_parse=True):
         if not model: model = GameModel()
         
         # We have to set full move number to 1 to make sure LBoard and GameModel
@@ -33,6 +30,7 @@ class FenFile (ChessFile):
         fen = self.games[gameno]
         
         model.boards = [model.variant.board(setup=fen)]
+        model.variations = [model.boards]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
         

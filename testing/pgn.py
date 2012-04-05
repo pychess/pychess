@@ -3,77 +3,67 @@ import unittest
 
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Savers import pgn
-from pychess.Utils.const import FEN_START
-
-
-KEEPENDS = True
-
-GAMES = """
-[Event "Bourdonnais"]
-[Site "La Palamede 1837"]
-[Date "1797.??.??"]
-[Round "?"]
-[White "De la Bourdonnais, Louis"]
-[Black "?"]
-[Result "1-0"]
-[Annotator "JvR"]
-[SetUp "1"]
-[FEN "8/2P1k3/8/5Q2/8/3pp3/4rp2/3K4 w - - 0 1"]
-[PlyCount "11"]
-[EventDate "1797.??.??"]
-
-{De la Bourdonnais (1797-1840) played a series of six matches with MacDonnell
-in London 1834. It was the first long international chess event. The tactical
-talent of the Frenchman prevailed. He composed a simple endgame study.} 1.
-c8=N+ $1 {Calvi and De la Bourdonnais supported the idea of minor promotion as
-a law of chess.} (1. Qh7+ $2 Kf6 $1 {leads to a repetition of moves.}) 1... Ke8
-2. Qg6+ Kf8 3. Qf6+ Kg8 4. Ne7+ Kh7 5. Qg6+ Kh8 6. Qg8# 1-0
-
-[Event "Horwitz"]
-[Site "Chess Studies 1851"]
-[Date "1807.??.??"]
-[Round "?"]
-[White "Kling & Horwitz"]
-[Black "?"]
-[Result "1-0"]
-[Annotator "JvR"]
-[SetUp "1"]
-[FEN "3N4/2p5/8/3q4/3k4/8/3PKP2/R7 w - - 0 1"]
-[PlyCount "9"]
-[EventDate "1807.??.??"]
-
-{Bernhard Horwitz (1807-1885) moved from Germany to London in 1846. Staunton
-defeated him in a match. He cooperated with the chess composer Josef Kling.
-Endgame composition began with their joined effort.} 1. Ra4+ Ke5 2. Ra5 $1 c5 (
-2... Qxa5 3. Nc6+) 3. Rxc5 $1 Qxc5 4. d4+ $1 Kxd4 (4... Qxd4 5. Nc6+) 5. Ne6+ {
-A fork decides the game in three variations.} 1-0
-"""
-
-MOVES = [
-["c7c8", "e7e8", "f5g6", "e8f8", "g6f6", "f8g8", "c8e7", "g8h7", "f6g6", "h7h8", "g6g8"],
-["a1a4", "d4e5", "a4a5", "c7c5", "a5c5", "d5c5", "d2d4", "e5d4", "d8e6"],
-]
+from pychess.Savers.pgn import load, walk, movre
+from pychess.Utils.const import *
 
 
 class PgnTestCase(unittest.TestCase):
-    
-    def setUp(self):
-        self.PgnFile = pgn.load(GAMES.splitlines(KEEPENDS))
-
-    def testPGN(self):
-        """Testing pgn file"""
-        for i, game in enumerate(self.PgnFile.games):
-            model = self.PgnFile.loadToModel(i, -1)
-            self.assertEqual(map(repr, model.moves), MOVES[i])
-    
-    def testMovre(self):
+    def test_movre(self):
         """Testing movre regexp"""
         moves = "e4 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# "+ \
                 "0-0-0 O-O-O 0-0 O-O Ka1 Kxf8 Kxd4+ "+ \
                 "Qc3 Rxh8 B1xg7 Nhxg2 Qe4xd5 Rb7+ Bxg4# N8xb2+ Qaxb7# Qd5xe4+"
         
-        self.assertEqual(' '.join(pgn.movre.findall(moves)), ' '.join(moves.split()))
+        self.assertEqual(' '.join(movre.findall(moves)), ' '.join(moves.split()))
+
+def create_test(lines, result, gameno):
+    def test_expected(self):
+        for orig, new in zip(lines.split(), result.split()):
+            # Seems most .PGN unnecessary contains unambiguous notation
+            # when second move candidate is invalid (leaves king in check)
+            # f.e.: 1.e4 e5 2.d4 Nf6 3.Nc3 Bb4 Nge2
+            if len(orig) == len(new)+1 and orig[0] == new[0] and orig[2:] == new[1:]:
+                continue
+
+            if orig[-1] in "?!" and new[-1] not in "?!":
+                # pgn export format uses nag
+                break
+            elif orig == "0-0" or orig == "0-0-0":
+                continue
+
+            self.assertEqual(orig, new)
+
+    return test_expected
+
+#PgnFile = load(open('/home/tamas/PGN/russian_chess.pgn'))
+#PgnFile = load(open('/home/tamas/PGN/kasp_top.pgn'))
+#PgnFile = load(open('/home/tamas/PGN/hartwig.pgn'))
+PgnFile = load(open('gamefiles/world_matches.pgn'))
+for i, game in enumerate(PgnFile.games):
+    print "%s/%s" % (i+1, len(PgnFile.games))
+    model = PgnFile.loadToModel(i, quick_parse=False)
+    result = []
+    walk(model.boards[0], result)
+    result = " ".join(result)
+    status = reprResult[model.status]
+    
+    lines = game[1].replace('.   ', '. ').replace('.  ', '. ')
+    lines = lines.replace('\r\n', ' ')
+    lines = lines.replace('  )', ')').replace(' )', ')')
+    lines = lines.replace('(  ', '(').replace('( ', '(')
+    lines = lines.replace('  }', '}').replace(' }', '}')
+    lines = lines.replace('{  ', '{').replace('{ ', '{')
+    lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
+    lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
+    lines = lines.splitlines()
+    lines = [line.strip() for line in lines]
+    lines = ' '.join(lines)
+    result = "%s %s" % (result, status)
+
+    test_method = create_test(lines, result, i)
+    test_method.__name__ = 'test_game_%d' % (i+1)
+    setattr (PgnTestCase, test_method.__name__, test_method)
+
 
 if __name__ == '__main__':
     unittest.main()
