@@ -182,6 +182,8 @@ class UCIEngine (ProtocolEngine):
             self._recordMove(board1, move, board2)
 
     def putMove (self, board1, move, board2):
+        log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
+            (board1, move, board2, self.board), self.defname)
         self._recordMove(board1, move, board2)
         
         if not self.readyMoves: return
@@ -189,6 +191,8 @@ class UCIEngine (ProtocolEngine):
         self._searchNow()
     
     def makeMove (self, board1, move, board2):
+        log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s\n" % \
+            (move, self.pondermove, board1, board2, self.board), self.defname)
         assert self.readyMoves
         
         with self.moveLock:
@@ -311,6 +315,9 @@ class UCIEngine (ProtocolEngine):
                 self.readyForStop = False
     
     def playerUndoMoves (self, moves, gamemodel):
+        log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+
         self._recordMoveList(gamemodel)
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
@@ -323,6 +330,9 @@ class UCIEngine (ProtocolEngine):
             self.returnQueue.put("int")
     
     def spectatorUndoMoves (self, moves, gamemodel):
+        log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+
         self._recordMoveList(gamemodel)
         
         if self.readyMoves:
@@ -374,6 +384,9 @@ class UCIEngine (ProtocolEngine):
         print >> self.engine, "ucinewgame"
     
     def _searchNow (self, ponderhit=False):
+        log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s\n" % \
+            (self.needBestmove, ponderhit, self.board), self.defname)
+
         with self.moveLock:
             commands = []
             
@@ -515,6 +528,8 @@ class UCIEngine (ProtocolEngine):
                     return
                 
                 self._recordMove(self.board.move(move), move, self.board)
+                log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
+                    (move, self.board), self.defname)
                 
                 if self.getOption('Ponder'):
                     self.pondermove = None
