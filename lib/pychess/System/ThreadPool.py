@@ -1,18 +1,15 @@
 """ This is a pool for reusing threads """
 
-import htmlentitydefs
+from threading import Thread, Condition, Lock
+import GtkWorker
+import Queue
 import inspect
 import os
-import re
-import sys as sys_
-import traceback, cStringIO, atexit
+import sys
 import threading
-from threading import Thread, currentThread, Condition, Lock
-import Queue
-
-import glock
-import GtkWorker
-import pychess
+import traceback
+import cStringIO
+import atexit
 
 if not hasattr(Thread, "_Thread__bootstrap_inner"):
     class SafeThread (Thread):
@@ -20,14 +17,14 @@ if not hasattr(Thread, "_Thread__bootstrap_inner"):
             try:
                 self._Thread__bootstrap_inner()
             except:
-                if self.__daemonic and (sys_ is None or sys_.__doc__ is None):
+                if self.__daemonic and (sys is None or sys.__doc__ is None):
                     return
                 raise
     setattr(SafeThread, "_Thread__bootstrap_inner", SafeThread._Thread__bootstrap)
     setattr(SafeThread, "_Thread__bootstrap", SafeThread.encaps)
     threading.Thread = SafeThread
 
-maxThreads = sys_.maxint
+maxThreads = sys.maxint
 
 class ThreadPool:
     def __init__ (self):
@@ -61,7 +58,10 @@ class ThreadPool:
         self.lock.release()
         
     def _getThreadName (self, thread, func):
-        framerecord = inspect.stack()[2]
+        try:
+            framerecord = inspect.stack()[2]
+        except TypeError:
+            return ""
 #        d = os.path.basename(os.path.dirname(framerecord[1]))
         f = os.path.basename(framerecord[1])
 #        f = os.sep.join((d, f))
@@ -112,8 +112,9 @@ class ThreadPool:
                             #    print e
                             #    pass
                             
+                            _, _, exc_traceback = sys.exc_info()
                             list = self.tracestack[:-2] + \
-                                    traceback.extract_tb(sys_.exc_traceback)[2:]
+                                    traceback.extract_tb(exc_traceback)[2:]
                             error = "".join(traceback.format_list(list))
                             print error.rstrip()
                             print str(e.__class__), e

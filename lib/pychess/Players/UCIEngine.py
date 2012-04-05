@@ -17,7 +17,7 @@ from pychess.System.ThreadPool import pool
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ProtocolEngine import ProtocolEngine
-from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
@@ -241,6 +241,8 @@ class UCIEngine (ProtocolEngine):
             self.board = self.gameBoard.switchColor()
     
     def setOptionInitialBoard (self, model):
+        log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
+            (self, model), self.defname)
         self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
@@ -275,6 +277,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def pause (self):
+        log.debug("pause: self=%s\n" % self, self.defname)
         self.engine.pause()
         return
         
@@ -284,6 +287,7 @@ class UCIEngine (ProtocolEngine):
             print >> self.engine, "stop"
     
     def resume (self):
+        log.debug("resume: self=%s\n" % self, self.defname)
         self.engine.resume()
         return
         
@@ -397,6 +401,7 @@ class UCIEngine (ProtocolEngine):
                     commands.append("position fen %s" % self.board.asFen())
                 else:
                     commands.append("position %s" % self.uciPosition)
+
                 commands.append("go infinite")
             
             if self.multipvSetting > 1:
@@ -441,6 +446,8 @@ class UCIEngine (ProtocolEngine):
         #---------------------------------------------------------- Initializing
         if parts[0] == "id":
             self.ids[parts[1]] = " ".join(parts[2:])
+            if parts[1] == "name":
+                self.setName(self.ids["name"])
             return
         
         if parts[0] == "uciok":

@@ -3,6 +3,8 @@ import webbrowser
 import math
 import atexit
 import signal
+import urllib 
+from urlparse import urlparse
 
 import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
@@ -23,6 +25,7 @@ from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
+from pychess.Savers import png
 from pychess.ic import ICLogon
 from pychess import VERSION, VERSION_NAME
 
@@ -30,6 +33,12 @@ from pychess import VERSION, VERSION_NAME
 # gameDic - containing the gamewidget:gamemodel of all open games              #
 ################################################################################
 gameDic = {}
+
+########################
+#  For Racent Chooser 
+########################
+recentManager = gtk.recent_manager_get_default()
+
 
 class GladeHandlers:
     
@@ -62,9 +71,22 @@ class GladeHandlers:
         
         # Bring playing window to the front
         gamewidget.getWidgets()["window1"].present()
+
+        gamemodel.connect("game_loaded", GladeHandlers.__dict__["on_recent_game_activated"])
+        gamemodel.connect("game_saved", GladeHandlers.__dict__["on_recent_game_activated"])
         
         # Make sure we can remove gamewidgets from gameDic later
         gmwidg.connect("closed", GladeHandlers.__dict__["on_gmwidg_closed"])
+
+    def on_recent_game_activated (gamemodel, uri):
+        if isinstance(uri, basestring):
+            o = urlparse(uri)
+            recent_data = {
+                'mime_type':'application/x-chess-pgn',
+                'app_name':'pychess',
+                'app_exec':'pychess',
+                'group':'pychess'}
+            recentManager.add_full("file://" + o.path, recent_data)
     
     def on_gmwidg_closed (gmwidg):
         del gameDic[gmwidg]
@@ -105,6 +127,10 @@ class GladeHandlers:
     
     def on_save_game_as1_activate (widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
+
+    def on_export_position_activate (widget):
+        gmwidg = gamewidget.cur_gmwidg()
+        png.export(gmwidg, gameDic[gmwidg])
     
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
@@ -230,8 +256,14 @@ class PyChess:
         widgets["Background"].show_all()
         
         flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+        # To get drag in the whole window, we add it to the menu and the
+        # background. If it can be gotten to work, the drag_dest_set_proxy
+        # method is very interesting.
         widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        # The following two should really be set in the glade file
+        widgets["menubar1"].set_events(widgets["menubar1"].get_events() | gtk.gdk.DRAG_STATUS)
+        widgets["Background"].set_events(widgets["Background"].get_events() | gtk.gdk.DRAG_STATUS)
         
         #=======================================================================
         # Init 'minor' dialogs
@@ -268,6 +300,29 @@ class PyChess:
         clb.connect("activate", callback)
         clb.connect("clicked", callback)
         widgets["aboutdialog1"].connect("delete-event", callback)
+
+        #---------------------------------------------------- RecentChooser
+        def recent_item_activated (self):
+            uri = self.get_current_uri()
+            try:
+                urllib.urlopen(uri).close()
+                newGameDialog.LoadFileExtension.run(self.get_current_uri())
+            except (IOError, OSError):
+                #shomething wrong whit the uri
+                recentManager.remove_item(uri)
+                
+        self.menu_recent = gtk.RecentChooserMenu(recentManager)
+        self.menu_recent.set_show_tips(True)
+        self.menu_recent.set_sort_type(gtk.RECENT_SORT_MRU)
+        self.menu_recent.set_limit(10)
+        self.menu_recent.set_name("menu_recent")
+        
+        self.file_filter = gtk.RecentFilter()
+        self.file_filter.add_mime_type("application/x-chess-pgn")
+        self.menu_recent.set_filter(self.file_filter)
+
+        self.menu_recent.connect("item-activated", recent_item_activated)
+        widgets["load_recent_game1"].set_submenu(self.menu_recent)
         
         #----------------------------------------------------- Discoverer dialog
         def discovering_started (discoverer, binnames):

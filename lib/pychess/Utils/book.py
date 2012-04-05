@@ -43,7 +43,7 @@ def getOpenings (board):
                 lo = mid + 1
             else:
                 hi = mid
-        
+
         bookFile.seek(lo * 16)
         while bookFile.readinto(entry) == 16:
             if entry.key != key:

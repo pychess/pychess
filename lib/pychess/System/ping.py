@@ -1,16 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-from threading import Thread
-from subprocess import *
-import select, signal, re, os, atexit
-
 from gobject import GObject, SIGNAL_RUN_FIRST
-
-from pychess.System import glock
 from pychess.System.Log import log
-from pychess.System.SubProcess import SubProcess, SubProcessError, searchPath
-from pychess.System.ThreadPool import PooledThread
-from pychess.Utils.const import SUBPROCESS_PTY
+from pychess.System.SubProcess import SubProcess, searchPath
+import re
 
 class Pinger (GObject):
     """ The recieved signal contains the time it took to get response from the

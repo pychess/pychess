@@ -19,6 +19,7 @@ IAC_WONT_ECHO = ''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
 class TimeSeal:
     BUFFER_SIZE = 4096
+    sensitive = False
 
     def open (self, address, port):
         if hasattr(self, "closed") and self.closed:
@@ -132,7 +133,8 @@ class TimeSeal:
         str = self.writebuf[:i]
         self.writebuf = self.writebuf[i+1:]
         
-        log.log(str+"\n", (repr(self), "raw"))
+        logstr = "*"*len(str) if self.sensitive else str
+        log.log(logstr+"\n", (repr(self), "raw"))
         str = self.encode(str)
         self.sock.send(str+"\n")
     

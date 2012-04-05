@@ -8,14 +8,13 @@ import gtk
 
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
-from pychess.Utils.repr import *
+from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.System import conf
 from pychess.System import glock
 from pychess.System.Log import log
-
 from pychess.widgets import preferencesDialog
 
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown, MENU_ITEMS
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -71,7 +70,8 @@ def on_gmwidg_title_changed (gmwidg):
 #===============================================================================
 
 def game_ended (gamemodel, reason, gmwidg):
-    
+    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s\n" % \
+        (reason, gmwidg, gamemodel))
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
                "mover": gamemodel.curplayer}
@@ -95,10 +95,11 @@ def game_ended (gamemodel, reason, gmwidg):
             md.add_button(_("Offer Rematch"), 0)
         else:
             md.add_button(_("Play Rematch"), 1)
-            if gamemodel.ply > 1:
-                md.add_button(_("Undo two moves"), 2)
-            elif gamemodel.ply == 1:
-                md.add_button(_("Undo one move"), 2)
+            if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
+                if gamemodel.ply == 1:
+                    md.add_button(_("Undo one move"), 2)
+                elif gamemodel.ply > 1:
+                    md.add_button(_("Undo two moves"), 2)
     
     def cb (messageDialog, responseId):
         if responseId == 0:
@@ -107,6 +108,7 @@ def game_ended (gamemodel, reason, gmwidg):
             else:
                 gamemodel.players[1].offerRematch()
         elif responseId == 1:
+            # newGameDialog uses ionest uses gamenanny uses newGameDialog...
             from pychess.widgets.newGameDialog import createRematch
             createRematch(gamemodel)
         elif responseId == 2:
@@ -210,7 +212,7 @@ def offer_callback (player, offer, gamemodel, gmwidg):
         message = _("You sent a pause offer")
     elif offer.type == RESUME_OFFER:
         message = _("You sent a resume offer")
-    elif offer.type == ABORT_OFFER:
+    elif offer.type == TAKEBACK_OFFER:
         message = _("You sent an undo offer")
     elif offer.type == HURRY_ACTION:
         message = _("You asked your opponent to move")
