@@ -1,7 +1,7 @@
 import gtk
 import cairo
 
-from pychess.gfx.Pieces import drawPiece
+from pychess.gfx import Pieces
 
 class PieceWidget (gtk.DrawingArea):
     def __init__(self, piece):
@@ -21,4 +21,4 @@ class PieceWidget (gtk.DrawingArea):
         s = min(rect.width, rect.height)
         x = (rect.width-s) / 2.0
         y = (rect.height-s) / 2.0
-        drawPiece(self.piece, context, x, y, s)
+        Pieces.drawPiece(self.piece, context, x, y, s)

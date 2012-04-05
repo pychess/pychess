@@ -1,10 +1,16 @@
 import re
-from pychess.Utils.const import *
 import time
 import math
-from pychess.System import conf
 
-elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+")
+import cairo
+import rsvg
+
+from pychess.Utils.const import *
+from pychess.System import conf
+from pychess.System.prefix import addDataPrefix
+from pychess.System.cairoextras import create_cairo_font_face_for_file
+
+elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+|[z]\s+")
 spaceExpr = re.compile(r"[\s,]+")
 
 l = []
@@ -23,7 +29,7 @@ def parse(n, psize):
             
 # This has double speed at drawing, but when generating new functions, it
 # takes about ten times longer.
-def drawPiece3 (piece, cc, x, y, psize):
+def drawPiece1 (piece, cc, x, y, psize, allWhite=False):
     cc.save()
     cc.move_to(x,y)
     
@@ -34,18 +40,26 @@ def drawPiece3 (piece, cc, x, y, psize):
     cc.fill()
     cc.restore()
 
-def drawPieceReal (piece, cc, psize):
+def drawPieceReal (piece, cc, psize, allWhite=False):
+    color = WHITE if allWhite else piece.color
     
     # Do the actual drawing to the Cairo context
-    for cmd, points in parsedPieces[piece.color][piece.sign][psize]:
+    for cmd, points in parsedPieces[color][piece.sign][psize]:
         if cmd == 'M':
             cc.rel_move_to(*points)
         elif cmd == 'L':
             cc.rel_line_to(*points)
-        else:
+        elif cmd == 'C':
             cc.rel_curve_to(*points)
+        else:
+            if fill_path:
+                cc.set_source_rgb(1,1,1)
+                cc.fill_preserve()
+                cc.set_source_rgb(0,0,0)
+                
+def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
+    """Rendering pieces with draw each time method"""
 
-def drawPiece (piece, cc, x, y, psize):
     cc.save()
     cc.move_to(x,y)
     
@@ -54,13 +68,79 @@ def drawPiece (piece, cc, x, y, psize):
                 for cmd, points in parsedPieces[piece.color][piece.sign][size]]
         parsedPieces[piece.color][piece.sign][psize] = list
     
-    drawPieceReal (piece, cc, psize)
+    drawPieceReal (piece, cc, psize, allWhite)
     cc.fill()
     cc.restore()
 
-# This version has proven itself nearly three times as slow as the "draw each time" method. At least when drawing one path only. Might be useful when drawing svg    
-import cairo
-def drawPiece2 (piece, cc, x, y, psize):
+def drawPiece3(piece, context, x, y, psize, allWhite=False):
+    """Rendering pieces using .svg chess figurines"""
+
+    color = WHITE if allWhite else piece.color
+    if all_in_one:
+        image = svg_pieces
+        w, h = image.props.width/6, image.props.height/2
+        offset_x = piece_ord[piece.sign]*psize
+        offset_y = 0 if color == BLACK else psize
+    else:
+        image = svg_pieces[color][piece.sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
+    
+    context.save()
+
+    context.rectangle(x, y, psize, psize)
+    context.clip()
+    context.translate(x-offset_x, y-offset_y)
+    context.scale(1.0*psize/w, 1.0*psize/h)
+    
+    context.push_group()
+    
+    if all_in_one:
+        pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1].capitalize())
+        image.render_cairo(context, id=pieceid)
+    else:
+        image.render_cairo(context)
+        
+    context.pop_group_to_source()
+    context.paint_with_alpha(piece.opacity)
+    context.restore()
+
+def drawPiece4(piece, context, x, y, psize, allWhite=False):
+    """Rendering pieces using .ttf chessfont figurines"""
+
+    color = WHITE if allWhite else piece.color
+
+    context.set_font_face(chess_font_face)
+    context.set_font_size(psize)
+    context.move_to(x, y+psize)
+
+    if fill_path:
+        context.text_path(piece2char[color][piece.sign])
+        close_path = False
+        for cmd, points in context.copy_path():
+            if cmd == 0:
+                context.move_to(*points)
+                if close_path:
+                    context.set_source_rgb(1,1,1)
+                    context.fill_preserve()
+                    context.set_source_rgb(0,0,0)
+                    close_path = False
+            elif cmd == 1:
+                context.line_to(*points)
+            elif cmd == 2:
+                context.curve_to(*points)
+            else:
+                close_path = True
+        context.fill()
+    else:
+        context.show_text(piece2char[color][piece.sign])
+    
+# This version has proven itself nearly three times as slow as the "draw each time" method.
+# At least when drawing one path only. Might be useful when drawing svg    
+def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
+    """Rendering pieces from cache instead of draw each time"""
+
     if not piece in surfaceCache:
         s = cc.get_target().create_similar(cairo.CONTENT_COLOR_ALPHA, int(size), int(size))
         ctx = cairo.Context(s)
@@ -82,10 +162,10 @@ def drawPiece2 (piece, cc, x, y, psize):
     # Or paint() instead of fill().  fill() needs a path, so you should do a
     # rectangle() first.
     
-    
     cc.set_source_surface(surfaceCache[piece], 0, 0)
     cc.fill()
     cc.restore()
+
 surfaceCache = {}
 
 size = 800.0
@@ -115,8 +195,83 @@ for color in (WHITE, BLACK):
         list = []
         thep = [0,0]
         for g1, g2 in elemExpr.findall(pieces[color][piece]):
-            if not g1 or not g2: continue
-            points = [float(s) for s in spaceExpr.split(g2)]
-            list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
-            thep = points[-2:]
+            if g2:
+                points = [float(s) for s in spaceExpr.split(g2)]
+                list += [(g1, [f-thep[i%2] for i,f in enumerate(points)])]
+                thep = points[-2:]
+            elif g1 == 'z':
+                list += [('z', (0,0))]
+            else:
+                continue
         parsedPieces[color][piece] = {size:list}
+
+
+piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
+pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING)
+pnames = ('pawn','knight','bishop','rook','queen','king')
+
+def get_svg_pieces(svgdir):
+    """Load figurines from .svg files"""
+
+    if all_in_one:
+        rsvg_handles = rsvg.Handle(addDataPrefix("pieces/%s/%s.svg" % (svgdir, svgdir)))
+    else:
+        rsvg_handles = [[None]*7, [None]*7]
+        for c, color in ((WHITE, 'white'), (BLACK, 'black')):
+            for p, piece in zip(pieces, pnames):
+                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s-%s.svg" % (svgdir, color, piece)))
+    return rsvg_handles
+
+
+def get_chess_font_face(name):
+    """Set chess font and char mapping for a chess .ttf"""
+    
+    if name in ('alpha', 'berlin', 'cheq'):
+        char_map = ('phbrqk', 'ojntwl')
+    else:
+        char_map = ('pnbrqk', 'omvtwl')
+
+    piece_chars = [[None]*7, [None]*7]
+    for color in (WHITE, BLACK):
+        for piece, char in zip(pieces, char_map[color]):
+            piece_chars[color][piece] = char
+    
+    face = create_cairo_font_face_for_file(addDataPrefix("pieces/ttf/%s.ttf" % name))
+    return face, piece_chars
+
+
+# TODO: If we need fill_path=False at all, it can be a checkbox in preferences/themes
+fill_path = True
+
+all_in_one = None
+drawPiece = None
+svg_pieces = None
+chess_font_face = None
+piece2char = None
+
+def set_piece_theme(piece_set):
+    global all_in_one
+    global drawPiece
+    global svg_pieces
+    global chess_font_face
+    global piece2char
+    
+    piece_set = piece_set.lower()
+    if piece_set == 'pychess':
+        drawPiece = drawPiece2
+    elif piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
+        all_in_one = True
+        drawPiece = drawPiece3
+        svg_pieces = get_svg_pieces(piece_set)
+    elif piece_set in ('cburnett', 'chessmonk', 'freestaunton'):
+        all_in_one = False
+        drawPiece = drawPiece3
+        svg_pieces = get_svg_pieces(piece_set)
+    else:
+        drawPiece = drawPiece4
+        try:
+            chess_font_face, piece2char = get_chess_font_face(piece_set)
+        except:
+            drawPiece = drawPiece2
+
+set_piece_theme(conf.get("pieceTheme", "pychess"))

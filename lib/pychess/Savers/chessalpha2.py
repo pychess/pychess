@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import re
-from htmlentitydefs import *
-
-from pychess.Utils.Cord import Cord
-from pychess.Utils.Piece import Piece
-from pychess.Utils.Move import *
-from pychess.Utils.const import *
-from pychess.Utils.lutils.leval import evaluateComplete
-from pychess.Utils.logic import getStatus
-
 from ChessFile import ChessFile, LoadingError
+from htmlentitydefs import entitydefs
+from pychess.Utils import Cord
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.Move import toFAN
+from pychess.Utils.Piece import Piece
+from pychess.Utils.const import *
+from pychess.Utils.logic import getStatus
+import re
+
+
 group = lambda l, s: [l[i:i+s] for i in xrange(0,len(l),s)]
 
 __label__ = _("Chess Alpha 2 Diagram")
@@ -141,6 +141,7 @@ class AlphaFile (ChessFile):
                     board.addPiece(Cord(x,7-y), Piece(col,pie))
         
         model.boards = [board]
+        model.variations = [model.boards]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
         

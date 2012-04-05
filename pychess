@@ -1,7 +1,12 @@
 #!/usr/bin/python
-#
-# PyChess startup script
-#
+
+# PyChess startup script.
+# This script is to check package requirements, and set up system/enviroment
+# stuff, to make the PyChess Main class run smoothly.
+
+
+###############################################################################
+# Check requirements
 
 import os, sys
 if sys.version_info < (2, 5, 0):
@@ -14,15 +19,34 @@ pygtk.require("2.0")
 try:
     import rsvg
 except ImportError:
-    print 'ERROR: Could not load the rsvg module.'
-    print 'You need to install the rsvg package which is called python-rsvg in'
-    print 'Debian/Ubuntu and gnome-python2-rsvg in RPM based distributions like Fedora'
+    print 'ERROR: Could not load the rsvg python module.'
+    print 'You need to install the rsvg python package which is called '
+    print 'python-rsvg in Debian/Ubuntu and gnome-python2-rsvg in RPM based '
+    print 'distributions like Fedora'
     sys.exit(1)
+
+try:
+    import gtksourceview2
+except ImportError:
+    print 'ERROR: Could not load the gtksourceview2 python module.'
+    print 'You need to install the gtksourceview2 python package which is '
+    print 'called pygtksourceview in most distributions'
+    sys.exit(1)
+
+
+###############################################################################
+# Fix environment
 
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
+if "PYTHONPATH" in os.environ:
+    os.environ["PYTHONPATH"] = os.pathsep.join(
+        os.path.abspath(p) for p in os.environ["PYTHONPATH"].split(os.pathsep))
 
-# Import datalocation functions and ensure access to codebase
+
+###############################################################################
+# Ensure access to data store
+
 try:
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 except ImportError:
@@ -30,7 +54,10 @@ except ImportError:
     print "Please try to run pychess as stated in the INSTALL file"
     sys.exit(1)
 
+
+###############################################################################
 # Set up translations
+
 import gettext, gtk.glade
 if isInstalled():
     gettext.install("pychess", unicode=1, names=('ngettext',))
@@ -40,7 +67,10 @@ else:
     gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
 gtk.glade.textdomain("pychess")
 
-# Parse command-line options
+
+###############################################################################
+# Parse command line arguments
+
 import pychess
 no_debug = False
 glock_debug = False
@@ -72,6 +102,9 @@ else:
     thread_debug = args.thread_debug
     chess_file = args.chess_file
 
+
+###############################################################################
 # Let's rumble!
+
 import pychess.Main
 pychess.Main.run(no_debug, glock_debug, thread_debug, chess_file)

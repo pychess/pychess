@@ -3,6 +3,7 @@ import time
 import gtk
 import gobject
 import pango
+import re
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
@@ -10,9 +11,14 @@ from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
+from pychess.ic.FICSObjects import FICSPlayer
 
 TYPE_PERSONAL, TYPE_CHANNEL = range(2)
 
+def get_playername (playername):
+    m = re.match("(\w+)\W*", playername)
+    return m.groups()[0]
+    
 class BulletCellRenderer (gtk.GenericCellRenderer):
     __gproperties__ = {
         "color": (object, "Color", "Color", gobject.PARAM_READWRITE),
@@ -110,12 +116,15 @@ class TextImageTree (gtk.TreeView):
         self.get_selection().connect("changed", self.selection_changed)
     
     def addRow (self, id, text, type):
+        if id in self.id2iter: return
         iter = self.props.model.append([id, text, type])
         self.id2iter[id] = iter
         self.idSet.add(id)
     
     def removeRow (self, id):
-        iter = self.id2iter[id]
+        try:
+            iter = self.id2iter[id]
+        except KeyError: return
         self.props.model.remove(iter)
         del self.id2iter[id]
         self.idSet.remove(id)
@@ -206,7 +215,7 @@ class ViewsPanel (gtk.Notebook, Panel):
         glock_connect(self.connection.cm, "channelMessage",
                       self.onChannelMessage, id, chatView)
         glock_connect(self.connection.cm, "privateMessage",
-                      self.onPersonMessage, name, chatView)
+                      self.onPersonMessage, get_playername(name), chatView)
         
         if type == TYPE_CHANNEL:
             glock_connect(self.connection.cm, "channelLog",
@@ -239,7 +248,7 @@ class ViewsPanel (gtk.Notebook, Panel):
         if type == TYPE_CHANNEL:
             self.connection.cm.tellChannel(id, text)
         elif type == TYPE_PERSONAL:
-            self.connection.cm.tellPlayer(name, text)
+            self.connection.cm.tellPlayer(get_playername(name), text)
         chatView.addMessage(self.connection.getUsername(), text)
     
     def onPersonMessage (self, cm, name, title, isadmin, text, name_, chatView):
@@ -307,21 +316,22 @@ class InfoPanel (gtk.Notebook, Panel):
         def __init__ (self, id, text, chatView, connection):
             gtk.Alignment.__init__(self, xscale=1, yscale=1)
             self.add(gtk.Label(_("Loading player data")))
-            
+
+            playername = get_playername(text)            
             self.fm = connection.fm
             self.handle_id = glock_connect(self.fm, "fingeringFinished",
-                                           self.onFingeringFinished, text)
+                                           self.onFingeringFinished, playername)
             
-            self.fm.finger(text)
+            self.fm.finger(playername)
         
-        def onFingeringFinished (self, fm, finger, text):
+        def onFingeringFinished (self, fm, finger, playername):
             if not isinstance(self.get_child(), gtk.Label) or \
-                    finger.getName().lower() != text.lower():
+                    finger.getName().lower() != playername.lower():
                 return
             self.fm.disconnect(self.handle_id)
             
             label = gtk.Label()
-            label.set_markup("<b>%s</b>" % text)
+            label.set_markup("<b>%s</b>" % playername)
             widget = gtk.Frame()
             widget.set_label_widget(label)
             widget.set_shadow_type(gtk.SHADOW_NONE)
@@ -488,9 +498,19 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
                 else:
                     self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
         
-        for name in self.connection.glm.getPlayerlist():
-            id = self.compileId(name, TYPE_PERSONAL)
-            self.playersList.addRow(id, name, TYPE_PERSONAL)
+        for player in self.connection.players.values():
+            if player.online:
+                id = self.compileId(player.name, TYPE_PERSONAL)
+                self.playersList.addRow(id, player.name + player.display_titles(),
+                                        TYPE_PERSONAL)
+        
+        self.connection.players.connect("FICSPlayerEntered",
+            lambda players, player: self.playersList.addRow(
+            self.compileId(player.name, TYPE_PERSONAL),
+            player.name + player.display_titles(), TYPE_PERSONAL))
+        self.connection.players.connect("FICSPlayerExited",
+            lambda players, player: self.playersList.removeRow(
+            self.compileId(player.name, TYPE_PERSONAL)))
     
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:

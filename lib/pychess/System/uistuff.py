@@ -1,20 +1,15 @@
-
-import re
-import webbrowser
-import colorsys
-from math import log as ln, ceil
-import Queue
-
-import gobject
-import gtk.glade
-import pango
-
-from pychess.System import glock
-from pychess.System import conf
+from pychess.System import conf, glock
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
+import Queue
+import colorsys
+import gtk.glade
+import pango
+import re
+import webbrowser
+
 
 def createCombo (combo, data):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
@@ -56,14 +51,25 @@ def updateCombo (combo, data):
     combo.set_active(new_active)
 
 
+# int.bit_length() new in Python 2.7, so we have to use an equivalent
+def int_bit_length(i):
+    s = bin(i)       # binary representation:  bin(-37) --> '-0b100101'
+    s = s.lstrip('-0b') # remove leading zeros and minus sign
+    return len(s)       # len('100101') --> 6
+
 def genColor (n, startpoint=0):
     assert n >= 1
     # This splits the 0 - 1 segment in the pizza way
-    h = (2*n-1)/(2**ceil(ln(n)/ln(2)))-1
+    h = (2*n-1)/(2.**int_bit_length(n-1))-1
     h = (h + startpoint) % 1
-    # We set saturation based on the amount of green, in the range 0.6 to 0.8
+    # We set saturation based on the amount of green, scaled to the interval
+    # [0.6..0.8]. This ensures a consistent lightness over all colors.
     rgb = colorsys.hsv_to_rgb(h, 1, 1)
     rgb = colorsys.hsv_to_rgb(h, 1, (1-rgb[1])*0.2+0.6)
+    # This algorithm ought to balance colors more precisely, but it overrates
+    # the lightness of yellow, and nearly makes it black
+    # yiq = colorsys.rgb_to_yiq(*rgb)
+    # rgb = colorsys.yiq_to_rgb(.125, yiq[1], yiq[2])
     return rgb
 
 
@@ -122,6 +128,7 @@ METHODS = (
     # gtk.ToggleComboBox should be listed prior to gtk.ToggleButton, as it is a
     # subclass, but requires different handling
     (ToggleComboBox, ("_get_active", "_set_active", "changed")),
+    (gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
     (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
     (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
     (gtk.Range, ("get_value", "set_value", "value-changed")))
@@ -384,7 +391,7 @@ def initTexviewLinks (textview, text):
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter and iter.has_tag(tag) and \
-                    tag.props.foreground_gdk.red == 65535:
+                    tag.props.foreground_gdk.red == 0xffff:
                 if type == "link":
                     webbrowser.open(link)
                 else: webbrowser.open("mailto:"+link)
@@ -410,7 +417,7 @@ def initTexviewLinks (textview, text):
 
 
 
-def initLabelLinks (text, url):
+def LinkLabel (text, url):
     label = gtk.Label()
     
     eventbox = gtk.EventBox()

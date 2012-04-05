@@ -5,14 +5,16 @@
     Can be used for commenting on board changes.
 """
 
-import leval
-from pychess.Utils.const import *
-from pychess.Utils.repr import reprColor, reprPiece
-from lmove import *
-from lmovegen import *
-from lsort import staticExchangeEvaluate
 from ldata import *
-from validator import validateMove
+from pychess.Utils.const import *
+from pychess.Utils.lutils.attack import staticExchangeEvaluate, getAttacks, \
+    defends
+from pychess.Utils.lutils.lmove import TCORD, FCORD, FLAG, PROMOTE_PIECE, toSAN, \
+    newMove
+from pychess.Utils.lutils.lmovegen import genCaptures, genAllMoves
+from pychess.Utils.lutils.validator import validateMove
+from pychess.Utils.repr import reprColor, reprPiece
+import leval
 
 
 def join(items):

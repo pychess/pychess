@@ -117,6 +117,8 @@ class Sidepanel:
         print "----------------------"
         
     def shown_changed (self, boardview, shown):
+        if not self.boardview.model.isMainlineBoard(shown):
+            return
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)
             self.plot.redraw()

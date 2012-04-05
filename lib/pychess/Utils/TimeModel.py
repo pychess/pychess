@@ -3,6 +3,7 @@ from time import time
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System import repeat
+from pychess.System.Log import log
 
 class TimeModel (GObject):
     
@@ -17,10 +18,15 @@ class TimeModel (GObject):
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs, gain, bsecs=-1):
+    def __init__ (self, secs, gain, bsecs=-1, minutes=-1):
         GObject.__init__(self)
         
         if bsecs < 0: bsecs = secs
+        if minutes < 0:
+            minutes = secs / 60
+        self.minutes = minutes  # The number of minutes for the original starting
+            # time control (not necessarily where the game was resumed,
+            # i.e. self.intervals[0][0])
         self.intervals = [[secs],[bsecs]]
         self.gain = gain
         
@@ -38,6 +44,11 @@ class TimeModel (GObject):
         self.connect('player_changed', self.__zerolistener, 'player_changed')
         self.connect('pause_changed', self.__zerolistener, 'pause_changed')
         self.heap = []
+    
+    def __repr__ (self):
+        s = "<TimeModel object at %s (White: %s Black: %s)>" % \
+            (id(self), str(self.getPlayerTime(WHITE)), str(self.getPlayerTime(BLACK)))
+        return s
     
     def __zerolistener(self, *args):
         # If we are called by a sleeper (rather than a signal) we need to pop
@@ -119,6 +130,7 @@ class TimeModel (GObject):
         self.ended = True
     
     def pause (self):
+        log.debug("TimeModel.pause: self=%s\n" % self)
         if self.paused: return
         self.paused = True
         
@@ -130,6 +142,7 @@ class TimeModel (GObject):
         self.emit("pause_changed", True)
     
     def resume (self):
+        log.debug("TimeModel.resume: self=%s\n" % self)
         if not self.paused: return
         
         self.paused = False
@@ -206,3 +219,10 @@ class TimeModel (GObject):
     
     def getInitialTime (self):
         return self.intervals[WHITE][0]
+        
+    @property
+    def display_text (self):
+        t = ("%d " % self.minutes) + _("min")
+        if self.gain != 0:
+            t += (" + %d " % self.gain) + _("sec")
+        return t

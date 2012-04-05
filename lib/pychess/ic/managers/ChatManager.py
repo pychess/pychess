@@ -63,7 +63,7 @@ class ChatManager (GObject):
                 "Only (.+?) may join channel (\d+)\.")
         
         self.connection.expect_line (self.getNoChannelPlayers,
-                "Channel \d+ is empty\.")
+                "Channel (\d+) is empty\.")
         self.connection.expect_fromto (self.getChannelPlayers,
                 "Channel (\d+)(?: \"(\w+)\")?: (.+)",
                 "(\d+) player(?: is|s are) in channel \d+\.")
@@ -93,6 +93,10 @@ class ChatManager (GObject):
         #fics% tell 1 hi
         #You are not in channel 1, auto-adding you if possible.
         
+        # Setting 'Lang' is a workaround for
+        # http://code.google.com/p/pychess/issues/detail?id=376
+        # and can be removed when conversion to FICS block mode is done
+        self.connection.lvm.setVariable("Lang", "English")
         self.connection.lvm.setVariable("kibitz", "0")
         self.connection.lvm.setVariable("ctell", "1")
         self.connection.lvm.setVariable("tell", "1")
@@ -244,7 +248,7 @@ class ChatManager (GObject):
     
     def getPeopleInChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            people = self.connection.glm.getPlayerlist()
+            people = self.connection.players.get_online_playernames()
             self.emit('recievedNames', channel, people)
         print >> self.connection.client, "inchannel %s" % channel
     

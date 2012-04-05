@@ -18,7 +18,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addUserConfigPrefix
+from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
 from pychess.System.ThreadPool import pool, PooledThread
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
@@ -99,6 +99,8 @@ backup = """
     <engine protocol="cecp" protover="1" binname="amundsen">
         <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
+    <engine protocol="uci" protover="1" binname="robbolito">
+        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="glaurung">
         <meta><country>no</country></meta></engine>
     <engine protocol="uci" protover="1" binname="stockfish">
@@ -111,12 +113,17 @@ backup = """
         <meta><country>fr</country></meta></engine>
     <engine protocol="uci" protover="1" binname="toga2">
         <meta><country>de</country></meta></engine>
-    <engine protocol="uci" protover="1" binname="rybka">
-        <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="hiarcs">
         <meta><country>gb</country></meta></engine>
     <engine protocol="uci" protover="1" binname="diablo">
         <meta><country>us</country><author>Marcus Predaski</author></meta></engine>
+
+    <engine protocol="uci" protover="1" binname="Houdini.exe">
+        <meta><country>be</country></meta>
+        <vm binname="wine"/></engine>
+    <engine protocol="uci" protover="1" binname="Rybka.exe">
+        <meta><country>ru</country></meta>
+        <vm binname="wine"/></engine>
 </engines>
 """ % ENGINES_XML_API_VERSION
 
@@ -390,7 +397,8 @@ class EngineDiscoverer (GObject, PooledThread):
         # toBeRechecked = self.dom.findall('engine[recheck=true]')
         
         def count(self_, binname, engine, wentwell):
-            self.toBeRechecked[engine] = True
+            if wentwell:
+                self.toBeRechecked[engine] = True
             if all(self.toBeRechecked.values()):
                 self.emit("all_engines_discovered")
         self.connect("engine_discovered", count, True)
@@ -481,7 +489,8 @@ class EngineDiscoverer (GObject, PooledThread):
             path = vmpath
         
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS)
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
+                                getEngineDataPrefix())
         engine = attrToProtocol[protocol](subprocess, color, protover)
         
         if protocol == "uci":

@@ -1,25 +1,20 @@
 """ The task of this module, is to save, load and init new games """
 
-import os
-from StringIO import StringIO
-
-import gtk
-import gobject
-
-from pychess.System.Log import log
-from pychess.System import conf
-from pychess.System.protoopen import isWriteable
-from pychess.System.GtkWorker import GtkWorker
-from pychess.System.uistuff import GladeWidgets
-from pychess.System import conf
-from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import *
-from pychess.Players.engineNest import discoverer
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess import Savers
-from pychess.Savers import *
+from pychess.Players.engineNest import discoverer
 from pychess.Savers.ChessFile import LoadingError
-from pychess.widgets import gamewidget
-from pychess.widgets import gamenanny
+from pychess.Savers import * # This needs an import all not to break autoloading
+from pychess.System import conf
+from pychess.System.GtkWorker import GtkWorker
+from pychess.System.Log import log
+from pychess.System.protoopen import isWriteable
+from pychess.System.uistuff import GladeWidgets
+from pychess.Utils.const import *
+from pychess.Utils.Offer import Offer
+from pychess.widgets import gamenanny, gamewidget
+import gtk
+import os
 
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
@@ -62,17 +57,46 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     log.debug("ionest.workfunc: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
     gmwidg = gamewidget.GameWidget(gamemodel)
+    
+    # We want to show the game quickly, but the players take some time to start
+    gmwidg.setTabText("%s %s %s %s" % (player0tup[3], _("vs"), player1tup[3],
+                                       gamemodel.display_text))
+    worker.publish((gmwidg,gamemodel))
+    
+    # Initing players
+    players = []
+    for i, playertup in enumerate((player0tup, player1tup)):
+        type, func, args, prename = playertup
+        if type != LOCAL:
+            players.append(func(*args))
+            #if type == ARTIFICIAL:
+            #    def readyformoves (player, color):
+            #        gmwidg.setTabText(gmwidg.display_text))
+            #    players[i].connect("readyForMoves", readyformoves, i)
+        else:
+            # Until PyChess has a proper profiles system, as discussed on the
+            # issue tracker, we need to give human players special treatment
+            player = func(gmwidg, *args)
+            players.append(player)
+            
+            # Connect to conf
+            if i == 0 or (i == 1 and player0tup[0] != LOCAL):
+                key = "firstName"
+                alt = _("You")
+            else:
+                key = "secondName"
+                alt = _("Guest")
+            if prename == conf.get(key, alt):
+                conf.notify_add(key, lambda *a:player.setName(conf.get(key,alt)))
 
-    player0 = {}
-    player1 = {}
-    for player, playertup in ((player0, player0tup), (player1, player1tup)):
-        player["name"] = playertup[3]
-        player["rating"] = (len(playertup) > 4 and playertup[4]) and "("+playertup[4]+")" or None
-        player["tabtext"] = player["rating"] and player["name"] + " " + player["rating"] \
-                or player["name"]
-    text = [ player0["tabtext"], _("vs"), player1["tabtext"] ]
-    gmwidg.setTabText(" ".join(text))
-
+    if player0tup[0] == ARTIFICIAL and player1tup[0] == ARTIFICIAL:
+        def emit_action (action, param):
+            if gmwidg.isInFront():
+                gamemodel.curplayer.emit("offer", Offer(action, param=param))
+        gmwidg.board.connect("action", lambda b,action,param: emit_action(action, param))
+    
+    gamemodel.setPlayers(players)
+    
     # Init analyze engines
     anaengines = list(discoverer.getAnalyzers())
     specs = {}
@@ -93,69 +117,10 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                                                     gamemodel.variant)
         specs[SPY] = spyanalyzer
         log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
-
-    worker.publish((gmwidg,gamemodel))
-
-    # For updating names
-    players = []
-    def updateTitle (color=None):
-
-        name0_name1 = gmwidg.getTabText().split(" %s "%_("vs"))
-        if not name0_name1:
-            name0, name1 = _("White"), _("Black")
-        else: name0, name1 = name0_name1
-
-        if color is None:
-            name0 = repr(players[WHITE])
-            name0 += player0["rating"] and " "+player0["rating"] or ""
-            name1 = repr(players[BLACK])
-            name1 += player1["rating"] and " "+player1["rating"] or ""
-        elif color == WHITE:
-            name0 = repr(players[WHITE])
-            name0 += player0["rating"] and " "+player0["rating"] or ""
-        elif color == BLACK:
-            name1 = repr(players[BLACK])
-            name1 += player1["rating"] and " "+player1["rating"] or ""
-
-        gmwidg.setTabText("%s %s %s" % (name0, _("vs"), name1))
-
-    # Initing players
-    for i, playertup in enumerate((player0tup, player1tup)):
-        type, func, args = (playertup[0:3])
-        if type != LOCAL:
-            players.append(func(*args))
-            if type == ARTIFICIAL:
-                def readyformoves (player, color):
-                    updateTitle(color)
-                players[i].connect("readyForMoves", readyformoves, i)
-        else:
-            # Until PyChess has a proper profiles system, as discussed on the
-            # issue tracker, we need to give human players special treatment
-            ichandle = None
-            if len(args) > 2:
-                ichandle = args[2]
-                args = [ v for v in args[0:2] ]
-            player = func(gmwidg, ichandle=ichandle, *args)
-            players.append(player)
-            if i == 0 or (i == 1 and player0tup[0] != LOCAL):
-                key = "firstName"
-                alt = conf.username
-            else:
-                key = "secondName"
-                alt = _("Guest")
-            player.setName(conf.get(key, alt))
-
-            def callback (none, color, key, alt):
-                players[color].setName(conf.get(key, alt))
-                updateTitle(color)
-            conf.notify_add(key, callback, i, key, alt)
-
-    worker.publish(updateTitle)
-
+    
     # Setting game
-    gamemodel.setPlayers(players)
     gamemodel.setSpectators(specs)
-
+    
     # Starting
     if loaddata:
         try:
@@ -175,8 +140,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 player.setOptionInitialBoard(gamemodel)
 
         gamemodel.start()
-
-    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel={ %s }\n" % \
+    
+    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s\n" % \
         (gmwidg, gamemodel))
     return gmwidg, gamemodel
 
@@ -454,7 +419,6 @@ def closeGame (gmwidg, game):
 # Signal handler                                                               #
 ################################################################################
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 class Handler (GObject):
     """ The goal of this class, is to provide signal handling for the ionest

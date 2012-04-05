@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+###
+# Generators are not thread safe, so reduced which_files() to return the first match only !!!
+###
+
 """ Which - locate a command
 
     * adapted from proposal__ by Erik Demaine and patch__ by Brian Curtin, which adds this feature__ to shutil
@@ -203,7 +208,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     elif path is None:
         path = os.environ.get('PATH', os.defpath).split(os.pathsep)
         if _windows and not os.curdir in path:
-           path.insert(0, os.curdir) # current directory is always searched first on Windows
+            path.insert(0, os.curdir) # current directory is always searched first on Windows
     elif isinstance(path, basestring):
         path = path.split(os.pathsep)
 
@@ -227,21 +232,24 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
                 for ext in pathext:
                     name = woex + ext
                     if os.path.exists(name) and os.access(name, mode):
-                        yield name
+                        return name
+#                        yield name
+    return None
 
 def which(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     """ Return the first full path matched by which_files(), or raise IOError(errno.ENOENT).
 
         >>> # See which_files() for a doctest.
     """
-    try:
-        return iter(which_files(file, mode, path, pathext)).next()
-    except StopIteration:
-        try:
-            from errno import ENOENT
-        except ImportError:
-            ENOENT = 2
-        raise IOError(ENOENT, '%s not found' % (mode & os.X_OK and 'command' or 'file'), file)
+    return which_files(file, mode, path, pathext)
+#    try:
+#        return iter(which_files(file, mode, path, pathext)).next()
+#    except StopIteration:
+#        try:
+#            from errno import ENOENT
+#        except ImportError:
+#            ENOENT = 2
+#        raise IOError(ENOENT, '%s not found' % (mode & os.X_OK and 'command' or 'file'), file)
 
 
 if __name__ == '__main__':
