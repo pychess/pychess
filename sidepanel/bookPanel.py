@@ -1,19 +1,11 @@
 import gtk, gobject, cairo, pango
 
 from pychess.System import conf
-<<<<<<< local
-from pychess.Utils.const import WHITE
-=======
 from pychess.Utils.const import *
->>>>>>> other
 from pychess.Utils.book import getOpenings
-<<<<<<< local
-from pychess.Utils.Move import Move, toSAN, toFAN
-=======
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
->>>>>>> other
 from pychess.System.prefix import addDataPrefix
 
 # The tree store's columns are:
@@ -257,20 +249,10 @@ class Sidepanel:
         self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, str)
         self.tv.set_model(self.store)
         
-<<<<<<< local
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Move", gtk.CellRendererText(), text=0))
-        r = gtk.CellRendererText()
-        r.set_property("xalign", 1)
-        self.tv.append_column(gtk.TreeViewColumn("Popularity", r, text=1))
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Success", BookCellRenderer(), data=2))
-=======
         moveRenderer = gtk.CellRendererText()
         c0 = gtk.TreeViewColumn("Move", moveRenderer)
         c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
         c2 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=2)
->>>>>>> other
         
         def getMoveText(column, cell, store, iter):
             board, move = store[iter][0]
@@ -316,10 +298,6 @@ class Sidepanel:
             advisor.game_changed(self.board, model)
     
     def shown_changed (self, board, shown):
-<<<<<<< local
-        self.openings = getOpenings(self.board.model.getBoardAtPly(shown).board)
-        self.openings.sort(key=lambda t: t[1], reverse=True)
-=======
 # HACK
         if self.gmwidg:
             if HINT in self.gmwidg.gamemodel.spectators:
@@ -329,7 +307,6 @@ class Sidepanel:
             self.gmwidg = None
 # End of HACK
         board.bluearrow = None
->>>>>>> other
         
         if legalMoveCount(board.model.getBoardAtPly(shown)) == 0:
             if self.sw.get_child() == self.tv:
@@ -348,64 +325,15 @@ class Sidepanel:
         if self.sw.get_child() != self.tv:
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
-<<<<<<< local
-        
-        totalWeight = 0
-        # Polyglot-formatted books have space for learning data.
-        # Polyglot stores performance history, but this convention is not
-        # required. We will display this info if it passes a sanity-check.
-        # TODO: Maybe this should be smarter. One idea is to switch off the
-        # display for later moves once we see learning data that don't fit
-        # the formula we're looking for.
-        historyExists = False
-        historyIsPlausible = True
-        maxGames = 1
-        for move, weight, games, score in self.openings:
-            totalWeight += weight
-            maxGames = max(games, maxGames)
-            historyExists = historyExists or games > 0
-            historyIsPlausible = historyIsPlausible and score < 2*games < 65536
-=======
->>>>>>> other
 
-<<<<<<< local
-        for move, weight, games, score in self.openings:
-            b = self.board.model.getBoardAtPly(shown)
-            if conf.get("figuresInNotation", False):
-                move = toFAN(b, Move(move))
-            else:
-                move = toSAN(b, Move(move), True)
-            if weight <= totalWeight / 100:
-                popularity = "?"
-            else:
-                popularity = "%0.1f%%" % (weight*100.0/totalWeight)
-            if not (historyExists and historyIsPlausible):
-                games = 0
-            w =        score*0.5  / maxGames
-            l = (games-score*0.5) / maxGames
-            history = b.color == WHITE and (w, l, games) or (l, w, games)
-            self.store.append ([move, popularity, history])
-    
-=======
->>>>>>> other
     def selection_changed (self, widget, *args):
         iter = self.tv.get_selection().get_selected()[1]
-<<<<<<< local
-        if iter == None:
-            self.board.bluearrow = None
-            return
-        else: sel = self.tv.get_model().get_path(iter)[0]
-        
-        move = Move(self.openings[sel][0])
-        self.board.bluearrow = move.cords
-=======
         if iter:
             board, move = self.store[iter][0]
             if move:
                 self.board.bluearrow = move.cords
                 return
         self.board.bluearrow = None
->>>>>>> other
     
     def row_activated (self, widget, *args):
         iter = self.tv.get_selection().get_selected()[1]
@@ -434,41 +362,17 @@ class Sidepanel:
         # Otherwise, ask the TreeView to set up the tip's area according
         # to the row's rectangle.
         path, col, x, y = path_col_x_y
-<<<<<<< local
-=======
         if not path:
             return False
->>>>>>> other
         treeview.set_tooltip_row(tooltip, path)
-<<<<<<< local
-
-        # And then load it up with some meaningful text.
-=======
         
         # And ask the advisor for some text
->>>>>>> other
         iter = self.store.get_iter(path)
-<<<<<<< local
-        w_win, b_win, games = self.store.get(iter, 2)[0]
-        if games:
-            history = _("White scores <b>%0.1f</b>%% - <b>%0.1f</b>%%\n") % \
-                      (100*w_win / (w_win + b_win), 100*b_win / (w_win + b_win))
-            if games > 1:
-                confidence = _("Based on %d games") % games
-            else:
-                confidence = _("Based on 1 game")
-            tooltip.set_markup(history + confidence)
-=======
         text = self.advisors[path[0]].query_tooltip(path)
         if text:
             tooltip.set_markup(text)
->>>>>>> other
             return True # Show the tip.
-<<<<<<< local
-        
-=======
             
->>>>>>> other
         return False
 
 ################################################################################
@@ -494,11 +398,6 @@ class StrengthCellRenderer (gtk.GenericCellRenderer):
     def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
         if not self.data: return
         cairo = window.cairo_create()
-<<<<<<< local
-        w_win, b_win, games = self.data
-        if games:
-            paintGraph(cairo, w_win, b_win, cell_area)
-=======
         text, widthfrac, goodness = self.data
         if widthfrac:
             paintGraph(cairo, widthfrac, stoplightColor(goodness), cell_area)
@@ -509,7 +408,6 @@ class StrengthCellRenderer (gtk.GenericCellRenderer):
             cairo.move_to(cell_area.x, cell_area.y)
             cairo.rel_move_to( 50 - w, (height - h) / 2)
             cairo.show_layout(layout)
->>>>>>> other
        
     def on_get_size(self, widget, cell_area=None):
         return (0, 0, width, height)
@@ -522,42 +420,16 @@ gobject.type_register(StrengthCellRenderer)
 
 from math import ceil
 
-<<<<<<< local
-def paintGraph (cairo, w_win, b_win, rect):
-    x,y,w0,h = rect.x, rect.y, rect.width, rect.height
-    w = ceil((w_win + b_win) * w0)
-=======
 def stoplightColor (x):
     interp = lambda y0, yh, y1 : y0 + (y1+4*yh-3*y0) * x  + (-4*yh+2*y0) * x*x
     r = interp(239, 252, 138) / 255
     g = interp( 41, 233, 226) / 255 
     b = interp( 41,  79,  52) / 255
     return r, g, b
->>>>>>> other
 
-<<<<<<< local
-    if w_win > 0:
-        cairo.save()
-        cairo.rectangle(x,y,w_win*w0,h)
-        cairo.clip()
-        pathBlock(cairo, x,y,w,h)
-        cairo.set_source_rgb(0.9,0.9,0.9)
-        cairo.fill()
-        cairo.restore()
-    
-    if b_win > 0:
-        cairo.save()
-        cairo.rectangle(x+w_win*w0,y,b_win*w0,h)
-        cairo.clip()
-        pathBlock(cairo, x,y,w,h)
-        cairo.set_source_rgb(0,0,0)
-        cairo.fill()
-        cairo.restore()
-=======
 def paintGraph (cairo, widthfrac, rgb, rect):
     x,y,w0,h = rect.x, rect.y, rect.width, rect.height
     w = ceil(widthfrac * w0)
->>>>>>> other
     
     cairo.save()
     cairo.rectangle(x,y,w,h)
