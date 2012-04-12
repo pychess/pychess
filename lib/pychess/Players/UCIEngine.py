@@ -176,13 +176,6 @@ class UCIEngine (ProtocolEngine):
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
     
-    def _recordMoveList (self, model, ply=None):
-        self._recordMove(model.boards[0], None, None)
-        if ply is None:
-            ply = model.ply
-        for board1, move, board2 in zip(model.boards[1:ply+1], model.moves, model.boards[0:ply]):
-            self._recordMove(board1, move, board2)
-
     def setBoardAtPly (self, board):
         log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
         self._recordMove(board, None, None)
@@ -257,7 +250,7 @@ class UCIEngine (ProtocolEngine):
     def setOptionInitialBoard (self, model):
         log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
             (self, model), self.defname)
-        self._recordMoveList(model)
+        self._recordMove(model.boards[0], None, None)
     
     def setOptionVariant (self, variant):
         if variant == FischerRandomChess:
@@ -328,7 +321,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._recordMoveList(gamemodel)
+        self._recordMove(gamemodel.boards[-1], None, None)
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -343,7 +336,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._recordMoveList(gamemodel)
+        self._recordMove(gamemodel.boards[-1], None, None)
         
         if self.readyMoves:
             self._searchNow()
