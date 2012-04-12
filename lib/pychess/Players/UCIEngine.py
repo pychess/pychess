@@ -176,18 +176,28 @@ class UCIEngine (ProtocolEngine):
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
     
-    def _recordMoveList (self, model):
+    def _recordMoveList (self, model, ply=None):
         self._recordMove(model.boards[0], None, None)
-        for board1, move, board2 in zip(model.boards[1:], model.moves, model.boards[:-1]):
+        if ply is None:
+            ply = model.ply
+        for board1, move, board2 in zip(model.boards[1:ply+1], model.moves, model.boards[0:ply]):
             self._recordMove(board1, move, board2)
+
+    def setBoardAtPly (self, board):
+        log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
+        self._recordMove(board, None, None)
+
+        if not self.readyMoves:
+            return
+        self._searchNow()
 
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
             (board1, move, board2, self.board), self.defname)
         self._recordMove(board1, move, board2)
         
-        if not self.readyMoves: return
-        
+        if not self.readyMoves:
+            return
         self._searchNow()
     
     def makeMove (self, board1, move, board2):

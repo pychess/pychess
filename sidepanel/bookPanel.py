@@ -88,7 +88,8 @@ class OpeningAdvisor(Advisor):
 
         self.opening_names = []
         for move, weight, games, score in openings:
-            weight /= totalWeight
+            if totalWeight != 0:
+                weight /= totalWeight
             goodness = min(weight * len(openings), 1.0)
             weight = "%0.1f%%" % (100 * weight)
             
@@ -118,7 +119,6 @@ class EngineAdvisor(Advisor):
         self.engine = engine
         self.mode = mode
         self.active = False
-        self.analysisIsFresh = True
         self.linesExpected   = 1
         self.linesMax        = 1
         self.offeringExtraPV = False
@@ -142,7 +142,6 @@ class EngineAdvisor(Advisor):
             del self.store[child]
     
     def game_changed (self, board, model):
-        self.analysisIsFresh = False
         if (model.ply == board.shown):
             self.shown_changed(board, board.shown) # Undo doesn't emit shown_changed
     
@@ -150,32 +149,20 @@ class EngineAdvisor(Advisor):
         m = board.model
         b = m.getBoardAtPly(shown)
         
-        if board.model.ply != shown:
-            if not self.active: return
-            self.active = False
-            child = self.only_child()
-            # TODO: allow user to switch to visible position.
-            self.store[child] = self.textOnlyRow(_("The engine is considering another position."))
-            return
+        self.engine.setBoardAtPly(b)
         
         self.board = b if self.mode != INVERSE_ANALYZING else b.switchColor()
         self.active = True
-        if self.analysisIsFresh and self.engine.getAnalysis():
-            # Allocate rows for the analysis lines
-            for line in xrange(self.linesExpected-1):
-                parent = self.store.get_iter(self.path)
-                self.store.append(parent, self.textOnlyRow(_("Calculating...")))
-            self.on_analyze(self.engine, self.engine.getAnalysis())
-        else:
-            child = self.only_child()
-            self.store[child] = self.textOnlyRow(_("Calculating..."))
-            self.engine.requestMultiPV(1)
-            self.linesExpected   = 1
-            self.offeringExtraPV = False
-            self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
+
+        child = self.only_child()
+        self.store[child] = self.textOnlyRow(_("Calculating..."))
+        for line in xrange(self.linesExpected-1):
+            parent = self.store.get_iter(self.path)
+            self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+        self.offeringExtraPV = False
+        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
     
     def on_analyze (self, engine, analysis):
-        self.analysisIsFresh = True
         if not self.active: return
         for i, line in enumerate(analysis):
             pv, score = line
@@ -345,6 +332,13 @@ class Sidepanel:
             if move:
                 self.board.bluearrow = move.cords
                 return
+            else:
+                if self.store.iter_has_child(iter):
+                    path = self.store.get_path(iter)
+                    if self.tv.row_expanded(path):
+                        self.tv.collapse_row(path)
+                    else:
+                        self.tv.expand_row(path, True)
         self.board.bluearrow = None
     
     def row_activated (self, widget, *args):
