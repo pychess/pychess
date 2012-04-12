@@ -260,7 +260,7 @@ def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
             gmwidg.gamemodel.chacons = []
         
         def on_analyze (analyzer, analysis):
-            if not analysis:
+            if (not analysis) or analysis[0] is None:
                 return
             moves, score = analysis[0]
             if moves and (gmwidg.gamemodel.curplayer.__type__ == LOCAL or \

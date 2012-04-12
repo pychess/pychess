@@ -35,10 +35,6 @@ class Advisor:
         """ Update the suggestions to match a changed position. """
         pass
     
-    def game_changed (self, board, model):
-        """ Update the suggestions after a player move / undo. """
-        pass
-    
     def child_tooltip (self, i):
         """ Return a tooltip (or empty) string for the given child row. """
         return ""
@@ -128,43 +124,27 @@ class EngineAdvisor(Advisor):
     def __del__ (self):
         self.engine.disconnect(self.connection)
     
-    def only_child (self):
-        if self.offeringExtraPV:
-            parent = self.store.get_iter(self.path)
-            child = self.store.iter_children(parent)
-            del self.store[child]
-            self.offeringExtraPV = False
-        for line in xrange(self.linesExpected):
-            parent = self.store.get_iter(self.path)
-            child = self.store.iter_children(parent)
-            if line == self.linesExpected - 1:
-                return child
-            del self.store[child]
-    
-    def game_changed (self, board, model):
-        if (model.ply == board.shown):
-            self.shown_changed(board, board.shown) # Undo doesn't emit shown_changed
-    
     def shown_changed (self, board, shown):
-        m = board.model
-        b = m.getBoardAtPly(shown)
-        
+        b = board.model.getBoardAtPly(shown)
         self.engine.setBoardAtPly(b)
         
         self.board = b if self.mode != INVERSE_ANALYZING else b.switchColor()
-        self.active = True
 
-        child = self.only_child()
-        self.store[child] = self.textOnlyRow(_("Calculating..."))
-        for line in xrange(self.linesExpected-1):
-            parent = self.store.get_iter(self.path)
+        parent = self.empty_parent()
+        for line in xrange(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+
         self.offeringExtraPV = False
         self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
+        self.active = True
     
     def on_analyze (self, engine, analysis):
-        if not self.active: return
+        if not self.active:
+            return
+
         for i, line in enumerate(analysis):
+            if line is None:
+                break
             pv, score = line
             move = None
             if pv:
@@ -175,7 +155,7 @@ class EngineAdvisor(Advisor):
             if self.board.color == BLACK: score = -score
             self.store[self.path + (i,)] = [(self.board, move), (self.prettyPrintScore(score), 1, goodness), pv]
         
-        if not self.offeringExtraPV and self.linesExpected <= len(analysis) < self.linesMax:
+        if (not self.offeringExtraPV) and self.linesExpected <= len(analysis) < self.linesMax:
             parent = self.store.get_iter(self.path)
             self.store.append(parent, self.textOnlyRow(_("Double-click for another suggestion.")))
             self.offeringExtraPV = True
@@ -235,8 +215,8 @@ class EndgameAdvisor(Advisor):
                 details = _("Mate in %d") % depth
             self.store.append(parent, [(b, move), result, details])
 
+
 class Sidepanel:
-    
     def load (self, gmwidg):
         self.boardcontrol = gmwidg.board
         self.board = self.boardcontrol.view
@@ -270,8 +250,6 @@ class Sidepanel:
         self.tv.append_column(c2)
         
         self.board.connect("shown_changed", self.shown_changed)
-        self.board.model.connect("game_changed", self.game_changed)
-        self.board.model.connect("moves_undone", lambda model, moves: self.game_changed(model))
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
@@ -291,10 +269,6 @@ class Sidepanel:
         self.gmwidg = gmwidg # HACK
         
         return self.sw
-    
-    def game_changed (self, model):
-        for advisor in self.advisors:
-            advisor.game_changed(self.board, model)
     
     def shown_changed (self, board, shown):
 # HACK
