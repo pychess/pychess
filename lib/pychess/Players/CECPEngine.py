@@ -267,6 +267,9 @@ class CECPEngine (ProtocolEngine):
     #===========================================================================
     #    Send the player move updates
     #===========================================================================
+
+    def setBoardAtPly (self, board):
+        self.setBoard([board], [])
     
     @semisynced
     def putMove (self, board1, move, board2):
@@ -376,8 +379,7 @@ class CECPEngine (ProtocolEngine):
             
             self.__tellEngineToStopPlayingCurrentColor()
             
-            if boards[0].asFen() != FEN_START:
-                self.__setBoard(boards[0])
+            self.__setBoard(boards[0])
             
             self.board = boards[-1]
             for board, move in zip(boards[:-1], moves):
