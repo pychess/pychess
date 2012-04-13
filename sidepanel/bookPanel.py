@@ -125,17 +125,14 @@ class EngineAdvisor(Advisor):
         self.engine.disconnect(self.connection)
     
     def shown_changed (self, board, shown):
-        b = board.model.getBoardAtPly(shown)
-        self.engine.setBoardAtPly(b)
+        self.engine.setBoardAtPly(board.model.getBoardAtPly(shown))
         
-        self.board = b if self.mode != INVERSE_ANALYZING else b.switchColor()
-
         parent = self.empty_parent()
         for line in xrange(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
 
         self.offeringExtraPV = False
-        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.board))
+        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.engine.board))
         self.active = True
     
     def on_analyze (self, engine, analysis):
@@ -149,11 +146,12 @@ class EngineAdvisor(Advisor):
             move = None
             if pv:
                 move = pv[0]
-            pv = " ".join(listToSan(self.board, pv))
+            pv = " ".join(listToSan(self.engine.board, pv))
             # TODO make a move's "goodness" relative to other moves or past scores
             goodness = (min(max(score, -250), 250) + 250) / 500.0
-            if self.board.color == BLACK: score = -score
-            self.store[self.path + (i,)] = [(self.board, move), (self.prettyPrintScore(score), 1, goodness), pv]
+            if self.engine.board.color == BLACK:
+                score = -score
+            self.store[self.path + (i,)] = [(self.engine.board, move), (self.prettyPrintScore(score), 1, goodness), pv]
         
         if (not self.offeringExtraPV) and self.linesExpected <= len(analysis) < self.linesMax:
             parent = self.store.get_iter(self.path)
