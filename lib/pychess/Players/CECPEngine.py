@@ -278,6 +278,10 @@ class CECPEngine (ProtocolEngine):
             @param move: The last move made
             @param board2: The board before the last move was made
         """
+        # If the spactator engine analyzing an older position, let it do
+        if self.board != board2:
+            return
+
         self.board = board1
         
         if not board2:
