@@ -161,17 +161,12 @@ class UCIEngine (ProtocolEngine):
     def _recordMove (self, board1, move, board2):
         if self.gameBoard == board1:
             return
-        if not board2:
-            if board1.variant == NORMALCHESS and board1.asFen() == FEN_START:
-                self.uciPosition = "startpos"
-            else:
-                self.uciPosition = "fen " + board1.asFen()
-            self.uciPositionListsMoves = False;
-        if move:
-            if not self.uciPositionListsMoves:
-                self.uciPosition += " moves"
-                self.uciPositionListsMoves = True
-            self.uciPosition += " " + self._moveToUCI(board2, move)
+        if board1.variant == NORMALCHESS and board1.asFen() == FEN_START:
+            self.uciPosition = "startpos"
+        else:
+            self.uciPosition = "fen " + board1.asFen()
+        self.uciPositionListsMoves = False;
+
         self.board = self.gameBoard = board1
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
@@ -187,6 +182,10 @@ class UCIEngine (ProtocolEngine):
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
             (board1, move, board2, self.board), self.defname)
+        # If the spactator engine analyzing an older position, let it do
+        if self.board != board2:
+            return
+
         self._recordMove(board1, move, board2)
         
         if not self.readyMoves:
