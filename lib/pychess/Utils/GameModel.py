@@ -96,6 +96,8 @@ class GameModel (GObject, PooledThread):
         "spectators_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         # opening_changed is emitted if the move changed the opening.
         "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # variations_changed is emitted if a variation was added/deleted.
+        "variations_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
     }
     
     def __init__ (self, timemodel=None, variant=NormalChess):
@@ -720,3 +722,20 @@ class GameModel (GObject, PooledThread):
         if not self.uri or not isWriteable (self.uri):
             return True
         return False
+
+    def add_variation(self, ply, moves):
+        board0 = self.boards[ply]
+        board = board0.clone()
+        board.prev = None
+        vari = [board]
+        for move in moves:
+            new = board.move(move)
+            board.next = new
+            new.prev = board
+            vari.append(new)
+            board = new
+        board0.next.children.append(vari)
+        self.variations.append(self.boards[:ply] + vari)
+        self.needsSave = True
+        self.emit("variations_changed")
+        
