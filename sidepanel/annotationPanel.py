@@ -10,7 +10,7 @@ from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import Move, toSAN, toFAN
-from pychess.Savers.pgn import nag2symbol, symbol2nag
+from pychess.Savers.pgn import nag2symbol, symbol2nag, move_count
 
 __title__ = _("Annotation")
 __active__ = True
@@ -60,16 +60,17 @@ class Sidepanel(gtk.TextView):
         __widget__.add(self.textview)
 
         self.boardview = gmwidg.board.view
-        glock_connect(self.boardview.model, "game_changed", self.game_changed)
-        glock_connect(self.boardview.model, "game_started", self.game_started)
-        glock_connect(self.boardview.model, "game_ended", self.game_ended)
-        glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
-        glock_connect(self.boardview.model, "opening_changed", self.opening_changed)
-        glock_connect(self.boardview.model, "players_changed", self.players_changed)
         self.boardview.connect("shown_changed", self.shown_changed)
 
         self.gamemodel = gmwidg.board.view.model
-        glock_connect(self.gamemodel, "game_loaded", self.game_loaded)
+        glock_connect(self.gamemodel, "game_loaded", self.update)
+        glock_connect(self.gamemodel, "game_changed", self.game_changed)
+        glock_connect(self.gamemodel, "game_started", self.update)
+        glock_connect(self.gamemodel, "game_ended", self.update)
+        glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
+        glock_connect(self.gamemodel, "opening_changed", self.update)
+        glock_connect(self.gamemodel, "players_changed", self.update)
+        glock_connect(self.gamemodel, "variations_changed", self.update)
 
         # Connect to preferences
         
@@ -116,23 +117,9 @@ class Sidepanel(gtk.TextView):
             if offset >= ni["start"] and offset < ni["end"]:
                 node = ni
                 board = ni["node"]
+                parent = ni["parent"]
                 if event.button == 1:
-                    if board in self.gamemodel.boards:
-                        self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
-                    else:
-                        for vari in self.gamemodel.variations:
-                            if board in vari:
-                                # Go back to the common board of variations to let animation system work
-                                board_in_vari = board
-                                while board_in_vari not in self.gamemodel.boards:
-                                    board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
-                                self.autoUpdateSelected = False
-                                self.boardview.shown = board_in_vari.ply
-                                break
-                        self.gamemodel.boards = vari
-                        self.autoUpdateSelected = True
-                        self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
-
+                    self.setShown(board)
                     self.update_selected_node()
                 break
         
@@ -188,6 +175,14 @@ class Sidepanel(gtk.TextView):
                 menuitem = gtk.MenuItem(_("Remove symols"))
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
+
+                if board not in self.gamemodel.variations[0]:
+                    for vari in self.gamemodel.variations[1:]:
+                        if board in vari:
+                            menuitem = gtk.MenuItem(_("Remove variation"))
+                            menuitem.connect('activate', self.remove_variation, board, parent, vari)
+                            menu.append(menuitem)
+                            break
 
                 menu.show_all()
                 menu.popup( None, None, None, event.button, event.time)
@@ -264,6 +259,35 @@ class Sidepanel(gtk.TextView):
             self.update()
             self.gamemodel.needsSave = True
 
+    def remove_variation(self, widget, board, parent, vari):
+        self.gamemodel.variations.remove(vari)
+        for child in parent.children:
+            if isinstance(child, list) and board in child:
+                parent.children.remove(child)
+                break
+        self.update()
+        self.gamemodel.needsSave = True
+        
+        if self.gamemodel.getBoardAtPly(self.boardview.shown) in vari:
+            self.setShown(parent)
+
+    def setShown(self, board):
+        if board in self.gamemodel.boards:
+            self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
+        else:
+            for vari in self.gamemodel.variations:
+                if board in vari:
+                    # Go back to the common board of variations to let animation system work
+                    board_in_vari = board
+                    while board_in_vari not in self.gamemodel.boards:
+                        board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
+                    self.autoUpdateSelected = False
+                    self.boardview.shown = board_in_vari.ply
+                    break
+            self.gamemodel.boards = vari
+            self.autoUpdateSelected = True
+            self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
+
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
@@ -279,7 +303,7 @@ class Sidepanel(gtk.TextView):
             self.textview.scroll_to_iter(start, 0, use_align=False, yalign=0.1)
 
     # Recursively insert the node tree
-    def insert_nodes(self, node, level=0, ply=0, result=None):
+    def insert_nodes(self, node, level=0, ply=0, parent=None, result=None):
         buf = self.textbuffer
         end_iter = buf.get_end_iter # Convenience shortcut to the function
         new_line = False
@@ -335,6 +359,7 @@ class Sidepanel(gtk.TextView):
             ni["node"] = node
             ni["start"] = start       
             ni["end"] = end_iter().get_offset()
+            ni["parent"] = parent
             self.nodeIters.append(ni)
             
             buf.insert(end_iter(), " ")
@@ -357,7 +382,7 @@ class Sidepanel(gtk.TextView):
                     else:
                         buf.insert_with_tags_by_name(end_iter(), "(", "variation-uneven", "variation-margin2")
                     
-                    self.insert_nodes(child[0], level+1, ply-1)
+                    self.insert_nodes(child[0], level+1, ply-1, parent=node)
 
                     if level == 0:
                         buf.insert_with_tags_by_name(end_iter(), "]\n", "variation-toplevel", "variation-margin0")
@@ -472,31 +497,11 @@ class Sidepanel(gtk.TextView):
         buf.insert(end_iter(), "\n\n")
 
     # Update the entire notation tree
-    def update(self):
+    def update(self, *args):
         self.textbuffer.set_text('')
         self.nodeIters = []
         self.insert_header(self.gamemodel)
         self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
-
-    def game_loaded(self, gamemodel, uri):
-        self.update()
-
-    def game_started(self, gamemodel):
-        self.update()
-
-    def game_ended(self, gamemodel, reason):
-        self.update()
-
-    def opening_changed(self, gamemodel):
-        self.update()
-
-    def players_changed (self, gamemodel):
-        for player in gamemodel.players:
-            self.name_changed(player)
-            glock_connect(player, "name_changed", self.name_changed)
-
-    def name_changed (self, player):
-        self.update()
 
     def shown_changed(self, board, shown):
         if self.autoUpdateSelected:
@@ -545,4 +550,4 @@ class Sidepanel(gtk.TextView):
             movestr =  toSAN(node.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)
-        return "%s%s%s" % (node.movecount, movestr.replace("-","⁃"), nagsymbols)
+        return "%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols)

@@ -120,11 +120,10 @@ def walk(node, result):
             node = node.next
             continue
 
+        store(move_count(node))
+
         move = Move(node.board.history[-1][0])
-        movestr = toSAN(node.prev, move)
-        if node.movecount:
-            store(node.movecount)
-        store(movestr)
+        store(toSAN(node.prev, move))
 
         for nag in node.nags:
             if nag:
@@ -144,6 +143,16 @@ def walk(node, result):
             node = node.next
         else:
             break
+
+def move_count(node):
+    ply = node.ply
+    if ply % 2 == 1:
+        mvcount = "%d." % (ply/2+1)
+    elif node.prev.prev is None or node.prev.children:
+        mvcount = "%d..." % (ply/2)
+    else:
+        mvcount = ""        
+    return mvcount
 
 def stripBrackets (string):
     brackets = 0
@@ -285,16 +294,6 @@ def parse_string(string, model, board, position, variation=False):
                     break
 
                 board = boards[-1].move(move)
-
-                #if m.group(MOVE_COUNT):
-                ply = boards[-1].ply
-                if ply % 2 == 0:
-                    mvcount = "%d." % (ply/2+1)
-                elif prev_group != FULL_MOVE:
-                    mvcount = "%d..." % (ply/2+1)
-                else:
-                    mvcount = ""        
-                board.movecount = mvcount
 
                 if m.group(MOVE_COMMENT):
                     board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
