@@ -33,12 +33,12 @@ class Sidepanel:
         __widget__ = widgets.get_widget("panel")
         __widget__.unparent()
         
-        self.board = gmwidg.board.view
+        self.boardview = gmwidg.board.view
         
-        glock_connect(self.board.model, "game_changed", self.game_changed)
-        glock_connect(self.board.model, "game_started", self.game_changed)
-        glock_connect(self.board.model, "moves_undoing", self.moves_undoing)
-        self.board.connect("shown_changed", self.shown_changed)
+        glock_connect(self.boardview.model, "game_changed", self.game_changed)
+        glock_connect(self.boardview.model, "game_started", self.game_changed)
+        glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
+        self.boardview.connect("shown_changed", self.shown_changed)
         
         # Initialize treeviews
         
@@ -85,7 +85,7 @@ class Sidepanel:
         # Connect to preferences
         
         def figuresInNotationCallback (none):
-            game = self.board.model
+            game = self.boardview.model
             for board, move in zip(game.variations[0], game.moves):
                 if conf.get("figuresInNotation", False):
                     notat = toFAN(board, move)
@@ -104,20 +104,20 @@ class Sidepanel:
         if iter == None: return
         if self.frozen.on: return
 
-        # Back to the main line if needed...
-        if self.board.model.boards != self.board.model.variations[0]:
-            self.board.model.boards = self.board.model.variations[0]
-
         row = tree.get_model().get_path(iter)[0]
-        if self.board.model.lowply & 1:
-            self.board.shown = self.board.model.lowply + row*2 + col
-        else: self.board.shown = self.board.model.lowply + row*2 + col +1
+        if self.boardview.model.lowply & 1:
+            ply = row*2 + col
+        else:
+            ply = row*2 + col +1
+        
+        board = self.boardview.model.boards[ply]
+        self.boardview.setShownBoard(board)
     
     def key_press_event (self, col, event):
         if event.keyval in leftkeys:
-            self.board.shown -= 1
+            self.boardview.shown -= 1
         elif event.keyval in rightkeys:
-            self.board.shown += 1
+            self.boardview.shown += 1
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
@@ -160,10 +160,10 @@ class Sidepanel:
         
         view.get_model().append([notat])
     
-    def shown_changed (self, board, shown):
-        if not board.model.isMainlineBoard(shown):
+    def shown_changed (self, boardview, shown):
+        if not boardview.inMainLine():
             return
-        if shown <= board.model.lowply:
+        if shown <= boardview.model.lowply:
             #print "Or is it me?"
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
@@ -185,7 +185,7 @@ class Sidepanel:
     def _ply_to_row_col_other (self, ply):
         col = ply & 1 and self.left or self.right
         other = ply & 1 and self.right or self.left
-        if self.board.model.lowply & 1:
-            row = (ply-self.board.model.lowply) // 2
-        else: row = (ply-self.board.model.lowply-1) // 2
+        if self.boardview.model.lowply & 1:
+            row = (ply-self.boardview.model.lowply) // 2
+        else: row = (ply-self.boardview.model.lowply-1) // 2
         return row, col, other

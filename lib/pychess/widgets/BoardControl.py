@@ -71,7 +71,7 @@ class BoardControl (gtk.EventBox):
         
     def emit_move_signal (self, cord0, cord1):
         color = self.view.model.boards[-1].color
-        board = self.view.model.getBoardAtPly(self.view.shown)
+        board = self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
         
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
@@ -200,7 +200,7 @@ class BoardControl (gtk.EventBox):
     
     def _genPossibleBoards(self, ply):
         possibleBoards = []
-        curboard = self.view.model.getBoardAtPly(ply)
+        curboard = self.view.model.getBoardAtPly(ply, self.view.variation)
         for lmove in lmovegen.genAllMoves(curboard.board):
             move = Move(lmove)
             board = curboard.move(move)
@@ -214,7 +214,7 @@ class BoardState:
         self.lastMotionCord = None
     
     def getBoard (self):
-        return self.view.model.getBoardAtPly(self.view.shown)
+        return self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
     
     def validate (self, cord0, cord1):
         assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)

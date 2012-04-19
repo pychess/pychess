@@ -198,16 +198,15 @@ class GameModel (GObject, PooledThread):
         if self.ply > 40:
             return
 
-        if self.isMainlineBoard(self.ply):
-            if self.ply > 0:
-                opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
-            else:
-                opening = ("", "", "")
-            if opening is not None:
-                self.tags["ECO"] = opening[0]
-                self.tags["Opening"] = opening[1]
-                self.tags["Variation"] = opening[2]
-                self.emit("opening_changed")
+        if self.ply > 0:
+            opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
+        else:
+            opening = ("", "", "")
+        if opening is not None:
+            self.tags["ECO"] = opening[0]
+            self.tags["Opening"] = opening[1]
+            self.tags["Variation"] = opening[2]
+            self.emit("opening_changed")
     
     ############################################################################
     # Board stuff                                                              #
@@ -243,16 +242,16 @@ class GameModel (GObject, PooledThread):
             raise IndexError, "%s < %s\n" % (ply, self.lowply)
         return index
     
-    def getBoardAtPly (self, ply):
+    def getBoardAtPly (self, ply, variation=0):
         try:
-            return self.boards[self._plyToIndex(ply)]
+            return self.variations[variation][self._plyToIndex(ply)]
         except:
-            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.boards)))
+            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.variations[variation])))
             raise
     
-    def getMoveAtPly (self, ply):
+    def getMoveAtPly (self, ply, variation=0):
         try:
-            return Move(self.boards[self._plyToIndex(ply)+1].board.history[-1][0])
+            return Move(self.variations[variation][self._plyToIndex(ply)+1].board.history[-1][0])
         except IndexError:
             log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
@@ -269,9 +268,6 @@ class GameModel (GObject, PooledThread):
         else:
             return False
 
-    def isMainlineBoard(self, ply):
-        return self.getBoardAtPly(ply) in self.variations[0]
-        
     ############################################################################
     # Offer management                                                         #
     ############################################################################

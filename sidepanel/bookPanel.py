@@ -23,7 +23,7 @@ __about__ = _("Official PyChess panel.")
 class Advisor:
     def __init__ (self, store, name):
         """ The tree store's columns are:
-            (Board, Move)               Indicate the suggested move
+            (Board, Move, pv)           Indicate the suggested move
             (text, barWidth, goodness)  Indicate its strength (last 2 are 0 to 1.0)
             Details                     Describe a PV, opening name, etc. """
 
@@ -31,7 +31,7 @@ class Advisor:
         iter = store.append(None, self.textOnlyRow(name))
         self.path = store.get_path(iter)
     
-    def shown_changed (self, board, shown):
+    def shown_changed (self, boardview, shown):
         """ Update the suggestions to match a changed position. """
         pass
     
@@ -66,9 +66,9 @@ class OpeningAdvisor(Advisor):
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
         
-    def shown_changed (self, board, shown):
-        m = board.model
-        b = m.getBoardAtPly(shown)
+    def shown_changed (self, boardview, shown):
+        m = boardview.model
+        b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
         
         openings = getOpenings(b.board)
@@ -124,8 +124,8 @@ class EngineAdvisor(Advisor):
     def __del__ (self):
         self.engine.disconnect(self.connection)
     
-    def shown_changed (self, board, shown):
-        self.engine.setBoardAtPly(board.model.getBoardAtPly(shown))
+    def shown_changed (self, boardview, shown):
+        self.engine.setBoardAtPly(boardview.model.getBoardAtPly(shown, boardview.variation))
         
         parent = self.empty_parent()
         for line in xrange(self.linesExpected):
@@ -215,9 +215,9 @@ class EndgameAdvisor(Advisor):
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
     
-    def shown_changed (self, board, shown):
-        m = board.model
-        b = m.getBoardAtPly(shown)
+    def shown_changed (self, boardview, shown):
+        m = boardview.model
+        b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
         
         endings = self.egtb.scoreAllMoves(b.board)
@@ -288,7 +288,7 @@ class Sidepanel:
         
         return self.sw
     
-    def shown_changed (self, board, shown):
+    def shown_changed (self, boardview, shown):
 # HACK
         if self.gmwidg:
             if HINT in self.gmwidg.gamemodel.spectators:
@@ -297,9 +297,9 @@ class Sidepanel:
                 self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
             self.gmwidg = None
 # End of HACK
-        board.bluearrow = None
+        boardview.bluearrow = None
         
-        if legalMoveCount(board.model.getBoardAtPly(shown)) == 0:
+        if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.variation)) == 0:
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
                 label = gtk.Label(_("In this position,\nthere is no legal move."))
@@ -310,7 +310,7 @@ class Sidepanel:
             return
         
         for advisor in self.advisors:
-            advisor.shown_changed(board, shown)
+            advisor.shown_changed(boardview, shown)
         self.tv.expand_all()
         
         if self.sw.get_child() != self.tv:
