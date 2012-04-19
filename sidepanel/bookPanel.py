@@ -403,7 +403,7 @@ class StrengthCellRenderer (gtk.GenericCellRenderer):
             w, h = layout.get_pixel_size()
             context = widget.create_pango_context()
             cairo.move_to(cell_area.x, cell_area.y)
-            cairo.rel_move_to( 50 - w, (height - h) / 2)
+            cairo.rel_move_to( 70 - w, (height - h) / 2)
             cairo.show_layout(layout)
        
     def on_get_size(self, widget, cell_area=None):
