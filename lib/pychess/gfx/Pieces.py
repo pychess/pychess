@@ -52,7 +52,7 @@ def drawPieceReal (piece, cc, psize, allWhite=False):
         elif cmd == 'C':
             cc.rel_curve_to(*points)
         else:
-            if fill_path:
+            if not transparent_pieces:
                 cc.set_source_rgb(1,1,1)
                 cc.fill_preserve()
                 cc.set_source_rgb(0,0,0)
@@ -115,7 +115,7 @@ def drawPiece4(piece, context, x, y, psize, allWhite=False):
     context.set_font_size(psize)
     context.move_to(x, y+psize)
 
-    if fill_path:
+    if not transparent_pieces:
         context.text_path(piece2char[color][piece.sign])
         close_path = False
         for cmd, points in context.copy_path():
@@ -240,8 +240,7 @@ def get_chess_font_face(name):
     return face, piece_chars
 
 
-# TODO: If we need fill_path=False at all, it can be a checkbox in preferences/themes
-fill_path = True
+transparent_pieces = conf.get("transparentPieces", 0)
 
 all_in_one = None
 drawPiece = None
