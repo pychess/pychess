@@ -119,7 +119,7 @@ class Sidepanel(gtk.TextView):
                 board = ni["node"]
                 parent = ni["parent"]
                 if event.button == 1:
-                    self.setShown(board)
+                    self.boardview.setShownBoard(board)
                     self.update_selected_node()
                 break
         
@@ -268,32 +268,15 @@ class Sidepanel(gtk.TextView):
         self.update()
         self.gamemodel.needsSave = True
         
-        if self.gamemodel.getBoardAtPly(self.boardview.shown) in vari:
-            self.setShown(parent)
-
-    def setShown(self, board):
-        if board in self.gamemodel.boards:
-            self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
-        else:
-            for vari in self.gamemodel.variations:
-                if board in vari:
-                    # Go back to the common board of variations to let animation system work
-                    board_in_vari = board
-                    while board_in_vari not in self.gamemodel.boards:
-                        board_in_vari = vari[board_in_vari.ply-self.gamemodel.lowply-1]
-                    self.autoUpdateSelected = False
-                    self.boardview.shown = board_in_vari.ply
-                    break
-            self.gamemodel.boards = vari
-            self.autoUpdateSelected = True
-            self.boardview.shown = self.gamemodel.boards.index(board) + self.gamemodel.lowply
+        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation) in vari:
+            self.boardview.setShownBoard(parent)
 
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
         start = None
         for ni in self.nodeIters:
-            if ni["node"] == self.gamemodel.getBoardAtPly(self.boardview.shown):
+            if ni["node"] == self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation):
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 end = self.textbuffer.get_iter_at_offset(ni["end"])
                 self.textbuffer.apply_tag_by_name("selected", start, end)
@@ -352,7 +335,7 @@ class Sidepanel(gtk.TextView):
                 buf.apply_tag_by_name("variation-margin2", startIter, endIter)
 
             if self.boardview.shown >= self.gamemodel.lowply and \
-               node == self.gamemodel.getBoardAtPly(self.boardview.shown):
+               node == self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation):
                 buf.apply_tag_by_name("selected", startIter, endIter)
                 
             ni = {}
@@ -503,9 +486,8 @@ class Sidepanel(gtk.TextView):
         self.insert_header(self.gamemodel)
         self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
 
-    def shown_changed(self, board, shown):
-        if self.autoUpdateSelected:
-            self.update_selected_node()
+    def shown_changed(self, boardview, shown):
+        self.update_selected_node()
 
     def moves_undoing(self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
@@ -521,7 +503,7 @@ class Sidepanel(gtk.TextView):
         if game.status != RUNNING:
             return
 
-        node = game.getBoardAtPly(game.ply)
+        node = game.getBoardAtPly(game.ply, variation=0)
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
