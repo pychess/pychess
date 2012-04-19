@@ -55,6 +55,13 @@ class GeneralTab:
                     "fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
 
+        def get_active(widget):
+            active = widget.get_active()
+            Pieces.transparent_pieces = active
+            return active
+
+        uistuff.keep (widgets["transparentPieces"], "transparentPieces", get_value_=get_active)
+
 ################################################################################
 # Engine initing                                                               #
 ################################################################################
@@ -493,7 +500,6 @@ class ThemeTab:
     
     def __init__ (self, widgets):
         
-        self.widgets = widgets
         conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
 
         self.themes = self.discover_themes()
@@ -510,7 +516,7 @@ class ThemeTab:
                 print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
                 break
 
-        iconView = self.widgets["pieceTheme"]
+        iconView = widgets["pieceTheme"]
         
         iconView.set_model(store)
         iconView.set_pixbuf_column(0)
