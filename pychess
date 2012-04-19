@@ -3,8 +3,14 @@
 # PyChess startup script.
 # This script is to check package requirements, and set up system/enviroment
 # stuff, to make the PyChess Main class run smoothly.
-import faulthandler
-faulthandler.enable()
+
+# faulthandler will be in Python 3.3; for 2.x it can be download from pypi
+try:
+    import faulthandler
+    faulthandler.enable()
+except ImportError:
+    pass
+
 ###############################################################################
 # Check requirements
 
