@@ -51,7 +51,6 @@ class UCIEngine (ProtocolEngine):
         self.gameBoard = Board(setup=True) # board at the end of all moves played
         self.board = Board(setup=True)     # board to send the engine
         self.uciPosition = "startpos"
-        self.uciPositionListsMoves = False
         self.analysis = [ None ]
         
         self.returnQueue = Queue.Queue()
@@ -165,7 +164,6 @@ class UCIEngine (ProtocolEngine):
             self.uciPosition = "startpos"
         else:
             self.uciPosition = "fen " + board1.asFen()
-        self.uciPositionListsMoves = False;
 
         self.board = self.gameBoard = board1
         if self.mode == INVERSE_ANALYZING:
@@ -438,9 +436,7 @@ class UCIEngine (ProtocolEngine):
     
     def _startPonder (self):
         uciPos = self.uciPosition
-        if not self.uciPositionListsMoves:
-            uciPos += " moves"
-        print >> self.engine, "position", uciPos, \
+        print >> self.engine, "position", uciPos, " moves", \
                                 self._moveToUCI(self.board, self.pondermove)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "winc", self.incr, "btime", self.btime, "binc", self.incr
