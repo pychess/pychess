@@ -125,7 +125,7 @@ class EngineAdvisor(Advisor):
         self.engine.disconnect(self.connection)
     
     def shown_changed (self, boardview, shown):
-        self.engine.setBoardAtPly(boardview.model.getBoardAtPly(shown, boardview.variation))
+        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
         
         parent = self.empty_parent()
         for line in xrange(self.linesExpected):
