@@ -157,21 +157,21 @@ class UCIEngine (ProtocolEngine):
             cn = CASTLE_KR
         return toAN(board, move, short=True, castleNotation=cn)
     
-    def _recordMove (self, board1, move, board2):
-        if self.gameBoard == board1:
+    def _setBoard (self, board):
+        if self.gameBoard == board:
             return
-        if board1.variant == NORMALCHESS and board1.asFen() == FEN_START:
+        if board.variant == NORMALCHESS and board.asFen() == FEN_START:
             self.uciPosition = "startpos"
         else:
-            self.uciPosition = "fen " + board1.asFen()
+            self.uciPosition = "fen " + board.asFen()
 
-        self.board = self.gameBoard = board1
+        self.board = self.gameBoard = board
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
     
-    def setBoardAtPly (self, board):
+    def setBoard (self, board):
         log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
-        self._recordMove(board, None, None)
+        self._setBoard(board)
 
         if not self.readyMoves:
             return
@@ -184,7 +184,7 @@ class UCIEngine (ProtocolEngine):
         if self.board != board2:
             return
 
-        self._recordMove(board1, move, board2)
+        self._setBoard(board1)
         
         if not self.readyMoves:
             return
@@ -196,7 +196,7 @@ class UCIEngine (ProtocolEngine):
         assert self.readyMoves
         
         with self.moveLock:
-            self._recordMove(board1, move, board2)
+            self._setBoard(board1)
             self.waitingForMove = True
             ponderhit = False
             
@@ -247,7 +247,7 @@ class UCIEngine (ProtocolEngine):
     def setOptionInitialBoard (self, model):
         log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
             (self, model), self.defname)
-        self._recordMove(model.boards[0], None, None)
+        self._setBoard(model.boards[0])
     
     def setOptionVariant (self, variant):
         if variant == FischerRandomChess:
@@ -318,7 +318,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._recordMove(gamemodel.boards[-1], None, None)
+        self._setBoard(gamemodel.boards[-1])
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -333,7 +333,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._recordMove(gamemodel.boards[-1], None, None)
+        self._setBoard(gamemodel.boards[-1])
         
         if self.readyMoves:
             self._searchNow()
@@ -525,7 +525,7 @@ class UCIEngine (ProtocolEngine):
                     self.returnQueue.put('del')
                     return
                 
-                self._recordMove(self.board.move(move), move, self.board)
+                self._setBoard(self.board.move(move))
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
                     (move, self.board), self.defname)
                 
