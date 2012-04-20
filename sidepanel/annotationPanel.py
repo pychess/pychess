@@ -520,6 +520,7 @@ class Sidepanel(gtk.TextView):
         ni["node"] = node
         ni["start"] = startIter.get_offset()        
         ni["end"] = end_iter().get_offset()
+        ni["parent"] = None
 
         self.nodeIters.append(ni)
         self.update_selected_node()
