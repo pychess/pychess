@@ -128,7 +128,8 @@ class CECPEngine (ProtocolEngine):
         
         self.name = None
         
-        self.board = None
+        self.board = Board(setup=True)
+        
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
         # i.e. not thinking or playing, but still verifying move legality
         self.engineIsInNotPlaying = False 
@@ -268,8 +269,8 @@ class CECPEngine (ProtocolEngine):
     #    Send the player move updates
     #===========================================================================
 
-    def setBoardAtPly (self, board):
-        self.setBoard([board], [])
+    def setBoard (self, board):
+        self.setBoardList([board], [])
     
     @semisynced
     def putMove (self, board1, move, board2):
@@ -367,10 +368,10 @@ class CECPEngine (ProtocolEngine):
     def setOptionInitialBoard (self, model):
         # We don't use the optionQueue here, as set board prints a whole lot of
         # stuff. Instead we just call it, and let semisynced handle the rest.
-        self.setBoard(model.boards[:], model.moves[:])
+        self.setBoardList(model.boards[:], model.moves[:])
     
     @semisynced
-    def setBoard (self, boards, moves):
+    def setBoardList (self, boards, moves):
         # Notice: If this method is to be called while playing, the engine will
         # need 'new' and an arrangement similar to that of 'pause' to avoid
         # the current thought move to appear
@@ -398,7 +399,7 @@ class CECPEngine (ProtocolEngine):
                 if self.engineIsInNotPlaying:
                     print >> self.engine, "force"
             
-            # The called of setBoard will have to repost/analyze the
+            # The called of setBoardList will have to repost/analyze the
             # analyzer engines at this point.
         finally:
             self.boardLock.release()
