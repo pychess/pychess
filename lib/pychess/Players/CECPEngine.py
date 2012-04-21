@@ -742,10 +742,11 @@ class CECPEngine (ProtocolEngine):
             if match:
                 score, moves = match.groups()
                 
-                if "mat" in score.lower():
+                if "mat" in score.lower() or "#" in moves:
                     # Will look either like -Mat 3 or Mat3
-                    scoreval = MATE_VALUE - int("".join(c for c in score if c.isdigit()))
-                    if score.startswith('-'): scoreval = -scoreval
+                    scoreval = MATE_VALUE
+                    if score.startswith('-'):
+                        scoreval = -scoreval
                 else:
                     scoreval = int(score)
                 
