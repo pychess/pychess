@@ -202,8 +202,8 @@ class EngineAdvisor(Advisor):
             pp = "-"
             s = -s
         
-        if s >= MATE_VALUE - 1000:
-            return pp + "#" + str(MATE_VALUE - s)
+        if abs(s) == MATE_VALUE:
+            return pp + "#%s" % MATE_VALUE
         else:
             return pp + "%0.2f" % (s / 100.0)
 

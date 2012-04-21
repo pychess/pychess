@@ -563,8 +563,9 @@ class UCIEngine (ProtocolEngine):
                 score = int(parts[parts.index("score")+2])
                 if scoretype == 'mate':
 #                    print >> self.engine, "stop"
-                    sign = score/abs(score)
-                    score = sign * (MATE_VALUE-abs(score))
+                    if score != 0:
+                        sign = score/abs(score)
+                        score = sign*MATE_VALUE
             
             movstrs = parts[parts.index("pv")+1:]
             try:
