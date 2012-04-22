@@ -260,23 +260,30 @@ class Sidepanel(gtk.TextView):
             self.gamemodel.needsSave = True
 
     def remove_variation(self, widget, board, parent, vari):
-        self.gamemodel.variations.remove(vari)
         for child in parent.children:
             if isinstance(child, list) and board in child:
                 parent.children.remove(child)
                 break
+
+        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation) in vari:
+            self.boardview.setShownBoard(parent)
+        self.gamemodel.variations.remove(vari)
+
+        for vari in self.gamemodel.variations:
+            if parent in vari:
+                self.boardview.variation = self.gamemodel.variations.index(vari)
+                break
+
         self.update()
         self.gamemodel.needsSave = True
         
-        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation) in vari:
-            self.boardview.setShownBoard(parent)
-
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
         start = None
         for ni in self.nodeIters:
-            if ni["node"] == self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation):
+            if ni["node"] == shown_board:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 end = self.textbuffer.get_iter_at_offset(ni["end"])
                 self.textbuffer.apply_tag_by_name("selected", start, end)
@@ -292,6 +299,7 @@ class Sidepanel(gtk.TextView):
         new_line = False
 
         fan = conf.get("figuresInNotation", False)
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
         
         while True: 
             start = end_iter().get_offset()
@@ -334,8 +342,7 @@ class Sidepanel(gtk.TextView):
                 buf.apply_tag_by_name("variation-uneven", startIter, endIter)
                 buf.apply_tag_by_name("variation-margin2", startIter, endIter)
 
-            if self.boardview.shown >= self.gamemodel.lowply and \
-               node == self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation):
+            if self.boardview.shown >= self.gamemodel.lowply and node == shown_board:
                 buf.apply_tag_by_name("selected", startIter, endIter)
                 
             ni = {}
