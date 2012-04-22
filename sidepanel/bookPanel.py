@@ -39,7 +39,7 @@ class Advisor:
         """ Return a tooltip (or empty) string for the given child row. """
         return ""
     
-    def row_activated (self, path):
+    def row_activated (self, path, model):
         """ Act on a double-clicked child row other than a move suggestion. """
         pass
     
@@ -180,10 +180,9 @@ class EngineAdvisor(Advisor):
             self.engine.requestMultiPV(self.linesExpected)
             self.store[path] = self.textOnlyRow(_("Calculating..."))
         elif self.mode == ANALYZING:
-            ply = self.engine.board.ply
             moves = self.store[path][0][2]
             if moves is not None:
-                model.add_variation(ply, moves)
+                model.add_variation(self.engine.board, moves)
 
     def child_tooltip (self, i):
         if self.active:
@@ -237,7 +236,7 @@ class EndgameAdvisor(Advisor):
 class Sidepanel:
     def load (self, gmwidg):
         self.boardcontrol = gmwidg.board
-        self.board = self.boardcontrol.view
+        self.boardview = self.boardcontrol.view
         
         widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_widget("treeview")
@@ -267,7 +266,7 @@ class Sidepanel:
         self.tv.append_column(c1)
         self.tv.append_column(c2)
         
-        self.board.connect("shown_changed", self.shown_changed)
+        self.boardview.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
@@ -283,7 +282,7 @@ class Sidepanel:
             self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
         
         self.gmwidg = None # HACK
-        self.shown_changed(self.board, 0)
+        self.shown_changed(self.boardview, 0)
         self.gmwidg = gmwidg # HACK
         
         return self.sw
@@ -322,30 +321,23 @@ class Sidepanel:
         if iter:
             board, move, pv = self.store[iter][0]
             if move:
-                self.board.bluearrow = move.cords
+                self.boardview.bluearrow = move.cords
                 return
-            else:
-                if self.store.iter_has_child(iter):
-                    path = self.store.get_path(iter)
-                    if self.tv.row_expanded(path):
-                        self.tv.collapse_row(path)
-                    else:
-                        self.tv.expand_row(path, True)
-        self.board.bluearrow = None
+        self.boardview.bluearrow = None
     
     def row_activated (self, widget, *args):
         iter = self.tv.get_selection().get_selected()[1]
         if iter is None:
             return
         board, move, pv = self.store[iter][0]
-        if move and board == self.board.model.boards[-1]:
+        if move and board == self.boardview.model.boards[-1]:
             # Play the move if it's a suggestion for the next move of the game.
-            self.board.bluearrow = None
+            self.boardview.bluearrow = None
             self.boardcontrol.emit("piece_moved", move, board.color)
         else:
             # The row may be tied to a specific action.
             path = self.store.get_path(iter)
-            self.advisors[path[0]].row_activated(path, self.board.model)
+            self.advisors[path[0]].row_activated(path, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:

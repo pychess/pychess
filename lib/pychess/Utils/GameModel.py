@@ -719,19 +719,27 @@ class GameModel (GObject, PooledThread):
             return True
         return False
 
-    def add_variation(self, ply, moves):
-        board0 = self.boards[ply]
+    def add_variation(self, board, moves):
+        board0 = board
         board = board0.clone()
         board.prev = None
-        vari = [board]
+
+        variation = [board]
         for move in moves:
             new = board.move(move)
             board.next = new
             new.prev = board
-            vari.append(new)
+            variation.append(new)
             board = new
-        board0.next.children.append(vari)
-        self.variations.append(self.boards[:ply] + vari)
+        board0.next.children.append(variation)
+        
+        head = None
+        for vari in self.variations:
+            if board0 in vari:
+                head = vari
+                break
+
+        self.variations.append(head[:board0.ply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
         
