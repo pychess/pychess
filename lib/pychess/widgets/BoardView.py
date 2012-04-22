@@ -320,7 +320,7 @@ class BoardView (gtk.DrawingArea):
             return
         
         # This would cause IndexErrors later
-        if not self.model.lowply <= shown:
+        if not self.model.lowply <= shown <= self.model.variations[self.variation][-1].ply:
             return
         
         # If there is only one board, we don't do any animation, but simply
