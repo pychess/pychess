@@ -25,6 +25,8 @@ class Advisor:
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
             (text, barWidth, goodness)  Indicate its strength (last 2 are 0 to 1.0)
+            pvlines                     Number of analysis lines for analysing engines
+            is_pvlines_editable         Boolean
             Details                     Describe a PV, opening name, etc. """
 
         self.store = store
@@ -54,10 +56,13 @@ class Advisor:
             child = self.store.iter_children(parent)
             if not child:
                 return parent
-            del self.store[child]
+            self.store.remove(child)
 
     def textOnlyRow(self, text):
-        return [(None, None, None), ("", 0, None), text]
+        return [(None, None, None), ("", 0, None), 0, False, text]
+
+    def edited(self, path):
+        pass
 
 
 class OpeningAdvisor(Advisor):
@@ -97,7 +102,7 @@ class OpeningAdvisor(Advisor):
                 eco = opening[0]
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
-            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), eco])
+            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco])
     
     def child_tooltip (self, i):
         return "" if len(self.opening_names)==0 else self.opening_names[i]
@@ -115,10 +120,17 @@ class EngineAdvisor(Advisor):
         self.engine = engine
         self.mode = mode
         self.active = False
-        self.linesExpected   = 1
+        engineMax = self.engine.maxAnalysisLines()
+        self.linesExpected   = min(conf.get("multipv", 1), engineMax)
         self.linesMax        = 1
-        self.offeringExtraPV = False
-        self.store.append(self.empty_parent(), self.textOnlyRow(_("Calculating...")))
+        
+        parent = self.empty_parent()
+        self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+        
+        # set pvlines, but set it 0 if engine max is only 1
+        self.store.set_value(parent, 2, 0 if engineMax==1 else self.linesExpected)
+        # set it editable
+        self.store.set_value(parent, 3, engineMax>1)
         self.connection = engine.connect("analyze", self.on_analyze)
     
     def __del__ (self):
@@ -131,7 +143,6 @@ class EngineAdvisor(Advisor):
         for line in xrange(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
 
-        self.offeringExtraPV = False
         self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.engine.board))
         self.active = True
     
@@ -166,21 +177,28 @@ class EngineAdvisor(Advisor):
             goodness = (min(max(score, -250), 250) + 250) / 500.0
             if self.engine.board.color == BLACK:
                 score = -score
-            self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), " ".join(counted_pv)]
+            self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv)]
         
-        if (not self.offeringExtraPV) and self.linesExpected <= len(analysis) < self.linesMax:
+    def multipv_edited(self, value):
+        if value > self.engine.maxAnalysisLines():
+            return
+
+        if value != self.linesExpected:
+            self.engine.requestMultiPV(value)
             parent = self.store.get_iter(self.path)
-            self.store.append(parent, self.textOnlyRow(_("Double-click for another suggestion.")))
-            self.offeringExtraPV = True
-    
-    def row_activated (self, path, model):
-        if self.active and path[1:] and path[1] == self.linesExpected:
-            self.linesExpected += 1
-            self.offeringExtraPV = False
-            self.engine.requestMultiPV(self.linesExpected)
-            self.store[path] = self.textOnlyRow(_("Calculating..."))
-        elif self.mode == ANALYZING:
-            moves = self.store[path][0][2]
+            if value > self.linesExpected:
+                while self.linesExpected < value:
+                    self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+                    self.linesExpected += 1
+            else:
+                while self.linesExpected > value:
+                    child = self.store.iter_children(parent)
+                    self.store.remove(child)
+                    self.linesExpected -= 1
+        
+    def row_activated (self, iter, model):
+        if self.mode == ANALYZING and self.store.get_path(iter) != self.path:
+            moves = self.store[iter][0][2]
             if moves is not None:
                 model.add_variation(self.engine.board, moves)
 
@@ -230,7 +248,7 @@ class EndgameAdvisor(Advisor):
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
-            self.store.append(parent, [(b, move, None), result, details])
+            self.store.append(parent, [(b, move, None), result, 0, False, details])
 
 
 class Sidepanel:
@@ -242,14 +260,12 @@ class Sidepanel:
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
         self.sw.unparent()
-        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, str)
+        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str)
         self.tv.set_model(self.store)
         
         moveRenderer = gtk.CellRendererText()
         c0 = gtk.TreeViewColumn("Move", moveRenderer)
-        c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
-        c2 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=2)
-        
+
         def getMoveText(column, cell, store, iter):
             board, move, pv = store[iter][0]
             if not move:
@@ -259,12 +275,37 @@ class Sidepanel:
                     cell.set_property("text", toFAN(board, move))
                 else:
                     cell.set_property("text", toSAN(board, move, True))
-        
         c0.set_cell_data_func(moveRenderer, getMoveText)
+
+        c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
+
+        multipvRenderer = gtk.CellRendererSpin()
+        adjustment = gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
+        multipvRenderer.set_property("adjustment", adjustment)
+        multipvRenderer.set_property("editable", True)
+        multipvRenderer.set_property("width_chars", 3)
+        c2 = gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+
+        def currentCell(column, cell, store, iter):
+            if store[iter][2] == 0:
+                cell.set_property('visible', False)
+            else:
+                cell.set_property("text", store[iter][2])
+                cell.set_property('visible', True)
+        c2.set_cell_data_func(multipvRenderer, currentCell)
+
+        def multipv_edited(renderer, path, text):
+            iter = self.store.get_iter(path)
+            self.store.set_value(iter, 2, int(text))
+            self.advisors[int(path[0])].multipv_edited(int(text))
+        multipvRenderer.connect('edited', multipv_edited)
+
+        c3 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=4)
         
         self.tv.append_column(c0)
         self.tv.append_column(c1)
         self.tv.append_column(c2)
+        self.tv.append_column(c3)
         
         self.boardview.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
@@ -320,7 +361,7 @@ class Sidepanel:
         iter = self.tv.get_selection().get_selected()[1]
         if iter:
             board, move, pv = self.store[iter][0]
-            if move:
+            if move is not None:
                 self.boardview.bluearrow = move.cords
                 return
         self.boardview.bluearrow = None
@@ -330,14 +371,14 @@ class Sidepanel:
         if iter is None:
             return
         board, move, pv = self.store[iter][0]
-        if move and board == self.boardview.model.boards[-1]:
+        if (move is not None) and board == self.boardview.model.boards[-1]:
             # Play the move if it's a suggestion for the next move of the game.
             self.boardview.bluearrow = None
             self.boardcontrol.emit("piece_moved", move, board.color)
         else:
             # The row may be tied to a specific action.
             path = self.store.get_path(iter)
-            self.advisors[path[0]].row_activated(path, self.boardview.model)
+            self.advisors[path[0]].row_activated(iter, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
