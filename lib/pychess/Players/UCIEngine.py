@@ -11,6 +11,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMoveCount
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
@@ -44,7 +45,7 @@ class UCIEngine (ProtocolEngine):
         self.waitingForMove = False
         self.needBestmove = False
         self.readyForStop = False   # keeps track of whether we already sent a 'stop' command
-        self.multipvSetting  = 1    # MultiPV option sent to the engine
+        self.multipvSetting  = conf.get("multipv", 1)    # MultiPV option sent to the engine
         self.multipvExpected = 1    # Number of PVs expected (limited by number of legal moves)
         self.commands = collections.deque()
         
@@ -93,7 +94,8 @@ class UCIEngine (ProtocolEngine):
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
         
-            self.requestMultiPV(self.multipvSetting)
+            if self.multipvSetting > 1:
+                self.setOption('MultiPV', self.multipvSetting)
         
         for option, value in self.optionsToBeSent.iteritems():
             if self.options[option]["default"] != value:
@@ -647,6 +649,7 @@ class UCIEngine (ProtocolEngine):
         n = min(n, multipvMax)
         
         if n != self.multipvSetting:
+            conf.set("multipv", n)
             with self.moveLock:
                 self.multipvSetting  = n
                 print >> self.engine, "stop"
