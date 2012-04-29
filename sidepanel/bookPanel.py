@@ -147,6 +147,8 @@ class EngineAdvisor(Advisor):
         if not self.active:
             return
 
+        is_FAN = conf.get("figuresInNotation", False)
+        
         for i, line in enumerate(analysis):
             if line is None:
                 break
@@ -167,7 +169,7 @@ class EngineAdvisor(Advisor):
                     mvcount = "%d..." % (ply/2+1)
                 else:
                     mvcount = ""
-                counted_pv.append("%s%s" % (mvcount, toSAN(board, pvmove)))
+                counted_pv.append("%s%s" % (mvcount, toFAN(board, pvmove) if is_FAN else toSAN(board, pvmove, True)))
                 board = board.move(pvmove)
 
             # TODO make a move's "goodness" relative to other moves or past scores
