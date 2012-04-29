@@ -61,9 +61,6 @@ class Advisor:
     def textOnlyRow(self, text):
         return [(None, None, None), ("", 0, None), 0, False, text]
 
-    def edited(self, path):
-        pass
-
 
 class OpeningAdvisor(Advisor):
     def __init__ (self, store):
@@ -264,6 +261,7 @@ class Sidepanel:
         self.tv.set_model(self.store)
         
         moveRenderer = gtk.CellRendererText()
+        moveRenderer.set_property("xalign", 1.0)
         c0 = gtk.TreeViewColumn("Move", moveRenderer)
 
         def getMoveText(column, cell, store, iter):
