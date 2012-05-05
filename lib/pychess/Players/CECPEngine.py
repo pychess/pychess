@@ -154,7 +154,7 @@ class CECPEngine (ProtocolEngine):
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
         self.connect_after("readyForMoves", self.__onReadyForMoves)
-    
+
     #===========================================================================
     #    Starting the game
     #===========================================================================
@@ -481,6 +481,7 @@ class CECPEngine (ProtocolEngine):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         
+        log.debug("pause: self=%s\n" % self, self.defname)
         self.engine.pause()
         return
         
@@ -494,6 +495,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def resume (self):
+        log.debug("resume: self=%s\n" % self, self.defname)
         self.engine.resume()
         return
         

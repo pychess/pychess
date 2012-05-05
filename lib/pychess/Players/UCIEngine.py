@@ -160,8 +160,6 @@ class UCIEngine (ProtocolEngine):
         return toAN(board, move, short=True, castleNotation=cn)
     
     def _setBoard (self, board):
-        if self.gameBoard == board:
-            return
         if board.variant == NORMALCHESS and board.asFen() == FEN_START:
             self.uciPosition = "startpos"
         else:
@@ -174,7 +172,7 @@ class UCIEngine (ProtocolEngine):
     def setBoard (self, board):
         log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
         self._setBoard(board)
-
+        
         if not self.readyMoves:
             return
         self._searchNow()
@@ -579,7 +577,9 @@ class UCIEngine (ProtocolEngine):
                     (' '.join(movstrs),e), self.defname)
                 return
             
-            self.analysis[multipv - 1] = (moves, score)
+            if multipv <= len(self.analysis):
+                self.analysis[multipv - 1] = (moves, score)
+
             if multipv == self.multipvExpected:
                 self.emit("analyze", self.analysis)
             return
