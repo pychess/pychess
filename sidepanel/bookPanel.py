@@ -59,7 +59,7 @@ class Advisor:
             self.store.remove(child)
 
     def textOnlyRow(self, text):
-        return [(None, None, None), ("", 0, None), 0, False, text]
+        return [(None, None, None), ("", 0, None), 0, False, text, False, False]
 
 
 class OpeningAdvisor(Advisor):
@@ -68,7 +68,7 @@ class OpeningAdvisor(Advisor):
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
         
-    def shown_changed (self, boardview, shown):
+    def shown_changed (self, boardview, shown, tv):
         m = boardview.model
         b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
@@ -99,7 +99,7 @@ class OpeningAdvisor(Advisor):
                 eco = opening[0]
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
-            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco])
+            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])
     
     def child_tooltip (self, i):
         return "" if len(self.opening_names)==0 else self.opening_names[i]
@@ -116,7 +116,7 @@ class EngineAdvisor(Advisor):
             self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move" % engine)
         self.engine = engine
         self.mode = mode
-        self.active = False
+        self.active = True
         engineMax = self.engine.maxAnalysisLines()
         self.linesExpected   = min(conf.get("multipv", 1), engineMax)
         self.linesMax        = 1
@@ -128,20 +128,25 @@ class EngineAdvisor(Advisor):
         self.store.set_value(parent, 2, 0 if engineMax==1 else self.linesExpected)
         # set it editable
         self.store.set_value(parent, 3, engineMax>1)
+        # set start/stop cb activable
+        self.store.set_value(parent, 6, True)
         self.connection = engine.connect("analyze", self.on_analyze)
     
     def __del__ (self):
         self.engine.disconnect(self.connection)
     
-    def shown_changed (self, boardview, shown):
+    def shown_changed (self, boardview, shown, tv):
+        if not self.active:
+            return
+
         self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
-        
+
         parent = self.empty_parent()
         for line in xrange(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
 
         self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.engine.board))
-        self.active = True
+        tv.expand_row(self.path, False)
     
     def on_analyze (self, engine, analysis):
         if not self.active:
@@ -176,7 +181,17 @@ class EngineAdvisor(Advisor):
             goodness = (min(max(score, -250), 250) + 250) / 500.0
             if self.engine.board.color == BLACK:
                 score = -score
-            self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv)]
+            self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
+    
+    def start_stop(self, tb, boardview, tv):
+        if not tb:
+            self.active = True
+            self.engine.resume()
+            self.shown_changed(boardview, boardview.shown, tv)
+        else:
+            self.engine.pause()
+            self.empty_parent()
+            self.active = False
         
     def multipv_edited(self, value):
         if value > self.engine.maxAnalysisLines():
@@ -192,7 +207,8 @@ class EngineAdvisor(Advisor):
             else:
                 while self.linesExpected > value:
                     child = self.store.iter_children(parent)
-                    self.store.remove(child)
+                    if child is not None:
+                        self.store.remove(child)
                     self.linesExpected -= 1
         
     def row_activated (self, iter, model):
@@ -231,7 +247,7 @@ class EndgameAdvisor(Advisor):
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
     
-    def shown_changed (self, boardview, shown):
+    def shown_changed (self, boardview, shown, tv):
         m = boardview.model
         b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
@@ -247,7 +263,7 @@ class EndgameAdvisor(Advisor):
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
-            self.store.append(parent, [(b, move, None), result, 0, False, details])
+            self.store.append(parent, [(b, move, None), result, 0, False, details, False, False])
 
 
 class Sidepanel:
@@ -259,9 +275,10 @@ class Sidepanel:
         self.tv = widgets.get_widget("treeview")
         self.sw = widgets.get_widget("scrolledwindow")
         self.sw.unparent()
-        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str)
+        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str, bool, bool)
         self.tv.set_model(self.store)
         
+        ### move suggested
         moveRenderer = gtk.CellRendererText()
         moveRenderer.set_property("xalign", 1.0)
         c0 = gtk.TreeViewColumn("Move", moveRenderer)
@@ -277,8 +294,10 @@ class Sidepanel:
                     cell.set_property("text", toSAN(board, move, True))
         c0.set_cell_data_func(moveRenderer, getMoveText)
 
+        ### strength of the move
         c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
 
+        ### multipv (number of analysis lines)
         multipvRenderer = gtk.CellRendererSpin()
         adjustment = gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
         multipvRenderer.set_property("adjustment", adjustment)
@@ -286,13 +305,13 @@ class Sidepanel:
         multipvRenderer.set_property("width_chars", 3)
         c2 = gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
 
-        def currentCell(column, cell, store, iter):
+        def spin_visible(column, cell, store, iter):
             if store[iter][2] == 0:
                 cell.set_property('visible', False)
             else:
                 cell.set_property("text", store[iter][2])
                 cell.set_property('visible', True)
-        c2.set_cell_data_func(multipvRenderer, currentCell)
+        c2.set_cell_data_func(multipvRenderer, spin_visible)
 
         def multipv_edited(renderer, path, text):
             iter = self.store.get_iter(path)
@@ -300,8 +319,32 @@ class Sidepanel:
             self.advisors[int(path[0])].multipv_edited(int(text))
         multipvRenderer.connect('edited', multipv_edited)
 
+        ### header text, or analysis line
         c3 = gtk.TreeViewColumn("Details", gtk.CellRendererText(), text=4)
-        
+
+        ### start/stop button for analysis engines
+        toggleRenderer = CellRendererPixbufXt()
+        toggleRenderer.set_property("stock-id", "gtk-yes")
+        c4 = gtk.TreeViewColumn("StartStop", toggleRenderer)
+
+        def cb_visible(column, cell, store, iter):
+            if not store[iter][6]:
+                cell.set_property('visible', False)
+            else:
+                cell.set_property('visible', True)
+            
+            if store[iter][5]:
+                cell.set_property("stock-id", "gtk-yes")
+            else:
+                cell.set_property("stock-id", "gtk-no")
+        c4.set_cell_data_func(toggleRenderer, cb_visible)
+
+        def toggled_cb(cell, path):
+            self.store[path][5] = not self.store[path][5]
+            self.advisors[int(path[0])].start_stop(self.store[path][5], self.boardview, self.tv)
+        toggleRenderer.connect('clicked', toggled_cb)
+
+        self.tv.append_column(c4)
         self.tv.append_column(c0)
         self.tv.append_column(c1)
         self.tv.append_column(c2)
@@ -314,6 +357,7 @@ class Sidepanel:
         self.tv.connect("query-tooltip", self.query_tooltip)
         
         self.tv.props.has_tooltip = True
+        self.tv.set_property("show-expanders", False)
         
         self.advisors = [ OpeningAdvisor(self.store) ]
         if HINT in gmwidg.gamemodel.spectators:
@@ -350,10 +394,11 @@ class Sidepanel:
             return
         
         for advisor in self.advisors:
-            advisor.shown_changed(boardview, shown)
+            advisor.shown_changed(boardview, shown, self.tv)
         self.tv.expand_all()
         
         if self.sw.get_child() != self.tv:
+            print "???"
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
 
@@ -476,3 +521,37 @@ def paintGraph (cairo, widthfrac, rgb, rect):
     cairo.set_source_rgb(*rgb)
     cairo.fill()
     cairo.restore()
+
+# cell renderer for start-stop putton
+class CellRendererPixbufXt(gtk.CellRendererPixbuf):
+    __gproperties__ = { 'active-state' :                                      
+                        (gobject.TYPE_STRING, 'pixmap/active widget state',  
+                        'stock-icon name representing active widget state',  
+                        None, gobject.PARAM_READWRITE) }                      
+    __gsignals__    = { 'clicked' :                                          
+                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)) , } 
+
+    def __init__( self ):                                                    
+        gtk.CellRendererPixbuf.__init__( self )                              
+        self.set_property( 'mode', gtk.CELL_RENDERER_MODE_ACTIVATABLE )      
+                                                                              
+    def do_get_property( self, property ):                                    
+        if property.name == 'active-state':                                  
+            return self.active_state                                          
+        else:                                                                
+            raise AttributeError, 'unknown property %s' % property.name      
+                                                                              
+    def do_set_property( self, property, value ):                            
+        if property.name == 'active-state':                                  
+            self.active_state = value                                        
+        else:                                                                
+            raise AttributeError, 'unknown property %s' % property.name      
+                                                                              
+    def do_activate( self, event, widget, path,  background_area, cell_area, flags ):    
+        if event.type == gtk.gdk.BUTTON_PRESS:                                
+            self.emit('clicked', path)          
+                                                  
+    #def do_clicked(self, path):                                        
+        #print "do_clicked", path                              
+        
+gobject.type_register(CellRendererPixbufXt)
