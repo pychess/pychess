@@ -324,7 +324,7 @@ class Sidepanel:
 
         ### start/stop button for analysis engines
         toggleRenderer = CellRendererPixbufXt()
-        toggleRenderer.set_property("stock-id", "gtk-yes")
+        toggleRenderer.set_property("stock-id", "gtk-add")
         c4 = gtk.TreeViewColumn("StartStop", toggleRenderer)
 
         def cb_visible(column, cell, store, iter):
@@ -334,9 +334,9 @@ class Sidepanel:
                 cell.set_property('visible', True)
             
             if store[iter][5]:
-                cell.set_property("stock-id", "gtk-yes")
+                cell.set_property("stock-id", "gtk-add")
             else:
-                cell.set_property("stock-id", "gtk-no")
+                cell.set_property("stock-id", "gtk-remove")
         c4.set_cell_data_func(toggleRenderer, cb_visible)
 
         def toggled_cb(cell, path):
