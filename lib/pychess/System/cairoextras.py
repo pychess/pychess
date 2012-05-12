@@ -26,6 +26,12 @@ def create_cairo_font_face_for_file (filename, faceindex=0, loadoptions=0):
         _freetype_so = ctypes.CDLL ("libfreetype.so.6")
         _cairo_so = ctypes.CDLL ("libcairo.so.2")
 
+        _cairo_so.cairo_ft_font_face_create_for_ft_face.restype = ctypes.c_void_p
+        _cairo_so.cairo_ft_font_face_create_for_ft_face.argtypes = [ ctypes.c_void_p, ctypes.c_int ]
+        _cairo_so.cairo_set_font_face.argtypes = [ ctypes.c_void_p, ctypes.c_void_p ]
+        _cairo_so.cairo_font_face_status.argtypes = [ ctypes.c_void_p ]
+        _cairo_so.cairo_status.argtypes = [ ctypes.c_void_p ]
+
         # initialize freetype
         _ft_lib = ctypes.c_void_p ()
         if FT_Err_Ok != _freetype_so.FT_Init_FreeType (ctypes.byref (_ft_lib)):
