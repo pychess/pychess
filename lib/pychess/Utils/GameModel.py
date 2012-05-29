@@ -92,8 +92,10 @@ class GameModel (GObject, PooledThread):
         "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
         # players_changed is emitted if the players list was changed.
         "players_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # spectators_changed is emitted if the spectators list was changed.
-        "spectators_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "analyzer_added": (SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_removed": (SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_paused": (SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_resumed": (SIGNAL_RUN_FIRST, None, (object, str)),
         # opening_changed is emitted if the move changed the opening.
         "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         # variations_changed is emitted if a variation was added/deleted.
@@ -189,11 +191,50 @@ class GameModel (GObject, PooledThread):
         self.tags["Black"] = str(self.players[BLACK])
         self.emit("players_changed")
     
-    def setSpectators (self, spectators):
-        assert self.status == WAITING_TO_START
-        self.spectators = spectators
-        self.emit("spectators_changed")
-
+    def start_analyzer (self, analyzer_type):
+        from pychess.Players.engineNest import init_engine
+        analyzer = init_engine(analyzer_type, self)
+        if analyzer is None: return
+        
+        analyzer.setOptionInitialBoard(self)
+        self.spectators[analyzer_type] = analyzer
+        self.emit("analyzer_added", analyzer, analyzer_type)
+        return analyzer
+    
+    def remove_analyzer (self, analyzer_type):
+        try:
+            analyzer = self.spectators[analyzer_type]
+        except KeyError:
+            return
+        
+        analyzer.end(KILLED, UNKNOWN_REASON)
+        self.emit("analyzer_removed", analyzer, analyzer_type)
+        del self.spectators[analyzer_type]
+        
+    def resume_analyzer (self, analyzer_type):
+        try:
+            analyzer = self.spectators[analyzer_type]
+        except KeyError:
+            analyzer = self.start_analyzer(analyzer_type)
+            if analyzer is None: return
+        
+        analyzer.resume()
+        analyzer.setOptionInitialBoard(self)
+        self.emit("analyzer_resumed", analyzer, analyzer_type)
+    
+    def pause_analyzer (self, analyzer_type):
+        try:
+            analyzer = self.spectators[analyzer_type]
+        except KeyError:
+            return
+        
+        analyzer.pause()
+        self.emit("analyzer_paused", analyzer, analyzer_type)
+        
+    def restart_analyzer (self, analyzer_type):
+        self.remove_analyzer(analyzer_type)
+        self.start_analyzer(analyzer_type)
+    
     def setOpening(self):
         if self.ply > 40:
             return
@@ -567,11 +608,6 @@ class GameModel (GObject, PooledThread):
         log.debug("GameModel.__pause: %s\n" % self)
         for player in self.players:
             player.pause()
-        try:
-            for spectator in self.spectators.values():
-                spectator.pause()
-        except NotImplementedError:
-            pass
         if self.timemodel:
             self.timemodel.pause()
     
@@ -591,11 +627,6 @@ class GameModel (GObject, PooledThread):
     def __resume (self):
         for player in self.players:
             player.resume()
-        try:
-            for spectator in self.spectators.values():
-                spectator.resume()
-        except NotImplementedError:
-            pass
         if self.timemodel:
             self.timemodel.resume()
         self.emit("game_resumed")

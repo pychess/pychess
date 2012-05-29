@@ -89,6 +89,7 @@ def glock_connect(emitter, signal, function, *args, **kwargs):
             function(emitter, *extra)
         finally:
             release()
+        return False
     if "after" in kwargs and kwargs["after"]:
         return emitter.connect_after(signal, handler, *args)
     return emitter.connect(signal, handler, *args)

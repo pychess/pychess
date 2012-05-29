@@ -93,8 +93,8 @@ TIME_OUT_SECOND = 15
 
 class CECPEngine (ProtocolEngine):
     
-    def __init__ (self, subprocess, color, protover):
-        ProtocolEngine.__init__(self, subprocess, color, protover)
+    def __init__ (self, subprocess, color, protover, md5):
+        ProtocolEngine.__init__(self, subprocess, color, protover, md5)
         
         self.features = {
             "ping":      0,
