@@ -309,12 +309,14 @@ class GameWidget (gobject.GObject):
             
         self.board.view.runWhenReady(arrow, coordinates)
     
-    def _on_analyze (self, analyzer, moves, score, analyzer_type):
-        if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
-           [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]):
-            self._set_arrow(analyzer_type, moves[0].cords)
-        else:
-            self._set_arrow(analyzer_type, None)
+    def _on_analyze (self, analyzer, analysis, analyzer_type):
+        if len(analysis) >= 1 and analysis[0] is not None:
+            moves = analysis[0][0]
+            if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
+               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]):
+                self._set_arrow(analyzer_type, moves[0].cords)
+            else:
+                self._set_arrow(analyzer_type, None)
         return False
     
     def analyzer_added (self, gamemodel, analyzer, analyzer_type):
@@ -340,14 +342,7 @@ class GameWidget (gobject.GObject):
     
     def analyzer_resumed (self, gamemodel, analyzer, analyzer_type):
         self.menuitems[analyzer_type + "_mode"].active = True
-        
-        if len(analyzer.getAnalysis()) >= 1:
-            if self.gamemodel.curplayer.__type__ == LOCAL or \
-               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]:
-                self._set_arrow(analyzer_type, analyzer.getAnalysis()[0].cords)
-            else:
-                self._set_arrow(analyzer_type, None)
-        
+        self._on_analyze(analyzer, analyzer.getAnalysis(), analyzer_type)
         return False
     
     def analyzer_paused (self, gamemodel, analyzer, analyzer_type):
@@ -506,7 +501,7 @@ class GameWidget (gobject.GObject):
         try:
             self.statusbar.pop(0)
             if message:
-                print "Setting statusbar to \"%s\"" % str(message)
+                #print "Setting statusbar to \"%s\"" % str(message)
                 self.statusbar.push(0, message)
         finally:
             glock.release()

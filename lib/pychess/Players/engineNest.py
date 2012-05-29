@@ -497,7 +497,7 @@ class EngineDiscoverer (GObject, PooledThread):
         
         if xmlengine.find('meta/name') is not None:
             engine.setName(xmlengine.find('meta/name').text.strip())
-            print 'set engine name to "%s"' % engine.name
+            #print 'set engine name to "%s"' % engine.name
         
         if protocol == "uci":
             # If the user has configured special options for this engine, here is
