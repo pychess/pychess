@@ -25,8 +25,8 @@ OPTKEYS = ("type", "min", "max", "default", "var")
 
 class UCIEngine (ProtocolEngine):
     
-    def __init__ (self, subprocess, color, protover):
-        ProtocolEngine.__init__(self, subprocess, color, protover)
+    def __init__ (self, subprocess, color, protover, md5):
+        ProtocolEngine.__init__(self, subprocess, color, protover, md5)
         
         self.ids = {}
         self.options = {}

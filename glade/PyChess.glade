@@ -1201,42 +1201,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                     <property name="orientation">vertical</property>
                     <property name="spacing">12</property>
                     <child>
-                      <widget class="GtkHBox" id="analyzer_pref_infobox">
-                        <property name="visible">True</property>
-                        <property name="border_width">4</property>
-                        <property name="spacing">6</property>
-                        <child>
-                          <widget class="GtkImage" id="image1550">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-dialog-info</property>
-                            <property name="icon-size">5</property>
-                          </widget>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="GtkLabel" id="label119">
-                            <property name="visible">True</property>
-                            <property name="xalign">0.50999999046325684</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Note:&lt;/b&gt; Changes to analyzers will be applied to the next game started.</property>
-                            <property name="use_markup">True</property>
-                            <property name="wrap">True</property>
-                          </widget>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
                       <widget class="GtkFrame" id="frame7">
                         <property name="visible">True</property>
                         <property name="label_xalign">0</property>
@@ -1401,7 +1365,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                               <widget class="GtkLabel" id="label79">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">The analyzer will run in the background and analyze the game. &lt;b&gt;This is nessesary for the hint mode to work&lt;/b&gt;</property>
+                                                <property name="label" translatable="yes">The analyzer will run in the background and analyze the game. &lt;b&gt;This is necessary for the hint mode to work&lt;/b&gt;</property>
                                                 <property name="use_markup">True</property>
                                                 <property name="wrap">True</property>
                                               </widget>
@@ -1465,7 +1429,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                               <widget class="GtkLabel" id="label19">
                                                 <property name="visible">True</property>
                                                 <property name="xalign">3.7252902984619141e-09</property>
-                                                <property name="label" translatable="yes">The inverse analyzer will analyze the game as if your opponent was to move. &lt;b&gt;This is nessesary for the spy mode to work&lt;/b&gt;</property>
+                                                <property name="label" translatable="yes">The inverse analyzer will analyze the game as if your opponent was to move. &lt;b&gt;This is necessary for the spy mode to work&lt;/b&gt;</property>
                                                 <property name="use_markup">True</property>
                                                 <property name="wrap">True</property>
                                               </widget>

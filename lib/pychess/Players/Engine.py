@@ -22,8 +22,9 @@ class Engine (Player):
         'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
     }
     
-    def __init__(self):
+    def __init__(self, md5=None):
         Player.__init__(self)
+        self.md5 = md5
         
         self.currentAnalysis = []
         def on_analysis(self_, analysis):

@@ -17,8 +17,8 @@ class ProtocolEngine (Engine):
     #    Setting engine options
     #===========================================================================
     
-    def __init__ (self, subprocess, color, protover):
-        Engine.__init__(self)
+    def __init__ (self, subprocess, color, protover, md5):
+        Engine.__init__(self, md5)
         
         self.engine = subprocess
         self.defname = subprocess.defname
