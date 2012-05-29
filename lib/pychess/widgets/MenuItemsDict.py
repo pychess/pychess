@@ -46,14 +46,14 @@ class GtkMenuItem (object):
     def _set_widget (self, prop, value):
         if not self.gamewidget.isInFront(): return
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
-            print "setting %s property %s to %s.." % (self.name, prop, str(value)),
+            #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
             glock.acquire()
             try:
                 gamewidget.getWidgets()[self.name].set_property(prop, value)
             finally:
                 glock.release()
-            print " success (%s = \"%s\")" % \
-                (prop, gamewidget.getWidgets()[self.name].get_property(prop))
+            #print " success (%s = \"%s\")" % \
+            #    (prop, gamewidget.getWidgets()[self.name].get_property(prop))
             
     def update (self):
         self._set_widget("sensitive", self._sensitive)

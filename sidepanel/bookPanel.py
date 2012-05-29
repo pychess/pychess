@@ -68,7 +68,7 @@ class OpeningAdvisor(Advisor):
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
         
-    def shown_changed (self, boardview, shown, tv):
+    def shown_changed (self, boardview, shown):
         m = boardview.model
         b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
@@ -107,7 +107,7 @@ class OpeningAdvisor(Advisor):
 
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
-    def __init__ (self, store, engine, mode):
+    def __init__ (self, store, engine, mode, tv):
         if mode == ANALYZING:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
             self.tooltip = _("%s will try to predict which move is best and which side has the advantage" % engine)
@@ -116,37 +116,43 @@ class EngineAdvisor(Advisor):
             self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move" % engine)
         self.engine = engine
         self.mode = mode
-        self.active = True
+        self.tv = tv
+        self.active = False
+        self.linesExpected   = 1
+        
+        self.connection = engine.connect("analyze", self.on_analyze)
+        engine.connect("readyForOptions", self.on_ready_for_options)
+    
+    def __del__ (self):
+        self.engine.disconnect(self.connection)
+    
+    def _create_new_expected_lines(self):
+        parent = self.empty_parent()
+        for line in range(self.linesExpected):
+            self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+        self.tv.expand_row(self.path, False)
+        return parent
+    
+    def shown_changed (self, boardview, shown):
+        if not self.active:
+            return
+
+        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
+        self._create_new_expected_lines()
+        
+    def on_ready_for_options (self, engine):
         engineMax = self.engine.maxAnalysisLines()
         self.linesExpected   = min(conf.get("multipv", 1), engineMax)
-        self.linesMax        = 1
-        
-        parent = self.empty_parent()
-        self.store.append(parent, self.textOnlyRow(_("Calculating...")))
-        
+
+        parent = self._create_new_expected_lines()
+
         # set pvlines, but set it 0 if engine max is only 1
         self.store.set_value(parent, 2, 0 if engineMax==1 else self.linesExpected)
         # set it editable
         self.store.set_value(parent, 3, engineMax>1)
         # set start/stop cb activable
         self.store.set_value(parent, 6, True)
-        self.connection = engine.connect("analyze", self.on_analyze)
-    
-    def __del__ (self):
-        self.engine.disconnect(self.connection)
-    
-    def shown_changed (self, boardview, shown, tv):
-        if not self.active:
-            return
-
-        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
-
-        parent = self.empty_parent()
-        for line in xrange(self.linesExpected):
-            self.store.append(parent, self.textOnlyRow(_("Calculating...")))
-
-        self.linesMax = min(self.engine.maxAnalysisLines(), legalMoveCount(self.engine.board))
-        tv.expand_row(self.path, False)
+        self.active = True
     
     def on_analyze (self, engine, analysis):
         if not self.active:
@@ -181,15 +187,16 @@ class EngineAdvisor(Advisor):
             goodness = (min(max(score, -250), 250) + 250) / 500.0
             if self.engine.board.color == BLACK:
                 score = -score
+
             self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
     
-    def start_stop(self, tb, boardview, tv):
+    def start_stop(self, tb, boardview):
         if not tb:
             self.active = True
-            self.engine.resume()
-            self.shown_changed(boardview, boardview.shown, tv)
+            boardview.model.resume_analyzer(HINT if self.engine.mode == ANALYZING else SPY)
+            self.shown_changed(boardview, boardview.shown)
         else:
-            self.engine.pause()
+            boardview.model.pause_analyzer(HINT if self.engine.mode == ANALYZING else SPY)
             self.empty_parent()
             self.active = False
         
@@ -247,7 +254,7 @@ class EndgameAdvisor(Advisor):
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
     
-    def shown_changed (self, boardview, shown, tv):
+    def shown_changed (self, boardview, shown):
         m = boardview.model
         b = m.getBoardAtPly(shown, boardview.variation)
         parent = self.empty_parent()
@@ -341,7 +348,7 @@ class Sidepanel:
 
         def toggled_cb(cell, path):
             self.store[path][5] = not self.store[path][5]
-            self.advisors[int(path[0])].start_stop(self.store[path][5], self.boardview, self.tv)
+            self.advisors[int(path[0])].start_stop(self.store[path][5], self.boardview)
         toggleRenderer.connect('clicked', toggled_cb)
 
         self.tv.append_column(c4)
@@ -359,28 +366,18 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         self.tv.set_property("show-expanders", False)
         
-        self.advisors = [ OpeningAdvisor(self.store) ]
-        if HINT in gmwidg.gamemodel.spectators:
-            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectators[HINT], ANALYZING))
-        self.advisors.append(EndgameAdvisor(self.store))
-        if SPY in gmwidg.gamemodel.spectators:
-            self.advisors.append(EngineAdvisor(self.store, gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
-        
-        self.gmwidg = None # HACK
-        self.shown_changed(self.boardview, 0)
-        self.gmwidg = gmwidg # HACK
-        
+        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store) ]
+
+        gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         return self.sw
     
+    def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
+        if analyzer_type == HINT:
+            self.advisors.append(EngineAdvisor(self.store, analyzer, ANALYZING, self.tv))
+        if analyzer_type == SPY:
+            self.advisors.append(EngineAdvisor(self.store, analyzer, INVERSE_ANALYZING, self.tv))
+
     def shown_changed (self, boardview, shown):
-# HACK
-        if self.gmwidg:
-            if HINT in self.gmwidg.gamemodel.spectators:
-                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectators[HINT], ANALYZING))
-            if SPY in self.gmwidg.gamemodel.spectators:
-                self.advisors.append(EngineAdvisor(self.store, self.gmwidg.gamemodel.spectators[SPY], INVERSE_ANALYZING))
-            self.gmwidg = None
-# End of HACK
         boardview.bluearrow = None
         
         if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.variation)) == 0:
@@ -394,7 +391,7 @@ class Sidepanel:
             return
         
         for advisor in self.advisors:
-            advisor.shown_changed(boardview, shown, self.tv)
+            advisor.shown_changed(boardview, shown)
         self.tv.expand_all()
         
         if self.sw.get_child() != self.tv:
