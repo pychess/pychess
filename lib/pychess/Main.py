@@ -180,12 +180,19 @@ class GladeHandlers:
     
     def on_hint_mode_activate (widget):
         for gmwidg in gameDic.keys():
-            gamenanny.setAnalyzerEnabled(gmwidg, HINT, widget.get_active())
+            if gmwidg.isInFront():
+                if widget.get_active():
+                    gmwidg.gamemodel.resume_analyzer(HINT)
+                else:
+                    gmwidg.gamemodel.pause_analyzer(HINT)
     
     def on_spy_mode_activate (widget):
         for gmwidg in gameDic.keys():
-            print "setting spymode for", gmwidg, "to", widget.get_active()
-            gamenanny.setAnalyzerEnabled(gmwidg, SPY, widget.get_active())
+            if gmwidg.isInFront():
+                if widget.get_active():
+                    gmwidg.gamemodel.resume_analyzer(SPY)
+                else:
+                    gmwidg.gamemodel.pause_analyzer(SPY)
     
     #          Settings menu          #
     
@@ -235,6 +242,12 @@ class PyChess:
         #------------------------------------------------------ Redirect widgets
         gamewidget.setWidgets(widgets)
         
+        def on_sensitive_changed (widget, prop):
+            name = widget.get_property('name')
+            sensitive = widget.get_property('sensitive')
+            print "'%s' changed to '%s'" % (name, sensitive)
+        widgets['pause1'].connect("notify::sensitive", on_sensitive_changed)
+        widgets['resume1'].connect("notify::sensitive", on_sensitive_changed)
         #-------------------------- Main.py still needs a minimum of information
         ionest.handler.connect("gmwidg_created",
                                GladeHandlers.__dict__["on_gmwidg_created"])
