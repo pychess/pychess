@@ -245,7 +245,7 @@ class PyChess:
         def on_sensitive_changed (widget, prop):
             name = widget.get_property('name')
             sensitive = widget.get_property('sensitive')
-            print "'%s' changed to '%s'" % (name, sensitive)
+            #print "'%s' changed to '%s'" % (name, sensitive)
         widgets['pause1'].connect("notify::sensitive", on_sensitive_changed)
         widgets['resume1'].connect("notify::sensitive", on_sensitive_changed)
         #-------------------------- Main.py still needs a minimum of information
