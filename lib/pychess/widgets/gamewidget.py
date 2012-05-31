@@ -244,10 +244,6 @@ class GameWidget (gobject.GObject):
         self._update_menu_resign()
         self._update_menu_undo()
         self._update_menu_ask_to_move()
-        
-        for mode in ("hint_mode", "spy_mode"):
-            self.menuitems[mode].active = False
-            self.menuitems[mode].sensitive = False
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:

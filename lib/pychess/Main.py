@@ -254,7 +254,6 @@ class PyChess:
         
         #---------------------- The only menuitems that need special initing
         for widget in ("hint_mode", "spy_mode"):
-            widgets[widget].set_active(False)
             widgets[widget].set_sensitive(False)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
         

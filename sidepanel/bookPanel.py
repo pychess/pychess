@@ -24,10 +24,12 @@ class Advisor:
     def __init__ (self, store, name):
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
-            (text, barWidth, goodness)  Indicate its strength (last 2 are 0 to 1.0)
+            text or barWidth or goodness  Indicate its strength (last 2 are 0 to 1.0)
             pvlines                     Number of analysis lines for analysing engines
-            is_pvlines_editable         Boolean
-            Details                     Describe a PV, opening name, etc. """
+            is pvlines editable         Boolean
+            Details                     Describe a PV, opening name, etc.
+            star/stop                   Boolean HINT, SPY analyzing toggle button state
+            is start/stop visible       Boolean """
 
         self.store = store
         iter = store.append(None, self.textOnlyRow(name))
@@ -151,7 +153,7 @@ class EngineAdvisor(Advisor):
         self.store.set_value(parent, 2, 0 if engineMax==1 else self.linesExpected)
         # set it editable
         self.store.set_value(parent, 3, engineMax>1)
-        # set start/stop cb activable
+        # set start/stop cb visible
         self.store.set_value(parent, 6, True)
         self.active = True
     
@@ -384,14 +386,14 @@ class Sidepanel:
     def on_analyzer_paused(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
             if advisor.mode == analyzer_type:
-                self.store[advisor.path][5] = not self.store[advisor.path][5]
+                self.store[advisor.path][5] = True
                 advisor.empty_parent()
                 advisor.active = False
 
     def on_analyzer_resumed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
             if advisor.mode == analyzer_type:
-                self.store[advisor.path][5] = not self.store[advisor.path][5]
+                self.store[advisor.path][5] = False
                 advisor.active = True
                 advisor.shown_changed(self.boardview, self.boardview.shown)
 
