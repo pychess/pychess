@@ -65,6 +65,7 @@ class Advisor:
 class OpeningAdvisor(Advisor):
     def __init__ (self, store):
         Advisor.__init__(self, store, _("Opening Book"))
+        self.mode = OPENING
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
         
@@ -108,7 +109,7 @@ class OpeningAdvisor(Advisor):
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
     def __init__ (self, store, engine, mode, tv):
-        if mode == ANALYZING:
+        if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
             self.tooltip = _("%s will try to predict which move is best and which side has the advantage" % engine)
         else:
@@ -170,7 +171,7 @@ class EngineAdvisor(Advisor):
 
             board0 = self.engine.board
             board = board0.clone()
-            ply0 = board.ply if self.mode == ANALYZING else board.ply+1
+            ply0 = board.ply if self.mode == HINT else board.ply+1
             counted_pv = []
             for j, pvmove in enumerate(pv):
                 ply = ply0 + j
@@ -193,10 +194,10 @@ class EngineAdvisor(Advisor):
     def start_stop(self, tb, boardview):
         if not tb:
             self.active = True
-            boardview.model.resume_analyzer(HINT if self.engine.mode == ANALYZING else SPY)
+            boardview.model.resume_analyzer(self.mode)
             self.shown_changed(boardview, boardview.shown)
         else:
-            boardview.model.pause_analyzer(HINT if self.engine.mode == ANALYZING else SPY)
+            boardview.model.pause_analyzer(self.mode)
             self.empty_parent()
             self.active = False
         
@@ -219,7 +220,7 @@ class EngineAdvisor(Advisor):
                     self.linesExpected -= 1
         
     def row_activated (self, iter, model):
-        if self.mode == ANALYZING and self.store.get_path(iter) != self.path:
+        if self.mode == HINT and self.store.get_path(iter) != self.path:
             moves = self.store[iter][0][2]
             if moves is not None:
                 model.add_variation(self.engine.board, moves)
@@ -250,6 +251,7 @@ class EngineAdvisor(Advisor):
 class EndgameAdvisor(Advisor):
     def __init__ (self, store):
         Advisor.__init__(self, store, _("Endgame Table"))
+        self.mode = ENDGAME
         self.egtb = EndgameTable()
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
@@ -369,13 +371,29 @@ class Sidepanel:
         self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store) ]
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
+        gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused)
+        gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed)
         return self.sw
     
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, ANALYZING, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv))
         if analyzer_type == SPY:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, INVERSE_ANALYZING, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv))
+
+    def on_analyzer_paused(self, gamemodel, analyzer, analyzer_type):
+        for advisor in self.advisors:
+            if advisor.mode == analyzer_type:
+                self.store[advisor.path][5] = not self.store[advisor.path][5]
+                advisor.empty_parent()
+                advisor.active = False
+
+    def on_analyzer_resumed(self, gamemodel, analyzer, analyzer_type):
+        for advisor in self.advisors:
+            if advisor.mode == analyzer_type:
+                self.store[advisor.path][5] = not self.store[advisor.path][5]
+                advisor.active = True
+                advisor.shown_changed(self.boardview, self.boardview.shown)
 
     def shown_changed (self, boardview, shown):
         boardview.bluearrow = None
