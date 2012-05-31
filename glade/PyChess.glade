@@ -392,7 +392,7 @@
                         <property name="sensitive">False</property>
                         <property name="label" translatable="yes">_Hint mode</property>
                         <property name="use_underline">True</property>
-                        <signal name="toggled" handler="on_hint_mode_activate"/>
+                        <signal name="activate" handler="on_hint_mode_activate"/>
                         <accelerator key="H" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </widget>
                     </child>
