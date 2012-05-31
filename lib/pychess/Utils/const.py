@@ -196,7 +196,7 @@ IC_STATUS_UNKNOWN = range(11)
 ################################################################################
 
 # Hint modes
-HINT, SPY = ["hint", "spy"]
+OPENING, ENDGAME, HINT, SPY = ["opening", "endgame", "hint", "spy"]
 
 # Sound settings
 SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
