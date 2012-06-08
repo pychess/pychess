@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.net
+
+[pychess.pychess]
+file_filter = translations/pychess.pychess/<lang>.po
+host = https://www.transifex.com
+source_lang = en
+
