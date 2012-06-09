@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-12-15 17:09+0000\n"
-"Last-Translator: Patrick Fiquet <Unknown>\n"
+"PO-Revision-Date: 2012-03-12 22:06+0000\n"
+"Last-Translator: pmd <Unknown>\n"
 "Language-Team: <>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:27+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,49,-1,-1\n"
 
 #: glade/fics_lounge.glade:522 lib/pychess/ic/ICLounge.py:223
@@ -89,15 +89,16 @@ msgstr "texte"
 
 #: glade/fics_logon.glade:90
 msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
-msgstr "Connexion au serveur gratuit d'échecs en ligne FICS"
+msgstr ""
+"<b><big>Connexion au serveur gratuit d'échecs en ligne FICS</big></b>"
 
 #: glade/fics_logon.glade:160 glade/taskers.glade:349
 msgid "_Password:"
-msgstr "_Mot de passe :"
+msgstr "Mot de _passe :"
 
 #: glade/fics_logon.glade:173
 msgid "_Name:"
-msgstr "_Nom :"
+msgstr "_Nom :"
 
 #: glade/fics_logon.glade:217
 msgid "Log on as _Guest"
@@ -105,15 +106,15 @@ msgstr "Se connecter en tant qu' _invité"
 
 #: glade/fics_logon.glade:252
 msgid "Po_rts:"
-msgstr "Ports :"
+msgstr "Po_rts :"
 
 #: glade/fics_logon.glade:324
 msgid "S_ign up"
-msgstr "Inscription"
+msgstr "_Inscription"
 
 #: glade/fics_lounge.glade:7
 msgid "PyChess - Internet Chess: FICS"
-msgstr "PyChess - Jeu d'échecs : FICS"
+msgstr "PyChess - Jeu d'échecs : FICS"
 
 #: glade/fics_lounge.glade:69
 msgid "_Clear Seeks"
@@ -129,19 +130,19 @@ msgstr "_Refuser"
 
 #: glade/fics_lounge.glade:302 glade/fics_lounge.glade:2625
 msgid "Lightning:"
-msgstr "Lightning:"
+msgstr "Lightning :"
 
 #: glade/fics_lounge.glade:324 glade/fics_lounge.glade:2647
 msgid "Standard:"
-msgstr "Standard :"
+msgstr "Standard :"
 
 #: glade/fics_lounge.glade:347 glade/fics_lounge.glade:2670
 msgid "Blitz:"
-msgstr "Blitz :"
+msgstr "Blitz :"
 
 #: glade/fics_lounge.glade:370
 msgid "2 min, Fischer Random, 1800↓, Black"
-msgstr "2 min, échecs aléatoires Fischer, 1800↓, Black"
+msgstr "2 min, échecs aléatoires Fischer, 1800↓, Noir"
 
 #: glade/fics_lounge.glade:389
 msgid "10 min + 6 sec/move, 1400↑, White"
@@ -165,7 +166,7 @@ msgstr "Requêtes / Défis"
 
 #: glade/fics_lounge.glade:567
 msgid "Seek _Graph"
-msgstr "Graphe des requêtes"
+msgstr "_Graphe des requêtes"
 
 #: glade/fics_lounge.glade:589
 msgid "0 Players Ready"
@@ -181,7 +182,7 @@ msgstr "Observer"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
-msgstr "Démarrer conversation"
+msgstr "Démarrer conversation privée"
 
 #: glade/fics_lounge.glade:773
 msgid "_Player List"
@@ -197,7 +198,7 @@ msgstr "Aperçu"
 
 #: glade/fics_lounge.glade:972
 msgid "Offer A_bort"
-msgstr "Proposer l'abandon"
+msgstr "Proposer l'a_bandon"
 
 #: glade/fics_lounge.glade:1013 glade/PyChess.glade:209
 msgid "Offer _Draw"
@@ -213,7 +214,7 @@ msgstr "Proposer de _reprendre"
 
 #: glade/fics_lounge.glade:1172
 msgid "_Adjourned"
-msgstr "Ajourné"
+msgstr "_Ajourné"
 
 #: glade/fics_lounge.glade:1267
 msgid "<b>News</b>"
@@ -242,15 +243,15 @@ msgstr "Sans décompte de temps"
 
 #: glade/fics_lounge.glade:1457
 msgid "Minutes:  "
-msgstr "Minutes :  "
+msgstr "Minutes :  "
 
 #: glade/fics_lounge.glade:1480
 msgid "   Gain:  "
-msgstr "   Gain :  "
+msgstr "   Gain :  "
 
 #: glade/fics_lounge.glade:1510
 msgid "Time control:  "
-msgstr "Cadence :  "
+msgstr "Cadence :  "
 
 #: glade/fics_lounge.glade:1521 lib/pychess/ic/ICLounge.py:775
 #: lib/pychess/ic/ICLounge.py:1653 lib/pychess/ic/__init__.py:59
@@ -267,7 +268,7 @@ msgstr "Pas de préférence"
 
 #: glade/fics_lounge.glade:1656
 msgid "Your strength: "
-msgstr "Votre niveau : "
+msgstr "Votre niveau : "
 
 #: glade/fics_lounge.glade:1692
 msgid "(Blitz)"
@@ -275,7 +276,7 @@ msgstr "(Blitz)"
 
 #: glade/fics_lounge.glade:1717
 msgid "Opponent's strength: "
-msgstr "Niveau de l'adversaire : "
+msgstr "Niveau de l'adversaire : "
 
 #: glade/fics_lounge.glade:1804
 msgid ""
@@ -293,7 +294,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1838
 msgid "Center:"
-msgstr "Centre :"
+msgstr "Centre :"
 
 #: glade/fics_lounge.glade:1870
 msgid "1200"
@@ -301,7 +302,7 @@ msgstr "1200"
 
 #: glade/fics_lounge.glade:1914
 msgid "Tolerance:"
-msgstr "Tolérance :"
+msgstr "Tolérance :"
 
 #: glade/fics_lounge.glade:1961 lib/pychess/ic/ICLounge.py:1892
 msgid "Hide"
@@ -327,7 +328,7 @@ msgstr "Noir"
 
 #: glade/fics_lounge.glade:2136
 msgid "<b>Your Color</b>"
-msgstr "Votre couleur"
+msgstr "<b>Votre couleur</b>"
 
 #: glade/fics_lounge.glade:2189
 msgid "Play normal chess rules"
@@ -359,11 +360,11 @@ msgstr "<b>Options</b>"
 
 #: glade/fics_lounge.glade:2431
 msgid "Challenge: <Player>"
-msgstr "Défier : <Player>"
+msgstr "Défier : <Player>"
 
 #: glade/fics_lounge.glade:2446
 msgid "<big>Challenge:</big>"
-msgstr "<big>Défier :</big>"
+msgstr "<big>Défier :</big>"
 
 #: glade/fics_lounge.glade:2693
 msgid "2 min, Fischer Random, Black"
@@ -371,7 +372,7 @@ msgstr "2 min, échecs aléatoires Fischer, Noir"
 
 #: glade/fics_lounge.glade:2713
 msgid "10 min + 6 sec/move, White"
-msgstr "10 min + 6s/coup , Blanc"
+msgstr "10 min + 6 s/coup, Blanc"
 
 #: glade/fics_lounge.glade:2733
 msgid "5 min"
@@ -399,7 +400,7 @@ msgstr "_Suivant"
 
 #: glade/findbar.glade:137
 msgid "Search:"
-msgstr "Rechercher :"
+msgstr "Rechercher :"
 
 #: glade/newInOut.glade:7 lib/pychess/widgets/newGameDialog.py:368
 msgid "New Game"
@@ -407,11 +408,11 @@ msgstr "Nouvelle partie"
 
 #: glade/newInOut.glade:86
 msgid "_Black player:"
-msgstr "_Joueur noir :"
+msgstr "Joueur _noir :"
 
 #: glade/newInOut.glade:102
 msgid "_White player:"
-msgstr "_Joueur blanc :"
+msgstr "Joueur _blanc :"
 
 #: glade/newInOut.glade:199
 msgid "<b>Players</b>"
@@ -423,15 +424,15 @@ msgstr "_Sans cadence"
 
 #: glade/newInOut.glade:280
 msgid "Blitz:\t5 min"
-msgstr "Blitz :\t5 min"
+msgstr "Blitz :\t5 min"
 
 #: glade/newInOut.glade:324
 msgid "Rapid:\t15 min + 10 sec/move"
-msgstr "Rapide :\t15 min + 10 s/coup"
+msgstr "Rapide :\t15 min + 10 s/coup"
 
 #: glade/newInOut.glade:366
 msgid "Normal:\t40 min + 15 sec/move"
-msgstr "Normal :\t40 min + 15 s/coup"
+msgstr "Normal :\t40 min + 15 s/coup"
 
 #: glade/newInOut.glade:460
 msgid "_Play Normal chess"
@@ -507,7 +508,7 @@ msgstr "Disposer les pièces"
 
 #: glade/PyChess.glade:88
 msgid "Enter Game _Notation"
-msgstr "Entrer la note de la partie"
+msgstr "Entrer l'évaluation de la partie"
 
 #: glade/PyChess.glade:100
 msgid "_Save Game"
@@ -547,11 +548,11 @@ msgstr "_Victoire au temps"
 
 #: glade/PyChess.glade:276
 msgid "Ask to _Move"
-msgstr "Demander de _jouer"
+msgstr "_Demander de jouer"
 
 #: glade/PyChess.glade:288
 msgid "_View"
-msgstr "_Affichage"
+msgstr "A_ffichage"
 
 #: glade/PyChess.glade:294
 msgid "_Rotate Board"
@@ -587,11 +588,11 @@ msgstr "P_références"
 
 #: glade/PyChess.glade:410
 msgid "_Help"
-msgstr "_Aide"
+msgstr "A_ide"
 
 #: glade/PyChess.glade:416
 msgid "About Chess"
-msgstr "À Propos des échecs"
+msgstr "À propos des échecs"
 
 #: glade/PyChess.glade:430
 msgid "How to Play"
@@ -651,11 +652,11 @@ msgstr "Évènement :"
 
 #: glade/PyChess.glade:628
 msgid "Site:"
-msgstr "Localisation :"
+msgstr "Lieu :"
 
 #: glade/PyChess.glade:651
 msgid "Round:"
-msgstr "Tour(s):"
+msgstr "Tour :"
 
 #: glade/PyChess.glade:688
 msgid "<b>Game data</b>"
@@ -675,7 +676,7 @@ msgstr "Le nom affiché du premier joueur humain, par exemple Pierre."
 
 #: glade/PyChess.glade:850
 msgid "<b>Name of _first human player:</b>"
-msgstr "<b>Nom du _premier joueur humain :</b>"
+msgstr "<b>Nom du _premier joueur humain :</b>"
 
 #: glade/PyChess.glade:879
 msgid "The displayed name of the guest player, e.g., Mary."
@@ -683,7 +684,7 @@ msgstr "Le nom affiché du joueur invité, par exemple Marie."
 
 #: glade/PyChess.glade:888
 msgid "<b>Name of s_econd human player:</b>"
-msgstr "<b>Nom du _second joueur humain :</b>"
+msgstr "<b>Nom du _second joueur humain :</b>"
 
 #: glade/PyChess.glade:924
 msgid "_Hide tabs when only one game is open"
@@ -695,7 +696,7 @@ msgid ""
 "needed."
 msgstr ""
 "Lorsque cette option est sélectionnée, cache l'onglet en haut de la fenêtre "
-"de jeu lorsqu'il n'y a pas besoin de l'afficher ."
+"de jeu lorsque ce n'est pas nécessaire."
 
 #: glade/PyChess.glade:940
 msgid "Auto _rotate board to current human player"
@@ -724,7 +725,7 @@ msgstr ""
 
 #: glade/PyChess.glade:973
 msgid "Sho_w cords"
-msgstr "Echiquier lettré"
+msgstr "Échiquier avec coordonnées"
 
 #: glade/PyChess.glade:977
 msgid ""
@@ -770,7 +771,7 @@ msgstr "Echiquier totalement animé"
 #: glade/PyChess.glade:1068
 msgid "Animate pieces, board rotation and more. Use this on fast machines."
 msgstr ""
-"Anime les pièces, fait pivoter l'échiquier et plus encore. A utiliser sur "
+"Anime les pièces, fait pivoter l'échiquier et plus encore. À utiliser sur "
 "une machine puissante."
 
 #: glade/PyChess.glade:1081
@@ -783,12 +784,12 @@ msgstr "Anime uniquement les mouvements des pièces."
 
 #: glade/PyChess.glade:1098
 msgid "No _animation"
-msgstr "Aucune animation."
+msgstr "Aucune animation"
 
 #: glade/PyChess.glade:1102
 msgid "Never use animation. Use this on slow machines."
 msgstr ""
-"Aucune animation durant la partie. A utiliser sur les machines les moins "
+"Aucune animation durant la partie. À utiliser sur les machines les moins "
 "puissantes."
 
 #: glade/PyChess.glade:1125
@@ -803,7 +804,8 @@ msgstr "_Général"
 msgid ""
 "<b>Note:</b> Changes to analyzers will be applied to the next game started."
 msgstr ""
-"Note : le changement d'analyseur sera appliqué au prochain démarrage du jeu."
+"<b>Note :</b> Les modifications apportées aux analyseurs prendront effet à "
+"partir de la prochaine partie."
 
 #: glade/PyChess.glade:1296
 msgid "<b>Chess Engines</b>"
@@ -1662,7 +1664,7 @@ msgstr "La proposition de changer de côté"
 
 #: lib/pychess/Players/Human.py:42
 msgid "The takeback offer"
-msgstr ""
+msgstr "La proposition d'annuler le dernier coup"
 
 #: lib/pychess/Players/Human.py:46
 msgid "resign"
@@ -1670,7 +1672,7 @@ msgstr "abandonner"
 
 #: lib/pychess/Players/Human.py:47
 msgid "call your opponents flag"
-msgstr ""
+msgstr "demander la victoire au temps"
 
 #: lib/pychess/Players/Human.py:48
 msgid "offer a draw"
@@ -1698,7 +1700,7 @@ msgstr "proposer de changer de côté"
 
 #: lib/pychess/Players/Human.py:54
 msgid "offer a takeback"
-msgstr ""
+msgstr "Proposer d'annuler le dernier coup"
 
 #: lib/pychess/Players/Human.py:55
 msgid "ask your opponent to move"
@@ -1813,7 +1815,7 @@ msgstr "Hôte Inaccessible"
 
 #: lib/pychess/System/ping.py:70
 msgid "Died"
-msgstr ""
+msgstr "Arrêté"
 
 # The event at which the game was played
 #: lib/pychess/Utils/GameModel.py:119
@@ -2024,7 +2026,7 @@ msgstr "sec"
 
 #: lib/pychess/Variants/asymmetricrandom.py:85
 msgid "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/asymmetricrandom.py:91
 msgid "Asymmetric Random"
@@ -2032,7 +2034,7 @@ msgstr "Echecs aléatoires asymétriques"
 
 #: lib/pychess/Variants/blindfold.py:10
 msgid "Classic chess rules with hidden figurines\n"
-msgstr ""
+msgstr "Partie d'échecs à l'aveugle\n"
 
 #: lib/pychess/Variants/blindfold.py:12
 #: lib/pychess/widgets/newGameDialog.py:246
@@ -2115,7 +2117,7 @@ msgstr "Handicap d'un pion"
 
 #: lib/pychess/Variants/pawnspassed.py:20
 msgid "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/pawnspassed.py:22
 msgid "Pawns Passed"
@@ -2123,7 +2125,7 @@ msgstr "Pions libres"
 
 #: lib/pychess/Variants/pawnspushed.py:19
 msgid "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/pawnspushed.py:21
 msgid "Pawns Pushed"
@@ -2139,7 +2141,7 @@ msgstr "Handicap de la reine"
 
 #: lib/pychess/Variants/randomchess.py:28
 msgid "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/randomchess.py:34
 #: lib/pychess/widgets/TaskerManager.py:148
@@ -2156,11 +2158,11 @@ msgstr "Handicap d'une tour"
 
 #: lib/pychess/Variants/shuffle.py:26
 msgid "xboard nocastle: http://tim-mann.org/xboard/engine-intf.html#8\n"
-msgstr ""
+msgstr "xboard nocastle: http://tim-mann.org/xboard/engine-intf.html#8\n"
 
 #: lib/pychess/Variants/upsidedown.py:18
 msgid "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/upsidedown.py:21
 msgid "Upside Down"
@@ -2838,7 +2840,7 @@ msgstr "%s ne peut plus faire de petit roque"
 #: lib/pychess/Utils/lutils/strateval.py:548
 #, python-format
 msgid "%(opcolor)s has a new trapped bishop on %(cord)s"
-msgstr ""
+msgstr "Les %(opcolor)s ont un nouveau fou piégé en %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:570
 #, python-format
@@ -2858,12 +2860,12 @@ msgstr "déplace un %(piece)s plus près du roi adverse : %(cord)s"
 #: lib/pychess/Utils/lutils/strateval.py:591
 #, python-format
 msgid "develops a %(piece)s: %(cord)s"
-msgstr ""
+msgstr "Développe un %(piece)s: %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:609
 #, python-format
 msgid "places a %(piece)s more active: %(cord)s"
-msgstr ""
+msgstr "Rend un %(piece)s plus actif : %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:635
 msgid "White should do pawn storm in right"
