@@ -113,10 +113,10 @@ class EngineAdvisor(Advisor):
     def __init__ (self, store, engine, mode, tv):
         if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
-            self.tooltip = _("%s will try to predict which move is best and which side has the advantage" % engine)
+            self.tooltip = _("%s will try to predict which move is best and which side has the advantage") % engine
         else:
             Advisor.__init__(self, store, _("Threat analysis by %s") % engine)
-            self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move" % engine)
+            self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move") % engine
         self.engine = engine
         self.mode = mode
         self.tv = tv
