@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-08-11 19:38+0000\n"
-"Last-Translator: Manuel Kaufmann <Unknown>\n"
+"PO-Revision-Date: 2012-04-13 16:24+0000\n"
+"Last-Translator: Rodolfo <Unknown>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:28+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -86,7 +86,7 @@ msgstr "_Aceptar"
 
 #: glade/fics_lounge.glade:115
 msgid "_Decline"
-msgstr ""
+msgstr "_Declinar"
 
 #: glade/fics_lounge.glade:302 glade/fics_lounge.glade:2625
 msgid "Lightning:"
@@ -148,11 +148,11 @@ msgstr "Desafío"
 
 #: glade/fics_lounge.glade:673 glade/fics_lounge.glade:830
 msgid "Observe"
-msgstr ""
+msgstr "Observar"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
-msgstr ""
+msgstr "Iniciar Chat Privado"
 
 #: glade/fics_lounge.glade:773
 msgid "_Player List"
@@ -389,7 +389,7 @@ msgstr "<b>Jugadores</b>"
 
 #: glade/newInOut.glade:246
 msgid "_Untimed"
-msgstr ""
+msgstr "Sin"
 
 #: glade/newInOut.glade:280
 msgid "Blitz:\t5 min"
@@ -1000,27 +1000,27 @@ msgstr "Desconectado"
 
 #: lib/pychess/ic/FICSObjects.py:80
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: lib/pychess/ic/FICSObjects.py:82
 msgid "Playing"
-msgstr ""
+msgstr "Jugando"
 
 #: lib/pychess/ic/FICSObjects.py:87
 msgid "Idle"
-msgstr ""
+msgstr "Inactivo"
 
 #: lib/pychess/ic/FICSObjects.py:89
 msgid "Examining"
-msgstr ""
+msgstr "Examinando"
 
 #: lib/pychess/ic/FICSObjects.py:91
 msgid "Not Available"
-msgstr ""
+msgstr "No Disponible"
 
 #: lib/pychess/ic/FICSObjects.py:93
 msgid "Running Simul Match"
-msgstr ""
+msgstr "Corriendo un Match simultáneo"
 
 #: lib/pychess/ic/FICSObjects.py:95
 msgid "In Tournament"
@@ -1051,7 +1051,7 @@ msgstr "%d min"
 #: lib/pychess/ic/FICSObjects.py:519
 #, python-format
 msgid " + %d sec"
-msgstr ""
+msgstr " + %d seg"
 
 #: lib/pychess/ic/ICLogon.py:111 lib/pychess/ic/ICLogon.py:117
 msgid "Connection Error"
@@ -1098,7 +1098,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:245
 msgid "Sanctions"
-msgstr ""
+msgstr "Sanciones"
 
 #: lib/pychess/ic/ICLounge.py:250
 msgid "Email"
@@ -1178,15 +1178,15 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:565
 msgid "Accept Challenge"
-msgstr ""
+msgstr "Aceptar Reto"
 
 #: lib/pychess/ic/ICLounge.py:567
 msgid "Decline Challenge"
-msgstr ""
+msgstr "Declinar Reto"
 
 #: lib/pychess/ic/ICLounge.py:569
 msgid "Ignore Challenge"
-msgstr ""
+msgstr "Ignorar Reto"
 
 #: lib/pychess/ic/ICLounge.py:683
 msgid " min"
@@ -1199,11 +1199,11 @@ msgstr "%(min)s min + %(sec)s seg"
 
 #: lib/pychess/ic/ICLounge.py:723
 msgid "Opponent Rating"
-msgstr ""
+msgstr "Rating del Adversario"
 
 #: lib/pychess/ic/ICLounge.py:725
 msgid "Manual Accept"
-msgstr ""
+msgstr "Aceptar Manualmente"
 
 #: lib/pychess/ic/ICLounge.py:774 lib/pychess/ic/ICLounge.py:1654
 #: lib/pychess/ic/__init__.py:58 lib/pychess/widgets/newGameDialog.py:145
@@ -1221,12 +1221,12 @@ msgstr "Salvaje"
 
 #: lib/pychess/ic/ICLounge.py:775
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: lib/pychess/ic/ICLounge.py:817 lib/pychess/ic/ICLounge.py:839
 #, python-format
 msgid "Players: %d"
-msgstr ""
+msgstr "Jugadores: %d"
 
 #: lib/pychess/ic/ICLounge.py:945
 msgid "White Player"
@@ -1247,7 +1247,7 @@ msgstr "Juegos en curso: %d"
 
 #: lib/pychess/ic/ICLounge.py:1076
 msgid "Your Color"
-msgstr ""
+msgstr "Su Color"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Opponent"
@@ -1255,11 +1255,11 @@ msgstr "Oponente"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Is Online"
-msgstr ""
+msgstr "Está Conectado"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Time Control"
-msgstr ""
+msgstr "Control del Tiempo"
 
 #: lib/pychess/ic/ICLounge.py:1078
 msgid "Date/Time"
@@ -1268,7 +1268,7 @@ msgstr "Fecha/Hora"
 #: lib/pychess/ic/ICLounge.py:1121
 #, python-format
 msgid "%(player)s is %(status)s"
-msgstr ""
+msgstr "%(player)s es %(status)s"
 
 #: lib/pychess/ic/ICLounge.py:1126
 #, python-format
@@ -1278,15 +1278,15 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1139
 msgid "Request Continuation"
-msgstr ""
+msgstr "Solicitar Continuar"
 
 #: lib/pychess/ic/ICLounge.py:1141
 msgid "Examine Adjourned Game"
-msgstr ""
+msgstr "Examinar Juego Aplazado"
 
 #: lib/pychess/ic/ICLounge.py:1143
 msgid "Do Nothing"
-msgstr ""
+msgstr "No Hacer Nada"
 
 #: lib/pychess/ic/ICLounge.py:1400
 msgid ""
@@ -1377,11 +1377,11 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1971
 msgid " has declined your offer for a match."
-msgstr ""
+msgstr " ha declinado el reto."
 
 #: lib/pychess/ic/__init__.py:62
 msgid "Examined"
-msgstr ""
+msgstr "Examinado"
 
 #: lib/pychess/ic/__init__.py:141
 msgid "Administrator"
@@ -1912,7 +1912,7 @@ msgstr "Un jugador se ha desconectado"
 
 #: lib/pychess/Utils/repr.py:43
 msgid "Because both players agreed to adjourn the game"
-msgstr ""
+msgstr "Porque ambos jugadores acordaron aplazar el juego"
 
 #: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
 msgid "Because the server was shutdown"
@@ -1929,6 +1929,8 @@ msgid ""
 "Because %(black)s lost connection to the server and %(white)s requested "
 "adjournment"
 msgstr ""
+"Porque %(black)s perdió la conexión con el servidor y %(white)s solicitó "
+"aplazar el juego"
 
 #: lib/pychess/Utils/repr.py:47
 #, python-format
@@ -1936,16 +1938,18 @@ msgid ""
 "Because %(white)s lost connection to the server and %(black)s requested "
 "adjournment"
 msgstr ""
+"Porque %(white)s perdió la conexión con el servidor y %(black)s solicitó "
+"aplazar el juego"
 
 #: lib/pychess/Utils/repr.py:48
 #, python-format
 msgid "Because %(white)s lost connection to the server"
-msgstr ""
+msgstr "Porque %(white)s perdió la conexión con el servidor"
 
 #: lib/pychess/Utils/repr.py:49
 #, python-format
 msgid "Because %(black)s lost connection to the server"
-msgstr ""
+msgstr "Porque %(black)s perdió la conexión con el servidor"
 
 #: lib/pychess/Utils/repr.py:53
 msgid "Because of courtesy by a player"
@@ -1972,11 +1976,11 @@ msgstr "Razón desconocida"
 
 #: lib/pychess/Utils/TimeModel.py:225
 msgid "min"
-msgstr ""
+msgstr "min"
 
 #: lib/pychess/Utils/TimeModel.py:227
 msgid "sec"
-msgstr ""
+msgstr "seg"
 
 #: lib/pychess/Variants/asymmetricrandom.py:85
 msgid "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
@@ -2054,7 +2058,7 @@ msgstr "Losers"
 
 #: lib/pychess/Variants/normal.py:4
 msgid "Classic chess rules\n"
-msgstr ""
+msgstr "Reglas tradicionales de ajedrez\n"
 
 #: lib/pychess/Variants/normal.py:6 lib/pychess/widgets/newGameDialog.py:149
 msgid "Normal"
@@ -2062,7 +2066,7 @@ msgstr "Normal"
 
 #: lib/pychess/Variants/pawnodds.py:17
 msgid "One player starts with one less pawn piece"
-msgstr ""
+msgstr "Un jugador inicia la partida sin un peón"
 
 #: lib/pychess/Variants/pawnodds.py:18
 msgid "Pawn odds"
@@ -2086,7 +2090,7 @@ msgstr "Pawns Pushed"
 
 #: lib/pychess/Variants/queenodds.py:17
 msgid "One player starts with one less queen piece"
-msgstr ""
+msgstr "Un jugador inicia la partida sin una reina"
 
 #: lib/pychess/Variants/queenodds.py:18
 msgid "Queen odds"
@@ -2103,7 +2107,7 @@ msgstr "Random"
 
 #: lib/pychess/Variants/rookodds.py:17
 msgid "One player starts with one less rook piece"
-msgstr ""
+msgstr "Un jugador inicia la partida sin una torre"
 
 #: lib/pychess/Variants/rookodds.py:18
 msgid "Rook odds"
@@ -2139,7 +2143,7 @@ msgstr "Cargando datos del jugador"
 
 #: lib/pychess/widgets/ChatWindow.py:372
 msgid "Receiving list of players"
-msgstr ""
+msgstr "Recibiendo la lista de jugadores"
 
 #: lib/pychess/widgets/ChatWindow.py:473
 msgid "More channels"
@@ -2233,7 +2237,7 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:153
 msgid "Abort"
-msgstr ""
+msgstr "Anular"
 
 #: lib/pychess/widgets/gamewidget.py:155
 msgid ""
@@ -2295,7 +2299,7 @@ msgstr ""
 #: lib/pychess/widgets/ionest.py:86 lib/pychess/widgets/newGameDialog.py:328
 #: lib/pychess/widgets/TaskerManager.py:200
 msgid "You"
-msgstr ""
+msgstr "Usted"
 
 #: lib/pychess/widgets/ionest.py:89 lib/pychess/widgets/newGameDialog.py:329
 #: lib/pychess/widgets/preferencesDialog.py:44
@@ -2473,7 +2477,7 @@ msgstr "Ventajas"
 
 #: lib/pychess/widgets/newGameDialog.py:271
 msgid " chess"
-msgstr ""
+msgstr " ajedrez"
 
 #: lib/pychess/widgets/newGameDialog.py:485
 msgid "Enter Game"
@@ -2863,7 +2867,7 @@ msgstr ""
 
 #: sidepanel/annotationPanel.py:154
 msgid "Add start comment"
-msgstr ""
+msgstr "Añadir comentario inicial"
 
 #: sidepanel/annotationPanel.py:159
 msgid "Add comment"
@@ -2871,7 +2875,7 @@ msgstr ""
 
 #: sidepanel/annotationPanel.py:163 sidepanel/annotationPanel.py:196
 msgid "Edit comment"
-msgstr ""
+msgstr "Editar comentario"
 
 #: sidepanel/annotationPanel.py:173
 msgid "Add move symbol"
