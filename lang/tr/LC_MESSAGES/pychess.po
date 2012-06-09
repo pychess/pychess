@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: PyChess 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-08-30 10:33+0000\n"
-"Last-Translator: Hamit Selahattin Naiboğlu <Unknown>\n"
+"PO-Revision-Date: 2012-02-21 17:18+0000\n"
+"Last-Translator: Selim Sercan Suerkan <Unknown>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:28+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -84,7 +84,7 @@ msgstr "_Kabul Et"
 
 #: glade/fics_lounge.glade:115
 msgid "_Decline"
-msgstr ""
+msgstr "_Reddet"
 
 #: glade/fics_lounge.glade:302 glade/fics_lounge.glade:2625
 msgid "Lightning:"
@@ -146,11 +146,11 @@ msgstr ""
 
 #: glade/fics_lounge.glade:673 glade/fics_lounge.glade:830
 msgid "Observe"
-msgstr ""
+msgstr "İzle"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
-msgstr ""
+msgstr "Kişiyle sohbet et"
 
 #: glade/fics_lounge.glade:773
 msgid "_Player List"
@@ -162,11 +162,11 @@ msgstr "_Oyun Listesi"
 
 #: glade/fics_lounge.glade:931
 msgid "Pre_view"
-msgstr ""
+msgstr "Ön_izleme"
 
 #: glade/fics_lounge.glade:972
 msgid "Offer A_bort"
-msgstr ""
+msgstr "Maçın iptalini öner"
 
 #: glade/fics_lounge.glade:1013 glade/PyChess.glade:209
 msgid "Offer _Draw"
@@ -178,11 +178,11 @@ msgstr "Pes_et"
 
 #: glade/fics_lounge.glade:1120 glade/PyChess.glade:227
 msgid "Offer _Resume"
-msgstr ""
+msgstr "Maça devam öner"
 
 #: glade/fics_lounge.glade:1172
 msgid "_Adjourned"
-msgstr ""
+msgstr "Ertelendi"
 
 #: glade/fics_lounge.glade:1267
 msgid "<b>News</b>"

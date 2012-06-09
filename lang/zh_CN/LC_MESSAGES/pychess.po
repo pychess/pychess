@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-01-19 22:51+0000\n"
-"Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
+"PO-Revision-Date: 2012-05-17 14:56+0000\n"
+"Last-Translator: Wang Dianjin <Unknown>\n"
 "Language-Team: Simplified Chinese <zh_CN@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:28+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -48,7 +48,7 @@ msgstr "文本"
 
 #: glade/fics_logon.glade:90
 msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
-msgstr ""
+msgstr "<b><big>连接到Free Online Chess Server</big></b>"
 
 #: glade/fics_logon.glade:160 glade/taskers.glade:349
 msgid "_Password:"
@@ -64,11 +64,11 @@ msgstr "登录为来宾用户(_G)"
 
 #: glade/fics_logon.glade:252
 msgid "Po_rts:"
-msgstr ""
+msgstr "端口(_R)："
 
 #: glade/fics_logon.glade:324
 msgid "S_ign up"
-msgstr ""
+msgstr "注册"
 
 #: glade/fics_lounge.glade:7
 msgid "PyChess - Internet Chess: FICS"
@@ -84,7 +84,7 @@ msgstr "接受(_A)"
 
 #: glade/fics_lounge.glade:115
 msgid "_Decline"
-msgstr ""
+msgstr "拒绝(_D)"
 
 #: glade/fics_lounge.glade:302 glade/fics_lounge.glade:2625
 msgid "Lightning:"
@@ -108,7 +108,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:408
 msgid "5 min, 1200-1800, Manual"
-msgstr ""
+msgstr "5 分钟，1200-1800，手动"
 
 #: glade/fics_lounge.glade:456
 msgid "Send seek"
@@ -116,7 +116,7 @@ msgstr "开始寻找"
 
 #: glade/fics_lounge.glade:488
 msgid "Create Seek"
-msgstr ""
+msgstr "开始查找"
 
 #: glade/fics_lounge.glade:505
 msgid "_Seeks / Challenges"
@@ -142,23 +142,23 @@ msgstr "0 个玩家已就绪"
 
 #: glade/fics_lounge.glade:624
 msgid "Challenge"
-msgstr ""
+msgstr "挑战"
 
 #: glade/fics_lounge.glade:673 glade/fics_lounge.glade:830
 msgid "Observe"
-msgstr ""
+msgstr "旁观"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
-msgstr ""
+msgstr "进行私聊"
 
 #: glade/fics_lounge.glade:773
 msgid "_Player List"
-msgstr ""
+msgstr "玩家名单"
 
 #: glade/fics_lounge.glade:881
 msgid "_Game List"
-msgstr ""
+msgstr "游戏列表"
 
 #: glade/fics_lounge.glade:931
 msgid "Pre_view"
@@ -202,7 +202,7 @@ msgstr "<b>工具</b>"
 
 #: glade/fics_lounge.glade:1361
 msgid "Edit Seek"
-msgstr ""
+msgstr "编辑查找条件"
 
 #: glade/fics_lounge.glade:1414 lib/pychess/ic/ICLounge.py:1653
 #: lib/pychess/ic/__init__.py:61 lib/pychess/Utils/GameModel.py:166
@@ -219,7 +219,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1510
 msgid "Time control:  "
-msgstr ""
+msgstr "时间控制：  "
 
 #: glade/fics_lounge.glade:1521 lib/pychess/ic/ICLounge.py:775
 #: lib/pychess/ic/ICLounge.py:1653 lib/pychess/ic/__init__.py:59
@@ -228,7 +228,7 @@ msgstr "标准"
 
 #: glade/fics_lounge.glade:1553 glade/newInOut.glade:414
 msgid "<b>Time Control</b>"
-msgstr ""
+msgstr "<b>时间控制</b>"
 
 #: glade/fics_lounge.glade:1604 glade/fics_lounge.glade:2050
 msgid "Don't care"
@@ -261,7 +261,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1870
 msgid "1200"
-msgstr ""
+msgstr "1200"
 
 #: glade/fics_lounge.glade:1914
 msgid "Tolerance:"
@@ -289,7 +289,7 @@ msgstr "黑"
 
 #: glade/fics_lounge.glade:2136
 msgid "<b>Your Color</b>"
-msgstr ""
+msgstr "<b>您的颜色</b>"
 
 #: glade/fics_lounge.glade:2189
 msgid "Play normal chess rules"
@@ -297,7 +297,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2222
 msgid "Play"
-msgstr ""
+msgstr "开始游戏"
 
 #: glade/fics_lounge.glade:2244
 msgid "Asymmetric Random\t"
@@ -309,23 +309,23 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2326
 msgid "Rated game"
-msgstr ""
+msgstr "积分游戏"
 
 #: glade/fics_lounge.glade:2340
 msgid "Manually accept opponent"
-msgstr ""
+msgstr "手动接受对手"
 
 #: glade/fics_lounge.glade:2365
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>选项</b>"
 
 #: glade/fics_lounge.glade:2431
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "挑战: <玩家>"
 
 #: glade/fics_lounge.glade:2446
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>挑战:</big>"
 
 #: glade/fics_lounge.glade:2693
 msgid "2 min, Fischer Random, Black"
@@ -337,11 +337,11 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2733
 msgid "5 min"
-msgstr ""
+msgstr "5 分钟"
 
 #: glade/fics_lounge.glade:2805
 msgid "Send Challenge"
-msgstr ""
+msgstr "发出挑战"
 
 #: glade/findbar.glade:6
 msgid "window1"
@@ -361,7 +361,7 @@ msgstr "下一个(_N)"
 
 #: glade/findbar.glade:137
 msgid "Search:"
-msgstr ""
+msgstr "查找:"
 
 #: glade/newInOut.glade:7 lib/pychess/widgets/newGameDialog.py:368
 msgid "New Game"
@@ -369,11 +369,11 @@ msgstr "新游戏"
 
 #: glade/newInOut.glade:86
 msgid "_Black player:"
-msgstr ""
+msgstr "黑方选手"
 
 #: glade/newInOut.glade:102
 msgid "_White player:"
-msgstr ""
+msgstr "白方选手"
 
 #: glade/newInOut.glade:199
 msgid "<b>Players</b>"
@@ -409,11 +409,11 @@ msgstr ""
 
 #: glade/newInOut.glade:657
 msgid "<b>Open Game</b>"
-msgstr ""
+msgstr "<b>打开游戏</b>"
 
 #: glade/newInOut.glade:876
 msgid "<b>Initial Position</b>"
-msgstr ""
+msgstr "<b>最初的位置</b>"
 
 #: glade/newInOut.glade:930
 msgid "<b>Enter Game Notation</b>"
@@ -457,7 +457,7 @@ msgstr "新游戏(_N)"
 
 #: glade/PyChess.glade:43
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "开始线上对战"
 
 #: glade/PyChess.glade:64
 msgid "_Load Game"
@@ -489,7 +489,7 @@ msgstr "操作(_A)"
 
 #: glade/PyChess.glade:193
 msgid "Offer _Abort"
-msgstr ""
+msgstr "请求中断"
 
 #: glade/PyChess.glade:201
 msgid "Offer Ad_journment"
@@ -497,11 +497,11 @@ msgstr ""
 
 #: glade/PyChess.glade:218
 msgid "Offer _Pause"
-msgstr ""
+msgstr "请求暂停"
 
 #: glade/PyChess.glade:234
 msgid "Offer _Undo"
-msgstr ""
+msgstr "请求悔棋"
 
 #: glade/PyChess.glade:258
 msgid "_Call Flag"
@@ -521,11 +521,11 @@ msgstr "旋转棋盘（_R）"
 
 #: glade/PyChess.glade:311
 msgid "_Fullscreen"
-msgstr ""
+msgstr "全屏(_F)"
 
 #: glade/PyChess.glade:327
 msgid "Leave _Fullscreen"
-msgstr ""
+msgstr "离开全屏(_F)"
 
 #: glade/PyChess.glade:344
 msgid "_Show Sidepanels"
@@ -628,7 +628,7 @@ msgstr "首选项"
 
 #: glade/PyChess.glade:841
 msgid "The displayed name of the first human player, e.g., John."
-msgstr ""
+msgstr "P1的显示名称,例如 约翰"
 
 #: glade/PyChess.glade:850
 msgid "<b>Name of _first human player:</b>"
@@ -664,7 +664,7 @@ msgstr ""
 
 #: glade/PyChess.glade:957
 msgid "Face _to Face display mode"
-msgstr ""
+msgstr "面对面显示模式(_T)"
 
 #: glade/PyChess.glade:961
 msgid ""
@@ -720,15 +720,15 @@ msgstr ""
 
 #: glade/PyChess.glade:1085
 msgid "Only animate piece moves."
-msgstr ""
+msgstr "只显示棋子移动时的动画"
 
 #: glade/PyChess.glade:1098
 msgid "No _animation"
-msgstr ""
+msgstr "无动画(_A)"
 
 #: glade/PyChess.glade:1102
 msgid "Never use animation. Use this on slow machines."
-msgstr ""
+msgstr "永远不显示动画.在配置差的机器上用这项."
 
 #: glade/PyChess.glade:1125
 msgid "<b>Animation</b>"
@@ -736,7 +736,7 @@ msgstr "<b>动画</b>"
 
 #: glade/PyChess.glade:1144
 msgid "_General"
-msgstr ""
+msgstr "常规(G)"
 
 #: glade/PyChess.glade:1182
 msgid ""
@@ -773,7 +773,7 @@ msgstr "<b>分析中</b>"
 
 #: glade/PyChess.glade:1481
 msgid "Computer _Opponents"
-msgstr ""
+msgstr "电脑对手(_O)"
 
 #: glade/PyChess.glade:1506
 msgid "_Use sounds in PyChess"
@@ -831,11 +831,11 @@ msgstr "<b>当...播放声音</b>"
 
 #: glade/PyChess.glade:2066
 msgid "_Sounds"
-msgstr ""
+msgstr "声音(_S)"
 
 #: glade/PyChess.glade:2193
 msgid "Uninstall"
-msgstr ""
+msgstr "卸载"
 
 #: glade/PyChess.glade:2239
 msgid "Ac_tive"
@@ -843,38 +843,38 @@ msgstr ""
 
 #: glade/PyChess.glade:2283
 msgid "<b>Installed Sidepanels</b>"
-msgstr ""
+msgstr "<b>已安装侧栏面板</b>"
 
 #: glade/PyChess.glade:2300
 msgid "Side_panels"
-msgstr ""
+msgstr "侧栏面板(_P)"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
-msgstr ""
+msgstr "退出Pychess"
 
 #: glade/saveGamesDialog.glade:44
 msgid ""
 "<big><b>There are %d games with unsaved moves. Save changes before "
 "closing?</b></big>"
-msgstr ""
+msgstr "<big><b>有 %d 个游戏还未保存. 关闭前先保存吗?</b></big>"
 
 #: glade/saveGamesDialog.glade:62
 msgid "Select the games you want to save:"
-msgstr ""
+msgstr "请选择你想要保存的游戏:"
 
 #: glade/saveGamesDialog.glade:100
 msgid ""
 "If you don't save, new changes to your games will be permanently lost."
-msgstr ""
+msgstr "如果不保存，您游戏的新更改将永久丢失。"
 
 #: glade/saveGamesDialog.glade:124 lib/pychess/widgets/ionest.py:392
 msgid "Close _without Saving"
-msgstr ""
+msgstr "关闭而不保存(_W)"
 
 #: glade/saveGamesDialog.glade:182
 msgid "_Save %d documents"
-msgstr ""
+msgstr "保存 %d 文档(_S)"
 
 #: glade/taskers.glade:108
 msgid "_Opponent:"
@@ -882,19 +882,19 @@ msgstr ""
 
 #: glade/taskers.glade:134
 msgid "_Your Color:"
-msgstr ""
+msgstr "您的颜色(_Y)："
 
 #: glade/taskers.glade:194
 msgid "<b>_Start Game</b>"
-msgstr ""
+msgstr "<b>开始游戏(_S)</b>"
 
 #: glade/taskers.glade:299
 msgid "Log on as G_uest"
-msgstr ""
+msgstr "以访客身份登录(_U)"
 
 #: glade/taskers.glade:318
 msgid "connectButton"
-msgstr ""
+msgstr "连接按钮"
 
 #: glade/taskers.glade:364
 msgid "Ha_ndle:"
@@ -906,11 +906,11 @@ msgstr ""
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
-msgstr ""
+msgstr "日积月累"
 
 #: glade/tipoftheday.glade:59
 msgid "Show tips at startup"
-msgstr ""
+msgstr "启动时显示日积月累"
 
 #: lib/pychess/Main.py:173
 msgid "http://en.wikipedia.org/wiki/Chess"
@@ -924,7 +924,7 @@ msgstr ""
 
 #: lib/pychess/Main.py:226 lib/pychess/widgets/gamenanny.py:62
 msgid "Welcome"
-msgstr ""
+msgstr "欢迎"
 
 #: lib/pychess/ic/FICSConnection.py:104
 msgid "The connection was broken - got \"end of file\" message"
@@ -937,39 +937,39 @@ msgstr "'%s'不是一个注册姓名"
 
 #: lib/pychess/ic/FICSConnection.py:106
 msgid "The entered password was invalid.\n"
-msgstr ""
+msgstr "输入的密码无效。\n"
 
 #: lib/pychess/ic/FICSConnection.py:120
 msgid "Connecting to server"
-msgstr ""
+msgstr "正在连接到服务器"
 
 #: lib/pychess/ic/FICSConnection.py:132
 msgid "Logging on to server"
-msgstr ""
+msgstr "正在登录到服务器"
 
 #: lib/pychess/ic/FICSConnection.py:169
 msgid "Setting up environment"
-msgstr ""
+msgstr "正在设置环境"
 
 #: lib/pychess/ic/FICSObjects.py:63
 msgid "Online"
-msgstr ""
+msgstr "在线"
 
 #: lib/pychess/ic/FICSObjects.py:64
 msgid "Offline"
-msgstr ""
+msgstr "离线"
 
 #: lib/pychess/ic/FICSObjects.py:80
 msgid "Available"
-msgstr ""
+msgstr "可用"
 
 #: lib/pychess/ic/FICSObjects.py:82
 msgid "Playing"
-msgstr ""
+msgstr "游戏中"
 
 #: lib/pychess/ic/FICSObjects.py:87
 msgid "Idle"
-msgstr ""
+msgstr "空闲"
 
 #: lib/pychess/ic/FICSObjects.py:89
 msgid "Examining"
@@ -977,7 +977,7 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:91
 msgid "Not Available"
-msgstr ""
+msgstr "不可用"
 
 #: lib/pychess/ic/FICSObjects.py:93
 msgid "Running Simul Match"
@@ -1007,12 +1007,12 @@ msgstr ""
 #: lib/pychess/ic/FICSObjects.py:517 lib/pychess/ic/ICLounge.py:1543
 #, python-format
 msgid "%d min"
-msgstr ""
+msgstr "%d 分钟"
 
 #: lib/pychess/ic/FICSObjects.py:519
 #, python-format
 msgid " + %d sec"
-msgstr ""
+msgstr " + %d 秒"
 
 #: lib/pychess/ic/ICLogon.py:111 lib/pychess/ic/ICLogon.py:117
 msgid "Connection Error"
@@ -1028,27 +1028,27 @@ msgstr "连接已经关闭"
 
 #: lib/pychess/ic/ICLogon.py:121
 msgid "Address Error"
-msgstr ""
+msgstr "地址错误"
 
 #: lib/pychess/ic/ICLogon.py:124
 msgid "Auto-logout"
-msgstr ""
+msgstr "自动注销"
 
 #: lib/pychess/ic/ICLogon.py:125
 msgid "You have been logged out because you were idle more than 60 minutes"
-msgstr ""
+msgstr "您已经注销因为您空闲时间超过了 60 分钟"
 
 #: lib/pychess/ic/ICLounge.py:223
 msgid "Win"
-msgstr ""
+msgstr "获胜"
 
 #: lib/pychess/ic/ICLounge.py:223
 msgid "Draw"
-msgstr ""
+msgstr "平局"
 
 #: lib/pychess/ic/ICLounge.py:223
 msgid "Loss"
-msgstr ""
+msgstr "失败"
 
 #: lib/pychess/ic/ICLounge.py:233
 msgid ""
@@ -1116,12 +1116,12 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:495 lib/pychess/ic/ICLounge.py:537
 #, python-format
 msgid "%(min)s min"
-msgstr ""
+msgstr "%(min)s 分钟"
 
 #: lib/pychess/ic/ICLounge.py:497 lib/pychess/ic/ICLounge.py:539
 #, python-format
 msgid " + %(sec)s sec"
-msgstr ""
+msgstr " + %(sec)s 秒"
 
 #: lib/pychess/ic/ICLounge.py:552
 #, python-format
@@ -1136,19 +1136,19 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:565
 msgid "Accept Challenge"
-msgstr ""
+msgstr "接受挑战"
 
 #: lib/pychess/ic/ICLounge.py:567
 msgid "Decline Challenge"
-msgstr ""
+msgstr "拒绝挑战"
 
 #: lib/pychess/ic/ICLounge.py:569
 msgid "Ignore Challenge"
-msgstr ""
+msgstr "忽略挑战"
 
 #: lib/pychess/ic/ICLounge.py:683
 msgid " min"
-msgstr ""
+msgstr " 分钟"
 
 #: lib/pychess/ic/ICLounge.py:720
 #, python-format
@@ -1161,7 +1161,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:725
 msgid "Manual Accept"
-msgstr ""
+msgstr "手动接受"
 
 #: lib/pychess/ic/ICLounge.py:774 lib/pychess/ic/ICLounge.py:1654
 #: lib/pychess/ic/__init__.py:58 lib/pychess/widgets/newGameDialog.py:145
@@ -1179,12 +1179,12 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:775
 msgid "Status"
-msgstr ""
+msgstr "状态"
 
 #: lib/pychess/ic/ICLounge.py:817 lib/pychess/ic/ICLounge.py:839
 #, python-format
 msgid "Players: %d"
-msgstr ""
+msgstr "玩家：%d"
 
 #: lib/pychess/ic/ICLounge.py:945
 msgid "White Player"
@@ -1205,7 +1205,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1076
 msgid "Your Color"
-msgstr ""
+msgstr "您的颜色"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Opponent"
@@ -1213,20 +1213,20 @@ msgstr "对手"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Is Online"
-msgstr ""
+msgstr "在线"
 
 #: lib/pychess/ic/ICLounge.py:1077
 msgid "Time Control"
-msgstr ""
+msgstr "时间控制"
 
 #: lib/pychess/ic/ICLounge.py:1078
 msgid "Date/Time"
-msgstr ""
+msgstr "日期/时间"
 
 #: lib/pychess/ic/ICLounge.py:1121
 #, python-format
 msgid "%(player)s is %(status)s"
-msgstr ""
+msgstr "%(player)s 目前 %(status)s"
 
 #: lib/pychess/ic/ICLounge.py:1126
 #, python-format
@@ -1236,7 +1236,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1139
 msgid "Request Continuation"
-msgstr ""
+msgstr "请求继续"
 
 #: lib/pychess/ic/ICLounge.py:1141
 msgid "Examine Adjourned Game"
@@ -1244,7 +1244,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1143
 msgid "Do Nothing"
-msgstr ""
+msgstr "无动作"
 
 #: lib/pychess/ic/ICLounge.py:1400
 msgid ""
@@ -1272,11 +1272,11 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:1561
 msgid "Manual"
-msgstr ""
+msgstr "手动"
 
 #: lib/pychess/ic/ICLounge.py:1701
 msgid "Any strength"
-msgstr ""
+msgstr "任何能量"
 
 #: lib/pychess/ic/ICLounge.py:1753
 msgid "You can't play rated games because you are logged in as a guest"
@@ -1301,12 +1301,12 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:1777 lib/pychess/Variants/shuffle.py:31
 #: lib/pychess/widgets/newGameDialog.py:248
 msgid "Shuffle"
-msgstr ""
+msgstr "随机"
 
 #: lib/pychess/ic/ICLounge.py:1778 lib/pychess/ic/__init__.py:63
 #: lib/pychess/widgets/newGameDialog.py:249
 msgid "Other"
-msgstr ""
+msgstr "其它"
 
 #: lib/pychess/ic/ICLounge.py:1859
 msgid "You can't select a variant because \"Untimed\" is checked, "
@@ -1336,7 +1336,7 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:141
 msgid "Administrator"
-msgstr ""
+msgstr "管理员"
 
 #: lib/pychess/ic/__init__.py:141
 msgid "Blindfold Account"
@@ -1344,15 +1344,15 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:141
 msgid "Computer Account"
-msgstr ""
+msgstr "电脑账户"
 
 #: lib/pychess/ic/__init__.py:142
 msgid "Team Account"
-msgstr ""
+msgstr "团队账户"
 
 #: lib/pychess/ic/__init__.py:142
 msgid "Unregistered User"
-msgstr ""
+msgstr "未注册用户"
 
 #: lib/pychess/ic/__init__.py:142
 msgid "Chess Advisor"
@@ -1396,7 +1396,7 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:149
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: lib/pychess/ic/__init__.py:149 lib/pychess/Utils/repr.py:12
 msgid "B"
@@ -1404,55 +1404,55 @@ msgstr "B"
 
 #: lib/pychess/ic/__init__.py:149
 msgid "C"
-msgstr ""
+msgstr "C"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "T"
-msgstr ""
+msgstr "T"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "U"
-msgstr ""
+msgstr "U"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "CA"
-msgstr ""
+msgstr "CA"
 
 #: lib/pychess/ic/__init__.py:151
 msgid "SR"
-msgstr ""
+msgstr "SR"
 
 #: lib/pychess/ic/__init__.py:151
 msgid "TD"
-msgstr ""
+msgstr "TD"
 
 #: lib/pychess/ic/__init__.py:151
 msgid "TM"
-msgstr ""
+msgstr "TM"
 
 #: lib/pychess/ic/__init__.py:152
 msgid "GM"
-msgstr ""
+msgstr "GM"
 
 #: lib/pychess/ic/__init__.py:152
 msgid "IM"
-msgstr ""
+msgstr "IM"
 
 #: lib/pychess/ic/__init__.py:152
 msgid "FM"
-msgstr ""
+msgstr "FM"
 
 #: lib/pychess/ic/__init__.py:153
 msgid "WGM"
-msgstr ""
+msgstr "WGM"
 
 #: lib/pychess/ic/__init__.py:153
 msgid "WIM"
-msgstr ""
+msgstr "WIM"
 
 #: lib/pychess/ic/__init__.py:153
 msgid "D"
-msgstr ""
+msgstr "D"
 
 #: lib/pychess/Players/Human.py:14
 msgid "Your opponent has offered you a draw. Accept?"
@@ -1591,7 +1591,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:55
 msgid "ask your opponent to move"
-msgstr ""
+msgstr "要求您的对手走棋"
 
 #: lib/pychess/Players/Human.py:60
 msgid "Your opponent is not out of time."
@@ -1599,15 +1599,15 @@ msgstr "您的对手未超时。"
 
 #: lib/pychess/Players/Human.py:62
 msgid "The clock hasn't been started yet."
-msgstr ""
+msgstr "时钟还没有开始。"
 
 #: lib/pychess/Players/Human.py:64
 msgid "You can't switch colors during the game."
-msgstr ""
+msgstr "游戏期间您不能切换颜色。"
 
 #: lib/pychess/Players/Human.py:66
 msgid "You have tried to undo too many moves."
-msgstr ""
+msgstr "您已经尝试撤销太多走棋。"
 
 #: lib/pychess/Players/Human.py:165
 msgid "Your opponent asks you to hurry!"
@@ -1686,7 +1686,7 @@ msgstr ""
 #: lib/pychess/Savers/pgn.py:283 lib/pychess/Savers/pgn.py:439
 #, python-format
 msgid "The move failed because %s."
-msgstr ""
+msgstr "走棋失败因为 %s。"
 
 #: lib/pychess/System/ping.py:27
 msgid "Destination Host Unreachable"
@@ -1739,12 +1739,12 @@ msgstr "一方投降游戏结束"
 #: lib/pychess/Utils/repr.py:16
 #, python-format
 msgid "%(white)s won the game"
-msgstr ""
+msgstr "%(white)s 赢得游戏"
 
 #: lib/pychess/Utils/repr.py:17
 #, python-format
 msgid "%(black)s won the game"
-msgstr ""
+msgstr "%(black)s 赢得游戏"
 
 #: lib/pychess/Utils/repr.py:18
 msgid "The game has been killed"
@@ -1781,7 +1781,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:29 lib/pychess/Utils/repr.py:52
 msgid "Because the players agreed to"
-msgstr ""
+msgstr "因为玩家同意"
 
 #: lib/pychess/Utils/repr.py:30 lib/pychess/Utils/repr.py:39
 #: lib/pychess/Utils/repr.py:51
@@ -1814,7 +1814,7 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:36
 #, python-format
 msgid "Because %(loser)s ran out of time"
-msgstr ""
+msgstr "因为 %(loser)s 超时"
 
 #: lib/pychess/Utils/repr.py:37
 #, python-format
@@ -1824,7 +1824,7 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:38
 #, python-format
 msgid "Because %(loser)s disconnected"
-msgstr ""
+msgstr "因为 %(loser)s 断开连接"
 
 #: lib/pychess/Utils/repr.py:40
 #, python-format
@@ -1833,7 +1833,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because a player lost connection"
-msgstr ""
+msgstr "因为一个玩家失去连接"
 
 #: lib/pychess/Utils/repr.py:43
 msgid "Because both players agreed to adjourn the game"
@@ -1841,7 +1841,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
 msgid "Because the server was shutdown"
-msgstr ""
+msgstr "因为服务器关机"
 
 #: lib/pychess/Utils/repr.py:45
 msgid ""
@@ -1896,11 +1896,11 @@ msgstr "未知原因"
 
 #: lib/pychess/Utils/TimeModel.py:225
 msgid "min"
-msgstr ""
+msgstr "分钟"
 
 #: lib/pychess/Utils/TimeModel.py:227
 msgid "sec"
-msgstr ""
+msgstr "秒"
 
 #: lib/pychess/Variants/asymmetricrandom.py:85
 msgid "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
@@ -1945,7 +1945,7 @@ msgstr ""
 
 #: lib/pychess/Variants/corner.py:31
 msgid "http://brainking.com/en/GameRules?tp=2\n"
-msgstr ""
+msgstr "http://brainking.com/en/GameRules?tp=2\n"
 
 #: lib/pychess/Variants/corner.py:37
 msgid "Corner"
@@ -1953,7 +1953,7 @@ msgstr "角落"
 
 #: lib/pychess/Variants/fischerandom.py:217
 msgid "http://en.wikipedia.org/wiki/Chess960\n"
-msgstr ""
+msgstr "http://en.wikipedia.org/wiki/Chess960\n"
 
 #: lib/pychess/Variants/fischerandom.py:219
 msgid "Fischer Random"
@@ -1974,11 +1974,11 @@ msgstr ""
 
 #: lib/pychess/Variants/losers.py:13
 msgid "Losers"
-msgstr ""
+msgstr "失败者"
 
 #: lib/pychess/Variants/normal.py:4
 msgid "Classic chess rules\n"
-msgstr ""
+msgstr "经典象棋规则\n"
 
 #: lib/pychess/Variants/normal.py:6 lib/pychess/widgets/newGameDialog.py:149
 msgid "Normal"

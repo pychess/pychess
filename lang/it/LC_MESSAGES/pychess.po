@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-11-25 07:19+0000\n"
-"Last-Translator: reto ambrosini <Unknown>\n"
+"PO-Revision-Date: 2012-04-30 14:25+0000\n"
+"Last-Translator: Frodohack <Unknown>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:28+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -70,11 +70,11 @@ msgstr "Po_rte:"
 
 #: glade/fics_logon.glade:324
 msgid "S_ign up"
-msgstr "_Collegati"
+msgstr "_Registrati"
 
 #: glade/fics_lounge.glade:7
 msgid "PyChess - Internet Chess: FICS"
-msgstr "PyChess - Server scacchistico: FICS"
+msgstr "PyChess - Internet Chess Server: FICS"
 
 #: glade/fics_lounge.glade:69
 msgid "_Clear Seeks"
@@ -110,15 +110,15 @@ msgstr "10 min + 6 sec/mossa, 1400↑, Bianco"
 
 #: glade/fics_lounge.glade:408
 msgid "5 min, 1200-1800, Manual"
-msgstr "5 min, 1200-1800, Manuale"
+msgstr ""
 
 #: glade/fics_lounge.glade:456
 msgid "Send seek"
-msgstr "Invia ricerca"
+msgstr "Invia Sfida"
 
 #: glade/fics_lounge.glade:488
 msgid "Create Seek"
-msgstr "Crea Ricerca"
+msgstr "Crea Sfida"
 
 #: glade/fics_lounge.glade:505
 msgid "_Seeks / Challenges"
@@ -128,7 +128,7 @@ msgstr "_Elenco Sfide"
 #: lib/pychess/ic/ICLounge.py:418 lib/pychess/ic/ICLounge.py:945
 #: lib/pychess/ic/ICLounge.py:946
 msgid "Rating"
-msgstr "Punteggio"
+msgstr "Valutazione"
 
 #: glade/fics_lounge.glade:545
 msgid "Time"
@@ -148,7 +148,7 @@ msgstr "Sfida"
 
 #: glade/fics_lounge.glade:673 glade/fics_lounge.glade:830
 msgid "Observe"
-msgstr "Osservo"
+msgstr "Osserva"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
@@ -172,15 +172,15 @@ msgstr "Chiedi di smettere"
 
 #: glade/fics_lounge.glade:1013 glade/PyChess.glade:209
 msgid "Offer _Draw"
-msgstr "Offri la pa_tta"
+msgstr "Chiedi la patta"
 
 #: glade/fics_lounge.glade:1067 glade/PyChess.glade:267
 msgid "R_esign"
-msgstr "Arr_enditi"
+msgstr "Rinuncia"
 
 #: glade/fics_lounge.glade:1120 glade/PyChess.glade:227
 msgid "Offer _Resume"
-msgstr "Chiedi di riprendere"
+msgstr "Chiedi la ripresa"
 
 #: glade/fics_lounge.glade:1172
 msgid "_Adjourned"
@@ -204,7 +204,7 @@ msgstr "<b>Strumenti</b>"
 
 #: glade/fics_lounge.glade:1361
 msgid "Edit Seek"
-msgstr "Modifica Ricerca"
+msgstr "Modifica Sfida"
 
 #: glade/fics_lounge.glade:1414 lib/pychess/ic/ICLounge.py:1653
 #: lib/pychess/ic/__init__.py:61 lib/pychess/Utils/GameModel.py:166
@@ -226,7 +226,7 @@ msgstr "Cronometro:  "
 #: glade/fics_lounge.glade:1521 lib/pychess/ic/ICLounge.py:775
 #: lib/pychess/ic/ICLounge.py:1653 lib/pychess/ic/__init__.py:59
 msgid "Standard"
-msgstr "Predefinito"
+msgstr "Standard"
 
 #: glade/fics_lounge.glade:1553 glade/newInOut.glade:414
 msgid "<b>Time Control</b>"
@@ -234,7 +234,7 @@ msgstr "<b>Cronometro</b>"
 
 #: glade/fics_lounge.glade:1604 glade/fics_lounge.glade:2050
 msgid "Don't care"
-msgstr "Non mi interessa"
+msgstr "Indifferente"
 
 #: glade/fics_lounge.glade:1656
 msgid "Your strength: "
@@ -296,7 +296,7 @@ msgstr "Nero"
 
 #: glade/fics_lounge.glade:2136
 msgid "<b>Your Color</b>"
-msgstr "<b>Tuo Colore</b>"
+msgstr "Colore"
 
 #: glade/fics_lounge.glade:2189
 msgid "Play normal chess rules"
@@ -312,7 +312,7 @@ msgstr "Asimmetrico casuale\t"
 
 #: glade/fics_lounge.glade:2273 glade/newInOut.glade:582
 msgid "<b>Chess Variant</b>"
-msgstr "<b>Varianti scacchistiche</b>"
+msgstr "Varianti"
 
 #: glade/fics_lounge.glade:2326
 msgid "Rated game"
@@ -416,7 +416,7 @@ msgstr "Gioca a Vinciperdi"
 
 #: glade/newInOut.glade:657
 msgid "<b>Open Game</b>"
-msgstr "<b>Apri Gioco</b>"
+msgstr "<b>Apri Partita</b>"
 
 #: glade/newInOut.glade:876
 msgid "<b>Initial Position</b>"
@@ -424,7 +424,7 @@ msgstr "<b>Posizione Iniziale</b>"
 
 #: glade/newInOut.glade:930
 msgid "<b>Enter Game Notation</b>"
-msgstr "<b>Inserire notazioni di gioco</b>"
+msgstr "<b>Inserire note di gioco</b>"
 
 #: glade/newInOut.glade:1020
 msgid "_Start Game"
@@ -436,7 +436,7 @@ msgstr "Promozione"
 
 #: glade/promotion.glade:22
 msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>A cosa vuoi promuovere il pedone?</big></b>"
+msgstr "<b><big>In cosa vuoi promuovere il pedone?</big></b>"
 
 #: glade/promotion.glade:59 lib/pychess/Utils/repr.py:10
 msgid "Queen"
@@ -476,7 +476,7 @@ msgstr "Imposta Posizione"
 
 #: glade/PyChess.glade:88
 msgid "Enter Game _Notation"
-msgstr "Inserire la _Notazione di Gioco"
+msgstr "Inserire _Note di Gioco"
 
 #: glade/PyChess.glade:100
 msgid "_Save Game"
@@ -516,7 +516,7 @@ msgstr "_Verifica la bandierina"
 
 #: glade/PyChess.glade:276
 msgid "Ask to _Move"
-msgstr "Chiedi di _Effettuare la mossa"
+msgstr ""
 
 #: glade/PyChess.glade:288
 msgid "_View"
@@ -524,7 +524,7 @@ msgstr "_Vista"
 
 #: glade/PyChess.glade:294
 msgid "_Rotate Board"
-msgstr "_Ruota la scacchiera"
+msgstr "_Ruota scacchiera"
 
 #: glade/PyChess.glade:311
 msgid "_Fullscreen"
@@ -532,7 +532,7 @@ msgstr "Sc_hermo intero"
 
 #: glade/PyChess.glade:327
 msgid "Leave _Fullscreen"
-msgstr "_Finestra normale"
+msgstr "_Esci da schermo intero"
 
 #: glade/PyChess.glade:344
 msgid "_Show Sidepanels"
@@ -540,7 +540,7 @@ msgstr "_Mostra pannello Laterale"
 
 #: glade/PyChess.glade:353
 msgid "_Log Viewer"
-msgstr "Visua_lizzatore registro"
+msgstr "Visua_lizza registro"
 
 #: glade/PyChess.glade:367
 msgid "_Hint mode"
@@ -560,11 +560,11 @@ msgstr "_Aiuto"
 
 #: glade/PyChess.glade:416
 msgid "About Chess"
-msgstr "Informazioni sugli scacchi"
+msgstr "Info sul gioco"
 
 #: glade/PyChess.glade:430
 msgid "How to Play"
-msgstr "Come si Gioca"
+msgstr "Come Giocare"
 
 #: glade/PyChess.glade:444
 msgid "Translate PyChess"
@@ -572,11 +572,11 @@ msgstr "Traduci PyChess"
 
 #: glade/PyChess.glade:458
 msgid "Tip of the Day"
-msgstr "Suggerimento del Giorno"
+msgstr "Suggerimento del giorno"
 
 #: glade/PyChess.glade:510
 msgid "Chess client for the Gnome desktop"
-msgstr "Un client di scacchi per GNOME"
+msgstr "Client di scacchi per GNOME"
 
 #: glade/PyChess.glade:513
 msgid ""
@@ -611,7 +611,7 @@ msgstr ""
 
 #: glade/PyChess.glade:547
 msgid "Game information"
-msgstr "Informazioni sulla partita"
+msgstr "Informazioni di gioco"
 
 #: glade/PyChess.glade:615
 msgid "Event:"
@@ -643,7 +643,7 @@ msgstr "Il nome visualizzato del primo giocatore umano, ad es., Giovanni."
 
 #: glade/PyChess.glade:850
 msgid "<b>Name of _first human player:</b>"
-msgstr "<b>Nome del _primo giocatore umano:</b>"
+msgstr "<b>Nome del _primo giocatore:</b>"
 
 #: glade/PyChess.glade:879
 msgid "The displayed name of the guest player, e.g., Mary."
@@ -651,7 +651,7 @@ msgstr "Il nome visualizzato del giocatore ospite, ad es., Maria."
 
 #: glade/PyChess.glade:888
 msgid "<b>Name of s_econd human player:</b>"
-msgstr "<b>Nome del _secondo giocatore umano:</b>"
+msgstr "<b>Nome del _secondo giocatore:</b>"
 
 #: glade/PyChess.glade:924
 msgid "_Hide tabs when only one game is open"
@@ -665,27 +665,26 @@ msgstr "se selezionato, nasconde le Tab in alto quando non servono."
 
 #: glade/PyChess.glade:940
 msgid "Auto _rotate board to current human player"
-msgstr ""
-"_Ruota automaticamente la scacchiera verso il giocatore umano corrente"
+msgstr "_Ruota automaticamente la scacchiera verso il giocatore corrente"
 
 #: glade/PyChess.glade:944
 msgid ""
 "If set, the board will turn after each move, to show the natural view for "
 "the current player."
 msgstr ""
-"se selezionato, la scacchiera ruoterà ad ogni turno, in modo che il "
+"Se selezionato, la scacchiera ruoterà ad ogni turno, in modo che il "
 "giocatore corrente possa vederla dal proprio lato."
 
 #: glade/PyChess.glade:957
 msgid "Face _to Face display mode"
-msgstr "Modo _Visualizzazione Faccia a Faccia"
+msgstr "_Visualizzazione Faccia a Faccia"
 
 #: glade/PyChess.glade:961
 msgid ""
 "If set, the black pieces will be head down, suitable for playing against "
 "friends on mobile devices."
 msgstr ""
-"se selezionato, i pezzi neri saranno visualizzati a testa in giù, utile per "
+"Se selezionato, i pezzi neri saranno visualizzati a testa in giù, utile per "
 "giocare contro un amico su di un dispositivo mobile."
 
 #: glade/PyChess.glade:973
@@ -697,7 +696,8 @@ msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
 msgstr ""
-"se selezionato, la scacchiera mostrerà le etichette di riga e colonna."
+"Se selezionato, la scacchiera mostrerà le etichette di riga e colonna. Usati "
+"nella notazione delle partite."
 
 #: glade/PyChess.glade:989
 msgid "Prefer figures in _notation"
@@ -708,7 +708,7 @@ msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
 msgstr ""
-"se selezionato, PyChess utilizzerà le immagini per identificare le mosse, al "
+"Se selezionato, PyChess utilizzerà le immagini per identificare le mosse, al "
 "posto delle lettere maiuscole."
 
 #: glade/PyChess.glade:1005
@@ -734,8 +734,7 @@ msgstr "Animazione _Completa della Scacchiera"
 #: glade/PyChess.glade:1068
 msgid "Animate pieces, board rotation and more. Use this on fast machines."
 msgstr ""
-"Visualizza l'animazione dei pezzi, della scacchiera e altro. Da usare su "
-"computer veloci."
+"Animazione dei pezzi, della scacchiera e altro. Da usare su computer veloci."
 
 #: glade/PyChess.glade:1081
 msgid "Only animate _moves"
@@ -743,7 +742,7 @@ msgstr "Animazione delle sole _mosse"
 
 #: glade/PyChess.glade:1085
 msgid "Only animate piece moves."
-msgstr "Solo il movimento dei pezzi sarà animato."
+msgstr "Animazione dell movimento dei soli pezzi"
 
 #: glade/PyChess.glade:1098
 msgid "No _animation"
@@ -751,7 +750,7 @@ msgstr "Nessuna _Animazione"
 
 #: glade/PyChess.glade:1102
 msgid "Never use animation. Use this on slow machines."
-msgstr "Nessun effetto animato. Da usare su computer lenti."
+msgstr "Non usare animazioni. Utile per computer lenti."
 
 #: glade/PyChess.glade:1125
 msgid "<b>Animation</b>"
@@ -802,11 +801,11 @@ msgstr "<b>Analisi</b>"
 
 #: glade/PyChess.glade:1481
 msgid "Computer _Opponents"
-msgstr "Avversari (c_omputer)"
+msgstr "Avversario _Computer"
 
 #: glade/PyChess.glade:1506
 msgid "_Use sounds in PyChess"
-msgstr "_Usare suoni con PyChess"
+msgstr "_Usare suoni in PyChess"
 
 #: glade/PyChess.glade:1585
 msgid ""
@@ -2241,7 +2240,7 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:153
 msgid "Abort"
-msgstr ""
+msgstr "Annulla"
 
 #: lib/pychess/widgets/gamewidget.py:155
 msgid ""
@@ -2871,7 +2870,7 @@ msgstr "Il Bianco ha una posizione leggermente ristretta"
 
 #: sidepanel/annotationPanel.py:15
 msgid "Annotation"
-msgstr ""
+msgstr "Annotazione"
 
 #: sidepanel/annotationPanel.py:18
 msgid "Annotated game"
@@ -2887,7 +2886,7 @@ msgstr "Aggiungi un commento"
 
 #: sidepanel/annotationPanel.py:163 sidepanel/annotationPanel.py:196
 msgid "Edit comment"
-msgstr ""
+msgstr "Modifica Commento"
 
 #: sidepanel/annotationPanel.py:173
 msgid "Add move symbol"
