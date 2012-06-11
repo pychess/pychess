@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-09 01:00+0200\n"
+"POT-Creation-Date: 2012-06-11 13:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1810,7 +1810,7 @@ msgid "The game has been aborted"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:24
-msgid "Because neither player has sufficient material to mate"
+msgid "Because neither player has got sufficient material to mate"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:25
@@ -1830,7 +1830,7 @@ msgstr ""
 msgid "Because %(mover)s stalemated"
 msgstr ""
 
-#: lib/pychess/Utils/repr.py:29 lib/pychess/Utils/repr.py:52
+#: lib/pychess/Utils/repr.py:29
 msgid "Because the players agreed to"
 msgstr ""
 
@@ -1846,15 +1846,15 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:32
 #, python-format
 msgid ""
-"Because %(white)s ran out of time and %(black)s has insufficient material to "
-"mate"
+"Because %(white)s ran out of time and %(black)s has got insufficient "
+"material to mate"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:33
 #, python-format
 msgid ""
-"Because %(black)s ran out of time and %(white)s has insufficient material to "
-"mate"
+"Because %(black)s ran out of time and %(white)s has got insufficient "
+"material to mate"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:35
@@ -1869,7 +1869,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:37
 #, python-format
-msgid "Because %(loser)s was checkmated"
+msgid "Because %(loser)s has been checkmated"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:38
@@ -1891,7 +1891,7 @@ msgid "Because both players agreed to adjourn the game"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
-msgid "Because the server was shutdown"
+msgid "Because the server was shut down"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:45
@@ -1921,6 +1921,10 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:49
 #, python-format
 msgid "Because %(black)s lost connection to the server"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:52
+msgid "Because both players agreed to"
 msgstr ""
 
 #: lib/pychess/Utils/repr.py:53
