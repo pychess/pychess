@@ -32,8 +32,14 @@ class Advisor:
             is start/stop visible       Boolean """
 
         self.store = store
-        iter = store.append(None, self.textOnlyRow(name))
-        self.path = store.get_path(iter)
+        self.name = name
+        store.append(None, self.textOnlyRow(name))
+
+    @property
+    def path(self):
+        for i, row in enumerate(self.store):
+            if row[4] == self.name:
+                return (i,)
     
     def shown_changed (self, boardview, shown):
         """ Update the suggestions to match a changed position. """
@@ -199,9 +205,9 @@ class EngineAdvisor(Advisor):
             boardview.model.resume_analyzer(self.mode)
             self.shown_changed(boardview, boardview.shown)
         else:
+            self.active = False
             boardview.model.pause_analyzer(self.mode)
             self.empty_parent()
-            self.active = False
         
     def multipv_edited(self, value):
         if value > self.engine.maxAnalysisLines():
@@ -373,6 +379,7 @@ class Sidepanel:
         self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store) ]
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
+        gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
         gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused)
         gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed)
         return self.sw
@@ -383,12 +390,20 @@ class Sidepanel:
         if analyzer_type == SPY:
             self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv))
 
+    def on_analyzer_removed(self, gamemodel, analyzer, analyzer_type):
+        for advisor in self.advisors:
+            if advisor.mode == analyzer_type:
+                advisor.active = False
+                parent = advisor.empty_parent()
+                self.store.remove(parent)
+                self.advisors.remove(advisor)
+
     def on_analyzer_paused(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
             if advisor.mode == analyzer_type:
+                advisor.active = False
                 self.store[advisor.path][5] = True
                 advisor.empty_parent()
-                advisor.active = False
 
     def on_analyzer_resumed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
