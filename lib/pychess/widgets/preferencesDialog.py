@@ -128,7 +128,13 @@ class EngineTab:
             widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
             from pychess.Main import gameDic
             if gameDic:
-                widgets["spy_mode"].set_sensitive(check.get_active())
+                if check.get_active():
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.restart_analyzer(SPY)
+                else:
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.remove_analyzer(SPY)
+
         widgets["inv_analyzer_check"].connect_after("toggled",
                                               on_invanalyzer_check_toggled)
         uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
