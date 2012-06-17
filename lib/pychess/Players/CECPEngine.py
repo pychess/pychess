@@ -39,12 +39,13 @@ anare = re.compile("""
     \s*                      #
     \d+ [+\-\.]?             # The ply analyzed. Some engines end it with a dot, minus or plus
     \s+                      #
-    (-?Mat\s*\d+ | [-\d\.]+) # Mat1 is used by gnuchess to specify mate in one.
-                             #        otherwise we should support a signed float
+    (-?Mat\s*\d+ | [+\-\d\.]+) # The score found in centipawns.
+                             #   Mat1 is used by gnuchess to specify mate in one.
+                             #   otherwise we should support a signed float
     \s+                      #
     [\d\.]+                  # The time used in seconds
     \s+                      #
-    [\d\.]+                  # The score found in centipawns
+    [\d\.]+                  # Number of nodes visited
     \s+                      #
     (.+)                     # The Principal-Variation. With or without move numbers
     \s*                      #
