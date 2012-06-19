@@ -94,7 +94,7 @@ class UCIEngine (ProtocolEngine):
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
         
-            if self.multipvSetting > 1:
+            if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.setOption('MultiPV', self.multipvSetting)
         
         for option, value in self.optionsToBeSent.iteritems():
