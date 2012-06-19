@@ -100,6 +100,8 @@ backup = """
     <engine protocol="cecp" protover="1" binname="amundsen">
         <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
+    <engine protocol="uci" protover="1" binname="gnuchessu">
+        <meta><country>us</country></meta></engine>
     <engine protocol="uci" protover="1" binname="robbolito">
         <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="glaurung">
