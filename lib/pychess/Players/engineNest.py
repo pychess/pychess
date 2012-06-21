@@ -67,13 +67,15 @@ def mergeElements(elemA, elemB):
 #    </vm>
 #</engine>
 
+PYTHONBIN = sys.executable.split("/")[-1]
+
 backup = """
 <engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py">
         <meta><country>dk</country></meta>
-        <vm binname="python"><args><arg name='0' value="-u"/></args></vm></engine>
+        <vm binname="%s"><args><arg name='0' value="-u"/></args></vm></engine>
     <engine protocol="cecp" protover="2" binname="shatranj.py">
-        <vm binname="python"><args><arg name='0' value="-u"/></args></vm>
+        <vm binname="%s"><args><arg name='0' value="-u"/></args></vm>
         <args><arg name='0' value='-xboard'/></args></engine>
     <engine protocol="cecp" protover="2" binname="gnuchess">
         <meta><country>us</country></meta>
@@ -128,7 +130,7 @@ backup = """
         <meta><country>ru</country></meta>
         <vm binname="wine"/></engine>
 </engines>
-""" % ENGINES_XML_API_VERSION
+""" % (ENGINES_XML_API_VERSION, PYTHONBIN, PYTHONBIN)
 
 class EngineDiscoverer (GObject, PooledThread):
     
