@@ -10,7 +10,7 @@ from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import Move, toSAN, toFAN
-from pychess.Savers.pgn import nag2symbol, symbol2nag, move_count
+from pychess.Savers.pgn import nag2symbol, move_count
 
 __title__ = _("Annotation")
 __active__ = True
@@ -153,9 +153,15 @@ class Sidepanel(gtk.TextView):
                     menu.append(menuitem)
 
                 symbol_menu1 = gtk.Menu()
-                for symbol in ("!", "?", "!?", "?!", "!!", "??"):
-                    menuitem = gtk.MenuItem(symbol)
-                    menuitem.connect('activate', self.symbol_menu1_activate, board, symbol)
+                for nag, menutext in (("$1", "!"),
+                                      ("$2", "?"),
+                                      ("$3", "!!"),
+                                      ("$4", "??"),
+                                      ("$5", "!?"),
+                                      ("$6", "?!"),
+                                      ("$7", _("Forced move"))):
+                    menuitem = gtk.MenuItem(menutext)
+                    menuitem.connect('activate', self.symbol_menu1_activate, board, nag)
                     symbol_menu1.append(menuitem)
 
                 menuitem = gtk.MenuItem(_("Add move symbol"))
@@ -163,9 +169,25 @@ class Sidepanel(gtk.TextView):
                 menu.append(menuitem)
                 
                 symbol_menu2 = gtk.Menu()
-                for symbol in ("=", "∞", "+=", "=+", "±", "∓", "+-", "-+"):
-                    menuitem = gtk.MenuItem(symbol)
-                    menuitem.connect('activate', self.symbol_menu2_activate, board, symbol)
+                for nag, menutext in (("$10", "="),
+                                      ("$13", _("Unclear position")),
+                                      ("$14", "+="),
+                                      ("$15", "=+"),
+                                      ("$16", "±"),
+                                      ("$17", "∓"),
+                                      ("$18", "+-"),
+                                      ("$19", "-+"),
+                                      ("$20", "+--"),
+                                      ("$21", "--+"),
+                                      ("$22", _("Zugzwang")),
+                                      ("$32", _("Development adv.")),
+                                      ("$36", _("Initiative")),
+                                      ("$40", _("With attack")),
+                                      ("$44", _("Compensation")),
+                                      ("$132", _("Counterplay")),
+                                      ("$138", _("Time pressure"))):
+                    menuitem = gtk.MenuItem(menutext)
+                    menuitem.connect('activate', self.symbol_menu2_activate, board, nag)
                     symbol_menu2.append(menuitem)
 
                 menuitem = gtk.MenuItem(_("Add evaluation symbol"))
@@ -227,28 +249,32 @@ class Sidepanel(gtk.TextView):
         else:
             dialog.destroy()
 
-    def symbol_menu1_activate(self, widget, board, symbol):
+    def symbol_menu1_activate(self, widget, board, nag):
         if len(board.nags) == 0:
-            board.nags.append(symbol2nag(symbol))
+            board.nags.append(nag)
             self.gamemodel.needsSave = True
         else:
-            if board.nags[0] != symbol2nag(symbol):
-                board.nags[0] = symbol2nag(symbol)
+            if board.nags[0] != nag:
+                board.nags[0] = nag
                 self.gamemodel.needsSave = True
         if self.gamemodel.needsSave:
             self.update()
 
-    def symbol_menu2_activate(self, widget, board, symbol):
+    def symbol_menu2_activate(self, widget, board, nag):
+        color = board.color
+        if color == WHITE and nag in ("$22", "$32", "$36", "$40", "$44", "$132", "$138"):
+            nag = "$%s" % (int(nag[1:]) + 1)
+
         if len(board.nags) == 0:
             board.nags.append("")
-            board.nags.append(symbol2nag(symbol))
+            board.nags.append(nag)
             self.gamemodel.needsSave = True
         if len(board.nags) == 1:
-            board.nags.append(symbol2nag(symbol))
+            board.nags.append(nag)
             self.gamemodel.needsSave = True
         else:
-            if board.nags[1] != symbol2nag(symbol):
-                board.nags[1] = symbol2nag(symbol)
+            if board.nags[1] != nag:
+                board.nags[1] = nag
                 self.gamemodel.needsSave = True
         if self.gamemodel.needsSave:
             self.update()
