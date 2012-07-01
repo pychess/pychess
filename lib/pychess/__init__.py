@@ -1,0 +1,2 @@
+VERSION = "0.10.1"
+VERSION_NAME = "Staunton"
