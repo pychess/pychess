@@ -271,7 +271,7 @@ class PyChessCECP(PyChess):
             
             elif lines[0] == "sd":
                 self.sd = int(lines[1])
-                self.skipPruneChance = max(0, (5-self.sd)*0.02)
+                #self.skipPruneChance = max(0, (5-self.sd)*0.02)
                 if self.sd >= 5:
                     print "If the game has no timesettings, you probably don't want\n"+\
                           "to set a search depth much greater than 4"
