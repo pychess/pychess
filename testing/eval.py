@@ -14,21 +14,15 @@ class EvalTestCase(unittest.TestCase):
     
     def test1(self):
         """Testing eval symmetry with startboard (WHITE)"""
-        score = evaluateComplete(self.board, color=WHITE, balanced=True)
+        score = evaluateComplete(self.board, color=WHITE)
         self.assertEqual(score, 0)
     
     def test2(self):
         """Testing eval symmetry with startboard (BLACK)"""
-        score = evaluateComplete(self.board, color=BLACK, balanced=True)
+        score = evaluateComplete(self.board, color=BLACK)
         self.assertEqual(score, 0)
     
     def test3(self):
-        """Testing eval symmetry between colors with balanced=False"""
-        scorew = evaluateComplete(self.board, color=WHITE)
-        scoreb = evaluateComplete(self.board, color=BLACK)
-        self.assertEqual(scorew, scoreb)
-    
-    def test4(self):
         """Testing eval symmetry of each function"""
         funcs = (f for f in dir(leval) if f.startswith("eval"))
         funcs = (getattr(leval,f) for f in funcs)
