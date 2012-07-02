@@ -13,30 +13,18 @@ from lmove import newMove
 #from random import randint
 randomval = 0 #randint(8,12)/10.
 
-def evaluateComplete (board, color, balanced=False):
+def evaluateComplete (board, color):
     """ A detailed evaluation function, taking into account
         several positional factors """
     
     s, phase = evalMaterial (board, color)
-    s += evalKingTropism (board, color, phase)
-    s += evalKnights (board, color, phase)
-    s += evalBishops (board, color, phase)
-    s += evalTrappedBishops (board, color, phase)
-    s += evalRooks (board, color, phase)
-    s += evalKing (board, color, phase)
+    for component in evalKnights, evalBishops, evalTrappedBishops, evalRooks, \
+                     evalKing, evalKingTropism, evalPawnStructure, evalDoubleQR7:
+        s += component (board, color, phase)
+        s -= component (board, 1-color, phase)
+    
     s += evalDev (board, color, phase)
-    s += evalPawnStructure (board, color, phase)
-    s += evalDoubleQR7 (board, color, phase)
-    
     s += randomval
-    
-    if balanced:
-        s -= evalKingTropism (board, 1-color, phase)
-        s -= evalKnights (board, 1-color, phase)
-        s -= evalPawnStructure (board, 1-color, phase)
-        s -= evalBishops (board, 1-color, phase)
-        s -= evalTrappedBishops (board, 1-color, phase)
-        s -= evalRooks (board, 1-color, phase)
     
     return s
 
