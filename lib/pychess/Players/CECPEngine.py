@@ -203,7 +203,8 @@ class CECPEngine (ProtocolEngine):
         # Some engines has the 'post' option enabled by default, and posts a lot
         # of debug information. Generelly this only help to increase the log
         # file size, and we don't really need it.
-        print >> self.engine, "nopost"
+        # [Forcing it to be *enabled* on this branch.]
+        print >> self.engine, "post"
         
         for command in self.optionQueue:
             print >> self.engine, command
