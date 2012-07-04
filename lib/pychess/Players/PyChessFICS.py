@@ -2,6 +2,7 @@ from pychess.Players import PyChess
 from pychess.System.prefix import addDataPrefix, isInstalled
 from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
+from pychess.System import GtkWorker
 from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.ic import FICSConnection
