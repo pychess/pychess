@@ -1,6 +1,6 @@
 from Move import Move
-from lutils.egtb_k4it import egtb_k4it
-from lutils.egtb_gaviota import egtb_gaviota
+#from lutils.egtb_k4it import egtb_k4it
+#from lutils.egtb_gaviota import egtb_gaviota
 from lutils.bitboard import bitLength
 
 providers = []
@@ -12,7 +12,8 @@ class EndgameTable:
     def __init__ (self):
         global providers
         if not providers:
-            providers = [ egtb_gaviota(), egtb_k4it() ]
+            #providers = [ egtb_gaviota(), egtb_k4it() ]
+            providers = [ ]
         self.providers = providers
     
     def _pieceCounts (self, board):
