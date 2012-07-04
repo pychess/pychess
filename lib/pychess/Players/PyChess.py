@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-from pychess.System import glock
-from pychess.System.GtkWorker import GtkWorker
+import threading
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
@@ -73,7 +72,7 @@ class PyChess:
                 choice = move
         return choice
     
-    def __go (self, worker):
+    def __go (self, ondone=None):
         """ Finds and prints the best move from the current position """
         
         mv = self.__getBestOpening()
@@ -103,7 +102,7 @@ class PyChess:
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
-                worker.publish("Time left: %3.2f seconds; Planing to thinking for %3.2f seconds" % (self.mytime, usetime))
+                print "Time left: %3.2f seconds; Planing to thinking for %3.2f seconds" % (self.mytime, usetime)
                 for depth in range(1, self.sd+1):
                     # Heuristic time saving
                     # Don't waste time, if the estimated isn't enough to complete next depth
@@ -117,8 +116,8 @@ class PyChess:
                             break
                         if self.post:
                             movstrs = " ".join(listToSan(self.board, mvs))
-                            worker.publish("\t".join(("%d","%d","%0.2f","%d","%s")) %
-                                           (depth, self.scr, time()-starttime, lsearch.nodes, movstrs))
+                            print "\t".join(("%d","%d","%0.2f","%d","%s")) % \
+                                           (depth, self.scr, time()-starttime, lsearch.nodes, movstrs)
                     else:
                         # We were interrupted
                         if depth == 1:
@@ -142,16 +141,16 @@ class PyChess:
                 #    print "resign"
                 #else:
                 if self.scr == 0:
-                    worker.publish("result %s" % reprResult[DRAW])
+                    print "result %s" % reprResult[DRAW]
                 elif self.scr < 0:
                     if self.board.color == WHITE:
-                        worker.publish("result %s" % reprResult[BLACKWON])
-                    else: worker.publish("result %s" % reprResult[WHITEWON])
+                        print "result %s" % reprResult[BLACKWON]
+                    else: print "result %s" % reprResult[WHITEWON]
                 else:
                     if self.board.color == WHITE:
-                        worker.publish("result %s" % reprResult[WHITEWON])
-                    else: worker.publish("result %s" % reprResult[BLACKWON])
-                worker.publish("last: %d %d" % (lsearch.last, self.scr))
+                        print "result %s" % reprResult[WHITEWON]
+                    else: print "result %s" % reprResult[BLACKWON]
+                print "last: %d %d" % (lsearch.last, self.scr)
                 return
             
             lsearch.movesearches = 0
@@ -160,9 +159,10 @@ class PyChess:
         
         move = mvs[0]
         sanmove = toSAN(self.board, move)
+        if ondone: ondone(sanmove)
         return sanmove
     
-    def __analyze (self, worker):
+    def __analyze (self):
         """ Searches, and prints info from, the position as stated in the cecp
             protocol """
         
@@ -181,13 +181,13 @@ class PyChess:
             # depth in plies, evaluation, time used, nodes searched, p/v
             
             movstrs = " ".join(listToSan(self.board, mvs))
-            worker.publish("\t".join(("%d","%d","%0.2f","%d","%s")) %
-                           (depth, scr, time()-start, lsearch.nodes, movstrs))
+            print "\t".join(("%d","%d","%0.2f","%d","%s")) % \
+                           (depth, scr, time()-start, lsearch.nodes, movstrs)
             
             if lsearch.movesearches:
                 mvs_pos = lsearch.nodes/float(lsearch.movesearches)
                 mvs_tim = lsearch.nodes/(time()-t)
-                worker.publish("%0.1f moves/position; %0.1f n/s" % (mvs_pos, mvs_tim))
+                print "%0.1f moves/position; %0.1f n/s" % (mvs_pos, mvs_tim)
             
             lsearch.nodes = 0
             lsearch.movesearches = 0
@@ -209,7 +209,7 @@ class PyChessCECP(PyChess):
         
         self.forced = False
         self.analyzing = False
-        self.worker = None
+        self.thread = None
         
         self.features = {
             "setboard": 1,
@@ -365,29 +365,19 @@ class PyChessCECP(PyChess):
     
     def __stopSearching(self):
         lsearch.searching = False
-        if self.worker:
-            self.worker.cancel()
-            glock.acquire()
-            self.worker.get()
-            glock.release()
-            self.worker = None
+        if self.thread:
+            self.thread.join()
     
     def __go (self):
-        self.worker = GtkWorker(lambda worker: PyChess._PyChess__go(self, worker))
-        def process (worker, messages): print "\n".join(messages)
-        self.worker.connect("published", process)
-        def ondone (worker, result):
-            if not result: return
+        def ondone (result):
             self.board.applyMove(parseSAN(self.board,result))
             print "move %s" % result
-        self.worker.connect("done", ondone)
-        self.worker.execute()
+        self.thread = threading.Thread(target=PyChess._PyChess__go, args=(self,ondone))
+        self.thread.start()
     
     def __analyze (self):
-        self.worker = GtkWorker(lambda worker: PyChess._PyChess__analyze(self, worker))
-        def process (worker, messages): print "\n".join(messages)
-        self.worker.connect("published", process)
-        self.worker.execute()
+        self.thread = threading.Thread(target=PyChess._PyChess__analyze, args=(self,))
+        self.thread.start()
 
 ################################################################################
 # main                                                                         #
