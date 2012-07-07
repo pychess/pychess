@@ -9,6 +9,8 @@ from ldata import *
 from LBoard import LBoard
 from lsort import staticExchangeEvaluate
 from lmove import newMove
+from ctypes import create_string_buffer, memset
+from struct import Struct, pack_into, unpack_from
 
 #from random import randint
 randomval = 0 #randint(8,12)/10.
@@ -43,7 +45,7 @@ def evalMaterial (board, color):
         material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
         material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
     
-    phase = max(1, round(8 - (material[WHITE] + material[BLACK]) / 1150))
+    phase = max(1, int(round(8 - (material[WHITE] + material[BLACK]) / 1150)))
     
     # If both sides are equal, we don't need to compute anything!
     if material[BLACK] == material[WHITE]:
@@ -127,10 +129,29 @@ def evalKingTropism (board, color, phase):
 # evalPawnStructure                                                            #
 ################################################################################
 
-pawntable = {}
+# For pawn hash, don't use buckets. Store:
+# key         high 16 bits of pawn hash key
+# score       score from white's point of view
+# passed      bitboard of passed pawns
+# weaked      bitboard of weak pawns
+pawnEntryType = Struct('=H h Q Q')
+pawnPhaseKey  = (0x343d, 0x055d, 0x3d3c, 0x1a1c, 0x28aa, 0x19ee, 0x1538, 0x2a99)
+pawntable = create_string_buffer(16384 * pawnEntryType.size)
+    
+def probePawns (board, phase):
+    index = (board.pawnhash % 16384) ^ pawnPhaseKey[phase-1]
+    key, score, passed, weaked = pawnEntryType.unpack_from(pawntable, index * pawnEntryType.size)
+    if key == (board.pawnhash >> 14) & 0xffff:
+        return score, passed, weaked
+    return None
+
+def recordPawns (board, phase, score, passed, weaked):
+    index = (board.pawnhash % 16384) ^ pawnPhaseKey[phase-1]
+    key = (board.pawnhash >> 14) & 0xffff
+    pawnEntryType.pack_into(pawntable, index * pawnEntryType.size, key, score, passed, weaked)
 
 def fillPawnTable (board, phase):
-    if board.pawnhash in pawntable:
+    if probePawns (board, phase):
         return
 
     score = 0
@@ -222,7 +243,7 @@ def fillPawnTable (board, phase):
         # Switch point of view when switching colors
         score = -score
         
-    pawntable[board.pawnhash] = (score, passed, weaked)
+    recordPawns (board, phase, score, passed, weaked)
 
 def evalPawnStructure (board, color, phase):
     """
@@ -254,7 +275,7 @@ def evalPawnStructure (board, color, phase):
     opboards = board.boards[opcolor]
     oppawns = opboards[PAWN]
     
-    score, passed, weaked = pawntable[board.pawnhash]
+    score, passed, weaked = probePawns (board, phase)
     score = score / 2 if color == WHITE else -score / 2
     passed &= pawns
     weaked &= pawns
