@@ -18,6 +18,7 @@ def evaluateComplete (board, color):
         several positional factors """
     
     s, phase = evalMaterial (board, color)
+    fillPawnTable (board, phase)
     for component in evalKnights, evalBishops, evalTrappedBishops, evalRooks, \
                      evalKing, evalKingTropism, evalPawnStructure, evalDoubleQR7:
         s += component (board, color, phase)
@@ -128,45 +129,19 @@ def evalKingTropism (board, color, phase):
 
 pawntable = {}
 
-def evalPawnStructure (board, color, phase):
-    """
-    Pawn evaluation is based on the following factors:
-    1.  Pawn square tables.
-    2.  Passed pawns.
-    3.  Backward pawns.
-    4.  Pawn base under attack.
-    5.  Doubled pawns 
-    6.  Isolated pawns 
-    7.  Connected passed pawns on 6/7th rank.
-    8.  Unmoved & blocked d, e pawn
-    9.  Passed pawn which cannot be caught.
-    10. Pawn storms.
-    
-    Notice: The function has better precicion for current player
-    """
-    
-    boards = board.boards[color]
-    
-    if not boards[PAWN]:
-        return 0
-    
-    king = board.kings[color]
-    pawns = boards[PAWN]
-    
-    opcolor = 1-color
-    opking = board.kings[opcolor]
-    opboards = board.boards[opcolor]
-    oppawns = opboards[PAWN]
-    
-    #ptable = PawnTab[color] + (PawnHashKey & PHashMask)
-    #if ptable->phase == phase and ptable->pkey == KEY(PawnHashKey):
+def fillPawnTable (board, phase):
     if board.pawnhash in pawntable:
-        score, passed, weaked = pawntable[board.pawnhash]
-        
-    else:
-        score = 0
-        passed = createBoard(0)
-        weaked = createBoard(0)
+        return
+
+    score = 0
+    passed = createBoard(0)
+    weaked = createBoard(0)
+
+    for color in WHITE, BLACK:
+        opcolor = 1-color
+        pawns = board.boards[color][PAWN]
+        oppawns = board.boards[opcolor][PAWN]
+
         nfile = [0]*8
         pScoreBoard = pawnScoreBoard[color]
         for cord in iterBits(pawns):
@@ -190,9 +165,6 @@ def evalPawnStructure (board, color, phase):
             ptype = color == WHITE and PAWN or BPAWN
             opptype = color == BLACK and PAWN or BPAWN
             
-            if not 0 <= i <= 63:
-                print toString(pawns)
-                print board
             if not (passedPawnMask[opcolor][i] & ~fileBits[cord&7] & pawns) and\
                     board.arBoard[i] != PAWN:
                 n1 = bitLength (pawns & moveArray[opptype][i])
@@ -239,9 +211,6 @@ def evalPawnStructure (board, color, phase):
         if bitLength(pawns) == 8:
             score -= 10
         
-        # Detect stonewall formation in enemy
-        if stonewall[opcolor] & oppawns == stonewall[opcolor]:
-            score -= 10
         # Detect stonewall formation in our pawns
         if stonewall[color] & pawns == stonewall[color]:
             score += 10
@@ -249,13 +218,46 @@ def evalPawnStructure (board, color, phase):
         # Penalize Locked pawns
         n = bitLength((pawns >> 8) & oppawns & lbox)
         score -= n * 10
-        # Opposite for opponent
-        n = bitLength((oppawns << 8) & pawns & lbox)
-        score += n * 10
+
+        # Switch point of view when switching colors
+        score = -score
         
-        
-        # Save the score into the pawn hash table */ 
-        pawntable[board.pawnhash] = (score, passed, weaked)
+    pawntable[board.pawnhash] = (score, passed, weaked)
+
+def evalPawnStructure (board, color, phase):
+    """
+    Pawn evaluation is based on the following factors:
+    1.  Pawn square tables.
+    2.  Passed pawns.
+    3.  Backward pawns.
+    4.  Pawn base under attack.
+    5.  Doubled pawns 
+    6.  Isolated pawns 
+    7.  Connected passed pawns on 6/7th rank.
+    8.  Unmoved & blocked d, e pawn
+    9.  Passed pawn which cannot be caught.
+    10. Pawn storms.
+    
+    Notice: The function has better precicion for current player
+    """
+    
+    boards = board.boards[color]
+    
+    if not boards[PAWN]:
+        return 0
+    
+    king = board.kings[color]
+    pawns = boards[PAWN]
+    
+    opcolor = 1-color
+    opking = board.kings[opcolor]
+    opboards = board.boards[opcolor]
+    oppawns = opboards[PAWN]
+    
+    score, passed, weaked = pawntable[board.pawnhash]
+    score = score / 2 if color == WHITE else -score / 2
+    passed &= pawns
+    weaked &= pawns
     
     ############################################################################
     #  This section of the pawn code cannot be saved into the pawn hash as     #
