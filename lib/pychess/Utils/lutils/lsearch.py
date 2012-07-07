@@ -14,7 +14,7 @@ from pychess.Utils.EndgameTable import EndgameTable
 
 TIMECHECK_FREQ = 500
 
-table = TranspositionTable(5000000)
+table = TranspositionTable(32 * 1024 * 1024)
 skipPruneChance = 0
 searching = False
 movesearches = 0
@@ -81,6 +81,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Look up transposition table                                              #
     ############################################################################
     
+    if ply == 0:
+        table.newSearch()
+
     table.setHashMove (depth, -1)
     probe = table.probe (board, depth, alpha, beta)
     hashmove = None
