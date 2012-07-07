@@ -3,7 +3,7 @@ from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
 
 # Store hash entries in buckets of 4. An entry consists of:
-# key         32 bytes derived from the board hash
+# key         32 bits derived from the board hash
 # search_id   counter used to determine entry's age
 # hashf       bound type (one of the hashf* constants)
 # depth       search depth
