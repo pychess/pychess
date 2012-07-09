@@ -400,10 +400,10 @@ def evalKing (board, color, phase):
         
         pawns = board.boards[color][PAWN]
         total_in_front = bitLength(wall1|wall2&pawns)
-        numbermod = (0,1,2,3,2.33,1.67,1)[total_in_front]
+        numbermod = (0,3,6,9,7,5,3)[total_in_front]
         
-        s = bitLength(wall1&pawns) + bitLength(wall2&pawns)/2.
-        return s * numbermod * 5
+        s = bitLength(wall1&pawns) * 2 + bitLength(wall2&pawns)
+        return (s * numbermod * 5) / 6
     
     return 0
     
