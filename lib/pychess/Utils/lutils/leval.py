@@ -286,20 +286,6 @@ def evalPawnStructure (board, color, phase):
     #  calculated again.                                                       #
     ############################################################################
         
-    # Pawn on f6/c6 with Queen against castled king is very strong
-    
-    if boards[QUEEN] and opking > H6:
-        if pawns & bitPosArray[F6] and distance[KING][opking][G7] <= 1:
-            score += 40
-        if pawns & bitPosArray[C6] and distance[KING][opking][B7] <= 1:
-            score += 40
-    
-    if opboards[QUEEN] and king < A3:
-        if oppawns & bitPosArray[F3] and distance[KING][king][G2] <= 1:
-            score -= 20
-        if oppawns & bitPosArray[C3] and distance[KING][king][B2] <= 1:
-            score -= 20
-        
     # Connected passed pawns on 6th or 7th rank
     t = passed & brank67[color]
     opMajorCount = sum(bitLength(opboards[p]) for p in xrange(KNIGHT, KING))
@@ -521,24 +507,6 @@ def evalBishops (board, color, phase):
         else: s = bitLength(board.friends[color] & BLACK_SQUARES)
                   
         score -= s
-    
-    # Avoid wasted moves
-    
-    if color == WHITE:
-        if bishops & bitPosArray[B5] and arBoard[C6] == EMPTY and \
-                oppawns & bitPosArray[B7] and oppawns & bitPosArray[C7]:
-            score -= 50
-        if bishops & bitPosArray[G5] and arBoard[F6] == EMPTY and \
-                oppawns & bitPosArray[F7] and oppawns & bitPosArray[G7]:
-            score -= 50
-    
-    else:
-        if bishops & bitPosArray[B4] and arBoard[C3] == EMPTY and \
-                oppawns & bitPosArray[B2] and oppawns & bitPosArray[C2]:
-            score -= 50
-        if bishops & bitPosArray[G4] and arBoard[F3] == EMPTY and \
-                oppawns & bitPosArray[F2] and oppawns & bitPosArray[G2]:
-            score -= 50
     
     return score
 
