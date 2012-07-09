@@ -17,9 +17,7 @@ TIMECHECK_FREQ = 500
 table = TranspositionTable(32 * 1024 * 1024)
 skipPruneChance = 0
 searching = False
-movesearches = 0
 nodes = 0
-last = 0
 endtime = 0
 timecheck_counter = TIMECHECK_FREQ
 egtb = None
@@ -38,7 +36,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             the deepest)
         *   a score of your standing the the last possition. """
     
-    global last, searching, nodes, movesearches, table, endtime, timecheck_counter
+    global searching, nodes, table, endtime, timecheck_counter
     foundPv = False
     hashf = hashfALPHA
     amove = []
@@ -63,7 +61,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 if state == WHITEWON:
                     score = -MATE_VALUE+steps-2
                 else: score = MATE_VALUE-steps+2
-            last = 1
             return [move.move], score
     
     ###########################################################################
@@ -74,7 +71,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # We don't adjudicate draws. Clients may have different rules for that.
     if ply > 0:
         if ldraw.test(board):
-            last = 2
             return [], 0
     
     ############################################################################
@@ -93,7 +89,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         table.setHashMove (depth, move)
         
         if hashf == hashfEXACT:
-            last = 3
             return [move], score
         elif hashf == hashfBETA:
             beta = min(score, beta)
@@ -101,7 +96,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             alpha = score
             
         if hashf != hashfBAD and alpha >= beta:
-            last = 4
             return [move], score
     
     ############################################################################
@@ -119,7 +113,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     if not searching:
-        last = 5
         return [], -evaluateComplete(board, 1-board.color)
     
     ############################################################################
@@ -133,15 +126,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
         else:
-            last = 6
             mvs, val = quiescent(board, alpha, beta, ply)
             return mvs, val
     
     ############################################################################
     # Find and sort moves                                                      #
     ############################################################################
-    
-    movesearches += 1
     
     if isCheck:
         moves = [(-getMoveValue(board,table,depth,m),m) for m in genCheckEvasions(board)]
@@ -190,7 +180,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                             not move>>12 in PROMOTIONS:
                         table.addKiller (depth, move)
                         table.addButterfly(move, depth)
-                last = 7
                 return [move]+mvs, beta
             
             alpha = val
@@ -207,21 +196,17 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             table.record (board, amove[0], alpha, hashf, depth)
             if board.arBoard[amove[0]&63] == EMPTY:
                 table.addKiller (depth, amove[0])
-        last = 8
         return amove, alpha
     
     if catchFailLow:
         if searching:
             table.record (board, catchFailLow, alpha, hashf, depth)
-        last = 9
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
     if isCheck:
-        last = 10
         return [], -MATE_VALUE+ply-2
     
-    last = 11
     return [], 0
 
 def quiescent (board, alpha, beta, ply):

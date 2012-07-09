@@ -133,7 +133,6 @@ class PyChess:
             if not mvs:
                 if not lsearch.searching:
                     # We were interupted
-                    lsearch.movesearches = 0
                     lsearch.nodes = 0
                     return
                 
@@ -151,7 +150,6 @@ class PyChess:
                     else: print "result %s" % reprResult[BLACKWON]
                 return
             
-            lsearch.movesearches = 0
             lsearch.nodes = 0
             lsearch.searching = False
         
@@ -180,7 +178,6 @@ class PyChess:
             print depth, scr, time_cs, lsearch.nodes, pv
             
             lsearch.nodes = 0
-            lsearch.movesearches = 0
     
 ################################################################################
 # main                                                                         #
