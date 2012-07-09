@@ -21,8 +21,8 @@ def evaluateComplete (board, color):
     
     s, phase = evalMaterial (board, color)
     fillPawnTable (board, phase)
-    for component in evalKnights, evalBishops, evalTrappedBishops, evalRooks, \
-                     evalKing, evalKingTropism, evalPawnStructure, evalDoubleQR7:
+    for component in evalBishops, evalTrappedBishops, evalRooks, evalKing, \
+                     evalKingTropism, evalPawnStructure, evalDoubleQR7:
         s += component (board, color, phase)
         s -= component (board, 1-color, phase)
     
@@ -421,11 +421,6 @@ def evalKing (board, color, phase):
     
     return 0
     
-def evalKnights (board, color, phase):
-    outerring = ~lbox
-    outer_count = bitLength (board.boards[color][KNIGHT] & outerring)
-    return -max(15-phase,0)*outer_count
-
 def evalDev (board, color, phase):
     """
     Calculate the development score for side (for opening only).
