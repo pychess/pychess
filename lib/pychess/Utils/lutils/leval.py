@@ -21,11 +21,12 @@ def evaluateComplete (board, color):
     
     s, phase = evalMaterial (board, color)
     fillPawnTable (board, phase)
-    for component in evalBishops, evalTrappedBishops, evalRooks, evalKing, \
+    for component in evalBishops, evalRooks, evalKing, \
                      evalKingTropism, evalPawnStructure, evalDoubleQR7:
         s += component (board, color, phase)
         s -= component (board, 1-color, phase)
     
+    s += evalTrappedBishops (board, color)
     s += evalDev (board, color, phase)
     s += randomval
     
@@ -479,71 +480,55 @@ def evalDev (board, color, phase):
 def evalBishops (board, color, phase):
     
     opcolor = 1-color
-    pawns = board.boards[color][PAWN]
     bishops = board.boards[color][BISHOP]
-    opbishops = board.boards[opcolor][BISHOP]
+    pawns = board.boards[color][PAWN]
     oppawns = board.boards[opcolor][PAWN]
     
     arBoard = board.arBoard
     score = 0
     
-    # Avoid having too many pawns on you bishops color
+    # Avoid having too many pawns on you bishop's color.
+    # In late game phase, add a bonus for enemy pieces on your bishop's color.
     
     if bitLength (bishops) == 1:
-        if bishops & WHITE_SQUARES:
-            s =   bitLength(pawns & WHITE_SQUARES) \
-                + bitLength(oppawns & WHITE_SQUARES)/2
-                
-        else: s =   bitLength(pawns & BLACK_SQUARES) \
-                  + bitLength(oppawns & BLACK_SQUARES)/2
-                  
-        score -= s
-    
-    # In later games, try to get your pices away from opponent bishop colos
-    
-    if phase > 6 and bitLength (opbishops) == 1:
-        if opbishops & WHITE_SQUARES:
-            s = bitLength(board.friends[color] & WHITE_SQUARES)
-        else: s = bitLength(board.friends[color] & BLACK_SQUARES)
-                  
-        score -= s
-    
+        squareMask = WHITE_SQUARES if (bishops & WHITE_SQUARES) else BLACK_SQUARES
+        score = - bitLength(pawns & squareMask) \
+                - bitLength(oppawns & squareMask)/2
+        if phase > 6:
+            score += bitLength(board.friends[1-color] & squareMask)
+
     return score
 
-def evalTrappedBishops (board, color, phase):
+def evalTrappedBishops (board, color):
     """ Check for bishops trapped at A2/H2/A7/H7 """
     
-    opcolor = 1-color
-    opbishops = board.boards[opcolor][BISHOP]
-    pawns = board.boards[color][PAWN]
+    wbishops = board.boards[WHITE][BISHOP]
+    bbishops = board.boards[BLACK][BISHOP]
+    wpawns = board.boards[WHITE][PAWN]
+    bpawns = board.boards[BLACK][PAWN]
     score = 0
     
-    # Don't waste time
-    if not opbishops:
-        return 0
-    
-    if color == WHITE:
-        if opbishops & bitPosArray[A2] and pawns & bitPosArray[B3]:
+    if bbishops:
+        if bbishops & bitPosArray[A2] and wpawns & bitPosArray[B3]:
             see = staticExchangeEvaluate(board, newMove(A2,B3))
             if see < 0:
-                score += see
-        if opbishops & bitPosArray[H2] and pawns & bitPosArray[G3]:
+                score -= see
+        if bbishops & bitPosArray[H2] and wpawns & bitPosArray[G3]:
             see = staticExchangeEvaluate(board, newMove(H2,G3))
             if see < 0:
-                score += see
+                score -= see
     
-    else:
-        if opbishops & bitPosArray[A7] and pawns & bitPosArray[B6]:
+    if wbishops:
+        if wbishops & bitPosArray[A7] and bpawns & bitPosArray[B6]:
             see = staticExchangeEvaluate(board, newMove(A7,B6))
             if see < 0:
                 score += see
-        if opbishops & bitPosArray[H7] and pawns & bitPosArray[G6]:
+        if wbishops & bitPosArray[H7] and bpawns & bitPosArray[G6]:
             see = staticExchangeEvaluate(board, newMove(H7,G6))
             if see < 0:
                 score += see
 
-    
-    return score
+    return score if color == WHITE else -score
 
 def evalRooks (board, color, phase):
     """ rooks on open/half-open files """
