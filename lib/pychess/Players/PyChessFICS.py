@@ -1,15 +1,22 @@
-from pychess.Players import PyChess
+from pychess.Players.PyChess import PyChess
 from pychess.System.prefix import addDataPrefix, isInstalled
 from pychess.System.repeat import repeat_sleep
 from pychess.System.ThreadPool import pool
 from pychess.System import GtkWorker
+from pychess.Utils.const import *
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN
+from pychess.Utils.lutils import lsearch
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.ic import FICSConnection
+import gettext
 import gtk.glade
 from urllib import urlopen, urlencode
 import email.Utils
 import math
+import pychess
+import random
+import signal
 import subprocess
 
 class PyChessFICS(PyChess):
@@ -291,7 +298,7 @@ class PyChessFICS(PyChess):
         elif offer.type in (TAKEBACK_OFFER,):
             offerManager.decline(offer)
         elif offer.type in (DRAW_OFFER, ABORT_OFFER, SWITCH_OFFER):
-            if self.scr <= 0:
+            if self.__willingToDraw():
                 offerManager.accept(offer)
             else: offerManager.decline(offer)
     
@@ -301,12 +308,14 @@ class PyChessFICS(PyChess):
     
     def __onGameCreated (self, boardManager, ficsgame):
         
-        self.mytime = int(ficsgame.min)*60
-        self.increment = int(ficsgame.inc)
+        base = int(ficsgame.min)*60
+        inc = int(ficsgame.inc)
+        self.clock[:] = base, base
+        self.increment[:] = inc, inc
         self.gameno = ficsgame.gameno
         self.lastPly = -1
         
-        self.acceptedTimesettings.append((self.mytime, self.increment))
+        self.acceptedTimesettings.append((base, inc))
         
         self.tellHome("Starting a game (%s, %s) gameno: %s" %
                 (ficsgame.wplayer.name, ficsgame.bplayer.name, ficsgame.gameno))
@@ -349,9 +358,7 @@ class PyChessFICS(PyChess):
         
         self.board.applyFen(fen)
         
-        if self.playingAs == WHITE:
-            self.mytime = wms/1000.
-        else: self.mytime = bms/1000.
+        self.clock[:] = wms/1000., bms/1000.
         
         if curcol == self.playingAs:
             self.__go()
