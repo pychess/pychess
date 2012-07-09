@@ -221,8 +221,6 @@ class LBoard:
         movenumber = int(moveNoChr)*2 -2
         if self.color == BLACK: movenumber += 1
         self.history = [None]*movenumber
-        
-        self.updateBoard()
     
     def isChecked (self):
         if self.checked == None:
@@ -237,8 +235,10 @@ class LBoard:
         return self.opchecked
         
     def _addPiece (self, cord, piece, color):
-        self.boards[color][piece] = \
-                setBit(self.boards[color][piece], cord)
+        _setBit = setBit
+        self.boards[color][piece] = _setBit(self.boards[color][piece], cord)
+        self.friends[color] = _setBit(self.friends[color], cord)
+        self.blocker = _setBit(self.blocker, cord)
         
         if piece == PAWN:
             #assert not (color == WHITE and cord > 55)
@@ -250,8 +250,10 @@ class LBoard:
         self.arBoard[cord] = piece
     
     def _removePiece (self, cord, piece, color):
-        self.boards[color][piece] = \
-                clearBit(self.boards[color][piece], cord)
+        _clearBit = clearBit
+        self.boards[color][piece] = _clearBit(self.boards[color][piece], cord)
+        self.friends[color] = _clearBit(self.friends[color], cord)
+        self.blocker = _clearBit(self.blocker, cord)
         
         if piece == PAWN:
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
@@ -265,11 +267,6 @@ class LBoard:
         self._removePiece(fcord, piece, color)
         self._addPiece(tcord, piece, color)
     
-    def updateBoard (self):
-        self.friends[WHITE] = sum(self.boards[WHITE])
-        self.friends[BLACK] = sum(self.boards[BLACK])
-        self.blocker = self.friends[WHITE] | self.friends[BLACK]
-        
     def setColor (self, color):
         if color == self.color: return
         self.color = color
@@ -440,7 +437,6 @@ class LBoard:
                 self._move(fcord, tcord, fpiece, self.color)
         
         self.setColor(opcolor)
-        self.updateBoard ()
         
         return move # Move is returned with the captured piece flag set
     
@@ -536,7 +532,6 @@ class LBoard:
         
         
         self.setColor(color)
-        self.updateBoard ()
         
         self.checked = checked
         self.opchecked = opchecked
