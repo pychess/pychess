@@ -241,8 +241,6 @@ class LBoard:
         self.blocker = _setBit(self.blocker, cord)
         
         if piece == PAWN:
-            #assert not (color == WHITE and cord > 55)
-            #assert not (color == BLACK and cord < 8)
             self.pawnhash ^= pieceHashes[color][PAWN][cord]
         elif piece == KING:
             self.kings[color] = cord
@@ -271,7 +269,6 @@ class LBoard:
         if color == self.color: return
         self.color = color
         self.hash ^= colorHash
-        self.pawnhash ^= colorHash
     
     def setCastling (self, castling):
         if self.castling == castling: return
