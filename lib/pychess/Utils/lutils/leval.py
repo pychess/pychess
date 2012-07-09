@@ -20,11 +20,14 @@ def evaluateComplete (board, color):
         several positional factors """
     
     s, phase = evalMaterial (board, color)
-    fillPawnTable (board, phase)
-    for component in evalBishops, evalRooks, evalKing, \
-                     evalKingTropism, evalPawnStructure, evalDoubleQR7:
-        s += component (board, color, phase)
-        s -= component (board, 1-color, phase)
+    s += evalBishops (board, color, phase)       - evalBishops (board, 1-color, phase)
+    s += evalRooks (board, color, phase)         - evalRooks (board, 1-color, phase)
+    s += evalKing (board, color, phase)          - evalKing (board, 1-color, phase)
+    s += evalKingTropism (board, color, phase)   - evalKingTropism (board, 1-color, phase)
+    s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
+    pawnScore, passed, weaked = cacheablePawnInfo (board, phase)
+    s += pawnScore if color == WHITE else -pawnScore
+    s += evalPawnStructure (board, color, phase, passed, weaked) - evalPawnStructure (board, 1-color, phase, passed, weaked)
     
     s += evalTrappedBishops (board, color)
     s += evalDev (board, color, phase)
@@ -151,9 +154,10 @@ def recordPawns (board, phase, score, passed, weaked):
     key = (board.pawnhash >> 14) & 0xffff
     pawnEntryType.pack_into(pawntable, index * pawnEntryType.size, key, score, passed, weaked)
 
-def fillPawnTable (board, phase):
-    if probePawns (board, phase):
-        return
+def cacheablePawnInfo (board, phase):
+    entry = probePawns (board, phase)
+    if entry:
+        return entry
 
     score = 0
     passed = createBoard(0)
@@ -245,8 +249,9 @@ def fillPawnTable (board, phase):
         score = -score
         
     recordPawns (board, phase, score, passed, weaked)
+    return score, passed, weaked
 
-def evalPawnStructure (board, color, phase):
+def evalPawnStructure (board, color, phase, passed, weaked):
     """
     Pawn evaluation is based on the following factors:
     1.  Pawn square tables.
@@ -276,8 +281,7 @@ def evalPawnStructure (board, color, phase):
     opboards = board.boards[opcolor]
     oppawns = opboards[PAWN]
     
-    score, passed, weaked = probePawns (board, phase)
-    score = score / 2 if color == WHITE else -score / 2
+    score = 0
     passed &= pawns
     weaked &= pawns
     
