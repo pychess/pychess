@@ -394,11 +394,10 @@ def evalKing (board, color, phase):
     # - - - K - - - R
     
     king = board.kings[color]
-    opking = board.kings[1-color]
     
     # If we are in endgame, we want our king in the center, and theirs far away
     if phase >= 6:
-        return endingKing[king] - endingKing[opking]
+        return endingKing[king]
     
     # else if castled, prefer having some pawns in front
     elif FILE(king) not in (3,4) and RANK(king) in (0,8):
@@ -598,14 +597,14 @@ def evalRooks (board, color, phase):
     
     score = 0
     
-    for cord in iterBits(rooks):
-        file = cord & 7
-        if phase < 7:
+    if phase < 7:
+        for cord in iterBits(rooks):
+            file = cord & 7
             if not boards[PAWN] & fileBits[file]:
                 if file == 5 and opking & 7 >= 4:
                     score += 40
                 score += 5
                 if not boards[PAWN] & fileBits[file]:
                     score += 6
-    
+
     return score
