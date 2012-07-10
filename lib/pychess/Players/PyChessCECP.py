@@ -2,6 +2,7 @@ from pychess.Players.PyChess import PyChess
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
 from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN
 from pychess.Utils.lutils import lsearch
@@ -95,7 +96,7 @@ class PyChessCECP(PyChess):
                     self.forced = False
                     self.playingAs = BLACK
                     self.clock[:] = self.basetime, self.basetime
-                    self.sd = 10
+                    self.sd = MAXPLY
                     if self.analyzing:
                         self.__analyze()
                 

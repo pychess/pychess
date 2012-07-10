@@ -7,6 +7,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
 from pychess.Utils.lutils import lsearch
+from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
@@ -22,7 +23,7 @@ gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 class PyChess:
     
     def __init__ (self):
-        self.sd = 10
+        self.sd = MAXPLY
         self.skipPruneChance = 0
         
         self.clock = [None, None]
