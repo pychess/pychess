@@ -33,6 +33,7 @@ class PyChess:
         self.scr = 0 # The current predicted score. Used when accepting draw offers
         self.playingAs = WHITE
         self.ponder = False # Currently unused
+        self.post = False
         self.debug = True
     
     def makeReady(self):
