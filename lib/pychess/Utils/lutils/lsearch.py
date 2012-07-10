@@ -7,7 +7,7 @@ from pychess.Utils.const import *
 from leval import evaluateComplete
 from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
-from ldata import MATE_VALUE
+from ldata import MATE_VALUE, VALUE_AT_PLY
 from TranspositionTable import TranspositionTable
 import ldraw
 from pychess.Utils.EndgameTable import EndgameTable
@@ -42,6 +42,20 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     amove = []
     
     ############################################################################
+    # Mate distance pruning
+    ############################################################################
+
+    MATED = -MATE_VALUE+ply 
+    MATE_IN_1 = MATE_VALUE-ply-1
+
+    if beta <= MATED:
+        return [], MATED
+    if beta >= MATE_IN_1:
+        beta = MATE_IN_1
+        if alpha >= beta:
+            return [], MATE_IN_1    
+
+    ############################################################################
     # Look in the end game table
     ############################################################################
     
@@ -55,12 +69,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 score = 0
             elif board.color == WHITE:
                 if state == WHITEWON:
-                    score = MATE_VALUE-steps+2
-                else: score = -MATE_VALUE+steps-2
+                    score = MATE_VALUE-steps
+                else: score = -MATE_VALUE+steps
             else:
                 if state == WHITEWON:
-                    score = -MATE_VALUE+steps-2
-                else: score = MATE_VALUE-steps+2
+                    score = -MATE_VALUE+steps
+                else: score = MATE_VALUE-steps
             return [move.move], score
     
     ###########################################################################
@@ -85,6 +99,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     hashmove = None
     if probe:
         move, score, hashf = probe
+        score = VALUE_AT_PLY(score, ply)
         hashmove = move
         table.setHashMove (depth, move)
         
@@ -173,7 +188,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if val > alpha:
             if val >= beta:
                 if searching:
-                    table.record (board, move, beta, hashfBETA, depth)
+                    table.record (board, move, VALUE_AT_PLY(beta, -ply), hashfBETA, depth)
                     # We don't want to use our valuable killer move spaces for
                     # captures and promotions, as these are searched early anyways.
                     if board.arBoard[move&63] == EMPTY and \
@@ -193,19 +208,19 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if amove:
         if searching:
-            table.record (board, amove[0], alpha, hashf, depth)
+            table.record (board, amove[0], VALUE_AT_PLY(alpha, -ply), hashf, depth)
             if board.arBoard[amove[0]&63] == EMPTY:
                 table.addKiller (depth, amove[0])
         return amove, alpha
     
     if catchFailLow:
         if searching:
-            table.record (board, catchFailLow, alpha, hashf, depth)
+            table.record (board, catchFailLow, VALUE_AT_PLY(alpha, -ply), hashf, depth)
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
     if isCheck:
-        return [], -MATE_VALUE+ply-2
+        return [], MATED
     
     return [], 0
 
@@ -239,7 +254,7 @@ def quiescent (board, alpha, beta, ply):
             # Heap.append is fine, as we don't really do sorting on the few moves
             heap.append((0, move))
         if not someMove:
-            return [], -MATE_VALUE+ply-2
+            return [], -MATE_VALUE+ply
     else:
         for move in genCaptures (board):
             heappush(heap, (-getCaptureValue (board, move), move))

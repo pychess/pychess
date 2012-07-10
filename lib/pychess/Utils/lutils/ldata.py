@@ -21,6 +21,11 @@ PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
                 BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
 MATE_VALUE = MAXVAL = 32767
+def VALUE_AT_PLY(val, ply):
+    """ Return the value of scoring val a given number of plies into the future. """
+    if val >= +MATE_VALUE-127: return val - ply
+    if val <= -MATE_VALUE+127: return val + ply
+    return val
 
 # How many points does it give to have the piece standing i cords from the
 # opponent king
