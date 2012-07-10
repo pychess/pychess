@@ -13,7 +13,6 @@ import sys
 
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
 # because pychess from another author already exist in pypi.
-NAME = "pychess"
 VERSION = pychess.VERSION
 
 DESC = "Gnome chess game"
@@ -66,8 +65,14 @@ CLASSIFIERS = [
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
+if not isfile("eco.db"):
+    execfile("pgn2ecodb.py")
+
+if not isfile(os.path.abspath("pieces/Pychess.png")):
+    execfile("create_theme_preview.py")
+
 DATA_FILES = [("share/pychess",
-    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin"])]
+    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
@@ -87,6 +92,13 @@ DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
 DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
 DATA_FILES += [('share/gtksourceview-1.0/language-specs', ['gtksourceview-1.0/language-specs/pgn.lang'])]
 
+# Piece sets
+DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
+DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
+
+for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
+    DATA_FILES += [("share/pychess/pieces/"+dir, glob('pieces/'+dir+'/*.svg'))]
+
 # Manpages
 DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 
@@ -97,7 +109,7 @@ if sys.platform == "win32":
     sys.path.append(argv0_path + "\\tools\\i18n")
     import msgfmt
 
-for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d)]:
+for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d) and d != "en"]:
     if sys.platform == "win32":
         file = "lang/%s/%s" % (dir,pofile)
         msgfmt.make(file+".po", file+".mo")
@@ -114,7 +126,7 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
 # Setup
 
 setup (
-    name             = NAME,
+    name             = 'pychess',
     version          = VERSION,
     author           = 'Pychess team',
     author_email     = 'pychess-people@googlegroups.com',

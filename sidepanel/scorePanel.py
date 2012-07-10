@@ -117,14 +117,15 @@ class Sidepanel:
         print "----------------------"
         
     def shown_changed (self, boardview, shown):
-        if not self.boardview.model.isMainlineBoard(shown):
+        if not boardview.inMainLine():
             return
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)
             self.plot.redraw()
     
     def plot_selected (self, plot, selected):
-        self.boardview.shown = selected+self.boardview.model.lowply
+        board = self.boardview.model.boards[selected]
+        self.boardview.setShownBoard(board)
 
 
 class ScorePlot (gtk.DrawingArea):

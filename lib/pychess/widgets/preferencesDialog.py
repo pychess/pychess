@@ -1,12 +1,16 @@
 import sys, os
+from os import listdir
+from os.path import isdir, isfile, splitext
 from xml.dom import minidom
+
 import gtk
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, getUserDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
+from pychess.gfx import Pieces
 
 firstRun = True
 def run(widgets):
@@ -17,11 +21,11 @@ def run(widgets):
     widgets["preferences"].show()
 
 def initialize(widgets):
-    
     GeneralTab(widgets)
     EngineTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
+    ThemeTab(widgets)
     
     def delete_event (widget, *args):
         widgets["preferences"].hide()
@@ -50,14 +54,19 @@ class GeneralTab:
                     "fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
 
+        def get_active(widget):
+            active = widget.get_active()
+            Pieces.transparent_pieces = active
+            return active
+
+        uistuff.keep (widgets["transparentPieces"], "transparentPieces", get_value_=get_active)
+
 ################################################################################
 # Engine initing                                                               #
 ################################################################################
 
 class EngineTab:
-    
     def __init__ (self, widgets):
-        
         # Put engines in trees and combos
         
         engines = discoverer.getEngines()
@@ -102,20 +111,32 @@ class EngineTab:
         
         def on_analyzer_check_toggled (check):
             widgets["analyzers_vbox"].set_sensitive(check.get_active())
-            widgets["hint_mode"].set_active(check.get_active())
             from pychess.Main import gameDic
             if gameDic:
-                widgets["hint_mode"].set_sensitive(check.get_active())
-        widgets["analyzer_check"].connect("toggled", on_analyzer_check_toggled)
+                if check.get_active():
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.restart_analyzer(HINT)
+                else:
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.remove_analyzer(HINT)
+        
+        widgets["analyzer_check"].connect_after("toggled",
+                                                on_analyzer_check_toggled)
         uistuff.keep(widgets["analyzer_check"], "analyzer_check")
         
         def on_invanalyzer_check_toggled (check):
             widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
-            widgets["spy_mode"].set_active(check.get_active())
             from pychess.Main import gameDic
             if gameDic:
-                widgets["spy_mode"].set_sensitive(check.get_active())
-        widgets["inv_analyzer_check"].connect("toggled", on_invanalyzer_check_toggled)
+                if check.get_active():
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.restart_analyzer(SPY)
+                else:
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.remove_analyzer(SPY)
+
+        widgets["inv_analyzer_check"].connect_after("toggled",
+                                              on_invanalyzer_check_toggled)
         uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
         
         # Put options in trees in add/edit dialog
@@ -161,39 +182,46 @@ class EngineTab:
         #widgets["remove_engine_button"].connect("clicked", remove)
         #widgets["add_engine_button"].connect("clicked", add)
         
-        # Give widgets to kepper
+        # Give widgets to keeper
         
-        for combo in ("ana_combobox", "inv_ana_combobox"):
-            
-            def get_value (combobox):
-                engine = list(discoverer.getAnalyzers())[combobox.get_active()]
-                if engine.find('md5') != None:
-                    return engine.find('md5').text.strip()
-            
-            def set_value (combobox, value):
-                engine = discoverer.getEngineByMd5(value)
-                if engine is None:
-                    combobox.set_active(0)
-                else:
-                    try:
-                        index = list(discoverer.getAnalyzers()).index(engine)
-                    except ValueError:
-                        index = 0
-                    combobox.set_active(index)
-            
-            uistuff.keep (widgets[combo], combo, get_value, set_value)
+        def get_value (combobox):
+            engine = list(discoverer.getAnalyzers())[combobox.get_active()]
+            if engine.find('md5') != None:
+                return engine.find('md5').text.strip()
         
-        # Init info box
+        def set_value (combobox, value, show_arrow_check, ana_check, analyzer_type):
+            engine = discoverer.getEngineByMd5(value)
+            if engine is None:
+                combobox.set_active(0)
+            else:
+                try:
+                    index = list(discoverer.getAnalyzers()).index(engine)
+                except ValueError:
+                    index = 0
+                combobox.set_active(index)
+            
+            replace_analyzers = False
+            if widgets[show_arrow_check].get_active() is True and \
+                    widgets[ana_check].get_active() is True:
+                replace_analyzers = True
+            
+            from pychess.Main import gameDic
+            for gmwidg in gameDic.keys():
+                spectators = gmwidg.gamemodel.spectators
+                md5 = engine.find('md5').text.strip()
+                
+                if analyzer_type in spectators and \
+                        spectators[analyzer_type].md5 != md5:
+                    gmwidg.gamemodel.remove_analyzer(analyzer_type)
+                    if replace_analyzers:
+                        gmwidg.gamemodel.start_analyzer(analyzer_type)
         
-        uistuff.makeYellow(widgets["analyzer_pref_infobox"])
-        widgets["analyzer_pref_infobox"].hide()
-        def updatePrefInfobox (widget, *args):
-            widgets["analyzer_pref_infobox"].show()
-        widgets["ana_combobox"].connect("changed", updatePrefInfobox)
-        widgets["analyzer_check"].connect("toggled", updatePrefInfobox)
-        widgets["inv_ana_combobox"].connect("changed", updatePrefInfobox)
-        widgets["inv_analyzer_check"].connect("toggled", updatePrefInfobox)
-        widgets["preferences"].connect("hide", lambda *a: widgets["analyzer_pref_infobox"].hide())
+        uistuff.keep(widgets["ana_combobox"], "ana_combobox", get_value,
+            lambda combobox, value: set_value(combobox, value, "hint_mode",
+                                              "analyzer_check", HINT))
+        uistuff.keep(widgets["inv_ana_combobox"], "inv_ana_combobox", get_value,
+            lambda combobox, value: set_value(combobox, value, "spy_mode",
+                                              "inv_analyzer_check", SPY))
         
 ################################################################################
 # Sound initing                                                                #
@@ -481,3 +509,64 @@ class PanelTab:
 
     def __on_hide_window(self, widget):
         self.hideit()
+
+
+class ThemeTab:
+
+    
+    def __init__ (self, widgets):
+        
+        conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
+
+        self.themes = self.discover_themes()
+        
+        store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        
+        for theme in self.themes:
+            pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
+        
+            if isfile(pngfile):
+                pixbuf = gtk.gdk.pixbuf_new_from_file(pngfile)
+                store.append((pixbuf, theme))
+            else:
+                print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
+                break
+
+        iconView = widgets["pieceTheme"]
+        
+        iconView.set_model(store)
+        iconView.set_pixbuf_column(0)
+        iconView.set_text_column(1)
+        
+        def _get_active(iconview):
+            model = iconview.get_model()
+            selected = iconview.get_selected_items()
+            
+            if len(selected) == 0:
+                return conf.get("pieceTheme", "pychess")
+            
+            i = selected[0][0]
+            theme = model[i][1]
+            Pieces.set_piece_theme(theme)
+            return theme
+        
+        def _set_active(iconview, value):
+            try:
+                index = self.themes.index(value)
+            except ValueError:
+                index = 0
+            iconview.select_path((index,))
+                
+        uistuff.keep (widgets["pieceTheme"], "pieceTheme", _get_active, _set_active)
+
+    def discover_themes(self):
+        themes = ['Pychess']
+        
+        pieces = addDataPrefix("pieces")
+        themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d)) and d != 'ttf']
+        
+        ttf = addDataPrefix("pieces/ttf")
+        themes += [splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
+        themes.sort()
+        
+        return themes

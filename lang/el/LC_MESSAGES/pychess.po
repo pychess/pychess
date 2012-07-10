@@ -8,31 +8,33 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2011-07-26 14:34+0000\n"
-"Last-Translator: Vassilis <vtrigas@hotmail.com>\n"
+"PO-Revision-Date: 2012-02-22 08:09+0000\n"
+"Last-Translator: Basilis Thomopoulos <kolxoz83@gmail.com>\n"
 "Language-Team: Greek <el@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:27+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
 msgstr ""
+"<big><b>Το PyChess ανακαλύπτει τις μηχανές σας. Παρακαλώ "
+"περιμένετε.</b></big>"
 
 #: glade/discovererDialog.glade:70
 msgid "PyChess.py:"
-msgstr ""
+msgstr "PyChess.py:"
 
 #: glade/discovererDialog.glade:81
 msgid "ShredderLinuxChess:"
-msgstr ""
+msgstr "ShredderLinuxChess:"
 
 #: glade/discovererDialog.glade:92
 msgid "gnuchess:"
-msgstr ""
+msgstr "gnuchess:"
 
 #: glade/fics_logon.glade:7
 msgid "PyChess - Connect to Internet Chess"
@@ -49,6 +51,7 @@ msgstr "κείμενο"
 #: glade/fics_logon.glade:90
 msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
 msgstr ""
+"<b><big>Σύνδεση με τον Δωρεάν Συνδεδεμένο Σκακιστικό Εξυπηρετητή</big></b>"
 
 #: glade/fics_logon.glade:160 glade/taskers.glade:349
 msgid "_Password:"
@@ -68,7 +71,7 @@ msgstr "θ_ύρες"
 
 #: glade/fics_logon.glade:324
 msgid "S_ign up"
-msgstr ""
+msgstr "Ε_γγραφείτε"
 
 #: glade/fics_lounge.glade:7
 msgid "PyChess - Internet Chess: FICS"
@@ -76,7 +79,7 @@ msgstr "PyChess - Διαδικτυακή Σύνδεση: FICS"
 
 #: glade/fics_lounge.glade:69
 msgid "_Clear Seeks"
-msgstr ""
+msgstr "_Καθαρισμός Αναζητήσεων"
 
 #: glade/fics_lounge.glade:92
 msgid "_Accept"
@@ -84,7 +87,7 @@ msgstr "_Αποδοχή"
 
 #: glade/fics_lounge.glade:115
 msgid "_Decline"
-msgstr ""
+msgstr "_Άρνηση"
 
 #: glade/fics_lounge.glade:302 glade/fics_lounge.glade:2625
 msgid "Lightning:"
@@ -92,23 +95,23 @@ msgstr ""
 
 #: glade/fics_lounge.glade:324 glade/fics_lounge.glade:2647
 msgid "Standard:"
-msgstr ""
+msgstr "Τυπική:"
 
 #: glade/fics_lounge.glade:347 glade/fics_lounge.glade:2670
 msgid "Blitz:"
-msgstr ""
+msgstr "Μπλιτς:"
 
 #: glade/fics_lounge.glade:370
 msgid "2 min, Fischer Random, 1800↓, Black"
-msgstr ""
+msgstr "2 λεπτά, Τυχαίο Φίσερ, 1800↓, Μαύρα"
 
 #: glade/fics_lounge.glade:389
 msgid "10 min + 6 sec/move, 1400↑, White"
-msgstr ""
+msgstr "10 λεπτά + 6 δευτ/κίνηση, 1400↑, Λευκά"
 
 #: glade/fics_lounge.glade:408
 msgid "5 min, 1200-1800, Manual"
-msgstr ""
+msgstr "5 λεπτά, 1200-1800, Χειροκίνητα"
 
 #: glade/fics_lounge.glade:456
 msgid "Send seek"
@@ -116,11 +119,11 @@ msgstr "Αποστολή Αναζήτησης"
 
 #: glade/fics_lounge.glade:488
 msgid "Create Seek"
-msgstr ""
+msgstr "Δημιουργία Αναζήτησης"
 
 #: glade/fics_lounge.glade:505
 msgid "_Seeks / Challenges"
-msgstr ""
+msgstr "_Αναζητήσεις / Προκλήσεις"
 
 #: glade/fics_lounge.glade:522 lib/pychess/ic/ICLounge.py:223
 #: lib/pychess/ic/ICLounge.py:418 lib/pychess/ic/ICLounge.py:945
@@ -146,23 +149,23 @@ msgstr "Πρόκληση"
 
 #: glade/fics_lounge.glade:673 glade/fics_lounge.glade:830
 msgid "Observe"
-msgstr ""
+msgstr "Παρατήρηση"
 
 #: glade/fics_lounge.glade:722
 msgid "Start Private Chat"
-msgstr ""
+msgstr "Έναρξη Ιδιωτικής Συνομιλίας"
 
 #: glade/fics_lounge.glade:773
 msgid "_Player List"
-msgstr ""
+msgstr "_Κατάλογος Παίκτη"
 
 #: glade/fics_lounge.glade:881
 msgid "_Game List"
-msgstr ""
+msgstr "_Κατάλογος Παιχνιδιού"
 
 #: glade/fics_lounge.glade:931
 msgid "Pre_view"
-msgstr ""
+msgstr "Π_ροεπισκόπηση"
 
 #: glade/fics_lounge.glade:972
 msgid "Offer A_bort"
@@ -174,7 +177,7 @@ msgstr "Πρόταση για Ι_σοπαλία"
 
 #: glade/fics_lounge.glade:1067 glade/PyChess.glade:267
 msgid "R_esign"
-msgstr ""
+msgstr "Ε_γκατάληψη"
 
 #: glade/fics_lounge.glade:1120 glade/PyChess.glade:227
 msgid "Offer _Resume"
@@ -190,11 +193,11 @@ msgstr "<b>Νέα</b>"
 
 #: glade/fics_lounge.glade:1297
 msgid "Show _Chat"
-msgstr ""
+msgstr "Εμφάνιση _Συνομιλίας"
 
 #: glade/fics_lounge.glade:1312
 msgid "_Log Off"
-msgstr ""
+msgstr "_Αποσύνδεση"
 
 #: glade/fics_lounge.glade:1331
 msgid "<b>Tools</b>"
@@ -202,33 +205,33 @@ msgstr "<b>Εργαλεία</b>"
 
 #: glade/fics_lounge.glade:1361
 msgid "Edit Seek"
-msgstr ""
+msgstr "Επεξεργασία Αναζήτησης"
 
 #: glade/fics_lounge.glade:1414 lib/pychess/ic/ICLounge.py:1653
 #: lib/pychess/ic/__init__.py:61 lib/pychess/Utils/GameModel.py:166
 msgid "Untimed"
-msgstr ""
+msgstr "Χωρίς χρόνο"
 
 #: glade/fics_lounge.glade:1457
 msgid "Minutes:  "
-msgstr ""
+msgstr "Λεπτά:  "
 
 #: glade/fics_lounge.glade:1480
 msgid "   Gain:  "
-msgstr ""
+msgstr "   Κέρδος:  "
 
 #: glade/fics_lounge.glade:1510
 msgid "Time control:  "
-msgstr ""
+msgstr "Έλεγχος χρόνου:  "
 
 #: glade/fics_lounge.glade:1521 lib/pychess/ic/ICLounge.py:775
 #: lib/pychess/ic/ICLounge.py:1653 lib/pychess/ic/__init__.py:59
 msgid "Standard"
-msgstr ""
+msgstr "Πρότυπο"
 
 #: glade/fics_lounge.glade:1553 glade/newInOut.glade:414
 msgid "<b>Time Control</b>"
-msgstr ""
+msgstr "<b>Έλεγχος χρόνου</b>"
 
 #: glade/fics_lounge.glade:1604 glade/fics_lounge.glade:2050
 msgid "Don't care"
@@ -236,15 +239,15 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1656
 msgid "Your strength: "
-msgstr ""
+msgstr "Η δυναμικότητά σας: "
 
 #: glade/fics_lounge.glade:1692
 msgid "(Blitz)"
-msgstr ""
+msgstr "(Μπλιτς)"
 
 #: glade/fics_lounge.glade:1717
 msgid "Opponent's strength: "
-msgstr ""
+msgstr "Δυναμικότητα αντιπάλου: "
 
 #: glade/fics_lounge.glade:1804
 msgid ""
@@ -257,23 +260,23 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1838
 msgid "Center:"
-msgstr ""
+msgstr "Κέντρο:"
 
 #: glade/fics_lounge.glade:1870
 msgid "1200"
-msgstr ""
+msgstr "1200"
 
 #: glade/fics_lounge.glade:1914
 msgid "Tolerance:"
-msgstr ""
+msgstr "Ανοχή:"
 
 #: glade/fics_lounge.glade:1961 lib/pychess/ic/ICLounge.py:1892
 msgid "Hide"
-msgstr ""
+msgstr "Απόκρυψη"
 
 #: glade/fics_lounge.glade:1999
 msgid "<b>Opponent Strength</b>"
-msgstr ""
+msgstr "<b>Δυναμικότητα Αντιπάλου</b>"
 
 #: glade/fics_lounge.glade:2083 lib/pychess/ic/ICLounge.py:1553
 #: lib/pychess/Utils/repr.py:8 lib/pychess/widgets/ChessClock.py:16
@@ -289,15 +292,15 @@ msgstr "Μαύρα"
 
 #: glade/fics_lounge.glade:2136
 msgid "<b>Your Color</b>"
-msgstr ""
+msgstr "<b>Το Χρώμα σας</b>"
 
 #: glade/fics_lounge.glade:2189
 msgid "Play normal chess rules"
-msgstr ""
+msgstr "Παίξτε με κανονικούς κανόνες σκακιού"
 
 #: glade/fics_lounge.glade:2222
 msgid "Play"
-msgstr ""
+msgstr "Παίξε"
 
 #: glade/fics_lounge.glade:2244
 msgid "Asymmetric Random\t"
@@ -305,27 +308,27 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2273 glade/newInOut.glade:582
 msgid "<b>Chess Variant</b>"
-msgstr ""
+msgstr "<b>Σκακιστική Παραλλαγή</b>"
 
 #: glade/fics_lounge.glade:2326
 msgid "Rated game"
-msgstr ""
+msgstr "Βαθμολογημένο παιχνίδι"
 
 #: glade/fics_lounge.glade:2340
 msgid "Manually accept opponent"
-msgstr ""
+msgstr "Χειροκίνητη αποδοχή αντιπάλου"
 
 #: glade/fics_lounge.glade:2365
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>Επιλογές</b>"
 
 #: glade/fics_lounge.glade:2431
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "Πρόκληση: <Παίχτης>"
 
 #: glade/fics_lounge.glade:2446
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>Πρόκληση:</big>"
 
 #: glade/fics_lounge.glade:2693
 msgid "2 min, Fischer Random, Black"
@@ -333,35 +336,35 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2713
 msgid "10 min + 6 sec/move, White"
-msgstr ""
+msgstr "10 λεπτά + 6 δευτ/κίνηση, Λευκά"
 
 #: glade/fics_lounge.glade:2733
 msgid "5 min"
-msgstr ""
+msgstr "5 λεπτά"
 
 #: glade/fics_lounge.glade:2805
 msgid "Send Challenge"
-msgstr ""
+msgstr "Αποστολή Πρόκλησης"
 
 #: glade/findbar.glade:6
 msgid "window1"
-msgstr ""
+msgstr "παράθυρο1"
 
 #: glade/findbar.glade:19
 msgid "0 of 0"
-msgstr ""
+msgstr "0 από 0"
 
 #: glade/findbar.glade:62
 msgid "_Previous"
-msgstr ""
+msgstr "_Προηγούμενο"
 
 #: glade/findbar.glade:112
 msgid "_Next"
-msgstr ""
+msgstr "_Επόμενο"
 
 #: glade/findbar.glade:137
 msgid "Search:"
-msgstr ""
+msgstr "Αναζήτηση:"
 
 #: glade/newInOut.glade:7 lib/pychess/widgets/newGameDialog.py:368
 msgid "New Game"
@@ -369,11 +372,11 @@ msgstr "Νέο Παιχνίδι"
 
 #: glade/newInOut.glade:86
 msgid "_Black player:"
-msgstr ""
+msgstr "_Μαύρος:"
 
 #: glade/newInOut.glade:102
 msgid "_White player:"
-msgstr ""
+msgstr "_Λεύκος:"
 
 #: glade/newInOut.glade:199
 msgid "<b>Players</b>"
@@ -381,15 +384,15 @@ msgstr "<b>Παίκτες</b>"
 
 #: glade/newInOut.glade:246
 msgid "_Untimed"
-msgstr ""
+msgstr "_Χωρίς χρόνο"
 
 #: glade/newInOut.glade:280
 msgid "Blitz:\t5 min"
-msgstr ""
+msgstr "Μπλιτς:\t5 λεπτά"
 
 #: glade/newInOut.glade:324
 msgid "Rapid:\t15 min + 10 sec/move"
-msgstr ""
+msgstr "Ράπιντ:\t15 λεπτά + 10 δευτ/κίνηση"
 
 #: glade/newInOut.glade:366
 msgid "Normal:\t40 min + 15 sec/move"
@@ -397,7 +400,7 @@ msgstr ""
 
 #: glade/newInOut.glade:460
 msgid "_Play Normal chess"
-msgstr ""
+msgstr "_Παίξτε Κανονικό σκάκι"
 
 #: glade/newInOut.glade:493
 msgid "Play Fischer Random chess"
@@ -409,11 +412,11 @@ msgstr ""
 
 #: glade/newInOut.glade:657
 msgid "<b>Open Game</b>"
-msgstr ""
+msgstr "<b>Ανοιχτό Παιχνίδι</b>"
 
 #: glade/newInOut.glade:876
 msgid "<b>Initial Position</b>"
-msgstr ""
+msgstr "<b>Αρχική Θέση</b>"
 
 #: glade/newInOut.glade:930
 msgid "<b>Enter Game Notation</b>"
@@ -457,7 +460,7 @@ msgstr "_Νέο Παιxνίδι"
 
 #: glade/PyChess.glade:43
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Παίξτε _Διαδικτυακό Σκάκι"
 
 #: glade/PyChess.glade:64
 msgid "_Load Game"
@@ -465,7 +468,7 @@ msgstr "_Φόρτωση Παιχνιδιού"
 
 #: glade/PyChess.glade:80
 msgid "Setup Position"
-msgstr ""
+msgstr "Καθορισμός Θέσης"
 
 #: glade/PyChess.glade:88
 msgid "Enter Game _Notation"
@@ -481,7 +484,7 @@ msgstr "Αποθήκευση Παιχνιδιού Ω_ς"
 
 #: glade/PyChess.glade:149
 msgid "Player _Rating"
-msgstr ""
+msgstr "_Βαθμολογία Παίκτη"
 
 #: glade/PyChess.glade:185
 msgid "_Actions"
@@ -497,11 +500,11 @@ msgstr ""
 
 #: glade/PyChess.glade:218
 msgid "Offer _Pause"
-msgstr ""
+msgstr "Πρόσφερε _Παύση"
 
 #: glade/PyChess.glade:234
 msgid "Offer _Undo"
-msgstr ""
+msgstr "Πρόσφερε _Αναίρεση"
 
 #: glade/PyChess.glade:258
 msgid "_Call Flag"
@@ -521,11 +524,11 @@ msgstr "Π_εριστροφή Σκακιέρας"
 
 #: glade/PyChess.glade:311
 msgid "_Fullscreen"
-msgstr ""
+msgstr "_Πλήρης οθόνη"
 
 #: glade/PyChess.glade:327
 msgid "Leave _Fullscreen"
-msgstr ""
+msgstr "Έξοδος από _Πλήρη οθόνη"
 
 #: glade/PyChess.glade:344
 msgid "_Show Sidepanels"
@@ -533,7 +536,7 @@ msgstr ""
 
 #: glade/PyChess.glade:353
 msgid "_Log Viewer"
-msgstr ""
+msgstr "Προβολέας _Καταγραφών"
 
 #: glade/PyChess.glade:367
 msgid "_Hint mode"
@@ -545,7 +548,7 @@ msgstr "Λειτουργία _Κατασκοπίας"
 
 #: glade/PyChess.glade:390
 msgid "S_ettings"
-msgstr ""
+msgstr "Ρ_υθμίσεις"
 
 #: glade/PyChess.glade:410
 msgid "_Help"
@@ -561,15 +564,15 @@ msgstr ""
 
 #: glade/PyChess.glade:444
 msgid "Translate PyChess"
-msgstr ""
+msgstr "Μεταφράστε το PyChess"
 
 #: glade/PyChess.glade:458
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Συμβουλή της ημέρας"
 
 #: glade/PyChess.glade:510
 msgid "Chess client for the Gnome desktop"
-msgstr ""
+msgstr "Πελάτης σκακιού για το Gnome"
 
 #: glade/PyChess.glade:513
 msgid ""

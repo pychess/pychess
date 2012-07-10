@@ -12,7 +12,7 @@ import pango
 from pychess.System import glock, conf, gstreamer
 from pychess.System.glock import glock_connect, glock_connect_after
 from pychess.System.repeat import repeat, repeat_sleep
-from pychess.gfx.Pieces import drawPiece
+from pychess.gfx import Pieces
 from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
@@ -99,6 +99,8 @@ class BoardView (gtk.DrawingArea):
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
+        self.variation = 0 # this is the main variation in gamemodel.variations list
+        
         glock_connect(self.model, "game_started", self.game_started)
         glock_connect_after(self.model, "game_started", self.game_started_after)
         glock_connect_after(self.model, "game_changed", self.game_changed)
@@ -111,6 +113,8 @@ class BoardView (gtk.DrawingArea):
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
         conf.notify_add("faceToFace", self.on_face_to_face)
+        conf.notify_add("pieceTheme", self.on_set_piece_theme)
+        conf.notify_add("transparentPieces", self.on_set_piece_theme)
         self.set_size_request(350,350)
         
         self.animationStart = time()
@@ -118,6 +122,10 @@ class BoardView (gtk.DrawingArea):
         self.deadlist = []
         
         self.autoUpdateShown = True
+        
+        self.realSetShown = True
+        # only false when self.shown set temporarily (change shown variation)
+        # to avoid redrawMisc in animation
         
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = 0, 0, 8, 1 # An object global variable with the current
@@ -200,15 +208,15 @@ class BoardView (gtk.DrawingArea):
                     self.rotation = self.model.boards[-1].color * pi
     
     def moves_undoing (self, model, moves):
-        if model.boards == model.variations[0]:
+        if self.inMainLine():
             self.shown = model.ply-moves
         else:
             # Go back to the mainline to let animation system work
-            board = model.getBoardAtPly(self.shown)
+            board = model.getBoardAtPly(self.shown, self.variation)
             while board not in model.variations[0]:
                 board = model.boards[board.ply-model.lowply-1]
             self.shown = board.ply
-            self.model.boards = self.model.variations[0]
+            self.variation = 0
             self.shown = model.ply-moves
     
     def game_loading (self, model, uri):
@@ -254,6 +262,9 @@ class BoardView (gtk.DrawingArea):
     
     def on_face_to_face (self, *args):
         self.redraw_canvas()
+
+    def on_set_piece_theme (self, *args):
+        self.redraw_canvas()
     
     ###############################
     #          Animation          #
@@ -276,6 +287,29 @@ class BoardView (gtk.DrawingArea):
                 paintBox = join(paintBox, self.cord2RectRelative(Cord("d" + y)))
         return paintBox
 
+    def setShownBoard(self, board):
+        if board in self.model.variations[self.variation]:
+            # if the board to be shown is in the current shown variation, we are ok
+            self.shown = self.model.variations[self.variation].index(board) + self.model.lowply
+        else:
+            # else we have to go back first
+            for vari in self.model.variations:
+                if board in vari:
+                    # Go back to the common board of variations to let animation system work
+                    board_in_vari = board
+                    while board_in_vari not in self.model.variations[self.variation]:
+                        board_in_vari = vari[board_in_vari.ply-self.model.lowply-1]
+                    self.realSetShown = False
+                    self.shown = board_in_vari.ply
+                    break
+            # swich to the new variation
+            self.variation = self.model.variations.index(vari)
+            self.realSetShown = True
+            self.shown = self.model.variations[self.variation].index(board) + self.model.lowply
+    
+    def inMainLine(self):
+        return self.variation==0
+
     def _get_shown(self):
         return self._shown
     
@@ -286,7 +320,7 @@ class BoardView (gtk.DrawingArea):
             return
         
         # This would cause IndexErrors later
-        if not self.model.lowply <= shown <= self.model.ply:
+        if not self.model.lowply <= shown <= self.model.variations[self.variation][-1].ply:
             return
         
         # If there is only one board, we don't do any animation, but simply
@@ -294,7 +328,7 @@ class BoardView (gtk.DrawingArea):
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
             self._shown = shown
             if shown > self.model.lowply:
-                self.lastMove = self.model.getMoveAtPly(shown-1)
+                self.lastMove = self.model.getMoveAtPly(shown-1, self.variation)
             self.emit("shown_changed", self.shown)
             self.redraw_canvas()
             return
@@ -306,13 +340,13 @@ class BoardView (gtk.DrawingArea):
         try:
             deadset = set()
             for i in xrange(self.shown, shown, step):
-                board = self.model.getBoardAtPly(i)
-                board1 = self.model.getBoardAtPly(i + step)
+                board = self.model.getBoardAtPly(i, self.variation)
+                board1 = self.model.getBoardAtPly(i + step, self.variation)
                 if step == 1:
-                    move = self.model.getMoveAtPly(i)
+                    move = self.model.getMoveAtPly(i, self.variation)
                     moved, new, dead = board.simulateMove(board1, move)
                 else:
-                    move = self.model.getMoveAtPly(i-1)
+                    move = self.model.getMoveAtPly(i-1, self.variation)
                     moved, new, dead = board.simulateUnmove(board1, move)
                 
                 # We need to ensure, that the piece coordinate is saved in the
@@ -341,13 +375,14 @@ class BoardView (gtk.DrawingArea):
             self.animationLock.release()
         
         self.deadlist = []
-        for y, row in enumerate(self.model.getBoardAtPly(self.shown).data):
+        for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.variation).data):
             for x, piece in enumerate(row):
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
         
         self._shown = shown
-        self.emit("shown_changed", self.shown)
+        if self.realSetShown:
+            self.emit("shown_changed", self.shown)
         
         self.animationStart = time()
         if self.lastMove:
@@ -355,18 +390,11 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = None
             self.redraw_canvas(rect(paintBox))
         if self.shown > self.model.lowply:
-            self.lastMove = self.model.getMoveAtPly(self.shown-1)
+            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.variation)
         else:
             self.lastMove = None
 
-        # Back to the main line if needed...
-        stayInVariation = True
-        if self.model.boards != self.model.variations[0]:
-            if self.model.isMainlineBoard(self.shown):
-                self.model.boards = self.model.variations[0]
-                stayInVariation = False
-       
-        self.runAnimation(redrawMisc=stayInVariation)
+        self.runAnimation(redrawMisc=self.realSetShown)
         repeat(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
@@ -388,7 +416,7 @@ class BoardView (gtk.DrawingArea):
             paintBox = None
             
             mod = min(1, (time()-self.animationStart)/ANIMATION_TIME)
-            board = self.model.getBoardAtPly(self.shown)
+            board = self.model.getBoardAtPly(self.shown, self.variation)
             
             for y, row in enumerate(board.data):
                 for x, piece in enumerate(row):
@@ -690,6 +718,10 @@ class BoardView (gtk.DrawingArea):
         
         context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
         context.fill()
+        
+        if not self.showCords:
+            context.rectangle(xc, yc, 8*s, 8*s)
+            context.stroke()
     
     ###############################
     #         drawPieces          #
@@ -734,13 +766,13 @@ class BoardView (gtk.DrawingArea):
                 matrix = invmatrix = cairo.Matrix(1,0,0,1,0,0)
         
         context.transform(invmatrix)
-        drawPiece(  piece, context,
+        Pieces.drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
                     s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteChess)
         context.transform(matrix)
     
     def drawPieces(self, context, r):
-        pieces = self.model.getBoardAtPly(self.shown)
+        pieces = self.model.getBoardAtPly(self.shown, self.variation)
         xc, yc, square, s = self.square
         
         parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
@@ -835,8 +867,8 @@ class BoardView (gtk.DrawingArea):
     def drawLastMove (self, context, redrawn):
         if not self.lastMove: return
         if self.shown <= self.model.lowply: return
-        show_board = self.model.getBoardAtPly(self.shown)
-        last_board = self.model.getBoardAtPly(self.shown - 1)
+        show_board = self.model.getBoardAtPly(self.shown, self.variation)
+        last_board = self.model.getBoardAtPly(self.shown - 1, self.variation)
         capture = self.lastMove.is_capture(last_board)
         
         wh = 0.27 # Width of marker
@@ -1245,7 +1277,7 @@ class BoardView (gtk.DrawingArea):
             self.shown -= 1
 
     def showNext (self):
-        if self.shown < self.model.ply:
+        if self.shown < self.model.variations[self.variation][-1].ply:
             self.shown += 1
             
     def showLast (self):

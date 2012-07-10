@@ -120,11 +120,10 @@ def walk(node, result):
             node = node.next
             continue
 
+        store(move_count(node))
+
         move = Move(node.board.history[-1][0])
-        movestr = toSAN(node.prev, move)
-        if node.movecount:
-            store(node.movecount)
-        store(movestr)
+        store(toSAN(node.prev, move))
 
         for nag in node.nags:
             if nag:
@@ -144,6 +143,16 @@ def walk(node, result):
             node = node.next
         else:
             break
+
+def move_count(node):
+    ply = node.ply
+    if ply % 2 == 1:
+        mvcount = "%d." % (ply/2+1)
+    elif node.prev.prev is None or node.prev.children:
+        mvcount = "%d..." % (ply/2)
+    else:
+        mvcount = ""        
+    return mvcount
 
 def stripBrackets (string):
     brackets = 0
@@ -585,13 +594,13 @@ nag2symbolDict = {
     "$4": "??",
     "$5": "!?",
     "$6": "?!",
-    "$7": "□",
+    "$7": "□", # forced move
     "$8": "□",
     "$9": "??",
     "$10": "=",
     "$11": "=",
     "$12": "=",
-    "$13": "∞",
+    "$13": "∞", # unclear
     "$14": "+=",
     "$15": "=+",
     "$16": "±",
@@ -600,8 +609,32 @@ nag2symbolDict = {
     "$19": "-+",
     "$20": "+--",
     "$21": "--+",
-    "$22": "⨀",
+    "$22": "⨀", # zugzwang
     "$23": "⨀",
+    "$24": "◯", # space
+    "$25": "◯",
+    "$26": "◯",
+    "$27": "◯",
+    "$28": "◯",
+    "$29": "◯",
+    "$32": "⟳", # development
+    "$33": "⟳",
+    "$36": "↑", # initiative
+    "$37": "↑",
+    "$40": "→", # attack
+    "$41": "→",
+    "$44": "~=", # compensation
+    "$45": "=~",
+    "$132": "⇆", # counterplay
+    "$133": "⇆",
+    "$136": "⨁", # time
+    "$137": "⨁",
+    "$138": "⨁",
+    "$139": "⨁",
+    "$140": "∆", # with the idea
+    "$141": "∇", # aimed against
+    "$142": "⌓", # better is
+    "$146": "N", # novelty
 }
 
 symbol2nagDict = {}

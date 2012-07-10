@@ -58,7 +58,7 @@ class CECPTests(EmittingTestCase):
         engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, (listToMoves(board,moves), score))
+        self.assertEqual(results, ([(listToMoves(board,moves), score)],))
     
     def setUp (self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
@@ -68,8 +68,8 @@ class CECPTests(EmittingTestCase):
         """ Test analyzing in forced mate situations """
         
         board = Board('B1n1n1KR/1r5B/6R1/2b1p1p1/2P1k1P1/1p2P2p/1P2P2P/3N1N2 w - - 0 1')
-        self.analyzerA.setBoard([board],[])
-        self.analyzerI.setBoard([board],[])
+        self.analyzerA.setBoardList([board],[])
+        self.analyzerI.setBoardList([board],[])
         
         self._testLine(self.engineA, self.analyzerA, board,
                        "1. Mat1 0 1     Bxb7#",
@@ -86,8 +86,8 @@ class CECPTests(EmittingTestCase):
         """ Test analyzing in promotion situations """
         
         board = Board('5k2/PK6/8/8/8/6P1/6P1/8 w - - 1 48')
-        self.analyzerA.setBoard([board],[])
-        self.analyzerI.setBoard([board],[])
+        self.analyzerA.setBoardList([board],[])
+        self.analyzerI.setBoardList([board],[])
         
         self._testLine(self.engineA, self.analyzerA, board,
                        "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",

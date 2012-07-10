@@ -25,6 +25,7 @@ from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
+from pychess.Savers import png
 from pychess.ic import ICLogon
 from pychess.Database.PgnImport import PgnImport
 from pychess.Database.gamelist import GameList
@@ -131,6 +132,10 @@ class GladeHandlers:
     
     def on_save_game_as1_activate (widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
+
+    def on_export_position_activate (widget):
+        gmwidg = gamewidget.cur_gmwidg()
+        png.export(gmwidg, gameDic[gmwidg])
     
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
@@ -180,12 +185,19 @@ class GladeHandlers:
     
     def on_hint_mode_activate (widget):
         for gmwidg in gameDic.keys():
-            gamenanny.setAnalyzerEnabled(gmwidg, HINT, widget.get_active())
+            if gmwidg.isInFront():
+                if widget.get_active():
+                    gmwidg.gamemodel.resume_analyzer(HINT)
+                else:
+                    gmwidg.gamemodel.pause_analyzer(HINT)
     
     def on_spy_mode_activate (widget):
         for gmwidg in gameDic.keys():
-            print "setting spymode for", gmwidg, "to", widget.get_active()
-            gamenanny.setAnalyzerEnabled(gmwidg, SPY, widget.get_active())
+            if gmwidg.isInFront():
+                if widget.get_active():
+                    gmwidg.gamemodel.resume_analyzer(SPY)
+                else:
+                    gmwidg.gamemodel.pause_analyzer(SPY)
     
     #          Settings menu          #
     
@@ -201,7 +213,7 @@ class GladeHandlers:
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
 
     def translate_this_application_activate(widget):
-        webbrowser.open("http://code.google.com/p/pychess/wiki/RosettaTranslates")
+        webbrowser.open("http://code.google.com/p/pychess/wiki/TransifexTranslates")
         
     def on_TipOfTheDayMenuItem_activate (widget):
         tipOfTheDay.TipOfTheDay.show()
@@ -235,13 +247,18 @@ class PyChess:
         #------------------------------------------------------ Redirect widgets
         gamewidget.setWidgets(widgets)
         
+        def on_sensitive_changed (widget, prop):
+            name = widget.get_property('name')
+            sensitive = widget.get_property('sensitive')
+            #print "'%s' changed to '%s'" % (name, sensitive)
+        widgets['pause1'].connect("notify::sensitive", on_sensitive_changed)
+        widgets['resume1'].connect("notify::sensitive", on_sensitive_changed)
         #-------------------------- Main.py still needs a minimum of information
         ionest.handler.connect("gmwidg_created",
                                GladeHandlers.__dict__["on_gmwidg_created"])
         
         #---------------------- The only menuitems that need special initing
         for widget in ("hint_mode", "spy_mode"):
-            widgets[widget].set_active(False)
             widgets[widget].set_sensitive(False)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
         

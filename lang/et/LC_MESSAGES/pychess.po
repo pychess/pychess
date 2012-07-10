@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2010-08-25 10:47+0000\n"
-"Last-Translator: gert7 <Unknown>\n"
+"PO-Revision-Date: 2012-03-30 15:10+0000\n"
+"Last-Translator: AMt6lk <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:27+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -830,7 +830,7 @@ msgstr "_Vaadeldud käigud"
 
 #: glade/PyChess.glade:1945
 msgid "Observed _ends:"
-msgstr ""
+msgstr "Vaadeldav _lõppeb"
 
 #: glade/PyChess.glade:2042
 msgid "<b>Play Sound When...</b>"
@@ -1600,7 +1600,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:60
 msgid "Your opponent is not out of time."
-msgstr ""
+msgstr "Sinu vastane pole ületanud ajalimiiti"
 
 #: lib/pychess/Players/Human.py:62
 msgid "The clock hasn't been started yet."
@@ -1629,7 +1629,7 @@ msgstr ""
 #: lib/pychess/Players/Human.py:228
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr ""
+msgstr "Sinu vastane keeldus %s"
 
 #: lib/pychess/Players/Human.py:229
 msgid ""
@@ -1656,6 +1656,8 @@ msgid ""
 "PyChess was unable to get the %s offer accepted. Probably because it has "
 "been withdrawn."
 msgstr ""
+"PyChess ei suutnud vastu võtta %s pakkumist. Tõenäoliselt seepärast, et see "
+"on tagasi võetud."
 
 #: lib/pychess/Players/Human.py:254
 #, python-format
@@ -1709,7 +1711,7 @@ msgstr "Kohalik sündmus"
 
 #: lib/pychess/Utils/GameModel.py:120
 msgid "Local Site"
-msgstr ""
+msgstr "Kohalik lehekülg"
 
 #: lib/pychess/Utils/repr.py:10
 msgid "Pawn"
@@ -2156,6 +2158,10 @@ msgid ""
 "You can try to start a new game with the engine, or try to play against "
 "another one."
 msgstr ""
+"PyChess on kaotanud sideme mootoriga. Tõenäoliselt seetõttu, et see on "
+"surnud.\n"
+"Sa võid proovida alustada uut mängu selle mootoriga või siis proovida "
+"mängida mõne teise vastu."
 
 #: lib/pychess/widgets/gamewidget.py:153
 msgid "Abort"
@@ -2301,6 +2307,8 @@ msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr ""
+"Fail eksisteerib juba kataloogis '%s' Kui sa ta asendad siis kirjutatakse "
+"tema sisu üle."
 
 #: lib/pychess/widgets/ionest.py:304
 msgid "Could not save the file"
@@ -2393,7 +2401,7 @@ msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:485
 msgid "Enter Game"
-msgstr ""
+msgstr "Sisene mängu"
 
 #: lib/pychess/widgets/preferencesDialog.py:77
 msgid "Flag"
@@ -2562,12 +2570,12 @@ msgstr "viib vankri poolavatud liinile"
 #: lib/pychess/Utils/lutils/strateval.py:127
 #, python-format
 msgid "moves bishop into fianchetto: %s"
-msgstr ""
+msgstr "käib odaga fianchetto positsiooni: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:133
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr ""
+msgstr "ettur lipustub viguriks %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:136
 msgid "castles"
@@ -2583,11 +2591,11 @@ msgstr "ohverdab materjali"
 
 #: lib/pychess/Utils/lutils/strateval.py:165
 msgid "exchanges material"
-msgstr ""
+msgstr "vahetab materjali"
 
 #: lib/pychess/Utils/lutils/strateval.py:167
 msgid "captures material"
-msgstr ""
+msgstr "võtab materjali"
 
 #: lib/pychess/Utils/lutils/strateval.py:288
 #, python-format
@@ -2696,7 +2704,7 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:571
 #, python-format
 msgid "brings a pawn closer to the backrow: %s"
-msgstr ""
+msgstr "Toob etturi tagareale lähemale: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:588
 #, python-format

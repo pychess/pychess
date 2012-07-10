@@ -140,3 +140,10 @@ def getMoveKillingKing (board):
 def genCastles (board):
     for move in lmovegen.genCastles(board.board):
         yield Move(move)
+
+def legalMoveCount (board):
+    moves = 0
+    for move in lmovegen.genAllMoves (board.board):
+        if not board.willLeaveInCheck (Move(move)):
+            moves += 1
+    return moves

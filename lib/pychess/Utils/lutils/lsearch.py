@@ -10,7 +10,7 @@ from lmove import toSAN
 from ldata import MATE_VALUE
 from TranspositionTable import TranspositionTable
 import ldraw
-from pychess.Utils.lutils.egtb_k4it import probeEndGameTable
+from pychess.Utils.EndgameTable import EndgameTable
 
 TIMECHECK_FREQ = 500
 
@@ -22,7 +22,7 @@ nodes = 0
 last = 0
 endtime = 0
 timecheck_counter = TIMECHECK_FREQ
-useegtb = False
+egtb = None
 
 def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
@@ -47,10 +47,11 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Look in the end game table
     ############################################################################
     
-    if useegtb:
-        egtb = probeEndGameTable(board)
-        if egtb:
-            move, state, steps = egtb[0]
+    global egtb
+    if egtb:
+        tbhits = egtb.scoreAllMoves(board)
+        if tbhits:
+            move, state, steps = tbhits[0]
             
             if state == DRAW:
                 score = 0
@@ -63,7 +64,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                     score = -MATE_VALUE+steps-2
                 else: score = MATE_VALUE-steps+2
             last = 1
-            return [move], score
+            return [move.move], score
     
     ###########################################################################
     # We don't save repetition in the table, so we need to test draw before   #
@@ -283,3 +284,7 @@ def quiescent (board, alpha, beta, ply):
     
     else:
         return [], alpha
+
+def enableEGTB():
+    global egtb
+    egtb = EndgameTable()

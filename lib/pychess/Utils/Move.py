@@ -125,11 +125,11 @@ def parseAN (board, an):
 def listToSan (board, moves):
     return lmove.listToSan(board.board, (m.move for m in moves))
 
-def toAN (board, move, short=False):
+def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
     """ Returns a Algebraic Notation string of a move
         board should be prior to the move """
     
-    return lmove.toAN (board.board, move.move, short=short)
+    return lmove.toAN (board.board, move.move, short=short, castleNotation=castleNotation)
     
 def toSAN (board, move, localRepr=False):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 

@@ -17,11 +17,13 @@ mainloop = glib.MainLoop()
 
 ###############################################################################
 # Do the rest of the imports
+import atexit
 import sys
 import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
+from pychess.System import SubProcess
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
@@ -81,6 +83,7 @@ class DummyPlayer (Player):
     def offer (self, offer): self.emit('accept', offer)
 
 def start(discoverer):
+    atexit.register(SubProcess.finishAllSubprocesses)
     pgnfile, gameno = queryGameno(sys.argv[1])
     analyzer = queryAnalyzer(list(discoverer.getAnalyzers()))
     secs = queryTime()
@@ -95,7 +98,7 @@ def start(discoverer):
     game.setPlayers([DummyPlayer(), DummyPlayer()])
     analyzer = discoverer.initAnalyzerEngine(analyzer, ANALYZING, game.variant)
     analyzer.connect('analyze', onAnalyze)
-    game.setSpectators({0: analyzer})
+    game.spectators[HINT] = analyzer
     game.loadAndStart(sys.argv[1], pgn, gameno, -1)
     
     def cb():
@@ -128,15 +131,21 @@ def check_blund():
             print
     
     movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
-    print "Considering", game.ply//2+1, movename, " ",
+    if game.ply % 2 == 1:
+        move_suffix = ""
+    else:
+        move_suffix = "..."
+    print "Considering %d%s %s " % ((game.ply+1)//2, move_suffix, movename,),
     game.undoMoves(1)
 
-def onAnalyze(analyzer, pv, score):
+def onAnalyze(analyzer, analysis):
     global values
-    sys.stdout.write('.')
-    sys.stdout.flush()
-    if score != None:
-        values[game.ply] = (pv, score*(-1)**game.ply)
+    if analysis:
+        pv, score = analysis[0]
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        if score != None:
+            values[game.ply] = (pv, score*(-1)**game.ply)
 
 ###############################################################################
 # Slightly validate arguments 

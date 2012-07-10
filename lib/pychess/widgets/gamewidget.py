@@ -125,9 +125,15 @@ class GameWidget (gobject.GObject):
         gamemodel.connect("moves_undone", self.moves_undone)
         gamemodel.connect("game_unended", self.game_unended)
         gamemodel.connect("players_changed", self.players_changed)
+        gamemodel.connect("analyzer_added", self.analyzer_added)
+        gamemodel.connect("analyzer_removed", self.analyzer_removed)
+        gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
+        gamemodel.connect("analyzer_paused", self.analyzer_paused)
         self.players_changed(gamemodel)
         if gamemodel.timemodel:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
+        
+        self.analyzer_cids = {}
         
         # Some stuff in the sidepanels .load functions might change UI, so we
         # need glock
@@ -238,26 +244,15 @@ class GameWidget (gobject.GObject):
         self._update_menu_resign()
         self._update_menu_undo()
         self._update_menu_ask_to_move()
-        
-        activate_hint = False
-        activate_spy = False
-        if HINT in gamemodel.spectators and not \
-                (isinstance(self.gamemodel, ICGameModel) and
-                 self.gamemodel.isObservationGame() is False):
-            activate_hint = True
-        if SPY in gamemodel.spectators and not \
-                (isinstance(self.gamemodel, ICGameModel) and
-                 self.gamemodel.isObservationGame() is False):
-            activate_spy = True
-        self.menuitems["hint_mode"].active = activate_hint
-        self.menuitems["hint_mode"].sensitive = HINT in gamemodel.spectators
-        self.menuitems["spy_mode"].active = activate_spy
-        self.menuitems["spy_mode"].sensitive = SPY in gamemodel.spectators
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:
-            self.menuitems[item].sensitive = False
+            if item not in self.menuitems.VIEW_MENU_ITEMS:
+                self.menuitems[item].sensitive = False
         self._update_menu_undo()
+        self._set_arrow(HINT, None)
+        self._set_arrow(SPY, None)
+        return False
     
     def game_changed (self, gamemodel):
         self._update_menu_abort()
@@ -265,22 +260,35 @@ class GameWidget (gobject.GObject):
         self._update_menu_draw()
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
+        self._set_arrow(HINT, None)
+        self._set_arrow(SPY, None)
+        return False
     
     def game_paused (self, gamemodel):
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
         self._update_menu_ask_to_move()
+        return False
     
     def game_resumed (self, gamemodel):
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
         self._update_menu_ask_to_move()
+        return False
     
     def moves_undone (self, gamemodel, moves):
         self.game_changed(gamemodel)
+        return False
     
     def game_unended (self, gamemodel):
-        self.game_started(gamemodel)
+        self._update_menu_abort()
+        self._update_menu_adjourn()
+        self._update_menu_draw()
+        self._update_menu_pause_and_resume()
+        self._update_menu_resign()
+        self._update_menu_undo()
+        self._update_menu_ask_to_move()
+        return False
     
     def players_changed (self, gamemodel):
         for player in gamemodel.players:
@@ -288,6 +296,55 @@ class GameWidget (gobject.GObject):
             # Notice that this may connect the same player many times. In
             # normal use that shouldn't be a problem.
             glock_connect(player, "name_changed", self.name_changed)
+    
+    def _set_arrow (self, analyzer_type, coordinates):
+        if analyzer_type == HINT:
+            arrow = self.board.view._set_greenarrow
+        else:
+            arrow = self.board.view._set_redarrow
+            
+        self.board.view.runWhenReady(arrow, coordinates)
+    
+    def _on_analyze (self, analyzer, analysis, analyzer_type):
+        if len(analysis) >= 1 and analysis[0] is not None:
+            moves = analysis[0][0]
+            if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
+               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]):
+                self._set_arrow(analyzer_type, moves[0].cords)
+            else:
+                self._set_arrow(analyzer_type, None)
+        return False
+    
+    def analyzer_added (self, gamemodel, analyzer, analyzer_type):
+        self.analyzer_cids[analyzer_type] = \
+            analyzer.connect("analyze", self._on_analyze, analyzer_type)
+        self.menuitems[analyzer_type + "_mode"].active = True
+        self.menuitems[analyzer_type + "_mode"].sensitive = True
+        return False
+    
+    def analyzer_removed (self, gamemodel, analyzer, analyzer_type):
+        self._set_arrow(analyzer_type, None)
+        self.menuitems[analyzer_type + "_mode"].active = False
+        self.menuitems[analyzer_type + "_mode"].sensitive = False
+        
+        try:
+            cid = self.analyzer_cids[analyzer_type]
+        except IndexError:
+            return False
+        if analyzer.handler_is_connected(cid):
+            analyzer.disconnect(cid)
+            
+        return False
+    
+    def analyzer_resumed (self, gamemodel, analyzer, analyzer_type):
+        self.menuitems[analyzer_type + "_mode"].active = True
+        self._on_analyze(analyzer, analyzer.getAnalysis(), analyzer_type)
+        return False
+    
+    def analyzer_paused (self, gamemodel, analyzer, analyzer_type):
+        self.menuitems[analyzer_type + "_mode"].active = False
+        self._set_arrow(analyzer_type, None)
+        return False
     
     @property
     def display_text (self):
@@ -440,6 +497,7 @@ class GameWidget (gobject.GObject):
         try:
             self.statusbar.pop(0)
             if message:
+                #print "Setting statusbar to \"%s\"" % str(message)
                 self.statusbar.push(0, message)
         finally:
             glock.release()
