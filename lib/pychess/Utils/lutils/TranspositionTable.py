@@ -1,4 +1,5 @@
 from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
+from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
 
@@ -41,7 +42,8 @@ class TranspositionTable:
         for i in xrange(baseIndex, baseIndex + 4):
             tkey, search_id, hashf, tdepth, score, move = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == key:
-                if tdepth < depth:
+                # Mate score bounds are guaranteed to be accurate at any depth.
+                if tdepth < depth and abs(score) < MATE_VALUE-MAXPLY:
                     return move, score, hashfBAD
                 if hashf == hashfEXACT:
                     return move, score, hashf
