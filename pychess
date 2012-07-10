@@ -4,6 +4,12 @@
 # This script is to check package requirements, and set up system/enviroment
 # stuff, to make the PyChess Main class run smoothly.
 
+# faulthandler will be in Python 3.3; for 2.x it can be download from pypi
+try:
+    import faulthandler
+    faulthandler.enable()
+except ImportError:
+    pass
 
 ###############################################################################
 # Check requirements
@@ -40,7 +46,8 @@ except ImportError:
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
 if "PYTHONPATH" in os.environ:
-    os.environ["PYTHONPATH"] = os.path.abspath(os.environ["PYTHONPATH"])
+    os.environ["PYTHONPATH"] = os.pathsep.join(
+        os.path.abspath(p) for p in os.environ["PYTHONPATH"].split(os.pathsep))
 
 
 ###############################################################################

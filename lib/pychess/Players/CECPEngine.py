@@ -18,7 +18,7 @@ from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
 
-from Player import PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from ProtocolEngine import ProtocolEngine
 
 def isdigits (strings):
@@ -39,12 +39,13 @@ anare = re.compile("""
     \s*                      #
     \d+ [+\-\.]?             # The ply analyzed. Some engines end it with a dot, minus or plus
     \s+                      #
-    (-?Mat\s*\d+ | [-\d\.]+) # Mat1 is used by gnuchess to specify mate in one.
-                             #        otherwise we should support a signed float
+    (-?Mat\s*\d+ | [+\-\d\.]+) # The score found in centipawns.
+                             #   Mat1 is used by gnuchess to specify mate in one.
+                             #   otherwise we should support a signed float
     \s+                      #
     [\d\.]+                  # The time used in seconds
     \s+                      #
-    [\d\.]+                  # The score found in centipawns
+    [\d\.]+                  # Number of nodes visited
     \s+                      #
     (.+)                     # The Principal-Variation. With or without move numbers
     \s*                      #
@@ -93,8 +94,8 @@ TIME_OUT_SECOND = 15
 
 class CECPEngine (ProtocolEngine):
     
-    def __init__ (self, subprocess, color, protover):
-        ProtocolEngine.__init__(self, subprocess, color, protover)
+    def __init__ (self, subprocess, color, protover, md5):
+        ProtocolEngine.__init__(self, subprocess, color, protover, md5)
         
         self.features = {
             "ping":      0,
@@ -128,7 +129,8 @@ class CECPEngine (ProtocolEngine):
         
         self.name = None
         
-        self.board = None
+        self.board = Board(setup=True)
+        
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
         # i.e. not thinking or playing, but still verifying move legality
         self.engineIsInNotPlaying = False 
@@ -153,7 +155,7 @@ class CECPEngine (ProtocolEngine):
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
         self.connect_after("readyForMoves", self.__onReadyForMoves)
-    
+
     #===========================================================================
     #    Starting the game
     #===========================================================================
@@ -262,11 +264,14 @@ class CECPEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [], None)
+                self.emit("analyze", [])
     
     #===========================================================================
     #    Send the player move updates
     #===========================================================================
+
+    def setBoard (self, board):
+        self.setBoardList([board], [])
     
     @semisynced
     def putMove (self, board1, move, board2):
@@ -275,6 +280,10 @@ class CECPEngine (ProtocolEngine):
             @param move: The last move made
             @param board2: The board before the last move was made
         """
+        # If the spactator engine analyzing an older position, let it do
+        if self.board != board2:
+            return
+
         self.board = board1
         
         if not board2:
@@ -294,7 +303,7 @@ class CECPEngine (ProtocolEngine):
                 # Many engines don't like positions able to take down enemy
                 # king. Therefore we just return the "kill king" move
                 # automaticaly
-                self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
+                self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
                 return
             self.__printColor()
             if self.engineIsInNotPlaying: print >> self.engine, "force"
@@ -360,10 +369,10 @@ class CECPEngine (ProtocolEngine):
     def setOptionInitialBoard (self, model):
         # We don't use the optionQueue here, as set board prints a whole lot of
         # stuff. Instead we just call it, and let semisynced handle the rest.
-        self.setBoard(model.boards[:], model.moves[:])
+        self.setBoardList(model.boards[:], model.moves[:])
     
     @semisynced
-    def setBoard (self, boards, moves):
+    def setBoardList (self, boards, moves):
         # Notice: If this method is to be called while playing, the engine will
         # need 'new' and an arrangement similar to that of 'pause' to avoid
         # the current thought move to appear
@@ -376,8 +385,7 @@ class CECPEngine (ProtocolEngine):
             
             self.__tellEngineToStopPlayingCurrentColor()
             
-            if boards[0].asFen() != FEN_START:
-                self.__setBoard(boards[0])
+            self.__setBoard(boards[0])
             
             self.board = boards[-1]
             for board, move in zip(boards[:-1], moves):
@@ -392,7 +400,7 @@ class CECPEngine (ProtocolEngine):
                 if self.engineIsInNotPlaying:
                     print >> self.engine, "force"
             
-            # The called of setBoard will have to repost/analyze the
+            # The called of setBoardList will have to repost/analyze the
             # analyzer engines at this point.
         finally:
             self.boardLock.release()
@@ -474,6 +482,7 @@ class CECPEngine (ProtocolEngine):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         
+        log.debug("pause: self=%s\n" % self, self.defname)
         self.engine.pause()
         return
         
@@ -487,6 +496,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def resume (self):
+        log.debug("resume: self=%s\n" % self, self.defname)
         self.engine.resume()
         return
         
@@ -578,7 +588,11 @@ class CECPEngine (ProtocolEngine):
         
         if self.features["san"]:
             print >> self.engine, toSAN(board, move)
-        else: print >> self.engine, toAN(board, move, short=True)
+        else:
+            cn = CASTLE_KK
+            if board.variant == FISCHERRANDOMCHESS:
+                cn = CASTLE_SAN
+            print >> self.engine, toAN(board, move, short=True, castleNotation=cn)
     
     def __tellEngineToMoveNow (self):
         if self.features["sigint"]:
@@ -731,10 +745,11 @@ class CECPEngine (ProtocolEngine):
             if match:
                 score, moves = match.groups()
                 
-                if "mat" in score.lower():
+                if "mat" in score.lower() or "#" in moves:
                     # Will look either like -Mat 3 or Mat3
-                    scoreval = MATE_VALUE - int("".join(c for c in score if c.isdigit()))
-                    if score.startswith('-'): scoreval = -scoreval
+                    scoreval = MATE_VALUE
+                    if score.startswith('-'):
+                        scoreval = -scoreval
                 else:
                     scoreval = int(score)
                 
@@ -750,7 +765,7 @@ class CECPEngine (ProtocolEngine):
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
                 if moves and not self.board.board.opIsChecked():
-                    self.emit("analyze", moves, scoreval)
+                    self.emit("analyze", [(moves, scoreval)])
                 
                 return
         
@@ -857,6 +872,12 @@ class CECPEngine (ProtocolEngine):
     def canAnalyze (self):
         assert self.ready, "Still waiting for done=1"
         return self.features["analyze"]
+    
+    def maxAnalysisLines (self):
+        return 1
+    
+    def requestMultiPV (self, setting):
+        return 1
     
     def isAnalyzing (self):
         return self.mode in (ANALYZING, INVERSE_ANALYZING)

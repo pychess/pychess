@@ -1,6 +1,8 @@
 syntax: glob
 *.mo
 *.pyc
+pieces/*.png
+eco.db
 
 syntax: regexp
 ^\.pydevproject$

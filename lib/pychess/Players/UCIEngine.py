@@ -8,24 +8,25 @@ from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Offer import Offer
-from pychess.Utils.logic import validate, getMoveKillingKing, getStatus
+from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMoveCount
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.System.ThreadPool import pool
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ProtocolEngine import ProtocolEngine
-from Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("type", "min", "max", "default", "var")
 
 class UCIEngine (ProtocolEngine):
     
-    def __init__ (self, subprocess, color, protover):
-        ProtocolEngine.__init__(self, subprocess, color, protover)
+    def __init__ (self, subprocess, color, protover, md5):
+        ProtocolEngine.__init__(self, subprocess, color, protover, md5)
         
         self.ids = {}
         self.options = {}
@@ -44,10 +45,14 @@ class UCIEngine (ProtocolEngine):
         self.waitingForMove = False
         self.needBestmove = False
         self.readyForStop = False   # keeps track of whether we already sent a 'stop' command
+        self.multipvSetting  = conf.get("multipv", 1)    # MultiPV option sent to the engine
+        self.multipvExpected = 1    # Number of PVs expected (limited by number of legal moves)
         self.commands = collections.deque()
         
-        self.board = None
-        self.uciok = False
+        self.gameBoard = Board(setup=True) # board at the end of all moves played
+        self.board = Board(setup=True)     # board to send the engine
+        self.uciPosition = "startpos"
+        self.analysis = [ None ]
         
         self.returnQueue = Queue.Queue()
         self.engine.connect("line", self.parseLines)
@@ -89,6 +94,9 @@ class UCIEngine (ProtocolEngine):
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
         
+            if self.hasOption("MultiPV") and self.multipvSetting > 1:
+                self.setOption('MultiPV', self.multipvSetting)
+        
         for option, value in self.optionsToBeSent.iteritems():
             if self.options[option]["default"] != value:
                 self.options[option]["default"] = value
@@ -105,9 +113,7 @@ class UCIEngine (ProtocolEngine):
         # If we are an analyzer, this signal was already called in a different
         # thread, so we can safely block it.
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            if not self.board:
-                self.board = Board(setup=True)
-            self.putMove(self.board, None, None)
+            self._searchNow()
     
     #===========================================================================
     #    Ending the game
@@ -141,22 +147,47 @@ class UCIEngine (ProtocolEngine):
             
             finally:
                 # Clear the analyzed data, if any
-                self.emit("analyze", [], None)
+                self.emit("analyze", [])
     
     #===========================================================================
     #    Send the player move updates
     #===========================================================================
     
+    def _moveToUCI (self, board, move):
+        cn = CASTLE_KK
+        if board.variant == FISCHERRANDOMCHESS:
+            cn = CASTLE_KR
+        return toAN(board, move, short=True, castleNotation=cn)
+    
+    def _setBoard (self, board):
+        if board.variant == NORMALCHESS and board.asFen() == FEN_START:
+            self.uciPosition = "startpos"
+        else:
+            self.uciPosition = "fen " + board.asFen()
+
+        self.board = self.gameBoard = board
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.gameBoard.switchColor()
+    
+    def setBoard (self, board):
+        log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
+        self._setBoard(board)
+        
+        if not self.readyMoves:
+            return
+        self._searchNow()
+
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
             (board1, move, board2, self.board), self.defname)
-        if not self.readyMoves: return
+        # If the spactator engine analyzing an older position, let it do
+        if self.board != board2:
+            return
+
+        self._setBoard(board1)
         
-        self.board = board1
-        
-        if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
-        
+        if not self.readyMoves:
+            return
         self._searchNow()
     
     def makeMove (self, board1, move, board2):
@@ -165,7 +196,7 @@ class UCIEngine (ProtocolEngine):
         assert self.readyMoves
         
         with self.moveLock:
-            self.board = board1
+            self._setBoard(board1)
             self.waitingForMove = True
             ponderhit = False
             
@@ -210,14 +241,13 @@ class UCIEngine (ProtocolEngine):
     
     def setOptionAnalyzing (self, mode):
         self.mode = mode
+        if self.mode == INVERSE_ANALYZING:
+            self.board = self.gameBoard.switchColor()
     
     def setOptionInitialBoard (self, model):
         log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
             (self, model), self.defname)
-        # UCI always sets the position when searching for a new game, but for
-        # getting analyzers ready to analyze at first ply, it is good to have.
-        self.board = model.getBoardAtPly(model.ply)
-        pass
+        self._setBoard(model.boards[0])
     
     def setOptionVariant (self, variant):
         if variant == FischerRandomChess:
@@ -255,7 +285,7 @@ class UCIEngine (ProtocolEngine):
         self.engine.pause()
         return
         
-        if self.board and self.board.color == self.color or \
+        if self.board.color == self.color or \
                 self.mode != NORMAL or self.pondermove:
             self.ignoreNext = True
             print >> self.engine, "stop"
@@ -266,7 +296,7 @@ class UCIEngine (ProtocolEngine):
         return
         
         if self.mode == NORMAL:
-            if self.board and self.board.color == self.color:
+            if self.board.color == self.color:
                 self._searchNow()
             elif self.getOption('Ponder') and self.pondermove:
                 self._startPonder()
@@ -287,6 +317,8 @@ class UCIEngine (ProtocolEngine):
     def playerUndoMoves (self, moves, gamemodel):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+
+        self._setBoard(gamemodel.boards[-1])
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -300,8 +332,11 @@ class UCIEngine (ProtocolEngine):
     def spectatorUndoMoves (self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+
+        self._setBoard(gamemodel.boards[-1])
         
-        self.putMove(gamemodel.getBoardAtPly(gamemodel.ply), None, None)
+        if self.readyMoves:
+            self._searchNow()
     
     #===========================================================================
     #    Offer handling
@@ -351,6 +386,7 @@ class UCIEngine (ProtocolEngine):
     def _searchNow (self, ponderhit=False):
         log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s\n" % \
             (self.needBestmove, ponderhit, self.board), self.defname)
+
         with self.moveLock:
             commands = []
             
@@ -358,28 +394,34 @@ class UCIEngine (ProtocolEngine):
                 commands.append("ponderhit")
                 
             elif self.mode == NORMAL:
-                commands.append("position fen %s" % self.board.asFen())
+                commands.append("position %s" % self.uciPosition)
                 if self.strength <= 3:
                     commands.append("go depth %d" % self.strength)
                 else:
-                    commands.append("go wtime %d btime %d winc %d binc %d" % \
-                                    (self.wtime, self.btime, self.incr, self.incr))
+                    commands.append("go wtime %d winc %d btime %d binc %d" % \
+                                    (self.wtime, self.incr, self.btime, self.incr))
                 
             else:
+                print >> self.engine, "stop"
+                
                 if self.mode == INVERSE_ANALYZING:
                     if self.board.board.opIsChecked():
                         # Many engines don't like positions able to take down enemy
                         # king. Therefore we just return the "kill king" move
                         # automaticaly
-                        self.emit("analyze", [getMoveKillingKing(self.board)], MATE_VALUE-1)
+                        self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
                         return
-                
-                print >> self.engine, "stop"
-                if self.board.asFen() == FEN_START:
-                    commands.append("position startpos")
-                else:
                     commands.append("position fen %s" % self.board.asFen())
+                else:
+                    commands.append("position %s" % self.uciPosition)
+
                 commands.append("go infinite")
+            
+            if self.multipvSetting > 1:
+                self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
+            else:
+                self.multipvExpected = 1
+            self.analysis = [None] * self.multipvExpected
             
             if self.needBestmove:
                 self.commands.append(commands)
@@ -388,15 +430,16 @@ class UCIEngine (ProtocolEngine):
             else:
                 for command in commands:
                     print >> self.engine, command
-                if self.board.asFen() != FEN_START and getStatus(self.board)[1] != WON_MATE:
+                if getStatus(self.board)[1] != WON_MATE: # XXX This looks fishy.
                     self.needBestmove = True
                     self.readyForStop = True
     
     def _startPonder (self):
-        print >> self.engine, "position fen", self.board.asFen(), \
-                                "moves", toAN(self.board, self.pondermove, short=True)
+        uciPos = self.uciPosition
+        print >> self.engine, "position", uciPos, " moves", \
+                                self._moveToUCI(self.board, self.pondermove)
         print >> self.engine, "go ponder wtime", self.wtime, \
-            "btime", self.btime, "winc", self.incr, "binc", self.incr
+            "winc", self.incr, "btime", self.btime, "binc", self.incr
     
     #===========================================================================
     #    Parsing from engine
@@ -482,14 +525,14 @@ class UCIEngine (ProtocolEngine):
                     self.returnQueue.put('del')
                     return
                 
-                self.board = self.board.move(move)
+                self._setBoard(self.board.move(move))
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
                     (move, self.board), self.defname)
                 
                 if self.getOption('Ponder'):
                     self.pondermove = None
                     # An engine may send an empty ponder line, simply to clear.
-                    if len(parts) == 4 and self.board:
+                    if len(parts) == 4:
                         # Engines don't always check for everything in their
                         # ponders. Hence we need to validate.
                         # But in some cases, what they send may not even be
@@ -510,6 +553,9 @@ class UCIEngine (ProtocolEngine):
         
         #----------------------------------------------------------- An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
+            multipv = 1
+            if "multipv" in parts:
+                multipv = int(parts[parts.index("multipv")+1])
             scoretype = parts[parts.index("score")+1]
             if scoretype in ('lowerbound', 'upperbound'):
                 score = None
@@ -517,8 +563,9 @@ class UCIEngine (ProtocolEngine):
                 score = int(parts[parts.index("score")+2])
                 if scoretype == 'mate':
 #                    print >> self.engine, "stop"
-                    sign = score/abs(score)
-                    score = sign * (MATE_VALUE-abs(score))
+                    if score != 0:
+                        sign = score/abs(score)
+                        score = sign*MATE_VALUE
             
             movstrs = parts[parts.index("pv")+1:]
             try:
@@ -530,7 +577,11 @@ class UCIEngine (ProtocolEngine):
                     (' '.join(movstrs),e), self.defname)
                 return
             
-            self.emit("analyze", moves, score)
+            if multipv <= len(self.analysis):
+                self.analysis[multipv - 1] = (moves, score)
+
+            if multipv == self.multipvExpected:
+                self.emit("analyze", self.analysis)
             return
         
         #-----------------------------------------------  An Analyzer bestmove
@@ -587,9 +638,25 @@ class UCIEngine (ProtocolEngine):
     #    Info
     #===========================================================================
     
-    def canAnalyze (self):
-        # All UCIEngines can analyze
-        return True
+    def maxAnalysisLines (self):
+        try:
+            return int(self.options["MultiPV"]["max"])
+        except (KeyError, ValueError):
+            return 1 # Engine does not support the MultiPV option
+        
+    def requestMultiPV (self, n):
+        multipvMax = self.maxAnalysisLines()
+        n = min(n, multipvMax)
+        
+        if n != self.multipvSetting:
+            conf.set("multipv", n)
+            with self.moveLock:
+                self.multipvSetting  = n
+                print >> self.engine, "stop"
+                print >> self.engine, "setoption name MultiPV value", n
+                self._searchNow()
+        
+        return n
     
     def __repr__ (self):
         if self.name:

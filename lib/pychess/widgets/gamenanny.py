@@ -6,6 +6,7 @@ import math
 
 import gtk
 
+from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
@@ -56,14 +57,17 @@ def on_gmwidg_infront (gmwidg):
     
     # Change window title
     getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    return False
 
 def on_gmwidg_closed (gmwidg):
     if len(key2gmwidg) == 1:
         getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
+    return False
 
 def on_gmwidg_title_changed (gmwidg):
     if gmwidg.isInFront():
         getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    return False
 
 #===============================================================================
 # Gamemodel signals
@@ -132,20 +136,21 @@ def game_ended (gamemodel, reason, gmwidg):
             engineDead(gamemodel.players[1], gmwidg)
     finally:
         glock.release()
+    
+    return False
 
 def _set_statusbar (gamewidget, message):
     assert type(message) is str or type(message) is unicode
-    glock.acquire()
-    try:
-        gamewidget.status(message)
-    finally:
-        glock.release()
+    gamewidget.status(message)
     
 def game_paused (gamemodel, gmwidg):
-    _set_statusbar(gmwidg, _("The game is paused"))
+    s = _("The game is paused")
+    _set_statusbar(gmwidg, s)
+    return False
     
 def game_changed (gamemodel, gmwidg):
     _set_statusbar(gmwidg, "")
+    return False
     
 def game_unended (gamemodel, gmwidg):
     log.debug("gamenanny.game_unended: %s\n" % gamemodel.boards[-1])
@@ -155,6 +160,7 @@ def game_unended (gamemodel, gmwidg):
     finally:
         glock.release()
     _set_statusbar(gmwidg, "")
+    return False
 
 # Connect game_loaded, game_saved and game_ended to statusbar
 def game_loaded (gamemodel, uri, gmwidg):
@@ -163,9 +169,16 @@ def game_loaded (gamemodel, uri, gmwidg):
     else: s = _("Loaded game")
     
     _set_statusbar(gmwidg, s)
+    return False
 
 def game_saved (gamemodel, uri, gmwidg):
     _set_statusbar(gmwidg, "%s: %s" % (_("Saved game"), str(uri)))
+    return False
+
+def analyzer_added (gamemodel, analyzer, analyzer_type, gmwidg):
+    s = _("Analyzer started") + ": " + analyzer.name
+    _set_statusbar(gmwidg, s)
+    return False
 
 def on_game_started (gamemodel, gmwidg):
     on_gmwidg_infront(gmwidg)  # setup menu items sensitivity
@@ -188,8 +201,13 @@ def on_game_started (gamemodel, gmwidg):
             player.connect("offer", offer_callback, gamemodel, gmwidg)
     
     # Start analyzers if any
-    setAnalyzerEnabled(gmwidg, HINT, getWidgets()["hint_mode"].get_active())
-    setAnalyzerEnabled(gmwidg, SPY, getWidgets()["spy_mode"].get_active())
+    gamemodel.connect("analyzer_added", analyzer_added, gmwidg)
+    if not (isinstance(gamemodel, ICGameModel) and \
+            gamemodel.isObservationGame() is False):
+        gamemodel.start_analyzer(HINT)
+        gamemodel.start_analyzer(SPY)
+    
+    return False
 
 #===============================================================================
 # Player signals
@@ -212,12 +230,13 @@ def offer_callback (player, offer, gamemodel, gmwidg):
         message = _("You sent a pause offer")
     elif offer.type == RESUME_OFFER:
         message = _("You sent a resume offer")
-    elif offer.type == ABORT_OFFER:
+    elif offer.type == TAKEBACK_OFFER:
         message = _("You sent an undo offer")
     elif offer.type == HURRY_ACTION:
         message = _("You asked your opponent to move")
     
     _set_statusbar(gmwidg, message)
+    return False
 
 #===============================================================================
 # Subfunctions
@@ -230,64 +249,3 @@ def engineDead (engine, gmwidg):
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
     d.connect("response", lambda d,r: d.hide())
     d.show_all()
-
-def setAnalyzerEnabled (gmwidg, analyzerType, enabled):
-    if not analyzerType in gmwidg.gamemodel.spectators:
-        return
-    
-    analyzer = gmwidg.gamemodel.spectators[analyzerType]
-    
-    if analyzerType == HINT:
-        arrow = gmwidg.board.view._set_greenarrow
-    else: arrow = gmwidg.board.view._set_redarrow
-    set_arrow = lambda x: gmwidg.board.view.runWhenReady(arrow, x)
-    
-    if enabled:
-        if len(analyzer.getAnalysis()) >= 1:
-            if gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
-               [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]:
-                set_arrow (analyzer.getAnalysis()[0].cords)
-            else: set_arrow (None)
-        
-        # This is a kludge using pythons ability to asign attributes to an
-        # object, even if those attributes are nowhere mentioned in the objects
-        # class. So don't go looking for it ;)
-        # Code is used to save our connection ids, enabling us to later dis-
-        # connect
-        if not hasattr (gmwidg.gamemodel, "anacons"):
-            gmwidg.gamemodel.anacons = {HINT:[], SPY:[]}
-        if not hasattr (gmwidg.gamemodel, "chacons"):
-            gmwidg.gamemodel.chacons = []
-        
-        def on_analyze (analyzer, moves, score):
-            if moves and (gmwidg.gamemodel.curplayer.__type__ == LOCAL or \
-               [player.__type__ for player in gmwidg.gamemodel.players] == [REMOTE, REMOTE]):
-                set_arrow (moves[0].cords)
-            else: set_arrow (None)
-        
-        def on_game_change (gamemodel):
-            set_arrow (None)
-        
-        gmwidg.gamemodel.anacons[analyzerType].append(
-                analyzer.connect("analyze", on_analyze))
-        gmwidg.gamemodel.chacons.append(
-                gmwidg.gamemodel.connect("game_changed", on_game_change))
-        gmwidg.gamemodel.chacons.append(
-                gmwidg.gamemodel.connect("game_ended",
-                                         lambda model, reason: on_game_change(model)))
-        gmwidg.gamemodel.chacons.append(
-                gmwidg.gamemodel.connect("moves_undoing",
-                                         lambda model, moves: on_game_change(model)))
-    
-    else:
-        if hasattr (gmwidg.gamemodel, "anacons"):
-            for conid in gmwidg.gamemodel.anacons[analyzerType]:
-                analyzer.disconnect(conid)
-            del gmwidg.gamemodel.anacons[analyzerType][:]
-        if hasattr (gmwidg.gamemodel, "chacons"):
-            for conid in gmwidg.gamemodel.chacons:
-                gmwidg.gamemodel.disconnect(conid)
-            del gmwidg.gamemodel.chacons[:]
-        set_arrow (None)
-
-

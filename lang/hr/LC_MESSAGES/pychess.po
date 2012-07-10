@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2011-11-27 13:05+0100\n"
-"PO-Revision-Date: 2010-10-16 01:34+0000\n"
-"Last-Translator: Sinisa Radalj <Unknown>\n"
+"PO-Revision-Date: 2012-01-02 12:28+0000\n"
+"Last-Translator: Patrick Fiquet <Unknown>\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Launchpad-Export-Date: 2011-12-31 16:27+0000\n"
-"X-Generator: Launchpad (build 14560)\n"
+"X-Launchpad-Export-Date: 2012-06-09 17:36+0000\n"
+"X-Generator: Launchpad (build 15376)\n"
 
 #: glade/discovererDialog.glade:17
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -458,7 +458,7 @@ msgstr "_Nova igra"
 
 #: glade/PyChess.glade:43
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Igra _Internet šah"
 
 #: glade/PyChess.glade:64
 msgid "_Load Game"
@@ -566,7 +566,7 @@ msgstr ""
 
 #: glade/PyChess.glade:458
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Tip dana"
 
 #: glade/PyChess.glade:510
 msgid "Chess client for the Gnome desktop"
@@ -909,11 +909,11 @@ msgstr ""
 
 #: lib/pychess/Main.py:173
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr ""
+msgstr "http://hr.wikipedia.org/wiki/Šah"
 
 #: lib/pychess/Main.py:176
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
-msgstr ""
+msgstr "http://hr.wikipedia.org/wiki/Šahovska_pravila"
 
 #: lib/pychess/Main.py:226 lib/pychess/widgets/gamenanny.py:62
 msgid "Welcome"
@@ -1000,7 +1000,7 @@ msgstr ""
 #: lib/pychess/ic/FICSObjects.py:517 lib/pychess/ic/ICLounge.py:1543
 #, python-format
 msgid "%d min"
-msgstr ""
+msgstr "%d min"
 
 #: lib/pychess/ic/FICSObjects.py:519
 #, python-format
@@ -1114,7 +1114,7 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:497 lib/pychess/ic/ICLounge.py:539
 #, python-format
 msgid " + %(sec)s sec"
-msgstr ""
+msgstr " + %(sec)s sek"
 
 #: lib/pychess/ic/ICLounge.py:552
 #, python-format
@@ -1141,12 +1141,12 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:683
 msgid " min"
-msgstr ""
+msgstr " min"
 
 #: lib/pychess/ic/ICLounge.py:720
 #, python-format
 msgid "%(min)s min + %(sec)s sec"
-msgstr ""
+msgstr "%(min)s min + %(sec)s sek"
 
 #: lib/pychess/ic/ICLounge.py:723
 msgid "Opponent Rating"
@@ -1219,7 +1219,7 @@ msgstr ""
 #: lib/pychess/ic/ICLounge.py:1121
 #, python-format
 msgid "%(player)s is %(status)s"
-msgstr ""
+msgstr "%(player)s je %(status)s"
 
 #: lib/pychess/ic/ICLounge.py:1126
 #, python-format
@@ -1701,11 +1701,11 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:10
 msgid "Pawn"
-msgstr ""
+msgstr "Pješak"
 
 #: lib/pychess/Utils/repr.py:10
 msgid "King"
-msgstr ""
+msgstr "Kralj"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "P"
@@ -1891,11 +1891,11 @@ msgstr ""
 
 #: lib/pychess/Utils/TimeModel.py:225
 msgid "min"
-msgstr ""
+msgstr "min"
 
 #: lib/pychess/Utils/TimeModel.py:227
 msgid "sec"
-msgstr ""
+msgstr "sek"
 
 #: lib/pychess/Variants/asymmetricrandom.py:85
 msgid "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
@@ -2208,7 +2208,7 @@ msgstr ""
 #: lib/pychess/widgets/ionest.py:86 lib/pychess/widgets/newGameDialog.py:328
 #: lib/pychess/widgets/TaskerManager.py:200
 msgid "You"
-msgstr ""
+msgstr "Vi"
 
 #: lib/pychess/widgets/ionest.py:89 lib/pychess/widgets/newGameDialog.py:329
 #: lib/pychess/widgets/preferencesDialog.py:44
@@ -2375,7 +2375,7 @@ msgstr ""
 #: lib/pychess/widgets/newGameDialog.py:229
 #, python-format
 msgid "%(name)s %(minutes)d min"
-msgstr ""
+msgstr "%(name)s %(minutes)d min"
 
 #: lib/pychess/widgets/newGameDialog.py:247
 msgid "Odds"
@@ -2520,7 +2520,7 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:25 sidepanel/commentPanel.py:196
 #: sidepanel/commentPanel.py:213
 msgid "and"
-msgstr ""
+msgstr "i"
 
 #: lib/pychess/Utils/lutils/strateval.py:44
 msgid "draws"

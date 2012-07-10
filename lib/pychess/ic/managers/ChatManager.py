@@ -63,7 +63,7 @@ class ChatManager (GObject):
                 "Only (.+?) may join channel (\d+)\.")
         
         self.connection.expect_line (self.getNoChannelPlayers,
-                "Channel \d+ is empty\.")
+                "Channel (\d+) is empty\.")
         self.connection.expect_fromto (self.getChannelPlayers,
                 "Channel (\d+)(?: \"(\w+)\")?: (.+)",
                 "(\d+) player(?: is|s are) in channel \d+\.")

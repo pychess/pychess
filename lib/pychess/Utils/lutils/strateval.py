@@ -5,7 +5,6 @@
     Can be used for commenting on board changes.
 """
 
-from gettext import ngettext
 from ldata import *
 from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import staticExchangeEvaluate, getAttacks, \

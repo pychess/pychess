@@ -1,9 +1,7 @@
 """ The task of this module, is to save, load and init new games """
 
-from gettext import ngettext
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess import Savers
-from pychess.Players.engineNest import discoverer
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers import * # This needs an import all not to break autoloading
 from pychess.System import conf
@@ -98,30 +96,6 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     
     gamemodel.setPlayers(players)
     
-    # Init analyze engines
-    anaengines = list(discoverer.getAnalyzers())
-    specs = {}
-    engine = discoverer.getEngineByMd5(conf.get("ana_combobox", 0))
-    if engine is None: engine = anaengines[0]
-    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) \
-       and conf.get("analyzer_check", True):
-        hintanalyzer = discoverer.initAnalyzerEngine(engine, ANALYZING,
-                                                     gamemodel.variant)
-        specs[HINT] = hintanalyzer
-        log.debug("Hint Analyzer: %s\n" % repr(hintanalyzer))
-
-    engine = discoverer.getEngineByMd5(conf.get("inv_ana_combobox", 0))
-    if engine is None: engine = anaengines[0]
-    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) \
-       and conf.get("inv_analyzer_check", True):
-        spyanalyzer = discoverer.initAnalyzerEngine(engine, INVERSE_ANALYZING,
-                                                    gamemodel.variant)
-        specs[SPY] = spyanalyzer
-        log.debug("Spy Analyzer: %s\n" % repr(spyanalyzer))
-    
-    # Setting game
-    gamemodel.setSpectators(specs)
-    
     # Starting
     if loaddata:
         try:
@@ -137,9 +111,8 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 
     else:
         if gamemodel.variant.need_initial_board:
-            for player in gamemodel.players + gamemodel.spectators.values():
+            for player in gamemodel.players:
                 player.setOptionInitialBoard(gamemodel)
-
         gamemodel.start()
     
     log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s\n" % \

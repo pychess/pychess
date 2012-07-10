@@ -43,16 +43,18 @@ class GtkMenuItem (object):
         self._tooltip = tooltip
         self._set_widget("tooltip-text", tooltip)
     
-    def _set_widget (self, property, value):
+    def _set_widget (self, prop, value):
         if not self.gamewidget.isInFront(): return
-        if gamewidget.widgets[self.name].get_property(property) != value:
-#            log.debug("setting %s property %s to %s\n" % (self.name, property, str(value)))
+        if gamewidget.getWidgets()[self.name].get_property(prop) != value:
+            #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
             glock.acquire()
             try:
-                gamewidget.widgets[self.name].set_property(property, value)
+                gamewidget.getWidgets()[self.name].set_property(prop, value)
             finally:
                 glock.release()
-    
+            #print " success (%s = \"%s\")" % \
+            #    (prop, gamewidget.getWidgets()[self.name].get_property(prop))
+            
     def update (self):
         self._set_widget("sensitive", self._sensitive)
         if self._label is not None:

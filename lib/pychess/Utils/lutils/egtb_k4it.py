@@ -4,8 +4,8 @@ import re
 from pychess.Utils.lutils.lmove import newMove, FILE, RANK
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
-from pychess.Utils.lutils.bitboard import bitLength
 from pychess.System.Log import log
+from pychess.System import conf
 
 URL = "http://www.k4it.de/egtb/fetch.php?action=egtb&fen="
 expression = re.compile("(\d+)-(\d+)-?(\d+)?: (Win in \d+|Draw|Lose in \d+)")
@@ -16,78 +16,88 @@ PROMOTION_FLAGS = {
     5: KNIGHT_PROMOTION
 }
 
-table = {}
-def probeEndGameTable (board):
+class egtb_k4it:
     
-    fen = board.asFen().split()[0] + " w - - 0 1"
-    if (fen,board.color) in table:
-        return table[(fen,board.color)]
+    def __init__ (self):
+        self.table = {}
     
-    # k4it has all 6-men tables except 5 vs. 1
-    whites = bitLength(board.friends[WHITE])
-    blacks = bitLength(board.friends[BLACK])
-    if whites >= 5 or blacks >= 5 or whites+blacks >= 7:
-        return []
+    def supports (self, size):
+        return size[0] < 5 and size[1] < 5 and sum(size) < 7
     
-    # Request the page
-    url = (URL + fen).replace(" ", "%20")
-    try:
-        f = urllib.urlopen(url)
-    except IOError, e:
-        log.warn("Unable to read endgame tablebase from the Internet: %s" % repr(e))
-        return []
-    data = f.read()
-    
-    # Parse
-    for color, move_data in enumerate(data.split("\nNEXTCOLOR\n")):
+    def scoreAllMoves (self, board, probeSoft=False):
+        global URL, expression, PROMOTION_FLAGS
+        fen = board.asFen().split()[0] + " w - - 0 1"
+        if (fen,board.color) in self.table:
+            return self.table[(fen,board.color)]
+        
+        if probeSoft or not conf.get("allowRemoteProbes", True):
+            return []
+        
+        # Request the page
+        url = (URL + fen).replace(" ", "%20")
         try:
-            moves = []
-            for fcord, tcord, promotion, result in expression.findall(move_data):
-                fcord = int(fcord)
-                tcord = int(tcord)
+            f = urllib.urlopen(url)
+        except IOError, e:
+            log.warn("Unable to read endgame tablebase from the Internet: %s" % repr(e))
+            return []
+        data = f.read()
+        
+        # Parse
+        for color, move_data in enumerate(data.split("\nNEXTCOLOR\n")):
+            try:
+                moves = []
+                for fcord, tcord, promotion, result in expression.findall(move_data):
+                    fcord = int(fcord)
+                    tcord = int(tcord)
+                    
+                    if promotion:
+                        flag = PROMOTION_FLAGS[int(promotion)]
+                    elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
+                            board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
+                        flag = ENPASSANT
+                    else: flag = NORMAL_MOVE
+                    
+                    move = newMove(fcord, tcord, flag)
+                    
+                    if result == "Draw":
+                        state = DRAW
+                        steps = 0
+                    else:
+                        s, steps = result.split(" in ")
+                        steps = int(steps)
+                    
+                    if result.startswith("Win"):
+                        if color == WHITE:
+                            state = WHITEWON
+                        else: state = BLACKWON
+                    elif result.startswith("Lose"):
+                        if color == WHITE:
+                            state = BLACKWON
+                        else: state = WHITEWON
+                    
+                    moves.append( (move,state,steps) )
                 
-                if promotion:
-                    flag = PROMOTION_FLAGS[int(promotion)]
-                elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
-                        board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
-                    flag = ENPASSANT
-                else: flag = NORMAL_MOVE
-                
-                move = newMove(fcord, tcord, flag)
-                
-                if result == "Draw":
-                    state = DRAW
-                    steps = 0
-                else:
-                    s, steps = result.split(" in ")
-                    steps = int(steps)
-                
-                if result.startswith("Win"):
-                    if color == WHITE:
-                        state = (WHITEWON, steps)
-                    else: state = (BLACKWON, steps)
-                elif result.startswith("Lose"):
-                    if color == WHITE:
-                        state = (BLACKWON, steps)
-                    else: state = (WHITEWON, steps)
-                
-                moves.append( (move,state,steps) )
-            
-            if moves:
-                table[(fen,color)] = moves
-            elif color == board.color and board.opIsChecked():
-                log.warn("Asked endgametable for a won position: %s" % fen)
-            elif color == board.color:
-                log.warn("Couldn't get %s data for position %s.\nData was: %s" %
+                if moves:
+                    self.table[(fen,color)] = moves
+                elif color == board.color and board.opIsChecked():
+                    log.warn("Asked endgametable for a won position: %s" % fen)
+                elif color == board.color:
+                    log.warn("Couldn't get %s data for position %s.\nData was: %s" %
+                             (reprColor[color], fen, repr(data)))
+            except (KeyError, ValueError):
+                log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
                          (reprColor[color], fen, repr(data)))
-        except (KeyError, ValueError):
-            log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
-                     (reprColor[color], fen, repr(data)))
-            table[(fen, color)] = [] # Don't try again.
+                table[(fen, color)] = [] # Don't try again.
+        
+        if (fen,board.color) in self.table:
+            return self.table[(fen,board.color)]
+        return []
     
-    if (fen,board.color) in table:
-        return table[(fen,board.color)]
-    return []
+    def scoreGame(self, board, omitDepth, probeSoft):
+        scores = self.scoreAllMoves(board, probeSoft)
+        if scores:
+            return scores[0][1], scores[0][2]
+        return None, None
 
 if __name__ == "__main__":
     from pychess.Utils.lutils.LBoard import LBoard

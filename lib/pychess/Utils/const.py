@@ -129,6 +129,8 @@ KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION = range(8)
 PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
+# Castling notation types: e.g., O-O, e1g1, e1h1
+CASTLE_SAN, CASTLE_KK, CASTLE_KR = range(3)
 
 FAN_PIECES = [
     ["", u"♙", u"♘", u"♗", u"♖", u"♕", u"♔", ""],
@@ -194,7 +196,7 @@ IC_STATUS_UNKNOWN = range(11)
 ################################################################################
 
 # Hint modes
-HINT, SPY = ["hint", "spy"]
+OPENING, ENDGAME, HINT, SPY = ["opening", "endgame", "hint", "spy"]
 
 # Sound settings
 SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
@@ -203,14 +205,7 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 CLEAR, ENPAS = range(2)
 
 # Main menu items
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
-ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
-                     "call_flag", "resign", "ask_to_move")
-VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
-
-# Main menu items
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "properties1", "close1")
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "export_position1", "properties1", "close1")
 ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")

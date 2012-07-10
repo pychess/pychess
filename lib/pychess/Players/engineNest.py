@@ -16,6 +16,7 @@ except ImportError:
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
@@ -66,13 +67,15 @@ def mergeElements(elemA, elemB):
 #    </vm>
 #</engine>
 
+PYTHONBIN = sys.executable.split("/")[-1]
+
 backup = """
 <engines version="%s">
     <engine protocol="cecp" protover="2" binname="PyChess.py">
         <meta><country>dk</country></meta>
-        <vm binname="python"><args><arg name='0' value="-u"/></args></vm></engine>
+        <vm binname="%s"><args><arg name='0' value="-u"/></args></vm></engine>
     <engine protocol="cecp" protover="2" binname="shatranj.py">
-        <vm binname="python"><args><arg name='0' value="-u"/></args></vm>
+        <vm binname="%s"><args><arg name='0' value="-u"/></args></vm>
         <args><arg name='0' value='-xboard'/></args></engine>
     <engine protocol="cecp" protover="2" binname="gnuchess">
         <meta><country>us</country></meta>
@@ -99,6 +102,8 @@ backup = """
     <engine protocol="cecp" protover="1" binname="amundsen">
         <meta><country>sw</country><author>John Bergbom</author></meta></engine>
     
+    <engine protocol="uci" protover="1" binname="gnuchessu">
+        <meta><country>us</country></meta></engine>
     <engine protocol="uci" protover="1" binname="robbolito">
         <meta><country>ru</country></meta></engine>
     <engine protocol="uci" protover="1" binname="glaurung">
@@ -125,7 +130,7 @@ backup = """
         <meta><country>ru</country></meta>
         <vm binname="wine"/></engine>
 </engines>
-""" % ENGINES_XML_API_VERSION
+""" % (ENGINES_XML_API_VERSION, PYTHONBIN, PYTHONBIN)
 
 class EngineDiscoverer (GObject, PooledThread):
     
@@ -487,11 +492,16 @@ class EngineDiscoverer (GObject, PooledThread):
             vmargs = [a.get('value') for a in xmlengine.findall('vm/args/arg')]
             args = vmargs+[path]+args
             path = vmpath
+        md5 = xmlengine.find('md5').text.strip()
         
         warnwords = ("illegal", "error", "exception")
         subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
                                 getEngineDataPrefix())
-        engine = attrToProtocol[protocol](subprocess, color, protover)
+        engine = attrToProtocol[protocol](subprocess, color, protover, md5)
+        
+        if xmlengine.find('meta/name') is not None:
+            engine.setName(xmlengine.find('meta/name').text.strip())
+            #print 'set engine name to "%s"' % engine.name
         
         if protocol == "uci":
             # If the user has configured special options for this engine, here is
@@ -525,6 +535,36 @@ class EngineDiscoverer (GObject, PooledThread):
 
 
 discoverer = EngineDiscoverer()
+
+def init_engine (analyzer_type, gamemodel, force=False):
+    """
+    Initializes and starts the engine analyzer of analyzer_type the user has
+    configured in the Engines tab of the preferencesDialog, for gamemodel. If no
+    such engine is set in the preferences, or if the configured engine doesn't
+    support the chess variant being played in gamemodel, then no analyzer is
+    started and None is returned.
+    """
+    if analyzer_type == HINT:
+        combo_name = "ana_combobox"
+        check_name = "analyzer_check"
+        mode = ANALYZING
+    else:
+        combo_name = "inv_ana_combobox"
+        check_name = "inv_analyzer_check"
+        mode = INVERSE_ANALYZING
+    
+    anaengines = list(discoverer.getAnalyzers())
+    engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
+    if engine is None: engine = anaengines[0]
+    
+    analyzer = None
+    
+    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) \
+            and conf.get(check_name, True):
+        analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
+        log.debug("%s analyzer: %s\n" % (analyzer_type, repr(analyzer)))
+        
+    return analyzer
 
 if __name__ == "__main__":
     import glib, gobject
