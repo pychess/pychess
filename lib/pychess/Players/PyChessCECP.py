@@ -1,6 +1,7 @@
 from pychess.Players.PyChess import PyChess
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
+from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
@@ -282,6 +283,13 @@ class PyChessCECP(PyChess):
      
                 elif lines[0] == "egtb":
                     enableEGTB()
+                
+                elif lines[0] == "benchmark":
+                    benchmark()
+                
+                elif lines[0] == "profile":
+                    import cProfile
+                    cProfile.runctx("benchmark()", locals(), globals(), lines[1])
                 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.
