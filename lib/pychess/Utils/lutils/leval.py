@@ -139,18 +139,22 @@ def evalKingTropism (board, color, phase):
 # passed      bitboard of passed pawns
 # weaked      bitboard of weak pawns
 pawnEntryType = Struct('=H h Q Q')
-pawnPhaseKey  = (0x343d, 0x055d, 0x3d3c, 0x1a1c, 0x28aa, 0x19ee, 0x1538, 0x2a99)
-pawntable = create_string_buffer(16384 * pawnEntryType.size)
+PAWN_HASH_SIZE  = 16384
+PAWN_PHASE_KEY  = (0x343d, 0x055d, 0x3d3c, 0x1a1c, 0x28aa, 0x19ee, 0x1538, 0x2a99)
+pawntable = create_string_buffer(PAWN_HASH_SIZE * pawnEntryType.size)
     
+def clearPawnTable():
+        memset(pawntable, 0, PAWN_HASH_SIZE * pawnEntryType.size)
+
 def probePawns (board, phase):
-    index = (board.pawnhash % 16384) ^ pawnPhaseKey[phase-1]
+    index = (board.pawnhash % PAWN_HASH_SIZE) ^ PAWN_PHASE_KEY[phase-1]
     key, score, passed, weaked = pawnEntryType.unpack_from(pawntable, index * pawnEntryType.size)
     if key == (board.pawnhash >> 14) & 0xffff:
         return score, passed, weaked
     return None
 
 def recordPawns (board, phase, score, passed, weaked):
-    index = (board.pawnhash % 16384) ^ pawnPhaseKey[phase-1]
+    index = (board.pawnhash % PAWN_HASH_SIZE) ^ PAWN_PHASE_KEY[phase-1]
     key = (board.pawnhash >> 14) & 0xffff
     pawnEntryType.pack_into(pawntable, index * pawnEntryType.size, key, score, passed, weaked)
 
