@@ -45,7 +45,7 @@ class CECPTests(EmittingTestCase):
     
     def _setupengine(self, mode):
         engine = DummyCECPAnalyzerEngine()
-        analyzer = CECPEngine(engine, WHITE, 2)
+        analyzer = CECPEngine(engine, WHITE, 2, 0)
         def optionsCallback (engine):
             analyzer.setOptionAnalyzing(mode)
         analyzer.connect("readyForOptions", optionsCallback)
@@ -73,14 +73,14 @@ class CECPTests(EmittingTestCase):
         
         self._testLine(self.engineA, self.analyzerA, board,
                        "1. Mat1 0 1     Bxb7#",
-                       ['Bxb7#'], MATE_VALUE-1)
+                       ['Bxb7#'], MATE_VALUE)
         
         # Notice, in the opposite situation there is no forced mate. Black can
         # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
         # recognizing this.
         self._testLine(self.engineI, self.analyzerI, board.switchColor(),
                        "10. -Mat 2 35 64989837     Bd4 Bxb7#",
-                       ['Bd4','Bxb7#'], -MATE_VALUE+2)
+                       ['Bd4','Bxb7#'], -MATE_VALUE)
     
     def test2(self):
         """ Test analyzing in promotion situations """
