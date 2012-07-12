@@ -20,7 +20,7 @@ if uselp:
 
 
 #===============================================================================
-# clearBit returns a bitboard with the ith bit set
+# setBit returns a bitboard with the ith bit set
 #===============================================================================
 
 def setBit (bitboard, i):
