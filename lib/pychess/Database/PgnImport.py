@@ -6,6 +6,8 @@ import zipfile
 from datetime import date
 from array import array
 
+from profilehooks import profile
+
 from sqlalchemy import select, Index, func, and_
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
@@ -117,6 +119,7 @@ class PgnImport():
 
         return next_id
 
+    @profile
     def do_import(self, filename):
         print filename
         # collect new names not in they dict yet
@@ -341,3 +344,48 @@ class PgnImport():
                 trans.rollback()
                 raise
 
+    def print_db(self):
+        a1 = event.alias()
+        a2 = site.alias()
+        a3 = player.alias()
+        a4 = player.alias()
+
+        s = select([game.c.id, a1.c.name.label('event'), a2.c.name.label('site'), a3.c.name.label('white'), a4.c.name.label('black'),
+                    game.c.date_year, game.c.date_month, game.c.date_day, game.c.eco,
+                    game.c.result, game.c.white_elo, game.c.black_elo],
+                    and_(
+                    game.c.event_id==a1.c.id,
+                    game.c.site_id==a2.c.id,
+                    game.c.white_id==a3.c.id,
+                    game.c.black_id==a4.c.id)).where(and_(a3.c.name.startswith(u"Réti"), a4.c.name.startswith(u"Van Nüss")))
+                     
+        result = self.conn.execute(s)
+        games = result.fetchall()
+        for g in games:
+            print "%s %s %s %s %s %s %s %s %s %s %s %s" % (g['id'], g['event'], g['site'], g['white'], g['black'],
+                g[5], g[6], g[7], g['eco'], reprResult[g['result']], g['white_elo'], g['black_elo'])
+
+
+if __name__ == "__main__":
+    if 1:
+        metadata.drop_all(engine)
+        metadata.create_all(engine)
+
+    imp = PgnImport()
+    
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        if arg[-4:].lower() == ".pgn":
+            if os.path.isfile(arg):
+                imp.do_import(arg)
+        elif os.path.exists(arg):
+            for file in os.listdir(arg):
+                if file[-4:].lower() == ".pgn":
+                    imp.do_import(os.path.join(arg, file))
+    else:
+        path = os.path.abspath(os.path.dirname(__file__))
+        imp.do_import(os.path.join('../../../testing/gamefiles', "annotated.pgn"))
+        imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
+        imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
+        
+    imp.print_db()
