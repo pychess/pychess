@@ -41,6 +41,53 @@ def genCastles (board):
             move = generateOne (BLACK, 0, C8, D8) 
             if move: yield move
 
+def genPieceMoves(board, piece, tcord):
+    """"
+    Used by parseSAN only to accelerate it a bit
+    """
+    
+    friends = board.friends[board.color]
+    notfriends = ~friends
+    if piece == KNIGHT:
+        knights = board.boards[board.color][KNIGHT]
+        knightMoves = moveArray[KNIGHT]
+        for fcord in iterBits(knights):
+            if tcord in iterBits(knightMoves[fcord] & notfriends):
+                yield newMove(fcord, tcord)
+
+    elif piece == BISHOP:
+        blocker = board.blocker
+        bishops = board.boards[board.color][BISHOP]
+        for fcord in iterBits(bishops):
+            attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                          attack135[fcord][ray135[fcord] & blocker]
+            if tcord in iterBits(attackBoard & notfriends):
+                yield newMove(fcord, tcord)
+
+    elif piece == ROOK:
+        blocker = board.blocker
+        rooks = board.boards[board.color][ROOK]
+        for fcord in iterBits(rooks):
+            attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
+                          attack90[fcord][ray90[fcord] & blocker]
+            if tcord in iterBits(attackBoard & notfriends):
+                yield newMove(fcord, tcord)
+
+    elif piece == QUEEN:
+        blocker = board.blocker
+        queens = board.boards[board.color][QUEEN]
+        for fcord in iterBits(queens):
+            attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                          attack135[fcord][ray135[fcord] & blocker]
+            if tcord in iterBits(attackBoard & notfriends):
+                yield newMove(fcord, tcord)
+
+        for fcord in iterBits(queens):
+            attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
+                          attack90[fcord][ray90[fcord] & blocker]
+            if tcord in iterBits(attackBoard & notfriends):
+                yield newMove(fcord, tcord)
+
 def genAllMoves (board):
     
     blocker = board.blocker
