@@ -535,16 +535,6 @@ class PGNFile (ChessFile):
 
                     board = boards[-1].move(move)
 
-                    # TODO: is this realy belongs here?
-                    ply = boards[-1].ply
-                    if ply % 2 == 0:
-                        mvcount = "%d." % (ply/2+1)
-                    elif prev_group != FULL_MOVE:
-                        mvcount = "%d..." % (ply/2+1)
-                    else:
-                        mvcount = ""        
-                    board.movecount = mvcount
-
                     if m.group(MOVE_COMMENT):
                         board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
 
