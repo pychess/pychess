@@ -247,15 +247,6 @@ class Database(PGNFile):
 
                     move = Move(elem)
                     board = boards[-1].move(move)
-                    
-                    ply = boards[-1].ply
-                    if ply % 2 == 0:
-                        mvcount = "%d." % (ply/2+1)
-                    elif prev_elem < 0:
-                        mvcount = "%d..." % (ply/2+1)
-                    else:
-                        mvcount = ""        
-                    board.movecount = mvcount
 
                     if last_board:
                         board.prev = last_board
