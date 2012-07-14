@@ -325,7 +325,8 @@ class Sidepanel(gtk.TextView):
         new_line = False
 
         fan = conf.get("figuresInNotation", False)
-        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
+        if self.boardview.shown >= self.gamemodel.lowply:
+            shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
         
         while True: 
             start = end_iter().get_offset()
