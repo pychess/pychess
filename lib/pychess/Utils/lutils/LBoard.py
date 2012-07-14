@@ -189,11 +189,11 @@ class LBoard:
                     self.ini_kings[WHITE] = self.kings[WHITE]
                 elif char == "k":
                     castling |= B_OO
-                    self.ini_rooks[1][1] = rank8.rfind('r')
+                    self.ini_rooks[1][1] = rank8.rfind('r') + 56
                     self.ini_kings[BLACK] = self.kings[BLACK]
                 elif char == "q":
                     castling |= B_OOO
-                    self.ini_rooks[1][0] = rank8.find('r')
+                    self.ini_rooks[1][0] = rank8.find('r') + 56
                     self.ini_kings[BLACK] = self.kings[BLACK]
             else:
                 if char == "K":
