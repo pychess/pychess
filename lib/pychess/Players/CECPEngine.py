@@ -4,7 +4,6 @@ import itertools
 import re
 import time
 
-from pychess.Savers.pgn import movre as movere
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move
@@ -31,6 +30,22 @@ def isdigits (strings):
             if not s.isdigit():
                 return False
     return True
+
+movere = re.compile(r"""
+    (                   # group start
+    (?:                 # non grouping parenthesis start
+    [KQRBN]?            # piece
+    [a-h]?[1-8]?        # unambiguous column or line
+    x?                  # capture
+    [a-h][1-8]          # destination square
+    =?[QRBN]?           # promotion
+    |O\-O(?:\-O)?       # castling
+    |0\-0(?:\-0)?       # castling
+    )                   # non grouping parenthesis end
+    [+#]?               # check/mate
+    )                   # group end
+    \s*                 # any whitespace
+    """, re.VERBOSE)
 
 d_plus_dot_expr = re.compile(r"\d+\.")
 

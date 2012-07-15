@@ -190,9 +190,9 @@ class Database(PGNFile):
         arr.fromstring(result[0])
         return arr
 
-    def loadToModel (self, gameno, position=-1, model=None, quick_parse=True):
+    def loadToModel (self, gameno, position=-1, model=None):
         self.comment_idx = 0
-        model = PGNFile.loadToModel (self, gameno, position=position, model=model, quick_parse=quick_parse)
+        model = PGNFile.loadToModel (self, gameno, position=position, model=model)
         model.game_id = self.games[gameno]["Id"]
         return model
 

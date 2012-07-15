@@ -197,7 +197,7 @@ class GameList(gtk.TreeView):
         wp, bp = self.chessfile.get_player_names(gameno)
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)
-        self.chessfile.loadToModel(gameno, -1, gamemodel, False)
+        self.chessfile.loadToModel(gameno, -1, gamemodel)
 
         gamemodel.status = WAITING_TO_START
         ionest.generalStart(gamemodel, p0, p1)

@@ -153,7 +153,7 @@ class PgnImport():
                     movelist = array("H")
                     comments = []
                     try:
-                        model = cf.loadToModel(i, quick_parse=False)
+                        model = cf.loadToModel(i)
                     except LoadingError, e:
                         print e
                         continue
