@@ -75,6 +75,10 @@ class LBoard:
             self.ini_kings = [E1, E8]
             self.ini_rooks = [[A1, H1], [A8, H8]]
     
+    @property
+    def lastMove (self):
+        return self.history[-1][0]
+
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
             If the string is not properly

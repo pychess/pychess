@@ -560,7 +560,7 @@ class Sidepanel(gtk.TextView):
         self.update_selected_node()
 
     def __movestr(self, node, fan):
-        move = Move(node.board.history[-1][0])
+        move = Move(node.board.lastMove)
         if fan:
             movestr = toFAN(node.prev, move)
         else:
