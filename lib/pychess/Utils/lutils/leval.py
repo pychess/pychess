@@ -25,12 +25,12 @@ def evaluateComplete (board, color):
     s += evalKing (board, color, phase)          - evalKing (board, 1-color, phase)
     s += evalKingTropism (board, color, phase)   - evalKingTropism (board, 1-color, phase)
     s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
+    s += evalDev (board, color, phase)           -  evalDev (board, 1-color, phase)
     pawnScore, passed, weaked = cacheablePawnInfo (board, phase)
     s += pawnScore if color == WHITE else -pawnScore
     s += evalPawnStructure (board, color, phase, passed, weaked) - evalPawnStructure (board, 1-color, phase, passed, weaked)
     
     s += evalTrappedBishops (board, color)
-    s += evalDev (board, color, phase)
     s += randomval
     
     return s
@@ -432,23 +432,23 @@ def evalDev (board, color, phase):
     
     score = 0
     
-    if not board.hasCastled[WHITE]:
+    if not board.hasCastled[color]:
     
-        wboards = board.boards[WHITE]
-        pawns = wboards[PAWN]
+        boards = board.boards[color]
+        pawns = boards[PAWN]
         
         # We don't encourage castling, but it should always be possible
-        if not board.castling & W_OOO:
+        if not board.castling & CAS_FLAGS[color][0]:
             score -= 40
-        if not board.castling & W_OO:
+        if not board.castling & CAS_FLAGS[color][1]:
             score -= 50
         
         # Should keep queen home
-        cord = firstBit(wboards[QUEEN])
-        if cord != D1: score -= 30
+        cord = firstBit(boards[QUEEN])
+        if cord != D1 + 56*color: score -= 30
         
-        qpawns = max(qwwingpawns1 & pawns, qwwingpawns2 & pawns) 
-        kpawns = max(kwwingpawns1 & pawns, kwwingpawns2 & pawns) 
+        qpawns = max(qwingpawns1[color] & pawns, qwingpawns2[color] & pawns) 
+        kpawns = max(kwingpawns1[color] & pawns, kwingpawns2[color] & pawns) 
         
         if qpawns != 2 and kpawns != 2:
             # Structure destroyed in both sides
@@ -456,32 +456,6 @@ def evalDev (board, color, phase):
         else:
             # Discourage any wing pawn moves
             score += (qpawns+kpawns) *6
-    
-    if not board.hasCastled[BLACK]:
-        
-        bboards = board.boards[BLACK]
-        pawns = bboards[PAWN]
-        
-        if not board.castling & B_OOO:
-            score += 40
-        if not board.castling & B_OO:
-            score += 50
-        
-        cord = firstBit(bboards[QUEEN])
-        if cord != D8: score += 30
-        
-        qpawns = max(qbwingpawns1 & pawns, qbwingpawns2 & pawns) 
-        kpawns = max(kbwingpawns1 & pawns, kbwingpawns2 & pawns) 
-        
-        if qpawns != 2 and kpawns != 2:
-            # Structure destroyed in both sides
-            score += 35
-        else:
-            # Discourage any wing pawn moves
-            score -= (qpawns+kpawns) *6
-    
-    if color == BLACK:
-        score = -score
     
     return score
 
