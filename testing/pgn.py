@@ -3,18 +3,18 @@ import unittest
 
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Savers.pgn import load, walk, movre
+from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.Utils.const import *
 
 
 class PgnTestCase(unittest.TestCase):
     def test_movre(self):
-        """Testing movre regexp"""
+        """Testing SAN pattern regexp"""
         moves = "e4 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# "+ \
                 "0-0-0 O-O-O 0-0 O-O Ka1 Kxf8 Kxd4+ "+ \
                 "Qc3 Rxh8 B1xg7 Nhxg2 Qe4xd5 Rb7+ Bxg4# N8xb2+ Qaxb7# Qd5xe4+"
-        
-        self.assertEqual(' '.join(movre.findall(moves)), ' '.join(moves.split()))
+        matches = [m[MOVE-1] for m in pattern.findall(moves)] 
+        self.assertEqual(' '.join(matches), ' '.join(moves.split()))
 
 def create_test(lines, result, gameno):
     def test_expected(self):
@@ -41,7 +41,8 @@ def create_test(lines, result, gameno):
 PgnFile = load(open('gamefiles/world_matches.pgn'))
 for i, game in enumerate(PgnFile.games):
     print "%s/%s" % (i+1, len(PgnFile.games))
-    model = PgnFile.loadToModel(i, quick_parse=False)
+
+    model = PgnFile.loadToModel(i)
     result = []
     walk(model.boards[0], result)
     result = " ".join(result)
