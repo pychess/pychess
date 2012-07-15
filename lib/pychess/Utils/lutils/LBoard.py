@@ -43,6 +43,7 @@ class LBoard:
         self.castling = 0
         self.hasCastled = [False, False]
         self.fifty = 0
+        self.plyCount = 0
         
         self.checked = None
         self.opchecked = None
@@ -221,7 +222,8 @@ class LBoard:
         
         movenumber = int(moveNoChr)*2 -2
         if self.color == BLACK: movenumber += 1
-        self.history = [None]*movenumber
+        self.history = []
+        self.plyCount = movenumber
     
     def isChecked (self):
         if self.checked == None:
@@ -378,6 +380,7 @@ class LBoard:
         self.setCastling(castling)
 
         self.setColor(opcolor)
+        self.plyCount += 1
     
     def popMove (self):
         # Note that we remove the last made move, which was not made by boards
@@ -436,6 +439,7 @@ class LBoard:
         self.castling = castling
         self.hash = hash
         self.fifty = fifty
+        self.plyCount -= 1
         
     def __hash__ (self):
         return self.hash
@@ -524,7 +528,7 @@ class LBoard:
         fenstr.append(str(self.fifty))
         fenstr.append(" ")
         
-        fullmove = (len(self.history))/2 + 1
+        fullmove = (self.plyCount)/2 + 1
         fenstr.append(str(fullmove))
         
         return "".join(fenstr)
@@ -542,6 +546,7 @@ class LBoard:
         copy.castling = self.castling
         copy.hasCastled = self.hasCastled[:]
         copy.fifty = self.fifty
+        copy.plyCount = self.plyCount
         
         copy.checked = self.checked
         copy.opchecked = self.opchecked

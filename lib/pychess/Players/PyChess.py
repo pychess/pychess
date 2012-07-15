@@ -49,7 +49,7 @@ class PyChess:
     
     def __remainingMovesA (self):
         # Based on regression of a 180k games pgn
-        x = len(self.board.history)
+        x = self.board.plyCount
         return -1.71086e-12*x**6 \
                +1.69103e-9*x**5 \
                -6.00801e-7*x**4 \
@@ -60,7 +60,7 @@ class PyChess:
     
     def __remainingMovesB (self):
         # We bet a game will be around 80 moves
-        x = len(self.board.history)
+        x = self.board.plyCount
         return max(80-x,4)
     
     def __getBestOpening (self):
