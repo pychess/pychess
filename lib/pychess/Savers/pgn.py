@@ -240,7 +240,10 @@ def load (file):
             if not files:
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
-                files.append(["",""])
+                if line[0].isdigit():
+                    files.append(["",""])
+                else:
+                    continue
             files[-1][1] += line.decode('latin_1')
                 
     return PGNFile (files)
@@ -518,20 +521,18 @@ class PGNFile (ChessFile):
                     try:
                         move = Move(parseSAN(boards[-1].board, mstr))
                     except ParsingError, e:
-                        if mstr == "--":
-                            print "Ignoring rest of the variation after non standard '--' null move..."
-                            break
-                        else:
-                            notation, reason, boardfen = e.args
-                            ply = boards[-1].ply
-                            if ply % 2 == 0:
-                                moveno = "%d." % (ply/2+1)
-                            else: moveno = "%d..." % (ply/2+1)
-                            errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
-                                        'moveno': moveno, 'notation': notation}
-                            errstr2 = _("The move failed because %s.") % reason
-                            self.error = LoadingError (errstr1, errstr2)
-                            break
+                        # TODO: save the rest as comment
+                        # last_board.children.append(string[m.start():])
+                        notation, reason, boardfen = e.args
+                        ply = boards[-1].ply
+                        if ply % 2 == 0:
+                            moveno = "%d." % (ply/2+1)
+                        else: moveno = "%d..." % (ply/2+1)
+                        errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                                    'moveno': moveno, 'notation': notation}
+                        errstr2 = _("The move failed because %s.") % reason
+                        self.error = LoadingError (errstr1, errstr2)
+                        break
 
                     board = boards[-1].move(move)
 

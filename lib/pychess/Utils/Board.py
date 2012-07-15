@@ -77,7 +77,7 @@ class Board:
         
         moved.append( (self[cord0], cord0) )
         
-        if self[cord1]:
+        if self[cord1] and move.flag != NULL_MOVE:
             dead.append( self[cord1] )
         
         if move.flag == QUEEN_CASTLE:
@@ -114,7 +114,7 @@ class Board:
         
         moved.append( (self[cord1], cord1) )
         
-        if board1[cord1]:
+        if board1[cord1] and move.flag != NULL_MOVE:
             dead.append( board1[cord1] )
         
         if move.flag == QUEEN_CASTLE:
@@ -153,7 +153,8 @@ class Board:
         flag = FLAG(move.move)
         
         newBoard[cord1] = newBoard[cord0]
-        newBoard[cord0] = None
+        if flag != NULL_MOVE:
+            newBoard[cord0] = None
         
         if self.color == WHITE:
             if flag == QUEEN_CASTLE:
