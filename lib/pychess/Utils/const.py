@@ -124,7 +124,7 @@ chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
 ################################################################################
 
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION = range(8)
+KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, NULL_MOVE = range(9)
 
 PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
 # Algebraic notation types: Short, Long, Figure and Simpe

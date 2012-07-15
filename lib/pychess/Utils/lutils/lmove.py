@@ -30,7 +30,7 @@ for i in range(64):
 
 shiftedFlags = []
 for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION:
+            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, NULL_MOVE:
     shiftedFlags.append(i << 12)
 
 def newMove (fromcord, tocord, flag=NORMAL_MOVE):
@@ -156,6 +156,9 @@ def toSAN (board, move, localRepr=False):
     
     flag = move >> 12
     
+    if flag == NULL_MOVE:
+        return "--"
+    
     if flag == KING_CASTLE:
         return "O-O%s" % check_or_mate()
     elif flag == QUEEN_CASTLE:
@@ -237,6 +240,12 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move is too short"), board.asFen())
     
     notat = san
+    
+    if notat == "--":
+        if board.color == WHITE:
+            return newMove(board.kings[WHITE], board.kings[WHITE], NULL_MOVE)
+        else:
+            return newMove(board.kings[BLACK], board.kings[BLACK], NULL_MOVE)
 
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]

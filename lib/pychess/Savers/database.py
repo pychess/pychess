@@ -8,6 +8,7 @@ from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import Move
+from pychess.Utils.lutils.lmove import newMove
 from pychess.Utils.const import *
 from pychess.Database.model import engine, metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
@@ -16,11 +17,12 @@ __label__ = _("PyChess database")
 __endings__ = "pdb",
 __append__ = True
 
-COMMENT, VARI_START, VARI_END, NAG = -1, -2, -3, -4
+MAXMOVE = newMove(63, 63, NULL_MOVE)
+COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]
 
 
 def save (file, model):
-    movelist = array("h")
+    movelist = array("H")
     comments = []
     walk(model.boards[0], movelist, comments)
 
@@ -122,7 +124,7 @@ def walk(node, arr, txt):
 
         for nag in node.nags:
             if nag:
-                arr.append(NAG-(int(nag[1:])+1))
+                arr.append(NAG + int(nag[1:]))
 
         for child in node.children:
             if isinstance(child, basestring):
@@ -184,7 +186,7 @@ class Database(PGNFile):
         conn = engine.connect()
         result = conn.execute(s).first()
         self.comments = result[1].split("|")
-        arr = array("h")
+        arr = array("H")
         arr.fromstring(result[0])
         return arr
 
@@ -220,7 +222,7 @@ class Database(PGNFile):
 
         error = None
         parenthesis = 0
-        v_array = array("h")
+        v_array = array("H")
         prev_elem = -9999
         for i, elem in enumerate(movetext):
             if parenthesis > 0:
@@ -230,7 +232,7 @@ class Database(PGNFile):
                 parenthesis -= 1
                 if parenthesis == 0:
                     v_last_board.children.append(self.parse_string(v_array[:-1], model, board.prev, position, variation=True))
-                    v_array = array("h")
+                    v_array = array("H")
                     prev_elem = VARI_END
                     continue
 
@@ -240,7 +242,7 @@ class Database(PGNFile):
                     v_last_board = last_board
 
             if parenthesis == 0:
-                if elem > 0:
+                if elem < COMMENT:
                     if not variation:
                         if position != -1 and board.ply >= position:
                             break
@@ -263,14 +265,14 @@ class Database(PGNFile):
                     self.comment_idx += 1
                     last_board.children.append(comment)
 
-                elif elem <= NAG:
+                elif elem > NAG:
                     # NAG
-                    board.nags.append("$%s" % (-(elem-NAG+1)))
+                    board.nags.append("$%s" % (elem-NAG))
 
                 else:
                     print "Unknown element in movelist array:", elem
 
-            if elem > NAG:
+            if elem <= MAXMOVE:
                 prev_elem = elem
 
             if error:

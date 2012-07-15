@@ -189,11 +189,11 @@ class LBoard:
                     self.ini_kings[WHITE] = self.kings[WHITE]
                 elif char == "k":
                     castling |= B_OO
-                    self.ini_rooks[1][1] = rank8.rfind('r')
+                    self.ini_rooks[1][1] = rank8.rfind('r') + 56
                     self.ini_kings[BLACK] = self.kings[BLACK]
                 elif char == "q":
                     castling |= B_OOO
-                    self.ini_rooks[1][0] = rank8.find('r')
+                    self.ini_rooks[1][0] = rank8.find('r') + 56
                     self.ini_kings[BLACK] = self.kings[BLACK]
             else:
                 if char == "K":
@@ -326,6 +326,10 @@ class LBoard:
             (move, tpiece, self.enpassant, self.castling,
             self.hash, self.fifty, self.checked, self.opchecked)
         )
+
+        if flag == NULL_MOVE:
+            self.setColor(opcolor)
+            return move
         
         self.opchecked = None
         self.checked = None
@@ -455,6 +459,11 @@ class LBoard:
         hash, fifty, checked, opchecked = self.history.pop()
         
         flag = move >> 12
+        
+        if flag == NULL_MOVE:
+            self.setColor(color)
+            return
+            
         fcord = (move >> 6) & 63
         tcord = move & 63
         
