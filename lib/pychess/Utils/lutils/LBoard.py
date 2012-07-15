@@ -61,9 +61,6 @@ class LBoard:
         #  castling:   The castling availability in the position               #
         #  hash:       The hash of the position                                #
         #  fifty:      A counter for the fifty moves rule                      #
-        #                                                                      #
-        #  Early entries may be None instead of tuples if the information is   #
-        #  not available (e.g. if the board was loaded from a position).       #
         ########################################################################
         self.history = []
 
