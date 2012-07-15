@@ -427,7 +427,7 @@ def evalDev (board, color, phase):
     
     # If we are castled or beyond the 20th move, no more evalDev
     
-    if len(board.history) >= 38:
+    if board.plyCount >= 38:
         return 0
     
     score = 0
