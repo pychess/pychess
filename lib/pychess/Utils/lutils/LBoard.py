@@ -326,6 +326,10 @@ class LBoard:
             (move, tpiece, self.enpassant, self.castling,
             self.hash, self.fifty, self.checked, self.opchecked)
         )
+
+        if flag == NULL_MOVE:
+            self.setColor(opcolor)
+            return move
         
         self.opchecked = None
         self.checked = None
@@ -455,6 +459,11 @@ class LBoard:
         hash, fifty, checked, opchecked = self.history.pop()
         
         flag = move >> 12
+        
+        if flag == NULL_MOVE:
+            self.setColor(color)
+            return
+            
         fcord = (move >> 6) & 63
         tcord = move & 63
         
