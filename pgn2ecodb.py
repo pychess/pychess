@@ -28,7 +28,7 @@ if __name__ == '__main__':
         old_eco = ""
         ply_max = 0
         for i, game in enumerate(cf.games):
-            model = cf.loadToModel(i, quick_parse=True)
+            model = cf.loadToModel(i)
 
             eco = cf._getTag(i, "ECO")[:3]
             
