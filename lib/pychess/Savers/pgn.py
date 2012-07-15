@@ -122,7 +122,7 @@ def walk(node, result):
 
         store(move_count(node))
 
-        move = Move(node.board.history[-1][0])
+        move = Move(node.board.lastMove)
         store(toSAN(node.prev, move))
 
         for nag in node.nags:
