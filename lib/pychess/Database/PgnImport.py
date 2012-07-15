@@ -119,7 +119,7 @@ class PgnImport():
 
         return next_id
 
-    @profile
+#    @profile
     def do_import(self, filename):
         print filename
         # collect new names not in they dict yet
@@ -149,8 +149,8 @@ class PgnImport():
             trans = self.conn.begin()
             try:
                 for i, game in enumerate(cf.games):
-                    #print i
-                    movelist = array("h")
+                    print i, cf.get_player_names(i)
+                    movelist = array("H")
                     comments = []
                     try:
                         model = cf.loadToModel(i, quick_parse=False)
