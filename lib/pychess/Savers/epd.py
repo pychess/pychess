@@ -71,7 +71,7 @@ def load (file):
 
 class EpdFile (ChessFile):
     
-    def loadToModel (self, gameno, position, model=None, quick_parse=True):
+    def loadToModel (self, gameno, position, model=None):
         if not model: model = GameModel()
         
         fieldlist = self.games[gameno].split(" ")

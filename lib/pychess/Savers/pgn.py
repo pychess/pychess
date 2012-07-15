@@ -170,33 +170,13 @@ def stripBrackets (string):
     result += string[end:]
     return result
 
-
 tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.*?)\"\]")
-comre = re.compile(r"(?:\{.*?\})|(?:;.*?[\n\r])|(?:\$[0-9]+)", re.DOTALL)
-# old regexp used for quick parsing, without comments and variations
-movre = re.compile(r"""
-    (                   # group start
-    (?:                 # non grouping parenthesis start
-    [KQRBN]?            # piece
-    [a-h]?[1-8]?        # unambiguous column or line
-    x?                  # capture
-    [a-h][1-8]          # destination square
-    =?[QRBN]?           # promotion
-    |O\-O(?:\-O)?       # castling
-    |0\-0(?:\-0)?       # castling
-    )                   # non grouping parenthesis end
-    [+#]?               # check/mate
-    )                   # group end
-    [\?!]*              # traditional suffix annotations
-    \s*                 # any whitespace
-    """, re.VERBOSE)
 
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
 VARIATION_START, VARIATION_END, \
 RESULT, FULL_MOVE, MOVE_COUNT, MOVE, MOVE_COMMENT = range(1,11)
 
-# new regexp
 pattern = re.compile(r"""
     (\;.*?[\n\r])        # comment, rest of line style
     |(\{.*?\})           # comment, between {} 
@@ -256,17 +236,7 @@ class PGNFile (ChessFile):
         self.expect = None
         self.tagcache = {}
 
-    def _getMoves (self, gameno):
-        if not self.games:
-            return []
-        moves = comre.sub("", self.games[gameno][1])
-        moves = stripBrackets(moves)
-        moves = movre.findall(moves+" ")
-        if moves and moves[-1] in ("*", "1/2-1/2", "1-0", "0-1"):
-            del moves[-1]
-        return moves
-    
-    def loadToModel (self, gameno, position=-1, model=None, quick_parse=True):
+    def loadToModel (self, gameno, position=-1, model=None):
         if not model:
             model = GameModel()
 
@@ -347,55 +317,30 @@ class PGNFile (ChessFile):
         del model.variations[:]
         
         self.error = None
-        if quick_parse:
-            movstrs = self._getMoves (gameno)
-            for i, mstr in enumerate(movstrs):
-                if position != -1 and model.ply >= position:
-                    break
-                try:
-                    move = parseAny (model.boards[-1], mstr)
-                except ParsingError, e:
-                    notation, reason, boardfen = e.args
-                    ply = model.boards[-1].ply
-                    if ply % 2 == 0:
-                        moveno = "%d." % (i/2+1)
-                    else: moveno = "%d..." % (i/2+1)
-                    errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
-                                'moveno': moveno, 'notation': notation}
-                    errstr2 = _("The move failed because %s.") % reason
-                    self.error = LoadingError (errstr1, errstr2)
-                    break
-                model.moves.append(move)
-                model.boards.append(model.boards[-1].move(move))
-        else:
-            movetext = self.get_movetext(gameno)
-            model.boards = self.parse_string(movetext, model, model.boards[-1], position)
-            
-            def walk(node, path):
-                if node.next is None:
-                    model.variations.append(path+[node])
-                else:
-                    walk(node.next, path+[node])
+        movetext = self.get_movetext(gameno)
+        model.boards = self.parse_string(movetext, model, model.boards[-1], position)
+        
+        def walk(node, path):
+            if node.next is None:
+                model.variations.append(path+[node])
+            else:
+                walk(node.next, path+[node])
 
-                if node.children: 
-                    for child in node.children:
-                        if isinstance(child, list):
-                            if len(child) > 1:
-                                walk(child[1], list(path))
-            
-            # Collect all variation paths into a list of board lists
-            # where the first one will be the boards of mainline game.
-            # model.boards will allways point to the current shown variation
-            # which will be model.variations[0] when we are in the mainline.
-            walk(model.boards[0], [])
+            if node.children: 
+                for child in node.children:
+                    if isinstance(child, list):
+                        if len(child) > 1:
+                            walk(child[1], list(path))
+        
+        # Collect all variation paths into a list of board lists
+        # where the first one will be the boards of mainline game.
+        # model.boards will allways point to the current shown variation
+        # which will be model.variations[0] when we are in the mainline.
+        walk(model.boards[0], [])
 
         if model.timemodel:
-            if quick_parse:
-                blacks = len(movstrs)/2
-                whites = len(movstrs)-blacks
-            else:
-                blacks = len(model.moves)/2
-                whites = len(model.moves)-blacks
+            blacks = len(model.moves)/2
+            whites = len(model.moves)-blacks
 
             model.timemodel.intervals = [
                 [model.timemodel.intervals[0][0]]*(whites+1),
