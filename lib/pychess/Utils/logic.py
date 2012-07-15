@@ -22,12 +22,9 @@ def getDestinationCords (board, cord):
                 tcords.append(Cord(TCORD(move)))
     return tcords
 
-def repetitionCount (board):
-    return ldraw.repetitionCount(board.board)
-
 def isClaimableDraw (board):
     lboard = board.board
-    if ldraw.repetitionCount (lboard) >= 3:
+    if lboard.repetitionCount () >= 3:
         return True
     if ldraw.testFifty (lboard):
         return True
@@ -86,7 +83,7 @@ def getStatus (board):
             else:
                 return DRAW, DRAW_STALEMATE
 
-    if ldraw.repetitionCount (lboard) >= 3:
+    if lboard.repetitionCount () >= 3:
         return DRAW, DRAW_REPITITION
     
     if ldraw.testFifty (lboard):

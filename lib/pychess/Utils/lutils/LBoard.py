@@ -79,6 +79,14 @@ class LBoard:
     def lastMove (self):
         return self.history[-1][0]
 
+    def repetitionCount (self, drawThreshold=3):
+        rc = 1
+        for ply in xrange(4, 1+min(len(self.history), self.fifty), 2):
+            if self.history[-ply][4] == self.hash:
+                rc += 1
+                if rc >= drawThreshold: break
+        return rc
+
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
             If the string is not properly
