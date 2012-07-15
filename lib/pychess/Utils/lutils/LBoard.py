@@ -20,7 +20,6 @@ STRICT_FEN = False
 # Final positions of castled kings and rooks
 fin_kings = ((C1,G1),(C8,G8))
 fin_rooks = ((D1,F1),(D8,F8))
-cas_flags = ((W_OOO,W_OO),(B_OOO,B_OO))
 
 ################################################################################
 # LBoard                                                                       #
@@ -364,18 +363,18 @@ class LBoard:
         # Clear castle flags
         castling = self.castling
         if fpiece == KING:
-            castling &= ~cas_flags[color][0]
-            castling &= ~cas_flags[color][1]
+            castling &= ~CAS_FLAGS[color][0]
+            castling &= ~CAS_FLAGS[color][1]
         elif fpiece == ROOK:
             if fcord == self.ini_rooks[color][0]:
-                castling &= ~cas_flags[color][0]
+                castling &= ~CAS_FLAGS[color][0]
             elif fcord == self.ini_rooks[color][1]:
-                castling &= ~cas_flags[color][1]
+                castling &= ~CAS_FLAGS[color][1]
         if tpiece == ROOK:
             if tcord == self.ini_rooks[opcolor][0]:
-                castling &= ~cas_flags[opcolor][0]
+                castling &= ~CAS_FLAGS[opcolor][0]
             elif tcord == self.ini_rooks[opcolor][1]:
-                castling &= ~cas_flags[opcolor][1]
+                castling &= ~CAS_FLAGS[opcolor][1]
         self.setCastling(castling)
 
         self.setColor(opcolor)

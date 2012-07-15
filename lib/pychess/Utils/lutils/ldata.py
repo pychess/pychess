@@ -240,23 +240,10 @@ stonewall[BLACK] = createBoard(0x81400000000)
 # - # - - - - # -
 # # # - - - - # #
 # - - - - - - - -
-qwwingpawns1 = bitPosArray[A2] | bitPosArray[B2]
-qwwingpawns2 = bitPosArray[A2] | bitPosArray[B3]
-kwwingpawns1 = bitPosArray[G2] | bitPosArray[H2]
-kwwingpawns2 = bitPosArray[G3] | bitPosArray[H2]
-
-# - - - - - - - -
-# # # - - - - # #
-# - # - - - - # -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-qbwingpawns1 = bitPosArray[A7] | bitPosArray[B7]
-qbwingpawns2 = bitPosArray[A7] | bitPosArray[B6]
-kbwingpawns1 = bitPosArray[G7] | bitPosArray[H7]
-kbwingpawns2 = bitPosArray[G6] | bitPosArray[H7]
+qwingpawns1 = ( bitPosArray[A2] | bitPosArray[B2], bitPosArray[A7] | bitPosArray[B7] )
+qwingpawns2 = ( bitPosArray[A2] | bitPosArray[B3], bitPosArray[A7] | bitPosArray[B6] )
+kwingpawns1 = ( bitPosArray[G2] | bitPosArray[H2], bitPosArray[G7] | bitPosArray[H7] )
+kwingpawns2 = ( bitPosArray[G3] | bitPosArray[H2], bitPosArray[G6] | bitPosArray[H7] )
 
 ################################################################################
 #  Ranks and files                                                             #
