@@ -13,9 +13,10 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
 
 from pychess.Utils.const import *
+from pychess.Utils.Board import Board
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers.pgn import load as pgn_load
-from pychess.Savers.database import walk as database_walk
+from pychess.Savers.pgnbase import pgn_load
+from pychess.Database.util import *
 from pychess.Database.model import engine, metadata, collection, event,\
                             site, player, game, annotator, ini_collection
 
@@ -119,7 +120,7 @@ class PgnImport():
 
         return next_id
 
-#    @profile
+    #@profile
     def do_import(self, filename):
         print filename
         # collect new names not in they dict yet
@@ -149,15 +150,46 @@ class PgnImport():
             trans = self.conn.begin()
             try:
                 for i, game in enumerate(cf.games):
-                    print i, cf.get_player_names(i)
+                    #print i, cf.get_player_names(i)
                     movelist = array("H")
                     comments = []
                     try:
-                        model = cf.loadToModel(i)
+                        fenstr = cf._getTag(i, "FEN")
+                        variant = cf.get_variant(i)
+
+                        # Fixes for some non statndard Chess960 .pgn
+                        if variant==0 and (fenstr is not None) and "Chess960" in cf._getTag(i,"Event"):
+                            cf.tagcache[i]["Variant"] = "Fischerandom"
+                            variant = 1
+                            parts = fenstr.split()
+                            parts[0] = parts[0].replace(".", "/").replace("0", "")
+                            if len(parts) == 1:
+                                parts.append("w")
+                                parts.append("-")
+                                parts.append("-")
+                            fenstr = " ".join(parts)
+                            
+                        if fenstr:
+                            try:
+                                if variant:
+                                    from pychess.Variants.fischerandom import FRCBoard
+                                    boards = [FRCBoard(fenstr)]
+                                else:
+                                    boards = [Board(fenstr)]
+                            except SyntaxError, e:
+                                boards = [Board(FEN_EMPTY)]
+                                raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
+                        else:
+                            boards = [Board(setup=True)]
+
+                        movetext = cf.get_movetext(i)
+                        boards = cf.parse_string(movetext, boards[0], -1)
+
                     except LoadingError, e:
                         print e
                         continue
-                    database_walk(model.boards[0], movelist, comments)
+
+                    walk(boards[0], movelist, comments)
                     
                     if not movelist:
                         if (not comments) and (cf._getTag(i, 'White') is None) and (cf._getTag(i, 'Black') is None):
@@ -373,19 +405,24 @@ if __name__ == "__main__":
 
     imp = PgnImport()
     
+    from timer import Timer
     if len(sys.argv) > 1:
         arg = sys.argv[1]
-        if arg[-4:].lower() == ".pgn":
-            if os.path.isfile(arg):
-                imp.do_import(arg)
-        elif os.path.exists(arg):
-            for file in os.listdir(arg):
-                if file[-4:].lower() == ".pgn":
-                    imp.do_import(os.path.join(arg, file))
+        with Timer() as t:
+            if arg[-4:].lower() in (".pgn", ".zip"):
+                if os.path.isfile(arg):
+                    imp.do_import(arg)
+            elif os.path.exists(arg):
+                for file in sorted(os.listdir(arg)):
+                    if file[-4:].lower() in (".pgn", ".zip"):
+                        imp.do_import(os.path.join(arg, file))
+        print "Elapsed time (secs): %s" % t.elapsed_secs
     else:
         path = os.path.abspath(os.path.dirname(__file__))
-        imp.do_import(os.path.join('../../../testing/gamefiles', "annotated.pgn"))
-        imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
-        imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
-        
+        with Timer() as t:
+            imp.do_import(os.path.join('../../../testing/gamefiles', "annotated.pgn"))
+            imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
+            imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
+        print "Elapsed time (secs): %s" % t.elapsed_secs
+        print "Old: 28.68"
     imp.print_db()
