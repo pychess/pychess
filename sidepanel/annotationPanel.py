@@ -10,7 +10,8 @@ from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import Move, toSAN, toFAN
-from pychess.Savers.pgn import nag2symbol, move_count
+from pychess.Savers.pgn import move_count
+from pychess.Savers.pgnbase import nag2symbol
 
 __title__ = _("Annotation")
 __active__ = True
