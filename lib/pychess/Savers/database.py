@@ -8,17 +8,14 @@ from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import Move
-from pychess.Utils.lutils.lmove import newMove
 from pychess.Utils.const import *
+from pychess.Database.util import *
 from pychess.Database.model import engine, metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
 
 __label__ = _("PyChess database")
 __endings__ = "pdb",
 __append__ = True
-
-MAXMOVE = newMove(63, 63, NULL_MOVE)
-COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]
 
 
 def save (file, model):
@@ -106,43 +103,6 @@ def save (file, model):
         raise
 
 
-def walk(node, arr, txt):
-    while True: 
-        if node is None:
-            break
-        
-        # Initial game or variation comment
-        if node.prev is None:
-            for child in node.children:
-                if isinstance(child, basestring):
-                    arr.append(COMMENT)
-                    txt.append(child)
-            node = node.next
-            continue
-
-        arr.append(node.board.history[-1][0])
-
-        for nag in node.nags:
-            if nag:
-                arr.append(NAG + int(nag[1:]))
-
-        for child in node.children:
-            if isinstance(child, basestring):
-                # comment
-                arr.append(COMMENT)
-                txt.append(child)
-            else:
-                # variations
-                arr.append(VARI_START)
-                walk(child[0], arr, txt)
-                arr.append(VARI_END)
-
-        if node.next:
-            node = node.next
-        else:
-            break
-
-
 def load(file):
     conn = engine.connect()
     
@@ -213,7 +173,7 @@ class Database(PGNFile):
         else:
             return ""
 
-    def parse_string(self, movetext, model, board, position, variation=False):
+    def parse_string(self, movetext, board, position, variation=False):
         boards = []
 
         board = board.clone()
@@ -231,7 +191,7 @@ class Database(PGNFile):
             if elem == VARI_END:
                 parenthesis -= 1
                 if parenthesis == 0:
-                    v_last_board.children.append(self.parse_string(v_array[:-1], model, board.prev, position, variation=True))
+                    v_last_board.children.append(self.parse_string(v_array[:-1], board.prev, position, variation=True))
                     v_array = array("H")
                     prev_elem = VARI_END
                     continue
@@ -257,8 +217,8 @@ class Database(PGNFile):
                     boards.append(board)
                     last_board = board
 
-                    if not variation:
-                        model.moves.append(move)
+                    #if not variation:
+                    #    model.moves.append(move)
 
                 elif elem == COMMENT:
                     comment = self.comments[self.comment_idx]
