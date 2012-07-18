@@ -5,6 +5,7 @@ from datetime import date
 
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Move import toSAN, Move
 from pychess.Utils.const import *
@@ -227,36 +228,39 @@ class PGNFile (PgnBase):
                 parts.append("-")
             fenstr = " ".join(parts)
 
+        if variant:
+            board = LBoard(FISCHERRANDOMCHESS)
+        else:
+            board = LBoard()
+
         if fenstr:
             try:
-                if variant:
-                    from pychess.Variants.fischerandom import FRCBoard
-                    model.variant = FischerRandomChess
-                    model.boards = [FRCBoard(fenstr)]
-                else:
-                    model.boards = [Board(fenstr)]
+                board.applyFen(fenstr)
             except SyntaxError, e:
-                model.boards = [Board(FEN_EMPTY)]
+                board.applyFen(FEN_EMPTY)
                 raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         else:
-            model.boards = [Board(setup=True)]
-            
+            board.applyFen(FEN_START)
+        
+        boards = [board]
+
         del model.moves[:]
         del model.variations[:]
         
         self.error = None
         movetext = self.get_movetext(gameno)
-        model.boards = self.parse_string(movetext, model.boards[-1], position)
+        boards = self.parse_string(movetext, boards[0], position)
         
-        for board in model.boards:
-            if board.board.history and board.board.history[-1] is not None:
-                model.moves.append(Move(board.board.history[-1][0]))
+        for board in boards:
+            if board.history and board.history[-1] is not None:
+                model.moves.append(Move(board.history[-1][0]))
         
         def walk(node, path):
+            board = Board(lboard=node)
             if node.next is None:
-                model.variations.append(path+[node])
+                model.variations.append(path+[board])
             else:
-                walk(node.next, path+[node])
+                walk(node.next, path+[board])
 
             if node.children: 
                 for child in node.children:
@@ -268,7 +272,8 @@ class PGNFile (PgnBase):
         # where the first one will be the boards of mainline game.
         # model.boards will allways point to the current shown variation
         # which will be model.variations[0] when we are in the mainline.
-        walk(model.boards[0], [])
+        walk(boards[0], [])
+        model.boards = model.variations[0]
 
         if model.timemodel:
             blacks = len(model.moves)/2

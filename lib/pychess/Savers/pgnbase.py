@@ -3,7 +3,6 @@
 import re
 
 from pychess.Utils.const import *
-from pychess.Utils.Move import Move
 from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 
@@ -39,11 +38,11 @@ class PgnBase(ChessFile):
 
     def parse_string(self, string, board, position, variation=False):
         boards = []
-
+        
         board = board.clone()
         last_board = board
         boards.append(board)
-
+        
         status = None
         parenthesis = 0
         v_string = ""
@@ -74,7 +73,7 @@ class PgnBase(ChessFile):
 
                     mstr = m.group(MOVE)
                     try:
-                        move = Move(parseSAN(boards[-1].board, mstr))
+                        lmove = parseSAN(boards[-1], mstr)
                     except ParsingError, e:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
@@ -87,9 +86,11 @@ class PgnBase(ChessFile):
                                     'moveno': moveno, 'notation': notation}
                         errstr2 = _("The move failed because %s.") % reason
                         self.error = LoadingError (errstr1, errstr2)
+                        print errstr1, errstr2
                         break
-
-                    board = boards[-1].move(move)
+                    
+                    board = boards[-1].clone()
+                    board.applyMove(lmove)
 
                     if m.group(MOVE_COMMENT):
                         board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))

@@ -13,7 +13,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
 
 from pychess.Utils.const import *
-from pychess.Utils.Board import Board
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.util import *
@@ -150,7 +150,7 @@ class PgnImport():
             trans = self.conn.begin()
             try:
                 for i, game in enumerate(cf.games):
-                    #print i, cf.get_player_names(i)
+                    print i#, cf.get_player_names(i)
                     movelist = array("H")
                     comments = []
                     try:
@@ -168,20 +168,22 @@ class PgnImport():
                                 parts.append("-")
                                 parts.append("-")
                             fenstr = " ".join(parts)
-                            
+                        
+                        if variant:
+                            board = LBoard(FISCHERRANDOMCHESS)
+                        else:
+                            board = LBoard()
+
                         if fenstr:
                             try:
-                                if variant:
-                                    from pychess.Variants.fischerandom import FRCBoard
-                                    boards = [FRCBoard(fenstr)]
-                                else:
-                                    boards = [Board(fenstr)]
+                                board.applyFen(fenstr)
                             except SyntaxError, e:
-                                boards = [Board(FEN_EMPTY)]
+                                board.applyFen(FEN_EMPTY)
                                 raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
                         else:
-                            boards = [Board(setup=True)]
-
+                            board.applyFen(FEN_START)
+                        
+                        boards = [board]
                         movetext = cf.get_movetext(i)
                         boards = cf.parse_string(movetext, boards[0], -1)
 

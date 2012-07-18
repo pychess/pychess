@@ -21,7 +21,7 @@ __append__ = True
 def save (file, model):
     movelist = array("H")
     comments = []
-    walk(model.boards[0], movelist, comments)
+    walk(model.boards[0].board, movelist, comments)
 
     game_event = model.tags["Event"]
     game_site = model.tags["Site"]
@@ -203,12 +203,13 @@ class Database(PGNFile):
 
             if parenthesis == 0:
                 if elem < COMMENT:
+                    # a move
                     if not variation:
                         if position != -1 and board.ply >= position:
                             break
 
-                    move = Move(elem)
-                    board = boards[-1].move(move)
+                    board = boards[-1].clone()
+                    board.applyMove(elem)
 
                     if last_board:
                         board.prev = last_board
