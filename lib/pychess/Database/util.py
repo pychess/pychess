@@ -18,7 +18,8 @@ def walk(node, arr, txt):
             node = node.next
             continue
 
-        arr.append(node.board.history[-1][0])
+#        arr.append(node.board.history[-1][0])
+        arr.append(node.history[-1][0])
 
         for nag in node.nags:
             if nag:
