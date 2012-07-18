@@ -6,8 +6,6 @@ from ldata import *
 from attack import isAttacked
 from bitboard import *
 from PolyglotHash import *
-from threading import RLock
-from copy import deepcopy
 
 ################################################################################
 # FEN                                                                          #
@@ -38,11 +36,11 @@ class LBoard:
         self.kings = [-1]*2
         self.boards = [[createBoard(0)]*7 for i in range(2)]
         
-        self.enpassant = None
+        self.enpassant = None            # cord which can be captured by enpassant or None
         self.color = BLACK
-        self.castling = 0
+        self.castling = 0                # The castling availability in the position
         self.hasCastled = [False, False]
-        self.fifty = 0
+        self.fifty = 0                   # A ply counter for the fifty moves rule
         self.plyCount = 0
         
         self.checked = None
@@ -53,16 +51,15 @@ class LBoard:
         self.hash = 0
         self.pawnhash = 0
         
-        ########################################################################
-        #  The format of history is a list of tuples of the following fields   #
-        #  move:       The move that was applied to get the position           #
-        #  tpiece:     The piece the move captured, == EMPTY for normal moves  #
-        #  enpassant:  cord which can be captured by enpassant or None         #
-        #  castling:   The castling availability in the position               #
-        #  hash:       The hash of the position                                #
-        #  fifty:      A counter for the fifty moves rule                      #
-        ########################################################################
-        self.history = []
+        #  Data from the position's history:
+        self.hist_move = []      # The move that was applied to get the position
+        self.hist_tpiece = []    # The piece the move captured, == EMPTY for normal moves
+        self.hist_enpassant = []
+        self.hist_castling = []
+        self.hist_hash = []
+        self.hist_fifty = []
+        self.hist_checked = []
+        self.hist_opchecked = []
 
         # initial cords of rooks and kings for castling in Chess960
         if self.variant == FISCHERRANDOMCHESS:
@@ -74,12 +71,12 @@ class LBoard:
     
     @property
     def lastMove (self):
-        return self.history[-1][0]
+        return self.hist_move[-1]
 
     def repetitionCount (self, drawThreshold=3):
         rc = 1
-        for ply in xrange(4, 1+min(len(self.history), self.fifty), 2):
-            if self.history[-ply][4] == self.hash:
+        for ply in xrange(4, 1+min(len(self.hist_hash), self.fifty), 2):
+            if self.hist_hash[-ply] == self.hash:
                 rc += 1
                 if rc >= drawThreshold: break
         return rc
@@ -231,7 +228,14 @@ class LBoard:
         
         movenumber = int(moveNoChr)*2 -2
         if self.color == BLACK: movenumber += 1
-        self.history = []
+        self.hist_move = []
+        self.hist_tpiece = []
+        self.hist_enpassant = []
+        self.hist_castling = []
+        self.hist_hash = []
+        self.hist_fifty = []
+        self.hist_checked = []
+        self.hist_opchecked = []
         self.plyCount = movenumber
     
     def isChecked (self):
@@ -322,6 +326,17 @@ class LBoard:
         color = self.color
         opcolor = 1-self.color
         
+        self.hist_move.append(move)
+        self.hist_enpassant.append(self.enpassant)
+        self.hist_castling.append(self.castling)
+        self.hist_hash.append(self.hash)
+        self.hist_fifty.append(self.fifty)
+        self.hist_checked.append(self.checked)
+        self.hist_opchecked.append(self.opchecked)
+        
+        self.opchecked = None
+        self.checked = None
+
         # Castling moves can be represented strangely, so normalize them.
         if flag in (KING_CASTLE, QUEEN_CASTLE):
             side = flag - QUEEN_CASTLE
@@ -331,19 +346,11 @@ class LBoard:
             tcord = fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
             rookt = fin_rooks[color][side]
-        
-        # Update history
-        self.history.append (
-            (move, tpiece, self.enpassant, self.castling,
-            self.hash, self.fifty, self.checked, self.opchecked)
-        )
-        
-        self.opchecked = None
-        self.checked = None
-        
         # Capture
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
+        
+        self.hist_tpiece.append(tpiece)
         
         # Remove moving piece(s), then add them at their destination.
         self._removePiece(fcord, fpiece, color)
@@ -397,9 +404,8 @@ class LBoard:
         color = 1 - self.color
         opcolor = self.color
         
-        # Get information from history
-        move, cpiece, enpassant, castling, \
-        hash, fifty, checked, opchecked = self.history.pop()
+        move = self.hist_move.pop()
+        cpiece = self.hist_tpiece.pop()
         
         flag = move >> 12
         fcord = (move >> 6) & 63
@@ -414,14 +420,12 @@ class LBoard:
             tcord = fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
             rookt = fin_rooks[color][side]
-
-        self._removePiece (tcord, tpiece, color)
-
-        # Put back rook moved by castling
-        if flag in (KING_CASTLE, QUEEN_CASTLE):
+            self._removePiece (tcord, tpiece, color)
             self._removePiece (rookt, ROOK, color)
             self._addPiece (rookf, ROOK, color)
             self.hasCastled[color] = False
+        else:
+            self._removePiece (tcord, tpiece, color)
         
         # Put back captured piece
         if cpiece != EMPTY:
@@ -439,15 +443,14 @@ class LBoard:
         # Put back moved piece
         self._addPiece (fcord, tpiece, color)
         
-        
         self.setColor(color)
         
-        self.checked = checked
-        self.opchecked = opchecked
-        self.enpassant = enpassant
-        self.castling = castling
-        self.hash = hash
-        self.fifty = fifty
+        self.checked = self.hist_checked.pop()
+        self.opchecked = self.hist_opchecked.pop()
+        self.enpassant = self.hist_enpassant.pop()
+        self.castling = self.hist_castling.pop()
+        self.hash = self.hist_hash.pop()
+        self.fifty = self.hist_fifty.pop()
         self.plyCount -= 1
         
     def __hash__ (self):
@@ -549,24 +552,28 @@ class LBoard:
         copy.friends = self.friends[:]
         copy.kings = self.kings[:]
         copy.boards = [self.boards[WHITE][:], self.boards[BLACK][:]]
+        copy.arBoard = self.arBoard[:]
         
-        copy.enpassant = self.enpassant
         copy.color = self.color
-        copy.castling = self.castling
-        copy.hasCastled = self.hasCastled[:]
-        copy.fifty = self.fifty
         copy.plyCount = self.plyCount
-        
+        copy.hasCastled = self.hasCastled[:]
+
+        copy.enpassant = self.enpassant
+        copy.castling = self.castling
+        copy.hash = self.hash
+        copy.pawnhash = self.pawnhash
+        copy.fifty = self.fifty
         copy.checked = self.checked
         copy.opchecked = self.opchecked
         
-        copy.arBoard = self.arBoard[:]
-        
-        copy.hash = self.hash
-        copy.pawnhash = self.pawnhash
-        
-        # We don't need to deepcopy the tuples, as they are imutable
-        copy.history = self.history[:]
+        copy.hist_move = self.hist_move[:]
+        copy.hist_tpiece = self.hist_tpiece[:]
+        copy.hist_enpassant = self.hist_enpassant[:]
+        copy.hist_castling = self.hist_castling[:]
+        copy.hist_hash = self.hist_hash[:]
+        copy.hist_fifty = self.hist_fifty[:]
+        copy.hist_checked = self.hist_checked[:]
+        copy.hist_opchecked = self.hist_opchecked[:]
         
         copy.ini_kings = self.ini_kings[:]
         copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
