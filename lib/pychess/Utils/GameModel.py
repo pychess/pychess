@@ -551,14 +551,14 @@ class GameModel (GObject, PooledThread):
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
-                newBoard.prev = self.boards[-1]
-                if self.ply % 2 == 0:
-                    newBoard.movecount = str((self.ply+1)/2 + 1)+"."
-                else:
-                    newBoard.movecount = ""
+                newBoard.board.prev = self.boards[-1].board
+                #if self.ply % 2 == 0:
+                    #newBoard.movecount = str((self.ply+1)/2 + 1)+"."
+                #else:
+                    #newBoard.movecount = ""
                 
                 self.boards = self.variations[0]
-                self.boards[-1].next = newBoard
+                self.boards[-1].board.next = newBoard.board
                 self.boards.append(newBoard)
                 self.moves.append(move)
 

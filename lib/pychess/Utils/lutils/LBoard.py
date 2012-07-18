@@ -25,9 +25,15 @@ STRICT_FEN = False
 ################################################################################
 
 class LBoard:
-    def __init__ (self, variant):
+    def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
         self._reset()
+
+        self.nags = []
+        # children can contain comments and variations
+        self.children = []
+        self.next = None
+        self.prev = None
     
     def _reset (self):
         """ Set board to empty on Black's turn (which Polyglot-hashes to 0) """
@@ -72,6 +78,10 @@ class LBoard:
         else:
             self.ini_kings = [E1, E8]
             self.ini_rooks = [[A1, H1], [A8, H8]]
+
+    def _get_ply (self):
+        return len(self.history)
+    ply = property(_get_ply)
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.

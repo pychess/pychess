@@ -18,22 +18,20 @@ class Board:
     
     variant = NORMALCHESS
     
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         self.data = [[None]*8 for i in xrange(8)]
-        self.board = LBoard(self.variant)
-
-        self.nags = []
-        # children can contain comments and variations
-        self.children = []
-        self.next = None
-        self.prev = None
+        if lboard is None:
+            self.board = LBoard(self.variant)
+        else:
+            self.board = lboard
+        self.board.pieceBoard = self
         
-        if setup:
+        if setup or lboard is not None:
             if setup == True:
                 self.board.applyFen(FEN_START)
-            else: self.board.applyFen(setup)
+            elif isinstance(setup, basestring):
+                self.board.applyFen(setup)
             
-            arBoard = self.board.arBoard
             wpieces = self.board.boards[WHITE]
             bpieces = self.board.boards[BLACK]
             
@@ -231,6 +229,7 @@ class Board:
         else:
             newBoard = Board()
         newBoard.board = lboard
+        newBoard.board.pieceBoard = self.board.pieceBoard
         
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
