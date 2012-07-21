@@ -121,7 +121,6 @@ class Sidepanel(gtk.TextView):
                 parent = ni["parent"]
                 if event.button == 1:
                     self.boardview.setShownBoard(board.pieceBoard)
-                    print board.pieceBoard.__dict__
                     self.update_selected_node()
                 break
         
