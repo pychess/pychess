@@ -229,7 +229,7 @@ class Board:
         else:
             newBoard = Board()
         newBoard.board = lboard
-        newBoard.board.pieceBoard = self.board.pieceBoard
+        newBoard.board.pieceBoard = newBoard
         
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):
