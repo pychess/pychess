@@ -176,9 +176,10 @@ class Database(PGNFile):
     def parse_string(self, movetext, board, position, variation=False):
         boards = []
 
-        board = board.clone()
         last_board = board
-        boards.append(board)
+        if board.prev is None and not variation:
+            # initial game board
+            boards.append(board)
 
         error = None
         parenthesis = 0
@@ -191,7 +192,7 @@ class Database(PGNFile):
             if elem == VARI_END:
                 parenthesis -= 1
                 if parenthesis == 0:
-                    v_last_board.children.append(self.parse_string(v_array[:-1], board.prev, position, variation=True))
+                    v_last_board.children.append(self.parse_string(v_array[:-1], last_board.prev, position, variation=True))
                     v_array = array("H")
                     prev_elem = VARI_END
                     continue
@@ -205,21 +206,20 @@ class Database(PGNFile):
                 if elem < COMMENT:
                     # a move
                     if not variation:
-                        if position != -1 and board.ply >= position:
+                        if position != -1 and last_board.ply >= position:
                             break
 
-                    board = boards[-1].clone()
-                    board.applyMove(elem)
+                    new_board = last_board.clone()
+                    new_board.applyMove(elem)
 
-                    if last_board:
-                        board.prev = last_board
-                        last_board.next = board
+                    new_board.prev = last_board
+                    
+                    # set last_board next, except starting a new variation
+                    if not (variation and last_board==board):
+                        last_board.next = new_board
 
-                    boards.append(board)
-                    last_board = board
-
-                    #if not variation:
-                    #    model.moves.append(move)
+                    boards.append(new_board)
+                    last_board = new_board
 
                 elif elem == COMMENT:
                     comment = self.comments[self.comment_idx]

@@ -5,6 +5,14 @@ MAXMOVE = newMove(63, 63, NULL_MOVE)
 COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]
 
 def walk(node, arr, txt):
+    """Recurively walks the node tree to collect moves and comments.
+       
+       Arguments:
+       node - list (a tree of lboards created by the pgn parser)
+       arr - array("H") (2 byte unsigned ints representing lmove objects
+                        or COMMENT, VARI_START, VARI_END, NAG+nag)
+       txt - list (comment strings)"""
+        
     while True: 
         if node is None:
             break
@@ -18,7 +26,6 @@ def walk(node, arr, txt):
             node = node.next
             continue
 
-#        arr.append(node.board.history[-1][0])
         arr.append(node.history[-1][0])
 
         for nag in node.nags:

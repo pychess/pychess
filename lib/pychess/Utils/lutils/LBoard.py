@@ -31,9 +31,15 @@ class LBoard:
 
         self.nags = []
         # children can contain comments and variations
+        # variations are lists of lboard objects
         self.children = []
+        
+        # the next and prev lboard objects in the variation list
         self.next = None
         self.prev = None
+        
+        # The high level owner Board (with Piece objects) in gamemodel
+        self.pieceBoard = None
     
     def _reset (self):
         """ Set board to empty on Black's turn (which Polyglot-hashes to 0) """

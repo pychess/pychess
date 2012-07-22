@@ -149,7 +149,7 @@ def move_count(node):
     ply = node.ply
     if ply % 2 == 1:
         mvcount = "%d." % (ply/2+1)
-    elif node.prev.prev is None or node.prev.children:
+    elif node != node.prev.next or node.prev.children:
         mvcount = "%d..." % (ply/2)
     else:
         mvcount = ""        
@@ -249,24 +249,32 @@ class PGNFile (PgnBase):
         
         self.error = None
         movetext = self.get_movetext(gameno)
+        
         boards = self.parse_string(movetext, boards[0], position)
+
+        # The parser built a tree of lboard objects, now we have to
+        # create the high level Board and Move lists...
         
         for board in boards:
             if board.history and board.history[-1] is not None:
                 model.moves.append(Move(board.history[-1][0]))
         
         def walk(node, path):
-            board = Board(lboard=node)
+            if node.prev is None:
+                # initial game board
+                board = Board(setup=node.asFen(), lboard=node)
+            else:
+                move = Move(node.history[-1][0])
+                board = node.prev.pieceBoard.move(move, lboard=node)
+
             if node.next is None:
                 model.variations.append(path+[board])
             else:
                 walk(node.next, path+[board])
 
-            if node.children: 
-                for child in node.children:
-                    if isinstance(child, list):
-                        if len(child) > 1:
-                            walk(child[1], list(path))
+            for child in node.children:
+                if isinstance(child, list):
+                    walk(child[0], list(path))
         
         # Collect all variation paths into a list of board lists
         # where the first one will be the boards of mainline game.
@@ -274,7 +282,7 @@ class PGNFile (PgnBase):
         # which will be model.variations[0] when we are in the mainline.
         walk(boards[0], [])
         model.boards = model.variations[0]
-
+        
         if model.timemodel:
             blacks = len(model.moves)/2
             whites = len(model.moves)-blacks
