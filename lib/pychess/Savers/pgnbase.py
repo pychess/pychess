@@ -37,11 +37,20 @@ class PgnBase(ChessFile):
         self.tagcache = {}
 
     def parse_string(self, string, board, position, variation=False):
+        """Recursive parses a movelist part of one game.
+        
+           Arguments:
+           srting - str (movelist)
+           board - lboard (initial position)
+           position - int (maximum ply to parse)
+           variation- boolean (True if the string is a variation)"""
+        
         boards = []
         
-        board = board.clone()
         last_board = board
-        boards.append(board)
+        if board.prev is None and not variation:
+            # initial game board
+            boards.append(board)
         
         status = None
         parenthesis = 0
@@ -54,8 +63,8 @@ class PgnBase(ChessFile):
 
             if group == VARIATION_END:
                 parenthesis -= 1
-                if parenthesis == 0 and board.prev is not None:
-                    v_last_board.children.append(self.parse_string(v_string[:-1], board.prev, position, variation=True))
+                if parenthesis == 0:
+                    v_last_board.children.append(self.parse_string(v_string[:-1], last_board.prev, position, variation=True))
                     v_string = ""
                     prev_group = VARIATION_END
                     continue
@@ -68,17 +77,17 @@ class PgnBase(ChessFile):
             if parenthesis == 0:
                 if group == FULL_MOVE:
                     if not variation:
-                        if position != -1 and board.ply >= position:
+                        if position != -1 and last_board.ply >= position:
                             break
 
                     mstr = m.group(MOVE)
                     try:
-                        lmove = parseSAN(boards[-1], mstr)
+                        lmove = parseSAN(last_board, mstr)
                     except ParsingError, e:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
                         notation, reason, boardfen = e.args
-                        ply = boards[-1].ply
+                        ply = last_board.ply
                         if ply % 2 == 0:
                             moveno = "%d." % (ply/2+1)
                         else: moveno = "%d..." % (ply/2+1)
@@ -89,18 +98,20 @@ class PgnBase(ChessFile):
                         print errstr1, errstr2
                         break
                     
-                    board = boards[-1].clone()
-                    board.applyMove(lmove)
+                    new_board = last_board.clone()
+                    new_board.applyMove(lmove)
 
                     if m.group(MOVE_COMMENT):
-                        board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
+                        new_board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
 
-                    if last_board:
-                        board.prev = last_board
-                        last_board.next = board
+                    new_board.prev = last_board
+                    
+                    # set last_board next, except starting a new variation
+                    if not (variation and last_board==board):
+                        last_board.next = new_board
 
-                    boards.append(board)
-                    last_board = board
+                    boards.append(new_board)
+                    last_board = new_board
 
                 elif group == COMMENT_REST:
                     last_board.children.append(text[1:])

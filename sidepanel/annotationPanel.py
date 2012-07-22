@@ -139,7 +139,7 @@ class Sidepanel(gtk.TextView):
                         position = index
                         break
 
-                if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].children:
+                if board == self.gamemodel.boards[1].board and not self.gamemodel.boards[0].board.children:
                     menuitem = gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0], 0)
                     menu.append(menuitem)
@@ -199,9 +199,9 @@ class Sidepanel(gtk.TextView):
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
 
-                if board not in self.gamemodel.variations[0]:
+                if board not in [board.board for board in self.gamemodel.variations[0]]:
                     for vari in self.gamemodel.variations[1:]:
-                        if board in vari:
+                        if board in [board.board for board in vari]:
                             menuitem = gtk.MenuItem(_("Remove variation"))
                             menuitem.connect('activate', self.remove_variation, board, parent, vari)
                             menu.append(menuitem)
