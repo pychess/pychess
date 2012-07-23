@@ -11,7 +11,7 @@ from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 
 from pgnbase import PgnBase, pgn_load
 from ChessFile import LoadingError
@@ -264,7 +264,10 @@ class PGNFile (PgnBase):
         def walk(node, path):
             if node.prev is None:
                 # initial game board
-                board = Board(setup=node.asFen(), lboard=node)
+                if variant:
+                    board = FRCBoard(setup=node.asFen(), lboard=node)
+                else:
+                    board = Board(setup=node.asFen(), lboard=node)
             else:
                 move = Move(node.history[-1][0])
                 board = node.prev.pieceBoard.move(move, lboard=node)
