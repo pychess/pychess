@@ -45,7 +45,7 @@ for i, game in enumerate(PgnFile.games):
 
     model = PgnFile.loadToModel(i)
     result = []
-    walk(model.boards[0], result)
+    walk(model.boards[0].board, result)
     result = " ".join(result)
     status = reprResult[model.status]
     
