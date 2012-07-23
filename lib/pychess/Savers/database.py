@@ -2,7 +2,7 @@
 
 from array import array
 
-from sqlalchemy import create_engine, select, insert, func, and_
+from sqlalchemy import select, func, and_
 
 from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
