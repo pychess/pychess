@@ -6,9 +6,8 @@ from sqlalchemy import create_engine, select, insert, func, and_
 
 from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
-from pychess.Utils.Board import Board
-from pychess.Utils.Move import Move
 from pychess.Utils.const import *
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database.util import *
 from pychess.Database.model import engine, metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
@@ -35,7 +34,8 @@ def save (file, model):
     white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
     variant = 1 if issubclass(model.variant, FischerRandomChess) else None
-    fen = model.boards[0].asFen() if model.boards[0].asFen() != FEN_START else None
+    fen = model.boards[0].board.asFen()
+    fen = fen if fen != FEN_START else None
     game_annotator = model.tags.get("Annotator")
     ply_count = model.ply-model.lowply
 
@@ -177,14 +177,16 @@ class Database(PGNFile):
         boards = []
 
         last_board = board
-        if board.prev is None and not variation:
+        if variation:
+            # this board used only to hold initial variation comments
+            boards.append(LBoard(board.variant))
+        else:
             # initial game board
             boards.append(board)
 
         error = None
         parenthesis = 0
         v_array = array("H")
-        prev_elem = -9999
         for i, elem in enumerate(movetext):
             if parenthesis > 0:
                 v_array.append(elem)
@@ -215,7 +217,9 @@ class Database(PGNFile):
                     new_board.prev = last_board
                     
                     # set last_board next, except starting a new variation
-                    if not (variation and last_board==board):
+                    if variation and last_board==board:
+                        boards[0].next = new_board
+                    else:
                         last_board.next = new_board
 
                     boards.append(new_board)
@@ -224,17 +228,18 @@ class Database(PGNFile):
                 elif elem == COMMENT:
                     comment = self.comments[self.comment_idx]
                     self.comment_idx += 1
-                    last_board.children.append(comment)
+                    if variation and last_board==board:
+                        # initial variation comment
+                        boards[0].children.append(comment)
+                    else:
+                        last_board.children.append(comment)
 
                 elif elem > NAG:
                     # NAG
-                    board.nags.append("$%s" % (elem-NAG))
+                    last_board.nags.append("$%s" % (elem-NAG))
 
                 else:
                     print "Unknown element in movelist array:", elem
-
-            if elem <= MAXMOVE:
-                prev_elem = elem
 
             if error:
                 raise error
