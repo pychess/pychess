@@ -27,7 +27,6 @@ from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import png
 from pychess.ic import ICLogon
-from pychess.Database.PgnImport import PgnImport
 from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
 
@@ -367,29 +366,19 @@ class PyChess:
                 newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (no_debug, glock_debug, thread_debug, pgn_import, chess_file):
-    if pgn_import:
-        imp = PgnImport()
-        if chess_file[-4:].lower() in (".pgn", ".zip"):
-            if os.path.isfile(chess_file):
-                imp.do_import(chess_file)
-        elif os.path.exists(chess_file):
-            for file in sorted(os.listdir(chess_file)):
-                if file[-4:].lower() in (".pgn", ".zip"):
-                    imp.do_import(os.path.join(chess_file, file))
-    else:
-        PyChess(chess_file)
-        signal.signal(signal.SIGINT, gtk.main_quit)
-        def cleanup ():
-            SubProcess.finishAllSubprocesses()
-        atexit.register(cleanup)
-        gtk.gdk.threads_init()
-        
-        # Start logging
-        Log.DEBUG = False if no_debug is True else True
-        glock.debug = glock_debug
-        log.debug("Started\n")
-        if thread_debug:
-            start_thread_dump()
-        
-        gtk.main()
+def run (no_debug, glock_debug, thread_debug, chess_file):
+    PyChess(chess_file)
+    signal.signal(signal.SIGINT, gtk.main_quit)
+    def cleanup ():
+        SubProcess.finishAllSubprocesses()
+    atexit.register(cleanup)
+    gtk.gdk.threads_init()
+    
+    # Start logging
+    Log.DEBUG = False if no_debug is True else True
+    glock.debug = glock_debug
+    log.debug("Started\n")
+    if thread_debug:
+        start_thread_dump()
+    
+    gtk.main()
