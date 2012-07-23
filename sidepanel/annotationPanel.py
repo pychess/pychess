@@ -199,9 +199,9 @@ class Sidepanel(gtk.TextView):
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
 
-                if board not in [board.board for board in self.gamemodel.variations[0]]:
+                if board.pieceBoard not in self.gamemodel.variations[0]:
                     for vari in self.gamemodel.variations[1:]:
-                        if board in [board.board for board in vari]:
+                        if board.pieceBoard in vari:
                             menuitem = gtk.MenuItem(_("Remove variation"))
                             menuitem.connect('activate', self.remove_variation, board, parent, vari)
                             menu.append(menuitem)
@@ -297,7 +297,7 @@ class Sidepanel(gtk.TextView):
         self.gamemodel.variations.remove(vari)
 
         for vari in self.gamemodel.variations:
-            if parent in vari:
+            if parent.pieceBoard in vari:
                 self.boardview.variation = self.gamemodel.variations.index(vari)
                 break
 
@@ -529,7 +529,7 @@ class Sidepanel(gtk.TextView):
         start = self.textbuffer.get_start_iter()
         end = self.textbuffer.get_end_iter()
         for ni in reversed(self.nodeIters):
-            if ni["node"] == self.gamemodel.variations[0][-moves]:
+            if ni["node"].pieceBoard == self.gamemodel.variations[0][-moves]:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 break
         self.textbuffer.delete(start, end)
