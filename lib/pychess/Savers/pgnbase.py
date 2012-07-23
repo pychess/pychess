@@ -3,6 +3,7 @@
 import re
 
 from pychess.Utils.const import *
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 
@@ -48,14 +49,16 @@ class PgnBase(ChessFile):
         boards = []
         
         last_board = board
-        if board.prev is None and not variation:
+        if variation:
+            # this board used only to hold initial variation comments
+            boards.append(LBoard(board.variant))
+        else:
             # initial game board
             boards.append(board)
         
         status = None
         parenthesis = 0
         v_string = ""
-        prev_group = -1
         for i, m in enumerate(re.finditer(pattern, string)):
             group, text = m.lastindex, m.group(m.lastindex)
             if parenthesis > 0:
@@ -66,7 +69,6 @@ class PgnBase(ChessFile):
                 if parenthesis == 0:
                     v_last_board.children.append(self.parse_string(v_string[:-1], last_board.prev, position, variation=True))
                     v_string = ""
-                    prev_group = VARIATION_END
                     continue
 
             elif group == VARIATION_START:
@@ -107,9 +109,11 @@ class PgnBase(ChessFile):
                     new_board.prev = last_board
                     
                     # set last_board next, except starting a new variation
-                    if not (variation and last_board==board):
+                    if variation and last_board==board:
+                        boards[0].next = new_board
+                    else:
                         last_board.next = new_board
-
+                        
                     boards.append(new_board)
                     last_board = new_board
 
@@ -120,10 +124,14 @@ class PgnBase(ChessFile):
                     comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
                     comm = comm[1:-1].splitlines()
                     comment = ' '.join([line.strip() for line in comm])
-                    last_board.children.append(comment)
+                    if variation and last_board==board:
+                        # initial variation comment
+                        boards[0].children.append(comment)
+                    else:
+                        last_board.children.append(comment)
 
                 elif group == COMMENT_NAG:
-                    board.nags.append(text)
+                    last_board.nags.append(text)
 
                 elif group == RESULT:
                     if text == "1/2":
@@ -134,9 +142,6 @@ class PgnBase(ChessFile):
 
                 else:
                     print "Unknown:",text
-
-            if group != COMMENT_NAG:
-                prev_group = group
 
         return boards #, status
 

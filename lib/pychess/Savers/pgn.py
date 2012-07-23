@@ -7,7 +7,8 @@ from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.Move import toSAN, Move
+from pychess.Utils.lutils.lmove import toSAN
+from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Variants.fischerandom import FischerRandomChess
@@ -93,7 +94,7 @@ def save (file, model):
     print >> file
 
     result = []
-    walk(model.boards[0], result)
+    walk(model.boards[0].board, result)
             
     result = " ".join(result)
     result = wrap(result, 80)
@@ -123,7 +124,7 @@ def walk(node, result):
 
         store(move_count(node))
 
-        move = Move(node.board.history[-1][0])
+        move = node.history[-1][0]
         store(toSAN(node.prev, move))
 
         for nag in node.nags:
@@ -149,7 +150,8 @@ def move_count(node):
     ply = node.ply
     if ply % 2 == 1:
         mvcount = "%d." % (ply/2+1)
-    elif node != node.prev.next or node.prev.children:
+    elif node.prev.prev is None or node != node.prev.next or node.prev.children:
+        # initial game move, or initial variation move or move after comment
         mvcount = "%d..." % (ply/2)
     else:
         mvcount = ""        
@@ -274,7 +276,7 @@ class PGNFile (PgnBase):
 
             for child in node.children:
                 if isinstance(child, list):
-                    walk(child[0], list(path))
+                    walk(child[1], list(path))
         
         # Collect all variation paths into a list of board lists
         # where the first one will be the boards of mainline game.
