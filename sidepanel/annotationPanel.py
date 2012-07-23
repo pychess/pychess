@@ -519,7 +519,14 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.set_text('')
         self.nodeIters = []
         self.insert_header(self.gamemodel)
-        self.insert_nodes(self.gamemodel.boards[0].board, result=reprResult[self.gamemodel.status])
+
+        status = reprResult[self.gamemodel.status]
+        if status != '*':
+            result = status
+        else:
+            result = self.gamemodel.tags['Result']
+
+        self.insert_nodes(self.gamemodel.boards[0].board, result=result)
 
     def shown_changed(self, boardview, shown):
         self.update_selected_node()
