@@ -122,7 +122,9 @@ def walk(node, result):
             node = node.next
             continue
 
-        store(move_count(node))
+        movecount = move_count(node)
+        if movecount:
+            store(movecount)
 
         move = node.history[-1][0]
         store(toSAN(node.prev, move))
