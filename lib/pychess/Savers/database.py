@@ -22,7 +22,8 @@ MAXMOVE = newMove(63, 63, NULL_MOVE)
 COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]
 
 def walk(node, arr, txt):
-    """Recurively walks the node tree to collect moves and comments.
+    """Prepares a game data for databse.
+       Recursively walks the node tree to collect moves and comments.
        
        Arguments:
        node - list (a tree of lboards created by the pgn parser)

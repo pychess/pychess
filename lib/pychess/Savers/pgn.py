@@ -102,6 +102,14 @@ def save (file, model):
     file.close()
 
 def walk(node, result):
+    """Prepares a game data for .pgn storage.
+       Recursively walks the node tree to collect moves and comments
+       into a resulting movetext string.
+       
+       Arguments:
+       node - list (a tree of lboards created by the pgn parser)
+       result - str (movetext strings)"""
+
     def store(text):
         if len(result) > 1 and result[-1] == "(":
             result[-1] = "(%s" % text
