@@ -16,7 +16,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers.pgnbase import pgn_load
-from pychess.Database.util import *
+from pychess.Savers.database import walk
 from pychess.Database.model import engine, metadata, collection, event,\
                             site, player, game, annotator, ini_collection
 
