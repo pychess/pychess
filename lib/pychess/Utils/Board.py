@@ -18,22 +18,20 @@ class Board:
     
     variant = NORMALCHESS
     
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         self.data = [[None]*8 for i in xrange(8)]
-        self.board = LBoard(self.variant)
-
-        self.nags = []
-        # children can contain comments and variations
-        self.children = []
-        self.next = None
-        self.prev = None
+        if lboard is None:
+            self.board = LBoard(self.variant)
+        else:
+            self.board = lboard
+        self.board.pieceBoard = self
         
         if setup:
             if setup == True:
                 self.board.applyFen(FEN_START)
-            else: self.board.applyFen(setup)
+            elif isinstance(setup, basestring):
+                self.board.applyFen(setup)
             
-            arBoard = self.board.arBoard
             wpieces = self.board.boards[WHITE]
             bpieces = self.board.boards[BLACK]
             
@@ -142,12 +140,18 @@ class Board:
         
         return moved, new, dead
     
-    def move (self, move):
-        
+    def move (self, move, lboard=None):
+        """ Creates a new Board object cloning itself then applying
+            the move.move to the clone Board's lboard.
+            If lboard param was given, it will be used when cloning,
+            and move will not be applyed, just the high level Piece
+            objects will be adjusted.""" 
+
         assert self[move.cord0], "%s %s" % (move, self.asFen())
         
-        newBoard = self.clone()
-        newBoard.board.applyMove (move.move)
+        newBoard = self.clone(lboard=lboard)
+        if lboard is None:
+            newBoard.board.applyMove (move.move)
         
         cord0, cord1 = move.cords
         flag = FLAG(move.move)
@@ -221,9 +225,9 @@ class Board:
     def __setitem__ (self, cord, piece):
         self.data[cord.y][cord.x] = piece
     
-    def clone (self):
-        
-        lboard = self.board.clone()
+    def clone (self, lboard=None):
+        if lboard is None:
+            lboard = self.board.clone()
         
         if self.variant != NORMALCHESS:
             from pychess.Variants import variants
@@ -231,6 +235,7 @@ class Board:
         else:
             newBoard = Board()
         newBoard.board = lboard
+        newBoard.board.pieceBoard = newBoard
         
         for y, row in enumerate(self.data):
             for x, piece in enumerate(row):

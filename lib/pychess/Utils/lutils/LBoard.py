@@ -6,8 +6,6 @@ from ldata import *
 from attack import isAttacked
 from bitboard import *
 from PolyglotHash import *
-from threading import RLock
-from copy import deepcopy
 
 # 50 moves rule is not hashed, as it is so rarly used and would greatly damage
 # our transposition table.
@@ -25,10 +23,25 @@ STRICT_FEN = False
 ################################################################################
 
 class LBoard:
-    def __init__ (self, variant):
+    ini_kings = (E1, E8)
+    ini_rooks = ((A1, H1), (A8, H8))
+
+    def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
         self._reset()
-    
+
+        self.nags = []
+        # children can contain comments and variations
+        # variations are lists of lboard objects
+        self.children = []
+        
+        # the next and prev lboard objects in the variation list
+        self.next = None
+        self.prev = None
+        
+        # The high level owner Board (with Piece objects) in gamemodel
+        self.pieceBoard = None
+
     def _reset (self):
         """ Set board to empty on Black's turn (which Polyglot-hashes to 0) """
         self.blocker = createBoard(0)
@@ -69,9 +82,10 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
-        else:
-            self.ini_kings = [E1, E8]
-            self.ini_rooks = [[A1, H1], [A8, H8]]
+
+    def _get_ply (self):
+        return len(self.history)
+    ply = property(_get_ply)
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -671,6 +685,7 @@ class LBoard:
         # We don't need to deepcopy the tuples, as they are imutable
         copy.history = self.history[:]
         
-        copy.ini_kings = self.ini_kings[:]
-        copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
+        if self.variant == FISCHERRANDOMCHESS:
+            copy.ini_kings = self.ini_kings[:]
+            copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
         return copy

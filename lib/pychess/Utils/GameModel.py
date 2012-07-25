@@ -551,14 +551,10 @@ class GameModel (GObject, PooledThread):
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
-                newBoard.prev = self.boards[-1]
-                if self.ply % 2 == 0:
-                    newBoard.movecount = str((self.ply+1)/2 + 1)+"."
-                else:
-                    newBoard.movecount = ""
+                newBoard.board.prev = self.boards[-1].board
                 
                 self.boards = self.variations[0]
-                self.boards[-1].next = newBoard
+                self.boards[-1].board.next = newBoard.board
                 self.boards.append(newBoard)
                 self.moves.append(move)
 
@@ -722,7 +718,7 @@ class GameModel (GObject, PooledThread):
             self.boards = self.variations[0]
             del self.boards[-moves:]
             del self.moves[-moves:]
-            self.boards[-1].next = None
+            self.boards[-1].board.next = None
             
             for player in self.players:
                 player.playerUndoMoves(moves, self)
@@ -753,23 +749,29 @@ class GameModel (GObject, PooledThread):
     def add_variation(self, board, moves):
         board0 = board
         board = board0.clone()
-        board.prev = None
-
+        board.board.prev = None
+        
         variation = [board]
+        
         for move in moves:
             new = board.move(move)
-            board.next = new
-            new.prev = board
+            if len(variation) == 1:
+                new.board.prev = board0.board
+                variation[0].board.next = new.board
+            else:
+                new.board.prev = board.board
+                board.board.next = new.board
             variation.append(new)
             board = new
-        board0.next.children.append(variation)
         
+        board0.board.next.children.append([board.board for board in variation])
+
         head = None
         for vari in self.variations:
             if board0 in vari:
                 head = vari
                 break
-
+        
         self.variations.append(head[:board0.ply] + variation)
         self.needsSave = True
         self.emit("variations_changed")

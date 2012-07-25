@@ -3,7 +3,8 @@ import unittest
 
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Savers.pgn import load, walk, pattern, MOVE
+from pychess.Savers.pgn import load, walk
+from pychess.Savers.pgnbase import pattern, MOVE
 from pychess.Utils.const import *
 
 
@@ -16,7 +17,7 @@ class PgnTestCase(unittest.TestCase):
         matches = [m[MOVE-1] for m in pattern.findall(moves)] 
         self.assertEqual(' '.join(matches), ' '.join(moves.split()))
 
-def create_test(lines, result, gameno):
+def create_test(lines, result):
     def test_expected(self):
         for orig, new in zip(lines.split(), result.split()):
             # Seems most .PGN unnecessary contains unambiguous notation
@@ -35,35 +36,45 @@ def create_test(lines, result, gameno):
 
     return test_expected
 
-#PgnFile = load(open('/home/tamas/PGN/russian_chess.pgn'))
-#PgnFile = load(open('/home/tamas/PGN/kasp_top.pgn'))
-#PgnFile = load(open('/home/tamas/PGN/hartwig.pgn'))
-PgnFile = load(open('gamefiles/world_matches.pgn'))
-for i, game in enumerate(PgnFile.games):
-    print "%s/%s" % (i+1, len(PgnFile.games))
+filenames = ("chess960rwch", "world_matches")
 
-    model = PgnFile.loadToModel(i)
-    result = []
-    walk(model.boards[0], result)
-    result = " ".join(result)
-    status = reprResult[model.status]
-    
-    lines = game[1].replace('.   ', '. ').replace('.  ', '. ')
-    lines = lines.replace('\r\n', ' ')
-    lines = lines.replace('  )', ')').replace(' )', ')')
-    lines = lines.replace('(  ', '(').replace('( ', '(')
-    lines = lines.replace('  }', '}').replace(' }', '}')
-    lines = lines.replace('{  ', '{').replace('{ ', '{')
-    lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
-    lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
-    lines = lines.splitlines()
-    lines = [line.strip() for line in lines]
-    lines = ' '.join(lines)
-    result = "%s %s" % (result, status)
+PgnFile1 = load(open('gamefiles/%s.pgn' % filenames[0]))
+PgnFile2 = load(open('gamefiles/%s.pgn' % filenames[1]))
 
-    test_method = create_test(lines, result, i)
-    test_method.__name__ = 'test_game_%d' % (i+1)
-    setattr (PgnTestCase, test_method.__name__, test_method)
+for filename, pgnfile in zip(filenames, (PgnFile1, PgnFile2)):
+    print "Creating test methods for %s" % filename
+    for i, game in enumerate(pgnfile.games):
+        print "%s/%s" % (i+1, len(pgnfile.games))
+        if i > 20:
+            break
+        model = pgnfile.loadToModel(i)
+        result = []
+        walk(model.boards[0].board, result)
+        result = " ".join(result)
+        status = reprResult[model.status]
+        
+        lines = game[1].replace('.   ', '. ').replace('.  ', '. ')
+        lines = lines.replace('\r\n', ' ')
+        lines = lines.replace('  )', ')').replace(' )', ')')
+        lines = lines.replace('(  ', '(').replace('( ', '(')
+        lines = lines.replace('  }', '}').replace(' }', '}')
+        lines = lines.replace('{  ', '{').replace('{ ', '{')
+        lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
+        lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
+        lines = lines.splitlines()
+        lines = [line.strip() for line in lines]
+        lines = ' '.join(lines)
+        result = "%s %s" % (result, status)
+
+        # create a new test method
+        test_method = create_test(lines, result)
+        
+        # change it's name to be unique in PgnTestCase class
+        test_method.__name__ = 'test_%s_%d' % (filename, i+1)
+        test_method.__doc__ = "Pgn read-write %s" % ' '.join(test_method.__name__.split('_'))
+        
+        # monkey patch PgnTestCase class, adding the new test method
+        setattr (PgnTestCase, test_method.__name__, test_method)
 
 
 if __name__ == '__main__':

@@ -9,8 +9,9 @@ from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.Move import Move, toSAN, toFAN
-from pychess.Savers.pgn import nag2symbol, move_count
+from pychess.Utils.lutils.lmove import toSAN, toFAN
+from pychess.Savers.pgn import move_count
+from pychess.Savers.pgnbase import nag2symbol
 
 __title__ = _("Annotation")
 __active__ = True
@@ -119,7 +120,7 @@ class Sidepanel(gtk.TextView):
                 board = ni["node"]
                 parent = ni["parent"]
                 if event.button == 1:
-                    self.boardview.setShownBoard(board)
+                    self.boardview.setShownBoard(board.pieceBoard)
                     self.update_selected_node()
                 break
         
@@ -138,7 +139,7 @@ class Sidepanel(gtk.TextView):
                         position = index
                         break
 
-                if board == self.gamemodel.boards[1] and not self.gamemodel.boards[0].children:
+                if board == self.gamemodel.boards[1].board and not self.gamemodel.boards[0].board.children:
                     menuitem = gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0], 0)
                     menu.append(menuitem)
@@ -198,9 +199,9 @@ class Sidepanel(gtk.TextView):
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
 
-                if board not in self.gamemodel.variations[0]:
+                if board.pieceBoard not in self.gamemodel.variations[0]:
                     for vari in self.gamemodel.variations[1:]:
-                        if board in vari:
+                        if board.pieceBoard in vari:
                             menuitem = gtk.MenuItem(_("Remove variation"))
                             menuitem.connect('activate', self.remove_variation, board, parent, vari)
                             menu.append(menuitem)
@@ -292,11 +293,11 @@ class Sidepanel(gtk.TextView):
                 break
 
         if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation) in vari:
-            self.boardview.setShownBoard(parent)
+            self.boardview.setShownBoard(parent.pieceBoard)
         self.gamemodel.variations.remove(vari)
 
         for vari in self.gamemodel.variations:
-            if parent in vari:
+            if parent.pieceBoard in vari:
                 self.boardview.variation = self.gamemodel.variations.index(vari)
                 break
 
@@ -309,7 +310,7 @@ class Sidepanel(gtk.TextView):
         shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
         start = None
         for ni in self.nodeIters:
-            if ni["node"] == shown_board:
+            if ni["node"] == shown_board.board:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 end = self.textbuffer.get_iter_at_offset(ni["end"])
                 self.textbuffer.apply_tag_by_name("selected", start, end)
@@ -369,7 +370,7 @@ class Sidepanel(gtk.TextView):
                 buf.apply_tag_by_name("variation-uneven", startIter, endIter)
                 buf.apply_tag_by_name("variation-margin2", startIter, endIter)
 
-            if self.boardview.shown >= self.gamemodel.lowply and node == shown_board:
+            if self.boardview.shown >= self.gamemodel.lowply and node == shown_board.board:
                 buf.apply_tag_by_name("selected", startIter, endIter)
                 
             ni = {}
@@ -518,7 +519,14 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.set_text('')
         self.nodeIters = []
         self.insert_header(self.gamemodel)
-        self.insert_nodes(self.gamemodel.boards[0], result=reprResult[self.gamemodel.status])
+
+        status = reprResult[self.gamemodel.status]
+        if status != '*':
+            result = status
+        else:
+            result = self.gamemodel.tags['Result']
+
+        self.insert_nodes(self.gamemodel.boards[0].board, result=result)
 
     def shown_changed(self, boardview, shown):
         self.update_selected_node()
@@ -528,7 +536,7 @@ class Sidepanel(gtk.TextView):
         start = self.textbuffer.get_start_iter()
         end = self.textbuffer.get_end_iter()
         for ni in reversed(self.nodeIters):
-            if ni["node"] == self.gamemodel.variations[0][-moves]:
+            if ni["node"].pieceBoard == self.gamemodel.variations[0][-moves]:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 break
         self.textbuffer.delete(start, end)
@@ -537,7 +545,7 @@ class Sidepanel(gtk.TextView):
         if game.status != RUNNING:
             return
 
-        node = game.getBoardAtPly(game.ply, variation=0)
+        node = game.getBoardAtPly(game.ply, variation=0).board
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
@@ -560,7 +568,7 @@ class Sidepanel(gtk.TextView):
         self.update_selected_node()
 
     def __movestr(self, node, fan):
-        move = Move(node.board.history[-1][0])
+        move = node.history[-1][0]
         if fan:
             movestr = toFAN(node.prev, move)
         else:

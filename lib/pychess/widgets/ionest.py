@@ -294,6 +294,13 @@ def closeAllGames (pairs):
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
         response = gtk.RESPONSE_OK
+
+    #if conf.get("autoSave", False): # Autosave option from preferences?
+        #for gmwidg, game in changedPairs:
+            #game.save(None, Savers.database, append=False)
+        #response = gtk.RESPONSE_OK
+    #else:
+    
     elif len(changedPairs) == 1:
         response = closeGame(*changedPairs[0])
     else:
@@ -361,6 +368,11 @@ def closeGame (gmwidg, game):
     if not game.isChanged():
         response = gtk.RESPONSE_OK
     else:
+        #if conf.get("autoSave", False): # Autosave option from preferences?
+            #game.save(None, Savers.database, append=False)
+            #response = gtk.RESPONSE_OK
+        #else
+        
         d = gtk.MessageDialog (type = gtk.MESSAGE_WARNING)
         d.add_button(_("Close _without Saving"), gtk.RESPONSE_OK)
         d.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)

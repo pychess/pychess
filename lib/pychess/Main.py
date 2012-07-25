@@ -27,6 +27,7 @@ from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import png
 from pychess.ic import ICLogon
+from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
 
 ################################################################################
@@ -118,6 +119,9 @@ class GladeHandlers:
     def on_set_up_position_activate (widget):
         # Not implemented
         pass
+
+    def on_open_database_activate (widget):
+        GameList().load_games()
     
     def on_enter_game_notation_activate (widget):
         newGameDialog.EnterNotationExtension.run()
