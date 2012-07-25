@@ -9,11 +9,6 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, toAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-try:
-    import psyco
-    psyco.bind(genAllMoves)
-except ImportError:
-    print 'psyco not found'
 
 class FRCFindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
