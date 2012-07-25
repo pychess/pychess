@@ -84,6 +84,15 @@
                       </widget>
                     </child>
                     <child>
+                      <widget class="GtkMenuItem" id="open_database">
+                        <property name="visible">False</property>
+                        <property name="label" translatable="yes">Open _Database</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_open_database_activate"/>
+                        <accelerator key="D" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkMenuItem" id="set_up_position1">
                         <property name="visible">False</property>
                         <property name="label" translatable="yes">Setup Position</property>
