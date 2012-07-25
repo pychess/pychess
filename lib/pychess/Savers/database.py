@@ -9,7 +9,8 @@ from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database.util import *
-from pychess.Database.model import engine, metadata, event, site, player, pl1, pl2, game, annotator
+from pychess.Database import model as dbmodel
+from pychess.Database.model import metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
 
 __label__ = _("PyChess database")
@@ -51,7 +52,7 @@ def save (file, model):
             id_ = result.inserted_primary_key[0]
         return id_
 
-    conn = engine.connect()
+    conn = dbmodel.engine.connect()
     trans = conn.begin()
     try:
         event_id = get_id(event, game_event)
@@ -104,7 +105,7 @@ def save (file, model):
 
 
 def load(file):
-    conn = engine.connect()
+    conn = dbmodel.engine.connect()
     
     s = select([func.count(game.c.id)])
     count = conn.execute(s).scalar()
@@ -143,7 +144,7 @@ class Database(PGNFile):
 
     def get_movetext(self, gameno):
         s = select([game.c.movelist, game.c.comments], game.c.id==self.games[gameno][0])
-        conn = engine.connect()
+        conn = dbmodel.engine.connect()
         result = conn.execute(s).first()
         self.comments = result[1].split("|")
         arr = array("H")

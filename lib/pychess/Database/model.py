@@ -6,8 +6,11 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Sequence, Integer
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix 
 
-pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
-engine = create_engine("sqlite:///" + pychess_pdb, echo=False)
+engine = None
+def set_engine(url, echo=False):
+    global engine
+    engine = create_engine(url, echo=echo)
+
 metadata = MetaData()
 
 event = Table('event', metadata,
@@ -77,7 +80,9 @@ def ini_collection():
         ]
     conn.execute(collection.insert(), new_values)
     conn.close()
-    
+
+pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
+set_engine("sqlite:///" + pychess_pdb)
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
     ini_collection()
