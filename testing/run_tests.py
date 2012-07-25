@@ -2,14 +2,15 @@ import unittest
 
 modules_to_test = (
     "bitboard",
+    "database",
     "draw",
     "eval",
     "fen",
     "frc_castling",
-    "frc_movegen",
+    #"frc_movegen",
     "move",
-    "movegen",
-    "pgn",
+    #"movegen",
+    #"pgn",
     "zobrist",
     "polyglot",
     'ficsmanagers',
