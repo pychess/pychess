@@ -8,9 +8,8 @@ from pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmove import newMove
 from pychess.Database import model as dbmodel
-from pychess.Database.dbwalk import walk
+from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import metadata, event, site, player, pl1, pl2, game, annotator
 from pychess.Variants.fischerandom import FischerRandomChess
 
