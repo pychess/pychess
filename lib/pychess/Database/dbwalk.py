@@ -1,5 +1,5 @@
 from pychess.Utils.const import *
-from pychess.Utils.lutils.lmove import newMove
+from pychess.Utils.lutils.lmovegen import newMove
 
 MAXMOVE = newMove(63, 63, NULL_MOVE)
 COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]

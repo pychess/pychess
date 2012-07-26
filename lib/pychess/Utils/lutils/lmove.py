@@ -6,6 +6,7 @@ from ldata import *
 from validator import validateMove
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
+from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -17,24 +18,6 @@ def FLAG (move): return move >> 12
 def PROMOTE_PIECE (flag): return flag -2
 def FLAG_PIECE (piece): return piece +2
 
-################################################################################
-#   The format of a move is as follows - from left:                            #
-#   4 bits:  Descriping the type of the move                                   #
-#   6 bits:  cord to move from                                                 #
-#   6 bits:  cord to move to                                                   #
-################################################################################
-
-shiftedFromCords = []
-for i in range(64):
-    shiftedFromCords.append(i << 6)
-
-shiftedFlags = []
-for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, NULL_MOVE:
-    shiftedFlags.append(i << 12)
-
-def newMove (fromcord, tocord, flag=NORMAL_MOVE):
-    return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
 class ParsingError (Exception):
     """ Please raise this with a 3-tupple: (move, reason, board.asFen())
@@ -136,7 +119,7 @@ def toSAN (board, move, localRepr=False):
         The board should be prior to the move """
     
     # Has to be importet at calltime, as lmovegen imports lmove
-    from lmovegen import genAllMoves
+    #from lmovegen import genAllMoves
 
     def check_or_mate():
         board_clone = board.clone()
@@ -363,7 +346,6 @@ def parseSAN (board, san):
     else:
         # We find all pieces who could have done it. (If san was legal, there should
         # never be more than one)
-        from lmovegen import genPieceMoves
         for move in genPieceMoves(board, piece, tcord):
             f = FCORD(move)
             if frank != None and frank != RANK(f):
@@ -378,7 +360,6 @@ def parseSAN (board, san):
             return move
 
     # If the piece letter was omitted (not  a canonical SAN)
-    from lmovegen import genPieceMoves
     for piece in (KNIGHT, BISHOP, ROOK, QUEEN):
         for move in genPieceMoves(board, piece, tcord):
             f = FCORD(move)

@@ -11,6 +11,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMoveCount
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError

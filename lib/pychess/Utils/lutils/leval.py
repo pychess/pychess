@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 from ldata import *
 from LBoard import LBoard
 from lsort import staticExchangeEvaluate
-from lmove import newMove
+from lmovegen import newMove
 
 #from random import randint
 randomval = 0 #randint(8,12)/10.
