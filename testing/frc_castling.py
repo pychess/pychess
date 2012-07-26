@@ -2,8 +2,8 @@ import unittest
 
 from pychess.Utils.const import *
 from pychess.Utils.lutils.leval import LBoard
-from pychess.Utils.lutils.lmove import newMove, FLAG
-from pychess.Utils.lutils.lmovegen import genCastles
+from pychess.Utils.lutils.lmove import FLAG
+from pychess.Utils.lutils.lmovegen import genCastles, newMove
 
 # TODO: add more test data
 data = (
