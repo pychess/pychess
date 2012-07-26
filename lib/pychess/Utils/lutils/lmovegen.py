@@ -2,7 +2,25 @@
 from bitboard import *
 from attack import *
 from pychess.Utils.const import *
-from lmove import newMove
+
+################################################################################
+#   The format of a move is as follows - from left:                            #
+#   4 bits:  Descriping the type of the move                                   #
+#   6 bits:  cord to move from                                                 #
+#   6 bits:  cord to move to                                                   #
+################################################################################
+
+shiftedFromCords = []
+for i in range(64):
+    shiftedFromCords.append(i << 6)
+
+shiftedFlags = []
+for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
+            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, NULL_MOVE:
+    shiftedFlags.append(i << 12)
+
+def newMove (fromcord, tocord, flag=NORMAL_MOVE):
+    return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
 ################################################################################
 #   Generate all moves                                                         #

@@ -9,7 +9,7 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.lutils.bitboard import *
 from pychess.Utils.lutils.attack import *
-from pychess.Utils.lutils.lmove import newMove, FLAG, PROMOTE_PIECE
+from pychess.Utils.lutils.lmove import FLAG, PROMOTE_PIECE
 
 class FRCBoard(Board):
     variant = FISCHERRANDOMCHESS

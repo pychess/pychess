@@ -1,7 +1,8 @@
 import urllib
 import re
 
-from pychess.Utils.lutils.lmove import newMove, FILE, RANK
+from pychess.Utils.lutils.lmovegen import newMove
+from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
 from pychess.System.Log import log
