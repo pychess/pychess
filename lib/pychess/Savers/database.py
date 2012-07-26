@@ -246,7 +246,6 @@ class Database(PGNFile):
                 if parenthesis == 0:
                     v_last_board.children.append(self.parse_string(v_array[:-1], last_board.prev, position, variation=True))
                     v_array = array("H")
-                    prev_elem = VARI_END
                     continue
 
             elif elem == VARI_START:
