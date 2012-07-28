@@ -289,7 +289,9 @@ class PGNFile (PgnBase):
 
             for child in node.children:
                 if isinstance(child, list):
-                    walk(child[1], list(path))
+                    if len(child) > 1:
+                        # non empty variation, go walk
+                        walk(child[1], list(path))
         
         # Collect all variation paths into a list of board lists
         # where the first one will be the boards of mainline game.
