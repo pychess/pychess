@@ -11,7 +11,7 @@ from pychess.Savers.ChessFile import ChessFile, LoadingError
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
 VARIATION_START, VARIATION_END, \
-RESULT, FULL_MOVE, MOVE_COUNT, MOVE, MOVE_COMMENT = range(1,11)
+RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1,10)
 
 pattern = re.compile(r"""
     (\;.*?[\n\r])        # comment, rest of line style
@@ -21,8 +21,7 @@ pattern = re.compile(r"""
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
-    ([0-9]{1,3}\s*[.]*\s*)?
-    ([a-hxOoKQRBN1-8+#=]{2,7}
+    ([a-hKQRBN][a-hxKQRBN1-8+#=\-]{1,6}
     |O\-O(?:\-O)?
     |0\-0(?:\-0)?
     |\-\-)               # non standard '--' is used for null move inside variations
@@ -97,7 +96,14 @@ class PgnBase(ChessFile):
                                     'moveno': moveno, 'notation': notation}
                         errstr2 = _("The move failed because %s.") % reason
                         self.error = LoadingError (errstr1, errstr2)
-                        print errstr1, errstr2
+                        break
+                    except:
+                        ply = last_board.ply
+                        if ply % 2 == 0:
+                            moveno = "%d." % (ply/2+1)
+                        else: moveno = "%d..." % (ply/2+1)
+                        errstr1 = _( "Error parsing move %s %s") % (moveno, mstr)
+                        self.error = LoadingError (errstr1, "")
                         break
                     
                     new_board = last_board.clone()
