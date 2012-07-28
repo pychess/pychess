@@ -150,45 +150,46 @@ class PgnImport():
             trans = self.conn.begin()
             try:
                 for i, game in enumerate(cf.games):
-                    print i#, cf.get_player_names(i)
+                    #print i+1#, cf.get_player_names(i)
                     movelist = array("H")
                     comments = []
-                    try:
-                        fenstr = cf._getTag(i, "FEN")
-                        variant = cf.get_variant(i)
+                    cf.error = None
 
-                        # Fixes for some non statndard Chess960 .pgn
-                        if variant==0 and (fenstr is not None) and "Chess960" in cf._getTag(i,"Event"):
-                            cf.tagcache[i]["Variant"] = "Fischerandom"
-                            variant = 1
-                            parts = fenstr.split()
-                            parts[0] = parts[0].replace(".", "/").replace("0", "")
-                            if len(parts) == 1:
-                                parts.append("w")
-                                parts.append("-")
-                                parts.append("-")
-                            fenstr = " ".join(parts)
-                        
-                        if variant:
-                            board = LBoard(FISCHERRANDOMCHESS)
-                        else:
-                            board = LBoard()
+                    fenstr = cf._getTag(i, "FEN")
+                    variant = cf.get_variant(i)
 
-                        if fenstr:
-                            try:
-                                board.applyFen(fenstr)
-                            except SyntaxError, e:
-                                board.applyFen(FEN_EMPTY)
-                                raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
-                        else:
-                            board.applyFen(FEN_START)
-                        
-                        boards = [board]
-                        movetext = cf.get_movetext(i)
-                        boards = cf.parse_string(movetext, boards[0], -1)
+                    # Fixes for some non statndard Chess960 .pgn
+                    if variant==0 and (fenstr is not None) and "Chess960" in cf._getTag(i,"Event"):
+                        cf.tagcache[i]["Variant"] = "Fischerandom"
+                        variant = 1
+                        parts = fenstr.split()
+                        parts[0] = parts[0].replace(".", "/").replace("0", "")
+                        if len(parts) == 1:
+                            parts.append("w")
+                            parts.append("-")
+                            parts.append("-")
+                        fenstr = " ".join(parts)
+                    
+                    if variant:
+                        board = LBoard(FISCHERRANDOMCHESS)
+                    else:
+                        board = LBoard()
 
-                    except LoadingError, e:
-                        print e
+                    if fenstr:
+                        try:
+                            board.applyFen(fenstr)
+                        except SyntaxError, e:
+                            print _("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0]
+                            continue
+                    else:
+                        board.applyFen(FEN_START)
+                    
+                    boards = [board]
+                    movetext = cf.get_movetext(i)
+                    boards = cf.parse_string(movetext, boards[0], -1)
+
+                    if cf.error is not None:
+                        print "ERROR in game #%s" % (i+1), cf.error.args[0]
                         continue
 
                     walk(boards[0], movelist, comments)

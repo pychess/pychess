@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-import string
-
 from ldata import *
+from bitboard import bitLength, firstBit
 from validator import validateMove
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
@@ -221,7 +220,6 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move is an empty string"), board.asFen())
     elif len(san) < 2:
         raise ParsingError, (san, _("the move is too short"), board.asFen())
-    
     notat = san
     
     if notat == "--":
@@ -281,7 +279,11 @@ def parseSAN (board, san):
                     tcord = C8
         
         return newMove (fcord, tcord, flag)
-    
+
+    # LAN is not allowed in pgn spec, but sometimes it occures
+    if "-" in notat:
+        notat = notat.replace("-", "")
+
     if notat[0] in ("Q", "R", "B", "K", "N"):
         piece = chr2Sign[notat[0].lower()]
         notat = notat[1:]
@@ -293,8 +295,9 @@ def parseSAN (board, san):
         if not tcord in cordDic:
             raise ParsingError, (
                     san, _("the captured cord (%s) is incorrect") % tcord, board.asFen())
-        
+
         tcord = cordDic[tcord]
+
         if piece == PAWN:
             # If a pawn is attacking an empty cord, we assue it an enpassant
             if board.arBoard[tcord] == EMPTY:
@@ -326,10 +329,12 @@ def parseSAN (board, san):
     if notat and notat[0] in reprRank:
         frank = int(notat[0])-1
         notat = notat[1:]
+        # we know all we want
+        return newMove(frank*8+ffile, tcord, flag)
 
     if piece == PAWN:
         pawns = board.boards[WHITE][PAWN] if board.color == WHITE else board.boards[BLACK][PAWN]
-            
+
         if (ffile is not None) and ffile != FILE(tcord):
             # capture
             if board.color == WHITE:
@@ -341,9 +346,13 @@ def parseSAN (board, san):
                 fcord = tcord-16 if RANK(tcord)==3 and not (pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8
             else:
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
-        if fcord in iterBits(pawns):
-            return newMove(fcord, tcord, flag)
+        return newMove(fcord, tcord, flag)
     else:
+        if bitLength(board.boards[board.color][piece]) == 1:
+            # we have only one from this kind if piece, so:
+            fcord = firstBit(board.boards[board.color][piece])
+            return newMove(fcord, tcord, flag)
+
         # We find all pieces who could have done it. (If san was legal, there should
         # never be more than one)
         for move in genPieceMoves(board, piece, tcord):
