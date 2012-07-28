@@ -401,8 +401,7 @@ class LBoard:
                     self._move (rookf, rookt, ROOK, self.color)
             self.hasCastled[self.color] = True
         
-        if tpiece == EMPTY and fpiece != PAWN and \
-                not flag in (KING_CASTLE, QUEEN_CASTLE):
+        if tpiece == EMPTY and fpiece != PAWN:
             self.fifty += 1
         else:
             self.fifty = 0
