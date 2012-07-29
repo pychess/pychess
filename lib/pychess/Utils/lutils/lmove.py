@@ -353,35 +353,21 @@ def parseSAN (board, san):
             fcord = firstBit(board.boards[board.color][piece])
             return newMove(fcord, tcord, flag)
 
-        # We find all pieces who could have done it. (If san was legal, there should
-        # never be more than one)
-        for move in genPieceMoves(board, piece, tcord):
-            f = FCORD(move)
-            if frank != None and frank != RANK(f):
-                continue
-            if ffile != None and ffile != FILE(f):
-                continue
-            
-            board_clone = board.clone()
-            board_clone.applyMove(move)
-            if board_clone.opIsChecked():
-                continue
-            return move
-
-    # If the piece letter was omitted (not  a canonical SAN)
-    for piece in (KNIGHT, BISHOP, ROOK, QUEEN):
-        for move in genPieceMoves(board, piece, tcord):
-            f = FCORD(move)
-            if frank != None and frank != RANK(f):
-                continue
-            if ffile != None and ffile != FILE(f):
-                continue
-            
-            board_clone = board.clone()
-            board_clone.applyMove(move)
-            if board_clone.opIsChecked():
-                continue
-            return move
+        if ffile is not None:
+            fcord = firstBit(board.boards[board.color][piece] & fileBits[ffile])
+            return newMove(fcord, tcord, flag)
+        elif frank is not None:
+            fcord = firstBit(board.boards[board.color][piece] & rankBits[frank])
+            return newMove(fcord, tcord, flag)
+        else:
+            # We find all pieces who could have done it. (If san was legal, there should
+            # never be more than one)
+            for move in genPieceMoves(board, piece, tcord):
+                board_clone = board.clone()
+                board_clone.applyMove(move)
+                if board_clone.opIsChecked():
+                    continue
+                return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
     raise ParsingError, (san, errstring, board.asFen())
