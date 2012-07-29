@@ -222,8 +222,10 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move is too short"), board.asFen())
     notat = san
     
+    color = board.color
+    
     if notat == "--":
-        if board.color == WHITE:
+        if color == WHITE:
             return newMove(board.kings[WHITE], board.kings[WHITE], NULL_MOVE)
         else:
             return newMove(board.kings[BLACK], board.kings[BLACK], NULL_MOVE)
@@ -249,7 +251,7 @@ def parseSAN (board, san):
     
     notat = notat.replace("0","O").replace("o","O")
     if notat.startswith("O-O"):
-        if board.color == WHITE:
+        if color == WHITE:
             fcord = board.ini_kings[0] #E1
             if notat == "O-O":
                 flag = KING_CASTLE
@@ -311,7 +313,7 @@ def parseSAN (board, san):
         notat = notat[:-2]
 
     if piece == KING:
-        if board.color == WHITE:
+        if color == WHITE:
             return newMove(board.kings[WHITE], tcord, flag)
         else:
             return newMove(board.kings[BLACK], tcord, flag)
@@ -333,41 +335,46 @@ def parseSAN (board, san):
         return newMove(frank*8+ffile, tcord, flag)
 
     if piece == PAWN:
-        pawns = board.boards[WHITE][PAWN] if board.color == WHITE else board.boards[BLACK][PAWN]
-
         if (ffile is not None) and ffile != FILE(tcord):
             # capture
-            if board.color == WHITE:
+            if color == WHITE:
                 fcord = tcord-7 if ffile > FILE(tcord) else tcord-9
             else:
                 fcord = tcord+7 if ffile < FILE(tcord) else tcord+9
         else:
-            if board.color == WHITE:
+            if color == WHITE:
+                pawns = board.boards[WHITE][PAWN]
                 fcord = tcord-16 if RANK(tcord)==3 and not (pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8
             else:
+                pawns = board.boards[BLACK][PAWN]
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
         return newMove(fcord, tcord, flag)
     else:
-        if bitLength(board.boards[board.color][piece]) == 1:
+        if bitLength(board.boards[color][piece]) == 1:
             # we have only one from this kind if piece, so:
-            fcord = firstBit(board.boards[board.color][piece])
+            fcord = firstBit(board.boards[color][piece])
             return newMove(fcord, tcord, flag)
 
         if ffile is not None:
-            fcord = firstBit(board.boards[board.color][piece] & fileBits[ffile])
+            fcord = firstBit(board.boards[color][piece] & fileBits[ffile])
             return newMove(fcord, tcord, flag)
         elif frank is not None:
-            fcord = firstBit(board.boards[board.color][piece] & rankBits[frank])
+            fcord = firstBit(board.boards[color][piece] & rankBits[frank])
             return newMove(fcord, tcord, flag)
         else:
             # We find all pieces who could have done it. (If san was legal, there should
             # never be more than one)
-            for move in genPieceMoves(board, piece, tcord):
-                board_clone = board.clone()
-                board_clone.applyMove(move)
-                if board_clone.opIsChecked():
-                    continue
-                return move
+            moves = [move for move in genPieceMoves(board, piece, tcord)]
+            if moves:
+                if len(moves) == 1:
+                    return moves[0]
+                else:
+                    for move in moves:
+                        board_clone = board.clone()
+                        board_clone.applyMove(move)
+                        if board_clone.opIsChecked():
+                            continue
+                        return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
     raise ParsingError, (san, errstring, board.asFen())
