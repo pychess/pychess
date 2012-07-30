@@ -13,8 +13,8 @@ class FenTestCase(unittest.TestCase):
     
     def testFEN(self):
         """Testing board-FEN conversion with several positions"""
-        board = LBoard()
         for i, fenstr in enumerate(self.positions[1:]):
+            board = LBoard()
             board.applyFen(fenstr)
             fenstr2 = board.asFen()
             self.assertEqual(fenstr, fenstr2)
