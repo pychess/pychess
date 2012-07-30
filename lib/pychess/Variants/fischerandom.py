@@ -15,7 +15,7 @@ class FRCBoard(Board):
     variant = FISCHERRANDOMCHESS
     
     def __init__ (self, setup=False, lboard=None):
-        if setup is True:
+        if setup == True:
             Board.__init__(self, setup=self.shuffle_start(), lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)

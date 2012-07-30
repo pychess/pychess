@@ -100,9 +100,10 @@ class FindMovesTestCase(unittest.TestCase):
             depths = [int(s[3:].rstrip()) for s in parts[1:]]
             self.positions.append( (parts[0], depths) )
     
-    def movegen(self, board, positions):
+    def movegen(self, positions):
         for i, (fen, depths) in enumerate(positions):
             print i+1, "/", len(positions), "-", fen
+            board = LBoard(NORMALCHESS)
             board.applyFen(fen)
             hash = board.hash
             
@@ -118,7 +119,7 @@ class FindMovesTestCase(unittest.TestCase):
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
         print
-        self.movegen(LBoard(NORMALCHESS), self.positions)
+        self.movegen(self.positions)
 
 
 if __name__ == '__main__':
