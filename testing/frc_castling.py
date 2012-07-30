@@ -23,10 +23,9 @@ class FRCCastlingTestCase(unittest.TestCase):
         """Testing FRC castling movegen"""
         print
 
-        board = LBoard(FISCHERRANDOMCHESS)
-
         for fen, castles in data:
             print fen
+            board = LBoard(FISCHERRANDOMCHESS)
             board.applyFen(fen)
             #print board
             moves = [move for move in genCastles(board)]

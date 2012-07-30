@@ -369,6 +369,7 @@ class PyChessCECP(PyChess):
                 
             elif lines[0] == "setboard":
                 self.__stopSearching()
+                self.board = LBoard(self.board.variant)
                 self.board.applyFen(" ".join(lines[1:]))
                 if self.analyzing:
                     self.__analyze()

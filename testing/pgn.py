@@ -1,8 +1,6 @@
 import sys
 import unittest
 
-from pychess.Utils.Board import Board
-from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgn import load, walk
 from pychess.Savers.pgnbase import pattern, MOVE
 from pychess.Utils.const import *
