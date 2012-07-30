@@ -13,7 +13,8 @@ def walk(node, arr, txt):
        arr - array("H") (2 byte unsigned ints representing lmove objects
                         or COMMENT, VARI_START, VARI_END, NAG+nag)
        txt - list (comment strings)"""
-        
+    
+    arr_append = arr.append
     while True: 
         if node is None:
             break
@@ -22,27 +23,27 @@ def walk(node, arr, txt):
         if node.prev is None:
             for child in node.children:
                 if isinstance(child, basestring):
-                    arr.append(COMMENT)
+                    arr_append(COMMENT)
                     txt.append(child)
             node = node.next
             continue
 
-        arr.append(node.history[-1][0])
+        arr_append(node.history[-1][0])
 
         for nag in node.nags:
             if nag:
-                arr.append(NAG + int(nag[1:]))
+                arr_append(NAG + int(nag[1:]))
 
         for child in node.children:
             if isinstance(child, basestring):
                 # comment
-                arr.append(COMMENT)
+                arr_append(COMMENT)
                 txt.append(child)
             else:
                 # variations
-                arr.append(VARI_START)
+                arr_append(VARI_START)
                 walk(child[0], arr, txt)
-                arr.append(VARI_END)
+                arr_append(VARI_END)
 
         if node.next:
             node = node.next

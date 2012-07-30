@@ -46,14 +46,15 @@ class PgnBase(ChessFile):
            variation- boolean (True if the string is a variation)"""
         
         boards = []
+        boards_append = boards.append
         
         last_board = board
         if variation:
             # this board used only to hold initial variation comments
-            boards.append(LBoard(board.variant))
+            boards_append(LBoard(board.variant))
         else:
             # initial game board
-            boards.append(board)
+            boards_append(board)
         
         status = None
         parenthesis = 0
@@ -120,7 +121,7 @@ class PgnBase(ChessFile):
                     else:
                         last_board.next = new_board
                         
-                    boards.append(new_board)
+                    boards_append(new_board)
                     last_board = new_board
 
                 elif group == COMMENT_REST:

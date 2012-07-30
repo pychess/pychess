@@ -27,10 +27,11 @@ class Board:
         self.board.pieceBoard = self
         
         if setup:
-            if setup == True:
-                self.board.applyFen(FEN_START)
-            elif isinstance(setup, basestring):
-                self.board.applyFen(setup)
+            if lboard is None:
+                if setup == True:
+                    self.board.applyFen(FEN_START)
+                elif isinstance(setup, basestring):
+                    self.board.applyFen(setup)
             
             wpieces = self.board.boards[WHITE]
             bpieces = self.board.boards[BLACK]

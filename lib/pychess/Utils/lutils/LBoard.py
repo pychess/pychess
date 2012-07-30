@@ -28,7 +28,6 @@ class LBoard:
 
     def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
-        self._reset()
 
         self.nags = []
         # children can contain comments and variations
@@ -42,8 +41,7 @@ class LBoard:
         # The high level owner Board (with Piece objects) in gamemodel
         self.pieceBoard = None
 
-    def _reset (self):
-        """ Set board to empty on Black's turn (which Polyglot-hashes to 0) """
+        # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = createBoard(0)
         
         self.friends = [createBoard(0)]*2
@@ -94,6 +92,8 @@ class LBoard:
             Pos(%d) specifying the string index of the problem.
             if an error is found, no changes will be made to the board. """
         
+        assert self.kings[0] == -1, "The applyFen() method can be used on new LBoard objects only!"
+        
         # Get information
         
         parts = fenstr.split()
@@ -140,10 +140,6 @@ class LBoard:
         
         if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
             raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
-
-        # Reset this board
-        
-        self._reset()
         
         # Parse piece placement field
         
