@@ -22,6 +22,7 @@ pattern = re.compile(r"""
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
     ([a-hKQRBN][a-hxKQRBN1-8+#=\-]{1,6}
+    |o\-o(?:\-o)?
     |O\-O(?:\-O)?
     |0\-0(?:\-0)?
     |\-\-)               # non standard '--' is used for null move inside variations
