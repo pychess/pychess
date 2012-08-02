@@ -216,19 +216,12 @@ def toSAN (board, move, localRepr=False):
 
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
-    if not san:
-        raise ParsingError, (san, _("the move is an empty string"), board.asFen())
-    elif len(san) < 2:
-        raise ParsingError, (san, _("the move is too short"), board.asFen())
     notat = san
     
     color = board.color
     
     if notat == "--":
-        if color == WHITE:
-            return newMove(board.kings[WHITE], board.kings[WHITE], NULL_MOVE)
-        else:
-            return newMove(board.kings[BLACK], board.kings[BLACK], NULL_MOVE)
+        return newMove(board.kings[color], board.kings[color], NULL_MOVE)
 
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]
@@ -239,8 +232,9 @@ def parseSAN (board, san):
     flag = NORMAL_MOVE
     
     # If last char is a piece char, we assue it the promote char
-    c = notat[-1].lower()
-    if c in chr2Sign:
+    c = notat[-1]
+    if c in chrU2Sign or c in chr2Sign:
+        c = c.lower()
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
@@ -249,11 +243,10 @@ def parseSAN (board, san):
     if len(notat) < 2:
         raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
     
-    notat = notat.replace("0","O").replace("o","O")
-    if notat.startswith("O-O"):
+    if notat[0] in "O0o":
         if color == WHITE:
             fcord = board.ini_kings[0] #E1
-            if notat == "O-O":
+            if notat == "O-O" or notat == "0-0" or notat == "o-o":
                 flag = KING_CASTLE
                 if board.variant == FISCHERRANDOMCHESS:
                     tcord = board.ini_rooks[0][1]
@@ -267,7 +260,7 @@ def parseSAN (board, san):
                     tcord = C1
         else:
             fcord = board.ini_kings[1] #E8
-            if notat == "O-O":
+            if notat == "O-O" or notat == "0-0" or notat == "o-o":
                 flag = KING_CASTLE
                 if board.variant == FISCHERRANDOMCHESS:
                     tcord = board.ini_rooks[1][1]
@@ -287,7 +280,7 @@ def parseSAN (board, san):
         notat = notat.replace("-", "")
 
     if notat[0] in ("Q", "R", "B", "K", "N"):
-        piece = chr2Sign[notat[0].lower()]
+        piece = chrU2Sign[notat[0]]
         notat = notat[1:]
     else:
         piece = PAWN
@@ -313,10 +306,7 @@ def parseSAN (board, san):
         notat = notat[:-2]
 
     if piece == KING:
-        if color == WHITE:
-            return newMove(board.kings[WHITE], tcord, flag)
-        else:
-            return newMove(board.kings[BLACK], tcord, flag)
+        return newMove(board.kings[color], tcord, flag)
 
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
     # want to know
