@@ -426,6 +426,7 @@ if __name__ == "__main__":
             imp.do_import(os.path.join('../../../testing/gamefiles', "annotated.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
+            #imp.do_import(os.path.join('../../../testing/gamefiles', "twic923.pgn"))
         print "Elapsed time (secs): %s" % t.elapsed_secs
         print "Old: 28.68"
     imp.print_db()
