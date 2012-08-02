@@ -188,7 +188,7 @@ class Database(PGNFile):
         error = None
         parenthesis = 0
         v_array = array("H")
-        for i, elem in enumerate(movetext):
+        for elem in movetext:
             if parenthesis > 0:
                 v_array.append(elem)
 

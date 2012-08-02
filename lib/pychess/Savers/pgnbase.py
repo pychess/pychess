@@ -60,7 +60,7 @@ class PgnBase(ChessFile):
         status = None
         parenthesis = 0
         v_string = ""
-        for i, m in enumerate(re.finditer(pattern, string)):
+        for m in re.finditer(pattern, string):
             group, text = m.lastindex, m.group(m.lastindex)
             if parenthesis > 0:
                 v_string += ' '+text
