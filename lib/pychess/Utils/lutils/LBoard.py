@@ -41,6 +41,19 @@ class LBoard:
         # The high level owner Board (with Piece objects) in gamemodel
         self.pieceBoard = None
 
+    @property
+    def ply (self):
+        return len(self.history) if hasattr(self, "history") else 0
+    
+    def applyFen (self, fenstr):
+        """ Applies the fenstring to the board.
+            If the string is not properly
+            written a SyntaxError will be raised, having its message ending in
+            Pos(%d) specifying the string index of the problem.
+            if an error is found, no changes will be made to the board. """
+
+        assert not hasattr(self, "boards"), "The applyFen() method can be used on new LBoard objects only!"
+
         # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = createBoard(0)
         
@@ -80,19 +93,6 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
-
-    def _get_ply (self):
-        return len(self.history)
-    ply = property(_get_ply)
-    
-    def applyFen (self, fenstr):
-        """ Applies the fenstring to the board.
-            If the string is not properly
-            written a SyntaxError will be raised, having its message ending in
-            Pos(%d) specifying the string index of the problem.
-            if an error is found, no changes will be made to the board. """
-        
-        assert self.kings[0] == -1, "The applyFen() method can be used on new LBoard objects only!"
         
         # Get information
         
