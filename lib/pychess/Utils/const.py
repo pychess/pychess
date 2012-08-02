@@ -118,6 +118,7 @@ sliders = [ False, False, False, True, True, True, False, False ]
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
+chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN}
 
 ################################################################################
 # Move values                                                                  #
