@@ -32,6 +32,8 @@ removeDic = {
     ord(u" "): None,
 }
 
+LBoard_FEN_START = LBoard()
+LBoard_FEN_START.applyFen(FEN_START)
 
 class PgnImport():
     def __init__(self):
@@ -182,8 +184,8 @@ class PgnImport():
                             print _("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0]
                             continue
                     else:
-                        board.applyFen(FEN_START)
-                    
+                        board = LBoard_FEN_START.clone()
+
                     boards = [board]
                     movetext = cf.get_movetext(i)
                     boards = cf.parse_string(movetext, boards[0], -1)
