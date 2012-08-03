@@ -63,7 +63,7 @@ def genPieceMoves(board, piece, tcord):
     """"
     Used by parseSAN only to accelerate it a bit
     """
-    moves = []
+    moves = set()
     friends = board.friends[board.color]
     notfriends = ~friends
     if piece == KNIGHT:
@@ -71,7 +71,7 @@ def genPieceMoves(board, piece, tcord):
         knightMoves = moveArray[KNIGHT]
         for fcord in iterBits(knights):
             if tcord in iterBits(knightMoves[fcord] & notfriends):
-                moves.append(newMove(fcord, tcord))
+                moves.add(newMove(fcord, tcord))
         return moves
         
     if piece == BISHOP:
@@ -81,7 +81,7 @@ def genPieceMoves(board, piece, tcord):
             attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
                           attack135[fcord][ray135[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                moves.append(newMove(fcord, tcord))
+                moves.add(newMove(fcord, tcord))
         return moves
         
     if piece == ROOK:
@@ -91,7 +91,7 @@ def genPieceMoves(board, piece, tcord):
             attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
                           attack90[fcord][ray90[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                moves.append(newMove(fcord, tcord))
+                moves.add(newMove(fcord, tcord))
         return moves
 
     if piece == QUEEN:
@@ -101,13 +101,12 @@ def genPieceMoves(board, piece, tcord):
             attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
                           attack135[fcord][ray135[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                moves.append(newMove(fcord, tcord))
+                moves.add(newMove(fcord, tcord))
 
-        for fcord in iterBits(queens):
             attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
                           attack90[fcord][ray90[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                moves.append(newMove(fcord, tcord))
+                moves.add(newMove(fcord, tcord))
         return moves
 
 def genAllMoves (board):

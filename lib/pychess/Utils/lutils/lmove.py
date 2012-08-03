@@ -356,7 +356,7 @@ def parseSAN (board, san):
             # never be more than one)
             moves = genPieceMoves(board, piece, tcord)
             if len(moves) == 1:
-                return moves[0]
+                return moves.pop()
             else:
                 for move in moves:
                     board_clone = board.clone()
