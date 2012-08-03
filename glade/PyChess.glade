@@ -85,7 +85,7 @@
                     </child>
                     <child>
                       <widget class="GtkMenuItem" id="open_database">
-                        <property name="visible">True</property>
+                        <property name="visible">False</property>
                         <property name="label" translatable="yes">Open _Database</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_open_database_activate"/>
