@@ -13,6 +13,7 @@ from managers.NewsManager import NewsManager
 from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
 from managers.ChatManager import ChatManager
+from managers.ConsoleManager import ConsoleManager
 from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
@@ -20,6 +21,7 @@ from managers.AdjournManager import AdjournManager
 from FICSObjects import FICSPlayers, FICSGames
 
 from TimeSeal import TimeSeal
+from VerboseTelnet import NoPrediction
 from VerboseTelnet import LinePrediction
 from VerboseTelnet import ManyLinesPrediction
 from VerboseTelnet import FromPlusPrediction
@@ -60,6 +62,9 @@ class Connection (GObject, PooledThread):
     
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
+
+    def expect_nothing (self, callback):
+        self.expect(NoPrediction(callback))
     
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
@@ -191,6 +196,7 @@ class FICSConnection (Connection):
             self.nm = NewsManager(self)
             self.om = OfferManager(self)
             self.cm = ChatManager(self)
+            self.com = ConsoleManager(self)
             self.alm = AutoLogOutManager(self)
             self.adm = AdjournManager(self)
             self.players = FICSPlayers(self)

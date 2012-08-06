@@ -30,6 +30,16 @@ class Prediction:
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
+class NoPrediction (Prediction):
+    def __init__ (self, callback):
+        Prediction.__init__(self, callback)
+    
+    def handle(self, line):
+        if line:
+            self.callback(line)
+            return RETURN_MATCH
+        return RETURN_NO_MATCH
+
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp):
         Prediction.__init__(self, callback, regexp)
