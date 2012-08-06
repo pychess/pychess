@@ -20,6 +20,7 @@ from pychess.System.Log import log
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
 from pychess.widgets.ChatWindow import ChatWindow
+from pychess.widgets.ConsoleWindow import ConsoleWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.widgets.preferencesDialog import SoundTab
@@ -90,7 +91,7 @@ class ICLounge (GObject):
             AdjournedTabSection(w,c, self.infobar),
 
             ChatWindow(w,c),
-            #ConsoleWindow(w,c),
+            ConsoleWindow(w,c),
 
             SeekChallengeSection(w,c),
             
@@ -826,7 +827,8 @@ class PlayerTabSection (ParrentListSection):
         for key in ("status", "game", "titles"):
             if player.handler_is_connected(self.players[player][key]):
                 player.disconnect(self.players[player][key])
-        if player.game and player.game.handler_is_connected(
+        if player.game and "private" in self.players[player] and \
+            player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
         for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
@@ -1927,10 +1929,6 @@ class SeekChallengeSection (ParrentListSection):
             self.__getSeekEditorDialogValues()
         self.widgets["variantCombo"].set_tooltip_text(
             variants[gametype.variant_type].__desc__)
-
-class ConsoleWindow:
-    def __init__ (self, widgets, connection):
-        pass
 
 ############################################################################
 # Relay server messages to the user which aren't part of a game            #
