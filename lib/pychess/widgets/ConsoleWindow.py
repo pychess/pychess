@@ -41,8 +41,8 @@ class ConsoleWindow:
     def onConsoleMessage(self, com, line):
         if not self.window:
             return
-        self.showConsole()
-        self.consoleView.addMessage(line)
+        if not line.startswith("<"):
+            self.consoleView.addMessage(line)
         
 
 class ConsoleView (gtk.VPaned):
