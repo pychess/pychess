@@ -53,6 +53,7 @@ class Connection (GObject, PooledThread):
         self.connected = False
         self.connecting = False
         
+        self.noprediction = None
         self.predictions = set()
         self.predictionsDict = {}
     
@@ -64,7 +65,7 @@ class Connection (GObject, PooledThread):
         self.predictions.remove(self.predictionsDict.pop(callback))
 
     def expect_nothing (self, callback):
-        self.expect(NoPrediction(callback))
+        self.noprediction = NoPrediction(callback)
     
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
@@ -182,7 +183,7 @@ class FICSConnection (Connection):
             # should be implemented into the FICSConnection somehow.
             self.lvm = ListAndVarManager(self)
             while not self.lvm.isReady():
-                self.client.handleSomeText(self.predictions)
+                self.client.handleSomeText(self.predictions, self.noprediction)
             self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
             
             # FIXME: Some managers use each other to avoid regexp collapse. To
@@ -218,7 +219,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.handleSomeText(self.predictions)
+                    self.client.handleSomeText(self.predictions, self.noprediction)
             
             except Exception, e:
                 if self.connected:
