@@ -144,7 +144,7 @@ class PredictionsTelnet:
     def setLinePrefix(self, value):
         self.__linePrefix = value
 
-    def handleSomeText (self, predictions):
+    def handleSomeText (self, predictions, noprediction):
         # The prediations list may be changed at any time, so to avoid
         # "changed size during iteration" errors, we make a shallow copy
         temppreds = copy(predictions)
@@ -162,6 +162,9 @@ class PredictionsTelnet:
         if self.getStripLines():
             line = line.strip()
             log.debug(line+"\n", (repr(self.telnet), "lines"))
+        
+        if noprediction is not None:
+            noprediction.handle(line)
         
         if self.__state:
             answer = self.__state.handle(line)
