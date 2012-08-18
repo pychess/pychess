@@ -105,6 +105,25 @@ class ICLounge (GObject):
             CreatedBoards(w,c)
         )
 
+        self.widgets['notebook'].connect("switch-page", self.onSwitchPage)
+
+    def onSwitchPage(self, notebook, page, page_num):
+        if notebook.get_nth_page(page_num) == self.widgets['playersListContent']:
+            print >> self.connection.client, "who IsblwL"
+            self.connection.lvm.setVariable("pin", True)
+            self.connection.lvm.setVariable("availinfo", True)
+        else:
+            self.connection.lvm.setVariable("pin", False)
+            self.connection.lvm.setVariable("availinfo", False)
+
+        if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
+            print >> self.connection.client, "games /sblwL"
+            self.connection.lvm.setVariable("gin", True)
+            self.connection.lvm.setVariable("allresults", True)
+        else:
+            self.connection.lvm.setVariable("gin", False)
+            self.connection.lvm.setVariable("allresults", False)
+
     @glock.glocked
     def on_news_item (self, nm, news):            
         self.widgets["show_chat_button"].set_sensitive(True)    
@@ -730,9 +749,11 @@ class SeekGraphSection (ParrentListSection):
         x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
-        try:
-            player = self.connection.players[FICSPlayer(seek["w"])]
-        except KeyError: return
+###        try:
+###            player = self.connection.players[FICSPlayer(seek["w"])]
+###        except KeyError: return
+        player = self.connection.players.get(FICSPlayer(seek["w"]))
+
         is_rated = False if seek["r"] == "u" else True
         text = self.getSeekTooltipText(player, seek["rt"],
             is_rated, seek["manual"], seek["gametype"], seek["t"], seek["i"],
@@ -790,9 +811,10 @@ class PlayerTabSection (ParrentListSection):
         widgets["private_chat_button"].set_sensitive(False)
         widgets["observe_button"].connect("clicked", self.onObserveClicked)
         widgets["observe_button"].set_sensitive(False)
+        
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
-        
+    
     @glock.glocked
     def onPlayerAdded (self, players, player):
         if player in self.players: return

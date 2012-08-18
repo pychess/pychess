@@ -234,7 +234,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="activates_default">True</property>
-                                <property name="text" context="yes">23, 5000</property>
+                                <property name="text" context="yes">5000, 23</property>
                               </widget>
                               <packing>
                                 <property name="left_attach">1</property>
