@@ -68,24 +68,24 @@ class GameListManager (GObject):
         #self.connection.lvm.setVariable("seek", False)
         self.connection.lvm.setVariable("showownseek", True)
         
-        self.connection.lvm.setVariable("gin", True)
-        self.connection.lvm.setVariable("pin", True)
-        self.connection.lvm.setVariable("allresults", True)
+        ###self.connection.lvm.setVariable("gin", True)
+        ###self.connection.lvm.setVariable("pin", True)
+        ###self.connection.lvm.setVariable("allresults", True)
         
         # TODO: This makes login take alot longer...
         # we send the first who command mainly to get title info like (TM)
-        print >> self.connection.client, "who"
+        ###print >> self.connection.client, "who"
         # and this second one is mainly for getting rating information
-        print >> self.connection.client, "who IsblwL"
+        ###print >> self.connection.client, "who IsblwL"
         
         #b: blitz      l: lightning   u: untimed      e: examined game
         #s: standard   w: wild        x: atomic       z: crazyhouse        
         #B: Bughouse   L: losers      S: Suicide
-        print >> self.connection.client, "games /sblwL"
+        ###print >> self.connection.client, "games /sblwL"
         
         #self.connection.lvm.setVariable("availmax", True)
         #self.connection.lvm.setVariable("availmin", True)
-        self.connection.lvm.setVariable("availinfo", True)
+        ###self.connection.lvm.setVariable("availinfo", True)
     
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
