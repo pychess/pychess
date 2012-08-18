@@ -41,7 +41,9 @@ class ConsoleWindow:
     def onConsoleMessage(self, com, line):
         if not self.window:
             return
-        if not line.startswith("<"):
+        if (line[0] not in ('<', '{')) and \
+           (not line.endswith('available for matches.')) and \
+           (not ('Blitz' in line and 'Std' in line and 'Wild' in line and 'Light' in line and 'Bug' in line)):
             self.consoleView.addMessage(line)
         
 
