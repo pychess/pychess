@@ -1,5 +1,6 @@
 import gtk
 import gobject
+import pango
 
 from gtk.gdk import keyval_from_name
 
@@ -36,8 +37,6 @@ class ConsoleWindow:
         self.consoleView = ConsoleView(self.connection)
         self.window.add(self.consoleView)
         
-        self.consoleView.enable()
-
     def onConsoleMessage(self, com, line):
         if not self.window:
             return
@@ -68,8 +67,12 @@ class ConsoleView (gtk.VPaned):
         
         # Inits the read view
         self.readView = gtk.TextView()
+        fontdesc = pango.FontDescription("Monospace 10")
+        self.readView.modify_font(fontdesc)
+        
         self.textbuffer = self.readView.get_buffer()
-        self.textbuffer.create_tag("mycomment", foreground="darkblue")
+        self.textbuffer.create_tag("text", foreground="black")
+        self.textbuffer.create_tag("mytext", foreground="darkblue")
 
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -77,31 +80,15 @@ class ConsoleView (gtk.VPaned):
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
+        self.readView.set_cursor_visible(False)
         self.readView.props.wrap_mode = gtk.WRAP_WORD
-        self.readView.props.pixels_below_lines = 1
-        self.readView.props.pixels_above_lines = 2
-        self.readView.props.left_margin = 2
-        #self.readView.get_buffer().create_tag("log",
-        #        foreground = self.readView.get_style().fg[gtk.STATE_INSENSITIVE])
-        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
-        
-        # Create a 'log mark' in the beginning of the text buffer. Because we
-        # query the log asynchronously and in chunks, we can use this to insert
-        # it correctly after previous log messages, but before the new messages.   
-        start = self.readView.get_buffer().get_start_iter()
-        self.readView.get_buffer().create_mark("logMark", start)
+        self.pack1(sw, resize=True, shrink=True)
         
         # Inits the write view
-        self.writeView = gtk.TextView()
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_NONE)
-        sw.add(self.writeView)
-        self.writeView.props.wrap_mode = gtk.WRAP_WORD
-        self.writeView.props.pixels_below_lines = 1
-        self.writeView.props.pixels_above_lines = 2
-        self.writeView.props.left_margin = 2
-        self.pack2(BorderBox(sw,top=True), resize=True, shrink=True)
+        self.history = []
+        self.pos = 0
+        self.writeView = gtk.Entry()
+        self.pack2(self.writeView, resize=True, shrink=True)
         
         # Forces are reasonable position for the panner.
         def callback (widget, event):
@@ -121,22 +108,10 @@ class ConsoleView (gtk.VPaned):
         if tb.props.text:
             tb.insert(iter, "\n")
         tb = self.readView.get_buffer()
-        if my:
-            tb.insert_with_tags_by_name(iter, text, "mycomment")
-        else:
-            tb.insert(iter, text)
+        tag = "mytext" if my else "text"
+        tb.insert_with_tags_by_name(iter, text, tag)
     
-    def disable (self, message):
-        """ Sets the write field insensitive, in cases where the channel is
-            read only. Use the message to give the user a propriate
-            exlpanation """
-        self.writeView.set_sensitive(False)
-        self.writeView.props.buffer.set_text(message)
-    
-    def enable (self):
-        self.writeView.props.buffer.set_text("")
-        self.writeView.set_sensitive(True)
-    
+   
     def onKeyPress (self, widget, event):
         if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
             if not event.state & gtk.gdk.CONTROL_MASK:
@@ -145,18 +120,42 @@ class ConsoleView (gtk.VPaned):
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, my=True)
                 
-                if buffer.props.text == "set gin 1":
-                    self.connection.lvm.variablesBackup["gin"] = 1
-                elif buffer.props.text == "set pin 1":
-                    self.connection.lvm.variablesBackup["pin"] = 1
-                elif buffer.props.text == "set seek 1":
-                    self.connection.lvm.variablesBackup["seek"] = 1
-                elif buffer.props.text == "set gin 0":
-                    self.connection.lvm.variablesBackup["gin"] = 0
-                elif buffer.props.text == "set pin 0":
-                    self.connection.lvm.variablesBackup["pin"] = 0
-                elif buffer.props.text == "set seek 0":
-                    self.connection.lvm.variablesBackup["seek"] = 0
-                
+                for var in self.connection.lvm.variablesBackup:
+                    if buffer.props.text == "set %s" % var:
+                        if self.connection.lvm.variablesBackup[var] == 0:
+                            self.connection.lvm.variablesBackup[var] = 1
+                        else:
+                            self.connection.lvm.variablesBackup[var] = 0
+                    elif buffer.props.text in ("set %s 1" % var, "set %s on" % var, "set %s true" % var):
+                        self.connection.lvm.variablesBackup[var] = 1
+                    elif buffer.props.text in ("set %s 0" % var, "set %s off" % var, "set %s false" % var):
+                        self.connection.lvm.variablesBackup[var] = 0
+                    elif buffer.props.text.startswith("set %s " % var):
+                        parts = buffer.props.text.split()
+                        if len(parts) == 3 and parts[2]:
+                            self.connection.lvm.variablesBackup[var] = parts[2]
+
+                self.history.append(buffer.props.text)
                 buffer.props.text = ""
+                self.pos = len(self.history)
                 return True
+
+        elif event.keyval == keyval_from_name("Up"):
+            if self.pos > 0:
+                buffer = self.writeView.get_buffer()
+                self.pos -= 1
+                buffer.props.text = self.history[self.pos]
+            widget.grab_focus()
+            return True
+
+        elif event.keyval == keyval_from_name("Down"):
+            buffer = self.writeView.get_buffer()
+            if self.pos == len(self.history)-1:
+                self.pos += 1
+                buffer.props.text = ""
+            elif self.pos < len(self.history):
+                self.pos += 1
+                buffer.props.text = self.history[self.pos]
+            widget.grab_focus()
+            return True
+                

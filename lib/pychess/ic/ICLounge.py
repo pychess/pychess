@@ -116,6 +116,9 @@ class ICLounge (GObject):
             self.connection.lvm.setVariable("pin", False)
             self.connection.lvm.setVariable("availinfo", False)
 
+        #b: blitz      l: lightning   u: untimed      e: examined game
+        #s: standard   w: wild        x: atomic       z: crazyhouse        
+        #B: Bughouse   L: losers      S: Suicide
         if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
             print >> self.connection.client, "games /sblwL"
             self.connection.lvm.setVariable("gin", True)
