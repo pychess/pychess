@@ -1,5 +1,8 @@
-from pychess.System import conf
+import atexit
 from threading import Semaphore
+
+from pychess.System import conf
+
 
 class ListAndVarManager:
     def __init__ (self, connection):
@@ -25,7 +28,6 @@ class ListAndVarManager:
         
         # Variables
         self.variablesBackup = {}
-        self.ivariablesBackup = {}
         self.variables = {}
         self.ivariables = {}
         self.varLock = Semaphore(0)
@@ -41,14 +43,16 @@ class ListAndVarManager:
         
         # Auto flag
         conf.notify_add('autoCallFlag', self.autoFlagNotify)
-    
+        
+        atexit.register(self.stop, self.connection)
+
     def isReady (self):
         return self.listLock._Semaphore__value and self.varLock._Semaphore__value
     
     def stop (self, connection):
         if not self.isReady():
             return
-        
+
         # Restore personal lists
         for listName in self.personalLists.keys():
             backup = self.personalBackup[listName]
@@ -63,10 +67,7 @@ class ListAndVarManager:
         # Restore variables
         for key, usedvalue in self.variables.iteritems():
             if key in self.variablesBackup and usedvalue != self.variablesBackup[key]:
-                self.setVariable(key, usedvalue)
-        #for key, usedvalue in self.ivariables.iteritems():
-        #    if usedvalue != self.ivariablesBackup[key]:
-        #        self.setVariable(key, usedvalue)
+                self.setVariable(key, self.variablesBackup[key])
     
     # Lists
     
@@ -120,8 +121,6 @@ class ListAndVarManager:
                 k,v = kv.split("=")
                 if isIvars:
                     self.ivariables[k] = v
-                    if k not in self.ivariablesBackup:
-                        self.ivariablesBackup[k] = v
                 else:
                     self.variables[k] = v
                     if k not in self.variablesBackup:
