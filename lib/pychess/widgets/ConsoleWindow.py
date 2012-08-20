@@ -41,10 +41,19 @@ class ConsoleWindow:
     def onConsoleMessage(self, com, line):
         if not self.window:
             return
-        if (line[0] not in ('<', '{')) and \
-           (not line.endswith('available for matches.')) and \
-           (not ('Blitz' in line and 'Std' in line and 'Wild' in line and 'Light' in line and 'Bug' in line)):
-            self.consoleView.addMessage(line)
+        if not line.startswith('<'):
+            add = True
+            if line.endswith('available for matches.') or ('Blitz' in line and 'Std' in line and 'Wild' in line and 'Light' in line and 'Bug' in line):
+                pin = self.connection.lvm.variablesBackup.get("pin")
+                add = int(pin)>0
+            elif line.startswith('{Game'):
+                gin = self.connection.lvm.variablesBackup.get("gin")
+                add = int(gin)>0
+            elif ") seeking" in line and line.endswith(" to respond)"):
+                seek = self.connection.lvm.variablesBackup.get("seek")
+                add = int(seek)>0
+            if add:
+                self.consoleView.addMessage(line)
         
 
 class ConsoleView (gtk.VPaned):
@@ -59,6 +68,9 @@ class ConsoleView (gtk.VPaned):
         
         # Inits the read view
         self.readView = gtk.TextView()
+        self.textbuffer = self.readView.get_buffer()
+        self.textbuffer.create_tag("mycomment", foreground="darkblue")
+
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         sw.set_shadow_type(gtk.SHADOW_NONE)
@@ -101,7 +113,7 @@ class ConsoleView (gtk.VPaned):
         self.writeView.connect("key-press-event", self.onKeyPress)
 
     
-    def addMessage (self, text):
+    def addMessage (self, text, my=False):
         tb = self.readView.get_buffer()
         iter = tb.get_end_iter()
         # Messages have linebreak before the text. This is opposite to log
@@ -109,7 +121,10 @@ class ConsoleView (gtk.VPaned):
         if tb.props.text:
             tb.insert(iter, "\n")
         tb = self.readView.get_buffer()
-        tb.insert(iter, text)
+        if my:
+            tb.insert_with_tags_by_name(iter, text, "mycomment")
+        else:
+            tb.insert(iter, text)
     
     def disable (self, message):
         """ Sets the write field insensitive, in cases where the channel is
@@ -128,5 +143,20 @@ class ConsoleView (gtk.VPaned):
                 buffer = self.writeView.get_buffer()
                 print >> self.connection.client, buffer.props.text
                 self.emit("messageTyped", buffer.props.text)
+                self.addMessage(buffer.props.text, my=True)
+                
+                if buffer.props.text == "set gin 1":
+                    self.connection.lvm.variablesBackup["gin"] = 1
+                elif buffer.props.text == "set pin 1":
+                    self.connection.lvm.variablesBackup["pin"] = 1
+                elif buffer.props.text == "set seek 1":
+                    self.connection.lvm.variablesBackup["seek"] = 1
+                elif buffer.props.text == "set gin 0":
+                    self.connection.lvm.variablesBackup["gin"] = 0
+                elif buffer.props.text == "set pin 0":
+                    self.connection.lvm.variablesBackup["pin"] = 0
+                elif buffer.props.text == "set seek 0":
+                    self.connection.lvm.variablesBackup["seek"] = 0
+                
                 buffer.props.text = ""
                 return True
