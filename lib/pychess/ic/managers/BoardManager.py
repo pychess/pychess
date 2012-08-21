@@ -10,7 +10,7 @@ from pychess.ic.VerboseTelnet import *
 from pychess.ic.FICSObjects import *
 
 names = "(\w+)"
-titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
+titles = "((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
 ratings = "\(\s*([-0-9+]+|UNR)\)"
 
