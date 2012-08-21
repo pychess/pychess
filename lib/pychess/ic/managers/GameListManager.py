@@ -46,7 +46,7 @@ class GameListManager (GObject):
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         
         self.connection.expect_line (self.on_game_list,
-                "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d+):(\d+)\s*-\s*(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
+                "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
                 % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
         self.connection.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
@@ -137,7 +137,7 @@ class GameListManager (GObject):
     
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
-            inc, wmin, wsec, bmin, bsec, wmat, bmat, color, movno = match.groups()
+            inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
         try:
             gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
         except KeyError: return
