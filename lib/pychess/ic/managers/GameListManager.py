@@ -54,10 +54,10 @@ class GameListManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
 
         self.connection.expect_line (self.on_player_connect,
-                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5)
+                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 4 + "(\d{1,4})([PE]?)")
         self.connection.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
         self.connection.expect_line (self.on_player_whoI,
-                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5)
+                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 4 + "(\d{1,4})([PE]?)")
         self.connection.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
         self.connection.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
         self.connection.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
