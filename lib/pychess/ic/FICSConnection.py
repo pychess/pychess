@@ -177,6 +177,9 @@ class FICSConnection (Connection):
             self.client.setStripLines(True)
             self.client.setLinePrefix("fics%")
             
+            if not self.registred:
+                print >> self.client, "set seek 0"
+                
             # Important: As the other managers use ListAndVarManager, we need it
             # to be instantiated first. We might decide that the purpose of this
             # manager is different - used by different parts of the code - so it

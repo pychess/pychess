@@ -4,7 +4,7 @@ from gobject import *
 class ConsoleManager (GObject):
     
     __gsignals__ = {
-        'consoleMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'consoleMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
     }
     
     def __init__ (self, connection):
@@ -13,5 +13,5 @@ class ConsoleManager (GObject):
         
         self.connection.expect_nothing(self.onConsoleMessage)
 
-    def onConsoleMessage (self, line):
-        self.emit("consoleMessage", line)
+    def onConsoleMessage (self, line, prediction_name):
+        self.emit("consoleMessage", line, prediction_name)

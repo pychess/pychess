@@ -7,6 +7,7 @@ from pychess.System.Log import log
 class Prediction:
     def __init__ (self, callback, *regexps):
         self.callback = callback
+        self.name = callback.__name__
         
         self.regexps = []
         self.hash = hash(callback)
@@ -34,9 +35,9 @@ class NoPrediction (Prediction):
     def __init__ (self, callback):
         Prediction.__init__(self, callback)
     
-    def handle(self, line):
+    def handle(self, line, prediction_name=None):
         if line:
-            self.callback(line)
+            self.callback(line, prediction_name)
             return RETURN_MATCH
         return RETURN_NO_MATCH
 
@@ -163,16 +164,16 @@ class PredictionsTelnet:
             line = line.strip()
             log.debug(line+"\n", (repr(self.telnet), "lines"))
         
-        if noprediction is not None:
-            noprediction.handle(line)
-        
         if self.__state:
+            prediction = self.__state
             answer = self.__state.handle(line)
             if answer != RETURN_NO_MATCH:
                 log.debug(line+"\n", (repr(self.telnet), repr(self.__state.callback.__name__)))
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
+                if noprediction is not None:
+                    noprediction.handle(line, prediction.name)
                 return
         
         if not self.__state:
@@ -183,8 +184,12 @@ class PredictionsTelnet:
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
+                    if noprediction is not None:
+                        noprediction.handle(line, prediction.name)
                     break
             else:
+                if noprediction is not None:
+                    noprediction.handle(line)
                 log.debug(origLine, (repr(self.telnet), "nonmatched"))
     
     def write(self, str):
