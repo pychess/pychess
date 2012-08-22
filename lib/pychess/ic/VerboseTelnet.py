@@ -4,6 +4,15 @@ from copy import copy
 
 from pychess.System.Log import log
 
+
+class ConsoleHandler():
+    def __init__ (self, callback):
+        self.callback = callback
+    
+    def handle(self, line, prediction_name=None):
+        if line:
+            self.callback(line, prediction_name)
+
 class Prediction:
     def __init__ (self, callback, *regexps):
         self.callback = callback
@@ -31,15 +40,6 @@ class Prediction:
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
-class NoPrediction (Prediction):
-    def __init__ (self, callback):
-        Prediction.__init__(self, callback)
-    
-    def handle(self, line, prediction_name=None):
-        if line:
-            self.callback(line, prediction_name)
-            return RETURN_MATCH
-        return RETURN_NO_MATCH
 
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp):
@@ -145,7 +145,7 @@ class PredictionsTelnet:
     def setLinePrefix(self, value):
         self.__linePrefix = value
 
-    def handleSomeText (self, predictions, noprediction):
+    def handleSomeText (self, predictions, consolehandler):
         # The prediations list may be changed at any time, so to avoid
         # "changed size during iteration" errors, we make a shallow copy
         temppreds = copy(predictions)
@@ -172,8 +172,8 @@ class PredictionsTelnet:
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                if noprediction is not None:
-                    noprediction.handle(line, prediction.name)
+                if consolehandler is not None:
+                    consolehandler.handle(line, prediction.name)
                 return
         
         if not self.__state:
@@ -184,12 +184,12 @@ class PredictionsTelnet:
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                    if noprediction is not None:
-                        noprediction.handle(line, prediction.name)
+                    if consolehandler is not None:
+                        consolehandler.handle(line, prediction.name)
                     break
             else:
-                if noprediction is not None:
-                    noprediction.handle(line)
+                if consolehandler is not None:
+                    consolehandler.handle(line)
                 log.debug(origLine, (repr(self.telnet), "nonmatched"))
     
     def write(self, str):
