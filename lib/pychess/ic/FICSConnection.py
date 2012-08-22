@@ -21,7 +21,6 @@ from managers.AdjournManager import AdjournManager
 from FICSObjects import FICSPlayers, FICSGames
 
 from TimeSeal import TimeSeal
-from VerboseTelnet import NoPrediction
 from VerboseTelnet import LinePrediction
 from VerboseTelnet import ManyLinesPrediction
 from VerboseTelnet import FromPlusPrediction
@@ -53,7 +52,7 @@ class Connection (GObject, PooledThread):
         self.connected = False
         self.connecting = False
         
-        self.noprediction = None
+        self.consolehandler = None
         self.predictions = set()
         self.predictionsDict = {}
     
@@ -64,9 +63,6 @@ class Connection (GObject, PooledThread):
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
 
-    def expect_nothing (self, callback):
-        self.noprediction = NoPrediction(callback)
-    
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
     
@@ -186,7 +182,7 @@ class FICSConnection (Connection):
             # should be implemented into the FICSConnection somehow.
             self.lvm = ListAndVarManager(self)
             while not self.lvm.isReady():
-                self.client.handleSomeText(self.predictions, self.noprediction)
+                self.client.handleSomeText(self.predictions, self.consolehandler)
             self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
             
             # FIXME: Some managers use each other to avoid regexp collapse. To
@@ -225,7 +221,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.handleSomeText(self.predictions, self.noprediction)
+                    self.client.handleSomeText(self.predictions, self.consolehandler)
             
             except Exception, e:
                 if self.connected:
