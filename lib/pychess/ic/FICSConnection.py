@@ -208,6 +208,9 @@ class FICSConnection (Connection):
             self.bm.start()
             self.players.start()
             self.games.start()
+
+            # disable setting iveriables from console
+            self.lvm.setVariable("lock", True)
             
             self.connecting = False
             self.connected = True
