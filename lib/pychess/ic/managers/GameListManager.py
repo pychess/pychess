@@ -84,9 +84,6 @@ class GameListManager (GObject):
         print s        
         print >> self.connection.client, s
     
-    def refreshSeeks (self):
-        print >> self.connection.client, "iset seekinfo 1"
-    
     ###
     
     def on_seek_add (self, match):
