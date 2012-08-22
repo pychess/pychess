@@ -122,10 +122,8 @@ class ICLounge (GObject):
         if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
             print >> self.connection.client, "games /sblwL"
             self.connection.lvm.setVariable("gin", True)
-            self.connection.lvm.setVariable("allresults", True)
         else:
             self.connection.lvm.setVariable("gin", False)
-            self.connection.lvm.setVariable("allresults", False)
 
     @glock.glocked
     def on_news_item (self, nm, news):            
