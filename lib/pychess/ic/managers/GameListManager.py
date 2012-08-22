@@ -66,6 +66,7 @@ class GameListManager (GObject):
         self.connection.lvm.setVariable("seekinfo", True)
         self.connection.lvm.setVariable("seekremove", True)
         self.connection.lvm.setVariable("showownseek", True)
+        self.connection.lvm.setVariable("allresults", True)
         
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
