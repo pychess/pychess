@@ -16,9 +16,22 @@ names = "([a-zA-Z]+)%s" % titles
 mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
-rating_re = re.compile("[0-9]{2,}")
-deviation_estimated_re = re.compile("E")
-deviation_provisional_re = re.compile("P")
+
+DEVIATION = {"E": DEVIATION_ESTIMATED,
+             "P": DEVIATION_PROVISIONAL,
+             " ": DEVIATION_NONE,
+             "" : DEVIATION_NONE,
+            }
+
+STATUS = {"^": IC_STATUS_PLAYING,
+          " ": IC_STATUS_AVAILABLE,
+          ".": IC_STATUS_IDLE,
+          "#": IC_STATUS_EXAMINING,
+          ":": IC_STATUS_NOT_AVAILABLE,
+          "~": IC_STATUS_RUNNING_SIMUL_MATCH,
+          "&": IC_STATUS_IN_TOURNAMENT,
+          }
+
 
 class HelperManager (GObject):
     
@@ -41,6 +54,8 @@ class HelperManager (GObject):
                 "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
                 % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
 
+        # New ivar pin
+        # http://www.freechess.org/Help/HelpFiles/new_features.html
         self.helperconn.expect_line (self.on_player_whoI,
                                      "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 4 + "(\d{1,4})([PE]?)")
         self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
@@ -124,37 +139,9 @@ class HelperManager (GObject):
         wplayer.game = None
         bplayer.game = None
 
-    def __parseStatus (self, status):
-        if status == "^":
-            return IC_STATUS_PLAYING
-        elif status == " ":
-            return IC_STATUS_AVAILABLE
-        elif status == ".":
-            return IC_STATUS_IDLE
-        elif status == "#":
-            return IC_STATUS_EXAMINING
-        elif status == ":":
-            return IC_STATUS_NOT_AVAILABLE
-        elif status == "~":
-            return IC_STATUS_RUNNING_SIMUL_MATCH
-        elif status == "&":
-            return IC_STATUS_IN_TOURNAMENT
-    
     @staticmethod
     def parseRating (rating):
-        if rating:
-            m = rating_re.match(rating)
-            if m: return int(m.group(0))
-            else: return 0
-        else: return 0
-    
-    def __parseDeviation (self, deviation):
-        if deviation_estimated_re.match(deviation):
-            return DEVIATION_ESTIMATED
-        elif deviation_provisional_re.match(deviation):
-            return DEVIATION_PROVISIONAL
-        else:
-            return DEVIATION_NONE
+        return int(rating) if rating.isdigit() else 0
     
     def __parseTitleHex (self, titlehex):
         titles = set()
@@ -177,7 +164,7 @@ class HelperManager (GObject):
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
         copy.online = True
-        copy.status = self.__parseStatus(status)
+        copy.status = STATUS[status]
         copy.titles |= self.__parseTitleHex(titlehex)        
 
         for ratingtype, elo, dev in \
@@ -187,7 +174,7 @@ class HelperManager (GObject):
                  (TYPE_WILD, wild, wilddev),
                  (TYPE_LOSERS, losers, losersdev)):
             copy.ratings[ratingtype].elo = self.parseRating(elo)
-            copy.ratings[ratingtype].deviation = self.__parseDeviation(dev)
+            copy.ratings[ratingtype].deviation = DEVIATION[dev]
 
         player.update(copy)
     
@@ -203,7 +190,7 @@ class HelperManager (GObject):
             player = self.connection.players.get(FICSPlayer(name))
             copy = player.copy()
             copy.online = True
-            copy.status = self.__parseStatus(status)
+            copy.status = STATUS[status]
             copy.titles |= self.__parseTitles(titles)
             copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
             player.update(copy)

@@ -195,7 +195,11 @@ class FICSConnection (Connection):
                 print >> self.client, "set gin 1"
                 print >> self.client, "set availinfo 1"
                 print >> self.client, "iset allresults 1"
+                
+                # New ivar pin
+                # http://www.freechess.org/Help/HelpFiles/new_features.html
                 print >> self.client, "iset pin 1"
+                
                 self.hm = HelperManager(self, self.conn)
 
             else:
