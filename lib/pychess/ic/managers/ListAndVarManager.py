@@ -147,13 +147,13 @@ class ListAndVarManager:
         self.listLock.acquire()
         self.listLock.release()
         print >> self.connection.client, "+%s %s" % (listName, value)
-        self.lists[listName].append(value)
+        #self.lists[listName].append(value)
     
     def removeFromList (self, listName, value):
         self.listLock.acquire()
         self.listLock.release()
         print >> self.connection.client, "-%s %s" % (listName, value)
-        self.lists[listName].append(value)
+        #self.lists[listName].append(value)
     
     
     def getVariable (self, name):
