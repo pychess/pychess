@@ -330,11 +330,7 @@ class BoardManager (GObject):
     
     @staticmethod
     def parseRating (rating):
-        if rating:
-            m = re.match("[0-9]{2,}", rating)
-            if m: return int(m.group(0))
-            else: return 0
-        else: return 0
+        return int(rating) if rating.isdigit() else 0
     
     def onPlayGameCreated (self, matchlist):
         log.debug("BM.onPlayGameCreated: %s\n%s\n" % 
