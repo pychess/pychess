@@ -138,10 +138,13 @@ class PredictionsTelnet:
     
     def getStripLines(self):
         return self.__stripLines
+
     def getLinePrefix(self):
         return self.__linePrefix
+
     def setStripLines(self, value):
         self.__stripLines = value
+
     def setLinePrefix(self, value):
         self.__linePrefix = value
 
