@@ -623,10 +623,6 @@ class BoardManager (GObject):
                 self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.ourGameno = ""
-            # update player info on players that changed rating/status while we
-            # were playing because we can't get rating change info when playing
-            # a game
-            print >> self.connection.client, "who IsblwL"
             del self.gamemodelStartedEvents[game.gameno]
         else:
             if game.gameno in self.queuedEmits:
