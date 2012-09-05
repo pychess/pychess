@@ -115,7 +115,7 @@ class BoardView (gtk.DrawingArea):
         conf.notify_add("faceToFace", self.on_face_to_face)
         conf.notify_add("pieceTheme", self.on_set_piece_theme)
         conf.notify_add("transparentPieces", self.on_set_piece_theme)
-        self.set_size_request(350,350)
+        self.set_size_request(150, 150)
         
         self.animationStart = time()
         self.lastShown = None
