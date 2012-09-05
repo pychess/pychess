@@ -1,15 +1,14 @@
 
-from math import e
-from random import randint
-from sys import maxint
+# Authors: Jonas Thiem
+
+import re
 
 import gtk, gobject
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System.glock import glock_connect
+from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON, ARTIFICIAL
-from pychess.Utils.lutils import leval
+from pychess.Utils.const import ARTIFICIAL
 
 __title__ = _("Engines")
 
@@ -54,8 +53,16 @@ class Sidepanel:
         if len(model.players) > 0:
             if model.players[0].__type__ == ARTIFICIAL:
                 gotWhiteEngine = True
+                self.output_white.attachEngine(model.players[0].engine)
             if model.players[1].__type__ == ARTIFICIAL:
                 gotBlackEngine = True
+                self.output_black.attachEngine(model.players[1].engine)
+        
+        # First, detach from old engines:
+        if not gotBlackEngine:
+            self.output_black.detachEngine()
+        if not gotWhiteEngine:
+            self.output_white.detachEngine()
         
         if gotBlackEngine or gotWhiteEngine:
             # Remove "no engines" label:
@@ -112,7 +119,9 @@ class EngineOutput (gtk.VBox):
     def __init__(self, white=True):
         gtk.VBox.__init__(self)
 
+        self.attached_engine = None  # engine attached to which we listen
         self.white = white
+        self.clear_on_output = False  # next thinking line belongs to new move
 
         # Title bar:
         self.title_label = gtk.Label()
@@ -142,12 +151,109 @@ class EngineOutput (gtk.VBox):
         # Add all sub widgets to ourselves:
         self.pack_start(self.title_hbox, False)
         self.pack_start(self.output_container, True)
-    
+
+    def append (self, line):
+        if self.output.get_buffer().get_char_count() > 0:
+            self.output.get_buffer().insert(self.output.get_buffer().
+            get_end_iter(), "\n" + line)
+        else:
+            self.output.get_buffer().set_text(line)
+
+    def parseInfoLine (self, line):
+        if self.clear_on_output == True:
+            self.clear_on_output = False
+            self.clear()
+
+        # FIXME: do more sophisticated parsing here:
+        if line.startswith("info "):
+            # UCI info line
+            self.append(line[len("info "+1):])
+        else:
+            # CECP/Winboard/GNUChess info line
+            self.append(line)
+
+    def parseLines (self, engine, lines):
+        for line in lines:
+            # Clean up the line a bit:
+            line = line.strip(" \r\t\n")
+
+            # GNU Chess/CECP/Winboard engine output lines:
+            if re.match( r'^[0-9]+\. ', line, re.I):
+                self.parseInfoLine(line)
+
+            # UCI engine output lines:
+            if re.match( r'^info (.*) pv [a-z][0-9][a-z][0-9](.+)$', line,
+            re.I):
+                if line.find("depth") != -1 and line.find("score") != -1:
+                    self.parseInfoLine(line)
+
+            # We want to clear on the next output info line
+            # when a move arrived, so that for every move
+            # we freshly fill our thinking output:
+
+            # CECP/Winboard oldstyle move line, SAN notation:
+            if re.match( r'^move +[a-z][0-9][a-z][0-9]$', line, re.I):
+                self.clear_on_output = True
+
+            # CECP/Winboard newstyle move line, SAN notation:
+            if re.match( r'^move +([QKNB]|[QKNBx])[a-z][0-9]\+?#?$',
+            line, re.I):
+                self.clear_on_output = True
+
+            # CECP/Winboard newstyle move line, SAN castling:
+            if re.match( r'^move +(O-O-O|O-O)$', line, re.I):
+                self.clear_on_output = True
+
+            # CECP/Winboard newstyle move line, long algebraeic notation:
+            if re.match( r'^[a-z][0-9][a-z][0-9]$', line, re.I):
+                self.clear_on_output = True
+
+            # CECP/Winboard newstyle move line, SAN notation:
+            if re.match( r'^([QKNB]|[QKNBx])[a-z][0-9]\+?#?$', line, re.I):
+                self.clear_on_output = True
+
+            # CECP/Winboard newstyle move line, SAN castling:
+            if re.match( r'^(O-O-O|O-O)$', line, re.I):
+                self.clear_on_output = True
+
+            # UCI move line:
+            if re.match( r'^bestmove +[a-z][0-9][a-z][0-9]$', line, re.I):
+                self.clear_on_output = True
+        return
+
     def clear (self):
-        self.output.get_buffer().set_text(_(" "))
+        self.output.get_buffer().set_text("")
         return
 
     def setTitle (self, title):
         self.title_label.set_text(title)
         return
+
+    def attachEngine (self, engine):
+        # Attach an engine for line listening
+        if not self.attached_engine is None:
+            if self.attached_engine == engine:
+                # We are already attached to this engine
+                return
+            # Detach from previous engine
+            self.attached_engine.disconnect(self.attached_handler_id)
+        # Attach to new engine:
+        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__())
+        self.attached_engine = engine
+        self.attached_handler_id = engine.connect("line", self.parseLines)
+        return
+
+    def detachEngine (self):
+        # Detach from attached engine
+        if not self.attached_engine is None:
+            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__())
+            self.attached_engine.disconnect(self.attached_handler_id)
+            self.attached_engine = None
+
+    def __repr__(self):
+        color = "black"
+        if self.white:
+            color = "white"
+        return "Engine Output " + color + " #" + id(self).__str__() + " (engine: " + self.attached_engine.__str__()
  
+
