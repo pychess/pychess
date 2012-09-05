@@ -193,6 +193,8 @@ class EngineTab:
             engine = discoverer.getEngineByMd5(value)
             if engine is None:
                 combobox.set_active(0)
+                # This return saves us from the None-engine being used
+                # in later code  -Jonas Thiem
                 return
             else:
                 try:

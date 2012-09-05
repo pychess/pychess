@@ -215,10 +215,9 @@ class CECPEngine (ProtocolEngine):
         # This is no longer needed
         #self.timeout = time.time()
         
-        # Some engines has the 'post' option enabled by default, and posts a lot
-        # of debug information. Generelly this only help to increase the log
-        # file size, and we don't really need it.
-        print >> self.engine, "nopost"
+        # We always want post turned on so the Engine Output sidebar can
+        # show those things  -Jonas Thiem
+        print >> self.engine, "post"
         
         for command in self.optionQueue:
             print >> self.engine, command
