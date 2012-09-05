@@ -27,6 +27,7 @@ class Sidepanel:
         # Use two engine output widgets for each player color:
         self.output_white = EngineOutput(True)
         self.output_black = EngineOutput(False)
+        self.output_separator = gtk.HSeparator()
         self.output_noengines = gtk.TextView()
         self.output_noengines.get_buffer().set_text(
         _("No chess engines (computer players) are participating in this game."))
@@ -73,9 +74,11 @@ class Sidepanel:
             # Add white engine info if white engine is participating:
             if gotWhiteEngine:
                 if not self.output_white in self.box.get_children():
-                    # Remove black output first to ensure proper ordering:
+                    # Remove black output and separator first
+                    # to ensure proper ordering:
                     if self.output_black in self.box.get_children():
                         self.box.remove(self.output_black)
+                        self.box.remove(self.output_separator)
                     self.box.pack_start(self.output_white)
                     self.output_white.clear()
                     self.output_white.show_all()
@@ -83,10 +86,14 @@ class Sidepanel:
             else:
                 if self.output_white in self.box.get_children():
                     self.box.remove(self.output_white)
+                    self.box.remove(self.output_separator)
             
             # Add white engine info if black engine is participating:
             if gotBlackEngine:
                 if not self.output_black in self.box.get_children():
+                    if gotWhiteEngine:
+                        self.box.pack_start(self.output_separator)
+                        self.output_separator.show()
                     self.box.pack_start(self.output_black)
                     self.output_black.clear()
                     self.output_black.show_all()
@@ -94,6 +101,7 @@ class Sidepanel:
             else:
                 if self.output_black in self.box.get_children():
                     self.box.remove(self.output_black)
+                    self.box.remove(self.output_separator)
         else:
             # Show "no engines" label
             if self.output_white in self.box.get_children():
