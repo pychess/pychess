@@ -193,6 +193,7 @@ class EngineTab:
             engine = discoverer.getEngineByMd5(value)
             if engine is None:
                 combobox.set_active(0)
+                return
             else:
                 try:
                     index = list(discoverer.getAnalyzers()).index(engine)
