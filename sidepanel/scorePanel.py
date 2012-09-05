@@ -6,6 +6,7 @@ from sys import maxint
 import gtk, gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
+from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
@@ -38,17 +39,8 @@ class Sidepanel:
         
         # Add the initial board
         glock_connect(self.boardview.model, "game_started", self.game_changed)
-        
-        def changed (vadjust):
-            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.upper-vadjust.page_size)
-                vadjust.need_scroll = True
-        __widget__.get_vadjustment().connect("changed", changed)
-        
-        def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                    vadjust.upper) < vadjust.step_increment
-        __widget__.get_vadjustment().connect("value-changed", value_changed)
+   
+        uistuff.keepDown(__widget__)     
         
         return __widget__
     

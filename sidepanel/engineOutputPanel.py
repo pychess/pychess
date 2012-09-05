@@ -5,6 +5,7 @@ import re
 
 import gtk, gobject
 
+from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
@@ -141,6 +142,9 @@ class EngineOutput (gtk.VBox):
         self.output_container = gtk.ScrolledWindow()
         self.output_container.set_policy(gtk.POLICY_NEVER,
         gtk.POLICY_AUTOMATIC)
+
+        # scroll down on new output:
+        uistuff.keepDown(self.output_container)
  
         # Text field for output:
         self.output = gtk.TextView()
@@ -153,10 +157,13 @@ class EngineOutput (gtk.VBox):
         self.pack_start(self.output_container, True)
 
     def append (self, line):
+        # See if we want to append or simply set:
         if self.output.get_buffer().get_char_count() > 0:
+            # We have old content, append
             self.output.get_buffer().insert(self.output.get_buffer().
             get_end_iter(), "\n" + line)
         else:
+            # Set contents directly
             self.output.get_buffer().set_text(line)
 
     def parseInfoLine (self, line):
