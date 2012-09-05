@@ -167,7 +167,7 @@ class EngineOutput (gtk.VBox):
         # FIXME: do more sophisticated parsing here:
         if line.startswith("info "):
             # UCI info line
-            self.append(line[len("info "+1):])
+            self.append(line[len("info "):])
         else:
             # CECP/Winboard/GNUChess info line
             self.append(line)
@@ -182,7 +182,7 @@ class EngineOutput (gtk.VBox):
                 self.parseInfoLine(line)
 
             # UCI engine output lines:
-            if re.match( r'^info (.*) pv [a-z][0-9][a-z][0-9](.+)$', line,
+            if re.match( r'^info (.*) pv [a-z][0-9][a-z][0-9](.*)$', line,
             re.I):
                 if line.find("depth") != -1 and line.find("score") != -1:
                     self.parseInfoLine(line)
