@@ -1,4 +1,6 @@
-import re, socket
+import re
+import socket
+import threading
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
@@ -201,6 +203,11 @@ class FICSConnection (Connection):
                 print >> self.client, "iset pin 1"
                 
                 self.hm = HelperManager(self, self.conn)
+
+                def keep_alive():
+                    print >> self.client, "date"
+                    threading.Timer(59*60, keep_alive).start()
+                keep_alive()
 
             else:
                 # Important: As the other managers use ListAndVarManager, we need it
