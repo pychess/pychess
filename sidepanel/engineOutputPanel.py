@@ -192,12 +192,12 @@ class EngineOutput (gtk.VBox):
             # Clean up the line a bit:
             line = line.strip(" \r\t\n")
 
-            # GNU Chess/CECP/Winboard engine output lines:
+            # GNU Chess/CECP/Winboard engine thinking output lines:
             if re.match( r'^[0-9]+\. ', line, re.I):
                 self.parseInfoLine(line)
 
-            # UCI engine output lines:
-            if re.match( r'^info (.*) pv [a-z][0-9][a-z][0-9](.*)$', line,
+            # UCI engine thinking output lines:
+            if re.match( r'^info (.*) pv [a-h][0-9][a-h][0-9](.*)$', line,
             re.I):
                 if line.find("depth") != -1 and line.find("score") != -1:
                     self.parseInfoLine(line)
@@ -206,12 +206,12 @@ class EngineOutput (gtk.VBox):
             # when a move arrived, so that for every move
             # we freshly fill our thinking output:
 
-            # CECP/Winboard oldstyle move line, SAN notation:
-            if re.match( r'^move +[a-z][0-9][a-z][0-9]$', line, re.I):
+            # CECP/Winboard oldstyle move line, long algebraeic notation:
+            if re.match( r'^move +[a-h][0-9][a-h][0-9]$', line, re.I):
                 self.clear_on_output = True
 
             # CECP/Winboard newstyle move line, SAN notation:
-            if re.match( r'^move +([QKNB]|[QKNBx])[a-z][0-9]\+?#?$',
+            if re.match( r'^move +[QKNB]?[a-h]?x?[a-h][0-9]\+?#?$',
             line, re.I):
                 self.clear_on_output = True
 
@@ -220,11 +220,11 @@ class EngineOutput (gtk.VBox):
                 self.clear_on_output = True
 
             # CECP/Winboard newstyle move line, long algebraeic notation:
-            if re.match( r'^[a-z][0-9][a-z][0-9]$', line, re.I):
+            if re.match( r'^[a-h][0-9][a-h][0-9]$', line, re.I):
                 self.clear_on_output = True
 
             # CECP/Winboard newstyle move line, SAN notation:
-            if re.match( r'^([QKNB]|[QKNBx])[a-z][0-9]\+?#?$', line, re.I):
+            if re.match( r'^[QKNB]?[a-h]?x?[a-h][0-9]\+?#?$', line, re.I):
                 self.clear_on_output = True
 
             # CECP/Winboard newstyle move line, SAN castling:
@@ -232,7 +232,7 @@ class EngineOutput (gtk.VBox):
                 self.clear_on_output = True
 
             # UCI move line:
-            if re.match( r'^bestmove +[a-z][0-9][a-z][0-9]$', line, re.I):
+            if re.match( r'^bestmove +[a-h][0-9][a-h][0-9]$', line, re.I):
                 self.clear_on_output = True
         return
 

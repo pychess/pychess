@@ -39,7 +39,8 @@ class PyChess:
     def __init__ (self):
         self.sd = 10
         self.skipPruneChance = 0
-        
+       
+        self.showThinking = False 
         self.increment = None
         self.mytime = None
         #self.optime = None
@@ -116,7 +117,7 @@ class PyChess:
                 starttime = time()
                 lsearch.endtime = starttime + usetime
                 prevtime = 0
-                worker.publish("Time left: %3.2f seconds; Planing to thinking for %3.2f seconds" % (self.mytime, usetime))
+                worker.publish("Time left: %3.2f seconds; Planning to think for %3.2f seconds" % (self.mytime, usetime))
                 for depth in range(1, self.sd+1):
                     # Heuristic time saving
                     # Don't waste time, if the estimated isn't enough to complete next depth
@@ -124,12 +125,22 @@ class PyChess:
                         lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
                         search_result = alphaBeta(self.board, depth)
                         if lsearch.searching:
-                            mvs, self.scr = search_result
+                            mvs, temp_result = search_result
+                            movepv = (" ".join(listToSan(self.board, mvs)))
+                            # Output our best line as thinking output:
+                            if self.showThinking == True:
+                                worker.publish(
+                                " ".join(("%d.","%d","%0.2f","%d","%s")) %
+                                (depth, self.scr, time()-starttime, lsearch.nodes,
+                                movepv))
+
+                            # Save result:
+                            self.scr = temp_result
                             if time() > lsearch.endtime:
                                 # Endtime occured after depth
                                 worker.publish("Endtime occured after depth")
                                 break
-                            worker.publish("got moves %s from depth %d" % (" ".join(listToSan(self.board, mvs)), depth))
+                            movepv = (" ".join(listToSan(self.board, mvs)))
                         else:
                             # We were interrupted
                             worker.publish("I was interrupted (%d) while searching depth %d" % (lsearch.last, depth))
@@ -227,7 +238,8 @@ class PyChessCECP(PyChess):
         PyChess.__init__(self)
         self.board = LBoard(NORMALCHESS)
         self.board.applyFen(FEN_START)
-        
+       
+        self.showThinking = False 
         self.forced = False
         self.analyzing = False
         self.worker = None
@@ -257,7 +269,13 @@ class PyChessCECP(PyChess):
             if lines[0] == "protover":
                 stringPairs = ["=".join([k,repr(v)]) for k,v in self.features.iteritems()]
                 print "feature %s done=1" % " ".join(stringPairs)
-            
+           
+            elif lines[0] == "post":
+                self.showThinking = True
+
+            elif lines[0] == "nopost":
+                self.showThinking = False
+ 
             elif lines[0] == "usermove":
                 
                 self.__stopSearching()
@@ -374,7 +392,7 @@ class PyChessCECP(PyChess):
                 if self.analyzing:
                     self.__analyze()
             
-            elif lines[0] in ("xboard", "otim", "hard", "easy", "nopost", "post",
+            elif lines[0] in ("xboard", "otim", "hard", "easy",
                               "accepted", "rejected"):
                 pass
             
