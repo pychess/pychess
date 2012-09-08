@@ -20,13 +20,17 @@ __desc__ = _("The engine output panel shows the thinking output of chess engines
 
 class Sidepanel:
     def load (self, gmwidg):
-        __widget__ = gtk.VBox()
+        __widget__ = gtk.HBox()
+        
         self.box = __widget__
 
         # Use two engine output widgets for each player color:
         self.output_white = EngineOutput(True)
         self.output_black = EngineOutput(False)
-        self.output_separator = gtk.HSeparator()
+        if __widget__ is gtk.HBox():
+            self.output_separator = gtk.HSeparator()
+        else:
+            self.output_separator = gtk.VSeparator()
         self.output_noengines = gtk.TextView()
         self.output_noengines.get_buffer().set_text(
         _("No chess engines (computer players) are participating in this game."))
@@ -91,7 +95,7 @@ class Sidepanel:
             if gotBlackEngine:
                 if not self.output_black in self.box.get_children():
                     if gotWhiteEngine:
-                        self.box.pack_start(self.output_separator)
+                        self.box.pack_start(self.output_separator, False)
                         self.output_separator.show()
                     self.box.pack_start(self.output_black)
                     self.output_black.clear()
@@ -107,8 +111,8 @@ class Sidepanel:
                 self.box.remove(self.output_white)
             if self.output_black in self.box.get_children():
                 self.box.remove(self.output_black)
-            if not self.output_noengine in self.box.get_children():
-                self.box.pack_start(self.output_noengine)
+            if not self.output_noengines in self.box.get_children():
+                self.box.pack_start(self.output_noengines)
         return
 
     def players_changed (self, model):
@@ -147,16 +151,16 @@ class EngineOutput (gtk.VBox):
         
         # output scrolled window container:
         self.output_container = gtk.ScrolledWindow()
-        self.output_container.set_policy(gtk.POLICY_NEVER,
+        self.output_container.set_policy(gtk.POLICY_AUTOMATIC,
         gtk.POLICY_AUTOMATIC)
 
-        # scroll down on new output:
-        uistuff.keepDown(self.output_container)  
+        # scroll down on new output: -- not reliable with multilines added
+        #uistuff.keepDown(self.output_container)  
 
         # scroll down on new output: -- brute force variant
-        #def changed (vadjust):
-        #    vadjust.set_value(vadjust.upper-vadjust.page_size)
-        #self.output_container.get_vadjustment().connect("changed", changed)
+        def changed (vadjust):
+            vadjust.set_value(vadjust.upper-vadjust.page_size)
+        self.output_container.get_vadjustment().connect("changed", changed)
  
         # Text field for output:
         self.output = gtk.TextView()
@@ -336,7 +340,6 @@ class EngineOutput (gtk.VBox):
         return
 
     def detachEngine (self):
-        print("DETACH DETACH")
         # Detach from attached engine
         if not self.attached_engine is None:
             log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__() + "\n", self.attached_engine.defname)

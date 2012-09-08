@@ -695,7 +695,8 @@ def _ensureReadForGameWidgets ():
         leaf.setDockable(False)
 
         # S
-        leaf2 = leaf.dock(docks["engineOutputPanel"][1], SOUTH, docks["engineOutputPanel"][0], "engineOutputPanel")       
+        epanel = leaf.dock(docks["engineOutputPanel"][1], SOUTH, docks["engineOutputPanel"][0], "engineOutputPanel")       
+        epanel.default_item_height = 60
  
         # NE
         leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
