@@ -151,8 +151,13 @@ class EngineOutput (gtk.VBox):
         self.output_container.set_policy(gtk.POLICY_NEVER,
         gtk.POLICY_AUTOMATIC)
 
+        # scroll down on new output: -- DOESN'T WORK RELIABLY
+        #uistuff.keepDown(self.output_container)  
+
         # scroll down on new output:
-        uistuff.keepDown(self.output_container)
+        def changed (vadjust):
+            vadjust.set_value(vadjust.upper-vadjust.page_size)
+        self.output_container.get_vadjustment().connect("changed", changed)
  
         # Text field for output:
         self.output = gtk.TextView()
@@ -256,7 +261,7 @@ class EngineOutput (gtk.VBox):
             
 
         # Clean pv of unwanted chars:
-        pv = re.sub( '[^a-z^0-9^ ^x^?]', '', pv, flags=re.I )
+        pv = re.sub( '[^a-z^A-Z^0-9^ ^x^?]', '', pv )
 
         # If we found useful information, show it:
         if infoFound:
