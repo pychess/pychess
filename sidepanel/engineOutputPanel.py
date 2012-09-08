@@ -274,7 +274,7 @@ class EngineOutput (gtk.VBox):
             line = line.replace("\t", " ")
 
             # Output line for debugging if we want to:
-            print(line)
+            #print(line)
 
             # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
