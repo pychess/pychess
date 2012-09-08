@@ -150,13 +150,13 @@ class EngineOutput (gtk.VBox):
         self.output_container.set_policy(gtk.POLICY_NEVER,
         gtk.POLICY_AUTOMATIC)
 
-        # scroll down on new output: -- DOESN'T WORK RELIABLY
-        #uistuff.keepDown(self.output_container)  
-
         # scroll down on new output:
-        def changed (vadjust):
-            vadjust.set_value(vadjust.upper-vadjust.page_size)
-        self.output_container.get_vadjustment().connect("changed", changed)
+        uistuff.keepDown(self.output_container)  
+
+        # scroll down on new output: -- brute force variant
+        #def changed (vadjust):
+        #    vadjust.set_value(vadjust.upper-vadjust.page_size)
+        #self.output_container.get_vadjustment().connect("changed", changed)
  
         # Text field for output:
         self.output = gtk.TextView()
@@ -170,6 +170,14 @@ class EngineOutput (gtk.VBox):
         self.pack_start(self.title_hbox, False)
         self.pack_start(self.output_container, True)
 
+        # Precompile regexes we want to use:
+        self.re_thinking_line_cecp = re.compile( r'^[0-9]+\.? +\-?[0-9]+ +' )
+        self.re_thinking_line_uci = re.compile( r'^info (.*) pv [a-hA-H][0-9][a-hA-H][0-9](.*)$' )
+        self.re_move_line_cecp_alg = re.compile( r'^(move +)?[a-hA-H][0-9][a-hA-H][0-9]$' ) 
+        self.re_move_line_cecp_san = re.compile( r'^(move +)?([QKNB]?[a-hA-H]?[xX]?[a-hA-H][0-9]\+?#?|[oO]-[oO]-[oO]|[oO]-[oO])$' )
+        self.re_move_line_uci = re.compile( r'^bestmove +[a-hA-H][0-9][a-hA-H][0-9]( .*)?$' )
+        self.re_extract_cecp_all = re.compile( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$' )
+ 
     def __del__ (self):
         self.detachEngine()
 
@@ -252,7 +260,7 @@ class EngineOutput (gtk.VBox):
         else:
             # CECP/Winboard/GNUChess info line
             # parse all information in one go:
-            result = re.match( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$', line, re.I )
+            result = self.re_extract_cecp_all.match(line)
             if not result:
                 return
             infoFound = True
@@ -278,12 +286,11 @@ class EngineOutput (gtk.VBox):
             # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
             # GNU Chess/CECP/Winboard engine thinking output lines:
-            if re.match( r'^[0-9]+\.? +\-?[0-9]+ +', line, re.I):
+            if self.re_thinking_line_cecp.match(line):
                 self.parseInfoLine(line)
 
             # UCI engine thinking output lines:
-            if re.match( r'^info (.*) pv [a-h][0-9][a-h][0-9](.*)$', line,
-            re.I):
+            if self.re_thinking_line_uci.match(line):
                 if line.find("depth") != -1 and line.find("score") != -1:
                     self.parseInfoLine(line)
 
@@ -293,33 +300,16 @@ class EngineOutput (gtk.VBox):
             # when a move arrived, so that for every move
             # we freshly fill our thinking output:
 
-            # CECP/Winboard oldstyle move line, long algebraeic notation:
-            if re.match( r'^move +[a-h][0-9][a-h][0-9]$', line, re.I):
+            # CECP/Winboard move line, long algebraeic notation:
+            if self.re_move_line_cecp_alg.match(line):
                 self.clear_on_output = True
 
-            # CECP/Winboard newstyle move line, SAN notation:
-            if re.match( r'^move +[QKNB]?[a-h]?x?[a-h][0-9]\+?#?$',
-            line, re.I):
-                self.clear_on_output = True
-
-            # CECP/Winboard newstyle move line, SAN castling:
-            if re.match( r'^move +(O-O-O|O-O)$', line, re.I):
-                self.clear_on_output = True
-
-            # CECP/Winboard newstyle move line, long algebraeic notation:
-            if re.match( r'^[a-h][0-9][a-h][0-9]$', line, re.I):
-                self.clear_on_output = True
-
-            # CECP/Winboard newstyle move line, SAN notation:
-            if re.match( r'^[QKNB]?[a-h]?x?[a-h][0-9]\+?#?$', line, re.I):
-                self.clear_on_output = True
-
-            # CECP/Winboard newstyle move line, SAN castling:
-            if re.match( r'^(O-O-O|O-O)$', line, re.I):
+            # CECP/Winboard move line, SAN notation:
+            if self.re_move_line_cecp_san.match(line):
                 self.clear_on_output = True
 
             # UCI move line:
-            if re.match( r'^bestmove +[a-h][0-9][a-h][0-9]$', line, re.I):
+            if self.re_move_line_uci.match(line):
                 self.clear_on_output = True
         return
 
