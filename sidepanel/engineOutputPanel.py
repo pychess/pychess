@@ -154,6 +154,10 @@ class EngineOutput (gtk.VBox):
         self.output_container.set_policy(gtk.POLICY_AUTOMATIC,
         gtk.POLICY_AUTOMATIC)
 
+        # Allow the user to make the output pretty tiny vertically
+        # (to save space, only the last output line is really important)
+        self.output_container.set_size_request(-1, 40)
+
         # scroll down on new output: -- not reliable with multilines added
         #uistuff.keepDown(self.output_container)  
 
