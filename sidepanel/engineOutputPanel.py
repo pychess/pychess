@@ -274,7 +274,7 @@ class EngineOutput (gtk.VBox):
             line = line.replace("\t", " ")
 
             # Output line for debugging if we want to:
-            #print(line)
+            log.debug("Received line: " + line, repr(self))
 
             # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
@@ -341,7 +341,7 @@ class EngineOutput (gtk.VBox):
             # Detach from previous engine
             self.attached_engine.disconnect(self.attached_handler_id)
         # Attach to new engine:
-        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__())
+        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__(), repr(self))
         self.attached_engine = engine
         self.attached_handler_id = engine.connect("line", self.parseLines)
         return
@@ -349,7 +349,7 @@ class EngineOutput (gtk.VBox):
     def detachEngine (self):
         # Detach from attached engine
         if not self.attached_engine is None:
-            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__())
+            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__(), repr(self))
             self.attached_engine.disconnect(self.attached_handler_id)
             self.attached_engine = None
 
@@ -357,6 +357,8 @@ class EngineOutput (gtk.VBox):
         color = "black"
         if self.white:
             color = "white"
-        return "Engine Output " + color + " #" + id(self).__str__() + " (engine: " + self.attached_engine.__str__()
- 
+        return "Engine Output " + color + " #" + id(self).__str__()
 
+    def __str__(self):
+        return repr(self) + " (engine: " + self.attached_engine.__str__() + ")"
+ 
