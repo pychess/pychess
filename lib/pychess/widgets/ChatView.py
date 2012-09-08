@@ -27,6 +27,7 @@ class ChatView (gtk.VPaned):
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         sw.set_shadow_type(gtk.SHADOW_NONE)
+        sw.set_size_request(-1, 20)
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
@@ -60,7 +61,7 @@ class ChatView (gtk.VPaned):
         def callback (widget, event):
             widget.disconnect(handle_id)
             allocation = widget.get_allocation()
-            self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
+            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))
         handle_id = self.connect("expose-event", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
