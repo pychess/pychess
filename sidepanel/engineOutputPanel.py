@@ -19,7 +19,6 @@ white = addDataPrefix("glade/panel_engineoutput.svg")
 __desc__ = _("The engine output panel shows the thinking output of chess engines (computer players) during a game")
 
 class Sidepanel:
-    
     def load (self, gmwidg):
         __widget__ = gtk.VBox()
         self.box = __widget__
@@ -171,6 +170,9 @@ class EngineOutput (gtk.VBox):
         self.pack_start(self.title_hbox, False)
         self.pack_start(self.output_container, True)
 
+    def __del__ (self):
+        self.detachEngine()
+
     def appendNewline (self):
         # Start a new line if text output isn't empty:
         if self.output.get_buffer().get_char_count() > 0:
@@ -273,9 +275,6 @@ class EngineOutput (gtk.VBox):
             line = line.strip(" \r\t\n")
             line = line.replace("\t", " ")
 
-            # Output line for debugging if we want to:
-            #log.debug(self.__str__() + " received line: " + line + "\n", "Default")
-
             # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
             # GNU Chess/CECP/Winboard engine thinking output lines:
@@ -341,15 +340,16 @@ class EngineOutput (gtk.VBox):
             # Detach from previous engine
             self.attached_engine.disconnect(self.attached_handler_id)
         # Attach to new engine:
-        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__() + "\n", "Default")
+        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__() + "\n", engine.defname)
         self.attached_engine = engine
         self.attached_handler_id = engine.connect("line", self.parseLines)
         return
 
     def detachEngine (self):
+        print("DETACH DETACH")
         # Detach from attached engine
         if not self.attached_engine is None:
-            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__() + "\n", "Default")
+            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__() + "\n", self.attached_engine.defname)
             self.attached_engine.disconnect(self.attached_handler_id)
             self.attached_engine = None
 
