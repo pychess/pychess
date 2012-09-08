@@ -3,7 +3,7 @@
 
 import re
 
-import gtk, gobject
+import gtk, gobject, pango
 
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
@@ -159,41 +159,120 @@ class EngineOutput (gtk.VBox):
         self.output_container.add(self.output)
         self.output.set_editable(False)
         self.output.set_wrap_mode(gtk.WRAP_WORD_CHAR)
+        self.tag_bold = self.output.get_buffer().create_tag("bold", weight=pango.WEIGHT_BOLD)
+        self.tag_color = self.output.get_buffer().create_tag("color", foreground="#0033ff")
         
         # Add all sub widgets to ourselves:
         self.pack_start(self.title_hbox, False)
         self.pack_start(self.output_container, True)
 
-    def append (self, line):
-        # See if we want to append or simply set:
+    def appendNewline (self):
+        # Start a new line if text output isn't empty:
         if self.output.get_buffer().get_char_count() > 0:
-            # We have old content, append
+            # We have old content, append newline
             self.output.get_buffer().insert(self.output.get_buffer().
-            get_end_iter(), "\n" + line)
-        else:
-            # Set contents directly
-            self.output.get_buffer().set_text(line)
+            get_end_iter(), "\n")
+
+    def append (self, line, tag=None):
+        # Append a specific string with the given formatting:
+        oldenditer = self.output.get_buffer().get_end_iter()
+        self.output.get_buffer().insert(self.output.get_buffer().
+        get_end_iter(), line)
+        if not tag is None:
+            enditer = self.output.get_buffer().get_end_iter()
+            startiter = enditer.copy()
+            startiter.backward_chars(len(line))
+            self.output.get_buffer().apply_tag(tag, startiter,
+            enditer)
+    
+    def appendThinking (self, depth, score, pv):
+        # Append a formatted thinking line:
+        self.appendNewline();
+        self.append(depth.__str__() + ". ", self.tag_color)
+        self.append("Score: ", self.tag_bold)
+        self.append(score.__str__() + " ")
+        self.append("PV: ", self.tag_bold)
+        self.append(pv.__str__())
 
     def parseInfoLine (self, line):
+        # Parse an identified info line and add it to our output:
         if self.clear_on_output == True:
             self.clear_on_output = False
             self.clear()
 
-        # FIXME: do more sophisticated parsing here:
+        # Clean up line first:
+        while line.find("  ") != -1:
+            line = line.replace("  ", " ")
+
+        depth = "?"
+        score = "?"
+        pv = "?"
+        infoFound = False
+
+        # do more sophisticated parsing here:
         if line.startswith("info "):
             # UCI info line
-            self.append(line[len("info "):])
+            # always end with a space to faciliate searching:
+            line = line + " "
+
+            # parse depth:
+            result = re.search( r'depth +([0-9]+) +', line, re.I )
+            if result:
+                depth = result.group(1)
+
+            # parse score:
+            result = re.search( r'score cp +([0-9]+) +', line, re.I )
+            if result:
+                score = result.group(1)
+            else:
+                result = re.search( r'score +mate +([0-9]+) +', line, re.I )
+                if result:
+                    score = "winning in " + result.group(1) + " moves"
+                else:
+                    result = re.search( r'score +mate +\-([0-9]+) +', line, re.I )
+                    if result:
+                        score = "losing in " + result.group(1) + " moves"
+                    else:
+                        if re.search( r'score +lowerbound +', line, re.I ):
+                            score = "lowerbound"
+                        elif re.search( r'score +upperbound +', line, re.I ):
+                            score = "upperbound"
+            # parse pv:
+            result = re.search( r'pv +([a-z].*[^ ]) *$', line, re.I )
+            if result:
+                infoFound = True
+                pv = result.group(1)
         else:
             # CECP/Winboard/GNUChess info line
-            self.append(line)
+            # parse all information in one go:
+            result = re.match( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([a-z].*)$', line, re.I )
+            if not result:
+                return
+            infoFound = True
+            depth = result.group(1)
+            score = result.group(2)
+            pv = result.group(3)
+
+        # Clean pv of unwanted chars:
+        pv = re.sub( '[^a-z^0-9^ ^x^?]', '', pv, flags=re.I )
+
+        # If we found useful information, show it:
+        if infoFound:
+            self.appendThinking(depth, score, pv)
 
     def parseLines (self, engine, lines):
         for line in lines:
             # Clean up the line a bit:
             line = line.strip(" \r\t\n")
+            line = line.replace("\t", " ")
+
+            # Output line for debugging if we want to:
+            #print(line)
+
+            # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
             # GNU Chess/CECP/Winboard engine thinking output lines:
-            if re.match( r'^[0-9]+\. ', line, re.I):
+            if re.match( r'^[0-9]+\.? +\-?[0-9]+ +', line, re.I):
                 self.parseInfoLine(line)
 
             # UCI engine thinking output lines:
@@ -201,6 +280,8 @@ class EngineOutput (gtk.VBox):
             re.I):
                 if line.find("depth") != -1 and line.find("score") != -1:
                     self.parseInfoLine(line)
+
+            # PARSE MOVE LINES (roughly, we merely identify them):
 
             # We want to clear on the next output info line
             # when a move arrived, so that for every move
