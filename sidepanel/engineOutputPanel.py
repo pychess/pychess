@@ -245,13 +245,15 @@ class EngineOutput (gtk.VBox):
         else:
             # CECP/Winboard/GNUChess info line
             # parse all information in one go:
-            result = re.match( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([a-z].*)$', line, re.I )
+            result = re.match( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$', line, re.I )
             if not result:
                 return
             infoFound = True
             depth = result.group(1)
             score = result.group(2)
             pv = result.group(3)
+
+            
 
         # Clean pv of unwanted chars:
         pv = re.sub( '[^a-z^0-9^ ^x^?]', '', pv, flags=re.I )
@@ -267,7 +269,7 @@ class EngineOutput (gtk.VBox):
             line = line.replace("\t", " ")
 
             # Output line for debugging if we want to:
-            #print(line)
+            print(line)
 
             # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
