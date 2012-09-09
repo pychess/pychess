@@ -187,7 +187,7 @@ class EngineOutput (gtk.VBox):
         self.re_extract_cecp_all = re.compile( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$' )
         self.re_extract_uci_depth = re.compile( r'depth +([0-9]+) +' )
         self.re_extract_uci_score = re.compile( r'score cp +([0-9]+) +' )
-        self.re_extract_uci_score_mate_other = re.compile( r'score cp +([0-9]+) +' )
+        self.re_extract_uci_score_mate_other = re.compile( r'score +mate +([0-9]+) +' )
         self.re_extract_uci_score_mate_us = re.compile( r'score +mate +\-([0-9]+) +' )
         self.re_extract_uci_score_lowerbound = re.compile( r'score +lowerbound +' )
         self.re_extract_uci_score_upperbound = re.compile( r'score +upperbound +' )
