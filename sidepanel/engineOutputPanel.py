@@ -185,7 +185,14 @@ class EngineOutput (gtk.VBox):
         self.re_move_line_cecp_san = re.compile( r'^(move +)?([QKNB]?[a-hA-H]?[xX]?[a-hA-H][0-9]\+?#?|[oO]-[oO]-[oO]|[oO]-[oO])$' )
         self.re_move_line_uci = re.compile( r'^bestmove +[a-hA-H][0-9][a-hA-H][0-9]( .*)?$' )
         self.re_extract_cecp_all = re.compile( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$' )
- 
+        self.re_extract_uci_depth = re.compile( r'depth +([0-9]+) +' )
+        self.re_extract_uci_score = re.compile( r'score cp +([0-9]+) +' )
+        self.re_extract_uci_score_mate_other = re.compile( r'score cp +([0-9]+) +' )
+        self.re_extract_uci_score_mathe_us = re.compile( r'score +mate +\-([0-9]+) +' )
+        self.re_extract_uci_score_lowerbound = re.compile( r'score +lowerbound +' )
+        self.re_extract_uci_score_upperbound = re.compile( r'score +upperbound +' )
+        self.re_extract_uci_pv = re.compile( r'pv +([a-hA-HoO].*[^ ]) *$' )
+
     def __del__ (self):
         self.detachEngine()
 
@@ -239,29 +246,29 @@ class EngineOutput (gtk.VBox):
             line = line + " "
 
             # parse depth:
-            result = re.search( r'depth +([0-9]+) +', line, re.I )
+            result = self.re_extract_uci_depth.search(line)
             if result:
                 depth = result.group(1)
 
             # parse score:
-            result = re.search( r'score cp +([0-9]+) +', line, re.I )
+            result = self.re_extract_uci_score.search(line)
             if result:
                 score = result.group(1)
             else:
-                result = re.search( r'score +mate +([0-9]+) +', line, re.I )
+                result = self.re_extract_uci_score_mate_other.search(line)
                 if result:
                     score = "winning in " + result.group(1) + " moves"
                 else:
-                    result = re.search( r'score +mate +\-([0-9]+) +', line, re.I )
+                    result = self.re_extract_uci_score_mate_us(line)
                     if result:
                         score = "losing in " + result.group(1) + " moves"
                     else:
-                        if re.search( r'score +lowerbound +', line, re.I ):
+                        if self.re_extract_uci_score_lowerbound.search(line):
                             score = "lowerbound"
-                        elif re.search( r'score +upperbound +', line, re.I ):
+                        elif self.re_extract_uci_score_upperbound.search(line):
                             score = "upperbound"
             # parse pv:
-            result = re.search( r'pv +([a-z].*[^ ]) *$', line, re.I )
+            result = self.re_extract_uci_pv.search(line)
             if result:
                 infoFound = True
                 pv = result.group(1)
