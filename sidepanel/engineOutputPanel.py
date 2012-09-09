@@ -20,17 +20,23 @@ __desc__ = _("The engine output panel shows the thinking output of chess engines
 
 class Sidepanel:
     def load (self, gmwidg):
-        __widget__ = gtk.HBox()
-        
-        self.box = __widget__
+        # Specify whether the panel should have a horizontal layout:
+        horizontal = True
+
+        if horizontal:
+            self.box = gtk.HBox()
+        else:
+            self.box = gtk.VBox()
+        __widget__ = self.box
 
         # Use two engine output widgets for each player color:
         self.output_white = EngineOutput(True)
         self.output_black = EngineOutput(False)
-        if __widget__ is gtk.HBox():
-            self.output_separator = gtk.HSeparator()
-        else:
+        if horizontal:
             self.output_separator = gtk.VSeparator()
+        else:
+            self.output_separator = gtk.HSeparator()
+
         self.output_noengines = gtk.TextView()
         self.output_noengines.get_buffer().set_text(
         _("No chess engines (computer players) are participating in this game."))
