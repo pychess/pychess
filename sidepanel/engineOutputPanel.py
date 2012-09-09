@@ -259,7 +259,7 @@ class EngineOutput (gtk.VBox):
                 if result:
                     score = "winning in " + result.group(1) + " moves"
                 else:
-                    result = self.re_extract_uci_score_mate_us(line)
+                    result = self.re_extract_uci_score_mate_us.search(line)
                     if result:
                         score = "losing in " + result.group(1) + " moves"
                     else:
