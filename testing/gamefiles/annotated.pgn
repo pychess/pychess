@@ -1,0 +1,13 @@
+[Event ""]
+[Site "?"]
+[Date "2011"]
+[Round "1.2"]
+[White "Test Player1"]
+[Black "Test Player2"]
+[Result "*"]
+
+{Initial main line comment} e4  $1 $24 {some comment on e4} e5! Nf3 {
+[clk 1:05:23 ] comment on move 2. Nf3} ({Initial variation comment for move 2.f4
+['just for fun']
+} 2. f4 {some comment on f4} d5) 2...Nc6 (2... Nf6 3. Nc3 (3. d3 (3. Bc4 Bc5)))
+({Initial variation comment for 2... d6} 2.. d6) 3. Bc4  $13 *
