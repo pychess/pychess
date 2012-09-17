@@ -155,7 +155,7 @@ class ICLogon:
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):
-        self.lounge = ICLounge(connection)
+        self.lounge = ICLounge(connection, self.helperconn)
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout", lambda iclounge: self.onDisconnected(None))
@@ -184,11 +184,15 @@ class ICLogon:
         
         ports = self.widgets["portsEntry"].get_text()
         ports = map(int, re.findall("\d+", ports))
-        if not 23 in ports: ports.append(23)
         if not 5000 in ports: ports.append(5000)
+        if not 23 in ports: ports.append(23)
         self.showConnecting()
-        
+
+
         self.connection = FICSConnection("freechess.org", ports, username, password)
+        self.helperconn = FICSConnection("freechess.org", ports, "guest", "", conn=self.connection)
+        self.helperconn.start()
+
         glock.glock_connect(self.connection, "connected", self.onConnected)
         glock.glock_connect(self.connection, "error", self.showError)
         glock.glock_connect(self.connection, "connectingMsg", self.showMessage)

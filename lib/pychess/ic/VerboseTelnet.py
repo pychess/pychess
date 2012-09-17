@@ -4,9 +4,19 @@ from copy import copy
 
 from pychess.System.Log import log
 
+
+class ConsoleHandler():
+    def __init__ (self, callback):
+        self.callback = callback
+    
+    def handle(self, line, prediction_name=None):
+        if line:
+            self.callback(line, prediction_name)
+
 class Prediction:
     def __init__ (self, callback, *regexps):
         self.callback = callback
+        self.name = callback.__name__
         
         self.regexps = []
         self.hash = hash(callback)
@@ -29,6 +39,7 @@ class Prediction:
         return "<Prediction to %s>" % self.callback.__name__
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
+
 
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp):
@@ -127,14 +138,17 @@ class PredictionsTelnet:
     
     def getStripLines(self):
         return self.__stripLines
+
     def getLinePrefix(self):
         return self.__linePrefix
+
     def setStripLines(self, value):
         self.__stripLines = value
+
     def setLinePrefix(self, value):
         self.__linePrefix = value
 
-    def handleSomeText (self, predictions):
+    def handleSomeText (self, predictions, consolehandler):
         # The prediations list may be changed at any time, so to avoid
         # "changed size during iteration" errors, we make a shallow copy
         temppreds = copy(predictions)
@@ -154,12 +168,15 @@ class PredictionsTelnet:
             log.debug(line+"\n", (repr(self.telnet), "lines"))
         
         if self.__state:
+            prediction = self.__state
             answer = self.__state.handle(line)
             if answer != RETURN_NO_MATCH:
                 log.debug(line+"\n", (repr(self.telnet), repr(self.__state.callback.__name__)))
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
+                if consolehandler is not None:
+                    consolehandler.handle(line, prediction.name)
                 return
         
         if not self.__state:
@@ -170,8 +187,12 @@ class PredictionsTelnet:
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
+                    if consolehandler is not None:
+                        consolehandler.handle(line, prediction.name)
                     break
             else:
+                if consolehandler is not None:
+                    consolehandler.handle(line)
                 log.debug(origLine, (repr(self.telnet), "nonmatched"))
     
     def write(self, str):
