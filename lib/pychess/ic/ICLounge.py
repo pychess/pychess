@@ -20,6 +20,7 @@ from pychess.System.Log import log
 from pychess.widgets import ionest
 from pychess.widgets import gamewidget
 from pychess.widgets.ChatWindow import ChatWindow
+from pychess.widgets.ConsoleWindow import ConsoleWindow
 from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.widgets.preferencesDialog import SoundTab
@@ -44,10 +45,15 @@ class ICLounge (GObject):
         'autoLogout'    : (SIGNAL_RUN_FIRST, None, ()),
     }
     
-    def __init__ (self, c):
+    def __init__ (self, connection, helperconn):
         GObject.__init__(self)
-        self.connection = c
-        self.widgets = w = uistuff.GladeWidgets("fics_lounge.glade")
+        self.connection = connection
+        self.helperconn = helperconn
+        
+        self.need_who = True
+        self.need_games = True
+        
+        self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
         self.infobar = InfoBar()
         self.infobar.hide()
@@ -59,14 +65,17 @@ class ICLounge (GObject):
             self.emit("logout")
             return True
         self.widgets["fics_lounge"].connect("delete-event", on_window_delete)
+
         def on_logoffButton_clicked (button):
             self.close()
             self.emit("logout")
         self.widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)        
+
         def on_autoLogout (alm):
             self.close()
             self.emit("autoLogout")
         self.connection.alm.connect("logOut", on_autoLogout)
+
         self.connection.connect("disconnected", lambda connection: self.close())
         self.connection.connect("error", self.on_connection_error)
         
@@ -79,30 +88,49 @@ class ICLounge (GObject):
 
         global sections
         sections = (
-            VariousSection(w,c),
-            UserInfoSection(w,c),
-            NewsSection(w,c),
+            VariousSection(self.widgets, self.connection),
+            UserInfoSection(self.widgets, self.connection),
+            NewsSection(self.widgets, self.connection),
 
-            SeekTabSection(w,c, self.infobar),
-            SeekGraphSection(w,c),
-            PlayerTabSection(w,c),
-            GameTabSection(w,c),
-            AdjournedTabSection(w,c, self.infobar),
+            SeekTabSection(self.widgets, self.connection, self.infobar),
+            SeekGraphSection(self.widgets, self.connection),
+            PlayerTabSection(self.widgets, self.connection),
+            GameTabSection(self.widgets, self.connection),
+            AdjournedTabSection(self.widgets, self.connection, self.infobar),
 
-            ChatWindow(w,c),
-            #ConsoleWindow(w,c),
+            ChatWindow(self.widgets, self.connection),
+            ConsoleWindow(self.widgets, self.connection),
 
-            SeekChallengeSection(w,c),
+            SeekChallengeSection(self.widgets, self.connection),
             
             # This is not really a section. It handles server messages which
             # don't correspond to a running game
-            Messages(w,c, self.infobar),
+            Messages(self.widgets, self.connection, self.infobar),
             
             # This is not really a section. Merely a pair of BoardManager connects
             # which takes care of ionest and stuff when a new game is started or
             # observed
-            CreatedBoards(w,c)
+            CreatedBoards(self.widgets, self.connection)
         )
+
+        self.widgets['notebook'].connect("switch-page", self.onSwitchPage)
+
+    def onSwitchPage(self, notebook, page, page_num):
+        # We don't want to slow down the login process, so load
+        # all players and all games just on first time when needed
+
+        #b: blitz      l: lightning   u: untimed      e: examined game
+        #s: standard   w: wild        x: atomic       z: crazyhouse        
+        #B: Bughouse   L: losers      S: Suicide
+        if notebook.get_nth_page(page_num) == self.widgets['playersListContent']:
+            if self.need_who:
+                print >> self.helperconn.client, "who IsblwL"
+                self.need_who = False
+
+        if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
+            if self.need_games:
+                print >> self.helperconn.client, "games /sblwL"
+                self.need_games = False
 
     @glock.glocked
     def on_news_item (self, nm, news):            
@@ -131,6 +159,9 @@ class ICLounge (GObject):
         if self.connection != None:
             self.connection.close()
         self.connection = None
+        if self.helperconn != None:
+            self.helperconn.close()
+        self.helperconn = None
         self.widgets = None
 
 ################################################################################
@@ -651,7 +682,6 @@ class SeekTabSection (ParrentListSection):
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
-        self.connection.glm.refreshSeeks()
 
 ########################################################################
 # Initialize Seek Graph                                                #
@@ -729,9 +759,11 @@ class SeekGraphSection (ParrentListSection):
         x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
-        try:
-            player = self.connection.players[FICSPlayer(seek["w"])]
-        except KeyError: return
+###        try:
+###            player = self.connection.players[FICSPlayer(seek["w"])]
+###        except KeyError: return
+        player = self.connection.players.get(FICSPlayer(seek["w"]))
+
         is_rated = False if seek["r"] == "u" else True
         text = self.getSeekTooltipText(player, seek["rt"],
             is_rated, seek["manual"], seek["gametype"], seek["t"], seek["i"],
@@ -789,9 +821,10 @@ class PlayerTabSection (ParrentListSection):
         widgets["private_chat_button"].set_sensitive(False)
         widgets["observe_button"].connect("clicked", self.onObserveClicked)
         widgets["observe_button"].set_sensitive(False)
+        
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
-        
+    
     @glock.glocked
     def onPlayerAdded (self, players, player):
         if player in self.players: return
@@ -826,7 +859,8 @@ class PlayerTabSection (ParrentListSection):
         for key in ("status", "game", "titles"):
             if player.handler_is_connected(self.players[player][key]):
                 player.disconnect(self.players[player][key])
-        if player.game and player.game.handler_is_connected(
+        if player.game and "private" in self.players[player] and \
+            player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
         for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
@@ -1927,10 +1961,6 @@ class SeekChallengeSection (ParrentListSection):
             self.__getSeekEditorDialogValues()
         self.widgets["variantCombo"].set_tooltip_text(
             variants[gametype.variant_type].__desc__)
-
-class ConsoleWindow:
-    def __init__ (self, widgets, connection):
-        pass
 
 ############################################################################
 # Relay server messages to the user which aren't part of a game            #
