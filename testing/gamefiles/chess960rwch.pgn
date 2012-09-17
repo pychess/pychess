@@ -1,0 +1,522 @@
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.28"]
+[Round "1.1"]
+[White "Nakamura, Hikaru"]
+[Black "Aronian, Levon"]
+[Result "0-1"]
+[WhiteElo "2777"]
+[BlackElo "2800"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nnrbkrbq/pppppppp/8/8/8/8/PPPPPPPP/NNRBKRBQ w FCfc - 0 1"]
+[PlyCount "84"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. g3 c6 2. c4 g6 3. Nc3 f5 4. d3 e5 5. f4 exf4 6. Bc5 Rf7 7. Rxf4 Bg5 8. Bd4
+Bxf4 9. Bxh8 Bxc1 10. Qg1 Bxb2 11. Nb3 b6 12. Qe3+ Re7 13. Qg5 Nc7 14. Bf6 Rf7
+15. Kd2 Ne6 16. Qh4 d6 17. e4 Nd7 18. Bh8 Bxc3+ 19. Kxc3 fxe4 20. Qxe4 Re7 21.
+Qh4 g5 22. Bh5+ Kd8 23. Qg4 Kc7 24. Nd4 Nxd4 25. Qxg5 Re5 26. Bxe5 dxe5 27. Bg4
+Be6 28. Bxe6 Nxe6 29. Qe7 Nd4 30. Qxh7 Rf8 31. Kb2 Rf2+ 32. Kb1 a5 33. h4 b5
+34. cxb5 cxb5 35. a3 b4 36. a4 Ne2 37. Kb2 Kd6 38. Qg6+ Nf6 39. Qf7 Ne4 40.
+Qg6+ Kc5 41. d4+ Nxd4+ 42. Kc1 Nc3 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.28"]
+[Round "1.2"]
+[White "Movsesian, Sergei"]
+[Black "Bologan, Viktor"]
+[Result "0-1"]
+[WhiteElo "2771"]
+[BlackElo "2702"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nnrbkrbq/pppppppp/8/8/8/8/PPPPPPPP/NNRBKRBQ w FCfc - 0 1"]
+[PlyCount "150"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. d4 g6 2. Nb3 f5 3. N1d2 Nc6 4. e3 e5 5. c3 Be7 6. h4 O-O-O 7. h5 g5 8. Bc2
+Nb6 9. O-O-O exd4 10. exd4 a5 11. a3 Bd5 12. Kb1 Bd6 13. Bh2 f4 14. Ne4 Be7 15.
+Nbd2 g4 16. Rfe1 Qg7 17. f3 g3 18. Bg1 d6 19. Bd3 Qf7 20. Rc1 Nc4 21. Nxc4 Bxc4
+22. Bc2 Be6 23. Ka1 Bf5 24. Ba4 d5 25. Nc5 Rd6 26. c4 dxc4 27. d5 Rxd5 28. Rxc4
+Ne5 29. Rc3 Nd3 30. Nxd3 Rxd3 31. Bb3 Qf6 32. Rxd3 Bxd3 33. Bd4 Qxd4 34. Rxe7
+a4 35. Qc1 Qd6 36. Be6+ Kb8 37. Rd7 Qe5 38. Rxd3 Qxe6 39. Rd4 Qe2 40. Rxa4 Rd8
+41. Ka2 Rd2 42. Rxf4 Rc2 43. Qb1 Qe6+ 44. Ka1 Rxg2 45. Re4 Qd5 46. Re8+ Ka7 47.
+Re1 Rd2 48. Rg1 g2 49. Qe1 Qd4 50. Qc1 Rxb2 51. Qxb2 Qxg1+ 52. Ka2 Qf1 53. Qd4+
+b6 54. Qa4+ Kb7 55. Qe4+ Ka7 56. Qa4+ Qa6 57. Qd4 Qe2+ 58. Kb3 Qxf3+ 59. Kb2
+Qg3 60. Qa4+ Kb8 61. Qe8+ Kb7 62. Qe4+ c6 63. Qe7+ Ka6 64. Qe2+ b5 65. Qe6 Qf2+
+66. Kb3 Qf3+ 67. Kb2 Qf2+ 68. Kb3 g1=Q 69. Qc8+ Kb6 70. Qb8+ Kc5 71. Qe5+ Kb6
+72. Qb8+ Ka6 73. Qc8+ Ka5 74. Qa8+ Qa7 75. Qd8+ Qgb6 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.28"]
+[Round "2.1"]
+[White "Aronian, Levon"]
+[Black "Bologan, Viktor"]
+[Result "1-0"]
+[WhiteElo "2800"]
+[BlackElo "2702"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rkqrnbbn/pppppppp/8/8/8/8/PPPPPPPP/RKQRNBBN w DAda - 0 1"]
+[PlyCount "43"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 e5 2. d4 d6 3. f3 Ng6 4. Bc4 c6 5. Bb3 Nc7 6. Ng3 exd4 7. Bxd4 Ne6 8. Bc3
+Nc5 9. Nf5 Nxb3 10. axb3 f6 11. Qe3 Qc7 12. Nd3 Ne5 13. Be1 g6 14. Nd4 Bf7 15.
+Bf2 Bg7 16. Rxa7 Rxa7 17. Nb5 cxb5 18. Qxa7+ Kc8 19. Nxe5 fxe5 20. Bb6 Qe7 21.
+Qa8+ Kd7 22. Bxd8 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.28"]
+[Round "2.2"]
+[White "Nakamura, Hikaru"]
+[Black "Movsesian, Sergei"]
+[Result "0-1"]
+[WhiteElo "2777"]
+[BlackElo "2771"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rkqrnbbn/pppppppp/8/8/8/8/PPPPPPPP/RKQRNBBN w DAda - 0 1"]
+[PlyCount "104"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. f4 f5 2. Ng3 Nd6 3. d3 Ng6 4. e4 fxe4 5. dxe4 e5 6. f5 Ne7 7. Nf3 Nc6 8. c4
+b6 9. Qc3 Re8 10. c5 Nb7 11. Bb5 Nxc5 12. Bxc6 dxc6 13. Nxe5 Nxe4 14. Nxc6+ Kb7
+15. Qf3 Ng5 16. Na5+ Kb8 17. Qg4 bxa5 18. Qxg5 Qa6 19. Bd4 Bc4 20. Kc2 Qc6 21.
+Bc3 Kb7 22. b3 Ba3 23. Rd2 Bd5 24. Rad1 Bxg2 25. Rd4 Bf3 26. R1d3 Bc5 27. Rc4
+Bd5 28. Rxc5 Qxc5 29. Kb2 a4 30. f6 a3+ 31. Kb1 Rad8 32. f7 Qg1+ 33. Kc2 Qf2+
+34. Bd2 Qxf7 35. Kc1 Rd6 36. Bf4 Rc6+ 37. Kd2 Rc5 38. Be3 h6 39. Qg4 Rb5 40.
+Qd4 Ra8 41. Ne2 Bc6 42. Nc3 Rb6 43. Qh4 Re8 44. Bxb6 axb6 45. b4 Qf1 46. Kc2
+Qa1 47. Rd1 Qb2+ 48. Kd3 Bb5+ 49. Nxb5 Qe2+ 50. Kc3 Qxd1 51. Qf4 Qe1+ 52. Kd3
+Qe2+ 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.28"]
+[Round "3.1"]
+[White "Movsesian, Sergei"]
+[Black "Aronian, Levon"]
+[Result "0-1"]
+[WhiteElo "2771"]
+[BlackElo "2800"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "brqbknnr/pppppppp/8/8/8/8/PPPPPPPP/BRQBKNNR w HBhb - 0 1"]
+[PlyCount "56"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. b4 Nf6 2. Ng3 e6 3. e4 b6 4. Bf3 Ng6 5. h4 d6 6. d4 d5 7. h5 dxe4 8. Be2 Nf8
+9. h6 Rg8 10. c4 c5 11. bxc5 bxc5 12. Rxb8 Qxb8 13. d5 e3 14. Bd1 exf2+ 15.
+Kxf2 gxh6 16. N1e2 Ng4+ 17. Kg1 Bg5 18. Ba4+ Ke7 19. Qc2 Be3+ 20. Kf1 Bf4 21.
+Nf5+ exf5 22. Rh3 Be5 23. Nc3 Kf6 24. Qd3 Rg5 25. d6 Kg7 26. d7 Nxd7 27. Bxd7
+Bd4 28. Ke2 Nf2 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "3.2"]
+[White "Bologan, Viktor"]
+[Black "Nakamura, Hikaru"]
+[Result "0-1"]
+[WhiteElo "2702"]
+[BlackElo "2777"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "brqbknnr/pppppppp/8/8/8/8/PPPPPPPP/BRQBKNNR w HBhb - 0 1"]
+[PlyCount "98"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 b5 2. d3 e6 3. Ng3 Nf6 4. b4 a5 5. a3 axb4 6. axb4 c5 7. Be5 Bc7 8. Bxc7
+Qxc7 9. Qg5 cxb4 10. N1e2 Ng6 11. Rxb4 d5 12. O-O O-O 13. c3 h6 14. Qc1 Rfd8
+15. Qb1 dxe4 16. dxe4 h5 17. h4 Qe5 18. Nd4 Nxh4 19. Rxb5 Rxb5 20. Qxb5 Qxb5
+21. Nxb5 Nxe4 22. Bxh5 Nd2 23. Ra1 g6 24. Be2 Bxg2 25. Ra4 Bc6 26. Rxh4 Bxb5
+27. Rb4 Bc6 28. f4 Rc8 29. c4 Ra8 30. Kf2 Ra3 31. Rb6 Ne4+ 32. Nxe4 Bxe4 33.
+Ke1 Ra2 34. Rb3 Kg7 35. Rc3 Kf6 36. c5 Bc6 37. Bd3 Ke7 38. Rc2 Ra4 39. Rc4 Rxc4
+40. Bxc4 f5 41. Kd2 Kf6 42. Kc3 e5 43. fxe5+ Kxe5 44. Kb4 f4 45. Kc3 g5 46. Kd3
+g4 47. Bf7 Bb5+ 48. Kd2 g3 49. c6 g2 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "4.1"]
+[White "Aronian, Levon"]
+[Black "Nakamura, Hikaru"]
+[Result "0-1"]
+[WhiteElo "2800"]
+[BlackElo "2777"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rbnkqnbr/pppppppp/8/8/8/8/PPPPPPPP/RBNKQNBR w HAha - 0 1"]
+[PlyCount "105"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. Nb3 a5 2. e4 e5 3. d4 exd4 4. f3 Ne6 5. Nxd4 Nd6 6. Nf5 Qf8 7. Nd2 f6 8. a3
+Nxf5 9. exf5 Nc5 10. Qh4 Ba7 11. Bf2 Qd6 12. Qg3 Qxg3 13. hxg3 Na4 14. Bxa7
+Rxa7 15. Ba2 Nxb2+ 16. Kc1 Bxa2 17. Kxb2 Bf7 18. Rae1 h6 19. Re4 b5 20. Rg4 Rg8
+21. Nb3 a4 22. Nc5 d6 23. Rd1 h5 24. Re4 Re8 25. Ne6+ Bxe6 26. fxe6 g6 27. g4
+hxg4 28. fxg4 Ra6 29. g5 f5 30. Re2 Rc6 31. Rde1 Rc4 32. g3 Rg4 33. Re3 c6 34.
+e7+ Kd7 35. Re6 Rxg5 36. Rf6 Rxe7 37. Rd1 d5 38. Rh1 Rh5 39. Rxh5 gxh5 40. Rxf5
+Rg7 41. Rxh5 Rxg3 42. Rh6 Kc7 43. Rh8 Kb6 44. Rh6 Kc5 45. Rf6 Re3 46. Rh6 d4
+47. Rh5+ Kc4 48. Rh6 c5 49. Rh4 b4 50. axb4 Kxb4 51. Rh5 c4 52. Rh1 a3+ 53. Kb1
+0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "4.2"]
+[White "Bologan, Viktor"]
+[Black "Movsesian, Sergei"]
+[Result "0-1"]
+[WhiteElo "2702"]
+[BlackElo "2771"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rbnkqnbr/pppppppp/8/8/8/8/PPPPPPPP/RBNKQNBR w HAha - 0 1"]
+[PlyCount "118"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 e5 2. f3 f6 3. Nb3 a5 4. d4 a4 5. Nc5 Nd6 6. Qb4 b6 7. Nd3 exd4 8. Bxd4
+a3 9. b3 c5 10. Nxc5 bxc5 11. Bxc5 Qe5 12. Bd4 Qb5 13. Qd2 Ne6 14. c4 Qg5 15.
+Qxg5 Nxg5 16. Ne3 Ne6 17. Bc3 Nb7 18. Kd2 Be5 19. Bc2 Bf7 20. g3 Nd4 21. Rhf1
+Nc5 22. b4 Nxc2 23. Kxc2 Na4 24. Bxe5 fxe5 25. Kb3 O-O 26. Rac1 Rfb8 27. Nd5
+Bxd5 28. exd5 d6 29. f4 e4 30. Rc2 Nc5+ 31. Kc3 Nd3 32. Rb1 Ra4 33. b5 Nc5 34.
+Kd4 Kf7 35. Rc3 Ke7 36. g4 g6 37. Rh3 Rh8 38. b6 Nb7 39. Rbb3 Na5 40. Rbc3 Kd7
+41. Rxa3 Rxc4+ 42. Ke3 Rc5 43. Kxe4 h5 44. gxh5 gxh5 45. Rag3 Re8+ 46. Kf3 Rxd5
+47. Rg5 Rd3+ 48. Kg2 Re2+ 49. Kf1 Rxh3 50. Kxe2 Rxh2+ 51. Kf3 Rxa2 52. Rxh5 Kc6
+53. f5 Nc4 54. Kf4 Kxb6 55. f6 Rf2+ 56. Kg5 Ne5 57. Rh7 Kc6 58. Ra7 Kd5 59. Re7
+Ke4 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "5.1"]
+[White "Bologan, Viktor"]
+[Black "Aronian, Levon"]
+[Result "1-0"]
+[WhiteElo "2702"]
+[BlackElo "2800"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrbnkrqb/pppppppp/8/8/8/8/PPPPPPPP/NRBNKRQB w FBfb - 0 1"]
+[PlyCount "123"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. f4 b6 2. g4 g6 3. Nb3 c5 4. d3 f5 5. Ne3 e6 6. Nc4 Nf7 7. Bd2 d5 8. Na3 Bf6
+9. g5 Be7 10. c4 Nc7 11. d4 Nd6 12. dxc5 Nxc4 13. Nxc4 dxc4 14. cxb6 Rxb6 15.
+Na5 Ba6 16. Qd4 Qh8 17. Qxh8 Rxh8 18. Nc6 Nd5 19. Bxd5 exd5 20. Bc3 Rg8 21.
+Nxe7 Kxe7 22. Rf3 Kd6 23. Rh3 Rb7 24. Rh6 Re8 25. Kf2 Re6 26. e3 Bb5 27. h4 Be8
+28. h5 Kc5 29. hxg6 Bxg6 30. Bd4+ Kb5 31. Ke2 a5 32. Kd2 Ka6 33. Kc3 Rbe7 34.
+Rh3 Re4 35. Rd1 Kb5 36. b3 Rc7 37. Be5 Rd7 38. Bd4 Rc7 39. Rb1 cxb3+ 40. Kxb3
+Rc4 41. Ka3+ Rb4 42. Rhh1 Re6 43. Rhc1 Rxb1 44. Rxb1+ Ka6 45. Rb8 Be8 46. Kb3
+Bg6 47. Rd8 Kb7 48. Ka3 Kc6 49. Rc8+ Kd7 50. Rc5 Ra6 51. Rxd5+ Ke7 52. Re5+ Kd7
+53. Ka4 Kd6 54. Rxa5 Be8+ 55. Kb4 Rxa5 56. Kxa5 Bf7 57. a3 Kc6 58. Kb4 Bh5 59.
+e4 fxe4 60. f5 Kd5 61. Kc3 Be8 62. Be3 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "5.2"]
+[White "Movsesian, Sergei"]
+[Black "Nakamura, Hikaru"]
+[Result "0-1"]
+[WhiteElo "2771"]
+[BlackElo "2777"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrbnkrqb/pppppppp/8/8/8/8/PPPPPPPP/NRBNKRQB w FBfb - 0 1"]
+[PlyCount "88"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. f4 Nc6 2. f5 g6 3. g4 Nb6 4. Ne3 gxf5 5. gxf5 Bf6 6. Qf2 e6 7. c3 d5 8. d4
+Bd7 9. Bd2 O-O-O 10. O-O-O e5 11. dxe5 Bxe5 12. Rg1 Qh8 13. Nxd5 Kb8 14. Nb3
+Bc8 15. Bg5 Rd6 16. Nxb6 axb6 17. Rxd6 Bxd6 18. f6 Rg8 19. Bh4 Bf4+ 20. e3 Ne5
+21. Be4 Bh6 22. Kb1 Ng4 23. Qe2 Nxe3 24. Rxg8 Qxg8 25. Bg3 Nf5 26. Bxf5 Bxf5+
+27. Ka1 Qg4 28. Bxc7+ Kxc7 29. Qe5+ Kc8 30. Qe8+ Kc7 31. Qe5+ Kd7 32. Qe7+ Kc6
+33. Nd4+ Kd5 34. Qxf7+ Be6 35. Qxb7+ Ke5 36. Nc6+ Kd6 37. Qe7+ Kxc6 38. Qe8+
+Bd7 39. Qa8+ Kc5 40. Qh1 Qf4 41. f7 Bb5 42. b4+ Kd6 43. Kb2 Qd2+ 44. Kb3 Qd5+
+0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "6.1"]
+[White "Aronian, Levon"]
+[Black "Movsesian, Sergei"]
+[Result "1-0"]
+[WhiteElo "2800"]
+[BlackElo "2771"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrnkrqbb/pppppppp/8/8/8/8/PPPPPPPP/NRNKRQBB w EBeb - 0 1"]
+[PlyCount "53"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. f4 f5 2. g3 Nab6 3. Nab3 g6 4. Nc5 c6 5. e4 d6 6. N5d3 fxe4 7. Bxe4 Nc4 8.
+Ne2 N8b6 9. b3 Na3 10. Rc1 Nb5 11. a4 Nc7 12. a5 Nd7 13. Bxa7 Ra8 14. Qf2 Kc8
+15. c4 d5 16. cxd5 Nf6 17. Nc3 Nxe4 18. Rxe4 Bxc3 19. dxc6 Bxb3+ 20. Ke1 bxc6
+21. Rxc3 Bd5 22. Re5 e6 23. Qb6 g5 24. a6 gxf4 25. Qb7+ Kd7 26. Bb6 Rec8 27.
+Rxd5+ 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.29"]
+[Round "6.2"]
+[White "Nakamura, Hikaru"]
+[Black "Bologan, Viktor"]
+[Result "1-0"]
+[WhiteElo "2777"]
+[BlackElo "2702"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrnkrqbb/pppppppp/8/8/8/8/PPPPPPPP/NRNKRQBB w EBeb - 0 1"]
+[PlyCount "54"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 f5 2. e5 Bd5 3. f4 e6 4. Bf2 Qf7 5. Qe2 b5 6. a3 O-O 7. O-O d6 8. Nd3 a5
+9. Nb3 a4 10. Nd4 Ne7 11. Rfe1 Ng6 12. g3 Bxh1 13. Kxh1 c5 14. Nf3 c4 15. Nb4
+dxe5 16. Nc6 e4 17. Ng5 Qb7 18. Qh5 h6 19. Qxg6 hxg5 20. Qxe6+ Kh7 21. fxg5
+Rbe8 22. g6+ Kh6 23. Qd5 Nc7 24. Qd7 Rf6 25. Be3+ Kxg6 26. Ne7+ Rxe7 27. Qxe7
+Nd5 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "7.1"]
+[White "Nakamura, Hikaru"]
+[Black "Aronian, Levon"]
+[Result "1-0"]
+[WhiteElo "2777"]
+[BlackElo "2800"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrnkrbbq/pppppppp/8/8/8/8/PPPPPPPP/NRNKRBBQ w EBeb - 0 1"]
+[PlyCount "77"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. f4 f5 2. Bd4 d6 3. Qg1 c5 4. Bc3 Nc7 5. g4 e6 6. d3 Bf7 7. e4 Ne7 8. Ne2 Qg8
+9. Nb3 b6 10. O-O-O g6 11. Nd2 O-O-O 12. Bh3 fxe4 13. Nxe4 Ned5 14. Bf6 Rd7 15.
+c4 Nb4 16. a3 Nc6 17. Bc3 Be7 18. g5 d5 19. Nf6 Bxf6 20. Bxf6 Qf8 21. Nc3 Qd6
+22. Qf2 Kb7 23. Kb1 Rf8 24. cxd5 Nxd5 25. Nxd5 Qxd5 26. d4 e5 27. Bxd7 Nxd4 28.
+Rxd4 cxd4 29. Rxe5 Qa2+ 30. Kc1 Qa1+ 31. Kc2 d3+ 32. Kxd3 Qd1+ 33. Qd2 Bc4+ 34.
+Ke3 Qg1+ 35. Kf3 h5 36. Re1 Qc5 37. Be7 Bd5+ 38. Kg3 h4+ 39. Kh3 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "7.2"]
+[White "Bologan, Viktor"]
+[Black "Movsesian, Sergei"]
+[Result "0-1"]
+[WhiteElo "2702"]
+[BlackElo "2771"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "nrnkrbbq/pppppppp/8/8/8/8/PPPPPPPP/NRNKRBBQ w EBeb - 0 1"]
+[PlyCount "102"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. g4 e5 2. Nab3 c6 3. h4 h5 4. g5 f5 5. f4 Bd5 6. Bg2 Bxg2 7. Qxg2 e4 8. Bd4
+Qg8 9. e3 Nc7 10. Ne2 g6 11. d3 exd3 12. cxd3 Nb6 13. Bf6+ Be7 14. e4 fxe4 15.
+dxe4 Qc4 16. Rc1 Qd3+ 17. Nd2 O-O-O 18. Bxe7 Rxe7 19. Qg3 Qa6 20. Qa3 Qxa3 21.
+bxa3 d5 22. Ng3 dxe4 23. Ngxe4 Ncd5 24. O-O Rf7 25. f5 gxf5 26. Rf3 f4 27. Rd3
+Kc7 28. Nf3 Re8 29. Nc5 Rfe7 30. Nd4 Ne3 31. Nb5+ Kb8 32. Nd6 Rf8 33. Nde4 Nbd5
+34. Rb3 b6 35. Na6+ Kb7 36. Nec5+ Kc8 37. Nd3 Kd7 38. Nab4 c5 39. Nxd5 Nxd5 40.
+Nf2 Kc6 41. Rd3 Rf5 42. Kg2 Re3 43. Rcd1 c4 44. Rd4 b5 45. Ne4 f3+ 46. Kg1 Rxa3
+47. Nf6 f2+ 48. Kh2 Nxf6 49. Rd6+ Kc5 50. Rxf6 Rxf6 51. gxf6 Rf3 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "8.1"]
+[White "Aronian, Levon"]
+[Black "Nakamura, Hikaru"]
+[Result "0-1"]
+[WhiteElo "2800"]
+[BlackElo "2777"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "brnnkqrb/pppppppp/8/8/8/8/PPPPPPPP/BRNNKQRB w GBgb - 0 1"]
+[PlyCount "52"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. b3 b5 2. f3 f6 3. d4 f5 4. Nd3 g6 5. Qf2 Bf6 6. g3 Qh6 7. e3 Ne6 8. Qe2 Nb6
+9. Nc3 a6 10. Nc5 Nxc5 11. dxc5 Qg7 12. Qd3 b4 13. cxb6 cxb6 14. Nd5 Bxa1 15.
+Nc7+ Kf7 16. O-O Bc3 17. f4 Bxh1 18. Kxh1 Qf6 19. Rbd1 Qc6+ 20. Qd5+ Qxd5+ 21.
+Rxd5 Rb7 22. Nxa6 Ra8 23. Nxb4 Bxb4 24. a4 Bc5 25. Re1 e6 26. Rd3 d5 0-1
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "8.2"]
+[White "Movsesian, Sergei"]
+[Black "Bologan, Viktor"]
+[Result "1-0"]
+[WhiteElo "2771"]
+[BlackElo "2702"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "brnnkqrb/pppppppp/8/8/8/8/PPPPPPPP/BRNNKQRB w GBgb - 0 1"]
+[PlyCount "45"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. g4 g5 2. Qh3 Ne6 3. e3 Nd6 4. d4 h5 5. d5 Ng7 6. gxh5 Ngf5 7. Nd3 O-O-O 8.
+e4 Nd4 9. Ne3 f5 10. e5 f4 11. Ng4 Nc4 12. O-O-O Ne2+ 13. Kb1 Nxg1 14. Rxg1 b5
+15. Rd1 Qf5 16. b3 Nb6 17. Nc5 e6 18. Be4 Qf8 19. d6 f3 20. Bxa8 Nxa8 21. Nf6
+g4 22. Qf1 c6 23. Qe1 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "9.1"]
+[White "Nakamura, Hikaru"]
+[Black "Aronian, Levon"]
+[Result "1-0"]
+[WhiteElo "2777"]
+[BlackElo "2800"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rnkrbbnq/pppppppp/8/8/8/8/PPPPPPPP/RNKRBBNQ w DAda - 0 1"]
+[PlyCount "43"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 e5 2. Nf3 g6 3. Nc3 c6 4. g3 d6 5. d4 Bd7 6. Rd3 Na6 7. a3 Bh6+ 8. Bd2
+Bg7 9. Be3 exd4 10. Bxd4 Nc5 11. Rd2 Nf6 12. Ng5 Rf8 13. O-O-O O-O-O 14. e5 Ng4
+15. f4 Ne6 16. Nxe6 Bxe6 17. h3 dxe5 18. Bxa7 Nf6 19. Ba6 e4 20. Qg1 Rxd2 21.
+Bxb7+ Kxb7 22. Qb6+ 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "9.2"]
+[White "Bologan, Viktor"]
+[Black "Movsesian, Sergei"]
+[Result "1-0"]
+[WhiteElo "2702"]
+[BlackElo "2772"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rnkrbbnq/pppppppp/8/8/8/8/PPPPPPPP/RNKRBBNQ w DAda - 0 1"]
+[PlyCount "101"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. g3 d5 2. Bg2 Nf6 3. Nc3 e6 4. d4 a5 5. Bd2 h6 6. e4 dxe4 7. Nxe4 Nxe4 8.
+Bxe4 Bc6 9. Ne2 a4 10. O-O Be7 11. c4 Bxe4 12. Qxe4 Qe8 13. Nc3 Nd7 14. Bf4 Nf6
+15. Qe2 Bd6 16. Be5 Bxe5 17. dxe5 Nd7 18. Rad1 Qe7 19. Nb5 Qc5 20. Rfe1 Rf8 21.
+b4 Qxb4 22. Qe3 Qa5 23. Rd4 O-O-O 24. Red1 Nb6 25. a3 Rxd4 26. Qxd4 Kb8 27.
+Nxc7 Nxc4 28. Nxe6 Rc8 29. Nf8 Rxf8 30. Qxc4 Qxe5 31. Qxa4 Rc8 32. Qb3 f5 33.
+Rb1 Qe4 34. Qb6 h5 35. h4 f4 36. gxf4 Qf3 37. Qe3 Qg4+ 38. Qg3 Qxg3+ 39. fxg3
+Rc3 40. Kg2 Rxa3 41. Rb5 g6 42. f5 Ra6 43. fxg6 Rxg6 44. Rxh5 Kc7 45. Rf5 Rg8
+46. h5 Rb8 47. h6 b5 48. g4 b4 49. g5 Kd6 50. h7 b3 51. g6 1-0
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "10.1"]
+[White "Aronian, Levon"]
+[Black "Nakamura, Hikaru"]
+[Result "1/2-1/2"]
+[WhiteElo "2800"]
+[BlackElo "2777"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rbbkrnqn/pppppppp/8/8/8/8/PPPPPPPP/RBBKRNQN w EAea - 0 1"]
+[PlyCount "96"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. c4 f5 2. Bxf5 Qxc4 3. f3 a5 4. Bc2 a4 5. Qe3 Ra5 6. Qc3 Qxc3 7. bxc3 Ba7 8.
+Ba3 Rg5 9. g3 Rh5 10. g4 Rh3 11. Bxa4 Ne6 12. d4 Nf4 13. Nf2 Rh6 14. Bc1 Rf8
+15. Bc2 g5 16. Ne4 Nf7 17. Bb3 Rg6 18. h4 d5 19. Nxg5 Nxg5 20. hxg5 Rxg5 21.
+Ng3 c5 22. Nh5 Rxh5 23. gxh5 cxd4 24. Bxf4 Rxf4 25. O-O-O e6 26. cxd4 Bd7 27.
+e4 Rxf3 28. exd5 exd5 29. Re5 Rf4 30. Rxd5 Kc8 31. Bc2 h6 32. Rd3 Rh4 33. Rd6
+Bb8 34. Rc3+ Kd8 35. Rb6 Bf4+ 36. Kb2 Bc6 37. Bg6 Kc7 38. Rbb3 Kd6 39. a4 Bg5
+40. Rc4 Bf6 41. Rbb4 Rh2+ 42. Rc2 Rh4 43. Rd2 Rg4 44. Kc3 Bd8 45. d5 Ba5 46.
+dxc6+ Kc7 47. Rd7+ Kxc6 48. Rdxb7 Rxb4 1/2-1/2
+
+[Event "CCM9 - Chess960 Rapid WCh"]
+[Site "Mainz"]
+[Date "2009.07.30"]
+[Round "10.2"]
+[White "Movsesian, Sergei"]
+[Black "Bologan, Viktor"]
+[Result "1/2-1/2"]
+[WhiteElo "2772"]
+[BlackElo "2702"]
+[Variant "chess 960"]
+[SetUp "1"]
+[FEN "rbbkrnqn/pppppppp/8/8/8/8/PPPPPPPP/RBBKRNQN w EAea - 0 1"]
+[PlyCount "100"]
+[EventDate "2009.??.??"]
+[EventCountry "GER"]
+[Source "Chess Tigers"]
+[SourceDate "2009.01.01"]
+
+1. e4 a6 2. d4 Ba7 3. Be3 d6 4. c3 Bd7 5. f3 f6 6. Bc2 e5 7. Nd2 Ne6 8. Ng3 Ng6
+9. Bb3 Qf8 10. O-O-O Ngf4 11. Kb1 g6 12. Nc4 Qg7 13. Na5 O-O 14. dxe5 Bxe3 15.
+exf6 Bxg1 16. fxg7 Kxg7 17. Rxg1 Nc5 18. Bc2 Rae8 19. Nb3 Nxb3 20. Bxb3 Re5 21.
+Rd2 Bc6 22. Ne2 Nxe2 23. Rxe2 d5 24. Bc2 dxe4 25. Rge1 Rh5 26. Bxe4 Bxe4+ 27.
+Rxe4 Rxh2 28. R1e2 h5 29. Kc2 h4 30. Kd2 h3 31. gxh3 Rxh3 32. Re7+ Rf7 33.
+Rxf7+ Kxf7 34. Ke3 a5 35. Rd2 Ke6 36. Rg2 Kf6 37. Rd2 Rh7 38. a4 g5 39. b4 axb4
+40. cxb4 Ke5 41. Rc2 Kd6 42. Rd2+ Ke6 43. Rc2 c6 44. Rc5 Rh4 45. b5 Kd6 46.
+Rxg5 Rxa4 47. bxc6 bxc6 48. f4 c5 49. Rg6+ Kd5 50. Rg5+ Kd6 1/2-1/2
+
