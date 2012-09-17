@@ -21,12 +21,16 @@ class TimeSeal:
     BUFFER_SIZE = 4096
     sensitive = False
 
+    def __init__(self):
+        self.name = ""
+        
     def open (self, address, port):
         if hasattr(self, "closed") and self.closed:
             return
         
         self.port = port
         self.address = address
+        self.name = address
         
         self.connected = False
         self.closed = False
@@ -183,7 +187,7 @@ class TimeSeal:
             self.cook_some()
     
     def __repr__ (self):
-        return self.address
+        return self.name
 
             
 
