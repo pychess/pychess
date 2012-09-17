@@ -1,0 +1,11 @@
+[Event "Lokalt spil"]
+[Site "Local Site"]
+[Round "1"]
+[Date "2007.02.06"]
+[White "Human"]
+[Black "Human"]
+[Result "*"]
+[SetUp "1"]
+[FEN "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"]
+
+2... g6 3. h4 g5 4. hxg5 *
