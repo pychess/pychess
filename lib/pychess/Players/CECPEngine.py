@@ -139,7 +139,8 @@ class CECPEngine (ProtocolEngine):
         
         self.supported_features = [
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
-            "analyze", "myname", "variants", "colors", "pause", "done"
+            "analyze", "myname", "variants", "colors", "pause", "done",
+            "debug"
         ]
         
         self.name = None
@@ -854,6 +855,9 @@ class CECPEngine (ProtocolEngine):
                 
                 if key == "done":
                     if value == 1:
+                        # Start a new game before using the engine:
+                        print >> self.engine, "new"
+                        # We are now ready for play:
                         self.emit("readyForOptions")
                         self.emit("readyForMoves")
                         self.returnQueue.put("ready")
