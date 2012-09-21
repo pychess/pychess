@@ -11,6 +11,9 @@ import traceback
 import cStringIO
 import atexit
 
+debug = False
+debug_stream = sys.stdout
+
 if not hasattr(Thread, "_Thread__bootstrap_inner"):
     class SafeThread (Thread):
         def encaps(self):
@@ -51,6 +54,10 @@ class ThreadPool:
         
         a.func = lambda: func(*args, **kw)
         a.name = self._getThreadName(a, func)
+        
+        if debug:
+            print >> debug_stream, a.ident, a.name
+            
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
@@ -75,6 +82,11 @@ class ThreadPool:
             f = os.path.basename(framerecord[1])
 #            f = os.sep.join((d, f))
             callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
+
+            framerecord = inspect.stack()[4]
+            f = os.path.basename(framerecord[1])
+            callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
+
         s = caller + " -- " + callee
         for repl in ("pychess.", "System.", "Players."):
             s = s.replace(repl, "")
