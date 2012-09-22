@@ -209,6 +209,7 @@ def genAllMoves (board):
         # One step
         
         movedpawns = (pawns << 8) & notblocker
+        movedpawns &= 0xffffffffffffffff  # contrain to 64 bits
         for cord in iterBits(movedpawns):
             if cord <= 7:
                 for p in PROMOTIONS:
