@@ -202,23 +202,28 @@ def evalPawnStructure (board, color, phase):
             ptype = color == WHITE and PAWN or BPAWN
             opptype = color == BLACK and PAWN or BPAWN
             
-            if not 0 <= i <= 63:
-                print toString(pawns)
-                print board
-            if not (passedPawnMask[opcolor][i] & ~fileBits[cord&7] & pawns) and\
-                    board.arBoard[i] != PAWN:
-                n1 = bitLength (pawns & moveArray[opptype][i])
-                n2 = bitLength (oppawns & moveArray[ptype][i])
-                if n1 < n2:
-                    backward = True
-
-            if not backward and bitPosArray[cord] & brank7[opcolor]:
-                i = i + (color == WHITE and 8 or -8)
-                if not (passedPawnMask[opcolor][i] & ~fileBits[1] & pawns):
+            # If the following condition is not true, we have
+            # an invalid pawn on topmost or bottommost rank.
+            # Please note chess does actually not allow this
+            # (a pawn needs to be promoted when entering that rank),
+            # so this position can only be reached through some
+            # strange direct positional editing:
+            if 0 <= i <= 63:
+                if not (passedPawnMask[opcolor][i] & \
+                        ~fileBits[cord&7] & pawns) and\
+                        board.arBoard[i] != PAWN:
                     n1 = bitLength (pawns & moveArray[opptype][i])
                     n2 = bitLength (oppawns & moveArray[ptype][i])
                     if n1 < n2:
                         backward = True
+
+                if not backward and bitPosArray[cord] & brank7[opcolor]:
+                    i = i + (color == WHITE and 8 or -8)
+                    if not (passedPawnMask[opcolor][i] & ~fileBits[1] & pawns):
+                        n1 = bitLength (pawns & moveArray[opptype][i])
+                        n2 = bitLength (oppawns & moveArray[ptype][i])
+                        if n1 < n2:
+                            backward = True
             
             if backward:
                 weaked |= bitPosArray[cord]
