@@ -179,9 +179,19 @@ class CECPEngine (ProtocolEngine):
     def prestart (self):
         print >> self.engine, "xboard"
         if self.protover == 1:
+            # start a new game (CECPv1 engines):
+            print >> self.engine, "new"
+
+            # we are now ready for options:
             self.emit("readyForOptions")
         elif self.protover == 2:
+            # start advanced protocol initialisation:
             print >> self.engine, "protover 2"
+
+            # we don't start a new game for CECPv2 here,
+            # we will do it after feature accept/reject is completed.
+
+            # set timeout for feature accept/reject:
             self.timeout = time.time() + TIME_OUT_FIRST
     
     def start (self):
@@ -856,7 +866,9 @@ class CECPEngine (ProtocolEngine):
                 if key == "done":
                     if value == 1:
                         # Start a new game before using the engine:
+                        # (CECPv2 engines)
                         print >> self.engine, "new"
+
                         # We are now ready for play:
                         self.emit("readyForOptions")
                         self.emit("readyForMoves")
