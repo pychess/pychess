@@ -81,7 +81,6 @@ import pychess
 no_debug = False
 glock_debug = False
 thread_debug = False
-stack_tracer = False
 
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 try:
@@ -101,8 +100,6 @@ else:
         help='turn on glock debugging output (WARNING: creates alot of output)')
     parser.add_argument('--thread-debug', action='store_true',
         help='turn on thread debugging output')
-    parser.add_argument('--stack-tracer', action='store_true',
-        help='turn on stack tracing output to trace.html')
     parser.add_argument('chess_file', nargs='?', metavar='chessfile',
         help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
     
@@ -111,18 +108,9 @@ else:
     glock_debug = args.glock_debug
     thread_debug = args.thread_debug
     chess_file = args.chess_file
-    stack_tracer = args.stack_tracer
     
-# Stack tracer for debugging deadlocks (needs pygments installed)
-if stack_tracer:
-    try:
-        from pychess.System import stacktracer
-        stacktracer.trace_start("trace.html")
-    except ImportError:
-        print "Stack tracer depends on pygments, but it's not installed."
-
 ###############################################################################
 # Let's rumble!
 
 import pychess.Main
-pychess.Main.run(no_debug, glock_debug, thread_debug, stack_tracer, chess_file)
+pychess.Main.run(no_debug, glock_debug, thread_debug, chess_file)

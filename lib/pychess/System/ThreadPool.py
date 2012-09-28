@@ -11,9 +11,6 @@ import traceback
 import cStringIO
 import atexit
 
-debug = False
-debug_stream = sys.stdout
-
 if not hasattr(Thread, "_Thread__bootstrap_inner"):
     class SafeThread (Thread):
         def encaps(self):
@@ -55,9 +52,6 @@ class ThreadPool:
         a.func = lambda: func(*args, **kw)
         a.name = self._getThreadName(a, func)
         
-        if debug:
-            print >> debug_stream, a.ident, a.name
-            
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
