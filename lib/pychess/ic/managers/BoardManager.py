@@ -577,7 +577,7 @@ class BoardManager (GObject):
         if game_type.variant_type == FISCHERRANDOMCHESS:
             pgnHead += [ ("Variant", "Fischerandom") ]
             # FR is the only variant used in this tag by the PGN generator @
-            # ficsgames.com. They put all the other wild/* stuff only in the
+            # ficsgames.org. They put all the other wild/* stuff only in the
             # "Event" header.
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
