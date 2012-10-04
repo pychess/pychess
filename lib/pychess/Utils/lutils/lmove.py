@@ -233,7 +233,7 @@ def parseSAN (board, san):
     
     # If last char is a piece char, we assue it the promote char
     c = notat[-1]
-    if c in chrU2Sign or c in chr2Sign:
+    if c in ("Q", "R", "B", "N", "q", "r", "b", "n"):
         c = c.lower()
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
@@ -284,6 +284,9 @@ def parseSAN (board, san):
         notat = notat[1:]
     else:
         piece = PAWN
+        if notat[-1] in ("1", "8") and flag == NORMAL_MOVE:
+            raise ParsingError, (
+                    san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
     if "x" in notat:
         notat, tcord = notat.split("x")
@@ -468,6 +471,10 @@ def parseAN (board, an):
         raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     flag = NORMAL_MOVE
+
+    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+        raise ParsingError, (an, "invalid promoted piece", board.asFen())
+
     if len(an) == 5:
         #The a7a8q variant
         flag = chr2Sign[an[4].lower()] + 2
@@ -493,6 +500,9 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
+    elif board.arBoard[fcord] == PAWN and an[3] in ("1", "8"):
+            raise ParsingError, (
+                    an, _("promotion move without promoted piece is incorrect"), board.asFen())
 
     return newMove (fcord, tcord, flag)
 
