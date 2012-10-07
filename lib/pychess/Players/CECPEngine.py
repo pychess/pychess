@@ -800,7 +800,15 @@ class CECPEngine (ProtocolEngine):
             return
         
         # Resigns
-        if "resign" in parts:
+        if parts[0] == "resign" or \
+            (parts[0] == "tellics" and parts[1] == "resign"): # buggy crafty
+
+            # Previously: if "resign" in parts,
+            # however, this is too generic, since "hint", "bk",
+            # "feature option=.." and possibly other, future CECPv2
+            # commands can validly contain the word "resign" without this
+            # being an intentional resign offer.
+
             self.emit("offer", Offer(RESIGNATION))
             return
         
@@ -816,11 +824,6 @@ class CECPEngine (ProtocolEngine):
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
             
-            # Crafty sometimes only resign to ics :S
-            #if parts[1] == "resign":
-            #    self.emit("offer", Offer(RESIGNATION))
-            #    log.warn("Interpreted tellics as a wish to resign")
-            #else:
             log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
             return
         
