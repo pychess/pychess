@@ -3,7 +3,9 @@ import Queue
 import itertools
 import re
 import time
+import gtk, gobject
 
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move
@@ -817,7 +819,21 @@ class CECPEngine (ProtocolEngine):
         
         #Tell User Error
         if parts[0] == "tellusererror":
-            log.warn("Ignoring tellusererror: %s\n" % " ".join(parts[1:]))
+            # Create a non-modal non-blocking message dialog with the error:
+            dlg = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format=None)
+
+            # Use the engine name if already known, otherwise the defname:
+            displayname = self.name
+            if not displayname:
+                displayname = self.defname
+
+            # Compose the dialog text:
+            dlg.set_markup(gobject.markup_escape_text(_("The engine %s reports an error:") % displayname) + "\n\n" + gobject.markup_escape_text(" ".join(parts[1:])))
+
+            # handle response signal so the "Close" button works:
+            dlg.connect("response", lambda dlg, x: dlg.destroy())
+
+            dlg.show_all()
             return
         
         # Tell Somebody
