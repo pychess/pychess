@@ -705,6 +705,10 @@ class CECPEngine (ProtocolEngine):
             self.__parseLine(line)
     
     def __parseLine (self, line):
+        if line[0:1] == "#":
+            # Debug line which we shall ignore as specified in CECPv2 specs
+            return
+
 #        log.debug("__parseLine: line=\"%s\"\n" % line.strip(), self.defname)
         parts = whitespaces.split(line.strip())
         
