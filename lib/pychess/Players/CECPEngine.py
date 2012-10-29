@@ -751,13 +751,17 @@ class CECPEngine (ProtocolEngine):
                         try:
                             move = parseAny(self.board, movestr)
                         except ParsingError, e:
-                            raise PlayerIsDead, e
+                            #raise PlayerIsDead, e
+                            self.end(WHITEWON if self.board.color == BLACK else BLACKWONWON, WON_ADJUDICATION)
+                            return
                         
                         if validate(self.board, move):
                             self.board = None
                             self.returnQueue.put(move)
                             return
-                        raise PlayerIsDead, "Board didn't validate after move"
+                        #raise PlayerIsDead, "Board didn't validate after move"
+                        self.end(WHITEWON if self.board.color == BLACK else BLACKWONWON, WON_ADJUDICATION)
+                        return
                 finally:
                     log.debug("__parseLine(): releasing self.boardLock\n", self.defname)
                     self.boardLock.release()
