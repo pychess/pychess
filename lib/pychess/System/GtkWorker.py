@@ -82,7 +82,7 @@ class GtkWorker (GObject, Thread):
         #self.connections = {"progressed": 0, "published": 0, "done": 0}
         self.connections = {"published": 0, "done": 0}
         self.handler_ids = {}
-        
+        self.name = func.__name__
         self.func = func
         self.cancelled = False
         self.done = False
