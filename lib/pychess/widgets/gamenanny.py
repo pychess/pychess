@@ -47,26 +47,38 @@ def nurseGame (gmwidg, gamemodel):
 #===============================================================================
 
 def on_gmwidg_infront (gmwidg):
-    for widget in MENU_ITEMS:
-        if widget in gmwidg.menuitems:
-            continue
-        elif widget == 'show_sidepanels' and isDesignGWShown():
-            getWidgets()[widget].set_property('sensitive', False)
-        else:
-            getWidgets()[widget].set_property('sensitive', True)
-    
-    # Change window title
-    getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    glock.acquire()
+    try:
+        for widget in MENU_ITEMS:
+            if widget in gmwidg.menuitems:
+                continue
+            elif widget == 'show_sidepanels' and isDesignGWShown():
+                getWidgets()[widget].set_property('sensitive', False)
+            else:
+                getWidgets()[widget].set_property('sensitive', True)
+        
+        # Change window title
+        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    finally:
+        glock.release()
     return False
 
 def on_gmwidg_closed (gmwidg):
-    if len(key2gmwidg) == 1:
-        getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
+    glock.acquire()
+    try:
+        if len(key2gmwidg) == 1:
+            getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
+    finally:
+        glock.release()
     return False
 
 def on_gmwidg_title_changed (gmwidg):
-    if gmwidg.isInFront():
-        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    glock.acquire()
+    try:
+        if gmwidg.isInFront():
+            getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+    finally:
+        glock.release()
     return False
 
 #===============================================================================
