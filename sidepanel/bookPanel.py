@@ -1,3 +1,5 @@
+from Queue import Queue
+
 import gtk, gobject, cairo, pango
 
 from pychess.System import conf
@@ -9,6 +11,7 @@ from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.prefix import addDataPrefix
+from pychess.System.ThreadPool import PooledThread
 
 
 __title__ = _("Hints")
@@ -256,32 +259,50 @@ class EngineAdvisor(Advisor):
             return pp + "%0.2f" % (s / 100.0)
 
 
-class EndgameAdvisor(Advisor):
-    def __init__ (self, store):
+class EndgameAdvisor(Advisor, PooledThread):
+    def __init__ (self, store, tv):
         Advisor.__init__(self, store, _("Endgame Table"))
         self.mode = ENDGAME
         self.egtb = EndgameTable()
+        self.tv = tv
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
-    
-    def shown_changed (self, boardview, shown):
-        m = boardview.model
-        b = m.getBoardAtPly(shown, boardview.variation)
-        parent = self.empty_parent()
+
+        self.egtb.connect("scored", self.on_scored)
+
+        self.queue = Queue()
+        self.start()
         
-        endings = self.egtb.scoreAllMoves(b.board)
+    def run(self):
+        while True:
+            lboard = self.queue.get()
+            if lboard == self.board.board:
+                self.egtb.scoreAllMoves(lboard)
+            self.queue.task_done()
+
+    def shown_changed (self, boardview, shown):
+        self.parent = self.empty_parent()
+        m = boardview.model
+        self.board = m.getBoardAtPly(shown, boardview.variation)
+        self.queue.put(self.board.board)
+
+    def on_scored(self, w, ret):
+        board, endings = ret
+        if board != self.board.board:
+            return
+
         for move, result, depth in endings:
             if result == DRAW:
                 result = (_("Draw"), 1, 0.5)
                 details = ""
-            elif (result == WHITEWON) ^ (b.color == WHITE):
+            elif (result == WHITEWON) ^ (self.board.color == WHITE):
                 result = (_("Loss"), 1, 0.0)
                 details = _("Mate in %d") % depth
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
-            self.store.append(parent, [(b, move, None), result, 0, False, details, False, False])
-
+            self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
+        self.tv.expand_row(self.path, False)
 
 class Sidepanel:
     def load (self, gmwidg):
@@ -376,7 +397,7 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         self.tv.set_property("show-expanders", False)
         
-        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store) ]
+        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store, self.tv) ]
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
