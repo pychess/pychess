@@ -272,6 +272,9 @@ def set_piece_theme(piece_set):
     else:
         all_in_one = False
         drawPiece = drawPiece3
-        svg_pieces = get_svg_pieces(piece_set)
+        try:
+            svg_pieces = get_svg_pieces(piece_set)
+        except:
+            drawPiece = drawPiece2
 
 set_piece_theme(conf.get("pieceTheme", "pychess"))
