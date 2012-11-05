@@ -119,7 +119,7 @@ class OpeningAdvisor(Advisor):
 
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
-    def __init__ (self, store, engine, mode, tv):
+    def __init__ (self, store, engine, mode, tv, boardview):
         if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
             self.tooltip = _("%s will try to predict which move is best and which side has the advantage") % engine
@@ -131,6 +131,7 @@ class EngineAdvisor(Advisor):
         self.tv = tv
         self.active = False
         self.linesExpected   = 1
+        self.boardview = boardview
         
         self.connection = engine.connect("analyze", self.on_analyze)
         engine.connect("readyForOptions", self.on_ready_for_options)
@@ -148,7 +149,7 @@ class EngineAdvisor(Advisor):
     def shown_changed (self, boardview, shown):
         if not self.active:
             return
-
+        
         self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
         self._create_new_expected_lines()
         
@@ -165,6 +166,8 @@ class EngineAdvisor(Advisor):
         # set start/stop cb visible
         self.store.set_value(parent, 6, True)
         self.active = True
+        
+        self.shown_changed(self.boardview, self.boardview.shown)
     
     def on_analyze (self, engine, analysis):
         if not self.active:
@@ -202,14 +205,14 @@ class EngineAdvisor(Advisor):
 
             self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
     
-    def start_stop(self, tb, boardview):
+    def start_stop(self, tb):
         if not tb:
             self.active = True
-            boardview.model.resume_analyzer(self.mode)
-            self.shown_changed(boardview, boardview.shown)
+            self.boardview.model.resume_analyzer(self.mode)
+            self.shown_changed(self.boardview, self.boardview.shown)
         else:
             self.active = False
-            boardview.model.pause_analyzer(self.mode)
+            self.boardview.model.pause_analyzer(self.mode)
             self.empty_parent()
         
     def multipv_edited(self, value):
@@ -379,7 +382,7 @@ class Sidepanel:
 
         def toggled_cb(cell, path):
             self.store[path][5] = not self.store[path][5]
-            self.advisors[int(path[0])].start_stop(self.store[path][5], self.boardview)
+            self.advisors[int(path[0])].start_stop(self.store[path][5])
         toggleRenderer.connect('clicked', toggled_cb)
 
         self.tv.append_column(c4)
@@ -407,9 +410,9 @@ class Sidepanel:
     
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv, self.boardview))
         if analyzer_type == SPY:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv, self.boardview))
 
     def on_analyzer_removed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
