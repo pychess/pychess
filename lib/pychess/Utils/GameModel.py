@@ -462,19 +462,8 @@ class GameModel (GObject, PooledThread):
             if self.timemodel and self.ply >= 2:
                 self.timemodel.start()
             
-            self.status = WAITING_TO_START
-            self.start()
-        else:
-            self.emit("game_started")
-        
-        if self.status == WHITEWON:
-            self.emit("game_ended", self.reason)
-        
-        elif self.status == BLACKWON:
-            self.emit("game_ended", self.reason)
-        
-        elif self.status == DRAW:
-            self.emit("game_ended", self.reason)
+        self.status = WAITING_TO_START
+        self.start()
         
         if error:
             raise error
@@ -506,6 +495,9 @@ class GameModel (GObject, PooledThread):
         
         log.debug("GameModel.run: emitting 'game_started' self=%s\n" % self)
         self.emit("game_started")
+        
+        # Let GameModel end() itself on games started with loadAndStart()
+        self.checkStatus()
         
         while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
             curColor = self.boards[-1].color
