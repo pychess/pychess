@@ -3,6 +3,7 @@ import webbrowser
 import math
 import atexit
 import signal
+import subprocess
 import urllib 
 from urlparse import urlparse
 
@@ -294,12 +295,14 @@ class PyChess:
         #widgets["aboutdialog1"].set_position(gtk.WIN_POS_CENTER)
         #widgets["aboutdialog1"].set_website_label(_("PyChess Homepage"))
         link = widgets["aboutdialog1"].get_website()
-        if os.path.isfile(prefix.addDataPrefix(".svn/entries")):
-            f = open(prefix.addDataPrefix(".svn/entries"))
-            line4 = [f.next() for i in xrange(4)][-1].strip()
-            widgets["aboutdialog1"].set_version(VERSION_NAME+" r"+line4)
-        else:
-            widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        if os.path.isdir(prefix.addDataPrefix(".hg")):
+            cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
+            process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            out = process.stdout.readline().split()
+            if len(out)>=2:
+                comments = widgets["aboutdialog1"].get_comments()
+                widgets["aboutdialog1"].set_comments("rev. "+out[0]+"\n"+out[1] + "\n%s" % comments)
         
         with open(prefix.addDataPrefix("ARTISTS")) as f:
             widgets["aboutdialog1"].set_artists(f.read().splitlines())
