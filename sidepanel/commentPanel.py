@@ -40,9 +40,10 @@ class Sidepanel:
             glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
         ]
 
-        widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
-        self.tv = widgets.get_widget("treeview")
-        scrollwin = widgets.get_widget("scrolledwindow")
+        widgets = gtk.Builder()
+        widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
+        self.tv = widgets.get_object("treeview")
+        scrollwin = widgets.get_object("scrolledwindow")
         scrollwin.unparent()
 
         self.store = gtk.ListStore(str)

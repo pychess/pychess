@@ -21,7 +21,7 @@ from time import time
 from urllib import urlopen, urlencode
 import email.Utils
 import gettext
-import gtk.glade
+#import gtk.glade
 import math
 import pychess
 import random
@@ -822,11 +822,11 @@ if __name__ == "__main__":
         
         if isInstalled():
             gettext.install("pychess", unicode=1)
-            gtk.glade.bindtextdomain("pychess")
+            #gtk.glade.bindtextdomain("pychess")
         else:
             gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-            gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
-        gtk.glade.textdomain("pychess")
+            #gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
+        #gtk.glade.textdomain("pychess")
         
         # Start logging
         
