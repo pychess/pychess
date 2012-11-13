@@ -1,116 +1,84 @@
-<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
-<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
-
-<glade-interface>
-
-<widget class="GtkWindow" id="window">
-  <property name="title">window1</property>
-  <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
-  <property name="modal">False</property>
-  <property name="resizable">True</property>
-  <property name="destroy_with_parent">False</property>
-  <property name="decorated">True</property>
-  <property name="skip_taskbar_hint">False</property>
-  <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
-  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
-  <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
-
-  <child>
-    <widget class="GtkScrolledWindow" id="panel">
-      <property name="visible">True</property>
-      <property name="can_focus">True</property>
-      <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
-      <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-      <property name="shadow_type">GTK_SHADOW_NONE</property>
-      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
-
-      <child>
-	<widget class="GtkViewport" id="viewport1">
-	  <property name="visible">True</property>
-	  <property name="shadow_type">GTK_SHADOW_NONE</property>
-
-	  <child>
-	    <widget class="GtkHBox" id="hbox1">
-	      <property name="visible">True</property>
-	      <property name="homogeneous">False</property>
-	      <property name="spacing">0</property>
-
-	      <child>
-		<widget class="GtkTreeView" id="treeview1">
-		  <property name="width_request">35</property>
-		  <property name="visible">True</property>
-		  <property name="sensitive">False</property>
-		  <property name="headers_visible">False</property>
-		  <property name="rules_hint">True</property>
-		  <property name="reorderable">False</property>
-		  <property name="enable_search">False</property>
-		  <property name="fixed_height_mode">False</property>
-		  <property name="hover_selection">False</property>
-		  <property name="hover_expand">False</property>
-		  <signal name="cursor_changed" handler="treeview1_selection_changed" last_modification_time="Thu, 31 Aug 2006 20:18:25 GMT"/>
-		  <signal name="select_cursor_row" handler="treeview1_selection_changed" last_modification_time="Thu, 31 Aug 2006 20:19:08 GMT"/>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkTreeView" id="treeview2">
-		  <property name="width_request">60</property>
-		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="headers_visible">False</property>
-		  <property name="rules_hint">True</property>
-		  <property name="reorderable">False</property>
-		  <property name="enable_search">False</property>
-		  <property name="fixed_height_mode">False</property>
-		  <property name="hover_selection">False</property>
-		  <property name="hover_expand">False</property>
-		  <signal name="cursor_changed" handler="treeview2_selection_changed" last_modification_time="Tue, 29 Aug 2006 20:45:35 GMT"/>
-		  <signal name="select_cursor_row" handler="treeview2_selection_changed" last_modification_time="Tue, 29 Aug 2006 20:45:42 GMT"/>
-		  <signal name="key_press_event" handler="on_treeview2_key_press_event" last_modification_time="Mon, 04 Sep 2006 15:35:24 GMT"/>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkTreeView" id="treeview3">
-		  <property name="width_request">60</property>
-		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="headers_visible">False</property>
-		  <property name="rules_hint">True</property>
-		  <property name="reorderable">False</property>
-		  <property name="enable_search">False</property>
-		  <property name="fixed_height_mode">False</property>
-		  <property name="hover_selection">False</property>
-		  <property name="hover_expand">False</property>
-		  <signal name="cursor_changed" handler="treeview3_selection_changed" last_modification_time="Tue, 29 Aug 2006 21:00:37 GMT"/>
-		  <signal name="select_cursor_row" handler="treeview3_selection_changed" last_modification_time="Tue, 29 Aug 2006 20:45:19 GMT"/>
-		  <signal name="key_press_event" handler="on_treeview3_key_press_event" last_modification_time="Mon, 04 Sep 2006 15:35:30 GMT"/>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">True</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-	    </widget>
-	  </child>
-	</widget>
-      </child>
-    </widget>
-  </child>
-</widget>
-
-</glade-interface>
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkWindow" id="window">
+    <property name="can_focus">False</property>
+    <property name="title">window1</property>
+    <child>
+      <object class="GtkScrolledWindow" id="panel">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <property name="vscrollbar_policy">automatic</property>
+        <child>
+          <object class="GtkViewport" id="viewport1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkHBox" id="hbox1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkTreeView" id="treeview1">
+                    <property name="width_request">35</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="headers_visible">False</property>
+                    <property name="rules_hint">True</property>
+                    <property name="enable_search">False</property>
+                    <signal name="cursor-changed" handler="treeview1_selection_changed" swapped="no"/>
+                    <signal name="select-cursor-row" handler="treeview1_selection_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTreeView" id="treeview2">
+                    <property name="width_request">60</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="headers_visible">False</property>
+                    <property name="rules_hint">True</property>
+                    <property name="enable_search">False</property>
+                    <signal name="cursor-changed" handler="treeview2_selection_changed" swapped="no"/>
+                    <signal name="key-press-event" handler="on_treeview2_key_press_event" swapped="no"/>
+                    <signal name="select-cursor-row" handler="treeview2_selection_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTreeView" id="treeview3">
+                    <property name="width_request">60</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="headers_visible">False</property>
+                    <property name="rules_hint">True</property>
+                    <property name="enable_search">False</property>
+                    <signal name="cursor-changed" handler="treeview3_selection_changed" swapped="no"/>
+                    <signal name="key-press-event" handler="on_treeview3_key_press_event" swapped="no"/>
+                    <signal name="select-cursor-row" handler="treeview3_selection_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
