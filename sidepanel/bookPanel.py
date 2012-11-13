@@ -312,9 +312,10 @@ class Sidepanel:
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
         
-        widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
-        self.tv = widgets.get_widget("treeview")
-        self.sw = widgets.get_widget("scrolledwindow")
+        widgets = gtk.Builder()
+        widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
+        self.tv = widgets.get_object("treeview")
+        self.sw = widgets.get_object("scrolledwindow")
         self.sw.unparent()
         self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str, bool, bool)
         self.tv.set_model(self.store)

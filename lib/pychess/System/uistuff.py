@@ -1,14 +1,16 @@
+import colorsys
+import Queue
+import re
+import webbrowser
+
+import gtk
+import pango
+
 from pychess.System import conf, glock
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
-import Queue
-import colorsys
-import gtk.glade
-import pango
-import re
-import webbrowser
 
 
 def createCombo (combo, data):
@@ -438,6 +440,7 @@ def LinkLabel (text, url):
     
     return eventbox
 
+
 cachedGlades = {}
 def cacheGladefile(filename):
     """ gtk.glade automatically caches the file, so we only need to use this
@@ -445,7 +448,8 @@ def cacheGladefile(filename):
     if filename not in cachedGlades:
         cachedGlades[filename] = Queue.Queue()
         def readit ():
-            glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+            glade = gtk.Builder()
+            glade.add_from_file(addDataPrefix("glade/%s" % filename))
             cachedGlades[filename].put(glade)
         pool.start(readit)
 
@@ -463,7 +467,8 @@ class GladeWidgets:
         if not self.glade:
             glock.acquire()
 #            print "uistuff.py:gladefile = %s" % filename
-            self.glade = gtk.glade.XML(addDataPrefix("glade/%s" % filename))
+            self.glade = gtk.Builder()
+            self.glade.add_from_file(addDataPrefix("glade/%s" % filename))
             glock.release()
         
         self.extras = {}
@@ -471,7 +476,7 @@ class GladeWidgets:
     def __getitem__(self, key):
         if key in self.extras:
             return self.extras[key]
-        return self.glade.get_widget(key)
+        return self.glade.get_object(key)
     
     def __setitem__(self, key, widget):
         self.extras[key] = widget

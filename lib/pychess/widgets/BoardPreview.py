@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import gtk, gtk.glade, gobject
+import gtk, gobject
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
 from pychess.Utils.Board import Board
-from pychess.System.uistuff import GladeWidgets
 from pychess.System.protoopen import protoopen, splitUri
 from pychess.widgets.BoardView import BoardView
 from pychess.Savers.ChessFile import LoadingError

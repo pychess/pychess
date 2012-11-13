@@ -239,10 +239,12 @@ class PyChess:
         #=======================================================================
         # Init glade and the 'GladeHandlers'
         #=======================================================================
-        gtk.glade.set_custom_handler(self.widgetHandler)
         gtk.about_dialog_set_url_hook(self.website)
         widgets = uistuff.GladeWidgets("PyChess.glade")
-        widgets.getGlade().signal_autoconnect(GladeHandlers.__dict__)
+        widgets.getGlade().connect_signals(GladeHandlers.__dict__)
+        tasker = TaskerManager()
+        tasker.packTaskers (NewGameTasker(), InternetGameTasker())
+        widgets["Background"].add(tasker)
         
         #------------------------------------------------------ Redirect widgets
         gamewidget.setWidgets(widgets)
@@ -356,12 +358,6 @@ class PyChess:
 
     def website(self, clb, link):
         webbrowser.open(link)
-    
-    def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
-        # Tasker is currently the only widget that uses glades CustomWidget
-        tasker = TaskerManager()
-        tasker.packTaskers (NewGameTasker(), InternetGameTasker())
-        return tasker
     
     def handleArgs (self, chess_file):
         if chess_file:
