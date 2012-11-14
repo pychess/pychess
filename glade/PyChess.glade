@@ -2234,7 +2234,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Load _Recent Game</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_load_recent_game_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>

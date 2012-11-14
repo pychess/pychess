@@ -29,8 +29,6 @@
                     <property name="headers_visible">False</property>
                     <property name="rules_hint">True</property>
                     <property name="enable_search">False</property>
-                    <signal name="cursor-changed" handler="treeview1_selection_changed" swapped="no"/>
-                    <signal name="select-cursor-row" handler="treeview1_selection_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -46,9 +44,6 @@
                     <property name="headers_visible">False</property>
                     <property name="rules_hint">True</property>
                     <property name="enable_search">False</property>
-                    <signal name="cursor-changed" handler="treeview2_selection_changed" swapped="no"/>
-                    <signal name="key-press-event" handler="on_treeview2_key_press_event" swapped="no"/>
-                    <signal name="select-cursor-row" handler="treeview2_selection_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -64,9 +59,6 @@
                     <property name="headers_visible">False</property>
                     <property name="rules_hint">True</property>
                     <property name="enable_search">False</property>
-                    <signal name="cursor-changed" handler="treeview3_selection_changed" swapped="no"/>
-                    <signal name="key-press-event" handler="on_treeview3_key_press_event" swapped="no"/>
-                    <signal name="select-cursor-row" handler="treeview3_selection_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
