@@ -118,11 +118,12 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate (widget):
-        # Not implemented
+        # Not implemented yet
         pass
 
-    #def on_open_database_activate (widget):
+    def on_open_database_activate (widget):
         #GameList().load_games()
+        pass
     
     def on_enter_game_notation_activate (widget):
         newGameDialog.EnterNotationExtension.run()
