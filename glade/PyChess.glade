@@ -2415,7 +2415,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Offer _Draw</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_draw_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2426,7 +2425,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Offer _Pause</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_pause1_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2437,7 +2435,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Offer _Resume</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_resume1_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2451,7 +2448,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="image">image6</property>
                         <property name="use_stock">False</property>
                         <accelerator key="Z" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_undo1_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2468,7 +2464,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">_Call Flag</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_call_flag_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2479,7 +2474,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">R_esign</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_resign_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2490,7 +2484,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Ask to _Move</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_ask_to_move_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
