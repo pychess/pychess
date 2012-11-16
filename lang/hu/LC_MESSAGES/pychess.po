@@ -9,15 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
-"POT-Creation-Date: 2012-06-09 01:00+0200\n"
-"PO-Revision-Date: 2012-06-09 10:40+0000\n"
+"POT-Creation-Date: 2012-06-24 19:09+0200\n"
+"PO-Revision-Date: 2012-06-25 08:22+0000\n"
 "Last-Translator: gbtami <gbtami@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: Hungarian (http://www.transifex.com/projects/p/pychess/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: hu\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/discovererDialog.glade:17
@@ -1041,15 +1041,15 @@ msgstr "Automatikus kijelentkezés"
 msgid "You have been logged out because you were idle more than 60 minutes"
 msgstr "Kiléptetve 60 perc tétlenség miatt"
 
-#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:275
+#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:281
 msgid "Win"
 msgstr "Győzelem"
 
-#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:269
+#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:275
 msgid "Draw"
 msgstr "Döntetlen"
 
-#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:272
+#: lib/pychess/ic/ICLounge.py:223 sidepanel/bookPanel.py:278
 msgid "Loss"
 msgstr "Vereség"
 
@@ -1813,7 +1813,7 @@ msgid "The game has been aborted"
 msgstr "A játszmát megszakították."
 
 #: lib/pychess/Utils/repr.py:24
-msgid "Because neither player has sufficient material to mate"
+msgid "Because neither player has got sufficient material to mate"
 msgstr "(egyik félnek sincs elég mattadó anyaga)"
 
 #: lib/pychess/Utils/repr.py:25
@@ -1833,7 +1833,7 @@ msgstr "(mindkét fél túllépte az időt)"
 msgid "Because %(mover)s stalemated"
 msgstr "(%(mover)s pattba lépett)"
 
-#: lib/pychess/Utils/repr.py:29 lib/pychess/Utils/repr.py:52
+#: lib/pychess/Utils/repr.py:29
 msgid "Because the players agreed to"
 msgstr "(a játékosok megegyeztek)"
 
@@ -1849,15 +1849,15 @@ msgstr "(túl hosszú játszma)"
 #: lib/pychess/Utils/repr.py:32
 #, python-format
 msgid ""
-"Because %(white)s ran out of time and %(black)s has insufficient material to"
-" mate"
+"Because %(white)s ran out of time and %(black)s has got insufficient "
+"material to mate"
 msgstr "(%(white)s túllépte az időt, de %(black)s oldalán sincs elég mattadó anyag)"
 
 #: lib/pychess/Utils/repr.py:33
 #, python-format
 msgid ""
-"Because %(black)s ran out of time and %(white)s has insufficient material to"
-" mate"
+"Because %(black)s ran out of time and %(white)s has got insufficient "
+"material to mate"
 msgstr "(%(black)s túllépte az időt, de %(white)s oldalán sincs elég mattadó anyag)"
 
 #: lib/pychess/Utils/repr.py:35
@@ -1872,7 +1872,7 @@ msgstr "(%(loser)s túllépte az időt)"
 
 #: lib/pychess/Utils/repr.py:37
 #, python-format
-msgid "Because %(loser)s was checkmated"
+msgid "Because %(loser)s has been checkmated"
 msgstr "(%(loser)s mattot kapott)"
 
 #: lib/pychess/Utils/repr.py:38
@@ -1894,7 +1894,7 @@ msgid "Because both players agreed to adjourn the game"
 msgstr "(mindkét játékos beleegyezett az elhalasztásba)"
 
 #: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
-msgid "Because the server was shutdown"
+msgid "Because the server was shut down"
 msgstr "(a szerver leállt)"
 
 #: lib/pychess/Utils/repr.py:45
@@ -1925,6 +1925,10 @@ msgstr "(%(white)s kapcsolata megszakadt a szerverrel)"
 #, python-format
 msgid "Because %(black)s lost connection to the server"
 msgstr "(%(black)s kapcsolata megszakadt a szerverrel)"
+
+#: lib/pychess/Utils/repr.py:52
+msgid "Because both players agreed to"
+msgstr "(a játékosok megegyeztek)"
 
 #: lib/pychess/Utils/repr.py:53
 msgid "Because of courtesy by a player"
@@ -2411,23 +2415,23 @@ msgstr "Játszma rögzítése"
 msgid "Flag"
 msgstr "Ország"
 
-#: lib/pychess/widgets/preferencesDialog.py:298
+#: lib/pychess/widgets/preferencesDialog.py:304
 msgid "Open Sound File"
 msgstr "Hangfájl megnyitása"
 
-#: lib/pychess/widgets/preferencesDialog.py:315
+#: lib/pychess/widgets/preferencesDialog.py:321
 msgid "No sound"
 msgstr "Nincs hang"
 
-#: lib/pychess/widgets/preferencesDialog.py:316
+#: lib/pychess/widgets/preferencesDialog.py:322
 msgid "Beep"
 msgstr "Csipogás"
 
-#: lib/pychess/widgets/preferencesDialog.py:317
+#: lib/pychess/widgets/preferencesDialog.py:323
 msgid "Select sound file..."
 msgstr "Hangfájl kiválasztása..."
 
-#: lib/pychess/widgets/preferencesDialog.py:452
+#: lib/pychess/widgets/preferencesDialog.py:458
 msgid "Undescribed panel"
 msgstr "Nincs leírás"
 
@@ -2773,27 +2777,63 @@ msgstr "Kezdő megjegyzés"
 msgid "Add comment"
 msgstr "Megjegyzés hozzáadása"
 
-#: sidepanel/annotationPanel.py:151 sidepanel/annotationPanel.py:192
+#: sidepanel/annotationPanel.py:151 sidepanel/annotationPanel.py:214
 msgid "Edit comment"
 msgstr "Megjegyzés szerkesztése"
 
-#: sidepanel/annotationPanel.py:161
+#: sidepanel/annotationPanel.py:162
+msgid "Forced move"
+msgstr "Kikényszerített lépés"
+
+#: sidepanel/annotationPanel.py:167
 msgid "Add move symbol"
 msgstr "Lépés minősítése"
 
-#: sidepanel/annotationPanel.py:171
+#: sidepanel/annotationPanel.py:173
+msgid "Unclear position"
+msgstr "Tisztázatlan állás"
+
+#: sidepanel/annotationPanel.py:182
+msgid "Zugzwang"
+msgstr "Lépéskényszer"
+
+#: sidepanel/annotationPanel.py:183
+msgid "Development adv."
+msgstr "Fejlődési előny"
+
+#: sidepanel/annotationPanel.py:184
+msgid "Initiative"
+msgstr "Kezdeményezés"
+
+#: sidepanel/annotationPanel.py:185
+msgid "With attack"
+msgstr "Támadással"
+
+#: sidepanel/annotationPanel.py:186
+msgid "Compensation"
+msgstr "Kompenzáció"
+
+#: sidepanel/annotationPanel.py:187
+msgid "Counterplay"
+msgstr "Ellentámadás"
+
+#: sidepanel/annotationPanel.py:188
+msgid "Time pressure"
+msgstr "Időzavar"
+
+#: sidepanel/annotationPanel.py:193
 msgid "Add evaluation symbol"
 msgstr "Állás minősítése"
 
-#: sidepanel/annotationPanel.py:175
+#: sidepanel/annotationPanel.py:197
 msgid "Remove symols"
 msgstr "Szimbólumok eltávolítása"
 
-#: sidepanel/annotationPanel.py:182
+#: sidepanel/annotationPanel.py:204
 msgid "Remove variation"
 msgstr "Változat eltávolítva."
 
-#: sidepanel/annotationPanel.py:459
+#: sidepanel/annotationPanel.py:485
 #, python-format
 msgid "round %s"
 msgstr "%s forduló"
@@ -2811,69 +2851,69 @@ msgstr "Számítógépes segítség a játszma minden fázisában."
 msgid "Official PyChess panel."
 msgstr "Hivatalos PyChess panel."
 
-#: sidepanel/bookPanel.py:69
+#: sidepanel/bookPanel.py:75
 msgid "Opening Book"
 msgstr "Megnyitástár"
 
-#: sidepanel/bookPanel.py:71
+#: sidepanel/bookPanel.py:77
 msgid ""
 "The opening book will try to inspire you during the opening phase of the "
 "game by showing you common moves made by chess masters"
 msgstr "A leggyakrabban alkalmazott lépések az adott megnyitásban"
 
-#: sidepanel/bookPanel.py:115
+#: sidepanel/bookPanel.py:121
 #, python-format
 msgid "Analysis by %s"
 msgstr "%s elemzése"
 
-#: sidepanel/bookPanel.py:116
+#: sidepanel/bookPanel.py:122
 #, python-format
 msgid ""
 "%s will try to predict which move is best and which side has the advantage"
 msgstr "%s  megpróbálja megállapítani a legjobb lépést és hogy melyik oldal áll jobban."
 
-#: sidepanel/bookPanel.py:118
+#: sidepanel/bookPanel.py:124
 #, python-format
 msgid "Threat analysis by %s"
 msgstr "%s fenyegetés elemzése"
 
-#: sidepanel/bookPanel.py:119
+#: sidepanel/bookPanel.py:125
 #, python-format
 msgid ""
 "%s will identify what threats would exist if it were your opponent's turn to"
 " move"
 msgstr "%s  megpróbálja megállapítani, hogy mi fenyegetne, ha az ellenfél következne lépésre."
 
-#: sidepanel/bookPanel.py:135 sidepanel/bookPanel.py:215
+#: sidepanel/bookPanel.py:141 sidepanel/bookPanel.py:221
 msgid "Calculating..."
 msgstr "Számolás..."
 
-#: sidepanel/bookPanel.py:233
+#: sidepanel/bookPanel.py:239
 msgid "Engine scores are in units of pawns, from White's point of view."
 msgstr "Az elemzés által mutatott számok egysége 1 gyalog, világos szemszögéből nézve."
 
-#: sidepanel/bookPanel.py:235
+#: sidepanel/bookPanel.py:241
 msgid ""
 "Adding suggestions can help you find ideas, but slows down the computer's "
 "analysis."
 msgstr "További javaslatok hozzáadása segíthet ötleteket meríteni, de lassítja a számítógépes elemzést."
 
-#: sidepanel/bookPanel.py:255
+#: sidepanel/bookPanel.py:261
 msgid "Endgame Table"
 msgstr "Végjáték adatbázis"
 
-#: sidepanel/bookPanel.py:258
+#: sidepanel/bookPanel.py:264
 msgid ""
 "The endgame table will show exact analysis when there are few pieces on the "
 "board."
 msgstr "A végjáték adatbázis használata pontos elemzést ad ha már csak néhány figura van a táblán."
 
-#: sidepanel/bookPanel.py:273 sidepanel/bookPanel.py:276
+#: sidepanel/bookPanel.py:279 sidepanel/bookPanel.py:282
 #, python-format
 msgid "Mate in %d"
 msgstr "Matt %d lépésben."
 
-#: sidepanel/bookPanel.py:406
+#: sidepanel/bookPanel.py:421
 msgid ""
 "In this position,\n"
 "there is no legal move."
