@@ -83,8 +83,9 @@ class EngineTab:
         from pychess.widgets import newGameDialog
         def update_store(discoverer, store):
             store.clear()
-            for icon, name, binname in newGameDialog.playerItems[0][1:]:
-                store.append((icon, name, binname))
+            # don't add the very first (Human) player to engine store
+            for item in newGameDialog.playerItems[0][1:]:
+                store.append(item)
         glock_connect_after(discoverer, "all_engines_discovered",
                             update_store, allstore)
         update_store(discoverer, allstore)
@@ -93,8 +94,9 @@ class EngineTab:
         uistuff.createCombo(widgets["inv_ana_combobox"], [])
 
         def update_analyzers_store(discoverer):
-            uistuff.updateCombo(widgets["ana_combobox"], newGameDialog.analyzerItems)
-            uistuff.updateCombo(widgets["inv_ana_combobox"], newGameDialog.analyzerItems)
+            data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
+            uistuff.updateCombo(widgets["ana_combobox"], data)
+            uistuff.updateCombo(widgets["inv_ana_combobox"], data)
         glock_connect_after(discoverer, "all_engines_discovered",
                             update_analyzers_store)
         update_analyzers_store(discoverer)
