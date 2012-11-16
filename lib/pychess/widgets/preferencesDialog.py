@@ -184,12 +184,8 @@ class EngineTab:
             if iter:
                 row = allstore.get_path(iter)[0]
                 binname = allstore[row][2]
-                engine = discoverer.getEngines()[binname]
-                discoverer.dom.getroot().remove(engine)
-                del discoverer.getEngines()[binname]
-                discoverer.need_save = True
+                discoverer.removeEngine(binname)
                 discoverer.start()
-        
         widgets["remove_engine_button"].connect("clicked", remove)
 
         def add(button):
@@ -199,47 +195,11 @@ class EngineTab:
             if response == gtk.RESPONSE_OK:
                 new_engine = dialog.get_filename()
                 if os.access(new_engine, os.R_OK|os.X_OK):
-                    from subprocess import Popen, PIPE
-                    proc = Popen(new_engine, stdin=PIPE, stdout=PIPE)
-                    proc.stdin.write("uci\n")
-                    proc.stdin.flush()
-
-                    is_uci = False
-                    #works in python 3.0+
-                    #for line in proc.stdout:
-                    for line in iter(proc.stdout.readline,''):
-                        line = line.rstrip()
-                        if line == "uciok":
-                            is_uci = True
-                            print "uci"
-                            break
-                        elif "Error" in line or "Illegal" in line:
-                            print "not uci"
-                            break
-                    proc.terminate()
-
-                    from xml.etree.ElementTree import fromstring
-                    engine = fromstring('<engine></engine>')
-
-                    path, binname = os.path.split(new_engine)
-                    engine.set('binname', binname)
-                    if is_uci:
-                        engine.set('protocol', 'uci')
-                        engine.set('protover', '1')
-                    else:
-                        engine.set('protocol', 'cecp')
-                        engine.set('protover', '2')
-                    engine.append(fromstring('<path>%s</path>' % path))
-
-                    discoverer.getEngines()[binname] = engine
-                    discoverer.dom.getroot().append(engine)
+                    discoverer.addEngine(new_engine)
                     discoverer.start()
                 else:
-                    print "not an executable"
-            elif response == gtk.RESPONSE_CANCEL:
-                print 'Closed, no files selected'
+                    print "%s is not an executable" % new_engine
             dialog.destroy()
-
         widgets["add_engine_button"].connect("clicked", add)
         
         # Give widgets to keeper

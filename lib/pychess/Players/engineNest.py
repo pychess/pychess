@@ -6,6 +6,7 @@ from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
 from copy import deepcopy
+from subprocess import Popen, PIPE, STDOUT
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
@@ -547,6 +548,44 @@ class EngineDiscoverer (GObject, PooledThread):
         engine.prestart()
         return engine
 
+    def is_uci(self, new_engine):
+        proc = Popen(new_engine, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        proc.stdin.write("uci\n")
+        proc.stdin.flush()
+
+        uci = False
+        #works in python 3.0+
+        #for line in proc.stdout:
+        for line in iter(proc.stdout.readline,''):
+            line = line.rstrip()
+            if line == "uciok":
+                uci = True
+                break
+            elif "Error" in line or "Illegal" in line:
+                break
+        proc.terminate()
+        return uci
+
+    def addEngine(self, new_engine):
+        path, binname = os.path.split(new_engine)
+        engine = fromstring('<engine></engine>')
+        engine.set('binname', binname)
+        if self.is_uci(new_engine):
+            engine.set('protocol', 'uci')
+            engine.set('protover', '1')
+        else:
+            engine.set('protocol', 'cecp')
+            engine.set('protover', '2')
+        engine.append(fromstring('<path>%s</path>' % path))
+
+        self._engines[binname] = engine
+        self.dom.getroot().append(engine)
+
+    def removeEngine(self, binname):
+        engine = self._engines[binname]
+        del self._engines[binname]
+        self.dom.getroot().remove(engine)
+        self.need_save = True
 
 discoverer = EngineDiscoverer()
 
