@@ -418,7 +418,7 @@ class UCIEngine (ProtocolEngine):
 
                 commands.append("go infinite")
             
-            if self.multipvSetting > 1:
+            if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
             else:
                 self.multipvExpected = 1
