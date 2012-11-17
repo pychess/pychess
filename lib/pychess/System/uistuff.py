@@ -13,7 +13,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data):
+def createCombo (combo, data=[]):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
     for row in data:
         ls.append(row)
