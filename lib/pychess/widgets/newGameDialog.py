@@ -21,6 +21,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
+from pychess.System.glock import glock_connect_after
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
@@ -120,8 +121,8 @@ class _GameInitializationMode:
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
 
-        uistuff.createCombo(cls.widgets["whitePlayerCombobox"], playerItems[0])
-        uistuff.createCombo(cls.widgets["blackPlayerCombobox"], playerItems[0])
+        uistuff.createCombo(cls.widgets["whitePlayerCombobox"])
+        uistuff.createCombo(cls.widgets["blackPlayerCombobox"])
 
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
@@ -171,8 +172,13 @@ class _GameInitializationMode:
             cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)            
             variant2 = conf.get("ngvariant2", LOSERSCHESS)
             cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
-            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
-            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
+            data = [(item[0], item[1]) for item in playerItems[variant]]
+            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
+            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], data)
+
+        glock_connect_after(discoverer, "all_engines_discovered", updateCombos)
+        updateCombos(discoverer)
+
         conf.notify_add("ngvariant1", updateCombos)
         conf.notify_add("ngvariant2", updateCombos)
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)

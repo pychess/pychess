@@ -90,8 +90,8 @@ class EngineTab:
                             update_store, allstore)
         update_store(discoverer, allstore)
 
-        uistuff.createCombo(widgets["ana_combobox"], [])
-        uistuff.createCombo(widgets["inv_ana_combobox"], [])
+        uistuff.createCombo(widgets["ana_combobox"])
+        uistuff.createCombo(widgets["inv_ana_combobox"])
 
         def update_analyzers_store(discoverer):
             data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
