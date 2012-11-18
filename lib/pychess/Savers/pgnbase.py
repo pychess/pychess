@@ -240,10 +240,7 @@ def pgn_load(file, klass=PgnBase):
             if not files:
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
-                if line.startswith("1."):
-                    files.append(["",""])
-                else:
-                    continue
+                files.append(["",""])
             files[-1][1] += line.decode('latin_1')
                 
     return klass(files)
