@@ -24,6 +24,7 @@ def run(widgets):
 def initialize(widgets):
     GeneralTab(widgets)
     EngineTab(widgets)
+    HintTab(widgets)
     SoundTab(widgets)
     PanelTab(widgets)
     ThemeTab(widgets)
@@ -69,7 +70,7 @@ class GeneralTab:
 class EngineTab:
     def __init__ (self, widgets):
         self.widgets = widgets
-        # Put engines in trees and combos
+        # Put engines into tree store
         
         allstore = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         
@@ -90,52 +91,6 @@ class EngineTab:
                             update_store, allstore)
         update_store(discoverer, allstore)
 
-        uistuff.createCombo(widgets["ana_combobox"])
-        uistuff.createCombo(widgets["inv_ana_combobox"])
-
-        def update_analyzers_store(discoverer):
-            data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
-            uistuff.updateCombo(widgets["ana_combobox"], data)
-            uistuff.updateCombo(widgets["inv_ana_combobox"], data)
-        glock_connect_after(discoverer, "all_engines_discovered",
-                            update_analyzers_store)
-        update_analyzers_store(discoverer)
-
-        # Save, load and make analyze combos active
-        
-        conf.set("ana_combobox", conf.get("ana_combobox", 0))
-        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", 0))
-        
-        def on_analyzer_check_toggled (check):
-            widgets["analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.Main import gameDic
-            if gameDic:
-                if check.get_active():
-                    for gmwidg in gameDic.keys():
-                        gmwidg.gamemodel.restart_analyzer(HINT)
-                else:
-                    for gmwidg in gameDic.keys():
-                        gmwidg.gamemodel.remove_analyzer(HINT)
-        
-        widgets["analyzer_check"].connect_after("toggled",
-                                                on_analyzer_check_toggled)
-        uistuff.keep(widgets["analyzer_check"], "analyzer_check")
-        
-        def on_invanalyzer_check_toggled (check):
-            widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.Main import gameDic
-            if gameDic:
-                if check.get_active():
-                    for gmwidg in gameDic.keys():
-                        gmwidg.gamemodel.restart_analyzer(SPY)
-                else:
-                    for gmwidg in gameDic.keys():
-                        gmwidg.gamemodel.remove_analyzer(SPY)
-
-        widgets["inv_analyzer_check"].connect_after("toggled",
-                                              on_invanalyzer_check_toggled)
-        uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
-        
         # Put options in trees in add/edit dialog
         
         #=======================================================================
@@ -202,6 +157,104 @@ class EngineTab:
             dialog.destroy()
         widgets["add_engine_button"].connect("clicked", add)
         
+    def selection_changed(self, treeselection):
+        self.widgets['remove_engine_button'].set_sensitive(True)
+
+
+################################################################################
+# Hint initing                                                               #
+################################################################################
+
+class HintTab:
+    def __init__ (self, widgets):
+        self.widgets = widgets
+    
+        # Opening book
+        print "op book set"
+        default_path = os.path.join(addDataPrefix("pychess_book.bin"))
+        path = conf.get("opening_entry", default_path)
+        conf.set("opening_entry", path)
+        
+        button = widgets["opening_filechooser_button"]
+        button.set_filename(path)
+
+        ofilter = gtk.FileFilter()
+        ofilter.set_name(_("Opening books"))
+        ofilter.add_pattern("*.bin")
+        button.add_filter(ofilter)
+
+        def on_opening_filechooser_button_file_set(button):
+            new_file = button.get_filename()
+            if new_file is not None:
+                widgets["opening_entry"].set_text(new_file)
+        widgets["opening_filechooser_button"].connect_after("file_set",
+                                                on_opening_filechooser_button_file_set)
+        uistuff.keep(widgets["opening_entry"], "opening_entry")
+
+        def on_opening_check_toggled (check):
+            widgets["opening_hbox"].set_sensitive(check.get_active())
+        widgets["opening_check"].connect_after("toggled",
+                                                on_opening_check_toggled)
+        uistuff.keep(widgets["opening_check"], "opening_check")
+
+        # Endgame
+        conf.set("online_egtb_check", conf.get("online_egtb_check", 0))
+        
+        def on_endgame_check_toggled (check):
+            widgets["endgame_vbox"].set_sensitive(check.get_active())
+        
+        widgets["endgame_check"].connect_after("toggled",
+                                                on_endgame_check_toggled)
+        uistuff.keep(widgets["endgame_check"], "endgame_check")
+
+        # Analyzing engines
+        uistuff.createCombo(widgets["ana_combobox"])
+        uistuff.createCombo(widgets["inv_ana_combobox"])
+
+        from pychess.widgets import newGameDialog
+        def update_analyzers_store(discoverer):
+            data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
+            uistuff.updateCombo(widgets["ana_combobox"], data)
+            uistuff.updateCombo(widgets["inv_ana_combobox"], data)
+        glock_connect_after(discoverer, "all_engines_discovered",
+                            update_analyzers_store)
+        update_analyzers_store(discoverer)
+
+        # Save, load and make analyze combos active
+        
+        conf.set("ana_combobox", conf.get("ana_combobox", 0))
+        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", 0))
+        
+        def on_analyzer_check_toggled (check):
+            widgets["analyzers_vbox"].set_sensitive(check.get_active())
+            from pychess.Main import gameDic
+            if gameDic:
+                if check.get_active():
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.restart_analyzer(HINT)
+                else:
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.remove_analyzer(HINT)
+        
+        widgets["analyzer_check"].connect_after("toggled",
+                                                on_analyzer_check_toggled)
+        uistuff.keep(widgets["analyzer_check"], "analyzer_check")
+        
+        def on_invanalyzer_check_toggled (check):
+            widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
+            from pychess.Main import gameDic
+            if gameDic:
+                if check.get_active():
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.restart_analyzer(SPY)
+                else:
+                    for gmwidg in gameDic.keys():
+                        gmwidg.gamemodel.remove_analyzer(SPY)
+
+        widgets["inv_analyzer_check"].connect_after("toggled",
+                                              on_invanalyzer_check_toggled)
+        uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
+        
         # Give widgets to keeper
         
         def get_value (combobox):
@@ -245,9 +298,6 @@ class EngineTab:
         uistuff.keep(widgets["inv_ana_combobox"], "inv_ana_combobox", get_value,
             lambda combobox, value: set_value(combobox, value, "spy_mode",
                                               "inv_analyzer_check", SPY))
-
-    def selection_changed(self, treeselection):
-        self.widgets['remove_engine_button'].set_sensitive(True)
         
 ################################################################################
 # Sound initing                                                                #
