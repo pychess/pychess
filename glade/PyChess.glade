@@ -349,6 +349,16 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
     <property name="can_focus">False</property>
     <property name="stock">gtk-new</property>
   </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image11">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -408,6 +418,16 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-info</property>
+  </object>
+  <object class="GtkImage" id="image_stock_folder">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-directory</property>
+  </object>
+  <object class="GtkImage" id="image_stock_open">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-open</property>
   </object>
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -1039,7 +1059,19 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <object class="GtkEntry" id="opening_entry">
+                                          <object class="GtkLabel" id="label10">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Polyglot book file</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="opening_file_entry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="invisible_char">●</property>
@@ -1051,24 +1083,22 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                           <packing>
                                             <property name="expand">True</property>
                                             <property name="fill">True</property>
-                                            <property name="padding">2</property>
-                                            <property name="position">0</property>
+                                            <property name="padding">4</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkFileChooserButton" id="opening_filechooser_button">
+                                          <object class="GtkButton" id="opening_filechooser_button">
+                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="orientation">vertical</property>
-                                            <property name="create_folders">False</property>
-                                            <property name="preview_widget_active">False</property>
-                                            <property name="show_hidden">True</property>
-                                            <property name="use_preview_label">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="image">image_stock_open</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1339,17 +1369,34 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkFileChooserButton" id="gaviota_filechooser_button">
+                                              <object class="GtkEntry" id="egtb_path_entry">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="action">select-folder</property>
-                                                <property name="create_folders">False</property>
-                                                <property name="title" translatable="yes">Select folder</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="invisible_char">•</property>
+                                                <property name="primary_icon_activatable">False</property>
+                                                <property name="secondary_icon_activatable">False</property>
+                                                <property name="primary_icon_sensitive">True</property>
+                                                <property name="secondary_icon_sensitive">True</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
                                                 <property name="fill">True</property>
+                                                <property name="padding">4</property>
                                                 <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="gaviota_filechooser_button">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image">image_stock_folder</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">2</property>
                                               </packing>
                                             </child>
                                           </object>
