@@ -170,26 +170,29 @@ class HintTab:
         self.widgets = widgets
     
         # Opening book
-        print "op book set"
         default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-        path = conf.get("opening_entry", default_path)
-        conf.set("opening_entry", path)
+        path = conf.get("opening_file_entry", default_path)
+        conf.set("opening_file_entry", path)
         
         button = widgets["opening_filechooser_button"]
-        button.set_filename(path)
+        openingdialog = gtk.FileChooserDialog(_("Select book file"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+                    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+ 
+        filter = gtk.FileFilter()
+        filter.set_name(_("Opening books"))
+        filter.add_pattern("*.bin")
+        openingdialog.add_filter(filter)
+        openingdialog.set_filename(path)
 
-        ofilter = gtk.FileFilter()
-        ofilter.set_name(_("Opening books"))
-        ofilter.add_pattern("*.bin")
-        button.add_filter(ofilter)
-
-        def on_opening_filechooser_button_file_set(button):
-            new_file = button.get_filename()
-            if new_file is not None:
-                widgets["opening_entry"].set_text(new_file)
-        widgets["opening_filechooser_button"].connect_after("file_set",
-                                                on_opening_filechooser_button_file_set)
-        uistuff.keep(widgets["opening_entry"], "opening_entry")
+        def on_opening_filechooser_button_clicked(button):
+            if openingdialog.run() == gtk.RESPONSE_OK:
+                new_file = openingdialog.get_filename()
+                if new_file is not None:
+                    widgets["opening_file_entry"].set_text(new_file)
+            openingdialog.hide()
+        widgets["opening_filechooser_button"].connect_after("clicked",
+                                                on_opening_filechooser_button_clicked)
+        uistuff.keep(widgets["opening_file_entry"], "opening_file_entry")
 
         def on_opening_check_toggled (check):
             widgets["opening_hbox"].set_sensitive(check.get_active())
@@ -387,6 +390,7 @@ class SoundTab:
                 break
         
         soundfilter = gtk.FileFilter()
+        soundfilter.set_name(_("Sound files"))
         soundfilter.add_custom(soundfilter.get_needed(),
                                lambda data: data[3] and data[3].startswith("audio/"))
         opendialog.add_filter(soundfilter)

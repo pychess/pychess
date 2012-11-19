@@ -31,7 +31,7 @@ def getOpenings (board):
         return []
         
     default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-    path = path = conf.get("opening_entry", default_path) 
+    path = path = conf.get("opening_file_entry", default_path) 
 
     openings = []
     with open(path, "rb") as bookFile:
