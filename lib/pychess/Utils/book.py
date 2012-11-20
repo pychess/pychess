@@ -27,11 +27,8 @@ def getOpenings (board):
         scored (with 2 per victory and 1 per draw). However, opening books
         aren't required to keep this information. """
 
-    if not conf.get("opening_check", 0):
-        return []
-        
     default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-    path = path = conf.get("opening_file_entry", default_path) 
+    path = conf.get("opening_file_entry", default_path) 
 
     openings = []
     with open(path, "rb") as bookFile:
