@@ -31,6 +31,9 @@ def getOpenings (board):
     path = conf.get("opening_file_entry", default_path) 
 
     openings = []
+    if not os.path.isfile(path):
+        return openings
+
     with open(path, "rb") as bookFile:
         key = board.hash
         entry = BookEntry()

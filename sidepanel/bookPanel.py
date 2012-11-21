@@ -1,3 +1,4 @@
+import os
 from Queue import Queue
 
 import gtk, gobject, cairo, pango
@@ -428,6 +429,15 @@ class Sidepanel:
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
         conf.notify_add("opening_check", on_opening_check)
+
+        def on_opening_file_entry_changed(none):
+            default_path = os.path.join(addDataPrefix("pychess_book.bin"))
+            path = conf.get("opening_file_entry", default_path) 
+            if os.path.isfile(path):
+                for advisor in self.advisors:
+                    if advisor.mode == OPENING:
+                        advisor.shown_changed(self.boardview, self.boardview.shown)
+        conf.notify_add("opening_file_entry", on_opening_file_entry_changed)
 
         def on_endgame_check(none):
             if conf.get("endgame_check", 0):
