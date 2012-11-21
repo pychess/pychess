@@ -5,7 +5,7 @@ from xml.dom import minidom
 
 import gtk
 
-from pychess.System.prefix import addDataPrefix, getUserDataPrefix
+from pychess.System.prefix import addDataPrefix, getDataPrefix, getUserDataPrefix
 from pychess.System.glock import glock_connect_after
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
@@ -202,6 +202,25 @@ class HintTab:
 
         # Endgame
         conf.set("online_egtb_check", conf.get("online_egtb_check", 0))
+
+        default_path = os.path.join(getDataPrefix())
+        path = conf.get("egtb_path_entry", default_path)
+        conf.set("egtb_path_entry", path)
+
+        button = widgets["gaviota_filechooser_button"]
+        endgamedialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        endgamedialog.set_current_folder(path)
+        
+        def on_gaviota_filechooser_button_clicked(button):
+            if endgamedialog.run() == gtk.RESPONSE_OK:
+                new_path = endgamedialog.get_filename()
+                if new_path is not None:
+                    widgets["egtb_path_entry"].set_text(new_path)
+            endgamedialog.hide()
+        widgets["gaviota_filechooser_button"].connect_after("clicked",
+                                                on_gaviota_filechooser_button_clicked)
+        uistuff.keep(widgets["egtb_path_entry"], "egtb_path_entry")
         
         def on_endgame_check_toggled (check):
             widgets["endgame_vbox"].set_sensitive(check.get_active())
