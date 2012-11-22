@@ -1,4 +1,4 @@
-import gtk.glade, os
+import os
 from pychess.System import conf
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
