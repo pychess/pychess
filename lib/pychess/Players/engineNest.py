@@ -566,11 +566,11 @@ class EngineDiscoverer (GObject, PooledThread):
         proc.terminate()
         return uci
 
-    def addEngine(self, new_engine):
+    def addEngine(self, new_engine, protocol):
         path, binname = os.path.split(new_engine)
         engine = fromstring('<engine></engine>')
         engine.set('binname', binname)
-        if self.is_uci(new_engine):
+        if protocol.lower() == "uci":
             engine.set('protocol', 'uci')
             engine.set('protover', '1')
         else:

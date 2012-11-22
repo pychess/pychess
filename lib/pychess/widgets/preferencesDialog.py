@@ -137,26 +137,57 @@ class EngineTab:
         def remove(button):
             store, iter = self.tv.get_selection().get_selected()
             if iter:
+                self.widgets['remove_engine_button'].set_sensitive(False)
                 row = allstore.get_path(iter)[0]
                 binname = allstore[row][2]
                 discoverer.removeEngine(binname)
                 discoverer.start()
         widgets["remove_engine_button"].connect("clicked", remove)
 
+        enginedialog = widgets["enginedialog"]
         def add(button):
+            response = enginedialog.run()
+        widgets["add_engine_button"].connect("clicked", add)
+
+        def hide_window(button):
+            enginedialog.hide()
+
+        def accept_properties(button):
+            new_engine = widgets["engine_command_entry"].get_text()
+            active = widgets["engine_protocol_combo"].get_active()
+            print "active=", active
+            protocol = "uci" if active==1 else "xboard"
+            discoverer.addEngine(new_engine, protocol)
+            discoverer.start()
+            enginedialog.hide()
+            
+        widgets["engine_cancel_button"].connect("clicked", hide_window)
+        widgets["engine_ok_button"].connect("clicked", accept_properties)
+
+        protocol_combo = widgets["engine_protocol_combo"]
+        protocol_model = gtk.ListStore(str)
+        protocol_combo.set_model(protocol_model)
+        protocol_model.append(("Uci",))
+        protocol_model.append(("Xboard",))
+
+        def select_engine(button):
             dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
                 new_engine = dialog.get_filename()
                 if os.access(new_engine, os.R_OK|os.X_OK):
-                    discoverer.addEngine(new_engine)
-                    discoverer.start()
+                    uci = discoverer.is_uci(new_engine)
+                    path, binname = os.path.split(new_engine)
+                    protocol = "uci" if uci else "xboard"
+                    widgets["engine_name_entry"].set_text(binname)
+                    widgets["engine_command_entry"].set_text(new_engine)
+                    widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                 else:
                     print "%s is not an executable" % new_engine
             dialog.destroy()
-        widgets["add_engine_button"].connect("clicked", add)
-        
+        widgets["select_engine_button"].connect("clicked", select_engine)
+
     def selection_changed(self, treeselection):
         self.widgets['remove_engine_button'].set_sensitive(True)
 
