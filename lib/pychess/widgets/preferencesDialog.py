@@ -155,8 +155,7 @@ class EngineTab:
         def accept_properties(button):
             new_engine = widgets["engine_command_entry"].get_text()
             active = widgets["engine_protocol_combo"].get_active()
-            print "active=", active
-            protocol = "uci" if active==1 else "xboard"
+            protocol = "uci" if active==0 else "xboard"
             discoverer.addEngine(new_engine, protocol)
             discoverer.start()
             enginedialog.hide()
@@ -165,11 +164,9 @@ class EngineTab:
         widgets["engine_ok_button"].connect("clicked", accept_properties)
 
         protocol_combo = widgets["engine_protocol_combo"]
-        protocol_model = gtk.ListStore(str)
-        protocol_combo.set_model(protocol_model)
-        protocol_model.append(("Uci",))
-        protocol_model.append(("Xboard",))
-
+        cell = gtk.CellRendererText()
+        protocol_combo.pack_start(cell, True)
+        protocol_combo.add_attribute(cell, "text", 0)
         def select_engine(button):
             dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
@@ -189,6 +186,7 @@ class EngineTab:
         widgets["select_engine_button"].connect("clicked", select_engine)
 
     def selection_changed(self, treeselection):
+        self.widgets['edit_engine_button'].set_sensitive(True)
         self.widgets['remove_engine_button'].set_sensitive(True)
 
 

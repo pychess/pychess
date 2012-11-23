@@ -257,6 +257,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                           <object class="GtkComboBox" id="engine_protocol_combo">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="model">liststore3</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -701,6 +702,20 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
       </row>
       <row>
         <col id="0" translatable="yes">No sound</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore3">
+    <columns>
+      <!-- column-name protocolcol -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">uci</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">xboard</col>
       </row>
     </data>
   </object>
