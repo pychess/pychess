@@ -154,10 +154,13 @@ class EngineTab:
 
         def accept_properties(button):
             new_engine = widgets["engine_command_entry"].get_text()
-            active = widgets["engine_protocol_combo"].get_active()
-            protocol = "uci" if active==0 else "xboard"
-            discoverer.addEngine(new_engine, protocol)
-            discoverer.start()
+            if new_engine.strip():
+                active = widgets["engine_protocol_combo"].get_active()
+                protocol = "uci" if active==0 else "xboard"
+                discoverer.addEngine(new_engine, protocol)
+                discoverer.start()
+            else:
+                print "empty command..."
             enginedialog.hide()
             
         widgets["engine_cancel_button"].connect("clicked", hide_window)
