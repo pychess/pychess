@@ -144,10 +144,26 @@ class EngineTab:
                 discoverer.start()
         widgets["remove_engine_button"].connect("clicked", remove)
 
+        self.mode = None
         enginedialog = widgets["enginedialog"]
         def add(button):
+            self.mode = "add"
             response = enginedialog.run()
         widgets["add_engine_button"].connect("clicked", add)
+
+        def edit(button):
+            self.mode = "edit"
+            store, iter = self.tv.get_selection().get_selected()
+            if iter:
+                self.widgets['remove_engine_button'].set_sensitive(False)
+                row = allstore.get_path(iter)[0]
+                binname = allstore[row][2]
+                engine = discoverer.getEngines()[binname]
+                widgets["engine_name_entry"].set_text(discoverer.getName(engine))
+                widgets["engine_command_entry"].set_text(engine.find("path").text.strip())
+                widgets["engine_protocol_combo"].set_active(0 if engine.get("protocol")=="uci" else 1)
+                response = enginedialog.run()
+        widgets["edit_engine_button"].connect("clicked", edit)
 
         def hide_window(button):
             enginedialog.hide()
@@ -157,8 +173,9 @@ class EngineTab:
             if new_engine.strip():
                 active = widgets["engine_protocol_combo"].get_active()
                 protocol = "uci" if active==0 else "xboard"
-                discoverer.addEngine(new_engine, protocol)
-                discoverer.start()
+                if self.mode == "add":
+                    discoverer.addEngine(new_engine, protocol)
+                    discoverer.start()
             else:
                 print "empty command..."
             enginedialog.hide()
@@ -166,10 +183,12 @@ class EngineTab:
         widgets["engine_cancel_button"].connect("clicked", hide_window)
         widgets["engine_ok_button"].connect("clicked", accept_properties)
 
+        # Add cell renderer to protocol combo column
         protocol_combo = widgets["engine_protocol_combo"]
         cell = gtk.CellRendererText()
         protocol_combo.pack_start(cell, True)
         protocol_combo.add_attribute(cell, "text", 0)
+
         def select_engine(button):
             dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))

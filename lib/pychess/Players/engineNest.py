@@ -490,12 +490,6 @@ class EngineDiscoverer (GObject, PooledThread):
             return country.text.strip()
         return None
 
-    def getMd5sum (self, engine):
-        md5sum = engine.find('md5')
-        if md5sum is not None:
-            return md5sum.text.strip()
-        return None
-   
     def initEngine (self, xmlengine, color):
         protover = int(xmlengine.get("protover"))
         protocol = xmlengine.get("protocol")
