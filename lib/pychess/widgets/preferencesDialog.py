@@ -72,7 +72,7 @@ class EngineTab:
         self.widgets = widgets
         # Put engines into tree store
         
-        allstore = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
+        allstore = gtk.ListStore(gtk.gdk.Pixbuf, str)
         
         self.tv = widgets["engines_treeview"]
         self.tv.set_model(allstore)
@@ -90,6 +90,8 @@ class EngineTab:
         glock_connect_after(discoverer, "all_engines_discovered",
                             update_store, allstore)
         update_store(discoverer, allstore)
+        
+        self.cur_engine = None
 
         # Put options in trees in add/edit dialog
         
@@ -135,33 +137,24 @@ class EngineTab:
         self.tv.get_selection().connect('changed', self.selection_changed)
 
         def remove(button):
-            store, iter = self.tv.get_selection().get_selected()
-            if iter:
+            if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
-                row = allstore.get_path(iter)[0]
-                binname = allstore[row][2]
-                discoverer.removeEngine(binname)
+                discoverer.removeEngine(self.cur_engine.get("binname"))
                 discoverer.start()
         widgets["remove_engine_button"].connect("clicked", remove)
 
-        self.mode = None
         enginedialog = widgets["enginedialog"]
         def add(button):
-            self.mode = "add"
+            self.cur_engine = None
             response = enginedialog.run()
         widgets["add_engine_button"].connect("clicked", add)
 
         def edit(button):
-            self.mode = "edit"
-            store, iter = self.tv.get_selection().get_selected()
-            if iter:
+            if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
-                row = allstore.get_path(iter)[0]
-                binname = allstore[row][2]
-                engine = discoverer.getEngines()[binname]
-                widgets["engine_name_entry"].set_text(discoverer.getName(engine))
-                widgets["engine_command_entry"].set_text(engine.find("path").text.strip())
-                widgets["engine_protocol_combo"].set_active(0 if engine.get("protocol")=="uci" else 1)
+                widgets["engine_name_entry"].set_text(self.cur_engine.get("binname"))
+                widgets["engine_command_entry"].set_text(self.cur_engine.find("path").text.strip())
+                widgets["engine_protocol_combo"].set_active(0 if self.cur_engine.get("protocol")=="uci" else 1)
                 response = enginedialog.run()
         widgets["edit_engine_button"].connect("clicked", edit)
 
@@ -169,15 +162,22 @@ class EngineTab:
             enginedialog.hide()
 
         def accept_properties(button):
-            new_engine = widgets["engine_command_entry"].get_text()
+            new_engine = widgets["engine_command_entry"].get_text().strip()
+            name = widgets["engine_name_entry"].get_text().strip()
             if new_engine.strip():
                 active = widgets["engine_protocol_combo"].get_active()
-                protocol = "uci" if active==0 else "xboard"
-                if self.mode == "add":
-                    discoverer.addEngine(new_engine, protocol)
-                    discoverer.start()
-            else:
-                print "empty command..."
+                protocol = "uci" if active==0 else "cecp"
+                if self.cur_engine is None:
+                    discoverer.addEngine(name, new_engine, protocol)
+                else:
+                    old_name = self.cur_engine.get("binname")
+                    if name != old_name:
+                        engines = discoverer.getEngines()
+                        engines[name] = engines[old_name]
+                        engines[name].set("binname", name)
+                        del engines[old_name]
+                    self.cur_engine.set("protocol", protocol)
+                discoverer.start()
             enginedialog.hide()
             
         widgets["engine_cancel_button"].connect("clicked", hide_window)
@@ -208,8 +208,13 @@ class EngineTab:
         widgets["select_engine_button"].connect("clicked", select_engine)
 
     def selection_changed(self, treeselection):
-        self.widgets['edit_engine_button'].set_sensitive(True)
-        self.widgets['remove_engine_button'].set_sensitive(True)
+        store, iter = self.tv.get_selection().get_selected()
+        if iter:
+            self.widgets['edit_engine_button'].set_sensitive(True)
+            self.widgets['remove_engine_button'].set_sensitive(True)
+            row = store.get_path(iter)[0]
+            name = store[row][1]
+            self.cur_engine = discoverer.getEngines()[name]
 
 
 ################################################################################

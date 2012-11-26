@@ -84,8 +84,7 @@ def createPlayerUIGlobals (discoverer):
     for variantClass in variants.values():
         playerItems += [ [(ipeople, _("Human Being"), "")] ]
         smallPlayerItems += [ [(speople, _("Human Being"), "")] ]
-    for binname, engine in discoverer.getEngines().items():
-        name = discoverer.getName(engine)
+    for name, engine in discoverer.getEngines().items():
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
         if c and os.path.isfile(path):
@@ -94,10 +93,10 @@ def createPlayerUIGlobals (discoverer):
             path = addDataPrefix("flags/unknown.png")
             flag_icon = gtk.gdk.pixbuf_new_from_file(path)
         for variant in discoverer.getEngineVariants(engine):
-            playerItems[variant] += [(flag_icon, name, binname)]
-            smallPlayerItems[variant] += [(snotebook, name, binname)]
+            playerItems[variant] += [(flag_icon, name)]
+            smallPlayerItems[variant] += [(snotebook, name)]
         if discoverer.is_analyzer(engine):
-            analyzerItems.append((flag_icon, name, binname))
+            analyzerItems.append((flag_icon, name))
 
 discoverer.connect("all_engines_discovered", createPlayerUIGlobals)
 
