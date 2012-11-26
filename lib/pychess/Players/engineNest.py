@@ -560,24 +560,24 @@ class EngineDiscoverer (GObject, PooledThread):
         proc.terminate()
         return uci
 
-    def addEngine(self, new_engine, protocol):
+    def addEngine(self, name, new_engine, protocol):
         path, binname = os.path.split(new_engine)
         engine = fromstring('<engine></engine>')
-        engine.set('binname', binname)
+        engine.set('binname', name)
         if protocol.lower() == "uci":
             engine.set('protocol', 'uci')
             engine.set('protover', '1')
         else:
             engine.set('protocol', 'cecp')
             engine.set('protover', '2')
-        engine.append(fromstring('<path>%s</path>' % path))
+        engine.append(fromstring('<path>%s</path>' % new_engine))
 
-        self._engines[binname] = engine
+        self._engines[name] = engine
         self.dom.getroot().append(engine)
 
-    def removeEngine(self, binname):
-        engine = self._engines[binname]
-        del self._engines[binname]
+    def removeEngine(self, name):
+        engine = self._engines[name]
+        del self._engines[name]
         self.dom.getroot().remove(engine)
         self.need_save = True
 
