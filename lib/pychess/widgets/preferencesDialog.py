@@ -176,7 +176,11 @@ class EngineTab:
                         engines[name] = engines[old_name]
                         engines[name].set("binname", name)
                         del engines[old_name]
-                    self.cur_engine.set("protocol", protocol)
+                    
+                    old_protocol = self.cur_engine.get("protocol")
+                    if protocol != old_protocol:
+                        self.cur_engine.set("protocol", protocol)
+                        self.cur_engine.set('recheck', 'true')
                 discoverer.start()
             enginedialog.hide()
             
