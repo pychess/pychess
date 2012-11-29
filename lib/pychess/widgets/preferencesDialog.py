@@ -140,10 +140,13 @@ class EngineTab:
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
                 discoverer.removeEngine(self.cur_engine.get("binname"))
+                # Force emit "all_engines_discovered" signal let update engine lists
                 discoverer.start()
+                ts = self.tv.get_selection()
+                ts.select_path((0,))
+                self.tv.set_cursor(0)
         widgets["remove_engine_button"].connect("clicked", remove)
 
-        enginedialog = widgets["enginedialog"]
         def add(button):
             self.cur_engine = None
             widgets["engine_name_entry"].set_text("")
@@ -151,20 +154,11 @@ class EngineTab:
             widgets["engine_options_entry"].set_text("")
             widgets["engine_directory_entry"].set_text("")
             widgets["engine_protocol_combo"].set_active(0)
-            response = enginedialog.run()
         widgets["add_engine_button"].connect("clicked", add)
 
-        def edit(button):
-            if self.cur_engine is not None:
-                self.widgets['remove_engine_button'].set_sensitive(False)
-                widgets["engine_name_entry"].set_text(self.cur_engine.get("binname"))
-                widgets["engine_command_entry"].set_text(self.cur_engine.find("path").text.strip())
-                widgets["engine_protocol_combo"].set_active(0 if self.cur_engine.get("protocol")=="uci" else 1)
-                response = enginedialog.run()
-        widgets["edit_engine_button"].connect("clicked", edit)
-
-        def hide_window(button):
-            enginedialog.hide()
+        def copy(button):
+            pass
+        widgets["copy_engine_button"].connect("clicked", copy)
 
         def accept_properties(button):
             new_engine = widgets["engine_command_entry"].get_text().strip()
@@ -187,10 +181,7 @@ class EngineTab:
                         self.cur_engine.set("protocol", protocol)
                         self.cur_engine.set('recheck', 'true')
                 discoverer.start()
-            enginedialog.hide()
-            
-        widgets["engine_cancel_button"].connect("clicked", hide_window)
-        widgets["engine_ok_button"].connect("clicked", accept_properties)
+        widgets["engine_save_button"].connect("clicked", accept_properties)
 
         # Add cell renderer to protocol combo column
         protocol_combo = widgets["engine_protocol_combo"]
@@ -219,11 +210,15 @@ class EngineTab:
     def selection_changed(self, treeselection):
         store, iter = self.tv.get_selection().get_selected()
         if iter:
-            self.widgets['edit_engine_button'].set_sensitive(True)
+            self.widgets['copy_engine_button'].set_sensitive(True)
             self.widgets['remove_engine_button'].set_sensitive(True)
             row = store.get_path(iter)[0]
             name = store[row][1]
             self.cur_engine = discoverer.getEngines()[name]
+            if self.cur_engine is not None:
+                self.widgets["engine_name_entry"].set_text(self.cur_engine.get("binname"))
+                self.widgets["engine_command_entry"].set_text(self.cur_engine.find("path").text.strip())
+                self.widgets["engine_protocol_combo"].set_active(0 if self.cur_engine.get("protocol")=="uci" else 1)
 
 
 ################################################################################
