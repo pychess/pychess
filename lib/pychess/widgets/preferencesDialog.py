@@ -146,6 +146,11 @@ class EngineTab:
         enginedialog = widgets["enginedialog"]
         def add(button):
             self.cur_engine = None
+            widgets["engine_name_entry"].set_text("")
+            widgets["engine_command_entry"].set_text("")
+            widgets["engine_options_entry"].set_text("")
+            widgets["engine_directory_entry"].set_text("")
+            widgets["engine_protocol_combo"].set_active(0)
             response = enginedialog.run()
         widgets["add_engine_button"].connect("clicked", add)
 
