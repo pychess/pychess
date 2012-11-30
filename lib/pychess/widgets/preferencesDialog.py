@@ -93,47 +93,6 @@ class EngineTab:
         
         self.cur_engine = None
 
-        # Put options in trees in add/edit dialog
-        
-        #=======================================================================
-        # tv = widgets["optionview"]
-        # self.tv.append_column(gtk.TreeViewColumn(
-        #    "Option", gtk.CellRendererText(), text=0))
-        # self.tv.append_column(gtk.TreeViewColumn(
-        #    "Value", gtk.CellRendererText(), text=1))
-        # 
-        # def edit (button):
-        #    
-        #    iter = widgets["engines_treeview"].get_selection().get_selected()[1]
-        #    if iter: row = allstore.get_path(iter)[0]
-        #    else: return
-        #    
-        #    engine = discoverer.getEngineN(row)
-        #    optionstags = engine.getElementsByTagName("options")
-        #    if not optionstags:
-        #        widgets["engine_options_expander"].hide()
-        #    else:
-        #        widgets["engine_options_expander"].show()
-        #        widgets["engine_options_expander"].set_expanded(False)
-        #        
-        #        optionsstore = gtk.ListStore(str, str)
-        #        tv = widgets["optionview"]
-        #        self.tv.set_model(optionsstore)
-        #        
-        #        for option in optionstags[0].childNodes:
-        #            if option.nodeType != option.ELEMENT_NODE: continue
-        #            optionsstore.append( [option.getAttribute("name"),
-        #                                  option.getAttribute("default")] )
-        #        
-        #    widgets["engine_path_chooser"].set_title(_("Locate Engine"))
-        #    widgets["engine_path_chooser"].set_uri("file:///usr/bin/gnuchess")
-        #    
-        #    dialog = widgets["addconfig_engine"]
-        #    answer = dialog.run()
-        #    dialog.hide()
-        # widgets["edit_engine_button"].connect("clicked", edit)
-        #=======================================================================
-
         self.tv.get_selection().connect('changed', self.selection_changed)
 
         def remove(button):
@@ -189,6 +148,16 @@ class EngineTab:
         protocol_combo.pack_start(cell, True)
         protocol_combo.add_attribute(cell, "text", 0)
 
+        # Add columns and cell renderers to options treeview 
+        optv = widgets["options_treeview"]
+        optv.append_column(gtk.TreeViewColumn(
+           "Option", gtk.CellRendererText(), text=0))
+        optv.append_column(gtk.TreeViewColumn(
+           "Value", gtk.CellRendererText(), text=1))
+
+        self.options_store = gtk.ListStore(str, str)
+        optv.set_model(self.options_store)
+
         def select_engine(button):
             dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
@@ -219,6 +188,11 @@ class EngineTab:
                 self.widgets["engine_name_entry"].set_text(self.cur_engine.get("binname"))
                 self.widgets["engine_command_entry"].set_text(self.cur_engine.find("path").text.strip())
                 self.widgets["engine_protocol_combo"].set_active(0 if self.cur_engine.get("protocol")=="uci" else 1)
+
+                options_tags = self.cur_engine.findall(".//options")
+                self.options_store.clear()
+                for option in options_tags[0].getchildren():
+                    self.options_store.append([option.get("name"), option.get("default")])
 
 
 ################################################################################
