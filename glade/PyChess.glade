@@ -915,7 +915,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="top_padding">4</property>
-                                <property name="left_padding">12</property>
                                 <child>
                                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                                     <property name="visible">True</property>
@@ -1210,7 +1209,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
+                                    <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
@@ -1221,17 +1220,21 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                     <property name="can_focus">True</property>
                                     <property name="hscrollbar_policy">automatic</property>
                                     <property name="vscrollbar_policy">automatic</property>
+                                    <property name="shadow_type">in</property>
                                     <child>
                                       <object class="GtkTreeView" id="options_treeview">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="model">liststore4</property>
+                                        <property name="rules_hint">True</property>
+                                        <property name="enable_grid_lines">both</property>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
                                     <property name="fill">True</property>
+                                    <property name="padding">4</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
