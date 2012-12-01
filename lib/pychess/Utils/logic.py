@@ -100,7 +100,7 @@ def standard_validate (board, move):
 
 def validate (board, move):
     if board.variant == LOSERSCHESS:
-        capture = board[move.cord1] != None
+        capture = move.flag == ENPASSANT or board[move.cord1] != None
         if capture:
             return standard_validate (board, move)
         else:

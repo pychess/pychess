@@ -443,32 +443,34 @@ def LinkLabel (text, url):
 
 cachedGlades = {}
 def cacheGladefile(filename):
-    """ gtk.glade automatically caches the file, so we only need to use this
+    """ gtk.Builder automatically caches the file, so we only need to use this
         file once """
     if filename not in cachedGlades:
         cachedGlades[filename] = Queue.Queue()
         def readit ():
-            glade = gtk.Builder()
-            glade.add_from_file(addDataPrefix("glade/%s" % filename))
-            cachedGlades[filename].put(glade)
+            builder = gtk.Builder()
+            builder.set_translation_domain("pychess")
+            builder.add_from_file(addDataPrefix("glade/%s" % filename))
+            cachedGlades[filename].put(builder)
         pool.start(readit)
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
-        self.glade = None
+        self.builder = None
         try:
             if filename in cachedGlades:
-                self.glade = cachedGlades[filename].get(block=False)
+                self.builder = cachedGlades[filename].get(block=False)
         except Queue.Empty:
             pass
         
-        if not self.glade:
+        if not self.builder:
             glock.acquire()
 #            print "uistuff.py:gladefile = %s" % filename
-            self.glade = gtk.Builder()
-            self.glade.add_from_file(addDataPrefix("glade/%s" % filename))
+            self.builder = gtk.Builder()
+            self.builder.set_translation_domain("pychess")
+            self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
             glock.release()
         
         self.extras = {}
@@ -476,11 +478,11 @@ class GladeWidgets:
     def __getitem__(self, key):
         if key in self.extras:
             return self.extras[key]
-        return self.glade.get_object(key)
+        return self.builder.get_object(key)
     
     def __setitem__(self, key, widget):
         self.extras[key] = widget
     
     def getGlade (self):
-        return self.glade
+        return self.builder
 
