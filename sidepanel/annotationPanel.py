@@ -346,41 +346,42 @@ class Sidepanel(gtk.TextView):
                 node = node.next
                 continue
             
-            if ply > 0 and not new_line:
-                buf.insert(end_iter(), " ")
-            
-            ply += 1
-
-            movestr = self.__movestr(node, fan)
-            buf.insert(end_iter(), movestr)
-            
-            startIter = buf.get_iter_at_offset(start)
-            endIter = buf.get_iter_at_offset(end_iter().get_offset())
-            
-            if level == 0:
-                buf.apply_tag_by_name("node", startIter, endIter)
-                buf.apply_tag_by_name("margin", startIter, endIter)
-            elif level == 1:
-                buf.apply_tag_by_name("variation-toplevel", startIter, endIter)
-                buf.apply_tag_by_name("variation-margin0", startIter, endIter)
-            elif level % 2 == 0:
-                buf.apply_tag_by_name("variation-even", startIter, endIter)
-                buf.apply_tag_by_name("variation-margin1", startIter, endIter)
-            else:
-                buf.apply_tag_by_name("variation-uneven", startIter, endIter)
-                buf.apply_tag_by_name("variation-margin2", startIter, endIter)
-
-            if self.boardview.shown >= self.gamemodel.lowply and node == shown_board.board:
-                buf.apply_tag_by_name("selected", startIter, endIter)
+            if hasattr(node, "history"):
+                if ply > 0 and not new_line:
+                    buf.insert(end_iter(), " ")
                 
-            ni = {}
-            ni["node"] = node
-            ni["start"] = start       
-            ni["end"] = end_iter().get_offset()
-            ni["parent"] = parent
-            self.nodeIters.append(ni)
-            
-            buf.insert(end_iter(), " ")
+                ply += 1
+
+                movestr = self.__movestr(node, fan)
+                buf.insert(end_iter(), movestr)
+                
+                startIter = buf.get_iter_at_offset(start)
+                endIter = buf.get_iter_at_offset(end_iter().get_offset())
+                
+                if level == 0:
+                    buf.apply_tag_by_name("node", startIter, endIter)
+                    buf.apply_tag_by_name("margin", startIter, endIter)
+                elif level == 1:
+                    buf.apply_tag_by_name("variation-toplevel", startIter, endIter)
+                    buf.apply_tag_by_name("variation-margin0", startIter, endIter)
+                elif level % 2 == 0:
+                    buf.apply_tag_by_name("variation-even", startIter, endIter)
+                    buf.apply_tag_by_name("variation-margin1", startIter, endIter)
+                else:
+                    buf.apply_tag_by_name("variation-uneven", startIter, endIter)
+                    buf.apply_tag_by_name("variation-margin2", startIter, endIter)
+
+                if self.boardview.shown >= self.gamemodel.lowply and node == shown_board.board:
+                    buf.apply_tag_by_name("selected", startIter, endIter)
+                    
+                ni = {}
+                ni["node"] = node
+                ni["start"] = start       
+                ni["end"] = end_iter().get_offset()
+                ni["parent"] = parent
+                self.nodeIters.append(ni)
+                
+                buf.insert(end_iter(), " ")
 
             new_line = False
             for index, child in enumerate(node.children):

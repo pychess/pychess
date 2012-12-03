@@ -473,14 +473,9 @@ class Sidepanel:
         if iter is None:
             return
         board, move, pv = self.store[iter][0]
-        if (move is not None) and board == self.boardview.model.boards[-1]:
-            # Play the move if it's a suggestion for the next move of the game.
-            self.boardview.bluearrow = None
-            self.boardcontrol.emit("piece_moved", move, board.color)
-        else:
-            # The row may be tied to a specific action.
-            path = self.store.get_path(iter)
-            self.advisors[path[0]].row_activated(iter, self.boardview.model)
+        # The row may be tied to a specific action.
+        path = self.store.get_path(iter)
+        self.advisors[path[0]].row_activated(iter, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
