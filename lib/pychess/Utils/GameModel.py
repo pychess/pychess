@@ -545,6 +545,10 @@ class GameModel (GObject, PooledThread):
                 newBoard = self.boards[-1].move(move)
                 newBoard.board.prev = self.boards[-1].board
                 
+                # Variation on next move can exist from the hint panel...
+                if self.boards[-1].board.next is not None:
+                    newBoard.board.children = self.boards[-1].board.next.children
+                
                 self.boards = self.variations[0]
                 self.boards[-1].board.next = newBoard.board
                 self.boards.append(newBoard)
@@ -756,6 +760,12 @@ class GameModel (GObject, PooledThread):
             variation.append(new)
             board = new
         
+        if board0.board.next is None:
+            from pychess.Utils.lutils.LBoard import LBoard
+            null_board = LBoard()
+            null_board.prev = board0.board
+            board0.board.next = null_board
+
         board0.board.next.children.append([board.board for board in variation])
 
         head = None
@@ -767,4 +777,3 @@ class GameModel (GObject, PooledThread):
         self.variations.append(head[:board0.ply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
-        
