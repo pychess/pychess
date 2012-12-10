@@ -113,6 +113,7 @@ class EngineTab:
             widgets["engine_options_entry"].set_text("")
             widgets["engine_directory_entry"].set_text("")
             widgets["engine_protocol_combo"].set_active(0)
+            select_engine(None)
         widgets["add_engine_button"].connect("clicked", add)
 
         def copy(button):
@@ -165,12 +166,15 @@ class EngineTab:
             if response == gtk.RESPONSE_OK:
                 new_engine = dialog.get_filename()
                 if os.access(new_engine, os.R_OK|os.X_OK):
-                    uci = discoverer.is_uci(new_engine)
-                    path, binname = os.path.split(new_engine)
-                    protocol = "uci" if uci else "xboard"
-                    widgets["engine_name_entry"].set_text(binname)
-                    widgets["engine_command_entry"].set_text(new_engine)
-                    widgets["engine_protocol_combo"].set_active(0 if uci else 1)
+                    try:
+                        uci = discoverer.is_uci(new_engine)
+                        path, binname = os.path.split(new_engine)
+                        protocol = "uci" if uci else "xboard"
+                        widgets["engine_name_entry"].set_text(binname)
+                        widgets["engine_command_entry"].set_text(new_engine)
+                        widgets["engine_protocol_combo"].set_active(0 if uci else 1)
+                    except OSError:
+                        print "There is something wrong with this executable"
                 else:
                     print "%s is not an executable" % new_engine
             dialog.destroy()

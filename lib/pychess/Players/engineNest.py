@@ -543,7 +543,11 @@ class EngineDiscoverer (GObject, PooledThread):
         return engine
 
     def is_uci(self, new_engine):
-        proc = Popen(new_engine, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        try:
+            proc = Popen(new_engine, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        except OSError:
+            raise
+            
         proc.stdin.write("uci\n")
         proc.stdin.flush()
 
