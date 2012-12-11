@@ -77,9 +77,9 @@ class EngineTab:
         self.tv = widgets["engines_treeview"]
         self.tv.set_model(allstore)
         self.tv.append_column(gtk.TreeViewColumn(
-                _("Flag"), gtk.CellRendererPixbuf(), pixbuf=0))
+                "Flag", gtk.CellRendererPixbuf(), pixbuf=0))
         self.tv.append_column(gtk.TreeViewColumn(
-                _("Name"), gtk.CellRendererText(), text=1))
+                "Name", gtk.CellRendererText(), text=1))
 
         from pychess.widgets import newGameDialog
         def update_store(discoverer, store):
@@ -113,35 +113,48 @@ class EngineTab:
             widgets["engine_options_entry"].set_text("")
             widgets["engine_directory_entry"].set_text("")
             widgets["engine_protocol_combo"].set_active(0)
+
             select_engine(None)
+
+            new_engine = widgets["engine_command_entry"].get_text().strip()
+            if new_engine:
+                name = widgets["engine_name_entry"].get_text().strip()
+                active = widgets["engine_protocol_combo"].get_active()
+                protocol = "uci" if active==0 else "cecp"
+                discoverer.addEngine(name, new_engine, protocol)
+                self.cur_engine = discoverer.getEngines()[name]
+                discoverer.start()
         widgets["add_engine_button"].connect("clicked", add)
 
         def copy(button):
             pass
         widgets["copy_engine_button"].connect("clicked", copy)
 
-        def accept_properties(button):
-            new_engine = widgets["engine_command_entry"].get_text().strip()
-            name = widgets["engine_name_entry"].get_text().strip()
-            if new_engine.strip():
+        def name_changed(widget):
+            if self.cur_engine is not None:
+                new_name = widgets["engine_name_entry"].get_text().strip()
+                old_name = self.cur_engine.get("binname")
+                if new_name != old_name:
+                    engines = discoverer.getEngines()
+                    if new_name not in engines:
+                        engines[new_name] = engines[old_name]
+                        engines[new_name].set("binname", new_name)
+                        del engines[old_name]
+                    else:
+                        widgets["engine_name_entry"].set_text(old_name)
+                        print "Name %s allready exist" % new_name
+        widgets["engine_name_entry"].connect("changed", name_changed)
+            
+        def protocol_changed(widget):
+            if self.cur_engine is not None:
                 active = widgets["engine_protocol_combo"].get_active()
                 protocol = "uci" if active==0 else "cecp"
-                if self.cur_engine is None:
-                    discoverer.addEngine(name, new_engine, protocol)
-                else:
-                    old_name = self.cur_engine.get("binname")
-                    if name != old_name:
-                        engines = discoverer.getEngines()
-                        engines[name] = engines[old_name]
-                        engines[name].set("binname", name)
-                        del engines[old_name]
-                    
-                    old_protocol = self.cur_engine.get("protocol")
-                    if protocol != old_protocol:
-                        self.cur_engine.set("protocol", protocol)
-                        self.cur_engine.set('recheck', 'true')
-                discoverer.start()
-        widgets["engine_save_button"].connect("clicked", accept_properties)
+                old_protocol = self.cur_engine.get("protocol")
+                if protocol != old_protocol:
+                    self.cur_engine.set("protocol", protocol)
+                    self.cur_engine.set('recheck', 'true')
+                    discoverer.start()
+        widgets["engine_protocol_combo"].connect("changed", protocol_changed)
 
         # Add cell renderer to protocol combo column
         protocol_combo = widgets["engine_protocol_combo"]
@@ -170,6 +183,9 @@ class EngineTab:
                         uci = discoverer.is_uci(new_engine)
                         path, binname = os.path.split(new_engine)
                         protocol = "uci" if uci else "xboard"
+                        for name in discoverer.getEngines():
+                            if name == binname:
+                                binname = name + "(1)"
                         widgets["engine_name_entry"].set_text(binname)
                         widgets["engine_command_entry"].set_text(new_engine)
                         widgets["engine_protocol_combo"].set_active(0 if uci else 1)
@@ -240,6 +256,7 @@ class HintTab:
 
         # Endgame
         conf.set("online_egtb_check", conf.get("online_egtb_check", 0))
+        uistuff.keep(widgets["online_egtb_check"], "online_egtb_check")
 
         default_path = os.path.join(getDataPrefix())
         path = conf.get("egtb_path_entry", default_path)
