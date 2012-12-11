@@ -919,26 +919,23 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="hscrollbar_policy">automatic</property>
+                                    <property name="hscrollbar_policy">never</property>
                                     <property name="vscrollbar_policy">automatic</property>
                                     <property name="shadow_type">in</property>
                                     <child>
                                       <object class="GtkTreeView" id="engines_treeview">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="headers_visible">False</property>
+                                        <property name="headers_clickable">False</property>
                                       </object>
                                     </child>
                                   </object>
                                 </child>
                               </object>
                             </child>
-                            <child type="label">
-                              <object class="GtkLabel" id="label17">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Chess Engines&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </object>
+                            <child type="label_item">
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
@@ -1310,21 +1307,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                             <property name="position">2</property>
                           </packing>
                         </child>
-                        <child>
-                          <object class="GtkButton" id="engine_save_button">
-                            <property name="label">gtk-save</property>
-                            <property name="use_action_appearance">False</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">3</property>
-                          </packing>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1379,7 +1361,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkCheckButton" id="opening_check">
-                                    <property name="label" translatable="yes">Use _opening book</property>
+                                    <property name="label" translatable="yes">Use opening _book</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -1671,13 +1653,12 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkCheckButton" id="endgame_check">
-                                    <property name="label" translatable="yes">Use _tablebases</property>
+                                    <property name="label" translatable="yes">Use _local tablebases</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="use_underline">True</property>
-                                    <property name="yalign">0.4699999988079071</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1751,22 +1732,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="online_egtb_check">
-                                            <property name="label" translatable="yes">Enable online tablebases</property>
-                                            <property name="use_action_appearance">False</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -1774,6 +1739,23 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
                                     <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="online_egtb_check">
+                                    <property name="label" translatable="yes">Use _online tablebases</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
