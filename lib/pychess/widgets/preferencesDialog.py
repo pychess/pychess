@@ -130,20 +130,21 @@ class EngineTab:
             pass
         widgets["copy_engine_button"].connect("clicked", copy)
 
-        def name_changed(widget):
+        def name_changed(widget, event):
             if self.cur_engine is not None:
                 new_name = widgets["engine_name_entry"].get_text().strip()
                 old_name = self.cur_engine.get("binname")
-                if new_name != old_name:
+                if new_name and new_name != old_name:
                     engines = discoverer.getEngines()
                     if new_name not in engines:
                         engines[new_name] = engines[old_name]
                         engines[new_name].set("binname", new_name)
                         del engines[old_name]
+                        discoverer.start()
                     else:
                         widgets["engine_name_entry"].set_text(old_name)
                         print "Name %s allready exist" % new_name
-        widgets["engine_name_entry"].connect("changed", name_changed)
+        widgets["engine_name_entry"].connect("focus-out-event", name_changed)
             
         def protocol_changed(widget):
             if self.cur_engine is not None:
@@ -186,6 +187,7 @@ class EngineTab:
                         for name in discoverer.getEngines():
                             if name == binname:
                                 binname = name + "(1)"
+                                break
                         widgets["engine_name_entry"].set_text(binname)
                         widgets["engine_command_entry"].set_text(new_engine)
                         widgets["engine_protocol_combo"].set_active(0 if uci else 1)
