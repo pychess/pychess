@@ -81,82 +81,6 @@ class EngineTab:
         self.tv.append_column(gtk.TreeViewColumn(
                 "Name", gtk.CellRendererText(), text=1))
 
-        from pychess.widgets import newGameDialog
-        def update_store(discoverer, store):
-            store.clear()
-            # don't add the very first (Human) player to engine store
-            for item in newGameDialog.playerItems[0][1:]:
-                store.append(item)
-        glock_connect_after(discoverer, "all_engines_discovered",
-                            update_store, allstore)
-        update_store(discoverer, allstore)
-        
-        self.cur_engine = None
-
-        self.tv.get_selection().connect('changed', self.selection_changed)
-
-        def remove(button):
-            if self.cur_engine is not None:
-                self.widgets['remove_engine_button'].set_sensitive(False)
-                discoverer.removeEngine(self.cur_engine.get("binname"))
-                # Force emit "all_engines_discovered" signal let update engine lists
-                discoverer.start()
-                ts = self.tv.get_selection()
-                ts.select_path((0,))
-                self.tv.set_cursor(0)
-        widgets["remove_engine_button"].connect("clicked", remove)
-
-        def add(button):
-            self.cur_engine = None
-            widgets["engine_name_entry"].set_text("")
-            widgets["engine_command_entry"].set_text("")
-            widgets["engine_options_entry"].set_text("")
-            widgets["engine_directory_entry"].set_text("")
-            widgets["engine_protocol_combo"].set_active(0)
-
-            select_engine(None)
-
-            new_engine = widgets["engine_command_entry"].get_text().strip()
-            if new_engine:
-                name = widgets["engine_name_entry"].get_text().strip()
-                active = widgets["engine_protocol_combo"].get_active()
-                protocol = "uci" if active==0 else "cecp"
-                discoverer.addEngine(name, new_engine, protocol)
-                self.cur_engine = discoverer.getEngines()[name]
-                discoverer.start()
-        widgets["add_engine_button"].connect("clicked", add)
-
-        def copy(button):
-            pass
-        widgets["copy_engine_button"].connect("clicked", copy)
-
-        def name_changed(widget, event):
-            if self.cur_engine is not None:
-                new_name = widgets["engine_name_entry"].get_text().strip()
-                old_name = self.cur_engine.get("binname")
-                if new_name and new_name != old_name:
-                    engines = discoverer.getEngines()
-                    if new_name not in engines:
-                        engines[new_name] = engines[old_name]
-                        engines[new_name].set("binname", new_name)
-                        del engines[old_name]
-                        discoverer.start()
-                    else:
-                        widgets["engine_name_entry"].set_text(old_name)
-                        print "Name %s allready exist" % new_name
-        widgets["engine_name_entry"].connect("focus-out-event", name_changed)
-            
-        def protocol_changed(widget):
-            if self.cur_engine is not None:
-                active = widgets["engine_protocol_combo"].get_active()
-                protocol = "uci" if active==0 else "cecp"
-                old_protocol = self.cur_engine.get("protocol")
-                if protocol != old_protocol:
-                    self.cur_engine.set("protocol", protocol)
-                    self.cur_engine.set('recheck', 'true')
-                    discoverer.start()
-        widgets["engine_protocol_combo"].connect("changed", protocol_changed)
-
         # Add cell renderer to protocol combo column
         protocol_combo = widgets["engine_protocol_combo"]
         cell = gtk.CellRendererText()
@@ -173,10 +97,94 @@ class EngineTab:
         self.options_store = gtk.ListStore(str, str)
         optv.set_model(self.options_store)
 
-        def select_engine(button):
+        self.cur_engine = None
+
+        def update_options():
+            if self.cur_engine is not None:
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                options_tags = xmlengine.findall(".//options")
+                if options_tags:
+                    self.options_store.clear()
+                    for option in options_tags[0].getchildren():
+                        self.options_store.append([option.get("name"), option.get("default")])
+
+        from pychess.widgets import newGameDialog
+        def update_store(discoverer, store):
+            store.clear()
+            # don't add the very first (Human) player to engine store
+            for item in newGameDialog.playerItems[0][1:]:
+                store.append(item)
+            update_options()
+
+        glock_connect_after(discoverer, "all_engines_discovered",
+                            update_store, allstore)
+        update_store(discoverer, allstore)
+        
+        def remove(button):
+            if self.cur_engine is not None:
+                self.widgets['remove_engine_button'].set_sensitive(False)
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                discoverer.removeEngine(xmlengine.get("binname"))
+                ts = self.tv.get_selection()
+                ts.select_path((0,))
+                # Force emit "all_engines_discovered" signal let update engine lists
+                discoverer.start()
+
+        widgets["remove_engine_button"].connect("clicked", remove)
+
+        def add(button):
+            new_engine = select_new_engine(None)
+            if new_engine:
+                name = widgets["engine_name_entry"].get_text().strip()
+                active = widgets["engine_protocol_combo"].get_active()
+                protocol = "uci" if active==0 else "cecp"
+                discoverer.addEngine(name, new_engine, protocol)
+                self.cur_engine = name
+                discoverer.start()
+
+        widgets["add_engine_button"].connect("clicked", add)
+
+        def copy(button):
+            pass
+
+        widgets["copy_engine_button"].connect("clicked", copy)
+
+        def name_changed(widget, event):
+            if self.cur_engine is not None:
+                new_name = widgets["engine_name_entry"].get_text().strip()
+                old_name = self.cur_engine
+                if new_name and new_name != old_name:
+                    engines = discoverer.getEngines()
+                    if new_name not in engines:
+                        engines[new_name] = engines[old_name]
+                        engines[new_name].set("binname", new_name)
+                        del engines[old_name]
+                        self.cur_engine = new_name
+                        discoverer.start()
+                    else:
+                        widgets["engine_name_entry"].set_text(old_name)
+                        print "Name %s allready exist" % new_name
+
+        widgets["engine_name_entry"].connect("focus-out-event", name_changed)
+            
+        def protocol_changed(widget):
+            if self.cur_engine is not None:
+                active = widgets["engine_protocol_combo"].get_active()
+                protocol = "uci" if active==0 else "cecp"
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                old_protocol = xmlengine.get("protocol")
+                if protocol != old_protocol:
+                    xmlengine.set("protocol", protocol)
+                    xmlengine.set('recheck', 'true')
+                    discoverer.start()
+
+        widgets["engine_protocol_combo"].connect("changed", protocol_changed)
+
+        def select_new_engine(button):
             dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
             response = dialog.run()
+            new_engine = ""
             if response == gtk.RESPONSE_OK:
                 new_engine = dialog.get_filename()
                 if os.access(new_engine, os.R_OK|os.X_OK):
@@ -193,28 +201,32 @@ class EngineTab:
                         widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                     except OSError:
                         print "There is something wrong with this executable"
+                        new_engine = ""
                 else:
                     print "%s is not an executable" % new_engine
+                    new_engine = ""
             dialog.destroy()
-        widgets["select_engine_button"].connect("clicked", select_engine)
+            return new_engine
 
-    def selection_changed(self, treeselection):
-        store, iter = self.tv.get_selection().get_selected()
-        if iter:
-            self.widgets['copy_engine_button'].set_sensitive(True)
-            self.widgets['remove_engine_button'].set_sensitive(True)
-            row = store.get_path(iter)[0]
-            name = store[row][1]
-            self.cur_engine = discoverer.getEngines()[name]
-            if self.cur_engine is not None:
-                self.widgets["engine_name_entry"].set_text(self.cur_engine.get("binname"))
-                self.widgets["engine_command_entry"].set_text(self.cur_engine.find("path").text.strip())
-                self.widgets["engine_protocol_combo"].set_active(0 if self.cur_engine.get("protocol")=="uci" else 1)
+        widgets["select_engine_button"].connect("clicked", select_new_engine)
 
-                options_tags = self.cur_engine.findall(".//options")
-                self.options_store.clear()
-                for option in options_tags[0].getchildren():
-                    self.options_store.append([option.get("name"), option.get("default")])
+        def selection_changed(treeselection):
+            store, iter = self.tv.get_selection().get_selected()
+            if iter:
+                self.widgets['copy_engine_button'].set_sensitive(True)
+                self.widgets['remove_engine_button'].set_sensitive(True)
+                row = store.get_path(iter)[0]
+                name = store[row][1]
+                self.cur_engine = name
+                xmlengine = discoverer.getEngines()[name]
+                self.widgets["engine_name_entry"].set_text(xmlengine.get("binname"))
+                self.widgets["engine_command_entry"].set_text(xmlengine.find("path").text.strip())
+                self.widgets["engine_protocol_combo"].set_active(0 if xmlengine.get("protocol")=="uci" else 1)
+                update_options()
+                    
+        tree_selection = self.tv.get_selection()
+        tree_selection.connect('changed', selection_changed)
+        tree_selection.select_path((0,))
 
 
 ################################################################################
