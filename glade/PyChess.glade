@@ -1012,7 +1012,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkEntry" id="engine_options_entry">
+                                      <object class="GtkEntry" id="engine_args_entry">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">●</property>
