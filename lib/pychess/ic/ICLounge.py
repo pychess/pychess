@@ -1810,7 +1810,8 @@ class SeekChallengeSection (ParrentListSection):
         
         groupNames = {VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other")}
-        ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES]
+        ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES and 
+                                                    v.board.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
@@ -1831,6 +1832,7 @@ class SeekChallengeSection (ParrentListSection):
         def comboGetter (combo):
             path = model.get_path(combo.get_active_iter())
             return pathToVariant[path]
+            
         def comboSetter (combo, variant):
             assert variant in VARIANT_GAME_TYPES, \
                 "not a supported FICS variant: \"%s\"" % str(variant)
