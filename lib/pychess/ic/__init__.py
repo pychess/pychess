@@ -59,9 +59,13 @@ GAME_TYPES = {
     "standard": NormalGameType("standard", "s", TYPE_STANDARD, _("Standard")),
     "lightning": NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
     "untimed": NormalGameType("untimed", "u", TYPE_UNTIMED, _("Untimed")),
-    "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),    
-    "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),    
+    "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),
+    "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),
+    "atomic": VariantGameType("atomic", "x", TYPE_ATOMIC, ATOMICCHESS),
+    "bughouse": VariantGameType("bughouse", "B", TYPE_BUGHOUSE, BUGHOUSECHESS),
+    "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
+    "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
     "wild/2": WildGameType("wild/2", SHUFFLECHESS),
     "wild/3": WildGameType("wild/3", RANDOMCHESS),
@@ -70,11 +74,6 @@ GAME_TYPES = {
     "wild/8": WildGameType("wild/8", PAWNSPUSHEDCHESS),
     "wild/8a": WildGameType("wild/8a", PAWNSPASSEDCHESS)
 }
-# unsupported:
-#    "bughouse": VariantGameType("bughouse", "B", TYPE_BUGHOUSE, BUGHOUSECHESS),
-#    "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
-#    "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
-#    "atomic": VariantGameType("atomic", "x", TYPE_ATOMIC, ATOMICCHESS),
 
 VARIANT_GAME_TYPES = {}
 for key in GAME_TYPES:
