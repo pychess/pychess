@@ -2,14 +2,27 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import isAttacked
 from pychess.Utils.lutils.bitboard import bitPosArray, clearBit
 from pychess.Utils.lutils.ldata import moveArray, fromToRay
+from pychess.Utils.lutils.lmove import RANK
 
 ################################################################################
 #   Validate move                                                              #
 ################################################################################
 
 def validateMove (board, move):
-    
+    flag = move >> 12
     fcord = (move >> 6) & 63
+    tcord = move & 63
+
+    if flag == DROP:
+        tpiece = board.arBoard[tcord]
+        if tpiece != EMPTY:
+            return false
+        else:
+            if fcord == PAWN:
+                rank = RANK(tcord)
+                return rank > 0 and rank < 7
+            else:
+                return True
     
     fpiece = board.arBoard[fcord]
     
@@ -23,9 +36,6 @@ def validateMove (board, move):
     # Piece is not right color  
     if not bitPosArray[fcord] & friends:
         return False
-    
-    tcord = move & 63
-    flag = move >> 12
     
     # TO square is a friendly piece, so illegal move  
     if bitPosArray[tcord] & board.friends[color]:
