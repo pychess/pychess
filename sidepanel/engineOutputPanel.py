@@ -188,7 +188,7 @@ class EngineOutput (gtk.VBox):
         self.re_thinking_line_cecp = re.compile( r'^[0-9]+\.? +\-?[0-9]+ +' )
         self.re_thinking_line_uci = re.compile( r'^info (.*) pv [a-hA-H][0-9][a-hA-H][0-9](.*)$' )
         self.re_move_line_cecp_alg = re.compile( r'^(move +)?[a-hA-H][0-9][a-hA-H][0-9]$' ) 
-        self.re_move_line_cecp_san = re.compile( r'^(move +)?([QKNB]?[a-hA-H]?[xX]?[a-hA-H][0-9]\+?#?|[oO]-[oO]-[oO]|[oO]-[oO])$' )
+        self.re_move_line_cecp_san = re.compile( r'^(move +)?([QKNB]?[a-hA-H]?[xX@]?[a-hA-H][0-9]\+?#?|[oO]-[oO]-[oO]|[oO]-[oO])$' )
         self.re_move_line_uci = re.compile( r'^bestmove +[a-hA-H][0-9][a-hA-H][0-9]( .*)?$' )
         self.re_extract_cecp_all = re.compile( r'^([0-9]+)\.? +(\-?[0-9]+) +[0-9]+.?[0-9]* ([^ ].*)$' )
         self.re_extract_uci_depth = re.compile( r'depth +([0-9]+) +' )
@@ -292,7 +292,7 @@ class EngineOutput (gtk.VBox):
             
 
         # Clean pv of unwanted chars:
-        pv = re.sub( '[^a-z^A-Z^0-9^ ^x^?]', '', pv )
+        pv = re.sub( '[^a-z^A-Z^0-9^ ^x^@^?]', '', pv )
 
         # If we found useful information, show it:
         if infoFound:
