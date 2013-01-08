@@ -282,6 +282,15 @@ def parseSAN (board, san):
     if "-" in notat:
         notat = notat.replace("-", "")
 
+    if "@" in notat:
+        tcord = cordDic[notat[-2:]]
+        if notat[0].islower():
+            # Sjeng-ism
+            piece = chr2Sign[notat[0]]
+        else:
+            piece = chrU2Sign[notat[0]]
+        return newMove(piece, tcord, DROP)
+    
     if notat[0] in ("Q", "R", "B", "K", "N"):
         piece = chrU2Sign[notat[0]]
         notat = notat[1:]
@@ -310,9 +319,6 @@ def parseSAN (board, san):
         
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
-    
-    if "@" in notat:
-        return newMove(piece, tcord, DROP)
     
     if piece == KING:
         return newMove(board.kings[color], tcord, flag)

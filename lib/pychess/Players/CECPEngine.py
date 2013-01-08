@@ -36,9 +36,10 @@ def isdigits (strings):
 movere = re.compile(r"""
     (                   # group start
     (?:                 # non grouping parenthesis start
-    [KQRBN]?            # piece
+    [PKQRBN]?            # piece
     [a-h]?[1-8]?        # unambiguous column or line
     x?                  # capture
+    @?                  # drop
     [a-h][1-8]          # destination square
     =?[QRBN]?           # promotion
     |O\-O(?:\-O)?       # castling
