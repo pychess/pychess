@@ -1,4 +1,5 @@
 import gamewidget
+from pychess.System import conf
 from pychess.System import glock
 from pychess.Utils.const import ACTION_MENU_ITEMS
 
@@ -97,7 +98,8 @@ class MenuItemsDict (dict):
         for item in ACTION_MENU_ITEMS:
             dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
         for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget))
+            dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget,
+                             active = conf.get(item, False)))
         gamewidget.connect("infront", self.on_gamewidget_infront)
     
     def __setitem__ (self, item, value):
