@@ -538,8 +538,8 @@ def state_trappedBishops (model, ply, phase):
     else:
         return
 
-    s = leval.evalTrappedBishops (board, opcolor, phase)
-    olds = leval.evalTrappedBishops (oldboard, opcolor, phase)
+    s = leval.evalTrappedBishops (board, opcolor)
+    olds = leval.evalTrappedBishops (oldboard, opcolor)
 
     # We have got more points -> We have trapped a bishop
     if s > olds:

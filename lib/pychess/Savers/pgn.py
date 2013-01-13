@@ -134,7 +134,7 @@ def walk(node, result):
         if movecount:
             store(movecount)
 
-        move = node.history[-1][0]
+        move = node.lastMove
         store(toSAN(node.prev, move))
 
         for nag in node.nags:
@@ -157,7 +157,7 @@ def walk(node, result):
             break
 
 def move_count(node):
-    ply = node.ply
+    ply = node.plyCount
     if ply % 2 == 1:
         mvcount = "%d." % (ply/2+1)
     elif node.prev.prev is None or node != node.prev.next or node.prev.children:
@@ -268,8 +268,8 @@ class PGNFile (PgnBase):
         # create the high level Board and Move lists...
         
         for board in boards:
-            if board.history and board.history[-1] is not None:
-                model.moves.append(Move(board.history[-1][0]))
+            if board.lastMove is not None:
+                model.moves.append(Move(board.lastMove))
         
         def walk(node, path):
             if node.prev is None:
@@ -279,7 +279,7 @@ class PGNFile (PgnBase):
                 else:
                     board = Board(setup=node.asFen(), lboard=node)
             else:
-                move = Move(node.history[-1][0])
+                move = Move(node.lastMove)
                 board = node.prev.pieceBoard.move(move, lboard=node)
 
             if node.next is None:

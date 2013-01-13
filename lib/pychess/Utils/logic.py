@@ -22,12 +22,9 @@ def getDestinationCords (board, cord):
                 tcords.append(Cord(TCORD(move)))
     return tcords
 
-def repetitionCount (board):
-    return ldraw.repetitionCount(board.board)
-
 def isClaimableDraw (board):
     lboard = board.board
-    if ldraw.repetitionCount (lboard) >= 3:
+    if lboard.repetitionCount () >= 3:
         return True
     if ldraw.testFifty (lboard):
         return True
@@ -52,14 +49,13 @@ def getStatus (board):
         if ldraw.testMaterial (lboard):
             return DRAW, DRAW_INSUFFICIENT
     
-    board_clone = lboard.clone()
     hasMove = False
-    for move in lmovegen.genAllMoves (board_clone):
-        board_clone.applyMove(move)
-        if board_clone.opIsChecked():
-            board_clone.popMove()
+    for move in lmovegen.genAllMoves (lboard):
+        lboard.applyMove(move)
+        if lboard.opIsChecked():
+            lboard.popMove()
             continue
-        board_clone.popMove()
+        lboard.popMove()
         hasMove = True
         break
 
@@ -86,7 +82,7 @@ def getStatus (board):
             else:
                 return DRAW, DRAW_STALEMATE
 
-    if ldraw.repetitionCount (lboard) >= 3:
+    if lboard.repetitionCount () >= 3:
         return DRAW, DRAW_REPITITION
     
     if ldraw.testFifty (lboard):

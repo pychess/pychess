@@ -211,7 +211,7 @@ class Board:
     color = property(_get_color)
     
     def _get_ply (self):
-        return len(self.board.history)
+        return self.board.plyCount
     ply = property(_get_ply)
     
     def asFen (self):

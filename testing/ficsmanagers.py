@@ -36,7 +36,7 @@ class DummyConnection(Connection):
     def putline(self, line):
         self.client.putline(line)
     def handleSomeText(self):
-        self.client.handleSomeText(self.predictions)
+        self.client.handleSomeText(self.predictions, None)
     def getUsername(self):
         return self.username
     
