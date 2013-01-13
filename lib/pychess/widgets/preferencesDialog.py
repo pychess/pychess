@@ -146,6 +146,7 @@ class EngineTab:
         widgets["add_engine_button"].connect("clicked", add)
 
         def copy(button):
+            # TODO
             pass
 
         widgets["copy_engine_button"].connect("clicked", copy)
@@ -177,6 +178,16 @@ class EngineTab:
                 args.append(fromstring('<arg value="%s"/>' % new_args))
 
         widgets["engine_args_entry"].connect("focus-out-event", args_changed)
+
+        def directory_changed(widget, event):
+            if self.cur_engine is not None:
+                new_directory = widgets["engine_directory_entry"].get_text().strip()
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                old_directory = xmlengine.get("directory")
+                if new_directory != old_directory:
+                    xmlengine.set("directory", new_directory)
+
+        widgets["engine_directory_entry"].connect("focus-out-event", directory_changed)
             
         def protocol_changed(widget):
             if self.cur_engine is not None:
@@ -234,6 +245,8 @@ class EngineTab:
                 self.widgets["engine_command_entry"].set_text(xmlengine.find("path").text.strip())
                 args = [a.get('value') for a in xmlengine.findall('args/arg')]
                 self.widgets["engine_args_entry"].set_text(' '.join(args))
+                directory = xmlengine.get("directory") if xmlengine.get("directory") is not None else ""
+                self.widgets["engine_directory_entry"].set_text(directory)
                 self.widgets["engine_protocol_combo"].set_active(0 if xmlengine.get("protocol")=="uci" else 1)
                 update_options()
                     
