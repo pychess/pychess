@@ -366,7 +366,8 @@ class LBoard:
         self.hist_tpiece.append(tpiece)
         
         # Remove moving piece(s), then add them at their destination.
-        self._removePiece(fcord, fpiece, color)
+        if flag != DROP:
+            self._removePiece(fcord, fpiece, color)
 
         if flag in (KING_CASTLE, QUEEN_CASTLE):
             self._removePiece (rookf, ROOK, color)
