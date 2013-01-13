@@ -292,7 +292,7 @@ class GameModel (GObject, PooledThread):
     
     def getMoveAtPly (self, ply, variation=0):
         try:
-            return Move(self.variations[variation][self._plyToIndex(ply)+1].board.history[-1][0])
+            return Move(self.variations[variation][self._plyToIndex(ply)+1].board.lastMove)
         except IndexError:
             log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
             raise

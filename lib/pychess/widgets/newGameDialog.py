@@ -257,7 +257,8 @@ class _GameInitializationMode:
                       VARIANTS_ODDS: _("Odds"),
                       VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other")}
-        specialVariants = [v for v in variants.values() if v != NormalChess]
+        specialVariants = [v for v in variants.values() if v != NormalChess and 
+                                        v.board.variant not in UNSUPPORTED]
         groups = groupby(specialVariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}

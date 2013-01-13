@@ -2,16 +2,6 @@ from bitboard import bitLength
 from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
-def repetitionCount (board, drawThreshold=3):
-    rc = 1
-    for ply in xrange(4, 1+min(len(board.history), board.fifty), 2):
-        if board.history[-ply] is None:
-            break # Game started from a position; early history is unavailable.
-        if board.history[-ply][4] == board.hash:
-            rc += 1
-            if rc >= drawThreshold: break
-    return rc
-
 def testFifty (board):
     if board.fifty >= 100:
         return True
@@ -86,6 +76,6 @@ def testPlayerMatingMaterial (board, color):
 
 def test (board):
     """ Test if the position is drawn. Two-fold repetitions are counted. """
-    return repetitionCount (board, drawThreshold=2) > 1 or \
+    return board.repetitionCount (drawThreshold=2) > 1 or \
            testFifty (board) or \
            testMaterial (board)
