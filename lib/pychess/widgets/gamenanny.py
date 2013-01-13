@@ -218,7 +218,10 @@ def on_game_started (gamemodel, gmwidg):
             gamemodel.isObservationGame() is False):
         gamemodel.start_analyzer(HINT)
         gamemodel.start_analyzer(SPY)
-    
+        if not conf.get("hint_mode", False):
+            gamemodel.pause_analyzer(HINT)
+        if not conf.get("spy_mode", False):
+            gamemodel.pause_analyzer(SPY)
     return False
 
 #===============================================================================

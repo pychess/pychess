@@ -9,7 +9,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, toAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-MAXDEPTH = 2
+MAXDEPTH = 3
 
 
 class FindMovesTestCase(unittest.TestCase):

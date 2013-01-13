@@ -339,14 +339,14 @@ class Sidepanel(gtk.TextView):
             if node.prev is None:
                 for index, child in enumerate(node.children):
                     if isinstance(child, basestring):
-                        if node.ply == self.gamemodel.lowply:
+                        if 0: # TODO node.plyCount == self.gamemodel.lowply:
                             self.insert_comment(child + "\n", node, index, level)
                         else:
                             self.insert_comment(child, node, index, level)
                 node = node.next
                 continue
             
-            if hasattr(node, "history"):
+            if hasattr(node, "hist_move"):
                 if ply > 0 and not new_line:
                     buf.insert(end_iter(), " ")
                 
@@ -569,7 +569,7 @@ class Sidepanel(gtk.TextView):
         self.update_selected_node()
 
     def __movestr(self, node, fan):
-        move = node.history[-1][0]
+        move = node.lastMove
         if fan:
             movestr = toFAN(node.prev, move)
         else:

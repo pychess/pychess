@@ -28,7 +28,7 @@ def walk(node, arr, txt):
             node = node.next
             continue
 
-        arr_append(node.history[-1][0])
+        arr_append(node.lastMove)
 
         for nag in node.nags:
             if nag:

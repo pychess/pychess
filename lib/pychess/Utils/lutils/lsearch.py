@@ -7,19 +7,17 @@ from pychess.Utils.const import *
 from leval import evaluateComplete
 from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
-from ldata import MATE_VALUE
+from ldata import MATE_VALUE, VALUE_AT_PLY
 from TranspositionTable import TranspositionTable
 import ldraw
 from pychess.Utils.EndgameTable import EndgameTable
 
 TIMECHECK_FREQ = 500
 
-table = TranspositionTable(5000000)
+table = TranspositionTable(32 * 1024 * 1024)
 skipPruneChance = 0
 searching = False
-movesearches = 0
 nodes = 0
-last = 0
 endtime = 0
 timecheck_counter = TIMECHECK_FREQ
 egtb = None
@@ -38,11 +36,25 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             the deepest)
         *   a score of your standing the the last possition. """
     
-    global last, searching, nodes, movesearches, table, endtime, timecheck_counter
+    global searching, nodes, table, endtime, timecheck_counter
     foundPv = False
     hashf = hashfALPHA
     amove = []
     
+    ############################################################################
+    # Mate distance pruning
+    ############################################################################
+
+    MATED = -MATE_VALUE+ply 
+    MATE_IN_1 = MATE_VALUE-ply-1
+
+    if beta <= MATED:
+        return [], MATED
+    if beta >= MATE_IN_1:
+        beta = MATE_IN_1
+        if alpha >= beta:
+            return [], MATE_IN_1    
+
     ############################################################################
     # Look in the end game table
     ############################################################################
@@ -57,13 +69,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 score = 0
             elif board.color == WHITE:
                 if state == WHITEWON:
-                    score = MATE_VALUE-steps+2
-                else: score = -MATE_VALUE+steps-2
+                    score = MATE_VALUE-steps
+                else: score = -MATE_VALUE+steps
             else:
                 if state == WHITEWON:
-                    score = -MATE_VALUE+steps-2
-                else: score = MATE_VALUE-steps+2
-            last = 1
+                    score = -MATE_VALUE+steps
+                else: score = MATE_VALUE-steps
             return [move.move], score
     
     ###########################################################################
@@ -74,23 +85,25 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # We don't adjudicate draws. Clients may have different rules for that.
     if ply > 0:
         if ldraw.test(board):
-            last = 2
             return [], 0
     
     ############################################################################
     # Look up transposition table                                              #
     ############################################################################
     
+    if ply == 0:
+        table.newSearch()
+
     table.setHashMove (depth, -1)
     probe = table.probe (board, depth, alpha, beta)
     hashmove = None
     if probe:
         move, score, hashf = probe
+        score = VALUE_AT_PLY(score, ply)
         hashmove = move
         table.setHashMove (depth, move)
         
         if hashf == hashfEXACT:
-            last = 3
             return [move], score
         elif hashf == hashfBETA:
             beta = min(score, beta)
@@ -98,7 +111,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             alpha = score
             
         if hashf != hashfBAD and alpha >= beta:
-            last = 4
             return [move], score
     
     ############################################################################
@@ -116,7 +128,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     
     if not searching:
-        last = 5
         return [], -evaluateComplete(board, 1-board.color)
     
     ############################################################################
@@ -130,15 +141,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
         else:
-            last = 6
             mvs, val = quiescent(board, alpha, beta, ply)
             return mvs, val
     
     ############################################################################
     # Find and sort moves                                                      #
     ############################################################################
-    
-    movesearches += 1
     
     if isCheck:
         moves = [(-getMoveValue(board,table,depth,m),m) for m in genCheckEvasions(board)]
@@ -180,14 +188,13 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if val > alpha:
             if val >= beta:
                 if searching:
-                    table.record (board, move, beta, hashfBETA, depth)
+                    table.record (board, move, VALUE_AT_PLY(beta, -ply), hashfBETA, depth)
                     # We don't want to use our valuable killer move spaces for
                     # captures and promotions, as these are searched early anyways.
                     if board.arBoard[move&63] == EMPTY and \
                             not move>>12 in PROMOTIONS:
                         table.addKiller (depth, move)
                         table.addButterfly(move, depth)
-                last = 7
                 return [move]+mvs, beta
             
             alpha = val
@@ -201,24 +208,20 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     
     if amove:
         if searching:
-            table.record (board, amove[0], alpha, hashf, depth)
+            table.record (board, amove[0], VALUE_AT_PLY(alpha, -ply), hashf, depth)
             if board.arBoard[amove[0]&63] == EMPTY:
                 table.addKiller (depth, amove[0])
-        last = 8
         return amove, alpha
     
     if catchFailLow:
         if searching:
-            table.record (board, catchFailLow, alpha, hashf, depth)
-        last = 9
+            table.record (board, catchFailLow, VALUE_AT_PLY(alpha, -ply), hashf, depth)
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
     if isCheck:
-        last = 10
-        return [], -MATE_VALUE+ply-2
+        return [], MATED
     
-    last = 11
     return [], 0
 
 def quiescent (board, alpha, beta, ply):
@@ -251,7 +254,7 @@ def quiescent (board, alpha, beta, ply):
             # Heap.append is fine, as we don't really do sorting on the few moves
             heap.append((0, move))
         if not someMove:
-            return [], -MATE_VALUE+ply-2
+            return [], -MATE_VALUE+ply
     else:
         for move in genCaptures (board):
             heappush(heap, (-getCaptureValue (board, move), move))
