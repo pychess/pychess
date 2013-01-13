@@ -1,7 +1,7 @@
 from ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
-from pychess.Utils.logic import getStatus, repetitionCount
+from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.leval import evaluateComplete
 
 __label__ = _("Chess Position")
@@ -21,7 +21,7 @@ def save (file, model):
     ############################################################################
     # Repetition count                                                         #
     ############################################################################
-    rc = repetitionCount(model.boards[-1])
+    rc = model.boards[-1].repetitionCount()
     
     ############################################################################
     # Centipawn evaluation                                                     #

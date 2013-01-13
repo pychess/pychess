@@ -60,7 +60,7 @@ class Sidepanel:
             return
         
         for i in xrange(len(self.plot)+model.lowply, model.ply):
-            points = leval.evaluateComplete(model.getBoardAtPly(i).board, WHITE, True)
+            points = leval.evaluateComplete(model.getBoardAtPly(i).board, WHITE)
             self.plot.addScore(points)
         
         if model.status == DRAW:
@@ -70,7 +70,7 @@ class Sidepanel:
         elif model.status == BLACKWON:
             points = -maxint
         else:
-            points = leval.evaluateComplete(model.getBoardAtPly(model.ply).board, WHITE, True)
+            points = leval.evaluateComplete(model.getBoardAtPly(model.ply).board, WHITE)
         self.plot.addScore(points)
         
         # As shown_changed will normally be emitted just after game_changed -

@@ -81,7 +81,7 @@ class PgnBase(ChessFile):
             if parenthesis == 0:
                 if group == FULL_MOVE:
                     if not variation:
-                        if position != -1 and last_board.ply >= position:
+                        if position != -1 and last_board.plyCount >= position:
                             break
 
                     mstr = m.group(MOVE)
@@ -91,7 +91,7 @@ class PgnBase(ChessFile):
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
                         notation, reason, boardfen = e.args
-                        ply = last_board.ply
+                        ply = last_board.plyCount
                         if ply % 2 == 0:
                             moveno = "%d." % (ply/2+1)
                         else: moveno = "%d..." % (ply/2+1)
@@ -101,7 +101,7 @@ class PgnBase(ChessFile):
                         self.error = LoadingError (errstr1, errstr2)
                         break
                     except:
-                        ply = last_board.ply
+                        ply = last_board.plyCount
                         if ply % 2 == 0:
                             moveno = "%d." % (ply/2+1)
                         else: moveno = "%d..." % (ply/2+1)

@@ -145,6 +145,7 @@ FAN_PIECES = [
 # Castling values                                                              #
 ################################################################################
 W_OO, W_OOO, B_OO, B_OOO = [2**i for i in range(4)]
+CAS_FLAGS = ((W_OOO,W_OO),(B_OOO,B_OO))
 W_CASTLED, B_CASTLED = [2**i for i in range(2)]
 
 ################################################################################
