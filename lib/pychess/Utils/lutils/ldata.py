@@ -20,7 +20,16 @@ KING_VALUE = 2000
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
                 BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
-MATE_VALUE = MAXVAL = 99999
+# Maximum possible search depth. The hash structure only allows 8-bit depths.
+MAXPLY = 63
+# Maximum possible score. Mate in n ply is +/- (MATE_VALUE-n).
+# The hash structure only allows signed 16-bit scores.
+MATE_VALUE = MAXVAL = 32767
+def VALUE_AT_PLY(val, ply):
+    """ Return the value of scoring val a given number of plies into the future. """
+    if val >= +32512: return val - ply
+    if val <= -32512: return val + ply
+    return val
 
 # How many points does it give to have the piece standing i cords from the
 # opponent king
@@ -231,23 +240,10 @@ stonewall[BLACK] = createBoard(0x81400000000)
 # - # - - - - # -
 # # # - - - - # #
 # - - - - - - - -
-qwwingpawns1 = bitPosArray[A2] | bitPosArray[B2]
-qwwingpawns2 = bitPosArray[A2] | bitPosArray[B3]
-kwwingpawns1 = bitPosArray[G2] | bitPosArray[H2]
-kwwingpawns2 = bitPosArray[G3] | bitPosArray[H2]
-
-# - - - - - - - -
-# # # - - - - # #
-# - # - - - - # -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-# - - - - - - - -
-qbwingpawns1 = bitPosArray[A7] | bitPosArray[B7]
-qbwingpawns2 = bitPosArray[A7] | bitPosArray[B6]
-kbwingpawns1 = bitPosArray[G7] | bitPosArray[H7]
-kbwingpawns2 = bitPosArray[G6] | bitPosArray[H7]
+qwingpawns1 = ( bitPosArray[A2] | bitPosArray[B2], bitPosArray[A7] | bitPosArray[B7] )
+qwingpawns2 = ( bitPosArray[A2] | bitPosArray[B3], bitPosArray[A7] | bitPosArray[B6] )
+kwingpawns1 = ( bitPosArray[G2] | bitPosArray[H2], bitPosArray[G7] | bitPosArray[H7] )
+kwingpawns2 = ( bitPosArray[G3] | bitPosArray[H2], bitPosArray[G6] | bitPosArray[H7] )
 
 ################################################################################
 #  Ranks and files                                                             #
