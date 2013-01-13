@@ -318,13 +318,13 @@ class GameWidget (gobject.GObject):
     def analyzer_added (self, gamemodel, analyzer, analyzer_type):
         self.analyzer_cids[analyzer_type] = \
             analyzer.connect("analyze", self._on_analyze, analyzer_type)
-        self.menuitems[analyzer_type + "_mode"].active = True
+        #self.menuitems[analyzer_type + "_mode"].active = True
         self.menuitems[analyzer_type + "_mode"].sensitive = True
         return False
     
     def analyzer_removed (self, gamemodel, analyzer, analyzer_type):
         self._set_arrow(analyzer_type, None)
-        self.menuitems[analyzer_type + "_mode"].active = False
+        #self.menuitems[analyzer_type + "_mode"].active = False
         self.menuitems[analyzer_type + "_mode"].sensitive = False
         
         try:
