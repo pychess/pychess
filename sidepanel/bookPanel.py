@@ -1,3 +1,5 @@
+from Queue import Queue
+
 import gtk, gobject, cairo, pango
 
 from pychess.System import conf
@@ -9,6 +11,7 @@ from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.prefix import addDataPrefix
+from pychess.System.ThreadPool import PooledThread
 
 
 __title__ = _("Hints")
@@ -116,7 +119,7 @@ class OpeningAdvisor(Advisor):
 
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
-    def __init__ (self, store, engine, mode, tv):
+    def __init__ (self, store, engine, mode, tv, boardview):
         if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine)
             self.tooltip = _("%s will try to predict which move is best and which side has the advantage") % engine
@@ -128,6 +131,7 @@ class EngineAdvisor(Advisor):
         self.tv = tv
         self.active = False
         self.linesExpected   = 1
+        self.boardview = boardview
         
         self.connection = engine.connect("analyze", self.on_analyze)
         engine.connect("readyForOptions", self.on_ready_for_options)
@@ -145,7 +149,7 @@ class EngineAdvisor(Advisor):
     def shown_changed (self, boardview, shown):
         if not self.active:
             return
-
+        
         self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
         self._create_new_expected_lines()
         
@@ -162,6 +166,8 @@ class EngineAdvisor(Advisor):
         # set start/stop cb visible
         self.store.set_value(parent, 6, True)
         self.active = True
+        
+        self.shown_changed(self.boardview, self.boardview.shown)
     
     def on_analyze (self, engine, analysis):
         if not self.active:
@@ -199,14 +205,14 @@ class EngineAdvisor(Advisor):
 
             self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
     
-    def start_stop(self, tb, boardview):
+    def start_stop(self, tb):
         if not tb:
             self.active = True
-            boardview.model.resume_analyzer(self.mode)
-            self.shown_changed(boardview, boardview.shown)
+            self.boardview.model.resume_analyzer(self.mode)
+            self.shown_changed(self.boardview, self.boardview.shown)
         else:
             self.active = False
-            boardview.model.pause_analyzer(self.mode)
+            self.boardview.model.pause_analyzer(self.mode)
             self.empty_parent()
         
     def multipv_edited(self, value):
@@ -256,41 +262,60 @@ class EngineAdvisor(Advisor):
             return pp + "%0.2f" % (s / 100.0)
 
 
-class EndgameAdvisor(Advisor):
-    def __init__ (self, store):
+class EndgameAdvisor(Advisor, PooledThread):
+    def __init__ (self, store, tv):
         Advisor.__init__(self, store, _("Endgame Table"))
         self.mode = ENDGAME
         self.egtb = EndgameTable()
+        self.tv = tv
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
-    
-    def shown_changed (self, boardview, shown):
-        m = boardview.model
-        b = m.getBoardAtPly(shown, boardview.variation)
-        parent = self.empty_parent()
+
+        self.egtb.connect("scored", self.on_scored)
+
+        self.queue = Queue()
+        self.start()
         
-        endings = self.egtb.scoreAllMoves(b.board)
+    def run(self):
+        while True:
+            lboard = self.queue.get()
+            if lboard == self.board.board:
+                self.egtb.scoreAllMoves(lboard)
+            self.queue.task_done()
+
+    def shown_changed (self, boardview, shown):
+        self.parent = self.empty_parent()
+        m = boardview.model
+        self.board = m.getBoardAtPly(shown, boardview.variation)
+        self.queue.put(self.board.board)
+
+    def on_scored(self, w, ret):
+        board, endings = ret
+        if board != self.board.board:
+            return
+
         for move, result, depth in endings:
             if result == DRAW:
                 result = (_("Draw"), 1, 0.5)
                 details = ""
-            elif (result == WHITEWON) ^ (b.color == WHITE):
+            elif (result == WHITEWON) ^ (self.board.color == WHITE):
                 result = (_("Loss"), 1, 0.0)
                 details = _("Mate in %d") % depth
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
-            self.store.append(parent, [(b, move, None), result, 0, False, details, False, False])
-
+            self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
+        self.tv.expand_row(self.path, False)
 
 class Sidepanel:
     def load (self, gmwidg):
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
         
-        widgets = gtk.glade.XML(addDataPrefix("sidepanel/book.glade"))
-        self.tv = widgets.get_widget("treeview")
-        self.sw = widgets.get_widget("scrolledwindow")
+        widgets = gtk.Builder()
+        widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
+        self.tv = widgets.get_object("treeview")
+        self.sw = widgets.get_object("scrolledwindow")
         self.sw.unparent()
         self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str, bool, bool)
         self.tv.set_model(self.store)
@@ -358,7 +383,7 @@ class Sidepanel:
 
         def toggled_cb(cell, path):
             self.store[path][5] = not self.store[path][5]
-            self.advisors[int(path[0])].start_stop(self.store[path][5], self.boardview)
+            self.advisors[int(path[0])].start_stop(self.store[path][5])
         toggleRenderer.connect('clicked', toggled_cb)
 
         self.tv.append_column(c4)
@@ -376,7 +401,7 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         self.tv.set_property("show-expanders", False)
         
-        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store) ]
+        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store, self.tv) ]
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
@@ -386,9 +411,9 @@ class Sidepanel:
     
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv, self.boardview))
         if analyzer_type == SPY:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv, self.boardview))
 
     def on_analyzer_removed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
@@ -448,14 +473,9 @@ class Sidepanel:
         if iter is None:
             return
         board, move, pv = self.store[iter][0]
-        if (move is not None) and board == self.boardview.model.boards[-1]:
-            # Play the move if it's a suggestion for the next move of the game.
-            self.boardview.bluearrow = None
-            self.boardcontrol.emit("piece_moved", move, board.color)
-        else:
-            # The row may be tied to a specific action.
-            path = self.store.get_path(iter)
-            self.advisors[path[0]].row_activated(iter, self.boardview.model)
+        # The row may be tied to a specific action.
+        path = self.store.get_path(iter)
+        self.advisors[path[0]].row_activated(iter, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:

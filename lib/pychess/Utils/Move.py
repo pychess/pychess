@@ -1,7 +1,7 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
+from pychess.Utils.lutils.lmovegen import newMove
 from lutils import lmove
-from lutils.lmove import ParsingError, FLAG_PIECE
 
 class Move:
     
@@ -32,10 +32,12 @@ class Move:
             
             if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
                 if promotion == None: promotion = QUEEN
-                self.flag = FLAG_PIECE(promotion)
+                self.flag = lmove.FLAG_PIECE(promotion)
             
             elif board[self.cord0].piece == KING:
-                if board.variant == FISCHERRANDOMCHESS:
+                if self.cord0 == self.cord1:
+                    self.flag = NULL_MOVE
+                elif board.variant == FISCHERRANDOMCHESS:
                     if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x==C1) or \
                         \
                         (board.board.ini_rooks[board.color][0] == self.cord1.cord and \
@@ -60,7 +62,7 @@ class Move:
                     self.cord0.y != self.cord1.y:
                 self.flag = ENPASSANT
             
-            self.move = lmove.newMove(self.cord0.cord, self.cord1.cord, self.flag)
+            self.move = newMove(self.cord0.cord, self.cord1.cord, self.flag)
             
     def _get_cords (self):
         return (self.cord0, self.cord1)

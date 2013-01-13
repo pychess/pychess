@@ -1,7 +1,8 @@
 import urllib
 import re
 
-from pychess.Utils.lutils.lmove import newMove, FILE, RANK
+from pychess.Utils.lutils.lmovegen import newMove
+from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
 from pychess.System.Log import log
@@ -87,7 +88,7 @@ class egtb_k4it:
             except (KeyError, ValueError):
                 log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
                          (reprColor[color], fen, repr(data)))
-                table[(fen, color)] = [] # Don't try again.
+                self.table[(fen, color)] = [] # Don't try again.
         
         if (fen,board.color) in self.table:
             return self.table[(fen,board.color)]

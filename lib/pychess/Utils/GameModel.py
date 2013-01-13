@@ -433,7 +433,7 @@ class GameModel (GObject, PooledThread):
         self.gameno = gameno
         self.emit("game_loading", uri)
         try:
-            chessfile.loadToModel(gameno, position, self, False)
+            chessfile.loadToModel(gameno, position, self)
         #Postpone error raising to make games loadable to the point of the error
         except LoadingError, e:
             error = e
@@ -462,19 +462,8 @@ class GameModel (GObject, PooledThread):
             if self.timemodel and self.ply >= 2:
                 self.timemodel.start()
             
-            self.status = WAITING_TO_START
-            self.start()
-        else:
-            self.emit("game_started")
-        
-        if self.status == WHITEWON:
-            self.emit("game_ended", self.reason)
-        
-        elif self.status == BLACKWON:
-            self.emit("game_ended", self.reason)
-        
-        elif self.status == DRAW:
-            self.emit("game_ended", self.reason)
+        self.status = WAITING_TO_START
+        self.start()
         
         if error:
             raise error
@@ -506,6 +495,9 @@ class GameModel (GObject, PooledThread):
         
         log.debug("GameModel.run: emitting 'game_started' self=%s\n" % self)
         self.emit("game_started")
+        
+        # Let GameModel end() itself on games started with loadAndStart()
+        self.checkStatus()
         
         while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
             curColor = self.boards[-1].color
@@ -551,14 +543,14 @@ class GameModel (GObject, PooledThread):
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
-                newBoard.prev = self.boards[-1]
-                if self.ply % 2 == 0:
-                    newBoard.movecount = str((self.ply+1)/2 + 1)+"."
-                else:
-                    newBoard.movecount = ""
+                newBoard.board.prev = self.boards[-1].board
+                
+                # Variation on next move can exist from the hint panel...
+                if self.boards[-1].board.next is not None:
+                    newBoard.board.children = self.boards[-1].board.next.children
                 
                 self.boards = self.variations[0]
-                self.boards[-1].next = newBoard
+                self.boards[-1].board.next = newBoard.board
                 self.boards.append(newBoard)
                 self.moves.append(move)
 
@@ -722,7 +714,7 @@ class GameModel (GObject, PooledThread):
             self.boards = self.variations[0]
             del self.boards[-moves:]
             del self.moves[-moves:]
-            self.boards[-1].next = None
+            self.boards[-1].board.next = None
             
             for player in self.players:
                 player.playerUndoMoves(moves, self)
@@ -753,24 +745,35 @@ class GameModel (GObject, PooledThread):
     def add_variation(self, board, moves):
         board0 = board
         board = board0.clone()
-        board.prev = None
-
+        board.board.prev = None
+        
         variation = [board]
+        
         for move in moves:
             new = board.move(move)
-            board.next = new
-            new.prev = board
+            if len(variation) == 1:
+                new.board.prev = board0.board
+                variation[0].board.next = new.board
+            else:
+                new.board.prev = board.board
+                board.board.next = new.board
             variation.append(new)
             board = new
-        board0.next.children.append(variation)
         
+        if board0.board.next is None:
+            from pychess.Utils.lutils.LBoard import LBoard
+            null_board = LBoard()
+            null_board.prev = board0.board
+            board0.board.next = null_board
+
+        board0.board.next.children.append([board.board for board in variation])
+
         head = None
         for vari in self.variations:
             if board0 in vari:
                 head = vari
                 break
-
+        
         self.variations.append(head[:board0.ply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
-        

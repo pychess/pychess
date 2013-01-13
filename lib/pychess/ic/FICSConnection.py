@@ -1,4 +1,6 @@
-import re, socket
+import re
+import socket
+import threading
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
@@ -13,6 +15,8 @@ from managers.NewsManager import NewsManager
 from managers.BoardManager import BoardManager
 from managers.OfferManager import OfferManager
 from managers.ChatManager import ChatManager
+from managers.ConsoleManager import ConsoleManager
+from managers.HelperManager import HelperManager
 from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
@@ -51,6 +55,7 @@ class Connection (GObject, PooledThread):
         self.connected = False
         self.connecting = False
         
+        self.consolehandler = None
         self.predictions = set()
         self.predictionsDict = {}
     
@@ -60,7 +65,7 @@ class Connection (GObject, PooledThread):
     
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
-    
+
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
     
@@ -107,9 +112,14 @@ BADPAS = _("The entered password was invalid.\n" + \
            "If you have forgot your password, go to http://www.freechess.org/cgi-bin/Utilities/requestPassword.cgi to request a new one over email.")
 
 class FICSConnection (Connection):
-    def __init__ (self, host, ports, username="guest", password=""):
+    def __init__ (self, host, ports, username="guest", password="", conn=None):
         Connection.__init__(self, host, ports, username, password)
+        self.conn = conn
         self.registred = None
+        
+        if self.conn is None:
+            self.players = FICSPlayers(self)
+            self.games = FICSGames(self)
     
     def _connect (self):
         self.connecting = True
@@ -164,6 +174,8 @@ class FICSConnection (Connection):
                     self.username = match.groups()[0]
                     break
             
+            self.client.name = self.username
+            
             self.client.readuntil("fics%")
             
             self.emit('connectingMsg', _("Setting up environment"))
@@ -171,37 +183,69 @@ class FICSConnection (Connection):
             self.client.setStripLines(True)
             self.client.setLinePrefix("fics%")
             
-            # Important: As the other managers use ListAndVarManager, we need it
-            # to be instantiated first. We might decide that the purpose of this
-            # manager is different - used by different parts of the code - so it
-            # should be implemented into the FICSConnection somehow.
-            self.lvm = ListAndVarManager(self)
-            while not self.lvm.isReady():
-                self.client.handleSomeText(self.predictions)
-            self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
+            if not self.registred:
+                print >> self.client, "set seek 0"
             
-            # FIXME: Some managers use each other to avoid regexp collapse. To
-            # avoid having to init the in a specific order, connect calls should
-            # be moved to a "start" function, so all managers would be in
-            # the connection object when they are called
-            self.em = ErrorManager(self)
-            self.glm = GameListManager(self)
-            self.bm = BoardManager(self)
-            self.fm = FingerManager(self)
-            self.nm = NewsManager(self)
-            self.om = OfferManager(self)
-            self.cm = ChatManager(self)
-            self.alm = AutoLogOutManager(self)
-            self.adm = AdjournManager(self)
-            self.players = FICSPlayers(self)
-            self.games = FICSGames(self)
-            self.bm.start()
-            self.players.start()
-            self.games.start()
-            
+            # The helper just wants only player and game notifications
+            if self.conn:
+                print >> self.client, "set open 0"
+                print >> self.client, "set shout 0"
+                print >> self.client, "set cshout 0"
+                print >> self.client, "set seek 0"
+                print >> self.client, "set tell 0"
+                print >> self.client, "set chanoff 1"
+                print >> self.client, "set gin 1"
+                print >> self.client, "set availinfo 1"
+                print >> self.client, "iset allresults 1"
+                
+                # New ivar pin
+                # http://www.freechess.org/Help/HelpFiles/new_features.html
+                print >> self.client, "iset pin 1"
+                
+                self.hm = HelperManager(self, self.conn)
+
+                def keep_alive():
+                    print >> self.client, "date"
+                    threading.Timer(59*60, keep_alive).start()
+                keep_alive()
+
+            else:
+                # Important: As the other managers use ListAndVarManager, we need it
+                # to be instantiated first. We might decide that the purpose of this
+                # manager is different - used by different parts of the code - so it
+                # should be implemented into the FICSConnection somehow.
+                self.lvm = ListAndVarManager(self)
+                while not self.lvm.isReady():
+                    self.client.handleSomeText(self.predictions, self.consolehandler)
+                self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
+                
+                # FIXME: Some managers use each other to avoid regexp collapse. To
+                # avoid having to init the in a specific order, connect calls should
+                # be moved to a "start" function, so all managers would be in
+                # the connection object when they are called
+
+                self.em = ErrorManager(self)
+                self.glm = GameListManager(self)
+                self.bm = BoardManager(self)
+                self.fm = FingerManager(self)
+                self.nm = NewsManager(self)
+                self.om = OfferManager(self)
+                self.cm = ChatManager(self)
+                self.alm = AutoLogOutManager(self)
+                self.adm = AdjournManager(self)
+                self.com = ConsoleManager(self)
+                self.bm.start()
+                self.players.start()
+                self.games.start()
+
+                # disable setting iveriables from console
+                self.lvm.setVariable("lock", True)
+                
             self.connecting = False
             self.connected = True
-            self.emit("connected")
+            
+            if self.conn is None:
+                self.emit("connected")
         
         finally:
             self.connecting = False
@@ -212,7 +256,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.handleSomeText(self.predictions)
+                    self.client.handleSomeText(self.predictions, self.consolehandler)
             
             except Exception, e:
                 if self.connected:

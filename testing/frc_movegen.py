@@ -9,11 +9,6 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.lutils.lmove import toSAN, toAN, parseSAN, ParsingError
 from pychess.Utils.const import *
 
-try:
-    import psyco
-    psyco.bind(genAllMoves)
-except ImportError:
-    print 'psyco not found'
 
 class FRCFindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
@@ -53,8 +48,9 @@ class FRCFindMovesTestCase(unittest.TestCase):
             depths = [int(s[3:].rstrip()) for s in parts[1:]]
             self.positions2.append( (parts[0], depths) )
     
-    def movegen(self, board, positions):
+    def movegen(self, positions):
         for i, (fen, depths) in enumerate(positions):
+            board = LBoard(FISCHERRANDOMCHESS)
             fen = fen.split()
             castl = fen[2]
             castl = castl.replace("K", "H")
@@ -79,13 +75,13 @@ class FRCFindMovesTestCase(unittest.TestCase):
         """Testing FRC variant move generator with perftsuite.epd"""
         print
         self.MAXDEPTH = 2
-        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions1)
+        self.movegen(self.positions1)
 
     def testMovegen2(self):
         """Testing FRC variant move generator with frc_perftsuite.epd"""
         print
         self.MAXDEPTH = 2
-        self.movegen(LBoard(FISCHERRANDOMCHESS), self.positions2)
+        self.movegen(self.positions2)
 
 
 if __name__ == '__main__':

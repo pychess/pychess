@@ -302,7 +302,7 @@ def defends (board, fcord, tcord):
     # Can we "attack" the piece now?
     backupColor = board.color
     board.setColor(color)
-    from lmove import newMove
+    from lmovegen import newMove
     from validator import validateMove
     islegal = validateMove (board, newMove(fcord, tcord))
     board.setColor(backupColor)

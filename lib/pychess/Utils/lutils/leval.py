@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 from ldata import *
 from LBoard import LBoard
 from lsort import staticExchangeEvaluate
-from lmove import newMove
+from lmovegen import newMove
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
 
@@ -209,6 +209,14 @@ def cacheablePawnInfo (board, phase):
                     n2 = bitLength (oppawns & moveArray[ptype][i])
                     if n1 < n2:
                         backward = True
+
+                if not backward and bitPosArray[cord] & brank7[opcolor]:
+                    i = i + (color == WHITE and 8 or -8)
+                    if not (passedPawnMask[opcolor][i] & ~fileBits[1] & pawns):
+                        n1 = bitLength (pawns & moveArray[opptype][i])
+                        n2 = bitLength (oppawns & moveArray[ptype][i])
+                        if n1 < n2:
+                            backward = True
             
             if backward:
                 weaked |= bitPosArray[cord]

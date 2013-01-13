@@ -693,7 +693,11 @@ def _ensureReadForGameWidgets ():
         leaf = dock.dock(docks["board"][1], CENTER, gtk.Label(docks["board"][0]), "board")
         docks["board"][1].show_all()
         leaf.setDockable(False)
-        
+
+        # S
+        epanel = leaf.dock(docks["engineOutputPanel"][1], SOUTH, docks["engineOutputPanel"][0], "engineOutputPanel")       
+        epanel.default_item_height = 60
+ 
         # NE
         leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
         leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")

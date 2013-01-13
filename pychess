@@ -4,7 +4,7 @@
 # This script is to check package requirements, and set up system/enviroment
 # stuff, to make the PyChess Main class run smoothly.
 
-# faulthandler will be in Python 3.3; for 2.x it can be download from pypi
+# faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 try:
     import faulthandler
     faulthandler.enable()
@@ -64,14 +64,16 @@ except ImportError:
 ###############################################################################
 # Set up translations
 
-import gettext, gtk.glade
+import gettext, locale
+locale.setlocale(locale.LC_ALL, '')
+
+domain = "pychess"
 if isInstalled():
-    gettext.install("pychess", unicode=1, names=('ngettext',))
-    gtk.glade.bindtextdomain("pychess")
+    gettext.install(domain, unicode=1, names=('ngettext',))
 else:
-    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1, names=('ngettext',))
-    gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
-gtk.glade.textdomain("pychess")
+    locale_dir = addDataPrefix("lang")
+    gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
+    locale.bindtextdomain(domain, locale_dir)
 
 
 ###############################################################################
@@ -81,6 +83,7 @@ import pychess
 no_debug = False
 glock_debug = False
 thread_debug = False
+
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 try:
     import argparse
@@ -107,8 +110,7 @@ else:
     glock_debug = args.glock_debug
     thread_debug = args.thread_debug
     chess_file = args.chess_file
-
-
+    
 ###############################################################################
 # Let's rumble!
 

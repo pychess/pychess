@@ -72,6 +72,9 @@ def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
     cc.fill()
     cc.restore()
 
+piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
+pnames = ('Pawn','Knight','Bishop','Rook','Queen','King')
+
 def drawPiece3(piece, context, x, y, psize, allWhite=False):
     """Rendering pieces using .svg chess figurines"""
 
@@ -97,7 +100,7 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     context.push_group()
     
     if all_in_one:
-        pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1].capitalize())
+        pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1])
         image.render_cairo(context, id=pieceid)
     else:
         image.render_cairo(context)
@@ -206,9 +209,7 @@ for color in (WHITE, BLACK):
         parsedPieces[color][piece] = {size:list}
 
 
-piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING)
-pnames = ('pawn','knight','bishop','rook','queen','king')
 
 def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
@@ -218,14 +219,14 @@ def get_svg_pieces(svgdir):
     else:
         rsvg_handles = [[None]*7, [None]*7]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
-            for p, piece in zip(pieces, pnames):
-                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s-%s.svg" % (svgdir, color, piece)))
+            for p in pieces:
+                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[p].lower())))
     return rsvg_handles
 
 
 def get_chess_font_face(name):
     """Set chess font and char mapping for a chess .ttf"""
-    
+    name = name[4:]
     if name in ('alpha', 'berlin', 'cheq'):
         char_map = ('phbrqk', 'ojntwl')
     else:
@@ -258,18 +259,21 @@ def set_piece_theme(piece_set):
     piece_set = piece_set.lower()
     if piece_set == 'pychess':
         drawPiece = drawPiece2
+    elif piece_set.startswith("ttf-"):
+        drawPiece = drawPiece4
+        try:
+            chess_font_face, piece2char = get_chess_font_face(piece_set)
+        except:
+            drawPiece = drawPiece2
     elif piece_set in ('celtic','eyes', 'fantasy', 'fantasy_alt', 'freak', 'prmi', 'skulls', 'spatial'):
         all_in_one = True
         drawPiece = drawPiece3
         svg_pieces = get_svg_pieces(piece_set)
-    elif piece_set in ('cburnett', 'chessmonk', 'freestaunton'):
+    else:
         all_in_one = False
         drawPiece = drawPiece3
-        svg_pieces = get_svg_pieces(piece_set)
-    else:
-        drawPiece = drawPiece4
         try:
-            chess_font_face, piece2char = get_chess_font_face(piece_set)
+            svg_pieces = get_svg_pieces(piece_set)
         except:
             drawPiece = drawPiece2
 

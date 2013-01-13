@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-import string
-
 from ldata import *
+from bitboard import bitLength, firstBit
 from validator import validateMove
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
+from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
 
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
@@ -17,24 +17,6 @@ def FLAG (move): return move >> 12
 def PROMOTE_PIECE (flag): return flag -2
 def FLAG_PIECE (piece): return piece +2
 
-################################################################################
-#   The format of a move is as follows - from left:                            #
-#   4 bits:  Descriping the type of the move                                   #
-#   6 bits:  cord to move from                                                 #
-#   6 bits:  cord to move to                                                   #
-################################################################################
-
-shiftedFromCords = []
-for i in range(64):
-    shiftedFromCords.append(i << 6)
-
-shiftedFlags = []
-for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION:
-    shiftedFlags.append(i << 12)
-
-def newMove (fromcord, tocord, flag=NORMAL_MOVE):
-    return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
 class ParsingError (Exception):
     """ Please raise this with a 3-tupple: (move, reason, board.asFen())
@@ -136,7 +118,7 @@ def toSAN (board, move, localRepr=False):
         The board should be prior to the move """
     
     # Has to be importet at calltime, as lmovegen imports lmove
-    from lmovegen import genAllMoves
+    #from lmovegen import genAllMoves
 
     def check_or_mate():
         board_clone = board.clone()
@@ -155,6 +137,9 @@ def toSAN (board, move, localRepr=False):
         return sign
     
     flag = move >> 12
+    
+    if flag == NULL_MOVE:
+        return "--"
     
     if flag == KING_CASTLE:
         return "O-O%s" % check_or_mate()
@@ -231,12 +216,12 @@ def toSAN (board, move, localRepr=False):
 
 def parseSAN (board, san):
     """ Parse a Short/Abbreviated Algebraic Notation string """
-    if not san:
-        raise ParsingError, (san, _("the move is an empty string"), board.asFen())
-    elif len(san) < 2:
-        raise ParsingError, (san, _("the move is too short"), board.asFen())
-    
     notat = san
+    
+    color = board.color
+    
+    if notat == "--":
+        return newMove(board.kings[color], board.kings[color], NULL_MOVE)
 
     if notat[-1] in ("+", "#"):
         notat = notat[:-1]
@@ -247,8 +232,9 @@ def parseSAN (board, san):
     flag = NORMAL_MOVE
     
     # If last char is a piece char, we assue it the promote char
-    c = notat[-1].lower()
-    if c in chr2Sign:
+    c = notat[-1]
+    if c in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+        c = c.lower()
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
@@ -257,11 +243,10 @@ def parseSAN (board, san):
     if len(notat) < 2:
         raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
     
-    notat = notat.replace("0","O").replace("o","O")
-    if notat.startswith("O-O"):
-        if board.color == WHITE:
+    if notat[0] in "O0o":
+        if color == WHITE:
             fcord = board.ini_kings[0] #E1
-            if notat == "O-O":
+            if notat == "O-O" or notat == "0-0" or notat == "o-o":
                 flag = KING_CASTLE
                 if board.variant == FISCHERRANDOMCHESS:
                     tcord = board.ini_rooks[0][1]
@@ -275,7 +260,7 @@ def parseSAN (board, san):
                     tcord = C1
         else:
             fcord = board.ini_kings[1] #E8
-            if notat == "O-O":
+            if notat == "O-O" or notat == "0-0" or notat == "o-o":
                 flag = KING_CASTLE
                 if board.variant == FISCHERRANDOMCHESS:
                     tcord = board.ini_rooks[1][1]
@@ -289,20 +274,28 @@ def parseSAN (board, san):
                     tcord = C8
         
         return newMove (fcord, tcord, flag)
-    
+
+    # LAN is not allowed in pgn spec, but sometimes it occures
+    if "-" in notat:
+        notat = notat.replace("-", "")
+
     if notat[0] in ("Q", "R", "B", "K", "N"):
-        piece = chr2Sign[notat[0].lower()]
+        piece = chrU2Sign[notat[0]]
         notat = notat[1:]
     else:
         piece = PAWN
+        if notat[-1] in ("1", "8") and flag == NORMAL_MOVE:
+            raise ParsingError, (
+                    san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
     if "x" in notat:
         notat, tcord = notat.split("x")
         if not tcord in cordDic:
             raise ParsingError, (
                     san, _("the captured cord (%s) is incorrect") % tcord, board.asFen())
-        
+
         tcord = cordDic[tcord]
+
         if piece == PAWN:
             # If a pawn is attacking an empty cord, we assue it an enpassant
             if board.arBoard[tcord] == EMPTY:
@@ -316,10 +309,7 @@ def parseSAN (board, san):
         notat = notat[:-2]
 
     if piece == KING:
-        if board.color == WHITE:
-            return newMove(board.kings[WHITE], tcord, flag)
-        else:
-            return newMove(board.kings[BLACK], tcord, flag)
+        return newMove(board.kings[color], tcord, flag)
 
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
     # want to know
@@ -334,55 +324,49 @@ def parseSAN (board, san):
     if notat and notat[0] in reprRank:
         frank = int(notat[0])-1
         notat = notat[1:]
+        # we know all we want
+        return newMove(frank*8+ffile, tcord, flag)
 
     if piece == PAWN:
-        pawns = board.boards[WHITE][PAWN] if board.color == WHITE else board.boards[BLACK][PAWN]
-            
         if (ffile is not None) and ffile != FILE(tcord):
             # capture
-            if board.color == WHITE:
+            if color == WHITE:
                 fcord = tcord-7 if ffile > FILE(tcord) else tcord-9
             else:
                 fcord = tcord+7 if ffile < FILE(tcord) else tcord+9
         else:
-            if board.color == WHITE:
+            if color == WHITE:
+                pawns = board.boards[WHITE][PAWN]
                 fcord = tcord-16 if RANK(tcord)==3 and not (pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord-8
             else:
+                pawns = board.boards[BLACK][PAWN]
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
-        if fcord in iterBits(pawns):
-            return newMove(fcord, tcord, flag)
+        return newMove(fcord, tcord, flag)
     else:
-        # We find all pieces who could have done it. (If san was legal, there should
-        # never be more than one)
-        from lmovegen import genPieceMoves
-        for move in genPieceMoves(board, piece, tcord):
-            f = FCORD(move)
-            if frank != None and frank != RANK(f):
-                continue
-            if ffile != None and ffile != FILE(f):
-                continue
-            
-            board_clone = board.clone()
-            board_clone.applyMove(move)
-            if board_clone.opIsChecked():
-                continue
-            return move
+        if bitLength(board.boards[color][piece]) == 1:
+            # we have only one from this kind if piece, so:
+            fcord = firstBit(board.boards[color][piece])
+            return newMove(fcord, tcord, flag)
 
-    # If the piece letter was omitted (not  a canonical SAN)
-    from lmovegen import genPieceMoves
-    for piece in (KNIGHT, BISHOP, ROOK, QUEEN):
-        for move in genPieceMoves(board, piece, tcord):
-            f = FCORD(move)
-            if frank != None and frank != RANK(f):
-                continue
-            if ffile != None and ffile != FILE(f):
-                continue
-            
-            board_clone = board.clone()
-            board_clone.applyMove(move)
-            if board_clone.opIsChecked():
-                continue
-            return move
+        if ffile is not None:
+            fcord = firstBit(board.boards[color][piece] & fileBits[ffile])
+            return newMove(fcord, tcord, flag)
+        elif frank is not None:
+            fcord = firstBit(board.boards[color][piece] & rankBits[frank])
+            return newMove(fcord, tcord, flag)
+        else:
+            # We find all pieces who could have done it. (If san was legal, there should
+            # never be more than one)
+            moves = genPieceMoves(board, piece, tcord)
+            if len(moves) == 1:
+                return moves.pop()
+            else:
+                for move in moves:
+                    board_clone = board.clone()
+                    board_clone.applyMove(move)
+                    if board_clone.opIsChecked():
+                        continue
+                    return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
     raise ParsingError, (san, errstring, board.asFen())
@@ -487,6 +471,10 @@ def parseAN (board, an):
         raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     flag = NORMAL_MOVE
+
+    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+        raise ParsingError, (an, "invalid promoted piece", board.asFen())
+
     if len(an) == 5:
         #The a7a8q variant
         flag = chr2Sign[an[4].lower()] + 2
@@ -512,6 +500,9 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
+    elif board.arBoard[fcord] == PAWN and an[3] in ("1", "8"):
+            raise ParsingError, (
+                    an, _("promotion move without promoted piece is incorrect"), board.asFen())
 
     return newMove (fcord, tcord, flag)
 
