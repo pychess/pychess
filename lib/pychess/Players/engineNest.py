@@ -574,6 +574,7 @@ class EngineDiscoverer (GObject, PooledThread):
         else:
             engine.set('protocol', 'cecp')
             engine.set('protover', '2')
+            # TODO: handle protover 1 engines
         engine.append(fromstring('<path>%s</path>' % new_engine))
 
         self._engines[name] = engine
