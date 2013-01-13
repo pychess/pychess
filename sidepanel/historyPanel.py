@@ -29,8 +29,9 @@ class Sidepanel:
     
     def load (self, gmwidg):
         
-        widgets = gtk.glade.XML(addDataPrefix("sidepanel/history.glade"))
-        __widget__ = widgets.get_widget("panel")
+        widgets = gtk.Builder()
+        widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
+        __widget__ = widgets.get_object("panel")
         __widget__.unparent()
         
         self.boardview = gmwidg.board.view
@@ -42,9 +43,9 @@ class Sidepanel:
         
         # Initialize treeviews
         
-        self.numbers = widgets.get_widget("treeview1")
-        self.left = widgets.get_widget("treeview2")
-        self.right = widgets.get_widget("treeview3")
+        self.numbers = widgets.get_object("treeview1")
+        self.left = widgets.get_object("treeview2")
+        self.right = widgets.get_object("treeview3")
         
         def fixList (list, xalign=0):
             list.set_model(gtk.ListStore(str))
@@ -62,14 +63,14 @@ class Sidepanel:
         self.right.get_selection().connect('changed', self.on_selection_changed,
                                            self.right, 1)
         
-        widgets.signal_autoconnect ({
+        widgets.connect_signals ({
             "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
             "on_treeview3_key_press_event":lambda w,e:self.key_press_event(2,e)
         })
         
         # Lock scrolling
         
-        scrollwin = widgets.get_widget("panel")
+        scrollwin = widgets.get_object("panel")
         
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:

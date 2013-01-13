@@ -9,8 +9,6 @@ from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.ic import FICSConnection
-import gettext
-import gtk.glade
 from urllib import urlopen, urlencode
 import email.Utils
 import math
@@ -131,14 +129,6 @@ class PyChessFICS(PyChess):
     
     def makeReady(self):
         signal.signal(signal.SIGINT, gtk.main_quit)
-        
-        if isInstalled():
-            gettext.install("pychess", unicode=1)
-            gtk.glade.bindtextdomain("pychess")
-        else:
-            gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-            gtk.glade.bindtextdomain("pychess", addDataPrefix("lang"))
-        gtk.glade.textdomain("pychess")
         
         PyChess.makeReady(self)
         

@@ -67,7 +67,7 @@ class EmitPublisher (Publisher):
 class GtkWorker (GObject, Thread):
     
     __gsignals__ = {
-        "progressed": (SIGNAL_RUN_FIRST, None, (float,)),
+        #"progressed": (SIGNAL_RUN_FIRST, None, (float,)),
         "published":  (SIGNAL_RUN_FIRST, None, (object,)),
         "done":       (SIGNAL_RUN_FIRST, None, (object,))
     }
@@ -79,13 +79,14 @@ class GtkWorker (GObject, Thread):
         
         # By some reason we cannot access __gsignals__, so we have to do a
         # little double work here
-        self.connections = {"progressed": 0, "published": 0, "done": 0}
+        #self.connections = {"progressed": 0, "published": 0, "done": 0}
+        self.connections = {"published": 0, "done": 0}
         self.handler_ids = {}
-        
+        self.name = func.__name__
         self.func = func
         self.cancelled = False
         self.done = False
-        self.progress = 0
+        #self.progress = 0
         
         ########################################################################
         # Publish and progress queues                                          #
@@ -94,8 +95,8 @@ class GtkWorker (GObject, Thread):
         self.publisher = EmitPublisher (self, "published", Publisher.SEND_LIST)
         self.publisher.start()
         
-        self.progressor = EmitPublisher (self, "progressed", Publisher.SEND_LAST)
-        self.progressor.start()
+        #self.progressor = EmitPublisher (self, "progressed", Publisher.SEND_LAST)
+        #self.progressor.start()
     
     ############################################################################
     # We override the connect/disconnect methods in order to count the number  #
@@ -191,7 +192,7 @@ class GtkWorker (GObject, Thread):
             """
         self.cancelled = True
         self.publisher.__del__()
-        self.progressor.__del__()
+        #self.progressor.__del__()
     
     ############################################################################
     # Get stuf                                                                 #
@@ -203,23 +204,23 @@ class GtkWorker (GObject, Thread):
     def isDone (self):
         return self.done
     
-    def getProgress (self):
-        return self.progress
+    #def getProgress (self):
+        #return self.progress
     
     ############################################################################
     # These methods are used by the function to indicate progress and publish  #
     # process                                                                  #
     ############################################################################
     
-    def setProgress (self, progress):
-        """ setProgress should be called from inside the processed function.
-            When the gdklock gets ready, it will emit the "progressed" signal,
-            with the value of the latest setProgress call """
-        if self.isCancelled():
-            return
-        if self.progress != progress:
-            self.progress = progress
-            self.progressor.put(progress)
+    #def setProgress (self, progress):
+        #""" setProgress should be called from inside the processed function.
+            #When the gdklock gets ready, it will emit the "progressed" signal,
+            #with the value of the latest setProgress call """
+        #if self.isCancelled():
+            #return
+        #if self.progress != progress:
+            #self.progress = progress
+            #self.progressor.put(progress)
     
     def publish (self, val):
         """ Publish should be called from inside the processed function. It will
@@ -255,7 +256,7 @@ if __name__ == "__main__":
             else:
                 primes.append(n)
                 worker.publish(n)
-            worker.setProgress(n/limit)
+            #worker.setProgress(n/limit)
         return primes
     
     import gtk
@@ -286,11 +287,11 @@ if __name__ == "__main__":
     gbut.connect("clicked", callback)
     vbox.add(gbut)
     
-    prog = gtk.ProgressBar()
-    def callback (worker, progress):
-        prog.set_fraction(progress)
-    worker.connect("progressed", callback)
-    vbox.add(prog)
+    #prog = gtk.ProgressBar()
+    #def callback (worker, progress):
+        #prog.set_fraction(progress)
+    #worker.connect("progressed", callback)
+    #vbox.add(prog)
     
     field = gtk.Entry()
     def process (worker, primes):

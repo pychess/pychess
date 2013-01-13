@@ -2,6 +2,7 @@ import unittest
 
 modules_to_test = (
     "bitboard",
+    "database",
     "draw",
     "eval",
     "fen",

@@ -70,8 +70,8 @@ class PyChessCECP(PyChess):
             except EOFError:
                 line = "quit"
             lines = line.split()
-            
-            try:
+            if 1:
+            #try:
                 if not lines:
                     continue
      
@@ -196,6 +196,7 @@ class PyChessCECP(PyChess):
                 elif lines[0] == "setboard":
                     self.__stopSearching()
                     try:
+                        self.board = LBoard(self.board.variant)
                         self.board.applyFen(" ".join(lines[1:]))
                     except SyntaxError as e:
                         print "tellusererror Illegal position:", str(e)
@@ -311,10 +312,10 @@ class PyChessCECP(PyChess):
 
                 else:
                     print "Error (unknown command):", line
-            except SystemExit:
-                sys.exit(0)
-            except:
-                print "Error (missing or invalid argument)", line
+            #except SystemExit:
+                #sys.exit(0)
+            #except:
+                #print "Error (missing or invalid argument)", line
     
     def __stopSearching(self):
         lsearch.searching = False

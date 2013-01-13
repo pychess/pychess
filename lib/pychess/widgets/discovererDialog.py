@@ -1,13 +1,12 @@
+import os
+
+import gtk
+
 from Throbber import Throbber
 from pychess.Players.engineNest import discoverer
 from pychess.System import conf, uistuff
 from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
-import gtk.glade
-import os
-
- 
-
 
 uistuff.cacheGladefile("discovererDialog.glade")
 

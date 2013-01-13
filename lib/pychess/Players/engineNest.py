@@ -553,16 +553,17 @@ def init_engine (analyzer_type, gamemodel, force=False):
         check_name = "inv_analyzer_check"
         mode = INVERSE_ANALYZING
     
-    anaengines = list(discoverer.getAnalyzers())
-    engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
-    if engine is None: engine = anaengines[0]
-    
     analyzer = None
-    
-    if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine) \
-            and conf.get(check_name, True):
-        analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
-        log.debug("%s analyzer: %s\n" % (analyzer_type, repr(analyzer)))
+
+    if conf.get(check_name, True):
+        anaengines = list(discoverer.getAnalyzers())
+        engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
+        if engine is None:
+            engine = anaengines[0]
+        
+        if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine):
+            analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
+            log.debug("%s analyzer: %s\n" % (analyzer_type, repr(analyzer)))
         
     return analyzer
 

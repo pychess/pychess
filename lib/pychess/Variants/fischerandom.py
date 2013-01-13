@@ -9,16 +9,16 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.lutils.bitboard import *
 from pychess.Utils.lutils.attack import *
-from pychess.Utils.lutils.lmove import newMove, FLAG, PROMOTE_PIECE
+from pychess.Utils.lutils.lmove import FLAG, PROMOTE_PIECE
 
 class FRCBoard(Board):
     variant = FISCHERRANDOMCHESS
     
-    def __init__ (self, setup=False):
-        if setup is True:
-            Board.__init__(self, setup=self.shuffle_start())
+    def __init__ (self, setup=False, lboard=None):
+        if setup == True:
+            Board.__init__(self, setup=self.shuffle_start(), lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
     def simulateMove (self, board1, move):
         moved = []
@@ -105,12 +105,13 @@ class FRCBoard(Board):
         
         return moved, new, dead
 
-    def move (self, move):
+    def move (self, move, lboard=None):
         
         assert self[move.cord0], "%s %s" % (move, self.asFen())
         
-        newBoard = self.clone()
-        newBoard.board.applyMove (move.move)
+        newBoard = self.clone(lboard=lboard)
+        if lboard is None:
+            newBoard.board.applyMove (move.move)
         
         cord0, cord1 = move.cords
         flag = FLAG(move.move)

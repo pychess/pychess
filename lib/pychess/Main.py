@@ -3,6 +3,7 @@ import webbrowser
 import math
 import atexit
 import signal
+import subprocess
 import urllib 
 from urlparse import urlparse
 
@@ -27,6 +28,7 @@ from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import png
 from pychess.ic import ICLogon
+#from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
 
 ################################################################################
@@ -116,7 +118,11 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate (widget):
-        # Not implemented
+        # Not implemented yet
+        pass
+
+    def on_open_database_activate (widget):
+        #GameList().load_games()
         pass
     
     def on_enter_game_notation_activate (widget):
@@ -234,10 +240,12 @@ class PyChess:
         #=======================================================================
         # Init glade and the 'GladeHandlers'
         #=======================================================================
-        gtk.glade.set_custom_handler(self.widgetHandler)
         gtk.about_dialog_set_url_hook(self.website)
         widgets = uistuff.GladeWidgets("PyChess.glade")
-        widgets.getGlade().signal_autoconnect(GladeHandlers.__dict__)
+        widgets.getGlade().connect_signals(GladeHandlers.__dict__)
+        tasker = TaskerManager()
+        tasker.packTaskers (NewGameTasker(), InternetGameTasker())
+        widgets["Background"].add(tasker)
         
         #------------------------------------------------------ Redirect widgets
         gamewidget.setWidgets(widgets)
@@ -290,12 +298,14 @@ class PyChess:
         #widgets["aboutdialog1"].set_position(gtk.WIN_POS_CENTER)
         #widgets["aboutdialog1"].set_website_label(_("PyChess Homepage"))
         link = widgets["aboutdialog1"].get_website()
-        if os.path.isfile(prefix.addDataPrefix(".svn/entries")):
-            f = open(prefix.addDataPrefix(".svn/entries"))
-            line4 = [f.next() for i in xrange(4)][-1].strip()
-            widgets["aboutdialog1"].set_version(VERSION_NAME+" r"+line4)
-        else:
-            widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        if os.path.isdir(prefix.addDataPrefix(".hg")):
+            cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
+            process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            out = process.stdout.readline().split()
+            if len(out)>=2:
+                comments = widgets["aboutdialog1"].get_comments()
+                widgets["aboutdialog1"].set_comments("rev. "+out[0]+"\n"+out[1] + "\n%s" % comments)
         
         with open(prefix.addDataPrefix("ARTISTS")) as f:
             widgets["aboutdialog1"].set_artists(f.read().splitlines())
@@ -349,12 +359,6 @@ class PyChess:
 
     def website(self, clb, link):
         webbrowser.open(link)
-    
-    def widgetHandler (self, glade, functionName, widgetName, s1, s2, i1, i2):
-        # Tasker is currently the only widget that uses glades CustomWidget
-        tasker = TaskerManager()
-        tasker.packTaskers (NewGameTasker(), InternetGameTasker())
-        return tasker
     
     def handleArgs (self, chess_file):
         if chess_file:

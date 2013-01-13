@@ -18,15 +18,13 @@ testcases = [
 
 class PolyglotTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.board = LBoard(Board)
-         
     def testPolyglot_1(self):
         """Testing hash keys agree with Polyglot's"""
         
         for testcase in testcases:
-            self.board.applyFen(testcase[0])
-            self.assertEqual(self.board.hash, testcase[1])
+            board = LBoard(Board)
+            board.applyFen(testcase[0])
+            self.assertEqual(board.hash, testcase[1])
 
 if __name__ == '__main__':
     unittest.main()

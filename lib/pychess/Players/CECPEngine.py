@@ -3,8 +3,9 @@ import Queue
 import itertools
 import re
 import time
+import gtk, gobject
 
-from pychess.Savers.pgn import movre as movere
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move
@@ -31,6 +32,22 @@ def isdigits (strings):
             if not s.isdigit():
                 return False
     return True
+
+movere = re.compile(r"""
+    (                   # group start
+    (?:                 # non grouping parenthesis start
+    [KQRBN]?            # piece
+    [a-h]?[1-8]?        # unambiguous column or line
+    x?                  # capture
+    [a-h][1-8]          # destination square
+    =?[QRBN]?           # promotion
+    |O\-O(?:\-O)?       # castling
+    |0\-0(?:\-0)?       # castling
+    )                   # non grouping parenthesis end
+    [+#]?               # check/mate
+    )                   # group end
+    \s*                 # any whitespace
+    """, re.VERBOSE)
 
 d_plus_dot_expr = re.compile(r"\d+\.")
 
@@ -124,7 +141,8 @@ class CECPEngine (ProtocolEngine):
         
         self.supported_features = [
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
-            "analyze", "myname", "variants", "colors", "pause", "done"
+            "analyze", "myname", "variants", "colors", "pause", "done",
+            "debug"
         ]
         
         self.name = None
@@ -163,9 +181,19 @@ class CECPEngine (ProtocolEngine):
     def prestart (self):
         print >> self.engine, "xboard"
         if self.protover == 1:
+            # start a new game (CECPv1 engines):
+            print >> self.engine, "new"
+
+            # we are now ready for options:
             self.emit("readyForOptions")
         elif self.protover == 2:
+            # start advanced protocol initialisation:
             print >> self.engine, "protover 2"
+
+            # we don't start a new game for CECPv2 here,
+            # we will do it after feature accept/reject is completed.
+
+            # set timeout for feature accept/reject:
             self.timeout = time.time() + TIME_OUT_FIRST
     
     def start (self):
@@ -200,10 +228,8 @@ class CECPEngine (ProtocolEngine):
         # This is no longer needed
         #self.timeout = time.time()
         
-        # Some engines has the 'post' option enabled by default, and posts a lot
-        # of debug information. Generelly this only help to increase the log
-        # file size, and we don't really need it.
-        # [Forcing it to be *enabled* on this branch.]
+        # We always want post turned on so the Engine Output sidebar can
+        # show those things  -Jonas Thiem
         print >> self.engine, "post"
         
         for command in self.optionQueue:
@@ -679,6 +705,10 @@ class CECPEngine (ProtocolEngine):
             self.__parseLine(line)
     
     def __parseLine (self, line):
+        if line[0:1] == "#":
+            # Debug line which we shall ignore as specified in CECPv2 specs
+            return
+
 #        log.debug("__parseLine: line=\"%s\"\n" % line.strip(), self.defname)
         parts = whitespaces.split(line.strip())
         
@@ -721,13 +751,17 @@ class CECPEngine (ProtocolEngine):
                         try:
                             move = parseAny(self.board, movestr)
                         except ParsingError, e:
-                            raise PlayerIsDead, e
+                            #raise PlayerIsDead, e
+                            self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
+                            return
                         
                         if validate(self.board, move):
                             self.board = None
                             self.returnQueue.put(move)
                             return
-                        raise PlayerIsDead, "Board didn't validate after move"
+                        #raise PlayerIsDead, "Board didn't validate after move"
+                        self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
+                        return
                 finally:
                     log.debug("__parseLine(): releasing self.boardLock\n", self.defname)
                     self.boardLock.release()
@@ -776,7 +810,15 @@ class CECPEngine (ProtocolEngine):
             return
         
         # Resigns
-        if "resign" in parts:
+        if parts[0] == "resign" or \
+            (parts[0] == "tellics" and parts[1] == "resign"): # buggy crafty
+
+            # Previously: if "resign" in parts,
+            # however, this is too generic, since "hint", "bk",
+            # "feature option=.." and possibly other, future CECPv2
+            # commands can validly contain the word "resign" without this
+            # being an intentional resign offer.
+
             self.emit("offer", Offer(RESIGNATION))
             return
         
@@ -785,18 +827,27 @@ class CECPEngine (ProtocolEngine):
         
         #Tell User Error
         if parts[0] == "tellusererror":
-            log.warn("Ignoring tellusererror: %s\n" % " ".join(parts[1:]))
+            # Create a non-modal non-blocking message dialog with the error:
+            dlg = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format=None)
+
+            # Use the engine name if already known, otherwise the defname:
+            displayname = self.name
+            if not displayname:
+                displayname = self.defname
+
+            # Compose the dialog text:
+            dlg.set_markup(gobject.markup_escape_text(_("The engine %s reports an error:") % displayname) + "\n\n" + gobject.markup_escape_text(" ".join(parts[1:])))
+
+            # handle response signal so the "Close" button works:
+            dlg.connect("response", lambda dlg, x: dlg.destroy())
+
+            dlg.show_all()
             return
         
         # Tell Somebody
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
             
-            # Crafty sometimes only resign to ics :S
-            #if parts[1] == "resign":
-            #    self.emit("offer", Offer(RESIGNATION))
-            #    log.warn("Interpreted tellics as a wish to resign")
-            #else:
             log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
             return
         
@@ -841,6 +892,11 @@ class CECPEngine (ProtocolEngine):
                 
                 if key == "done":
                     if value == 1:
+                        # Start a new game before using the engine:
+                        # (CECPv2 engines)
+                        print >> self.engine, "new"
+
+                        # We are now ready for play:
                         self.emit("readyForOptions")
                         self.emit("readyForMoves")
                         self.returnQueue.put("ready")

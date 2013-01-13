@@ -24,12 +24,46 @@ fin_rooks = ((D1,F1),(D8,F8))
 ################################################################################
 
 class LBoard:
-    def __init__ (self, variant):
+    ini_kings = (E1, E8)
+    ini_rooks = ((A1, H1), (A8, H8))
+
+    def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
-        self._reset()
+
+        self.nags = []
+        # children can contain comments and variations
+        # variations are lists of lboard objects
+        self.children = []
+        
+        # the next and prev lboard objects in the variation list
+        self.next = None
+        self.prev = None
+        
+        # The high level owner Board (with Piece objects) in gamemodel
+        self.pieceBoard = None
+
+    @property
+    def lastMove (self):
+        return self.hist_move[-1] if len(self.hist_move) > 0 else None
+
+    def repetitionCount (self, drawThreshold=3):
+        rc = 1
+        for ply in xrange(4, 1+min(len(self.hist_hash), self.fifty), 2):
+            if self.hist_hash[-ply] == self.hash:
+                rc += 1
+                if rc >= drawThreshold: break
+        return rc
     
-    def _reset (self):
-        """ Set board to empty on Black's turn (which Polyglot-hashes to 0) """
+    def applyFen (self, fenstr):
+        """ Applies the fenstring to the board.
+            If the string is not properly
+            written a SyntaxError will be raised, having its message ending in
+            Pos(%d) specifying the string index of the problem.
+            if an error is found, no changes will be made to the board. """
+
+        assert not hasattr(self, "boards"), "The applyFen() method can be used on new LBoard objects only!"
+
+        # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = createBoard(0)
         
         self.friends = [createBoard(0)]*2
@@ -65,29 +99,7 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
-        else:
-            self.ini_kings = [E1, E8]
-            self.ini_rooks = [[A1, H1], [A8, H8]]
     
-    @property
-    def lastMove (self):
-        return self.hist_move[-1]
-
-    def repetitionCount (self, drawThreshold=3):
-        rc = 1
-        for ply in xrange(4, 1+min(len(self.hist_hash), self.fifty), 2):
-            if self.hist_hash[-ply] == self.hash:
-                rc += 1
-                if rc >= drawThreshold: break
-        return rc
-
-    def applyFen (self, fenstr):
-        """ Applies the fenstring to the board.
-            If the string is not properly
-            written a SyntaxError will be raised, having its message ending in
-            Pos(%d) specifying the string index of the problem.
-            if an error is found, no changes will be made to the board. """
-        
         # Get information
         
         parts = fenstr.split()
@@ -134,10 +146,6 @@ class LBoard:
         
         if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
             raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
-
-        # Reset this board
-        
-        self._reset()
         
         # Parse piece placement field
         
@@ -337,6 +345,10 @@ class LBoard:
         self.opchecked = None
         self.checked = None
 
+        if flag == NULL_MOVE:
+            self.setColor(opcolor)
+            return move
+
         # Castling moves can be represented strangely, so normalize them.
         if flag in (KING_CASTLE, QUEEN_CASTLE):
             side = flag - QUEEN_CASTLE
@@ -408,6 +420,11 @@ class LBoard:
         cpiece = self.hist_tpiece.pop()
         
         flag = move >> 12
+        
+        if flag == NULL_MOVE:
+            self.setColor(color)
+            return
+            
         fcord = (move >> 6) & 63
         tcord = move & 63
         tpiece = self.arBoard[tcord]
@@ -575,6 +592,7 @@ class LBoard:
         copy.hist_checked = self.hist_checked[:]
         copy.hist_opchecked = self.hist_opchecked[:]
         
-        copy.ini_kings = self.ini_kings[:]
-        copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
+        if self.variant == FISCHERRANDOMCHESS:
+            copy.ini_kings = self.ini_kings[:]
+            copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
         return copy

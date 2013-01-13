@@ -10,7 +10,7 @@ from pychess.ic.VerboseTelnet import *
 from pychess.ic.FICSObjects import *
 
 names = "(\w+)"
-titles = "((?:\((?:GM|IM|FM|WGM|WIM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
+titles = "((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
 ratings = "\(\s*([-0-9+]+|UNR)\)"
 
@@ -330,11 +330,7 @@ class BoardManager (GObject):
     
     @staticmethod
     def parseRating (rating):
-        if rating:
-            m = re.match("[0-9]{2,}", rating)
-            if m: return int(m.group(0))
-            else: return 0
-        else: return 0
+        return int(rating) if rating.isdigit() else 0
     
     def onPlayGameCreated (self, matchlist):
         log.debug("BM.onPlayGameCreated: %s\n%s\n" % 
@@ -581,7 +577,7 @@ class BoardManager (GObject):
         if game_type.variant_type == FISCHERRANDOMCHESS:
             pgnHead += [ ("Variant", "Fischerandom") ]
             # FR is the only variant used in this tag by the PGN generator @
-            # ficsgames.com. They put all the other wild/* stuff only in the
+            # ficsgames.org. They put all the other wild/* stuff only in the
             # "Event" header.
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
@@ -627,10 +623,6 @@ class BoardManager (GObject):
                 self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.ourGameno = ""
-            # update player info on players that changed rating/status while we
-            # were playing because we can't get rating change info when playing
-            # a game
-            print >> self.connection.client, "who IsblwL"
             del self.gamemodelStartedEvents[game.gameno]
         else:
             if game.gameno in self.queuedEmits:

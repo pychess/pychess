@@ -3,9 +3,9 @@ from threading import RLock, currentThread
 from gtk.gdk import threads_enter, threads_leave
 import time
 from pychess.System.prefix import addUserDataPrefix
-#logfile = open(addUserDataPrefix(time.strftime("%Y-%m-%d_%H-%M-%S") + "-glocks.log"), "w")
+logfile = open(addUserDataPrefix(time.strftime("%Y-%m-%d_%H-%M-%S") + "-glocks.log"), "w")
 debug = False
-debug_stream = sys.stdout
+debug_stream = logfile #sys.stdout
 gdklocks = {}
 _rlock = RLock()
 

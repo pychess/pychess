@@ -193,6 +193,9 @@ class EngineTab:
             engine = discoverer.getEngineByMd5(value)
             if engine is None:
                 combobox.set_active(0)
+                # This return saves us from the None-engine being used
+                # in later code  -Jonas Thiem
+                return
             else:
                 try:
                     index = list(discoverer.getAnalyzers()).index(engine)
@@ -566,7 +569,7 @@ class ThemeTab:
         themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d)) and d != 'ttf']
         
         ttf = addDataPrefix("pieces/ttf")
-        themes += [splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
+        themes += ["ttf-" + splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
         themes.sort()
         
         return themes

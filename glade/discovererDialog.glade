@@ -1,39 +1,44 @@
-<?xml version="1.0"?>
-<glade-interface>
-  <!-- interface-requires gtk+ 2.10 -->
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <widget class="GtkWindow" id="discovererDialog">
+  <object class="GtkWindow" id="discovererDialog">
+    <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="resizable">False</property>
     <property name="icon_name">pychess</property>
     <child>
-      <widget class="GtkVBox" id="vbox1">
+      <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
+        <property name="can_focus">False</property>
         <property name="spacing">12</property>
         <child>
-          <widget class="GtkLabel" id="label1">
+          <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;PyChess is discovering your engines. Please wait.&lt;/b&gt;&lt;/big&gt;</property>
             <property name="use_markup">True</property>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkTable" id="enginesTable">
+          <object class="GtkTable" id="enginesTable">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="n_rows">3</property>
             <property name="n_columns">2</property>
             <property name="column_spacing">6</property>
             <property name="row_spacing">3</property>
             <child>
-              <widget class="GtkProgressBar" id="progressbar3">
+              <object class="GtkProgressBar" id="progressbar3">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="pulse_step">0.10000000149</property>
-              </widget>
+              </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
@@ -42,10 +47,11 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkProgressBar" id="progressbar2">
+              <object class="GtkProgressBar" id="progressbar2">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="pulse_step">0.10000000149</property>
-              </widget>
+              </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
@@ -54,64 +60,72 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkProgressBar" id="progressbar1">
+              <object class="GtkProgressBar" id="progressbar1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="pulse_step">0.10000000149</property>
-              </widget>
+              </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label4">
+              <object class="GtkLabel" id="label4">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">PyChess.py:</property>
-              </widget>
+              </object>
               <packing>
                 <property name="top_attach">1</property>
                 <property name="bottom_attach">2</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label3">
+              <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">ShredderLinuxChess:</property>
-              </widget>
+              </object>
               <packing>
                 <property name="top_attach">2</property>
                 <property name="bottom_attach">3</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label2">
+              <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">gnuchess:</property>
-              </widget>
+              </object>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkAlignment" id="throbberDock">
+          <object class="GtkAlignment" id="throbberDock">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="xscale">0</property>
             <property name="yscale">0</property>
             <child>
               <placeholder/>
             </child>
-          </widget>
+          </object>
           <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">2</property>
           </packing>
         </child>
-      </widget>
+      </object>
     </child>
-  </widget>
-</glade-interface>
+  </object>
+</interface>

@@ -2,7 +2,25 @@
 from bitboard import *
 from attack import *
 from pychess.Utils.const import *
-from lmove import newMove
+
+################################################################################
+#   The format of a move is as follows - from left:                            #
+#   4 bits:  Descriping the type of the move                                   #
+#   6 bits:  cord to move from                                                 #
+#   6 bits:  cord to move to                                                   #
+################################################################################
+
+shiftedFromCords = []
+for i in range(64):
+    shiftedFromCords.append(i << 6)
+
+shiftedFlags = []
+for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
+            KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, NULL_MOVE:
+    shiftedFlags.append(i << 12)
+
+def newMove (fromcord, tocord, flag=NORMAL_MOVE):
+    return shiftedFlags[flag] + shiftedFromCords[fromcord] + tocord
 
 ################################################################################
 #   Generate all moves                                                         #
@@ -45,7 +63,7 @@ def genPieceMoves(board, piece, tcord):
     """"
     Used by parseSAN only to accelerate it a bit
     """
-    
+    moves = set()
     friends = board.friends[board.color]
     notfriends = ~friends
     if piece == KNIGHT:
@@ -53,40 +71,43 @@ def genPieceMoves(board, piece, tcord):
         knightMoves = moveArray[KNIGHT]
         for fcord in iterBits(knights):
             if tcord in iterBits(knightMoves[fcord] & notfriends):
-                yield newMove(fcord, tcord)
-
-    elif piece == BISHOP:
+                moves.add(newMove(fcord, tcord))
+        return moves
+        
+    if piece == BISHOP:
         blocker = board.blocker
         bishops = board.boards[board.color][BISHOP]
         for fcord in iterBits(bishops):
             attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
                           attack135[fcord][ray135[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                yield newMove(fcord, tcord)
-
-    elif piece == ROOK:
+                moves.add(newMove(fcord, tcord))
+        return moves
+        
+    if piece == ROOK:
         blocker = board.blocker
         rooks = board.boards[board.color][ROOK]
         for fcord in iterBits(rooks):
             attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
                           attack90[fcord][ray90[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                yield newMove(fcord, tcord)
+                moves.add(newMove(fcord, tcord))
+        return moves
 
-    elif piece == QUEEN:
+    if piece == QUEEN:
         blocker = board.blocker
         queens = board.boards[board.color][QUEEN]
         for fcord in iterBits(queens):
             attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
                           attack135[fcord][ray135[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                yield newMove(fcord, tcord)
+                moves.add(newMove(fcord, tcord))
 
-        for fcord in iterBits(queens):
             attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
                           attack90[fcord][ray90[fcord] & blocker]
             if tcord in iterBits(attackBoard & notfriends):
-                yield newMove(fcord, tcord)
+                moves.add(newMove(fcord, tcord))
+        return moves
 
 def genAllMoves (board):
     
@@ -188,6 +209,7 @@ def genAllMoves (board):
         # One step
         
         movedpawns = (pawns << 8) & notblocker
+        movedpawns &= 0xffffffffffffffff  # contrain to 64 bits
         for cord in iterBits(movedpawns):
             if cord <= 7:
                 for p in PROMOTIONS:

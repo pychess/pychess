@@ -1,19 +1,26 @@
+from gobject import GObject, SIGNAL_RUN_FIRST
+
 from Move import Move
-#from lutils.egtb_k4it import egtb_k4it
-#from lutils.egtb_gaviota import egtb_gaviota
+from lutils.egtb_k4it import egtb_k4it
+from lutils.egtb_gaviota import egtb_gaviota
 from lutils.bitboard import bitLength
 
 providers = []
 
-class EndgameTable:
+class EndgameTable(GObject):
     
     """ Wrap the low-level providers of exact endgame knowledge. """
+
+    __gsignals__ = {
+        "scored":  (SIGNAL_RUN_FIRST, None, (object,)),
+    }
     
     def __init__ (self):
+        GObject.__init__(self)
+
         global providers
         if not providers:
-            #providers = [ egtb_gaviota(), egtb_k4it() ]
-            providers = [ ]
+            providers = [ egtb_gaviota(), egtb_k4it() ]
         self.providers = providers
     
     def _pieceCounts (self, board):
@@ -47,6 +54,7 @@ class EndgameTable:
             game_result: Either WHITEWON, DRAW, BLACKWON
             depth: Depth to mate
         """
+        
         pc = self._pieceCounts(lBoard)
         for provider in self.providers:
             if provider.supports(pc):
@@ -55,5 +63,6 @@ class EndgameTable:
                     ret = []
                     for lMove, result, depth in results:
                         ret.append( (Move(lMove), result, depth) )
+                    self.emit("scored", (lBoard, ret))
                     return ret
         return []

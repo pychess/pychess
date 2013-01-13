@@ -9,9 +9,8 @@ from ldata import *
 from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import staticExchangeEvaluate, getAttacks, \
     defends
-from pychess.Utils.lutils.lmove import TCORD, FCORD, FLAG, PROMOTE_PIECE, toSAN, \
-    newMove
-from pychess.Utils.lutils.lmovegen import genCaptures, genAllMoves
+from pychess.Utils.lutils.lmove import TCORD, FCORD, FLAG, PROMOTE_PIECE, toSAN
+from pychess.Utils.lutils.lmovegen import genCaptures, genAllMoves, newMove
 from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.repr import reprColor, reprPiece
 import leval

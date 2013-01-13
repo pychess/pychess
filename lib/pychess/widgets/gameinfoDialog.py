@@ -18,8 +18,8 @@ def initialize(widgets, gameDic):
     # 1 to 12
     widgets["game_info_calendar"].clear_marks()
     widgets["game_info_calendar"].select_month(
-            gamemodel.tags["Month"]-1, gamemodel.tags["Year"])
-    widgets["game_info_calendar"].select_day(gamemodel.tags["Day"])
+            int(gamemodel.tags["Month"])-1, int(gamemodel.tags["Year"]))
+    widgets["game_info_calendar"].select_day(int(gamemodel.tags["Day"]))
     
     def hide_window(button, *args):
         widgets["game_info"].hide()
