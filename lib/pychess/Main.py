@@ -65,8 +65,14 @@ class GladeHandlers:
                         gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
                     elif event.keyval == gtk.keysyms.Page_Down:
                         gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
-        # Other
-        pass
+
+        # game move input
+        gmwidg = gamewidget.cur_gmwidg()
+        if gmwidg is not None:
+            board_control = gmwidg.board
+            keyname = gtk.gdk.keyval_name(event.keyval)
+            board_control.key_pressed(keyname)
+            gmwidg.status(board_control.keybuffer)
     
     def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel

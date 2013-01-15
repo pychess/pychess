@@ -7,7 +7,7 @@ import threading
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
-from pychess.Utils.Move import Move
+from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmovegen
@@ -63,6 +63,7 @@ class BoardControl (gtk.EventBox):
                 if player.__type__ == LOCAL:
                     self.allowPremove = True
         gamemodel.connect("game_started", onGameStart)
+        self.keybuffer = ""
         
     def __del__ (self):
         for menu, conid in self.connections.iteritems():
@@ -197,7 +198,22 @@ class BoardControl (gtk.EventBox):
     
     def leave_notify (self, widget, event):
         return self.currentState.leave(event.x, event.y)
-    
+
+    def key_pressed (self, keyname):
+        if keyname in "PNBRQKOox-12345678abcdefgh":
+            self.keybuffer += keyname
+        elif keyname == "at":
+            self.keybuffer += "@"
+        elif keyname == "Return":
+            color = self.view.model.boards[-1].color
+            board = self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
+            move = parseAny(board, self.keybuffer)
+            if validate(board, move):
+                self.emit("piece_moved", move, color)
+            self.keybuffer = ""
+        elif keyname == "BackSpace":
+            self.keybuffer = self.keybuffer[:-1] if self.keybuffer else ""
+
     def _genPossibleBoards(self, ply):
         possibleBoards = []
         curboard = self.view.model.getBoardAtPly(ply, self.view.variation)
