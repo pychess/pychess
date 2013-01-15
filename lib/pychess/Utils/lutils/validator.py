@@ -16,7 +16,7 @@ def validateMove (board, move):
     if flag == DROP:
         tpiece = board.arBoard[tcord]
         if tpiece != EMPTY:
-            return false
+            return False
         else:
             if fcord == PAWN:
                 rank = RANK(tcord)
