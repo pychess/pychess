@@ -41,7 +41,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,nocastle,fischerandom",
+            "variants": "normal,nocastle,fischerandom,crazyhouse",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -102,8 +102,11 @@ class PyChessCECP(PyChess):
                         self.__analyze()
                 
                 elif lines[0] == "variant":
-                    if len(lines) > 1 and lines[1] == "fischerandom":
-                        self.board.variant = FISCHERRANDOMCHESS
+                    if len(lines) > 1:
+                        if lines[1] == "fischerandom":
+                            self.board.variant = FISCHERRANDOMCHESS
+                        elif lines[1] == "crazyhouse":
+                            self.board.variant = CRAZYHOUSECHESS
                 
                 elif lines[0] == "quit":
                     self.forced = True
