@@ -544,3 +544,17 @@ def genCheckEvasions (board):
     for cord in iterBits (escapes):
         if not isAttacked (board, cord, opcolor):
             yield newMove (kcord, cord)
+
+
+def genDrops (board):
+    
+    color = board.color
+    opcolor = 1-color
+    
+    arBoard = board.arBoard
+    for piece in board.holding[color]:
+        if piece > 0:
+            for cord, elem in enumerate(arBoard):
+                if elem == EMPTY:
+                    # TODO: no pawn drop on 1 and 8 rank
+                    yield newMove(piece, cord, DROP)

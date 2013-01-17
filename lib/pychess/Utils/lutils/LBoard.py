@@ -99,6 +99,12 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
+
+        #elif self.variant == CRAZYHOUSECHESS:
+        self.promoted = array('B', [0]*64)
+        self.holding = [[0,0,0,0,0,0], [0,0,0,0,0,0]]
+        self.capture_promoting = False
+        self.hist_capture_promoting = []
     
         # Get information
         
@@ -236,14 +242,6 @@ class LBoard:
         
         movenumber = int(moveNoChr)*2 -2
         if self.color == BLACK: movenumber += 1
-        self.hist_move = []
-        self.hist_tpiece = []
-        self.hist_enpassant = []
-        self.hist_castling = []
-        self.hist_hash = []
-        self.hist_fifty = []
-        self.hist_checked = []
-        self.hist_opchecked = []
         self.plyCount = movenumber
     
     def isChecked (self):
@@ -342,6 +340,8 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
+        if self.variant == CRAZYHOUSECHESS:
+            self.hist_capture_promoting.append(self.capture_promoting)
         
         self.opchecked = None
         self.checked = None
@@ -359,14 +359,25 @@ class LBoard:
             tcord = fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
             rookt = fin_rooks[color][side]
+
         # Capture
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
+            if self.variant == CRAZYHOUSECHESS:
+                if self.promoted[tcord]:
+                    self.holding[color][PAWN] += 1
+                    self.capture_promoting = True
+                else:
+                    self.holding[color][tpiece] += 1
+                    self.capture_promoting = False
+                self.promoted[tcord] = 0
         
         self.hist_tpiece.append(tpiece)
         
         # Remove moving piece(s), then add them at their destination.
-        if flag != DROP:
+        if flag == DROP:
+            self.holding[color][fpiece] -= 1
+        else:
             self._removePiece(fcord, fpiece, color)
 
         if flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -377,9 +388,19 @@ class LBoard:
         if flag == ENPASSANT:
             takenPawnC = tcord + (color == WHITE and -8 or 8)
             self._removePiece (takenPawnC, PAWN, opcolor)
+            if self.variant == CRAZYHOUSECHESS:
+                self.holding[color][PAWN] += 1
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
+
+        if self.variant == CRAZYHOUSECHESS:
+            if flag in PROMOTIONS:
+                self.promoted[tcord] = 1
+            else:
+                if self.promoted[fcord]:
+                    self.promoted[fcord] = 0
+                    self.promoted[tcord] = 1
                 
         self._addPiece(tcord, fpiece, color)
 
@@ -420,7 +441,9 @@ class LBoard:
         
         move = self.hist_move.pop()
         cpiece = self.hist_tpiece.pop()
-        
+        if self.variant == CRAZYHOUSECHESS:
+            capture_promoting = self.hist_capture_promoting.pop()
+            
         flag = move >> 12
         
         if flag == NULL_MOVE:
@@ -449,11 +472,18 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
-        
+            if self.variant == CRAZYHOUSECHESS:
+                if capture_promoting:
+                    self.holding[color][PAWN] -= 1
+                else:
+                    self.holding[color][cpiece] -= 1
+                
         # Put back piece captured by enpassant
         if flag == ENPASSANT:
             epcord = color == WHITE and tcord - 8 or tcord + 8
             self._addPiece (epcord, PAWN, opcolor)
+            if self.variant == CRAZYHOUSECHESS:
+                self.holding[color][PAWN] -= 1
             
         # Un-promote pawn
         if flag in PROMOTIONS:
@@ -462,6 +492,16 @@ class LBoard:
         # Put back moved piece
         if flag != DROP:
             self._addPiece (fcord, tpiece, color)
+
+        if self.variant == CRAZYHOUSECHESS:
+            if flag in PROMOTIONS:
+                self.promoted[tcord] = 0
+            else:
+                self.promoted[fcord] = self.promoted[tcord]
+                if cpiece != EMPTY:
+                    self.promoted[tcord] = int(capture_promoting)
+                else:
+                    self.promoted[tcord] = 0
         
         self.setColor(color)
         
@@ -598,4 +638,10 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             copy.ini_kings = self.ini_kings[:]
             copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
+        elif self.variant == CRAZYHOUSECHESS:
+            copy.promoted = self.promoted[:]
+            copy.holding = [self.holding[0][:], self.holding[1][:]]
+            copy.capture_promoting = self.capture_promoting
+            copy.hist_capture_promoting = self.hist_capture_promoting[:]
+            
         return copy
