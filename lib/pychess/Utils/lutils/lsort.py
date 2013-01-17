@@ -35,19 +35,21 @@ def getMoveValue (board, table, depth, move):
     
     fcord = (move >> 6) & 63
     tcord = move & 63
+    flag = move >> 12
     
     arBoard = board.arBoard
-    fpiece = arBoard[fcord]
+    fpiece = fcord if flag == DROP else arBoard[fcord]
     tpiece = arBoard[tcord]
     
     if tpiece != EMPTY:
         # We add some extra to ensure also bad captures will be searched early
         return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
     
-    flag = move >> 12
-    
     if flag in PROMOTIONS:
         return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
+    
+    if flag == DROP:
+        return PIECE_VALUES[tpiece] + 1000
     
     killervalue = table.isKiller(depth, move)
     if killervalue:
@@ -62,6 +64,7 @@ def getMoveValue (board, table, depth, move):
         # That is, fpiece == EMPTY
         print fcord, tcord
         print repr(board)
+    
     score = positionValues[fpiece][board.color][tcord] - \
             positionValues[fpiece][board.color][fcord]
     

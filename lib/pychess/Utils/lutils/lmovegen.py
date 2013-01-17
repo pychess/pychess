@@ -257,6 +257,9 @@ def genAllMoves (board):
     for m in genCastles(board):
         yield m
 
+    if board.variant == CRAZYHOUSECHESS:
+        genDrops(board)
+
 ################################################################################
 #   Generate capturing moves                                                   #
 ################################################################################
@@ -460,6 +463,9 @@ def genNonCaptures (board):
     for move in genCastles(board):
         yield move
 
+    if board.variant == CRAZYHOUSECHESS:
+        genDrops(board)
+
 ################################################################################
 #   Generate escapes from check                                                #
 ################################################################################
@@ -530,6 +536,14 @@ def genCheckEvasions (board):
                             yield newMove(fcord, cord, p)
                     else:
                         yield newMove (fcord, cord)
+                    
+                    if board.variant == CRAZYHOUSECHESS:
+                        for piece in board.holding[color]:
+                            if piece > 0:
+                                if piece == PAWN:
+                                    if cord >= 56 or cord <= 7:
+                                        continue
+                                yield newMove (piece, cord, DROP)
     
     # If more than one checkers, move king to get out of check
     if checkers:
@@ -547,7 +561,6 @@ def genCheckEvasions (board):
 
 
 def genDrops (board):
-    
     color = board.color
     opcolor = 1-color
     
@@ -556,5 +569,7 @@ def genDrops (board):
         if piece > 0:
             for cord, elem in enumerate(arBoard):
                 if elem == EMPTY:
-                    # TODO: no pawn drop on 1 and 8 rank
+                    if piece == PAWN:
+                        if cord >= 56 or cord <= 7:
+                            continue
                     yield newMove(piece, cord, DROP)

@@ -376,7 +376,10 @@ class LBoard:
         
         # Remove moving piece(s), then add them at their destination.
         if flag == DROP:
-            self.holding[color][fpiece] -= 1
+            try:
+                self.holding[color][fpiece] -= 1
+            except:
+                print move, self.holding
         else:
             self._removePiece(fcord, fpiece, color)
 
