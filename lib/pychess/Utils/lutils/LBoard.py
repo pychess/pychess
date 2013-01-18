@@ -102,7 +102,8 @@ class LBoard:
 
         #elif self.variant == CRAZYHOUSECHESS:
         self.promoted = array('B', [0]*64)
-        self.holding = [[0,0,0,0,0,0], [0,0,0,0,0,0]]
+        self.holding = [{PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
+                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0}]
         self.capture_promoting = False
         self.hist_capture_promoting = []
     
@@ -342,7 +343,7 @@ class LBoard:
         self.hist_opchecked.append(self.opchecked)
         if self.variant == CRAZYHOUSECHESS:
             self.hist_capture_promoting.append(self.capture_promoting)
-        
+         
         self.opchecked = None
         self.checked = None
 
@@ -362,6 +363,7 @@ class LBoard:
 
         # Capture
         if tpiece != EMPTY:
+            print "The captured piece is:", reprSign[tpiece]
             self._removePiece(tcord, tpiece, opcolor)
             if self.variant == CRAZYHOUSECHESS:
                 if self.promoted[tcord]:
@@ -376,10 +378,8 @@ class LBoard:
         
         # Remove moving piece(s), then add them at their destination.
         if flag == DROP:
-            try:
-                self.holding[color][fpiece] -= 1
-            except:
-                print move, self.holding
+            assert self.holding[color][fpiece] > 0
+            self.holding[color][fpiece] -= 1
         else:
             self._removePiece(fcord, fpiece, color)
 
@@ -475,10 +475,13 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
+            print "put back captured piece:", reprSign[cpiece]
             if self.variant == CRAZYHOUSECHESS:
                 if capture_promoting:
+                    assert self.holding[color][PAWN] > 0
                     self.holding[color][PAWN] -= 1
                 else:
+                    assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
                 
         # Put back piece captured by enpassant
@@ -486,6 +489,7 @@ class LBoard:
             epcord = color == WHITE and tcord - 8 or tcord + 8
             self._addPiece (epcord, PAWN, opcolor)
             if self.variant == CRAZYHOUSECHESS:
+                assert self.holding[color][PAWN] > 0
                 self.holding[color][PAWN] -= 1
             
         # Un-promote pawn
@@ -493,17 +497,17 @@ class LBoard:
             tpiece = PAWN
 
         # Put back moved piece
-        if flag != DROP:
+        if flag == DROP:
+            self.holding[color][tpiece] += 1
+        else:
             self._addPiece (fcord, tpiece, color)
 
         if self.variant == CRAZYHOUSECHESS:
             if flag in PROMOTIONS:
                 self.promoted[tcord] = 0
             else:
-                self.promoted[fcord] = self.promoted[tcord]
-                if cpiece != EMPTY:
-                    self.promoted[tcord] = int(capture_promoting)
-                else:
+                if self.promoted[tcord]:
+                    self.promoted[fcord] = 1
                     self.promoted[tcord] = 0
         
         self.setColor(color)
@@ -643,7 +647,7 @@ class LBoard:
             copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
         elif self.variant == CRAZYHOUSECHESS:
             copy.promoted = self.promoted[:]
-            copy.holding = [self.holding[0][:], self.holding[1][:]]
+            copy.holding = [self.holding[0].copy(), self.holding[1].copy()]
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
             
