@@ -254,11 +254,12 @@ def genAllMoves (board):
     
     # Castling
     
-    for m in genCastles(board):
-        yield m
+    for move in genCastles(board):
+        yield move
 
     if board.variant == CRAZYHOUSECHESS:
-        genDrops(board)
+        for move in genDrops(board):
+            yield move
 
 ################################################################################
 #   Generate capturing moves                                                   #
@@ -464,7 +465,8 @@ def genNonCaptures (board):
         yield move
 
     if board.variant == CRAZYHOUSECHESS:
-        genDrops(board)
+        for move in genDrops(board):
+            yield move
 
 ################################################################################
 #   Generate escapes from check                                                #
@@ -538,8 +540,9 @@ def genCheckEvasions (board):
                         yield newMove (fcord, cord)
                     
                     if board.variant == CRAZYHOUSECHESS:
-                        for piece in board.holding[color]:
-                            if piece > 0:
+                        holding = board.holding[color]
+                        for piece in holding:
+                            if holding[piece] > 0:
                                 if piece == PAWN:
                                     if cord >= 56 or cord <= 7:
                                         continue
@@ -562,11 +565,10 @@ def genCheckEvasions (board):
 
 def genDrops (board):
     color = board.color
-    opcolor = 1-color
-    
     arBoard = board.arBoard
-    for piece in board.holding[color]:
-        if piece > 0:
+    holding = board.holding[color]
+    for piece in holding:
+        if holding[piece] > 0:
             for cord, elem in enumerate(arBoard):
                 if elem == EMPTY:
                     if piece == PAWN:

@@ -4,6 +4,7 @@ from heapq import heappush, heappop
 
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from pychess.Utils.const import *
+from pychess.Utils.Move import Move
 from leval import evaluateComplete
 from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
@@ -165,9 +166,11 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         
         nodes += 1
         
+        print "applyMove", Move(move), ply
         board.applyMove(move)
         if not isCheck:
             if board.opIsChecked():
+                print "popMove", Move(move), ply
                 board.popMove()
                 continue
         
@@ -183,11 +186,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             mvs, val = alphaBeta (board, depth-1, -beta, -alpha, ply+1)
             val = -val
         
+        print "popMove", Move(move), ply
         board.popMove()
         
         if val > alpha:
             if val >= beta:
-                if searching:
+                if searching and move>>12 != DROP:
                     table.record (board, move, VALUE_AT_PLY(beta, -ply), hashfBETA, depth)
                     # We don't want to use our valuable killer move spaces for
                     # captures and promotions, as these are searched early anyways.
@@ -265,14 +269,17 @@ def quiescent (board, alpha, beta, ply):
         
         v, move = heappop(heap)
         
+        print "applyMove", Move(move), ply
         board.applyMove(move)
         if board.opIsChecked():
+            print "popMove", Move(move), ply
             board.popMove()
             continue
         
         mvs, val = quiescent(board, -beta, -alpha, ply+1)
         val = -val
         
+        print "popMove", Move(move), ply
         board.popMove()
         
         if val >= beta:
