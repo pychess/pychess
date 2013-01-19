@@ -11,6 +11,7 @@ from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
+from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
 from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 
 from pgnbase import PgnBase, pgn_load
@@ -83,6 +84,8 @@ def save (file, model):
             msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000))
     if issubclass(model.variant, FischerRandomChess):
         print >> file, '[Variant "Fischerandom"]'
+    elif issubclass(model.variant, CrazyhouseChess):
+        print >> file, '[Variant "Crazyhouse"]'
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
@@ -227,21 +230,27 @@ class PGNFile (PgnBase):
         
         fenstr = self._getTag(gameno, "FEN")
         variant = self.get_variant(gameno)
-
-        # Fixes for some non statndard Chess960 .pgn
-        if variant==0 and (fenstr is not None) and "Chess960" in model.tags["Event"]:
-            model.tags["Variant"] = "Fischerandom"
-            variant = 1
-            parts = fenstr.split()
-            parts[0] = parts[0].replace(".", "/").replace("0", "")
-            if len(parts) == 1:
-                parts.append("w")
-                parts.append("-")
-                parts.append("-")
-            fenstr = " ".join(parts)
-
+        
         if variant:
+            # Fixes for some non statndard Chess960 .pgn
+            if (fenstr is not None) and variant == "Fischerandom":
+                model.tags["Variant"] = "Fischerandom"
+                parts = fenstr.split()
+                parts[0] = parts[0].replace(".", "/").replace("0", "")
+                if len(parts) == 1:
+                    parts.append("w")
+                    parts.append("-")
+                    parts.append("-")
+                fenstr = " ".join(parts)
+            elif variant == "Crazyhouse":
+                model.tags["Variant"] = "Crazyhouse"
+
+        if variant == "Fischerandom":
             board = LBoard(FISCHERRANDOMCHESS)
+            model.variant = FischerRandomChess
+        elif variant == "Crazyhouse":
+            board = LBoard(CRAZYHOUSECHESS)
+            model.variant = CrazyhouseChess
         else:
             board = LBoard()
 
@@ -274,8 +283,10 @@ class PGNFile (PgnBase):
         def walk(node, path):
             if node.prev is None:
                 # initial game board
-                if variant:
+                if variant == "Fischerandom":
                     board = FRCBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Crazyhouse":
+                    board = CrazyhouseBoard(setup=node.asFen(), lboard=node)
                 else:
                     board = Board(setup=node.asFen(), lboard=node)
             else:
