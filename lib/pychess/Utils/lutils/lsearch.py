@@ -91,28 +91,29 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     # Look up transposition table                                              #
     ############################################################################
-    
-    if ply == 0:
-        table.newSearch()
+    # TODO: add holder to hash
+    if table.variant != CRAZYHOUSECHESS:
+        if ply == 0:
+            table.newSearch()
 
-    table.setHashMove (depth, -1)
-    probe = table.probe (board, depth, alpha, beta)
-    hashmove = None
-    if probe:
-        move, score, hashf = probe
-        score = VALUE_AT_PLY(score, ply)
-        hashmove = move
-        table.setHashMove (depth, move)
-        
-        if hashf == hashfEXACT:
-            return [move], score
-        elif hashf == hashfBETA:
-            beta = min(score, beta)
-        elif hashf == hashfALPHA:
-            alpha = score
+        table.setHashMove (depth, -1)
+        probe = table.probe (board, depth, alpha, beta)
+        hashmove = None
+        if probe:
+            move, score, hashf = probe
+            score = VALUE_AT_PLY(score, ply)
+            hashmove = move
+            table.setHashMove (depth, move)
             
-        if hashf != hashfBAD and alpha >= beta:
-            return [move], score
+            if hashf == hashfEXACT:
+                return [move], score
+            elif hashf == hashfBETA:
+                beta = min(score, beta)
+            elif hashf == hashfALPHA:
+                alpha = score
+                
+            if hashf != hashfBAD and alpha >= beta:
+                return [move], score
     
     ############################################################################
     # Cheking the time                                                         #
@@ -166,11 +167,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         
         nodes += 1
         
-        print "applyMove", Move(move), ply
         board.applyMove(move)
         if not isCheck:
             if board.opIsChecked():
-                print "popMove", Move(move), ply
                 board.popMove()
                 continue
         
@@ -186,7 +185,6 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             mvs, val = alphaBeta (board, depth-1, -beta, -alpha, ply+1)
             val = -val
         
-        print "popMove", Move(move), ply
         board.popMove()
         
         if val > alpha:
@@ -269,17 +267,15 @@ def quiescent (board, alpha, beta, ply):
         
         v, move = heappop(heap)
         
-        print "applyMove", Move(move), ply
         board.applyMove(move)
-        if board.opIsChecked():
-            print "popMove", Move(move), ply
-            board.popMove()
-            continue
+        if not isCheck:
+            if board.opIsChecked():
+                board.popMove()
+                continue
         
         mvs, val = quiescent(board, -beta, -alpha, ply+1)
         val = -val
         
-        print "popMove", Move(move), ply
         board.popMove()
         
         if val >= beta:

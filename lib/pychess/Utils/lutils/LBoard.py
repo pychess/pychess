@@ -341,8 +341,6 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
-        if self.variant == CRAZYHOUSECHESS:
-            self.hist_capture_promoting.append(self.capture_promoting)
          
         self.opchecked = None
         self.checked = None
@@ -363,7 +361,7 @@ class LBoard:
 
         # Capture
         if tpiece != EMPTY:
-            print "The captured piece is:", reprSign[tpiece]
+            #print "Before capture:", self.holding[color]
             self._removePiece(tcord, tpiece, opcolor)
             if self.variant == CRAZYHOUSECHESS:
                 if self.promoted[tcord]:
@@ -373,7 +371,9 @@ class LBoard:
                     self.holding[color][tpiece] += 1
                     self.capture_promoting = False
                 self.promoted[tcord] = 0
-        
+            #print "After capturing:", reprSign[tpiece], self.holding[color]
+            self.hist_capture_promoting.append(self.capture_promoting)
+            
         self.hist_tpiece.append(tpiece)
         
         # Remove moving piece(s), then add them at their destination.
@@ -444,8 +444,6 @@ class LBoard:
         
         move = self.hist_move.pop()
         cpiece = self.hist_tpiece.pop()
-        if self.variant == CRAZYHOUSECHESS:
-            capture_promoting = self.hist_capture_promoting.pop()
             
         flag = move >> 12
         
@@ -475,14 +473,16 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
-            print "put back captured piece:", reprSign[cpiece]
+            #print "Before put back captured piece:", reprSign[cpiece], self.holding[color]
             if self.variant == CRAZYHOUSECHESS:
-                if capture_promoting:
+                self.capture_promoting = self.hist_capture_promoting.pop()
+                if self.capture_promoting:
                     assert self.holding[color][PAWN] > 0
                     self.holding[color][PAWN] -= 1
                 else:
                     assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
+            #print "After put back captured piece:", reprSign[cpiece], self.holding[color]
                 
         # Put back piece captured by enpassant
         if flag == ENPASSANT:
