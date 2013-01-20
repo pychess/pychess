@@ -75,10 +75,13 @@ class Move:
     promotion = property(_get_promotion)
     
     def __repr__ (self):
+        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] if self.flag in PROMOTIONS else ""
+        
         if self.flag == DROP:
-            return reprSign[lmove.FCORD(self.move)] + "@" +  str(self.cord1)
+            piece = reprSign[lmove.FCORD(self.move)]
+            return piece + "@" +  str(self.cord1) + promotion
         else:
-            return str(self.cord0) + str(self.cord1)
+            return str(self.cord0) + str(self.cord1) + promotion
 
     def __eq__ (self, other):
         if isinstance(other, Move):

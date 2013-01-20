@@ -403,6 +403,8 @@ class LBoard:
                 if self.promoted[fcord]:
                     self.promoted[fcord] = 0
                     self.promoted[tcord] = 1
+                elif tpiece != EMPTY:
+                    self.promoted[tcord] = 0
                 
         self._addPiece(tcord, fpiece, color)
 
@@ -502,12 +504,10 @@ class LBoard:
             self._addPiece (fcord, tpiece, color)
 
         if self.variant == CRAZYHOUSECHESS:
-            if flag in PROMOTIONS:
+            if not self.capture_promoting:
                 self.promoted[tcord] = 0
-            else:
-                if self.promoted[tcord]:
-                    self.promoted[fcord] = 1
-                    self.promoted[tcord] = 0
+            if self.promoted[fcord]:
+                self.promoted[fcord] = 1
         
         self.setColor(color)
         

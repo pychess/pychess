@@ -539,14 +539,14 @@ def genCheckEvasions (board):
                     else:
                         yield newMove (fcord, cord)
                     
-                    if board.variant == CRAZYHOUSECHESS:
-                        holding = board.holding[color]
-                        for piece in holding:
-                            if holding[piece] > 0:
-                                if piece == PAWN:
-                                    if cord >= 56 or cord <= 7:
-                                        continue
-                                yield newMove (piece, cord, DROP)
+                if board.variant == CRAZYHOUSECHESS:
+                    holding = board.holding[color]
+                    for piece in holding:
+                        if holding[piece] > 0:
+                            if piece == PAWN:
+                                if cord >= 56 or cord <= 7:
+                                    continue
+                            yield newMove (piece, cord, DROP)
     
     # If more than one checkers, move king to get out of check
     if checkers:
