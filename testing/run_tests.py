@@ -11,7 +11,7 @@ modules_to_test = (
     "move",
     "movegen",
     "pgn",
-    "lboard",
+    "crazyhouse",
     "zobrist",
     "polyglot",
     'ficsmanagers',
