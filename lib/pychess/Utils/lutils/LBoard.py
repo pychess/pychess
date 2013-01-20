@@ -361,17 +361,17 @@ class LBoard:
 
         # Capture
         if tpiece != EMPTY:
-            #print "Before capture:", self.holding[color]
             self._removePiece(tcord, tpiece, opcolor)
             if self.variant == CRAZYHOUSECHESS:
+                #print "Before capture:", self.holding[color]
                 if self.promoted[tcord]:
                     self.holding[color][PAWN] += 1
                     self.capture_promoting = True
                 else:
                     self.holding[color][tpiece] += 1
                     self.capture_promoting = False
-            #print "After capturing:", reprSign[tpiece], self.holding[color]
-            self.hist_capture_promoting.append(self.capture_promoting)
+                #print "After capturing:", reprSign[tpiece], self.holding[color]
+                self.hist_capture_promoting.append(self.capture_promoting)
             
         self.hist_tpiece.append(tpiece)
         

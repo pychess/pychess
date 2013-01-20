@@ -171,16 +171,21 @@ class PgnBase(ChessFile):
 
     def get_variant(self, no):
         variant = self._getTag(no, "Variant")
-        if not variant:
-            event = model.tags["Event"]
+        if variant:
+            if "fischer" in variant.lower() or "960" in variant:
+                return "Fischerandom"
+            elif "crazyhouse" in variant.lower():
+                return "Crazyhouse"
+            else:
+                return ""
+        else:
+            event = self.get_event(no)
             if "Chess960" in event:
                 return "Fischerandom"
             elif "crazyhouse" in event.lower():
                 return "Crazyhouse"
-        return variant.capitalize() if variant and \
-                ("fischer" in variant.lower() or \
-                 "960" in variant or \
-                 "crazyhouse" in variant.lower()) else ""
+            else:
+                return ""
 
     def get_player_names (self, no):
         p1 = self._getTag(no,"White") and self._getTag(no,"White") or "Unknown"
