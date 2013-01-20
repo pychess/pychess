@@ -133,6 +133,8 @@ class GameWidget (gobject.GObject):
         if gamemodel.timemodel:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
+        board.view.connect("shown_changed", self.shown_changed)
+        
         self.analyzer_cids = {}
         
         # Some stuff in the sidepanels .load functions might change UI, so we
@@ -235,6 +237,19 @@ class GameWidget (gobject.GObject):
             self.menuitems["ask_to_move"].sensitive = True
         else:
             self.menuitems["ask_to_move"].sensitive = False
+
+    def _showHolding (self, holding):
+        figurines = ["", ""]
+        for color in (BLACK, WHITE):
+            for piece in holding[color].keys():
+                count = holding[color][piece]
+                figurines[color] += " " if count==0 else FAN_PIECES[color][piece]*count
+        self.status(figurines[BLACK] + "   " + figurines[WHITE])
+
+    def shown_changed (self, boardview, shown):
+        if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
+            holding = self.gamemodel.getBoardAtPly(shown).board.holding
+            self._showHolding(holding)
     
     def game_started (self, gamemodel):
         self._update_menu_abort()

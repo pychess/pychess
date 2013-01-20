@@ -92,7 +92,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Look up transposition table                                              #
     ############################################################################
     # TODO: add holder to hash
-    if table.variant != CRAZYHOUSECHESS:
+    if board.variant != CRAZYHOUSECHESS:
         if ply == 0:
             table.newSearch()
 

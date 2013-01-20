@@ -370,7 +370,6 @@ class LBoard:
                 else:
                     self.holding[color][tpiece] += 1
                     self.capture_promoting = False
-                self.promoted[tcord] = 0
             #print "After capturing:", reprSign[tpiece], self.holding[color]
             self.hist_capture_promoting.append(self.capture_promoting)
             
