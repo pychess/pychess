@@ -20,6 +20,8 @@ KING_VALUE = 2000
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
                 BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
+CRAZY_PIECE_VALUES = (0, 100, 210, 240, 250, 420, 2000)
+
 # Maximum possible search depth. The hash structure only allows 8-bit depths.
 MAXPLY = 63
 # Maximum possible score. Mate in n ply is +/- (MATE_VALUE-n).

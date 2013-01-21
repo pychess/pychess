@@ -45,9 +45,16 @@ def evalMaterial (board, color):
     opcolor = 1-color
     
     material = [0, 0]
-    for piece in range(PAWN, KING):
-        material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
-        material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
+    if board.variant == CRAZYHOUSECHESS:
+        for piece in range(PAWN, KING):
+            material[WHITE] += CRAZY_PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
+            material[BLACK] += CRAZY_PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
+            material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[WHITE][piece]
+            material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[BLACK][piece]
+    else:
+        for piece in range(PAWN, KING):
+            material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
+            material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
     
     phase = max(1, 8 - (material[WHITE] + material[BLACK]) / 1150)
     
