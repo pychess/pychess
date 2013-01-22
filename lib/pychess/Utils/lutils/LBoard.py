@@ -341,6 +341,7 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
+        self.hist_capture_promoting.append(self.capture_promoting)
          
         self.opchecked = None
         self.checked = None
@@ -363,15 +364,12 @@ class LBoard:
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
             if self.variant == CRAZYHOUSECHESS:
-                #print "Before capture:", self.holding[color]
                 if self.promoted[tcord]:
                     self.holding[color][PAWN] += 1
                     self.capture_promoting = True
                 else:
                     self.holding[color][tpiece] += 1
                     self.capture_promoting = False
-                #print "After capturing:", reprSign[tpiece], self.holding[color]
-                self.hist_capture_promoting.append(self.capture_promoting)
             
         self.hist_tpiece.append(tpiece)
         
@@ -474,16 +472,13 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
-            #print "Before put back captured piece:", reprSign[cpiece], self.holding[color]
             if self.variant == CRAZYHOUSECHESS:
-                self.capture_promoting = self.hist_capture_promoting.pop()
                 if self.capture_promoting:
                     assert self.holding[color][PAWN] > 0
                     self.holding[color][PAWN] -= 1
                 else:
                     assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
-            #print "After put back captured piece:", reprSign[cpiece], self.holding[color]
                 
         # Put back piece captured by enpassant
         if flag == ENPASSANT:
@@ -504,13 +499,17 @@ class LBoard:
             self._addPiece (fcord, tpiece, color)
 
         if self.variant == CRAZYHOUSECHESS:
-            if not self.capture_promoting:
-                self.promoted[tcord] = 0
+            if cpiece != EMPTY:
+                if self.capture_promoting:
+                    self.promoted[tcord] = 1
+                else:
+                    self.promoted[tcord] = 0
             if self.promoted[fcord]:
                 self.promoted[fcord] = 1
         
         self.setColor(color)
         
+        self.capture_promoting = self.hist_capture_promoting.pop()
         self.checked = self.hist_checked.pop()
         self.opchecked = self.hist_opchecked.pop()
         self.enpassant = self.hist_enpassant.pop()
