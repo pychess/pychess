@@ -197,11 +197,7 @@ class Board:
 
     def willLeaveInCheck (self, move):
         board_clone = self.board.clone()
-        try:
-            board_clone.applyMove(move.move)
-        except:
-            print board_clone, move, board_clone.holding
-            raise
+        board_clone.applyMove(move.move)
         return board_clone.opIsChecked()
     
     def switchColor (self):
