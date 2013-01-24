@@ -25,7 +25,7 @@ moveListHeader1 = re.compile(moveListHeader1Str)
 moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
     ratedexp
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
-sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
+sanmove = "([a-hx@OoKQRBN0-8+#=-]{2,7})"
 movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
 moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
