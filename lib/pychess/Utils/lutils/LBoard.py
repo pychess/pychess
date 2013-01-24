@@ -341,7 +341,8 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
-        self.hist_capture_promoting.append(self.capture_promoting)
+        if self.variant == CRAZYHOUSECHESS:
+            self.hist_capture_promoting.append(self.capture_promoting)
          
         self.opchecked = None
         self.checked = None
@@ -395,6 +396,9 @@ class LBoard:
             fpiece = flag - 2
 
         if self.variant == CRAZYHOUSECHESS:
+            if tpiece == EMPTY:
+                self.capture_promoting = False
+            
             if flag in PROMOTIONS:
                 self.promoted[tcord] = 1
             else:
@@ -499,17 +503,16 @@ class LBoard:
             self._addPiece (fcord, tpiece, color)
 
         if self.variant == CRAZYHOUSECHESS:
-            if cpiece != EMPTY:
-                if self.capture_promoting:
-                    self.promoted[tcord] = 1
-                else:
-                    self.promoted[tcord] = 0
-            if self.promoted[fcord]:
+            if self.promoted[tcord] and (not flag in PROMOTIONS):
                 self.promoted[fcord] = 1
+            if self.capture_promoting:
+                self.promoted[tcord] = 1
+            else:
+                self.promoted[tcord] = 0
+            self.capture_promoting = self.hist_capture_promoting.pop()
         
         self.setColor(color)
         
-        self.capture_promoting = self.hist_capture_promoting.pop()
         self.checked = self.hist_checked.pop()
         self.opchecked = self.hist_opchecked.pop()
         self.enpassant = self.hist_enpassant.pop()
