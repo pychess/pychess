@@ -248,7 +248,7 @@ class GameWidget (gobject.GObject):
 
     def shown_changed (self, boardview, shown):
         if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
-            holding = self.gamemodel.getBoardAtPly(shown).board.holding
+            holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding
             self._showHolding(holding)
     
     def game_started (self, gamemodel):
