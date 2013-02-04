@@ -20,7 +20,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
                                        HiddenPiecesChess, AllWhiteChess
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.crazyhouse import CrazyhouseChess
 import preferencesDialog
 
 def intersects (r0, r1):
@@ -80,6 +80,8 @@ def matrixAround (rotatedMatrix, anchorX, anchorY):
     return matrix, invmatrix
 
 ANIMATION_TIME = 0.5
+RANKS = 8
+FILES = 8
 
 # If this is true, the board is scaled so that everything fits inside the window
 # even if the board is rotated 45 degrees
@@ -128,7 +130,7 @@ class BoardView (gtk.DrawingArea):
         # to avoid redrawMisc in animation
         
         self.padding = 0 # Set to self.pad when setcords is active
-        self.square = 0, 0, 8, 1 # An object global variable with the current
+        self.square = 0, 0, FILES, 1 # An object global variable with the current
                                  # board size
         self.pad = 0.13 # Padding applied only when setcords is active
         
@@ -171,7 +173,7 @@ class BoardView (gtk.DrawingArea):
             self.animationLock.acquire()
             try:
                 for row in self.model.boards[-1].data:
-                    for piece in row:
+                    for piece in row.values(): #row:
                         if piece:
                             piece.opacity = 0
             finally:
@@ -377,7 +379,7 @@ class BoardView (gtk.DrawingArea):
         
         self.deadlist = []
         for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.variation).data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items(): #enumerate(row):
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
         
@@ -420,7 +422,7 @@ class BoardView (gtk.DrawingArea):
             board = self.model.getBoardAtPly(self.shown, self.variation)
             
             for y, row in enumerate(board.data):
-                for x, piece in enumerate(row):
+                for x, piece in row.items(): #enumerate(row):
                     if not piece: continue
                     if piece == self.draggedPiece: continue
                     
@@ -518,7 +520,7 @@ class BoardView (gtk.DrawingArea):
         square = float(min(alloc.width, alloc.height))*p
         xc = alloc.width/2. - square/2
         yc = alloc.height/2. - square/2
-        s = square/8
+        s = square/FILES
         self.square = (xc, yc, square, s)
     
     def expose(self, widget, event):
@@ -595,7 +597,7 @@ class BoardView (gtk.DrawingArea):
             square /= abs(cos_)+abs(sin_)
         xc = alloc.width/2. - square/2
         yc = alloc.height/2. - square/2
-        s = square/8
+        s = square/FILES
         self.square = (xc, yc, square, s)
         
         self.drawBoard (context, r)
@@ -663,7 +665,7 @@ class BoardView (gtk.DrawingArea):
         pangoScale = float(pango.SCALE)
         
         def paint (inv):
-            for n in xrange(8):
+            for n in xrange(RANKS):
                 rank = inv and n+1 or 8-n
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
@@ -680,7 +682,7 @@ class BoardView (gtk.DrawingArea):
                 #context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
                 #context.show_layout(layout)
                 
-                file = inv and 8-n or n+1
+                file = inv and FILES-n or n+1
                 layout = self.create_pango_layout(chr(file+ord("A")-1))
                 layout.set_font_description(
                         pango.FontDescription("bold %d" % ss))
@@ -710,8 +712,8 @@ class BoardView (gtk.DrawingArea):
     
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
-        for x in xrange(8):
-            for y in xrange(8):
+        for x in xrange(FILES):
+            for y in xrange(RANKS):
                 if x % 2 + y % 2 == 1:
                     bounding = self.cord2RectRelative((xc+x*s,yc+y*s,s))
                     if intersects(rect(bounding), r):
@@ -721,7 +723,7 @@ class BoardView (gtk.DrawingArea):
         context.fill()
         
         if not self.showCords:
-            context.rectangle(xc, yc, 8*s, 8*s)
+            context.rectangle(xc, yc, FILES*s, RANKS*s)
             context.stroke()
     
     ###############################
@@ -732,9 +734,9 @@ class BoardView (gtk.DrawingArea):
         xc, yc, square, s = self.square
         square_, rot_ = self.cordMatricesState
         if square != self.square or rot_ != self.rotation:
-            self.cordMatrices = [None] * 64
+            self.cordMatrices = [None] * FILES*RANKS + [None] * FILES*4
             self.cordMatricesState = (self.square, self.rotation)
-        c = x * 8 + y
+        c = x * FILES + y
         if type(c) == int and self.cordMatrices[c]:
             matrices = self.cordMatrices[c]
         else:
@@ -799,7 +801,7 @@ class BoardView (gtk.DrawingArea):
         
         # Draw pieces reincarnating (With opacity < 1)
         for y, row in enumerate(pieces.data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items(): #enumerate(row):
                 if not piece or piece.opacity == 1:
                     continue
                 if piece.x:
@@ -809,7 +811,7 @@ class BoardView (gtk.DrawingArea):
         
         # Draw standing pieces (Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items(): #enumerate(row):
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
                 if not intersects(rect(self.cord2RectRelative(x,y)), r):
@@ -829,11 +831,18 @@ class BoardView (gtk.DrawingArea):
         
         # Draw moving or dragged pieces (Those with piece.x and piece.y != None)
         for y, row in enumerate(pieces.data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items(): #enumerate(row):
                 if not piece or piece.x == None or piece.opacity < 1:
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
-    
+         
+        #if self.model.variant == CrazyhouseChess:
+            #holding = self.model.getBoardAtPly(self.shown, self.variation).board.holding
+            #for color in (BLACK, WHITE):
+                #for piece in holding[color]:
+                    #if holding[color][piece] > 0:
+                        #self.__drawPiece(context, Piece(color, piece), -1 if color==BLACK else RANKS, piece-1)
+            
     ###############################
     #         drawSpecial         #
     ###############################
@@ -1239,7 +1248,7 @@ class BoardView (gtk.DrawingArea):
             x, y = cord.x, cord.y
         else: x = cord
         xc, yc, square, s = self.square
-        r = (xc+x*s, yc+(7-y)*s, s)
+        r = (xc+x*s, yc+(RANKS-1-y)*s, s)
         return r
     
     def cord2Point (self, cord, y=None):

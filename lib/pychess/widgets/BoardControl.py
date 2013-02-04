@@ -16,6 +16,9 @@ from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
 
+FILES = 8
+RANKS = 8
+
 class BoardControl (gtk.EventBox):
     
     __gsignals__ = {
@@ -73,7 +76,7 @@ class BoardControl (gtk.EventBox):
     def emit_move_signal (self, cord0, cord1):
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
-        
+        print "emit_move_signal", cord0, cord1
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         promotion = QUEEN
@@ -86,7 +89,10 @@ class BoardControl (gtk.EventBox):
                 self.view.runAnimation(redrawMisc = False)
                 return
         
-        move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
+        if cord0.x>7:
+            move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
+        else:
+            move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
         self.emit("piece_moved", move, color)
     
     def actionActivate (self, widget, key):
@@ -216,6 +222,7 @@ class BoardControl (gtk.EventBox):
 
     def _genPossibleBoards(self, ply):
         possibleBoards = []
+        return possibleBoards
         curboard = self.view.model.getBoardAtPly(ply, self.view.variation)
         for lmove in lmovegen.genAllMoves(curboard.board):
             move = Move(lmove)
@@ -235,6 +242,11 @@ class BoardState:
     def validate (self, cord0, cord1):
         assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)
         if self.getBoard()[cord0] == None: return False
+        print cord0, cord1, cord0.x, cord0.y
+        if cord0.x>7:
+            print validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
+            return validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
+        print validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
         return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
     
     def transPoint (self, x, y):
@@ -244,21 +256,22 @@ class BoardState:
         y -= yc; x -= xc
         y /= float(s)
         x /= float(s)
-        return x, 8-y
+        return x, RANKS-y
     
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
-        if not 0 <= int(point[0]) <= 7 or not 0 <= int(point[1]) <= 7:
-            return None
+        #if not 0 <= int(point[0]) <= 7 or not 0 <= int(point[1]) <= 7:
+        #    return None
+        #print int(point[0]), int(point[1])
         return Cord(int(point[0]), int(point[1]))
     
     def isSelectable (self, cord):
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
             return False
-        if not 0 <= cord.x <= 7 or not 0 <= cord.y <= 7:
-            return False
+        #if not 0 <= cord.x <= 7 or not 0 <= cord.y <= 7:
+        #    return False
         if self.view.model.status != RUNNING:
             return False
         if self.view.shown != self.view.model.ply:
@@ -295,6 +308,7 @@ class LockedBoardState (BoardState):
             Note: This doesn't always return the correct value, such as when 
             BoardControl.setLocked() has been called and we've begun a drag,
             but view.shown and BoardControl.lockedPly haven't been updated yet """
+        print "isAPotentiallyLegalNextMove"
         if cord0 == None or cord1 == None: return False
         if not self.parent.lockedPly in self.parent.possibleBoards:
             return False
@@ -320,6 +334,7 @@ class NormalState (BoardState):
     def press (self, x, y):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
+        print "NormalState.press(x,y)",x,y,cord
         if self.isSelectable(cord):
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
@@ -333,6 +348,7 @@ class ActiveState (BoardState):
     
     def release (self, x, y):
         cord = self.point2Cord(x,y)
+        print "ActiveState.release(x,y)",x,y,cord
         if not cord:
             self.view.active = None
             self.view.selected = None
@@ -419,6 +435,7 @@ class ActiveState (BoardState):
 class SelectedState (BoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
+            print "not BoardState.isSelectable(self, cord)"
             return False
         # Select another piece
         if self.getBoard()[cord] != None and \
@@ -428,10 +445,12 @@ class SelectedState (BoardState):
     
     def press (self, x, y):
         cord = self.point2Cord(x,y)
+        print "SelectedState.press(x,y)",x,y,cord
         # Unselecting by pressing the selected cord, or marking the cord to be 
         # moved to. We don't unset self.view.selected, so ActiveState can handle
         # things correctly
         if self.isSelectable(cord):
+            print "OK"
             if self.view.selected and self.view.selected != cord and \
                self.getBoard()[cord] != None and \
                self.getBoard()[cord].color == self.getBoard().color and \
@@ -448,6 +467,7 @@ class SelectedState (BoardState):
             self.parent.setStateActive()
         
         else:  # Unselecting by pressing an inactive cord
+            print "nem ok"
             self.view.selected = None
             self.parent.setStateNormal()
 
@@ -469,6 +489,7 @@ class LockedState (LockedBoardState):
     def press (self, x, y):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
+        print "LockedState.press(x,y)",x,y,cord
         if self.isSelectable(cord):
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
@@ -482,6 +503,7 @@ class LockedActiveState (LockedBoardState):
 
     def release (self, x, y):
         cord = self.point2Cord(x,y)
+        print "LockedActiveState.release(x,y)",x,y,cord
         if cord == self.view.active == self.view.selected == self.parent.selected_last:
             # user clicked (press+release) same piece twice, so unselect it
             self.view.active = None
@@ -554,6 +576,7 @@ class LockedSelectedState (LockedBoardState):
     
     def press (self, x, y):
         cord = self.point2Cord(x,y)
+        print "LockedSelectedState.press(x,y)",x,y,cord
         # Unselecting by pressing the selected cord, or marking the cord to be 
         # moved to. We don't unset self.view.selected, so ActiveState can handle
         # things correctly

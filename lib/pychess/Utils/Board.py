@@ -2,11 +2,13 @@ from copy import copy
 
 from lutils.LBoard import LBoard
 from lutils.bitboard import iterBits
-from lutils.lmove import RANK, FILE, FLAG, PROMOTE_PIECE, toAN
+from lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
 from Piece import Piece
 from Cord import Cord
 from const import *
 
+RANKS = 8
+FILES = 8
 
 class Board:
     """ Board is a thin layer above LBoard, adding the Piece objects, which are
@@ -19,7 +21,8 @@ class Board:
     variant = NORMALCHESS
     
     def __init__ (self, setup=False, lboard=None):
-        self.data = [[None]*8 for i in xrange(8)]
+        #self.data = [[None]*8 for i in xrange(8)]
+        self.data = [dict(enumerate([None]*8)) for i in xrange(8)]
         if lboard is None:
             self.board = LBoard(self.variant)
         else:
@@ -61,13 +64,27 @@ class Board:
                 self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
-    
+            
     def addPiece (self, cord, piece):
         self[cord] = piece
         self.board._addPiece(cord.cord, piece.piece, piece.color)
         self.board.updateBoard()
     
+    def getHoldingCord(self, color, piece):
+        x = -1 if color==BLACK else FILES
+        for i, row in enumerate(self.data):
+            if row.get(x) is not None:
+                if row.get(x).piece == piece:
+                    return Cord(x, i)
+
+    def newHoldingCord(self, color, piece):
+        x = -1 if color==BLACK else FILES
+        for i, row in enumerate(self.data):
+            if row.get(x) is None:
+                return Cord(x, i)
+        
     def simulateMove (self, board1, move):
+        print "simulateMove", move
         moved = []
         new = []
         dead = []
@@ -75,15 +92,18 @@ class Board:
         cord0, cord1 = move.cords
         
         if move.flag == DROP:
-            newPiece = board1[cord1]
-            new.append( newPiece )
-            newPiece.opacity=1
+            piece = FCORD(move.move)
+            cord0 = self.getHoldingCord(self.color, piece)
+            moved.append( (self[cord0], cord0) )
             return moved, new, dead
             
         moved.append( (self[cord0], cord0) )
         
         if self[cord1] and move.flag != NULL_MOVE:
-            dead.append( self[cord1] )
+            if self.variant == CRAZYHOUSECHESS:
+                moved.append( (self[cord1], cord1) )
+            else:
+                dead.append( self[cord1] )
         
         if move.flag == QUEEN_CASTLE:
             if self.color == WHITE:
@@ -111,6 +131,7 @@ class Board:
         return moved, new, dead
     
     def simulateUnmove (self, board1, move):
+        print "simulateUnMove", move
         moved = []
         new = []
         dead = []
@@ -120,7 +141,12 @@ class Board:
         moved.append( (self[cord1], cord1) )
         
         if board1[cord1] and move.flag != NULL_MOVE:
-            dead.append( board1[cord1] )
+            if self.variant == CRAZYHOUSECHESS:
+                piece = FCORD(move.move)
+                cord0 = self.newHoldingCord(self.color, piece)
+                moved.append( (board1[cord1], cord0) )
+            else:
+                dead.append( board1[cord1] )
         
         if move.flag == QUEEN_CASTLE:
             if board1.color == WHITE:
@@ -153,7 +179,7 @@ class Board:
             If lboard param was given, it will be used when cloning,
             and move will not be applyed, just the high level Piece
             objects will be adjusted.""" 
-
+        print "move", move
         flag = FLAG(move.move)
         if flag != DROP:
             assert self[move.cord0], "%s %s" % (move, self.asFen())
@@ -161,11 +187,19 @@ class Board:
         newBoard = self.clone(lboard=lboard)
         if lboard is None:
             newBoard.board.applyMove (move.move)
+
+        if self[move.cord1] is not None:
+            piece = PAWN if self[move.cord1].promoted else self[move.cord1].piece
+            new_piece = Piece(self.color, piece)
+            new_piece.opacity = 0
+            newBoard[self.newHoldingCord(self.color, piece)] = new_piece
         
         cord0, cord1 = move.cords
         
         if flag == DROP:
-            newBoard[cord1] = Piece(self.color, (move.move >> 6) & 63)
+            piece = FCORD(move.move)
+            newBoard[cord1] = newBoard[self.getHoldingCord(self.color, piece)]
+            newBoard[self.getHoldingCord(self.color, piece)] = None
         else:
             newBoard[cord1] = newBoard[cord0]
             
@@ -188,17 +222,14 @@ class Board:
                 newBoard[Cord(H8)] = None
 
         if flag in PROMOTIONS:
-            newBoard[cord1] = Piece(self.color, PROMOTE_PIECE(flag))
+            new_piece = Piece(self.color, PROMOTE_PIECE(flag))
+            new_piece.promoted = True
+            newBoard[cord1] = new_piece
         
         elif flag == ENPASSANT:
             newBoard[Cord(cord1.x, cord0.y)] = None
         
         return newBoard
-
-    def willLeaveInCheck (self, move):
-        board_clone = self.board.clone()
-        board_clone.applyMove(move.move)
-        return board_clone.opIsChecked()
     
     def switchColor (self):
         """ Switches the current color to move and unsets the enpassant cord.
@@ -232,7 +263,12 @@ class Board:
         return str(self.board)
     
     def __getitem__ (self, cord):
-        return self.data[cord.y][cord.x]
+        #return self.data[cord.y][cord.x]
+        try:
+            return self.data[cord.y].get(cord.x)
+        except:
+            print cord
+            raise
     
     def __setitem__ (self, cord, piece):
         self.data[cord.y][cord.x] = piece
@@ -250,7 +286,7 @@ class Board:
         newBoard.board.pieceBoard = newBoard
         
         for y, row in enumerate(self.data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items(): #enumerate(row):
                 newBoard.data[y][x] = piece
         
         return newBoard

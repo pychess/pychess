@@ -256,6 +256,11 @@ class LBoard:
             kingcord = self.kings[1-self.color]
             self.opchecked = isAttacked (self, kingcord, self.color)
         return self.opchecked
+
+    def willLeaveInCheck (self, move):
+        board_clone = self.clone()
+        board_clone.applyMove(move)
+        return board_clone.opIsChecked()
         
     def _addPiece (self, cord, piece, color):
         _setBit = setBit

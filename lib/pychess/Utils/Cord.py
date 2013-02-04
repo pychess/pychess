@@ -40,7 +40,7 @@ class Cord:
     cy = property(_get_cy)
     
     def intToChar (self, x):
-        assert 0 <= x <= 7
+        #assert 0 <= x <= 7
         return chr(x + ord('a'))
     
     def charToInt (self, char):

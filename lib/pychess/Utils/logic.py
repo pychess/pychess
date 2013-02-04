@@ -18,7 +18,7 @@ def getDestinationCords (board, cord):
     tcords = []
     for move in lmovegen.genAllMoves (board.board):
         if FCORD(move) == cord.cord:
-            if not board.willLeaveInCheck (Move(move)):
+            if not board.board.willLeaveInCheck(move):
                 tcords.append(Cord(TCORD(move)))
     return tcords
 
@@ -92,7 +92,7 @@ def getStatus (board):
     
 def standard_validate (board, move):
     return validateMove (board.board, move.move) and \
-           not board.willLeaveInCheck(move)
+           not board.board.willLeaveInCheck(move.move)
 
 def validate (board, move):
     if board.variant == LOSERSCHESS:
@@ -106,7 +106,7 @@ def validate (board, move):
             for c in lmovegen.genCaptures(board.board):
                 can_capture = True
                 if ischecked:
-                    if not board.willLeaveInCheck(Move(c)):
+                    if not board.board.willLeaveInCheck(c):
                         can_escape = True
                         break
                 else:
@@ -140,6 +140,6 @@ def genCastles (board):
 def legalMoveCount (board):
     moves = 0
     for move in lmovegen.genAllMoves (board.board):
-        if not board.willLeaveInCheck (Move(move)):
+        if not board.board.willLeaveInCheck(move):
             moves += 1
     return moves
