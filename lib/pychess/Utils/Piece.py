@@ -7,6 +7,9 @@ class Piece:
         self.color = color
         self.piece = piece
         
+        # in crazyhouse we need to know this for later captures
+        self.promoted = False
+        
         self.opacity = 1.0
         self.x = None
         self.y = None
