@@ -347,10 +347,10 @@ class BoardView (gtk.DrawingArea):
                 board1 = self.model.getBoardAtPly(i + step, self.variation)
                 if step == 1:
                     move = self.model.getMoveAtPly(i, self.variation)
-                    moved, new, dead = board.simulateMove(board1, move)
+                    moved, new, dead = board.simulateMove(board1, move, show_captured=True)
                 else:
                     move = self.model.getMoveAtPly(i-1, self.variation)
-                    moved, new, dead = board.simulateUnmove(board1, move)
+                    moved, new, dead = board.simulateUnmove(board1, move, show_captured=True)
                 
                 # We need to ensure, that the piece coordinate is saved in the
                 # piece
@@ -836,12 +836,6 @@ class BoardView (gtk.DrawingArea):
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
          
-        #if self.model.variant == CrazyhouseChess:
-            #holding = self.model.getBoardAtPly(self.shown, self.variation).board.holding
-            #for color in (BLACK, WHITE):
-                #for piece in holding[color]:
-                    #if holding[color][piece] > 0:
-                        #self.__drawPiece(context, Piece(color, piece), -1 if color==BLACK else RANKS, piece-1)
             
     ###############################
     #         drawSpecial         #
@@ -1248,6 +1242,10 @@ class BoardView (gtk.DrawingArea):
             x, y = cord.x, cord.y
         else: x = cord
         xc, yc, square, s = self.square
+        # TODO: captured pieces overlaps with cords when setcords is active
+        #if x < 0 or x > FILES-1:
+        #    color = self.model.getBoardAtPly(self.shown, self.variation).color
+        #    xc += -s if color==BLACK else s
         r = (xc+x*s, yc+(RANKS-1-y)*s, s)
         return r
     

@@ -27,6 +27,9 @@ class LBoard:
     ini_kings = (E1, E8)
     ini_rooks = ((A1, H1), (A8, H8))
 
+    holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
+               {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
+
     def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
 
@@ -53,6 +56,11 @@ class LBoard:
                 rc += 1
                 if rc >= drawThreshold: break
         return rc
+
+    def iniCrazy(self):
+        self.promoted = array('B', [0]*64)
+        self.capture_promoting = False
+        self.hist_capture_promoting = []
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -100,15 +108,10 @@ class LBoard:
             self.ini_kings = [None, None]
             self.ini_rooks = [[None, None], [None, None]]
 
-        #elif self.variant == CRAZYHOUSECHESS:
-        self.promoted = array('B', [0]*64)
-        self.holding = [{PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
-                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0}]
-        self.capture_promoting = False
-        self.hist_capture_promoting = []
-    
+        elif self.variant == CRAZYHOUSECHESS:
+            self.iniCrazy()
+            
         # Get information
-        
         parts = fenstr.split()
         
         if len(parts) > 6:

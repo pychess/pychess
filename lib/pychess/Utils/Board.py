@@ -10,6 +10,11 @@ from const import *
 RANKS = 8
 FILES = 8
 
+def reverse_enum(L):
+    for index in reversed(xrange(len(L))):
+        yield index, L[index]
+
+
 class Board:
     """ Board is a thin layer above LBoard, adding the Piece objects, which are
         needed for animation in BoardView.
@@ -76,15 +81,24 @@ class Board:
             if row.get(x) is not None:
                 if row.get(x).piece == piece:
                     return Cord(x, i)
+        x = -2 if color==BLACK else FILES+1
+        for i, row in enumerate(self.data):
+            if row.get(x) is not None:
+                if row.get(x).piece == piece:
+                    return Cord(x, i)
 
     def newHoldingCord(self, color, piece):
-        x = -1 if color==BLACK else FILES
-        for i, row in enumerate(self.data):
+        enum = reverse_enum if color == BLACK else enumerate
+        x = -1 if color == BLACK else FILES
+        for i, row in enum(self.data):
+            if row.get(x) is None:
+                return Cord(x, i)
+        x = -2 if color == BLACK else FILES+1
+        for i, row in enum(self.data):
             if row.get(x) is None:
                 return Cord(x, i)
         
-    def simulateMove (self, board1, move):
-        print "simulateMove", move
+    def simulateMove (self, board1, move, show_captured=False):
         moved = []
         new = []
         dead = []
@@ -99,9 +113,12 @@ class Board:
             
         moved.append( (self[cord0], cord0) )
         
-        if self[cord1] and move.flag != NULL_MOVE:
-            if self.variant == CRAZYHOUSECHESS:
-                moved.append( (self[cord1], cord1) )
+        if (self[cord1] or move.flag == ENPASSANT) and move.flag != NULL_MOVE:
+            if self.variant == CRAZYHOUSECHESS or show_captured:
+                if move.flag == ENPASSANT:
+                    moved.append( (self[Cord(cord1.x, cord1.y-1)], Cord(cord1.x, cord1.y-1)) )
+                else:
+                    moved.append( (self[cord1], cord1) )
             else:
                 dead.append( self[cord1] )
         
@@ -130,8 +147,7 @@ class Board:
         
         return moved, new, dead
     
-    def simulateUnmove (self, board1, move):
-        print "simulateUnMove", move
+    def simulateUnmove (self, board1, move, show_captured=False):
         moved = []
         new = []
         dead = []
@@ -141,7 +157,7 @@ class Board:
         moved.append( (self[cord1], cord1) )
         
         if board1[cord1] and move.flag != NULL_MOVE:
-            if self.variant == CRAZYHOUSECHESS:
+            if self.variant == CRAZYHOUSECHESS or show_captured:
                 piece = FCORD(move.move)
                 cord0 = self.newHoldingCord(self.color, piece)
                 moved.append( (board1[cord1], cord0) )
@@ -173,13 +189,12 @@ class Board:
         
         return moved, new, dead
     
-    def move (self, move, lboard=None):
+    def move (self, move, lboard=None, show_captured=True):
         """ Creates a new Board object cloning itself then applying
             the move.move to the clone Board's lboard.
             If lboard param was given, it will be used when cloning,
             and move will not be applyed, just the high level Piece
             objects will be adjusted.""" 
-        print "move", move
         flag = FLAG(move.move)
         if flag != DROP:
             assert self[move.cord0], "%s %s" % (move, self.asFen())
@@ -188,11 +203,16 @@ class Board:
         if lboard is None:
             newBoard.board.applyMove (move.move)
 
-        if self[move.cord1] is not None:
-            piece = PAWN if self[move.cord1].promoted else self[move.cord1].piece
-            new_piece = Piece(self.color, piece)
-            new_piece.opacity = 0
-            newBoard[self.newHoldingCord(self.color, piece)] = new_piece
+        if self[move.cord1] is not None or flag == ENPASSANT:
+            if self.variant == CRAZYHOUSECHESS or show_captured:
+                if self.variant == CRAZYHOUSECHESS:
+                    piece = PAWN if flag == ENPASSANT or self[move.cord1].promoted else self[move.cord1].piece
+                    new_piece = Piece(self.color, piece)
+                else:
+                    piece = PAWN if flag == ENPASSANT else self[move.cord1].piece
+                    new_piece = self[Cord(cord1.x, cord0.y) if flag == ENPASSANT else move.cord1]
+                new_piece.opacity = 0
+                newBoard[self.newHoldingCord(self.color, piece)] = new_piece
         
         cord0, cord1 = move.cords
         
