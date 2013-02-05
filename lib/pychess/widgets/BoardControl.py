@@ -89,7 +89,7 @@ class BoardControl (gtk.EventBox):
                 self.view.runAnimation(redrawMisc = False)
                 return
         
-        if cord0.x>7:
+        if cord0.x < 0 or cord0.x > FILES:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
             move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
@@ -242,11 +242,11 @@ class BoardState:
     def validate (self, cord0, cord1):
         assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)
         if self.getBoard()[cord0] == None: return False
-        print cord0, cord1, cord0.x, cord0.y
-        if cord0.x>7:
-            print validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
+        #print cord0, cord1, cord0.x, cord0.y
+        if cord0.x < 0 or cord0.x > FILES:
+            #print validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
             return validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
-        print validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
+        #print validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
         return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
     
     def transPoint (self, x, y):
@@ -256,14 +256,13 @@ class BoardState:
         y -= yc; x -= xc
         y /= float(s)
         x /= float(s)
-        return x, RANKS-y
+        return x if x>=0 else x-1, RANKS-y
     
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
         #if not 0 <= int(point[0]) <= 7 or not 0 <= int(point[1]) <= 7:
         #    return None
-        #print int(point[0]), int(point[1])
         return Cord(int(point[0]), int(point[1]))
     
     def isSelectable (self, cord):
