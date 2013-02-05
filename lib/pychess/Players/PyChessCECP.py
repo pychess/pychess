@@ -107,6 +107,7 @@ class PyChessCECP(PyChess):
                             self.board.variant = FISCHERRANDOMCHESS
                         elif lines[1] == "crazyhouse":
                             self.board.variant = CRAZYHOUSECHESS
+                            self.board.iniCrazy()
                 
                 elif lines[0] == "quit":
                     self.forced = True

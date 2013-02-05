@@ -542,7 +542,7 @@ class GameModel (GObject, PooledThread):
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s\n" % \
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
-                newBoard = self.boards[-1].move(move)
+                newBoard = self.boards[-1].move(move, show_captured=True)
                 newBoard.board.prev = self.boards[-1].board
                 
                 # Variation on next move can exist from the hint panel...
