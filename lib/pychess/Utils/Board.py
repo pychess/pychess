@@ -103,6 +103,9 @@ class Board:
         new = []
         dead = []
         
+        if move.flag == NULL_MOVE:
+            return moved, new, dead
+            
         cord0, cord1 = move.cords
         
         if move.flag == DROP:
@@ -113,12 +116,9 @@ class Board:
             
         moved.append( (self[cord0], cord0) )
         
-        if (self[cord1] or move.flag == ENPASSANT) and move.flag != NULL_MOVE:
+        if self[cord1]:
             if self.variant == CRAZYHOUSECHESS or show_captured:
-                if move.flag == ENPASSANT:
-                    moved.append( (self[Cord(cord1.x, cord1.y-1)], Cord(cord1.x, cord1.y-1)) )
-                else:
-                    moved.append( (self[cord1], cord1) )
+                moved.append( (self[cord1], cord1) )
             else:
                 dead.append( self[cord1] )
         
@@ -141,9 +141,16 @@ class Board:
             dead.append( self[cord0] )
         
         elif move.flag == ENPASSANT:
-            if self.color == WHITE:
-                dead.append( self[Cord(cord1.x, cord1.y-1)] )
-            else: dead.append( self[Cord(cord1.x, cord1.y+1)] )
+            if self.variant == CRAZYHOUSE or show_captured:
+                if self.color == WHITE:
+                    moved.append( (self[Cord(cord1.x, cord1.y-1)], Cord(cord1.x, cord1.y-1)) )
+                else:
+                    moved.append( (self[Cord(cord1.x, cord1.y+1)], Cord(cord1.x, cord1.y+1)) )
+            else:
+                if self.color == WHITE:
+                    dead.append( self[Cord(cord1.x, cord1.y-1)] )
+                else:
+                    dead.append( self[Cord(cord1.x, cord1.y+1)] )
         
         return moved, new, dead
     
@@ -151,15 +158,18 @@ class Board:
         moved = []
         new = []
         dead = []
+
+        if move.flag == NULL_MOVE:
+            return moved, new, dead
         
         cord0, cord1 = move.cords
         
         moved.append( (self[cord1], cord1) )
         
-        if board1[cord1] and move.flag != NULL_MOVE:
+        if board1[cord1]:
             if self.variant == CRAZYHOUSECHESS or show_captured:
                 piece = FCORD(move.move)
-                cord0 = self.newHoldingCord(self.color, piece)
+                cord0 = self.getHoldingCord(self.color, piece)
                 moved.append( (board1[cord1], cord0) )
             else:
                 dead.append( board1[cord1] )
@@ -185,7 +195,8 @@ class Board:
         elif move.flag == ENPASSANT:
             if board1.color == WHITE:
                 new.append( board1[Cord(cord1.x, cord1.y-1)] )
-            else: new.append( board1[Cord(cord1.x, cord1.y+1)] )
+            else:
+                new.append( board1[Cord(cord1.x, cord1.y+1)] )
         
         return moved, new, dead
     
