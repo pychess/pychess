@@ -115,10 +115,13 @@ class Board:
             return moved, new, dead
             
         moved.append( (self[cord0], cord0) )
-        
+
         if self[cord1]:
             if self.variant == CRAZYHOUSECHESS or show_captured:
-                moved.append( (self[cord1], cord1) )
+                piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
+                cord = self.newHoldingCord(self.color, piece)
+                moved.append( (board1[cord], cord0) )
+                new.append( board1[cord] )
             else:
                 dead.append( self[cord1] )
         
@@ -141,7 +144,7 @@ class Board:
             dead.append( self[cord0] )
         
         elif move.flag == ENPASSANT:
-            if self.variant == CRAZYHOUSE or show_captured:
+            if self.variant == CRAZYHOUSECHESS or show_captured:
                 if self.color == WHITE:
                     moved.append( (self[Cord(cord1.x, cord1.y-1)], Cord(cord1.x, cord1.y-1)) )
                 else:
@@ -168,9 +171,10 @@ class Board:
         
         if board1[cord1]:
             if self.variant == CRAZYHOUSECHESS or show_captured:
-                piece = FCORD(move.move)
-                cord0 = self.getHoldingCord(self.color, piece)
-                moved.append( (board1[cord1], cord0) )
+                piece = board1[cord1].piece
+                cord0 = self.getHoldingCord(1-self.color, piece)
+                moved.append( (self[cord0], cord0) )
+                dead.append( self[cord0] )
             else:
                 dead.append( board1[cord1] )
         
