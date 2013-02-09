@@ -27,7 +27,7 @@ class Board:
     
     def __init__ (self, setup=False, lboard=None):
         #self.data = [[None]*8 for i in xrange(8)]
-        self.data = [dict(enumerate([None]*8)) for i in xrange(8)]
+        self.data = [dict(enumerate([None]*FILES)) for i in xrange(RANKS)]
         if lboard is None:
             self.board = LBoard(self.variant)
         else:
@@ -70,33 +70,23 @@ class Board:
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
             
-    def addPiece (self, cord, piece):
-        self[cord] = piece
-        self.board._addPiece(cord.cord, piece.piece, piece.color)
-        self.board.updateBoard()
-    
     def getHoldingCord(self, color, piece):
-        x = -1 if color==BLACK else FILES
+        x1 = -1 if color==BLACK else FILES
+        x2 = -2 if color==BLACK else FILES+1
         for i, row in enumerate(self.data):
-            if row.get(x) is not None:
-                if row.get(x).piece == piece:
-                    return Cord(x, i)
-        x = -2 if color==BLACK else FILES+1
-        for i, row in enumerate(self.data):
-            if row.get(x) is not None:
-                if row.get(x).piece == piece:
-                    return Cord(x, i)
+            for x in (x1, x2):
+                if row.get(x) is not None:
+                    if row.get(x).piece == piece:
+                        return Cord(x, i)
 
     def newHoldingCord(self, color, piece):
         enum = reverse_enum if color == BLACK else enumerate
-        x = -1 if color == BLACK else FILES
+        x1 = -1 if color == BLACK else FILES
+        x2 = -2 if color == BLACK else FILES+1
         for i, row in enum(self.data):
-            if row.get(x) is None:
-                return Cord(x, i)
-        x = -2 if color == BLACK else FILES+1
-        for i, row in enum(self.data):
-            if row.get(x) is None:
-                return Cord(x, i)
+            for x in (x1, x2):
+                if row.get(x) is None:
+                    return Cord(x, i)
         
     def simulateMove (self, board1, move, show_captured=False):
         moved = []
@@ -120,7 +110,7 @@ class Board:
             if self.variant == CRAZYHOUSECHESS or show_captured:
                 piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
                 cord = self.newHoldingCord(self.color, piece)
-                moved.append( (board1[cord], cord0) )
+                moved.append( (board1[cord], cord1) )
                 new.append( board1[cord] )
             else:
                 dead.append( self[cord1] )
@@ -140,20 +130,16 @@ class Board:
             newPiece = board1[cord1]
             moved.append( (newPiece, cord0) )
             new.append( newPiece )
-            newPiece.opacity=1
-            dead.append( self[cord0] )
         
         elif move.flag == ENPASSANT:
+            shift = -1 if self.color == WHITE else 1
+            ep_cord = Cord(cord1.x, cord1.y + shift)
             if self.variant == CRAZYHOUSECHESS or show_captured:
-                if self.color == WHITE:
-                    moved.append( (self[Cord(cord1.x, cord1.y-1)], Cord(cord1.x, cord1.y-1)) )
-                else:
-                    moved.append( (self[Cord(cord1.x, cord1.y+1)], Cord(cord1.x, cord1.y+1)) )
+                moved.append( (self[ep_cord], ep_cord) )
+                cord = self.newHoldingCord(self.color, PAWN)
+                new.append( board1[cord] )
             else:
-                if self.color == WHITE:
-                    dead.append( self[Cord(cord1.x, cord1.y-1)] )
-                else:
-                    dead.append( self[Cord(cord1.x, cord1.y+1)] )
+                dead.append( self[ep_cord] )
         
         return moved, new, dead
     
@@ -171,10 +157,11 @@ class Board:
         
         if board1[cord1]:
             if self.variant == CRAZYHOUSECHESS or show_captured:
-                piece = board1[cord1].piece
-                cord0 = self.getHoldingCord(1-self.color, piece)
-                moved.append( (self[cord0], cord0) )
-                dead.append( self[cord0] )
+                piece = PAWN if self.variant == CRAZYHOUSECHESS and board1[cord1].promoted else board1[cord1].piece
+                cord = self.getHoldingCord(1-self.color, piece)
+                moved.append( (self[cord], cord) )
+                self[cord].opacity = 1
+                dead.append( self[cord] )
             else:
                 dead.append( board1[cord1] )
         
@@ -193,14 +180,18 @@ class Board:
             newPiece = board1[cord0]
             moved.append( (newPiece, cord1) )
             new.append( newPiece )
-            newPiece.opacity=1
-            dead.append( self[cord1] )
         
         elif move.flag == ENPASSANT:
-            if board1.color == WHITE:
-                new.append( board1[Cord(cord1.x, cord1.y-1)] )
+            if self.variant == CRAZYHOUSECHESS or show_captured:
+                cord = self.getHoldingCord(1-self.color, PAWN)
+                moved.append( (self[cord], cord) )
+                self[cord].opacity = 1
+                dead.append( self[cord] )
             else:
-                new.append( board1[Cord(cord1.x, cord1.y+1)] )
+                if board1.color == WHITE:
+                    new.append( board1[Cord(cord1.x, cord1.y-1)] )
+                else:
+                    new.append( board1[Cord(cord1.x, cord1.y+1)] )
         
         return moved, new, dead
     
