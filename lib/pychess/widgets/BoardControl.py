@@ -257,7 +257,11 @@ class BoardState:
         xc, yc, square, s = self.view.square
         x, y = self.view.invmatrix.transform_point(x,y)
         y -= yc; x -= xc
+        
         y /= float(s)
+        if x < 0 or x > square:
+            shift = -s/2 if x < 0 else s/2
+            x -= shift
         x /= float(s)
         return x if x>=0 else x-1, RANKS-y
     

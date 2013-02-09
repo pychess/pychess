@@ -1242,11 +1242,11 @@ class BoardView (gtk.DrawingArea):
             x, y = cord.x, cord.y
         else: x = cord
         xc, yc, square, s = self.square
-        # TODO: captured pieces overlaps with cords when setcords is active
-        #if x < 0 or x > FILES-1:
-        #    color = self.model.getBoardAtPly(self.shown, self.variation).color
-        #    xc += -s if color==BLACK else s
-        r = (xc+x*s, yc+(RANKS-1-y)*s, s)
+
+        shift = 0
+        if x < 0 or x > FILES-1:
+            shift = -s/2 if x < 0 else s/2
+        r = (xc+x*s+shift, yc+(RANKS-1-y)*s, s)
         return r
     
     def cord2Point (self, cord, y=None):
