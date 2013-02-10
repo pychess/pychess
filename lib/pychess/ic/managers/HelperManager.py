@@ -78,8 +78,12 @@ class HelperManager (GObject):
             inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
         try:
             gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
-        except KeyError: return
+        except KeyError:
+            return
         
+        if gametype.variant_type in UNSUPPORTED:
+            return
+            
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
         game = FICSGame(wplayer, bplayer, gameno=int(gameno),
@@ -99,7 +103,10 @@ class HelperManager (GObject):
         
     def on_game_add (self, match):
         gameno, wname, bname, rated, game_type = match.groups()
-        if game_type not in GAME_TYPES: return
+        if game_type not in GAME_TYPES:
+            return
+        if GAME_TYPES[game_type].variant_type in UNSUPPORTED:
+            return
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
         game = FICSGame(wplayer, bplayer, gameno=int(gameno),
