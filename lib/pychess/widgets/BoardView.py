@@ -345,12 +345,13 @@ class BoardView (gtk.DrawingArea):
             for i in xrange(self.shown, shown, step):
                 board = self.model.getBoardAtPly(i, self.variation)
                 board1 = self.model.getBoardAtPly(i + step, self.variation)
+                showCaptured = conf.get("showCaptured", False)
                 if step == 1:
                     move = self.model.getMoveAtPly(i, self.variation)
-                    moved, new, dead = board.simulateMove(board1, move, show_captured=True)
+                    moved, new, dead = board.simulateMove(board1, move, show_captured=showCaptured)
                 else:
                     move = self.model.getMoveAtPly(i-1, self.variation)
-                    moved, new, dead = board.simulateUnmove(board1, move, show_captured=True)
+                    moved, new, dead = board.simulateUnmove(board1, move, show_captured=showCaptured)
                 
                 # We need to ensure, that the piece coordinate is saved in the
                 # piece
@@ -379,7 +380,7 @@ class BoardView (gtk.DrawingArea):
         
         self.deadlist = []
         for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.variation).data):
-            for x, piece in row.items(): #enumerate(row):
+            for x, piece in row.items():
                 if piece in deadset:
                     self.deadlist.append((piece,x,y))
         
@@ -422,7 +423,7 @@ class BoardView (gtk.DrawingArea):
             board = self.model.getBoardAtPly(self.shown, self.variation)
             
             for y, row in enumerate(board.data):
-                for x, piece in row.items(): #enumerate(row):
+                for x, piece in row.items():
                     if not piece: continue
                     if piece == self.draggedPiece: continue
                     
@@ -801,7 +802,7 @@ class BoardView (gtk.DrawingArea):
         
         # Draw pieces reincarnating (With opacity < 1)
         for y, row in enumerate(pieces.data):
-            for x, piece in row.items(): #enumerate(row):
+            for x, piece in row.items():
                 if not piece or piece.opacity == 1:
                     continue
                 if piece.x:
@@ -811,7 +812,7 @@ class BoardView (gtk.DrawingArea):
         
         # Draw standing pieces (Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
-            for x, piece in row.items(): #enumerate(row):
+            for x, piece in row.items():
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
                 if not intersects(rect(self.cord2RectRelative(x,y)), r):
@@ -831,7 +832,7 @@ class BoardView (gtk.DrawingArea):
         
         # Draw moving or dragged pieces (Those with piece.x and piece.y != None)
         for y, row in enumerate(pieces.data):
-            for x, piece in row.items(): #enumerate(row):
+            for x, piece in row.items():
                 if not piece or piece.x == None or piece.opacity < 1:
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
@@ -1244,6 +1245,7 @@ class BoardView (gtk.DrawingArea):
         xc, yc, square, s = self.square
 
         shift = 0
+        # Holdings need some shift not to overlap cord letters when showCords is on
         if x < 0 or x > FILES-1:
             shift = -s/2 if x < 0 else s/2
         r = (xc+x*s+shift, yc+(RANKS-1-y)*s, s)

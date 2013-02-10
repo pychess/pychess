@@ -26,7 +26,6 @@ class Board:
     variant = NORMALCHESS
     
     def __init__ (self, setup=False, lboard=None):
-        #self.data = [[None]*8 for i in xrange(8)]
         self.data = [dict(enumerate([None]*FILES)) for i in xrange(RANKS)]
         if lboard is None:
             self.board = LBoard(self.variant)
@@ -71,10 +70,11 @@ class Board:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
             
     def getHoldingCord(self, color, piece):
+        enum = reverse_enum if color == WHITE else enumerate
         x1 = -1 if color==BLACK else FILES
         x2 = -2 if color==BLACK else FILES+1
-        for i, row in enumerate(self.data):
-            for x in (x1, x2):
+        for i, row in enum(self.data):
+            for x in (x2, x1):
                 if row.get(x) is not None:
                     if row.get(x).piece == piece:
                         return Cord(x, i)
@@ -147,7 +147,7 @@ class Board:
         moved = []
         new = []
         dead = []
-
+        
         if move.flag == NULL_MOVE:
             return moved, new, dead
         
@@ -195,7 +195,7 @@ class Board:
         
         return moved, new, dead
     
-    def move (self, move, lboard=None, show_captured=True):
+    def move (self, move, lboard=None, show_captured=False):
         """ Creates a new Board object cloning itself then applying
             the move.move to the clone Board's lboard.
             If lboard param was given, it will be used when cloning,
@@ -209,6 +209,8 @@ class Board:
         if lboard is None:
             newBoard.board.applyMove (move.move)
 
+        cord0, cord1 = move.cords
+
         if self[move.cord1] is not None or flag == ENPASSANT:
             if self.variant == CRAZYHOUSECHESS or show_captured:
                 if self.variant == CRAZYHOUSECHESS:
@@ -216,11 +218,8 @@ class Board:
                     new_piece = Piece(self.color, piece)
                 else:
                     piece = PAWN if flag == ENPASSANT else self[move.cord1].piece
-                    new_piece = self[Cord(cord1.x, cord0.y) if flag == ENPASSANT else move.cord1]
-                new_piece.opacity = 0
+                    new_piece = Piece(1-self.color, piece)
                 newBoard[self.newHoldingCord(self.color, piece)] = new_piece
-        
-        cord0, cord1 = move.cords
         
         if flag == DROP:
             piece = FCORD(move.move)
@@ -289,13 +288,8 @@ class Board:
         return str(self.board)
     
     def __getitem__ (self, cord):
-        #return self.data[cord.y][cord.x]
-        try:
-            return self.data[cord.y].get(cord.x)
-        except:
-            print cord
-            raise
-    
+        return self.data[cord.y].get(cord.x)
+     
     def __setitem__ (self, cord, piece):
         self.data[cord.y][cord.x] = piece
     
@@ -312,7 +306,7 @@ class Board:
         newBoard.board.pieceBoard = newBoard
         
         for y, row in enumerate(self.data):
-            for x, piece in row.items(): #enumerate(row):
+            for x, piece in row.items():
                 newBoard.data[y][x] = piece
         
         return newBoard
