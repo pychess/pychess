@@ -259,6 +259,7 @@ class BoardState:
         y -= yc; x -= xc
         
         y /= float(s)
+        # Holdings need some shift not to overlap cord letters when showCords is on
         if x < 0 or x > square:
             shift = -s/2 if x < 0 else s/2
             x -= shift
@@ -281,10 +282,10 @@ class BoardState:
         if not cord:
             return False
         if self.parent.variant == CrazyhouseChess:
-            if not -2 <= cord.x <= FILES+1 or not 0 <= cord.y <= RANKS-1:
+            if (not -2 <= cord.x <= FILES+1) or (not 0 <= cord.y <= RANKS-1):
                 return False
         else:
-            if not 0 <= cord.x <= FILES-1 or not 0 <= cord.y <= RANKS-1:
+            if (not 0 <= cord.x <= FILES-1) or (not 0 <= cord.y <= RANKS-1):
                 return False
         if self.view.model.status != RUNNING:
             return False

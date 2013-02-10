@@ -3,6 +3,7 @@
 import re
 from datetime import date
 
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
@@ -280,6 +281,8 @@ class PGNFile (PgnBase):
             if board.lastMove is not None:
                 model.moves.append(Move(board.lastMove))
         
+        showCaptured=conf.get("showCaptured", False)
+        
         def walk(node, path):
             if node.prev is None:
                 # initial game board
@@ -291,7 +294,7 @@ class PGNFile (PgnBase):
                     board = Board(setup=node.asFen(), lboard=node)
             else:
                 move = Move(node.lastMove)
-                board = node.prev.pieceBoard.move(move, lboard=node)
+                board = node.prev.pieceBoard.move(move, lboard=node, show_captured=showCaptured)
 
             if node.next is None:
                 model.variations.append(path+[board])
