@@ -12,7 +12,7 @@ from pychess.ic.FICSObjects import *
 names = "(\w+)"
 titles = "((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
-ratings = "\(\s*([-0-9+]+|UNR)\)"
+ratings = "\(\s*([0-9\ \-\+]{4}[P E]?|UNR)\)"
 
 weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
