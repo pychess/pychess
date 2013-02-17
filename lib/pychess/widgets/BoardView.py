@@ -80,14 +80,14 @@ def matrixAround (rotatedMatrix, anchorX, anchorY):
     return matrix, invmatrix
 
 ANIMATION_TIME = 0.5
-RANKS = 8
-FILES = 8
 
 # If this is true, the board is scaled so that everything fits inside the window
 # even if the board is rotated 45 degrees
 SCALE_ROTATED_BOARD = False
 
 CORD_PADDING = 1.5
+HOLDING_SHIFT = 0.5
+
 
 class BoardView (gtk.DrawingArea):
     
@@ -114,10 +114,13 @@ class BoardView (gtk.DrawingArea):
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
+        conf.notify_add("showCaptured", self.on_show_captured)
         conf.notify_add("faceToFace", self.on_face_to_face)
         conf.notify_add("pieceTheme", self.on_set_piece_theme)
         conf.notify_add("transparentPieces", self.on_set_piece_theme)
-        self.set_size_request(150, 150)
+
+        self.RANKS = self.model.boards[0].RANKS
+        self.FILES = self.model.boards[0].FILES
         
         self.animationStart = time()
         self.lastShown = None
@@ -130,7 +133,7 @@ class BoardView (gtk.DrawingArea):
         # to avoid redrawMisc in animation
         
         self.padding = 0 # Set to self.pad when setcords is active
-        self.square = 0, 0, FILES, 1 # An object global variable with the current
+        self.square = 0, 0, self.FILES, 1 # An object global variable with the current
                                  # board size
         self.pad = 0.13 # Padding applied only when setcords is active
         
@@ -144,6 +147,8 @@ class BoardView (gtk.DrawingArea):
         self._shown = self.model.ply
         self._showCords = False
         self.showCords = conf.get("showCords", False)
+        self._showCaptured = False
+        self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseChess
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -261,6 +266,9 @@ class BoardView (gtk.DrawingArea):
     
     def on_show_cords (self, *args):
         self.showCords = conf.get("showCords", False)
+
+    def on_show_captured (self, *args):
+        self.showCaptured = conf.get("showCaptured", False)
     
     def on_face_to_face (self, *args):
         self.redraw_canvas()
@@ -345,13 +353,12 @@ class BoardView (gtk.DrawingArea):
             for i in xrange(self.shown, shown, step):
                 board = self.model.getBoardAtPly(i, self.variation)
                 board1 = self.model.getBoardAtPly(i + step, self.variation)
-                showCaptured = conf.get("showCaptured", False)
                 if step == 1:
                     move = self.model.getMoveAtPly(i, self.variation)
-                    moved, new, dead = board.simulateMove(board1, move, show_captured=showCaptured)
+                    moved, new, dead = board.simulateMove(board1, move)
                 else:
                     move = self.model.getMoveAtPly(i-1, self.variation)
-                    moved, new, dead = board.simulateUnmove(board1, move, show_captured=showCaptured)
+                    moved, new, dead = board.simulateUnmove(board1, move)
                 
                 # We need to ensure, that the piece coordinate is saved in the
                 # piece
@@ -445,6 +452,7 @@ class BoardView (gtk.DrawingArea):
                         if (newx <= x <= piece.x or newx >= x >= piece.x) and \
                            (newy <= y <= piece.y or newy >= y >= piece.y) or \
                            abs(newx-x) < 0.005 and abs(newy-y) < 0.005:
+                            paintBox = join(paintBox, self.cord2RectRelative(x, y))
                             piece.x = None
                             piece.y = None
                         else:
@@ -521,7 +529,7 @@ class BoardView (gtk.DrawingArea):
         square = float(min(alloc.width, alloc.height))*p
         xc = alloc.width/2. - square/2
         yc = alloc.height/2. - square/2
-        s = square/FILES
+        s = square/self.FILES
         self.square = (xc, yc, square, s)
     
     def expose(self, widget, event):
@@ -593,12 +601,16 @@ class BoardView (gtk.DrawingArea):
         cos_, sin_ = self.matrix[0], self.matrix[1]
         context.transform(self.matrix)
         
-        square = float(min(alloc.width, alloc.height))*(1-self.padding)
+        if self.showCaptured:
+            holding_size = (alloc.width/(self.FILES+4+HOLDING_SHIFT*2))*(4+HOLDING_SHIFT*2)
+        else:
+            holding_size = 0
+        square = float(min(alloc.width - holding_size, alloc.height))*(1-self.padding)
         if SCALE_ROTATED_BOARD:
             square /= abs(cos_)+abs(sin_)
         xc = alloc.width/2. - square/2
         yc = alloc.height/2. - square/2
-        s = square/FILES
+        s = square/self.FILES
         self.square = (xc, yc, square, s)
         
         self.drawBoard (context, r)
@@ -666,8 +678,8 @@ class BoardView (gtk.DrawingArea):
         pangoScale = float(pango.SCALE)
         
         def paint (inv):
-            for n in xrange(RANKS):
-                rank = inv and n+1 or 8-n
+            for n in xrange(self.RANKS):
+                rank = inv and n+1 or self.RANKS-n
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
                         pango.FontDescription("bold %d" % ss))
@@ -683,7 +695,7 @@ class BoardView (gtk.DrawingArea):
                 #context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
                 #context.show_layout(layout)
                 
-                file = inv and FILES-n or n+1
+                file = inv and self.FILES-n or n+1
                 layout = self.create_pango_layout(chr(file+ord("A")-1))
                 layout.set_font_description(
                         pango.FontDescription("bold %d" % ss))
@@ -713,8 +725,8 @@ class BoardView (gtk.DrawingArea):
     
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
-        for x in xrange(FILES):
-            for y in xrange(RANKS):
+        for x in xrange(self.FILES):
+            for y in xrange(self.RANKS):
                 if x % 2 + y % 2 == 1:
                     bounding = self.cord2RectRelative((xc+x*s,yc+y*s,s))
                     if intersects(rect(bounding), r):
@@ -724,7 +736,7 @@ class BoardView (gtk.DrawingArea):
         context.fill()
         
         if not self.showCords:
-            context.rectangle(xc, yc, FILES*s, RANKS*s)
+            context.rectangle(xc, yc, self.FILES*s, self.RANKS*s)
             context.stroke()
     
     ###############################
@@ -735,9 +747,9 @@ class BoardView (gtk.DrawingArea):
         xc, yc, square, s = self.square
         square_, rot_ = self.cordMatricesState
         if square != self.square or rot_ != self.rotation:
-            self.cordMatrices = [None] * FILES*RANKS + [None] * FILES*4
+            self.cordMatrices = [None] * self.FILES*self.RANKS + [None] * self.FILES*4
             self.cordMatricesState = (self.square, self.rotation)
-        c = x * FILES + y
+        c = x * self.FILES + y
         if type(c) == int and self.cordMatrices[c]:
             matrices = self.cordMatrices[c]
         else:
@@ -756,6 +768,10 @@ class BoardView (gtk.DrawingArea):
                 return
         elif self.model.variant == HiddenPiecesChess:
             if piece.piece != PAWN:
+                return
+        
+        if not self.showCaptured:
+            if x < 0 or x >= self.FILES:
                 return
 
         xc, yc, square, s = self.square
@@ -1221,6 +1237,15 @@ class BoardView (gtk.DrawingArea):
     def _get_showCords (self):
         return self._showCords
     showCords = property(_get_showCords, _set_showCords)
+
+    def _set_showCaptured (self, showCaptured):
+        self._showCaptured = showCaptured or self.model.variant == CrazyhouseChess
+        files_for_holding = 4+2*HOLDING_SHIFT if self._showCaptured else 0
+        self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
+        self.redraw_canvas()
+    def _get_showCaptured (self):
+        return self._showCaptured
+    showCaptured = property(_get_showCaptured, _set_showCaptured)
     
     def _set_showEnpassant (self, showEnpassant):
         if self._showEnpassant == showEnpassant: return
@@ -1246,9 +1271,9 @@ class BoardView (gtk.DrawingArea):
 
         shift = 0
         # Holdings need some shift not to overlap cord letters when showCords is on
-        if x < 0 or x > FILES-1:
-            shift = -s/2 if x < 0 else s/2
-        r = (xc+x*s+shift, yc+(RANKS-1-y)*s, s)
+        if x < 0 or x > self.FILES-1:
+            shift = -s*HOLDING_SHIFT if x < 0 else s*HOLDING_SHIFT
+        r = (xc+x*s+shift, yc+(self.RANKS-1-y)*s, s)
         return r
     
     def cord2Point (self, cord, y=None):

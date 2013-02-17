@@ -12,7 +12,6 @@ from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System.ThreadPool import PooledThread, pool
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
-from pychess.System import conf
 from pychess.Utils.Move import Move, toSAN
 from pychess.Utils.eco import get_eco
 from pychess.Variants.normal import NormalChess
@@ -543,7 +542,7 @@ class GameModel (GObject, PooledThread):
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s\n" % \
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
-                newBoard = self.boards[-1].move(move, show_captured=conf.get("showCaptured", False))
+                newBoard = self.boards[-1].move(move)
                 newBoard.board.prev = self.boards[-1].board
                 
                 # Variation on next move can exist from the hint panel...
