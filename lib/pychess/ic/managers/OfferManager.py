@@ -10,7 +10,7 @@ names = "\w+(?:\([A-Z\*]+\))*"
 
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\])?"
-ratings = "\(([0-9\ \-\+]{4})\)"
+ratings = "\(([0-9\ \-\+]{4}[E P]?)\)"
 loaded_from = "(?: Loaded from (wild.*))?"
 adjourned = "(?: (\(adjourned\)))?"
 
@@ -124,6 +124,7 @@ class OfferManager (GObject):
     def onOfferAdd (self, match):
         log.debug("OfferManager.onOfferAdd: match.string=%s\n" % match.string)
         tofrom, index, offertype, parameters = match.groups()
+
         if tofrom == "t":
             # ICGameModel keeps track of the offers we've sent ourselves, so we
             # don't need this
