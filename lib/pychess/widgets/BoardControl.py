@@ -14,11 +14,9 @@ from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseChess
 
 from PromotionDialog import PromotionDialog
-from BoardView import BoardView, rect
+from BoardView import BoardView, rect, HOLDING_SHIFT
 from BoardView import join
 
-FILES = 8
-RANKS = 8
 
 class BoardControl (gtk.EventBox):
     
@@ -33,6 +31,9 @@ class BoardControl (gtk.EventBox):
         self.view = BoardView(gamemodel)
         self.add(self.view)
         self.variant = gamemodel.variant
+
+        self.RANKS = gamemodel.boards[0].RANKS
+        self.FILES = gamemodel.boards[0].FILES
         
         self.actionMenuItems = actionMenuItems
         self.connections = {}
@@ -81,7 +82,7 @@ class BoardControl (gtk.EventBox):
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         promotion = QUEEN
-        if board[cord0].sign == PAWN and cord1.y in (0, RANKS-1):
+        if board[cord0].sign == PAWN and cord1.y in (0, self.RANKS-1):
             res = self.promotionDialog.runAndHide(color)
             if res != gtk.RESPONSE_DELETE_EVENT:
                 promotion = res
@@ -90,7 +91,7 @@ class BoardControl (gtk.EventBox):
                 self.view.runAnimation(redrawMisc = False)
                 return
         
-        if cord0.x < 0 or cord0.x > FILES-1:
+        if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
             move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
@@ -236,6 +237,9 @@ class BoardState:
         self.parent = board
         self.view = board.view
         self.lastMotionCord = None
+
+        self.RANKS = self.view.model.boards[0].RANKS
+        self.FILES = self.view.model.boards[0].FILES
     
     def getBoard (self):
         return self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
@@ -244,9 +248,9 @@ class BoardState:
         assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)
         if self.getBoard()[cord0] == None:
             return False
-        if cord1.x < 0 or cord1.x > FILES-1:
+        if cord1.x < 0 or cord1.x > self.FILES-1:
             return False
-        if cord0.x < 0 or cord0.x > FILES-1:
+        if cord0.x < 0 or cord0.x > self.FILES-1:
             # drop
             return validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
         else:
@@ -261,19 +265,19 @@ class BoardState:
         y /= float(s)
         # Holdings need some shift not to overlap cord letters when showCords is on
         if x < 0 or x > square:
-            shift = -s/2 if x < 0 else s/2
+            shift = -s*HOLDING_SHIFT if x < 0 else s*HOLDING_SHIFT
             x -= shift
         x /= float(s)
-        return x if x>=0 else x-1, RANKS-y
+        return x if x>=0 else x-1, self.RANKS-y
     
     def point2Cord (self, x, y):
         if not self.view.square: return None
         point = self.transPoint(x, y)
         if self.parent.variant == CrazyhouseChess:
-            if not -2 <= int(point[0]) <= FILES+1 or not 0 <= int(point[1]) <= RANKS-1:
+            if not -2 <= int(point[0]) <= self.FILES+1 or not 0 <= int(point[1]) <= self.RANKS-1:
                 return None
         else:
-            if not 0 <= int(point[0]) <= FILES-1 or not 0 <= int(point[1]) <= RANKS-1:
+            if not 0 <= int(point[0]) <= self.FILES-1 or not 0 <= int(point[1]) <= self.RANKS-1:
                 return None
         return Cord(int(point[0]), int(point[1]))
     
@@ -282,10 +286,10 @@ class BoardState:
         if not cord:
             return False
         if self.parent.variant == CrazyhouseChess:
-            if (not -2 <= cord.x <= FILES+1) or (not 0 <= cord.y <= RANKS-1):
+            if (not -2 <= cord.x <= self.FILES+1) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         else:
-            if (not 0 <= cord.x <= FILES-1) or (not 0 <= cord.y <= RANKS-1):
+            if (not 0 <= cord.x <= self.FILES-1) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         if self.view.model.status != RUNNING:
             return False
