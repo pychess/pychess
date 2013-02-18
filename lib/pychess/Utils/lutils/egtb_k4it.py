@@ -31,7 +31,7 @@ class egtb_k4it:
         if (fen,board.color) in self.table:
             return self.table[(fen,board.color)]
         
-        if probeSoft or not conf.get("allowRemoteProbes", True):
+        if probeSoft or not conf.get("online_egtb_check", True):
             return []
         
         # Request the page
