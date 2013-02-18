@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="480"
+   height="480"
+   id="svg2985"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="br.svg">
+  <title
+     id="title3932">Black Rook</title>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="942"
+     inkscape:window-height="480"
+     id="namedview3930"
+     showgrid="false"
+     inkscape:zoom="0.49166667"
+     inkscape:cx="-350.84746"
+     inkscape:cy="240"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2985" />
+  <defs
+     id="defs2987" />
+  <metadata
+     id="metadata2990">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Black Rook</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:date>6.1.2013</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>James Kilfinger+alfons z!</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://openfontlibrary.org/assets/downloads/chess/dd244e4b50bb954610bc0b2372ce2e18/chess.zip</dc:source>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       d="m 238.375,69.21875 c -32.38633,0 -36.14492,49.09375 -68.53125,49.09375 -18.89203,0 -27.01139,-25.34375 -48.0625,-25.34375 -10.79544,0 -18.875,10.24433 -18.875,20.5 0,8.63635 2.69607,50.73015 43.71875,89.59375 26.44884,-8.63635 57.74435,-14.03125 91.75,-14.03125 34.00565,0 65.33241,5.3949 91.78125,14.03125 41.56246,-44.80109 43.71875,-84.19603 43.71875,-89.59375 0,-10.25567 -8.11081,-20.5 -18.90625,-20.5 -21.05111,0 -29.13922,25.34375 -48.03125,25.34375 -32.38633,0 -36.17617,-49.09375 -68.5625,-49.09375 z m -6.15625,166.25 c -30.60335,0.25302 -59.12254,2.42046 -82.90625,6.46875 0,23.74998 -4.85229,58.30119 -22.125,114.4375 C 162.81246,339.64206 199.5114,331 238.375,331 c 41.02268,0 83.6847,9.70172 121.46875,28.59375 -26.44884,-62.61357 -29.71023,-99.31252 -30.25,-117.125 -25.90906,-4.31818 -57.2131,-7 -91.21875,-7 -2.05788,0 -4.11603,-0.0169 -6.15625,0 z m 6.15625,151.125 C 160.64781,386.59375 92.642001,415.73868 50,460 l 380,0 C 387.358,415.73868 316.10219,386.59375 238.375,386.59375 z"
+       id="text3384"
+       style="font-size:539.77270508px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:chess;-inkscape-font-specification:chess Bold" />
+  </g>
+</svg>
