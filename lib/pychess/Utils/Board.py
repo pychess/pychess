@@ -69,6 +69,13 @@ class Board:
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
             
+            if self.variant == CRAZYHOUSECHESS:
+                for color in (BLACK, WHITE):
+                    holding = self.board.holding[color]
+                    for piece in holding:
+                        for i in range(holding[piece]):
+                            self[self.newHoldingCord(color, piece)] = Piece(color, piece)
+                
     def getHoldingCord(self, color, piece):
         enum = reverse_enum if color == WHITE else enumerate
         x1 = -1 if color==BLACK else self.FILES

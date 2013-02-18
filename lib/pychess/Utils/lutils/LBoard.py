@@ -61,6 +61,8 @@ class LBoard:
         self.promoted = array('B', [0]*64)
         self.capture_promoting = False
         self.hist_capture_promoting = []
+        self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
+                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
     
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -141,7 +143,7 @@ class LBoard:
         # TODO: This should be expanded and perhaps moved
         
         slashes = len([c for c in pieceChrs if c == "/"])
-        if slashes != 7:
+        if slashes < 7:
             raise SyntaxError, "Needs 7 slashes in piece placement field. "+ \
                                "Pos(%d)" % fenstr.rfind("/")
         
@@ -159,16 +161,34 @@ class LBoard:
         
         # Parse piece placement field
         
+        promoted = False
         for r, rank in enumerate(pieceChrs.split("/")):
             cord = (7-r)*8
             for char in rank:
+                if r > 7:
+                    # After the 8.rank BFEN can contain holdings (captured pieces)
+                    # "~" after a piece letter denotes promoted piece
+                    if r == 8 and self.variant == CRAZYHOUSECHESS:
+                        color = char.islower() and BLACK or WHITE
+                        piece = reprSign.index(char.upper())
+                        self.holding[color][piece] += 1
+                        continue
+                    else:
+                        break
+                        
                 if char.isdigit():
                     cord += int(char)
+                elif char == "~":
+                    promoted = True
                 else:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
+                    if self.variant == CRAZYHOUSECHESS and promoted:
+                        self.promoted[cord] = 1
+                        promoted = False
                     cord += 1
+
 
             if self.variant == FISCHERRANDOMCHESS:
                 # Save ranks fo find outermost rooks
@@ -592,12 +612,28 @@ class LBoard:
                         sign = sign.upper()
                     else: sign = sign.lower()
                     fenstr.append(sign)
+                    if self.variant == CRAZYHOUSECHESS:
+                        if self.promoted[r*8+i]:
+                            fenstr.append("~")
                 else:
                     empty += 1
             if empty > 0:
                 fenstr.append(str(empty))
             if r != 7:
                 fenstr.append("/")
+
+        if self.variant == CRAZYHOUSECHESS:
+            holding_pieces = []
+            for color in (BLACK, WHITE):
+                holding = self.holding[color]
+                for piece in holding:
+                    if holding[piece] > 0:
+                        sign = reprSign[piece]
+                        sign = sign.upper() if color == WHITE else sign.lower()
+                        holding_pieces.append(sign*holding[piece])
+            if holding:
+                fenstr.append("/")
+                fenstr += holding_pieces
         
         fenstr.append(" ")
     
