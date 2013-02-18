@@ -106,7 +106,7 @@ class LBoard:
         # initial cords of rooks and kings for castling in Chess960
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
-            self.ini_rooks = [[None, None], [None, None]]
+            self.ini_rooks = ([None, None], [None, None])
 
         elif self.variant == CRAZYHOUSECHESS:
             self.iniCrazy()
@@ -653,7 +653,7 @@ class LBoard:
         
         if self.variant == FISCHERRANDOMCHESS:
             copy.ini_kings = self.ini_kings[:]
-            copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
+            copy.ini_rooks = (self.ini_rooks[0][:], self.ini_rooks[1][:])
         elif self.variant == CRAZYHOUSECHESS:
             copy.promoted = self.promoted[:]
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
