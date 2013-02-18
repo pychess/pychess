@@ -168,22 +168,23 @@ class NewGameTasker (gtk.Alignment):
         
         widgets["startButton"].connect("clicked", self.startClicked)
         self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
-    
+
     def __initPlayerCombo (self, discoverer, widgets):
         combo = self.playerCombo
-        for image, name in newGameDialog.smallPlayerItems[0]:
-            combo.addItem(name, image)
-        combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
-        combo.setMarkup("<b>", "</b>")
-        combo.active = 1
-        uistuff.keep(self.playerCombo, "newgametasker_playercombo")
+        combo.update(newGameDialog.smallPlayerItems[0])
+        if combo.active < 0:
+            combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+            combo.setMarkup("<b>", "</b>")
+            combo.active = 1
+            uistuff.keep(self.playerCombo, "newgametasker_playercombo")
+
+            def on_playerCombobox_changed (widget, event):
+                widgets["skillSlider"].props.visible = widget.active > 0
+            combo.connect("changed", on_playerCombobox_changed)
         
-        def on_playerCombobox_changed (widget, event):
-            widgets["skillSlider"].props.visible = widget.active > 0
-        combo.connect("changed", on_playerCombobox_changed)
-        uistuff.keep(widgets["skillSlider"], "taskerSkillSlider")
-        widgets["skillSlider"].set_no_show_all(True)
-        on_playerCombobox_changed(self.playerCombo, None)
+            uistuff.keep(widgets["skillSlider"], "taskerSkillSlider")
+            widgets["skillSlider"].set_no_show_all(True)
+            on_playerCombobox_changed(self.playerCombo, None)
     
     def openDialogClicked (self, button):
         newGameDialog.NewGameMode.run()

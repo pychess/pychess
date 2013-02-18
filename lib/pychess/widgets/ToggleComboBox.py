@@ -97,6 +97,20 @@ class ToggleComboBox (gtk.ToggleButton):
         item.show()
         if self.active < 0: self.active = 0
     
+    def update(self, data):
+        last_active = self._items[self.active][0] if self.active >= 0 else None
+        new_active = -1
+
+        self._items = []
+        for i in self.menu.get_children():
+            self.menu.remove(i)
+
+        for i, row in enumerate(data):
+            self.addItem(row[1], row[0])
+            if last_active == row[1]:
+                new_active = i
+        self.active = new_active
+            
     def menuPos (self, menu):
         x, y = self.window.get_origin()
         x += self.get_allocation().x

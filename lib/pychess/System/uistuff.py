@@ -13,10 +13,10 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data):
+def createCombo (combo, data=[]):
     ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
-    for icon, label in data:
-        ls.append([icon, label])
+    for row in data:
+        ls.append(row)
     combo.clear()
     
     combo.set_model(ls)
