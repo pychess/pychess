@@ -656,7 +656,7 @@ class LBoard:
             copy.ini_rooks = [self.ini_rooks[0][:], self.ini_rooks[1][:]]
         elif self.variant == CRAZYHOUSECHESS:
             copy.promoted = self.promoted[:]
-            copy.holding = [self.holding[0].copy(), self.holding[1].copy()]
+            copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
             

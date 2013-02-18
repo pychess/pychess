@@ -15,7 +15,7 @@ class CrazyhouseTestCase(unittest.TestCase):
         board = LBoard(variant=CRAZYHOUSECHESS)
         board.applyFen("rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         
-        holding0 = [board.holding[0].copy(), board.holding[1].copy()]
+        holding0 = (board.holding[0].copy(), board.holding[1].copy())
         promoted0 = board.promoted[:]
         capture_promoting0 = board.capture_promoting
         hist_capture_promoting0 = board.hist_capture_promoting[:]
@@ -34,7 +34,7 @@ class CrazyhouseTestCase(unittest.TestCase):
                 board.popMove()
                 continue
                 
-            holding1 = [board.holding[0].copy(), board.holding[1].copy()]
+            holding1 = (board.holding[0].copy(), board.holding[1].copy())
             promoted1 = board.promoted[:]
             capture_promoting1 = board.capture_promoting
             hist_capture_promoting1 = board.hist_capture_promoting[:]
@@ -49,7 +49,7 @@ class CrazyhouseTestCase(unittest.TestCase):
                     board.popMove()
                     continue
 
-                holding2 = [board.holding[0].copy(), board.holding[1].copy()]
+                holding2 = (board.holding[0].copy(), board.holding[1].copy())
                 promoted2 = board.promoted[:]
                 capture_promoting2 = board.capture_promoting
                 hist_capture_promoting2 = board.hist_capture_promoting[:]
