@@ -6,6 +6,7 @@ from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
 from copy import deepcopy
+from subprocess import Popen, PIPE, STDOUT
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
@@ -151,6 +152,7 @@ class EngineDiscoverer (GObject, PooledThread):
             c = compareVersions(self.dom.getroot().get('version', default='0'), ENGINES_XML_API_VERSION)
             if c == -1:
                 log.warn("engineNest: engines.xml is outdated. It will be replaced\n")
+                # TODO: this is not so nice, koz will lose modifications made on engines.xml
                 self.dom = deepcopy(self.backup)
             elif c == 1:
                 raise NotImplementedError, "engines.xml is of a newer date. In order" + \
@@ -163,6 +165,7 @@ class EngineDiscoverer (GObject, PooledThread):
             self.dom = deepcopy(self.backup)
         
         self._engines = {}
+        self.need_save = False
     
     ############################################################################
     # Discover methods                                                         #
@@ -391,7 +394,8 @@ class EngineDiscoverer (GObject, PooledThread):
             except IOError, e:
                 log.error("Saving enginexml raised exception: %s\n" % \
                           ", ".join(str(a) for a in e.args))
-        
+            self.need_save = False
+            
         ######
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
@@ -416,6 +420,8 @@ class EngineDiscoverer (GObject, PooledThread):
             for engine in self.toBeRechecked.keys():
                 self.__discoverE(engine)
         else:
+            if self.need_save:
+                self.connect("all_engines_discovered", cb)
             self.emit('all_engines_discovered')
         
         
@@ -424,15 +430,18 @@ class EngineDiscoverer (GObject, PooledThread):
     # Interaction                                                              #
     ############################################################################
     
+    def is_analyzer(self, engine):
+        protocol = engine.get("protocol")
+        if protocol == "uci":
+            return True
+        elif protocol == "cecp":
+            if any(True for f in engine.findall('cecp-features/feature') if
+                   f.get('name') == 'analyze' and f.get('value') == '1'):
+                return True
+        return False
+        
     def getAnalyzers (self):
-        for engine in self.getEngines().values():
-            protocol = engine.get("protocol")
-            if protocol == "uci":
-                yield engine
-            elif protocol == "cecp":
-                if any(True for f in engine.findall('cecp-features/feature') if
-                       f.get('name') == 'analyze' and f.get('value') == '1'):
-                    yield engine
+        return [engine for engine in self.getEngines().values() if self.is_analyzer(engine)]
     
     def getEngines (self):
         """ Returns {binname: enginexml} """
@@ -480,7 +489,7 @@ class EngineDiscoverer (GObject, PooledThread):
         if country is not None:
             return country.text.strip()
         return None
-   
+
     def initEngine (self, xmlengine, color):
         protover = int(xmlengine.get("protover"))
         protocol = xmlengine.get("protocol")
@@ -533,6 +542,49 @@ class EngineDiscoverer (GObject, PooledThread):
         engine.prestart()
         return engine
 
+    def is_uci(self, new_engine):
+        try:
+            proc = Popen(new_engine, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        except OSError:
+            raise
+            
+        proc.stdin.write("uci\n")
+        proc.stdin.flush()
+
+        uci = False
+        #works in python 3.0+
+        #for line in proc.stdout:
+        for line in iter(proc.stdout.readline,''):
+            line = line.rstrip()
+            if line == "uciok":
+                uci = True
+                break
+            elif "Error" in line or "Illegal" in line:
+                break
+        proc.terminate()
+        return uci
+
+    def addEngine(self, name, new_engine, protocol):
+        path, binname = os.path.split(new_engine)
+        engine = fromstring('<engine></engine>')
+        engine.set('binname', name)
+        if protocol.lower() == "uci":
+            engine.set('protocol', 'uci')
+            engine.set('protover', '1')
+        else:
+            engine.set('protocol', 'cecp')
+            engine.set('protover', '2')
+            # TODO: handle protover 1 engines
+        engine.append(fromstring('<path>%s</path>' % new_engine))
+
+        self._engines[name] = engine
+        self.dom.getroot().append(engine)
+
+    def removeEngine(self, name):
+        engine = self._engines[name]
+        del self._engines[name]
+        self.dom.getroot().remove(engine)
+        self.need_save = True
 
 discoverer = EngineDiscoverer()
 
