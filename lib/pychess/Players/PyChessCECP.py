@@ -201,7 +201,8 @@ class PyChessCECP(PyChess):
                     self.__stopSearching()
                     try:
                         self.board = LBoard(self.board.variant)
-                        self.board.applyFen(" ".join(lines[1:]))
+                        fen = " ".join(lines[1:])
+                        self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as e:
                         print "tellusererror Illegal position:", str(e)
                     if self.analyzing:
