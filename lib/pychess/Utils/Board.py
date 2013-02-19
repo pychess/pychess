@@ -269,8 +269,8 @@ class Board:
         return self.board.plyCount
     ply = property(_get_ply)
     
-    def asFen (self):
-        return self.board.asFen()
+    def asFen (self, enable_bfen=True):
+        return self.board.asFen(enable_bfen)
     
     def __repr__ (self):
         return str(self.board)

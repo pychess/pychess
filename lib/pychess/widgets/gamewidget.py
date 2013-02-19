@@ -12,6 +12,7 @@ from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
+from pychess.Utils.lutils import lmove
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic.ICGameModel import ICGameModel
 from pydock.PyDockTop import PyDockTop
@@ -326,7 +327,13 @@ class GameWidget (gobject.GObject):
             moves = analysis[0][0]
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]):
-                self._set_arrow(analyzer_type, moves[0].cords)
+                if moves[0].flag == DROP:
+                    board = self.gamemodel.boards[-1]
+                    piece = lmove.FCORD(moves[0].move)
+                    cord0 = board.getHoldingCord(board.color, piece)
+                    self._set_arrow(analyzer_type, (cord0, moves[0].cord1))
+                else:
+                    self._set_arrow(analyzer_type, moves[0].cords)
             else:
                 self._set_arrow(analyzer_type, None)
         return False

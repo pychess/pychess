@@ -596,7 +596,7 @@ class LBoard:
             b += "\n"
         return b
     
-    def asFen (self):
+    def asFen (self, enable_bfen=True):
         fenstr = []
         
         rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
@@ -632,8 +632,13 @@ class LBoard:
                         sign = sign.upper() if color == WHITE else sign.lower()
                         holding_pieces.append(sign*holding[piece])
             if holding_pieces:
-                fenstr.append("/")
-                fenstr += holding_pieces
+                if enable_bfen:
+                    fenstr.append("/")
+                    fenstr += holding_pieces
+                else:
+                    fenstr.append("[")
+                    fenstr += holding_pieces
+                    fenstr.append("]")
         
         fenstr.append(" ")
     
