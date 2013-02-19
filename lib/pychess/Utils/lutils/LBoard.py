@@ -423,7 +423,7 @@ class LBoard:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
 
-        if self.variant == CRAZYHOUSECHESS:
+        if self.variant == CRAZYHOUSECHESS and flag != DROP:
             if tpiece == EMPTY:
                 self.capture_promoting = False
             
@@ -530,7 +530,7 @@ class LBoard:
         else:
             self._addPiece (fcord, tpiece, color)
 
-        if self.variant == CRAZYHOUSECHESS:
+        if self.variant == CRAZYHOUSECHESS and flag != DROP:
             if self.promoted[tcord] and (not flag in PROMOTIONS):
                 self.promoted[fcord] = 1
             if self.capture_promoting:
