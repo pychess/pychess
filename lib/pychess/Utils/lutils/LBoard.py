@@ -631,7 +631,7 @@ class LBoard:
                         sign = reprSign[piece]
                         sign = sign.upper() if color == WHITE else sign.lower()
                         holding_pieces.append(sign*holding[piece])
-            if holding:
+            if holding_pieces:
                 fenstr.append("/")
                 fenstr += holding_pieces
         
