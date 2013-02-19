@@ -75,26 +75,23 @@ class Board:
                     for piece in holding:
                         for i in range(holding[piece]):
                             self[self.newHoldingCord(color, piece)] = Piece(color, piece)
-                
+    
     def getHoldingCord(self, color, piece):
         enum = reverse_enum if color == WHITE else enumerate
-        x1 = -1 if color==BLACK else self.FILES
-        x2 = -2 if color==BLACK else self.FILES+1
-        for i, row in enum(self.data):
-            for x in (x2, x1):
-                if row.get(x) is not None:
-                    if row.get(x).piece == piece:
-                        return Cord(x, i)
+        files = ((self.FILES+2, self.FILES+1, self.FILES), (-3, -2, -1))
+        for x in files[color]:
+            for i, row in enum(self.data):
+                if (row.get(x) is not None) and row.get(x).piece == piece:
+                    return Cord(x, i)
 
     def newHoldingCord(self, color, piece):
         enum = reverse_enum if color == BLACK else enumerate
-        x1 = -1 if color == BLACK else self.FILES
-        x2 = -2 if color == BLACK else self.FILES+1
-        for i, row in enum(self.data):
-            for x in (x1, x2):
+        files = ((self.FILES, self.FILES+1, self.FILES+2), (-1, -2, -3))
+        for x in files[color]:
+            for i, row in enum(self.data):
                 if row.get(x) is None:
                     return Cord(x, i)
-        
+    
     def simulateMove (self, board1, move):
         moved = []
         new = []

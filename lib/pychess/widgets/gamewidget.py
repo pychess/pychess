@@ -134,7 +134,7 @@ class GameWidget (gobject.GObject):
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
         # Help crazyhouse testing
-        board.view.connect("shown_changed", self.shown_changed)
+        #board.view.connect("shown_changed", self.shown_changed)
         
         self.analyzer_cids = {}
         
