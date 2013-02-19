@@ -664,7 +664,7 @@ class CECPEngine (ProtocolEngine):
     def __setBoard (self, board):
         if self.features["setboard"]:
             self.__tellEngineToStopPlayingCurrentColor()
-            print >> self.engine, "setboard", board.asFen()
+            print >> self.engine, "setboard", board.asFen(enable_bfen=False)
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
