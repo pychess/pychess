@@ -85,7 +85,7 @@ class DummyPlayer (Player):
 def start(discoverer):
     atexit.register(SubProcess.finishAllSubprocesses)
     pgnfile, gameno = queryGameno(sys.argv[1])
-    analyzer = queryAnalyzer(list(discoverer.getAnalyzers()))
+    analyzer = queryAnalyzer(discoverer.getAnalyzers())
     secs = queryTime()
     name1, name2 = pgnfile.get_player_names(gameno)
     print "%s will now analyze the game between %s and %s with %d seconds per move." % \
