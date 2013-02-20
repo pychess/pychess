@@ -1,3 +1,4 @@
+import os
 from Queue import Queue
 
 import gtk, gobject, cairo, pango
@@ -74,11 +75,12 @@ class Advisor:
 
 
 class OpeningAdvisor(Advisor):
-    def __init__ (self, store):
+    def __init__ (self, store, tv):
         Advisor.__init__(self, store, _("Opening Book"))
         self.mode = OPENING
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
+        self.tv = tv
         
     def shown_changed (self, boardview, shown):
         m = boardview.model
@@ -87,7 +89,8 @@ class OpeningAdvisor(Advisor):
         
         openings = getOpenings(b.board)
         openings.sort(key=lambda t: t[1], reverse=True)
-        if not openings: return
+        if not openings:
+            return
         
         totalWeight = 0.0
         # Polyglot-formatted books have space for learning data.
@@ -112,6 +115,7 @@ class OpeningAdvisor(Advisor):
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
             self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])
+        self.tv.expand_row(self.path, False)
     
     def child_tooltip (self, i):
         return "" if len(self.opening_names)==0 else self.opening_names[i]
@@ -401,13 +405,55 @@ class Sidepanel:
         self.tv.props.has_tooltip = True
         self.tv.set_property("show-expanders", False)
         
-        self.advisors = [ OpeningAdvisor(self.store), EndgameAdvisor(self.store, self.tv) ]
+        self.advisors = []
+
+        if conf.get("opening_check", 0):
+            self.advisors.append(OpeningAdvisor(self.store, self.tv))
+        if conf.get("endgame_check", 0):
+            self.advisors.append(EndgameAdvisor(self.store, self.tv))
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
         gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused)
         gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed)
+        
+        def on_opening_check(none):
+            if conf.get("opening_check", 0):
+                advisor = OpeningAdvisor(self.store, self.tv)
+                self.advisors.append(advisor)
+                advisor.shown_changed(self.boardview, self.boardview.shown)
+            else:
+                for advisor in self.advisors:
+                    if advisor.mode == OPENING:
+                        parent = advisor.empty_parent()
+                        self.store.remove(parent)
+                        self.advisors.remove(advisor)
+        conf.notify_add("opening_check", on_opening_check)
+
+        def on_opening_file_entry_changed(none):
+            default_path = os.path.join(addDataPrefix("pychess_book.bin"))
+            path = conf.get("opening_file_entry", default_path) 
+            if os.path.isfile(path):
+                for advisor in self.advisors:
+                    if advisor.mode == OPENING:
+                        advisor.shown_changed(self.boardview, self.boardview.shown)
+        conf.notify_add("opening_file_entry", on_opening_file_entry_changed)
+
+        def on_endgame_check(none):
+            if conf.get("endgame_check", 0):
+                advisor = EndgameAdvisor(self.store, self.tv)
+                self.advisors.append(advisor)
+                advisor.shown_changed(self.boardview, self.boardview.shown)
+            else:
+                for advisor in self.advisors:
+                    if advisor.mode == ENDGAME:
+                        parent = advisor.empty_parent()
+                        self.store.remove(parent)
+                        self.advisors.remove(advisor)
+        conf.notify_add("endgame_check", on_endgame_check)
+
         return self.sw
+
     
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
