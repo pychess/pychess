@@ -664,7 +664,20 @@ class CECPEngine (ProtocolEngine):
     def __setBoard (self, board):
         if self.features["setboard"]:
             self.__tellEngineToStopPlayingCurrentColor()
-            print >> self.engine, "setboard", board.asFen(enable_bfen=False)
+            fen = board.asFen(enable_bfen=False)
+            if self.mode == INVERSE_ANALYZING:
+                # Some engine doesn't support feature "colors" (f.e: TJchess)
+                # so "black" and "white" command doesn't change the side to move
+                fen_arr = fen.split()
+                if self.board.color == WHITE:
+                    if fen_arr[1] == "b":
+                        fen_arr[1] = "w"
+                        fen = " ".join(fen_arr)
+                else:
+                    if fen_arr[1] == "w":
+                        fen_arr[1] = "b"
+                        fen = " ".join(fen_arr)
+            print >> self.engine, "setboard", fen
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
@@ -790,10 +803,10 @@ class CECPEngine (ProtocolEngine):
                 mvstrs = movere.findall(moves)
                 try:
                     moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=False)
-                except ParsingError, e:
-                    # ParsingErrors may happen when parsing "old" lines from
+                except:
+                    # Errors may happen when parsing "old" lines from
                     # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug("Ignored a line from analyzer: ParsingError%s\n" % e, self.defname)
+                    log.debug('Ignored an "old" line from analyzer: %s\n' % mvstrs, self.defname)
                     return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
