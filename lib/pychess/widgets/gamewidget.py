@@ -330,7 +330,8 @@ class GameWidget (gobject.GObject):
                 if moves[0].flag == DROP:
                     board = self.gamemodel.boards[-1]
                     piece = lmove.FCORD(moves[0].move)
-                    cord0 = board.getHoldingCord(board.color, piece)
+                    color = board.color if analyzer_type == HINT else 1-board.color
+                    cord0 = board.getHoldingCord(color, piece)
                     self._set_arrow(analyzer_type, (cord0, moves[0].cord1))
                 else:
                     self._set_arrow(analyzer_type, moves[0].cords)
