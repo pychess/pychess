@@ -83,7 +83,8 @@ class PyChessCECP(PyChess):
      
                 elif lines[0] == "protover":
                     stringPairs = ["=".join([k, '"%s"' % v if type(v) is str else str(v)]) for k,v in self.features.iteritems()]
-                    print "feature %s done=1" % " ".join(stringPairs)
+                    print "feature %s" % " ".join(stringPairs)
+                    print "feature done=1"
                 
                 elif lines[0] in ("accepted", "rejected"):
                     # We only really care about one case:
@@ -257,7 +258,9 @@ class PyChessCECP(PyChess):
                         if limit < 1:
                             print "Error (limit too low):", line
                         else:
-                            lsearch.setHashSize(limit)
+                            pass
+                            # TODO implement
+                            #lsearch.setHashSize(limit)
      
                 elif lines[0] == "cores":
                     pass # We aren't SMP-capable.
