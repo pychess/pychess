@@ -11,7 +11,6 @@ from lmove import toSAN
 from ldata import MATE_VALUE, VALUE_AT_PLY
 from TranspositionTable import TranspositionTable
 import ldraw
-from pychess.Utils.EndgameTable import EndgameTable
 
 TIMECHECK_FREQ = 500
 
@@ -292,5 +291,6 @@ def quiescent (board, alpha, beta, ply):
         return [], alpha
 
 def enableEGTB():
+    from pychess.Utils.EndgameTable import EndgameTable
     global egtb
     egtb = EndgameTable()
