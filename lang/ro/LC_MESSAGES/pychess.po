@@ -1,0 +1,3050 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: pychess\n"
+"Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
+"POT-Creation-Date: 2012-11-16 23:43+0100\n"
+"PO-Revision-Date: 2012-11-17 08:23+0000\n"
+"Last-Translator: gbtami <gbtami@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
+
+# "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+#: glade/discovererDialog.glade:19
+msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
+msgstr "<big><b>PyChess caută motoarele dvs. de șah. Va rugăm așteptați.</b></big>"
+
+#: glade/discovererDialog.glade:78
+msgid "PyChess.py:"
+msgstr "PyChess.py:"
+
+#: glade/discovererDialog.glade:90
+msgid "ShredderLinuxChess:"
+msgstr "ShredderLinuxChess:"
+
+#: glade/discovererDialog.glade:102
+msgid "gnuchess:"
+msgstr "gnuchess:"
+
+#: glade/fics_logon.glade:8
+msgid "PyChess - Connect to Internet Chess"
+msgstr "Conectare la Șah pe Internet"
+
+#: glade/fics_logon.glade:55
+msgid "<b>Title</b>"
+msgstr "<b>Titlu<b/>"
+
+#: glade/fics_logon.glade:70
+msgid "text"
+msgstr "text"
+
+#: glade/fics_logon.glade:102
+msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
+msgstr "<b><big>Conectare la Free Online Chess Server</big></b>"
+
+#: glade/fics_logon.glade:188 glade/taskers.glade:402
+msgid "_Password:"
+msgstr "_Parolă:"
+
+#: glade/fics_logon.glade:202
+msgid "_Name:"
+msgstr "_Nume:"
+
+#: glade/fics_logon.glade:250
+msgid "Log on as _Guest"
+msgstr "Autentificare drept _Vizitator"
+
+#: glade/fics_logon.glade:291
+msgid "Po_rts:"
+msgstr "Po_rturi;"
+
+#: glade/fics_logon.glade:382
+msgid "S_ign up"
+msgstr "Înreg_istrare"
+
+#: glade/fics_lounge.glade:36
+msgid "Challenge: <Player>"
+msgstr "Provoacă: <Player>"
+
+#: glade/fics_lounge.glade:100
+msgid "Send Challenge"
+msgstr "Trimite Provocare"
+
+#: glade/fics_lounge.glade:136
+msgid "<big>Challenge:</big>"
+msgstr "<big>Provocare:</big>"
+
+#: glade/fics_lounge.glade:333 glade/fics_lounge.glade:2096
+msgid "Lightning:"
+msgstr "Fulger:"
+
+#: glade/fics_lounge.glade:357 glade/fics_lounge.glade:2120
+msgid "Standard:"
+msgstr "Standard:"
+
+#: glade/fics_lounge.glade:382 glade/fics_lounge.glade:2145
+msgid "Blitz:"
+msgstr "Bliț"
+
+#: glade/fics_lounge.glade:408
+msgid "2 min, Fischer Random, Black"
+msgstr "2 min, Fischer aleator, Negru"
+
+#: glade/fics_lounge.glade:430
+msgid "10 min + 6 sec/move, White"
+msgstr "10 min + 6 sec/mutare, Alb"
+
+#: glade/fics_lounge.glade:452
+msgid "5 min"
+msgstr "5 min"
+
+#: glade/fics_lounge.glade:488
+msgid "Edit Seek"
+msgstr "Editează căutare"
+
+#: glade/fics_lounge.glade:594 lib/pychess/ic/ICLounge.py:1687
+#: lib/pychess/ic/__init__.py:61 lib/pychess/Utils/GameModel.py:173
+msgid "Untimed"
+msgstr "Necronometrat"
+
+#: glade/fics_lounge.glade:647
+msgid "Minutes:  "
+msgstr "Minute:  "
+
+#: glade/fics_lounge.glade:677
+msgid "   Gain:  "
+msgstr "   Câștig:  "
+
+#: glade/fics_lounge.glade:717
+msgid "Time control:  "
+msgstr "Control timp:  "
+
+#: glade/fics_lounge.glade:730 lib/pychess/ic/ICLounge.py:807
+#: lib/pychess/ic/ICLounge.py:1687 lib/pychess/ic/__init__.py:59
+msgid "Standard"
+msgstr "Standard"
+
+#: glade/fics_lounge.glade:771 glade/newInOut.glade:584
+msgid "<b>Time Control</b>"
+msgstr "<b>Control timp</b>"
+
+#: glade/fics_lounge.glade:828 glade/fics_lounge.glade:1361
+msgid "Don't care"
+msgstr "Irelevant"
+
+#: glade/fics_lounge.glade:893
+msgid "Your strength: "
+msgstr "Evaluarea ta: "
+
+#: glade/fics_lounge.glade:935
+msgid "(Blitz)"
+msgstr "(Bliț)"
+
+#: glade/fics_lounge.glade:965
+msgid "Opponent's strength: "
+msgstr "Evaluarea oponentului: "
+
+#: glade/fics_lounge.glade:1069
+msgid ""
+"When this button is in the \"locked\" state, the relationship\n"
+"between \"Opponent's strength\" and \"Your strength\" will be\n"
+"preserved when \n"
+"a) your rating for the type of game sought has changed\n"
+"b) you change the variant or the time control"
+msgstr "Când butonul este „blocat”, relația dintre „Evaluarea adversarului”\nși „Evaluarea ta” va fi păstrată când:\na) evaluarea ta pentru tipul de joc căutat a crescut\nb) schimbi varianta sau controlul timpului"
+
+#: glade/fics_lounge.glade:1109
+msgid "Center:"
+msgstr "Centru:"
+
+#: glade/fics_lounge.glade:1148
+msgid "1200"
+msgstr "1200"
+
+#: glade/fics_lounge.glade:1202
+msgid "Tolerance:"
+msgstr "Toleranță:"
+
+#: glade/fics_lounge.glade:1257 lib/pychess/ic/ICLounge.py:1926
+msgid "Hide"
+msgstr "Ascunde"
+
+#: glade/fics_lounge.glade:1304
+msgid "<b>Opponent Strength</b>"
+msgstr "<b>Evaluarea oponentului</b>"
+
+#: glade/fics_lounge.glade:1401 lib/pychess/Database/gamelist.py:40
+#: lib/pychess/ic/ICLounge.py:1587 lib/pychess/Utils/repr.py:8
+#: lib/pychess/widgets/ChessClock.py:16
+#: lib/pychess/widgets/TaskerManager.py:146
+msgid "White"
+msgstr "Alb"
+
+#: glade/fics_lounge.glade:1429 lib/pychess/Database/gamelist.py:40
+#: lib/pychess/ic/ICLounge.py:1589 lib/pychess/Utils/repr.py:8
+#: lib/pychess/widgets/ChessClock.py:16
+#: lib/pychess/widgets/TaskerManager.py:147
+msgid "Black"
+msgstr "Negru"
+
+#: glade/fics_lounge.glade:1468
+msgid "<b>Your Color</b>"
+msgstr "<b>Culoarea ta</b>"
+
+#: glade/fics_lounge.glade:1527
+msgid "Play normal chess rules"
+msgstr "Joacă șah cu regulile normale"
+
+#: glade/fics_lounge.glade:1567
+msgid "Play"
+msgstr "Joacă"
+
+#: glade/fics_lounge.glade:1633 glade/newInOut.glade:784
+msgid "<b>Chess Variant</b>"
+msgstr "<b>Variantă șah</b>"
+
+#: glade/fics_lounge.glade:1691
+msgid "Rated game"
+msgstr "Joc evaluat"
+
+#: glade/fics_lounge.glade:1707
+msgid "Manually accept opponent"
+msgstr "Acceptă oponenții manual"
+
+#: glade/fics_lounge.glade:1737
+msgid "<b>Options</b>"
+msgstr "<b>Opțiuni</b>"
+
+#: glade/fics_lounge.glade:1765
+msgid "PyChess - Internet Chess: FICS"
+msgstr "PyChess - Șah pe Internet: FICS"
+
+#: glade/fics_lounge.glade:1838
+msgid "_Clear Seeks"
+msgstr "Șterge _căutările"
+
+#: glade/fics_lounge.glade:1863
+msgid "_Accept"
+msgstr "_Acceptă"
+
+#: glade/fics_lounge.glade:1888
+msgid "_Decline"
+msgstr ""
+
+#: glade/fics_lounge.glade:2171
+msgid "2 min, Fischer Random, 1800↓, Black"
+msgstr "2 min, Fischer Aleator, 1800↓, Negru"
+
+#: glade/fics_lounge.glade:2192
+msgid "10 min + 6 sec/move, 1400↑, White"
+msgstr "10 min + 6 sec/mutare, 1400↑, Alb"
+
+#: glade/fics_lounge.glade:2213
+msgid "5 min, 1200-1800, Manual"
+msgstr "5 min, 1200-1800, Manual"
+
+#: glade/fics_lounge.glade:2269
+msgid "Send seek"
+msgstr "Trimite căutare"
+
+#: glade/fics_lounge.glade:2304
+msgid "Create Seek"
+msgstr "Creează căutare"
+
+#: glade/fics_lounge.glade:2320
+msgid "_Seeks / Challenges"
+msgstr "Căutări /  _Provocări"
+
+#: glade/fics_lounge.glade:2341 lib/pychess/ic/ICLounge.py:254
+#: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:979
+#: lib/pychess/ic/ICLounge.py:980
+msgid "Rating"
+msgstr "Evaluare"
+
+#: glade/fics_lounge.glade:2366
+msgid "Time"
+msgstr "Timp"
+
+#: glade/fics_lounge.glade:2386
+msgid "Seek _Graph"
+msgstr "Grafic căutări"
+
+#: glade/fics_lounge.glade:2410
+msgid "0 Players Ready"
+msgstr "Niciun jucător pregătit"
+
+#: glade/fics_lounge.glade:2452
+msgid "Challenge"
+msgstr "Provoacă"
+
+#: glade/fics_lounge.glade:2506 glade/fics_lounge.glade:2681
+msgid "Observe"
+msgstr ""
+
+#: glade/fics_lounge.glade:2560
+msgid "Start Private Chat"
+msgstr ""
+
+#: glade/fics_lounge.glade:2615
+msgid "_Player List"
+msgstr "Lista _jucătorilor"
+
+#: glade/fics_lounge.glade:2736
+msgid "_Game List"
+msgstr "Lista j_ocurilor"
+
+#: glade/fics_lounge.glade:2792 glade/PyChess.glade:2435
+msgid "Offer _Resume"
+msgstr "Propune _reluare"
+
+#: glade/fics_lounge.glade:2851 glade/PyChess.glade:2474
+msgid "R_esign"
+msgstr "C_edează"
+
+#: glade/fics_lounge.glade:2896 glade/PyChess.glade:2415
+msgid "Offer _Draw"
+msgstr "Propune remiză"
+
+#: glade/fics_lounge.glade:2941
+msgid "Offer A_bort"
+msgstr ""
+
+#: glade/fics_lounge.glade:2999
+msgid "Pre_view"
+msgstr "Pre_vizualizează"
+
+#: glade/fics_lounge.glade:3055
+msgid "_Adjourned"
+msgstr "Suspend_at"
+
+#: glade/fics_lounge.glade:3160
+msgid "<b>News</b>"
+msgstr "<b>Știri</b>"
+
+#: glade/fics_lounge.glade:3192
+msgid "Show _Chat"
+msgstr "Afișează _conversații"
+
+#: glade/fics_lounge.glade:3208
+msgid "Show Console"
+msgstr ""
+
+#: glade/fics_lounge.glade:3223
+msgid "_Log Off"
+msgstr "Închide _sesiunea"
+
+#: glade/fics_lounge.glade:3244
+msgid "<b>Tools</b>"
+msgstr "<b>Unelte</b>"
+
+#: glade/findbar.glade:7
+msgid "window1"
+msgstr "window1"
+
+#: glade/findbar.glade:23
+msgid "0 of 0"
+msgstr "0 din 0"
+
+#: glade/findbar.glade:73
+msgid "_Previous"
+msgstr "_Precedent"
+
+#: glade/findbar.glade:132
+msgid "_Next"
+msgstr "_Următor"
+
+#: glade/findbar.glade:161
+msgid "Search:"
+msgstr "Caută:"
+
+#: glade/newInOut.glade:34 lib/pychess/widgets/newGameDialog.py:364
+msgid "New Game"
+msgstr "Joc nou"
+
+#: glade/newInOut.glade:99
+msgid "_Start Game"
+msgstr "_Pornește jocul"
+
+#: glade/newInOut.glade:208
+msgid "_Black player:"
+msgstr "Jucătorul _negru"
+
+#: glade/newInOut.glade:225
+msgid "_White player:"
+msgstr "Jucătorul _alb"
+
+#: glade/newInOut.glade:336
+msgid "<b>Players</b>"
+msgstr "<b>Jucători</b>"
+
+#: glade/newInOut.glade:387
+msgid "_Untimed"
+msgstr ""
+
+#: glade/newInOut.glade:426
+msgid "Blitz:\t5 min"
+msgstr "Bliț:\t5 min"
+
+#: glade/newInOut.glade:477
+msgid "Rapid:\t15 min + 10 sec/move"
+msgstr "Rapid:\t15 min + 10 sec/mutare"
+
+#: glade/newInOut.glade:526
+msgid "Normal:\t40 min + 15 sec/move"
+msgstr "Normal:\t40 min + 15 sec/mutare"
+
+#: glade/newInOut.glade:635
+msgid "_Play Normal chess"
+msgstr "Joacă șah normal"
+
+#: glade/newInOut.glade:675
+msgid "Play Fischer Random chess"
+msgstr "Joacă șah Fisher Aleator"
+
+#: glade/newInOut.glade:725
+msgid "Play Losers chess"
+msgstr ""
+
+#: glade/newInOut.glade:869
+msgid "<b>Open Game</b>"
+msgstr "<b>Deschide joc</b>"
+
+#: glade/newInOut.glade:1116
+msgid "<b>Initial Position</b>"
+msgstr "<b>Poziția inițială</b>"
+
+#: glade/newInOut.glade:1175
+msgid "<b>Enter Game Notation</b>"
+msgstr "<b>Introdu notația de joc</b>"
+
+#: glade/promotion.glade:8
+msgid "Promotion"
+msgstr "Promovare"
+
+#: glade/promotion.glade:50 lib/pychess/Utils/repr.py:10
+msgid "Queen"
+msgstr "Regină"
+
+#: glade/promotion.glade:97 lib/pychess/Utils/repr.py:10
+msgid "Rook"
+msgstr "Tură"
+
+#: glade/promotion.glade:143 lib/pychess/Utils/repr.py:10
+msgid "Bishop"
+msgstr "Nebun"
+
+#: glade/promotion.glade:189 lib/pychess/Utils/repr.py:10
+msgid "Knight"
+msgstr "Cal"
+
+#: glade/promotion.glade:221
+msgid "<b><big>Promote pawn to what?</big></b>"
+msgstr "<b><big>În ce se promovează pionul?</big></b>"
+
+#: glade/PyChess.glade:10
+msgid "Chess client for the Gnome desktop"
+msgstr "Client de șah pentru Gnome"
+
+#: glade/PyChess.glade:13
+msgid ""
+"PyChess is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version.\n"
+"\n"
+"PyChess is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License \n"
+"along with PyChess; if not, write to the Free Software Foundation, Inc., \n"
+"51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA"
+msgstr ""
+
+#: glade/PyChess.glade:57
+msgid "Game information"
+msgstr "Informații joc"
+
+#: glade/PyChess.glade:179
+msgid "Event:"
+msgstr "Eveniment:"
+
+#: glade/PyChess.glade:193
+msgid "Site:"
+msgstr "Pagină web:"
+
+#: glade/PyChess.glade:221
+msgid "Round:"
+msgstr "Rundă:"
+
+#: glade/PyChess.glade:265
+msgid "<b>Game data</b>"
+msgstr "<b>Date joc</b>"
+
+#: glade/PyChess.glade:320
+msgid "<b>Date of game</b>"
+msgstr "<b>Dată joc</b>"
+
+#: glade/PyChess.glade:446
+msgid "Preferences"
+msgstr "Preferințe"
+
+#: glade/PyChess.glade:484
+msgid "The displayed name of the first human player, e.g., John."
+msgstr "Numele afișat al primului jucător uman, de exemplu Ion."
+
+#: glade/PyChess.glade:498
+msgid "<b>Name of _first human player:</b>"
+msgstr "<b>Numele _primului jucător uman:</b>"
+
+#: glade/PyChess.glade:527
+msgid "The displayed name of the guest player, e.g., Mary."
+msgstr "Numele afișat al jucătorului oaspete, de exemplu Maria."
+
+#: glade/PyChess.glade:541
+msgid "<b>Name of s_econd human player:</b>"
+msgstr "<b>Numele celui de-al _doilea jucător uman:</b>"
+
+#: glade/PyChess.glade:577
+msgid "_Hide tabs when only one game is open"
+msgstr "Ascunde taburi când numai un joc este deschis"
+
+#: glade/PyChess.glade:582
+msgid ""
+"If set, this hides the tab in the top of the playing window, when it is not "
+"needed."
+msgstr "Dacă este ales, ascunde fila în partea superioară a ferestrii de joc când aceasta nu este necesară."
+
+#: glade/PyChess.glade:594
+msgid "Auto _rotate board to current human player"
+msgstr "_Rotește tabla automat pentru jucătorul uman la mutare"
+
+#: glade/PyChess.glade:599
+msgid ""
+"If set, the board will turn after each move, to show the natural view for "
+"the current player."
+msgstr "Daca este ales, tabla se va întoarce dupa fiecare mutare pentru a arătă vederea naturală a jucătorului la mutare."
+
+#: glade/PyChess.glade:612
+msgid "Face _to Face display mode"
+msgstr "Modul de afișa_re fața în față"
+
+#: glade/PyChess.glade:617
+msgid ""
+"If set, the black pieces will be head down, suitable for playing against "
+"friends on mobile devices."
+msgstr "Dacă este ales, piesele negre vor fi orientate în jos, adecvat pentru a juca împotriva prietenilor pe dispozitive mobile."
+
+#: glade/PyChess.glade:629
+msgid "Sho_w cords"
+msgstr ""
+
+#: glade/PyChess.glade:634
+msgid ""
+"If set, the playing board will display labels and ranks for each chess "
+"field. These are usable in chess notation."
+msgstr ""
+
+#: glade/PyChess.glade:646
+msgid "Prefer figures in _notation"
+msgstr "Prefera figurine în _notații"
+
+#: glade/PyChess.glade:651
+msgid ""
+"If set, PyChess will use figures to express moved pieces, rather than "
+"uppercase letters."
+msgstr "Dacă este ales, PyChess va folosi figurine pentru a arăta piesele mutate în locul majusculilor."
+
+#: glade/PyChess.glade:663
+msgid "Transparent pieces"
+msgstr ""
+
+#: glade/PyChess.glade:668
+msgid ""
+"If set, PyChess will not fill pieces in most piece sets. Use this on slow "
+"machines"
+msgstr ""
+
+#: glade/PyChess.glade:680
+msgid "Auto ca_ll flag"
+msgstr ""
+
+#: glade/PyChess.glade:685
+msgid ""
+"If set, PyChess will automatically end games, where a player has exceeded "
+"his or her timelimit."
+msgstr "Dacă este ales, PyChess va termina jocurile automat când un jucător și-a depășit limita de timp."
+
+#: glade/PyChess.glade:710
+msgid "<b>General Display Options</b>"
+msgstr "<b>Opțiuni generale de afișare</b>"
+
+#: glade/PyChess.glade:744
+msgid "F_ull board animation"
+msgstr "Animație totală a ta_blei"
+
+#: glade/PyChess.glade:749
+msgid "Animate pieces, board rotation and more. Use this on fast machines."
+msgstr "Animează piesele, rotația tablei și altele. Recomandat doar pe calculatoarele performante."
+
+#: glade/PyChess.glade:762
+msgid "Only animate _moves"
+msgstr "Animează doar _mutările"
+
+#: glade/PyChess.glade:767
+msgid "Only animate piece moves."
+msgstr "Animează doar mutările pieselor."
+
+#: glade/PyChess.glade:780
+msgid "No _animation"
+msgstr "Fără animații."
+
+#: glade/PyChess.glade:785
+msgid "Never use animation. Use this on slow machines."
+msgstr "Nu anima nimic. Recomandat pentru calculatoarele lente."
+
+#: glade/PyChess.glade:811
+msgid "<b>Animation</b>"
+msgstr "<b>Animație</b>"
+
+#: glade/PyChess.glade:830
+msgid "_General"
+msgstr "_General"
+
+#: glade/PyChess.glade:956
+msgid "<b>Chess Engines</b>"
+msgstr "<b>Motoare de șah</b>"
+
+#: glade/PyChess.glade:990
+msgid "Use _analyzer"
+msgstr "Utilizează _analizator"
+
+#: glade/PyChess.glade:1030
+msgid ""
+"The analyzer will run in the background and analyze the game. <b>This is "
+"necessary for the hint mode to work</b>"
+msgstr ""
+
+#: glade/PyChess.glade:1062
+msgid "Use _inverted analyzer"
+msgstr "Utilizează analizator _inversat"
+
+#: glade/PyChess.glade:1102
+msgid ""
+"The inverse analyzer will analyze the game as if your opponent was to move. "
+"<b>This is necessary for the spy mode to work</b>"
+msgstr ""
+
+#: glade/PyChess.glade:1136
+msgid "<b>Analyzing</b>"
+msgstr "<b>Se analizează</b>"
+
+#: glade/PyChess.glade:1158
+msgid "Computer _Opponents"
+msgstr "Adversari mașină"
+
+#: glade/PyChess.glade:1184
+msgid "_Use sounds in PyChess"
+msgstr "_Utilizează sunete în PyChess"
+
+#: glade/PyChess.glade:1502
+msgid "A player _checks:"
+msgstr "Un jucător dă șah:"
+
+#: glade/PyChess.glade:1517
+msgid "A player _moves:"
+msgstr "Un jucător mută:"
+
+#: glade/PyChess.glade:1530
+msgid "Game is _drawn:"
+msgstr "Jocul e remiză"
+
+#: glade/PyChess.glade:1545
+msgid "Game is _lost:"
+msgstr "Jocu_l e pierdut:"
+
+#: glade/PyChess.glade:1560
+msgid "Game is _won:"
+msgstr "Jocul este câștigat:"
+
+#: glade/PyChess.glade:1575
+msgid "A player c_aptures:"
+msgstr "Un jucător c_apturează:"
+
+#: glade/PyChess.glade:1604
+msgid "Game is _set-up:"
+msgstr "Jocul e _configurat:"
+
+#: glade/PyChess.glade:1656
+msgid "_Observed moves:"
+msgstr "Mutări _observate"
+
+#: glade/PyChess.glade:1671
+msgid "Observed _ends:"
+msgstr "Finalizări obs_ervate"
+
+#: glade/PyChess.glade:1776
+msgid "<b>Play Sound When...</b>"
+msgstr "<b>Redă sunet când...</b>"
+
+#: glade/PyChess.glade:1798
+msgid "_Sounds"
+msgstr "_Sunete"
+
+#: glade/PyChess.glade:1942
+msgid "Uninstall"
+msgstr "Dezinstalează"
+
+#: glade/PyChess.glade:1996
+msgid "Ac_tive"
+msgstr "Ac_tiv"
+
+#: glade/PyChess.glade:2047
+msgid "<b>Installed Sidepanels</b>"
+msgstr "<b>Panouri laterale instalate</b>"
+
+#: glade/PyChess.glade:2062
+msgid "Side_panels"
+msgstr "_Panouri laterale"
+
+#: glade/PyChess.glade:2112
+msgid "Themes"
+msgstr ""
+
+#: glade/PyChess.glade:2180
+msgid "_Game"
+msgstr "_Joc"
+
+#: glade/PyChess.glade:2187
+msgid "_New Game"
+msgstr "Joc _nou"
+
+#: glade/PyChess.glade:2200
+msgid "Play _Internet Chess"
+msgstr "Joacă șah pe _internet"
+
+#: glade/PyChess.glade:2219
+msgid "_Load Game"
+msgstr "Încarcă joc"
+
+#: glade/PyChess.glade:2235
+msgid "Load _Recent Game"
+msgstr ""
+
+#: glade/PyChess.glade:2243
+msgid "Open _Database"
+msgstr ""
+
+#: glade/PyChess.glade:2253
+msgid "Setup Position"
+msgstr "Configurează poziția"
+
+#: glade/PyChess.glade:2263
+msgid "Enter Game _Notation"
+msgstr "Introdu _notația jocului"
+
+#: glade/PyChess.glade:2276
+msgid "_Save Game"
+msgstr "_Salvează joc"
+
+#: glade/PyChess.glade:2290
+msgid "Save Game _As"
+msgstr "S_alvează joc ca"
+
+#: glade/PyChess.glade:2304
+msgid "_Export Position"
+msgstr ""
+
+#: glade/PyChess.glade:2339
+msgid "Player _Rating"
+msgstr "Evalua_re jucător"
+
+#: glade/PyChess.glade:2384
+msgid "_Actions"
+msgstr "_Acțiuni"
+
+#: glade/PyChess.glade:2395
+msgid "Offer _Abort"
+msgstr "Oferă oprire_a jocului"
+
+#: glade/PyChess.glade:2405
+msgid "Offer Ad_journment"
+msgstr "Oferă suspendarea _jocului"
+
+#: glade/PyChess.glade:2425
+msgid "Offer _Pause"
+msgstr "Propune _pauză"
+
+#: glade/PyChess.glade:2441
+msgid "Offer _Undo"
+msgstr "Prop_une revenire"
+
+#: glade/PyChess.glade:2464
+msgid "_Call Flag"
+msgstr ""
+
+#: glade/PyChess.glade:2484
+msgid "Ask to _Move"
+msgstr "Cere mutare"
+
+#: glade/PyChess.glade:2497
+msgid "_View"
+msgstr "_Vizualizează"
+
+#: glade/PyChess.glade:2504
+msgid "_Rotate Board"
+msgstr "_Rotește tabla"
+
+#: glade/PyChess.glade:2518
+msgid "_Fullscreen"
+msgstr "_Ecran complet"
+
+#: glade/PyChess.glade:2531
+msgid "Leave _Fullscreen"
+msgstr "Părăsește _Ecran Complet"
+
+#: glade/PyChess.glade:2547
+msgid "_Show Sidepanels"
+msgstr "Afișează panourile laterale"
+
+#: glade/PyChess.glade:2558
+msgid "_Log Viewer"
+msgstr "Vizualizator jurna_l"
+
+#: glade/PyChess.glade:2575
+msgid "_Hint mode"
+msgstr "Mod ajutător"
+
+#: glade/PyChess.glade:2587
+msgid "Sp_y mode"
+msgstr "Mod spion"
+
+#: glade/PyChess.glade:2602
+msgid "S_ettings"
+msgstr "S_etări"
+
+#: glade/PyChess.glade:2628
+msgid "_Help"
+msgstr "A_jutor"
+
+#: glade/PyChess.glade:2635
+msgid "About Chess"
+msgstr "Despre șah"
+
+#: glade/PyChess.glade:2644
+msgid "How to Play"
+msgstr "Cum se joacă"
+
+#: glade/PyChess.glade:2653
+msgid "Translate PyChess"
+msgstr "Tradu PyChess"
+
+#: glade/PyChess.glade:2662
+msgid "Tip of the Day"
+msgstr "Pontul zilei"
+
+#: glade/saveGamesDialog.glade:8
+msgid "Quit PyChess"
+msgstr "Ieși din PyChess"
+
+#: glade/saveGamesDialog.glade:25 lib/pychess/widgets/ionest.py:377
+msgid "Close _without Saving"
+msgstr "Închide _fără a salva"
+
+#: glade/saveGamesDialog.glade:87
+msgid "_Save %d documents"
+msgstr "_Salvează %d documente"
+
+#: glade/saveGamesDialog.glade:145
+msgid ""
+"<big><b>There are %d games with unsaved moves. Save changes before "
+"closing?</b></big>"
+msgstr "<big><b>Există %d jocuri cu mutări nesalvate. Salvează modificări înainte de închidere?</b></big>"
+
+#: glade/saveGamesDialog.glade:165
+msgid "Select the games you want to save:"
+msgstr "Alege jocurile pe care vrei să le salvezi:"
+
+#: glade/saveGamesDialog.glade:207
+msgid "If you don't save, new changes to your games will be permanently lost."
+msgstr "Dacă nu salvezi, noile modificări către jocurile tale vor fi pierdute definitiv."
+
+#: glade/taskers.glade:128
+msgid "_Opponent:"
+msgstr "A_dversat:"
+
+#: glade/taskers.glade:156
+msgid "_Your Color:"
+msgstr "Culoarea _ta"
+
+#: glade/taskers.glade:222
+msgid "<b>_Start Game</b>"
+msgstr "<b>Începe _joc<b>"
+
+#: glade/taskers.glade:342
+msgid "Log on as G_uest"
+msgstr "Autentificare ca _oaspete"
+
+#: glade/taskers.glade:418
+msgid "Ha_ndle:"
+msgstr "_Nume utilizator:"
+
+#: glade/taskers.glade:478
+msgid "<b>_Connect to FICS</b>"
+msgstr "<b>_Conecteaza la FICS</b>"
+
+#: glade/tipoftheday.glade:8
+msgid "Tip Of The day"
+msgstr "Sfatul Zilei"
+
+#: glade/tipoftheday.glade:64
+msgid "Show tips at startup"
+msgstr "Arată sfaturi la pornire"
+
+#: lib/pychess/Main.py:211
+msgid "http://en.wikipedia.org/wiki/Chess"
+msgstr "http://ro.wikipedia.org/wiki/%C5%9Eah_%28joc%29"
+
+#: lib/pychess/Main.py:214
+msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
+msgstr "http://ro.wikipedia.org/wiki/%C5%9Eah_%28joc%29"
+
+#: lib/pychess/Main.py:271 lib/pychess/widgets/gamenanny.py:70
+msgid "Welcome"
+msgstr "Bun venit"
+
+#: lib/pychess/Database/gamelist.py:40
+msgid "Id"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:40
+msgid "W Elo"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:40
+msgid "B Elo"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "Result"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "Event"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "Site"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "Round"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "Date"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:41
+msgid "ECO"
+msgstr ""
+
+#: lib/pychess/Database/gamelist.py:62
+msgid "PyChess Game Database"
+msgstr ""
+
+#: lib/pychess/Database/PgnImport.py:184
+#, python-format
+msgid "The game #%s can't be loaded, because of an error parsing FEN"
+msgstr ""
+
+#: lib/pychess/ic/FICSConnection.py:109
+msgid "The connection was broken - got \"end of file\" message"
+msgstr "The connection was broken - got \"sfârșit de fișier\" message"
+
+#: lib/pychess/ic/FICSConnection.py:110
+#, python-format
+msgid "'%s' is not a registered name"
+msgstr "'%s' nu e un nume înregistrat"
+
+#: lib/pychess/ic/FICSConnection.py:111
+msgid "The entered password was invalid.\n"
+msgstr "Parola întrodusă nu este validă.\n"
+
+#: lib/pychess/ic/FICSConnection.py:130
+msgid "Connecting to server"
+msgstr "Conectare la server"
+
+#: lib/pychess/ic/FICSConnection.py:142
+msgid "Logging on to server"
+msgstr "Autentificare pe server"
+
+#: lib/pychess/ic/FICSConnection.py:181
+msgid "Setting up environment"
+msgstr "Configureaza mediul"
+
+#: lib/pychess/ic/FICSObjects.py:63
+msgid "Online"
+msgstr "Conectat"
+
+#: lib/pychess/ic/FICSObjects.py:64
+msgid "Offline"
+msgstr "Deconectat"
+
+#: lib/pychess/ic/FICSObjects.py:80
+msgid "Available"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:82
+msgid "Playing"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:87
+msgid "Idle"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:89
+msgid "Examining"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:91
+msgid "Not Available"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:93
+msgid "Running Simul Match"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:95
+msgid "In Tournament"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:239 lib/pychess/ic/FICSObjects.py:501
+#: lib/pychess/ic/ICLounge.py:529 lib/pychess/ic/ICLounge.py:571
+#: lib/pychess/ic/ICLounge.py:744 lib/pychess/ic/ICLounge.py:748
+#: lib/pychess/ic/ICLounge.py:1757
+msgid "Unrated"
+msgstr "Neevaluat"
+
+#: lib/pychess/ic/FICSObjects.py:500 lib/pychess/ic/ICLounge.py:450
+#: lib/pychess/ic/ICLounge.py:529 lib/pychess/ic/ICLounge.py:571
+#: lib/pychess/ic/ICLounge.py:748 lib/pychess/ic/ICLounge.py:1592
+msgid "Rated"
+msgstr "Evaluat"
+
+#: lib/pychess/ic/FICSObjects.py:510
+msgid "Private"
+msgstr "Privat"
+
+#: lib/pychess/ic/FICSObjects.py:517 lib/pychess/ic/ICLounge.py:1577
+#, python-format
+msgid "%d min"
+msgstr "%d min"
+
+#: lib/pychess/ic/FICSObjects.py:519
+#, python-format
+msgid " + %d sec"
+msgstr ""
+
+#: lib/pychess/ic/ICLogon.py:111 lib/pychess/ic/ICLogon.py:117
+msgid "Connection Error"
+msgstr "Eroare la conectare"
+
+#: lib/pychess/ic/ICLogon.py:113
+msgid "Log on Error"
+msgstr "Eroare autentificare"
+
+#: lib/pychess/ic/ICLogon.py:115
+msgid "Connection was closed"
+msgstr "Conexiunea a fost închisă"
+
+#: lib/pychess/ic/ICLogon.py:121
+msgid "Address Error"
+msgstr "Eroare adresă"
+
+#: lib/pychess/ic/ICLogon.py:124
+msgid "Auto-logout"
+msgstr "Deconectare automată"
+
+#: lib/pychess/ic/ICLogon.py:125
+msgid "You have been logged out because you were idle more than 60 minutes"
+msgstr "Ați fost deconectați pentru că ați fost inactive pentru mai mult de 60 minute."
+
+#: lib/pychess/ic/ICLounge.py:254 sidepanel/bookPanel.py:305
+msgid "Win"
+msgstr "Victorie"
+
+#: lib/pychess/ic/ICLounge.py:254 sidepanel/bookPanel.py:299
+msgid "Draw"
+msgstr "Remiză"
+
+#: lib/pychess/ic/ICLounge.py:254 sidepanel/bookPanel.py:302
+msgid "Loss"
+msgstr "Pierdere"
+
+#: lib/pychess/ic/ICLounge.py:264
+msgid ""
+"On FICS, your \"Wild\" rating encompasses all of the following variants at "
+"all time controls:\n"
+msgstr "Pe FICS, evaluarea ta \"Wild\" cuprinde toate variantele următoare pe toate timpurile:\n"
+
+#: lib/pychess/ic/ICLounge.py:276
+msgid "Sanctions"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:281
+msgid "Email"
+msgstr "Poștă electronică"
+
+#: lib/pychess/ic/ICLounge.py:286
+msgid "Spent"
+msgstr "Utilizat"
+
+#: lib/pychess/ic/ICLounge.py:288
+msgid "online in total"
+msgstr "total online"
+
+#: lib/pychess/ic/ICLounge.py:292
+msgid "Ping"
+msgstr "Ping"
+
+#: lib/pychess/ic/ICLounge.py:293
+msgid "Connecting"
+msgstr "Se conectează"
+
+#: lib/pychess/ic/ICLounge.py:300 lib/pychess/Savers/epd.py:132
+msgid "Unknown"
+msgstr "Necunoscut"
+
+#: lib/pychess/ic/ICLounge.py:311
+msgid ""
+"You are currently logged in as a guest.\n"
+"A guest is not able to play rated games, and thus the offer of games will be smaller."
+msgstr "Momentan ești autentificat ca oaspete.\nUn oaspete nu poate să joace jocuri evaluate și în consecința lista jocurile oferite va fi mai mică."
+
+#: lib/pychess/ic/ICLounge.py:316
+msgid "Register now"
+msgstr "Înscrie-te acum"
+
+#: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:806
+#: lib/pychess/widgets/preferencesDialog.py:88
+msgid "Name"
+msgstr "Nume"
+
+#: lib/pychess/ic/ICLounge.py:450
+msgid "Type"
+msgstr "Tip"
+
+#: lib/pychess/ic/ICLounge.py:450
+msgid "Clock"
+msgstr "Ceas"
+
+#: lib/pychess/ic/ICLounge.py:523
+#, python-format
+msgid "Active seeks: %d"
+msgstr "Căutări active: %d"
+
+#: lib/pychess/ic/ICLounge.py:526 lib/pychess/ic/ICLounge.py:568
+#, python-format
+msgid "%(min)s min"
+msgstr "%(min)s min"
+
+#: lib/pychess/ic/ICLounge.py:528 lib/pychess/ic/ICLounge.py:570
+#, python-format
+msgid " + %(sec)s sec"
+msgstr " + %(sec)s sec"
+
+#: lib/pychess/ic/ICLounge.py:583
+#, python-format
+msgid " would like to resume your adjourned <b>%(time)s</b> "
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:586
+#, python-format
+msgid ""
+" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game."
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:596
+msgid "Accept Challenge"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:598
+msgid "Decline Challenge"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:600
+msgid "Ignore Challenge"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:713
+msgid " min"
+msgstr " min"
+
+#: lib/pychess/ic/ICLounge.py:750
+#, python-format
+msgid "%(min)s min + %(sec)s sec"
+msgstr "%(min)s min + %(sec)s sec"
+
+#: lib/pychess/ic/ICLounge.py:753
+msgid "Opponent Rating"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:755
+msgid "Manual Accept"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:806 lib/pychess/ic/ICLounge.py:1688
+#: lib/pychess/ic/__init__.py:58 lib/pychess/widgets/newGameDialog.py:141
+msgid "Blitz"
+msgstr "Bliț"
+
+#: lib/pychess/ic/ICLounge.py:807 lib/pychess/ic/ICLounge.py:1688
+#: lib/pychess/ic/__init__.py:60
+msgid "Lightning"
+msgstr "Fulger"
+
+#: lib/pychess/ic/ICLounge.py:807 lib/pychess/ic/__init__.py:88
+msgid "Wild"
+msgstr "Wild"
+
+#: lib/pychess/ic/ICLounge.py:807
+msgid "Status"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:850 lib/pychess/ic/ICLounge.py:873
+#, python-format
+msgid "Players: %d"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:979
+msgid "White Player"
+msgstr "Jucător alb"
+
+#: lib/pychess/ic/ICLounge.py:980
+msgid "Black Player"
+msgstr "Jucător negru"
+
+#: lib/pychess/ic/ICLounge.py:981 lib/pychess/ic/ICLounge.py:1111
+msgid "Game Type"
+msgstr "Tipul jocului"
+
+#: lib/pychess/ic/ICLounge.py:1030
+#, python-format
+msgid "Games running: %d"
+msgstr "Jocuri în desfășurare: %d"
+
+#: lib/pychess/ic/ICLounge.py:1110
+msgid "Your Color"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1111
+msgid "Opponent"
+msgstr "Adversar"
+
+#: lib/pychess/ic/ICLounge.py:1111
+msgid "Is Online"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1111
+msgid "Time Control"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1112
+msgid "Date/Time"
+msgstr "Dată/Oră"
+
+#: lib/pychess/ic/ICLounge.py:1155
+#, python-format
+msgid "%(player)s is %(status)s"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1160
+#, python-format
+msgid ""
+" with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1173
+msgid "Request Continuation"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1175
+msgid "Examine Adjourned Game"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1177
+msgid "Do Nothing"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1434
+msgid ""
+"The chain button is disabled because you are logged in as a guest. Guests "
+"can't establish ratings, and the chain button's state has no effect when "
+"there is no rating to which to tie \"Opponent Strength\" to"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1467
+msgid "Challenge: "
+msgstr "Provocare: "
+
+#: lib/pychess/ic/ICLounge.py:1509 lib/pychess/ic/ICLounge.py:1512
+msgid "This option is not applicable because you're challenging a player"
+msgstr "Această opțiune nu este disponibilă când provoci un jucător"
+
+#: lib/pychess/ic/ICLounge.py:1525
+msgid "Edit Seek: "
+msgstr "Modifică căutarea: "
+
+#: lib/pychess/ic/ICLounge.py:1574
+#, python-format
+msgid "%(minutes)d min + %(gain)d sec/move"
+msgstr "%(minutes)d min + %(gain)d sec/mutare"
+
+#: lib/pychess/ic/ICLounge.py:1595
+msgid "Manual"
+msgstr "Manual"
+
+#: lib/pychess/ic/ICLounge.py:1735
+msgid "Any strength"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:1787
+msgid "You can't play rated games because you are logged in as a guest"
+msgstr "Nu poți juca jocuri evaluate pentru că ești autentificat ca oaspete"
+
+#: lib/pychess/ic/ICLounge.py:1791
+msgid "You can't play rated games because \"Untimed\" is checked, "
+msgstr "Nu poți juca jocuri evaloate pentru că \"Necronometrat\" este ales. "
+
+#: lib/pychess/ic/ICLounge.py:1792
+msgid "and on FICS, untimed games can't be rated"
+msgstr "și pe FICS, jocurile necronometrate nu pot fi evaluate"
+
+#: lib/pychess/ic/ICLounge.py:1796
+msgid "This option is not available because you're challenging a guest, "
+msgstr "Această opțiune nu este dispobilă pentru că provoci un oaspete, "
+
+#: lib/pychess/ic/ICLounge.py:1797
+msgid "and guests can't play rated games"
+msgstr "iar oaspeții nu pot juca jocuri evaluate"
+
+#: lib/pychess/ic/ICLounge.py:1811 lib/pychess/Variants/shuffle.py:31
+#: lib/pychess/widgets/newGameDialog.py:244
+msgid "Shuffle"
+msgstr "Amestecă"
+
+#: lib/pychess/ic/ICLounge.py:1812 lib/pychess/ic/__init__.py:63
+#: lib/pychess/widgets/newGameDialog.py:245
+msgid "Other"
+msgstr "Alte"
+
+#: lib/pychess/ic/ICLounge.py:1893
+msgid "You can't select a variant because \"Untimed\" is checked, "
+msgstr "Nu poți alege o variantă pentru ca \"Necronometrat\" este ales, "
+
+#: lib/pychess/ic/ICLounge.py:1894
+msgid "and on FICS, untimed games have to be normal chess rules"
+msgstr "și pe FICS, jocurile necronometrate se joaca cu regulile normale"
+
+#: lib/pychess/ic/ICLounge.py:1928
+msgid "Change Tolerance"
+msgstr "Modifică toleranța"
+
+#: lib/pychess/ic/ICLounge.py:1980
+msgid ""
+"You may only have 3 outstanding seeks at the same time. If you want to add a"
+" new seek you must clear your currently active seeks. Clear your seeks?"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:2001
+msgid " has declined your offer for a match."
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:62
+msgid "Examined"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:141
+msgid "Administrator"
+msgstr "Administrator"
+
+#: lib/pychess/ic/__init__.py:141
+msgid "Blindfold Account"
+msgstr "Cont legat la ochi"
+
+#: lib/pychess/ic/__init__.py:141
+msgid "Computer Account"
+msgstr "Cont calculator"
+
+#: lib/pychess/ic/__init__.py:142
+msgid "Team Account"
+msgstr "Cont echipa"
+
+#: lib/pychess/ic/__init__.py:142
+msgid "Unregistered User"
+msgstr "Utilizator neînregistrat"
+
+#: lib/pychess/ic/__init__.py:142
+msgid "Chess Advisor"
+msgstr "Consilier șah"
+
+#: lib/pychess/ic/__init__.py:143
+msgid "Service Representative"
+msgstr "Reprezentant serviciu"
+
+#: lib/pychess/ic/__init__.py:143
+msgid "Tournament Director"
+msgstr "Director turneu"
+
+#: lib/pychess/ic/__init__.py:143
+msgid "Mamer Manager"
+msgstr "Director mamer"
+
+#: lib/pychess/ic/__init__.py:144
+msgid "Grand Master"
+msgstr "Mare maestru internațional"
+
+#: lib/pychess/ic/__init__.py:144
+msgid "International Master"
+msgstr "Maestru internațional"
+
+#: lib/pychess/ic/__init__.py:144
+msgid "FIDE Master"
+msgstr "Maestru FIDE"
+
+#: lib/pychess/ic/__init__.py:145
+msgid "Woman Grand Master"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:145
+msgid "Woman International Master"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:145
+msgid "Woman FIDE Master"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:146
+msgid "Dummy Account"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:150
+msgid "*"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:150 lib/pychess/Utils/repr.py:12
+msgid "B"
+msgstr "B"
+
+#: lib/pychess/ic/__init__.py:150
+msgid "C"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:151
+msgid "T"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:151
+msgid "U"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:151
+msgid "CA"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:152
+msgid "SR"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:152
+msgid "TD"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:152
+msgid "TM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:153
+msgid "GM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:153
+msgid "IM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:153
+msgid "FM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:154
+msgid "WGM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:154
+msgid "WIM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:154
+msgid "WFM"
+msgstr ""
+
+#: lib/pychess/ic/__init__.py:154
+msgid "D"
+msgstr ""
+
+#: lib/pychess/Players/CECPEngine.py:839
+#, python-format
+msgid "The engine %s reports an error:"
+msgstr ""
+
+#: lib/pychess/Players/Human.py:14
+msgid "Your opponent has offered you a draw. Accept?"
+msgstr "Adversarul v-a oferit o remiză. Acceptați?"
+
+#: lib/pychess/Players/Human.py:15
+msgid ""
+"Your opponent has offered you a draw. If you accept this offer, the game "
+"will end with a score of 1/2 - 1/2."
+msgstr "Adversarul v-a oferit o remiză. Dacă acceptați, jocul se va termina cu scorul 1/2 - 1/2."
+
+#: lib/pychess/Players/Human.py:17
+msgid "Your opponent wants to abort the game. Accept?"
+msgstr "Adversarul vrea să renunțați la joc. Acceptați?"
+
+#: lib/pychess/Players/Human.py:18
+msgid ""
+"Your opponent has asked that the game be aborted. If you accept this offer, "
+"the game will end with no rating change."
+msgstr "Adversarul a cerut ca jocul sa fie terminat. Dacă acceptați, jocul se va termina fără modificarea evaluarilor."
+
+#: lib/pychess/Players/Human.py:20
+msgid "Your opponent wants to adjourn the game. Accept?"
+msgstr "Adversarul dumneavoastra vrea să suspende jocul. Acceptați?"
+
+#: lib/pychess/Players/Human.py:21
+msgid ""
+"Your opponent has asked that the game be adjourned. If you accept this "
+"offer, the game will be adjourned and you can resume it later (when your "
+"opponent is online and both players agree to resume)."
+msgstr ""
+
+#: lib/pychess/Players/Human.py:23
+#, python-format
+msgid "Your opponent wants to undo %s move(s). Accept?"
+msgstr "Adversarul vrea să refacă %s mutăre(i). Acceptați?"
+
+#: lib/pychess/Players/Human.py:24
+#, python-format
+msgid ""
+"Your opponent has asked that the last %s move(s) be undone. If you accept "
+"this offer, the game will continue from the earlier position."
+msgstr "Adversarul a cerut refacerea ultimei(lor %s) mutări."
+
+#: lib/pychess/Players/Human.py:26
+msgid "Your opponent wants to pause the game. Accept?"
+msgstr "Adversarul dumneavoastră vrea să întrerupă jocul. Acceptați?"
+
+#: lib/pychess/Players/Human.py:27
+msgid ""
+"Your opponent has asked that the game be paused. If you accept this offer, "
+"the game clock will be paused until both players agree to resume the game."
+msgstr "Adversul a cerut suspendarea jocului. Dacă acceptați ceasul jocului se va opri până când amandoi jucători sunt deacord să reia jocul."
+
+#: lib/pychess/Players/Human.py:29
+msgid "Your opponent wants to resume the game. Accept?"
+msgstr "Adversarul dumneavoastră vrea să reia jocul. Acceptați?"
+
+#: lib/pychess/Players/Human.py:30
+msgid ""
+"Your opponent has asked that the game be resumed. If you accept this offer, "
+"the game clock will continue from where it was paused."
+msgstr "Adversarul a cerul reluarea jocului. Dacă acceptati ceasul jocului va continue de când a fost întrerupt."
+
+#: lib/pychess/Players/Human.py:34
+msgid "The resignation"
+msgstr "Abdicarea"
+
+#: lib/pychess/Players/Human.py:35
+msgid "The flag call"
+msgstr ""
+
+#: lib/pychess/Players/Human.py:36
+msgid "The draw offer"
+msgstr "Oferta de remiză"
+
+#: lib/pychess/Players/Human.py:37
+msgid "The abort offer"
+msgstr "Oferta de întrerupere"
+
+#: lib/pychess/Players/Human.py:38
+msgid "The adjourn offer"
+msgstr "Oferta de suspendare"
+
+#: lib/pychess/Players/Human.py:39
+msgid "The pause offer"
+msgstr "Oferta de întrerupere"
+
+#: lib/pychess/Players/Human.py:40
+msgid "The resume offer"
+msgstr "Oferta de reluare"
+
+#: lib/pychess/Players/Human.py:41
+msgid "The offer to switch sides"
+msgstr "Oferta de schimbare a părții"
+
+#: lib/pychess/Players/Human.py:42
+msgid "The takeback offer"
+msgstr "Oferta de revenire"
+
+#: lib/pychess/Players/Human.py:46
+msgid "resign"
+msgstr "să renunțați"
+
+#: lib/pychess/Players/Human.py:47
+msgid "call your opponents flag"
+msgstr ""
+
+#: lib/pychess/Players/Human.py:48
+msgid "offer a draw"
+msgstr "să oferiți remiză"
+
+#: lib/pychess/Players/Human.py:49
+msgid "offer an abort"
+msgstr "oferă oprirea jocului"
+
+#: lib/pychess/Players/Human.py:50
+msgid "offer to adjourn"
+msgstr "oferă suspendarea jocului"
+
+#: lib/pychess/Players/Human.py:51
+msgid "offer a pause"
+msgstr "să oferiți pauză"
+
+#: lib/pychess/Players/Human.py:52
+msgid "offer to resume"
+msgstr "să oferiți reluare"
+
+#: lib/pychess/Players/Human.py:53
+msgid "offer to switch sides"
+msgstr "să oferiți schimbați partea"
+
+#: lib/pychess/Players/Human.py:54
+msgid "offer a takeback"
+msgstr "oferă refacerea ultimei mutări"
+
+#: lib/pychess/Players/Human.py:55
+msgid "ask your opponent to move"
+msgstr "să cereți adversarului să mute"
+
+#: lib/pychess/Players/Human.py:60
+msgid "Your opponent is not out of time."
+msgstr "Adversarul nu a depășit timpul."
+
+#: lib/pychess/Players/Human.py:62
+msgid "The clock hasn't been started yet."
+msgstr "Cronomentrul nu a fost pornit."
+
+#: lib/pychess/Players/Human.py:64
+msgid "You can't switch colors during the game."
+msgstr "Nu puteți schimba partea în timpul jocului."
+
+#: lib/pychess/Players/Human.py:66
+msgid "You have tried to undo too many moves."
+msgstr "Ați încercat să refaceți prea multe mutări."
+
+#: lib/pychess/Players/Human.py:165
+msgid "Your opponent asks you to hurry!"
+msgstr "Adversarul îți cere să te grăbești!"
+
+#: lib/pychess/Players/Human.py:166
+msgid ""
+"Generally this means nothing, as the game is timebased, but if you want to "
+"please your opponent, perhaps you should get going."
+msgstr "În general, aceasta nu înseamnă nimic, jocul fiind bazat pe timp, dar dacă vrei să-i fii pe plac adversarului, poate ar trebui să acționezi."
+
+#: lib/pychess/Players/Human.py:228
+#, python-format
+msgid "%s was declined by your opponent"
+msgstr "%s a fost respinsă de adversar."
+
+#: lib/pychess/Players/Human.py:229
+msgid ""
+"You can try to send the offer to your opponent later in the game again."
+msgstr "Poți încerca să trimiți din nou solicitarea către adversarul tău mai târziu."
+
+#: lib/pychess/Players/Human.py:236
+#, python-format
+msgid "%s was withdrawn by your opponent"
+msgstr "%s a fost restrasă de către adversar"
+
+#: lib/pychess/Players/Human.py:237
+msgid "Your opponent seems to have changed his or her mind."
+msgstr "Adversarul tău s-a răzgândit."
+
+#: lib/pychess/Players/Human.py:246
+#, python-format
+msgid "Unable to accept %s"
+msgstr "Nu se poate accepta %s"
+
+#: lib/pychess/Players/Human.py:247
+#, python-format
+msgid ""
+"PyChess was unable to get the %s offer accepted. Probably because it has "
+"been withdrawn."
+msgstr "PyChess nu a fost capabil sa accepte oferta %s. Probabil deoarece aceasta a fost revocată."
+
+#: lib/pychess/Players/Human.py:254
+#, python-format
+msgid "%s returns an error"
+msgstr "%s întoarce o eroare"
+
+#: lib/pychess/Savers/chessalpha2.py:16
+msgid "Chess Alpha 2 Diagram"
+msgstr "Diagrama Chess Alpha 2"
+
+#: lib/pychess/Savers/chessalpha2.py:138
+#, python-format
+msgid "Couldn't load the diagram '%s'"
+msgstr "Nu s-a putut încărca diagrama '%s'"
+
+#: lib/pychess/Savers/database.py:16
+msgid "PyChess database"
+msgstr ""
+
+#: lib/pychess/Savers/epd.py:7
+msgid "Chess Position"
+msgstr "Poziție de șah"
+
+#: lib/pychess/Savers/fen.py:5
+msgid "Simple Chess Position"
+msgstr "Poziție simplă de șah"
+
+#: lib/pychess/Savers/pgnbase.py:97
+#, python-format
+msgid ""
+"The game can't be read to end, because of an error parsing move %(moveno)s "
+"'%(notation)s'."
+msgstr ""
+
+#: lib/pychess/Savers/pgnbase.py:99
+#, python-format
+msgid "The move failed because %s."
+msgstr "Mutarea a eșuat pentru că %s."
+
+#: lib/pychess/Savers/pgnbase.py:107
+#, python-format
+msgid "Error parsing move %s %s"
+msgstr ""
+
+#: lib/pychess/Savers/pgn.py:20
+msgid "Chess Game"
+msgstr "Joc de șah"
+
+#: lib/pychess/Savers/pgn.py:253
+msgid "The game can't be loaded, because of an error parsing FEN"
+msgstr ""
+
+#: lib/pychess/Savers/png.py:31
+msgid "Export position"
+msgstr ""
+
+#: lib/pychess/Savers/png.py:36 lib/pychess/widgets/ionest.py:213
+#: lib/pychess/widgets/ionest.py:328
+msgid "vs."
+msgstr "împotriva."
+
+#: lib/pychess/Savers/png.py:39
+msgid "All files"
+msgstr ""
+
+#: lib/pychess/Savers/png.py:44
+msgid "Images"
+msgstr ""
+
+#: lib/pychess/Savers/png.py:62 lib/pychess/widgets/ionest.py:255
+msgid "_Replace"
+msgstr "Înlocuiește"
+
+#: lib/pychess/Savers/png.py:65 lib/pychess/widgets/ionest.py:259
+msgid "File exists"
+msgstr "Fișierul există"
+
+#: lib/pychess/Savers/png.py:67 lib/pychess/widgets/ionest.py:261
+#, python-format
+msgid ""
+"<big><b>A file named '%s' already exists. Would you like to replace "
+"it?</b></big>"
+msgstr "<big><b>Un fișier numit '%s' există deja. Se dorește înlocuirea?</b></big>"
+
+#: lib/pychess/Savers/png.py:68 lib/pychess/widgets/ionest.py:262
+#, python-format
+msgid ""
+"The file already exists in '%s'. If you replace it, its content will be "
+"overwritten."
+msgstr "Fișierul există deja în '%s'. Dacă îl înlocuiți, conținutul său va fi suprascris."
+
+#: lib/pychess/Savers/png.py:80 lib/pychess/widgets/ionest.py:277
+msgid "Could not save the file"
+msgstr "Nu s-a putut salva fișierul"
+
+#: lib/pychess/Savers/png.py:81
+msgid "<big><b>PyChess was not able to export the position</b></big>"
+msgstr ""
+
+#: lib/pychess/Savers/png.py:82 lib/pychess/widgets/ionest.py:279
+#, python-format
+msgid "The error was: %s"
+msgstr "Eroarea a fost: %s"
+
+#: lib/pychess/System/ping.py:27
+msgid "Destination Host Unreachable"
+msgstr "Serverul destinație nu e disponibil"
+
+#: lib/pychess/System/ping.py:70
+msgid "Died"
+msgstr "A murit"
+
+#: lib/pychess/Utils/GameModel.py:126
+msgid "Local Event"
+msgstr "Eveniment local"
+
+#: lib/pychess/Utils/GameModel.py:127
+msgid "Local Site"
+msgstr "Site local"
+
+#: lib/pychess/Utils/repr.py:10
+msgid "Pawn"
+msgstr "Pion"
+
+#: lib/pychess/Utils/repr.py:10
+msgid "King"
+msgstr "Rege"
+
+#: lib/pychess/Utils/repr.py:12
+msgid "P"
+msgstr "P"
+
+#: lib/pychess/Utils/repr.py:12
+msgid "N"
+msgstr "N"
+
+#: lib/pychess/Utils/repr.py:12
+msgid "R"
+msgstr "R"
+
+#: lib/pychess/Utils/repr.py:12
+msgid "Q"
+msgstr "Q"
+
+#: lib/pychess/Utils/repr.py:12
+msgid "K"
+msgstr "K"
+
+#: lib/pychess/Utils/repr.py:15
+msgid "The game ended in a draw"
+msgstr "Partida s-a încheiat cu remiză"
+
+#: lib/pychess/Utils/repr.py:16
+#, python-format
+msgid "%(white)s won the game"
+msgstr "%(white)s a câștigat jocul"
+
+#: lib/pychess/Utils/repr.py:17
+#, python-format
+msgid "%(black)s won the game"
+msgstr "%(black)s a câștigat jocul"
+
+#: lib/pychess/Utils/repr.py:18
+msgid "The game has been killed"
+msgstr "Programul a fost terminat"
+
+#: lib/pychess/Utils/repr.py:19
+msgid "The game has been adjourned"
+msgstr "Jocul a fost suspendat"
+
+#: lib/pychess/Utils/repr.py:20
+msgid "The game has been aborted"
+msgstr "Jocul a fost abandonat"
+
+#: lib/pychess/Utils/repr.py:24
+msgid "Because neither player has got sufficient material to mate"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:25
+msgid "Because the same position was repeated three times in a row"
+msgstr "Pentru că aceeași poziție a fost repetată de trei ori la rând"
+
+#: lib/pychess/Utils/repr.py:26
+msgid "Because the last 50 moves brought nothing new"
+msgstr "Deoarece ultimele 50 de mutari nu au schimbat situația jocului"
+
+#: lib/pychess/Utils/repr.py:27
+msgid "Because both players ran out of time"
+msgstr "Pentru că amândoi jucători au rămas fără timp"
+
+#: lib/pychess/Utils/repr.py:28
+#, python-format
+msgid "Because %(mover)s stalemated"
+msgstr "Because %(mover)s a fost pus în pat."
+
+#: lib/pychess/Utils/repr.py:29
+msgid "Because the players agreed to"
+msgstr "Pentru că jucătorii au fost deacord să"
+
+#: lib/pychess/Utils/repr.py:30 lib/pychess/Utils/repr.py:39
+#: lib/pychess/Utils/repr.py:51
+msgid "Because of adjudication by an admin"
+msgstr "Din cauza deciziei unui administrator"
+
+#: lib/pychess/Utils/repr.py:31
+msgid "Because the game exceed the max length"
+msgstr "Pentru că jocul a depășit lungimea maximă"
+
+#: lib/pychess/Utils/repr.py:32
+#, python-format
+msgid ""
+"Because %(white)s ran out of time and %(black)s has got insufficient "
+"material to mate"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:33
+#, python-format
+msgid ""
+"Because %(black)s ran out of time and %(white)s has got insufficient "
+"material to mate"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:35
+#, python-format
+msgid "Because %(loser)s resigned"
+msgstr "Pentru că %(loser)s a renunțat"
+
+#: lib/pychess/Utils/repr.py:36
+#, python-format
+msgid "Because %(loser)s ran out of time"
+msgstr "Pentru că %(loser)s a rămas fără timp"
+
+#: lib/pychess/Utils/repr.py:37
+#, python-format
+msgid "Because %(loser)s has been checkmated"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:38
+#, python-format
+msgid "Because %(loser)s disconnected"
+msgstr "Pentru că %(loser)s s-a deconectat"
+
+#: lib/pychess/Utils/repr.py:40
+#, python-format
+msgid "Because %(loser)s lost all pieces but the king"
+msgstr "Pentru că %(loser)s a pierdut toate piesele mai puțin regele"
+
+#: lib/pychess/Utils/repr.py:42
+msgid "Because a player lost connection"
+msgstr "Pentru că un jucător s-a deconectat"
+
+#: lib/pychess/Utils/repr.py:43
+msgid "Because both players agreed to adjourn the game"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
+msgid "Because the server was shut down"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:45
+msgid ""
+"Because a player lost connection and the other player requested adjournment"
+msgstr "Pentru că un jucător a pierdut conexiunea, iar celalt jocător a cerut o amânare"
+
+#: lib/pychess/Utils/repr.py:46
+#, python-format
+msgid ""
+"Because %(black)s lost connection to the server and %(white)s requested "
+"adjournment"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:47
+#, python-format
+msgid ""
+"Because %(white)s lost connection to the server and %(black)s requested "
+"adjournment"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:48
+#, python-format
+msgid "Because %(white)s lost connection to the server"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:49
+#, python-format
+msgid "Because %(black)s lost connection to the server"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:52
+msgid "Because both players agreed to"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:53
+msgid "Because of courtesy by a player"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:54
+msgid ""
+"Because a player quit. No winner was found due to the early phase of the "
+"game"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:57
+#, python-format
+msgid "Because the %(white)s engine died"
+msgstr "Pentru că motorul de șah %(white)s a murit"
+
+#: lib/pychess/Utils/repr.py:58
+#, python-format
+msgid "Because the %(black)s engine died"
+msgstr ""
+
+#: lib/pychess/Utils/repr.py:59
+msgid "Because the connection to the server was lost"
+msgstr "Pentru că conexiunea către server a fost pierdută"
+
+#: lib/pychess/Utils/repr.py:60
+msgid "The reason is unknown"
+msgstr "Motivul este necunoscut"
+
+#: lib/pychess/Utils/TimeModel.py:225
+msgid "min"
+msgstr ""
+
+#: lib/pychess/Utils/TimeModel.py:227
+msgid "sec"
+msgstr ""
+
+#: lib/pychess/Variants/asymmetricrandom.py:85
+msgid "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n"
+msgstr ""
+
+#: lib/pychess/Variants/asymmetricrandom.py:91
+msgid "Asymmetric Random"
+msgstr "Aleator asimetric"
+
+#: lib/pychess/Variants/blindfold.py:10
+msgid "Classic chess rules with hidden figurines\n"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:12
+#: lib/pychess/widgets/newGameDialog.py:242
+msgid "Blindfold"
+msgstr "Legat la ochi"
+
+#: lib/pychess/Variants/blindfold.py:25
+msgid "Classic chess rules with hidden pawns\n"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:27
+msgid "Hidden pawns"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:40
+msgid "Classic chess rules with hidden pieces\n"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:42
+msgid "Hidden pieces"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:55
+msgid "Classic chess rules with all pieces white\n"
+msgstr ""
+
+#: lib/pychess/Variants/blindfold.py:57
+msgid "All white"
+msgstr ""
+
+#: lib/pychess/Variants/corner.py:31
+msgid "http://brainking.com/en/GameRules?tp=2\n"
+msgstr ""
+
+#: lib/pychess/Variants/corner.py:37
+msgid "Corner"
+msgstr "Colț"
+
+#: lib/pychess/Variants/fischerandom.py:218
+msgid "http://en.wikipedia.org/wiki/Chess960\n"
+msgstr ""
+
+#: lib/pychess/Variants/fischerandom.py:220
+msgid "Fischer Random"
+msgstr "Fischer aleator"
+
+#: lib/pychess/Variants/knightodds.py:17
+msgid "One player starts with one less knight piece"
+msgstr ""
+
+#: lib/pychess/Variants/knightodds.py:18
+msgid "Knight odds"
+msgstr "Cotele calului"
+
+#: lib/pychess/Variants/losers.py:12
+msgid "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
+msgstr ""
+
+#: lib/pychess/Variants/losers.py:13
+msgid "Losers"
+msgstr "Pierzatori"
+
+#: lib/pychess/Variants/normal.py:4
+msgid "Classic chess rules\n"
+msgstr ""
+
+#: lib/pychess/Variants/normal.py:6 lib/pychess/widgets/newGameDialog.py:145
+msgid "Normal"
+msgstr "Normal"
+
+#: lib/pychess/Variants/pawnodds.py:17
+msgid "One player starts with one less pawn piece"
+msgstr ""
+
+#: lib/pychess/Variants/pawnodds.py:18
+msgid "Pawn odds"
+msgstr "Cotele pionului"
+
+#: lib/pychess/Variants/pawnspassed.py:20
+msgid "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
+msgstr ""
+
+#: lib/pychess/Variants/pawnspassed.py:22
+msgid "Pawns Passed"
+msgstr ""
+
+#: lib/pychess/Variants/pawnspushed.py:19
+msgid "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
+msgstr ""
+
+#: lib/pychess/Variants/pawnspushed.py:21
+msgid "Pawns Pushed"
+msgstr ""
+
+#: lib/pychess/Variants/queenodds.py:17
+msgid "One player starts with one less queen piece"
+msgstr ""
+
+#: lib/pychess/Variants/queenodds.py:18
+msgid "Queen odds"
+msgstr "Cotele reginei"
+
+#: lib/pychess/Variants/randomchess.py:28
+msgid "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n"
+msgstr ""
+
+#: lib/pychess/Variants/randomchess.py:34
+#: lib/pychess/widgets/TaskerManager.py:148
+msgid "Random"
+msgstr "Aleator"
+
+#: lib/pychess/Variants/rookodds.py:17
+msgid "One player starts with one less rook piece"
+msgstr ""
+
+#: lib/pychess/Variants/rookodds.py:18
+msgid "Rook odds"
+msgstr "Cotele turei"
+
+#: lib/pychess/Variants/shuffle.py:26
+msgid "xboard nocastle: http://tim-mann.org/xboard/engine-intf.html#8\n"
+msgstr ""
+
+#: lib/pychess/Variants/upsidedown.py:18
+msgid "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
+msgstr ""
+
+#: lib/pychess/Variants/upsidedown.py:21
+msgid "Upside Down"
+msgstr "Răsturnat"
+
+#: lib/pychess/widgets/ChatWindow.py:193
+msgid "You have opened no conversations yet"
+msgstr "Nu ați deschis nicio conversați încă"
+
+#: lib/pychess/widgets/ChatWindow.py:225
+msgid "Only registered users may talk to this channel"
+msgstr "Doar utilizatorii înregistrați poti vorbi pe acest canal"
+
+#: lib/pychess/widgets/ChatWindow.py:281
+msgid "No conversation's selected"
+msgstr "Nicio conversație nu a fost selectată"
+
+#: lib/pychess/widgets/ChatWindow.py:318
+msgid "Loading player data"
+msgstr "Se încarcă datele jucătorului"
+
+#: lib/pychess/widgets/ChatWindow.py:372
+msgid "Receiving list of players"
+msgstr ""
+
+#: lib/pychess/widgets/ChatWindow.py:473
+msgid "More channels"
+msgstr "Mai multe canale"
+
+#: lib/pychess/widgets/ChatWindow.py:480
+msgid "More players"
+msgstr "Mai mulți jucători"
+
+#: lib/pychess/widgets/ChatWindow.py:595
+msgid "Conversations"
+msgstr "Conversații"
+
+#: lib/pychess/widgets/ChatWindow.py:597
+msgid "Conversation info"
+msgstr "Informații desre coversație"
+
+#: lib/pychess/widgets/gamenanny.py:111
+msgid "Offer Rematch"
+msgstr "Oferiți revanșă"
+
+#: lib/pychess/widgets/gamenanny.py:113
+msgid "Play Rematch"
+msgstr "Jucați revanșă"
+
+#: lib/pychess/widgets/gamenanny.py:116
+msgid "Undo one move"
+msgstr "Refă o mutare"
+
+#: lib/pychess/widgets/gamenanny.py:118
+msgid "Undo two moves"
+msgstr "Refă două mutări"
+
+#: lib/pychess/widgets/gamenanny.py:159
+msgid "The game is paused"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:180 lib/pychess/widgets/gamenanny.py:181
+msgid "Loaded game"
+msgstr "Joc încărcat"
+
+#: lib/pychess/widgets/gamenanny.py:187
+msgid "Saved game"
+msgstr "Joc salvat"
+
+#: lib/pychess/widgets/gamenanny.py:191
+msgid "Analyzer started"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:236
+msgid "You sent an abort offer"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:238
+msgid "You sent an adjournment offer"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:240
+msgid "You sent a draw offer"
+msgstr "Ai trimis o ofertă de remiză"
+
+#: lib/pychess/widgets/gamenanny.py:242
+msgid "You sent a pause offer"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:244
+msgid "You sent a resume offer"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:246
+msgid "You sent an undo offer"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:248
+msgid "You asked your opponent to move"
+msgstr ""
+
+#: lib/pychess/widgets/gamenanny.py:260
+#, python-format
+msgid "<big><b>Engine, %s, has died</b></big>"
+msgstr "<big><b>Motorul, %s, a murit</b></big>"
+
+#: lib/pychess/widgets/gamenanny.py:261
+msgid ""
+"PyChess has lost connection to the engine, probably because it has died.\n"
+"\n"
+"You can try to start a new game with the engine, or try to play against another one."
+msgstr "PyChess a pierdut legătura cu motorul; probabil acesta s-a oprit.\n\nPuteți incerca să porniți un joc nou cu motorul sau să jucați împotriva altuia."
+
+#: lib/pychess/widgets/gamewidget.py:159
+msgid "Abort"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:161
+msgid ""
+"This game can be automatically aborted without rating loss because there has"
+" not yet been two moves made"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:163
+msgid "Offer Abort"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:165
+msgid ""
+"Your opponent must agree to abort the game because there has been two or "
+"more moves made"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:183
+msgid "This game can not be adjourned because one or both players are guests"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:200
+msgid "Claim Draw"
+msgstr ""
+
+#: lib/pychess/widgets/gamewidget.py:351 lib/pychess/widgets/ionest.py:61
+msgid "vs"
+msgstr "împotriva"
+
+#: lib/pychess/widgets/gamewidget.py:442
+msgid "Jump to initial position"
+msgstr "Revino poziția inițială"
+
+#: lib/pychess/widgets/gamewidget.py:447
+msgid "Step back one move"
+msgstr "Revino o mutare înapoi"
+
+#: lib/pychess/widgets/gamewidget.py:452
+msgid "Step forward one move"
+msgstr "Revino o mutare înainte"
+
+#: lib/pychess/widgets/gamewidget.py:457
+msgid "Jump to latest position"
+msgstr "Revino la ultima mutare"
+
+#: lib/pychess/widgets/gamewidget.py:683
+msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
+msgstr "<b><big>PyChess nu a putut încărca setările dumneavoastră de panou</big></b>"
+
+#: lib/pychess/widgets/gamewidget.py:684
+msgid ""
+"Your panel settings have been reset. If this problem repeats, you should "
+"report it to the developers"
+msgstr "Setările dumneavoastră de panou au fost resetate. Dacă problema persistă, ar trebui să o raportați dezvoltatorilor."
+
+#: lib/pychess/widgets/ionest.py:84 lib/pychess/widgets/newGameDialog.py:324
+#: lib/pychess/widgets/TaskerManager.py:200
+msgid "You"
+msgstr ""
+
+#: lib/pychess/widgets/ionest.py:87 lib/pychess/widgets/newGameDialog.py:325
+#: lib/pychess/widgets/preferencesDialog.py:48
+#: lib/pychess/widgets/TaskerManager.py:203
+msgid "Guest"
+msgstr "Oaspete"
+
+#: lib/pychess/widgets/ionest.py:108
+msgid "Correct the move, or start playing with what could be read"
+msgstr "Corectați mutarea, sau începeți jocul cu ce s-a putut citi"
+
+#: lib/pychess/widgets/ionest.py:140 lib/pychess/widgets/newGameDialog.py:399
+msgid "Open Game"
+msgstr "Deschide joc"
+
+#: lib/pychess/widgets/ionest.py:142
+msgid "Save Game"
+msgstr "Salvează joc"
+
+#: lib/pychess/widgets/ionest.py:149
+msgid "All Files"
+msgstr "Toate fișierele"
+
+#: lib/pychess/widgets/ionest.py:152
+msgid "Detect type automatically"
+msgstr "Detectează tip automat"
+
+#: lib/pychess/widgets/ionest.py:156
+msgid "All Chess Files"
+msgstr "Toate fișierele de șah"
+
+#: lib/pychess/widgets/ionest.py:230
+#, python-format
+msgid "<big><b>Unknown file type '%s'</b></big>"
+msgstr "<big><b>Tip de fișier necunoscut '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:231
+#, python-format
+msgid ""
+"Was unable to save '%(uri)s' as PyChess doesn't know the format "
+"'%(ending)s'."
+msgstr "Nu s-a putut salva '%(uri)s' deoarece PyChess nu știe formatul '%(ending)s'."
+
+#: lib/pychess/widgets/ionest.py:245
+#, python-format
+msgid "<big><b>Unable to save file '%s'</b></big>"
+msgstr "<big><b>Nu se poate salva fișierul '%s'</b></big>"
+
+#: lib/pychess/widgets/ionest.py:247
+msgid ""
+"You don't have the necessary rights to save the file.\n"
+"Please ensure that you have given the right path and try again."
+msgstr "Nu aveți drepturile necesare pentru a salva fișierul.\nVerificați dacă ați introdus calea corectă și reîncercați."
+
+#: lib/pychess/widgets/ionest.py:278
+msgid "<big><b>PyChess was not able to save the game</b></big>"
+msgstr "<big><b>PyChess nu a fost capabil să salveze jocul</b></big>"
+
+#: lib/pychess/widgets/ionest.py:314
+#, python-format
+msgid "There is %d game with unsaved moves."
+msgid_plural "There are %d games with unsaved moves."
+msgstr[0] "Există %d joc cu mutări nesalvate."
+msgstr[1] "Există %d jocuri cu mutări nesalvate."
+msgstr[2] "Există %d jocuri cu mutări nesalvate."
+
+#: lib/pychess/widgets/ionest.py:317
+msgid "Save moves before closing?"
+msgstr "Salvează mutări înainte de închidere"
+
+#: lib/pychess/widgets/ionest.py:334
+#, python-format
+msgid "_Save %d document"
+msgid_plural "_Save %d documents"
+msgstr[0] "_Salvează %d document"
+msgstr[1] "_Salvează %d documente"
+msgstr[2] "_Salvează %d de documente"
+
+#: lib/pychess/widgets/ionest.py:385
+msgid "<b><big>Save the current game before you close it?</big></b>"
+msgstr "<b><big>Salvați jocul curent înainte de a-l închide?</big></b>"
+
+#: lib/pychess/widgets/ionest.py:387
+msgid ""
+"It is not possible later to continue the game,\n"
+"if you don't save it."
+msgstr "Nu este posibil să continuați jocul mai târziu,\ndacă nu-l salvați."
+
+#: lib/pychess/widgets/LogDialog.py:30
+msgid "PyChess Information Window"
+msgstr "Fereastra de informare PyChess"
+
+#: lib/pychess/widgets/LogDialog.py:184 lib/pychess/widgets/LogDialog.py:188
+msgid "of"
+msgstr "din"
+
+#: lib/pychess/widgets/newGameDialog.py:77
+#: lib/pychess/widgets/newGameDialog.py:78
+msgid "Human Being"
+msgstr "Ființă umană"
+
+#: lib/pychess/widgets/newGameDialog.py:143
+msgid "Rapid"
+msgstr "Rapid"
+
+#: lib/pychess/widgets/newGameDialog.py:202
+msgid "Minutes:"
+msgstr "Minute:"
+
+#: lib/pychess/widgets/newGameDialog.py:206
+msgid "Gain:"
+msgstr "Progres:"
+
+#: lib/pychess/widgets/newGameDialog.py:219
+#, python-format
+msgid "%(name)s %(minutes)d min + %(gain)d sec/move"
+msgstr "%(name)s %(minutes)d min + %(gain)d sec/mutare"
+
+#: lib/pychess/widgets/newGameDialog.py:222
+#, python-format
+msgid "%(name)s %(minutes)d min %(gain)d sec/move"
+msgstr "%(name)s %(minutes)d min %(gain)d sec/mutare"
+
+#: lib/pychess/widgets/newGameDialog.py:225
+#, python-format
+msgid "%(name)s %(minutes)d min"
+msgstr "%(name)s %(minutes)d min"
+
+#: lib/pychess/widgets/newGameDialog.py:243
+msgid "Odds"
+msgstr "Probabilitate"
+
+#: lib/pychess/widgets/newGameDialog.py:267
+msgid " chess"
+msgstr ""
+
+#: lib/pychess/widgets/newGameDialog.py:481
+msgid "Enter Game"
+msgstr "Intră în joc"
+
+#: lib/pychess/widgets/preferencesDialog.py:86
+msgid "Flag"
+msgstr "Steag"
+
+#: lib/pychess/widgets/preferencesDialog.py:307
+msgid "Open Sound File"
+msgstr "Deschide fișier sunet"
+
+#: lib/pychess/widgets/preferencesDialog.py:324
+msgid "No sound"
+msgstr "Fără sunet"
+
+#: lib/pychess/widgets/preferencesDialog.py:325
+msgid "Beep"
+msgstr "Bip"
+
+#: lib/pychess/widgets/preferencesDialog.py:326
+msgid "Select sound file..."
+msgstr "Alege fișier sunet..."
+
+#: lib/pychess/widgets/preferencesDialog.py:461
+msgid "Undescribed panel"
+msgstr "Panou nedescris"
+
+#: lib/pychess/widgets/tipOfTheDay.py:52
+msgid ""
+"You can start a new game by <b>Game</b> > <b>New Game</b>, in New Game "
+"window do you can choose <b>Players</b>, <b>Time Control</b> and <b>Chess "
+"Variants</b>."
+msgstr "Poți începe un joc nou cu <b>Joc</b> > <b>Joc nou</b>. În fereastra Joc nou poți să alegi <b>Jucători</b>, <b>Control timp</b> și <b>Varianta de șah</b>."
+
+#: lib/pychess/widgets/tipOfTheDay.py:53
+msgid ""
+"You can choose from 8 different difficulties to play against the computer."
+msgstr "Puteți să alegeți 8 moduri de dificulatate pentru a juca împotriva calculatorul."
+
+#: lib/pychess/widgets/tipOfTheDay.py:54
+msgid ""
+"Chess Variants are like the pieces of the last line will be placed on the "
+"board."
+msgstr ""
+
+#: lib/pychess/widgets/tipOfTheDay.py:55
+msgid ""
+"To save a game <b>Game</b> > <b>Save Game As</b>, give the filename and "
+"choose where you want to be saved. At the bottom choose extension type of "
+"the file, and <b>Save</b>."
+msgstr "Pentru a salva un joc <b>Joc</b> > <b>Salvează Joc</b>, dați un nume de fișier și alegeți un să fie salvat. În  partea de jos alegeți extensia fișierului și apoi <b>Salveaza</b>."
+
+#: lib/pychess/widgets/tipOfTheDay.py:56
+msgid ""
+"Do you know that you can call flag when the clock is with you, "
+"<b>Actions</b> > <b>Call Flag</b>."
+msgstr ""
+
+#: lib/pychess/widgets/tipOfTheDay.py:57
+msgid "Pressing <b>Ctrl+Z</b> to offer opponent the possible rollback moves."
+msgstr ""
+
+#: lib/pychess/widgets/tipOfTheDay.py:58
+msgid ""
+"To play on <b>Fullscreen mode</b>, just type <b>F11</b>. Coming back, F11 "
+"again."
+msgstr "Pentru a juca cu <b>Ecran complet</b> apăsați <b>F11</b>. Pentru a reveni, apăsați F11 din nou."
+
+#: lib/pychess/widgets/tipOfTheDay.py:59
+msgid "<b>Hint mode</b> analyzing your game, enable this type <b>Ctrl+H</b>."
+msgstr "<b>Modul sfat</b> analizează jocul dumneavoastra. Pentru activare apăsați <b>Ctrl+H</b>"
+
+#: lib/pychess/widgets/tipOfTheDay.py:60
+msgid ""
+"<b>Spy mode</b> analyzing the oponnent game, enable this type <b>Ctrl+Y</b>."
+msgstr "<b>Modul spion</b> analizează jocul adversarului. Pentru activare apăsați <b>Ctrl+Y</b>"
+
+#: lib/pychess/widgets/tipOfTheDay.py:61
+msgid ""
+"You can play chess listening to the sounds of the game, for that, "
+"<b>Settings</b> > <b>Preferences</b> > <b>Sound tab</b>, enable <b>Use "
+"sounds in PyChess</b> and choose your preferred sounds."
+msgstr ""
+
+#: lib/pychess/widgets/tipOfTheDay.py:62
+msgid ""
+"Do you know that you can help translate Pychess in your language, "
+"<b>Help</b> > <b>Translate Pychess</b>."
+msgstr "Știați că puteți traduce PyChess în limba dumneavoastră? <b>Help</b> > <b>Traduceți PyChess</b>."
+
+#: lib/pychess/widgets/tipOfTheDay.py:63
+msgid ""
+"Do you know that it is possible to finish a chess game in just 2 turns?"
+msgstr "Știați că este posibil ca un joc de șah să se termine în 2 mutări?"
+
+#: lib/pychess/widgets/tipOfTheDay.py:64
+msgid ""
+"Do you know that the number of possible chess games exceeds the number of "
+"atoms in the Universe?"
+msgstr "Știați că numărul posibil de jocuri de șah este mai mare decât numarul de atomi din Univers?"
+
+#: lib/pychess/ic/managers/ChatManager.py:127
+msgid "Shout"
+msgstr "Strigă"
+
+#: lib/pychess/ic/managers/ChatManager.py:128
+msgid "Chess Shout"
+msgstr "Strigă șah"
+
+#: lib/pychess/ic/managers/ChatManager.py:138
+#, python-format
+msgid "Unofficial channel %d"
+msgstr "Canal neoficial %d"
+
+#: lib/pychess/Utils/lutils/lmove.py:244
+msgid "the move needs a piece and a cord"
+msgstr "mutarea necesită o piesă și o căsuță"
+
+#: lib/pychess/Utils/lutils/lmove.py:289 lib/pychess/Utils/lutils/lmove.py:505
+msgid "promotion move without promoted piece is incorrect"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/lmove.py:295
+#, python-format
+msgid "the captured cord (%s) is incorrect"
+msgstr "căsuța capturată (%s) este incorectă"
+
+#: lib/pychess/Utils/lutils/strateval.py:23 sidepanel/commentPanel.py:198
+#: sidepanel/commentPanel.py:215
+msgid "and"
+msgstr "și"
+
+#: lib/pychess/Utils/lutils/strateval.py:42
+msgid "draws"
+msgstr "remize"
+
+#: lib/pychess/Utils/lutils/strateval.py:44
+msgid "mates"
+msgstr "maturi"
+
+#: lib/pychess/Utils/lutils/strateval.py:48
+msgid "puts opponent in check"
+msgstr "pune adversarul în șah"
+
+#: lib/pychess/Utils/lutils/strateval.py:72
+msgid "improves king safety"
+msgstr "imbunătățește apărarea regelui"
+
+#: lib/pychess/Utils/lutils/strateval.py:74
+msgid "slightly improves king safety"
+msgstr "îmbunătățește ușor apărarea regelui"
+
+#: lib/pychess/Utils/lutils/strateval.py:107
+msgid "moves a rook to an open file"
+msgstr "mută o tură pe o coloană deschisă"
+
+#: lib/pychess/Utils/lutils/strateval.py:108
+msgid "moves an rook to a half-open file"
+msgstr "mută o tură pe o coloană parțial deschisă"
+
+#: lib/pychess/Utils/lutils/strateval.py:118
+#: lib/pychess/Utils/lutils/strateval.py:120
+#: lib/pychess/Utils/lutils/strateval.py:123
+#: lib/pychess/Utils/lutils/strateval.py:125
+#, python-format
+msgid "moves bishop into fianchetto: %s"
+msgstr "muta nebun in fianchetto: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:131
+#, python-format
+msgid "promotes a Pawn to a %s"
+msgstr "schimbă un pion în %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:134
+msgid "castles"
+msgstr "face rocada"
+
+#: lib/pychess/Utils/lutils/strateval.py:157
+msgid "takes back material"
+msgstr "ia înapoi material"
+
+#: lib/pychess/Utils/lutils/strateval.py:161
+msgid "sacrifies material"
+msgstr "sacrifică material"
+
+#: lib/pychess/Utils/lutils/strateval.py:163
+msgid "exchanges material"
+msgstr "schimbă material"
+
+#: lib/pychess/Utils/lutils/strateval.py:165
+msgid "captures material"
+msgstr "capturează material"
+
+#: lib/pychess/Utils/lutils/strateval.py:286
+#, python-format
+msgid "rescues a %s"
+msgstr "recupereaza un(o) %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:289
+#, python-format
+msgid "threatens to win material by %s"
+msgstr "amenință să câștige material prin %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:291
+#, python-format
+msgid "increases the pressure on %s"
+msgstr "mărește presiunea pe %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:293
+#, python-format
+msgid "defends %s"
+msgstr "apără %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:331
+#, python-format
+msgid "pins an enemy %(oppiece)s on the %(piece)s at %(cord)s"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:364
+#, python-format
+msgid "White has a new piece in outpost: %s"
+msgstr "Albul are o nouă piesă în avanpost: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:372
+#, python-format
+msgid "Black has a new piece in outpost: %s"
+msgstr "Negrul are o nouă piesă în avanpost: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:411
+#, python-format
+msgid "%(color)s has a new passed pawn on %(cord)s"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:465
+msgid "half-open"
+msgstr "semi-deschis"
+
+#: lib/pychess/Utils/lutils/strateval.py:467
+#, python-format
+msgid "in the %(x)s%(y)s file"
+msgstr "în fișierul %(x)s%(y)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:469
+#, python-format
+msgid "in the %(x)s%(y)s files"
+msgstr "în fișierele %(x)s%(y)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:472
+#, python-format
+msgid "%(color)s got a double pawn %(place)s"
+msgstr "%(color)s are un pion dublu %(place)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:473
+#, python-format
+msgid "%(color)s got new double pawns %(place)s"
+msgstr "%(color)s are un nou pion dublu %(place)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:480
+#, python-format
+msgid "%(color)s got an isolated pawn in the %(x)s file"
+msgid_plural "%(color)s got isolated pawns in the %(x)s files"
+msgstr[0] "%(color)s are un pion izolat pe coloana %(x)s"
+msgstr[1] "%(color)s are pioni izolati pe coloana %(x)s"
+msgstr[2] "%(color)s are pioni izolati pe coloana %(x)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:487
+#, python-format
+msgid "%s moves pawns into stonewall formation"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:502
+#: lib/pychess/Utils/lutils/strateval.py:509
+#, python-format
+msgid "%s can no longer castle"
+msgstr "%s nu mai poate face rocada"
+
+#: lib/pychess/Utils/lutils/strateval.py:503
+#: lib/pychess/Utils/lutils/strateval.py:510
+#, python-format
+msgid "%s can no longer castle in queenside"
+msgstr "%s nu mai poate face rocada pe partea reginei"
+
+#: lib/pychess/Utils/lutils/strateval.py:505
+#: lib/pychess/Utils/lutils/strateval.py:512
+#, python-format
+msgid "%s can no longer castle in kingside"
+msgstr "%s nu mai poate face rocada pe partea regelui"
+
+#: lib/pychess/Utils/lutils/strateval.py:546
+#, python-format
+msgid "%(opcolor)s has a new trapped bishop on %(cord)s"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:568
+#, python-format
+msgid "develops a pawn: %s"
+msgstr "dezvolta un pion: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:569
+#, python-format
+msgid "brings a pawn closer to the backrow: %s"
+msgstr "aduce un pion mai aproapte de ultima linie: %s"
+
+#: lib/pychess/Utils/lutils/strateval.py:586
+#, python-format
+msgid "brings a %(piece)s closer to enemy king: %(cord)s"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:589
+#, python-format
+msgid "develops a %(piece)s: %(cord)s"
+msgstr "dezvoltă un(o) %(piece)s: %(cord)s"
+
+#: lib/pychess/Utils/lutils/strateval.py:607
+#, python-format
+msgid "places a %(piece)s more active: %(cord)s"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:633
+msgid "White should do pawn storm in right"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:635
+msgid "Black should do pawn storm in left"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:638
+msgid "White should do pawn storm in left"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:640
+msgid "Black should do pawn storm in right"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:673
+msgid "Black has a rather cramped position"
+msgstr ""
+
+#: lib/pychess/Utils/lutils/strateval.py:675
+msgid "Black has a slightly cramped position"
+msgstr "Negrul are o poziție înghesuită"
+
+#: lib/pychess/Utils/lutils/strateval.py:677
+msgid "White has a rather cramped position"
+msgstr "Albul are o poziție înghesuită"
+
+#: lib/pychess/Utils/lutils/strateval.py:679
+msgid "White has a slightly cramped position"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:16
+msgid "Annotation"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:19
+msgid "Annotated game"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:143
+msgid "Add start comment"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:148
+msgid "Add comment"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:152 sidepanel/annotationPanel.py:215
+msgid "Edit comment"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:163
+msgid "Forced move"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:168
+msgid "Add move symbol"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:174
+msgid "Unclear position"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:183
+msgid "Zugzwang"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:184
+msgid "Development adv."
+msgstr ""
+
+#: sidepanel/annotationPanel.py:185
+msgid "Initiative"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:186
+msgid "With attack"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:187
+msgid "Compensation"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:188
+msgid "Counterplay"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:189
+msgid "Time pressure"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:194
+msgid "Add evaluation symbol"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:198
+msgid "Remove symols"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:205
+msgid "Remove variation"
+msgstr ""
+
+#: sidepanel/annotationPanel.py:487
+#, python-format
+msgid "round %s"
+msgstr ""
+
+#: sidepanel/bookPanel.py:17
+msgid "Hints"
+msgstr ""
+
+#: sidepanel/bookPanel.py:21
+msgid ""
+"The hint panel will provide computer advice during each stage of the game"
+msgstr ""
+
+#: sidepanel/bookPanel.py:23
+msgid "Official PyChess panel."
+msgstr "Panoul PyChess oficial."
+
+#: sidepanel/bookPanel.py:78
+msgid "Opening Book"
+msgstr "Cartea de deschideri"
+
+#: sidepanel/bookPanel.py:80
+msgid ""
+"The opening book will try to inspire you during the opening phase of the "
+"game by showing you common moves made by chess masters"
+msgstr "Cartea de deschideri va încerca să vă inspire în timpul deschiderii jocului arătându-vă mutări frecvente ale maeștrilor din șah"
+
+#: sidepanel/bookPanel.py:124
+#, python-format
+msgid "Analysis by %s"
+msgstr ""
+
+#: sidepanel/bookPanel.py:125
+#, python-format
+msgid ""
+"%s will try to predict which move is best and which side has the advantage"
+msgstr ""
+
+#: sidepanel/bookPanel.py:127
+#, python-format
+msgid "Threat analysis by %s"
+msgstr ""
+
+#: sidepanel/bookPanel.py:128
+#, python-format
+msgid ""
+"%s will identify what threats would exist if it were your opponent's turn to"
+" move"
+msgstr ""
+
+#: sidepanel/bookPanel.py:145 sidepanel/bookPanel.py:227
+msgid "Calculating..."
+msgstr ""
+
+#: sidepanel/bookPanel.py:245
+msgid "Engine scores are in units of pawns, from White's point of view."
+msgstr ""
+
+#: sidepanel/bookPanel.py:247
+msgid ""
+"Adding suggestions can help you find ideas, but slows down the computer's "
+"analysis."
+msgstr ""
+
+#: sidepanel/bookPanel.py:267
+msgid "Endgame Table"
+msgstr ""
+
+#: sidepanel/bookPanel.py:271
+msgid ""
+"The endgame table will show exact analysis when there are few pieces on the "
+"board."
+msgstr ""
+
+#: sidepanel/bookPanel.py:303 sidepanel/bookPanel.py:306
+#, python-format
+msgid "Mate in %d"
+msgstr ""
+
+#: sidepanel/bookPanel.py:446
+msgid ""
+"In this position,\n"
+"there is no legal move."
+msgstr ""
+
+#: sidepanel/chatPanel.py:15
+msgid "Chat"
+msgstr "Conversații"
+
+#: sidepanel/chatPanel.py:19
+msgid ""
+"The chat panel lets you communicate with your opponent during the game, "
+"assuming he or she is interested"
+msgstr "Panoul de conversații vă dă posibilitate să comunicați cu adversarul dumneavoastră în timpul jocului, presupunând ca el sau ea este înteresat(ă)."
+
+#: sidepanel/commentPanel.py:18
+msgid "Comments"
+msgstr "Comentarii"
+
+#: sidepanel/commentPanel.py:22
+msgid "The comments panel will try to analyze and explain the moves played"
+msgstr "Panoul de comentarii va încerca să analizeze și să explice mutările jucate"
+
+#: sidepanel/commentPanel.py:128
+msgid "Initial position"
+msgstr "Pozițiă inițială"
+
+#: sidepanel/commentPanel.py:261
+#, python-format
+msgid "%(color)s moves a %(piece)s to %(cord)s"
+msgstr ""
+
+#: sidepanel/engineOutputPanel.py:14
+msgid "Engines"
+msgstr ""
+
+#: sidepanel/engineOutputPanel.py:19
+msgid ""
+"The engine output panel shows the thinking output of chess engines (computer"
+" players) during a game"
+msgstr ""
+
+#: sidepanel/engineOutputPanel.py:42
+msgid "No chess engines (computer players) are participating in this game."
+msgstr ""
+
+#: sidepanel/historyPanel.py:15
+msgid "Move History"
+msgstr "Istoric mutări"
+
+#: sidepanel/historyPanel.py:18
+msgid ""
+"The moves sheet keeps track of the players' moves and lets you navigate "
+"through the game history"
+msgstr "Fila cu mutări înregistrează mutările jucătorilor si vă dă posibilitatea să navigați prin istoria jocului"
+
+#: sidepanel/scorePanel.py:15
+msgid "Score"
+msgstr "Scor"
+
+#: sidepanel/scorePanel.py:19
+msgid ""
+"The score panel tries to evaluate the positions and shows you a graph of the"
+" game progress"
+msgstr "Panoul de scor încearcă să evalueze pozițiile și să va arate un grafic al progresului jocului,"
