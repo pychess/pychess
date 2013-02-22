@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/pypy -u
 
 if __name__ == "__main__":
     print "feature done=0"

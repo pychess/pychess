@@ -29,7 +29,6 @@ benchmarkPositions = [
 def benchmark ():
     """ Times a search of a static list of positions. """
     
-    board = LBoard(NORMALCHESS)
     suite_time = time()
     suite_nodes = lsearch.nodes
     lsearch.endtime = sys.maxint
@@ -37,6 +36,7 @@ def benchmark ():
     for i, fen in enumerate(benchmarkPositions):
         lsearch.table.clear()
         clearPawnTable()
+        board = LBoard(NORMALCHESS)
         board.applyFen(fen)
         pos_start_time = time()
         pos_start_nodes = lsearch.nodes
