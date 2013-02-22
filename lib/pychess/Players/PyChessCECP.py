@@ -297,8 +297,11 @@ class PyChessCECP(PyChess):
                     benchmark()
                 
                 elif lines[0] == "profile":
-                    import cProfile
-                    cProfile.runctx("benchmark()", locals(), globals(), lines[1])
+                    if len(lines) > 1:
+                        import cProfile
+                        cProfile.runctx("benchmark()", locals(), globals(), lines[1])
+                    else:
+                        print "Usage: profile outputfilename"
                 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.
