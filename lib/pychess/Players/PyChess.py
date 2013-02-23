@@ -26,10 +26,10 @@ class PyChess:
         self.sd = MAXPLY
         self.skipPruneChance = 0
         
-        self.clock = [None, None]
-        self.increment = [None, None]
+        self.clock = [0, 0]
+        self.increment = [0, 0]
         self.movestogo = 0
-        self.searchtime = None
+        self.searchtime = 0
         self.scr = 0 # The current predicted score. Used when accepting draw offers
         self.playingAs = WHITE
         self.ponder = False # Currently unused
@@ -86,10 +86,10 @@ class PyChess:
             lsearch.skipPruneChance = self.skipPruneChance
             lsearch.searching = True
             
-            if self.clock[self.playingAs] == None:
-                lsearch.endtime = sys.maxint
-                mvs, self.scr = alphaBeta (self.board, self.sd)
+            timed = self.basetime > 0
             
+            if self.searchtime > 0:
+                usetime = self.searchtime
             else:
                 usetime = self.clock[self.playingAs] / self.__remainingMovesA()
                 if self.clock[self.playingAs] < 6*60+self.increment[self.playingAs]*40:
@@ -100,32 +100,37 @@ class PyChess:
                 if usetime < 0.5:
                     # We don't wan't to search for e.g. 0 secs
                     usetime = 0.5
-                
-                starttime = time()
-                lsearch.endtime = starttime + usetime
-                prevtime = 0
-                if self.debug: print "# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime)
-                for depth in range(1, self.sd+1):
-                    # Heuristic time saving
-                    # Don't waste time, if the estimated isn't enough to complete next depth
-                    if usetime <= prevtime*4 and usetime > 1:
+
+            prevtime = 0
+            starttime = time()
+            lsearch.endtime = starttime + usetime if timed else sys.maxint
+            if self.debug:
+                if timed:
+                    print "# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime)
+                else:
+                    print "# Searching to depth %d without timelimit" % self.sd
+
+            for depth in range(1, self.sd+1):
+                # Heuristic time saving
+                # Don't waste time, if the estimated isn't enough to complete next depth
+                if timed and usetime <= prevtime*4 and usetime > 1:
+                    break
+                lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
+                search_result = alphaBeta(self.board, depth)
+                if lsearch.searching:
+                    mvs, self.scr = search_result
+                    if time() > lsearch.endtime:
                         break
-                    lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
-                    search_result = alphaBeta(self.board, depth)
-                    if lsearch.searching:
+                    if self.post:
+                        pv = " ".join(listToSan(self.board, mvs))
+                        time_cs = int(100 * (time()-starttime))
+                        print depth, self.scr, time_cs, lsearch.nodes, pv
+                else:
+                    # We were interrupted
+                    if depth == 1:
                         mvs, self.scr = search_result
-                        if time() > lsearch.endtime:
-                            break
-                        if self.post:
-                            pv = " ".join(listToSan(self.board, mvs))
-                            time_cs = int(100 * (time()-starttime))
-                            print depth, self.scr, time_cs, lsearch.nodes, pv
-                    else:
-                        # We were interrupted
-                        if depth == 1:
-                            mvs, self.scr = search_result
-                        break
-                    prevtime = time()-starttime - prevtime
+                    break
+                prevtime = time()-starttime - prevtime
                 
                 self.clock[self.playingAs] -= time() - starttime - self.increment[self.playingAs]
             
