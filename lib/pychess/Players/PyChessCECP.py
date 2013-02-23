@@ -26,7 +26,7 @@ class PyChessCECP(PyChess):
         self.analyzing = False
         self.thread = None
 
-        self.basetime = None
+        self.basetime = 0
         
         self.features = {
             "ping": 1,
@@ -98,6 +98,7 @@ class PyChessCECP(PyChess):
                     self.forced = False
                     self.playingAs = BLACK
                     self.clock[:] = self.basetime, self.basetime
+                    self.searchtime = 0
                     self.sd = MAXPLY
                     if self.analyzing:
                         self.__analyze()
