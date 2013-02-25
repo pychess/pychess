@@ -21,6 +21,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
+from pychess.System.glock import glock_connect_after
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
@@ -69,23 +70,33 @@ skillToIconLarge = {
 
 playerItems = []
 smallPlayerItems = []
+analyzerItems = []
 
 def createPlayerUIGlobals (discoverer):
     global playerItems
     global smallPlayerItems
+    global analyzerItems
+
+    playerItems = []
+    smallPlayerItems = []
+    analyzerItems = []
+
     for variantClass in variants.values():
-        playerItems += [ [(ipeople, _("Human Being"))] ]
-        smallPlayerItems += [ [(speople, _("Human Being"))] ]
-    for engine in discoverer.getEngines().values():
-        name = discoverer.getName(engine)
+        playerItems += [ [(ipeople, _("Human Being"), "")] ]
+        smallPlayerItems += [ [(speople, _("Human Being"), "")] ]
+    for name, engine in discoverer.getEngines().items():
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
         if c and os.path.isfile(path):
             flag_icon = gtk.gdk.pixbuf_new_from_file(path)
-        else: flag_icon = inotebook
+        else:
+            path = addDataPrefix("flags/unknown.png")
+            flag_icon = gtk.gdk.pixbuf_new_from_file(path)
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
             smallPlayerItems[variant] += [(snotebook, name)]
+        if discoverer.is_analyzer(engine):
+            analyzerItems.append((flag_icon, name))
 
 discoverer.connect("all_engines_discovered", createPlayerUIGlobals)
 
@@ -109,10 +120,8 @@ class _GameInitializationMode:
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
 
-        uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
-                            (i[:2] for i in playerItems[0]))
-        uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
-                            (i[:2] for i in playerItems[0]))
+        uistuff.createCombo(cls.widgets["whitePlayerCombobox"])
+        uistuff.createCombo(cls.widgets["blackPlayerCombobox"])
 
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
@@ -162,8 +171,13 @@ class _GameInitializationMode:
             cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)            
             variant2 = conf.get("ngvariant2", LOSERSCHESS)
             cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
-            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], playerItems[variant])
-            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], playerItems[variant])
+            data = [(item[0], item[1]) for item in playerItems[variant]]
+            uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
+            uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], data)
+
+        glock_connect_after(discoverer, "all_engines_discovered", updateCombos)
+        updateCombos(discoverer)
+
         conf.notify_add("ngvariant1", updateCombos)
         conf.notify_add("ngvariant2", updateCombos)
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
