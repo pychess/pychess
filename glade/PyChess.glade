@@ -1291,7 +1291,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                           <object class="GtkButton" id="copy_engine_button">
                             <property name="label">gtk-copy</property>
                             <property name="use_action_appearance">False</property>
-                            <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="can_default">True</property>

@@ -102,7 +102,10 @@ class EngineTab:
 
         def update_options():
             if self.cur_engine is not None:
-                xmlengine = discoverer.getEngines()[self.cur_engine]
+                engines = discoverer.getEngines()
+                if self.cur_engine not in engines:
+                    self.cur_engine = discoverer.getEngines().keys()[0]
+                xmlengine = engines[self.cur_engine]
                 options_tags = xmlengine.findall(".//options")
                 if options_tags:
                     self.options_store.clear()
@@ -192,13 +195,19 @@ class EngineTab:
         def protocol_changed(widget):
             if self.cur_engine is not None:
                 active = widgets["engine_protocol_combo"].get_active()
-                protocol = "uci" if active==0 else "cecp"
+                new_protocol = "uci" if active==0 else "cecp"
                 xmlengine = discoverer.getEngines()[self.cur_engine]
                 old_protocol = xmlengine.get("protocol")
-                if protocol != old_protocol:
-                    xmlengine.set("protocol", protocol)
-                    xmlengine.set('recheck', 'true')
-                    discoverer.start()
+                if new_protocol != old_protocol:
+                    engine = widgets["engine_command_entry"].get_text().strip()
+                    uci = discoverer.is_uci(engine)
+                    new_protocol = "uci" if uci else "cecp"
+                    if new_protocol != old_protocol:
+                        xmlengine.set("protocol", new_protocol)
+                        xmlengine.set('recheck', 'true')
+                        discoverer.start()
+                    else:
+                        widgets["engine_protocol_combo"].set_active(0 if uci else 1)
 
         widgets["engine_protocol_combo"].connect("changed", protocol_changed)
 
@@ -213,7 +222,6 @@ class EngineTab:
                     try:
                         uci = discoverer.is_uci(new_engine)
                         path, binname = os.path.split(new_engine)
-                        protocol = "uci" if uci else "xboard"
                         for name in discoverer.getEngines():
                             if name == binname:
                                 binname = name + "(1)"
