@@ -559,7 +559,7 @@ class EngineDiscoverer (GObject, PooledThread):
             if line == "uciok":
                 uci = True
                 break
-            elif "Error" in line or "Illegal" in line:
+            elif "Error" in line or "Illegal" in line or "Invalid" in line:
                 break
         proc.terminate()
         return uci
