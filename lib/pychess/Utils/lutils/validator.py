@@ -2,7 +2,6 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import isAttacked
 from pychess.Utils.lutils.bitboard import bitPosArray, clearBit
 from pychess.Utils.lutils.ldata import moveArray, fromToRay
-from pychess.Utils.lutils.lmove import RANK
 
 ################################################################################
 #   Validate move                                                              #
@@ -19,7 +18,7 @@ def validateMove (board, move):
             return False
         else:
             if fcord == PAWN:
-                rank = RANK(tcord)
+                rank = tcord >> 3
                 return rank > 0 and rank < 7
             else:
                 return True
