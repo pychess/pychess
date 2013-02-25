@@ -3,6 +3,7 @@ from struct import Struct
 from collections import namedtuple
 
 from pychess.Utils.const import *
+from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
 
@@ -27,8 +28,14 @@ def getOpenings (board):
         times a move has been tried, and score the number of points it has
         scored (with 2 per victory and 1 per draw). However, opening books
         aren't required to keep this information. """
-    path = os.path.join(addDataPrefix("pychess_book.bin"))
-    openings = list()
+
+    default_path = os.path.join(addDataPrefix("pychess_book.bin"))
+    path = conf.get("opening_file_entry", default_path) 
+
+    openings = []
+    if not os.path.isfile(path):
+        return openings
+
     with open(path, "rb") as bookFile:
         key = board.hash
         # Find the first entry whose key is >= the position's hash
