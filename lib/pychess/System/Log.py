@@ -1,13 +1,100 @@
-import os, sys, time, gobject, traceback, threading
-from GtkWorker import EmitPublisher, Publisher
-from prefix import getUserDataPrefix, addUserDataPrefix
-from pychess.Utils.const import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
-from pychess.System.glock import gdklocks
-from pychess.System.ThreadPool import pool
+import os
+import sys
+import time
 
-MAXFILES = 10
-DEBUG = True
-labels = {LOG_DEBUG: "Debug", LOG_LOG: "Log", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
+try:
+    import gobject
+    standard_logging = False
+except ImportError:
+    standard_logging = True
+
+from pychess.Utils.const import LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR
+
+if standard_logging:
+    import logging as log
+    log.messages = []
+    log.connect = lambda log, messages: None
+else:
+    from GtkWorker import EmitPublisher, Publisher
+    from prefix import getUserDataPrefix, addUserDataPrefix
+
+    MAXFILES = 10
+    DEBUG = True
+    labels = {LOG_DEBUG: "Debug", LOG_INFO: "Info", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
+
+
+    class Log (gobject.GObject):
+        
+        __gsignals__ = {
+            "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
+        }                                              # list of (str, float, str, int)
+        
+        def __init__ (self, logpath):
+            gobject.GObject.__init__(self)
+            
+            self.file = open(logpath, "w")
+            
+            self.printTime = True
+            
+            # We store everything in this list, so that the LogDialog, which is
+            # imported a little later, will have all data ever given to Log.
+            # When Dialog inits, it will set this list to None, and we will stop
+            # appending data to it. Ugly? Somewhat I guess.
+            self.messages = []
+            
+            self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
+            self.publisher.start()
+        
+        def _format (self, task, message, type):
+            t = time.strftime ("%H:%M:%S")
+            return "%s %s %s: %s" % (t, task, labels[type], message.decode("latin-1"))
+        
+        def _log (self, task, message, type):
+            if not message: return
+            
+            if self.messages != None:
+                self.messages.append((task, time.time(), message, type))
+            self.publisher.put((task, time.time(), message, type))
+            
+            if self.printTime:
+                message = self._format(task, message, type)
+            self.printTime = message.endswith("\n")
+            
+            try:
+                self.file.write(message)
+                self.file.flush()
+            except IOError, e:
+                if not type == LOG_ERROR:
+                    self.error("Unable to write '%s' to log file because of error: %s" % \
+                            (message, ", ".join(str(a) for a in e.args)))
+            
+            if type in (LOG_ERROR, LOG_WARNING) and task != "stdout":
+                print message
+        
+        def debug (self, message, task="Default"):
+            if DEBUG:
+                self._log (task, message, LOG_DEBUG)
+        
+        def info (self, message, task="Default"):
+            self._log (task, message, LOG_INFO)
+        
+        def warn (self, message, task="Default"):
+            self._log (task, message, LOG_WARNING)
+        
+        def error (self, message, task="Default"):
+            self._log (task, message, LOG_ERROR)
+
+    oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
+    if len(oldlogs) >= MAXFILES:
+        oldlogs.sort()
+        try:
+            os.remove(addUserDataPrefix(oldlogs[0]))
+        except OSError, e:
+            pass
+    newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+
+    log = Log(addUserDataPrefix(newName))
+
 
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -34,100 +121,5 @@ class LogPipe:
     def fileno (self):
         return self.to.fileno()
 
-class Log (gobject.GObject):
-    
-    __gsignals__ = {
-        "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
-    }                                              # list of (str, float, str, int)
-    
-    def __init__ (self, logpath):
-        gobject.GObject.__init__(self)
-        
-        self.file = open(logpath, "w")
-        
-        self.printTime = True
-        
-        # We store everything in this list, so that the LogDialog, which is
-        # imported a little later, will have all data ever given to Log.
-        # When Dialog inits, it will set this list to None, and we will stop
-        # appending data to it. Ugly? Somewhat I guess.
-        self.messages = []
-        
-        self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
-        self.publisher.start()
-    
-    def _format (self, task, message, type):
-        t = time.strftime ("%H:%M:%S")
-        return "%s %s %s: %s" % (t, task, labels[type], message.decode("latin-1"))
-    
-    def _log (self, task, message, type):
-        if not message: return
-        
-        if self.messages != None:
-            self.messages.append((task, time.time(), message, type))
-        self.publisher.put((task, time.time(), message, type))
-        
-        if self.printTime:
-            message = self._format(task, message, type)
-        self.printTime = message.endswith("\n")
-        
-        try:
-            self.file.write(message)
-            self.file.flush()
-        except IOError, e:
-            if not type == LOG_ERROR:
-                self.error("Unable to write '%s' to log file because of error: %s" % \
-                        (message, ", ".join(str(a) for a in e.args)))
-        
-        if type in (LOG_ERROR, LOG_WARNING) and task != "stdout":
-            print message
-    
-    def debug (self, message, task="Default"):
-        if DEBUG:
-            self._log (task, message, LOG_DEBUG)
-    
-    def log (self, message, task="Default"):
-        self._log (task, message, LOG_LOG)
-    
-    def warn (self, message, task="Default"):
-        self._log (task, message, LOG_WARNING)
-    
-    def error (self, message, task="Default"):
-        self._log (task, message, LOG_ERROR)
-
-oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
-if len(oldlogs) >= MAXFILES:
-    oldlogs.sort()
-    try:
-        os.remove(addUserDataPrefix(oldlogs[0]))
-    except OSError, e:
-        pass
-newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-
-log = Log(addUserDataPrefix(newName))
-
 sys.stdout = LogPipe(sys.stdout, "stdout")
 sys.stderr = LogPipe(sys.stderr, "stdout")
-
-def start_thread_dump ():
-    def thread_dumper ():
-        def dump_threads ():
-            id2name = {}
-            for thread in threading.enumerate():
-                id2name[thread.ident] = thread.name
-            
-            stacks = []
-            for thread_id, frame in sys._current_frames().items():
-                stack = traceback.format_list(traceback.extract_stack(frame))
-                if thread_id in gdklocks:
-                    stacks.append("Thread GdkLock count: %s" % str(gdklocks[thread_id]))
-                stacks.append("Thread: %s (%d)" % (id2name[thread_id], thread_id))
-                stacks.append("".join(stack))
-            
-            log.debug("\n".join(stacks))
-        
-        while 1:
-            dump_threads()
-            time.sleep(10)
-    
-    pool.start(thread_dumper)

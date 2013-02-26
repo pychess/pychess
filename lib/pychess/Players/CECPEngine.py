@@ -758,7 +758,7 @@ class CECPEngine (ProtocolEngine):
                         # If engine was set in pause just before the engine sent its
                         # move, we ignore it. However the engine has to know that we
                         # ignored it, and thus we step it one back
-                        log.log("__parseLine: Discarding engine's move: %s\n" % movestr, self.defname)
+                        log.info("__parseLine: Discarding engine's move: %s\n" % movestr, self.defname)
                         print >> self.engine, "undo"
                         return
                     else:
@@ -860,7 +860,7 @@ class CECPEngine (ProtocolEngine):
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
             
-            log.log("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
+            log.info("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
             return
         
         if "feature" in parts:
@@ -913,7 +913,7 @@ class CECPEngine (ProtocolEngine):
                         self.emit("readyForMoves")
                         self.returnQueue.put("ready")
                     elif value == 0:
-                        log.log("Adds %d seconds timeout\n" % TIME_OUT_SECOND, self.defname)
+                        log.info("Adds %d seconds timeout\n" % TIME_OUT_SECOND, self.defname)
                         # This'll buy you some more time
                         self.timeout = time.time()+TIME_OUT_SECOND
                         self.returnQueue.put("not ready")

@@ -161,7 +161,7 @@ class EngineDiscoverer (GObject, PooledThread):
             log.warn("engineNest: %s\n" % e)
             self.dom = deepcopy(self.backup)
         except IOError, e:
-            log.log("engineNest: Couldn\'t open engines.xml. Creating a new.\n%s\n" % e)
+            log.info("engineNest: Couldn\'t open engines.xml. Creating a new.\n%s\n" % e)
             self.dom = deepcopy(self.backup)
         
         self._engines = {}

@@ -8,7 +8,7 @@ import gtk, pango, gobject
 
 from pychess.System import glock, uistuff
 from pychess.System.Log import log
-from pychess.System.Log import LOG_DEBUG, LOG_LOG, LOG_WARNING, LOG_ERROR
+from pychess.System.Log import LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR
 from pychess.System.prefix import addDataPrefix
 
 def rawreplace(error):
@@ -73,7 +73,7 @@ class InformationWindow:
         if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
             t = time.strftime("%H:%M:%S", time.localtime(timestamp))
             textview.get_buffer().insert_with_tags_by_name(
-                textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(LOG_LOG))
+                textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(LOG_INFO))
             cls.tagToTime[tag] = timestamp
         
         if type(message) == str:
@@ -96,7 +96,7 @@ class InformationWindow:
         textview = widgets["textview"]
         tb = textview.get_buffer()
         tb.create_tag(str(LOG_DEBUG), family='Monospace')
-        tb.create_tag(str(LOG_LOG), family='Monospace', weight=pango.WEIGHT_BOLD)
+        tb.create_tag(str(LOG_INFO), family='Monospace', weight=pango.WEIGHT_BOLD)
         tb.create_tag(str(LOG_WARNING), family='Monospace', foreground="red")
         tb.create_tag(str(LOG_ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
         

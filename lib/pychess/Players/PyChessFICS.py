@@ -376,7 +376,7 @@ class PyChessFICS(PyChess):
     #===========================================================================
     
     def extendlog(self, messages):
-        [log.log(m+"\n") for m in messages]
+        [log.info(m+"\n") for m in messages]
         self.log.extend(messages)
         del self.log[:-10]
     

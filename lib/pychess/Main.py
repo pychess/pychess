@@ -12,7 +12,8 @@ from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
-from pychess.System.Log import log, start_thread_dump
+from pychess.System.Log import log
+from pychess.System.debug import start_thread_dump
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
