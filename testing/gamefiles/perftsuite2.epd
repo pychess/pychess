@@ -1,3 +1,6 @@
+#################################################################################
+# Collected by Martin Sedlak http://www.talkchess.com/forum/viewtopic.php?t=47318
+#################################################################################
 # avoid illegal ep (thanks to Steve Maughan):
 3k4/3p4/8/K1P4r/8/8/8/8 b - - 0 1         ;D6 1134888
 8/8/8/8/k1p4R/8/3P4/3K4 w - - 0 1         ;D6 1134888
@@ -40,3 +43,10 @@ K1k5/8/P7/8/8/8/8/8 w - - 0 1            ;D6 2217
 # double check:
 8/8/2k5/5q2/5n2/8/5K2/8 b - - 0 1         ;D4 23527
 8/5k2/8/5N2/5Q2/2K5/8/8 w - - 0 1         ;D4 23527 
+# Positions sended by Volker Annuss
+# short castling impossible although the rook never moved away from its corner
+1k6/1b6/8/8/7R/8/8/4K2R b K - 0 1 ;D5 1063513
+4k2r/8/8/7r/8/8/1B6/1K6 w k - 0 1 ;D5 1063513
+# long castling impossible although the rook never moved away from its corner
+1k6/8/8/8/R7/1n6/8/R3K3 b Q - 0 1 ;D5 346695
+r3k3/8/1N6/r7/8/8/8/1K6 w q - 0 1 ;D5 346695
