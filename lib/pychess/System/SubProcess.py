@@ -146,7 +146,7 @@ class SubProcess (gobject.GObject):
         if self.channelsClosed:
             log.warn("Chan closed for %r" % data, self.defname)
             return
-        log.log(data, self.defname)
+        log.info(data, self.defname)
         self.inChannel.write(data)
         if data.endswith("\n"):
             try:

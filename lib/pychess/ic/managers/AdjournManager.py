@@ -122,28 +122,28 @@ class AdjournManager (GObject):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.resign: no adjourned game vs %s\n" % game.opponent)
             return
-        log.log("AdjournManager.resign: resigning adjourned game=%s\n" % game)
+        log.info("AdjournManager.resign: resigning adjourned game=%s\n" % game)
         print >> self.connection.client, "resign %s" % game.opponent.name
     
     def draw (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.draw: no adjourned game vs %s\n" % game.opponent)
             return
-        log.log("AdjournManager.draw: offering sdraw for adjourned game=%s\n" % game)
+        log.info("AdjournManager.draw: offering sdraw for adjourned game=%s\n" % game)
         print >> self.connection.client, "sdraw %s" % game.opponent.name
     
     def abort (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.abort: no adjourned game vs %s\n" % game.opponent)
             return
-        log.log("AdjournManager.abort: offering sabort for adjourned game=%s\n" % game)
+        log.info("AdjournManager.abort: offering sabort for adjourned game=%s\n" % game)
         print >> self.connection.client, "sabort %s" % game.opponent.name
     
     def resume (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.resume: no adjourned game vs %s\n" % game.opponent)
             return
-        log.log("AdjournManager.resume: offering resume for adjourned game=%s\n" % game)
+        log.info("AdjournManager.resume: offering resume for adjourned game=%s\n" % game)
         print >> self.connection.client, "match %s" % game.opponent.name
     
 #(a)  Users who have more than 15 stored games are restricted from starting new

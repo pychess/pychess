@@ -78,7 +78,7 @@ class egtb_gaviota:
             self.pathList = self.tbpaths_done(self.pathList)
             return
         elif initInfo:
-            log.log(initInfo)
+            log.info(initInfo)
         
         # TODO: Set up a WDL cache area once the engine can use it.
         self.initialized &= self.tbcache_init(4*1024*1024, 0)

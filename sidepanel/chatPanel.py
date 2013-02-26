@@ -37,7 +37,7 @@ class Sidepanel:
             self.player = gamemodel.players[1]
             self.opplayer = gamemodel.players[0]
         else:
-            log.log("Chatpanel loaded with no local players\n")
+            log.info("Chatpanel loaded with no local players\n")
             self.chatView.hide()
         
         if hasattr(self, "player"):

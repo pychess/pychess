@@ -634,7 +634,7 @@ class GameModel (GObject, PooledThread):
     
     def end (self, status, reason):
         if self.status not in UNFINISHED_STATES:
-            log.log("GameModel.end: Can't end a game that's already ended: %s %s\n" % (status, reason))
+            log.info("GameModel.end: Can't end a game that's already ended: %s %s\n" % (status, reason))
             return
         if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.needsSave = True
