@@ -101,7 +101,7 @@ class Human (Player):
         if conf.get('autoCallFlag', False) and \
                 self.gamemodel.status == RUNNING and \
                 timemodel.getPlayerTime(1-self.color) <= 0:
-            log.log('Automatically sending flag call on behalf of player %s.' % self.name)
+            log.info('Automatically sending flag call on behalf of player %s.' % self.name)
             self.emit("offer", Offer(FLAG_CALL))
     
     def piece_moved (self, board, move, color):
