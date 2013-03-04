@@ -68,6 +68,21 @@ def mergeElements(elemA, elemB):
 #    </vm>
 #</engine>
 
+def indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
 PYTHONBIN = sys.executable.split("/")[-1]
 
 backup = """
@@ -218,7 +233,7 @@ class EngineDiscoverer (GObject, PooledThread):
             for key, value in dic.iteritems():
                 if key == 'vars':
                     for valueoption in value:
-                        option.append(fromstring('<var name="%s" />' % valueoption))
+                        option.append(fromstring('<var name="%s"/>' % valueoption))
                 else:
                     option.attrib[key] = str(value)
                 
@@ -233,13 +248,31 @@ class EngineDiscoverer (GObject, PooledThread):
             meta.append(fromstring('<name>%s</name>' % features['myname']))
         
         feanode = engine.find('cecp-features')
-        for key, value in features.iteritems():
-            feanode.append(fromstring('<feature name="%s" value="%s"/>' % (key, value)))
-        
         optnode = engine.find('options')
+        for key, value in features.iteritems():
+            if key == "option":
+                parts = value.split()
+                if parts[1] == "-check":
+                    optnode.append(fromstring('<check-option name="%s" default="%s"/>' % (parts[0], parts[2])))
+                elif parts[1] in ("-spin", "-slider"):
+                    optnode.append(fromstring('<spin-option name="%s" default="%s" min="%s" max="%s"/>' % (parts[0], parts[2], parts[3], parts[4])))
+                elif parts[1] in ("-string", "-file", "-path"):
+                    optnode.append(fromstring('<string-option name="%s" default="%s"/>' % (parts[0], parts[2])))
+                elif parts[1] == "-combo":
+                    optnode.append(fromstring('<combo-option name="%s" default="%s"/>' % (parts[0], parts[2])))
+                elif parts[1] in ("-button", "-save", "-reset"):
+                    optnode.append(fromstring('<button-option name="%s"/>' % parts[0]))
+            else:
+                if key == "smp" and value == 1:
+                    optnode.append(fromstring('<spin-option name="cores" default="1" min="1" max="64"/>'))
+                elif key == "memory" and value == 1:
+                    optnode.append(fromstring('<spin-option name="memory" default="32" min="1" max="4096"/>'))
+                else:
+                    feanode.append(fromstring('<feature name="%s" value="%s"/>' % (key, value)))
+        
         optnode.append(fromstring('<check-option name="Ponder" default="false"/>'))
-        optnode.append(fromstring('<check-option name="Random" default="false"/>'))
-        optnode.append(fromstring('<spin-option name="Depth" min="1" max="-1" default="false"/>'))
+        #optnode.append(fromstring('<check-option name="Random" default="false"/>'))
+        #optnode.append(fromstring('<spin-option name="Depth" min="1" max="-1" default="false"/>'))
         
         return engine
     
@@ -352,6 +385,19 @@ class EngineDiscoverer (GObject, PooledThread):
             engine2.find('vm').append(fromstring('<args/>'))
         
         return engine2
+
+    ######
+    # Save the xml
+    ######
+    def save(self, *args):
+        try:
+            with open(self.xmlpath, "w") as f:
+                indent(self.dom.getroot())
+                self.dom.write(f)
+        except IOError, e:
+            log.error("Saving enginexml raised exception: %s\n" % \
+                      ", ".join(str(a) for a in e.args))
+        self.need_save = False
     
     def run (self):
         # List available engines
@@ -385,18 +431,6 @@ class EngineDiscoverer (GObject, PooledThread):
             self._engines[engine.get("binname")] = engine
         
         ######
-        # Save the xml
-        ######
-        def cb(self_, *args):
-            try:
-                with open(self.xmlpath, "w") as f:
-                    self.dom.write(f)
-            except IOError, e:
-                log.error("Saving enginexml raised exception: %s\n" % \
-                          ", ".join(str(a) for a in e.args))
-            self.need_save = False
-            
-        ######
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
         
@@ -416,12 +450,12 @@ class EngineDiscoverer (GObject, PooledThread):
         if self.toBeRechecked:
             binnames = [engine.get('binname') for engine in self.toBeRechecked.keys()] 
             self.emit("discovering_started", binnames)
-            self.connect("all_engines_discovered", cb)
+            self.connect("all_engines_discovered", self.save)
             for engine in self.toBeRechecked.keys():
                 self.__discoverE(engine)
         else:
             if self.need_save:
-                self.connect("all_engines_discovered", cb)
+                self.connect("all_engines_discovered", self.save)
             self.emit('all_engines_discovered')
         
         

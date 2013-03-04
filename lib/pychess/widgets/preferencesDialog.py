@@ -4,7 +4,7 @@ from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 from xml.etree.ElementTree import fromstring
 
-import gtk
+import gtk, gobject
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix, getUserDataPrefix
 from pychess.System.glock import glock_connect_after
@@ -89,14 +89,13 @@ class EngineTab:
         protocol_combo.add_attribute(cell, "text", 0)
 
         # Add columns and cell renderers to options treeview 
+        self.options_store = gtk.ListStore(str, gobject.TYPE_PYOBJECT)
         optv = widgets["options_treeview"]
+        optv.set_model(self.options_store)
         optv.append_column(gtk.TreeViewColumn(
            "Option", gtk.CellRendererText(), text=0))
         optv.append_column(gtk.TreeViewColumn(
-           "Value", gtk.CellRendererText(), text=1))
-
-        self.options_store = gtk.ListStore(str, str)
-        optv.set_model(self.options_store)
+           "Data", KeyValueCellRenderer(self.options_store), data=1))
 
         self.cur_engine = None
 
@@ -110,7 +109,27 @@ class EngineTab:
                 if options_tags:
                     self.options_store.clear()
                     for option in options_tags[0].getchildren():
-                        self.options_store.append([option.get("name"), option.get("default")])
+                        key = option.get("name")
+                        val = {}
+                        opt_type = option.tag.split("-")[0]
+                        val["type"] = opt_type
+                        if opt_type == "check":
+                            val["default"] = bool(option.get("default"))
+                            val["value"] = bool(option.get("value", default=val["default"]))
+                        elif opt_type == "spin":
+                            val["default"] = int(option.get("default"))
+                            val["value"] = int(option.get("value", default=val["default"]))
+                            val["max"] = int(option.get("max"))
+                            val["min"] = int(option.get("min"))
+                        elif opt_type == "string":
+                            val["default"] = option.get("default")
+                            val["value"] = option.get("value", default=val["default"])
+                        elif opt_type == "combo":
+                            val["default"] = option.get("default")
+                            val["value"] = option.get("value", default=val["default"])
+                            choices = [var.get("name") for var in option.findall("var")]
+                            val["choices"] = choices
+                        self.options_store.append([key, val])
 
         from pychess.widgets import newGameDialog
         def update_store(discoverer, store):
@@ -772,3 +791,112 @@ class ThemeTab:
         themes.sort()
         
         return themes
+
+
+class KeyValueCellRenderer(gtk.GenericCellRenderer):
+    """ Custom renderer providing different renderers in different rows.
+        The model parameter is a gtk.ListStore(str, gobject.TYPE_PYOBJECT)
+        containing key data pairs. Each data is a dictionary with
+        type, value, min, max (for spin options), chices (list of combo options)
+        The 'type' can be 'check', 'spin', 'string', 'combo', 'button'.
+        Examples:
+            ('Nullmove', {'type': 'check', 'value': True})
+            ('Selectivity', {'type': 'spin', 'min': 0, 'max': 4, 'value': 2})
+            ('Style', {'type': 'combo', 'choices': ['Solid', 'Normal','Risky'], 'value': 'Normal'})
+            ('NalimovPath', {'type': 'string', 'value': 'c:\'})
+            ('Clear Hash', {'type': 'button'})
+    """
+    __gproperties__ = {"data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE)}
+    
+    def __init__(self, model):
+        gtk.GenericCellRenderer.__init__(self)
+
+        self.data = None
+
+        self.text_renderer = gtk.CellRendererText()
+        self.text_renderer.set_property("editable", True)
+        self.text_renderer.connect("edited", self.text_edited_cb, model)
+
+        self.toggle_renderer = gtk.CellRendererToggle()
+        self.toggle_renderer.set_property("activatable", True)
+        self.toggle_renderer.set_property("xalign", 0)
+        self.toggle_renderer.connect("toggled", self.toggled_cb, model)
+
+        self.spin_renderer = gtk.CellRendererSpin()
+        self.spin_renderer.set_property("editable", True)
+        self.spin_renderer.connect("edited", self.spin_edited_cb, model)
+
+        self.combo_renderer = gtk.CellRendererCombo()
+        self.combo_renderer.set_property("has_entry", False)
+        self.combo_renderer.set_property("editable", True)
+        self.combo_renderer.set_property("text_column", 0)
+        self.combo_renderer.connect("edited", self.text_edited_cb, model)
+
+        self.button_renderer = gtk.CellRendererText()
+        self.button_renderer.set_property("editable", False)
+
+    def text_edited_cb(self, cell, path, new_text, model):
+        model[path][1]["value"] = new_text
+        return
+
+    def toggled_cb(self, cell, path, model):
+        model[path][1]["value"] = not model[path][1]["value"]
+        return
+        
+    def spin_edited_cb(self, cell, path, new_text, model):
+        model[path][1]["value"] = new_text
+        return
+
+    def _get_renderer(self):
+        if self.data["type"] == "check":
+            return self.toggle_renderer
+        elif self.data["type"] == "spin":
+            return self.spin_renderer
+        elif self.data["type"] == "string":
+            return self.text_renderer
+        elif self.data["type"] == "combo":
+            return self.combo_renderer
+        elif self.data["type"] == "button":
+            return self.button_renderer
+    renderer = property(_get_renderer)
+    
+    def do_set_property(self, pspec, value):
+        if value["type"] == "check":
+            self.toggle_renderer.set_active(value["value"])
+            self.set_property("mode", gtk.CELL_RENDERER_MODE_ACTIVATABLE)
+        elif value["type"] == "spin":
+            adjustment = gtk.Adjustment(value=int(value["value"]), lower=value["min"], upper=value["max"], step_incr=1)
+            self.spin_renderer.set_property("adjustment", adjustment)
+            self.spin_renderer.set_property("text", value["value"])
+            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+        elif value["type"] == "string":
+            self.text_renderer.set_property("text", value["value"])
+            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+        elif value["type"] == "combo":
+            liststore = gtk.ListStore(str)
+            for choice in value["choices"]:
+                liststore.append([choice])
+            self.combo_renderer.set_property("model", liststore)
+            self.combo_renderer.set_property("text", value["value"])
+            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+        elif value["type"] == "button":
+            self.button_renderer.set_property("text", "")
+
+        setattr(self, pspec.name, value)
+        
+    def do_get_property(self, pspec):
+        return getattr(self, pspec.name)
+
+    def on_get_size(self, widget, cell_area=None):
+        return self.renderer.get_size(widget, cell_area=cell_area)
+        
+    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
+        self.renderer.render(window, widget, background_area, cell_area, expose_area, flags)
+        
+    def on_activate(self, event, widget, path, background_area, cell_area, flags):
+        return self.renderer.activate(event, widget, path, background_area, cell_area, flags)
+        
+    def on_start_editing(self, event, widget, path, background_area, cell_area, flags):
+        return self.renderer.start_editing(event, widget, path, background_area, cell_area, flags)
+
+gobject.type_register(KeyValueCellRenderer)
