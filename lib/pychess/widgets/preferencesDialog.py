@@ -198,8 +198,26 @@ class EngineTab:
                 args = xmlengine.find("args")
                 args.clear()
                 args.append(fromstring('<arg value="%s"/>' % new_args))
+                discoverer.save()
 
         widgets["engine_args_entry"].connect("focus-out-event", args_changed)
+
+        def select_new_dir(button):
+            dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+                (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+            dialog.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
+            response = dialog.run()
+            if response == gtk.RESPONSE_OK:
+                new_directory = dialog.get_filename()
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                old_directory = xmlengine.get("directory")
+                if new_directory != old_directory:
+                    widgets["engine_directory_entry"].set_text(new_directory)
+                    xmlengine.set("directory", new_directory)
+                    discoverer.save()
+            dialog.destroy()
+
+        widgets["engine_directory_button"].connect("clicked", select_new_dir)
 
         def directory_changed(widget, event):
             if self.cur_engine is not None:
@@ -208,6 +226,7 @@ class EngineTab:
                 old_directory = xmlengine.get("directory")
                 if new_directory != old_directory:
                     xmlengine.set("directory", new_directory)
+                    discoverer.save()
 
         widgets["engine_directory_entry"].connect("focus-out-event", directory_changed)
             
