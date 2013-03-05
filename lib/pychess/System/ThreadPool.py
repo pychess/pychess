@@ -1,7 +1,6 @@
 """ This is a pool for reusing threads """
 
 from threading import Thread, Condition, Lock
-import GtkWorker
 import Queue
 import inspect
 import os
@@ -70,6 +69,7 @@ class ThreadPool:
         module = inspect.getmodule(func)
         lineno = inspect.getsourcelines(func)[1]
         callee = ":".join((module.__name__, str(lineno), func.__name__))
+        import GtkWorker
         if module is GtkWorker or "repeat" in str(module):
             framerecord = inspect.stack()[3]
 #            d = os.path.basename(os.path.dirname(framerecord[1]))

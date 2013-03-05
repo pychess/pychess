@@ -2,19 +2,14 @@ import os
 import sys
 import time
 
-try:
-    import gobject
-    standard_logging = False
-except ImportError:
-    standard_logging = True
+from pychess.Utils.const import LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR, STANDARD_LOGGING
 
-from pychess.Utils.const import LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR
-
-if standard_logging:
+if STANDARD_LOGGING:
     import logging as log
     log.messages = []
     log.connect = lambda log, messages: None
 else:
+    import gobject
     from GtkWorker import EmitPublisher, Publisher
     from prefix import getUserDataPrefix, addUserDataPrefix
 

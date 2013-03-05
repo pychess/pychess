@@ -48,7 +48,7 @@ def queryGameno(path):
         print "Autoselecting game 0."
         gameno = 0
     else:
-        gameno = int(raw_input("What engine should be your analyzer? [n] "))
+        gameno = int(raw_input("Select game number to be analyzed. [n]: "))
     print
     
     return pgnfile, gameno
@@ -71,6 +71,7 @@ class DummyPlayer (Player):
     def __init__(self):
         Player.__init__(self)
         self.Q = Queue.Queue()
+        self.__type__ = LOCAL
     def makeMove (self, board1, move, board2):
         r = self.Q.get()
         if r == "del": raise PlayerIsDead
