@@ -98,7 +98,7 @@ class UCIEngine (ProtocolEngine):
         
             if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.setOption('MultiPV', self.multipvSetting)
-        
+            
         for option, value in self.optionsToBeSent.iteritems():
             if self.options[option]["default"] != value:
                 self.options[option]["default"] = value
