@@ -550,13 +550,17 @@ class EngineDiscoverer (GObject, PooledThread):
             engine.setName(xmlengine.find('meta/name').text.strip())
             #print 'set engine name to "%s"' % engine.name
         
-        if protocol == "uci":
-            # If the user has configured special options for this engine, here is
-            # where they should be set.
-            def optionsCallback (engine):
-                if engine.hasOption("OwnBook"):
-                    engine.setOption("OwnBook", True)
-            engine.connect("readyForOptions", optionsCallback)
+        # If the user has configured special options for this engine, here is
+        # where they should be set.
+        def optionsCallback (engine):
+            options_tags = xmlengine.findall(".//options")
+            if options_tags:
+                for option in options_tags[0].getchildren():
+                    key = option.get("name")
+                    value = option.get("value")
+                    if (value is not None) and option.get("default") != value:
+                        engine.setOption(key, value)
+        engine.connect("readyForOptions", optionsCallback)
         
         return engine
     

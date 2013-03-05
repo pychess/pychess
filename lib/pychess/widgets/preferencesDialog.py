@@ -111,10 +111,11 @@ class EngineTab:
                     for option in options_tags[0].getchildren():
                         key = option.get("name")
                         val = {}
+                        val["xmlelement"] = option
                         opt_type = option.tag.split("-")[0]
                         val["type"] = opt_type
                         if opt_type == "check":
-                            val["default"] = bool(option.get("default"))
+                            val["default"] = option.get("default").lower == "true"
                             val["value"] = bool(option.get("value", default=val["default"]))
                         elif opt_type == "spin":
                             val["default"] = int(option.get("default"))
@@ -856,14 +857,20 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
 
     def text_edited_cb(self, cell, path, new_text, model):
         model[path][1]["value"] = new_text
+        model[path][1]["xmlelement"].set("value", model[path][1]["value"])
+        discoverer.save()
         return
 
     def toggled_cb(self, cell, path, model):
         model[path][1]["value"] = not model[path][1]["value"]
+        model[path][1]["xmlelement"].set("value", str(model[path][1]["value"]))
+        discoverer.save()
         return
         
     def spin_edited_cb(self, cell, path, new_text, model):
         model[path][1]["value"] = new_text
+        model[path][1]["xmlelement"].set("value", model[path][1]["value"])
+        discoverer.save()
         return
 
     def _get_renderer(self):
