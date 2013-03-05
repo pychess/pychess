@@ -143,7 +143,7 @@ class CECPEngine (ProtocolEngine):
         self.supported_features = [
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
             "analyze", "myname", "variants", "colors", "pause", "done",
-            "debug"
+            "debug", "smp", "memory"
         ]
         
         self.name = None
@@ -499,6 +499,27 @@ class CECPEngine (ProtocolEngine):
             s += ":" + str(secs)
         
         self.optionQueue.append("level 0 %s %d" % (s, gain))
+
+    #===========================================================================
+    #    Option handling
+    #===========================================================================
+    
+    def setOption (self, key, value):
+        """ Set an option, which will be sent to the engine, after the
+            'readyForOptions' signal has passed.
+            If you want to know the possible options, you should go to
+            engineDiscoverer or use the getOption, getOptions and hasOption
+            methods, while you are in your 'readyForOptions' signal handler """ 
+        if self.readyMoves:
+            log.warn("Options set after 'readyok' are not sent to the engine", self.defname)
+        if key == "cores":
+            self.optionQueue.append("cores %s" % value)
+        elif key == "memory":
+            self.optionQueue.append("memory %s" % value)
+        elif key.lower() == "ponder":
+            self.__setPonder(value.lower=="true")
+        else:
+            self.optionQueue.append("option %s=%s" % (key, value))
     
     #===========================================================================
     #    Interacting with the player
