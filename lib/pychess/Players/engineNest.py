@@ -537,9 +537,13 @@ class EngineDiscoverer (GObject, PooledThread):
             path = vmpath
         md5 = xmlengine.find('md5').text.strip()
         
+        working_directory = xmlengine.get("directory")
+        if working_directory:
+            workdir = working_directory
+        else:
+            workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
-                                getEngineDataPrefix())
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS, workdir)
         engine = attrToProtocol[protocol](subprocess, color, protover, md5)
         
         if xmlengine.find('meta/name') is not None:
