@@ -3,6 +3,9 @@
 if __name__ == "__main__":
     print "feature done=0"
 
+from pychess.Utils import const
+const.STANDARD_LOGGING = True
+
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *

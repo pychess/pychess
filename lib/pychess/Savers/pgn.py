@@ -102,6 +102,7 @@ def save (file, model):
     result = " ".join(result)
     result = wrap(result, 80)
     print >> file, result, status
+    print >> file
     file.close()
 
 def walk(node, result):

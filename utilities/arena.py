@@ -7,30 +7,42 @@
     system. The script is executed from a terminal with the usual environment.
 '''
 
+import os
+import sys
+
 ###############################################################################
 # Set up important things
 import glib, gobject
 gobject.threads_init()
 mainloop = glib.MainLoop()
 
-###############################################################################
-# Do the rest of the imports
-import sys
-from pychess.Players.engineNest import discoverer
-from pychess.Utils.GameModel import GameModel
-from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
-from pychess.Variants import variants
 
 ###############################################################################
-# Do logging
-#from pychess.widgets import LogDialog
-#LogDialog.show()
+# Fix environment
+if "PYTHONPATH" in os.environ:
+    os.environ["PYTHONPATH"] = os.pathsep.join(
+        os.path.abspath(p) for p in os.environ["PYTHONPATH"].split(os.pathsep))
+
+###############################################################################
+# Use standard logging
+#from pychess.Utils import const
+#const.STANDARD_LOGGING = True
+from pychess.System import Log
+Log.DEBUG = False
+
+###############################################################################
+# Do the rest of the imports
+from pychess.Players.engineNest import discoverer
+from pychess.Savers.pgn import save
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Variants import variants
 
 ###############################################################################
 # Look up engines
 def prepare():
-    print "Discovering uci engines",
+    print "Discovering engines",
     discoverer.connect('discovering_started', cb_started)
     discoverer.connect('engine_discovered', cb_gotone)
     discoverer.connect('all_engines_discovered', start)
@@ -103,6 +115,10 @@ def cb_gameended(game, reason):
         print "The current scores are:"
     printScoreboard()
     print
+    
+    f = open("arena.pgn", "a+")
+    save(f, game)
+    
     runGame()
 
 ###############################################################################
@@ -144,9 +160,9 @@ def findMatch():
     pos = [(i,j) for i in xrange(len(engines))
                  for j in xrange(len(engines))
                  if i != j and results[i][j] == None]
-    #pos = [(i,j) for i,j in pos if
-    #       "pychess" in discoverer.getName(engines[i]).lower() or
-    #       "pychess" in discoverer.getName(engines[j]).lower()]
+    pos = [(i,j) for i,j in pos if
+           "pychess" in discoverer.getName(engines[i]).lower() or
+           "pychess" in discoverer.getName(engines[j]).lower()]
     if not pos:
         return None, None
     return random.choice(pos)
