@@ -885,6 +885,8 @@ class CECPEngine (ProtocolEngine):
             return
         
         if "feature" in parts:
+            # Some engines send features after done=1, so we will iterate after done=1 too
+            done1 = False
             # We skip parts before 'feature', as some engines give us lines like
             # White (1) : feature setboard=1 analyze...e="GNU Chess 5.07" done=1
             parts = parts[parts.index("feature"):]
@@ -914,8 +916,7 @@ class CECPEngine (ProtocolEngine):
                         l = max(i, j)
                         value = rest[:l]
                 
-                else:
-                    # All nonquoted values are ints
+                elif value.isdigit():
                     value = int(value)
                 
                 if key in self.supported_features:
@@ -925,25 +926,29 @@ class CECPEngine (ProtocolEngine):
                 
                 if key == "done":
                     if value == 1:
-                        # Start a new game before using the engine:
-                        # (CECPv2 engines)
-                        print >> self.engine, "new"
-
-                        # We are now ready for play:
-                        self.emit("readyForOptions")
-                        self.emit("readyForMoves")
-                        self.returnQueue.put("ready")
+                        done1 = True
+                        continue
                     elif value == 0:
                         log.info("Adds %d seconds timeout\n" % TIME_OUT_SECOND, self.defname)
                         # This'll buy you some more time
                         self.timeout = time.time()+TIME_OUT_SECOND
                         self.returnQueue.put("not ready")
-                    return
+                        return
                 
                 self.features[key] = value
                 if key == "myname" and not self.name:
                     self.setName(value)
         
+            if done1:
+                # Start a new game before using the engine:
+                # (CECPv2 engines)
+                print >> self.engine, "new"
+
+                # We are now ready for play:
+                self.emit("readyForOptions")
+                self.emit("readyForMoves")
+                self.returnQueue.put("ready")
+
         # A hack to get better names in protover 1.
         # Unfortunately it wont work for now, as we don't read any lines from
         # protover 1 engines. When should we stop?
