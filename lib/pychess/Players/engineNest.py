@@ -6,7 +6,6 @@ from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
 from copy import deepcopy
-from subprocess import Popen, PIPE, STDOUT
 
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring
@@ -19,6 +18,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System import conf
 from pychess.System.Log import log
+from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
 from pychess.System.ThreadPool import pool, PooledThread
@@ -423,7 +423,10 @@ class EngineDiscoverer (GObject, PooledThread):
                 if engine2 is None:
                     # No longer suported
                     continue
-                self.dom.getroot().remove(engine)
+                try:
+                    self.dom.getroot().remove(engine)
+                except:
+                    pass
                 self.dom.getroot().append(engine2)
                 engine = engine2
                 engine.set('recheck', 'true')
@@ -585,26 +588,30 @@ class EngineDiscoverer (GObject, PooledThread):
         return engine
 
     def is_uci(self, new_engine):
-        try:
-            proc = Popen(new_engine, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
-        except OSError:
-            raise
-            
-        proc.stdin.write("uci\n")
-        proc.stdin.flush()
-
+        command = Command(new_engine, "uci\n")
+        output = command.run(timeout=3)[1]
         uci = False
-        #works in python 3.0+
-        #for line in proc.stdout:
-        for line in iter(proc.stdout.readline,''):
+        for line in output.split("\n"):
             line = line.rstrip()
             if line == "uciok":
                 uci = True
                 break
             elif "Error" in line or "Illegal" in line or "Invalid" in line:
                 break
-        proc.terminate()
         return uci
+
+    def is_cecp(self, new_engine):
+        command = Command(new_engine, "xboard\nprotover 2\n")
+        output = command.run(timeout=3)[1]
+        cecp = False
+        for line in output.split("\n"):
+            line = line.rstrip()
+            if "feature" in line and "done" in line:
+                cecp = True
+                break
+            elif "Error" in line or "Illegal" in line or "Invalid" in line:
+                break
+        return cecp
 
     def addEngine(self, name, new_engine, protocol):
         path, binname = os.path.split(new_engine)
