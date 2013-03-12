@@ -138,13 +138,16 @@ class CECPEngine (ProtocolEngine):
             "memory":    0,
             "smp":       0,
             "egt":       '',
+            "option":    '',
         }
         
         self.supported_features = [
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
             "analyze", "myname", "variants", "colors", "pause", "done",
-            "debug", "smp", "memory"
+            "debug", "smp", "memory", "option"
         ]
+        
+        self.options = []
         
         self.name = None
         
@@ -517,7 +520,7 @@ class CECPEngine (ProtocolEngine):
         elif key == "memory":
             self.optionQueue.append("memory %s" % value)
         elif key.lower() == "ponder":
-            self.__setPonder(value.lower=="true")
+            self.__setPonder(value==1)
         else:
             self.optionQueue.append("option %s=%s" % (key, value))
     
@@ -935,7 +938,10 @@ class CECPEngine (ProtocolEngine):
                         self.returnQueue.put("not ready")
                         return
                 
-                self.features[key] = value
+                if key == "option":
+                    self.options.append(value)
+                else:
+                    self.features[key] = value
                 if key == "myname" and not self.name:
                     self.setName(value)
         

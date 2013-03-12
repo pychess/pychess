@@ -9,7 +9,7 @@ import gtk, gobject
 from pychess.System.prefix import addDataPrefix, getDataPrefix, getUserDataPrefix
 from pychess.System.glock import glock_connect_after
 from pychess.System import conf, gstreamer, uistuff
-from pychess.Players.engineNest import discoverer
+from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
 from pychess.gfx import Pieces
@@ -99,7 +99,7 @@ class EngineTab:
 
         self.cur_engine = None
 
-        def update_options():
+        def update_options(*args):
             if self.cur_engine is not None:
                 engines = discoverer.getEngines()
                 if self.cur_engine not in engines:
@@ -115,7 +115,7 @@ class EngineTab:
                         opt_type = option.tag.split("-")[0]
                         val["type"] = opt_type
                         if opt_type == "check":
-                            val["default"] = option.get("default").lower == "true"
+                            val["default"] = option.get("default").lower() == "true"
                             val["value"] = bool(option.get("value", default=val["default"]))
                         elif opt_type == "spin":
                             val["default"] = int(option.get("default"))
@@ -133,25 +133,24 @@ class EngineTab:
                         self.options_store.append([key, val])
 
         from pychess.widgets import newGameDialog
-        def update_store(discoverer, store):
-            store.clear()
+        def update_store(*args):
+            allstore.clear()
+            newGameDialog.createPlayerUIGlobals(discoverer)
             # don't add the very first (Human) player to engine store
             for item in newGameDialog.playerItems[0][1:]:
-                store.append(item)
+                allstore.append(item)
             update_options()
 
-        glock_connect_after(discoverer, "all_engines_discovered",
-                            update_store, allstore)
-        update_store(discoverer, allstore)
+        update_store()
         
         def remove(button):
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
                 discoverer.removeEngine(self.cur_engine)
+                discoverer.save()
+                update_store(discoverer)
                 ts = self.tv.get_selection()
                 ts.select_path((0,))
-                # Force emit "all_engines_discovered" signal let update engine lists
-                discoverer.start()
 
         widgets["remove_engine_button"].connect("clicked", remove)
 
@@ -226,21 +225,28 @@ class EngineTab:
         widgets["engine_directory_entry"].connect("focus-out-event", directory_changed)
             
         def protocol_changed(widget):
-            if self.cur_engine is not None:
+            if self.cur_engine is not None and not self.add:
                 active = widgets["engine_protocol_combo"].get_active()
                 new_protocol = "uci" if active==0 else "cecp"
                 xmlengine = discoverer.getEngines()[self.cur_engine]
                 old_protocol = xmlengine.get("protocol")
                 if new_protocol != old_protocol:
                     engine = self.engine_chooser_dialog.get_filename()
-                    uci = discoverer.is_uci(engine)
-                    new_protocol = "uci" if uci else "cecp"
-                    if new_protocol != old_protocol:
+                    # is the new protocol supported by the engine?
+                    if new_protocol == "uci":
+                        ok = is_uci(engine)
+                    else:
+                        ok = is_cecp(engine)
+                    if ok:
+                        # discover engine options for new protocol
                         xmlengine.set("protocol", new_protocol)
+                        xmlengine.set("protover", "2")
                         xmlengine.set('recheck', 'true')
+                        glock_connect_after(discoverer, "engine_discovered", update_options)
                         discoverer.start()
                     else:
-                        widgets["engine_protocol_combo"].set_active(0 if uci else 1)
+                        # restore the original protocol
+                        widgets["engine_protocol_combo"].set_active(0 if old_protocol=="uci" else 1)
 
         widgets["engine_protocol_combo"].connect("changed", protocol_changed)
 
@@ -255,9 +261,9 @@ class EngineTab:
             new_engine = self.engine_chooser_dialog.get_filename()
             if os.access(new_engine, os.R_OK|os.X_OK):
                 try:
-                    uci = discoverer.is_uci(new_engine)
+                    uci = is_uci(new_engine)
                     if not uci:
-                        if not discoverer.is_cecp(new_engine):
+                        if not is_cecp(new_engine):
                             # restore the original
                             xmlengine = discoverer.getEngines()[self.cur_engine]
                             self.engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
@@ -282,6 +288,7 @@ class EngineTab:
                     self.add = False
                     discoverer.addEngine(name, new_engine, protocol)
                     self.cur_engine = name
+                    glock_connect_after(discoverer, "engine_discovered", update_store)
                     discoverer.start()
                 except:
                     print "There is something wrong with this executable"

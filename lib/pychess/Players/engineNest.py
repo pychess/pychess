@@ -180,7 +180,6 @@ class EngineDiscoverer (GObject, PooledThread):
             self.dom = deepcopy(self.backup)
         
         self._engines = {}
-        self.need_save = False
     
     ############################################################################
     # Discover methods                                                         #
@@ -241,6 +240,7 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def __fromCECPProcess (self, subprocess):
         features = subprocess.features
+        options = subprocess.options
         engine = fromstring('<engine><meta/><cecp-features/><options/></engine>')
         
         meta = engine.find('meta')
@@ -249,26 +249,48 @@ class EngineDiscoverer (GObject, PooledThread):
         
         feanode = engine.find('cecp-features')
         optnode = engine.find('options')
+
+        for opt in options:
+            if " -check " in opt:
+                name, value = opt.split(" -check ")
+                optnode.append(fromstring('<check-option name="%s" default="%s"/>' % (name, bool(int(value)))))
+            elif " -spin " in opt:
+                name, value = opt.split(" -spin ")
+                defv, minv, maxv = value.split()
+                optnode.append(fromstring('<spin-option name="%s" default="%s" min="%s" max="%s"/>' % (name, defv, minv, maxv)))
+            elif " -slider " in opt:
+                name, value = opt.split(" -slider ")
+                defv, minv, maxv = value.split()
+                optnode.append(fromstring('<spin-option name="%s" default="%s" min="%s" max="%s"/>' % (name, defv, minv, maxv)))
+            elif " -string " in opt:
+                name, value = opt.split(" -string ")
+                optnode.append(fromstring('<string-option name="%s" default="%s"/>' % (name, value)))
+            elif " -file " in opt:
+                name, value = opt.split(" -file ")
+                optnode.append(fromstring('<string-option name="%s" default="%s"/>' % (name, value)))
+            elif " -path " in opt:
+                name, value = opt.split(" -path ")
+                optnode.append(fromstring('<string-option name="%s" default="%s"/>' % (name, value)))
+            elif " -combo " in opt:
+                name, value = opt.split(" -combo ")
+                optnode.append(fromstring('<combo-option name="%s" default="%s"/>' % (name, value)))
+            elif " -button" in opt:
+                pos = opt.find(" -button")
+                optnode.append(fromstring('<button-option name="%s"/>' % opt[:pos]))
+            elif " -save" in opt:
+                pos = opt.find(" -save")
+                optnode.append(fromstring('<button-option name="%s"/>' % opt[:pos]))
+            elif " -reset" in opt:
+                pos = opt.find(" -reset")
+                optnode.append(fromstring('<button-option name="%s"/>' % opt[:pos]))
+
         for key, value in features.iteritems():
-            if key == "option":
-                parts = value.split()
-                if parts[1] == "-check":
-                    optnode.append(fromstring('<check-option name="%s" default="%s"/>' % (parts[0], parts[2])))
-                elif parts[1] in ("-spin", "-slider"):
-                    optnode.append(fromstring('<spin-option name="%s" default="%s" min="%s" max="%s"/>' % (parts[0], parts[2], parts[3], parts[4])))
-                elif parts[1] in ("-string", "-file", "-path"):
-                    optnode.append(fromstring('<string-option name="%s" default="%s"/>' % (parts[0], parts[2])))
-                elif parts[1] == "-combo":
-                    optnode.append(fromstring('<combo-option name="%s" default="%s"/>' % (parts[0], parts[2])))
-                elif parts[1] in ("-button", "-save", "-reset"):
-                    optnode.append(fromstring('<button-option name="%s"/>' % parts[0]))
+            if key == "smp" and value == 1:
+                optnode.append(fromstring('<spin-option name="cores" default="1" min="1" max="64"/>'))
+            elif key == "memory" and value == 1:
+                optnode.append(fromstring('<spin-option name="memory" default="32" min="1" max="4096"/>'))
             else:
-                if key == "smp" and value == 1:
-                    optnode.append(fromstring('<spin-option name="cores" default="1" min="1" max="64"/>'))
-                elif key == "memory" and value == 1:
-                    optnode.append(fromstring('<spin-option name="memory" default="32" min="1" max="4096"/>'))
-                else:
-                    feanode.append(fromstring('<feature name="%s" value="%s"/>' % (key, value)))
+                feanode.append(fromstring('<feature name="%s" value="%s"/>' % (key, value)))
         
         optnode.append(fromstring('<check-option name="Ponder" default="false"/>'))
         #optnode.append(fromstring('<check-option name="Random" default="false"/>'))
@@ -297,7 +319,7 @@ class EngineDiscoverer (GObject, PooledThread):
         elif engine.get("protocol") == "cecp":
             fresh = self.__fromCECPProcess(subproc)
         mergeElements(engine, fresh)
-        
+
         exitcode = subproc.kill(UNKNOWN_REASON)
         if exitcode:
             log.debug("Engine failed %s\n" % self.getName(engine))
@@ -397,7 +419,6 @@ class EngineDiscoverer (GObject, PooledThread):
         except IOError, e:
             log.error("Saving enginexml raised exception: %s\n" % \
                       ", ".join(str(a) for a in e.args))
-        self.need_save = False
     
     def run (self):
         # List available engines
@@ -423,10 +444,7 @@ class EngineDiscoverer (GObject, PooledThread):
                 if engine2 is None:
                     # No longer suported
                     continue
-                try:
-                    self.dom.getroot().remove(engine)
-                except:
-                    pass
+                self.dom.getroot().remove(engine)
                 self.dom.getroot().append(engine2)
                 engine = engine2
                 engine.set('recheck', 'true')
@@ -457,8 +475,6 @@ class EngineDiscoverer (GObject, PooledThread):
             for engine in self.toBeRechecked.keys():
                 self.__discoverE(engine)
         else:
-            if self.need_save:
-                self.connect("all_engines_discovered", self.save)
             self.emit('all_engines_discovered')
         
         
@@ -562,6 +578,8 @@ class EngineDiscoverer (GObject, PooledThread):
                     key = option.get("name")
                     value = option.get("value")
                     if (value is not None) and option.get("default") != value:
+                        if protocol == "cecp" and option.tag.split("-")[0] == "check":
+                            value = int(bool(value))
                         engine.setOption(key, value)
         engine.connect("readyForOptions", optionsCallback)
         
@@ -587,32 +605,6 @@ class EngineDiscoverer (GObject, PooledThread):
         engine.prestart()
         return engine
 
-    def is_uci(self, new_engine):
-        command = Command(new_engine, "uci\n")
-        output = command.run(timeout=3)[1]
-        uci = False
-        for line in output.split("\n"):
-            line = line.rstrip()
-            if line == "uciok":
-                uci = True
-                break
-            elif "Error" in line or "Illegal" in line or "Invalid" in line:
-                break
-        return uci
-
-    def is_cecp(self, new_engine):
-        command = Command(new_engine, "xboard\nprotover 2\n")
-        output = command.run(timeout=3)[1]
-        cecp = False
-        for line in output.split("\n"):
-            line = line.rstrip()
-            if "feature" in line and "done" in line:
-                cecp = True
-                break
-            elif "Error" in line or "Illegal" in line or "Invalid" in line:
-                break
-        return cecp
-
     def addEngine(self, name, new_engine, protocol):
         path, binname = os.path.split(new_engine)
         engine = fromstring('<engine></engine>')
@@ -624,16 +616,19 @@ class EngineDiscoverer (GObject, PooledThread):
             engine.set('protocol', 'cecp')
             engine.set('protover', '2')
             # TODO: handle protover 1 engines
+        with open(new_engine) as f:
+            md5sum = md5(f.read()).hexdigest()
         engine.append(fromstring('<path>%s</path>' % new_engine))
+        engine.append(fromstring('<md5>%s</md5>' % md5sum))
+        engine.append(fromstring('<args/>'))
+        engine.set('recheck', 'true')
 
-        self._engines[name] = engine
         self.dom.getroot().append(engine)
 
     def removeEngine(self, name):
         engine = self._engines[name]
         del self._engines[name]
         self.dom.getroot().remove(engine)
-        self.need_save = True
 
 discoverer = EngineDiscoverer()
 
@@ -667,6 +662,32 @@ def init_engine (analyzer_type, gamemodel, force=False):
             log.debug("%s analyzer: %s\n" % (analyzer_type, repr(analyzer)))
         
     return analyzer
+
+def is_uci(new_engine):
+    command = Command(new_engine, "uci\n")
+    output = command.run(timeout=3)[1]
+    uci = False
+    for line in output.split("\n"):
+        line = line.rstrip()
+        if line == "uciok":
+            uci = True
+            break
+        elif "Error" in line or "Illegal" in line or "Invalid" in line:
+            break
+    return uci
+
+def is_cecp(new_engine):
+    command = Command(new_engine, "xboard\nprotover 2\n")
+    output = command.run(timeout=3)[1]
+    cecp = False
+    for line in output.split("\n"):
+        line = line.rstrip()
+        if "feature" in line and "done" in line:
+            cecp = True
+            break
+        elif "Error" in line or "Illegal" in line or "Invalid" in line:
+            break
+    return cecp
 
 if __name__ == "__main__":
     import glib, gobject
