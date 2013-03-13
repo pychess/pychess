@@ -157,7 +157,7 @@ class EngineTab:
         self.add = False
         def add(button):
             self.add = True
-            self.engine_chooser_dialog.run()
+            engine_chooser_dialog.run()
 
         widgets["add_engine_button"].connect("clicked", add)
 
@@ -231,7 +231,7 @@ class EngineTab:
                 xmlengine = discoverer.getEngines()[self.cur_engine]
                 old_protocol = xmlengine.get("protocol")
                 if new_protocol != old_protocol:
-                    engine = self.engine_chooser_dialog.get_filename()
+                    engine = engine_chooser_dialog.get_filename()
                     # is the new protocol supported by the engine?
                     if new_protocol == "uci":
                         ok = is_uci(engine)
@@ -250,23 +250,28 @@ class EngineTab:
 
         widgets["engine_protocol_combo"].connect("changed", protocol_changed)
 
-        self.engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+        engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        self.engine_chooser_button = gtk.FileChooserButton(self.engine_chooser_dialog)
+        engine_chooser_button = gtk.FileChooserButton(engine_chooser_dialog)
 
-        self.widgets["engineChooserDock"].add(self.engine_chooser_button)
-        self.engine_chooser_button.show()
+        filter = gtk.FileFilter()
+        filter.set_name(_("Chess engines"))
+        filter.add_mime_type("application/x-executable")
+        engine_chooser_dialog.add_filter(filter)
+
+        self.widgets["engineChooserDock"].add(engine_chooser_button)
+        engine_chooser_button.show()
 
         def select_new_engine(button):
-            new_engine = self.engine_chooser_dialog.get_filename()
-            if os.access(new_engine, os.R_OK|os.X_OK):
+            new_engine = engine_chooser_dialog.get_filename()
+            if new_engine:
                 try:
                     uci = is_uci(new_engine)
                     if not uci:
                         if not is_cecp(new_engine):
                             # restore the original
                             xmlengine = discoverer.getEngines()[self.cur_engine]
-                            self.engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
+                            engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
                             return
                     path, binname = os.path.split(new_engine)
                     for name in discoverer.getEngines():
@@ -292,8 +297,12 @@ class EngineTab:
                     discoverer.start()
                 except:
                     print "There is something wrong with this executable"
-
-        self.engine_chooser_button.connect("file-set", select_new_engine)
+            else:
+                # restore the original
+                xmlengine = discoverer.getEngines()[self.cur_engine]
+                engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
+                
+        engine_chooser_button.connect("file-set", select_new_engine)
 
         def selection_changed(treeselection):
             store, iter = self.tv.get_selection().get_selected()
@@ -305,7 +314,7 @@ class EngineTab:
                 self.cur_engine = name
                 xmlengine = discoverer.getEngines()[name]
                 widgets["engine_name_entry"].set_text(xmlengine.get("binname"))
-                self.engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
+                engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
                 args = [a.get('value') for a in xmlengine.findall('args/arg')]
                 widgets["engine_args_entry"].set_text(' '.join(args))
                 directory = xmlengine.get("directory") if xmlengine.get("directory") is not None else ""
@@ -330,26 +339,29 @@ class HintTab:
         default_path = os.path.join(addDataPrefix("pychess_book.bin"))
         path = conf.get("opening_file_entry", default_path)
         conf.set("opening_file_entry", path)
-        
-        button = widgets["opening_filechooser_button"]
-        openingdialog = gtk.FileChooserDialog(_("Select book file"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-                    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
- 
+
+        book_chooser_dialog = gtk.FileChooserDialog(_("Select book file"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        book_chooser_button = gtk.FileChooserButton(book_chooser_dialog)
+
         filter = gtk.FileFilter()
         filter.set_name(_("Opening books"))
         filter.add_pattern("*.bin")
-        openingdialog.add_filter(filter)
-        openingdialog.set_filename(path)
+        book_chooser_dialog.add_filter(filter)
+        book_chooser_dialog.set_filename(path)
 
-        def on_opening_filechooser_button_clicked(button):
-            if openingdialog.run() == gtk.RESPONSE_OK:
-                new_file = openingdialog.get_filename()
-                if new_file is not None:
-                    widgets["opening_file_entry"].set_text(new_file)
-            openingdialog.hide()
-        widgets["opening_filechooser_button"].connect_after("clicked",
-                                                on_opening_filechooser_button_clicked)
-        uistuff.keep(widgets["opening_file_entry"], "opening_file_entry")
+        self.widgets["bookChooserDock"].add(book_chooser_button)
+        book_chooser_button.show()
+        
+        def select_new_book(button):
+            new_book = book_chooser_dialog.get_filename()
+            if new_book:
+                conf.set("opening_file_entry", new_book)
+            else:
+                # restore the original
+                book_chooser_dialog.set_filename(path)
+                
+        book_chooser_button.connect("file-set", select_new_book)
 
         def on_opening_check_toggled (check):
             widgets["opening_hbox"].set_sensitive(check.get_active())
