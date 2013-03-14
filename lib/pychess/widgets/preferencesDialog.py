@@ -143,6 +143,9 @@ class EngineTab:
 
         update_store()
         
+        ################################################################
+        # remove button
+        ################################################################
         def remove(button):
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
@@ -154,6 +157,9 @@ class EngineTab:
 
         widgets["remove_engine_button"].connect("clicked", remove)
 
+        ################################################################
+        # add button
+        ################################################################
         self.add = False
         def add(button):
             self.add = True
@@ -161,12 +167,10 @@ class EngineTab:
 
         widgets["add_engine_button"].connect("clicked", add)
 
-        def copy(button):
-            # TODO
-            pass
 
-        widgets["copy_engine_button"].connect("clicked", copy)
-
+        ################################################################
+        # engine name
+        ################################################################
         def name_changed(widget, event):
             if self.cur_engine is not None:
                 new_name = widgets["engine_name_entry"].get_text().strip()
@@ -185,6 +189,10 @@ class EngineTab:
 
         widgets["engine_name_entry"].connect("focus-out-event", name_changed)
 
+
+        ################################################################
+        # engine args
+        ################################################################
         def args_changed(widget, event):
             if self.cur_engine is not None:
                 new_args = widgets["engine_args_entry"].get_text().strip()
@@ -196,34 +204,31 @@ class EngineTab:
 
         widgets["engine_args_entry"].connect("focus-out-event", args_changed)
 
-        def select_new_dir(button):
-            dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-                (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-            dialog.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
-            response = dialog.run()
-            if response == gtk.RESPONSE_OK:
-                new_directory = dialog.get_filename()
-                xmlengine = discoverer.getEngines()[self.cur_engine]
-                old_directory = xmlengine.get("directory")
-                if new_directory != old_directory:
-                    widgets["engine_directory_entry"].set_text(new_directory)
-                    xmlengine.set("directory", new_directory)
-                    discoverer.save()
-            dialog.destroy()
 
-        widgets["engine_directory_button"].connect("clicked", select_new_dir)
+        ################################################################
+        # engine working directory
+        ################################################################
+        dir_chooser_dialog = gtk.FileChooserDialog(_("Select working directory"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dir_chooser_button = gtk.FileChooserButton(dir_chooser_dialog)
 
-        def directory_changed(widget, event):
-            if self.cur_engine is not None:
-                new_directory = widgets["engine_directory_entry"].get_text().strip()
-                xmlengine = discoverer.getEngines()[self.cur_engine]
-                old_directory = xmlengine.get("directory")
-                if new_directory != old_directory:
-                    xmlengine.set("directory", new_directory)
-                    discoverer.save()
+        self.widgets["dirChooserDock"].add(dir_chooser_button)
+        dir_chooser_button.show()
 
-        widgets["engine_directory_entry"].connect("focus-out-event", directory_changed)
-            
+        def select_dir(button):
+            new_directory = dir_chooser_dialog.get_filename()
+            xmlengine = discoverer.getEngines()[self.cur_engine]
+            old_directory = xmlengine.get("directory")
+            if new_directory != old_directory:
+                xmlengine.set("directory", new_directory)
+                discoverer.save()
+
+        dir_chooser_button.connect("current-folder-changed", select_dir)
+
+
+        ################################################################
+        # engine protocol
+        ################################################################
         def protocol_changed(widget):
             if self.cur_engine is not None and not self.add:
                 active = widgets["engine_protocol_combo"].get_active()
@@ -250,6 +255,10 @@ class EngineTab:
 
         widgets["engine_protocol_combo"].connect("changed", protocol_changed)
 
+
+        ################################################################
+        # engine
+        ################################################################
         engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         engine_chooser_button = gtk.FileChooserButton(engine_chooser_dialog)
@@ -304,6 +313,10 @@ class EngineTab:
                 
         engine_chooser_button.connect("file-set", select_new_engine)
 
+
+        ################################################################
+        # engine tree
+        ################################################################
         def selection_changed(treeselection):
             store, iter = self.tv.get_selection().get_selected()
             if iter:
@@ -318,7 +331,7 @@ class EngineTab:
                 args = [a.get('value') for a in xmlengine.findall('args/arg')]
                 widgets["engine_args_entry"].set_text(' '.join(args))
                 directory = xmlengine.get("directory") if xmlengine.get("directory") is not None else ""
-                widgets["engine_directory_entry"].set_text(directory)
+                dir_chooser_dialog.set_current_folder(directory)
                 widgets["engine_protocol_combo"].set_active(0 if xmlengine.get("protocol")=="uci" else 1)
                 update_options()
                     
