@@ -6,7 +6,7 @@ from xml.etree.ElementTree import fromstring
 
 import gtk, gobject
 
-from pychess.System.prefix import addDataPrefix, getDataPrefix, getUserDataPrefix
+from pychess.System.prefix import addDataPrefix, getDataPrefix, getEngineDataPrefix
 from pychess.System.glock import glock_connect_after
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
@@ -98,6 +98,7 @@ class EngineTab:
            "Data", KeyValueCellRenderer(self.options_store), data=1))
 
         self.cur_engine = None
+        self.default_workdir = getEngineDataPrefix()
 
         def update_options(*args):
             if self.cur_engine is not None:
@@ -219,7 +220,7 @@ class EngineTab:
             new_directory = dir_chooser_dialog.get_filename()
             xmlengine = discoverer.getEngines()[self.cur_engine]
             old_directory = xmlengine.get("directory")
-            if new_directory != old_directory:
+            if new_directory != old_directory and new_directory != self.default_workdir:
                 xmlengine.set("directory", new_directory)
                 discoverer.save()
 
@@ -289,7 +290,6 @@ class EngineTab:
                             break
                     widgets["engine_name_entry"].set_text(binname)
                     widgets["engine_protocol_combo"].set_active(0 if uci else 1)
-                    widgets["engine_directory_entry"].set_text("")
                     widgets["engine_args_entry"].set_text("")
                     
                     name = widgets["engine_name_entry"].get_text().strip()
@@ -330,8 +330,9 @@ class EngineTab:
                 engine_chooser_dialog.set_filename(xmlengine.find("path").text.strip())
                 args = [a.get('value') for a in xmlengine.findall('args/arg')]
                 widgets["engine_args_entry"].set_text(' '.join(args))
-                directory = xmlengine.get("directory") if xmlengine.get("directory") is not None else ""
-                dir_chooser_dialog.set_current_folder(directory)
+                directory = xmlengine.get("directory")
+                d = directory if directory is not None else self.default_workdir
+                dir_chooser_dialog.set_current_folder(d)
                 widgets["engine_protocol_combo"].set_active(0 if xmlengine.get("protocol")=="uci" else 1)
                 update_options()
                     
