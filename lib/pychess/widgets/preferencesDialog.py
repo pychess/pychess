@@ -388,24 +388,24 @@ class HintTab:
         uistuff.keep(widgets["online_egtb_check"], "online_egtb_check")
 
         default_path = os.path.join(getDataPrefix())
-        path = conf.get("egtb_path_entry", default_path)
-        conf.set("egtb_path_entry", path)
+        egtb_path = conf.get("egtb_path", default_path)
+        conf.set("egtb_path", egtb_path)
 
-        button = widgets["gaviota_filechooser_button"]
-        endgamedialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                    (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        endgamedialog.set_current_folder(path)
-        
-        def on_gaviota_filechooser_button_clicked(button):
-            if endgamedialog.run() == gtk.RESPONSE_OK:
-                new_path = endgamedialog.get_filename()
-                if new_path is not None:
-                    widgets["egtb_path_entry"].set_text(new_path)
-            endgamedialog.hide()
-        widgets["gaviota_filechooser_button"].connect_after("clicked",
-                                                on_gaviota_filechooser_button_clicked)
-        uistuff.keep(widgets["egtb_path_entry"], "egtb_path_entry")
-        
+        egtb_chooser_dialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        egtb_chooser_button = gtk.FileChooserButton(egtb_chooser_dialog)
+        egtb_chooser_dialog.set_current_folder(egtb_path)
+
+        self.widgets["egtbChooserDock"].add(egtb_chooser_button)
+        egtb_chooser_button.show()
+
+        def select_egtb(button):
+            new_directory = egtb_chooser_dialog.get_filename()
+            if new_directory != egtb_path:
+                conf.set("egtb_path", egtb_path)
+
+        egtb_chooser_button.connect("current-folder-changed", select_egtb)
+
         def on_endgame_check_toggled (check):
             widgets["endgame_vbox"].set_sensitive(check.get_active())
         
