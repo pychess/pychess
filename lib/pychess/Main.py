@@ -15,6 +15,7 @@ from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLD
 from pychess.System.Log import log
 from pychess.System.debug import start_thread_dump
 from pychess.Utils.const import HINT, NAME, SPY
+from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
@@ -206,6 +207,11 @@ class GladeHandlers:
                     gmwidg.gamemodel.resume_analyzer(SPY)
                 else:
                     gmwidg.gamemodel.pause_analyzer(SPY)
+
+    #          Engines menu          #
+    
+    def on_manage_engines_activate (widget):
+        enginesDialog.run(gamewidget.getWidgets())
     
     #          Settings menu          #
     
