@@ -98,7 +98,7 @@ class Diagram(BoardView):
         pieces = self.model.getBoardAtPly(self.shown)
         context.set_source_rgb(0, 0, 0)
         for y, row in enumerate(pieces.data):
-            for x, piece in enumerate(row):
+            for x, piece in row.items():
                 if piece is not None:
                     Pieces.drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
 
