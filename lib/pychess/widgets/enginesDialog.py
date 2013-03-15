@@ -81,20 +81,18 @@ class EnginesDialog():
                         val["xmlelement"] = option
                         opt_type = option.tag.split("-")[0]
                         val["type"] = opt_type
+                        val["default"] = option.get("default")
+                        value = option.get("value", default=val["default"])
                         if opt_type == "check":
-                            val["default"] = option.get("default").lower() == "true"
-                            val["value"] = bool(option.get("value", default=val["default"]))
+                            val["value"] = value.lower() == "true"
                         elif opt_type == "spin":
-                            val["default"] = int(option.get("default"))
-                            val["value"] = int(option.get("value", default=val["default"]))
+                            val["value"] = int(value)
                             val["max"] = int(option.get("max"))
                             val["min"] = int(option.get("min"))
                         elif opt_type == "string":
-                            val["default"] = option.get("default")
-                            val["value"] = option.get("value", default=val["default"])
+                            val["value"] = value
                         elif opt_type == "combo":
-                            val["default"] = option.get("default")
-                            val["value"] = option.get("value", default=val["default"])
+                            val["value"] = value
                             choices = [var.get("name") for var in option.findall("var")]
                             val["choices"] = choices
                         self.options_store.append([key, val])
@@ -310,7 +308,7 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
     """ Custom renderer providing different renderers in different rows.
         The model parameter is a gtk.ListStore(str, gobject.TYPE_PYOBJECT)
         containing key data pairs. Each data is a dictionary with
-        type, value, min, max (for spin options), chices (list of combo options)
+        type, value, min, max (for spin options), choices (list of combo options)
         The 'type' can be 'check', 'spin', 'string', 'combo', 'button'.
         Examples:
             ('Nullmove', {'type': 'check', 'value': True})
