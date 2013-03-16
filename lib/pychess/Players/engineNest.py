@@ -241,13 +241,12 @@ class EngineDiscoverer (GObject, PooledThread):
     def __fromCECPProcess (self, subprocess):
         features = subprocess.features
         options = subprocess.options
-        engine = fromstring('<engine><meta/><cecp-features/><options/></engine>')
+        engine = fromstring('<engine><meta/><options/></engine>')
         
         meta = engine.find('meta')
         if "name" in features:
             meta.append(fromstring('<name>%s</name>' % features['myname']))
         
-        feanode = engine.find('cecp-features')
         optnode = engine.find('options')
 
         for opt in options:
@@ -289,8 +288,8 @@ class EngineDiscoverer (GObject, PooledThread):
                 optnode.append(fromstring('<spin-option name="cores" default="1" min="1" max="64"/>'))
             elif key == "memory" and value == 1:
                 optnode.append(fromstring('<spin-option name="memory" default="32" min="1" max="4096"/>'))
-            else:
-                feanode.append(fromstring('<feature name="%s" value="%s"/>' % (key, value)))
+            elif key == "variants" and value is not None:
+                engine.set("variants", value)
         
         optnode.append(fromstring('<check-option name="Ponder" default="false"/>'))
         #optnode.append(fromstring('<check-option name="Random" default="false"/>'))
@@ -517,10 +516,9 @@ class EngineDiscoverer (GObject, PooledThread):
             if variantClass.standard_rules:
                 yield variantClass.board.variant
             else:
-                for feature in engine.findall("cecp-features/feature"):
-                    if feature.get("name") == "variants":
-                        if variantClass.cecp_name in feature.get('value'):
-                            yield variantClass.board.variant
+                if engine.get("variants"):
+                    if variantClass.cecp_name in engine.get("variants"):
+                        yield variantClass.board.variant
                 # UCI knows Chess960 only
                 if variantClass.cecp_name == "fischerandom":
                     for option in engine.findall('options/check-option'):
