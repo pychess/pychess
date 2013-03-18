@@ -210,7 +210,7 @@ class HintTab:
             from pychess.Main import gameDic
             for gmwidg in gameDic.keys():
                 spectators = gmwidg.gamemodel.spectators
-                md5 = engine.find('md5').text.strip()
+                md5 = engine.get('md5')
                 
                 if analyzer_type in spectators and \
                         spectators[analyzer_type].md5 != md5:
