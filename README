@@ -3,7 +3,7 @@ PyChess - a free chess client for Linux
 The mission of PyChess is to create a free, pleasant, pygtk, chess game for the
 Linux desktop that does everything you require from an advanced chess client.
 
-Project homepage: http://pychess.googlepages.com/
+Project homepage: http://pychess.org/
 Download page: http://code.google.com/p/pychess/downloads/list
 Development page: http://code.google.com/p/pychess/
 
@@ -14,7 +14,7 @@ template.po file in the lang/ directory. This can be edited using a program like
 poedit, free from http://www.poedit.org/ , when you are finished, please send
 your file, and a message of what language you have translated into, to
 pychess-people@googlegroups.com or translation Pychess directly in web browsing
-with Rosetta Launchpad, instructions http://code.google.com/p/pychess/wiki/RosettaTranslates
+with Transifex, instructions http://code.google.com/p/pychess/wiki/TransifexTranslates
 
 WORKING WITH PO FILES
 
