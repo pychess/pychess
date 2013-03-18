@@ -105,7 +105,7 @@ class PgnBase(ChessFile):
                         if ply % 2 == 0:
                             moveno = "%d." % (ply/2+1)
                         else: moveno = "%d..." % (ply/2+1)
-                        errstr1 = _( "Error parsing move %s %s") % (moveno, mstr)
+                        errstr1 = _( "Error parsing move %(moveno)s %(mstr)s") % {"moveno": moveno, "mstr": mstr}
                         self.error = LoadingError (errstr1, "")
                         break
                     
