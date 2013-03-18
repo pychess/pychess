@@ -136,7 +136,7 @@ setup (
     description      = DESC,
     long_description = LONG_DESC,
     license          = 'GPL3',
-    url              = 'http://pychess.googlepages.com',
+    url              = 'http://pychess.org',
     download_url     = 'http://code.google.com/p/pychess/downloads/list',
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
