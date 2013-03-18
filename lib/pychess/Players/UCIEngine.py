@@ -23,7 +23,7 @@ from ProtocolEngine import ProtocolEngine
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
-OPTKEYS = ("type", "min", "max", "default", "var")
+OPTKEYS = ("name", "type", "min", "max", "default", "var")
 
 class UCIEngine (ProtocolEngine):
     
@@ -100,10 +100,9 @@ class UCIEngine (ProtocolEngine):
                 self.setOption('MultiPV', self.multipvSetting)
             
         for option, value in self.optionsToBeSent.iteritems():
-            if self.options[option]["default"] != value:
-                self.options[option]["default"] = value
-                if type(value) == bool: value = str(value).lower()
-                print >> self.engine, "setoption name", option, "value", str(value)
+            if type(value) == bool:
+                value = str(value).lower()
+            print >> self.engine, "setoption name", option, "value", str(value)
         
         print >> self.engine, "isready"
     
@@ -485,16 +484,16 @@ class UCIEngine (ProtocolEngine):
                         
                     if key == "var":
                         varlist.append(value)
+                    elif key == "type" and value == "string":
+                        dic[key] = "text"
                     else:
                         dic[key] = value
                         
                     last = i
             if varlist:
-                dic["vars"] = varlist
+                dic["choices"] = varlist
             
-            name = dic["name"]
-            del dic["name"]
-            self.options[name] = dic
+            self.options[dic["name"]] = dic
             return
         
         #---------------------------------------------------------------- A Move
