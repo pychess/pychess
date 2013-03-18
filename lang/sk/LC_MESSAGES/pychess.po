@@ -4,13 +4,14 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
+#  <stevko@mail.ru>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
 "POT-Creation-Date: 2012-11-16 23:43+0100\n"
-"PO-Revision-Date: 2012-11-17 08:23+0000\n"
-"Last-Translator: gbtami <gbtami@gmail.com>\n"
+"PO-Revision-Date: 2013-02-21 23:12+0000\n"
+"Last-Translator: Stevko <stevko@mail.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +50,7 @@ msgstr "text"
 
 #: glade/fics_logon.glade:102
 msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
-msgstr ""
+msgstr "<b><big>Pripojiť sa k Free Online Chess Server</big></b>"
 
 #: glade/fics_logon.glade:188 glade/taskers.glade:402
 msgid "_Password:"
@@ -73,7 +74,7 @@ msgstr "Registrácia"
 
 #: glade/fics_lounge.glade:36
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "Výzva: <Player>"
 
 #: glade/fics_lounge.glade:100
 msgid "Send Challenge"
@@ -81,19 +82,19 @@ msgstr ""
 
 #: glade/fics_lounge.glade:136
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>Výzva:</big>"
 
 #: glade/fics_lounge.glade:333 glade/fics_lounge.glade:2096
 msgid "Lightning:"
-msgstr ""
+msgstr "Bleskový:"
 
 #: glade/fics_lounge.glade:357 glade/fics_lounge.glade:2120
 msgid "Standard:"
-msgstr ""
+msgstr "Štandardný:"
 
 #: glade/fics_lounge.glade:382 glade/fics_lounge.glade:2145
 msgid "Blitz:"
-msgstr ""
+msgstr "Rýchly:"
 
 #: glade/fics_lounge.glade:408
 msgid "2 min, Fischer Random, Black"
@@ -109,12 +110,12 @@ msgstr ""
 
 #: glade/fics_lounge.glade:488
 msgid "Edit Seek"
-msgstr ""
+msgstr "Upraviť hľadanie"
 
 #: glade/fics_lounge.glade:594 lib/pychess/ic/ICLounge.py:1687
 #: lib/pychess/ic/__init__.py:61 lib/pychess/Utils/GameModel.py:173
 msgid "Untimed"
-msgstr ""
+msgstr "Bez časového obmedzenia"
 
 #: glade/fics_lounge.glade:647
 msgid "Minutes:  "
@@ -122,11 +123,11 @@ msgstr "Minúty:  "
 
 #: glade/fics_lounge.glade:677
 msgid "   Gain:  "
-msgstr ""
+msgstr "Zisk:"
 
 #: glade/fics_lounge.glade:717
 msgid "Time control:  "
-msgstr ""
+msgstr "Časová kontrola"
 
 #: glade/fics_lounge.glade:730 lib/pychess/ic/ICLounge.py:807
 #: lib/pychess/ic/ICLounge.py:1687 lib/pychess/ic/__init__.py:59
@@ -135,23 +136,23 @@ msgstr "Štandard"
 
 #: glade/fics_lounge.glade:771 glade/newInOut.glade:584
 msgid "<b>Time Control</b>"
-msgstr ""
+msgstr "<b>Časová kontrola</b>"
 
 #: glade/fics_lounge.glade:828 glade/fics_lounge.glade:1361
 msgid "Don't care"
-msgstr ""
+msgstr "Nezáleží"
 
 #: glade/fics_lounge.glade:893
 msgid "Your strength: "
-msgstr ""
+msgstr "Vaša sila:"
 
 #: glade/fics_lounge.glade:935
 msgid "(Blitz)"
-msgstr ""
+msgstr "(Rýchly)"
 
 #: glade/fics_lounge.glade:965
 msgid "Opponent's strength: "
-msgstr ""
+msgstr "Sila oponenta:"
 
 #: glade/fics_lounge.glade:1069
 msgid ""
@@ -160,11 +161,11 @@ msgid ""
 "preserved when \n"
 "a) your rating for the type of game sought has changed\n"
 "b) you change the variant or the time control"
-msgstr ""
+msgstr "Keď je toto tlačidlo v stave „uzamknuté”, vzťah ⏎ medzi „Silou oponenta” a „Vašou silou” bude⏎ zachovaný keď ⏎ a) sa zmení váš rating pre typ hry, ktorý hľadáte ⏎ b) zmeníte variant alebo časovú kontrolu"
 
 #: glade/fics_lounge.glade:1109
 msgid "Center:"
-msgstr ""
+msgstr "Stred:"
 
 #: glade/fics_lounge.glade:1148
 msgid "1200"
@@ -172,57 +173,57 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1202
 msgid "Tolerance:"
-msgstr ""
+msgstr "Tolerancia:"
 
 #: glade/fics_lounge.glade:1257 lib/pychess/ic/ICLounge.py:1926
 msgid "Hide"
-msgstr ""
+msgstr "Skryť"
 
 #: glade/fics_lounge.glade:1304
 msgid "<b>Opponent Strength</b>"
-msgstr ""
+msgstr "<b>Sila oponenta</b>"
 
 #: glade/fics_lounge.glade:1401 lib/pychess/Database/gamelist.py:40
 #: lib/pychess/ic/ICLounge.py:1587 lib/pychess/Utils/repr.py:8
 #: lib/pychess/widgets/ChessClock.py:16
 #: lib/pychess/widgets/TaskerManager.py:146
 msgid "White"
-msgstr "Biela"
+msgstr "Biely"
 
 #: glade/fics_lounge.glade:1429 lib/pychess/Database/gamelist.py:40
 #: lib/pychess/ic/ICLounge.py:1589 lib/pychess/Utils/repr.py:8
 #: lib/pychess/widgets/ChessClock.py:16
 #: lib/pychess/widgets/TaskerManager.py:147
 msgid "Black"
-msgstr "Čierna"
+msgstr "Čierny"
 
 #: glade/fics_lounge.glade:1468
 msgid "<b>Your Color</b>"
-msgstr ""
+msgstr "<b>Vaša farba</b>"
 
 #: glade/fics_lounge.glade:1527
 msgid "Play normal chess rules"
-msgstr ""
+msgstr "Hrať so štandardnými pravidlami"
 
 #: glade/fics_lounge.glade:1567
 msgid "Play"
-msgstr ""
+msgstr "Hrať"
 
 #: glade/fics_lounge.glade:1633 glade/newInOut.glade:784
 msgid "<b>Chess Variant</b>"
-msgstr ""
+msgstr "<b>Variant šachu</b>"
 
 #: glade/fics_lounge.glade:1691
 msgid "Rated game"
-msgstr ""
+msgstr "Hodnotená hra"
 
 #: glade/fics_lounge.glade:1707
 msgid "Manually accept opponent"
-msgstr ""
+msgstr "Ručne akceptovať oponenta"
 
 #: glade/fics_lounge.glade:1737
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>Možnosti</b>"
 
 #: glade/fics_lounge.glade:1765
 msgid "PyChess - Internet Chess: FICS"
@@ -230,7 +231,7 @@ msgstr "PyChess - internetový šach: FICS"
 
 #: glade/fics_lounge.glade:1838
 msgid "_Clear Seeks"
-msgstr ""
+msgstr "Zrušiť vyhľadávanie"
 
 #: glade/fics_lounge.glade:1863
 msgid "_Accept"
@@ -238,7 +239,7 @@ msgstr "_Akceptovať"
 
 #: glade/fics_lounge.glade:1888
 msgid "_Decline"
-msgstr ""
+msgstr "Odmietnuť"
 
 #: glade/fics_lounge.glade:2171
 msgid "2 min, Fischer Random, 1800↓, Black"
@@ -258,11 +259,11 @@ msgstr "Odoslať hľadanie"
 
 #: glade/fics_lounge.glade:2304
 msgid "Create Seek"
-msgstr ""
+msgstr "Začať hľadať"
 
 #: glade/fics_lounge.glade:2320
 msgid "_Seeks / Challenges"
-msgstr ""
+msgstr "Hľadania / Výzvy"
 
 #: glade/fics_lounge.glade:2341 lib/pychess/ic/ICLounge.py:254
 #: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:979
@@ -276,23 +277,23 @@ msgstr "Čas"
 
 #: glade/fics_lounge.glade:2386
 msgid "Seek _Graph"
-msgstr ""
+msgstr "Graf hľadaní"
 
 #: glade/fics_lounge.glade:2410
 msgid "0 Players Ready"
-msgstr ""
+msgstr "0 pripravených hráčov"
 
 #: glade/fics_lounge.glade:2452
 msgid "Challenge"
-msgstr ""
+msgstr "Výzva"
 
 #: glade/fics_lounge.glade:2506 glade/fics_lounge.glade:2681
 msgid "Observe"
-msgstr ""
+msgstr "Sledovať"
 
 #: glade/fics_lounge.glade:2560
 msgid "Start Private Chat"
-msgstr ""
+msgstr "Začať súkromný rozhovor"
 
 #: glade/fics_lounge.glade:2615
 msgid "_Player List"
@@ -304,11 +305,11 @@ msgstr "Zoznam hier"
 
 #: glade/fics_lounge.glade:2792 glade/PyChess.glade:2435
 msgid "Offer _Resume"
-msgstr ""
+msgstr "Ponúknuť obnovenie"
 
 #: glade/fics_lounge.glade:2851 glade/PyChess.glade:2474
 msgid "R_esign"
-msgstr ""
+msgstr "Vzdať sa"
 
 #: glade/fics_lounge.glade:2896 glade/PyChess.glade:2415
 msgid "Offer _Draw"
@@ -316,7 +317,7 @@ msgstr "Ponúknuť _Remízu"
 
 #: glade/fics_lounge.glade:2941
 msgid "Offer A_bort"
-msgstr ""
+msgstr "Ponúknuť _zrušenie"
 
 #: glade/fics_lounge.glade:2999
 msgid "Pre_view"
@@ -324,7 +325,7 @@ msgstr "Náhľad"
 
 #: glade/fics_lounge.glade:3055
 msgid "_Adjourned"
-msgstr ""
+msgstr "Odložená"
 
 #: glade/fics_lounge.glade:3160
 msgid "<b>News</b>"
@@ -384,7 +385,7 @@ msgstr ""
 
 #: glade/newInOut.glade:336
 msgid "<b>Players</b>"
-msgstr "<b>Hráči:</b>"
+msgstr "<b>Hráči</b>"
 
 #: glade/newInOut.glade:387
 msgid "_Untimed"
@@ -428,11 +429,11 @@ msgstr "<b>Zadajte poznámky ku hre:</b>"
 
 #: glade/promotion.glade:8
 msgid "Promotion"
-msgstr "Návrh"
+msgstr "Premena"
 
 #: glade/promotion.glade:50 lib/pychess/Utils/repr.py:10
 msgid "Queen"
-msgstr "Kráľovna"
+msgstr "Dáma"
 
 #: glade/promotion.glade:97 lib/pychess/Utils/repr.py:10
 msgid "Rook"
@@ -448,7 +449,7 @@ msgstr "Jazdec"
 
 #: glade/promotion.glade:221
 msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>Kam posunúť pešiaka?</big></b>"
+msgstr "<b><big>Na akú figúru premeniť pešiaka?</big></b>"
 
 #: glade/PyChess.glade:10
 msgid "Chess client for the Gnome desktop"
@@ -481,7 +482,7 @@ msgstr "Udalosť:"
 
 #: glade/PyChess.glade:193
 msgid "Site:"
-msgstr "Stránka:"
+msgstr "Lokácia:"
 
 #: glade/PyChess.glade:221
 msgid "Round:"
@@ -517,53 +518,53 @@ msgstr ""
 
 #: glade/PyChess.glade:577
 msgid "_Hide tabs when only one game is open"
-msgstr "_Schovať záložky iba počas hry"
+msgstr "_Schovať záložky ak je otvorená iba jedna hra"
 
 #: glade/PyChess.glade:582
 msgid ""
 "If set, this hides the tab in the top of the playing window, when it is not "
 "needed."
-msgstr ""
+msgstr "Zaškrtnutie tejto voľby schová záložky kariet na vrchu okna s hrami ak nie sú potrebné."
 
 #: glade/PyChess.glade:594
 msgid "Auto _rotate board to current human player"
-msgstr ""
+msgstr "Automaticky otočiť šachovnicu pre aktuálneho ľudského hráča"
 
 #: glade/PyChess.glade:599
 msgid ""
 "If set, the board will turn after each move, to show the natural view for "
 "the current player."
-msgstr ""
+msgstr "Zaškrtnutie tejto voľby spôsobí otočenie šachovnice po každom ťahu, aby hráč na ťahu videl šachovnicu zo svojej strany "
 
 #: glade/PyChess.glade:612
 msgid "Face _to Face display mode"
-msgstr ""
+msgstr "Zobrazenie „tvárou v tvár”"
 
 #: glade/PyChess.glade:617
 msgid ""
 "If set, the black pieces will be head down, suitable for playing against "
 "friends on mobile devices."
-msgstr ""
+msgstr "Ak je voľba zaškrtnutá, čierne figúrky budú zobrazené dolu hlavou. Vhodné pre hranie na mobilných zariadeniach, keď oponent sedí proti vám."
 
 #: glade/PyChess.glade:629
 msgid "Sho_w cords"
-msgstr ""
+msgstr "Zobrazovať súradnice"
 
 #: glade/PyChess.glade:634
 msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
-msgstr ""
+msgstr "Zaškrtnutie tejto voľby zobrazí označenia stĺpcov a radov vedľa šachovnice."
 
 #: glade/PyChess.glade:646
 msgid "Prefer figures in _notation"
-msgstr ""
+msgstr "Uprednostňovať obrázky v zápise"
 
 #: glade/PyChess.glade:651
 msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
-msgstr ""
+msgstr "Zaškrtnutie spôsobí, že PyChess bude v zápise hry zobrazovať obrázky ťahaných figúr miesto označenia veľkým písmenom."
 
 #: glade/PyChess.glade:663
 msgid "Transparent pieces"
@@ -623,7 +624,7 @@ msgstr ""
 
 #: glade/PyChess.glade:956
 msgid "<b>Chess Engines</b>"
-msgstr "<b>Šachový algoritmus</b>"
+msgstr "<b>Šachový počítač</b>"
 
 #: glade/PyChess.glade:990
 msgid "Use _analyzer"
@@ -663,7 +664,7 @@ msgstr "Hráč dáva šach:"
 
 #: glade/PyChess.glade:1517
 msgid "A player _moves:"
-msgstr "Hráč pohybuje:"
+msgstr "Hráč ťahá:"
 
 #: glade/PyChess.glade:1530
 msgid "Game is _drawn:"
@@ -679,11 +680,11 @@ msgstr "Hra skončila výhrou:"
 
 #: glade/PyChess.glade:1575
 msgid "A player c_aptures:"
-msgstr "Hráč berie figúrku:"
+msgstr "Hráč berie:"
 
 #: glade/PyChess.glade:1604
 msgid "Game is _set-up:"
-msgstr "Začiatok hry"
+msgstr "Hra je pripravená"
 
 #: glade/PyChess.glade:1656
 msgid "_Observed moves:"
@@ -695,7 +696,7 @@ msgstr "Pozorovanie _končí:"
 
 #: glade/PyChess.glade:1776
 msgid "<b>Play Sound When...</b>"
-msgstr "<b>Zahrať zvuk keď...</b>"
+msgstr "<b>Zahrať zvuk keď…</b>"
 
 #: glade/PyChess.glade:1798
 msgid "_Sounds"
@@ -913,7 +914,7 @@ msgstr ""
 
 #: lib/pychess/Main.py:211
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr "http://en.wikipedia.org/wiki/Chess"
+msgstr "https://sk.wikipedia.org/wiki/%C5%A0ach_(hra)"
 
 #: lib/pychess/Main.py:214
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
@@ -1445,7 +1446,7 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:150 lib/pychess/Utils/repr.py:12
 msgid "B"
-msgstr "B"
+msgstr "S"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "C"
@@ -1821,7 +1822,7 @@ msgstr "Lokálna udalosť"
 
 #: lib/pychess/Utils/GameModel.py:127
 msgid "Local Site"
-msgstr "Lokálna stránka"
+msgstr "Lokálne miesto"
 
 #: lib/pychess/Utils/repr.py:10
 msgid "Pawn"
@@ -1837,15 +1838,15 @@ msgstr "P"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "N"
-msgstr "N"
+msgstr "J"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "R"
-msgstr "_R"
+msgstr "V"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "Q"
-msgstr "Q"
+msgstr "D"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "K"
@@ -2272,14 +2273,14 @@ msgstr ""
 #: lib/pychess/widgets/gamenanny.py:260
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr "<big><b>Algoritmus, %s, nečakane skončil</b></big>"
+msgstr "<big><b>Počítač, %s, nečakane skončil</b></big>"
 
 #: lib/pychess/widgets/gamenanny.py:261
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
 "You can try to start a new game with the engine, or try to play against another one."
-msgstr "PyChess stratil spojenie s enginom, pravdepodobne kvôli pádu.\n\nMôžete sa pokúsiť začať novú hru, alebo sa pokúste hrať znovú inú."
+msgstr "PyChess stratil spojenie so šachovým počítačom, pravdepodobne kvôli pádu.\n\nMôžete sa pokúsiť začať novú hru, alebo sa pokúste hrať znovú inú."
 
 #: lib/pychess/widgets/gamewidget.py:159
 msgid "Abort"
@@ -2442,7 +2443,7 @@ msgstr ""
 #: lib/pychess/widgets/newGameDialog.py:77
 #: lib/pychess/widgets/newGameDialog.py:78
 msgid "Human Being"
-msgstr "Ľudská bytosť"
+msgstr "Človek"
 
 #: lib/pychess/widgets/newGameDialog.py:143
 msgid "Rapid"
@@ -2651,11 +2652,11 @@ msgstr "pohybuje strelcom do fianchetta: %s"
 #: lib/pychess/Utils/lutils/strateval.py:131
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr "premení pešiaka na %s"
+msgstr "premieňa pešiaka na %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:134
 msgid "castles"
-msgstr "hrady"
+msgstr "robí rošádu"
 
 #: lib/pychess/Utils/lutils/strateval.py:157
 msgid "takes back material"

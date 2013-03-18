@@ -3,13 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Adolfo Jayme Barrientos <fitoschido@gmail.com>, 2012.
+#   <karvayoEdgar@gmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
 "POT-Creation-Date: 2012-11-16 23:43+0100\n"
-"PO-Revision-Date: 2012-11-17 08:23+0000\n"
-"Last-Translator: gbtami <gbtami@gmail.com>\n"
+"PO-Revision-Date: 2013-01-11 06:16+0000\n"
+"Last-Translator: karv <karvayoEdgar@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -315,7 +317,7 @@ msgstr "Ofrecer _empate"
 
 #: glade/fics_lounge.glade:2941
 msgid "Offer A_bort"
-msgstr ""
+msgstr "A_bortar oferta"
 
 #: glade/fics_lounge.glade:2999
 msgid "Pre_view"
@@ -335,7 +337,7 @@ msgstr "Mostrar _charla"
 
 #: glade/fics_lounge.glade:3208
 msgid "Show Console"
-msgstr ""
+msgstr "Mostrar consola"
 
 #: glade/fics_lounge.glade:3223
 msgid "_Log Off"
@@ -566,7 +568,7 @@ msgstr "Activado, PyChess usará figuras para expresar los movimientos en vez de
 
 #: glade/PyChess.glade:663
 msgid "Transparent pieces"
-msgstr ""
+msgstr "Piezas transparentes"
 
 #: glade/PyChess.glade:668
 msgid ""
@@ -632,7 +634,7 @@ msgstr "Usar _analizador"
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "necessary for the hint mode to work</b>"
-msgstr ""
+msgstr "El analizador se ejecutará en segundo plano y analizará el juego. <b>Esto es necesario para el funcionamiento del modo ayuda</b>"
 
 #: glade/PyChess.glade:1062
 msgid "Use _inverted analyzer"
@@ -642,7 +644,7 @@ msgstr "Usar _analizador invertido"
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is necessary for the spy mode to work</b>"
-msgstr ""
+msgstr "El analizador inverso analizará el juego como si fuera el turno de tu oponente. <b>Esto es necesario para el funcionamiento del modo espía</b>"
 
 #: glade/PyChess.glade:1136
 msgid "<b>Analyzing</b>"
@@ -718,7 +720,7 @@ msgstr "Paneles laterales"
 
 #: glade/PyChess.glade:2112
 msgid "Themes"
-msgstr ""
+msgstr "Temas"
 
 #: glade/PyChess.glade:2180
 msgid "_Game"
@@ -738,11 +740,11 @@ msgstr "_Cargar partida"
 
 #: glade/PyChess.glade:2235
 msgid "Load _Recent Game"
-msgstr ""
+msgstr "Cargar juego _reciente"
 
 #: glade/PyChess.glade:2243
 msgid "Open _Database"
-msgstr ""
+msgstr "Abrir base de _datos"
 
 #: glade/PyChess.glade:2253
 msgid "Setup Position"
@@ -762,7 +764,7 @@ msgstr "Guardar partida _como"
 
 #: glade/PyChess.glade:2304
 msgid "_Export Position"
-msgstr ""
+msgstr "_Exportar posición"
 
 #: glade/PyChess.glade:2339
 msgid "Player _Rating"
@@ -822,7 +824,7 @@ msgstr "_Visor de sucesos"
 
 #: glade/PyChess.glade:2575
 msgid "_Hint mode"
-msgstr "_Modo consejo"
+msgstr "_Modo ayuda"
 
 #: glade/PyChess.glade:2587
 msgid "Sp_y mode"
@@ -924,35 +926,35 @@ msgstr "Bienvenido/a"
 
 #: lib/pychess/Database/gamelist.py:40
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: lib/pychess/Database/gamelist.py:40
 msgid "W Elo"
-msgstr ""
+msgstr "B Elo"
 
 #: lib/pychess/Database/gamelist.py:40
 msgid "B Elo"
-msgstr ""
+msgstr "N Elo"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Result"
-msgstr ""
+msgstr "Resultado"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Event"
-msgstr ""
+msgstr "Evento"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Site"
-msgstr ""
+msgstr "Sitio"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Round"
-msgstr ""
+msgstr "Ronda"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Date"
-msgstr ""
+msgstr "Fecha"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "ECO"
@@ -960,7 +962,7 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:62
 msgid "PyChess Game Database"
-msgstr ""
+msgstr "Base de datos de jugadas de PyChess"
 
 #: lib/pychess/Database/PgnImport.py:184
 #, python-format
@@ -1424,11 +1426,11 @@ msgstr "Maestro FIDE"
 
 #: lib/pychess/ic/__init__.py:145
 msgid "Woman Grand Master"
-msgstr ""
+msgstr "Gran maestra"
 
 #: lib/pychess/ic/__init__.py:145
 msgid "Woman International Master"
-msgstr ""
+msgstr "Maestra internacional"
 
 #: lib/pychess/ic/__init__.py:145
 msgid "Woman FIDE Master"
@@ -1436,11 +1438,11 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:146
 msgid "Dummy Account"
-msgstr ""
+msgstr "Cuenta Falsa"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: lib/pychess/ic/__init__.py:150 lib/pychess/Utils/repr.py:12
 msgid "B"
@@ -1719,7 +1721,7 @@ msgstr "No se pudo cargar el diagrama '%s'"
 
 #: lib/pychess/Savers/database.py:16
 msgid "PyChess database"
-msgstr ""
+msgstr "Base de datos de PyChess"
 
 #: lib/pychess/Savers/epd.py:7
 msgid "Chess Position"
@@ -1756,7 +1758,7 @@ msgstr ""
 
 #: lib/pychess/Savers/png.py:31
 msgid "Export position"
-msgstr ""
+msgstr "Exportar posición"
 
 #: lib/pychess/Savers/png.py:36 lib/pychess/widgets/ionest.py:213
 #: lib/pychess/widgets/ionest.py:328
@@ -1765,11 +1767,11 @@ msgstr "vs."
 
 #: lib/pychess/Savers/png.py:39
 msgid "All files"
-msgstr ""
+msgstr "Todos los archivos"
 
 #: lib/pychess/Savers/png.py:44
 msgid "Images"
-msgstr ""
+msgstr "Imágenes"
 
 #: lib/pychess/Savers/png.py:62 lib/pychess/widgets/ionest.py:255
 msgid "_Replace"
@@ -1799,7 +1801,7 @@ msgstr "No se pudo guardar el archivo"
 
 #: lib/pychess/Savers/png.py:81
 msgid "<big><b>PyChess was not able to export the position</b></big>"
-msgstr ""
+msgstr "<big><b>PyChess no pudo exportar la posición</b></big>"
 
 #: lib/pychess/Savers/png.py:82 lib/pychess/widgets/ionest.py:279
 #, python-format
@@ -1878,7 +1880,7 @@ msgstr "El juego ha sido abortado"
 
 #: lib/pychess/Utils/repr.py:24
 msgid "Because neither player has got sufficient material to mate"
-msgstr ""
+msgstr "Porque ningún jugador tiene suficiente material para dar mate."
 
 #: lib/pychess/Utils/repr.py:25
 msgid "Because the same position was repeated three times in a row"
@@ -1915,14 +1917,14 @@ msgstr "La partida ha excedido la longitud máxima"
 msgid ""
 "Because %(white)s ran out of time and %(black)s has got insufficient "
 "material to mate"
-msgstr ""
+msgstr "Porque %(white)s agotó su tiempo y %(black)s tiene suficiente material para dar mate"
 
 #: lib/pychess/Utils/repr.py:33
 #, python-format
 msgid ""
 "Because %(black)s ran out of time and %(white)s has got insufficient "
 "material to mate"
-msgstr ""
+msgstr "Porque %(black)s agotó su tiempo y %(white)s tiene suficiente material para dar mate"
 
 #: lib/pychess/Utils/repr.py:35
 #, python-format
@@ -1959,7 +1961,7 @@ msgstr "Porque ambos jugadores acordaron aplazar el juego"
 
 #: lib/pychess/Utils/repr.py:44 lib/pychess/Utils/repr.py:55
 msgid "Because the server was shut down"
-msgstr ""
+msgstr "Porque el servidor no está disponible"
 
 #: lib/pychess/Utils/repr.py:45
 msgid ""
@@ -1992,7 +1994,7 @@ msgstr "Porque %(black)s perdió la conexión con el servidor"
 
 #: lib/pychess/Utils/repr.py:52
 msgid "Because both players agreed to"
-msgstr ""
+msgstr "Porque ambos jugadores estuvieron deacuerdo"
 
 #: lib/pychess/Utils/repr.py:53
 msgid "Because of courtesy by a player"
@@ -2053,7 +2055,7 @@ msgstr ""
 
 #: lib/pychess/Variants/blindfold.py:27
 msgid "Hidden pawns"
-msgstr ""
+msgstr "Peones cultos"
 
 #: lib/pychess/Variants/blindfold.py:40
 msgid "Classic chess rules with hidden pieces\n"
@@ -2061,7 +2063,7 @@ msgstr ""
 
 #: lib/pychess/Variants/blindfold.py:42
 msgid "Hidden pieces"
-msgstr ""
+msgstr "Piezas ocultas"
 
 #: lib/pychess/Variants/blindfold.py:55
 msgid "Classic chess rules with all pieces white\n"
@@ -2081,7 +2083,7 @@ msgstr "Corner"
 
 #: lib/pychess/Variants/fischerandom.py:218
 msgid "http://en.wikipedia.org/wiki/Chess960\n"
-msgstr ""
+msgstr "http://en.wikipedia.org/wiki/Chess960\n"
 
 #: lib/pychess/Variants/fischerandom.py:220
 msgid "Fischer Random"
@@ -2089,7 +2091,7 @@ msgstr "Fischer Random"
 
 #: lib/pychess/Variants/knightodds.py:17
 msgid "One player starts with one less knight piece"
-msgstr ""
+msgstr "un jugador empieza con un caballo menos"
 
 #: lib/pychess/Variants/knightodds.py:18
 msgid "Knight odds"
@@ -2226,7 +2228,7 @@ msgstr "Deshacer dos movimientos"
 
 #: lib/pychess/widgets/gamenanny.py:159
 msgid "The game is paused"
-msgstr ""
+msgstr "El juego se ha pausado"
 
 #: lib/pychess/widgets/gamenanny.py:180 lib/pychess/widgets/gamenanny.py:181
 msgid "Loaded game"
@@ -2238,11 +2240,11 @@ msgstr "Partida guardada"
 
 #: lib/pychess/widgets/gamenanny.py:191
 msgid "Analyzer started"
-msgstr ""
+msgstr "Analizador iniciado"
 
 #: lib/pychess/widgets/gamenanny.py:236
 msgid "You sent an abort offer"
-msgstr ""
+msgstr "Pediste abortar"
 
 #: lib/pychess/widgets/gamenanny.py:238
 msgid "You sent an adjournment offer"
@@ -2254,15 +2256,15 @@ msgstr "Has enviado un ofrecimiento de empate"
 
 #: lib/pychess/widgets/gamenanny.py:242
 msgid "You sent a pause offer"
-msgstr ""
+msgstr "Pediste pausa"
 
 #: lib/pychess/widgets/gamenanny.py:244
 msgid "You sent a resume offer"
-msgstr ""
+msgstr "Pediste continuar"
 
 #: lib/pychess/widgets/gamenanny.py:246
 msgid "You sent an undo offer"
-msgstr ""
+msgstr "Pediste deshacer"
 
 #: lib/pychess/widgets/gamenanny.py:248
 msgid "You asked your opponent to move"
@@ -2288,11 +2290,11 @@ msgstr "Anular"
 msgid ""
 "This game can be automatically aborted without rating loss because there has"
 " not yet been two moves made"
-msgstr ""
+msgstr "Este juego puede ser cancelado automáticamente sin pérdida de rating porque aún no se han hecho dos movimientos"
 
 #: lib/pychess/widgets/gamewidget.py:163
 msgid "Offer Abort"
-msgstr ""
+msgstr "Pedir abortar"
 
 #: lib/pychess/widgets/gamewidget.py:165
 msgid ""
@@ -2840,7 +2842,7 @@ msgstr "Añadir comentario inicial"
 
 #: sidepanel/annotationPanel.py:148
 msgid "Add comment"
-msgstr ""
+msgstr "Añadir comentario"
 
 #: sidepanel/annotationPanel.py:152 sidepanel/annotationPanel.py:215
 msgid "Edit comment"
@@ -2848,7 +2850,7 @@ msgstr "Editar comentario"
 
 #: sidepanel/annotationPanel.py:163
 msgid "Forced move"
-msgstr ""
+msgstr "Movimiento forzado"
 
 #: sidepanel/annotationPanel.py:168
 msgid "Add move symbol"
@@ -2868,7 +2870,7 @@ msgstr ""
 
 #: sidepanel/annotationPanel.py:185
 msgid "Initiative"
-msgstr ""
+msgstr "Iniciativa"
 
 #: sidepanel/annotationPanel.py:186
 msgid "With attack"
@@ -2876,15 +2878,15 @@ msgstr ""
 
 #: sidepanel/annotationPanel.py:187
 msgid "Compensation"
-msgstr ""
+msgstr "Compensación"
 
 #: sidepanel/annotationPanel.py:188
 msgid "Counterplay"
-msgstr ""
+msgstr "Contrajugada"
 
 #: sidepanel/annotationPanel.py:189
 msgid "Time pressure"
-msgstr ""
+msgstr "Presión del tiempo"
 
 #: sidepanel/annotationPanel.py:194
 msgid "Add evaluation symbol"
@@ -2951,7 +2953,7 @@ msgstr ""
 
 #: sidepanel/bookPanel.py:145 sidepanel/bookPanel.py:227
 msgid "Calculating..."
-msgstr ""
+msgstr "Calculando…"
 
 #: sidepanel/bookPanel.py:245
 msgid "Engine scores are in units of pawns, from White's point of view."
@@ -2961,7 +2963,7 @@ msgstr ""
 msgid ""
 "Adding suggestions can help you find ideas, but slows down the computer's "
 "analysis."
-msgstr ""
+msgstr "Agregar sugerencias puede ayudarte a encontrar ideas, pero ralentiza el análisis de la computadora. "
 
 #: sidepanel/bookPanel.py:267
 msgid "Endgame Table"
@@ -2976,7 +2978,7 @@ msgstr ""
 #: sidepanel/bookPanel.py:303 sidepanel/bookPanel.py:306
 #, python-format
 msgid "Mate in %d"
-msgstr ""
+msgstr "Mate en %d"
 
 #: sidepanel/bookPanel.py:446
 msgid ""
@@ -3013,7 +3015,7 @@ msgstr "%(color)s mueve %(piece)s a %(cord)s"
 
 #: sidepanel/engineOutputPanel.py:14
 msgid "Engines"
-msgstr ""
+msgstr "Motores"
 
 #: sidepanel/engineOutputPanel.py:19
 msgid ""
@@ -3023,7 +3025,7 @@ msgstr ""
 
 #: sidepanel/engineOutputPanel.py:42
 msgid "No chess engines (computer players) are participating in this game."
-msgstr ""
+msgstr "Ningún motor (jugador artificial) está participando en este juego."
 
 #: sidepanel/historyPanel.py:15
 msgid "Move History"
