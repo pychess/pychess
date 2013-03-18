@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-#   <appukonrad@gmail.com>, 2012.
+#   <appukonrad@gmail.com>, 2012-2013.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
 "POT-Creation-Date: 2012-11-16 23:43+0100\n"
-"PO-Revision-Date: 2012-11-17 08:23+0000\n"
+"PO-Revision-Date: 2013-01-15 09:39+0000\n"
 "Last-Translator: jui <appukonrad@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -203,7 +203,7 @@ msgstr "<b>Vaše barva</b>"
 
 #: glade/fics_lounge.glade:1527
 msgid "Play normal chess rules"
-msgstr ""
+msgstr "Hrát normální šachová pravidla"
 
 #: glade/fics_lounge.glade:1567
 msgid "Play"
@@ -337,7 +337,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:3208
 msgid "Show Console"
-msgstr ""
+msgstr "Zobrazit konzolu"
 
 #: glade/fics_lounge.glade:3223
 msgid "_Log Off"
@@ -365,7 +365,7 @@ msgstr ""
 
 #: glade/findbar.glade:161
 msgid "Search:"
-msgstr ""
+msgstr "Hledat:"
 
 #: glade/newInOut.glade:34 lib/pychess/widgets/newGameDialog.py:364
 msgid "New Game"
@@ -938,31 +938,31 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Result"
-msgstr ""
+msgstr "Výsledek"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Event"
-msgstr ""
+msgstr "Událost"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Site"
-msgstr ""
+msgstr "Stránka"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Round"
-msgstr ""
+msgstr "Kolo"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "ECO"
-msgstr ""
+msgstr "ECO"
 
 #: lib/pychess/Database/gamelist.py:62
 msgid "PyChess Game Database"
-msgstr ""
+msgstr "PyChess Game Databáze"
 
 #: lib/pychess/Database/PgnImport.py:184
 #, python-format
@@ -1434,7 +1434,7 @@ msgstr "Mezinárodní mistrině"
 
 #: lib/pychess/ic/__init__.py:145
 msgid "Woman FIDE Master"
-msgstr ""
+msgstr "Dámské mistrovství FIDE"
 
 #: lib/pychess/ic/__init__.py:146
 msgid "Dummy Account"
@@ -1721,7 +1721,7 @@ msgstr ""
 
 #: lib/pychess/Savers/database.py:16
 msgid "PyChess database"
-msgstr ""
+msgstr "PyChess databáze"
 
 #: lib/pychess/Savers/epd.py:7
 msgid "Chess Position"
@@ -1746,7 +1746,7 @@ msgstr ""
 #: lib/pychess/Savers/pgnbase.py:107
 #, python-format
 msgid "Error parsing move %s %s"
-msgstr ""
+msgstr "Chyba při analýze tahu %s %s"
 
 #: lib/pychess/Savers/pgn.py:20
 msgid "Chess Game"
@@ -1826,11 +1826,11 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:10
 msgid "Pawn"
-msgstr ""
+msgstr "Pěšec"
 
 #: lib/pychess/Utils/repr.py:10
 msgid "King"
-msgstr ""
+msgstr "Král"
 
 #: lib/pychess/Utils/repr.py:12
 msgid "P"
@@ -2083,7 +2083,7 @@ msgstr ""
 
 #: lib/pychess/Variants/fischerandom.py:218
 msgid "http://en.wikipedia.org/wiki/Chess960\n"
-msgstr ""
+msgstr "http://en.wikipedia.org/wiki/Chess960\n"
 
 #: lib/pychess/Variants/fischerandom.py:220
 msgid "Fischer Random"
@@ -2103,7 +2103,7 @@ msgstr ""
 
 #: lib/pychess/Variants/losers.py:13
 msgid "Losers"
-msgstr ""
+msgstr "Poražení"
 
 #: lib/pychess/Variants/normal.py:4
 msgid "Classic chess rules\n"
@@ -2123,7 +2123,7 @@ msgstr ""
 
 #: lib/pychess/Variants/pawnspassed.py:20
 msgid "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/pawnspassed.py:22
 msgid "Pawns Passed"
@@ -2131,7 +2131,7 @@ msgstr ""
 
 #: lib/pychess/Variants/pawnspushed.py:19
 msgid "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/pawnspushed.py:21
 msgid "Pawns Pushed"
@@ -2147,7 +2147,7 @@ msgstr ""
 
 #: lib/pychess/Variants/randomchess.py:28
 msgid "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/randomchess.py:34
 #: lib/pychess/widgets/TaskerManager.py:148
@@ -2168,7 +2168,7 @@ msgstr ""
 
 #: lib/pychess/Variants/upsidedown.py:18
 msgid "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
-msgstr ""
+msgstr "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 
 #: lib/pychess/Variants/upsidedown.py:21
 msgid "Upside Down"
@@ -2196,11 +2196,11 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatWindow.py:473
 msgid "More channels"
-msgstr ""
+msgstr "Více kanálů"
 
 #: lib/pychess/widgets/ChatWindow.py:480
 msgid "More players"
-msgstr ""
+msgstr "Více hráčů"
 
 #: lib/pychess/widgets/ChatWindow.py:595
 msgid "Conversations"
@@ -2232,7 +2232,7 @@ msgstr "Hra je pozastavena"
 
 #: lib/pychess/widgets/gamenanny.py:180 lib/pychess/widgets/gamenanny.py:181
 msgid "Loaded game"
-msgstr "NAčtená hra"
+msgstr "Načtená hra"
 
 #: lib/pychess/widgets/gamenanny.py:187
 msgid "Saved game"
@@ -2294,7 +2294,7 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:163
 msgid "Offer Abort"
-msgstr ""
+msgstr "Nabídka Přerušit"
 
 #: lib/pychess/widgets/gamewidget.py:165
 msgid ""
@@ -2915,7 +2915,7 @@ msgstr "Tipy"
 #: sidepanel/bookPanel.py:21
 msgid ""
 "The hint panel will provide computer advice during each stage of the game"
-msgstr ""
+msgstr "Panel tipů bude poskytovat rady počítače během každé fáze hry"
 
 #: sidepanel/bookPanel.py:23
 msgid "Official PyChess panel."
