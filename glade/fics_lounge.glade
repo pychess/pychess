@@ -3188,11 +3188,9 @@ b) you change the variant or the time control</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">3</property>
                             <child>
-                              <object class="GtkButton" id="show_chat_button">
-                                <property name="label" translatable="yes">Show _Chat</property>
+                              <object class="GtkButton" id="show_console_button">
+                                <property name="label" translatable="yes">Show Console</property>
                                 <property name="use_action_appearance">False</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_underline">True</property>
@@ -3204,10 +3202,11 @@ b) you change the variant or the time control</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="show_console_button">
-                                <property name="label" translatable="yes">Show Console</property>
+                              <object class="GtkButton" id="show_chat_button">
+                                <property name="label" translatable="yes">Show _Chat</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_underline">True</property>
