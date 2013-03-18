@@ -186,8 +186,7 @@ class HintTab:
         
         def get_value (combobox):
             engine = list(discoverer.getAnalyzers())[combobox.get_active()]
-            if engine.find('md5') != None:
-                return engine.find('md5').text.strip()
+            return engine.get("md5")
         
         def set_value (combobox, value, show_arrow_check, ana_check, analyzer_type):
             engine = discoverer.getEngineByMd5(value)
