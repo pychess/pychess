@@ -147,7 +147,8 @@ class CECPEngine (ProtocolEngine):
             "debug", "smp", "memory", "option"
         ]
         
-        self.options = []
+        self.options = {}
+        self.options["Ponder"] = {"name": "Ponder", "type": "check", "default": False}
         
         self.name = None
         
@@ -938,10 +939,16 @@ class CECPEngine (ProtocolEngine):
                         self.returnQueue.put("not ready")
                         return
                 
-                if key == "option":
-                    self.options.append(value)
+                if key == "smp" and value == 1:
+                    self.options["cores"] = {"name": "cores", "type": "spin", "default": 1, "min": 1, "max": 64}
+                elif key == "memory" and value == 1:
+                    self.options["memory"] = {"name": "memory", "type": "spin", "default": 32, "min": 1, "max": 4096}
+                elif key == "option" and key != "done":
+                    option = self.__parse_option(value)
+                    self.options[option["name"]] = option
                 else:
                     self.features[key] = value
+
                 if key == "myname" and not self.name:
                     self.setName(value)
         
@@ -965,7 +972,41 @@ class CECPEngine (ProtocolEngine):
                 self.features['myname'] = name
                 if not self.name:
                     self.setName(name)
-    
+
+    def __parse_option(self, option):
+        if " -check " in option:
+            name, value = option.split(" -check ")
+            return {"type": "check", "name": name, "default": bool(int(value))}
+        elif " -spin " in option:
+            name, value = option.split(" -spin ")
+            defv, minv, maxv = value.split()
+            return {"type": "spin", "name": name, "default": int(defv), "min": int(minv), "max": int(maxv)}
+        elif " -slider " in option:
+            name, value = option.split(" -slider ")
+            defv, minv, maxv = value.split()
+            return {"type": "spin", "name": name, "default": int(defv), "min": int(minv), "max": int(maxv)}
+        elif " -string " in option:
+            name, value = option.split(" -string ")
+            return {"type": "text", "name": name, "default": value}
+        elif " -file " in option:
+            name, value = option.split(" -file ")
+            return {"type": "text", "name": name, "default": value}
+        elif " -path " in option:
+            name, value = option.split(" -path ")
+            return {"type": "text", "name": name, "default": value}
+        elif " -combo " in option:
+            name, value = option.split(" -combo ")
+            return {"type": "combo", "name": name, "default": value}
+        elif " -button" in option:
+            pos = option.find(" -button")
+            return {"type": "button", "name": option[:pos]}
+        elif " -save" in option:
+            pos = option.find(" -save")
+            return {"type": "button", "name": option[:pos]}
+        elif " -reset" in option:
+            pos = option.find(" -reset")
+            return {"type": "button", "name": option[:pos]}
+
     #===========================================================================
     #    Info
     #===========================================================================

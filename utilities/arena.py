@@ -63,7 +63,7 @@ current = [0,0]
 
 def start(discoverer):
     global engines, results, minutes
-    engines = discoverer.getEngines().values()
+    engines = discoverer.getEngines()
     n = len(engines)
     for i in xrange(n):
         results.append([None]*n)

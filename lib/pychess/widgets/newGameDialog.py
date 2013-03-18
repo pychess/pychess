@@ -84,7 +84,8 @@ def createPlayerUIGlobals (discoverer):
     for variantClass in variants.values():
         playerItems += [ [(ipeople, _("Human Being"), "")] ]
         smallPlayerItems += [ [(speople, _("Human Being"), "")] ]
-    for name, engine in discoverer.getEngines().items():
+    for engine in discoverer.getEngines():
+        name = engine["name"]
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
         if c and os.path.isfile(path):
@@ -570,15 +571,15 @@ def createRematch (gamemodel):
         if bp.__type__ == LOCAL:
             player0tup = (bp.__type__, bp.__class__, (WHITE, repr(wp)), repr(bp))
         else:
-            xmlengine = discoverer.getEngineByMd5(bp.md5)
+            engine = discoverer.getEngineByMd5(bp.md5)
             player0tup = (ARTIFICIAL, discoverer.initPlayerEngine,
-                          (xmlengine, WHITE, bp.strength, gamemodel.variant,
+                          (engine, WHITE, bp.strength, gamemodel.variant,
                            secs, gain), repr(bp))
     else:
         player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
-        xmlengine = discoverer.getEngineByMd5(wp.md5)
+        engine = discoverer.getEngineByMd5(wp.md5)
         player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
-                      (xmlengine, BLACK, wp.strength, gamemodel.variant,
+                      (engine, BLACK, wp.strength, gamemodel.variant,
                        secs, gain), repr(wp))
 
     ionest.generalStart(newgamemodel, player0tup, player1tup)
