@@ -25,7 +25,7 @@ __about__ = _("Official PyChess panel.")
 
 
 class Advisor:
-    def __init__ (self, store, name):
+    def __init__ (self, store, name, mode):
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
             text or barWidth or goodness  Indicate its strength (last 2 are 0 to 1.0)
@@ -37,7 +37,8 @@ class Advisor:
 
         self.store = store
         self.name = name
-        store.append(None, self.textOnlyRow(name))
+        self.mode = mode
+        store.append(None, self.textOnlyRow(name, mode))
 
     @property
     def path(self):
@@ -70,14 +71,13 @@ class Advisor:
                 return parent
             self.store.remove(child)
 
-    def textOnlyRow(self, text):
-        return [(None, None, None), ("", 0, None), 0, False, text, False, False]
+    def textOnlyRow(self, text, mode=None):
+        return [(None, None, None), ("", 0, None), 0, False, text, False, mode in (HINT, SPY)]
 
 
 class OpeningAdvisor(Advisor):
     def __init__ (self, store, tv):
-        Advisor.__init__(self, store, _("Opening Book"))
-        self.mode = OPENING
+        Advisor.__init__(self, store, _("Opening Book"), OPENING)
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         self.opening_names = []
         self.tv = tv
@@ -125,13 +125,12 @@ class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
     def __init__ (self, store, engine, mode, tv, boardview):
         if mode == HINT:
-            Advisor.__init__(self, store, _("Analysis by %s") % engine)
+            Advisor.__init__(self, store, _("Analysis by %s") % engine, HINT)
             self.tooltip = _("%s will try to predict which move is best and which side has the advantage") % engine
         else:
-            Advisor.__init__(self, store, _("Threat analysis by %s") % engine)
+            Advisor.__init__(self, store, _("Threat analysis by %s") % engine, SPY)
             self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move") % engine
         self.engine = engine
-        self.mode = mode
         self.tv = tv
         self.active = False
         self.linesExpected   = 1
@@ -217,7 +216,6 @@ class EngineAdvisor(Advisor):
         else:
             self.active = False
             self.boardview.model.pause_analyzer(self.mode)
-            self.empty_parent()
         
     def multipv_edited(self, value):
         if value > self.engine.maxAnalysisLines():
@@ -268,8 +266,7 @@ class EngineAdvisor(Advisor):
 
 class EndgameAdvisor(Advisor, PooledThread):
     def __init__ (self, store, tv):
-        Advisor.__init__(self, store, _("Endgame Table"))
-        self.mode = ENDGAME
+        Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         self.tv = tv
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
