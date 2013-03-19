@@ -194,6 +194,8 @@ class VariousSection(Section):
         #sizeGroup.add_widget(widgets["show_console_label"])
         #sizeGroup.add_widget(widgets["log_off_label"])
 
+        widgets["show_console_button"].hide()
+
         connection.em.connect("onCommandNotFound", lambda em, cmd:
                 log.error("Fics answered '%s': Command not found" % cmd))
 
