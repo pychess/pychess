@@ -164,7 +164,7 @@
                             <child>
                               <object class="GtkEntry" id="nameEntry">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="activates_default">True</property>
                                 <property name="width_chars">25</property>
@@ -250,7 +250,7 @@
                                 <property name="label" translatable="yes">Log on as _Guest</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_indicator">True</property>
@@ -297,6 +297,12 @@
                                 <property name="bottom_attach">6</property>
                                 <property name="y_options"></property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
