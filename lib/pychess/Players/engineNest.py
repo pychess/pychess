@@ -372,10 +372,10 @@ class EngineDiscoverer (GObject, PooledThread):
         
         return engine_proc
     
-    def initPlayerEngine (self, engine, color, diffi, variant, secs=0, incr=0):
+    def initPlayerEngine (self, engine, color, diffi, variant, secs=0, incr=0, forcePonderOff=False):
         engine = self.initEngine (engine, color)
         def optionsCallback (engine):
-            engine.setOptionStrength(diffi)
+            engine.setOptionStrength(diffi, forcePonderOff)
             engine.setOptionVariant(variant)
             if secs > 0:
                 engine.setOptionTime(secs, incr)

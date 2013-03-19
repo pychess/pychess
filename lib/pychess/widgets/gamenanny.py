@@ -215,7 +215,8 @@ def on_game_started (gamemodel, gmwidg):
     # Start analyzers if any
     gamemodel.connect("analyzer_added", analyzer_added, gmwidg)
     if not (isinstance(gamemodel, ICGameModel) and \
-            gamemodel.isObservationGame() is False):
+            gamemodel.isObservationGame() is False) and \
+       not gamemodel.isEngine2EngineGame():
         gamemodel.start_analyzer(HINT)
         gamemodel.start_analyzer(SPY)
         if not conf.get("hint_mode", False):
