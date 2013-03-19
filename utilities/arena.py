@@ -97,8 +97,8 @@ def runGame():
     game = GameModel(TimeModel(minutes*60,0))
     game.connect('game_started', cb_gamestarted)
     game.connect('game_ended', cb_gameended)
-    p0 = discoverer.initPlayerEngine(engines[a], WHITE, 8, variants[NORMALCHESS], minutes*60)
-    p1 = discoverer.initPlayerEngine(engines[b], BLACK, 8, variants[NORMALCHESS], minutes*60)
+    p0 = discoverer.initPlayerEngine(engines[a], WHITE, 8, variants[NORMALCHESS], secs=minutes*60, incr=0, forcePonderOff=True)
+    p1 = discoverer.initPlayerEngine(engines[b], BLACK, 8, variants[NORMALCHESS], secs=minutes*60, incr=0, forcePonderOff=True)
     game.setPlayers([p0,p1])
     game.start()
 

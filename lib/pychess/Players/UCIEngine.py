@@ -260,7 +260,7 @@ class UCIEngine (ProtocolEngine):
         self.btime = int(max(secs*1000*self.timeHandicap, 1))
         self.incr = int(gain*1000*self.timeHandicap)
     
-    def setOptionStrength (self, strength):
+    def setOptionStrength (self, strength, forcePonderOff):
         self.strength = strength
         
         if self.hasOption('UCI_LimitStrength') and strength <= 6:
@@ -275,7 +275,7 @@ class UCIEngine (ProtocolEngine):
             self.incr = int(self.incr*th)
         
         if self.hasOption('Ponder'):
-            self.setOption('Ponder', strength >= 7)
+            self.setOption('Ponder', strength >= 7 and not forcePonderOff)
     
     #===========================================================================
     #    Interacting with the player

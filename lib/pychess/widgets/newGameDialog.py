@@ -334,12 +334,17 @@ class _GameInitializationMode:
                     engine = discoverer.getEngineN (playerno-1)
                     name = discoverer.getName(engine)
                     playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
-                            (engine, color, diffi, variant, secs, incr), name))
+                            [engine, color, diffi, variant, secs, incr], name))
                 else:
                     if not playertups or playertups[0][0] != LOCAL:
                         name = conf.get("firstName", _("You"))
                     else: name = conf.get("secondName", _("Guest"))
                     playertups.append((LOCAL, Human, (color, name), name))
+            
+            # Set forcePonderOff initPlayerEngine param True in engine-engine games
+            if playertups[0][0] == ARTIFICIAL and playertups[1][0] == ARTIFICIAL:
+                playertups[0][2].append(True)
+                playertups[1][2].append(True)
             
             if secs > 0:
                 timemodel = TimeModel (secs, incr)

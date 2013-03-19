@@ -461,7 +461,7 @@ class CECPEngine (ProtocolEngine):
         #          8         o      x       o              #
         #==================================================#
     
-    def setOptionStrength (self, strength):
+    def setOptionStrength (self, strength, forcePonderOff):
         self.strength = strength
         
         if 4 <= strength <= 7:
@@ -472,7 +472,7 @@ class CECPEngine (ProtocolEngine):
         elif strength <= 6:
             self.__setDepth(5+(strength-4)*2)
         
-        self.__setPonder(strength >= 7)
+        self.__setPonder(strength >= 7 and not forcePonderOff)
         
         if strength == 8:
             self.optionQueue.append("egtb")
