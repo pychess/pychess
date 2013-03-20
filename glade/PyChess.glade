@@ -1124,21 +1124,7 @@ If it can use both  you can set here which one you like.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="autoCallFlag">
-                                        <property name="label" translatable="yes">Auto ca_ll flag</property>
-                                        <property name="use_action_appearance">False</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If set, PyChess will automatically end games, where a player has exceeded his or her timelimit.</property>
-                                        <property name="use_underline">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">6</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -3060,6 +3046,22 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Ask to _Move</property>
                         <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="skillelinje2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="auto_call_flag">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Auto call _flag</property>
+                        <accelerator key="H" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="on_auto_call_flag_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
