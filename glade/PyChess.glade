@@ -51,11 +51,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-new</property>
-  </object>
   <object class="GtkDialog" id="game_info">
     <property name="can_focus">False</property>
     <property name="border_width">7</property>
@@ -349,6 +344,11 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
       <action-widget response="-5">game_info_ok_button</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-new</property>
+  </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -502,14 +502,14 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
   <object class="GtkListStore" id="liststore4"/>
   <object class="GtkDialog" id="manage_engines_dialog">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="border_width">9</property>
     <property name="title" translatable="yes">Manage engines</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="spacing">2</property>
+        <property name="spacing">3</property>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dialog-action_area3">
             <property name="visible">True</property>
@@ -542,7 +542,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
           <object class="GtkHBox" id="hbox5">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="border_width">6</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkFrame" id="frame8">
@@ -554,7 +553,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                   <object class="GtkAlignment" id="alignment7">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="top_padding">4</property>
                     <child>
                       <object class="GtkScrolledWindow" id="scrolledwindow5">
                         <property name="visible">True</property>
@@ -1365,7 +1363,7 @@ If it can use both  you can set here which one you like.</property>
                                               <object class="GtkLabel" id="label10">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="label" translatable="yes">Polyglot book file</property>
+                                                <property name="label" translatable="yes">Polyglot book file:</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -1442,7 +1440,7 @@ http://www.olympuschess.com/egtb/gaviota/</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="xpad">5</property>
-                                                <property name="label" translatable="yes">Gaviota TB path</property>
+                                                <property name="label" translatable="yes">Gaviota TB path:</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
