@@ -128,7 +128,7 @@ class HintTab:
         egtb_chooser_button.connect("current-folder-changed", select_egtb)
 
         def on_endgame_check_toggled (check):
-            widgets["endgame_vbox"].set_sensitive(check.get_active())
+            widgets["endgame_hbox"].set_sensitive(check.get_active())
         
         widgets["endgame_check"].connect_after("toggled",
                                                 on_endgame_check_toggled)
