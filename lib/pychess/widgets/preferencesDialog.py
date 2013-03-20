@@ -55,13 +55,6 @@ class GeneralTab:
                     "figuresInNotation", "autoCallFlag","fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
 
-        def get_active(widget):
-            active = widget.get_active()
-            Pieces.transparent_pieces = active
-            return active
-
-        uistuff.keep (widgets["transparentPieces"], "transparentPieces", get_value_=get_active)
-
 ################################################################################
 # Hint initing                                                               #
 ################################################################################
