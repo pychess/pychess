@@ -116,7 +116,7 @@ class HintTab:
         def select_egtb(button):
             new_directory = egtb_chooser_dialog.get_filename()
             if new_directory != egtb_path:
-                conf.set("egtb_path", egtb_path)
+                conf.set("egtb_path", new_directory)
 
         egtb_chooser_button.connect("current-folder-changed", select_egtb)
 
