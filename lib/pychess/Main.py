@@ -160,7 +160,7 @@ class GladeHandlers:
         if ionest.closeAllGames(gameDic.items()) in (gtk.RESPONSE_OK, gtk.RESPONSE_YES):
             gtk.main_quit()
         else: return True
-    
+
     #          View Menu          #
     
     def on_rotate_board1_activate (widget):
@@ -208,16 +208,22 @@ class GladeHandlers:
                 else:
                     gmwidg.gamemodel.pause_analyzer(SPY)
 
-    #          Engines menu          #
+    #          Edit menu          #
     
     def on_manage_engines_activate (widget):
         enginesDialog.run(gamewidget.getWidgets())
     
-    #          Settings menu          #
-    
     def on_preferences_activate (widget):
         preferencesDialog.run(gamewidget.getWidgets())
     
+    #          Actions Menu          #
+
+    def xon_auto_call_flag_activate (widget):
+        if widget.get_active():
+            conf.set('autoCallFlag', True)
+        else:
+            conf.set('autoCallFlag', False)
+
     #          Help menu          #
     
     def on_about_chess1_activate (widget):
@@ -280,6 +286,7 @@ class PyChess:
         uistuff.keep(widgets["hint_mode"], "hint_mode")
         uistuff.keep(widgets["spy_mode"], "spy_mode")
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
+        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag")
         
         #=======================================================================
         # Show main window and init d'n'd

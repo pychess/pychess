@@ -52,7 +52,7 @@ class GeneralTab:
         
         for key in ("firstName", "secondName",
                     "hideTabs", "autoRotate", "faceToFace", "showCords", "showCaptured",
-                    "figuresInNotation", "autoCallFlag","fullAnimation", "moveAnimation", "noAnimation"):
+                    "figuresInNotation", "fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
 
 ################################################################################
