@@ -117,7 +117,6 @@ class BoardView (gtk.DrawingArea):
         conf.notify_add("showCaptured", self.on_show_captured)
         conf.notify_add("faceToFace", self.on_face_to_face)
         conf.notify_add("pieceTheme", self.on_set_piece_theme)
-        conf.notify_add("transparentPieces", self.on_set_piece_theme)
 
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES

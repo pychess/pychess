@@ -52,10 +52,9 @@ def drawPieceReal (piece, cc, psize, allWhite=False):
         elif cmd == 'C':
             cc.rel_curve_to(*points)
         else:
-            if not transparent_pieces:
-                cc.set_source_rgb(1,1,1)
-                cc.fill_preserve()
-                cc.set_source_rgb(0,0,0)
+            cc.set_source_rgb(1,1,1)
+            cc.fill_preserve()
+            cc.set_source_rgb(0,0,0)
                 
 def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
     """Rendering pieces with draw each time method"""
@@ -118,26 +117,23 @@ def drawPiece4(piece, context, x, y, psize, allWhite=False):
     context.set_font_size(psize)
     context.move_to(x, y+psize)
 
-    if not transparent_pieces:
-        context.text_path(piece2char[color][piece.sign])
-        close_path = False
-        for cmd, points in context.copy_path():
-            if cmd == 0:
-                context.move_to(*points)
-                if close_path:
-                    context.set_source_rgb(1,1,1)
-                    context.fill_preserve()
-                    context.set_source_rgb(0,0,0)
-                    close_path = False
-            elif cmd == 1:
-                context.line_to(*points)
-            elif cmd == 2:
-                context.curve_to(*points)
-            else:
-                close_path = True
-        context.fill()
-    else:
-        context.show_text(piece2char[color][piece.sign])
+    context.text_path(piece2char[color][piece.sign])
+    close_path = False
+    for cmd, points in context.copy_path():
+        if cmd == 0:
+            context.move_to(*points)
+            if close_path:
+                context.set_source_rgb(1,1,1)
+                context.fill_preserve()
+                context.set_source_rgb(0,0,0)
+                close_path = False
+        elif cmd == 1:
+            context.line_to(*points)
+        elif cmd == 2:
+            context.curve_to(*points)
+        else:
+            close_path = True
+    context.fill()
     
 # This version has proven itself nearly three times as slow as the "draw each time" method.
 # At least when drawing one path only. Might be useful when drawing svg    
@@ -240,8 +236,6 @@ def get_chess_font_face(name):
     face = create_cairo_font_face_for_file(addDataPrefix("pieces/ttf/%s.ttf" % name))
     return face, piece_chars
 
-
-transparent_pieces = conf.get("transparentPieces", 0)
 
 all_in_one = None
 drawPiece = None
