@@ -331,17 +331,17 @@ class GameModel (GObject, PooledThread):
             else: self.end(WHITEWON, WON_RESIGN)
         
         elif offer.type == FLAG_CALL:
-            assert self.timemodel is not None            
-            if self.timemodel.getPlayerTime(1-player.color) <= 0:
-                if self.timemodel.getPlayerTime(player.color) <= 0:
+            assert self.timemodel is not None
+            if self.timemodel.getPlayerTime(player.color) <= 0:
+                if self.timemodel.getPlayerTime(1-player.color) <= 0:
                     self.end(DRAW, DRAW_CALLFLAG)
                 elif not playerHasMatingMaterial(self.boards[-1], 1-player.color):
-                    if 1-player.color == WHITE:
+                    if player.color == WHITE:
                         self.end(DRAW, DRAW_BLACKINSUFFICIENTANDWHITETIME)
                     else:
                         self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)
                 else:
-                    if player == self.players[WHITE]:
+                    if player == self.players[BLACK]:
                         self.end(WHITEWON, WON_CALLFLAG)
                     else:
                         self.end(BLACKWON, WON_CALLFLAG)
