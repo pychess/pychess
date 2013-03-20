@@ -3060,8 +3060,6 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Auto call _flag</property>
-                        <accelerator key="H" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_auto_call_flag_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>

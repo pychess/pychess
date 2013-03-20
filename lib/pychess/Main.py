@@ -216,14 +216,6 @@ class GladeHandlers:
     def on_preferences_activate (widget):
         preferencesDialog.run(gamewidget.getWidgets())
     
-    #          Actions Menu          #
-
-    def xon_auto_call_flag_activate (widget):
-        if widget.get_active():
-            conf.set('autoCallFlag', True)
-        else:
-            conf.set('autoCallFlag', False)
-
     #          Help menu          #
     
     def on_about_chess1_activate (widget):
