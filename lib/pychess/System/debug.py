@@ -4,6 +4,7 @@ import traceback
 import threading
 
 from pychess.System.glock import gdklocks
+from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 
 
