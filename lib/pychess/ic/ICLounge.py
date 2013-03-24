@@ -1084,8 +1084,9 @@ class GameTabSection (ParrentListSection):
             self.connection.bm.observe(game)
 
     def onGameObserved (self, game):
-        treeiter = self.games[game]["ti"]
-        self.store.set_value(treeiter, 1, self.recpix)
+        if game in self.games:
+            treeiter = self.games[game]["ti"]
+            self.store.set_value(treeiter, 1, self.recpix)
 
     def onGameUnobserved (self, game):
         if game in self.games:
