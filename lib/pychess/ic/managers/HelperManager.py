@@ -57,7 +57,7 @@ class HelperManager (GObject):
         # New ivar pin
         # http://www.freechess.org/Help/HelpFiles/new_features.html
         self.helperconn.expect_line (self.on_player_whoI,
-                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 4 + "(\d{1,4})([PE]?)")
+                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5 + "(\d{1,4})([PE]?)")
         self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
         
         self.helperconn.expect_line (self.on_game_add,
@@ -66,7 +66,7 @@ class HelperManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
 
         self.helperconn.expect_line (self.on_player_connect,
-                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 4 + "(\d{1,4})([PE]?)")
+                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5 + "(\d{1,4})([PE]?)")
         self.helperconn.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
@@ -167,7 +167,7 @@ class HelperManager (GObject):
 
     def on_player_connect (self, match):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-            wild, wilddev, losers, losersdev = match.groups()
+            wild, wilddev, crazyhouse, crazyhousedev, losers, losersdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
         copy.online = True
@@ -179,6 +179,7 @@ class HelperManager (GObject):
                  (TYPE_STANDARD, std, stddev),
                  (TYPE_LIGHTNING, light, lightdev),
                  (TYPE_WILD, wild, wilddev),
+                 (TYPE_CRAZYHOUSE, crazyhouse, crazyhousedev),
                  (TYPE_LOSERS, losers, losersdev)):
             copy.ratings[ratingtype].elo = self.parseRating(elo)
             copy.ratings[ratingtype].deviation = DEVIATION[dev]
