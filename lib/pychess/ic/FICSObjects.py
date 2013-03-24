@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 from pychess.ic import TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, \
     TYPE_LOSERS, TITLE_TYPE_DISPLAY_TEXTS, TITLE_TYPE_DISPLAY_TEXTS_SHORT, \
     GAME_TYPES_BY_RATING_TYPE, TYPE_UNREGISTERED, TYPE_COMPUTER, TYPE_ADMINISTRATOR, \
-    GAME_TYPES_BY_FICS_NAME, GAME_TYPES
+    GAME_TYPES_BY_FICS_NAME, GAME_TYPES, TYPE_CRAZYHOUSE
 
 class FICSPlayer (GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_OFFLINE,
@@ -29,7 +29,7 @@ class FICSPlayer (GObject):
         if ratings is None:
             self.ratings = {}
             for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
-                               TYPE_WILD, TYPE_LOSERS):
+                               TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
                 ratingobj = Rating(ratingtype, 0)
                 self.setRating(ratingtype, ratingobj)
         else:
@@ -134,6 +134,10 @@ class FICSPlayer (GObject):
         return self.getRating(TYPE_WILD).elo
 
     @property
+    def crazyhouse (self):
+        return self.getRating(TYPE_CRAZYHOUSE).elo
+
+    @property
     def losers (self):
         return self.getRating(TYPE_LOSERS).elo
         
@@ -160,8 +164,8 @@ class FICSPlayer (GObject):
             r += ", game.private=" + repr(game.private)
         else:
             r += ", game=None"
-        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD,
-                            TYPE_LOSERS):
+        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
+                            TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
             if rating_type in self.ratings:
                 r += ", ratings[%s] = (" % \
                     GAME_TYPES_BY_RATING_TYPE[rating_type].display_text
@@ -276,7 +280,7 @@ class FICSPlayer (GObject):
         if not self.titles >= player.titles:
             self.titles |= player.titles
         for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
-                           TYPE_WILD, TYPE_LOSERS):
+                           TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
             self.ratings[ratingtype].update(player.ratings[ratingtype])
         if self.status != player.status:
             self.status = player.status
@@ -637,7 +641,7 @@ class FICSGames (GObject):
     
     def get_game_by_gameno (self, gameno):
         if type(gameno) is not int: raise TypeError
-        return self.games_by_gameno[gameno]
+        return self.games_by_gameno.get(gameno)
     
     def get (self, game, create=True, emit=True):
         # TODO: lock

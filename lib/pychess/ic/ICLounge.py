@@ -124,12 +124,14 @@ class ICLounge (GObject):
         #B: Bughouse   L: losers      S: Suicide
         if notebook.get_nth_page(page_num) == self.widgets['playersListContent']:
             if self.need_who:
-                print >> self.helperconn.client, "who IsblwL"
+                # New ivar pin
+                # http://www.freechess.org/Help/HelpFiles/new_features.html
+                print >> self.helperconn.client, "who IsblwzL"
                 self.need_who = False
 
         if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
             if self.need_games:
-                print >> self.helperconn.client, "games /sblwL"
+                print >> self.helperconn.client, "games /sblwzL"
                 self.need_games = False
 
     @glock.glocked
@@ -194,7 +196,7 @@ class VariousSection(Section):
         #sizeGroup.add_widget(widgets["show_console_label"])
         #sizeGroup.add_widget(widgets["log_off_label"])
 
-        widgets["show_console_button"].hide()
+        #widgets["show_console_button"].hide()
 
         connection.em.connect("onCommandNotFound", lambda em, cmd:
                 log.error("Fics answered '%s': Command not found" % cmd))
@@ -803,10 +805,10 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv = widgets["playertreeview"]
         self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
-                                   int, int, str)
+                                   int, int, int, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
-            _("Standard"), _("Lightning"), _("Wild"), _("Status"), hide=[0],
+            _("Standard"), _("Lightning"), _("Crazyhouse"), _("Wild"), _("Status"), hide=[0],
             pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
@@ -833,7 +835,7 @@ class PlayerTabSection (ParrentListSection):
         
         ti = self.store.append([player, player.getIcon(),
             player.name + player.display_titles(), player.blitz, player.standard,
-            player.lightning, player.wild, player.display_status])
+            player.lightning, player.crazyhouse, player.wild, player.display_status])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
             "notify::status", self.status_changed)
@@ -844,7 +846,7 @@ class PlayerTabSection (ParrentListSection):
         if player.game:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_WILD):
             self.players[player][rt] = player.ratings[rt].connect(
                 "notify::elo", self.elo_changed, player)
         
@@ -865,7 +867,7 @@ class PlayerTabSection (ParrentListSection):
             player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD):
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_WILD):
             if player.ratings[rt].handler_is_connected(
                     self.players[player][rt]):
                 player.ratings[rt].disconnect(self.players[player][rt])
@@ -878,7 +880,7 @@ class PlayerTabSection (ParrentListSection):
     def status_changed (self, player, property):
         if player not in self.players: return
         if self.store.iter_is_valid(self.players[player]["ti"]):
-            self.store.set(self.players[player]["ti"], 7, player.display_status)
+            self.store.set(self.players[player]["ti"], 8, player.display_status)
         
         if player.status == IC_STATUS_PLAYING and player.game and \
                 "private" not in self.players[player]:
@@ -923,8 +925,10 @@ class PlayerTabSection (ParrentListSection):
             self.store.set(ti, 4, player.standard)
         elif rating.type == TYPE_LIGHTNING:
             self.store.set(ti, 5, player.lightning)
+        elif rating.type == TYPE_CRAZYHOUSE:
+            self.store.set(ti, 6, player.crazyhouse)
         elif rating.type == TYPE_WILD:
-            self.store.set(ti, 6, player.wild)
+            self.store.set(ti, 7, player.wild)
         
         return False
     

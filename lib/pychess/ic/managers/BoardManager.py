@@ -25,7 +25,7 @@ moveListHeader1 = re.compile(moveListHeader1Str)
 moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
     ratedexp
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
-sanmove = "([a-hx@OoKQRBN0-8+#=-]{2,7})"
+sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
 moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
@@ -281,7 +281,7 @@ class BoardManager (GObject):
         fen += fields[25]
         
         return gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen
-    
+
     def onStyle12 (self, match):
         style12 = match.groups()[0]
         gameno = int(style12.split()[15])
@@ -293,9 +293,13 @@ class BoardManager (GObject):
         if self.gamemodelStartedEvents.has_key(gameno):
             self.gamemodelStartedEvents[gameno].wait()
         
-        castleSigns = self.castleSigns[gameno]
+        if gameno in self.castleSigns:
+            castleSigns = self.castleSigns[gameno]
+        else:
+            castleSigns = ("k","q")
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
+        
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
     def onGameModelStarted (self, gameno):
