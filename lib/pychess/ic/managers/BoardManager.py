@@ -282,6 +282,13 @@ class BoardManager (GObject):
         
         return gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen
 
+    def __createGame(self, gameno, wname, bname, wms, bms, fen):
+        wplayer = self.connection.players.get(FICSPlayer(wname))
+        bplayer = self.connection.players.get(FICSPlayer(bname))
+        game = FICSGame(wplayer, bplayer, gameno=gameno, board=FICSBoard(wms, bms, fen=fen))
+        game = self.connection.games.get(game, emit=False)
+        return game
+
     def onStyle12 (self, match):
         style12 = match.groups()[0]
         gameno = int(style12.split()[15])
@@ -300,6 +307,16 @@ class BoardManager (GObject):
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
         
+        if gameno not in self.gamemodelStartedEvents:
+            game = self.connection.games.get_game_by_gameno(gameno)
+            # observe, follow from console
+            if game is not None:
+                self.observe(game)
+            #else:
+            # examine
+            #    game = self.__createGame(gameno, wname, bname, wms, bms, fen)
+            #    self.observe(game)
+
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
     def onGameModelStarted (self, gameno):
