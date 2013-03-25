@@ -7,7 +7,7 @@ from pychess.ic.FICSObjects import *
 from pychess.ic.FICSConnection import Connection
 from pychess.ic.VerboseTelnet import PredictionsTelnet
 from pychess.ic.managers.AdjournManager import AdjournManager
-from pychess.ic.managers.GameListManager import GameListManager
+from pychess.ic.managers.SeekManager import SeekManager
 from pychess.ic.managers.ListAndVarManager import ListAndVarManager
 from pychess.ic.managers.BoardManager import BoardManager
 
@@ -185,17 +185,17 @@ class AdjournManagerTests(EmittingTestCase):
         self.runAndAssertEquals(signal, lines, expectedResults)
 
 ###############################################################################
-# GameListManager
+# SeekManager
 ###############################################################################
 
-class GameListManagerTests(EmittingTestCase):
+class SeekManagerTests(EmittingTestCase):
     
     def setUp (self):
         self.connection = DummyConnection()
         # The real one stucks
         #self.connection.lvm = ListAndVarManager(self.connection)
         self.connection.lvm = DummyVarManager()
-        self.manager = GameListManager(self.connection)
+        self.manager = SeekManager(self.connection)
     
     def test1 (self):
         """ Seek add """

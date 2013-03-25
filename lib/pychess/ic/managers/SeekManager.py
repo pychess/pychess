@@ -20,7 +20,7 @@ rating_re = re.compile("[0-9]{2,}")
 deviation_estimated_re = re.compile("E")
 deviation_provisional_re = re.compile("P")
 
-class GameListManager (GObject):
+class SeekManager (GObject):
     
     __gsignals__ = {
         'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -44,7 +44,7 @@ class GameListManager (GObject):
         
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
-        log.debug("GameListManager.seek: %s %s %s %s %s %s %s\n" % \
+        log.debug("SeekManager.seek: %s %s %s %s %s %s %s\n" % \
             (startmin, incsec, game_type, rated, str(ratings), color, manual))
         rchar = rated and "r" or "u"
         if color != None:
