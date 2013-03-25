@@ -9,7 +9,7 @@ from pychess.System.Log import log
 from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 
-from managers.GameListManager import GameListManager
+from managers.SeekManager import SeekManager
 from managers.FingerManager import FingerManager
 from managers.NewsManager import NewsManager
 from managers.BoardManager import BoardManager
@@ -225,7 +225,7 @@ class FICSConnection (Connection):
                 # the connection object when they are called
 
                 self.em = ErrorManager(self)
-                self.glm = GameListManager(self)
+                self.glm = SeekManager(self)
                 self.bm = BoardManager(self)
                 self.fm = FingerManager(self)
                 self.nm = NewsManager(self)
