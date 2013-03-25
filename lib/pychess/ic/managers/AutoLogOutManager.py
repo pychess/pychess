@@ -1,4 +1,5 @@
 from gobject import *
+
 class AutoLogOutManager (GObject):
     __gsignals__ = {
         'logOut': (SIGNAL_RUN_FIRST, None, ())

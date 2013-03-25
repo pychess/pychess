@@ -1,7 +1,6 @@
-
 from gobject import *
 
-sanmove = "([a-hxOoKQRBN0-8+#=-]{2,7})"
+sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 
 class ErrorManager (GObject):
     
