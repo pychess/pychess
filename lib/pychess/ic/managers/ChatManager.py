@@ -1,4 +1,3 @@
-
 from gobject import *
 import threading
 import re

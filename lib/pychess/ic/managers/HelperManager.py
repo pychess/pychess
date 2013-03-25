@@ -35,15 +35,6 @@ STATUS = {"^": IC_STATUS_PLAYING,
 
 class HelperManager (GObject):
     
-    __gsignals__ = {
-        'playerConnected' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'playerDisconnected' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'playerUnavailable' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'playerAvailable' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'playerWhoI' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'playerWho' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-    }
-    
     def __init__ (self, helperconn, connection):
         GObject.__init__(self)
         
