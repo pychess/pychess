@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import platform
 from ctypes import *
 
@@ -176,8 +177,9 @@ class egtb_gaviota:
         if platform.system() == "Windows":
             libName = "gtb.dll"
         else:
-            libName = "libgtb.so.1"
-        for path in [ libName, os.path.join(addDataPrefix(libName)) ]:
+            libName = "libgtb.so"
+        arch = "x86-64" if sys.maxsize > 2**32 else "x86-32"
+        for path in [ libName, addDataPrefix("gaviota/%s/%s" % (arch, libName)) ]:
             try:
                 self.libgtb = CDLL(path)
                 break
