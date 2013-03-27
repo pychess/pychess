@@ -666,8 +666,8 @@ class BoardManager (GObject):
     
     def onUnobserveGame (self, match):
         gameno = int(match.groups()[0])
-        del self.gamemodelStartedEvents[gameno]
         try:
+            del self.gamemodelStartedEvents[gameno]
             game = self.connection.games.get_game_by_gameno(gameno)
         except KeyError: return
         self.emit("obsGameUnobserved", game)
