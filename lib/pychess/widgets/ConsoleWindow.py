@@ -1,3 +1,5 @@
+import sys
+
 import gtk
 import gobject
 import pango
@@ -39,6 +41,11 @@ class ConsoleWindow:
         
     def onConsoleMessage(self, com, line, prediction_name):
         if not self.window:
+            return
+        # beep
+        if line == chr(7):
+            sys.stdout.write("\a")
+            sys.stdout.flush()
             return
         if not line.startswith('<'):
             self.consoleView.addMessage(line)
