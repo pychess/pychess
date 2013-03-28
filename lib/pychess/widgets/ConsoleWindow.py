@@ -14,20 +14,7 @@ from pychess.System.glock import glock_connect
 class ConsoleWindow:
     def __init__ (self, widgets, connection):
         self.connection = connection
-        self.window = None
-        
-        widgets["show_console_button"].connect("clicked", self.showConsole)
-        glock_connect(connection.com, "consoleMessage",
-                      self.onConsoleMessage, after=False)
-        glock_connect(connection, "disconnected",
-                      lambda c: self.window and self.window.hide())
 
-    def showConsole(self, *widget):
-        if not self.window:
-            self.initUi()
-        self.window.show_all()
-    
-    def initUi (self):
         self.window = gtk.Window()
         self.window.set_border_width(12)
         self.window.set_icon_name("pychess")
@@ -39,9 +26,17 @@ class ConsoleWindow:
         self.consoleView = ConsoleView(self.connection)
         self.window.add(self.consoleView)
         
+        widgets["show_console_button"].connect("clicked", self.showConsole)
+        glock_connect(connection.com, "consoleMessage",
+                      self.onConsoleMessage, after=False)
+        glock_connect(connection, "disconnected",
+                      lambda c: self.window and self.window.hide())
+
+    def showConsole(self, *widget):
+        self.window.show_all()
+    
     def onConsoleMessage(self, com, line, prediction_name):
-        if not self.window:
-            return
+        print prediction_name, ":" ,line
         # beep
         if line == chr(7):
             sys.stdout.write("\a")
