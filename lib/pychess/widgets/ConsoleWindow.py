@@ -36,7 +36,6 @@ class ConsoleWindow:
         self.window.show_all()
     
     def onConsoleMessage(self, com, line, prediction_name):
-        print prediction_name, ":" ,line
         # beep
         if line == chr(7):
             sys.stdout.write("\a")

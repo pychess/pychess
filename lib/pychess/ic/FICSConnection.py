@@ -204,11 +204,6 @@ class FICSConnection (Connection):
                 
                 self.hm = HelperManager(self, self.conn)
 
-                def keep_alive():
-                    print >> self.client, "date"
-                    threading.Timer(59*60, keep_alive).start()
-                keep_alive()
-
             else:
                 # Important: As the other managers use ListAndVarManager, we need it
                 # to be instantiated first. We might decide that the purpose of this
@@ -246,6 +241,11 @@ class FICSConnection (Connection):
             
             if self.conn is None:
                 self.emit("connected")
+
+            def keep_alive():
+                print >> self.client, "date"
+                threading.Timer(30*60, keep_alive).start()
+            keep_alive()
         
         finally:
             self.connecting = False
