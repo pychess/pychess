@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
 "POT-Creation-Date: 2013-03-20 20:50+0100\n"
-"PO-Revision-Date: 2013-03-24 21:12+0000\n"
+"PO-Revision-Date: 2013-03-26 14:04+0000\n"
 "Last-Translator: CroatianFan <croatianfan@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -528,13 +528,13 @@ msgstr "Jedinstveni naziv programskog pogonika korišten u igračevim iskačući
 
 #: glade/PyChess.glade:699
 msgid "Full path to the engine binary or starting script."
-msgstr ""
+msgstr "Cijela putanja do binarnog koda programskog pogonika ili početne skripte ."
 
 #: glade/PyChess.glade:724
 msgid ""
 "Engines use uci or xboard communication protocol to talk to the GUI.\n"
 "If it can use both  you can set here which one you like."
-msgstr ""
+msgstr "Programski pogonici koriste komunikacijski protokol uci ili xboard za općenje s grafičkim korisničkim sučeljem.\nUkoliko se ne mogu koristiti oba, možeš odabrati onaj koji želiš."
 
 #: glade/PyChess.glade:750
 msgid "Working directory:"
@@ -668,7 +668,7 @@ msgstr "Ukoliko je postavljeno, PyChess će predložiti najbolje otvarajuće pot
 
 #: glade/PyChess.glade:1335
 msgid "Polyglot book file:"
-msgstr ""
+msgstr "Datoteka knjige Polyglot:"
 
 #: glade/PyChess.glade:1379
 msgid "Use _local tablebases"
@@ -683,7 +683,7 @@ msgstr "Ukoliko je postavljeno, PyChess će pokazati ishod partije za različite
 
 #: glade/PyChess.glade:1412
 msgid "Gaviota TB path:"
-msgstr ""
+msgstr "Putanja za Gaviota TB:"
 
 #: glade/PyChess.glade:1452
 msgid "Use _online tablebases"
@@ -881,7 +881,7 @@ msgstr "Zatraži _potez"
 
 #: glade/PyChess.glade:3062
 msgid "Auto call _flag"
-msgstr "Samostalno zovi _zastavicu"
+msgstr "Samostalno zovi zastavicu"
 
 #: glade/PyChess.glade:3074
 msgid "_View"
@@ -2126,7 +2126,7 @@ msgstr "FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html"
 
 #: lib/pychess/Variants/atomic.py:11
 msgid "Atomic"
-msgstr ""
+msgstr "Atomski šah - Atomic"
 
 #: lib/pychess/Variants/blindfold.py:10
 msgid "Classic chess rules with hidden figurines\n"
@@ -2167,7 +2167,7 @@ msgstr "FICS bughouse: http://www.freechess.org/Help/HelpFiles/bughouse.html"
 
 #: lib/pychess/Variants/bughouse.py:11
 msgid "Bughouse"
-msgstr ""
+msgstr "Ludnica - Bughouse"
 
 #: lib/pychess/Variants/corner.py:31
 msgid "http://brainking.com/en/GameRules?tp=2\n"
@@ -2184,7 +2184,7 @@ msgstr "FICS crazyhouse: http://www.freechess.org/Help/HelpFiles/crazyhouse.html
 
 #: lib/pychess/Variants/crazyhouse.py:11
 msgid "Crazyhouse"
-msgstr ""
+msgstr "Luda kuća - Crazyhouse"
 
 #: lib/pychess/Variants/fischerandom.py:218
 msgid "http://en.wikipedia.org/wiki/Chess960\n"
@@ -2278,7 +2278,7 @@ msgstr "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html
 
 #: lib/pychess/Variants/suicide.py:11
 msgid "Suicide"
-msgstr ""
+msgstr "Samoubilački šah - Suicide"
 
 #: lib/pychess/Variants/upsidedown.py:18
 msgid "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
@@ -2620,7 +2620,7 @@ msgstr "Knjige otvaranja"
 
 #: lib/pychess/widgets/preferencesDialog.py:108
 msgid "Select Gaviota TB path"
-msgstr ""
+msgstr "Odaberi putanju za Gaviota TB"
 
 #: lib/pychess/widgets/preferencesDialog.py:299
 msgid "Open Sound File"
