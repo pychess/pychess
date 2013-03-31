@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/pychess/issues/list\n"
 "POT-Creation-Date: 2013-03-20 20:50+0100\n"
-"PO-Revision-Date: 2013-03-23 16:57+0000\n"
+"PO-Revision-Date: 2013-03-31 21:46+0000\n"
 "Last-Translator: salmora8 <shorterfire@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -811,7 +811,7 @@ msgstr "Carr_egar jogo"
 
 #: glade/PyChess.glade:2762
 msgid "Load _Recent Game"
-msgstr "Carregar_Jogo Recente"
+msgstr "Carregar _Jogo Recente"
 
 #: glade/PyChess.glade:2770
 msgid "Open _Database"
