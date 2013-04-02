@@ -31,7 +31,9 @@ class TimeSeal:
         self.port = port
         self.address = address
         self.name = address
-        
+
+        self.FatICS = False
+
         self.connected = False
         self.closed = False
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -91,7 +93,7 @@ class TimeSeal:
         return  "TIMESTAMP|%(user)s|%(uname)s|" % locals()
     
     def decode(self, buf, stateinfo = None):
-        expected_table = "\n\r[G]\n\r"
+        expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
         final_state = len(expected_table)
         g_count = 0
         result = []
@@ -163,7 +165,9 @@ class TimeSeal:
             log.debug(recv, (repr(self), "raw"))
             self.buf += recv
             
-            if "Starting FICS session" in self.buf:
+            if "FatICS" in self.buf:
+                self.FatICS = True
+            elif "Starting FICS session" in self.buf:
                 self.connected = True
                 self.buf = self.buf.replace(IAC_WONT_ECHO, '')
         

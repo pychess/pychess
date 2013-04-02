@@ -190,24 +190,24 @@ class BoardManager (GObject):
         self.ourGameno = ""
         
         # The ms ivar makes the remaining second fields in style12 use ms
-        self.connection.lvm.setVariable("ms", True)
+        self.connection.lvm.setVariable("ms", 1)
         # Style12 is a must, when you don't want to parse visualoptimized stuff
         self.connection.lvm.setVariable("style", "12")
         # When we observe fischer games, this puts a startpos in the movelist
-        self.connection.lvm.setVariable("startpos", True)
+        self.connection.lvm.setVariable("startpos", 1)
         # movecase ensures that bc3 will never be a bishop move
-        self.connection.lvm.setVariable("movecase", True)
+        self.connection.lvm.setVariable("movecase", 1)
         # don't unobserve games when we start a new game
-        self.connection.lvm.setVariable("unobserve", "3")
+        self.connection.lvm.setVariable("unobserve", 3)
         self.connection.lvm.setVariable("formula", "")
-        self.connection.lvm.autoFlagNotify(None)
+        self.connection.lvm.autoFlagNotify()
         
         # gameinfo <g1> doesn't really have any interesting info, at least not
         # until we implement crasyhouse and stuff
-        # self.connection.lvm.setVariable("gameinfo", True)
+        # self.connection.lvm.setVariable("gameinfo", 1)
         
         # We don't use deltamoves as fisc won't send them with variants
-        #self.connection.lvm.setVariable("compressmove", True)
+        #self.connection.lvm.setVariable("compressmove", 1)
 
     def start (self):    
         self.connection.games.connect("FICSGameEnded", self.onGameEnd)
@@ -681,13 +681,13 @@ class BoardManager (GObject):
         return bool(self.ourGameno)
     
     def sendMove (self, move):
-        print >> self.connection.client, move
+        self.connection.client.run_command(move)
     
     def resign (self):
-        print >> self.connection.client, "resign"
+        self.connection.client.run_command("resign")
     
     def callflag (self):
-        print >> self.connection.client, "flag"
+        self.connection.client.run_command("flag")
     
     def observe (self, game):
         if not game.gameno in self.gamemodelStartedEvents:
@@ -695,21 +695,21 @@ class BoardManager (GObject):
             self.queuedEmits[game.gameno] = []
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
             self.gamemodelStartedEvents[game.gameno].clear()
-            print >> self.connection.client, "observe %d" % game.gameno
-            print >> self.connection.client, "moves %d" % game.gameno
+            self.connection.client.run_command("observe %d" % game.gameno)
+            self.connection.client.run_command("moves %d" % game.gameno)
     
     def unobserve (self, game):
         if game.gameno is not None:
-            print >> self.connection.client, "unobserve %d" % game.gameno
+            self.connection.client.run_command("unobserve %d" % game.gameno)
     
     def play (self, seekno):
-        print >> self.connection.client, "play %s" % seekno
+        self.connection.client.run_command("play %s" % seekno)
     
     def accept (self, offerno):
-        print >> self.connection.client, "accept %s" % offerno
+        self.connection.client.run_command("accept %s" % offerno)
     
     def decline (self, offerno):
-        print >> self.connection.client, "decline %s" % offerno
+        self.connection.client.run_command("decline %s" % offerno)
 
 if __name__ == "__main__":
     from pychess.ic.FICSConnection import Connection

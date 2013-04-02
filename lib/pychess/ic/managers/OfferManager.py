@@ -94,8 +94,8 @@ class OfferManager (GObject):
         self.lastPly = 0
         self.offers = {}
         
-        self.connection.lvm.setVariable("formula", "!suicide & !crazyhouse & !bughouse & !atomic")
-        self.connection.lvm.setVariable("pendinfo", True)
+        self.connection.lvm.setVariable("formula", "!suicide & !bughouse & !atomic")
+        self.connection.lvm.setVariable("pendinfo", 1)
     
     def onOfferDeclined (self, match):
         log.debug("OfferManager.onOfferDeclined: match.string=%s\n" % match.string)
@@ -132,7 +132,7 @@ class OfferManager (GObject):
         if offertype not in strToOfferType:
             log.warn("OfferManager.onOfferAdd: Declining unknown offer type: " + \
                 "offertype=%s parameters=%s index=%s\n" % (offertype, parameters, index))
-            print >> self.connection.client, "decline", index
+            self.connection.client.run_command("decline %s" % index)
         offertype = strToOfferType[offertype]
         if offertype == TAKEBACK_OFFER:
             offer = Offer(offertype, param=int(parameters), index=int(index))
@@ -204,7 +204,7 @@ class OfferManager (GObject):
         if isinstance(game_type, VariantGameType):
             s += " " + game_type.seek_text
         print s
-        print >> self.connection.client, s
+        self.connection.client.run_command(s)
     
     def offer (self, offer, curply):
         log.debug("OfferManager.offer: curply=%s %s\n" % (curply, offer))
@@ -212,36 +212,36 @@ class OfferManager (GObject):
         s = offerTypeToStr[offer.type]
         if offer.type == TAKEBACK_OFFER:
             s += " " + str(curply - offer.param)
-        print >> self.connection.client, s
+        self.connection.client.run_command(s)
     
     ###
     
     def withdraw (self, offer):
         log.debug("OfferManager.withdraw: %s\n" % offer)
-        print >> self.connection.client, "withdraw t", offerTypeToStr[offer.type]
+        self.connection.client.run_command("withdraw t %s" % offerTypeToStr[offer.type])
     
     def accept (self, offer):
         log.debug("OfferManager.accept: %s\n" % offer)
         if offer.index != None:
             self.acceptIndex(offer.index)
         else:
-            print >> self.connection.client, "accept t", offerTypeToStr[offer.type]
+            self.connection.client.run_command("accept t %s" % offerTypeToStr[offer.type])
     
     def decline (self, offer):
         log.debug("OfferManager.decline: %s\n" % offer)
         if offer.index != None:
             self.declineIndex(offer.index)
         else:
-            print >> self.connection.client, "decline t", offerTypeToStr[offer.type]
+            self.connection.client.run_command("decline t %s" % offerTypeToStr[offer.type])
     
     def acceptIndex (self, index):
         log.debug("OfferManager.acceptIndex: index=%s\n" % index)
-        print >> self.connection.client, "accept", index
+        self.connection.client.run_command("accept %s" % index)
     
     def declineIndex (self, index):
         log.debug("OfferManager.declineIndex: index=%s\n" % index)
-        print >> self.connection.client, "decline", index
+        self.connection.client.run_command("decline %s" % index)
     
     def playIndex (self, index):
         log.debug("OfferManager.playIndex: index=%s\n" % index)
-        print >> self.connection.client, "play", index
+        self.connection.client.run_command("play %s" % index)

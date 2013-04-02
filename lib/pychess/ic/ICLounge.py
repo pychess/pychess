@@ -45,10 +45,11 @@ class ICLounge (GObject):
         'autoLogout'    : (SIGNAL_RUN_FIRST, None, ()),
     }
     
-    def __init__ (self, connection, helperconn):
+    def __init__ (self, connection, helperconn, host):
         GObject.__init__(self)
         self.connection = connection
         self.helperconn = helperconn
+        self.host = host
         
         self.need_who = True
         self.need_games = True
@@ -89,7 +90,7 @@ class ICLounge (GObject):
         global sections
         sections = (
             VariousSection(self.widgets, self.connection),
-            UserInfoSection(self.widgets, self.connection),
+            UserInfoSection(self.widgets, self.connection, self.host),
             NewsSection(self.widgets, self.connection),
 
             SeekTabSection(self.widgets, self.connection, self.infobar),
@@ -126,12 +127,12 @@ class ICLounge (GObject):
             if self.need_who:
                 # New ivar pin
                 # http://www.freechess.org/Help/HelpFiles/new_features.html
-                print >> self.helperconn.client, "who IsblwzL"
+                self.helperconn.client.run_command("who IsblwzL")
                 self.need_who = False
 
         if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
             if self.need_games:
-                print >> self.helperconn.client, "games /sblwzL"
+                self.helperconn.client.run_command("games /sblwzL")
                 self.need_games = False
 
     @glock.glocked
@@ -207,9 +208,10 @@ class VariousSection(Section):
 
 class UserInfoSection(Section):
 
-    def __init__ (self, widgets, connection):
+    def __init__ (self, widgets, connection, host):
         self.widgets = widgets
         self.connection = connection
+        self.host = host
         self.pinger = None
 
         self.dock = self.widgets["fingerTableDock"]
@@ -296,7 +298,7 @@ class UserInfoSection(Section):
             table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
             pingLabel = gtk.Label(_("Connecting")+"...")
             pingLabel.props.xalign = 0
-            self.pinger = pinger = Pinger("freechess.org")
+            self.pinger = pinger = Pinger(self.host)
             def callback (pinger, pingtime):
                 if type(pingtime) == str:
                     pingLabel.set_text(pingtime)
@@ -656,7 +658,7 @@ class SeekTabSection (ParrentListSection):
             del self.messages[index]
         
     def onClearSeeksClicked (self, button):
-        print >> self.connection.client, "unseek"
+        self.connection.client.run_command("unseek")
         self.widgets["clearSeeksButton"].set_sensitive(False)
     
     def row_activated (self, treeview, path, view_column):
@@ -1171,7 +1173,7 @@ class AdjournedTabSection (ParrentListSection):
                                                       gametype=game.game_type)
             def callback (infobar, response):
                 if response == gtk.RESPONSE_ACCEPT:
-                    print >> self.connection.client, "match %s" % player.name
+                    self.connection.client.run_command("match %s" % player.name)
                 elif response == gtk.RESPONSE_HELP:
                     self.connection.adm.queryMoves(game)
                 del self.messages[player]
@@ -1991,7 +1993,7 @@ class Messages (Section):
         label.set_line_wrap(True)
         def response_cb (infobar, response):
             if response == gtk.RESPONSE_YES:
-                print >> self.connection.client, "unseek"
+                self.connection.client.run_command("unseek")
         message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb)
         message.add_button(InfoBarMessageButton(gtk.STOCK_YES, gtk.RESPONSE_YES))
         message.add_button(InfoBarMessageButton(gtk.STOCK_NO, gtk.RESPONSE_NO))

@@ -1,5 +1,6 @@
 import re
 import socket
+import time
 import threading
 
 from gobject import GObject, SIGNAL_RUN_FIRST
@@ -58,6 +59,9 @@ class Connection (GObject, PooledThread):
         self.consolehandler = None
         self.predictions = set()
         self.predictionsDict = {}
+
+        # Are we connected to FatICS ?
+        self.FatICS = False
     
     def expect (self, prediction):
         self.predictions.add(prediction)
@@ -174,6 +178,8 @@ class FICSConnection (Connection):
                     self.username = match.groups()[0]
                     break
             
+            self.FatICS = self.client.FatICS
+            
             self.client.name = self.username
             
             self.client.readuntil("fics%")
@@ -183,24 +189,26 @@ class FICSConnection (Connection):
             self.client.setStripLines(True)
             self.client.setLinePrefix("fics%")
             
-            if not self.registred:
-                print >> self.client, "set seek 0"
+            self.client.run_command("iset block 1")
+            self.client.setBlockModeOn()
+            
+            self.client.run_command("iset defprompt 1")
             
             # The helper just wants only player and game notifications
             if self.conn:
-                print >> self.client, "set open 0"
-                print >> self.client, "set shout 0"
-                print >> self.client, "set cshout 0"
-                print >> self.client, "set seek 0"
-                print >> self.client, "set tell 0"
-                print >> self.client, "set chanoff 1"
-                print >> self.client, "set gin 1"
-                print >> self.client, "set availinfo 1"
-                print >> self.client, "iset allresults 1"
+                self.client.run_command("set open 0")
+                self.client.run_command("set shout 0")
+                self.client.run_command("set cshout 0")
+                self.client.run_command("set seek 0")
+                self.client.run_command("set tell 0")
+                self.client.run_command("set chanoff 1")
+                self.client.run_command("set gin 1")
+                self.client.run_command("set availinfo 1")
+                self.client.run_command("iset allresults 1")
                 
                 # New ivar pin
                 # http://www.freechess.org/Help/HelpFiles/new_features.html
-                print >> self.client, "iset pin 1"
+                self.client.run_command("iset pin 1")
                 
                 self.hm = HelperManager(self, self.conn)
 
@@ -213,7 +221,7 @@ class FICSConnection (Connection):
                 while not self.lvm.isReady():
                     self.client.handleSomeText(self.predictions, self.consolehandler)
                 self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
-                
+
                 # FIXME: Some managers use each other to avoid regexp collapse. To
                 # avoid having to init the in a specific order, connect calls should
                 # be moved to a "start" function, so all managers would be in
@@ -234,7 +242,7 @@ class FICSConnection (Connection):
                 self.games.start()
 
                 # disable setting iveriables from console
-                self.lvm.setVariable("lock", True)
+                self.lvm.setVariable("lock", 1)
                 
             self.connecting = False
             self.connected = True
@@ -243,9 +251,12 @@ class FICSConnection (Connection):
                 self.emit("connected")
 
             def keep_alive():
-                print >> self.client, "date"
-                threading.Timer(30*60, keep_alive).start()
-            keep_alive()
+                while(True):
+                    self.client.run_command("date")
+                    time.sleep(59*60)
+            keep_alive_thread = threading.Thread(target = keep_alive)
+            keep_alive_thread.daemon = True
+            keep_alive_thread.start()
         
         finally:
             self.connecting = False
@@ -276,7 +287,7 @@ class FICSConnection (Connection):
         self.emit("disconnecting")
         if self.isConnected():
             try:
-                print >> self.client, "quit"
+                self.client.run_command("quit")
             except Exception, e:
                 for errortype in (IOError, LogOnError, EOFError,
                                   socket.error, socket.gaierror, socket.herror):
