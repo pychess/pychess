@@ -412,7 +412,7 @@ class PyChess:
                 newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (no_debug, glock_debug, thread_debug, chess_file):
+def run (no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port):
     PyChess(chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
@@ -426,5 +426,11 @@ def run (no_debug, glock_debug, thread_debug, chess_file):
     log.debug("Started\n")
     if thread_debug:
         start_thread_dump()
+
+    if ics_host:
+        ICLogon.host = ics_host
+
+    if ics_port:
+        ICLogon.port = ics_port
     
     gtk.main()

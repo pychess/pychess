@@ -96,13 +96,13 @@ class ChatManager (GObject):
         # http://code.google.com/p/pychess/issues/detail?id=376
         # and can be removed when conversion to FICS block mode is done
         self.connection.lvm.setVariable("Lang", "English")
-        self.connection.lvm.setVariable("kibitz", "0")
-        self.connection.lvm.setVariable("ctell", "1")
-        self.connection.lvm.setVariable("tell", "1")
-        self.connection.lvm.setVariable("height", "240")
+        self.connection.lvm.setVariable("kibitz", 0)
+        self.connection.lvm.setVariable("ctell", 1)
+        self.connection.lvm.setVariable("tell", 1)
+        self.connection.lvm.setVariable("height", 240)
         
-        print >> self.connection.client, "inchannel %s" % self.connection.username
-        print >> self.connection.client, "help channel_list"
+        self.connection.client.run_command("inchannel %s" % self.connection.username)
+        self.connection.client.run_command("help channel_list")
         
         self.getChannelsLock = threading.Semaphore()
         self.getChannelsLock.acquire()
@@ -210,7 +210,7 @@ class ChatManager (GObject):
         self.emit("channelLog", self.currentLogChannel, time, handle, text)
     
     def onChannelLogBreak (self, match):
-        print >> self.connection.client, "xtell chlog Next"
+        self.connection.client.run_command("xtell chlog Next")
     
     
     def convTime (self, h, m, s):
@@ -240,26 +240,26 @@ class ChatManager (GObject):
         """ Channel can be channel_id, shout or c-shout """
         assert 1 <= minutes <= 120
         # Using the chlog bot
-        print >> self.connection.client, "xtell chlog show %s -t %d" % (channel,minutes)
+        self.connection.client.run_command("xtell chlog show %s -t %d" % (channel,minutes))
     
     def getPlayersChannels (self, player):
-        print >> self.connection.client, "inchannel %s" % player
+        self.connection.client.run_command("inchannel %s" % player)
     
     def getPeopleInChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
             people = self.connection.players.get_online_playernames()
             self.emit('recievedNames', channel, people)
-        print >> self.connection.client, "inchannel %s" % channel
+        self.connection.client.run_command("inchannel %s" % channel)
     
     def joinChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            self.connection.lvm.setVariable(channel, True)
-        print >> self.connection.client, "+channel %s" % channel
+            self.connection.lvm.setVariable(channel, 1)
+        self.connection.client.run_command("+channel %s" % channel)
     
     def removeChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            self.connection.lvm.setVariable(channel, False)
-        print >> self.connection.client, "-channel %s" % channel
+            self.connection.lvm.setVariable(channel, 0)
+        self.connection.client.run_command("-channel %s" % channel)
     
     
     def mayTellChannel (self, channel):
@@ -269,32 +269,32 @@ class ChatManager (GObject):
     
     def tellPlayer (self, player, message):
         message = self.entityEncode(message)
-        print >> self.connection.client, "tell %s %s" % (player, message)
+        self.connection.client.run_command("tell %s %s" % (player, message))
     
     def tellChannel (self, channel, message):
         message = self.entityEncode(message)
         if channel == CHANNEL_SHOUT:
-            print >> self.connection.client, "shout %s" % message
+            self.connection.client.run_command("shout %s" % message)
         elif channel == CHANNEL_CSHOUT:
-            print >> self.connection.client, "cshout %s" % message
+            self.connection.client.run_command("cshout %s" % message)
         else:
-            print >> self.connection.client, "tell %s %s" % (channel, message)
+            self.connection.client.run_command("tell %s %s" % (channel, message))
     
     def tellAll (self, message):
         message = self.entityEncode(message)
-        print >> self.connection.client, "shout %s" % message
+        self.connection.client.run_command("shout %s" % message)
     
     def tellGame (self, gameno, message):
         message = self.entityEncode(message)
-        print >> self.connection.client, "xkibitz %s %s" % (gameno, message)
+        self.connection.client.run_command("xkibitz %s %s" % (gameno, message))
     
     def tellOpponent (self, message):
         message = self.entityEncode(message)
-        print >> self.connection.client, "say %s" % message
+        self.connection.client.run_command("say %s" % message)
     
     def tellBughousePartner (self, message):
         message = self.stripChars(message)
-        print >> self.connection.client, "ptell %s" % message
+        self.connection.client.run_command("ptell %s" % message)
     
     def tellUser (self, player, message):
         IS_TD = False
@@ -304,7 +304,7 @@ class ChatManager (GObject):
                 chunk = message[i:i+MAX_COM_SIZE]
                 chunk = chunk.replace("\n", "\\n")
                 chunk = self.entityEncode(chunk)
-                print >> self.connection.client, "qell %s %s" % (player, chunk)
+                self.connection.client.run_command("qell %s %s" % (player, chunk))
         else:
             for line in message.strip().split("\n"):
                 self.tellPlayer(player, line)

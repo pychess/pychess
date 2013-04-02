@@ -38,8 +38,8 @@ class Prediction:
     def __repr__ (self):
         return "<Prediction to %s>" % self.callback.__name__
 
-RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
+RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
 
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp):
@@ -128,6 +128,13 @@ class FromToPrediction (Prediction):
                 return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
+
+BLOCK_START = chr(21)        # \U
+BLOCK_SEPARATOR = chr(22)    # \V
+BLOCK_END = chr(23)          # \W
+BLOCK_POSE_START = chr(24)   # \X
+BLOCK_POSE_END = chr(25)     # \Y
+
 class PredictionsTelnet:
     def __init__ (self, telnet):
         self.telnet = telnet
@@ -135,6 +142,9 @@ class PredictionsTelnet:
         
         self.__stripLines = True
         self.__linePrefix = None
+        
+        self.__block_mode = False
+        self.__command_id = 0
     
     def getStripLines(self):
         return self.__stripLines
@@ -147,6 +157,9 @@ class PredictionsTelnet:
 
     def setLinePrefix(self, value):
         self.__linePrefix = value
+
+    def setBlockModeOn(self):
+        self.__block_mode = True
 
     def handleSomeText (self, predictions, consolehandler):
         # The prediations list may be changed at any time, so to avoid
@@ -161,11 +174,18 @@ class PredictionsTelnet:
                 line = line[len(self.getLinePrefix()):]
                 if self.getStripLines():
                     line = line.lstrip()
-        
+
         origLine = line
+        
+        if line.startswith(BLOCK_START):
+            command_id, command_code, line = line[1:].split(BLOCK_SEPARATOR)
+            
         if self.getStripLines():
-            line = line.strip()
+            line = line.rstrip()
             log.debug(line+"\n", (repr(self.telnet), "lines"))
+
+        if line.endswith(BLOCK_END):
+            line = line[:-1]
         
         if self.__state:
             prediction = self.__state
@@ -195,8 +215,13 @@ class PredictionsTelnet:
                     consolehandler.handle(line)
                 log.debug(origLine, (repr(self.telnet), "nonmatched"))
     
-    def write(self, str):
-        return self.telnet.write(str)
+    def run_command(self, text):
+        if self.__block_mode:
+            self.__command_id += 1
+            text = "%s %s\n" % (self.__command_id, text)
+            return self.telnet.write(text)
+        else:
+            return self.telnet.write("%s\n" % text)
     
     def close (self):
         self.telnet.close()

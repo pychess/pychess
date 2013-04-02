@@ -8,6 +8,10 @@ import re
 import socket
 import webbrowser
 
+
+host = None
+port = None
+
 dialog = None
 def run():
     global dialog
@@ -155,7 +159,7 @@ class ICLogon:
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):
-        self.lounge = ICLounge(connection, self.helperconn)
+        self.lounge = ICLounge(connection, self.helperconn, self.host)
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout", lambda iclounge: self.onDisconnected(None))
@@ -182,15 +186,19 @@ class ICLogon:
             username = self.widgets["nameEntry"].get_text()
             password = self.widgets["passEntry"].get_text()
         
-        ports = self.widgets["portsEntry"].get_text()
-        ports = map(int, re.findall("\d+", ports))
-        if not 5000 in ports: ports.append(5000)
-        if not 23 in ports: ports.append(23)
+        if port:
+            ports = (port,)
+        else:
+            ports = self.widgets["portsEntry"].get_text()
+            ports = map(int, re.findall("\d+", ports))
+            if not 5000 in ports: ports.append(5000)
+            if not 23 in ports: ports.append(23)
         self.showConnecting()
 
-
-        self.connection = FICSConnection("freechess.org", ports, username, password)
-        self.helperconn = FICSConnection("freechess.org", ports, "guest", "", conn=self.connection)
+        self.host = host if host is not None else "freechess.org"
+        
+        self.connection = FICSConnection(self.host, ports, username, password)
+        self.helperconn = FICSConnection(self.host, ports, "guest", "", conn=self.connection)
         self.helperconn.start()
 
         glock.glock_connect(self.connection, "connected", self.onConnected)

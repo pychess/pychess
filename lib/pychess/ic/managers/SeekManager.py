@@ -38,25 +38,27 @@ class SeekManager (GObject):
         self.connection.expect_line (self.on_seek_add, "<sn> (.+)")
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         
-        self.connection.lvm.setVariable("seekinfo", True)
-        self.connection.lvm.setVariable("seekremove", True)
-        self.connection.lvm.setVariable("showownseek", True)
+        self.connection.lvm.setVariable("seekinfo", 1)
+        self.connection.lvm.setVariable("seekremove", 1)
+        self.connection.lvm.setVariable("showownseek", 1)
         
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
         log.debug("SeekManager.seek: %s %s %s %s %s %s %s\n" % \
             (startmin, incsec, game_type, rated, str(ratings), color, manual))
-        rchar = rated and "r" or "u"
+        rchar = "r" if rated else "u"
         if color != None:
             cchar = color == WHITE and "w" or "b"
         else: cchar = ""
         manual = "m" if manual else ""
-        s = "seek %d %d %s %s %d-%d %s" % \
-            (startmin, incsec, rchar, cchar, ratings[0], ratings[1], manual)
+        s = "seek %d %d %s %s %s" % (startmin, incsec, rchar, cchar, manual)
         if isinstance(game_type, VariantGameType):
             s += " " + game_type.seek_text
-        print s        
-        print >> self.connection.client, s
+        if not self.connection.FatICS:
+            s += " %d-%d" % (ratings[0], ratings[1])
+        
+        #print s        
+        self.connection.client.run_command(s)
     
     ###
     
@@ -75,7 +77,21 @@ class SeekManager (GObject):
             if key == "tp":
                 try:
                     seek["gametype"] = GAME_TYPES[value]
-                except KeyError: return
+                except KeyError:
+                    if self.connection.FatICS and value == "chess":
+                        # TODO: remove when fixed in FatICS
+                        expected_time = int(seek["t"]) + int(seek["i"])*2/3
+                        if expected_time == 0:
+                            value = "untimed"
+                        elif expected_time < 3:
+                            value = "lightning"
+                        elif expected_time < 15:
+                            value = "blitz"
+                        else:
+                            value = "standard"
+                        seek["gametype"] = GAME_TYPES[value]
+                    else:
+                        return
             if key == "rr":
                 seek["rmin"], seek["rmax"] = value.split("-")
                 seek["rmin"] = int(seek["rmin"])
