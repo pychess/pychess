@@ -9,6 +9,7 @@ from urlparse import urlparse
 
 import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
+from gtk.gdk import keyval_from_name
 
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
@@ -20,6 +21,7 @@ from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets import LogDialog
 from pychess.widgets.discovererDialog import DiscovererDialog
+from pychess.widgets.BorderBox import BorderBox
 from pychess.widgets import gamewidget
 from pychess.widgets import gamenanny
 from pychess.widgets import ionest
@@ -32,6 +34,13 @@ from pychess.Savers import png
 from pychess.ic import ICLogon
 #from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
+
+leftkeys  = map(keyval_from_name, ("Left", "KP_Left"))
+rightkeys = map(keyval_from_name, ("Right", "KP_Right"))
+upkeys    = map(keyval_from_name, ("Up", "KP_Up"))
+downkeys  = map(keyval_from_name, ("Down", "KP_Down"))
+homekeys  = map(keyval_from_name, ("Home", "KP_Home"))
+endkeys   = map(keyval_from_name, ("End", "KP_End"))
 
 ################################################################################
 # gameDic - containing the gamewidget:gamemodel of all open games              #
@@ -68,13 +77,35 @@ class GladeHandlers:
                     elif event.keyval == gtk.keysyms.Page_Down:
                         gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
 
-        # game move input to help crazyhouse testing
-        #gmwidg = gamewidget.cur_gmwidg()
-        #if gmwidg is not None:
-            #board_control = gmwidg.board
-            #keyname = gtk.gdk.keyval_name(event.keyval)
-            #board_control.key_pressed(keyname)
-            #gmwidg.status(board_control.keybuffer)
+        gmwidg = gamewidget.cur_gmwidg()
+        if gmwidg is not None:
+            for panel in gmwidg.panels:
+                focused = panel.get_focus_child()
+                # Do nothing in chat panel
+                if focused is not None and isinstance(focused, BorderBox):
+                    return
+
+            keyname = gtk.gdk.keyval_name(event.keyval)
+            
+            # Enter moves with keyboard
+            board_control = gmwidg.board
+            board_control.key_pressed(keyname)
+            gmwidg.status(board_control.keybuffer)
+            
+            # Navigate on boardview with arrow keys
+            if event.keyval in leftkeys:
+                gmwidg.board.view.showPrevious()
+            elif event.keyval in rightkeys:
+                gmwidg.board.view.showNext()
+            elif event.keyval in upkeys:
+                gmwidg.board.view.shown -= 2
+            elif event.keyval in downkeys:
+                gmwidg.board.view.shown += 2
+            elif event.keyval in homekeys:
+                gmwidg.board.view.showFirst()
+            elif event.keyval in endkeys:
+                gmwidg.board.view.showLast()
+            return True
     
     def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel

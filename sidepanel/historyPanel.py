@@ -8,9 +8,6 @@ from pychess.System.glock import glock_connect
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import toSAN, toFAN
 
-from gtk.gdk import keyval_from_name
-leftkeys = map(keyval_from_name,("Left", "KP_Left"))
-rightkeys = map(keyval_from_name,("Right", "KP_Right"))
 
 __title__ = _("Move History")
 __active__ = True
@@ -63,11 +60,6 @@ class Sidepanel:
         self.right.get_selection().connect('changed', self.on_selection_changed,
                                            self.right, 1)
         
-        widgets.connect_signals ({
-            "on_treeview2_key_press_event":lambda w,e:self.key_press_event(1,e),
-            "on_treeview3_key_press_event":lambda w,e:self.key_press_event(2,e)
-        })
-        
         # Lock scrolling
         
         scrollwin = widgets.get_object("panel")
@@ -113,12 +105,6 @@ class Sidepanel:
         
         board = self.boardview.model.boards[ply]
         self.boardview.setShownBoard(board)
-    
-    def key_press_event (self, col, event):
-        if event.keyval in leftkeys:
-            self.boardview.shown -= 1
-        elif event.keyval in rightkeys:
-            self.boardview.shown += 1
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"

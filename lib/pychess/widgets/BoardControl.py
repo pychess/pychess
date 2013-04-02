@@ -215,7 +215,11 @@ class BoardControl (gtk.EventBox):
         elif keyname == "Return":
             color = self.view.model.boards[-1].color
             board = self.view.model.getBoardAtPly(self.view.shown, self.view.variation)
-            move = parseAny(board, self.keybuffer)
+            try:
+                move = parseAny(board, self.keybuffer)
+            except:
+                self.keybuffer = ""
+                return
             if validate(board, move):
                 self.emit("piece_moved", move, color)
             self.keybuffer = ""
