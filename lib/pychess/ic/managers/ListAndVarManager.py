@@ -24,7 +24,7 @@ class ListAndVarManager:
                 "-- (\w+) list: ([1-9]\d*) \w+ --",
                 "(?:\w+ *)+$")
         
-        print >> self.connection.client, "showlist"
+        self.connection.client.run_command("showlist")
         
         # Variables
         self.variablesBackup = {}
@@ -34,10 +34,11 @@ class ListAndVarManager:
         
         self.connection.expect_fromplus (self.onVariables,
                 "((?:Interface v|V)ariable settings) of (\w+):",
-                "(?:\w*=\w+ *)*$")
+                "(?:\w+=(?:\w+|\?) *)*$")
         
-        print >> self.connection.client, "variables"
-        print >> self.connection.client, "ivariables"
+        # The order of next two is important to FatICS !
+        self.connection.client.run_command("ivariables")
+        self.connection.client.run_command("variables")
         
         self.connection.connect("disconnecting", self.stop)
         
@@ -47,7 +48,11 @@ class ListAndVarManager:
         atexit.register(self.stop, self.connection)
 
     def isReady (self):
-        return self.listLock._Semaphore__value and self.varLock._Semaphore__value
+        # FatICS showlist output is not well formed yet
+        if self.connection.FatICS:
+            return self.varLock._Semaphore__value
+        else:
+            return self.listLock._Semaphore__value and self.varLock._Semaphore__value
     
     def stop (self, connection):
         if not self.isReady():
@@ -76,7 +81,7 @@ class ListAndVarManager:
         self.personalLists.clear()
         for line in [m.group(0) for m in matchlist[1:] if m.group(0)]:
             name, _, public_personal = line.split()
-            print >> self.connection.client, "showlist %s" % name
+            self.connection.client.run_command("showlist %s" % name)
             if public_personal == "PUBLIC":
                 self.publicLists[name] = set()
             else:
@@ -130,9 +135,9 @@ class ListAndVarManager:
         if not self.varLock._Semaphore__value and self.variablesBackup:
             self.varLock.release()
     
-    def autoFlagNotify(self, none):
-        self.setVariable('autoflag', conf.get('autoCallFlag',False))
-        print 'notify flag', conf.get('autoCallFlag',False)
+    def autoFlagNotify(self):
+        self.setVariable('autoflag', int(conf.get('autoCallFlag',False)))
+        #print 'notify flag', conf.get('autoCallFlag',False)
     
     # User methods
     
@@ -146,13 +151,13 @@ class ListAndVarManager:
     def addToList (self, listName, value):
         self.listLock.acquire()
         self.listLock.release()
-        print >> self.connection.client, "+%s %s" % (listName, value)
+        self.connection.client.run_command("+%s %s" % (listName, value))
         #self.lists[listName].append(value)
     
     def removeFromList (self, listName, value):
         self.listLock.acquire()
         self.listLock.release()
-        print >> self.connection.client, "-%s %s" % (listName, value)
+        self.connection.client.run_command("-%s %s" % (listName, value))
         #self.lists[listName].append(value)
     
     
@@ -167,8 +172,8 @@ class ListAndVarManager:
         self.varLock.acquire()
         self.varLock.release()
         if name in self.ivariables:
-            print >> self.connection.client, "iset %s %s" % (name, value)
+            self.connection.client.run_command("iset %s %s" % (name, value))
             self.ivariables[name] = value
         else:
-            print >> self.connection.client, "set %s %s" % (name, value)
+            self.connection.client.run_command("set %s %s" % (name, value))
             self.variables[name] = value

@@ -106,7 +106,7 @@ class ConsoleView (gtk.VPaned):
         if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
             if not event.state & gtk.gdk.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
-                print >> self.connection.client, buffer.props.text
+                self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, my=True)
                 

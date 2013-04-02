@@ -85,6 +85,9 @@ glock_debug = False
 thread_debug = False
 
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
+ics_host = None
+ics_port = None
+
 try:
     import argparse
 except ImportError:
@@ -102,6 +105,10 @@ else:
         help='turn on glock debugging output (WARNING: creates alot of output)')
     parser.add_argument('--thread-debug', action='store_true',
         help='turn on thread debugging output')
+    parser.add_argument('--ics_host', action='store',
+        help='the hostname of internet chess server (default is freechess.org)')
+    parser.add_argument('--ics_port', action='store', type=int,
+        help='the connection port of internet chess server (default is 5000)')
     parser.add_argument('chess_file', nargs='?', metavar='chessfile',
         help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
     
@@ -110,9 +117,11 @@ else:
     glock_debug = args.glock_debug
     thread_debug = args.thread_debug
     chess_file = args.chess_file
+    ics_host = args.ics_host
+    ics_port = args.ics_port
     
 ###############################################################################
 # Let's rumble!
 
 import pychess.Main
-pychess.Main.run(no_debug, glock_debug, thread_debug, chess_file)
+pychess.Main.run(no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port)

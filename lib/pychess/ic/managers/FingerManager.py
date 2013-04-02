@@ -236,7 +236,7 @@ class FingerManager (GObject):
                 "Finger of %s:" % names,
                 "$|".join(fingerLines))
                 
-        self.connection.lvm.setVariable("nowrap", True)
+        self.connection.lvm.setVariable("nowrap", 1)
         
         # We don't use this. Rather we use BoardManagers "gameEnded", after
         # which we do a refinger. This is to ensure not only rating, but also
@@ -332,11 +332,11 @@ class FingerManager (GObject):
         self.emit("ratingAdjusted", type, new)
     
     def finger (self, user):
-        print >> self.connection.client, "finger %s" % user
+        self.connection.client.run_command("finger %s" % user)
     
     def setFingerNote (self, note, message):
         assert 1 <= note <= 10
-        print >> self.connection.client, "set %d %s" % (note, message)
+        self.connection.client.run_command("set %d %s" % (note, message))
     
     def setBusyMessage (self, message):
         """ Like set busy is really busy right now. """

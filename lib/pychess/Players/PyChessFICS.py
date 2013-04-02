@@ -151,7 +151,7 @@ class PyChessFICS(PyChess):
         self.connection.em.connect("onIllegalMove", self.__onAmbiguousMove)
         
         self.connection.adm.queryAdjournments()
-        self.connection.lvm.setVariable("autoflag", True)
+        self.connection.lvm.setVariable("autoflag", 1)
         
         self.connection.fm.setFingerNote(1,
             "PyChess is the chess engine bundled with the PyChess %s " % pychess.VERSION +
@@ -230,7 +230,7 @@ class PyChessFICS(PyChess):
             if text.strip() == self.password or (not self.password and text == "none"):
                 self.sudos.add(name)
                 self.tellHome("%s gained sudo access" % name)
-                print >> self.connection.client, self.waitingForPassword
+                self.connection.client.run_command(self.waitingForPassword)
             else:
                 chatManager.tellPlayer(name, "Wrong password")
                 self.tellHome("%s failed sudo access" % name)

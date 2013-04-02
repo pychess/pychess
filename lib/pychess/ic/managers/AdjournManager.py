@@ -108,13 +108,13 @@ class AdjournManager (GObject):
             self.queryAdjournments()
     
     def queryAdjournments (self):
-        print >> self.connection.client, "stored"
+        self.connection.client.run_command("stored")
     
     def queryMoves (self, game):
-        print >> self.connection.client, "smoves %s" % game.opponent.name
+        self.connection.client.run_command("smoves %s" % game.opponent.name)
     
     def challenge (self, playerName):
-        print >> self.connection.client, "match %s" % playerName
+        self.connection.client.run_command("match %s" % playerName)
     
     def resign (self, game):
         """ This is (and draw and abort) are possible even when one's
@@ -123,28 +123,28 @@ class AdjournManager (GObject):
             log.warn("AdjournManager.resign: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.resign: resigning adjourned game=%s\n" % game)
-        print >> self.connection.client, "resign %s" % game.opponent.name
+        self.connection.client.run_command("resign %s" % game.opponent.name)
     
     def draw (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.draw: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.draw: offering sdraw for adjourned game=%s\n" % game)
-        print >> self.connection.client, "sdraw %s" % game.opponent.name
+        self.connection.client.run_command("sdraw %s" % game.opponent.name)
     
     def abort (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.abort: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.abort: offering sabort for adjourned game=%s\n" % game)
-        print >> self.connection.client, "sabort %s" % game.opponent.name
+        self.connection.client.run_command("sabort %s" % game.opponent.name)
     
     def resume (self, game):
         if not game.opponent.adjournment:
             log.warn("AdjournManager.resume: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.resume: offering resume for adjourned game=%s\n" % game)
-        print >> self.connection.client, "match %s" % game.opponent.name
+        self.connection.client.run_command("match %s" % game.opponent.name)
     
 #(a)  Users who have more than 15 stored games are restricted from starting new
 #games.  If this situation happens to you, review your stored games and see
