@@ -36,15 +36,17 @@ class TimeSeal:
 
         self.connected = False
         self.closed = False
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.stateinfo = None
         
+        self.sock.settimeout(10)
         try:
-            sock.connect((address,port))
-        except socket.error, (err, desc):
-            if err != errno.EINPROGRESS:
+            self.sock.connect((address,port))
+        except socket.error, e:
+            if e.errno != errno.EINPROGRESS:
                 raise
-        self.sock = sock
+        self.sock.settimeout(None)
+        
         self.buf = ''
         self.writebuf = ''
         
