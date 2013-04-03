@@ -137,8 +137,11 @@ class FICSConnection (Connection):
                 try:
                     self.client.open(self.host, port)
                 except socket.error, e:
-                    if e.args[0] != 111 or i+1 == len(self.ports):
+                    log.debug("Failed to open port %d %s\n" % (port, e), (self.host, "raw"))
+                    if i+1 == len(self.ports):
                         raise
+                    else:
+                        continue
                 else:
                     break
             
