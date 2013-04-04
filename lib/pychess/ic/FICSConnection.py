@@ -189,7 +189,6 @@ class FICSConnection (Connection):
             
             self.emit('connectingMsg', _("Setting up environment"))
             self.client = PredictionsTelnet(self.client)
-            self.client.setStripLines(True)
             self.client.setLinePrefix("fics%")
             
             self.client.run_command("iset block 1")
