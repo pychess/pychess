@@ -275,6 +275,9 @@ dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
 
 class PyChess:
     def __init__(self, chess_file):
+        self.hg_rev = ""
+        self.hg_date = ""
+        
         self.initGlade()
         self.handleArgs(chess_file)
     
@@ -351,7 +354,9 @@ class PyChess:
             out = process.stdout.readline().split()
             if len(out)>=2:
                 comments = widgets["aboutdialog1"].get_comments()
-                widgets["aboutdialog1"].set_comments("rev. "+out[0]+"\n"+out[1] + "\n%s" % comments)
+                self.hg_rev = out[0]
+                self.hg_date = out[1]
+                widgets["aboutdialog1"].set_comments("rev. %s\n%s\n%s" % (self.hg_rev, self.hg_date, comments))
         
         with open(prefix.addDataPrefix("ARTISTS")) as f:
             widgets["aboutdialog1"].set_artists(f.read().splitlines())
@@ -413,7 +418,7 @@ class PyChess:
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
 def run (no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port):
-    PyChess(chess_file)
+    pychess = PyChess(chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
@@ -423,7 +428,7 @@ def run (no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port):
     # Start logging
     Log.DEBUG = False if no_debug is True else True
     glock.debug = glock_debug
-    log.debug("Started\n")
+    log.debug("PyChess %s %s rev. %s %s started\n" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     if thread_debug:
         start_thread_dump()
 
