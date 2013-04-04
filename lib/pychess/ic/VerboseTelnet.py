@@ -139,21 +139,13 @@ class PredictionsTelnet:
     def __init__ (self, telnet):
         self.telnet = telnet
         self.__state = None
-        
-        self.__stripLines = True
         self.__linePrefix = None
-        
         self.__block_mode = False
         self.__command_id = 0
+        self._inReply = False
     
-    def getStripLines(self):
-        return self.__stripLines
-
     def getLinePrefix(self):
         return self.__linePrefix
-
-    def setStripLines(self, value):
-        self.__stripLines = value
 
     def setLinePrefix(self, value):
         self.__linePrefix = value
@@ -162,31 +154,44 @@ class PredictionsTelnet:
         self.__block_mode = True
 
     def handleSomeText (self, predictions, consolehandler):
+        line = self.telnet.readline().strip()
+
+        if self.__block_mode and self._inReply:
+            id, code, text = self._inReply
+            if line.endswith(BLOCK_END):
+                self._inReply = None
+                line = line[:-1]
+                self.handle_command_reply(id, code, text + "\n" + line)
+            else:
+                self._inReply = (id, code, text + "\n" + line)
+            self.parseNormalLine(line, predictions, consolehandler)
+            return
+        
+        if line.startswith(self.getLinePrefix()):
+            line = line[len(self.getLinePrefix())+1:]
+
+        if self.__block_mode:
+            if line.startswith(BLOCK_START):
+                line = line[1:]
+                id, code, text = line.split(BLOCK_SEPARATOR)
+                line = text
+                if text.endswith(BLOCK_END):
+                    line = text[:-1]
+                    self.handle_command_reply(id, code, line)
+                else:
+                    self._inReply = (id, code, line)
+                self.parseNormalLine(line, predictions, consolehandler)
+                return
+        
+        self.parseNormalLine(line, predictions, consolehandler)
+
+    def parseNormalLine(self, line, predictions, consolehandler):
         # The prediations list may be changed at any time, so to avoid
         # "changed size during iteration" errors, we make a shallow copy
         temppreds = copy(predictions)
-        
-        line = self.telnet.readline()
-        line = line.lstrip()
-        
-        if self.getLinePrefix() and self.getLinePrefix() in line:
-            while line.startswith(self.getLinePrefix()):
-                line = line[len(self.getLinePrefix()):]
-                if self.getStripLines():
-                    line = line.lstrip()
-
+        log.debug(line+"\n", (repr(self.telnet), "lines"))
         origLine = line
-        
-        if line.startswith(BLOCK_START):
-            command_id, command_code, line = line[1:].split(BLOCK_SEPARATOR)
-            
-        if self.getStripLines():
-            line = line.rstrip()
-            log.debug(line+"\n", (repr(self.telnet), "lines"))
 
-        if line.endswith(BLOCK_END):
-            line = line[:-1]
-        
         if self.__state:
             prediction = self.__state
             answer = self.__state.handle(line)
@@ -213,7 +218,7 @@ class PredictionsTelnet:
             else:
                 if consolehandler is not None:
                     consolehandler.handle(line)
-                log.debug(origLine, (repr(self.telnet), "nonmatched"))
+                log.debug(origLine+"\n", (repr(self.telnet), "nonmatched"))
     
     def run_command(self, text):
         if self.__block_mode:
@@ -222,6 +227,9 @@ class PredictionsTelnet:
             return self.telnet.write(text)
         else:
             return self.telnet.write("%s\n" % text)
+
+    def handle_command_reply(self, id, code, text):
+        log.debug("%s %s %s" % (id, code, text) + "\n", (repr(self.telnet), "command_reply"))
     
     def close (self):
         self.telnet.close()
