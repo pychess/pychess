@@ -185,7 +185,7 @@ class FICSConnection (Connection):
             
             self.client.name = self.username
             
-            self.client.readuntil("fics%")
+            self.client.readuntil("ics%")
             
             self.emit('connectingMsg', _("Setting up environment"))
             self.client = PredictionsTelnet(self.client)
