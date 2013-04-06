@@ -56,7 +56,6 @@ class Connection (GObject, PooledThread):
         self.connected = False
         self.connecting = False
         
-        self.consolehandler = None
         self.predictions = set()
         self.predictionsDict = {}
 
@@ -188,7 +187,7 @@ class FICSConnection (Connection):
             self.client.readuntil("ics%")
             
             self.emit('connectingMsg', _("Setting up environment"))
-            self.client = PredictionsTelnet(self.client)
+            self.client = PredictionsTelnet(self.client, self.predictions)
             self.client.setLinePrefix("fics%")
             
             self.client.run_command("iset block 1")
@@ -221,7 +220,7 @@ class FICSConnection (Connection):
                 # should be implemented into the FICSConnection somehow.
                 self.lvm = ListAndVarManager(self)
                 while not self.lvm.isReady():
-                    self.client.handleSomeText(self.predictions, self.consolehandler)
+                    self.client.handleSomeText()
                 self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
 
                 # FIXME: Some managers use each other to avoid regexp collapse. To
@@ -269,7 +268,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.handleSomeText(self.predictions, self.consolehandler)
+                    self.client.handleSomeText()
             
             except Exception, e:
                 if self.connected:

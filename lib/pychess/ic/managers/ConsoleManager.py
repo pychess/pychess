@@ -12,7 +12,7 @@ class ConsoleManager (GObject):
     def __init__ (self, connection):
         GObject.__init__(self)
         self.connection = connection
-        self.connection.consolehandler = ConsoleHandler(self.onConsoleMessage)
+        self.connection.client.consolehandler = ConsoleHandler(self.onConsoleMessage)
 
     def onConsoleMessage (self, line, prediction_name):
         self.emit("consoleMessage", line, prediction_name)

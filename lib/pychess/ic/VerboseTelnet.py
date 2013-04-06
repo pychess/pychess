@@ -136,8 +136,11 @@ BLOCK_POSE_START = chr(24)   # \X
 BLOCK_POSE_END = chr(25)     # \Y
 
 class PredictionsTelnet:
-    def __init__ (self, telnet):
+    def __init__ (self, telnet, predictions):
         self.telnet = telnet
+        self.predictions = predictions
+        self.consolehandler = None
+        
         self.__state = None
         self.__linePrefix = None
         self.__block_mode = False
@@ -153,18 +156,16 @@ class PredictionsTelnet:
     def setBlockModeOn(self):
         self.__block_mode = True
 
-    def handleSomeText (self, predictions, consolehandler):
+    def handleSomeText (self):
         line = self.telnet.readline().strip()
-
         if self.__block_mode and self._inReply:
             id, code, text = self._inReply
             if line.endswith(BLOCK_END):
                 self._inReply = None
                 line = line[:-1]
-                self.handle_command_reply(id, code, text + "\n" + line)
+                self.handle_command_reply(id, code, "%s\n%s" % (text, line))
             else:
-                self._inReply = (id, code, text + "\n" + line)
-            self.parseNormalLine(line, predictions, consolehandler)
+                self._inReply = (id, code, "%s\n%s" % (text, line))
             return
         
         if line.startswith(self.getLinePrefix()):
@@ -180,15 +181,11 @@ class PredictionsTelnet:
                     self.handle_command_reply(id, code, line)
                 else:
                     self._inReply = (id, code, line)
-                self.parseNormalLine(line, predictions, consolehandler)
                 return
         
-        self.parseNormalLine(line, predictions, consolehandler)
+        self.parseNormalLine(line)
 
-    def parseNormalLine(self, line, predictions, consolehandler):
-        # The prediations list may be changed at any time, so to avoid
-        # "changed size during iteration" errors, we make a shallow copy
-        temppreds = copy(predictions)
+    def parseNormalLine(self, line):
         log.debug(line+"\n", (repr(self.telnet), "lines"))
         origLine = line
 
@@ -200,28 +197,29 @@ class PredictionsTelnet:
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                if consolehandler is not None:
-                    consolehandler.handle(line, prediction.name)
+                if self.consolehandler is not None:
+                    self.consolehandler.handle(line, prediction.name)
                 return
         
         if not self.__state:
-            for prediction in temppreds:
+            for prediction in self.predictions:
                 answer = prediction.handle(line)
                 if answer != RETURN_NO_MATCH:
                     log.debug(line+"\n", (repr(self.telnet), repr(prediction.callback.__name__)))
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                    if consolehandler is not None:
-                        consolehandler.handle(line, prediction.name)
+                    if self.consolehandler is not None:
+                        self.consolehandler.handle(line, prediction.name)
                     break
             else:
-                if consolehandler is not None:
-                    consolehandler.handle(line)
+                if self.consolehandler is not None:
+                    self.consolehandler.handle(line)
                 log.debug(origLine+"\n", (repr(self.telnet), "nonmatched"))
     
     def run_command(self, text):
         if self.__block_mode:
+            # TODO: reuse id after command reply hadled
             self.__command_id += 1
             text = "%s %s\n" % (self.__command_id, text)
             return self.telnet.write(text)
@@ -229,6 +227,8 @@ class PredictionsTelnet:
             return self.telnet.write("%s\n" % text)
 
     def handle_command_reply(self, id, code, text):
+        for line in text.splitlines():
+            self.parseNormalLine(line)
         log.debug("%s %s %s" % (id, code, text) + "\n", (repr(self.telnet), "command_reply"))
     
     def close (self):
