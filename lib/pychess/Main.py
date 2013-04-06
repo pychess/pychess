@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import os
 import webbrowser
 import math
@@ -342,37 +344,39 @@ class PyChess:
         LogDialog.add_destroy_notify(lambda: widgets["log_viewer1"].set_active(0))
         
         #---------------------------------------------------------- About dialog
-        clb = widgets["aboutdialog1"].get_child().get_children()[1].get_children()[2]
-        widgets["aboutdialog1"].set_name(NAME)
-        #widgets["aboutdialog1"].set_position(gtk.WIN_POS_CENTER)
-        #widgets["aboutdialog1"].set_website_label(_("PyChess Homepage"))
-        link = widgets["aboutdialog1"].get_website()
-        widgets["aboutdialog1"].set_version(VERSION_NAME+" "+VERSION)
+        aboutdialog = widgets["aboutdialog1"]
+        clb = aboutdialog.get_child().get_children()[1].get_children()[2]
+        aboutdialog.set_name(NAME)
+        #aboutdialog.set_position(gtk.WIN_POS_CENTER)
+        #aboutdialog.set_website_label(_("PyChess Homepage"))
+        link = aboutdialog.get_website()
+        aboutdialog.set_copyright("Copyright © 2006-2013")
+        aboutdialog.set_version(VERSION_NAME+" "+VERSION)
         if os.path.isdir(prefix.addDataPrefix(".hg")):
             cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
             process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
             out = process.stdout.readline().split()
             if len(out)>=2:
-                comments = widgets["aboutdialog1"].get_comments()
+                comments = aboutdialog.get_comments()
                 self.hg_rev = out[0]
                 self.hg_date = out[1]
-                widgets["aboutdialog1"].set_comments("rev. %s\n%s\n%s" % (self.hg_rev, self.hg_date, comments))
+                aboutdialog.set_comments("rev. %s\n%s\n%s" % (self.hg_rev, self.hg_date, comments))
         
         with open(prefix.addDataPrefix("ARTISTS")) as f:
-            widgets["aboutdialog1"].set_artists(f.read().splitlines())
+            aboutdialog.set_artists(f.read().splitlines())
         with open(prefix.addDataPrefix("AUTHORS")) as f:
-            widgets["aboutdialog1"].set_authors(f.read().splitlines())
+            aboutdialog.set_authors(f.read().splitlines())
         with open(prefix.addDataPrefix("DOCUMENTERS")) as f:
-            widgets["aboutdialog1"].set_documenters(f.read().splitlines())
+            aboutdialog.set_documenters(f.read().splitlines())
         with open(prefix.addDataPrefix("TRANSLATORS")) as f:
-            widgets["aboutdialog1"].set_translator_credits(f.read())
+            aboutdialog.set_translator_credits(f.read())
 
         def callback(button, *args):
-            widgets["aboutdialog1"].hide()
+            aboutdialog.hide()
             return True
         clb.connect("activate", callback)
         clb.connect("clicked", callback)
-        widgets["aboutdialog1"].connect("delete-event", callback)
+        aboutdialog.connect("delete-event", callback)
 
         #---------------------------------------------------- RecentChooser
         def recent_item_activated (self):
