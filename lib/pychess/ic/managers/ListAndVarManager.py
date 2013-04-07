@@ -1,6 +1,8 @@
 import atexit
 from threading import Semaphore
 
+
+from pychess.ic.block_codes import BLKCMD_VARIABLES, BLKCMD_IVARIABLES
 from pychess.System import conf
 
 
@@ -32,8 +34,12 @@ class ListAndVarManager:
         self.ivariables = {}
         self.varLock = Semaphore(0)
         
+        self.connection.expect_fromplus (self.onIVariables,
+                "(Interface variable settings of \w+):",
+                "(?:\w+=(?:\w+|\?) *)*$")
+
         self.connection.expect_fromplus (self.onVariables,
-                "((?:Interface v|V)ariable settings) of (\w+):",
+                "(Variable settings of \w+):",
                 "(?:\w+=(?:\w+|\?) *)*$")
         
         # The order of next two is important to FatICS !
@@ -86,6 +92,8 @@ class ListAndVarManager:
                 self.publicLists[name] = set()
             else:
                 self.personalLists[name] = set()
+    # TODO: merge 3 regex
+    #onUpdateLists.BLKCMD = BLKCMD_SHOWLIST
     
     def onUpdateEmptyListitems (self, match):
         listName = match.groups()[0]
@@ -115,25 +123,32 @@ class ListAndVarManager:
         if not self.listLock._Semaphore__value and \
                 len(self.personalLists) == len(self.personalBackup):
             self.listLock.release()
+
+    # Interface variables
+
+    def onIVariables (self, matchlist):
+        name = matchlist[0]
+        for line in [m.group(0) for m in matchlist[1:] if m.group(0)]:
+            for kv in line.split():
+                k,v = kv.split("=")
+                self.ivariables[k] = v
+    onIVariables.BLKCMD = BLKCMD_IVARIABLES
     
     # Variables
     
     def onVariables (self, matchlist):
-        type, name = matchlist[0].groups()
-        isIvars = "interface" in type.lower()
+        name = matchlist[0]
         for line in [m.group(0) for m in matchlist[1:] if m.group(0)]:
             for kv in line.split():
                 k,v = kv.split("=")
-                if isIvars:
-                    self.ivariables[k] = v
-                else:
-                    self.variables[k] = v
-                    if k not in self.variablesBackup:
-                        self.variablesBackup[k] = v
+                self.variables[k] = v
+                if k not in self.variablesBackup:
+                    self.variablesBackup[k] = v
         # Unlock if people are waiting of the backup and we've got the normal
         # variable backup set. The interface variables automatically reset
         if not self.varLock._Semaphore__value and self.variablesBackup:
             self.varLock.release()
+    onVariables.BLKCMD = BLKCMD_VARIABLES
     
     def autoFlagNotify(self):
         self.setVariable('autoflag', int(conf.get('autoCallFlag',False)))

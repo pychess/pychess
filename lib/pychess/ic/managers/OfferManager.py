@@ -203,7 +203,6 @@ class OfferManager (GObject):
             (playerName, startmin, incsec, rchar, cchar)
         if isinstance(game_type, VariantGameType):
             s += " " + game_type.seek_text
-        print s
         self.connection.client.run_command(s)
     
     def offer (self, offer, curply):

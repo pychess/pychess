@@ -3,6 +3,7 @@ from gobject import *
 import re
 from time import time
 from pychess.ic import *
+from pychess.ic.block_codes import BLKCMD_FINGER
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
@@ -325,6 +326,7 @@ class FingerManager (GObject):
                 log.debug("Ignored fingerline: %s\n" % repr(match.group()))
         
         self.emit ("fingeringFinished", finger)
+    onFinger.BLKCMD = BLKCMD_FINGER
     
     def onRatingAdjust (self, match):
         # Notice: This is only recived for us, not for other persons we finger

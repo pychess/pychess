@@ -2,6 +2,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
+from pychess.ic.block_codes import BLKCMD_GAMES, BLKCMD_WHO
 from pychess.ic.FICSObjects import *
 from pychess.ic.managers.BoardManager import parse_reason
 from pychess.System.Log import log
@@ -91,6 +92,7 @@ class HelperManager (GObject):
                 player.ratings[gametype.rating_type].elo = rating
         
         self.connection.games.get(game)
+    on_game_list.BLKCMD = BLKCMD_GAMES
         
     def on_game_add (self, match):
         gameno, wname, bname, rated, game_type = match.groups()
@@ -183,6 +185,7 @@ class HelperManager (GObject):
 
     def on_player_whoI (self, match):
         self.on_player_connect(match)
+    on_player_whoI.BLKCMD = BLKCMD_WHO
     
     def on_player_who (self, match):
         for blitz, status, name, titles in whomatch_re.findall(match.string):

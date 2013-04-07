@@ -136,11 +136,13 @@ BLOCK_POSE_START = chr(24)   # \X
 BLOCK_POSE_END = chr(25)     # \Y
 
 class PredictionsTelnet:
-    def __init__ (self, telnet, predictions):
+    def __init__ (self, telnet, predictions, reply_cmd_dict):
         self.telnet = telnet
         self.predictions = predictions
+        self.reply_cmd_dict = reply_cmd_dict
+
         self.consolehandler = None
-        
+      
         self.__state = None
         self.__linePrefix = None
         self.__block_mode = False
@@ -185,7 +187,7 @@ class PredictionsTelnet:
         
         self.parseNormalLine(line)
 
-    def parseNormalLine(self, line):
+    def parseNormalLine(self, line, code=None):
         log.debug(line+"\n", (repr(self.telnet), "lines"))
         origLine = line
 
@@ -202,7 +204,8 @@ class PredictionsTelnet:
                 return
         
         if not self.__state:
-            for prediction in self.predictions:
+            preds = (self.reply_cmd_dict[code],) if code in self.reply_cmd_dict else self.predictions
+            for prediction in preds:
                 answer = prediction.handle(line)
                 if answer != RETURN_NO_MATCH:
                     log.debug(line+"\n", (repr(self.telnet), repr(prediction.callback.__name__)))
@@ -228,7 +231,7 @@ class PredictionsTelnet:
 
     def handle_command_reply(self, id, code, text):
         for line in text.splitlines():
-            self.parseNormalLine(line)
+            self.parseNormalLine(line, int(code))
         log.debug("%s %s %s" % (id, code, text) + "\n", (repr(self.telnet), "command_reply"))
     
     def close (self):
