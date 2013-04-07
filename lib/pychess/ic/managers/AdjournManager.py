@@ -4,6 +4,7 @@ from gobject import *
 
 from BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.ic import *
+from pychess.ic.block_codes import BLKCMD_SMOVES
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSPlayer
 from pychess.Utils.const import *
 from pychess.System.Log import log
@@ -99,6 +100,7 @@ class AdjournManager (GObject):
                                             in_progress=False)
         if game is None: return
         self.emit("adjournedGamePreview", game)
+    __onSmovesResponse.BLKCMD = BLKCMD_SMOVES
     
     def __onAdjournedGameResigned (self, match):
         self.queryAdjournments()

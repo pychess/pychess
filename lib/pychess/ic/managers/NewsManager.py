@@ -1,6 +1,8 @@
 import re
 from gobject import *
 
+from pychess.ic.block_codes import BLKCMD_NEWS
+
 days = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
 months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
 
@@ -50,3 +52,4 @@ class NewsManager (GObject):
         
         self.connection.expect_fromto (onFullNewsItem, re.escape(line), "Posted by.*")
         self.connection.client.run_command("news %s" % no)
+    onNewsItem.BLKCMD = BLKCMD_NEWS

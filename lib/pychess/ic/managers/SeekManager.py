@@ -2,6 +2,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
+from pychess.ic.block_codes import BLKCMD_SEEK, BLKCMD_UNSEEK
 from pychess.ic.FICSObjects import *
 from pychess.ic.managers.BoardManager import parse_reason
 from pychess.System.Log import log
@@ -34,8 +35,7 @@ class SeekManager (GObject):
         self.connection = connection
         
         self.connection.expect_line (self.on_seek_clear, "<sc>")
-        self.connection.expect_line (self.on_seek_add, "<s> (.+)")
-        self.connection.expect_line (self.on_seek_add, "<sn> (.+)")
+        self.connection.expect_line (self.on_seek_add, "<s(?:n?)> (.+)")
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         
         self.connection.lvm.setVariable("seekinfo", 1)
@@ -110,8 +110,8 @@ class SeekManager (GObject):
                 else: seek[key] = value
             elif key == "a":
                 seek["manual"] = value == "f" # Must be accepted manually
-        
         self.emit("addSeek", seek)
+    on_seek_add.BLKCMD = BLKCMD_SEEK
     
     def on_seek_clear (self, *args):
         self.emit("clearSeeks")
@@ -120,6 +120,8 @@ class SeekManager (GObject):
         for key in match.groups()[0].split(" "):
             if not key: continue
             self.emit("removeSeek", key)
+    on_seek_remove.BLKCMD = BLKCMD_UNSEEK
+
     
 if __name__ == "__main__":
     assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"

@@ -58,6 +58,7 @@ class Connection (GObject, PooledThread):
         
         self.predictions = set()
         self.predictionsDict = {}
+        self.reply_cmd_dict = {}
 
         # Are we connected to FatICS ?
         self.FatICS = False
@@ -65,10 +66,14 @@ class Connection (GObject, PooledThread):
     def expect (self, prediction):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
+        if hasattr(prediction.callback, "BLKCMD"):
+            self.reply_cmd_dict[prediction.callback.BLKCMD] = prediction
     
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
-
+        if hasattr(callback, "BLKCMD"):
+            self.reply_cmd_dict.pop(callback.BLKCMD)
+            
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
     
@@ -187,7 +192,7 @@ class FICSConnection (Connection):
             self.client.readuntil("ics%")
             
             self.emit('connectingMsg', _("Setting up environment"))
-            self.client = PredictionsTelnet(self.client, self.predictions)
+            self.client = PredictionsTelnet(self.client, self.predictions, self.reply_cmd_dict)
             self.client.setLinePrefix("fics%")
             
             self.client.run_command("iset block 1")
