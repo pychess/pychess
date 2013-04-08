@@ -88,6 +88,7 @@ class ConsoleView (gtk.VPaned):
         handle_id = self.connect("expose-event", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
+        self.writeView.grab_focus()
 
     
     def addMessage (self, text, my=False):
