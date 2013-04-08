@@ -100,9 +100,11 @@ class GladeHandlers:
             elif event.keyval in rightkeys:
                 gmwidg.board.view.showNext()
             elif event.keyval in upkeys:
-                gmwidg.board.view.shown -= 2
+                step = 2 if gmwidg.board.view.shown > gmwidg.board.view.model.lowply + 1 else 1
+                gmwidg.board.view.shown -= step
             elif event.keyval in downkeys:
-                gmwidg.board.view.shown += 2
+                step = 2 if gmwidg.board.view.shown < gmwidg.board.view.model.ply - 1 else 1
+                gmwidg.board.view.shown += step
             elif event.keyval in homekeys:
                 gmwidg.board.view.showFirst()
             elif event.keyval in endkeys:
