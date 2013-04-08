@@ -334,9 +334,10 @@ class PyChess:
         # method is very interesting.
         widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
         widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        # TODO: http://code.google.com/p/pychess/issues/detail?id=737
         # The following two should really be set in the glade file
-        widgets["menubar1"].set_events(widgets["menubar1"].get_events() | gtk.gdk.DRAG_STATUS)
-        widgets["Background"].set_events(widgets["Background"].get_events() | gtk.gdk.DRAG_STATUS)
+        #widgets["menubar1"].set_events(widgets["menubar1"].get_events() | gtk.gdk.DRAG_STATUS)
+        #widgets["Background"].set_events(widgets["Background"].get_events() | gtk.gdk.DRAG_STATUS)
         
         #=======================================================================
         # Init 'minor' dialogs
