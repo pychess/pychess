@@ -64,7 +64,7 @@ class ConsoleView (gtk.VPaned):
         self.textbuffer.create_tag("text", foreground="black")
         self.textbuffer.create_tag("mytext", foreground="darkblue")
 
-        sw = gtk.ScrolledWindow()
+        self.sw = sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         sw.set_shadow_type(gtk.SHADOW_NONE)
         uistuff.keepDown(sw)
@@ -110,6 +110,8 @@ class ConsoleView (gtk.VPaned):
                 self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, my=True)
+                adj = self.sw.get_vadjustment()
+                adj.set_value(adj.get_upper())
                 
                 for var in self.connection.lvm.variablesBackup:
                     if buffer.props.text == "set %s" % var:
