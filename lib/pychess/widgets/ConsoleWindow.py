@@ -7,6 +7,7 @@ import pango
 from gtk.gdk import keyval_from_name
 
 from BorderBox import BorderBox
+from pychess.System import glock
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 
@@ -92,16 +93,19 @@ class ConsoleView (gtk.VPaned):
 
     
     def addMessage (self, text, my=False):
-        tb = self.readView.get_buffer()
-        iter = tb.get_end_iter()
-        # Messages have linebreak before the text. This is opposite to log
-        # messages
-        if tb.props.text:
-            tb.insert(iter, "\n")
-        tb = self.readView.get_buffer()
-        tag = "mytext" if my else "text"
-        tb.insert_with_tags_by_name(iter, text, tag)
-    
+        glock.acquire()
+        try:
+            tb = self.readView.get_buffer()
+            iter = tb.get_end_iter()
+            # Messages have linebreak before the text. This is opposite to log
+            # messages
+            if tb.props.text:
+                tb.insert(iter, "\n")
+            tb = self.readView.get_buffer()
+            tag = "mytext" if my else "text"
+            tb.insert_with_tags_by_name(iter, text, tag)
+        finally:
+            glock.release()
    
     def onKeyPress (self, widget, event):
         if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
