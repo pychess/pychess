@@ -79,7 +79,6 @@ class SubProcess (gobject.GObject):
         
         self.subprocExitCode = (None, None)
         self.subprocFinishedEvent = threading.Event()
-        self.subprocFinishedEvent.clear()
         subprocesses.append(self)
         pool.start(self._wait4exit)
     

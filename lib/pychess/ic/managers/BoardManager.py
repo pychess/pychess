@@ -390,7 +390,6 @@ class BoardManager (GObject):
         
         self.ourGameno = gameno
         self.gamemodelStartedEvents[gameno] = threading.Event()
-        self.gamemodelStartedEvents[gameno].clear()
         self.emit("playGameCreated", game)
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
@@ -696,7 +695,6 @@ class BoardManager (GObject):
             self.queuedStyle12s[game.gameno] = []
             self.queuedEmits[game.gameno] = []
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
-            self.gamemodelStartedEvents[game.gameno].clear()
             self.connection.client.run_command("observe %d" % game.gameno)
             self.connection.client.run_command("moves %d" % game.gameno)
     
