@@ -150,7 +150,7 @@ class ListAndVarManager:
             self.varLock.release()
     onVariables.BLKCMD = BLKCMD_VARIABLES
     
-    def autoFlagNotify(self):
+    def autoFlagNotify(self, *args):
         self.setVariable('autoflag', int(conf.get('autoCallFlag',False)))
         #print 'notify flag', conf.get('autoCallFlag',False)
     
