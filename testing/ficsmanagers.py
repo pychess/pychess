@@ -43,7 +43,7 @@ class DummyConnection(Connection):
 class DummyVarManager:
     def setVariable (self, name, value):
         pass
-    def autoFlagNotify (self):
+    def autoFlagNotify (self, *args):
         pass
     
 class EmittingTestCase(unittest.TestCase):
