@@ -83,7 +83,7 @@ class Sidepanel:
         self.boardview.setShownBoard(board)
     
     def shown_changed (self, boardview, shown):
-        if not boardview.inMainLine():
+        if not boardview.shownIsMainLine():
             return
         row = shown - self.gamemodel.lowply
 
