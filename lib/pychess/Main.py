@@ -96,15 +96,13 @@ class GladeHandlers:
             
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
-                gmwidg.board.view.showPrevious()
+                gmwidg.board.view.showPrev()
             elif event.keyval in rightkeys:
                 gmwidg.board.view.showNext()
             elif event.keyval in upkeys:
-                step = 2 if gmwidg.board.view.shown > gmwidg.board.view.model.lowply + 1 else 1
-                gmwidg.board.view.shown -= step
+                gmwidg.board.view.showPrev(step=2)
             elif event.keyval in downkeys:
-                step = 2 if gmwidg.board.view.shown < gmwidg.board.view.model.ply - 1 else 1
-                gmwidg.board.view.shown += step
+                gmwidg.board.view.showNext(step=2)
             elif event.keyval in homekeys:
                 gmwidg.board.view.showFirst()
             elif event.keyval in endkeys:

@@ -84,7 +84,7 @@ class OpeningAdvisor(Advisor):
         
     def shown_changed (self, boardview, shown):
         m = boardview.model
-        b = m.getBoardAtPly(shown, boardview.variation)
+        b = m.getBoardAtPly(shown, boardview.shownVariationIdx)
         parent = self.empty_parent()
         
         openings = getOpenings(b.board)
@@ -153,7 +153,7 @@ class EngineAdvisor(Advisor):
         if not self.active:
             return
         
-        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.variation))
+        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.shownVariationIdx))
         self._create_new_expected_lines()
         
     def on_ready_for_options (self, engine):
@@ -287,7 +287,7 @@ class EndgameAdvisor(Advisor, PooledThread):
     def shown_changed (self, boardview, shown):
         self.parent = self.empty_parent()
         m = boardview.model
-        self.board = m.getBoardAtPly(shown, boardview.variation)
+        self.board = m.getBoardAtPly(shown, boardview.shownVariationIdx)
         self.queue.put(self.board.board)
 
     def on_scored(self, w, ret):
@@ -483,7 +483,7 @@ class Sidepanel:
     def shown_changed (self, boardview, shown):
         boardview.bluearrow = None
         
-        if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.variation)) == 0:
+        if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.shownVariationIdx)) == 0:
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
                 label = gtk.Label(_("In this position,\nthere is no legal move."))
