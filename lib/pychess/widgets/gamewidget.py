@@ -480,7 +480,7 @@ class GameWidget (gobject.GObject):
         endbut.props.has_tooltip = True
         endbut.connect("query-tooltip", tip, _("Jump to latest position"))
         startbut.connect("clicked", lambda w: board.view.showFirst())
-        backbut.connect("clicked", lambda w: board.view.showPrevious())
+        backbut.connect("clicked", lambda w: board.view.showPrev())
         forwbut.connect("clicked", lambda w: board.view.showNext())
         endbut.connect("clicked", lambda w: board.view.showLast())
         page_hbox.pack_start(startbut)

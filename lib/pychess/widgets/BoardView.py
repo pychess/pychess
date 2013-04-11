@@ -299,13 +299,16 @@ class BoardView (gtk.DrawingArea):
 
     def setShownBoard(self, board):
         """Set shown to the index of the given board in board list.
-        The board can belong to a different variationd, so
-        adjust the shown variation index when needed too.
+        It the board belongs to a different variationd,
+        adjust the shown variation index too.
+        If board is in the main line, reset the shown variation idx to 0 (the main line).
         """
         
         if board in self.model.variations[self.shownVariationIdx]:
             # if the board to be shown is in the current shown variation, we are ok
             self.shown = self.model.variations[self.shownVariationIdx].index(board) + self.model.lowply
+            if board in self.model.variations[0]:
+                self.shownVariationIdx = 0
         else:
             # else we have to go back first
             for vari in self.model.variations:
@@ -1319,14 +1322,26 @@ class BoardView (gtk.DrawingArea):
     
     def showFirst (self):
         self.shown = self.model.lowply
+        self.shownVariationIdx = 0
 
-    def showPrevious (self):
+    def showPrev (self, step=1):
         if self.shown > self.model.lowply:
-            self.shown -= 1
+            if self.shown - step > self.model.lowply:
+                self.shown -= step
+            else:
+                self.shown = self.model.lowply
+                
+            if self.model.getBoardAtPly(self.shown, self.shownVariationIdx) in self.model.variations[0]:
+                self.shownVariationIdx = 0
 
-    def showNext (self):
-        if self.shown < self.model.variations[self.shownVariationIdx][-1].ply:
-            self.shown += 1
+    def showNext (self, step=1):
+        maxply = self.model.variations[self.shownVariationIdx][-1].ply
+        if self.shown < maxply:
+            if self.shown + step < maxply:
+                self.shown += step
+            else:
+                self.shown = maxply
             
     def showLast (self):
-        self.shown = self.model.ply
+        maxply = self.model.variations[self.shownVariationIdx][-1].ply
+        self.shown = maxply
