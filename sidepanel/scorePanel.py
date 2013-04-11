@@ -109,7 +109,7 @@ class Sidepanel:
         print "----------------------"
         
     def shown_changed (self, boardview, shown):
-        if not boardview.inMainLine():
+        if not boardview.shownIsMainLine():
             return
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)

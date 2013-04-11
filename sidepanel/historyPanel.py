@@ -148,7 +148,7 @@ class Sidepanel:
         view.get_model().append([notat])
     
     def shown_changed (self, boardview, shown):
-        if not boardview.inMainLine():
+        if not boardview.shownIsMainLine():
             return
         if shown <= boardview.model.lowply:
             #print "Or is it me?"
