@@ -292,13 +292,13 @@ class Sidepanel(gtk.TextView):
                 parent.children.remove(child)
                 break
 
-        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation) in vari:
+        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx) in vari:
             self.boardview.setShownBoard(parent.pieceBoard)
         self.gamemodel.variations.remove(vari)
 
         for vari in self.gamemodel.variations:
             if parent.pieceBoard in vari:
-                self.boardview.variation = self.gamemodel.variations.index(vari)
+                self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
                 break
 
         self.update()
@@ -307,7 +307,7 @@ class Sidepanel(gtk.TextView):
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
-        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         start = None
         for ni in self.nodeIters:
             if ni["node"] == shown_board.board:
@@ -327,7 +327,7 @@ class Sidepanel(gtk.TextView):
 
         fan = conf.get("figuresInNotation", False)
         if self.boardview.shown >= self.gamemodel.lowply:
-            shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.variation)
+            shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         
         while True: 
             start = end_iter().get_offset()
