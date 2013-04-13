@@ -173,9 +173,15 @@ class PyChessCECP(PyChess):
                 
                 elif lines[0] == "usermove":
                     self.__stopSearching()
-                    move = parseAny (self.board, lines[1])
+                    try:
+                        move = parseAny (self.board, lines[1])
+                    except ParsingError, e:
+                        print "Error (unknown command):", lines[1]
+                        print self.board
+                        continue
                     if not validateMove(self.board, move):
                         print "Illegal move", lines[1]
+                        print self.board
                         continue
                     self.board.applyMove(move)
                     self.playingAs = self.board.color
@@ -313,6 +319,7 @@ class PyChessCECP(PyChess):
                         continue
                     if not validateMove(self.board, move):
                         print "Illegal move", lines[0]
+                        print self.board
                         continue
                     self.__stopSearching()
                     self.board.applyMove(move)

@@ -579,10 +579,10 @@ class LBoard:
             return "".join(strs)
     
     def __repr__ (self):
-        b = reprColor[self.color] + " "
+        b = "#" + reprColor[self.color] + " "
         b += self.reprCastling() + " "
         b += self.enpassant != None and reprCord[self.enpassant] or "-"
-        b += "\n"
+        b += "\n# "
         rows = [self.arBoard[i:i+8] for i in range(0,64,8)][::-1]
         for r, row in enumerate(rows):
             for i, piece in enumerate(row):
@@ -594,7 +594,7 @@ class LBoard:
                     b += sign
                 else: b += "."
                 b += " "
-            b += "\n"
+            b += "\n# "
         return b
     
     def asFen (self, enable_bfen=True):
