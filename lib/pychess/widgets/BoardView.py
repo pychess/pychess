@@ -299,7 +299,7 @@ class BoardView (gtk.DrawingArea):
 
     def setShownBoard(self, board):
         """Set shown to the index of the given board in board list.
-        It the board belongs to a different variationd,
+        If the board belongs to a different variationd,
         adjust the shown variation index too.
         If board is in the main line, reset the shown variation idx to 0 (the main line).
         """
