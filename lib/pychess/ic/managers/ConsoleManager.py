@@ -14,5 +14,5 @@ class ConsoleManager (GObject):
         self.connection = connection
         self.connection.client.consolehandler = ConsoleHandler(self.onConsoleMessage)
 
-    def onConsoleMessage (self, line, prediction_name):
-        self.emit("consoleMessage", line, prediction_name)
+    def onConsoleMessage (self, line, block_code):
+        self.emit("consoleMessage", line, block_code)

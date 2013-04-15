@@ -1,6 +1,5 @@
-#session
-
-import socket, errno
+import errno
+import socket
 import telnetlib
 import re
 import gobject
@@ -24,13 +23,13 @@ class TimeSeal:
     def __init__(self):
         self.name = ""
         
-    def open (self, address, port):
+    def open (self, host, port):
         if hasattr(self, "closed") and self.closed:
             return
         
         self.port = port
-        self.address = address
-        self.name = address
+        self.host = host
+        self.name = host
 
         self.FatICS = False
 
@@ -41,7 +40,7 @@ class TimeSeal:
         
         self.sock.settimeout(10)
         try:
-            self.sock.connect((address,port))
+            self.sock.connect((host, port))
         except socket.error, e:
             if e.errno != errno.EINPROGRESS:
                 raise
@@ -142,7 +141,7 @@ class TimeSeal:
         self.writebuf = self.writebuf[i+1:]
         
         logstr = "*"*len(str) if self.sensitive else str
-        log.info(logstr+"\n", (repr(self), "raw"))
+        log.info(logstr+"\n", (self.name, "raw"))
         str = self.encode(str)
         self.sock.send(str+"\n")
     
@@ -164,7 +163,7 @@ class TimeSeal:
             return
         
         if not self.connected:
-            log.debug(recv, (repr(self), "raw"))
+            log.debug(recv, (self.name, "raw"))
             self.buf += recv
             
             if "FatICS" in self.buf:
@@ -176,7 +175,7 @@ class TimeSeal:
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace("\r","")
-            log.debug(recv, (repr(self), "raw"))
+            log.debug(recv, (self.name, "raw"))
             
             for i in range(g_count):
                 print >> self, G_RESPONSE
@@ -191,9 +190,6 @@ class TimeSeal:
                     self.buf = self.buf[:start]
                     return i
             self.cook_some()
-    
-    def __repr__ (self):
-        return self.name
 
             
 

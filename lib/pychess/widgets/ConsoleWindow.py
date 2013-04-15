@@ -36,7 +36,7 @@ class ConsoleWindow:
     def showConsole(self, *widget):
         self.window.show_all()
     
-    def onConsoleMessage(self, com, line, prediction_name):
+    def onConsoleMessage(self, com, line, block_code):
         # beep
         if line == chr(7):
             sys.stdout.write("\a")

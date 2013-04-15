@@ -6,7 +6,7 @@ from pychess.System.Log import log
 from pychess.Savers.pgn import msToClockTimeTag
 from pychess.Utils.const import *
 from pychess.ic import *
-from pychess.ic.block_codes import BLKCMD_UNOBSERVE
+from pychess.ic.block_codes import BLKCMD_UNOBSERVE, BLKCMD_MOVES
 from pychess.ic.VerboseTelnet import *
 from pychess.ic.FICSObjects import *
 
@@ -316,7 +316,7 @@ class BoardManager (GObject):
             #else:
             # examine
             #    game = self.__createGame(gameno, wname, bname, wms, bms, fen)
-            #    self.observe(game)
+            #    self.examine(game)
 
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
@@ -637,7 +637,8 @@ class BoardManager (GObject):
         for emit in self.queuedEmits[game.gameno]:
             emit()        
         del self.queuedEmits[game.gameno]
-    
+    onObserveGameCreated.BLKCMD = BLKCMD_MOVES
+
     def onGameEnd (self, games, game):
         if game.gameno == self.ourGameno:
             if game.gameno in self.gamemodelStartedEvents:
@@ -697,11 +698,11 @@ class BoardManager (GObject):
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
             self.connection.client.run_command("observe %d" % game.gameno)
             self.connection.client.run_command("moves %d" % game.gameno)
-    
+
     def unobserve (self, game):
         if game.gameno is not None:
             self.connection.client.run_command("unobserve %d" % game.gameno)
-    
+
     def play (self, seekno):
         self.connection.client.run_command("play %s" % seekno)
     
