@@ -29,8 +29,9 @@ class AdjournManager (GObject):
         self.connection.expect_fromto (self.__onSmovesResponse,
                                        moveListHeader1Str,
 #                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
-                                        "\s*{.*(?:(?:[Gg]ame.*adjourned)|(?:Still in progress)).*}\s*\*")
-        
+                                        "\s*{.*(?:(?:[Gg]ame.*adjourned)|(?:Still in progress)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
+
+
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
                                         "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|[A-Z]\d+)\s+%s" %
