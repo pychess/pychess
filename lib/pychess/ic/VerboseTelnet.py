@@ -9,9 +9,9 @@ class ConsoleHandler():
     def __init__ (self, callback):
         self.callback = callback
     
-    def handle(self, line, prediction_name=None):
+    def handle(self, line, block_code=None):
         if line:
-            self.callback(line, prediction_name)
+            self.callback(line, block_code)
 
 class Prediction:
     def __init__ (self, callback, *regexps):
@@ -34,9 +34,6 @@ class Prediction:
     def __cmp__ (self, other):
         return self.callback == other.callback and \
                self.regexps == other.regexps
-    
-    def __repr__ (self):
-        return "<Prediction to %s>" % self.callback.__name__
 
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
@@ -119,6 +116,7 @@ class FromToPrediction (Prediction):
         else:
             match = self.regexps[1].match(line)
             if match:
+                #print "FromToPrediction %s (to) match: %s" % (self.name, line)
                 self.matchlist.append(match)
                 self.callback(self.matchlist)
                 del self.matchlist[:]
@@ -187,38 +185,38 @@ class PredictionsTelnet:
         
         self.parseNormalLine(line)
 
-    def parseNormalLine(self, line, code=None):
-        log.debug(line+"\n", (repr(self.telnet), "lines"))
+    def parseNormalLine(self, line, block_code=None):
+        log.debug(line+"\n", (self.telnet.name, "lines"))
         origLine = line
 
         if self.__state:
             prediction = self.__state
             answer = self.__state.handle(line)
             if answer != RETURN_NO_MATCH:
-                log.debug(line+"\n", (repr(self.telnet), repr(self.__state.callback.__name__)))
+                log.debug(line+"\n", (self.telnet.name, prediction.name))
             if answer in (RETURN_NO_MATCH, RETURN_MATCH):
                 self.__state = None
             if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                 if self.consolehandler is not None:
-                    self.consolehandler.handle(line, prediction.name)
+                    self.consolehandler.handle(line, block_code)
                 return
         
         if not self.__state:
-            preds = (self.reply_cmd_dict[code],) if code in self.reply_cmd_dict else self.predictions
+            preds = (self.reply_cmd_dict[block_code],) if block_code in self.reply_cmd_dict else self.predictions
             for prediction in preds:
                 answer = prediction.handle(line)
                 if answer != RETURN_NO_MATCH:
-                    log.debug(line+"\n", (repr(self.telnet), repr(prediction.callback.__name__)))
+                    log.debug(line+"\n", (self.telnet.name, prediction.name))
                 if answer == RETURN_NEED_MORE:
                     self.__state = prediction
                 if answer in (RETURN_MATCH, RETURN_NEED_MORE):
                     if self.consolehandler is not None:
-                        self.consolehandler.handle(line, prediction.name)
+                        self.consolehandler.handle(line, block_code)
                     break
             else:
                 if self.consolehandler is not None:
                     self.consolehandler.handle(line)
-                log.debug(origLine+"\n", (repr(self.telnet), "nonmatched"))
+                log.debug(origLine+"\n", (self.telnet.name, "nonmatched"))
     
     def run_command(self, text):
         if self.__block_mode:
@@ -232,7 +230,7 @@ class PredictionsTelnet:
     def handle_command_reply(self, id, code, text):
         for line in text.splitlines():
             self.parseNormalLine(line, int(code))
-        log.debug("%s %s %s" % (id, code, text) + "\n", (repr(self.telnet), "command_reply"))
+        log.debug("%s %s %s" % (id, code, text) + "\n", (self.telnet.name, "command_reply"))
     
     def close (self):
         self.telnet.close()
