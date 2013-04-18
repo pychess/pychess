@@ -2,7 +2,6 @@ import errno
 import socket
 import telnetlib
 import re
-import gobject
 import random
 import time
 import platform
