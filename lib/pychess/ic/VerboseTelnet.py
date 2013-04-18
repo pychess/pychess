@@ -1,8 +1,7 @@
-import socket
-import re, sre_constants
-from copy import copy
+import re
 
 from pychess.System.Log import log
+from pychess.ic.block_codes import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 
 
 class ConsoleHandler():
@@ -126,12 +125,6 @@ class FromToPrediction (Prediction):
                 return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
-
-BLOCK_START = chr(21)        # \U
-BLOCK_SEPARATOR = chr(22)    # \V
-BLOCK_END = chr(23)          # \W
-BLOCK_POSE_START = chr(24)   # \X
-BLOCK_POSE_END = chr(25)     # \Y
 
 class PredictionsTelnet:
     def __init__ (self, telnet, predictions, reply_cmd_dict):
