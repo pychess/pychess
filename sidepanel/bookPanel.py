@@ -84,6 +84,9 @@ class OpeningAdvisor(Advisor):
         
     def shown_changed (self, boardview, shown):
         m = boardview.model
+        if m.isPlayingICSGame():
+            return
+        
         b = m.getBoardAtPly(shown, boardview.shownVariationIdx)
         parent = self.empty_parent()
         
@@ -150,6 +153,10 @@ class EngineAdvisor(Advisor):
         return parent
     
     def shown_changed (self, boardview, shown):
+        m = boardview.model
+        if m.isPlayingICSGame():
+            return
+
         if not self.active:
             return
         
@@ -159,6 +166,10 @@ class EngineAdvisor(Advisor):
     def on_ready_for_options (self, engine):
         engineMax = self.engine.maxAnalysisLines()
         self.linesExpected   = min(conf.get("multipv", 1), engineMax)
+
+        m = self.boardview.model
+        if m.isPlayingICSGame():
+            return
 
         parent = self._create_new_expected_lines()
 
@@ -173,6 +184,10 @@ class EngineAdvisor(Advisor):
         self.shown_changed(self.boardview, self.boardview.shown)
     
     def on_analyze (self, engine, analysis):
+        m = self.boardview.model
+        if m.isPlayingICSGame():
+            return
+
         if not self.active:
             return
 
@@ -285,12 +300,19 @@ class EndgameAdvisor(Advisor, PooledThread):
             self.queue.task_done()
 
     def shown_changed (self, boardview, shown):
-        self.parent = self.empty_parent()
         m = boardview.model
+        if m.isPlayingICSGame():
+            return
+
+        self.parent = self.empty_parent()
         self.board = m.getBoardAtPly(shown, boardview.shownVariationIdx)
         self.queue.put(self.board.board)
 
     def on_scored(self, w, ret):
+        m = self.boardview.model
+        if m.isPlayingICSGame():
+            return
+
         board, endings = ret
         if board != self.board.board:
             return

@@ -234,6 +234,8 @@ class GameModel (GObject, PooledThread):
     def restart_analyzer (self, analyzer_type):
         self.remove_analyzer(analyzer_type)
         self.start_analyzer(analyzer_type)
+        if self.isPlayingICSGame():
+            self.pause_analyzer(analyzer_type)
     
     def setOpening(self):
         if self.ply > 40:
@@ -308,6 +310,14 @@ class GameModel (GObject, PooledThread):
             return True
         else:
             return False
+    
+    def isPlayingICSGame(self):
+        print self.players[0].__type__, self.players[1].__type__, self.status
+        if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
+            if self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE or \
+                self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE:
+                return True
+        return False
 
     ############################################################################
     # Offer management                                                         #
