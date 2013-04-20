@@ -315,6 +315,9 @@ class GameWidget (gobject.GObject):
             glock_connect(player, "name_changed", self.name_changed)
     
     def _set_arrow (self, analyzer_type, coordinates):
+        if self.gamemodel.isPlayingICSGame():
+            return
+
         if analyzer_type == HINT:
             arrow = self.board.view._set_greenarrow
         else:
