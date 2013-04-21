@@ -786,3 +786,11 @@ class GameModel (GObject, PooledThread):
         self.variations.append(head[:board0.ply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
+        return self.variations[-1]
+
+    def add_move2variation(self, board, move, shownVariationIdx):
+        new = board.move(move)
+        new.board.prev = board.board
+        board.board.next = new.board
+        self.variations[shownVariationIdx].append(new)
+        self.emit("variations_changed")
