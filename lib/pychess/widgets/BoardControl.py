@@ -221,7 +221,15 @@ class BoardControl (gtk.EventBox):
                 self.keybuffer = ""
                 return
             if validate(board, move):
-                self.emit("piece_moved", move, color)
+                if self.view.shownIsMainLine() and board.board.next is None:
+                    self.emit("piece_moved", move, color)
+                else:
+                    if board.board.next is None:
+                        self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
+                        self.view.shown += 1
+                    else:
+                        new_vari = self.view.model.add_variation(board, (move,))
+                        self.view.setShownBoard(new_vari[-1])
             self.keybuffer = ""
         elif keyname == "BackSpace":
             self.keybuffer = self.keybuffer[:-1] if self.keybuffer else ""
