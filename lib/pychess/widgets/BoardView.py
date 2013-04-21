@@ -1345,3 +1345,7 @@ class BoardView (gtk.DrawingArea):
     def showLast (self):
         maxply = self.model.variations[self.shownVariationIdx][-1].ply
         self.shown = maxply
+        
+    def backToMainLine(self):
+        while not self.shownIsMainLine():
+            self.showPrev()

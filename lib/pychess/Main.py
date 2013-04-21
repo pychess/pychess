@@ -96,7 +96,10 @@ class GladeHandlers:
             
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
-                gmwidg.board.view.showPrev()
+                if event.state & gtk.gdk.CONTROL_MASK:
+                    gmwidg.board.view.backToMainLine()
+                else:
+                    gmwidg.board.view.showPrev()
             elif event.keyval in rightkeys:
                 gmwidg.board.view.showNext()
             elif event.keyval in upkeys:
