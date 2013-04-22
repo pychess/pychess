@@ -782,7 +782,8 @@ class GameModel (GObject, PooledThread):
             if board0 in vari:
                 head = vari
                 break
-        
+                
+        variation[0] = board0
         self.variations.append(head[:board0.ply-self.lowply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
