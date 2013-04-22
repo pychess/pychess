@@ -587,10 +587,10 @@ class LBoard:
         for r, row in enumerate(rows):
             for i, piece in enumerate(row):
                 if piece != EMPTY:
-                    sign = reprSign[piece]
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
-                        sign = sign.upper()
-                    else: sign = sign.lower()
+                        sign = FAN_PIECES[1][piece]
+                    else:
+                        sign = FAN_PIECES[0][piece]
                     b += sign
                 else: b += "."
                 b += " "
