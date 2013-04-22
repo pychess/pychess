@@ -208,8 +208,10 @@ class BoardControl (gtk.EventBox):
         return self.currentState.leave(event.x, event.y)
 
     def key_pressed (self, keyname):
-        if keyname in "PNBRQKOox-12345678abcdefgh":
+        if keyname in "PNBRQKOox12345678abcdefgh":
             self.keybuffer += keyname
+        elif keyname == "minus":
+            self.keybuffer += "-"
         elif keyname == "at":
             self.keybuffer += "@"
         elif keyname == "Return":
