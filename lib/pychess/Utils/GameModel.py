@@ -783,14 +783,30 @@ class GameModel (GObject, PooledThread):
                 head = vari
                 break
         
-        self.variations.append(head[:board0.ply] + variation)
+        self.variations.append(head[:board0.ply-self.lowply] + variation)
         self.needsSave = True
         self.emit("variations_changed")
         return self.variations[-1]
 
-    def add_move2variation(self, board, move, shownVariationIdx):
+    def add_move2variation(self, board, move, variationIdx):
         new = board.move(move)
         new.board.prev = board.board
         board.board.next = new.board
-        self.variations[shownVariationIdx].append(new)
+
+        # Find the variation (low level lboard list) to append
+        cur_board = board.board
+        vari = None
+        while cur_board.prev is not None:
+            for child in cur_board.prev.next.children:
+                if isinstance(child, list) and cur_board in child:
+                    vari = child
+                    break
+            if vari is None:
+                cur_board = cur_board.prev
+            else:
+                break
+        vari.append(new.board)
+        
+        self.variations[variationIdx].append(new)
+        self.needsSave = True
         self.emit("variations_changed")
