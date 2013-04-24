@@ -90,12 +90,21 @@ class BoardControl (gtk.EventBox):
                 # Put back pawn moved be d'n'd
                 self.view.runAnimation(redrawMisc = False)
                 return
-        
+
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
-            move = Move(cord0, cord1, self.view.model.boards[-1], promotion)
-        self.emit("piece_moved", move, color)
+            move = Move(cord0, cord1, board, promotion)
+        
+        if self.view.shownIsMainLine() and board.board.next is None:
+            self.emit("piece_moved", move, color)
+        else:
+            if board.board.next is None:
+                self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
+                self.view.shown += 1
+            else:
+                new_vari = self.view.model.add_variation(board, (move,))
+                self.view.setShownBoard(new_vari[-1])
     
     def actionActivate (self, widget, key):
         """ Put actions from a menu or similar """
@@ -305,10 +314,6 @@ class BoardState:
         else:
             if (not 0 <= cord.x <= self.FILES-1) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
-        if self.view.model.status != RUNNING:
-            return False
-        if self.view.shown != self.view.model.ply:
-            return False
         return True
     
     def press (self, x, y):
