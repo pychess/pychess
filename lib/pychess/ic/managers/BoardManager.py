@@ -17,11 +17,15 @@ ratings = "\(\s*([0-9\ \-\+]{4}[P E]?|UNR)\)"
 
 weekdays = ("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
 months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
 # "Thu Oct 14, 20:36 PDT 2010"
 dates = "(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
     ("|".join(weekdays), "|".join(months))
 
-moveListHeader1Str = "%s %s vs. %s %s --- %s" % (names, ratings, names, ratings, dates)
+# "2010-10-14 20:36 UTC"
+datesFatICS = "(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
+
+moveListHeader1Str = "%s %s vs. %s %s --- (?:%s|%s)" % (names, ratings, names, ratings, dates, datesFatICS)
 moveListHeader1 = re.compile(moveListHeader1Str)
 moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
     ratedexp
@@ -313,10 +317,10 @@ class BoardManager (GObject):
             # observe, follow from console
             if game is not None:
                 self.observe(game)
-            #else:
-            # examine
-            #    game = self.__createGame(gameno, wname, bname, wms, bms, fen)
-            #    self.examine(game)
+            else:
+                if relation == IC_POS_OBSERVING:
+                    game = self.__createGame(gameno, wname, bname, wms, bms, fen)
+                    self.observe(game)
 
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
@@ -497,8 +501,15 @@ class BoardManager (GObject):
             index += 2
         header1 = matchlist[index] if isinstance(matchlist[index], str) \
             else matchlist[index].group()
-        wname, wrating, bname, brating, weekday, month, day, hour, minute, \
-            timezone, year =  moveListHeader1.match(header1).groups()
+
+        matches = moveListHeader1.match(header1).groups()
+        wname, wrating, bname, brating = matches[:4]
+        if self.connection.FatICS:
+            year, month, day, hour, minute, timezone =  matches[11:]
+        else:
+            weekday, month, day, hour, minute, timezone, year = matches[4:11]
+            month = months.index(month)+1
+
         wrating = self.parseRating(wrating)
         brating = self.parseRating(brating)
         rated, game_type, minutes, increment = \
@@ -586,7 +597,7 @@ class BoardManager (GObject):
         if year and month and day and hour and minute:
             pgnHead += [
                 ("Year", int(year)),
-                ("Month", months.index(month)+1),
+                ("Month", int(month)),
                 ("Day", int(day)),
                 ("Time", "%02d:%02d:00" % (int(hour), int(minute))),
             ]
