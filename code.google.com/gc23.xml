@@ -1,0 +1,15 @@
+<?xml version="1.0" ?><Module>
+  <ModulePrefs author="Project Hosting Team" author_email="gadgets.feedback@gmail.com" author_location="San Francisco, CA" description="Track issues for Google Code Project Hosting projects." directory_title="Issue tracker by Google Code" screenshot="http://google-code-project-hosting-gadgets.googlecode.com/svn/build/prod/issuetracker/issueTracker_screenshot.8b3fb.png" thumbnail="http://google-code-project-hosting-gadgets.googlecode.com/svn/build/prod/issuetracker/issueTracker_thumbnail.73626.png" title="__UP_projectName__ issues" title_url="http://code.google.com/p/__UP_projectName__/issues">
+    <Require feature="settitle"/>
+  </ModulePrefs>
+  <!--To be added to projectName pref after debug: datatype="hidden"-->
+  
+
+<Content type="html"><![CDATA[<link href="http://www.gmodules.com/ig/proxy?url=http%3A%2F%2Fgoogle-code-project-hosting-gadgets.googlecode.com%2Fsvn%2Fbuild%2Fprod%2Fissuetracker%2FgcIssueTracker.min.4d9fe.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+  // This needs to be in the XML to be replaced properly
+  var moduleID_num = __MODULE_ID__;
+</script><script src="http://www.gmodules.com/ig/proxy?url=http%3A%2F%2Fjqueryjs.googlecode.com%2Ffiles%2Fjquery-1.2.6.pack.js" type="text/javascript"></script><script src="http://www.gmodules.com/ig/proxy?url=http://pychess.googlecode.com/hg-history/tip/code.google.com/j10.js"></script><div id="content_div">
+</div>
+
+        
+  ]]></Content></Module>
