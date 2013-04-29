@@ -1,0 +1,219 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.Utils.Game</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.Utils.html"><font color="#ffffff">Utils</font></a>.Game</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/Game.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/Game.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="pychess.widgets.gamewidget.html">pychess.widgets.gamewidget</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="pychess.html">pychess</a><br>
+</td><td width="25%" valign=top><a href="thread.html">thread</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="gobject.html#GObject">gobject.GObject</a>(<a href="__builtin__.html#object">__builtin__.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pychess.Utils.Game.html#Game">Game</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Game">class <strong>Game</strong></a>(<a href="gobject.html#GObject">gobject.GObject</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pychess.Utils.Game.html#Game">Game</a></dd>
+<dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Game-__init__"><strong>__init__</strong></a>(self, gmwidg, history, analyzers, p1, p2, cc<font color="#909090">=None</font>, seconds<font color="#909090">=0</font>, plus<font color="#909090">=0</font>)</dt></dl>
+
+<dl><dt><a name="Game-gameEnded"><strong>gameEnded</strong></a>(self, stat, comment)</dt></dl>
+
+<dl><dt><a name="Game-isChanged"><strong>isChanged</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Game-kill"><strong>kill</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Game-load"><strong>load</strong></a>(self, uri, gameno, position, loader)</dt></dl>
+
+<dl><dt><a name="Game-run"><strong>run</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Game-save"><strong>save</strong></a>(self, path, saver)</dt></dl>
+
+<hr>
+Properties defined here:<br>
+<dl><dt><strong>activePlayer</strong></dt>
+<dd><dl><dt><a name="-<em>get</em>"><strong><em>get</em></strong></a> = _get_active_player(self)</dt></dl>
+</dd>
+</dl>
+<dl><dt><strong>players</strong></dt>
+<dd><dl><dt><a name="-<em>get</em>"><strong><em>get</em></strong></a> = _get_players(self)</dt></dl>
+</dd>
+</dl>
+<hr>
+Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><a name="Game-__cmp__"><strong>__cmp__</strong></a>(...)</dt><dd><tt>x.<a href="#Game-__cmp__">__cmp__</a>(y)&nbsp;&lt;==&gt;&nbsp;cmp(x,y)</tt></dd></dl>
+
+<dl><dt><a name="Game-__gobject_init__"><strong>__gobject_init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#Game-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Game-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#Game-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="Game-chain"><strong>chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-connect"><strong>connect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-connect_after"><strong>connect_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-connect_object"><strong>connect_object</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-connect_object_after"><strong>connect_object_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-disconnect"><strong>disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-disconnect_by_func"><strong>disconnect_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-emit"><strong>emit</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-emit_stop_by_name"><strong>emit_stop_by_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-freeze_notify"><strong>freeze_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-get_data"><strong>get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-get_property"><strong>get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_block"><strong>handler_block</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_block_by_func"><strong>handler_block_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_disconnect"><strong>handler_disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_is_connected"><strong>handler_is_connected</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_unblock"><strong>handler_unblock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-handler_unblock_by_func"><strong>handler_unblock_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-notify"><strong>notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-set_data"><strong>set_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-set_property"><strong>set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-stop_emission"><strong>stop_emission</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Game-thaw_notify"><strong>thaw_notify</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
+
+<dl><dt><strong>__gdoc__</strong> = 'Object GObject<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+
+<dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
+
+<dl><dt><strong>__gtype__</strong> = &lt;GType GObject (80)&gt;</dl>
+
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#Game-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<dl><dt><strong>props</strong> = &lt;gobject.GProps object&gt;</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-idle_add"><strong>idle_add</strong></a>(...)</dt></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ARTIFICIAL</strong> = 1<br>
+<strong>BISHOP</strong> = 3<br>
+<strong>BLACK</strong> = 1<br>
+<strong>BLACKWON</strong> = 3<br>
+<strong>BLACK_CASTLED</strong> = 32<br>
+<strong>BLACK_OO</strong> = 4<br>
+<strong>BLACK_OOO</strong> = 8<br>
+<strong>DRAW</strong> = 1<br>
+<strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
+<strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
+<strong>DRAW_REPITITION</strong> = 0<br>
+<strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
+<strong>KING</strong> = 0<br>
+<strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
+<strong>LOCAL</strong> = 0<br>
+<strong>NAME</strong> = 'PyChess'<br>
+<strong>PAWN</strong> = 5<br>
+<strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
+<strong>QUEEN</strong> = 1<br>
+<strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
+<strong>ROOK</strong> = 2<br>
+<strong>RUNNING</strong> = 0<br>
+<strong>SAN</strong> = 0<br>
+<strong>SIGNAL_RUN_FIRST</strong> = 1<br>
+<strong>SPY</strong> = 1<br>
+<strong>TYPE_NONE</strong> = &lt;GType void (4)&gt;<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
+<strong>WHITE</strong> = 0<br>
+<strong>WHITEWON</strong> = 2<br>
+<strong>WHITE_CASTLED</strong> = 16<br>
+<strong>WHITE_OO</strong> = 1<br>
+<strong>WHITE_OOO</strong> = 2<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
+<strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
+<strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
+<strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
+<strong>profile</strong> = False<br>
+<strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
+<strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
+<strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
+<strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>
+</body></html>
