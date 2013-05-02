@@ -1308,18 +1308,6 @@ class BoardView (gtk.DrawingArea):
         x, y = cord.cords
         return x % 2 + y % 2 == 1
     
-    def runWhenReady (self, func, *args):
-        """ As some pieces of pychess are quite eager to set the attributes of
-        BoardView, we can't always be sure, that BoardView has been painted once
-        before, and therefore self.sqaure has been set.
-        This might be doable in a smarter way... """
-        def do2():
-            if not self.square:
-                sleep(0.01)
-                return True
-            func(*args)
-        repeat(do2)
-    
     def showFirst (self):
         self.shown = self.model.lowply
         self.shownVariationIdx = 0
