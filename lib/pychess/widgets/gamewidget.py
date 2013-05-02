@@ -319,12 +319,10 @@ class GameWidget (gobject.GObject):
             return
 
         if analyzer_type == HINT:
-            arrow = self.board.view._set_greenarrow
+            self.board.view._set_greenarrow(coordinates)
         else:
-            arrow = self.board.view._set_redarrow
+            self.board.view._set_redarrow(coordinates)
             
-        self.board.view.runWhenReady(arrow, coordinates)
-    
     def _on_analyze (self, analyzer, analysis, analyzer_type):
         if len(analysis) >= 1 and analysis[0] is not None:
             moves = analysis[0][0]
