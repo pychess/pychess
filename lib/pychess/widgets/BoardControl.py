@@ -280,7 +280,6 @@ class BoardState:
             return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
     
     def transPoint (self, x, y):
-        if not self.view.square: return None
         xc, yc, square, s = self.view.square
         x, y = self.view.invmatrix.transform_point(x,y)
         y -= yc; x -= xc
@@ -294,7 +293,6 @@ class BoardState:
         return x if x>=0 else x-1, self.RANKS-y
     
     def point2Cord (self, x, y):
-        if not self.view.square: return None
         point = self.transPoint(x, y)
         if self.parent.variant == CrazyhouseChess:
             if not -2 <= int(point[0]) <= self.FILES+1 or not 0 <= int(point[1]) <= self.RANKS-1:
@@ -452,7 +450,6 @@ class ActiveState (BoardState):
         if piece.color != self.getBoard().color:
             return
         
-        if not self.view.square: return
         xc, yc, square, s = self.view.square
         co, si = self.view.matrix[0], self.view.matrix[1]
         point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
@@ -568,7 +565,6 @@ class LockedActiveState (LockedBoardState):
         if piece.color == self.getBoard().color:
             return
         
-        if not self.view.square: return
         xc, yc, square, s = self.view.square
         co, si = self.view.matrix[0], self.view.matrix[1]
         point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
