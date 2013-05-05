@@ -137,7 +137,7 @@ class BoardPreview:
         self.boardview.showFirst()
         
     def on_back_button (self, button):
-        self.boardview.showPrevious()
+        self.boardview.showPrev()
         
     def on_forward_button (self, button):
         self.boardview.showNext()
