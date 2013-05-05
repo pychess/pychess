@@ -5,6 +5,7 @@ from gobject import *
 import threading
 
 from pychess.System.prefix import addDataPrefix
+from pychess.System import glock
 from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny
@@ -16,7 +17,6 @@ from pychess.Variants.crazyhouse import CrazyhouseChess
 from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect, HOLDING_SHIFT
 from BoardView import join
-
 
 class BoardControl (gtk.EventBox):
     
@@ -54,10 +54,10 @@ class BoardControl (gtk.EventBox):
         self.normalState = NormalState(self)
         self.selectedState = SelectedState(self)
         self.activeState = ActiveState(self)
-        self.lockedState = LockedState(self)
+        self.lockedNormalState = LockedNormalState(self)
         self.lockedSelectedState = LockedSelectedState(self)
         self.lockedActiveState = LockedActiveState(self)
-        self.currentState = self.lockedState
+        self.currentState = self.lockedNormalState
         
         self.lockedPly = self.view.shown
         self.possibleBoards = {
@@ -75,22 +75,30 @@ class BoardControl (gtk.EventBox):
         for menu, conid in self.connections.iteritems():
             menu.disconnect(conid)
         self.connections = {}
+
+    def getPromotion(self):
+        color = self.view.model.boards[-1].color
+        promotion = None
+        glock.acquire()
+        try:
+            promotion = self.promotionDialog.runAndHide(color)
+        finally:
+            glock.release()
+        return promotion
         
-    def emit_move_signal (self, cord0, cord1):
+    def emit_move_signal (self, cord0, cord1, promotion=None):
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
-        promotion = QUEEN
-        if board[cord0].sign == PAWN and cord1.y in (0, self.RANKS-1):
-            res = self.promotionDialog.runAndHide(color)
-            if res != gtk.RESPONSE_DELETE_EVENT:
-                promotion = res
-            else:
+        
+        if promotion is None and board[cord0].sign == PAWN and cord1.y in (0, self.RANKS-1):
+            promotion = self.getPromotion()
+            if promotion is None:
                 # Put back pawn moved be d'n'd
                 self.view.runAnimation(redrawMisc = False)
                 return
-
+        
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
@@ -146,7 +154,7 @@ class BoardControl (gtk.EventBox):
             self.view.hover = None
             self.view.draggedPiece = None
             self.view.startAnimation()
-            self.currentState = self.lockedState
+            self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
     
@@ -160,7 +168,13 @@ class BoardControl (gtk.EventBox):
                     self.view.hover = None
                     self.view.draggedPiece = None
                     self.view.startAnimation()
-                self.currentState = self.lockedState
+
+                if self.currentState == self.selectedState:
+                    self.currentState = self.lockedSelectedState
+                elif self.currentState == self.activeState:
+                    self.currentState = self.lockedActiveState
+                else:
+                    self.currentState = self.lockedNormalState
             else:
                 if self.currentState == self.lockedSelectedState:
                     self.currentState = self.selectedState
@@ -174,10 +188,11 @@ class BoardControl (gtk.EventBox):
     def setStateSelected (self):
         self.stateLock.acquire()
         try:
-            if self.currentState in (self.lockedState, self.lockedSelectedState,
+            if self.currentState in (self.lockedNormalState, self.lockedSelectedState,
                                      self.lockedActiveState):
                 self.currentState = self.lockedSelectedState
             else:
+                self.view.setPremove(None, None, None, None)
                 self.currentState = self.selectedState
         finally:
             self.stateLock.release()
@@ -185,10 +200,11 @@ class BoardControl (gtk.EventBox):
     def setStateActive (self):
         self.stateLock.acquire()
         try:
-            if self.currentState in (self.lockedState, self.lockedSelectedState,
+            if self.currentState in (self.lockedNormalState, self.lockedSelectedState,
                                      self.lockedActiveState):
                 self.currentState = self.lockedActiveState
             else:
+                self.view.setPremove(None, None, None, None)
                 self.currentState = self.activeState
         finally:
             self.stateLock.release()
@@ -196,16 +212,17 @@ class BoardControl (gtk.EventBox):
     def setStateNormal (self):
         self.stateLock.acquire()
         try:
-            if self.currentState in (self.lockedState, self.lockedSelectedState,
+            if self.currentState in (self.lockedNormalState, self.lockedSelectedState,
                                      self.lockedActiveState):
-                self.currentState = self.lockedState
+                self.currentState = self.lockedNormalState
             else:
+                self.view.setPremove(None, None, None, None)
                 self.currentState = self.normalState
         finally:
             self.stateLock.release()
     
     def button_press (self, widget, event):
-        return self.currentState.press(event.x, event.y)
+        return self.currentState.press(event.x, event.y, event.button)
     
     def button_release (self, widget, event):
         return self.currentState.release(event.x, event.y)
@@ -247,15 +264,25 @@ class BoardControl (gtk.EventBox):
 
     def _genPossibleBoards(self, ply):
         possibleBoards = []
-        return possibleBoards
         curboard = self.view.model.getBoardAtPly(ply, self.view.shownVariationIdx)
         for lmove in lmovegen.genAllMoves(curboard.board):
             move = Move(lmove)
             board = curboard.move(move)
-            possibleBoards.append(board)        
+            possibleBoards.append(board)
         return possibleBoards
 
 class BoardState:
+    '''
+    There are 6 total BoardStates:
+    NormalState, ActiveState, SelectedState
+    LockedNormalState, LockedActiveState, LockedSelectedState
+
+    The board state is Locked while it is the opponents turn. The board state is not Locked during your turn.
+
+    Normal/Locked State - No pieces or cords are selected
+    Active State - A piece is currently being dragged by the mouse
+    Selected State - A cord is currently selected
+    '''
     def __init__ (self, board):
         self.parent = board
         self.view = board.view
@@ -314,7 +341,7 @@ class BoardState:
                 return False
         return True
     
-    def press (self, x, y):
+    def press (self, x, y, button):
         pass
     
     def release (self, x, y):
@@ -335,6 +362,11 @@ class BoardState:
             self.view.hover = None
 
 class LockedBoardState (BoardState):
+    '''
+    Parent of LockedNormalState, LockedActiveState, LockedSelectedState
+
+    The board is in one of the three Locked states during the opponent's turn.
+    '''
     def __init__ (self, board):
         BoardState.__init__(self, board)
     
@@ -344,8 +376,9 @@ class LockedBoardState (BoardState):
             Note: This doesn't always return the correct value, such as when 
             BoardControl.setLocked() has been called and we've begun a drag,
             but view.shown and BoardControl.lockedPly haven't been updated yet """
-        
-        if cord0 == None or cord1 == None: return False
+
+        if cord0 == None or cord1 == None:
+            return False
         if not self.parent.lockedPly in self.parent.possibleBoards:
             return False
         for board in self.parent.possibleBoards[self.parent.lockedPly]:
@@ -355,7 +388,11 @@ class LockedBoardState (BoardState):
                 return True
         return False
 
+
 class NormalState (BoardState):
+    '''
+    It is the human player's turn and no pieces or cords are selected.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -367,7 +404,7 @@ class NormalState (BoardState):
             return False
         return True
     
-    def press (self, x, y):
+    def press (self, x, y, button):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
         if self.isSelectable(cord):
@@ -376,6 +413,9 @@ class NormalState (BoardState):
             self.parent.setStateActive()
 
 class ActiveState (BoardState):
+    '''
+    It is the human player's turn and a piece is being dragged by the mouse.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -442,7 +482,7 @@ class ActiveState (BoardState):
     def motion (self, x, y):
         if not self.getBoard()[self.view.active]:
             return
-        
+
         BoardState.motion(self, x, y)
         fcord = self.view.active
         piece = self.getBoard()[fcord]
@@ -466,6 +506,9 @@ class ActiveState (BoardState):
             self.view.redraw_canvas(rect(paintBox), queue=True)
 
 class SelectedState (BoardState):
+    '''
+    It is the human player's turn and a cord is selected.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -475,7 +518,7 @@ class SelectedState (BoardState):
             return True
         return self.validate(self.view.selected, cord)
     
-    def press (self, x, y):
+    def press (self, x, y, button):
         cord = self.point2Cord(x,y)
         # Unselecting by pressing the selected cord, or marking the cord to be 
         # moved to. We don't unset self.view.selected, so ActiveState can handle
@@ -500,7 +543,10 @@ class SelectedState (BoardState):
             self.view.selected = None
             self.parent.setStateNormal()
 
-class LockedState (LockedBoardState):
+class LockedNormalState (LockedBoardState):
+    '''
+    It is the opponent's turn and no piece or cord is selected.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -515,7 +561,7 @@ class LockedState (LockedBoardState):
             return False
         return True
     
-    def press (self, x, y):
+    def press (self, x, y, button):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
         if self.isSelectable(cord):
@@ -523,7 +569,18 @@ class LockedState (LockedBoardState):
             self.view.active = cord
             self.parent.setStateActive()
 
+        # reset premove if mouse right-clicks or clicks one of the premove cords
+        if button == 3: #right-click
+            self.view.setPremove(None, None, None, None)
+            self.view.startAnimation()
+        elif cord == self.view.premove0 or cord == self.view.premove1:
+            self.view.setPremove(None, None, None, None)
+            self.view.startAnimation()
+
 class LockedActiveState (LockedBoardState):
+    '''
+    It is the opponent's turn and a piece is being dragged by the mouse.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -532,9 +589,35 @@ class LockedActiveState (LockedBoardState):
     def release (self, x, y):
         cord = self.point2Cord(x,y)
         if cord == self.view.active == self.view.selected == self.parent.selected_last:
-            # user clicked (press+release) same piece twice, so unselect it
+            # User clicked (press+release) same piece twice, so unselect it
             self.view.active = None
             self.view.selected = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.parent.setStateNormal()
+        elif self.parent.allowPremove and self.view.selected and self.isAPotentiallyLegalNextMove(self.view.selected, cord):
+            # In mixed locked selected/active state and user selects a valid premove cord
+            board = self.getBoard()
+            if board[self.view.selected].sign == PAWN and cord.y in (0, self.RANKS-1):
+                promotion = self.parent.getPromotion()
+            else:
+                promotion = None
+            self.view.setPremove(board[self.view.selected], self.view.selected, cord, self.view.shown+2, promotion)
+            self.view.selected = None
+            self.view.active = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.parent.setStateNormal()
+        elif self.parent.allowPremove and self.isAPotentiallyLegalNextMove(self.view.active, cord):
+            # User drags a piece to a valid premove square
+            board = self.getBoard()
+            if board[self.view.active].sign == PAWN and cord.y in (0, self.RANKS-1):
+                promotion = self.parent.getPromotion()
+            else:
+                promotion = None
+            self.view.setPremove(self.getBoard()[self.view.active], self.view.active, cord, self.view.shown+2, promotion)
+            self.view.selected = None
+            self.view.active = None
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
@@ -551,13 +634,13 @@ class LockedActiveState (LockedBoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
-        
+
         self.parent.selected_last = self.view.selected
     
     def motion (self, x, y):
         if not self.getBoard()[self.view.active]:
             return
-        
+
         BoardState.motion(self, x, y)
         fcord = self.view.active
         piece = self.getBoard()[fcord]
@@ -570,7 +653,7 @@ class LockedActiveState (LockedBoardState):
         point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
         if not point: return
         x, y = point
-        
+
         if piece.x != x or piece.y != y:
             if piece.x:
                 paintBox = self.view.cord2RectRelative(piece.x, piece.y)
@@ -581,6 +664,9 @@ class LockedActiveState (LockedBoardState):
             self.view.redraw_canvas(rect(paintBox), queue=True)
 
 class LockedSelectedState (LockedBoardState):
+    '''
+    It is the opponent's turn and a cord is selected.
+    '''
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
@@ -588,8 +674,8 @@ class LockedSelectedState (LockedBoardState):
         if self.getBoard()[cord] != None and \
                 self.getBoard()[cord].color != self.getBoard().color:
             return True
-        return False
-    
+        return self.isAPotentiallyLegalNextMove(self.view.selected, cord)
+
     def motion (self, x, y):
         cord = self.point2Cord(x, y)
         if self.lastMotionCord == cord:
@@ -600,7 +686,7 @@ class LockedSelectedState (LockedBoardState):
             self.view.hover = cord
         else: self.view.hover = None
     
-    def press (self, x, y):
+    def press (self, x, y, button):
         cord = self.point2Cord(x,y)
         # Unselecting by pressing the selected cord, or marking the cord to be 
         # moved to. We don't unset self.view.selected, so ActiveState can handle
@@ -620,3 +706,12 @@ class LockedSelectedState (LockedBoardState):
         else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
+
+        # reset premove if mouse right-clicks or clicks one of the premove cords
+        if button == 3: #right-click
+            self.view.setPremove(None, None, None, None)
+            self.view.startAnimation()
+        elif cord == self.view.premove0 or cord == self.view.premove1:
+            self.view.setPremove(None, None, None, None)
+            self.view.startAnimation()
+
