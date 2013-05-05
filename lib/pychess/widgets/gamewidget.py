@@ -503,11 +503,16 @@ class GameWidget (gobject.GObject):
         if len(self.tabcontent.child.get_children()) < 2:
             log.warn("GameWidget.setLocked: Not removing last tabcontent child\n")
             return
-        self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
-        if not locked:
-            self.tabcontent.child.pack_start(createImage(light_on), expand=False)
-        else: self.tabcontent.child.pack_start(createImage(light_off), expand=False)
-        self.tabcontent.show_all()
+        glock.acquire()
+        try:
+            self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
+            if not locked:
+                self.tabcontent.child.pack_start(createImage(light_on), expand=False)
+            else:
+                self.tabcontent.child.pack_start(createImage(light_off), expand=False)
+            self.tabcontent.show_all()
+        finally:
+            glock.release()
         log.debug("GameWidget.setLocked: %s: returning\n" % self.gamemodel.players)
     
     def setTabText (self, text):
