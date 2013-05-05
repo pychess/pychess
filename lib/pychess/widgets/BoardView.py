@@ -88,7 +88,6 @@ SCALE_ROTATED_BOARD = False
 CORD_PADDING = 1.5
 HOLDING_SHIFT = 0.5
 
-
 class BoardView (gtk.DrawingArea):
     
     __gsignals__ = {
@@ -139,6 +138,8 @@ class BoardView (gtk.DrawingArea):
         self._selected = None
         self._hover = None
         self._active = None
+        self._premove0 = None
+        self._premove1 = None
         self._redarrow = None
         self._greenarrow = None
         self._bluearrow = None
@@ -163,6 +164,8 @@ class BoardView (gtk.DrawingArea):
         self.rotationLock = Lock()
         
         self.draggedPiece = None  # a piece being dragged by the user
+        self.premovePiece = None
+        self.premovePromotion = None
     
     def game_started_after (self, model):
         self.emit("shown_changed", self.shown)
@@ -441,11 +444,22 @@ class BoardView (gtk.DrawingArea):
                 for x, piece in row.items():
                     if not piece: continue
                     if piece == self.draggedPiece: continue
+                    if piece == self.premovePiece:
+                        # if premove move is being made, the piece will already be sitting on the cord it needs to move to-
+                        # do not animate and reset premove to None
+                        if self.shown == self.premovePly:
+                            piece.x = None
+                            piece.y = None
+                            self.setPremove(None, None, None, None)
+                            continue
+                        # otherwise, animate premove piece moving to the premove cord rather than the cord it actually exists on
+                        elif self.premove0 and self.premove1:
+                            x = self.premove1.x
+                            y = self.premove1.y
                     
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
                             if piece.piece == KNIGHT:
-                                #print mod, x, piece.x
                                 newx = piece.x + (x-piece.x)*mod**(1.5)
                                 newy = piece.y + (y-piece.y)*mod
                             else:
@@ -466,7 +480,7 @@ class BoardView (gtk.DrawingArea):
                         else:
                             piece.x = newx
                             piece.y = newy
-                    
+
                     if piece.opacity < 1:
                         if piece.x != None:
                             px = piece.x
@@ -504,9 +518,10 @@ class BoardView (gtk.DrawingArea):
         
         finally:
             self.animationLock.release()
-        
+
+
         if redrawMisc:
-            for cord in (self.selected, self.hover, self.active):
+            for cord in (self.selected, self.active, self.premove0, self.premove1, self.hover):
                 if cord:
                     paintBox = join(paintBox, self.cord2RectRelative(cord))
             for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
@@ -516,10 +531,10 @@ class BoardView (gtk.DrawingArea):
             if self.lastMove:
                 paintBox = join(paintBox,
                                 self.paintBoxAround(self.lastMove))
-        
+
         if paintBox:
             self.redraw_canvas(rect(paintBox))
-        
+
         return paintBox and True or False
     
     def startAnimation (self):
@@ -802,13 +817,14 @@ class BoardView (gtk.DrawingArea):
     def drawPieces(self, context, r):
         pieces = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
         xc, yc, square, s = self.square
-        
+
         parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
         fgN = parseC(self.get_style().fg[gtk.STATE_NORMAL])
         fgS = fgN
         fgA = parseC(self.get_style().fg[gtk.STATE_ACTIVE])
         fgP = parseC(self.get_style().fg[gtk.STATE_PRELIGHT])
-        
+        fgM = fgN
+
         # As default we use normal foreground for selected cords, as it looks
         # less confusing. However for some themes, the normal foreground is so
         # similar to the selected background, that we have to use the selected
@@ -837,11 +853,12 @@ class BoardView (gtk.DrawingArea):
         # Draw standing pieces (Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
             for x, piece in row.items():
+                if piece == self.premovePiece:
+                    continue
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
                 if not intersects(rect(self.cord2RectRelative(x,y)), r):
                     continue
-                
                 if Cord(x,y) == self.selected:
                     context.set_source_rgb(*fgS)
                 elif Cord(x,y) == self.active:
@@ -849,17 +866,21 @@ class BoardView (gtk.DrawingArea):
                 elif Cord(x,y) == self.hover:
                     context.set_source_rgb(*fgP)
                 else: context.set_source_rgb(*fgN)
-                
+
                 self.__drawPiece(context, piece, x, y)
-        
-        context.set_source_rgb(*fgP)
-        
+
         # Draw moving or dragged pieces (Those with piece.x and piece.y != None)
+        context.set_source_rgb(*fgP)
         for y, row in enumerate(pieces.data):
             for x, piece in row.items():
                 if not piece or piece.x == None or piece.opacity < 1:
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
+
+        # Draw standing premove piece
+        context.set_source_rgb(*fgM)
+        if self.premovePiece and self.premovePiece.x == None and self.premove0 and self.premove1:
+                self.__drawPiece(context, self.premovePiece, self.premove1.x, self.premove1.y)
          
             
     ###############################
@@ -867,9 +888,15 @@ class BoardView (gtk.DrawingArea):
     ###############################
     
     def drawSpecial (self, context, redrawn):
+
+        light_blue = (0.550, 0.775, 0.950, 0.8)
+        dark_blue = (0.475, 0.700, 0.950, 0.5)
+
         used = []
         for cord, state in ((self.active, gtk.STATE_ACTIVE),
                             (self.selected, gtk.STATE_SELECTED),
+                            (self.premove0, gtk.STATE_SELECTED),
+                            (self.premove1, gtk.STATE_SELECTED),
                             (self.hover, gtk.STATE_PRELIGHT)):
             if not cord: continue
             if cord in used: continue
@@ -886,7 +913,13 @@ class BoardView (gtk.DrawingArea):
             if self.isLight(cord):
                 style = self.get_style().bg
             else: style = self.get_style().dark
-            context.set_source_color(style[state])
+            if cord == self.premove0 or cord == self.premove1:
+                if self.isLight(cord):
+                    context.set_source_rgba(*light_blue)
+                else:
+                    context.set_source_rgba(*dark_blue)
+            else:
+                context.set_source_color(style[state])
             context.fill()
     
     ###############################
@@ -1148,6 +1181,30 @@ class BoardView (gtk.DrawingArea):
     def _get_active (self):
         return self._active
     active = property(_get_active, _set_active)
+
+    def _set_premove0 (self, cord):
+        if self._premove0 == cord: return
+        if self._premove0:
+            r = rect(self.cord2RectRelative(self._premove0))
+            if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+        elif cord: r = rect(self.cord2RectRelative(cord))
+        self._premove0 = cord
+        self.redraw_canvas(r)
+    def _get_premove0 (self):
+        return self._premove0
+    premove0 = property(_get_premove0, _set_premove0)
+
+    def _set_premove1 (self, cord):
+        if self._premove1 == cord: return
+        if self._premove1:
+            r = rect(self.cord2RectRelative(self._premove1))
+            if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+        elif cord: r = rect(self.cord2RectRelative(cord))
+        self._premove1 = cord
+        self.redraw_canvas(r)
+    def _get_premove1 (self):
+        return self._premove1
+    premove1 = property(_get_premove1, _set_premove1)
     
     ################################
     #          Arrow vars          #
@@ -1337,3 +1394,10 @@ class BoardView (gtk.DrawingArea):
     def backToMainLine(self):
         while not self.shownIsMainLine():
             self.showPrev()
+
+    def setPremove(self, premovePiece, premove0, premove1, premovePly, promotion=None):
+        self.premovePiece = premovePiece
+        self.premove0 = premove0
+        self.premove1 = premove1
+        self.premovePly = premovePly
+        self.premovePromotion = promotion

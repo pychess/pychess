@@ -3,6 +3,8 @@ from Queue import Queue
 import gtk, gobject
 
 from pychess.Utils.const import *
+from pychess.Utils.logic import validate
+from pychess.Utils.Move import Move
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.System import glock, conf
@@ -133,6 +135,14 @@ class Human (Player):
     def makeMove (self, board1, move, board2):
         log.debug("Human.makeMove: move=%s, board1=%s board2=%s\n" % \
             (move, board1, board2))
+        if self.board.view.premovePiece and self.board.view.premove0 and self.board.view.premove1 and \
+            self.color == self.board.view.premovePiece.color:
+            if validate(board1, Move(self.board.view.premove0, self.board.view.premove1, board1, promotion=self.board.view.premovePromotion)):
+                log.debug("Human.makeMove: Setting move to premove %s %s\n" % \
+                    (self.board.view.premove0, self.board.view.premove1))
+                self.board.emit_move_signal(self.board.view.premove0, self.board.view.premove1, promotion=self.board.view.premovePromotion)
+            # reset premove
+            self.board.view.setPremove(None, None, None, None)
         self.gmwidg.setLocked(False)
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)

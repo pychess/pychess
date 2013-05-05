@@ -40,4 +40,4 @@ class PromotionDialog:
         self.dialog.hide()
         if res != gtk.RESPONSE_DELETE_EVENT:
             return [QUEEN,ROOK,BISHOP,KNIGHT][int(res)]
-        return res
+        return None
