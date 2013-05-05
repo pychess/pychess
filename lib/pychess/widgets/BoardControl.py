@@ -57,7 +57,7 @@ class BoardControl (gtk.EventBox):
         self.lockedNormalState = LockedNormalState(self)
         self.lockedSelectedState = LockedSelectedState(self)
         self.lockedActiveState = LockedActiveState(self)
-        self.currentState = self.lockedNormalState
+        self.currentState = self.normalState
         
         self.lockedPly = self.view.shown
         self.possibleBoards = {
@@ -104,10 +104,11 @@ class BoardControl (gtk.EventBox):
         else:
             move = Move(cord0, cord1, board, promotion)
         
-        if self.view.shownIsMainLine() and board.board.next is None:
+        if self.view.model.curplayer.__type__ == LOCAL and self.view.shownIsMainLine() and \
+           board.board.next is None and self.view.model.status == RUNNING:
             self.emit("piece_moved", move, color)
         else:
-            if board.board.next is None:
+            if board.board.next is None and not self.view.shownIsMainLine():
                 self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
                 self.view.shown += 1
             else:
@@ -157,11 +158,17 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
+
+    def getBoard (self):
+        return self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
+
+    def isLastPlayed(self, board):
+        return board == self.view.model.boards[-1]
     
     def setLocked (self, locked):
         self.stateLock.acquire()
         try:
-            if locked:
+            if locked and self.isLastPlayed(self.getBoard()) and self.view.model.status == RUNNING:
                 if self.view.model.status != RUNNING:
                     self.view.selected = None
                     self.view.active = None
