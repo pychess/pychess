@@ -451,30 +451,30 @@ class CECPEngine (ProtocolEngine):
         #    Strength system                               #
         #==================================================#
         #          Strength  Depth  Ponder  Time handicap  #
-        #    Easy  1         1      o       o              #
-        #          2         2      o       o              #
-        #          3         3      o       o              #
-        #    Semi  4         5      o       10,00%         #
-        #          5         7      o       20,00%         #
-        #          6         9      o       40,00%         #
-        #    Hard  7         o      x       80,00%         #
-        #          8         o      x       o              #
+        #          1         1      o       1,258%         #
+        #          2         2      o       1,584%         #
+        #          3         3      o       1.995%         #
+        #                                                  #
+        #         19         o      x       79,43%         #
+        #         20         o      x       o              #
         #==================================================#
     
     def setOptionStrength (self, strength, forcePonderOff):
         self.strength = strength
         
-        if 4 <= strength <= 7:
-            self.__setTimeHandicap(0.1 * 2**(strength-4))
+        if strength <= 19:
+            self.__setTimeHandicap(0.01 * 10**(strength/10.))
         
-        if strength <= 3:
+        if strength <= 18:
             self.__setDepth(strength)
-        elif strength <= 6:
-            self.__setDepth(5+(strength-4)*2)
+
+        # Crafty ofers 100 skill levels
+        if "crafty" in self.features["myname"].lower() and strength <= 19:
+            self.optionQueue.append("skill %s" % strength*5)
         
-        self.__setPonder(strength >= 7 and not forcePonderOff)
+        self.__setPonder(strength >= 19 and not forcePonderOff)
         
-        if strength == 8:
+        if strength == 20:
             self.optionQueue.append("egtb")
         else:
             self.optionQueue.append("random")
