@@ -293,13 +293,21 @@ class Sidepanel(gtk.TextView):
                 break
 
         if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx) in vari:
-            self.boardview.setShownBoard(parent.pieceBoard)
+            if parent.pieceBoard is None:
+                # variation without played move at game end 
+                self.boardview.setShownBoard(self.gamemodel.boards[-1])
+            else:
+                self.boardview.setShownBoard(parent.pieceBoard)
         self.gamemodel.variations.remove(vari)
 
-        for vari in self.gamemodel.variations:
-            if parent.pieceBoard in vari:
-                self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
-                break
+        if parent.pieceBoard is None:
+            self.boardview.shownVariationIdx = 0
+            parent.prev.next = None
+        else:
+            for vari in self.gamemodel.variations:
+                if parent.pieceBoard in vari:
+                    self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
+                    break
 
         self.update()
         self.gamemodel.needsSave = True
