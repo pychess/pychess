@@ -45,28 +45,15 @@ inotebook = load_icon(24, "stock_notebook", "computer")
 speople = load_icon(16, "stock_people", "system-users")
 snotebook = load_icon(16, "stock_notebook", "computer")
 
-skillToIcon = {
-    1: load_icon(16, "weather-clear"),
-    2: load_icon(16, "weather-few-clouds"),
-    3: load_icon(16, "weather-few-clouds"),
-    4: load_icon(16, "weather-overcast"),
-    5: load_icon(16, "weather-overcast"),
-    6: load_icon(16, "weather-showers"),
-    7: load_icon(16, "weather-showers"),
-    8: load_icon(16, "weather-storm"),
-}
-
+weather_icons = ("clear", "clear-night", "few-clouds", "few-clouds-night", "fog", "overcast", "severe-alert", "showers-scattered", "showers", "storm")
+skillToIcon = {}
 # Used by TaskerManager. Put here to help synchronization
-skillToIconLarge = {
-    1: load_icon(48, "weather-clear"),
-    2: load_icon(48, "weather-few-clouds"),
-    3: load_icon(48, "weather-few-clouds"),
-    4: load_icon(48, "weather-overcast"),
-    5: load_icon(48, "weather-overcast"),
-    6: load_icon(48, "weather-showers"),
-    7: load_icon(48, "weather-showers"),
-    8: load_icon(48, "weather-storm"),
-}
+skillToIconLarge = {}
+for i, icon in enumerate(weather_icons, start=1):
+    skillToIcon[2*i-1] = load_icon(16, "weather-%s" % icon)
+    skillToIcon[2*i] = load_icon(16, "weather-%s" % icon)
+    skillToIconLarge[2*i-1] = load_icon(48, "weather-%s" % icon)
+    skillToIconLarge[2*i] = load_icon(48, "weather-%s" % icon)
 
 playerItems = []
 smallPlayerItems = []

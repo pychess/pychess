@@ -263,19 +263,23 @@ class UCIEngine (ProtocolEngine):
     def setOptionStrength (self, strength, forcePonderOff):
         self.strength = strength
         
-        if self.hasOption('UCI_LimitStrength') and strength <= 6:
+        if self.hasOption('UCI_LimitStrength') and strength <= 18:
             self.setOption('UCI_LimitStrength', True)
             if self.hasOption('UCI_Elo'):
-                self.setOption('UCI_Elo', 300 * strength + 200)
+                self.setOption('UCI_Elo', 150 * strength)
         
-        if not self.hasOption('UCI_Elo') or strength == 7:
-            self.timeHandicap = th = 0.01 * 10**(strength/4.)
+        # Stockfish offers 20 skill levels
+        if self.hasOption('Skill Level') and strength <= 19:
+            self.setOption('Skill Level', strength)
+
+        if ((not self.hasOption('UCI_Elo')) and (not self.hasOption('Skill Level'))) or strength <= 19:
+            self.timeHandicap = th = 0.01 * 10**(strength/10.)
             self.wtime = int(max(self.wtime*th, 1))
             self.btime = int(max(self.btime*th, 1))
             self.incr = int(self.incr*th)
         
         if self.hasOption('Ponder'):
-            self.setOption('Ponder', strength >= 7 and not forcePonderOff)
+            self.setOption('Ponder', strength >= 19 and not forcePonderOff)
     
     #===========================================================================
     #    Interacting with the player
