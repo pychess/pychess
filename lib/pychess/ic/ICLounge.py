@@ -575,10 +575,7 @@ class SeekTabSection (ParrentListSection):
         if match["i"] != "0":
             time += _(" + %(sec)s sec") % {'sec': match["i"]}
         rated = match["r"] == "u" and _("Unrated") or _("Rated")
-        try:
-            player = self.connection.players[FICSPlayer(match["w"])]
-        except KeyError:
-            return
+        player = self.connection.players.get(FICSPlayer(match["w"]))
         nametitle = player.name + player.display_titles()
         is_rated = False if match["r"] == "u" else True
         is_manual = False
