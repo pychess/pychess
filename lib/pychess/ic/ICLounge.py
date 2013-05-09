@@ -534,9 +534,7 @@ class SeekTabSection (ParrentListSection):
             time += _(" + %(sec)s sec") % {'sec': seek["i"]}
         rated = seek["r"] == "u" and _("Unrated") or _("Rated")
         pix = seek["manual"] and self.manSeekPix or self.seekPix
-        try:
-            player = self.connection.players[FICSPlayer(seek["w"])]
-        except KeyError: return
+        player = self.connection.players.get(FICSPlayer(seek["w"]))
         textcolor = "grey" if player.name == self.connection.getUsername() \
                            else "black"
         is_rated = False if seek["r"] == "u" else True
@@ -762,9 +760,6 @@ class SeekGraphSection (ParrentListSection):
         x = XLOCATION (float(seek["t"]) + float(seek["i"]) * GAME_LENGTH/60.)
         y = seek["rt"].isdigit() and YLOCATION(float(seek["rt"])) or 0
         type = seek["r"] == "u" and 1 or 0
-###        try:
-###            player = self.connection.players[FICSPlayer(seek["w"])]
-###        except KeyError: return
         player = self.connection.players.get(FICSPlayer(seek["w"]))
 
         is_rated = False if seek["r"] == "u" else True
