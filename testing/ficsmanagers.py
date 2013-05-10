@@ -18,6 +18,7 @@ class DummyConnection(Connection):
         class DummyTelnet():
             def __init__(self):
                 self.Q = Queue()
+                self.name = "dummytelnet"
             def putline(self, line):
                 self.Q.put(line)
             def write(self, text):
@@ -25,18 +26,20 @@ class DummyConnection(Connection):
             def readline(self):
                 return self.Q.get()
         
-        def __init__(self):
-            PredictionsTelnet.__init__(self, self.DummyTelnet())
+        def __init__(self, predictions, reply_cmd_dict):
+            PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions, reply_cmd_dict)
         def putline(self, line):
             self.telnet.putline(line)
     
     def __init__(self):
         Connection.__init__(self, 'host', (0,), 'tester', '123456')
-        self.client = self.DummyClient()
+        self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
+        self.client.setBlockModeOn()
+        self.client.setLinePrefix("fics%")
     def putline(self, line):
         self.client.putline(line)
     def handleSomeText(self):
-        self.client.handleSomeText(self.predictions, None)
+        self.client.handleSomeText()
     def getUsername(self):
         return self.username
     
@@ -241,3 +244,6 @@ class SeekManagerTests(EmittingTestCase):
         pass
     
     # And so on...
+
+if __name__ == '__main__':
+    unittest.main()
