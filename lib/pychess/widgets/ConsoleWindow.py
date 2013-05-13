@@ -22,7 +22,7 @@ class ConsoleWindow:
         self.window.set_title("FICS Console")
         self.window.connect("delete-event", lambda w,e: w.hide() or True)
         
-        uistuff.keepWindowSize("consolewindow", self.window, defaultSize=(650,400))
+        uistuff.keepWindowSize("consolewindow", self.window, defaultSize=(700,400))
 
         self.consoleView = ConsoleView(self.connection)
         self.window.add(self.consoleView)
@@ -79,6 +79,7 @@ class ConsoleView (gtk.VPaned):
         self.history = []
         self.pos = 0
         self.writeView = gtk.Entry()
+        #self.writeView.set_width_chars(80)
         self.pack2(self.writeView, resize=True, shrink=True)
         
         # Forces are reasonable position for the panner.
