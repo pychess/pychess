@@ -1,5 +1,6 @@
 include glade/*.glade glade/*.png glade/*.svg flags/*.png
 recursive-include pieces *
+recursive-include gaviota *
 include README AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sidepanel/*.py sidepanel/*.glade
 include sounds/*.ogg
