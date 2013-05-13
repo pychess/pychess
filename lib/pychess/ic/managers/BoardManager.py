@@ -192,7 +192,7 @@ class BoardManager (GObject):
         
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
-        self.ourGameno = ""
+        self.theGameImPlaying = None
         
         # The ms ivar makes the remaining second fields in style12 use ms
         self.connection.lvm.setVariable("ms", 1)
@@ -392,7 +392,7 @@ class BoardManager (GObject):
             if player.game != game:
                 player.game = game
         
-        self.ourGameno = gameno
+        self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.emit("playGameCreated", game)
     
@@ -651,11 +651,11 @@ class BoardManager (GObject):
     onObserveGameCreated.BLKCMD = BLKCMD_MOVES
 
     def onGameEnd (self, games, game):
-        if game.gameno == self.ourGameno:
+        if game == self.theGameImPlaying:
             if game.gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
-            self.ourGameno = ""
+            self.theGameImPlaying = None
             del self.gamemodelStartedEvents[game.gameno]
         else:
             if game.gameno in self.queuedEmits:
@@ -691,7 +691,7 @@ class BoardManager (GObject):
     ############################################################################
     
     def isPlaying (self):
-        return bool(self.ourGameno)
+        return self.theGameImPlaying is not None
     
     def sendMove (self, move):
         self.connection.client.run_command(move)
