@@ -21,21 +21,23 @@ def isAttacked (board, cord, color):
     
     # Bishops & Queens
     bisque = (pboards[BISHOP] | pboards[QUEEN]) & moveArray[BISHOP][cord]
-    others = ~bisque & blocker
-    for t in iterBits(bisque):
-        # If there is a path and no other piece stand in our way
-        ray = rayto[t]
-        if ray and not ray & others:
-            return True
+    if bisque:
+        others = ~bisque & blocker
+        for t in iterBits(bisque):
+            # If there is a path and no other piece stand in our way
+            ray = rayto[t]
+            if ray and not ray & others:
+                return True
 
     # Rooks & Queens
     rooque = (pboards[ROOK] | pboards[QUEEN]) & moveArray[ROOK][cord]
-    others = ~rooque & blocker
-    for t in iterBits(rooque):
-        # If there is a path and no other piece stand in our way
-        ray = rayto[t]
-        if ray and not ray & others:
-            return True
+    if rooque:
+        others = ~rooque & blocker
+        for t in iterBits(rooque):
+            # If there is a path and no other piece stand in our way
+            ray = rayto[t]
+            if ray and not ray & others:
+                return True
     
     # Pawns
     # Would a pawn of the opposite color, standing at out kings cord, be able
@@ -69,17 +71,19 @@ def getAttacks (board, cord, color):
     
     # Bishops and Queens
     bisque = (pieces[BISHOP] | pieces[QUEEN]) & moveArray[BISHOP][cord]
-    for c in iterBits(bisque):
-        ray = rayto[c]
-        if ray and not clearBit(ray & blocker, c):
-            bits |= bitPosArray[c]
+    if bisque:
+        for c in iterBits(bisque):
+            ray = rayto[c]
+            if ray and not clearBit(ray & blocker, c):
+                bits |= bitPosArray[c]
     
     # Rooks and queens
     rooque = (pieces[ROOK] | pieces[QUEEN]) & moveArray[ROOK][cord]
-    for c in iterBits(rooque):
-        ray = rayto[c]
-        if ray and not clearBit(ray & blocker, c):
-            bits |= bitPosArray[c]
+    if rooque:
+        for c in iterBits(rooque):
+            ray = rayto[c]
+            if ray and not clearBit(ray & blocker, c):
+                bits |= bitPosArray[c]
     
     return bits
 
