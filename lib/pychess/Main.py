@@ -70,14 +70,18 @@ class GladeHandlers:
                     child = gamewidget.getheadbook().get_nth_page(page_num)
                     if event.keyval == gtk.keysyms.Page_Up:
                         gamewidget.getheadbook().reorder_child(child, (page_num-1)%pagecount)
+                        return True
                     elif event.keyval == gtk.keysyms.Page_Down:
                         gamewidget.getheadbook().reorder_child(child, (page_num+1)%pagecount)
+                        return True
                 # Change selected
                 else:
                     if event.keyval == gtk.keysyms.Page_Up:
                         gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
+                        return True
                     elif event.keyval == gtk.keysyms.Page_Down:
                         gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
+                        return True
 
         gmwidg = gamewidget.cur_gmwidg()
         if gmwidg is not None:
@@ -85,32 +89,42 @@ class GladeHandlers:
                 focused = panel.get_focus_child()
                 # Do nothing in chat panel
                 if focused is not None and isinstance(focused, BorderBox):
-                    return
+                    return False
 
-            keyname = gtk.gdk.keyval_name(event.keyval)
-            
-            # Enter moves with keyboard
-            board_control = gmwidg.board
-            board_control.key_pressed(keyname)
-            gmwidg.status(board_control.keybuffer)
-            
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
                 if event.state & gtk.gdk.CONTROL_MASK:
                     gmwidg.board.view.backToMainLine()
+                    return True
                 else:
                     gmwidg.board.view.showPrev()
+                    return True
             elif event.keyval in rightkeys:
                 gmwidg.board.view.showNext()
+                return True
             elif event.keyval in upkeys:
                 gmwidg.board.view.showPrev(step=2)
+                return True
             elif event.keyval in downkeys:
                 gmwidg.board.view.showNext(step=2)
+                return True
             elif event.keyval in homekeys:
                 gmwidg.board.view.showFirst()
+                return True
             elif event.keyval in endkeys:
                 gmwidg.board.view.showLast()
-            return True
+                return True
+
+            if (not event.state & gtk.gdk.CONTROL_MASK) and \
+                (not event.state & gtk.gdk.MOD1_MASK):
+                # Enter moves with keyboard
+                board_control = gmwidg.board
+                keyname = gtk.gdk.keyval_name(event.keyval)
+                board_control.key_pressed(keyname)
+                gmwidg.status(board_control.keybuffer)
+                return True
+
+            return False
     
     def on_gmwidg_created (handler, gmwidg, gamemodel):
         gameDic[gmwidg] = gamemodel
