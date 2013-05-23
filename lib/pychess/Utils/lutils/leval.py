@@ -52,9 +52,10 @@ def evalMaterial (board, color):
             material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[WHITE][piece]
             material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[BLACK][piece]
     else:
-        for piece in range(PAWN, KING):
-            material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
-            material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
+        #for piece in range(PAWN, QUEEN):
+            #material[WHITE] += PIECE_VALUES[piece] * bitLength(pieces[WHITE][piece])
+            #material[BLACK] += PIECE_VALUES[piece] * bitLength(pieces[BLACK][piece])
+        material = [board.material[WHITE], board.material[BLACK]]
     
     phase = max(1, 8 - (material[WHITE] + material[BLACK]) / 1150)
     
@@ -309,53 +310,54 @@ def evalPawnStructure (board, color, phase, passed, weaked):
     #  they depend on the position of other pieces.  So they have to be        #
     #  calculated again.                                                       #
     ############################################################################
+    
+    if passed:
+        # Connected passed pawns on 6th or 7th rank
+        t = passed & brank67[color]
+        opMajorCount = sum(bitLength(opboards[p]) for p in xrange(KNIGHT, KING))
+        if t and opMajorCount == 1:
+            n1 = FILE(opking)
+            n2 = RANK(opking)
+            for f in xrange(7):
+                if t & fileBits[f] and t & fileBits[f+1] and \
+                        (n1 < f-1 or n1 > f+1 or (color == WHITE and n2 < 4) or \
+                                                 (color == BLACK and n2 > 3)):
+                    score += 50
+            
+        # Enemy has no pieces & King is outcolor of passed pawn square
+        if passed and not opMajorCount:
+            for cord in iterBits(passed):
+                if board.color == color:
+                    if not squarePawnMask[color][cord] & opboards[KING]:
+                        score += passedScores[color][RANK(cord)]
+                else:
+                    if not moveArray[KING][opking] & squarePawnMask[color][cord]:
+                        score += passedScores[color][RANK(cord)]
         
-    # Connected passed pawns on 6th or 7th rank
-    t = passed & brank67[color]
-    opMajorCount = sum(bitLength(opboards[p]) for p in xrange(KNIGHT, KING))
-    if t and opMajorCount == 1:
-        n1 = FILE(opking)
-        n2 = RANK(opking)
-        for f in xrange(7):
-            if t & fileBits[f] and t & fileBits[f+1] and \
-                    (n1 < f-1 or n1 > f+1 or (color == WHITE and n2 < 4) or \
-                                             (color == BLACK and n2 > 3)):
-                score += 50
-        
+        # Estimate if any majors are able to hunt us down
+        for pawn in iterBits(passed):
+            found_hunter = False
+            if color == WHITE:
+                prom_cord = 7 << 3 | FILE(pawn)
+            else: prom_cord = FILE(pawn)
+            distance_to_promotion = distance[PAWN][pawn][prom_cord]
+            for piece in xrange(KNIGHT, KING+1):
+                for cord in iterBits(opboards[piece]):
+                    hunter_distance = distance[piece][cord][prom_cord]
+                    if hunter_distance <= distance_to_promotion:
+                        found_hunter = True
+                        break
+                if found_hunter:
+                    break
+            if not found_hunter:
+                score += passedScores[color][RANK(pawn)] / 5
+
     # Penalize Pawn on d2,e2/d7,e7 is blocked
     blocker = board.blocker
     if color == WHITE and ((pawns & d2e2[WHITE]) >> 8) & blocker:
         score -= 48
     elif color == BLACK and ((pawns & d2e2[BLACK]) << 8) & blocker:
         score -= 48
-    
-    # Enemy has no pieces & King is outcolor of passed pawn square
-    if passed and not opMajorCount:
-        for cord in iterBits(passed):
-            if board.color == color:
-                if not squarePawnMask[color][cord] & opboards[KING]:
-                    score += passedScores[color][RANK(cord)]
-            else:
-                if not moveArray[KING][opking] & squarePawnMask[color][cord]:
-                    score += passedScores[color][RANK(cord)]
-    
-    # Estimate if any majors are able to hunt us down
-    for pawn in iterBits(passed):
-        found_hunter = False
-        if color == WHITE:
-            prom_cord = 7 << 3 | FILE(pawn)
-        else: prom_cord = FILE(pawn)
-        distance_to_promotion = distance[PAWN][pawn][prom_cord]
-        for piece in xrange(KNIGHT, KING+1):
-            for cord in iterBits(opboards[piece]):
-                hunter_distance = distance[piece][cord][prom_cord]
-                if hunter_distance <= distance_to_promotion:
-                    found_hunter = True
-                    break
-            if found_hunter:
-                break
-        if not found_hunter:
-            score += passedScores[color][RANK(pawn)] / 5
     
     # If both colors are castled on different colors, bonus for pawn storms
     if abs(FILE(king)-FILE(opking)) >= 4 and phase < 6:
@@ -478,6 +480,9 @@ def evalBishops (board, color, phase):
     
     opcolor = 1-color
     bishops = board.boards[color][BISHOP]
+    if not bishops:
+        return 0
+        
     pawns = board.boards[color][PAWN]
     oppawns = board.boards[opcolor][PAWN]
     

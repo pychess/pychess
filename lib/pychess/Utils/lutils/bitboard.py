@@ -119,6 +119,9 @@ if uselp:
         for j in range (i, i*2):
             bitCount[j] = 1 + bitCount[j-i]
 
+    # A more readable and faster version (requires Python 2.6)
+    def bitLength (bitboard):
+        return bin(bitboard).count("1")
 
 
 #===============================================================================

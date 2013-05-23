@@ -267,6 +267,11 @@ class LBoard:
         movenumber = int(moveNoChr)*2 -2
         if self.color == BLACK: movenumber += 1
         self.plyCount = movenumber
+
+        self.material = [0, 0]
+        for piece in range(PAWN, KING):
+            self.material[WHITE] += PIECE_VALUES[piece] * bitLength(self.boards[WHITE][piece])
+            self.material[BLACK] += PIECE_VALUES[piece] * bitLength(self.boards[BLACK][piece])
     
     def isChecked (self):
         if self.checked == None:
@@ -392,6 +397,7 @@ class LBoard:
         # Capture
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
+            self.material[opcolor] -= PIECE_VALUES[tpiece]
             if self.variant == CRAZYHOUSECHESS:
                 if self.promoted[tcord]:
                     self.holding[color][PAWN] += 1
@@ -417,11 +423,13 @@ class LBoard:
         if flag == ENPASSANT:
             takenPawnC = tcord + (color == WHITE and -8 or 8)
             self._removePiece (takenPawnC, PAWN, opcolor)
+            self.material[opcolor] -= PIECE_VALUES[PAWN]
             if self.variant == CRAZYHOUSECHESS:
                 self.holding[color][PAWN] += 1
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
+            self.material[color] += (PIECE_VALUES[fpiece] - PIECE_VALUES[PAWN])
 
         if self.variant == CRAZYHOUSECHESS:
             if tpiece == EMPTY:
@@ -504,6 +512,7 @@ class LBoard:
         # Put back captured piece
         if cpiece != EMPTY:
             self._addPiece (tcord, cpiece, opcolor)
+            self.material[opcolor] += PIECE_VALUES[cpiece]
             if self.variant == CRAZYHOUSECHESS:
                 if self.capture_promoting:
                     assert self.holding[color][PAWN] > 0
@@ -516,6 +525,7 @@ class LBoard:
         if flag == ENPASSANT:
             epcord = color == WHITE and tcord - 8 or tcord + 8
             self._addPiece (epcord, PAWN, opcolor)
+            self.material[opcolor] += PIECE_VALUES[PAWN]
             if self.variant == CRAZYHOUSECHESS:
                 assert self.holding[color][PAWN] > 0
                 self.holding[color][PAWN] -= 1
@@ -523,6 +533,7 @@ class LBoard:
         # Un-promote pawn
         if flag in PROMOTIONS:
             tpiece = PAWN
+            self.material[color] -= (PIECE_VALUES[flag - 2] - PIECE_VALUES[PAWN])
 
         # Put back moved piece
         if flag == DROP:
@@ -671,6 +682,7 @@ class LBoard:
         copy.kings = self.kings[:]
         copy.boards = [self.boards[WHITE][:], self.boards[BLACK][:]]
         copy.arBoard = self.arBoard[:]
+        copy.material = self.material[:]
         
         copy.color = self.color
         copy.plyCount = self.plyCount
