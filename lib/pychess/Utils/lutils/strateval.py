@@ -303,7 +303,7 @@ def offencive_moves_pin (model, ply, phase):
     tcord = TCORD(move)
     piece = board.arBoard[tcord]
 
-    ray = createBoard(0)
+    ray = 0
     if piece in (BISHOP, QUEEN):
         ray |= (ray45[tcord] | ray135[tcord]) & ~(ray45[fcord] | ray135[fcord])
     if piece in (ROOK, QUEEN):

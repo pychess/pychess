@@ -16,22 +16,22 @@ class BitboardTestCase(unittest.TestCase):
                 if length:
                     positions = random.sample(xrange(64), length)
                     board = reduce(operator.or_, (1<<(63-i) for i in positions))
-                    self.positionSets.append( (positions, createBoard(board)) )
+                    self.positionSets.append( (positions, board) )
                 else:
-                    self.positionSets.append( ([], createBoard(0)) )
+                    self.positionSets.append( ([], 0) )
     
     def test1(self):
         """Testing setbit and clearbit"""
         
         for positions,board in self.positionSets:
-            b = createBoard(0)
+            b = 0
             for pos in positions:
                 b = setBit(b, pos)
             self.assertEqual(b, board)
             
             for pos in positions:
                 b = clearBit(b, pos)
-            self.assertEqual(b, createBoard(0))
+            self.assertEqual(b, 0)
     
     def test2(self):
         """Testing firstbit and lastbit"""

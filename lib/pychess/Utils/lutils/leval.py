@@ -172,8 +172,8 @@ def cacheablePawnInfo (board, phase):
         return entry
 
     score = 0
-    passed = createBoard(0)
-    weaked = createBoard(0)
+    passed = 0
+    weaked = 0
 
     for color in WHITE, BLACK:
         opcolor = 1-color
