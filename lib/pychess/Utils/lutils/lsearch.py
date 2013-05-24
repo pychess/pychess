@@ -237,12 +237,13 @@ def quiescent (board, alpha, beta, ply):
     
     isCheck = board.isChecked()
     
-    # Our quiescent search will evaluate the current board, and if 
-    value = evaluateComplete(board, board.color)
-    if value >= beta and not isCheck:
-        return [], beta
-    if value > alpha:
-        alpha = value
+    # no stand-pat when in check
+    if not isCheck: 
+        value = evaluateComplete(board, board.color)
+        if value >= beta:
+            return [], beta
+        if value > alpha:
+            alpha = value
     
     amove = []
     
