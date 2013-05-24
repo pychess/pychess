@@ -74,11 +74,11 @@ class LBoard:
         assert not hasattr(self, "boards"), "The applyFen() method can be used on new LBoard objects only!"
 
         # Set board to empty on Black's turn (which Polyglot-hashes to 0)
-        self.blocker = createBoard(0)
+        self.blocker = 0
         
-        self.friends = [createBoard(0)]*2
+        self.friends = [0]*2
         self.kings = [-1]*2
-        self.boards = [[createBoard(0)]*7 for i in range(2)]
+        self.boards = [[0]*7 for i in range(2)]
         
         self.enpassant = None            # cord which can be captured by enpassant or None
         self.color = BLACK

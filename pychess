@@ -15,8 +15,8 @@ except ImportError:
 # Check requirements
 
 import os, sys
-if sys.version_info < (2, 5, 0):
-    print 'ERROR: PyChess requires Python >= 2.5'
+if sys.version_info < (2, 6, 0):
+    print 'ERROR: PyChess requires Python >= 2.6'
     sys.exit(1)
 
 import pygtk
