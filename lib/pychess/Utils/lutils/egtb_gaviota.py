@@ -3,7 +3,6 @@ import re
 import sys
 import platform
 from ctypes import *
-from ctypes.util import find_library
 
 from bitboard import firstBit, clearBit
 from lmovegen import genAllMoves, genCheckEvasions
