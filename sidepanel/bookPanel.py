@@ -280,10 +280,11 @@ class EngineAdvisor(Advisor):
 
 
 class EndgameAdvisor(Advisor, PooledThread):
-    def __init__ (self, store, tv):
+    def __init__ (self, store, tv, boardview):
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         self.tv = tv
+        self.boardview = boardview
         self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
@@ -429,7 +430,7 @@ class Sidepanel:
         if conf.get("opening_check", 0):
             self.advisors.append(OpeningAdvisor(self.store, self.tv))
         if conf.get("endgame_check", 0):
-            self.advisors.append(EndgameAdvisor(self.store, self.tv))
+            self.advisors.append(EndgameAdvisor(self.store, self.tv, self.boardview))
 
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
@@ -460,7 +461,7 @@ class Sidepanel:
 
         def on_endgame_check(none):
             if conf.get("endgame_check", 0):
-                advisor = EndgameAdvisor(self.store, self.tv)
+                advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shown_changed(self.boardview, self.boardview.shown)
             else:
