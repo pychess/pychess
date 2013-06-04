@@ -3,6 +3,7 @@ import re
 import sys
 import platform
 from ctypes import *
+from ctypes.util import find_library
 
 from bitboard import firstBit, clearBit
 from lmovegen import genAllMoves, genCheckEvasions
@@ -174,17 +175,12 @@ class egtb_gaviota:
         return result, depth
     
     def _loadLibrary (self):
-        if platform.system() == "Windows":
-            libName = "gtb.dll"
-        else:
-            libName = "libgtb.so"
-        arch = "x86-64" if sys.maxsize > 2**32 else "x86-32"
-        for path in [ libName, addDataPrefix("gaviota/%s/%s" % (arch, libName)) ]:
-            try:
-                self.libgtb = CDLL(path)
-                break
-            except OSError:
-                pass
+        libName = "libgaviotatb.so.1.0.1"
+        try:
+            self.libgtb = CDLL(libName)
+        except OSError:
+            log.warn("Failed to load Gaviota EGTB library %s" % libName)
+            return None
         return self.libgtb
     
     # Prototypes from gtb-probe.h follow.

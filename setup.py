@@ -99,11 +99,6 @@ DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
     DATA_FILES += [("share/pychess/pieces/"+dir, glob('pieces/'+dir+'/*.svg'))]
 
-# Egtb
-arch = "x86-64" if sys.maxsize > 2**32 else "x86-32"
-DATA_FILES += [("share/pychess/gaviota/%s" % arch, ['gaviota/%s/libgtb.so' % arch])]
-DATA_FILES += [("share/pychess/gaviota", glob('gaviota/*.cp4'))]
-
 # Manpages
 DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 
