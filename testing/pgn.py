@@ -36,9 +36,9 @@ def create_test(lines, result):
 
 filenames = ("chess960rwch", "world_matches", "zh2200plus")
 
-PgnFile1 = load(open('gamefiles/%s.pgn' % filenames[2]))
+PgnFile1 = load(open('gamefiles/%s.pgn' % filenames[0]))
 PgnFile2 = load(open('gamefiles/%s.pgn' % filenames[1]))
-PgnFile3 = load(open('gamefiles/%s.pgn' % filenames[0]))
+PgnFile3 = load(open('gamefiles/%s.pgn' % filenames[2]))
 
 for filename, pgnfile in zip(filenames, (PgnFile1, PgnFile2, PgnFile3)):
     print "Creating test methods for %s" % filename

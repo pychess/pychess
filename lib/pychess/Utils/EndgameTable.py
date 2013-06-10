@@ -3,7 +3,6 @@ from gobject import GObject, SIGNAL_RUN_FIRST
 from Move import Move
 from lutils.egtb_k4it import egtb_k4it
 from lutils.egtb_gaviota import egtb_gaviota
-from lutils.bitboard import bitLength
 
 providers = []
 
@@ -24,7 +23,7 @@ class EndgameTable(GObject):
         self.providers = providers
     
     def _pieceCounts (self, board):
-        return sorted([ bitLength(board.friends[i]) for i in range(2) ])
+        return sorted([ bin(board.friends[i]).count("1") for i in range(2) ])
     
     def scoreGame (self, lBoard, omitDepth=False, probeSoft=False):
         """ Return result and depth to mate. (Intended for engine use.)
