@@ -1,7 +1,6 @@
 # Losers Chess
 
 from pychess.Utils.const import *
-from pychess.Utils.lutils.bitboard import bitLength
 from pychess.Utils.Board import Board
 
 class LosersBoard(Board):
@@ -19,8 +18,4 @@ class LosersChess:
 
 
 def testKingOnly(board):
-    boards = board.boards[board.color]
-    
-    return bitLength(boards[PAWN]) + bitLength(boards[KNIGHT]) + \
-           bitLength(boards[BISHOP]) + bitLength(boards[ROOK]) + \
-           bitLength(boards[QUEEN]) == 0
+    return bin(board.friends[board.color]).count("1") == 1

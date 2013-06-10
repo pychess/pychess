@@ -49,13 +49,6 @@ for i in xrange(64):
     lsb[2**i] = 63-i
 
 #===============================================================================
-# bitLength returns the number of set bits in a bitboard. This can be used to
-# count the number of pieces, or calculate mobility
-#===============================================================================
-def bitLength (bitboard):
-    return bin(bitboard).count("1")
-
-#===============================================================================
 # iterBits yields, or returns a list of, the positions of all set bits in a
 # bitboard. There is no guarantee of the order.
 #===============================================================================

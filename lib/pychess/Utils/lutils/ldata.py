@@ -1,4 +1,3 @@
-from array import array
 from operator import or_
 from pychess.Utils.const import *
 #from pychess.Utils.lutils.lmove import RANK, FILE

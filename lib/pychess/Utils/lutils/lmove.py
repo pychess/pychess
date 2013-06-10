@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from ldata import *
-from bitboard import bitLength, firstBit
+from bitboard import firstBit
 from validator import validateMove
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
@@ -355,7 +355,7 @@ def parseSAN (board, san):
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
         return newMove(fcord, tcord, flag)
     else:
-        if bitLength(board.boards[color][piece]) == 1:
+        if board.pieceCount[color][piece] == 1:
             # we have only one from this kind if piece, so:
             fcord = firstBit(board.boards[color][piece])
             return newMove(fcord, tcord, flag)
