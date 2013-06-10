@@ -43,12 +43,6 @@ class BitboardTestCase(unittest.TestCase):
                 self.assertEqual(positions[-1], lastBit(board))
 
     def test3(self):
-        """Testing bitlength"""
-        
-        for positions,board in self.positionSets:
-            self.assertEqual(len(positions), bitLength(board))
-    
-    def test4(self):
         """Testing iterbits"""
         
         for positions,board in self.positionSets:

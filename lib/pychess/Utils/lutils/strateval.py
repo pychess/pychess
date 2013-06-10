@@ -102,7 +102,7 @@ def offencive_moves_rook (model, ply, phase):
     ffile = fileBits[FILE(FCORD(move))]
     tfile = fileBits[FILE(tcord)]
 
-    if ffile & pawns and not tfile & pawns and bitLength(pawns) >= 3:
+    if ffile & pawns and not tfile & pawns and bin(pawns).count("1") >= 3:
         if not tfile & oppawns:
             yield _("moves a rook to an open file")
         else: yield _("moves an rook to a half-open file")
@@ -320,7 +320,7 @@ def offencive_moves_pin (model, ply, phase):
                 continue
             # There should be exactly one opponent piece in between
             op = clearBit(ray & board.friends[board.color], c)
-            if bitLength(op) != 1:
+            if bin(op).count("1") != 1:
                 continue
             # The king can't be pinned
             pinned = lastBit(op)
@@ -419,10 +419,10 @@ def state_pawn (model, ply, phase):
     for file in range(8):
         bits = fileBits[file]
 
-        count = bitLength(pawns & bits)
-        oldcount = bitLength(oldpawns & bits)
-        opcount = bitLength(oppawns & bits)
-        oldopcount = bitLength(oldoppawns & bits)
+        count = bin(pawns & bits).count("1")
+        oldcount = bin(oldpawns & bits).count("1")
+        opcount = bin(oppawns & bits).count("1")
+        oldopcount = bin(oldoppawns & bits).count("1")
 
         # Single pawn -> double pawns
         if count > oldcount >= 1:
@@ -623,10 +623,10 @@ def tip_pawnStorm (model, ply, phase):
 
     wking = board.boards[WHITE][KING]
     bking = board.boards[BLACK][KING]
-    wleft = bitLength(board.boards[WHITE][PAWN] & left)
-    wright = bitLength(board.boards[WHITE][PAWN] & right)
-    bleft = bitLength(board.boards[BLACK][PAWN] & left)
-    bright = bitLength(board.boards[BLACK][PAWN] & right)
+    wleft = bin(board.boards[WHITE][PAWN] & left).count("1")
+    wright = bin(board.boards[WHITE][PAWN] & right).count("1")
+    bleft = bin(board.boards[BLACK][PAWN] & left).count("1")
+    bright = bin(board.boards[BLACK][PAWN] & right).count("1")
 
     if wking & left and bking & right:
         if wright > bright:
@@ -661,13 +661,6 @@ def tip_mobility (model, ply, phase):
                         staticExchangeEvaluate(board, move) >= 0])
 
     board.setColor(colorBackup)
-
-    #print wmoves, bmoves, phase
-
-    #wb = board.boards[WHITE]
-    #print float(wmoves)/bitLength(wb[KNIGHT]|wb[BISHOP]|wb[ROOK]|wb[QUEEN])
-    #bb = board.boards[WHITE]
-    #print float(bmoves)/bitLength(bb[KNIGHT]|bb[BISHOP]|bb[ROOK]|bb[QUEEN])
 
     if wmoves-phase >= (bmoves+1)*7:
         yield wmoves-bmoves, _("Black has a rather cramped position")

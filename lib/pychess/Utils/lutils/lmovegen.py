@@ -483,7 +483,7 @@ def genCheckEvasions (board):
     checkers = getAttacks (board, kcord, opcolor)
     
     arBoard = board.arBoard
-    if bitLength(checkers) == 1:
+    if bin(checkers).count("1") == 1:
 
         # Captures of checking pieces (except by king, which we will test later)
         chkcord = firstBit (checkers)

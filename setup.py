@@ -11,6 +11,11 @@ from os.path import isdir, isfile
 import os
 import sys
 
+
+if sys.version_info < (2, 6, 0):
+    print 'ERROR: PyChess requires Python >= 2.6'
+    sys.exit(1)
+
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
 # because pychess from another author already exist in pypi.
 VERSION = pychess.VERSION

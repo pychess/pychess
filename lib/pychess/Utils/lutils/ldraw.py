@@ -1,4 +1,3 @@
-from bitboard import bitLength
 from ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
@@ -35,39 +34,38 @@ def testMaterial (board):
     """ Tests if no players are able to win the game from the current
         position """
     
-    whiteBoards = board.boards[WHITE]
-    blackBoards = board.boards[BLACK]
+    whitePieceCount = board.pieceCount[WHITE]
+    blackPieceCount = board.pieceCount[BLACK]
     
-    if bitLength(whiteBoards[PAWN]) or bitLength(blackBoards[PAWN]):
+    if whitePieceCount[PAWN] or blackPieceCount[PAWN]:
         return False
     
-    if bitLength(whiteBoards[QUEEN]) or bitLength(blackBoards[QUEEN]):
+    if whitePieceCount[QUEEN] or blackPieceCount[QUEEN]:
         return False
     
-    wn = bitLength(whiteBoards[KNIGHT])
-    wb = bitLength(whiteBoards[BISHOP])
-    wr = bitLength(whiteBoards[ROOK])
-    bn = bitLength(blackBoards[KNIGHT])
-    bb = bitLength(blackBoards[BISHOP])
-    br = bitLength(blackBoards[ROOK])
+    wn = whitePieceCount[KNIGHT]
+    wb = whitePieceCount[BISHOP]
+    wr = whitePieceCount[ROOK]
+    bn = blackPieceCount[KNIGHT]
+    bb = blackPieceCount[BISHOP]
+    br = blackPieceCount[ROOK]
     
     if (wn, wb, wr, 0,   bn, bb, br, 0) in drawSet:
         return True
         
     # Tests KBKB. Draw if bishops are of same color
     if not wn + wr + bn + wr and wb == 1 and bb == 1:
-        if whiteBoards[BISHOP] & BLACK_SQUARES and True != \
-           blackBoards[BISHOP] & BLACK_SQUARES and True:
+        if board.boards[WHITE][BISHOP] & BLACK_SQUARES and True != \
+           board.boards[BLACK][BISHOP] & BLACK_SQUARES and True:
             return True
 
 def testPlayerMatingMaterial (board, color):
     """ Tests if given color has enough material to mate on board """
 
-    boards = board.boards[color]
+    pieceCount = board.pieceCount[color]
     
-    if bitLength(boards[PAWN]) or bitLength(boards[QUEEN]) \
-       or bitLength(boards[ROOK]) \
-       or (bitLength(boards[KNIGHT]) + bitLength(boards[BISHOP]) > 1):
+    if pieceCount[PAWN] or pieceCount[QUEEN] or pieceCount[ROOK] \
+       or (pieceCount[KNIGHT] + pieceCount[BISHOP] > 1):
         return True
     return False
 
