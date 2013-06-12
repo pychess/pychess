@@ -52,7 +52,7 @@ class BoardPreview:
         self.widgets["last_button"].connect("clicked", self.on_last_button)
         
         # Add the board
-        self.boardview = BoardView()
+        self.boardview = BoardView(preview=True)
         self.boardview.set_size_request(170,170)
         self.widgets["boardPreviewDock"].add(self.boardview)
         self.boardview.show()
