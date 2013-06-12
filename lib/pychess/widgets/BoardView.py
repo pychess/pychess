@@ -94,13 +94,14 @@ class BoardView (gtk.DrawingArea):
         'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     }
     
-    def __init__(self, gamemodel=None):
+    def __init__(self, gamemodel=None, preview=False):
         gtk.DrawingArea.__init__(self)
         
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
-        self.shownVariationIdx = 0 # this is the main variation in gamemodel.variations list
+        self.preview = preview
+        self.shownVariationIdx = 0 # the main variation is the first in gamemodel.variations list
         
         glock_connect(self.model, "game_started", self.game_started)
         glock_connect_after(self.model, "game_started", self.game_started_after)
@@ -148,7 +149,10 @@ class BoardView (gtk.DrawingArea):
         self._showCords = False
         self.showCords = conf.get("showCords", False)
         self._showCaptured = False
-        self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseChess
+        if self.preview:
+            self.showCaptured = False
+        else:
+            self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseChess
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -1309,7 +1313,7 @@ class BoardView (gtk.DrawingArea):
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
         self.redraw_canvas()
     def _get_showCaptured (self):
-        return self._showCaptured
+        return False if self.preview else self._showCaptured
     showCaptured = property(_get_showCaptured, _set_showCaptured)
     
     def _set_showEnpassant (self, showEnpassant):
