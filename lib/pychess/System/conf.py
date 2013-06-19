@@ -2,11 +2,6 @@
     It also supports gconf like connection, so you get notices when a property
     has changed. """
 
-# gconf's notify all seams to be broken
-#try:
-#    import gconf
-#    import conf_gconf as confmodule
-#except:
 import conf_configParser as confmodule
 
 """Module for using gconf without having to care about types"""
