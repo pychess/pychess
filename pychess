@@ -73,7 +73,13 @@ if isInstalled():
 else:
     locale_dir = addDataPrefix("lang")
     gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
-    locale.bindtextdomain(domain, locale_dir)
+    if sys.platform == "win32":
+        from ctypes import cdll
+        libintl = cdll.intl
+        libintl.bindtextdomain(domain, locale_dir)
+        libintl.bind_textdomain_codeset(domain, 'UTF-8')
+    else:
+        locale.bindtextdomain(domain, locale_dir)
 
 
 ###############################################################################
