@@ -3169,6 +3169,7 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <accelerator key="F11" signal="activate"/>
+			<accelerator key="Escape" signal="activate"/>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
                       </object>
                     </child>
