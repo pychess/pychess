@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="480"
+   height="480"
+   id="svg2985"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="bn.svg">
+  <title
+     id="title3771">Black Knight</title>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="942"
+     inkscape:window-height="480"
+     id="namedview3769"
+     showgrid="false"
+     inkscape:zoom="0.49166667"
+     inkscape:cx="240"
+     inkscape:cy="240"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2985" />
+  <defs
+     id="defs2987" />
+  <metadata
+     id="metadata2990">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Black Knight</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:source>http://openfontlibrary.org/assets/downloads/chess/dd244e4b50bb954610bc0b2372ce2e18/chess.zip</dc:source>
+        <dc:date>6.1.2013</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>James Kilfinger+alfons z!</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       d="m 148.96875,49.96875 c -1.0795,2.159002 -1.625,4.332498 -1.625,7.03125 0,8.636007 5.40625,19.403743 5.40625,27.5 0,5.937255 -1.0655,11.343995 -4.84375,17.28125 -11.87451,19.43102 -35.61999,11.33024 -51.8125,28.0625 C 72.344731,154.13252 68.007765,174.64323 49.65625,203.25 39.400992,219.98226 22.6875,225.93548 22.6875,245.90625 30.783757,257.24101 40.486241,272.341 51.28125,274.5 c 16.192513,0 17.279479,-21.59375 43.1875,-21.59375 8.63601,0 16.71624,2.15625 24.8125,2.15625 30.76577,0 26.98098,-30.21875 48.03125,-30.21875 9.71551,0 16.75,10.24474 16.75,20.5 0,20.51052 -22.12549,28.62298 -34,48.59375 -14.57326,24.82852 -21.60274,34.53822 -32.9375,65.84375 37.78253,-18.89127 80.41647,-28.59375 121.4375,-28.59375 41.02103,0.53975 83.68622,9.70248 121.46875,28.59375 -0.53975,-26.98752 -4.34375,-44.26474 -4.34375,-57.21875 0,-24.28877 1.625,-48.03174 1.625,-59.90625 0,-46.41854 -15.10947,-70.15173 -51.8125,-98.21875 C 275.81373,121.76798 247.74003,116.36277 212.65625,95.3125 186.74823,79.659737 173.79727,67.780514 148.96875,49.96875 z M 123.0625,151.4375 c 9.17576,0 16.1875,7.56574 16.1875,17.28125 0,9.71551 -7.01174,17.28125 -16.1875,17.28125 -9.17576,0 -16.1875,-7.56574 -16.1875,-17.28125 0,-9.71551 7.01174,-17.28125 16.1875,-17.28125 z m 115.5,235.34375 c -77.72406,0 -145.734715,29.14671 -188.375,73.40625 l 380,0 C 387.54722,415.92796 316.28656,386.78125 238.5625,386.78125 z"
+       id="text3281"
+       style="font-size:539.75097656px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:chess;-inkscape-font-specification:chess Bold" />
+  </g>
+</svg>
