@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="480"
+   height="480"
+   id="svg2985"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="bb.svg">
+  <title
+     id="title3680">Black Bishop</title>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="942"
+     inkscape:window-height="480"
+     id="namedview3678"
+     showgrid="false"
+     inkscape:zoom="0.49166667"
+     inkscape:cx="240"
+     inkscape:cy="240"
+     inkscape:window-x="123"
+     inkscape:window-y="189"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2985" />
+  <defs
+     id="defs2987" />
+  <metadata
+     id="metadata2990">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Black Bishop</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:date>6.1.2013</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>James Kilfinger+alfons z!</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://openfontlibrary.org/assets/downloads/chess/dd244e4b50bb954610bc0b2372ce2e18/chess.zip</dc:source>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       d="m 238.375,55.15625 -50.71875,52.90625 70.15625,91.78125 c 8.09658,10.79544 11.875,14.56252 11.875,32.375 0,17.81248 -13.48581,32.375 -30.21875,32.375 -16.73294,0 -30.25,-14.56252 -30.25,-32.375 0,-11.87499 3.25,-19.98865 3.25,-28.625 0,-20.51134 -39.41195,-64.21875 -52.90625,-64.21875 -8.63635,0 -30.21875,25.36648 -30.21875,25.90625 -16.19316,14.03408 -38.875,43.7131 -38.875,77.71875 0,46.42041 8.656269,53.98018 26.46875,116.59375 C 154.72155,340.70172 197.35232,331 238.375,331 c 41.02268,0.53977 83.6847,9.70172 121.46875,28.59375 17.81248,-62.61357 26.4375,-70.17334 26.4375,-116.59375 0,-34.00565 -23.76138,-62.60513 -38.875,-77.71875 C 346.86648,164.20171 281.017,98.338023 238.375,55.15625 z m 0,331.4375 C 160.64781,386.59375 92.642001,415.73868 50,460 l 380,0 C 387.358,415.73868 316.10219,386.59375 238.375,386.59375 z"
+       id="text3456"
+       style="font-size:539.77270508px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:chess;-inkscape-font-specification:chess Bold" />
+  </g>
+</svg>
