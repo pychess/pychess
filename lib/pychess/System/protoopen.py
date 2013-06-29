@@ -9,15 +9,15 @@ def protoopen (uri):
     """ Function for opening many things """
    
     try:
-        return urllib.urlopen(uri)
+        return open(uri, "rU")
     except (IOError, OSError):
         pass
 
     try:
-        return open(uri)
+        return urllib.urlopen(uri)
     except (IOError, OSError):
         pass
-        
+
     raise IOError, "Protocol isn't supported by pychess"
 
 def protosave (uri, append=False):
