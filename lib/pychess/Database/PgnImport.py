@@ -144,9 +144,9 @@ class PgnImport():
         
         for pgnfile in files:
             if zf is None:
-                cf = pgn_load(open(pgnfile))
+                cf = pgn_load(open(pgnfile, "rU"))
             else:
-                cf = pgn_load(zf.open(pgnfile))
+                cf = pgn_load(zf.open(pgnfile, "rU"))
              
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
