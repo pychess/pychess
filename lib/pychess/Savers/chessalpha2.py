@@ -48,7 +48,7 @@ style = """
 url("http://pychess.org/fonts/ChessAlpha2.eot?") format("eot"),
 url("http://pychess.org/fonts/ChessAlpha2.woff") format("woff"),
 url("http://pychess.org/fonts/ChessAlpha2.ttf") format("truetype"),
-url("http://pychess.org/fonts/ChessAlpha2.svg#ChessAlpha2") format("svg"); font-weight:"normal"; font-style:"normal";)
+url("http://pychess.org/fonts/ChessAlpha2.svg#ChessAlpha2") format("svg"); font-weight:"normal"; font-style:"normal";}
 table.pychess {display:inline-block; vertical-align:top}
 table.pychess td {margin:0; padding:0; font-size:10pt; font-family:"Chess Alpha 2"; padding-left:.5em}
 table.pychess td.numa {width:0; text-align:right}
