@@ -103,18 +103,20 @@ def writeDiagram(file, model, border = True, whitetop = False):
             file.write(borderNums(y))
         else:
             file.write(borderNums[7-y])
-        for x,piece in row.items():
-            bg = y%2==x%2
-            if piece == None:
-                color = WHITE
-                piece = EMPTY
-            else:
-                color = piece.color
-                piece = piece.piece
-            c = diaPieces[bg][color][piece]
-            if c in def2entity:
-                c = def2entity[c]
-            file.write(c)
+        for x,piece in sorted(row.items()):
+            # exclude captured pieces in holding
+            if x>=0 and x<=7:
+                bg = y%2==x%2
+                if piece == None:
+                    color = WHITE
+                    piece = EMPTY
+                else:
+                    color = piece.color
+                    piece = piece.piece
+                c = diaPieces[bg][color][piece]
+                if c in def2entity:
+                    c = def2entity[c]
+                file.write(c)
         file.write('\\\n')
 
     if border:
