@@ -3,10 +3,10 @@ from pychess.Utils.const import WAITING_TO_START
 from pychess.Utils.logic import getStatus
 
 __label__ = _("Simple Chess Position")
-__endings__ = "fen",
+__ending__ = "fen"
 __append__ = True
 
-def save (file, model):
+def save (file, model, position):
     """Saves game to file in fen format"""
     
     print >> file, model.boards[-1].asFen()

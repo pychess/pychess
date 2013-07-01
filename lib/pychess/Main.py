@@ -32,7 +32,6 @@ from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
-from pychess.Savers import png
 from pychess.ic import ICLogon
 #from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
@@ -194,7 +193,8 @@ class GladeHandlers:
 
     def on_export_position_activate (widget):
         gmwidg = gamewidget.cur_gmwidg()
-        png.export(gmwidg, gameDic[gmwidg])
+        position = gmwidg.board.view.shown
+        ionest.saveGameAs (gameDic[gmwidg], position)
     
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
