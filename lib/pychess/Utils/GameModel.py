@@ -477,14 +477,14 @@ class GameModel (GObject, PooledThread):
         if error:
             raise error
     
-    def save (self, uri, saver, append):
+    def save (self, uri, saver, append, position=None):
         if type(uri) == str:
             fileobj = protosave(uri, append)
             self.uri = uri
         else:
             fileobj = uri
             self.uri = None
-        saver.save(fileobj, self)
+        saver.save(fileobj, self, position)
         self.emit("game_saved", uri)
         self.needsSave = False
         

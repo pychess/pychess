@@ -5,10 +5,10 @@ from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.leval import evaluateComplete
 
 __label__ = _("Chess Position")
-__endings__ = "epd",
+__ending__ = "epd"
 __append__ = True
 
-def save (file, model):
+def save (file, model, position):
     """Saves game to file in fen format"""
     
     color = model.boards[-1].color
@@ -21,7 +21,7 @@ def save (file, model):
     ############################################################################
     # Repetition count                                                         #
     ############################################################################
-    rc = model.boards[-1].repetitionCount()
+    rc = model.boards[-1].board.repetitionCount()
     
     ############################################################################
     # Centipawn evaluation                                                     #
@@ -50,7 +50,7 @@ def save (file, model):
         ("tcsi", "?@?.? %s" % repr(model.players[1-color]).replace(";","")),
         
         ("ce", ce),
-        #("rc", rc) Rc is kinda broken
+        ("rc", rc),
     )
     
     for key, value in opcodes:
