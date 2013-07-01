@@ -1,6 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers import * # This needs an import all not to break autoloading
@@ -126,30 +126,32 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
 opendialog = None
 savedialog = None
 enddir = {}
+saveformats = None
+exportformats = None
 def getOpenAndSaveDialogs():
-    global opendialog, savedialog, enddir, savecombo, savers
+    global opendialog, savedialog, enddir, savecombo, savers, saveformats, exportformats
 
     if not opendialog:
-        types = []
         savers = [getattr(Savers, s) for s in Savers.__all__]
         for saver in savers:
-            for ending in saver.__endings__:
-                enddir[ending] = saver
-                types.append((saver.__label__, saver.__endings__))
+            enddir[saver.__ending__] = saver
 
         opendialog = gtk.FileChooserDialog(_("Open Game"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
-        savedialog = gtk.FileChooserDialog(_("Save Game"), None, gtk.FILE_CHOOSER_ACTION_SAVE,
+        savedialog = gtk.FileChooserDialog("", None, gtk.FILE_CHOOSER_ACTION_SAVE,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
         savedialog.set_current_folder(os.environ["HOME"])
-        saveformats = gtk.ListStore(str, str)
+        saveformats = gtk.ListStore(str, str, TYPE_PYOBJECT)
+        exportformats = gtk.ListStore(str, str, TYPE_PYOBJECT)
 
         # All files filter
         star = gtk.FileFilter()
         star.set_name(_("All Files"))
         star.add_pattern("*")
         opendialog.add_filter(star)
-        saveformats.append([_("Detect type automatically"), ""])
+        auto = _("Detect type automatically")
+        saveformats.append([auto, "", None])
+        exportformats.append([auto, "", None])
 
         # All chess files filter
         all = gtk.FileFilter()
@@ -158,22 +160,25 @@ def getOpenAndSaveDialogs():
         opendialog.set_filter(all)
 
         # Specific filters and save formats
-        default = 0
-        for i, (label, endings) in enumerate(types):
-            endstr = "(%s)" % ", ".join(endings)
+        i = default = 0
+        for saver in savers:
+            label, ending = saver.__label__, saver.__ending__
+            endstr = "(%s)" % ending
             f = gtk.FileFilter()
             f.set_name(label+" "+endstr)
-            for ending in endings:
+            if hasattr(enddir[ending], "load"):
                 f.add_pattern("*."+ending)
                 all.add_pattern("*."+ending)
-            opendialog.add_filter(f)
-            saveformats.append([label, endstr])
+                opendialog.add_filter(f)
+                saveformats.append([label, endstr, saver])
+                i += 1
+            else:
+                exportformats.append([label, endstr, saver])
             if "pgn" in endstr:
                 default = i + 1
 
         # Add widgets to the savedialog
         savecombo = gtk.ComboBox()
-        savecombo.set_model(saveformats)
         crt = gtk.CellRendererText()
         savecombo.pack_start(crt, True)
         savecombo.add_attribute(crt, 'text', 0)
@@ -203,11 +208,18 @@ def saveGameSimple (uri, game):
     saver = enddir[ending[1:]]
     game.save(uri, saver, append=False)
 
-def saveGameAs (game):
+def saveGameAs (game, position=None):
     opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
+
+    if position is not None:
+        savecombo.set_model(exportformats)
+    else:
+        savecombo.set_model(saveformats)
 
     # Keep running the dialog until the user has canceled it or made an error
     # free operation
+    title = _("Save Game") if position is None else _("Export position")
+    savedialog.set_title(title)
     while True:
         savedialog.set_current_name("%s %s %s" %
                                    (game.players[0], _("vs."), game.players[1]))
@@ -218,7 +230,6 @@ def saveGameAs (game):
         uri = savedialog.get_filename()
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
-
         append = False
 
         if savecombo.get_active() == 0:
@@ -236,9 +247,11 @@ def saveGameAs (game):
             else:
                 saver = enddir[ending]
         else:
-            saver = savers[savecombo.get_active()-1]
+            index = savecombo.get_active()
+            format = saveformats[index] if position is None else exportformats[index]
+            saver = format[2]
             if not ending in enddir or not saver == enddir[ending]:
-                uri += ".%s" % saver.__endings__[0]
+                uri += ".%s" % saver.__ending__
 
         if os.path.isfile(uri) and not os.access (uri, os.W_OK):
             d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
@@ -270,7 +283,7 @@ Please ensure that you have given the right path and try again."))
         else:
             print repr(uri)
         try:
-            game.save(uri, saver, append)
+            game.save(uri, saver, append, position)
         except IOError, e:
             d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR)
             d.add_buttons(gtk.STOCK_OK, gtk.RESPONSE_OK)
