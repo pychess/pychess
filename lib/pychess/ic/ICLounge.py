@@ -947,12 +947,15 @@ class PlayerTabSection (ParrentListSection):
             
     @glock.glocked
     def onSelectionChanged (self, selection):
+        '''When the player selects a player from the player list, update the clickability of our buttons.'''
         player = self.getSelectedPlayer()
+        user_name = self.connection.getUsername()
         self.widgets["private_chat_button"].set_sensitive(player is not None)
         self.widgets["observe_button"].set_sensitive(
-            player is not None and player.isObservable())
+            player is not None and player.isObservable()\
+            and user_name not in (player.game.wplayer.name, player.game.bplayer.name))
         self.widgets["challengeButton"].set_sensitive(
-            player is not None and player.isAvailableForGame())
+            player is not None and player.isAvailableForGame() and player.name!=user_name)
         
 ########################################################################
 # Initialize Games List                                                #
@@ -1022,7 +1025,7 @@ class GameTabSection (ParrentListSection):
             game = model.get_value(rowiter, 0)
             if not game.private:
                 a_selected_game_is_observable = True
-                break        
+                break
         self.widgets["observeButton"].set_sensitive(a_selected_game_is_observable)
     
     def _update_gamesrunning_label (self):
