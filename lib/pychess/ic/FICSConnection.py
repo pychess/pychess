@@ -308,5 +308,6 @@ class FICSConnection (Connection):
         return self.registred
     
     def getUsername (self):
+        '''Return the username of the logged in player. Useful for determining if player is the logged in player.'''
         assert self.username != None
         return self.username
