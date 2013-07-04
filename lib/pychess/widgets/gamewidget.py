@@ -125,6 +125,7 @@ class GameWidget (gobject.GObject):
         gamemodel.connect("game_resumed", self.game_resumed)
         gamemodel.connect("moves_undone", self.moves_undone)
         gamemodel.connect("game_unended", self.game_unended)
+        gamemodel.connect("game_saved", self.game_saved)
         gamemodel.connect("players_changed", self.players_changed)
         gamemodel.connect("analyzer_added", self.analyzer_added)
         gamemodel.connect("analyzer_removed", self.analyzer_removed)
@@ -272,6 +273,7 @@ class GameWidget (gobject.GObject):
         return False
     
     def game_changed (self, gamemodel):
+        '''This runs when the game changes. It updates everything.'''
         self._update_menu_abort()
         self._update_menu_ask_to_move()
         self._update_menu_draw()
@@ -279,8 +281,14 @@ class GameWidget (gobject.GObject):
         self._update_menu_undo()
         self._set_arrow(HINT, None)
         self._set_arrow(SPY, None)
+        self.name_changed(gamemodel.players[0]) #We may need to add * to name
         return False
     
+    def game_saved(self, gamemodel, uri):
+        '''Run when the game is saved. Will remove * from title.'''
+        self.name_changed(gamemodel.players[0]) #We may need to remove * in name
+        return False
+
     def game_paused (self, gamemodel):
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
@@ -373,6 +381,7 @@ class GameWidget (gobject.GObject):
     
     @property
     def display_text (self):
+        '''This will give you the name of the game.'''
         vs = " " + _("vs") + " "
         if isinstance(self.gamemodel, ICGameModel):
             ficsgame = self.gamemodel.ficsgame
@@ -383,9 +392,12 @@ class GameWidget (gobject.GObject):
         
         if self.gamemodel.display_text != "":
             t += " " + self.gamemodel.display_text
+        if self.gamemodel.needsSave:
+            t="*"+t
         return t
     
     def name_changed (self, player):
+        '''This activates when it should be checked if the name of the game changes.'''
         newText = self.display_text
         if newText != self.getTabText():
             self.setTabText(newText)

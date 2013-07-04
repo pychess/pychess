@@ -485,8 +485,8 @@ class GameModel (GObject, PooledThread):
             fileobj = uri
             self.uri = None
         saver.save(fileobj, self, position)
-        self.emit("game_saved", uri)
         self.needsSave = False
+        self.emit("game_saved", uri)
         
     ############################################################################
     # Run stuff                                                                #
