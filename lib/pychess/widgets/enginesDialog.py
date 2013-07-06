@@ -224,6 +224,7 @@ class EnginesDialog():
         engine_chooser_dialog.add_filter(filter)
 
         self.widgets["engineChooserDock"].add(engine_chooser_button)
+        engine_chooser_button.set_sensitive(False)
         engine_chooser_button.show()
 
         def select_new_engine(button):
@@ -250,9 +251,6 @@ class EnginesDialog():
                     active = self.widgets["engine_protocol_combo"].get_active()
                     protocol = "uci" if active==0 else "xboard"
                     
-                    # When changing an existing engine, first delete the old one
-                    if not self.add and self.cur_engine is not None:
-                        discoverer.removeEngine(self.cur_engine)
                     discoverer.addEngine(name, new_engine, protocol)
                     self.cur_engine = name
                     glock_connect_after(discoverer, "engine_discovered", update_store)
