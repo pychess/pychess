@@ -8,6 +8,22 @@ from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.Utils.const import WHITE, BLACK
 
+
+def formatTime(seconds, clk2pgn=False):
+    if not -10 <= seconds <= 10:
+        seconds = ceil(seconds)
+    minus = "-" if seconds < 0 else ""
+    if minus:
+        seconds = -seconds
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours or clk2pgn:
+        return minus+"%d:%02d:%02d" % (hours, minutes, seconds)
+    elif not minutes and seconds < 10:
+        return minus+"%.1f" % seconds
+    else:
+        return minus+"%d:%02d" % (minutes, seconds)
+
 class ChessClock (gtk.DrawingArea):
     
     def __init__(self):
@@ -150,7 +166,7 @@ class ChessClock (gtk.DrawingArea):
         if model != None:
             self.model.connect("time_changed", self.time_changed)
             self.model.connect("player_changed", self.player_changed)
-            self.formatedCache = [self.formatTime (
+            self.formatedCache = [formatTime (
                 self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
             repeat_sleep(self.update, 0.1)
         else:
@@ -163,20 +179,9 @@ class ChessClock (gtk.DrawingArea):
         self.redraw_canvas()
     
     def update(self):
-        wt = self.formatTime (self.model.getPlayerTime(WHITE))
-        bt = self.formatTime (self.model.getPlayerTime(BLACK))
+        wt = formatTime (self.model.getPlayerTime(WHITE))
+        bt = formatTime (self.model.getPlayerTime(BLACK))
         if self.formatedCache != [wt, bt]:
             self.formatedCache = [wt, bt]
             self.redraw_canvas()
         return not self.model.ended
-    
-    def formatTime(self, seconds):
-        if not -10 <= seconds <= 10: seconds = ceil(seconds)
-        minus = seconds < 0 and "-" or ""
-        if minus: seconds = -seconds
-        h = int(seconds / 3600)
-        m = int(seconds % 3600 / 60)
-        s = seconds % 60
-        if h: return minus+"%d:%02d:%02d" % (h,m,s)
-        elif not m and s < 10: return minus+"%.1f" % s
-        else: return minus+"%d:%02d" % (m,s)

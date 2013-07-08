@@ -12,6 +12,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
 from pychess.Savers.pgnbase import nag2symbol
+from pychess.widgets.ChessClock import formatTime
 
 __title__ = _("Annotation")
 __active__ = True
@@ -74,10 +75,17 @@ class Sidepanel(gtk.TextView):
         glock_connect(self.gamemodel, "variations_changed", self.update)
 
         # Connect to preferences
-        
+        self.fan = conf.get("figuresInNotation", False)
         def figuresInNotationCallback(none):
+            self.fan = conf.get("figuresInNotation", False)
             self.update()
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        
+        self.showClocks = conf.get("showClocks", False)
+        def showClocksCallback(none):
+            self.showClocks = conf.get("showClocks", False)
+            self.update()
+        conf.notify_add("showClocks", showClocksCallback)
 
         return __widget__
 
@@ -333,7 +341,6 @@ class Sidepanel(gtk.TextView):
         end_iter = buf.get_end_iter # Convenience shortcut to the function
         new_line = False
 
-        fan = conf.get("figuresInNotation", False)
         if self.boardview.shown >= self.gamemodel.lowply:
             shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         
@@ -360,7 +367,7 @@ class Sidepanel(gtk.TextView):
                 
                 ply += 1
 
-                movestr = self.__movestr(node, fan)
+                movestr = self.__movestr(node)
                 buf.insert(end_iter(), movestr)
                 
                 startIter = buf.get_iter_at_offset(start)
@@ -558,9 +565,8 @@ class Sidepanel(gtk.TextView):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
-        fan = conf.get("figuresInNotation", False)
 
-        buf.insert(end_iter(), self.__movestr(node, fan) + " ")
+        buf.insert(end_iter(), self.__movestr(node) + " ")
 
         startIter = buf.get_iter_at_offset(start)
         endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -576,12 +582,16 @@ class Sidepanel(gtk.TextView):
         self.nodeIters.append(ni)
         self.update_selected_node()
 
-    def __movestr(self, node, fan):
+    def __movestr(self, node):
         move = node.lastMove
-        if fan:
+        if self.showClocks and node.clock is not None:
+            clock = " {%s}" % formatTime(node.clock)
+        else:
+            clock = ""
+        if self.fan:
             movestr = toFAN(node.prev, move)
         else:
             movestr =  toSAN(node.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)
-        return "%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols)
+        return "%s%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols, clock)
