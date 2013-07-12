@@ -752,23 +752,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkAlignment" id="engineChooserDock">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Full path to the engine binary or starting script.</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                            <property name="y_options">GTK_FILL</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkAlignment" id="alignment17">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -830,6 +813,31 @@ If it can use both  you can set here which one you like.</property>
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
                             <property name="y_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment4">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkEntry" id="engine_command_entry">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">False</property>
+                                <property name="editable">False</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                       </object>
@@ -3170,8 +3178,8 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="use_underline">True</property>
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
                       </object>
                     </child>
