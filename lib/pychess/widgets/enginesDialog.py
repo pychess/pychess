@@ -100,8 +100,6 @@ class EnginesDialog():
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
                 engine = discoverer.getEngineByName(self.cur_engine)
-                if "PyChess.py" in engine["command"]:
-                    return
                 discoverer.removeEngine(self.cur_engine)
                 discoverer.save()
                 update_store(discoverer)
@@ -115,11 +113,58 @@ class EnginesDialog():
         ################################################################
         # add button
         ################################################################
+        engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
+            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+
+        filter = gtk.FileFilter()
+        filter.set_name(_("Chess engines"))
+        filter.add_mime_type("application/x-executable")
+        engine_chooser_dialog.add_filter(filter)
         self.add = False
+
         def add(button):
             self.add = True
-            engine_chooser_dialog.run()
+            response = engine_chooser_dialog.run()
 
+            if response == gtk.RESPONSE_OK:
+                new_engine = engine_chooser_dialog.get_filename()
+                if new_engine:
+                    try:
+                        uci = is_uci(new_engine)
+                        if not uci:
+                            if not is_cecp(new_engine):
+                                # restore the original
+                                engine = discoverer.getEngineByName(self.cur_engine)
+                                engine_chooser_dialog.set_filename(engine["command"])
+                                print "Maybe not a chess engine"
+                                return
+                        path, binname = os.path.split(new_engine)
+                        for name in discoverer.getEngines():
+                            if name == binname:
+                                binname = name + "(1)"
+                                break
+                        self.widgets["engine_name_entry"].set_text(binname)
+                        self.widgets["engine_command_entry"].set_text(new_engine)
+                        self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
+                        self.widgets["engine_args_entry"].set_text("")
+                        
+                        name = self.widgets["engine_name_entry"].get_text().strip()
+                        active = self.widgets["engine_protocol_combo"].get_active()
+                        protocol = "uci" if active==0 else "xboard"
+                        
+                        discoverer.addEngine(name, new_engine, protocol)
+                        self.cur_engine = name
+                        glock_connect_after(discoverer, "engine_discovered", update_store)
+                        self.add = False
+                        discoverer.start()
+                    except:
+                        print "There is something wrong with this executable"
+                else:
+                    # restore the original
+                    engine = discoverer.getEngineByName(self.cur_engine)
+                    engine_chooser_dialog.set_filename(engine["command"])
+            engine_chooser_dialog.hide()
+            
         self.widgets["add_engine_button"].connect("clicked", add)
 
 
@@ -212,61 +257,6 @@ class EnginesDialog():
 
 
         ################################################################
-        # engine
-        ################################################################
-        engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        engine_chooser_button = gtk.FileChooserButton(engine_chooser_dialog)
-
-        filter = gtk.FileFilter()
-        filter.set_name(_("Chess engines"))
-        filter.add_mime_type("application/x-executable")
-        engine_chooser_dialog.add_filter(filter)
-
-        self.widgets["engineChooserDock"].add(engine_chooser_button)
-        engine_chooser_button.set_sensitive(False)
-        engine_chooser_button.show()
-
-        def select_new_engine(button):
-            new_engine = engine_chooser_dialog.get_filename()
-            if new_engine:
-                try:
-                    uci = is_uci(new_engine)
-                    if not uci:
-                        if not is_cecp(new_engine):
-                            # restore the original
-                            engine = discoverer.getEngineByName(self.cur_engine)
-                            engine_chooser_dialog.set_filename(engine["command"])
-                            return
-                    path, binname = os.path.split(new_engine)
-                    for name in discoverer.getEngines():
-                        if name == binname:
-                            binname = name + "(1)"
-                            break
-                    self.widgets["engine_name_entry"].set_text(binname)
-                    self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
-                    self.widgets["engine_args_entry"].set_text("")
-                    
-                    name = self.widgets["engine_name_entry"].get_text().strip()
-                    active = self.widgets["engine_protocol_combo"].get_active()
-                    protocol = "uci" if active==0 else "xboard"
-                    
-                    discoverer.addEngine(name, new_engine, protocol)
-                    self.cur_engine = name
-                    glock_connect_after(discoverer, "engine_discovered", update_store)
-                    self.add = False
-                    discoverer.start()
-                except:
-                    print "There is something wrong with this executable"
-            else:
-                # restore the original
-                engine = discoverer.getEngineByName(self.cur_engine)
-                engine_chooser_dialog.set_filename(engine["command"])
-                
-        engine_chooser_button.connect("file-set", select_new_engine)
-
-
-        ################################################################
         # engine tree
         ################################################################
         self.selection = False
@@ -274,13 +264,17 @@ class EnginesDialog():
             store, iter = self.tv.get_selection().get_selected()
             if iter:
                 self.selection = True
-                self.widgets['copy_engine_button'].set_sensitive(True)
-                self.widgets['remove_engine_button'].set_sensitive(True)
                 row = store.get_path(iter)[0]
                 name = store[row][1]
                 self.cur_engine = name
                 engine = discoverer.getEngineByName(name)
+                self.widgets['copy_engine_button'].set_sensitive(True)
+                if "PyChess.py" in engine["command"]:
+                    self.widgets['remove_engine_button'].set_sensitive(False)
+                else:
+                    self.widgets['remove_engine_button'].set_sensitive(True)
                 self.widgets["engine_name_entry"].set_text(engine["name"])
+                self.widgets["engine_command_entry"].set_text(engine["command"])
                 engine_chooser_dialog.set_filename(engine["command"])
                 args = [] if engine.get("args") is None else engine.get("args")
                 self.widgets["engine_args_entry"].set_text(' '.join(args))
