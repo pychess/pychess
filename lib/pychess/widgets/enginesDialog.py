@@ -139,9 +139,9 @@ class EnginesDialog():
                                 print "Maybe not a chess engine"
                                 return
                         path, binname = os.path.split(new_engine)
-                        for name in discoverer.getEngines():
-                            if name == binname:
-                                binname = name + "(1)"
+                        for e in discoverer.getEngines():
+                            if e["name"] == binname:
+                                binname = e["name"] + "(1)"
                                 break
                         self.widgets["engine_name_entry"].set_text(binname)
                         self.widgets["engine_command_entry"].set_text(new_engine)
