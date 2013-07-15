@@ -46,6 +46,7 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=pango.WEIGHT_BOLD)
         self.textbuffer.create_tag("node", weight=pango.WEIGHT_BOLD)
+        self.textbuffer.create_tag("clock", foreground="darkgrey")
         self.textbuffer.create_tag("comment", foreground="darkblue")
         self.textbuffer.create_tag("variation-toplevel")
         self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
@@ -398,6 +399,9 @@ class Sidepanel(gtk.TextView):
                 
                 buf.insert(end_iter(), " ")
 
+            if self.showClocks and node.clock is not None:
+                self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(node.clock), "clock")
+
             new_line = False
             for index, child in enumerate(node.children):
                 if isinstance(child, basestring):
@@ -580,18 +584,17 @@ class Sidepanel(gtk.TextView):
         ni["parent"] = None
 
         self.nodeIters.append(ni)
+
+        if self.showClocks and node.clock is not None:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(node.clock), "clock")
         self.update_selected_node()
 
     def __movestr(self, node):
         move = node.lastMove
-        if self.showClocks and node.clock is not None:
-            clock = " {%s}" % formatTime(node.clock)
-        else:
-            clock = ""
         if self.fan:
             movestr = toFAN(node.prev, move)
         else:
             movestr =  toSAN(node.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)
-        return "%s%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols, clock)
+        return "%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols)
