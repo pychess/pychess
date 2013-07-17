@@ -42,6 +42,7 @@ class UCIEngine (ProtocolEngine):
         self.moveLock = RLock()
         # none of the following variables should be changed or used in a
         # condition statement without holding the above self.moveLock
+        self.ponderOn = False
         self.pondermove = None
         self.ignoreNext = False
         self.waitingForMove = False
@@ -303,7 +304,7 @@ class UCIEngine (ProtocolEngine):
         if self.mode == NORMAL:
             if self.board.color == self.color:
                 self._searchNow()
-            elif self.getOption('Ponder') and self.pondermove:
+            elif self.ponderOn and self.pondermove:
                 self._startPonder()
         else:
             self._searchNow()
@@ -366,6 +367,7 @@ class UCIEngine (ProtocolEngine):
         if self.readyMoves:
             log.warn("Options set after 'readyok' are not sent to the engine", self.defname)
         self.optionsToBeSent[key] = value
+        self.ponderOn = key=="Ponder" and value is True
     
     def getOption (self, option):
         assert self.readyOptions
@@ -538,7 +540,7 @@ class UCIEngine (ProtocolEngine):
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
                     (move, self.board), self.defname)
                 
-                if self.getOption('Ponder'):
+                if self.ponderOn:
                     self.pondermove = None
                     # An engine may send an empty ponder line, simply to clear.
                     if len(parts) == 4:
