@@ -195,7 +195,9 @@ class EngineAdvisor(Advisor):
         
         for i, line in enumerate(analysis):
             if line is None:
-                break
+                self.store[self.path + (i,)] = self.textOnlyRow("")
+                continue
+                
             pv, score = line
             move = None
             if pv:
