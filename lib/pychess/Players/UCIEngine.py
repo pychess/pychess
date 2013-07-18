@@ -591,8 +591,7 @@ class UCIEngine (ProtocolEngine):
             if multipv <= len(self.analysis):
                 self.analysis[multipv - 1] = (moves, score)
 
-            if multipv == self.multipvExpected:
-                self.emit("analyze", self.analysis)
+            self.emit("analyze", self.analysis)
             return
         
         #-----------------------------------------------  An Analyzer bestmove
