@@ -63,7 +63,7 @@ class ICPlayer (Player):
             del self.offers[offer.index]
     
     def __onPrivateMessage (self, cm, name, title, isadmin, text):
-        if name == self.name:
+        if name == self.ichandle:
             self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
