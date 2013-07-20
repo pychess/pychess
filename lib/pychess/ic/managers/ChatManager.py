@@ -39,7 +39,7 @@ class ChatManager (GObject):
         self.connection = connection
         
         self.connection.expect_line_plus (self.onPrivateMessage,
-                "%s(\*)?(?:\[(\d+)\])? (?:tells you|says): (.*)" % names)
+                "%s(\*)? (?:tells you|says): (.*)" % names)
         self.connection.expect_line_plus (self.onAnnouncement,
                 "\s*\*\*ANNOUNCEMENT\*\* (.*)")
         self.connection.expect_line_plus (self.onChannelMessage,
@@ -155,7 +155,7 @@ class ChatManager (GObject):
         
     
     def onPrivateMessage (self, matchlist):
-        name, isadmin, gameno, text = matchlist[0].groups()
+        name, isadmin, text = matchlist[0].groups()
         text += " " + " ".join(matchlist[1:])
         text = self.entityDecode(text)
         self.emit("privateMessage", name, "title", isadmin, text)
