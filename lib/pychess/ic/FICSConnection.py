@@ -83,11 +83,6 @@ class Connection (GObject, PooledThread):
     def expect_n_lines (self, callback, *regexps):
         self.expect(NLinesPrediction(callback, *regexps))
     
-    def expect_line_plus (self, callback, regexp):
-        def callback_decorator (matchlist):
-            callback([matchlist[0]]+[m.group(0) for m in matchlist[1:]])
-        self.expect(FromPlusPrediction(callback_decorator, regexp, "\   (.*)"))
-    
     def expect_fromplus (self, callback, regexp0, regexp1):
         self.expect(FromPlusPrediction(callback, regexp0, regexp1))
     
