@@ -614,8 +614,12 @@ class ChatWindow:
             panel.selectItem(id)
     
     def onPersonMessage (self, cm, name, title, isadmin, text):
-        self.showChat()
-        self.window.set_urgency_hint(True)
+        if self.connection.bm.isPlaying():
+            if not self.window:
+                self.initUi()
+        else:
+            self.showChat()
+            self.window.set_urgency_hint(True)
     
     def openChatWithPlayer (self, name):
         self.showChat()
