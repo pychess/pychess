@@ -38,15 +38,15 @@ class ChatManager (GObject):
         GObject.__init__(self)
         self.connection = connection
         
-        self.connection.expect_line_plus (self.onPrivateMessage,
+        self.connection.expect_line (self.onPrivateMessage,
                 "%s(\*)? (?:tells you|says): (.*)" % names)
-        self.connection.expect_line_plus (self.onAnnouncement,
+        self.connection.expect_line (self.onAnnouncement,
                 "\s*\*\*ANNOUNCEMENT\*\* (.*)")
-        self.connection.expect_line_plus (self.onChannelMessage,
+        self.connection.expect_line (self.onChannelMessage,
                 "%s(\*)?\((\d+)\): (.*)" % names)
-        self.connection.expect_line_plus (self.onShoutMessage,
+        self.connection.expect_line (self.onShoutMessage,
                 "%s(\*)? (c-)?shouts: (.*)" % names)
-        self.connection.expect_line_plus (self.onShoutMessage,
+        self.connection.expect_line (self.onShoutMessage,
                 "--> %s(\*)?:? (.*)" % names)
         
         self.connection.expect_fromto (self.onChannelList,
@@ -154,32 +154,28 @@ class ChatManager (GObject):
             list += line.split()
         
     
-    def onPrivateMessage (self, matchlist):
-        name, isadmin, text = matchlist[0].groups()
-        text += " " + " ".join(matchlist[1:])
+    def onPrivateMessage (self, match):
+        name, isadmin, text = match.groups()
         text = self.entityDecode(text)
         self.emit("privateMessage", name, "title", isadmin, text)
     
-    def onAnnouncement (self, matchlist):
-        text = matchlist[0].groups()[0]
-        text += " " + " ".join(matchlist[1:-1])
+    def onAnnouncement (self, match):
+        text = match.groups()[0]
         text = self.entityDecode(text)
         self.emit("announcement", text)
     
-    def onChannelMessage (self, matchlist):
-        name, isadmin, channel, text = matchlist[0].groups()
-        text += " " + " ".join(matchlist[1:])
+    def onChannelMessage (self, match):
+        name, isadmin, channel, text = match.groups()
         text = self.entityDecode(text)
         isme = name.lower() == self.connection.username.lower()
         self.emit("channelMessage", name, isadmin, isme, channel, text)
     
-    def onShoutMessage (self, matchlist):
-        if len(matchlist[0].groups()) == 4:
-            name, isadmin, type, text = matchlist[0].groups()
-        elif len(matchlist[0].groups()) == 3:
-            name, isadmin, text = matchlist[0].groups()
+    def onShoutMessage (self, match):
+        if len(match.groups()) == 4:
+            name, isadmin, type, text = match.groups()
+        elif len(match.groups()) == 3:
+            name, isadmin, text = match.groups()
             type = ""
-        text += " " + " ".join(matchlist[1:])
         text = self.entityDecode(text)
         isme = name.lower() == self.connection.username.lower()
         # c-shout should be used ONLY for chess-related messages, such as
