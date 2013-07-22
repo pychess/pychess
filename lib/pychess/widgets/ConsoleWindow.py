@@ -118,6 +118,7 @@ class ConsoleView (gtk.VPaned):
                 adj = self.sw.get_vadjustment()
                 adj.set_value(adj.get_upper())
                 
+                # Maintain variables backup, it will be restored to fics on quit
                 for var in self.connection.lvm.variablesBackup:
                     if buffer.props.text == "set %s" % var:
                         if self.connection.lvm.variablesBackup[var] == 0:
@@ -132,6 +133,17 @@ class ConsoleView (gtk.VPaned):
                         parts = buffer.props.text.split()
                         if len(parts) == 3 and parts[2]:
                             self.connection.lvm.variablesBackup[var] = parts[2]
+
+                # Maintain lists backup, it will be restored to fics on quit
+                for list in self.connection.lvm.personalBackup:
+                    if buffer.props.text.startswith("addlist %s " % var) or buffer.props.text.startswith("+%s " % var):
+                        parts = buffer.props.text.split()
+                        if len(parts) == 3 and parts[2]:
+                            self.connection.lvm.personalBackup[var].add(parts[2])
+                    if buffer.props.text.startswith("sublist %s " % var) or buffer.props.text.startswith("-%s " % var):
+                        parts = buffer.props.text.split()
+                        if len(parts) == 3 and parts[2]:
+                            self.connection.lvm.personalBackup[var].discard(parts[2])
 
                 self.history.append(buffer.props.text)
                 buffer.props.text = ""
