@@ -40,7 +40,6 @@ class Connection (GObject, PooledThread):
         'connecting':    (SIGNAL_RUN_FIRST, None, ()),
         'connectingMsg': (SIGNAL_RUN_FIRST, None, (str,)),
         'connected':     (SIGNAL_RUN_FIRST, None, ()),
-        'disconnecting': (SIGNAL_RUN_FIRST, None, ()),
         'disconnected':  (SIGNAL_RUN_FIRST, None, ()),
         'error':         (SIGNAL_RUN_FIRST, None, (object,)),
     }
@@ -285,8 +284,9 @@ class FICSConnection (Connection):
             self.emit("disconnected")
     
     def close (self):
-        self.emit("disconnecting")
         if self.isConnected():
+            if self.conn is None:
+                self.lvm.stop()
             try:
                 self.client.run_command("quit")
             except Exception, e:

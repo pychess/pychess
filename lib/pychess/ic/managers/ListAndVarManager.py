@@ -46,12 +46,10 @@ class ListAndVarManager:
         self.connection.client.run_command("ivariables")
         self.connection.client.run_command("variables")
         
-        self.connection.connect("disconnecting", self.stop)
-        
         # Auto flag
         conf.notify_add('autoCallFlag', self.autoFlagNotify)
         
-        atexit.register(self.stop, self.connection)
+        atexit.register(self.stop)
 
     def isReady (self):
         # FatICS showlist output is not well formed yet
@@ -60,7 +58,7 @@ class ListAndVarManager:
         else:
             return self.listLock._Semaphore__value and self.varLock._Semaphore__value
     
-    def stop (self, connection):
+    def stop (self):
         if not self.isReady():
             return
 
