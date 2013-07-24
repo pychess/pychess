@@ -442,7 +442,7 @@ class GameWidget (gobject.GObject):
         boardvbox.set_spacing(2)
         
         messageSock = createAlignment(0,0,0,0)
-        makeYellow(messageSock)
+#        makeYellow(messageSock)
         
         if gamemodel.timemodel:
             ccalign = createAlignment(0, 0, 0, 0)
