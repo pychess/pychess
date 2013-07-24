@@ -799,11 +799,12 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv = widgets["playertreeview"]
         self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
-                                   int, int, int, str)
+                                   int, int, int, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
-            _("Standard"), _("Lightning"), _("Crazyhouse"), _("Wild"), _("Status"), hide=[0],
+            _("Standard"), _("Lightning"), _("Crazyhouse"), _("Wild"), _("Status"), "tooltip", hide=[0,6,7,9],
             pix=[1])
+        self.tv.set_tooltip_column(9,)
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
@@ -822,6 +823,23 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
+
+    @classmethod
+    def getPlayerTooltipText (cls, player):
+        text = "%s" % player.name
+        text += "%s" % player.display_titles(long=True)
+        if player.blitz:
+            text += "\n%s: %s" % (_("Blitz"), player.blitz)
+        if player.standard:
+            text += "\n%s: %s" % (_("Standard"), player.standard)
+        if player.lightning:
+            text += "\n%s: %s" % (_("Lightning"), player.lightning)
+        if player.crazyhouse:
+            text += "\n%s: %s" % (_("Crazyhouse"), player.crazyhouse)
+        if player.wild:
+            text += "\n%s: %s" % (_("Wild"), player.wild)
+        text += "\n%s" % player.display_status
+        return text
     
     @glock.glocked
     def onPlayerAdded (self, players, player):
@@ -829,7 +847,8 @@ class PlayerTabSection (ParrentListSection):
         
         ti = self.store.append([player, player.getIcon(),
             player.name + player.display_titles(), player.blitz, player.standard,
-            player.lightning, player.crazyhouse, player.wild, player.display_status])
+            player.lightning, player.crazyhouse, player.wild, player.display_status,
+            self.getPlayerTooltipText(player)])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
             "notify::status", self.status_changed)
