@@ -45,7 +45,9 @@ class ICLogon:
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
-        uistuff.makeYellow(self.widgets["messagePanel"])
+        self.infobar = gtk.InfoBar()
+        self.widgets["messagePanelHBox"].pack_start(self.infobar, 
+            expand=False, fill=False)
         
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
@@ -132,30 +134,29 @@ class ICLogon:
         
         self.showNormal()
         
-        pars = str(text).split("\n")
-        textsVbox = self.widgets["textsVbox"]
-        
-        while len(textsVbox.get_children()) > len(pars)+1:
-            child = textsVbox.get_children()[-1]
-            textsVbox.remove(child)
-        
-        while len(textsVbox.get_children()) < len(pars)+1:
+        content_area = self.infobar.get_content_area()
+        for widget in content_area:
+            content_area.remove(widget)
+        content = gtk.HBox()
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_DIALOG_WARNING, gtk.ICON_SIZE_DIALOG)
+        content.pack_start(image, expand=False, fill=False)
+        vbox = gtk.VBox()
+        label = gtk.Label()
+        label.props.xalign = 0
+        label.props.justify = gtk.JUSTIFY_LEFT
+        label.set_markup("<b><big>%s</big></b>" % title)
+        vbox.pack_start(label, expand=True, fill=False)
+        for line in str(text).split("\n"):
             label = gtk.Label()
             label.set_size_request(476, -1)
             label.props.selectable = True
             label.props.wrap = True
-            label.props.xalign = 0
             label.props.justify = gtk.JUSTIFY_LEFT
-            textsVbox.add(label)
-        def callback (textsVbox, allocation):
-            for child in textsVbox.get_children():
-                child.set_size_request(allocation.width, -1)
-        textsVbox.connect_after("size-allocate", callback)
-        
-        textsVbox.get_children()[0].set_markup("<b><big>%s</big></b>" % title)
-        for i, par in enumerate(pars):
-            textsVbox.get_children()[i+1].set_text(par)
-        
+            label.set_text(line)
+            vbox.pack_start(label, expand=True, fill=False)
+        content.pack_start(vbox, expand=False, fill=False, padding=7)
+        content_area.add(content)
         self.widgets["messagePanel"].show_all()
     
     def onConnected (self, connection):

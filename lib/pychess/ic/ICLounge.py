@@ -1969,7 +1969,7 @@ class SeekChallengeSection (ParrentListSection):
             variants[gametype.variant_type].__desc__)
 
 ############################################################################
-# Relay server messages to the user which aren't part of a game            #
+# Relay server messages which aren't part of a game to the user            #
 ############################################################################
 
 class Messages (Section):
