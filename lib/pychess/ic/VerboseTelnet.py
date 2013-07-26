@@ -167,7 +167,14 @@ class PredictionsTelnet:
         if self.__block_mode:
             if line.startswith(BLOCK_START):
                 line = line[1:]
-                id, code, text = line.split(BLOCK_SEPARATOR)
+                parts = line.split(BLOCK_SEPARATOR)
+                if len(parts) == 3:
+                    id, code, text = parts
+                elif len(parts) == 4:
+                    id, code, text = parts[0], parts[1], parts[3] 
+                else:
+                    print "Posing not supported yet..."
+                    return
                 line = text
                 if text.endswith(BLOCK_END):
                     line = text[:-1]
