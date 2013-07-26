@@ -392,8 +392,8 @@ class GameWidget (gobject.GObject):
         
         if self.gamemodel.display_text != "":
             t += " " + self.gamemodel.display_text
-        if self.gamemodel.needsSave:
-            t="*"+t
+        #if self.gamemodel.needsSave:
+        #    t="*"+t
         return t
     
     def name_changed (self, player):
