@@ -893,8 +893,11 @@ class PlayerTabSection (ParrentListSection):
     @glock.glocked
     def status_changed (self, player, property):
         if player not in self.players: return
+
         if self.store.iter_is_valid(self.players[player]["ti"]):
             self.store.set(self.players[player]["ti"], 8, player.display_status)
+            self.store.set(self.players[player]["ti"], 9,
+                           self.getPlayerTooltipText(player))
         
         if player.status == IC_STATUS_PLAYING and player.game and \
                 "private" not in self.players[player]:
@@ -919,6 +922,8 @@ class PlayerTabSection (ParrentListSection):
         self.store.set(self.players[player]["ti"], 1, player.getIcon())
         self.store.set(self.players[player]["ti"], 2,
                        player.name + player.display_titles())
+        self.store.set(self.players[player]["ti"], 9,
+                       self.getPlayerTooltipText(player))
         return False
         
     def private_changed (self, game, property, player):
@@ -932,7 +937,9 @@ class PlayerTabSection (ParrentListSection):
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
         self.store.set(ti, 1, player.getIcon())
-
+        self.store.set(self.players[player]["ti"], 9,
+                       self.getPlayerTooltipText(player))
+        
         if rating.type == TYPE_BLITZ:
             self.store.set(ti, 3, player.blitz)
         elif rating.type == TYPE_STANDARD:
