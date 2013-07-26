@@ -683,6 +683,7 @@ class SeekTabSection (ParrentListSection):
 
     def onCurGameEnded (self):
         self.widgets["seekListContent"].set_sensitive(True)
+        self.connection.glm.refresh_seeks()
 
 ########################################################################
 # Initialize Seek Graph                                                #
