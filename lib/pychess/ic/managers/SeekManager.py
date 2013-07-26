@@ -121,7 +121,9 @@ class SeekManager (GObject):
             if not key: continue
             self.emit("removeSeek", key)
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
-
+    
+    def refresh_seeks (self):
+        self.connection.lvm.setVariable("seekinfo", 1)
     
 if __name__ == "__main__":
     assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"
