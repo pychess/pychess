@@ -15,6 +15,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils import lmove
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic.ICGameModel import ICGameModel
+from pychess.widgets.InfoBar import InfoBar
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
 import cStringIO
@@ -105,19 +106,19 @@ class GameWidget (gobject.GObject):
         self.gamemodel = gamemodel
         
         tabcontent = self.initTabcontents()
-        boardvbox, board, messageSock = self.initBoardAndClock(gamemodel)
+        boardvbox, board, infobar = self.initBoardAndClock(gamemodel)
         statusbar, stat_hbox = self.initStatusbar(board)
         
         self.tabcontent = tabcontent
         self.board = board
         self.statusbar = statusbar
-        
-        self.messageSock = messageSock
+        self.infobar = infobar
+        self.messages = []
         self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
-        
         self.menuitems = MenuItemsDict(self)
+        
         gamemodel.connect("game_started", self.game_started)
         gamemodel.connect("game_ended", self.game_ended)
         gamemodel.connect("game_changed", self.game_changed)
@@ -440,9 +441,7 @@ class GameWidget (gobject.GObject):
     def initBoardAndClock(self, gamemodel):
         boardvbox = gtk.VBox()
         boardvbox.set_spacing(2)
-        
-        messageSock = createAlignment(0,0,0,0)
-#        makeYellow(messageSock)
+        infobar = InfoBar()
         
         if gamemodel.timemodel:
             ccalign = createAlignment(0, 0, 0, 0)
@@ -458,7 +457,7 @@ class GameWidget (gobject.GObject):
         
         board = BoardControl(gamemodel, actionMenuDic)
         boardvbox.pack_start(board)
-        return boardvbox, board, messageSock
+        return boardvbox, board, infobar
     
     def initStatusbar(self, board):
         def tip (widget, x, y, keyboard_mode, tooltip, text):
@@ -554,43 +553,16 @@ class GameWidget (gobject.GObject):
     def getPageNumber (self):
         return getheadbook().page_num(self.notebookKey)
     
-    def showMessage (self, messageDialog, vertical=False):
-        if self.messageSock.child:
-            self.messageSock.remove(self.messageSock.child)
-        
-        message = messageDialog.child.get_children()[0]
-        hbuttonbox = messageDialog.child.get_children()[-1]
-        
-        if vertical:
-            buttonbox = gtk.VButtonBox()
-            buttonbox.props.layout_style = gtk.BUTTONBOX_SPREAD
-            for button in hbuttonbox.get_children():
-                hbuttonbox.remove(button)
-                buttonbox.add(button)
-        else:
-            messageDialog.child.remove(hbuttonbox)
-            buttonbox = hbuttonbox
-            buttonbox.props.layout_style = gtk.BUTTONBOX_SPREAD
-        
-        messageDialog.child.remove(message)
-        texts = message.get_children()[1]
-        message.set_child_packing(texts, False, False, 0, gtk.PACK_START)
-        text1, text2 = texts.get_children()
-        text1.props.yalign = 1
-        text2.props.yalign = 0
-        texts.set_child_packing(text1, True, True, 0, gtk.PACK_START)
-        texts.set_child_packing(text2, True, True, 0, gtk.PACK_START)
-        texts.set_spacing(3)
-        message.pack_end(buttonbox, True, True)
-        if self.messageSock.child:
-            self.messageSock.remove(self.messageSock.child)
-        self.messageSock.add(message)
-        self.messageSock.show_all()
+    def showMessage (self, message):
+        self.messages.append(message)
+        self.infobar.push_message(message)
         if self == cur_gmwidg():
             notebooks["messageArea"].show()
     
-    def hideMessage (self):
-        self.messageSock.hide()
+    def removeMessages (self):
+        for message in self.messages:
+            message.dismiss()
+        del self.messages[:]
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
 
@@ -800,10 +772,10 @@ def attachGameWidget (gmwidg):
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
     
-    messageSockAlign = createAlignment(4,4,0,4)
-    messageSockAlign.show()
-    messageSockAlign.add(gmwidg.messageSock)
-    notebooks["messageArea"].append_page(messageSockAlign)
+    align = createAlignment(4,4,0,4)
+    align.show()
+    align.add(gmwidg.infobar)
+    notebooks["messageArea"].append_page(align)
     notebooks["board"].append_page(gmwidg.boardvbox)
     gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):

@@ -46,6 +46,7 @@ class ICLogon:
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
         self.infobar = gtk.InfoBar()
+        self.infobar.set_message_type(gtk.MESSAGE_WARNING)
         self.widgets["messagePanelHBox"].pack_start(self.infobar, 
             expand=False, fill=False)
         
@@ -152,6 +153,7 @@ class ICLogon:
             label.set_size_request(476, -1)
             label.props.selectable = True
             label.props.wrap = True
+            label.props.xalign = 0
             label.props.justify = gtk.JUSTIFY_LEFT
             label.set_text(line)
             vbox.pack_start(label, expand=True, fill=False)
