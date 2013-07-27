@@ -604,6 +604,9 @@ def delGameWidget (gmwidg):
         
         mainvbox.pack_end(background)
         background.show()
+        from pychess.ic.ICLogon import dialog
+        if dialog is not None and dialog.lounge is not None:
+            dialog.lounge.present()
     
     gmwidg.__del__()
 
