@@ -16,6 +16,7 @@ from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
 
 from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
+from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -97,37 +98,49 @@ def game_ended (gamemodel, reason, gmwidg):
     elif gamemodel.status == BLACKWON:
         nameDic["winner"] = gamemodel.players[BLACK]
         nameDic["loser"] = gamemodel.players[WHITE]
-    
     m1 = reprResult_long[gamemodel.status] % nameDic
     m2 = reprReason_long[reason] % nameDic
-    
-    
-    md = gtk.MessageDialog()
-    md.set_markup("<b><big>%s</big></b>" % m1)
-    md.format_secondary_markup(m2)
+    hbox = gtk.HBox()
+    image = gtk.Image()
+    image.set_from_stock(gtk.STOCK_DIALOG_INFO, gtk.ICON_SIZE_DIALOG)
+    hbox.pack_start(image, expand=False, fill=False)
+    vbox = gtk.VBox()
+    label = gtk.Label()
+    label.props.xalign = 0
+    label.props.justify = gtk.JUSTIFY_LEFT
+    label.set_markup("<b><big>%s</big></b>" % m1)
+    vbox.pack_start(label, expand=False, fill=False)
+    label = gtk.Label()
+    label.props.xalign = 0
+    label.props.justify = gtk.JUSTIFY_LEFT
+    label.props.wrap = True
+    label.set_text(m2)
+    vbox.pack_start(label, expand=False, fill=False)
+    hbox.pack_start(vbox, expand=False, fill=False, padding=7)
+    message = InfoBarMessage(gtk.MESSAGE_INFO, hbox, None)
     
     if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
         if gamemodel.players[0].__type__ == REMOTE or gamemodel.players[1].__type__ == REMOTE:
-            md.add_button(_("Offer Rematch"), 0)
+            message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
         else:
-            md.add_button(_("Play Rematch"), 1)
+            message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
             if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
                 if gamemodel.ply == 1:
-                    md.add_button(_("Undo one move"), 2)
+                    message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
                 elif gamemodel.ply > 1:
-                    md.add_button(_("Undo two moves"), 2)
+                    message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
     
-    def cb (messageDialog, responseId):
-        if responseId == 0:
+    def callback (infobar, response):
+        if response == 0:
             if gamemodel.players[0].__type__ == REMOTE:
                 gamemodel.players[0].offerRematch()
             else:
                 gamemodel.players[1].offerRematch()
-        elif responseId == 1:
+        elif response == 1:
             # newGameDialog uses ionest uses gamenanny uses newGameDialog...
             from pychess.widgets.newGameDialog import createRematch
             createRematch(gamemodel)
-        elif responseId == 2:
+        elif response == 2:
             if gamemodel.curplayer.__type__ == LOCAL and gamemodel.ply > 1:
                 offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
             else:
@@ -135,11 +148,11 @@ def game_ended (gamemodel, reason, gmwidg):
             if gamemodel.players[0].__type__ == LOCAL:
                 gamemodel.players[0].emit("offer", offer)
             else: gamemodel.players[1].emit("offer", offer)
-    md.connect("response", cb)
+    message.callback = callback
     
     glock.acquire()
     try:
-        gmwidg.showMessage(md)
+        gmwidg.showMessage(message)
         gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
         
         if reason == WHITE_ENGINE_DIED:
@@ -168,7 +181,7 @@ def game_unended (gamemodel, gmwidg):
     log.debug("gamenanny.game_unended: %s\n" % gamemodel.boards[-1])
     glock.acquire()
     try:
-        gmwidg.hideMessage()
+        gmwidg.removeMessages()
     finally:
         glock.release()
     _set_statusbar(gmwidg, "")
