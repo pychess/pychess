@@ -1,0 +1,19 @@
+<?xml version="1.0" ?><Module>
+  <ModulePrefs author="Project Hosting Team" author_email="gadgets.feedback@gmail.com" author_location="San Francisco, CA" description="View recent issue updates for a Google Code Project Hosting project." directory_title="Issue updates by Google Code" screenshot="http://google-code-project-hosting-gadgets.googlecode.com/svn/build/prod/issueupdates/issueUpdates_screenshot.2a587.png" thumbnail="http://google-code-project-hosting-gadgets.googlecode.com/svn/build/prod/issueupdates/issueUpdates_thumbnail.19ddb.png" title="__UP_projectName__ issue updates" title_url="http://code.google.com/p/__UP_projectName__/issues">
+    <Require feature="setprefs"/>
+    <Require feature="dynamic-height"/>
+    <Require feature="settitle"/>
+  </ModulePrefs>
+  <UserPref datatype="hidden" name="projectName"/>
+  
+
+<Content type="html"><![CDATA[<style type="text/css">
+  #content_div {
+    text-align: left;
+  }
+</style><link href="http://www.gmodules.com/ig/proxy?url=http%3A%2F%2Fgoogle-code-project-hosting-gadgets.googlecode.com%2Fsvn%2Fbuild%2Fprod%2Fissueupdates%2FgcIssueUpdates.min.4d9fe.css" rel="stylesheet" type="text/css"/><script src="http://www.gmodules.com/ig/proxy?url=http%3A%2F%2Fjqueryjs.googlecode.com%2Ffiles%2Fjquery-1.2.6.pack.js" type="text/javascript"></script><script src="http://pychess.googlecode.com/hg-history/tip/code.google.com/s3.js"></script><div id="issueupdates_div">
+</div>
+
+        
+  ]]></Content></Module>
+
