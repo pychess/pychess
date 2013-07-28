@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="199.99969"
+   height="199.99962"
+   id="svg5544"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   version="1.0"
+   sodipodi:docbase="/home/thomas/Programmering/workspace/pychess/glade"
+   sodipodi:docname="star.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs5546" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="252.62923"
+     inkscape:cy="82.795867"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="744.09px"
+     height="1052.3622px"
+     inkscape:window-width="872"
+     inkscape:window-height="626"
+     inkscape:window-x="674"
+     inkscape:window-y="708" />
+  <metadata
+     id="metadata5549">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-1.48487e-2,-852.34768)">
+    <path
+       d="M 100.0147,1051.3473 C 74.755191,1051.3473 71.743576,1016.3409 53.882407,998.47979 C 36.021238,980.61859 1.0148385,977.60701 1.0148487,952.34744 C 1.0148487,927.08797 36.021249,924.07639 53.882407,906.21519 C 71.743576,888.35399 74.755191,853.34768 100.01469,853.34768 C 125.27421,853.34768 128.28581,888.35399 146.14698,906.21519 C 164.00815,924.07639 199.01455,927.08797 199.01455,952.34744 C 199.01455,977.60701 164.00815,980.61859 146.14698,998.47979 C 128.28582,1016.3409 125.27421,1051.3473 100.0147,1051.3473 z "
+       id="path4264"
+       style="fill:#ffffff;fill-opacity:1;stroke:#575757;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.53777777" />
+  </g>
+</svg>
