@@ -77,6 +77,8 @@ class SeekManager (GObject):
             if key == "tp":
                 try:
                     seek["gametype"] = GAME_TYPES[value]
+                    if GAME_TYPES[value].variant_type in UNSUPPORTED:
+                        return
                 except KeyError:
                     if self.connection.FatICS and value == "chess":
                         # TODO: remove when fixed in FatICS

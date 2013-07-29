@@ -67,6 +67,8 @@ GAME_TYPES = {
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
     "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
+    "wild/0": WildGameType("wild/0", WILDCASTLECHESS),
+    "wild/1": WildGameType("wild/1", WILDCASTLESHUFFLECHESS),
     "wild/2": WildGameType("wild/2", SHUFFLECHESS),
     "wild/3": WildGameType("wild/3", RANDOMCHESS),
     "wild/4": WildGameType("wild/4", ASYMMETRICRANDOMCHESS),

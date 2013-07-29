@@ -205,7 +205,6 @@ class BoardManager (GObject):
         self.connection.lvm.setVariable("movecase", 1)
         # don't unobserve games when we start a new game
         self.connection.lvm.setVariable("unobserve", 3)
-        self.connection.lvm.setVariable("formula", "")
         self.connection.lvm.autoFlagNotify()
         
         # gameinfo <g1> doesn't really have any interesting info, at least not
@@ -316,12 +315,13 @@ class BoardManager (GObject):
         if gameno not in self.gamemodelStartedEvents:
             game = self.connection.games.get_game_by_gameno(gameno)
             # observe, follow from console
-            if game is not None:
+            if game is not None and game.supported:
                 self.observe(game)
             else:
                 if relation == IC_POS_OBSERVING:
                     game = self.__createGame(gameno, wname, bname, wms, bms, fen)
-                    self.observe(game)
+                    if game.supported:
+                        self.observe(game)
 
         self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     

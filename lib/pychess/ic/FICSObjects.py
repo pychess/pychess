@@ -181,22 +181,17 @@ class FICSPlayer (GObject):
         else: return True
     
     def isObservable (self):
-        if self.status in (IC_STATUS_PLAYING, IC_STATUS_EXAMINING) and \
-                self.game is not None and not self.game.private:
-            return True
-        else: return False
+        return self.status in (IC_STATUS_PLAYING, IC_STATUS_EXAMINING) and \
+               self.game is not None and not self.game.private and self.game.supported
         
     def isGuest (self):
-        if TYPE_UNREGISTERED in self.titles: return True
-        else: return False
+        return TYPE_UNREGISTERED in self.titles
 
     def isComputer (self):    
-        if TYPE_COMPUTER in self.titles: return True
-        else: return False
+        return TYPE_COMPUTER in self.titles
 
     def isAdmin (self):    
-        if TYPE_ADMINISTRATOR in self.titles: return True
-        else: return False
+        return TYPE_ADMINISTRATOR in self.titles
 
     @classmethod
     def getIconByRating (cls, rating, size=16):
@@ -544,6 +539,14 @@ class FICSGame (GObject):
         if game.board is not None and self.board != game.board:
             self.board = game.board
     
+    @property
+    def supported(self):
+        if self.game_type.fics_name in GAME_TYPES:
+            return not GAME_TYPES[self.game_type.fics_name].variant_type in UNSUPPORTED
+        else:
+            return False
+
+
 class FICSAdjournedGame (FICSGame):
     def __init__ (self, wplayer, bplayer, our_color=None,
                   length=None, time=None, rated=False, game_type=None,

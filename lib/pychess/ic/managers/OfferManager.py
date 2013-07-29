@@ -94,7 +94,6 @@ class OfferManager (GObject):
         self.lastPly = 0
         self.offers = {}
         
-        self.connection.lvm.setVariable("formula", "!suicide & !bughouse & !atomic")
         self.connection.lvm.setVariable("pendinfo", 1)
     
     def onOfferDeclined (self, match):
