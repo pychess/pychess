@@ -1050,7 +1050,7 @@ class GameTabSection (ParrentListSection):
         for path in paths:
             rowiter = model.get_iter(path)
             game = model.get_value(rowiter, 0)
-            if not game.private:
+            if not game.private and game.supported:
                 a_selected_game_is_observable = True
                 break
         self.widgets["observeButton"].set_sensitive(a_selected_game_is_observable)

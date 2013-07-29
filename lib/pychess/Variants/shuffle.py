@@ -23,7 +23,7 @@ class ShuffleBoard(Board):
         return tmp
 
 class ShuffleChess:
-    __desc__ = _("xboard nocastle: http://tim-mann.org/xboard/engine-intf.html#8\n" +
+    __desc__ = _("xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n" +
                  "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
                  "* Random arrangement of the pieces behind the pawns\n" +
                  "* No castling\n" +
