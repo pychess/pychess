@@ -116,16 +116,12 @@ class Board:
             moved.append( (board1[cord], cord1) )
             new.append( board1[cord] )
         
-        if move.flag == QUEEN_CASTLE:
-            if self.color == WHITE:
-                moved.append( (self[Cord(A1)], Cord(A1)) )
-            else:
-                moved.append( (self[Cord(A8)], Cord(A8)) )
-        elif move.flag == KING_CASTLE:
-            if self.color == WHITE:
-                moved.append( (self[Cord(H1)], Cord(H1)) )
-            else:
-                moved.append( (self[Cord(H8)], Cord(H8)) )
+        if move.flag in (QUEEN_CASTLE, KING_CASTLE):
+            side = move.flag - QUEEN_CASTLE
+            if FILE(cord0.x) == 3 and self.board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                side = 0 if side == 1 else 1
+            rook = self.board.ini_rooks[self.color][side]
+            moved.append( (self[Cord(rook)], Cord(rook)) )
         
         elif move.flag in PROMOTIONS:
             newPiece = board1[cord1]
@@ -160,16 +156,12 @@ class Board:
             self[cord].opacity = 1
             dead.append( self[cord] )
         
-        if move.flag == QUEEN_CASTLE:
-            if board1.color == WHITE:
-                moved.append( (self[Cord(D1)], Cord(D1)) )
-            else:
-                moved.append( (self[Cord(D8)], Cord(D8)) )
-        elif move.flag == KING_CASTLE:
-            if board1.color == WHITE:
-                moved.append( (self[Cord(F1)], Cord(F1)) )
-            else:
-                moved.append( (self[Cord(F8)], Cord(F8)) )
+        if move.flag in (QUEEN_CASTLE, KING_CASTLE):
+            side = move.flag - QUEEN_CASTLE
+            if FILE(cord0.x) == 3 and self.board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                side = 0 if side == 1 else 1
+            rook = self.board.fin_rooks[board1.color][side]
+            moved.append( (self[Cord(rook)], Cord(rook)) )
         
         elif move.flag in PROMOTIONS:
             newPiece = board1[cord0]
@@ -219,20 +211,14 @@ class Board:
         if flag != NULL_MOVE and flag != DROP:
             newBoard[cord0] = None
         
-        if self.color == WHITE:
-            if flag == QUEEN_CASTLE:
-                newBoard[Cord(D1)] = newBoard[Cord(A1)]
-                newBoard[Cord(A1)] = None
-            elif flag == KING_CASTLE:
-                newBoard[Cord(F1)] = newBoard[Cord(H1)]
-                newBoard[Cord(H1)] = None
-        else:
-            if flag == QUEEN_CASTLE:
-                newBoard[Cord(D8)] = newBoard[Cord(A8)]
-                newBoard[Cord(A8)] = None
-            elif flag == KING_CASTLE:
-                newBoard[Cord(F8)] = newBoard[Cord(H8)]
-                newBoard[Cord(H8)] = None
+        if flag in (QUEEN_CASTLE, KING_CASTLE):
+            side = flag - QUEEN_CASTLE
+            if FILE(cord0.x) == 3 and self.board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                side = 0 if side == 1 else 1
+            inirook = self.board.ini_rooks[self.color][side]
+            finrook = self.board.fin_rooks[self.color][side]
+            newBoard[Cord(finrook)] = newBoard[Cord(inirook)]
+            newBoard[Cord(inirook)] = None
 
         if flag in PROMOTIONS:
             new_piece = Piece(self.color, PROMOTE_PIECE(flag))
