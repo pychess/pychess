@@ -41,7 +41,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,nocastle,fischerandom,crazyhouse",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse",
             "colors": 0,
             "ics": 0,
             "name": 0,

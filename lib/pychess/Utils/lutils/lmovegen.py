@@ -27,36 +27,44 @@ def newMove (fromcord, tocord, flag=NORMAL_MOVE):
 ################################################################################
 
 def genCastles (board):
-    def generateOne (color, rooknum, king_after, rook_after):
-        if rooknum == 0:
+    def generateOne (color, side, king_after, rook_after):
+        if side == 0:
             castle = QUEEN_CASTLE
         else:
             castle = KING_CASTLE
         king = board.ini_kings[color]
-        rook = board.ini_rooks[color][rooknum]
+        rook = board.ini_rooks[color][side]
         blocker = clearBit(clearBit(board.blocker, king), rook)
         stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
         if not stepover & blocker:
             for cord in xrange(min(king,king_after), max(king,king_after)+1):
                 if isAttacked (board, cord, 1-color):
                     return
+            if FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                castle = QUEEN_CASTLE if castle == KING_CASTLE else KING_CASTLE
             return newMove (king, king_after, castle)
     
+    king = board.ini_kings[board.color]
+    wildcastle = FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
     if board.color == WHITE:
         if board.castling & W_OO:
-            move = generateOne (WHITE, 1, G1, F1) 
+            side = 0 if wildcastle else 1
+            move = generateOne (WHITE, side, board.fin_kings[WHITE][side], board.fin_rooks[WHITE][side]) 
             if move: yield move
         
         if board.castling & W_OOO:
-            move = generateOne (WHITE, 0, C1, D1) 
+            side = 1 if wildcastle else 0
+            move = generateOne (WHITE, side, board.fin_kings[WHITE][side], board.fin_rooks[WHITE][side]) 
             if move: yield move
     else:
         if board.castling & B_OO:
-            move = generateOne (BLACK, 1, G8, F8) 
+            side = 0 if wildcastle else 1
+            move = generateOne (BLACK, side, board.fin_kings[BLACK][side], board.fin_rooks[BLACK][side]) 
             if move: yield move
         
         if board.castling & B_OOO:
-            move = generateOne (BLACK, 0, C8, D8) 
+            side = 1 if wildcastle else 0
+            move = generateOne (BLACK, side, board.fin_kings[BLACK][side], board.fin_rooks[BLACK][side]) 
             if move: yield move
 
 def genPieceMoves(board, piece, tcord):

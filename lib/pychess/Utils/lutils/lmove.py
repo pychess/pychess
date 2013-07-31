@@ -141,12 +141,12 @@ def toSAN (board, move, localRepr=False):
     if flag == NULL_MOVE:
         return "--"
     
+    fcord = (move >> 6) & 63
     if flag == KING_CASTLE:
         return "O-O%s" % check_or_mate()
     elif flag == QUEEN_CASTLE:
         return "O-O-O%s" % check_or_mate()
     
-    fcord = (move >> 6) & 63
     tcord = move & 63
     
     fpiece = fcord if flag == DROP else board.arBoard[fcord]
@@ -247,35 +247,15 @@ def parseSAN (board, san):
         raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
     
     if notat[0] in "O0o":
-        if color == WHITE:
-            fcord = board.ini_kings[0] #E1
-            if notat == "O-O" or notat == "0-0" or notat == "o-o":
-                flag = KING_CASTLE
-                if board.variant == FISCHERRANDOMCHESS:
-                    tcord = board.ini_rooks[0][1]
-                else:
-                    tcord = G1
-            else:
-                flag = QUEEN_CASTLE
-                if board.variant == FISCHERRANDOMCHESS:
-                    tcord = board.ini_rooks[0][0]
-                else:
-                    tcord = C1
+        fcord = board.ini_kings[color]
+        flag = KING_CASTLE if notat == "O-O" or notat == "0-0" or notat == "o-o" else QUEEN_CASTLE
+        side = flag -QUEEN_CASTLE
+        if FILE(fcord) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+            side = 0 if side == 1 else 1
+        if board.variant == FISCHERRANDOMCHESS:
+            tcord = board.ini_rooks[color][side]
         else:
-            fcord = board.ini_kings[1] #E8
-            if notat == "O-O" or notat == "0-0" or notat == "o-o":
-                flag = KING_CASTLE
-                if board.variant == FISCHERRANDOMCHESS:
-                    tcord = board.ini_rooks[1][1]
-                else:
-                    tcord = G8
-            else:
-                flag = QUEEN_CASTLE
-                if board.variant == FISCHERRANDOMCHESS:
-                    tcord = board.ini_rooks[1][0]
-                else:
-                    tcord = C8
-        
+            tcord = board.fin_kings[color][side]
         return newMove (fcord, tcord, flag)
 
     # LAN is not allowed in pgn spec, but sometimes it occures

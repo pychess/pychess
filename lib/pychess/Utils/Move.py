@@ -52,9 +52,9 @@ class Move:
                         self.flag = KING_CASTLE
                 else:
                     if self.cord0.x - self.cord1.x == 2:
-                        self.flag = QUEEN_CASTLE
+                        self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
                     elif self.cord0.x - self.cord1.x == -2:
-                        self.flag = KING_CASTLE
+                        self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
             
             elif board[self.cord0].piece == PAWN and \
                     board[self.cord1] == None and \
