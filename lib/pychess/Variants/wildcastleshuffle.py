@@ -15,12 +15,39 @@ class WildcastleShuffleBoard(Board):
         else:
             Board.__init__(self, setup=setup)
 
-    # TODO: apply wild/1 rules
     def shuffle_start(self):
-        tmp = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
-        random.shuffle(tmp)
-        tmp = ''.join(tmp)
-        tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w KQkq - 0 1'
+        def get_shuffle():
+            positions = [2, 3, 4, 5, 6, 7]
+            tmp = ['r'] + ([''] * 6) + ['r']
+            
+            king = random.choice((4, 5))
+            tmp[king-1] = 'k'
+            positions.remove(king)
+            
+            bishop = random.choice(positions)
+            tmp[bishop-1] = 'b'
+            positions.remove(bishop)
+            color = bishop%2
+
+            bishop = random.choice([i for i in positions if i%2!=color])
+            tmp[bishop-1] = 'b'
+            positions.remove(bishop)
+
+            queen = random.choice(positions)
+            tmp[queen-1] = 'q'
+            positions.remove(queen)
+
+            knight = random.choice(positions)
+            tmp[knight-1] = 'n'
+            positions.remove(knight)
+
+            knight = random.choice(positions)
+            tmp[knight-1] = 'n'
+            positions.remove(knight)
+
+            return ''.join(tmp)
+            
+        tmp = get_shuffle() + '/pppppppp/8/8/8/8/PPPPPPPP/' + get_shuffle().upper() + ' w KQkq - 0 1'
         
         return tmp
 

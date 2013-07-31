@@ -13,10 +13,6 @@ from PolyglotHash import *
 # number is not specified
 STRICT_FEN = False
 
-# Final positions of castled kings and rooks
-fin_kings = ((C1,G1),(C8,G8))
-fin_rooks = ((D1,F1),(D8,F8))
-
 ################################################################################
 # LBoard                                                                       #
 ################################################################################
@@ -24,6 +20,10 @@ fin_rooks = ((D1,F1),(D8,F8))
 class LBoard:
     ini_kings = (E1, E8)
     ini_rooks = ((A1, H1), (A8, H8))
+
+    # Final positions of castled kings and rooks
+    fin_kings = ((C1,G1),(C8,G8))
+    fin_rooks = ((D1,F1),(D8,F8))
 
     holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
                {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
@@ -113,10 +113,14 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = ([None, None], [None, None])
+        elif self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+            self.ini_kings = [None, None]
+            self.fin_kings = ([None, None], [None, None])
+            self.fin_rooks = ([None, None], [None, None])
 
         elif self.variant == CRAZYHOUSECHESS:
             self.iniCrazy()
-            
+        
         # Get information
         parts = fenstr.split()
         
@@ -256,6 +260,24 @@ class LBoard:
                     castling |= B_OO
                 elif char == "q":
                     castling |= B_OOO
+
+        if self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+            self.ini_kings[WHITE] = self.kings[WHITE]
+            self.ini_kings[BLACK] = self.kings[BLACK]
+            if self.ini_kings[WHITE] == D1 and self.ini_kings[BLACK] == D8:
+                self.fin_kings = ([B1,F1],[B8,F8])
+                self.fin_rooks = ([C1,E1],[C8,E8])
+            elif self.ini_kings[WHITE] == D1:
+                self.fin_kings = ([B1,F1],[C8,G8])
+                self.fin_rooks = ([C1,E1],[D8,F8])
+            elif self.ini_kings[BLACK] == D8:
+                self.fin_kings = ([C1,G1],[B8,F8])
+                self.fin_rooks = ([D1,F1],[C8,E8])
+            else:
+                self.fin_kings = ([C1,G1],[C8,G8])
+                self.fin_rooks = ([D1,F1],[D8,F8])
+                
+
         self.setCastling(castling)
 
         # Parse en passant target sqaure
@@ -391,9 +413,11 @@ class LBoard:
             fpiece = KING
             tpiece = EMPTY # In FRC, there may be a rook there, but the king doesn't capture it.
             fcord = self.ini_kings[color]
-            tcord = fin_kings[color][side]
+            if FILE(fcord) == 3 and self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                side = 0 if side == 1 else 1
+            tcord = self.fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
-            rookt = fin_rooks[color][side]
+            rookt = self.fin_rooks[color][side]
 
         # Capture
         if tpiece != EMPTY:
@@ -502,9 +526,11 @@ class LBoard:
             side = flag - QUEEN_CASTLE
             tpiece = KING
             fcord = self.ini_kings[color]
-            tcord = fin_kings[color][side]
+            if FILE(fcord) == 3 and self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                side = 0 if side == 1 else 1
+            tcord = self.fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
-            rookt = fin_rooks[color][side]
+            rookt = self.fin_rooks[color][side]
             self._removePiece (tcord, tpiece, color)
             self._removePiece (rookt, ROOK, color)
             self._addPiece (rookf, ROOK, color)
@@ -713,6 +739,10 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             copy.ini_kings = self.ini_kings[:]
             copy.ini_rooks = (self.ini_rooks[0][:], self.ini_rooks[1][:])
+        elif self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+            copy.ini_kings = self.ini_kings[:]
+            copy.fin_kings = (self.fin_kings[0][:], self.fin_kings[1][:])
+            copy.fin_rooks = (self.fin_rooks[0][:], self.fin_rooks[1][:])
         elif self.variant == CRAZYHOUSECHESS:
             copy.promoted = self.promoted[:]
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
