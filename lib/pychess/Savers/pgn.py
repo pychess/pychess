@@ -13,6 +13,7 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
 from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
+from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
 
 from pgnbase import PgnBase, pgn_load
 from ChessFile import LoadingError
@@ -86,6 +87,8 @@ def save (file, model, position):
         print >> file, '[Variant "Fischerandom"]'
     elif issubclass(model.variant, CrazyhouseChess):
         print >> file, '[Variant "Crazyhouse"]'
+    elif issubclass(model.variant, WildcastleChess):
+        print >> file, '[Variant "Wildcastle"]'
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
@@ -245,6 +248,8 @@ class PGNFile (PgnBase):
                 fenstr = " ".join(parts)
             elif variant == "Crazyhouse":
                 model.tags["Variant"] = "Crazyhouse"
+            elif variant == "Wildcastle":
+                model.tags["Variant"] = "Wildcastle"
 
         if variant == "Fischerandom":
             board = LBoard(FISCHERRANDOMCHESS)
@@ -252,6 +257,9 @@ class PGNFile (PgnBase):
         elif variant == "Crazyhouse":
             board = LBoard(CRAZYHOUSECHESS)
             model.variant = CrazyhouseChess
+        elif variant == "Wildcastle":
+            board = LBoard(WILDCASTLECHESS)
+            model.variant = WildcastleChess
         else:
             board = LBoard()
 
