@@ -304,8 +304,17 @@ def genCaptures (board):
     
     # Rooks and Queens
     for cord in iterBits(rooks|queens):
-        attackBoard = attack00[cord][ray00[cord] & blocker] | \
+        try:
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
                       attack90[cord][ray90[cord] & blocker]
+        except:
+            # TODO: remove temp bughunting try-except
+            from pychess.System.Log import log
+            from pychess.Utils.Move import Move
+            for move in board.hist_move:
+                log.error("%s" % Move(move))
+            log.error("%s" % board)
+            raise
         for c in iterBits(attackBoard & enemies):
             yield newMove(cord, c)
     

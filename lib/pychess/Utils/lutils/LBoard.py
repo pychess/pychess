@@ -226,7 +226,6 @@ class LBoard:
                     else:
                         castling |= B_OO
                         self.ini_rooks[1][1] = reprFile.index(char) + 56
-                    self.ini_kings[BLACK] = self.kings[BLACK]
                 elif char in [c.upper() for c in reprFile]:
                     if char < reprCord[self.kings[WHITE]][0].upper():
                         castling |= W_OOO
@@ -234,23 +233,18 @@ class LBoard:
                     else:
                         castling |= W_OO
                         self.ini_rooks[0][1] = reprFile.index(char.lower())
-                    self.ini_kings[WHITE] = self.kings[WHITE]
                 elif char == "K":
                     castling |= W_OO
                     self.ini_rooks[0][1] = rank1.rfind('R')
-                    self.ini_kings[WHITE] = self.kings[WHITE]
                 elif char == "Q":
                     castling |= W_OOO
                     self.ini_rooks[0][0] = rank1.find('R')
-                    self.ini_kings[WHITE] = self.kings[WHITE]
                 elif char == "k":
                     castling |= B_OO
                     self.ini_rooks[1][1] = rank8.rfind('r') + 56
-                    self.ini_kings[BLACK] = self.kings[BLACK]
                 elif char == "q":
                     castling |= B_OOO
                     self.ini_rooks[1][0] = rank8.find('r') + 56
-                    self.ini_kings[BLACK] = self.kings[BLACK]
             else:
                 if char == "K":
                     castling |= W_OO
@@ -261,22 +255,22 @@ class LBoard:
                 elif char == "q":
                     castling |= B_OOO
 
-        if self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+        if self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, FISCHERRANDOMCHESS):
             self.ini_kings[WHITE] = self.kings[WHITE]
             self.ini_kings[BLACK] = self.kings[BLACK]
-            if self.ini_kings[WHITE] == D1 and self.ini_kings[BLACK] == D8:
-                self.fin_kings = ([B1,F1],[B8,F8])
-                self.fin_rooks = ([C1,E1],[C8,E8])
-            elif self.ini_kings[WHITE] == D1:
-                self.fin_kings = ([B1,F1],[C8,G8])
-                self.fin_rooks = ([C1,E1],[D8,F8])
-            elif self.ini_kings[BLACK] == D8:
-                self.fin_kings = ([C1,G1],[B8,F8])
-                self.fin_rooks = ([D1,F1],[C8,E8])
-            else:
-                self.fin_kings = ([C1,G1],[C8,G8])
-                self.fin_rooks = ([D1,F1],[D8,F8])
-                
+            if self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+                if self.ini_kings[WHITE] == D1 and self.ini_kings[BLACK] == D8:
+                    self.fin_kings = ([B1,F1],[B8,F8])
+                    self.fin_rooks = ([C1,E1],[C8,E8])
+                elif self.ini_kings[WHITE] == D1:
+                    self.fin_kings = ([B1,F1],[C8,G8])
+                    self.fin_rooks = ([C1,E1],[D8,F8])
+                elif self.ini_kings[BLACK] == D8:
+                    self.fin_kings = ([C1,G1],[B8,F8])
+                    self.fin_rooks = ([D1,F1],[C8,E8])
+                else:
+                    self.fin_kings = ([C1,G1],[C8,G8])
+                    self.fin_rooks = ([D1,F1],[D8,F8])
 
         self.setCastling(castling)
 

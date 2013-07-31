@@ -291,17 +291,19 @@ class BoardView (gtk.DrawingArea):
         if move.flag != DROP:
             paintBox = join(paintBox, self.cord2RectRelative(move.cord0))
         if move.flag in (KING_CASTLE, QUEEN_CASTLE):
-            y = move.cord0.cy
-            color = (y == 1)
-            rsqs = self.model.boards[-1].board.ini_rooks[color]
+            board = self.model.boards[-1].board
+            color = board.color
+            wildcastle = Cord(board.ini_kings[color]).x == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if move.flag == KING_CASTLE:
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[1])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord("f" + y)))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord("g" + y)))
+                side = 0 if wildcastle else 1
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
             else:
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(rsqs[0])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord("c" + y)))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord("d" + y)))
+                side = 1 if wildcastle else 0
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
+                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
         return paintBox
 
     def setShownBoard(self, board):
@@ -961,12 +963,15 @@ class BoardView (gtk.DrawingArea):
         if self.lastMove.flag in (KING_CASTLE, QUEEN_CASTLE):
             ksq0 = last_board.board.kings[last_board.color]
             ksq1 = show_board.board.kings[last_board.color]
+            wildcastle = Cord(last_board.board.ini_kings[last_board.color]).x == 3 and last_board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if self.lastMove.flag == KING_CASTLE:
-                rsq0 = show_board.board.ini_rooks[last_board.color][1]
-                rsq1 = ksq1 - 1
+                side = 0 if wildcastle else 1
+                rsq0 = show_board.board.ini_rooks[last_board.color][side]
+                rsq1 = show_board.board.fin_rooks[last_board.color][side]
             else:
-                rsq0 = show_board.board.ini_rooks[last_board.color][0]
-                rsq1 = ksq1 + 1
+                side = 1 if wildcastle else 0
+                rsq0 = show_board.board.ini_rooks[last_board.color][side]
+                rsq1 = show_board.board.fin_rooks[last_board.color][side]
             cord_pairs = [ [Cord(ksq0), Cord(ksq1)], [Cord(rsq0), Cord(rsq1)] ]
         else:
             cord_pairs = [ [self.lastMove.cord0, self.lastMove.cord1] ]
