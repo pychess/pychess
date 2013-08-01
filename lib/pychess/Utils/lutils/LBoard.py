@@ -478,19 +478,25 @@ class LBoard:
         
         # Clear castle flags
         castling = self.castling
+        king = self.ini_kings[color]
+        wildcastle = FILE(king) == 3 and self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
         if fpiece == KING:
             castling &= ~CAS_FLAGS[color][0]
             castling &= ~CAS_FLAGS[color][1]
         elif fpiece == ROOK:
             if fcord == self.ini_rooks[color][0]:
-                castling &= ~CAS_FLAGS[color][0]
+                side = 1 if wildcastle else 0
+                castling &= ~CAS_FLAGS[color][side]
             elif fcord == self.ini_rooks[color][1]:
-                castling &= ~CAS_FLAGS[color][1]
+                side = 0 if wildcastle else 1
+                castling &= ~CAS_FLAGS[color][side]
         if tpiece == ROOK:
             if tcord == self.ini_rooks[opcolor][0]:
-                castling &= ~CAS_FLAGS[opcolor][0]
+                side = 1 if wildcastle else 0
+                castling &= ~CAS_FLAGS[opcolor][side]
             elif tcord == self.ini_rooks[opcolor][1]:
-                castling &= ~CAS_FLAGS[opcolor][1]
+                side = 0 if wildcastle else 1
+                castling &= ~CAS_FLAGS[opcolor][side]
         self.setCastling(castling)
 
         self.setColor(opcolor)
