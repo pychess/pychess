@@ -161,6 +161,16 @@ def game_ended (gamemodel, reason, gmwidg):
             engineDead(gamemodel.players[1], gmwidg)
     finally:
         glock.release()
+
+    if (isinstance(gamemodel, ICGameModel) and \
+            gamemodel.isObservationGame() is False) or \
+       gamemodel.isEngine2EngineGame():
+        gamemodel.restart_analyzer(HINT)
+        gamemodel.restart_analyzer(SPY)
+        if not conf.get("hint_mode", False):
+            gamemodel.pause_analyzer(HINT)
+        if not conf.get("spy_mode", False):
+            gamemodel.pause_analyzer(SPY)
     
     return False
 
