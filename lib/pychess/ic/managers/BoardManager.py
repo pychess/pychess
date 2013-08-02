@@ -612,6 +612,10 @@ class BoardManager (GObject):
             # FR is the only variant used in this tag by the PGN generator @
             # ficsgames.org. They put all the other wild/* stuff only in the
             # "Event" header.
+        elif game_type.variant_type == CRAZYHOUSECHESS:
+            pgnHead += [ ("Variant", "Crazyhouse") ]
+        elif game_type.variant_type in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
+            pgnHead += [ ("Variant", "Wildcastle") ]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
         moves = moves.items()
