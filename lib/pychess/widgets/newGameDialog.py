@@ -568,7 +568,7 @@ def createRematch (gamemodel):
                           (engine, WHITE, bp.strength, gamemodel.variant,
                            secs, gain), repr(bp))
     else:
-        player0tup = (bp.__type__, bp.__class__, (WHITE, ""), repr(bp))
+        player0tup = (bp.__type__, bp.__class__, (WHITE, repr(bp)), repr(bp))
         engine = discoverer.getEngineByMd5(wp.md5)
         player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                       (engine, BLACK, wp.strength, gamemodel.variant,
