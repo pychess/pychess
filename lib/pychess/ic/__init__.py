@@ -139,8 +139,8 @@ TYPE_ADMINISTRATOR, TYPE_BLINDFOLD, TYPE_COMPUTER, \
     TYPE_DUMMY_ACCOUNT = range(16)
 
 TITLE_TYPE_DISPLAY_TEXTS = (
-    _("Administrator"), _("Blindfold Account"), _("Computer Account"),
-    _("Team Account"), _("Unregistered User"), _("Chess Advisor"),
+    _("Administrator"), _("Blindfold Account"), _("Computer"),
+    _("Team Account"), _("Unregistered"), _("Chess Advisor"),
     _("Service Representative"), _("Tournament Director"), _("Mamer Manager"),
     _("Grand Master"), _("International Master"), _("FIDE Master"),
     _("Woman Grand Master"), _("Woman International Master"), _("Woman FIDE Master"),
