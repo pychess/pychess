@@ -377,9 +377,6 @@ class FICSPlayers (GObject):
     
     def keys(self): return self.players.keys()
     def items(self): return self.players.items()
-    def iteritems(self): return self.players.iteritems()
-    def iterkeys(self): return self.players.iterkeys()
-    def itervalues(self): return self.players.itervalues()
     def values(self): return self.players.values()
     
     def online_changed (self, player, property):
@@ -390,7 +387,7 @@ class FICSPlayers (GObject):
     # converted to use FICSPlayer references rather than player's names
     def get_online_playernames (self):
         names = []
-        for player in self.players.itervalues():
+        for player in self.values():
             if player.online:
                 names.append(player.name)
         return names
@@ -639,9 +636,6 @@ class FICSGames (GObject):
     
     def keys(self): return self.games.keys()
     def items(self): return self.games.items()
-    def iteritems(self): return self.games.iteritems()
-    def iterkeys(self): return self.games.iterkeys()
-    def itervalues(self): return self.games.itervalues()
     def values(self): return self.games.values()
     
     def get_game_by_gameno (self, gameno):
