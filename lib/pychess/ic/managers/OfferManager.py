@@ -11,7 +11,7 @@ names = "\w+(?:\([A-Z\*]+\))*"
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\])?"
 ratings = "\(([0-9\ \-\+]{1,4}[E P]?)\)"
-loaded_from = "(?: Loaded from (wild.*))?"
+loaded_from = "(?: Loaded from (wild[/\w]*))?"
 adjourned = "(?: (\(adjourned\)))?"
 
 matchreUntimed = re.compile ("(\w+) %s %s ?(\w+) %s %s (untimed)\s*" % \
@@ -26,6 +26,7 @@ matchre = re.compile(
 #<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12
 #<pf> 45 w=GuestYDDR t=match p=GuestYDDR (----) mgatto (1358) unrated untimed
 #<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)
+#<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)
 #
 # Known offers: abort accept adjourn draw match pause unpause switch takeback
 #
