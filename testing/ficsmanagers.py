@@ -10,7 +10,7 @@ from pychess.ic.managers.AdjournManager import AdjournManager
 from pychess.ic.managers.SeekManager import SeekManager
 from pychess.ic.managers.ListAndVarManager import ListAndVarManager
 from pychess.ic.managers.BoardManager import BoardManager
-
+from pychess.ic.managers.OfferManager import OfferManager
 from Queue import Queue
 
 class DummyConnection(Connection):
@@ -244,6 +244,43 @@ class SeekManagerTests(EmittingTestCase):
         pass
     
     # And so on...
+
+###############################################################################
+# OfferManager
+###############################################################################
+
+class OfferManagerTests(EmittingTestCase):
+    
+    def setUp (self):
+        self.connection = DummyConnection()
+        # The real one stucks
+        #self.connection.lvm = ListAndVarManager(self.connection)
+        self.connection.lvm = DummyVarManager()
+        self.manager = OfferManager(self.connection)
+    
+    def test1 (self):
+        """ Challenges """
+        signal = 'onChallengeAdd'
+        
+        lines = ['<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)']
+        expectedResult = {'gametype': GAME_TYPES["wild/4"], "w": 'antiseptic',
+                "rt": '1945', "r": 'r', "t": "6", "i": "1", "is_adjourned": True}
+        self.runAndAssertEquals(signal, lines, ('59', expectedResult,))
+        
+        lines = ['<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)']
+        expectedResult = {'gametype': GAME_TYPES["wild/fr"], "w": 'joseph',
+                "rt": '1632', "r": 'r', "t": "5", "i": "1", "is_adjourned": True}
+        self.runAndAssertEquals(signal, lines, ('71', expectedResult,))
+
+        lines = ['<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12']
+        expectedResult = {'gametype': GAME_TYPES["losers"], "w": 'GuestGYXR',
+                "rt": '0', "r": 'u', "t": "2", "i": "12", "is_adjourned": False}
+        self.runAndAssertEquals(signal, lines, ('45', expectedResult,))
+
+        lines = ['<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)']
+        expectedResult = {'gametype': GAME_TYPES["blitz"], "w": 'GuestDVXV',
+                "rt": '0', "r": 'u', "t": "2", "i": "12", "is_adjourned": True}
+        self.runAndAssertEquals(signal, lines, ('39', expectedResult,))
 
 if __name__ == '__main__':
     unittest.main()
