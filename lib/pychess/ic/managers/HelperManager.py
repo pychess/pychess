@@ -65,6 +65,14 @@ class HelperManager (GObject):
         self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
                 (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
 
+        # New ivar pin
+        # http://www.freechess.org/Help/HelpFiles/new_features.html
+        #b: blitz      l: lightning   u: untimed      e: examined game
+        #s: standard   w: wild        x: atomic       z: crazyhouse        
+        #B: Bughouse   L: losers      S: Suicide
+        self.helperconn.client.run_command("who IsblwzL")
+        self.helperconn.client.run_command("games /sblwzL")
+
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
             inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
