@@ -1088,9 +1088,9 @@ class BoardView (gtk.DrawingArea):
             self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
                              (.447,.624,.812,0.9), (.204,.396,.643,1))
         
-        if self.shown != self.model.ply or \
-           self.model.boards != self.model.variations[0]:
-            return
+#         if self.shown != self.model.ply or \
+#            self.model.boards != self.model.variations[0]:
+#             return
         
         if self.greenarrow:
             self.__drawArrow(context, self.greenarrow, aw, ahw, ahh, asw,

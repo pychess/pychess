@@ -336,7 +336,8 @@ class GameWidget (gobject.GObject):
         if len(analysis) >= 1 and analysis[0] is not None:
             moves = analysis[0][0]
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
-               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE]):
+               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or \
+               self.gamemodel.status not in UNFINISHED_STATES):
                 if moves[0].flag == DROP:
                     board = self.gamemodel.boards[-1]
                     piece = lmove.FCORD(moves[0].move)
