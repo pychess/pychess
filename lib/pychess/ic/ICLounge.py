@@ -114,27 +114,6 @@ class ICLounge (GObject):
             CreatedBoards(self.widgets, self.connection)
         )
 
-        self.widgets['notebook'].connect("switch-page", self.onSwitchPage)
-
-    def onSwitchPage(self, notebook, page, page_num):
-        # We don't want to slow down the login process, so load
-        # all players and all games just on first time when needed
-
-        #b: blitz      l: lightning   u: untimed      e: examined game
-        #s: standard   w: wild        x: atomic       z: crazyhouse        
-        #B: Bughouse   L: losers      S: Suicide
-        if notebook.get_nth_page(page_num) == self.widgets['playersListContent']:
-            if self.need_who:
-                # New ivar pin
-                # http://www.freechess.org/Help/HelpFiles/new_features.html
-                self.helperconn.client.run_command("who IsblwzL")
-                self.need_who = False
-
-        if notebook.get_nth_page(page_num) == self.widgets['gamesListContent']:
-            if self.need_games:
-                self.helperconn.client.run_command("games /sblwzL")
-                self.need_games = False
-
     @glock.glocked
     def on_news_item (self, nm, news):            
         self.widgets["show_chat_button"].set_sensitive(True)    
