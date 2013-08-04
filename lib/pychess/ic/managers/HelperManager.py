@@ -127,6 +127,8 @@ class HelperManager (GObject):
         
         game = FICSGame(wplayer, bplayer, gameno=int(gameno), result=result,
                         reason=reason)
+        if wplayer.game is not None:
+            game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
         self.connection.games.game_ended(game)
         # Do this last to give anybody connected to the game's signals a chance
