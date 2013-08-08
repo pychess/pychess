@@ -779,12 +779,13 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv = widgets["playertreeview"]
         self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
-                                   int, int, int, str, str)
+                                   int, int, int, int, int, int, int, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
-            _("Standard"), _("Lightning"), _("Crazyhouse"), _("Wild"), _("Status"), "tooltip", hide=[0,6,7,9],
+            _("Standard"), _("Lightning"), _("Atomic"), _("Bughouse"), _("Crazyhouse"),
+            _("Losers"), _("Suicide"), _("Wild"), _("Status"), "tooltip", hide=[0,6,7,8,9,10,11,13],
             pix=[1])
-        self.tv.set_tooltip_column(9,)
+        self.tv.set_tooltip_column(13,)
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
@@ -814,8 +815,16 @@ class PlayerTabSection (ParrentListSection):
             text += "\n%s: %s" % (_("Standard"), player.standard)
         if player.lightning:
             text += "\n%s: %s" % (_("Lightning"), player.lightning)
+        if player.atomic:
+            text += "\n%s: %s" % (_("Atomic"), player.atomic)
+        if player.bughouse:
+            text += "\n%s: %s" % (_("Bughouse"), player.bughouse)
         if player.crazyhouse:
             text += "\n%s: %s" % (_("Crazyhouse"), player.crazyhouse)
+        if player.losers:
+            text += "\n%s: %s" % (_("Losers"), player.losers)
+        if player.suicide:
+            text += "\n%s: %s" % (_("Suicide"), player.suicide)
         if player.wild:
             text += "\n%s: %s" % (_("Wild"), player.wild)
         text += "\n%s" % player.display_status
@@ -827,7 +836,8 @@ class PlayerTabSection (ParrentListSection):
         
         ti = self.store.append([player, player.getIcon(),
             player.name + player.display_titles(), player.blitz, player.standard,
-            player.lightning, player.crazyhouse, player.wild, player.display_status,
+            player.lightning, player.atomic, player.bughouse, player.crazyhouse,
+            player.losers, player.suicide, player.wild, player.display_status,
             self.getPlayerTooltipText(player)])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
@@ -839,7 +849,8 @@ class PlayerTabSection (ParrentListSection):
         if player.game:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_WILD):
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
+                   TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
             self.players[player][rt] = player.ratings[rt].connect(
                 "notify::elo", self.elo_changed, player)
         
@@ -860,7 +871,8 @@ class PlayerTabSection (ParrentListSection):
             player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_WILD):
+        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
+                   TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
             if player.ratings[rt].handler_is_connected(
                     self.players[player][rt]):
                 player.ratings[rt].disconnect(self.players[player][rt])
@@ -874,8 +886,8 @@ class PlayerTabSection (ParrentListSection):
         if player not in self.players: return
 
         if self.store.iter_is_valid(self.players[player]["ti"]):
-            self.store.set(self.players[player]["ti"], 8, player.display_status)
-            self.store.set(self.players[player]["ti"], 9,
+            self.store.set(self.players[player]["ti"], 12, player.display_status)
+            self.store.set(self.players[player]["ti"], 13,
                            self.getPlayerTooltipText(player))
         
         if player.status == IC_STATUS_PLAYING and player.game and \
@@ -901,7 +913,7 @@ class PlayerTabSection (ParrentListSection):
         self.store.set(self.players[player]["ti"], 1, player.getIcon())
         self.store.set(self.players[player]["ti"], 2,
                        player.name + player.display_titles())
-        self.store.set(self.players[player]["ti"], 9,
+        self.store.set(self.players[player]["ti"], 13,
                        self.getPlayerTooltipText(player))
         return False
         
@@ -916,7 +928,7 @@ class PlayerTabSection (ParrentListSection):
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
         self.store.set(ti, 1, player.getIcon())
-        self.store.set(self.players[player]["ti"], 9,
+        self.store.set(self.players[player]["ti"], 13,
                        self.getPlayerTooltipText(player))
         
         if rating.type == TYPE_BLITZ:
@@ -925,10 +937,18 @@ class PlayerTabSection (ParrentListSection):
             self.store.set(ti, 4, player.standard)
         elif rating.type == TYPE_LIGHTNING:
             self.store.set(ti, 5, player.lightning)
+        elif rating.type == TYPE_ATOMIC:
+            self.store.set(ti, 6, player.atomic)
+        elif rating.type == TYPE_BUGHOUSE:
+            self.store.set(ti, 7, player.bughouse)
         elif rating.type == TYPE_CRAZYHOUSE:
-            self.store.set(ti, 6, player.crazyhouse)
+            self.store.set(ti, 8, player.crazyhouse)
+        elif rating.type == TYPE_LOSERS:
+            self.store.set(ti, 9, player.losers)
+        elif rating.type == TYPE_SUICIDE:
+            self.store.set(ti, 10, player.suicide)
         elif rating.type == TYPE_WILD:
-            self.store.set(ti, 7, player.wild)
+            self.store.set(ti, 11, player.wild)
         
         return False
     

@@ -5,10 +5,7 @@ from gobject import GObject, SIGNAL_RUN_FIRST
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
 from pychess.Utils.const import *
-from pychess.ic import TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, \
-    TYPE_LOSERS, TITLE_TYPE_DISPLAY_TEXTS, TITLE_TYPE_DISPLAY_TEXTS_SHORT, \
-    GAME_TYPES_BY_RATING_TYPE, TYPE_UNREGISTERED, TYPE_COMPUTER, TYPE_ADMINISTRATOR, \
-    GAME_TYPES_BY_FICS_NAME, GAME_TYPES, TYPE_CRAZYHOUSE
+from pychess.ic import *
 
 class FICSPlayer (GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_OFFLINE,
@@ -28,8 +25,8 @@ class FICSPlayer (GObject):
             self.titles = titles
         if ratings is None:
             self.ratings = {}
-            for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
-                               TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
+            for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
+                               TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
                 ratingobj = Rating(ratingtype, 0)
                 self.setRating(ratingtype, ratingobj)
         else:
@@ -130,8 +127,12 @@ class FICSPlayer (GObject):
         return self.getRating(TYPE_LIGHTNING).elo
 
     @property
-    def wild (self):
-        return self.getRating(TYPE_WILD).elo
+    def atomic (self):
+        return self.getRating(TYPE_ATOMIC).elo
+
+    @property
+    def bughouse (self):
+        return self.getRating(TYPE_BUGHOUSE).elo
 
     @property
     def crazyhouse (self):
@@ -140,7 +141,15 @@ class FICSPlayer (GObject):
     @property
     def losers (self):
         return self.getRating(TYPE_LOSERS).elo
-        
+
+    @property
+    def suicide (self):
+        return self.getRating(TYPE_SUICIDE).elo
+
+    @property
+    def wild (self):
+        return self.getRating(TYPE_WILD).elo
+
     def __hash__ (self):
         """ Two players are equal if the first 10 characters of their name match.
             This is to facilitate matching players from output of commands like the 'game'
@@ -164,8 +173,8 @@ class FICSPlayer (GObject):
             r += ", game.private=" + repr(game.private)
         else:
             r += ", game=None"
-        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
-                            TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
+        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
+                            TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
             if rating_type in self.ratings:
                 r += ", ratings[%s] = (" % \
                     GAME_TYPES_BY_RATING_TYPE[rating_type].display_text
