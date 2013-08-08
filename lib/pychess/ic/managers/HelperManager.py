@@ -46,32 +46,37 @@ class HelperManager (GObject):
                 "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
                 % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
 
-        # New ivar pin
-        # http://www.freechess.org/Help/HelpFiles/new_features.html
-        self.helperconn.expect_line (self.on_player_whoI,
-                                     "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5 + "(\d{1,4})([PE]?)")
-        self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
-        
+        if self.helperconn.FatICS:
+            self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
+
+            self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
+            self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
+                    (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
+        else:
+            # New ivar pin
+            # http://www.freechess.org/Help/HelpFiles/new_features.html
+            self.helperconn.expect_line (self.on_player_whoI,
+                                         "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
+            
+            self.helperconn.expect_line (self.on_player_connect,
+                                         "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
+            self.helperconn.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
+
         self.helperconn.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.helperconn.expect_line (self.on_game_remove,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
 
-        self.helperconn.expect_line (self.on_player_connect,
-                                     "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 5 + "(\d{1,4})([PE]?)")
-        self.helperconn.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
 
-        self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
-        self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
-                (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
-
-        # New ivar pin
-        # http://www.freechess.org/Help/HelpFiles/new_features.html
         #b: blitz      l: lightning   u: untimed      e: examined game
         #s: standard   w: wild        x: atomic       z: crazyhouse        
         #B: Bughouse   L: losers      S: Suicide
-        self.helperconn.client.run_command("who IsblwzL")
-        self.helperconn.client.run_command("games /sblwzL")
+        if self.helperconn.FatICS:
+            self.helperconn.client.run_command("who sblxwzBLS")
+        else:
+            self.helperconn.client.run_command("who IsblxwzBLS")
+            
+        self.helperconn.client.run_command("games /sblxwzBLS")
 
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
@@ -165,7 +170,8 @@ class HelperManager (GObject):
 
     def on_player_connect (self, match):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-            wild, wilddev, crazyhouse, crazyhousedev, losers, losersdev = match.groups()
+        atomic, atomicdev, wild, wilddev, crazyhouse, crazyhousedev, \
+        bughouse, bughousedev, losers, losersdev, suicide, suicidedev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
         copy.online = True
@@ -176,9 +182,13 @@ class HelperManager (GObject):
                 ((TYPE_BLITZ, blitz, blitzdev),
                  (TYPE_STANDARD, std, stddev),
                  (TYPE_LIGHTNING, light, lightdev),
+                 (TYPE_ATOMIC, atomic, atomicdev),
                  (TYPE_WILD, wild, wilddev),
                  (TYPE_CRAZYHOUSE, crazyhouse, crazyhousedev),
-                 (TYPE_LOSERS, losers, losersdev)):
+                 (TYPE_BUGHOUSE, bughouse, bughousedev),
+                 (TYPE_LOSERS, losers, losersdev),
+                 (TYPE_SUICIDE, suicide, suicidedev),
+                 ):
             copy.ratings[ratingtype].elo = self.parseRating(elo)
             copy.ratings[ratingtype].deviation = DEVIATION[dev]
 
@@ -223,5 +233,10 @@ class HelperManager (GObject):
         copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
         copy.ratings[TYPE_STANDARD].elo = self.parseRating(std)
         copy.ratings[TYPE_LIGHTNING].elo = self.parseRating(light)
+        copy.ratings[TYPE_ATOMIC].elo = self.parseRating(atomic)
+        copy.ratings[TYPE_BUGHOUSE].elo = self.parseRating(bughouse)
+        copy.ratings[TYPE_CRAZYHOUSE].elo = self.parseRating(crazyhouse)
+        copy.ratings[TYPE_LOSERS].elo = self.parseRating(losers)
+        copy.ratings[TYPE_SUICIDE].elo = self.parseRating(suicide)
         copy.ratings[TYPE_WILD].elo = self.parseRating(wild)
         player.update(copy)
