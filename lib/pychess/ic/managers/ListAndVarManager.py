@@ -2,7 +2,7 @@ import atexit
 from threading import Semaphore
 
 
-from pychess.ic.block_codes import BLKCMD_VARIABLES, BLKCMD_IVARIABLES
+from pychess.ic.block_codes import BLKCMD_SHOWLIST, BLKCMD_VARIABLES, BLKCMD_IVARIABLES
 from pychess.System import conf
 
 
@@ -90,8 +90,7 @@ class ListAndVarManager:
                 self.publicLists[name] = set()
             else:
                 self.personalLists[name] = set()
-    # TODO: merge 3 regex
-    #onUpdateLists.BLKCMD = BLKCMD_SHOWLIST
+    onUpdateLists.BLKCMD = BLKCMD_SHOWLIST
     
     def onUpdateEmptyListitems (self, match):
         listName = match.groups()[0]
@@ -105,6 +104,7 @@ class ListAndVarManager:
         if not self.listLock._Semaphore__value and \
                 len(self.personalLists) == len(self.personalBackup):
             self.listLock.release()
+    onUpdateEmptyListitems.BLKCMD = BLKCMD_SHOWLIST
     
     def onUpdateListitems (self, matchlist):
         listName, itemCount = matchlist[0].groups()
@@ -121,6 +121,7 @@ class ListAndVarManager:
         if not self.listLock._Semaphore__value and \
                 len(self.personalLists) == len(self.personalBackup):
             self.listLock.release()
+    onUpdateListitems.BLKCMD = BLKCMD_SHOWLIST
 
     # Interface variables
 
