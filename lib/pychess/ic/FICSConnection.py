@@ -2,6 +2,7 @@ import re
 import socket
 import time
 import threading
+from collections import defaultdict
 
 from gobject import GObject, SIGNAL_RUN_FIRST
 
@@ -57,7 +58,7 @@ class Connection (GObject, PooledThread):
         
         self.predictions = set()
         self.predictionsDict = {}
-        self.reply_cmd_dict = {}
+        self.reply_cmd_dict = defaultdict(list)
 
         # Are we connected to FatICS ?
         self.FatICS = False
@@ -66,13 +67,17 @@ class Connection (GObject, PooledThread):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
         if hasattr(prediction.callback, "BLKCMD"):
-            self.reply_cmd_dict[prediction.callback.BLKCMD] = prediction
+            self.reply_cmd_dict[prediction.callback.BLKCMD].append(prediction)
     
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
         if hasattr(callback, "BLKCMD"):
-            self.reply_cmd_dict.pop(callback.BLKCMD)
-            
+            for prediction in self.reply_cmd_dict[callback.BLKCMD]:
+                if prediction.callback == callback:
+                    self.reply_cmd_dict[callback.BLKCMD].remove(prediction)
+            if len(self.reply_cmd_dict[callback.BLKCMD]) == 0:
+                del self.reply_cmd_dict[callback.BLKCMD]
+    
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
     
