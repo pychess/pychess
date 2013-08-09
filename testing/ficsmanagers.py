@@ -11,7 +11,9 @@ from pychess.ic.managers.SeekManager import SeekManager
 from pychess.ic.managers.ListAndVarManager import ListAndVarManager
 from pychess.ic.managers.BoardManager import BoardManager
 from pychess.ic.managers.OfferManager import OfferManager
+from pychess.ic.managers.HelperManager import HelperManager
 from Queue import Queue
+from pychess.ic.block_codes import *
 
 class DummyConnection(Connection):
     class DummyClient(PredictionsTelnet):
@@ -198,7 +200,9 @@ class SeekManagerTests(EmittingTestCase):
         # The real one stucks
         #self.connection.lvm = ListAndVarManager(self.connection)
         self.connection.lvm = DummyVarManager()
-        self.manager = SeekManager(self.connection)
+        self.connection.glm = SeekManager(self.connection)
+        self.connection.bm = BoardManager(self.connection)
+        self.manager = self.connection.glm
     
     def test1 (self):
         """ Seek add """
@@ -234,6 +238,21 @@ class SeekManagerTests(EmittingTestCase):
         self.runAndAssertEquals('removeSeek', lines, ('124',))
     
     def test4 (self):
+        """ Seek add resulting from a seek command reply """
+        
+        signal = 'addSeek'
+        
+        lines = [BLOCK_START + '54' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 '<sn> 121 w=mgatto ti=00 rt=1677  t=6 i=1 r=r tp=wild/4 c=? rr=0-9999 a=f f=f',
+                 'fics% Your seek has been posted with index 121.',
+                 '(9 player(s) saw the seek.)',
+                 BLOCK_END]
+        expectedResult = {'gameno':'121', 'gametype': GAME_TYPES["wild/4"],
+            'rmin':0, 'rmax':9999, 'cp':False, 'rt':'1677', 'manual':True,
+            'title': '', 'w':'mgatto', 'r':'r', 't':'6', 'i':'1'}
+        self.runAndAssertEquals(signal, lines, (expectedResult,))
+    
+    def test5 (self):
         # This test case should be implemented when the ficsmanager.py unit testing
         # is able to chain managers like the real fics code does. This is because
         # this test case tests verifies that this line is caught in BoardManager.py
@@ -281,6 +300,7 @@ class OfferManagerTests(EmittingTestCase):
         expectedResult = {'gametype': GAME_TYPES["blitz"], "w": 'GuestDVXV',
                 "rt": '0', "r": 'u', "t": "2", "i": "12", "is_adjourned": True}
         self.runAndAssertEquals(signal, lines, ('39', expectedResult,))
+
 
 if __name__ == '__main__':
     unittest.main()

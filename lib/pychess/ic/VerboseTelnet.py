@@ -202,7 +202,7 @@ class PredictionsTelnet:
                 return
         
         if not self.__state:
-            preds = (self.reply_cmd_dict[block_code],) if block_code in self.reply_cmd_dict else self.predictions
+            preds = self.reply_cmd_dict[block_code] if block_code in self.reply_cmd_dict else self.predictions
             for prediction in preds:
                 answer = prediction.handle(line)
                 if answer != RETURN_NO_MATCH:
