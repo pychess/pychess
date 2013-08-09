@@ -49,9 +49,6 @@ class HelperManager (GObject):
         if self.helperconn.FatICS:
             self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
 
-            self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
-            self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
-                    (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
@@ -66,6 +63,9 @@ class HelperManager (GObject):
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.helperconn.expect_line (self.on_game_remove,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
+        self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
+        self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
+                (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
 
 
         #b: blitz      l: lightning   u: untimed      e: examined game
@@ -224,7 +224,7 @@ class HelperManager (GObject):
         player.update(copy)
         
     def on_player_available (self, matches):
-        name, titles, blitz, std, wild, light, bug = matches[0].groups()
+        name, titles, blitz, std, wild, light, bughouse = matches[0].groups()
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
         copy.online = True
@@ -232,11 +232,11 @@ class HelperManager (GObject):
         copy.titles |= self.__parseTitles(titles)
         copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
         copy.ratings[TYPE_STANDARD].elo = self.parseRating(std)
-        copy.ratings[TYPE_LIGHTNING].elo = self.parseRating(light)
-        copy.ratings[TYPE_ATOMIC].elo = self.parseRating(atomic)
-        copy.ratings[TYPE_BUGHOUSE].elo = self.parseRating(bughouse)
-        copy.ratings[TYPE_CRAZYHOUSE].elo = self.parseRating(crazyhouse)
-        copy.ratings[TYPE_LOSERS].elo = self.parseRating(losers)
-        copy.ratings[TYPE_SUICIDE].elo = self.parseRating(suicide)
         copy.ratings[TYPE_WILD].elo = self.parseRating(wild)
+        copy.ratings[TYPE_LIGHTNING].elo = self.parseRating(light)
+        copy.ratings[TYPE_BUGHOUSE].elo = self.parseRating(bughouse)
+#         copy.ratings[TYPE_ATOMIC].elo = self.parseRating(atomic)
+#         copy.ratings[TYPE_CRAZYHOUSE].elo = self.parseRating(crazyhouse)
+#         copy.ratings[TYPE_LOSERS].elo = self.parseRating(losers)
+#         copy.ratings[TYPE_SUICIDE].elo = self.parseRating(suicide)
         player.update(copy)
