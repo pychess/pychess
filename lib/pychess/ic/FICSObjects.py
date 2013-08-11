@@ -283,8 +283,8 @@ class FICSPlayer (GObject):
             self.adjournment = player.adjournment
         if not self.titles >= player.titles:
             self.titles |= player.titles
-        for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING,
-                           TYPE_WILD, TYPE_CRAZYHOUSE, TYPE_LOSERS):
+        for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
+                            TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
             self.ratings[ratingtype].update(player.ratings[ratingtype])
         if self.status != player.status:
             self.status = player.status

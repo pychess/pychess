@@ -72,11 +72,11 @@ class HelperManager (GObject):
         #s: standard   w: wild        x: atomic       z: crazyhouse        
         #B: Bughouse   L: losers      S: Suicide
         if self.helperconn.FatICS:
-            self.helperconn.client.run_command("who sblxwzBLS")
+            self.helperconn.client.run_command("who")
         else:
-            self.helperconn.client.run_command("who IsblxwzBLS")
+            self.helperconn.client.run_command("who IbslwBzSLx")
             
-        self.helperconn.client.run_command("games /sblxwzBLS")
+        self.helperconn.client.run_command("games /bslwBzSLx")
 
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
@@ -169,9 +169,11 @@ class HelperManager (GObject):
         return _titles
 
     def on_player_connect (self, match):
+        # bslwBzSLx
+        # gbtami 001411E1663P1483P1720P0P1646P0P0P1679P
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-        atomic, atomicdev, wild, wilddev, crazyhouse, crazyhousedev, \
-        bughouse, bughousedev, losers, losersdev, suicide, suicidedev = match.groups()
+        wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
+        suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
         copy = player.copy()
         copy.online = True
