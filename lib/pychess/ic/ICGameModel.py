@@ -4,6 +4,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.ic import GAME_TYPES
+from pychess.ic.FICSObjects import FICSPlayer
 
 class ICGameModel (GameModel):
     def __init__ (self, connection, ficsgame, timemodel):
@@ -55,6 +56,17 @@ class ICGameModel (GameModel):
                     obj.disconnect(handler_id)
         self.connections = None
     
+    @property
+    def remote_player (self):    
+        if self.players[0].__type__ == REMOTE:
+            return self.players[0]
+        else:
+            return self.players[1]
+        
+    @property
+    def remote_ficsplayer (self):    
+        return self.connection.players.get(FICSPlayer(self.remote_player.ichandle))
+        
     def hasGuestPlayers (self):
         for player in (self.ficsgame.wplayer, self.ficsgame.bplayer):
             if player.isGuest():

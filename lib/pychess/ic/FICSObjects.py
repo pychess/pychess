@@ -19,6 +19,7 @@ class FICSPlayer (GObject):
         self.status = status
         self.game = None
         self.adjournment = False
+        self.keep_after_logout = False  # Whether to remove from Players after they logout
         if titles is None:
             self.titles = set()
         else:
@@ -414,10 +415,9 @@ class FICSPlayers (GObject):
     def player_disconnected (self, player):
         if player in self:
             player = self[player]
-            if player.adjournment:
-                player.online = False
-                player.status = IC_STATUS_OFFLINE
-            else:
+            player.online = False
+            player.status = IC_STATUS_OFFLINE
+            if not player.adjournment and not player.keep_after_logout:
                 del self[player]
             self.emit('FICSPlayerExited', player)
     
