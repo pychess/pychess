@@ -567,18 +567,17 @@ class SeekTabSection (ParrentListSection):
                 % {"time": time, "rated": rated.lower(), "gametype": match["gametype"].display_text}
         content = self.get_infobarmessage_content(player, text,
                                                   gametype=match["gametype"])
-        def callback (infobar, response):
+        def callback (infobar, response, message):
             if response == gtk.RESPONSE_ACCEPT:
                 self.connection.om.acceptIndex(index)
             elif response == gtk.RESPONSE_NO:
                 self.connection.om.declineIndex(index)
+            message.dismiss()
+            return False
         message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
-        message.add_button(InfoBarMessageButton(_("Accept Challenge"),
-                                                gtk.RESPONSE_ACCEPT))
-        message.add_button(InfoBarMessageButton(_("Decline Challenge"),
-                                                gtk.RESPONSE_NO))
-        message.add_button(InfoBarMessageButton(_("Ignore Challenge"),
-                                                gtk.RESPONSE_CANCEL))
+        message.add_button(InfoBarMessageButton(_("Accept"), gtk.RESPONSE_ACCEPT))
+        message.add_button(InfoBarMessageButton(_("Decline"), gtk.RESPONSE_NO))
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
         self.messages[index] = message
         self.infobar.push_message(message)
         
@@ -1192,20 +1191,24 @@ class AdjournedTabSection (ParrentListSection):
                 {"timecontrol": game.display_timecontrol, "gametype": game.game_type.display_text}
             content = self.get_infobarmessage_content(player, text,
                                                       gametype=game.game_type)
-            def callback (infobar, response):
+            def callback (infobar, response, message):
                 if response == gtk.RESPONSE_ACCEPT:
                     self.connection.client.run_command("match %s" % player.name)
                 elif response == gtk.RESPONSE_HELP:
                     self.connection.adm.queryMoves(game)
-                del self.messages[player]
-
+                else:
+                    try:
+                        self.messages[player].dismiss()
+                        del self.messages[player]
+                    except KeyError: pass
+                return False
             message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
             message.add_button(InfoBarMessageButton(_("Request Continuation"),
                                                     gtk.RESPONSE_ACCEPT))
             message.add_button(InfoBarMessageButton(_("Examine Adjourned Game"),
                                                     gtk.RESPONSE_HELP))
-            message.add_button(InfoBarMessageButton(_("Do Nothing"),
-                                                    gtk.RESPONSE_NO))
+            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                    gtk.RESPONSE_CANCEL))
             self._update_infobarmessagebutton_sensitivity(message, player)
             self.messages[player] = message
             self.infobar.push_message(message)
@@ -2012,9 +2015,11 @@ class Messages (Section):
         label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
         label.set_width_chars(70)
         label.set_line_wrap(True)
-        def response_cb (infobar, response):
+        def response_cb (infobar, response, message):
             if response == gtk.RESPONSE_YES:
                 self.connection.client.run_command("unseek")
+            message.dismiss()
+            return False
         message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb)
         message.add_button(InfoBarMessageButton(gtk.STOCK_YES, gtk.RESPONSE_YES))
         message.add_button(InfoBarMessageButton(gtk.STOCK_NO, gtk.RESPONSE_NO))
@@ -2032,7 +2037,10 @@ class Messages (Section):
     def matchDeclined (self, bm, player):
         text = _(" has declined your offer for a match.")
         content = self.get_infobarmessage_content(player, text)
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                 gtk.RESPONSE_CANCEL))
         self.messages.append(message)
