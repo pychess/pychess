@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 from pychess.ic import *
 
 class FICSPlayer (GObject):
-    def __init__ (self, name, online=False, status=IC_STATUS_OFFLINE,
+    def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN,
                   game=None, titles=None, ratings=None):
         assert type(name) is str, name
         assert type(online) is bool, online
@@ -47,7 +47,7 @@ class FICSPlayer (GObject):
             
         title = self.display_titles()
         if title:
-            name += " %s" % title
+            name += "%s" % title
         return name
         
     def get_online (self):
@@ -73,26 +73,28 @@ class FICSPlayer (GObject):
         
     @property
     def display_status (self):
-        status = ""
         if self.status == IC_STATUS_AVAILABLE:
-            status = _("Available")
+            return _("Available")
         elif self.status == IC_STATUS_PLAYING:
             status = _("Playing")
             game = self.game
             if game is not None:
                 status += " " + game.display_text
+            return status
         elif self.status == IC_STATUS_IDLE:
-            status = _("Idle")
+            return _("Idle")
+        elif self.status == IC_STATUS_OFFLINE:
+            return _("Offline")
         elif self.status == IC_STATUS_EXAMINING:
-            status = _("Examining")
+            return _("Examining")
         elif self.status in (IC_STATUS_NOT_AVAILABLE, IC_STATUS_BUSY):
-            status = _("Not Available")
+            return _("Not Available")
         elif self.status == IC_STATUS_RUNNING_SIMUL_MATCH:
-            status = _("Running Simul Match")
+            return _("Running Simul Match")
         elif self.status == IC_STATUS_IN_TOURNAMENT:
-            status = _("In Tournament")
-#        log.debug("display_status: returning \"%s\" for %s\n" % (status, self))
-        return status
+            return _("In Tournament")
+        else:
+            return ""
         
     def get_game (self):
         return self._game
@@ -171,6 +173,7 @@ class FICSPlayer (GObject):
         game = self.game
         if game != None:
             r += ", game.gameno=%d" % game.gameno
+            r += ", game.rated=%s" % game.rated
             r += ", game.private=" + repr(game.private)
         else:
             r += ", game=None"
