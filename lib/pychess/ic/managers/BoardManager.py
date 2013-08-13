@@ -393,6 +393,7 @@ class BoardManager (GObject):
                 player.status = IC_STATUS_PLAYING
             if player.game != game:
                 player.game = game
+            player.keep_after_logout = True
         
         self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
