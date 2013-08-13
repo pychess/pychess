@@ -10,25 +10,27 @@ from pychess.System.Log import log
 from pychess.System import glock, conf
 
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
+from pychess.widgets import InfoBar
 
 OFFER_MESSAGES = {
     DRAW_OFFER:
-        (_("Your opponent has offered you a draw. Accept?"),
+        (_("Your opponent has offered you a draw."),
          _("Your opponent has offered you a draw. If you accept this offer, the game will end with a score of 1/2 - 1/2."), False),
     ABORT_OFFER:
-        (_("Your opponent wants to abort the game. Accept?"),
+        (_("Your opponent wants to abort the game."),
          _("Your opponent has asked that the game be aborted. If you accept this offer, the game will end with no rating change."), False),
     ADJOURN_OFFER:
-        (_("Your opponent wants to adjourn the game. Accept?"),
+        (_("Your opponent wants to adjourn the game."),
          _("Your opponent has asked that the game be adjourned. If you accept this offer, the game will be adjourned and you can resume it later (when your opponent is online and both players agree to resume)."), False),
     TAKEBACK_OFFER:
-        (_("Your opponent wants to undo %s move(s). Accept?"),
+        (_("Your opponent wants to undo %s move(s)."),
          _("Your opponent has asked that the last %s move(s) be undone. If you accept this offer, the game will continue from the earlier position."), True),
     PAUSE_OFFER:
-        (_("Your opponent wants to pause the game. Accept?"),
+        (_("Your opponent wants to pause the game."),
          _("Your opponent has asked that the game be paused. If you accept this offer, the game clock will be paused until both players agree to resume the game."), False),
     RESUME_OFFER:
-        (_("Your opponent wants to resume the game. Accept?"),
+        (_("Your opponent wants to resume the game."),
          _("Your opponent has asked that the game be resumed. If you accept this offer, the game clock will continue from where it was paused."), False)
 }
 
@@ -173,8 +175,13 @@ class Human (Player):
     
     def hurry (self):
         title = _("Your opponent asks you to hurry!")
-        description = _("Generally this means nothing, as the game is timebased, but if you want to please your opponent, perhaps you should get going.")
-        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+        text = _("Generally this means nothing, as the game is time-based, but if you want to please your opponent, perhaps you should get going.")
+        content = InfoBar.get_message_content(title, text, gtk.STOCK_DIALOG_INFO)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        self._show_message(message)
         
     @glock.glocked
     def pause (self):
@@ -215,63 +222,79 @@ class Human (Player):
     
     def offer (self, offer):
         log.debug("Human.offer: self=%s %s\n" % (self, offer))
-        title, description, takesParam = OFFER_MESSAGES[offer.type]
-        if takesParam:
+        assert offer.type in OFFER_MESSAGES
+        heading, text, takes_param = OFFER_MESSAGES[offer.type]
+        if takes_param:
             param = offer.param
             if offer.type == TAKEBACK_OFFER and \
                     self.gamemodel.players[1-self.color].__type__ is not REMOTE:
                 param = self.gamemodel.ply - offer.param
-            title = title % param
-            description = description % param
+            heading = heading % param
+            text = text % param
         
-        def responsecb (dialog, response):
-            if response == gtk.RESPONSE_YES:
+        def response_cb (infobar, response, message):
+            if response == gtk.RESPONSE_ACCEPT:
                 self.emit("accept", offer)
-            else: self.emit("decline", offer)
-        self._message(title, description,
-                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, responsecb)
+            elif response == gtk.RESPONSE_NO:
+                self.emit("decline", offer)
+            message.dismiss()
+        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_QUESTION)
+        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
+        message.add_button(InfoBarMessageButton(_("Accept"), gtk.RESPONSE_ACCEPT))
+        message.add_button(InfoBarMessageButton(_("Decline"), gtk.RESPONSE_NO))
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        self._show_message(message)
     
     def offerDeclined (self, offer):
         log.debug("Human.offerDeclined: self=%s %s\n" % (self, offer))
-        if offer.type not in ACTION_NAMES:
-            return
-        title = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
-        description = _("You can try to send the offer to your opponent later in the game again.")
-        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+        assert offer.type in ACTION_NAMES
+        heading = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
+        text = _("Resend %s?" % ACTION_NAMES[offer.type].lower())
+        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_INFO)
+        def response_cb (infobar, response, message):
+            if response == gtk.RESPONSE_ACCEPT:
+                self.emit("offer", offer)
+            message.dismiss()
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(_("Resend"), gtk.RESPONSE_ACCEPT))
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        self._show_message(message)
     
     def offerWithdrawn (self, offer):
         log.debug("Human.offerWithdrawn: self=%s %s\n" % (self, offer))
-        if offer.type not in ACTION_NAMES:
-            return
-        title = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
-        description = _("Your opponent seems to have changed his or her mind.")
-        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+        assert offer.type in ACTION_NAMES
+        heading = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
+        text = _("Your opponent seems to have changed their mind.")
+        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_INFO)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        self._show_message(message)
     
     def offerError (self, offer, error):
         log.debug("Human.offerError: self=%s error=%s %s\n" % (self, error, offer))
-        if offer.type not in ACTION_NAMES:
-            return
+        assert offer.type in ACTION_NAMES
         actionName = ACTION_NAMES[offer.type]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:
-            title = _("Unable to accept %s") % actionName.lower()
-            description = _("PyChess was unable to get the %s offer accepted. Probably because it has been withdrawn.")
+            heading = _("Unable to accept %s") % actionName.lower()
+            text = _("Probably because it has been withdrawn.")
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
              error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either
             # declined or withdrawn.
             return
         else:
-            title = _("%s returns an error") % actionName
-            description = ERROR_MESSAGES[error]
-        self._message(title, description, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+            heading = _("%s returns an error") % actionName
+            text = ERROR_MESSAGES[error]
+        
+        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_WARNING)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+        message = InfoBarMessage(gtk.MESSAGE_WARNING, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        self._show_message(message)
     
     @glock.glocked
-    def _message (self, title, description, type, buttons, responsecb=(lambda d,r:None)):
-        d = gtk.MessageDialog (type=type, buttons=buttons)
-        d.set_markup ("<big><b>%s</b></big>" % title)
-        d.format_secondary_text (description)
-        def response (dialog, response, responsecb):
-            responsecb(dialog, response)
-            dialog.hide()
-        d.connect("response", response, responsecb)
-        d.show()
+    def _show_message (self, message):
+        self.gmwidg.showMessage(message)
