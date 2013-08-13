@@ -174,6 +174,8 @@ class PgnBase(ChessFile):
         if variant:
             if "fischer" in variant.lower() or "960" in variant:
                 return "Fischerandom"
+            elif "atomic" in variant.lower():
+                return "Atomic"
             elif "crazyhouse" in variant.lower():
                 return "Crazyhouse"
             elif "wildcastle" in variant.lower():
@@ -184,6 +186,8 @@ class PgnBase(ChessFile):
             event = self.get_event(no)
             if "Chess960" in event:
                 return "Fischerandom"
+            elif "atomic" in event.lower():
+                return "Atomic"
             elif "crazyhouse" in event.lower():
                 return "Crazyhouse"
             elif "wildcastle" in event.lower():

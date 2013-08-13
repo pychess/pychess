@@ -38,6 +38,7 @@ reprReason_long = {
     WON_DISCONNECTION: _("Because %(loser)s disconnected"),
     WON_ADJUDICATION:  _("Because of adjudication by an admin"),
     WON_NOMATERIAL: _("Because %(loser)s lost all pieces but the king"),
+    WON_KINGEXPLODE: _("Because %(loser)s king exploded"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
     ADJOURNED_AGREEMENT: _("Because both players agreed to adjourn the game"),
