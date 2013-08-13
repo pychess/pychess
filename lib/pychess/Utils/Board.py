@@ -74,9 +74,11 @@ class Board:
                     holding = self.board.holding[color]
                     for piece in holding:
                         for i in range(holding[piece]):
-                            self[self.newHoldingCord(color, piece)] = Piece(color, piece)
+                            self[self.newHoldingCord(color, 1)] = Piece(color, piece)
     
     def getHoldingCord(self, color, piece):
+        """Get the first occurence of piece in given colors holding"""
+        
         enum = reverse_enum if color == WHITE else enumerate
         files = ((self.FILES+2, self.FILES+1, self.FILES), (-3, -2, -1))
         for x in files[color]:
@@ -84,18 +86,26 @@ class Board:
                 if (row.get(x) is not None) and row.get(x).piece == piece:
                     return Cord(x, i)
 
-    def newHoldingCord(self, color, piece):
+    def newHoldingCord(self, color, nth):
+        """Find the nth empty slot in given colors holding"""
+        
         enum = reverse_enum if color == BLACK else enumerate
         files = ((self.FILES, self.FILES+1, self.FILES+2), (-1, -2, -3))
+        empty = 0
         for x in files[color]:
             for i, row in enum(self.data):
                 if row.get(x) is None:
-                    return Cord(x, i)
+                    empty += 1
+                    if empty == nth:
+                        return Cord(x, i)
     
     def simulateMove (self, board1, move):
         moved = []
         new = []
         dead = []
+
+        # Sequence nubers of next newHoldingCord of WHITE and BLACK
+        nth = [0, 0]
         
         if move.flag == NULL_MOVE:
             return moved, new, dead
@@ -107,15 +117,33 @@ class Board:
             cord0 = self.getHoldingCord(self.color, piece)
             moved.append( (self[cord0], cord0) )
             return moved, new, dead
-            
-        moved.append( (self[cord0], cord0) )
+
+        if self.variant == ATOMICCHESS and (self[cord1] or move.flag == ENPASSANT):
+            piece = self[cord0]
+            nth[1-piece.color] += 1
+            cord = self.newHoldingCord(1-piece.color, nth[1-piece.color])
+            moved.append( (board1[cord], cord0) )
+            new.append( board1[cord] )
+        else:
+            moved.append( (self[cord0], cord0) )
 
         if self[cord1]:
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
-            cord = self.newHoldingCord(self.color, piece)
+            nth[self.color] += 1
+            cord = self.newHoldingCord(self.color, nth[self.color])
             moved.append( (board1[cord], cord1) )
             new.append( board1[cord] )
-        
+
+            if self.variant == ATOMICCHESS:
+                from pychess.Variants.atomic import cordsAround
+                for acord in cordsAround(cord1):
+                    piece = self[acord]
+                    if piece and piece.piece != PAWN and acord != cord0:
+                        nth[1-piece.color] += 1
+                        cord = self.newHoldingCord(1-piece.color, nth[1-piece.color])
+                        moved.append( (board1[cord], acord) )
+                        new.append( board1[cord] )
+
         if move.flag in (QUEEN_CASTLE, KING_CASTLE):
             side = move.flag - QUEEN_CASTLE
             if FILE(cord0.x) == 3 and self.board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
@@ -132,7 +160,8 @@ class Board:
             shift = -1 if self.color == WHITE else 1
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
-            cord = self.newHoldingCord(self.color, PAWN)
+            nth[self.color] += 1
+            cord = self.newHoldingCord(self.color, nth[self.color])
             new.append( board1[cord] )
 
         return moved, new, dead
@@ -146,8 +175,15 @@ class Board:
             return moved, new, dead
         
         cord0, cord1 = move.cords
-        
-        moved.append( (self[cord1], cord1) )
+
+        if self.variant == ATOMICCHESS and (board1[cord1] or move.flag == ENPASSANT):
+            piece = board1[cord0].piece
+            cord = self.getHoldingCord(self.color, piece)
+            moved.append( (self[cord], cord) )
+            self[cord].opacity = 1
+            dead.append( self[cord] )
+        else:
+            moved.append( (self[cord1], cord1) )
         
         if board1[cord1]:
             piece = PAWN if self.variant == CRAZYHOUSECHESS and board1[cord1].promoted else board1[cord1].piece
@@ -155,7 +191,17 @@ class Board:
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
             dead.append( self[cord] )
-        
+
+            if self.variant == ATOMICCHESS:
+                from pychess.Variants.atomic import cordsAround
+                for acord in cordsAround(cord1):
+                    piece = board1[acord]
+                    if piece and piece.piece != PAWN and acord != cord0:
+                        cord = self.getHoldingCord(1-piece.color, piece.piece)
+                        moved.append( (self[cord], cord) )
+                        self[cord].opacity = 1
+                        dead.append( self[cord] )
+
         if move.flag in (QUEEN_CASTLE, KING_CASTLE):
             side = move.flag - QUEEN_CASTLE
             if FILE(cord0.x) == 3 and self.board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
@@ -182,6 +228,10 @@ class Board:
             If lboard param was given, it will be used when cloning,
             and move will not be applyed, just the high level Piece
             objects will be adjusted.""" 
+
+        # Sequence nubers of next newHoldingCord of WHITE and BLACK
+        nth = [0, 0]
+
         flag = FLAG(move.move)
         if flag != DROP:
             assert self[move.cord0], "%s %s" % (move, self.asFen())
@@ -199,14 +249,32 @@ class Board:
             else:
                 piece = PAWN if flag == ENPASSANT else self[move.cord1].piece
                 new_piece = Piece(1-self.color, piece)
-            newBoard[self.newHoldingCord(self.color, piece)] = new_piece
+            nth[self.color] += 1
+            newBoard[self.newHoldingCord(self.color, nth[self.color])] = new_piece
+            
+            if self.variant == ATOMICCHESS:
+                from pychess.Variants.atomic import cordsAround
+                for acord in cordsAround(move.cord1):
+                    piece = self[acord]
+                    if piece and piece.piece != PAWN and acord != cord0:
+                        new_piece = Piece(piece.color, piece.piece)
+                        nth[1-piece.color] += 1
+                        newBoard[self.newHoldingCord(1-piece.color, nth[1-piece.color])] = new_piece
+                        newBoard[acord] = None
         
         if flag == DROP:
             piece = FCORD(move.move)
             newBoard[cord1] = newBoard[self.getHoldingCord(self.color, piece)]
             newBoard[self.getHoldingCord(self.color, piece)] = None
         else:
-            newBoard[cord1] = newBoard[cord0]
+            if self.variant == ATOMICCHESS and (flag == ENPASSANT or self[move.cord1] is not None):
+                piece = self[move.cord0].piece
+                new_piece = Piece(self.color, piece)
+                nth[1-self.color] += 1
+                newBoard[self.newHoldingCord(1-self.color, nth[1-self.color])] = new_piece
+                newBoard[cord1] = None
+            else:
+                newBoard[cord1] = newBoard[cord0]
             
         if flag != NULL_MOVE and flag != DROP:
             newBoard[cord0] = None

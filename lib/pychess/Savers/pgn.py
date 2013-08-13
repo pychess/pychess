@@ -11,6 +11,7 @@ from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
+from pychess.Variants.atomic import AtomicChess, AtomicBoard
 from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
 from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
@@ -85,6 +86,8 @@ def save (file, model, position):
             msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000))
     if issubclass(model.variant, FischerRandomChess):
         print >> file, '[Variant "Fischerandom"]'
+    elif issubclass(model.variant, AtomicChess):
+        print >> file, '[Variant "Atomic"]'
     elif issubclass(model.variant, CrazyhouseChess):
         print >> file, '[Variant "Crazyhouse"]'
     elif issubclass(model.variant, WildcastleChess):
@@ -246,6 +249,8 @@ class PGNFile (PgnBase):
                     parts.append("-")
                     parts.append("-")
                 fenstr = " ".join(parts)
+            elif variant == "Atomic":
+                model.tags["Variant"] = "Atomic"
             elif variant == "Crazyhouse":
                 model.tags["Variant"] = "Crazyhouse"
             elif variant == "Wildcastle":
@@ -254,6 +259,9 @@ class PGNFile (PgnBase):
         if variant == "Fischerandom":
             board = LBoard(FISCHERRANDOMCHESS)
             model.variant = FischerRandomChess
+        elif variant == "Atomic":
+            board = LBoard(ATOMICCHESS)
+            model.variant = AtomicChess
         elif variant == "Crazyhouse":
             board = LBoard(CRAZYHOUSECHESS)
             model.variant = CrazyhouseChess
@@ -294,8 +302,12 @@ class PGNFile (PgnBase):
                 # initial game board
                 if variant == "Fischerandom":
                     board = FRCBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Atomic":
+                    board = AtomicBoard(setup=node.asFen(), lboard=node)
                 elif variant == "Crazyhouse":
                     board = CrazyhouseBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Wildcastle":
+                    board = WildcastleBoard(setup=node.asFen(), lboard=node)
                 else:
                     board = Board(setup=node.asFen(), lboard=node)
             else:

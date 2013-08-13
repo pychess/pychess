@@ -41,7 +41,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse", #atomic",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -112,6 +112,9 @@ class PyChessCECP(PyChess):
                             self.board.iniCrazy()
                         elif lines[1] == "wildcastle":
                             self.board.variant = WILDCASTLESHUFFLECHESS
+                        elif lines[1] == "atomic":
+                            self.board.variant = ATOMICCHESS
+                            self.board.iniAtomic()
                 
                 elif lines[0] == "quit":
                     self.forced = True

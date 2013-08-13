@@ -144,7 +144,10 @@ def genAllMoves (board, drops=True):
     kingMoves = moveArray[KING]
     cord = firstBit( kings )
     for c in iterBits(kingMoves[cord] & notfriends):
-        yield newMove(cord, c)
+        if board.variant == ATOMICCHESS and kings and not board.arBoard[c]:
+            yield newMove(cord, c)
+        else:
+            yield newMove(cord, c)
     
     # Rooks and Queens
     for cord in iterBits(rooks | queens):
@@ -261,9 +264,10 @@ def genAllMoves (board, drops=True):
                 yield newMove (cord+9, cord)
     
     # Castling
-    
-    for move in genCastles(board):
-        yield move
+    # In atomic variant there is a chance not to have our king after an explosion
+    if kings:
+        for move in genCastles(board):
+            yield move
 
     if drops and board.variant == CRAZYHOUSECHESS:
         for move in genDrops(board):
@@ -300,7 +304,8 @@ def genCaptures (board):
     kingMoves = moveArray[KING]
     cord = firstBit( kings )
     for c in iterBits(kingMoves[cord] & enemies):
-        yield newMove(cord, c)
+        if board.variant != ATOMICCHESS:
+            yield newMove(cord, c)
     
     # Rooks and Queens
     for cord in iterBits(rooks|queens):
@@ -481,6 +486,7 @@ def genNonCaptures (board):
 ################################################################################
 
 def genCheckEvasions (board):
+    # TODO: atomic?
     
     color = board.color
     opcolor = 1-color
