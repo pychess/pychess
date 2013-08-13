@@ -12,6 +12,7 @@ from const import *
 from lutils.bitboard import iterBits
 from lutils.attack import getAttacks
 from pychess.Variants.losers import testKingOnly
+from pychess.Variants.atomic import kingExplode
 
 
 def getDestinationCords (board, cord):
@@ -35,7 +36,6 @@ def playerHasMatingMaterial (board, playercolor):
     return ldraw.testPlayerMatingMaterial(lboard, playercolor)
 
 def getStatus (board):
-    
     lboard = board.board
 
     if board.variant == LOSERSCHESS:
@@ -45,6 +45,13 @@ def getStatus (board):
             else:
                 status = BLACKWON
             return status, WON_NOMATERIAL
+    elif board.variant == ATOMICCHESS:
+        if lboard.boards[board.color][KING] == 0:
+            if board.color == WHITE:
+                status = BLACKWON
+            else:
+                status = WHITEWON
+            return status, WON_KINGEXPLODE
     else:
         if ldraw.testMaterial (lboard):
             return DRAW, DRAW_INSUFFICIENT
@@ -54,7 +61,14 @@ def getStatus (board):
         lboard.applyMove(move)
         if lboard.opIsChecked():
             lboard.popMove()
-            continue
+            if board.variant == ATOMICCHESS:
+                if kingExplode(lboard, move, 1-board.color) and not kingExplode(lboard, move, board.color):
+                    hasMove = True
+                    break
+                else:
+                    continue
+            else:
+                continue
         lboard.popMove()
         hasMove = True
         break
@@ -118,7 +132,15 @@ def validate (board, move):
                     return False
             else:
                 return standard_validate (board, move)
-    
+    elif board.variant == ATOMICCHESS:
+        # Moves exploding our king are not allowed
+        if kingExplode(board.board, move.move, board.color):
+            return False
+        # Exploding oppont king takes precedence over mate
+        elif kingExplode(board.board, move.move, 1-board.color):
+            return True
+        else:
+            return standard_validate (board, move)
     else:
         return standard_validate (board, move)
 

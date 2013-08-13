@@ -58,6 +58,9 @@ class LBoard:
                 if rc >= drawThreshold: break
         return rc
 
+    def iniAtomic(self):
+        self.hist_atomic = []
+        
     def iniCrazy(self):
         self.promoted = [0]*64
         self.capture_promoting = False
@@ -120,7 +123,10 @@ class LBoard:
 
         elif self.variant == CRAZYHOUSECHESS:
             self.iniCrazy()
-        
+
+        elif self.variant == ATOMICCHESS:
+            self.iniAtomic()
+            
         # Get information
         parts = fenstr.split()
         
@@ -293,13 +299,13 @@ class LBoard:
     def isChecked (self):
         if self.checked == None:
             kingcord = self.kings[self.color]
-            self.checked = isAttacked (self, kingcord, 1-self.color)
+            self.checked = isAttacked (self, kingcord, 1-self.color, ischecked=True)
         return self.checked
     
     def opIsChecked (self):
         if self.opchecked == None:
             kingcord = self.kings[1-self.color]
-            self.opchecked = isAttacked (self, kingcord, self.color)
+            self.opchecked = isAttacked (self, kingcord, self.color, ischecked=True)
         return self.opchecked
 
     def willLeaveInCheck (self, move):
@@ -424,6 +430,16 @@ class LBoard:
                 else:
                     self.holding[color][tpiece] += 1
                     self.capture_promoting = False
+            elif self.variant == ATOMICCHESS:
+                from pychess.Variants.atomic import piecesAround
+                apieces = [(fcord, fpiece, color),]
+                for acord, apiece, acolor in piecesAround(self, tcord):
+                    if apiece != PAWN and acord != fcord:
+                        self._removePiece(acord, apiece, acolor)
+                        if apiece != KING:
+                            self.pieceCount[acolor][apiece] -= 1
+                        apieces.append((acord, apiece, acolor))
+                self.hist_atomic.append(apieces)
             
         self.hist_tpiece.append(tpiece)
         
@@ -446,6 +462,16 @@ class LBoard:
             self.pieceCount[opcolor][PAWN] -= 1
             if self.variant == CRAZYHOUSECHESS:
                 self.holding[color][PAWN] += 1
+            elif self.variant == ATOMICCHESS:
+                from pychess.Variants.atomic import piecesAround
+                apieces = [(fcord, fpiece, color),]
+                for acord, apiece, acolor in piecesAround(self, tcord):
+                    if apiece != PAWN and acord != fcord:
+                        self._removePiece(acord, apiece, acolor)
+                        if apiece != KING:
+                            self.pieceCount[acolor][apiece] -= 1
+                        apieces.append((acord, apiece, acolor))
+                self.hist_atomic.append(apieces)
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
@@ -464,8 +490,12 @@ class LBoard:
                     self.promoted[tcord] = 1
                 elif tpiece != EMPTY:
                     self.promoted[tcord] = 0
-                
-        self._addPiece(tcord, fpiece, color)
+
+        if self.variant == ATOMICCHESS and (tpiece != EMPTY or flag == ENPASSANT):
+            if tpiece != KING:
+                self.pieceCount[color][fpiece] -= 1
+        else:
+            self._addPiece(tcord, fpiece, color)
 
         if fpiece == PAWN and abs(fcord-tcord) == 16:
             self.setEnpassant ((fcord + tcord) / 2)
@@ -501,7 +531,7 @@ class LBoard:
 
         self.setColor(opcolor)
         self.plyCount += 1
-    
+
     def popMove (self):
         # Note that we remove the last made move, which was not made by boards
         # current color, but by its opponent
@@ -549,6 +579,13 @@ class LBoard:
                 else:
                     assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
+            elif self.variant == ATOMICCHESS:
+                apieces = self.hist_atomic.pop()
+                for acord, apiece, acolor in apieces:
+                    self._addPiece (acord, apiece, acolor)
+                    if apiece != KING:
+                        self.pieceCount[acolor][apiece] += 1
+                    
                 
         # Put back piece captured by enpassant
         if flag == ENPASSANT:
@@ -558,6 +595,12 @@ class LBoard:
             if self.variant == CRAZYHOUSECHESS:
                 assert self.holding[color][PAWN] > 0
                 self.holding[color][PAWN] -= 1
+            elif self.variant == ATOMICCHESS:
+                apieces = self.hist_atomic.pop()
+                for acord, apiece, acolor in apieces:
+                    self._addPiece (acord, apiece, acolor)
+                    if apiece != KING:
+                        self.pieceCount[acolor][apiece] += 1
             
         # Un-promote pawn
         if flag in PROMOTIONS:
@@ -570,7 +613,8 @@ class LBoard:
             self.holding[color][tpiece] += 1
             self.pieceCount[color][tpiece] -= 1
         else:
-            self._addPiece (fcord, tpiece, color)
+            if not (self.variant == ATOMICCHESS and (cpiece != EMPTY or flag == ENPASSANT)):
+                self._addPiece (fcord, tpiece, color)
 
         if self.variant == CRAZYHOUSECHESS:
             if flag != DROP:
@@ -748,5 +792,7 @@ class LBoard:
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
+        elif self.variant == ATOMICCHESS:
+            copy.hist_atomic = [a[:] for a in self.hist_atomic]
             
         return copy

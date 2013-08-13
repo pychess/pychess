@@ -8,7 +8,7 @@ from pychess.Utils.const import *
 # for the inconvenience
 #
 
-def isAttacked (board, cord, color):
+def isAttacked (board, cord, color, ischecked=False):
     """ To determine if cord is attacked by any pieces from color. """
 
     _moveArray = moveArray
@@ -56,7 +56,10 @@ def isAttacked (board, cord, color):
     
     # King
     if pboards[KING] & _moveArray[KING][cord]:
-        return True
+        if board.variant == ATOMICCHESS and ischecked:
+            return False
+        else:
+            return True
     
     return False
     
