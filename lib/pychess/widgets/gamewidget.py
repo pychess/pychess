@@ -113,7 +113,6 @@ class GameWidget (gobject.GObject):
         self.board = board
         self.statusbar = statusbar
         self.infobar = infobar
-        self.messages = []
         self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
@@ -555,15 +554,17 @@ class GameWidget (gobject.GObject):
         return getheadbook().page_num(self.notebookKey)
     
     def showMessage (self, message):
-        self.messages.append(message)
         self.infobar.push_message(message)
         if self == cur_gmwidg():
             notebooks["messageArea"].show()
     
-    def removeMessages (self):
-        for message in self.messages:
-            message.dismiss()
-        del self.messages[:]
+    def replaceMessages (self, message):
+        """ Replace all messages with message """
+        self.infobar.clear_messages()
+        self.showMessage(message)
+    
+    def clearMessages (self):
+        self.infobar.clear_messages()
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
 
