@@ -106,6 +106,16 @@ def game_ended (gamemodel, reason, gmwidg):
     
     if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
         if gamemodel.players[0].__type__ == REMOTE or gamemodel.players[1].__type__ == REMOTE:
+            def status_changed (player, property, message):
+                button = message.buttons[0]
+                if player.isAvailableForGame():
+                    button.sensitive = True
+                    button.tooltip = ""
+                else:
+                    button.sensitive = False
+                    button.tooltip = _("%(player)s is %(status)s") % \
+                        {"player": player.name, "status": player.display_status.lower()}
+            gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
             message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
         else:
             message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
@@ -117,10 +127,7 @@ def game_ended (gamemodel, reason, gmwidg):
     
     def callback (infobar, response, message):
         if response == 0:
-            if gamemodel.players[0].__type__ == REMOTE:
-                gamemodel.players[0].offerRematch()
-            else:
-                gamemodel.players[1].offerRematch()
+            gamemodel.remote_player.offerRematch()
         elif response == 1:
             # newGameDialog uses ionest uses gamenanny uses newGameDialog...
             from pychess.widgets.newGameDialog import createRematch
