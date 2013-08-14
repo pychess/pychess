@@ -22,12 +22,12 @@ def get_message_content (heading_text, message_text, image_stock_id):
     return hbox
 
 class InfoBarMessageButton (gobject.GObject):
-    def __init__(self, text, response_id, sensitive=True, tooltip=""):
+    def __init__(self, text, response_id, sensitive=True, tooltip_text=""):
         gobject.GObject.__init__(self)
         self.text = text
         self.response_id = response_id
         self.sensitive = sensitive
-        self.tooltip = tooltip
+        self.tooltip_text = tooltip_text
 
         self._sensitive_cid = None
         self._tooltip_cid = None
@@ -39,11 +39,11 @@ class InfoBarMessageButton (gobject.GObject):
         self._sensitive = sensitive
     sensitive = gobject.property(get_sensitive, set_sensitive)
 
-    def get_tooltip (self):
-        return self._tooltip
-    def set_tooltip (self, tooltip):
-        self._tooltip = tooltip
-    tooltip = gobject.property(get_tooltip, set_tooltip)
+    def get_tooltip_text (self):
+        return self._tooltip_text
+    def set_tooltip_text (self, tooltip_text):
+        self._tooltip_text = tooltip_text
+    tooltip_text = gobject.property(get_tooltip_text, set_tooltip_text)
 
 class InfoBarMessage (gobject.GObject):
     __gsignals__ = {
@@ -131,7 +131,7 @@ class InfoBar (gtk.InfoBar):
             return
         
         if message == shown_message and button._button is not None:
-            button._button.set_property("tooltip-text", button.tooltip)
+            button._button.set_property("tooltip-text", button.tooltip_text)
         
         return False
     
@@ -165,7 +165,7 @@ class InfoBar (gtk.InfoBar):
             button._sensitive_cid = button.connect(
                 "notify::sensitive", self._button_sensitive_cb, message)
             button._tooltip_cid = button.connect(
-                "notify::tooltip", self._button_tooltip_cb, message)
+                "notify::tooltip-text", self._button_tooltip_cb, message)
             self._button_sensitive_cb(button, None, message)
             self._button_tooltip_cb(button, None, message)
         if message.callback:

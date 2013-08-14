@@ -77,7 +77,8 @@ class AdjournManager (GObject):
             
             user = self.connection.players.get(
                 FICSPlayer(self.connection.getUsername()))
-            opponent = self.connection.players.get(FICSPlayer(opponent_name))
+            opponent = FICSPlayer(opponent_name, status=IC_STATUS_OFFLINE)
+            opponent = self.connection.players.get(opponent)
             wplayer, bplayer = (user, opponent) if our_color == WHITE \
                                                 else (opponent, user)
             game = FICSAdjournedGame(wplayer, bplayer, game_type=gametype,
