@@ -423,7 +423,8 @@ class BoardView (gtk.DrawingArea):
             self.lastMove = None
 
         self.runAnimation(redrawMisc=self.realSetShown)
-        repeat(self.runAnimation)
+        if not conf.get("noAnimation", False):
+            repeat(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
     
@@ -546,7 +547,8 @@ class BoardView (gtk.DrawingArea):
     def startAnimation (self):
         self.animationStart = time()
         self.runAnimation(redrawMisc = True)
-        repeat(self.runAnimation)
+        if not conf.get("noAnimation", False):
+            repeat(self.runAnimation)
     
     #############################
     #          Drawing          #
