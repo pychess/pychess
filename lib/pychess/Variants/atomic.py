@@ -20,13 +20,11 @@ class AtomicChess:
     standard_rules = False
     variant_group = VARIANTS_OTHER
 
-offsets = (-9, -8, -7, -1, 1, 7, 8, 9)
 def cordsAround(cord):
-    for offset in offsets:
-        c = cord.cord+offset
-        if c >=0 and c<64:
-            yield Cord(c)
-    
+    kingMoves = moveArray[KING]
+    for c in iterBits(kingMoves[cord.cord]):
+        yield Cord(c)
+
 def piecesAround(board, cord):
     kingMoves = moveArray[KING]
 
