@@ -7,6 +7,15 @@ from pychess.Utils.Rating import Rating
 from pychess.Utils.const import *
 from pychess.ic import *
 
+def update_button_by_player_status (button, player):
+    if player.isAvailableForGame():
+        button.set_property("sensitive", True)
+        button.set_property("tooltip-text", "")
+    else:
+        button.set_property("sensitive", False)
+        button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
+            {"player": player.name, "status": player.display_status.lower()})
+
 class FICSPlayer (GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN,
                   game=None, titles=None, ratings=None):
