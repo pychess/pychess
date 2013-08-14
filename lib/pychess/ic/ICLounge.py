@@ -1159,30 +1159,24 @@ class AdjournedTabSection (ParrentListSection):
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         
     def onSelectionChanged (self, selection):
-        model, iter = selection.get_selected()
+        model, treeiter = selection.get_selected()
         a_row_is_selected = False
-        if iter != None:
+        if treeiter != None:
             a_row_is_selected = True
-        for button in ("resignButton", "abortButton", "drawButton", "resumeButton",
-                       "previewButton"):
+            game = model.get_value(treeiter, 0)
+            update_button_by_player_status(self.widgets["resumeButton"], game.opponent)
+        else:
+            self.widgets["resumeButton"].set_sensitive(False)
+            self.widgets["resumeButton"].set_tooltip_text("")
+        for button in ("resignButton", "abortButton", "drawButton", "previewButton"):
             self.widgets[button].set_sensitive(a_row_is_selected)
-    
+        
     @glock.glocked
     def onPlayGameCreated (self, bm, board):
         for message in self.messages.values():
             message.dismiss()
         self.messages = {}
         return False
-
-    def _update_infobarmessagebutton_sensitivity (self, message, player):
-        button = message.buttons[0]
-        if player.isAvailableForGame():
-            button.sensitive = True
-            button.tooltip = ""
-        else:
-            button.sensitive = False
-            button.tooltip = _("%(player)s is %(status)s") % \
-                {"player": player.name, "status": player.display_status.lower()}
         
     def _infobar_adjourned_message (self, game, player):
         if player not in self.messages:
@@ -1209,7 +1203,7 @@ class AdjournedTabSection (ParrentListSection):
                                                     gtk.RESPONSE_HELP))
             message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                     gtk.RESPONSE_CANCEL))
-            self._update_infobarmessagebutton_sensitivity(message, player)
+            update_button_by_player_status(message.buttons[0], player)
             self.messages[player] = message
             self.infobar.push_message(message)
             
@@ -1233,14 +1227,16 @@ class AdjournedTabSection (ParrentListSection):
         return False
         
     @glock.glocked
-    def status_changed (self, player, property, game):
+    def status_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.status_changed: %s %s\n" % \
             (repr(player), repr(game)))
         try:
             message = self.messages[player]
         except KeyError:
-            return False
-        self._update_infobarmessagebutton_sensitivity(message, player)
+            pass
+        else:
+            update_button_by_player_status(message.buttons[0], player)
+        self.onSelectionChanged(self.selection)
         return False
         
     def onAdjournedGameAdded (self, game):

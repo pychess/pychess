@@ -6,6 +6,7 @@ import math
 
 import gtk
 
+from pychess.ic.FICSObjects import update_button_by_player_status
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
@@ -14,10 +15,10 @@ from pychess.System import conf
 from pychess.System import glock
 from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
-
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
+
+from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -107,14 +108,7 @@ def game_ended (gamemodel, reason, gmwidg):
     if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
         if gamemodel.players[0].__type__ == REMOTE or gamemodel.players[1].__type__ == REMOTE:
             def status_changed (player, property, message):
-                button = message.buttons[0]
-                if player.isAvailableForGame():
-                    button.sensitive = True
-                    button.tooltip = ""
-                else:
-                    button.sensitive = False
-                    button.tooltip = _("%(player)s is %(status)s") % \
-                        {"player": player.name, "status": player.display_status.lower()}
+                update_button_by_player_status(message.buttons[0], player)
             gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
             message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
         else:
