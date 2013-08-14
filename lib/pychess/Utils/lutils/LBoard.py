@@ -59,7 +59,7 @@ class LBoard:
         return rc
 
     def iniAtomic(self):
-        self.hist_atomic = []
+        self.hist_exploding_around = []
         
     def iniCrazy(self):
         self.promoted = [0]*64
@@ -440,7 +440,7 @@ class LBoard:
                         if apiece != KING:
                             self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
-                self.hist_atomic.append(apieces)
+                self.hist_exploding_around.append(apieces)
             
         self.hist_tpiece.append(tpiece)
         
@@ -472,7 +472,7 @@ class LBoard:
                         if apiece != KING:
                             self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
-                self.hist_atomic.append(apieces)
+                self.hist_exploding_around.append(apieces)
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
@@ -493,7 +493,7 @@ class LBoard:
                     self.promoted[tcord] = 0
 
         if self.variant == ATOMICCHESS and (tpiece != EMPTY or flag == ENPASSANT):
-            if tpiece != KING:
+            if fpiece != KING:
                 self.pieceCount[color][fpiece] -= 1
         else:
             self._addPiece(tcord, fpiece, color)
@@ -581,7 +581,7 @@ class LBoard:
                     assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
             elif self.variant == ATOMICCHESS:
-                apieces = self.hist_atomic.pop()
+                apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
                     self._addPiece (acord, apiece, acolor)
                     if apiece != KING:
@@ -597,7 +597,7 @@ class LBoard:
                 assert self.holding[color][PAWN] > 0
                 self.holding[color][PAWN] -= 1
             elif self.variant == ATOMICCHESS:
-                apieces = self.hist_atomic.pop()
+                apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
                     self._addPiece (acord, apiece, acolor)
                     if apiece != KING:
@@ -794,6 +794,6 @@ class LBoard:
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
-            copy.hist_atomic = [a[:] for a in self.hist_atomic]
+            copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
             
         return copy
