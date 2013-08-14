@@ -134,8 +134,6 @@ def toSAN (board, move, localRepr=False):
                         if kingExplode(board, move, 1-board.color) and not kingExplode(board, move, board.color):
                             sign = "+"
                             break
-                        else:
-                            continue
                     else:
                         continue
                 sign = "+"
