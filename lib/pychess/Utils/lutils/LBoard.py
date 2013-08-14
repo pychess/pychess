@@ -422,7 +422,8 @@ class LBoard:
         # Capture
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
-            self.pieceCount[opcolor][tpiece] -= 1
+            if tpiece != KING:
+                self.pieceCount[opcolor][tpiece] -= 1
             if self.variant == CRAZYHOUSECHESS:
                 if self.promoted[tcord]:
                     self.holding[color][PAWN] += 1
