@@ -245,7 +245,7 @@ def parseSAN (board, san):
     
     # If last char is a piece char, we assue it the promote char
     c = notat[-1]
-    if c in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+    if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
         c = c.lower()
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
@@ -475,7 +475,7 @@ def parseAN (board, an):
     
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+    if len(an) > 4 and not an[-1] in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
         raise ParsingError, (an, "invalid promoted piece", board.asFen())
 
     if len(an) == 5:
