@@ -244,7 +244,9 @@ class _GameInitializationMode:
         groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
                       VARIANTS_ODDS: _("Odds"),
                       VARIANTS_SHUFFLE: _("Shuffle"),
-                      VARIANTS_OTHER: _("Other")}
+                      VARIANTS_OTHER: _("Other (standard rules)"),
+                      VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
+                      }
         specialVariants = [v for v in variants.values() if v != NormalChess and 
                                         v.board.variant not in UNSUPPORTED]
         groups = groupby(specialVariants, attrgetter("variant_group"))

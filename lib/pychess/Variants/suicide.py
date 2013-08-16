@@ -21,7 +21,7 @@ class SuicideChess:
     board = SuicideBoard
     need_initial_board = True
     standard_rules = False
-    variant_group = VARIANTS_OTHER
+    variant_group = VARIANTS_OTHER_NONSTANDARD
 
 def pieceCount(board, color):
     return bin(board.friends[color]).count("1")
