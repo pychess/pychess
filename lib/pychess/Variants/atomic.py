@@ -18,7 +18,7 @@ class AtomicChess:
     board = AtomicBoard
     need_initial_board = False
     standard_rules = False
-    variant_group = VARIANTS_OTHER
+    variant_group = VARIANTS_OTHER_NONSTANDARD
 
 def cordsAround(cord):
     kingMoves = moveArray[KING]

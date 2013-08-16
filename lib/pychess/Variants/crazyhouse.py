@@ -13,4 +13,4 @@ class CrazyhouseChess:
     board = CrazyhouseBoard
     need_initial_board = False
     standard_rules = False
-    variant_group = VARIANTS_OTHER
+    variant_group = VARIANTS_OTHER_NONSTANDARD
