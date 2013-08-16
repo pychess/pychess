@@ -31,13 +31,15 @@ reprReason_long = {
     DRAW_LENGTH: _("Because the game exceed the max length"),
     DRAW_BLACKINSUFFICIENTANDWHITETIME: _("Because %(white)s ran out of time and %(black)s hasn't got insufficient material to mate"),
     DRAW_WHITEINSUFFICIENTANDBLACKTIME: _("Because %(black)s ran out of time and %(white)s hasn't got insufficient material to mate"),
+    DRAW_EQUALMATERIAL: _("Because players has same amount of pieces"),
 
     WON_RESIGN: _("Because %(loser)s resigned"),
     WON_CALLFLAG: _("Because %(loser)s ran out of time"),
     WON_MATE: _("Because %(loser)s has been checkmated"),
     WON_DISCONNECTION: _("Because %(loser)s disconnected"),
     WON_ADJUDICATION:  _("Because of adjudication by an admin"),
-    WON_NOMATERIAL: _("Because %(loser)s lost all pieces but the king"),
+    WON_LESSMATERIAL: _("Because %(loser)s has fever pieces"),
+    WON_NOMATERIAL: _("Because %(loser)s lost all pieces"),
     WON_KINGEXPLODE: _("Because %(loser)s king exploded"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),

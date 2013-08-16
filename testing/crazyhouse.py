@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import sys
 import unittest
 
@@ -7,13 +9,22 @@ from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Utils.lutils.lmove import parseAN, parseSAN
 from pychess.Utils.const import *
 
+# ♜ ♞ ♝ ♛ ♚ ♝ ♖ ♜
+# ♟ ♙ ♙ ♟ ♟ ♘ ♟ ♟
+# . . . . . . . .
+# . . . . . . . .
+# . . . . . . . .
+# . . . . . . . .
+# ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
+# ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
+FEN = "rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 class CrazyhouseTestCase(unittest.TestCase):
     def test_apply_pop(self):
         """Testing Crazyhouse applyMove popMove"""
 
         board = LBoard(variant=CRAZYHOUSECHESS)
-        board.applyFen("rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+        board.applyFen(FEN)
         
         holding0 = (board.holding[0].copy(), board.holding[1].copy())
         promoted0 = board.promoted[:]

@@ -78,10 +78,11 @@ class BoardControl (gtk.EventBox):
 
     def getPromotion(self):
         color = self.view.model.boards[-1].color
+        variant = self.view.model.boards[-1].variant
         promotion = None
         glock.acquire()
         try:
-            promotion = self.promotionDialog.runAndHide(color)
+            promotion = self.promotionDialog.runAndHide(color, variant)
         finally:
             glock.release()
         return promotion
