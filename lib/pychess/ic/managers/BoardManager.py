@@ -67,6 +67,8 @@ def parse_reason (result, reason, wname=None):
             reason = WON_ADJUDICATION
         elif "exploded" in reason:
             reason = WON_KINGEXPLODE
+        elif "material" in reason:
+            reason = WON_NOMATERIAL
         else:
             reason = UNKNOWN_REASON
     elif result == DRAW:

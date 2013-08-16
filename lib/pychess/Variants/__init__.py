@@ -8,6 +8,7 @@ from asymmetricrandom import AsymmetricRandomChess
 from upsidedown import UpsideDownChess
 from pawnspushed import PawnsPushedChess
 from pawnspassed import PawnsPassedChess
+from theban import ThebanChess
 from atomic import AtomicChess
 from bughouse import BughouseChess
 from crazyhouse import CrazyhouseChess
@@ -31,6 +32,7 @@ variants = {NORMALCHESS : NormalChess,
             UPSIDEDOWNCHESS : UpsideDownChess,
             PAWNSPUSHEDCHESS : PawnsPushedChess,
             PAWNSPASSEDCHESS : PawnsPassedChess,
+            THEBANCHESS : ThebanChess,
             ATOMICCHESS: AtomicChess,
             BUGHOUSECHESS: BughouseChess,
             CRAZYHOUSECHESS: CrazyhouseChess,

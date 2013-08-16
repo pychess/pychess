@@ -11,6 +11,7 @@ from Move import Move
 from const import *
 from lutils.bitboard import iterBits
 from lutils.attack import getAttacks
+from pychess.Variants.suicide import pieceCount
 from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
 
@@ -40,6 +41,13 @@ def getStatus (board):
 
     if board.variant == LOSERSCHESS:
         if testKingOnly(lboard):
+            if board.color == WHITE:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+            return status, WON_NOMATERIAL
+    elif board.variant == SUICIDECHESS:
+        if pieceCount(lboard, lboard.color) == 0:
             if board.color == WHITE:
                 status = WHITEWON
             else:
@@ -93,6 +101,15 @@ def getStatus (board):
                 else:
                     status = BLACKWON
                 return status, DRAW_STALEMATE
+            elif board.variant == SUICIDECHESS:
+                if pieceCount(lboard, WHITE) == pieceCount(lboard, BLACK):
+                    return status, DRAW_EQUALMATERIAL
+                else:
+                    if board.color == WHITE and pieceCount(lboard, WHITE) < pieceCount(lboard, BLACK):
+                        status = WHITEWON
+                    else:
+                        status = BLACKWON
+                    return status, WON_LESSMATERIAL
             else:
                 return DRAW, DRAW_STALEMATE
 
@@ -130,6 +147,21 @@ def validate (board, move):
                     return standard_validate (board, move)
                 else:
                     return False
+            else:
+                return standard_validate (board, move)
+    elif board.variant == SUICIDECHESS:
+        capture = move.flag == ENPASSANT or board[move.cord1] != None
+        if capture:
+            return standard_validate (board, move)
+        else:
+            can_capture = False
+            for c in lmovegen.genCaptures(board.board):
+                from pychess.Utils.Move import Move
+                print "can capture!", Move(c)
+                can_capture = True
+                #break
+            if can_capture:
+                return False
             else:
                 return standard_validate (board, move)
     elif board.variant == ATOMICCHESS:
