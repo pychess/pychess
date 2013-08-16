@@ -28,4 +28,4 @@ class WildcastleChess:
     board = WildcastleBoard
     need_initial_board = True
     standard_rules = False
-    variant_group = VARIANTS_OTHER
+    variant_group = VARIANTS_OTHER_NONSTANDARD

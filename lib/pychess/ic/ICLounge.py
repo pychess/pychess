@@ -1842,7 +1842,9 @@ class SeekChallengeSection (ParrentListSection):
         combo.set_model(model)
         
         groupNames = {VARIANTS_SHUFFLE: _("Shuffle"),
-                      VARIANTS_OTHER: _("Other")}
+                      VARIANTS_OTHER: _("Other (standard rules)"),
+                      VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
+                      }
         ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES and 
                                                     v.board.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
