@@ -622,6 +622,12 @@ class BoardManager (GObject):
             pgnHead += [ ("Variant", "Crazyhouse") ]
         elif game_type.variant_type in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
             pgnHead += [ ("Variant", "Wildcastle") ]
+        elif game_type.variant_type == ATOMICCHESS:
+            pgnHead += [ ("Variant", "Atomic") ]
+        elif game_type.variant_type == LOSERSCHESS:
+            pgnHead += [ ("Variant", "Losers") ]
+        elif game_type.variant_type == SUICIDECHESS:
+            pgnHead += [ ("Variant", "Suicide") ]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
         moves = moves.items()
