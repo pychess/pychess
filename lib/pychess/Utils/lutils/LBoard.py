@@ -110,7 +110,7 @@ class LBoard:
         self.hist_opchecked = []
 
         # piece counts
-        self.pieceCount = [[0]*6, [0]*6]
+        self.pieceCount = [[0]*7, [0]*7]
         
         # initial cords of rooks and kings for castling in Chess960
         if self.variant == FISCHERRANDOMCHESS:
@@ -198,8 +198,7 @@ class LBoard:
                     color = char.islower() and BLACK or WHITE
                     piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
-                    if piece != KING:
-                        self.pieceCount[color][piece] += 1
+                    self.pieceCount[color][piece] += 1
                     if self.variant == CRAZYHOUSECHESS and promoted:
                         self.promoted[cord] = 1
                         promoted = False
@@ -297,18 +296,24 @@ class LBoard:
         self.plyCount = movenumber
 
     def isChecked (self):
+        if self.variant == SUICIDECHESS:
+            return False
         if self.checked == None:
             kingcord = self.kings[self.color]
             self.checked = isAttacked (self, kingcord, 1-self.color, ischecked=True)
         return self.checked
     
     def opIsChecked (self):
+        if self.variant == SUICIDECHESS:
+            return False
         if self.opchecked == None:
             kingcord = self.kings[1-self.color]
             self.opchecked = isAttacked (self, kingcord, self.color, ischecked=True)
         return self.opchecked
 
     def willLeaveInCheck (self, move):
+        if self.variant == SUICIDECHESS:
+            return False
         board_clone = self.clone()
         board_clone.applyMove(move)
         return board_clone.opIsChecked()
@@ -422,8 +427,7 @@ class LBoard:
         # Capture
         if tpiece != EMPTY:
             self._removePiece(tcord, tpiece, opcolor)
-            if tpiece != KING:
-                self.pieceCount[opcolor][tpiece] -= 1
+            self.pieceCount[opcolor][tpiece] -= 1
             if self.variant == CRAZYHOUSECHESS:
                 if self.promoted[tcord]:
                     self.holding[color][PAWN] += 1
@@ -437,8 +441,7 @@ class LBoard:
                 for acord, apiece, acolor in piecesAround(self, tcord):
                     if apiece != PAWN and acord != fcord:
                         self._removePiece(acord, apiece, acolor)
-                        if apiece != KING:
-                            self.pieceCount[acolor][apiece] -= 1
+                        self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
                 self.hist_exploding_around.append(apieces)
             
@@ -469,8 +472,7 @@ class LBoard:
                 for acord, apiece, acolor in piecesAround(self, tcord):
                     if apiece != PAWN and acord != fcord:
                         self._removePiece(acord, apiece, acolor)
-                        if apiece != KING:
-                            self.pieceCount[acolor][apiece] -= 1
+                        self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
                 self.hist_exploding_around.append(apieces)
         elif flag in PROMOTIONS:
@@ -493,8 +495,7 @@ class LBoard:
                     self.promoted[tcord] = 0
 
         if self.variant == ATOMICCHESS and (tpiece != EMPTY or flag == ENPASSANT):
-            if fpiece != KING:
-                self.pieceCount[color][fpiece] -= 1
+            self.pieceCount[color][fpiece] -= 1
         else:
             self._addPiece(tcord, fpiece, color)
 
@@ -584,8 +585,7 @@ class LBoard:
                 apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
                     self._addPiece (acord, apiece, acolor)
-                    if apiece != KING:
-                        self.pieceCount[acolor][apiece] += 1
+                    self.pieceCount[acolor][apiece] += 1
                     
                 
         # Put back piece captured by enpassant
@@ -600,8 +600,7 @@ class LBoard:
                 apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
                     self._addPiece (acord, apiece, acolor)
-                    if apiece != KING:
-                        self.pieceCount[acolor][apiece] += 1
+                    self.pieceCount[acolor][apiece] += 1
             
         # Un-promote pawn
         if flag in PROMOTIONS:
@@ -675,8 +674,10 @@ class LBoard:
             for i, piece in enumerate(row):
                 if piece != EMPTY:
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
+                        assert self.boards[WHITE][piece], "self.boards doesn't match self.arBoard !!!"
                         sign = FAN_PIECES[WHITE][piece]
                     else:
+                        assert self.boards[BLACK][piece], "self.boards doesn't match self.arBoard !!!"
                         sign = FAN_PIECES[BLACK][piece]
                     b += sign
                 else: b += "."
