@@ -157,7 +157,6 @@ def validate (board, move):
             can_capture = False
             for c in lmovegen.genCaptures(board.board):
                 from pychess.Utils.Move import Move
-                print "can capture!", Move(c)
                 can_capture = True
                 #break
             if can_capture:

@@ -25,3 +25,52 @@ class SuicideChess:
 
 def pieceCount(board, color):
     return bin(board.friends[color]).count("1")
+
+if __name__ == '__main__':
+    from pychess.Utils.Move import Move
+    from pychess.Utils.lutils.lmove import parseAN
+    from pychess.Utils.lutils.lmovegen import genCaptures
+
+    FEN = "rnbqk1nr/pppp1pPp/4p3/8/8/8/PPPbPPP1/RNBQKBNR b - - 7 4"
+    b = SuicideBoard(SUICIDESTART)
+    
+    b = b.move(Move(parseAN(b.board, "h2h4")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "e7e6")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "h4h5")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "f8b4")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "h5h6")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "b4d2")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "h6g7")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
+    b = b.move(Move(parseAN(b.board, "d2e1")))
+    print b.board.__repr__()
+    for move in genCaptures(b.board):
+        print Move(move)
+
