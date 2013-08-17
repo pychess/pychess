@@ -20,6 +20,8 @@ def evaluateComplete (board, color):
         several positional factors """
     
     s, phase = evalMaterial (board, color)
+    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+        return s
     s += evalBishops (board, color, phase)       - evalBishops (board, 1-color, phase)
     s += evalRooks (board, color, phase)         - evalRooks (board, 1-color, phase)
     s += evalKing (board, color, phase)          - evalKing (board, 1-color, phase)
@@ -49,6 +51,14 @@ def evalMaterial (board, color):
             material[BLACK] += CRAZY_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
             material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[WHITE][piece]
             material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[BLACK][piece]
+    elif board.variant == LOSERSCHESS:
+        for piece in xrange(PAWN, KING):
+            material[WHITE] += pieceCount[WHITE][piece]
+            material[BLACK] += pieceCount[BLACK][piece]
+    elif board.variant == SUICIDECHESS:
+        for piece in xrange(PAWN, KING+1):
+            material[WHITE] += pieceCount[WHITE][piece]
+            material[BLACK] += pieceCount[BLACK][piece]
     else:
         for piece in xrange(PAWN, KING):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]
@@ -66,6 +76,12 @@ def evalMaterial (board, color):
     if material[color] > material[opcolor]:
         leading = color
     else: leading = opcolor
+
+    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+        val = material[leading] - material[1-leading]
+        if leading == 1-color:
+            return val, phase
+        return -val, phase
     
     pawns = pieceCount[leading][PAWN]
     matDiff = material[leading] - material[1-leading]

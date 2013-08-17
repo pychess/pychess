@@ -5,6 +5,7 @@ from heapq import heappush, heappop
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from pychess.Utils.const import *
 from pychess.Utils.Move import Move
+from pychess.Utils.logic import validate
 from leval import evaluateComplete
 from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
@@ -141,6 +142,8 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if isCheck:
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
+        elif board.variant in (LOSERSCHESS, SUICIDECHESS):
+            return [], evaluateComplete(board, board.color)
         else:
             mvs, val = quiescent(board, alpha, beta, ply)
             return mvs, val
@@ -149,9 +152,20 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Find and sort moves                                                      #
     ############################################################################
     
-    if isCheck:
-        moves = [(-getMoveValue(board,table,depth,m),m) for m in genCheckEvasions(board)]
-    else: moves = [(-getMoveValue(board,table,depth,m),m) for m in genAllMoves(board)]
+    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+        mlist = [m for m in genCaptures(board)]
+        if board.variant == LOSERSCHESS and isCheck:
+            evasions = [m for m in genCheckEvasions(board)]
+            eva_cap = [m for m in evasions if m in mlist]
+            mlist = eva_cap if eva_cap else evasions
+        if not mlist and not isCheck:
+            mlist = [m for m in genAllMoves(board)]
+        moves = [(-getMoveValue(board,table,depth,m),m) for m in mlist]
+    else:
+        if isCheck:
+            moves = [(-getMoveValue(board,table,depth,m),m) for m in genCheckEvasions(board)]
+        else:
+            moves = [(-getMoveValue(board,table,depth,m),m) for m in genAllMoves(board)]
     moves.sort()
     
     # This is needed on checkmate

@@ -38,8 +38,8 @@ reprReason_long = {
     WON_MATE: _("Because %(loser)s has been checkmated"),
     WON_DISCONNECTION: _("Because %(loser)s disconnected"),
     WON_ADJUDICATION:  _("Because of adjudication by an admin"),
-    WON_LESSMATERIAL: _("Because %(loser)s has fever pieces"),
-    WON_NOMATERIAL: _("Because %(loser)s lost all pieces"),
+    WON_LESSMATERIAL: _("Because %(winner)s has fever pieces"),
+    WON_NOMATERIAL: _("Because %(winner)s lost all pieces"),
     WON_KINGEXPLODE: _("Because %(loser)s king exploded"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
