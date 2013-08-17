@@ -3,6 +3,12 @@
 if __name__ == "__main__":
     print "feature done=0"
 
+import gettext
+import pychess
+import random
+import sys
+from time import time
+
 from pychess.Utils import const
 const.STANDARD_LOGGING = True
 
@@ -14,11 +20,6 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
-from time import time
-import gettext
-import pychess
-import random
-import sys
 
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
@@ -68,12 +69,13 @@ class PyChess:
     def __getBestOpening (self):
         totalWeight = 0
         choice = None
-        for move, weight, histGames, histScore in getOpenings(self.board):
-            totalWeight += weight
-            if totalWeight == 0:
-                break
-            if not move or random.randrange(totalWeight) < weight:
-                choice = move
+        if self.board.variant not in (LOSERSCHESS, SUICIDECHESS):
+            for move, weight, histGames, histScore in getOpenings(self.board):
+                totalWeight += weight
+                if totalWeight == 0:
+                    break
+                if not move or random.randrange(totalWeight) < weight:
+                    choice = move
         return choice
     
     def __go (self, ondone=None):
