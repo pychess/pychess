@@ -1,6 +1,7 @@
 
 from attack import getAttacks, staticExchangeEvaluate
 from pychess.Utils.eval import pos as positionValues
+from pychess.Variants.atomic import kingExplode
 
 from sys import maxint
 from ldata import *
@@ -42,6 +43,9 @@ def getMoveValue (board, table, depth, move):
     tpiece = arBoard[tcord]
     
     if tpiece != EMPTY:
+        if board.variant == ATOMICCHESS:
+            if kingExplode(board, move, board.color):
+                return MATE_VALUE
         # We add some extra to ensure also bad captures will be searched early
         return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
     
@@ -63,7 +67,7 @@ def getMoveValue (board, table, depth, move):
     if fpiece not in positionValues:
         # That is, fpiece == EMPTY
         print fcord, tcord
-        print repr(board)
+        print board
     
     score = positionValues[fpiece][board.color][tcord] - \
             positionValues[fpiece][board.color][fcord]

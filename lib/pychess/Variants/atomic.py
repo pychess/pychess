@@ -39,9 +39,10 @@ def piecesAround(board, cord):
 def kingExplode(board, move, color):
     tcord = move & 63
     fcord = (move >> 6) & 63
-    if board.arBoard[tcord] and board.arBoard[fcord] != KING:
+    flag = move >> 12
+    if board.arBoard[tcord] or flag == ENPASSANT:
         for acord, apiece, acolor in piecesAround(board, tcord):
-            if apiece == KING and acolor == color and acord != fcord:
+            if apiece == KING and acolor == color:
                 return True
     return False
 

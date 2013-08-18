@@ -171,7 +171,8 @@ class LBoard:
                                  fenstr)
         
         if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
-            raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
+            if self.variant not in (ATOMICCHESS, SUICIDECHESS):
+                raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
         
         # Parse piece placement field
         
@@ -298,6 +299,9 @@ class LBoard:
     def isChecked (self):
         if self.variant == SUICIDECHESS:
             return False
+        elif self.variant == ATOMICCHESS:
+            if not self.boards[self.color][KING]:
+                return False
         if self.checked == None:
             kingcord = self.kings[self.color]
             self.checked = isAttacked (self, kingcord, 1-self.color, ischecked=True)
@@ -306,6 +310,9 @@ class LBoard:
     def opIsChecked (self):
         if self.variant == SUICIDECHESS:
             return False
+        elif self.variant == ATOMICCHESS:
+            if not self.boards[1-self.color][KING]:
+                return False
         if self.opchecked == None:
             kingcord = self.kings[1-self.color]
             self.opchecked = isAttacked (self, kingcord, self.color, ischecked=True)
@@ -474,6 +481,12 @@ class LBoard:
                         self._removePiece(acord, apiece, acolor)
                         self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
+                    if apiece == ROOK:
+                        if acord == self.ini_rooks[opcolor][0]:
+                            castling &= ~CAS_FLAGS[opcolor][0]
+                        elif acord == self.ini_rooks[opcolor][1]:
+                            castling &= ~CAS_FLAGS[opcolor][1]
+
                 self.hist_exploding_around.append(apieces)
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
@@ -683,7 +696,7 @@ class LBoard:
                 else: b += "."
                 b += " "
             b += "\n# "
-        return b
+        return b.encode("utf-8")
     
     def asFen (self, enable_bfen=True):
         fenstr = []
