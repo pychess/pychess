@@ -66,19 +66,18 @@ def getStatus (board):
     
     hasMove = False
     for move in lmovegen.genAllMoves (lboard):
+        if board.variant == ATOMICCHESS:
+            if kingExplode(lboard, move, 1-board.color) and not kingExplode(lboard, move, board.color):
+                hasMove = True
+                break
+            elif kingExplode(lboard, move, board.color):
+                continue
         lboard.applyMove(move)
         if lboard.opIsChecked():
             lboard.popMove()
-            if board.variant == ATOMICCHESS:
-                if kingExplode(lboard, move, 1-board.color) and not kingExplode(lboard, move, board.color):
-                    hasMove = True
-                    break
-                else:
-                    continue
-            else:
-                continue
-        lboard.popMove()
+            continue
         hasMove = True
+        lboard.popMove()
         break
 
     if not hasMove:

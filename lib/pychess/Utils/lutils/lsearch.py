@@ -11,6 +11,7 @@ from lsort import getCaptureValue, getMoveValue
 from lmove import toSAN
 from ldata import MATE_VALUE, VALUE_AT_PLY
 from TranspositionTable import TranspositionTable
+from pychess.Variants.atomic import kingExplode
 import ldraw
 
 TIMECHECK_FREQ = 500
@@ -55,6 +56,10 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         beta = MATE_IN_1
         if alpha >= beta:
             return [], MATE_IN_1    
+
+    if board.variant == ATOMICCHESS:
+        if bin(board.boards[board.color][KING]).count("1") == 0:
+            return [], MATED
 
     ############################################################################
     # Look in the end game table
@@ -142,7 +147,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if isCheck:
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
-        elif board.variant in (LOSERSCHESS, SUICIDECHESS):
+        elif board.variant in (LOSERSCHESS, SUICIDECHESS, ATOMICCHESS):
             return [], evaluateComplete(board, board.color)
         else:
             mvs, val = quiescent(board, alpha, beta, ply)
@@ -160,6 +165,12 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             mlist = eva_cap if eva_cap else evasions
         if not mlist and not isCheck:
             mlist = [m for m in genAllMoves(board)]
+        moves = [(-getMoveValue(board,table,depth,m),m) for m in mlist]
+    elif board.variant == ATOMICCHESS:
+        if isCheck:
+            mlist = [m for m in genCheckEvasions(board) if not kingExplode(board, m, board.color)]
+        else:
+            mlist = [m for m in genAllMoves(board) if not kingExplode(board, m, board.color)]
         moves = [(-getMoveValue(board,table,depth,m),m) for m in mlist]
     else:
         if isCheck:

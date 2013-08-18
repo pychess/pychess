@@ -126,19 +126,18 @@ def toSAN (board, move, localRepr=False):
         sign = ""
         if board_clone.isChecked():
             for altmove in genAllMoves (board_clone):
+                if board.variant == ATOMICCHESS:
+                    from pychess.Variants.atomic import kingExplode
+                    if kingExplode(board_clone, altmove, 1-board_clone.color) and \
+                        not kingExplode(board_clone, altmove, board_clone.color):
+                        sign = "+"
+                        break
+                    elif kingExplode(board_clone, altmove, board_clone.color):
+                        continue
                 board_clone.applyMove(altmove)
                 if board_clone.opIsChecked():
                     board_clone.popMove()
-                    if board.variant == ATOMICCHESS:
-                        from pychess.Variants.atomic import kingExplode
-                        if kingExplode(board_clone, altmove, 1-board_clone.color) and \
-                            not kingExplode(board_clone, altmove, board_clone.color):
-                            sign = "+"
-                            break
-                        else:
-                            continue
-                    else:
-                        continue
+                    continue
                 sign = "+"
                 break
             else:

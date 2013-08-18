@@ -19,7 +19,8 @@ KING_VALUE = 2000
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
                 BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
-CRAZY_PIECE_VALUES = (0, 100, 210, 240, 250, 420, 2000)
+CRAZY_PIECE_VALUES = (0, 100, 200, 240, 240, 380, 2000)
+ATOMIC_PIECE_VALUES = (0, 100, 90, 0, 220, 850, 2000)
 
 # Maximum possible search depth. The hash structure only allows 8-bit depths.
 MAXPLY = 10
