@@ -414,8 +414,6 @@ def genCaptures (board):
 ################################################################################
 
 def genCheckEvasions (board):
-    # TODO: atomic?
-    
     color = board.color
     opcolor = 1-color
     

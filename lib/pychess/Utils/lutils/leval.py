@@ -59,6 +59,10 @@ def evalMaterial (board, color):
         for piece in xrange(PAWN, KING+1):
             material[WHITE] += pieceCount[WHITE][piece]
             material[BLACK] += pieceCount[BLACK][piece]
+    elif board.variant == ATOMICCHESS:
+        for piece in xrange(PAWN, KING+1):
+            material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += ATOMIC_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     else:
         for piece in xrange(PAWN, KING):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]
