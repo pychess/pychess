@@ -246,6 +246,9 @@ def parseSAN (board, san):
     c = notat[-1]
     if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
         c = c.lower()
+        if c == "k" and board.variant != SUICIDECHESS:
+            raise ParsingError, (san, "invalid promoted piece", board.asFen())
+            
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
@@ -474,8 +477,9 @@ def parseAN (board, an):
     
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
-        raise ParsingError, (an, "invalid promoted piece", board.asFen())
+    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
+        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in ("K", "k"):
+            raise ParsingError, (an, "invalid promoted piece", board.asFen())
 
     if len(an) == 5:
         #The a7a8q variant
