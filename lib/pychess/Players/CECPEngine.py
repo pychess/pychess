@@ -689,7 +689,7 @@ class CECPEngine (ProtocolEngine):
     def __setBoard (self, board):
         if self.features["setboard"]:
             self.__tellEngineToStopPlayingCurrentColor()
-            fen = board.asFen(enable_bfen=False)
+            fen = board.asFen()
             if self.mode == INVERSE_ANALYZING:
                 # Some engine doesn't support feature "colors" (f.e: TJchess)
                 # so "black" and "white" command doesn't change the side to move
