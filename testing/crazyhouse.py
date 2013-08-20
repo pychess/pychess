@@ -3,11 +3,23 @@
 import sys
 import unittest
 
-from pychess.Utils.Move import Move
-from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.logic import validate
+from pychess.Utils.Move import Move, parseSAN
+from pychess.Variants.crazyhouse import CrazyhouseBoard
 from pychess.Utils.lutils.lmovegen import genAllMoves
-from pychess.Utils.lutils.lmove import parseAN, parseSAN
-from pychess.Utils.const import *
+from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.const import CRAZYHOUSECHESS
+
+
+# Black has a pawn and a rook in hes holding
+# ♚ . ♖ ♔ . . . . 
+# . . . . . . . . 
+# . . . . . . . . 
+# . . . . . . . . 
+# . . . . . . . . 
+# . . . . . . . . 
+# . . . . . . . . ♟ ♜
+FEN0 = "k1RK4/8/8/8/8/8/8/8/pr b - - 0 1"
 
 # ♜ ♞ ♝ ♛ ♚ ♝ ♖ ♜
 # ♟ ♙ ♙ ♟ ♟ ♘ ♟ ♟
@@ -17,14 +29,26 @@ from pychess.Utils.const import *
 # . . . . . . . .
 # ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
 # ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
-FEN = "rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+FEN1 = "rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 class CrazyhouseTestCase(unittest.TestCase):
+    def test_validate(self):
+        """Testing validate move in Crazyhouse variant"""
+        
+        board = CrazyhouseBoard(setup=FEN0)
+        print board
+        # Drop can save mate
+        self.assertTrue(validate(board, parseSAN(board, 'R@b8')))
+        self.assertTrue(validate(board, parseSAN(board, 'Ka7')))
+        self.assertTrue(validate(board, parseSAN(board, 'Kb7')))
+        self.assertTrue(not validate(board, parseSAN(board, 'P@b8')))
+        self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
+
     def test_apply_pop(self):
         """Testing Crazyhouse applyMove popMove"""
 
         board = LBoard(variant=CRAZYHOUSECHESS)
-        board.applyFen(FEN)
+        board.applyFen(FEN1)
         
         holding0 = (board.holding[0].copy(), board.holding[1].copy())
         promoted0 = board.promoted[:]

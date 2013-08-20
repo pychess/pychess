@@ -28,6 +28,8 @@ def evaluateComplete (board, color):
     s += evalKingTropism (board, color, phase)   - evalKingTropism (board, 1-color, phase)
     s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
     s += evalDev (board, color, phase)           -  evalDev (board, 1-color, phase)
+    if board.variant == ATOMICCHESS:
+        return s
     pawnScore, passed, weaked = cacheablePawnInfo (board, phase)
     s += pawnScore if color == WHITE else -pawnScore
     s += evalPawnStructure (board, color, phase, passed, weaked) - evalPawnStructure (board, 1-color, phase, passed, weaked)
