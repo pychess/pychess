@@ -131,18 +131,18 @@ def validate (board, move):
             return standard_validate (board, move)
         else:
             can_capture = False
-            can_escape = False
+            can_escape_with_capture= False
             ischecked = board.board.isChecked()
             for c in lmovegen.genCaptures(board.board):
-                can_capture = True
-                if ischecked:
-                    if not board.board.willLeaveInCheck(c):
-                        can_escape = True
-                        break
+                if board.board.willLeaveInCheck(c):
+                    continue
                 else:
+                    can_capture = True
+                    if ischecked:
+                        can_escape_with_capture = True
                     break
             if can_capture:
-                if ischecked and not can_escape:
+                if ischecked and not can_escape_with_capture:
                     return standard_validate (board, move)
                 else:
                     return False
