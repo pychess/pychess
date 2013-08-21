@@ -21,8 +21,20 @@ from pychess.Utils.lutils.lmovegen import genAllMoves
 FEN = "r2nkbnr/pp1bpppp/2p5/1N6/3q4/8/PPPP1PPP/R1BQKB1R w KQkq - 0 1"
 
 class AtomicTestCase(unittest.TestCase):
-    def test_validate(self):
-        """Testing validate move in Atomic variant"""
+    def test_validate1(self):
+        """Testing castling rights lose in explosion in Atomic variant"""
+        
+        board = AtomicBoard(setup=FEN)
+        board = board.move(parseSAN(board, 'Nxa7'))
+        print board
+        # Rook exploded, no O-O-O anymore!
+        self.assertTrue(validate(board, parseSAN(board, 'b6')))
+        self.assertTrue(not validate(board, parseSAN(board, 'a6')))
+        self.assertTrue(not validate(board, parseSAN(board, 'Rb8')))
+        self.assertTrue(not validate(board, parseSAN(board, 'O-O-O')))
+
+    def test_validate2(self):
+        """Testing explode king vs mate in Atomic variant"""
         
         board = AtomicBoard(setup=FEN)
         board = board.move(parseSAN(board, 'Nc7+'))

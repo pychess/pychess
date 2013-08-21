@@ -401,6 +401,7 @@ class LBoard:
         
         color = self.color
         opcolor = 1-self.color
+        castling = self.castling
         
         self.hist_move.append(move)
         self.hist_enpassant.append(self.enpassant)
@@ -450,6 +451,11 @@ class LBoard:
                         self._removePiece(acord, apiece, acolor)
                         self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
+                    if apiece == ROOK and acord != fcord:
+                        if acord == self.ini_rooks[opcolor][0]:
+                            castling &= ~CAS_FLAGS[opcolor][0]
+                        elif acord == self.ini_rooks[opcolor][1]:
+                            castling &= ~CAS_FLAGS[opcolor][1]
                 self.hist_exploding_around.append(apieces)
             
         self.hist_tpiece.append(tpiece)
@@ -481,12 +487,6 @@ class LBoard:
                         self._removePiece(acord, apiece, acolor)
                         self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
-                    if apiece == ROOK:
-                        if acord == self.ini_rooks[opcolor][0]:
-                            castling &= ~CAS_FLAGS[opcolor][0]
-                        elif acord == self.ini_rooks[opcolor][1]:
-                            castling &= ~CAS_FLAGS[opcolor][1]
-
                 self.hist_exploding_around.append(apieces)
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
@@ -522,7 +522,6 @@ class LBoard:
             self.fifty = 0
         
         # Clear castle flags
-        castling = self.castling
         king = self.ini_kings[color]
         wildcastle = FILE(king) == 3 and self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
         if fpiece == KING:
