@@ -15,7 +15,7 @@ from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseChess
 
 from PromotionDialog import PromotionDialog
-from BoardView import BoardView, rect, HOLDING_SHIFT
+from BoardView import BoardView, rect
 from BoardView import join
 
 class BoardControl (gtk.EventBox):
@@ -320,29 +320,26 @@ class BoardState:
         y -= yc; x -= xc
         
         y /= float(s)
-        # Holdings need some shift not to overlap cord letters when showCords is on
-        if x < 0 or x > square:
-            shift = -s*HOLDING_SHIFT if x < 0 else s*HOLDING_SHIFT
-            x -= shift
         x /= float(s)
-        return x if x>=0 else x-1, self.RANKS-y
+        return x, self.RANKS-y
     
     def point2Cord (self, x, y):
         point = self.transPoint(x, y)
+        p0, p1 = point[0], point[1]
         if self.parent.variant == CrazyhouseChess:
-            if not -2 <= int(point[0]) <= self.FILES+1 or not 0 <= int(point[1]) <= self.RANKS-1:
+            if not -3 <= int(p0) <= self.FILES+2 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
         else:
-            if not 0 <= int(point[0]) <= self.FILES-1 or not 0 <= int(point[1]) <= self.RANKS-1:
+            if not 0 <= int(p0) <= self.FILES-1 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
-        return Cord(int(point[0]), int(point[1]))
+        return Cord(int(p0) if p0>= 0 else int(p0)-1, int(p1))
     
     def isSelectable (self, cord):
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
             return False
         if self.parent.variant == CrazyhouseChess:
-            if (not -2 <= cord.x <= self.FILES+1) or (not 0 <= cord.y <= self.RANKS-1):
+            if (not -3 <= cord.x <= self.FILES+2) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         else:
             if (not 0 <= cord.x <= self.FILES-1) or (not 0 <= cord.y <= self.RANKS-1):
