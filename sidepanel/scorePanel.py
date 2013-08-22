@@ -21,7 +21,8 @@ __desc__ = _("The score panel tries to evaluate the positions and shows you a gr
 class Sidepanel:
     
     def load (self, gmwidg):
-        self.plot = ScorePlot()
+        self.boardview = gmwidg.board.view
+        self.plot = ScorePlot(self.boardview)
         __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         port = gtk.Viewport()
@@ -29,8 +30,6 @@ class Sidepanel:
         port.set_shadow_type(gtk.SHADOW_NONE)
         __widget__.add(port)
         __widget__.show_all()
-        
-        self.boardview = gmwidg.board.view
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
@@ -128,8 +127,9 @@ class ScorePlot (gtk.DrawingArea):
         "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     }
     
-    def __init__ (self):
+    def __init__ (self, boardview):
         gtk.DrawingArea.__init__(self)
+        self.boardview = boardview
         self.connect("expose_event", self.expose)
         self.connect("button-press-event", self.press)
         self.props.can_focus = True
@@ -174,6 +174,10 @@ class ScorePlot (gtk.DrawingArea):
         return False
     
     def draw (self, cr):
+        m = self.boardview.model
+        if m.isPlayingICSGame():
+            return
+
         width = self.get_allocation().width
         height = len(self.scores)*self.moveHeight
         
