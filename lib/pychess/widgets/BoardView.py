@@ -180,14 +180,11 @@ class BoardView (gtk.DrawingArea):
         else:
             if model.moves:
                 self.lastMove = model.moves[-1]
-            self.animationLock.acquire()
-            try:
+            with self.animationLock:
                 for row in self.model.boards[-1].data:
                     for piece in row.values(): #row:
                         if piece:
                             piece.opacity = 0
-            finally:
-                self.animationLock.release()
             self.gotStarted = True
             self.startAnimation()
     
@@ -363,8 +360,7 @@ class BoardView (gtk.DrawingArea):
         
         step = shown > self.shown and 1 or -1
         
-        self.animationLock.acquire()
-        try:
+        with self.animationLock:
             deadset = set()
             for i in xrange(self.shown, shown, step):
                 board = self.model.getBoardAtPly(i, self.shownVariationIdx)
@@ -397,9 +393,6 @@ class BoardView (gtk.DrawingArea):
                 
                 for piece in new:
                     piece.opacity = 0
-        
-        finally:
-            self.animationLock.release()
         
         self.deadlist = []
         for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.shownVariationIdx).data):
@@ -439,8 +432,7 @@ class BoardView (gtk.DrawingArea):
         which starts the animation, also sets a timestamp for the acceleration
         to work properply.
         """
-        self.animationLock.acquire()
-        try:
+        with self.animationLock:
             paintBox = None
             
             mod = min(1, (time()-self.animationStart)/ANIMATION_TIME)
@@ -521,10 +513,6 @@ class BoardView (gtk.DrawingArea):
                 if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.005:
                     del self.deadlist[i]
                 else: piece.opacity = newOp
-        
-        finally:
-            self.animationLock.release()
-
 
         if redrawMisc:
             for cord in (self.selected, self.active, self.premove0, self.premove1, self.hover):
@@ -578,9 +566,8 @@ class BoardView (gtk.DrawingArea):
         else:
             self.drawcount += 1
             start = time()
-            self.animationLock.acquire()
-            self.draw(context, event.area)
-            self.animationLock.release()
+            with self.animationLock:
+                self.draw(context, event.area)
             self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
             #    print "Average FPS: %0.3f - %d / %d" % \
@@ -652,11 +639,8 @@ class BoardView (gtk.DrawingArea):
             self.drawSpecial (context, r)
             self.drawEnpassant (context, r)
             self.drawArrows (context)
-            self.animationLock.acquire()
-            try:
+            with self.animationLock:
                 self.drawPieces (context, r)
-            finally:
-                self.animationLock.release()
             self.drawLastMove (context, r)
         
         if self.model.status == KILLED:
@@ -1402,8 +1386,9 @@ class BoardView (gtk.DrawingArea):
             self.showPrev()
 
     def setPremove(self, premovePiece, premove0, premove1, premovePly, promotion=None):
-        self.premovePiece = premovePiece
-        self.premove0 = premove0
-        self.premove1 = premove1
-        self.premovePly = premovePly
-        self.premovePromotion = promotion
+        with self.animationLock:
+            self.premovePiece = premovePiece
+            self.premove0 = premove0
+            self.premove1 = premove1
+            self.premovePly = premovePly
+            self.premovePromotion = promotion
