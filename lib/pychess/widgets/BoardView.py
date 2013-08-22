@@ -86,7 +86,6 @@ ANIMATION_TIME = 0.5
 SCALE_ROTATED_BOARD = False
 
 CORD_PADDING = 1.5
-HOLDING_SHIFT = 0.5
 
 class BoardView (gtk.DrawingArea):
     
@@ -633,7 +632,7 @@ class BoardView (gtk.DrawingArea):
         context.transform(self.matrix)
         
         if self.showCaptured:
-            holding_size = (alloc.width/(self.FILES+4+HOLDING_SHIFT*2))*(4+HOLDING_SHIFT*2)
+            holding_size = (alloc.width/(self.FILES+6))*6
         else:
             holding_size = 0
         square = float(min(alloc.width - holding_size, alloc.height))*(1-self.padding)
@@ -1316,7 +1315,7 @@ class BoardView (gtk.DrawingArea):
 
     def _set_showCaptured (self, showCaptured):
         self._showCaptured = showCaptured or self.model.variant == CrazyhouseChess
-        files_for_holding = 4+2*HOLDING_SHIFT if self._showCaptured else 0
+        files_for_holding = 6 if self._showCaptured else 0
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
         self.redraw_canvas()
     def _get_showCaptured (self):
@@ -1345,11 +1344,7 @@ class BoardView (gtk.DrawingArea):
         else: x = cord
         xc, yc, square, s = self.square
 
-        shift = 0
-        # Holdings need some shift not to overlap cord letters when showCords is on
-        if x < 0 or x > self.FILES-1:
-            shift = -s*HOLDING_SHIFT if x < 0 else s*HOLDING_SHIFT
-        r = (xc+x*s+shift, yc+(self.RANKS-1-y)*s, s)
+        r = (xc+x*s, yc+(self.RANKS-1-y)*s, s)
         return r
     
     def cord2Point (self, cord, y=None):
