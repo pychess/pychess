@@ -358,7 +358,8 @@ class BoardState:
             return
         self.lastMotionCord = cord
         if cord and self.isSelectable(cord):
-            self.view.hover = cord
+            if not self.view.model.isPlayingICSGame():
+                self.view.hover = cord
         else: self.view.hover = None
     
     def leave (self, x, y):
@@ -688,7 +689,8 @@ class LockedSelectedState (LockedBoardState):
             return
         self.lastMotionCord = cord
         if cord and self.isAPotentiallyLegalNextMove(self.view.selected, cord):
-            self.view.hover = cord
+            if not self.view.model.isPlayingICSGame():
+                self.view.hover = cord
         else: self.view.hover = None
     
     def press (self, x, y, button):
