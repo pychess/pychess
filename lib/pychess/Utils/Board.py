@@ -80,7 +80,7 @@ class Board:
         """Get the first occurence of piece in given colors holding"""
         
         enum = reverse_enum if color == WHITE else enumerate
-        files = ((self.FILES+2, self.FILES+1, self.FILES), (-3, -2, -1))
+        files = ((self.FILES+3, self.FILES+2, self.FILES+1), (-4, -3, -2))
         for x in files[color]:
             for i, row in enum(self.data):
                 if (row.get(x) is not None) and row.get(x).piece == piece:
@@ -90,7 +90,7 @@ class Board:
         """Find the nth empty slot in given colors holding"""
         
         enum = reverse_enum if color == BLACK else enumerate
-        files = ((self.FILES, self.FILES+1, self.FILES+2), (-1, -2, -3))
+        files = ((self.FILES+1, self.FILES+2, self.FILES+3), (-2, -3, -4))
         empty = 0
         for x in files[color]:
             for i, row in enum(self.data):
