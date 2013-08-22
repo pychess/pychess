@@ -116,6 +116,15 @@ def genPieceMoves(board, piece, tcord):
             if tcord in iterBits(attackBoard & notfriends):
                 moves.add(newMove(fcord, tcord))
         return moves
+        
+    if board.variant == SUICIDECHESS and piece == KING:
+        kings = board.boards[board.color][KING]
+        if kings:
+            kingMoves = moveArray[KING]
+            for fcord in iterBits(kings):
+                for tcord in iterBits(kingMoves[fcord] & notfriends):
+                    moves.add(newMove(fcord, tcord))
+            return moves
 
 def genAllMoves (board, drops=True):
     

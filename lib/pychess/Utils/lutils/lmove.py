@@ -311,7 +311,9 @@ def parseSAN (board, san):
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
     
-    if piece == KING:
+    # In suicide promoting to king is valid, so
+    # more than 1 king per side can exist !
+    if board.variant != SUICIDECHESS and piece == KING:
         return newMove(board.kings[color], tcord, flag)
 
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
