@@ -1869,8 +1869,8 @@ class SeekChallengeSection (ParrentListSection):
             return pathToVariant[path]
             
         def comboSetter (combo, variant):
-            assert variant in VARIANT_GAME_TYPES, \
-                "not a supported FICS variant: \"%s\"" % str(variant)
+            if variant not in VARIANT_GAME_TYPES:
+                variant = LOSERSCHESS
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
     
