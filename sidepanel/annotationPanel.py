@@ -46,7 +46,7 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=pango.WEIGHT_BOLD)
         self.textbuffer.create_tag("node", weight=pango.WEIGHT_BOLD)
-        self.textbuffer.create_tag("clock", foreground="darkgrey")
+        self.textbuffer.create_tag("emt", foreground="darkgrey")
         self.textbuffer.create_tag("comment", foreground="darkblue")
         self.textbuffer.create_tag("variation-toplevel")
         self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
@@ -82,11 +82,12 @@ class Sidepanel(gtk.TextView):
             self.update()
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
         
-        self.showClocks = conf.get("showClocks", False)
-        def showClocksCallback(none):
-            self.showClocks = conf.get("showClocks", False)
+        # Elapsed move time
+        self.showEmt = conf.get("showEmt", False)
+        def showEmtCallback(none):
+            self.showEmt = conf.get("showEmt", False)
             self.update()
-        conf.notify_add("showClocks", showClocksCallback)
+        conf.notify_add("showEmt", showEmtCallback)
 
         return __widget__
 
@@ -399,8 +400,9 @@ class Sidepanel(gtk.TextView):
                 
                 buf.insert(end_iter(), " ")
 
-            if self.showClocks and node.clock is not None:
-                self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(node.clock), "clock")
+            if self.showEmt and level == 0 and self.gamemodel.timemodel is not None:
+                elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
+                self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(elapsed) + " ", "emt")
 
             new_line = False
             for index, child in enumerate(node.children):
@@ -585,8 +587,10 @@ class Sidepanel(gtk.TextView):
 
         self.nodeIters.append(ni)
 
-        if self.showClocks and node.clock is not None:
-            self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(node.clock), "clock")
+        if self.showEmt and self.gamemodel.timemodel is not None:
+            elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
+            self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(elapsed) + " ", "emt")
+
         self.update_selected_node()
 
     def __movestr(self, node):
