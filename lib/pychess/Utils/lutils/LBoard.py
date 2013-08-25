@@ -43,9 +43,6 @@ class LBoard:
         # The high level owner Board (with Piece objects) in gamemodel
         self.pieceBoard = None
 
-        # Last player's remaining time in seconds
-        self.clock = None
-
     @property
     def lastMove (self):
         return self.hist_move[-1] if len(self.hist_move) > 0 else None

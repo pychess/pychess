@@ -565,7 +565,6 @@ class GameModel (GObject, PooledThread):
 
                 if self.timemodel:
                     self.timemodel.tap()
-                    newBoard.board.clock = self.timemodel.getPlayerTime(curColor)
                 
                 self.checkStatus()
                 
