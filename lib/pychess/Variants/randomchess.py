@@ -8,11 +8,11 @@ from pychess.Utils.Board import Board
 class RandomBoard(Board):
     variant = RANDOMCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=self.random_start())
+            Board.__init__(self, setup=self.random_start(), lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
     def random_start(self):        
         tmp = random.sample(('r', 'n', 'b', 'q')*16, 7)

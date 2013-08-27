@@ -8,11 +8,11 @@ UPSIDEDOWNSTART = "RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr w - - 0 1"
 class UpsideDownBoard(Board):
     variant = UPSIDEDOWNCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=UPSIDEDOWNSTART)
+            Board.__init__(self, setup=UPSIDEDOWNSTART, lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
 class UpsideDownChess:
     __desc__ = _("FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n" +

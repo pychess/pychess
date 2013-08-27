@@ -8,11 +8,11 @@ from pychess.Utils.Board import Board
 class AsymmetricRandomBoard(Board):
     variant = ASYMMETRICRANDOMCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=self.asymmetricrandom_start())
+            Board.__init__(self, setup=self.asymmetricrandom_start(), lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
     def asymmetricrandom_start(self):        
         white = random.sample(('r', 'n', 'b', 'q')*16, 7)

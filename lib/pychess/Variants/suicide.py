@@ -8,11 +8,11 @@ SUICIDESTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
 class SuicideBoard(Board):
     variant = SUICIDECHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=SUICIDESTART)
+            Board.__init__(self, setup=SUICIDESTART, lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
 class SuicideChess:
     __desc__ = _("FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html")
