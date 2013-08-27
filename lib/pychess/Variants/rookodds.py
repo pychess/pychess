@@ -6,11 +6,11 @@ ROOKODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/1NBQKBNR w Kkq - 0 1"
 class RookOddsBoard(Board):
     variant = ROOKODDSCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=ROOKODDSSTART)
+            Board.__init__(self, setup=ROOKODDSSTART, lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
 
 class RookOddsChess:

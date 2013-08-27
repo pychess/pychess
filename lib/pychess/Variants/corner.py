@@ -8,11 +8,11 @@ from pychess.Utils.Board import Board
 class CornerBoard(Board):
     variant = CORNERCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=self.shuffle_start())
+            Board.__init__(self, setup=self.shuffle_start(), lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
     def shuffle_start(self):
         b1 = b2 = 0
