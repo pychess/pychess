@@ -1386,9 +1386,8 @@ class BoardView (gtk.DrawingArea):
             self.showPrev()
 
     def setPremove(self, premovePiece, premove0, premove1, premovePly, promotion=None):
-        with self.animationLock:
-            self.premovePiece = premovePiece
-            self.premove0 = premove0
-            self.premove1 = premove1
-            self.premovePly = premovePly
-            self.premovePromotion = promotion
+        self.premovePiece = premovePiece
+        self.premove0 = premove0
+        self.premove1 = premove1
+        self.premovePly = premovePly
+        self.premovePromotion = promotion
