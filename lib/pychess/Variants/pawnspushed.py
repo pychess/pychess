@@ -8,11 +8,11 @@ PAWNSPUSHEDSTART = "rnbqkbnr/8/8/pppppppp/PPPPPPPP/8/8/RNBQKBNR w - - 0 1"
 class PawnsPushedBoard(Board):
     variant = PAWNSPUSHEDCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=PAWNSPUSHEDSTART)
+            Board.__init__(self, setup=PAWNSPUSHEDSTART, lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
 
 class PawnsPushedChess:

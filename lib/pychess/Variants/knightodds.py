@@ -6,11 +6,11 @@ KNIGHTODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R1BQKBNR w KQkq - 0 1"
 class KnightOddsBoard(Board):
     variant = KNIGHTODDSCHESS
 
-    def __init__ (self, setup=False):
+    def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=KNIGHTODDSSTART)
+            Board.__init__(self, setup=KNIGHTODDSSTART, lboard=lboard)
         else:
-            Board.__init__(self, setup=setup)
+            Board.__init__(self, setup=setup, lboard=lboard)
 
 
 class KnightOddsChess:
