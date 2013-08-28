@@ -33,6 +33,8 @@ class EnginesDialog():
     def __init__(self, widgets):
         self.widgets = widgets
         self.dialog = self.widgets["manage_engines_dialog"]
+        self.cur_engine = None
+        self.default_workdir = getEngineDataPrefix()
         
         uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(600, 500))
 
@@ -43,8 +45,23 @@ class EnginesDialog():
         self.tv.set_model(allstore)
         self.tv.append_column(gtk.TreeViewColumn(
                 "Flag", gtk.CellRendererPixbuf(), pixbuf=0))
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Name", gtk.CellRendererText(), text=1))
+        name_renderer = gtk.CellRendererText()
+        name_renderer.set_property("editable", True)
+        self.tv.append_column(gtk.TreeViewColumn("Name", name_renderer, text=1))
+        def name_edited(renderer, path, new_name):
+            if self.cur_engine is not None:
+                old_name = self.cur_engine
+                if new_name and new_name != old_name:
+                    names = [engine["name"] for engine in discoverer.getEngines()]
+                    if new_name not in names:
+                        engine = discoverer.getEngineByName(self.cur_engine)
+                        engine["name"] = new_name
+                        discoverer.save()
+                        self.cur_engine = new_name
+                        update_store()                        
+                        # Notify playerCombos in NewGameTasker
+                        discoverer.emit("all_engines_discovered")
+        name_renderer.connect("edited", name_edited)
 
         # Add cell renderer to protocol combo column
         protocol_combo = self.widgets["engine_protocol_combo"]
@@ -60,9 +77,6 @@ class EnginesDialog():
            "Option", gtk.CellRendererText(), text=0))
         optv.append_column(gtk.TreeViewColumn(
            "Data", KeyValueCellRenderer(self.options_store), data=1))
-
-        self.cur_engine = None
-        self.default_workdir = getEngineDataPrefix()
 
         def update_options(*args):
             if self.cur_engine is not None:
@@ -169,29 +183,6 @@ class EnginesDialog():
 
 
         ################################################################
-        # engine name
-        ################################################################
-        def name_changed(widget):
-            if self.cur_engine is not None:
-                new_name = self.widgets["engine_name_entry"].get_text().strip()
-                old_name = self.cur_engine
-                if new_name and new_name != old_name:
-                    names = [engine["name"] for engine in discoverer.getEngines()]
-                    if new_name not in names:
-                        engine = discoverer.getEngineByName(self.cur_engine)
-                        engine["name"] = new_name
-                        discoverer.save()
-                        self.cur_engine = new_name
-                        update_store()                        
-                        # Notify playerCombos in NewGameTasker
-                        discoverer.emit("all_engines_discovered")
-                    else:
-                        self.widgets["engine_name_entry"].set_text(old_name)
-
-        self.widgets["engine_name_entry"].connect("activate", name_changed)
-
-
-        ################################################################
         # engine args
         ################################################################
         def args_changed(widget):
@@ -203,7 +194,7 @@ class EnginesDialog():
                     engine["args"] = new_args.split()
                     discoverer.save()
 
-        self.widgets["engine_args_entry"].connect("activate", args_changed)
+        self.widgets["engine_args_entry"].connect("changed", args_changed)
 
 
         ################################################################
@@ -273,7 +264,6 @@ class EnginesDialog():
                     self.widgets['remove_engine_button'].set_sensitive(False)
                 else:
                     self.widgets['remove_engine_button'].set_sensitive(True)
-                self.widgets["engine_name_entry"].set_text(engine["name"])
                 self.widgets["engine_command_entry"].set_text(engine["command"])
                 engine_chooser_dialog.set_filename(engine["command"])
                 args = [] if engine.get("args") is None else engine.get("args")
