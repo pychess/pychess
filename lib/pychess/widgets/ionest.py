@@ -56,10 +56,6 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
     log.debug("ionest.workfunc: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
     gmwidg = gamewidget.GameWidget(gamemodel)
-    
-    # We want to show the game quickly, but the players take some time to start
-    gmwidg.setTabText("%s %s %s %s" % (player0tup[3], _("vs"), player1tup[3],
-                                       gamemodel.display_text))
     worker.publish((gmwidg,gamemodel))
     
     # Initing players

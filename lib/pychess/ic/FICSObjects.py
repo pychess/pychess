@@ -16,6 +16,31 @@ def update_button_by_player_status (button, player):
         button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
             {"player": player.name, "status": player.display_status.lower()})
 
+def get_player_tooltip_text (player, show_status=True):
+    text = "%s" % player.name
+    text += "%s" % player.display_titles(long=True)
+    if player.blitz:
+        text += "\n%s: %s" % (_("Blitz"), player.blitz)
+    if player.standard:
+        text += "\n%s: %s" % (_("Standard"), player.standard)
+    if player.lightning:
+        text += "\n%s: %s" % (_("Lightning"), player.lightning)
+    if player.atomic:
+        text += "\n%s: %s" % (_("Atomic"), player.atomic)
+    if player.bughouse:
+        text += "\n%s: %s" % (_("Bughouse"), player.bughouse)
+    if player.crazyhouse:
+        text += "\n%s: %s" % (_("Crazyhouse"), player.crazyhouse)
+    if player.losers:
+        text += "\n%s: %s" % (_("Losers"), player.losers)
+    if player.suicide:
+        text += "\n%s: %s" % (_("Suicide"), player.suicide)
+    if player.wild:
+        text += "\n%s: %s" % (_("Wild"), player.wild)
+    if show_status:
+        text += "\n%s" % player.display_status
+    return text
+
 class FICSPlayer (GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN,
                   game=None, titles=None, ratings=None):
