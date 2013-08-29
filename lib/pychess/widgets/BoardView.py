@@ -775,6 +775,10 @@ class BoardView (gtk.DrawingArea):
         return matrices
     
     def __drawPiece(self, context, piece, x, y):
+        # Maybe a premove was reset from another thread
+        if piece is None:
+            print "Trying to draw a None piece"
+            return
         if self.model.variant == BlindfoldChess:
             return
         elif self.model.variant == HiddenPawnsChess:
