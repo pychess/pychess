@@ -12,6 +12,7 @@ class ICGameModel (GameModel):
         GameModel.__init__(self, timemodel, ficsgame.game_type.variant)
         self.connection = connection
         self.ficsgame = ficsgame
+        self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
         
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
@@ -56,8 +57,14 @@ class ICGameModel (GameModel):
                     obj.disconnect(handler_id)
         self.connections = None
     
+    def ficsplayer (self, player):
+        if player.ichandle == self.ficsplayers[0].name:
+            return self.ficsplayers[0]
+        else:
+            return self.ficsplayers[1]
+    
     @property
-    def remote_player (self):    
+    def remote_player (self):
         if self.players[0].__type__ == REMOTE:
             return self.players[0]
         else:
@@ -65,10 +72,10 @@ class ICGameModel (GameModel):
         
     @property
     def remote_ficsplayer (self):    
-        return self.connection.players.get(FICSPlayer(self.remote_player.ichandle))
+        return self.ficsplayer(self.remote_player)
         
     def hasGuestPlayers (self):
-        for player in (self.ficsgame.wplayer, self.ficsgame.bplayer):
+        for player in self.ficsplayers:
             if player.isGuest():
                 return True
         return False

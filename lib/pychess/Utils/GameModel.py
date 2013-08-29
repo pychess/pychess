@@ -191,6 +191,12 @@ class GameModel (GObject, PooledThread):
         self.tags["Black"] = str(self.players[BLACK])
         self.emit("players_changed")
     
+    def color (self, player):
+        if player is self.players[0]:
+            return WHITE
+        else:
+            return BLACK
+        
     def start_analyzer (self, analyzer_type):
         from pychess.Players.engineNest import init_engine
         analyzer = init_engine(analyzer_type, self)
