@@ -14,6 +14,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
 from pychess.Utils.lutils import lmove
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
+from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar
 from pydock.PyDockTop import PyDockTop
@@ -97,7 +98,7 @@ class GameWidget (gobject.GObject):
     __gsignals__ = {
         'close_clicked': (gobject.SIGNAL_RUN_FIRST, None, ()), 
         'infront': (gobject.SIGNAL_RUN_FIRST, None, ()),
-        'title_changed': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'title_changed': (gobject.SIGNAL_RUN_FIRST, None, (str,)),
         'closed': (gobject.SIGNAL_RUN_FIRST, None, ()),
     }
     
@@ -105,11 +106,13 @@ class GameWidget (gobject.GObject):
         gobject.GObject.__init__(self)
         self.gamemodel = gamemodel
         
-        tabcontent = self.initTabcontents()
+        tabcontent, white_label, black_label, game_info_label = self.initTabcontents()
         boardvbox, board, infobar = self.initBoardAndClock(gamemodel)
         statusbar, stat_hbox = self.initStatusbar(board)
         
         self.tabcontent = tabcontent
+        self.player_name_labels = (white_label, black_label)
+        self.game_info_label = game_info_label
         self.board = board
         self.statusbar = statusbar
         self.infobar = infobar
@@ -132,6 +135,8 @@ class GameWidget (gobject.GObject):
         gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
         gamemodel.connect("analyzer_paused", self.analyzer_paused)
         self.players_changed(gamemodel)
+        if self.gamemodel.display_text:
+            self.game_info_label.set_text(" " + self.gamemodel.display_text)
         if gamemodel.timemodel:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
@@ -315,13 +320,6 @@ class GameWidget (gobject.GObject):
         self._update_menu_ask_to_move()
         return False
     
-    def players_changed (self, gamemodel):
-        for player in gamemodel.players:
-            self.name_changed(player)
-            # Notice that this may connect the same player many times. In
-            # normal use that shouldn't be a problem.
-            glock_connect(player, "name_changed", self.name_changed)
-    
     def _set_arrow (self, analyzer_type, coordinates):
         if self.gamemodel.isPlayingICSGame():
             return
@@ -380,28 +378,39 @@ class GameWidget (gobject.GObject):
         self._set_arrow(analyzer_type, None)
         return False
     
+    def player_display_text (self, color=WHITE):
+        if isinstance(self.gamemodel, ICGameModel):
+            return self.gamemodel.ficsplayers[color].long_name(
+                game_type=self.gamemodel.ficsgame.game_type)
+        else:
+            return repr(self.gamemodel.players[color])
+    
     @property
     def display_text (self):
         '''This will give you the name of the game.'''
         vs = " " + _("vs") + " "
-        if isinstance(self.gamemodel, ICGameModel):
-            ficsgame = self.gamemodel.ficsgame
-            t = vs.join((ficsgame.wplayer.long_name(game_type=ficsgame.game_type),
-                         ficsgame.bplayer.long_name(game_type=ficsgame.game_type)))
-        else:
-            t = vs.join(map(repr, self.gamemodel.players))
+        t = vs.join((self.player_display_text(color=WHITE),
+                     self.player_display_text(color=BLACK)))
         
-        if self.gamemodel.display_text != "":
+        if self.gamemodel.display_text:
             t += " " + self.gamemodel.display_text
-        #if self.gamemodel.needsSave:
-        #    t="*"+t
         return t
+        
+    def players_changed (self, gamemodel):
+        for player in gamemodel.players:
+            self.name_changed(player)
+            # Notice that this may connect the same player many times. In
+            # normal use that shouldn't be a problem.
+            glock_connect(player, "name_changed", self.name_changed)
     
     def name_changed (self, player):
-        '''This activates when it should be checked if the name of the game changes.'''
-        newText = self.display_text
-        if newText != self.getTabText():
-            self.setTabText(newText)
+        color = self.gamemodel.color(player)
+        self.player_name_labels[color].set_text(self.player_display_text(color=color))
+        if isinstance(self.gamemodel, ICGameModel) and player.__type__ == REMOTE:
+            self.player_name_labels[color].set_tooltip_text(get_player_tooltip_text
+                (self.gamemodel.ficsplayers[color], show_status=False))
+        
+        self.emit('title_changed', self.display_text)
     
     def zero_reached (self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES: return
@@ -431,12 +440,19 @@ class GameWidget (gobject.GObject):
         close_button.set_size_request(20, 18)
         close_button.connect("clicked", lambda w: self.emit("close_clicked"))
         hbox.pack_end(close_button, expand=False)
-        label = gtk.Label("")
-        label.set_alignment(0,.7)
-        hbox.pack_end(label)
+        text_hbox = gtk.HBox()
+        white_label = gtk.Label("")
+        text_hbox.pack_start(white_label, expand=False)
+        text_hbox.pack_start(gtk.Label(" %s " % _("vs")), expand=False)
+        black_label = gtk.Label("")
+        text_hbox.pack_start(black_label, expand=False)
+        gameinfo_label = gtk.Label("")
+        text_hbox.pack_start(gameinfo_label, expand=False)
+#        label.set_alignment(0,.7)
+        hbox.pack_end(text_hbox)
         tabcontent.add(hbox)
         tabcontent.show_all() # Gtk doesn't show tab labels when the rest is
-        return tabcontent
+        return tabcontent, white_label, black_label, gameinfo_label
     
     def initBoardAndClock(self, gamemodel):
         boardvbox = gtk.VBox()
@@ -525,13 +541,6 @@ class GameWidget (gobject.GObject):
         finally:
             glock.release()
         log.debug("GameWidget.setLocked: %s: returning\n" % self.gamemodel.players)
-    
-    def setTabText (self, text):
-        self.tabcontent.child.get_children()[1].set_text(text)
-        self.emit('title_changed')
-    
-    def getTabText (self):
-        return self.tabcontent.child.get_children()[1].get_text()
     
     def status (self, message):
         glock.acquire()

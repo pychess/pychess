@@ -803,31 +803,6 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
-
-    @classmethod
-    def getPlayerTooltipText (cls, player):
-        text = "%s" % player.name
-        text += "%s" % player.display_titles(long=True)
-        if player.blitz:
-            text += "\n%s: %s" % (_("Blitz"), player.blitz)
-        if player.standard:
-            text += "\n%s: %s" % (_("Standard"), player.standard)
-        if player.lightning:
-            text += "\n%s: %s" % (_("Lightning"), player.lightning)
-        if player.atomic:
-            text += "\n%s: %s" % (_("Atomic"), player.atomic)
-        if player.bughouse:
-            text += "\n%s: %s" % (_("Bughouse"), player.bughouse)
-        if player.crazyhouse:
-            text += "\n%s: %s" % (_("Crazyhouse"), player.crazyhouse)
-        if player.losers:
-            text += "\n%s: %s" % (_("Losers"), player.losers)
-        if player.suicide:
-            text += "\n%s: %s" % (_("Suicide"), player.suicide)
-        if player.wild:
-            text += "\n%s: %s" % (_("Wild"), player.wild)
-        text += "\n%s" % player.display_status
-        return text
     
     @glock.glocked
     def onPlayerAdded (self, players, player):
@@ -837,7 +812,7 @@ class PlayerTabSection (ParrentListSection):
             player.name + player.display_titles(), player.blitz, player.standard,
             player.lightning, player.atomic, player.bughouse, player.crazyhouse,
             player.losers, player.suicide, player.wild, player.display_status,
-            self.getPlayerTooltipText(player)])
+            get_player_tooltip_text(player)])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
             "notify::status", self.status_changed)
@@ -887,7 +862,7 @@ class PlayerTabSection (ParrentListSection):
         if self.store.iter_is_valid(self.players[player]["ti"]):
             self.store.set(self.players[player]["ti"], 12, player.display_status)
             self.store.set(self.players[player]["ti"], 13,
-                           self.getPlayerTooltipText(player))
+                           get_player_tooltip_text(player))
         
         if player.status == IC_STATUS_PLAYING and player.game and \
                 "private" not in self.players[player]:
@@ -913,7 +888,7 @@ class PlayerTabSection (ParrentListSection):
         self.store.set(self.players[player]["ti"], 2,
                        player.name + player.display_titles())
         self.store.set(self.players[player]["ti"], 13,
-                       self.getPlayerTooltipText(player))
+                       get_player_tooltip_text(player))
         return False
         
     def private_changed (self, game, property, player):
@@ -928,7 +903,7 @@ class PlayerTabSection (ParrentListSection):
         ti = self.players[player]["ti"]
         self.store.set(ti, 1, player.getIcon())
         self.store.set(self.players[player]["ti"], 13,
-                       self.getPlayerTooltipText(player))
+                       get_player_tooltip_text(player))
         
         if rating.type == TYPE_BLITZ:
             self.store.set(ti, 3, player.blitz)

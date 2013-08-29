@@ -61,7 +61,7 @@ def on_gmwidg_infront (gmwidg):
                 getWidgets()[widget].set_property('sensitive', True)
         
         # Change window title
-        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.display_text)
     finally:
         glock.release()
     return False
@@ -75,11 +75,11 @@ def on_gmwidg_closed (gmwidg):
         glock.release()
     return False
 
-def on_gmwidg_title_changed (gmwidg):
+def on_gmwidg_title_changed (gmwidg, new_title):
     glock.acquire()
     try:
         if gmwidg.isInFront():
-            getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.getTabText())
+            getWidgets()['window1'].set_title('%s - PyChess' % new_title)
     finally:
         glock.release()
     return False
