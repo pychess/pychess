@@ -977,22 +977,25 @@ class GameTabSection (ParrentListSection):
         self.tv = self.widgets["gametreeview"]
         self.store = gtk.ListStore(FICSGame, gtk.gdk.Pixbuf, str, int, str, int, str, int)
         self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.model = self.tv.get_model()
         self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.addColumns (
                 self.tv, "FICSGame", "", _("White Player"), _("Rating"),
                 _("Black Player"), _("Rating"),
                 _("Game Type"), "Time", hide=[0,7], pix=[1] )
         self.tv.get_column(0).set_sort_column_id(0)
-        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
-
+        self.model.set_sort_func(0, self.pixCompareFunction, 1)
+        self.tv.set_has_tooltip(True)
+        self.tv.connect("query-tooltip", self.on_query_tooltip)
+        
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
-
+        
         def typeCompareFunction (treemodel, iter0, iter1):
             return cmp (treemodel.get_value(iter0, 7),
                         treemodel.get_value(iter1, 7))
-        self.tv.get_model().set_sort_func(6, typeCompareFunction)
+        self.model.set_sort_func(6, typeCompareFunction)
 
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
@@ -1017,6 +1020,23 @@ class GameTabSection (ParrentListSection):
         self.connection.bm.connect("obsGameUnobserved", lambda bm, game:
                 self.listPublisher.put((self.onGameUnobserved, game)) )
 
+    def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
+        if not widget.get_tooltip_context(x, y, keyboard_tip):
+            return False
+        model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
+        bin_x, bin_y = widget.convert_widget_to_bin_window_coords(x, y)
+        result = widget.get_path_at_pos(bin_x, bin_y)
+        
+        if result is not None:
+            path, column, cell_x, cell_y = result
+            for player, column_number in ((self.model[path][0].wplayer, 1),
+                                          (self.model[path][0].bplayer, 3)):
+                if column is self.tv.get_column(column_number):
+                    tooltip.set_text(get_player_tooltip_text(player, show_status=False))
+                    widget.set_tooltip_cell(tooltip, path, None, None)
+                    return True
+        return False
+        
     def onSelectionChanged (self, selection):
         model, paths = selection.get_selected_rows()
         a_selected_game_is_observable = False
