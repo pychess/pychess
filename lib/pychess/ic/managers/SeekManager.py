@@ -27,6 +27,7 @@ class SeekManager (GObject):
         'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         'removeSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'clearSeeks' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        'seek_updated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
     }
     
     def __init__ (self, connection):
@@ -37,7 +38,12 @@ class SeekManager (GObject):
         self.connection.expect_line (self.on_seek_clear, "<sc>")
         self.connection.expect_line (self.on_seek_add, "<s(?:n?)> (.+)")
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
-        
+        self.connection.expect_n_lines (self.on_seek_updated,
+            "Updating seek ad (\d+)(?:;?) (.*)\.",
+            "",
+            "<sr> (\d+)",
+            "fics%\s*",
+            "<sn> (.+)")
         self.connection.lvm.setVariable("seekinfo", 1)
         self.connection.lvm.setVariable("seekremove", 1)
         self.connection.lvm.setVariable("showownseek", 1)
@@ -123,6 +129,12 @@ class SeekManager (GObject):
             if not key: continue
             self.emit("removeSeek", key)
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
+    
+    def on_seek_updated (self, matchlist):
+        self.on_seek_remove(matchlist[2])
+        self.on_seek_add(matchlist[4])
+        self.emit("seek_updated", matchlist[0].groups()[1])
+    on_seek_updated.BLKCMD = BLKCMD_SEEK
     
     def refresh_seeks (self):
         self.connection.lvm.setVariable("seekinfo", 1)
