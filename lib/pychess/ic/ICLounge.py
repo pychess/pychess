@@ -2002,11 +2002,13 @@ class Messages (Section):
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
+        self.connection.glm.connect("seek-updated", self.on_seek_updated)
         
     @glock.glocked
     def tooManySeeks (self, bm):
         label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
-        label.set_width_chars(70)
+        label.set_width_chars(80)
+        label.props.xalign = 0
         label.set_line_wrap(True)
         def response_cb (infobar, response, message):
             if response == gtk.RESPONSE_YES:
@@ -2034,6 +2036,24 @@ class Messages (Section):
             message.dismiss()
             return False
         message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+    
+    @glock.glocked
+    def on_seek_updated (self, glm, message_text):
+        if "manual" in message_text:
+            message_text = _("to manual accept")
+        elif "automatic" in message_text:
+            message_text = _("to automatic accept")
+        elif "rating range now" in message_text:
+            message_text.replace("rating range now", _("rating range now"))
+        label = gtk.Label(_("Seek updated") + ": " + message_text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, label, response_cb)
         message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                 gtk.RESPONSE_CANCEL))
         self.messages.append(message)
