@@ -563,8 +563,13 @@ class SeekTabSection (ParrentListSection):
             text = _(" would like to resume your adjourned <b>%(time)s</b> " + \
                 "<b>%(gametype)s</b> game.") % {"time": time, "gametype": match["gametype"].display_text}
         else:
-            text = _(" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game.") \
+            text = _(" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game") \
                 % {"time": time, "rated": rated.lower(), "gametype": match["gametype"].display_text}
+            if match["color"]:
+                text += " " + _("where") + " " + player.name + " " + \
+                    _("plays") + " " + match["color"] + "."
+            else:
+                text += "."
         content = self.get_infobarmessage_content(player, text,
                                                   gametype=match["gametype"])
         def callback (infobar, response, message):
@@ -582,7 +587,8 @@ class SeekTabSection (ParrentListSection):
         self.infobar.push_message(message)
         
         tooltiptext = SeekGraphSection.getSeekTooltipText(player, match["rt"],
-            is_rated, is_manual, match["gametype"], match["t"], match["i"])
+            is_rated, is_manual, match["color"], match["gametype"], match["t"],
+            match["i"])
         ti = self.store.prepend (["C"+index, self.chaPix, nametitle,
             int(match["rt"]), rated, match["gametype"].display_text, time,
             float(match["t"] + "." + match["i"]), "black", tooltiptext])

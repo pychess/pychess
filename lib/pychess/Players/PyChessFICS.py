@@ -279,7 +279,8 @@ class PyChessFICS(PyChess):
     #===========================================================================
     
     def __onChallengeAdd (self, offerManager, index, match):
-        #match = {"tp": type, "w": fname, "rt": rating, "r": rated, "t": mins, "i": incr}
+        #match = {"tp": type, "w": fname, "rt": rating, "color": color,
+        #         "r": rated, "t": mins, "i": incr}
         offerManager.acceptIndex(index)
     
     def __onOfferAdd (self, offerManager, offer):
