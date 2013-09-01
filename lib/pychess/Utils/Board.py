@@ -197,6 +197,7 @@ class Board:
                 for acord in cordsAround(cord1):
                     piece = board1[acord]
                     if piece and piece.piece != PAWN and acord != cord0:
+                        piece.opacity = 0
                         cord = self.getHoldingCord(1-piece.color, piece.piece)
                         moved.append( (self[cord], cord) )
                         self[cord].opacity = 1
@@ -356,3 +357,19 @@ class Board:
     def __eq__ (self, other):
         if type(self) != type(other): return False
         return self.board == other.board
+
+    def printPieces(self):
+        b = ""
+        for row in reversed(self.data):
+            for i in range(-3, 11):
+                piece = row.get(i)
+                if piece is not None:
+                    if piece.color == BLACK:
+                        p = FAN_PIECES[BLACK][piece.piece]
+                    else:
+                        p = FAN_PIECES[WHITE][piece.piece]
+                    b += p
+                else:
+                    b += '.'
+            b += "\n"
+        print b
