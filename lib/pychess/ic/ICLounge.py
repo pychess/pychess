@@ -466,6 +466,8 @@ class SeekTabSection (ParrentListSection):
                 self.listPublisher.put((self.onChallengeRemove, index)) )
         self.connection.glm.connect("clearSeeks", lambda glm:
                 self.listPublisher.put((self.onClearSeeks,)) )
+        self.connection.glm.connect("our-seeks-removed", lambda glm:
+                self.listPublisher.put((self.our_seeks_removed,)))
         self.connection.bm.connect("playGameCreated", lambda bm, game:
                 self.listPublisher.put((self.onPlayingGame,)) )
         self.connection.bm.connect("curGameEnded", lambda bm, game:
@@ -612,6 +614,9 @@ class SeekTabSection (ParrentListSection):
         self.seeks = {}
         self.__updateActiveSeeksLabel()
 
+    def our_seeks_removed (self):
+        self.widgets["clearSeeksButton"].set_sensitive(False)
+    
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
@@ -2011,6 +2016,7 @@ class Messages (Section):
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.glm.connect("seek-updated", self.on_seek_updated)
+        self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
         
     @glock.glocked
     def tooManySeeks (self, bm):
@@ -2058,6 +2064,18 @@ class Messages (Section):
         elif "rating range now" in message_text:
             message_text.replace("rating range now", _("rating range now"))
         label = gtk.Label(_("Seek updated") + ": " + message_text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, label, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+    
+    @glock.glocked
+    def our_seeks_removed (self, glm):
+        label = gtk.Label(_("Your seeks have been removed"))
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
