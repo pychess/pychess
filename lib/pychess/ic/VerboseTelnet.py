@@ -125,7 +125,6 @@ class FromToPrediction (Prediction):
                 return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
-
 class PredictionsTelnet:
     def __init__ (self, telnet, predictions, reply_cmd_dict):
         self.telnet = telnet

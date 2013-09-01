@@ -253,6 +253,19 @@ class SeekManagerTests(EmittingTestCase):
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
     def test5 (self):
+        """ Confirm that seeks remove resulting from an unseek command reply
+            is caught by our_seeks_removed rather than on_seek_remove
+        """
+        
+        signal = 'our_seeks_removed'
+        
+        lines = [BLOCK_START + '54' + BLOCK_SEPARATOR + '156' + BLOCK_SEPARATOR,
+                 "<sr> 8 17 30",
+                 "fics% Your seeks have been removed.",
+                 BLOCK_END]
+        self.runAndAssertEquals(signal, lines, ())
+    
+    def test6 (self):
         # This test case should be implemented when the ficsmanager.py unit testing
         # is able to chain managers like the real fics code does. This is because
         # this test case tests verifies that this line is caught in BoardManager.py
