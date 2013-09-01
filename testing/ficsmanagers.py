@@ -212,19 +212,19 @@ class SeekManagerTests(EmittingTestCase):
         lines = ['<s> 10 w=warbly ti=00 rt=1291  t=3 i=0 r=r tp=blitz c=? rr=1200-1400 a=t f=t']
         expectedResult = {'gameno':'10', 'gametype': GAME_TYPES["blitz"],
             'rmin':1200, 'rmax':1400, 'cp':False, 'rt':'1291', 'manual':False,
-            'title': '', 'w':'warbly', 'r':'r', 't':'3', 'i':'0'}
+            'color':None, 'title': '', 'w':'warbly', 'r':'r', 't':'3', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
         
         lines = ['<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f']
         expectedResult = {'gameno':'124', 'gametype': GAME_TYPES["blitz"],
             'rmin':0, 'rmax':9999, 'cp':True, 'rt':'1637', 'manual':False,
-            'title': '(C)', 'w':'leaderbeans', 'r':'u', 't':'3', 'i':'0'}
+            'color':'black', 'title': '(C)', 'w':'leaderbeans', 'r':'u', 't':'3', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
 
         lines = ['<s> 14 w=microknight ti=00 rt=1294  t=15 i=0 r=u tp=standard c=? rr=1100-1450 a=f f=f']
         expectedResult = {'gameno':'14', 'gametype': GAME_TYPES["standard"],
             'rmin':1100, 'rmax':1450, 'cp':False, 'rt':'1294', 'manual':True,
-            'title': '', 'w':'microknight', 'r':'u', 't':'15', 'i':'0'}
+            'color':None, 'title': '', 'w':'microknight', 'r':'u', 't':'15', 'i':'0'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
     def test2 (self):
@@ -249,7 +249,7 @@ class SeekManagerTests(EmittingTestCase):
                  BLOCK_END]
         expectedResult = {'gameno':'121', 'gametype': GAME_TYPES["wild/4"],
             'rmin':0, 'rmax':9999, 'cp':False, 'rt':'1677', 'manual':True,
-            'title': '', 'w':'mgatto', 'r':'r', 't':'6', 'i':'1'}
+            'color':None, 'title': '', 'w':'mgatto', 'r':'r', 't':'6', 'i':'1'}
         self.runAndAssertEquals(signal, lines, (expectedResult,))
     
     def test5 (self):
