@@ -24,10 +24,11 @@ deviation_provisional_re = re.compile("P")
 class SeekManager (GObject):
     
     __gsignals__ = {
-        'addSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'removeSeek' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'clearSeeks' : (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        'seek_updated' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'addSeek' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'removeSeek' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'clearSeeks' : (SIGNAL_RUN_FIRST, None, ()),
+        'our_seeks_removed' : (SIGNAL_RUN_FIRST, None, ()),
+        'seek_updated' : (SIGNAL_RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, connection):
@@ -37,6 +38,9 @@ class SeekManager (GObject):
         
         self.connection.expect_line (self.on_seek_clear, "<sc>")
         self.connection.expect_line (self.on_seek_add, "<s(?:n?)> (.+)")
+        self.connection.expect_n_lines (self.on_our_seeks_removed,
+            "<sr> ([\d ]+)",
+            "fics% Your seeks have been removed\.")
         self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         self.connection.expect_n_lines (self.on_seek_updated,
             "Updating seek ad (\d+)(?:;?) (.*)\.",
@@ -136,6 +140,11 @@ class SeekManager (GObject):
             if not key: continue
             self.emit("removeSeek", key)
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
+    
+    def on_our_seeks_removed (self, matchlist):
+        self.on_seek_remove(matchlist[0])
+        self.emit("our_seeks_removed")
+    on_our_seeks_removed.BLKCMD = BLKCMD_UNSEEK
     
     def on_seek_updated (self, matchlist):
         self.on_seek_remove(matchlist[2])
