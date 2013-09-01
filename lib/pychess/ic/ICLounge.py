@@ -518,7 +518,7 @@ class SeekTabSection (ParrentListSection):
                            else "black"
         is_rated = False if seek["r"] == "u" else True
         tooltiptext = SeekGraphSection.getSeekTooltipText(player,
-            seek["rt"], is_rated, seek["manual"], seek["gametype"],
+            seek["rt"], is_rated, seek["manual"], seek["color"], seek["gametype"],
             seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
         seek_ = [seek["gameno"], pix, player.name + player.display_titles(),
             int(seek["rt"]), rated, seek["gametype"].display_text, time,
@@ -716,7 +716,7 @@ class SeekGraphSection (ParrentListSection):
         self.connection.bm.play(name)
 
     @classmethod
-    def getSeekTooltipText (cls, player, rating, is_rated, is_manual,
+    def getSeekTooltipText (cls, player, rating, is_rated, is_manual, color,
                             gametype, min, gain, rmin=0, rmax=9999):
         text = "%s" % player.name
         if int(rating) == 0:
@@ -731,6 +731,8 @@ class SeekGraphSection (ParrentListSection):
         rrtext = SeekChallengeSection.getRatingRangeDisplayText(rmin, rmax)
         if rrtext:
             text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
+        if color:
+            text += "\n%s %s %s" % (player.name, _("plays"), color) 
         if is_manual:
             text += "\n%s" % _("Manual Accept")
         return text
@@ -743,8 +745,8 @@ class SeekGraphSection (ParrentListSection):
 
         is_rated = False if seek["r"] == "u" else True
         text = self.getSeekTooltipText(player, seek["rt"],
-            is_rated, seek["manual"], seek["gametype"], seek["t"], seek["i"],
-            rmin=seek["rmin"], rmax=seek["rmax"])
+            is_rated, seek["manual"], seek["color"], seek["gametype"],
+            seek["t"], seek["i"], rmin=seek["rmin"], rmax=seek["rmax"])
         self.graph.addSpot(seek["gameno"], text, x, y, type)
 
     def onSeekRemove (self, gameno):

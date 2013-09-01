@@ -118,6 +118,13 @@ class SeekManager (GObject):
                 else: seek[key] = value
             elif key == "a":
                 seek["manual"] = value == "f" # Must be accepted manually
+            elif key == "c":
+                if value == "?":
+                    seek["color"] = None
+                elif value == "W":
+                    seek["color"] = "white"
+                elif value == "B":
+                    seek["color"] = "black"
         self.emit("addSeek", seek)
     on_seek_add.BLKCMD = BLKCMD_SEEK
     
