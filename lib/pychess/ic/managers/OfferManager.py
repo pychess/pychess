@@ -171,7 +171,7 @@ class OfferManager (GObject):
             rating = frating.strip()
             rating = rating.isdigit() and rating or "0"
             rated = rated == "unrated" and "u" or "r"
-            match = {"gametype": gametype, "w": fname, "rt": rating,
+            match = {"gametype": gametype, "w": fname, "rt": rating, "color": col,
                 "r": rated, "t": mins, "i": incr, "is_adjourned": is_adjourned}
             self.emit("onChallengeAdd", index, match)
         

@@ -283,24 +283,39 @@ class OfferManagerTests(EmittingTestCase):
         
         lines = ['<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)']
         expectedResult = {'gametype': GAME_TYPES["wild/4"], "w": 'antiseptic',
-                "rt": '1945', "r": 'r', "t": "6", "i": "1", "is_adjourned": True}
+                "rt": '1945', "r": 'r', "t": "6", "i": "1", "color": None,
+                "is_adjourned": True}
         self.runAndAssertEquals(signal, lines, ('59', expectedResult,))
         
         lines = ['<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)']
         expectedResult = {'gametype': GAME_TYPES["wild/fr"], "w": 'joseph',
-                "rt": '1632', "r": 'r', "t": "5", "i": "1", "is_adjourned": True}
+                "rt": '1632', "r": 'r', "t": "5", "i": "1", "color": None,
+                "is_adjourned": True}
         self.runAndAssertEquals(signal, lines, ('71', expectedResult,))
 
         lines = ['<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12']
         expectedResult = {'gametype': GAME_TYPES["losers"], "w": 'GuestGYXR',
-                "rt": '0', "r": 'u', "t": "2", "i": "12", "is_adjourned": False}
+                "rt": '0', "r": 'u', "t": "2", "i": "12", "color": None,
+                "is_adjourned": False}
         self.runAndAssertEquals(signal, lines, ('45', expectedResult,))
 
         lines = ['<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)']
         expectedResult = {'gametype': GAME_TYPES["blitz"], "w": 'GuestDVXV',
-                "rt": '0', "r": 'u', "t": "2", "i": "12", "is_adjourned": True}
+                "rt": '0', "r": 'u', "t": "2", "i": "12", "color": None,
+                "is_adjourned": True}
         self.runAndAssertEquals(signal, lines, ('39', expectedResult,))
 
+        lines = ['<pf> 20 w=GuestFQPB t=match p=GuestFQPB (----) [white] mgatto (1322) unrated blitz 2 12']
+        expectedResult = {'gametype': GAME_TYPES["blitz"], "w": 'GuestFQPB',
+                "rt": '0', "r": 'u', "t": "2", "i": "12", "color": "white",
+                "is_adjourned": False}
+        self.runAndAssertEquals(signal, lines, ('20', expectedResult,))
+
+        lines = ['<pf> 7 w=GuestFQPB t=match p=GuestFQPB (----) [black] mgatto (----) unrated untimed']
+        expectedResult = {'gametype': GAME_TYPES["untimed"], "w": 'GuestFQPB',
+                "rt": '0', "r": 'u', "t": "0", "i": "0", "color": "black",
+                "is_adjourned": False}
+        self.runAndAssertEquals(signal, lines, ('7', expectedResult,))
 
 if __name__ == '__main__':
     unittest.main()
