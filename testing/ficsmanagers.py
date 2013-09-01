@@ -234,7 +234,8 @@ class SeekManagerTests(EmittingTestCase):
     def test3 (self):
         """ Seek remove (ignore remove) """
         lines = ['<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f',
-                 '<sr> 124']
+                 '<sr> 124',
+                 '']
         self.runAndAssertEquals('removeSeek', lines, ('124',))
     
     def test4 (self):
