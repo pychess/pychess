@@ -500,7 +500,9 @@ class BoardView (gtk.DrawingArea):
                             piece.opacity = 1
                         else: piece.opacity = newOp
             
-            for i, (piece, x, y) in enumerate(self.deadlist):
+            ready = []
+            for i, dead in enumerate(self.deadlist):
+                piece, x, y = dead
                 if not paintBox:
                     paintBox = self.cord2RectRelative(x, y)
                 else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
@@ -511,8 +513,12 @@ class BoardView (gtk.DrawingArea):
                     newOp = 0
                 
                 if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.005:
-                    del self.deadlist[i]
+                    ready.append(dead)
                 else: piece.opacity = newOp
+
+            for dead in ready:
+                self.deadlist.remove(dead)
+
 
         if redrawMisc:
             for cord in (self.selected, self.active, self.premove0, self.premove1, self.hover):
