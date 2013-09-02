@@ -16,6 +16,7 @@ def get_message_content (heading_text, message_text, image_stock_id):
     label.props.xalign = 0
     label.props.justify = gtk.JUSTIFY_LEFT
     label.props.wrap = True
+    label.set_width_chars(70)
     label.set_text(message_text)
     vbox.pack_start(label, expand=False, fill=False)
     hbox.pack_start(vbox, expand=False, fill=False, padding=7)
