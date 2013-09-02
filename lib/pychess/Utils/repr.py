@@ -51,11 +51,11 @@ reprReason_long = {
     ADJOURNED_LOST_CONNECTION_WHITE: _("Because %(white)s lost connection to the server"),
     ADJOURNED_LOST_CONNECTION_BLACK: _("Because %(black)s lost connection to the server"),
 
-    ABORTED_ADJUDICATION: _("Because of adjudication by an admin"),
-    ABORTED_AGREEMENT: _("Because both players agreed to abort the game"),
-    ABORTED_COURTESY: _("Because of courtesy by a player"),
-    ABORTED_EARLY: _("Because a player quit. No winner was found due to the early phase of the game"),
-    ABORTED_SERVER_SHUTDOWN: _("Because the server was shut down"),
+    ABORTED_ADJUDICATION: _("Because of adjudication by an admin. No rating changes have occurred."),
+    ABORTED_AGREEMENT: _("Because both players agreed to abort the game. No rating changes have occurred."),
+    ABORTED_COURTESY: _("Because of courtesy by a player. No rating changes have occurred."),
+    ABORTED_EARLY: _("Because a player aborted the game. Either player can abort the game without the other's consent before the second move. No rating changes have occurred."),
+    ABORTED_SERVER_SHUTDOWN: _("Because the server was shut down. No rating changes have occurred."),
 
     WHITE_ENGINE_DIED: _("Because the %(white)s engine died"),
     BLACK_ENGINE_DIED: _("Because the %(black)s engine died"),
