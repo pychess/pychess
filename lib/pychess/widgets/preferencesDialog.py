@@ -8,6 +8,7 @@ import gtk
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.glock import glock_connect_after
 from pychess.System import conf, gstreamer, uistuff
+from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
@@ -30,12 +31,15 @@ def initialize(widgets):
     
     def delete_event (widget, *args):
         widgets["preferences"].hide()
-        return True
+        return False
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences_close_button"].connect("clicked", delete_event)
     
     widgets["preferences"].connect("key-press-event",
         lambda w,e: delete_event(w) if e.keyval == gtk.keysyms.Escape else None)
+
+    uistuff.keepWindowSize("preferencesdialog", widgets["preferences"],
+                           defaultPosition=POSITION_GOLDEN)
 
 ################################################################################
 # General initing                                                              #
@@ -76,7 +80,7 @@ class HintTab:
         filter.set_name(_("Opening books"))
         filter.add_pattern("*.bin")
         book_chooser_dialog.add_filter(filter)
-        book_chooser_dialog.set_filename(path)
+        book_chooser_button.set_filename(path)
 
         self.widgets["bookChooserDock"].add(book_chooser_button)
         book_chooser_button.show()
@@ -108,7 +112,7 @@ class HintTab:
         egtb_chooser_dialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         egtb_chooser_button = gtk.FileChooserButton(egtb_chooser_dialog)
-        egtb_chooser_dialog.set_current_folder(egtb_path)
+        egtb_chooser_button.set_current_folder(egtb_path)
 
         self.widgets["egtbChooserDock"].add(egtb_chooser_button)
         egtb_chooser_button.show()
