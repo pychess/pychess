@@ -568,8 +568,8 @@ class SeekTabSection (ParrentListSection):
             text = _(" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game") \
                 % {"time": time, "rated": rated.lower(), "gametype": match["gametype"].display_text}
             if match["color"]:
-                text += " " + _("where") + " " + player.name + " " + \
-                    _("plays") + " " + match["color"] + "."
+                text += _(" where <b>%(player)s</b> plays <b>%(color)s</b>.") \
+                % {"player": player.name, "color": _("white") if match["color"] == "white" else _("black")}
             else:
                 text += "."
         content = self.get_infobarmessage_content(player, text,
@@ -743,7 +743,8 @@ class SeekGraphSection (ParrentListSection):
         if rrtext:
             text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
         if color:
-            text += "\n%s %s %s" % (player.name, _("plays"), color) 
+            text += "\n" + _("%(player)s plays %(color)s") \
+            % {"player": player.name, "color": _("white") if color == "white" else _("black")} 
         if is_manual:
             text += "\n%s" % _("Manual Accept")
         return text
