@@ -93,7 +93,9 @@ class TimeSeal:
         return  "TIMESTAMP|%(user)s|%(uname)s|" % locals()
     
     def decode(self, buf, stateinfo = None):
-        expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
+        expected_table = "[G]\n\r"
+        # TODO: add support to FatICS's new zipseal protocol when it finalizes
+        #expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
         final_state = len(expected_table)
         g_count = 0
         result = []
