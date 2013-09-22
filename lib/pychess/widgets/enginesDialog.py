@@ -309,6 +309,10 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
         self.toggle_renderer.set_property("xalign", 0)
         self.toggle_renderer.connect("toggled", self.toggled_cb, model)
 
+        self.ro_toggle_renderer = gtk.CellRendererToggle()
+        self.ro_toggle_renderer.set_property("activatable", False)
+        self.ro_toggle_renderer.set_property("xalign", 0)
+
         self.spin_renderer = gtk.CellRendererSpin()
         self.spin_renderer.set_property("editable", True)
         self.spin_renderer.connect("edited", self.spin_edited_cb, model)
@@ -339,7 +343,10 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
 
     def _get_renderer(self):
         if self.data["type"] == "check":
-            return self.toggle_renderer
+            if self.data["name"] == "UCI_Chess960":
+                return self.ro_toggle_renderer
+            else:
+                return self.toggle_renderer
         elif self.data["type"] == "spin":
             return self.spin_renderer
         elif self.data["type"] == "text":
