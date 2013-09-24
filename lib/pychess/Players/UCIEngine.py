@@ -55,6 +55,7 @@ class UCIEngine (ProtocolEngine):
         self.gameBoard = Board(setup=True) # board at the end of all moves played
         self.board = Board(setup=True)     # board to send the engine
         self.uciPosition = "startpos"
+        self.uciPositionListsMoves = False
         self.analysis = [ None ]
         
         self.returnQueue = Queue.Queue()
@@ -161,19 +162,37 @@ class UCIEngine (ProtocolEngine):
             cn = CASTLE_KR
         return toAN(board, move, short=True, castleNotation=cn)
     
-    def _setBoard (self, board):
-        if board.variant == NORMALCHESS and board.asFen() == FEN_START:
-            self.uciPosition = "startpos"
-        else:
-            self.uciPosition = "fen " + board.asFen()
+    def _recordMove (self, board1, move, board2):
+        if self.gameBoard == board1:
+            return
+        if not board2:
+            if board1.variant == NORMALCHESS and board1.asFen() == FEN_START:
+                self.uciPosition = "startpos"
+            else:
+                self.uciPosition = "fen " + board1.asFen()
+            self.uciPositionListsMoves = False
+        if move:
+            if not self.uciPositionListsMoves:
+                self.uciPosition += " moves"
+                self.uciPositionListsMoves = True
+            self.uciPosition += " " + self._moveToUCI(board2, move)
 
-        self.board = self.gameBoard = board
+
+        self.board = self.gameBoard = board1
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
+
+    def _recordMoveList (self, model, ply=None):
+        self._recordMove(model.boards[0], None, None)
+        if ply is None:
+            ply = model.ply
+        for board1, move, board2 in zip(model.boards[1:ply+1], model.moves, model.boards[0:ply]):
+            self._recordMove(board1, move, board2)
+
     
     def setBoard (self, board):
         log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
-        self._setBoard(board)
+        self._recordMove(board, None, None)
         
         if not self.readyMoves:
             return
@@ -186,7 +205,7 @@ class UCIEngine (ProtocolEngine):
         if self.board != board2:
             return
 
-        self._setBoard(board1)
+        self._recordMove(board1, move, board2)
         
         if not self.readyMoves:
             return
@@ -198,7 +217,7 @@ class UCIEngine (ProtocolEngine):
         assert self.readyMoves
         
         with self.moveLock:
-            self._setBoard(board1)
+            self._recordMove(board1, move, board2)
             self.waitingForMove = True
             ponderhit = False
             
@@ -249,7 +268,7 @@ class UCIEngine (ProtocolEngine):
     def setOptionInitialBoard (self, model):
         log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
             (self, model), self.defname)
-        self._setBoard(model.boards[0])
+        self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
         if variant == FischerRandomChess:
@@ -324,7 +343,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._setBoard(gamemodel.boards[-1])
+        self._recordMoveList(gamemodel)
         
         if (gamemodel.curplayer != self and moves % 2 == 1) or \
                 (gamemodel.curplayer == self and moves % 2 == 0):
@@ -339,7 +358,7 @@ class UCIEngine (ProtocolEngine):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
 
-        self._setBoard(gamemodel.boards[-1])
+        self._recordMoveList(gamemodel)
         
         if self.readyMoves:
             self._searchNow()
@@ -443,7 +462,9 @@ class UCIEngine (ProtocolEngine):
     
     def _startPonder (self):
         uciPos = self.uciPosition
-        print >> self.engine, "position", uciPos, " moves", \
+        if not self.uciPositionListsMoves:
+            uciPos += " moves"
+        print >> self.engine, "position", uciPos, \
                                 self._moveToUCI(self.board, self.pondermove)
         print >> self.engine, "go ponder wtime", self.wtime, \
             "winc", self.incr, "btime", self.btime, "binc", self.incr
@@ -536,7 +557,7 @@ class UCIEngine (ProtocolEngine):
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
-                self._setBoard(self.board.move(move))
+                self._recordMove(self.board.move(move), move, self.board)
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
                     (move, self.board), self.defname)
                 
