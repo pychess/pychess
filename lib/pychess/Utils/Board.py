@@ -265,8 +265,12 @@ class Board:
         
         if flag == DROP:
             piece = FCORD(move.move)
-            newBoard[cord1] = newBoard[self.getHoldingCord(self.color, piece)]
-            newBoard[self.getHoldingCord(self.color, piece)] = None
+            hc = self.getHoldingCord(self.color, piece)
+            if hc is None:
+                newBoard[cord1] = Piece(self.color, piece)
+            else:
+                newBoard[cord1] = newBoard[self.getHoldingCord(self.color, piece)]
+                newBoard[self.getHoldingCord(self.color, piece)] = None
         else:
             if self.variant == ATOMICCHESS and (flag == ENPASSANT or self[move.cord1] is not None):
                 piece = self[move.cord0].piece
