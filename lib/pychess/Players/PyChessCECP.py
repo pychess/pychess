@@ -109,7 +109,7 @@ class PyChessCECP(PyChess):
                             self.board.variant = FISCHERRANDOMCHESS
                         elif lines[1] == "crazyhouse":
                             self.board.variant = CRAZYHOUSECHESS
-                            self.board.iniCrazy()
+                            self.board.iniHouse()
                         elif lines[1] == "wildcastle":
                             self.board.variant = WILDCASTLESHUFFLECHESS
                         elif lines[1] == "losers":
