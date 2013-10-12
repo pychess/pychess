@@ -171,6 +171,8 @@ class BoardView (gtk.DrawingArea):
         self.premovePromotion = None
     
     def game_started_after (self, model):
+        # reenable shrinking the board
+        self.set_size_request(-1, -1)
         self.emit("shown_changed", self.shown)
     
     def game_started (self, model):
@@ -548,6 +550,11 @@ class BoardView (gtk.DrawingArea):
     #############################
     
     def on_realized (self, widget):
+        # restore saved board size
+        width = conf.get("board_window_width", 100)
+        height = conf.get("board_window_height", 100)
+        widget.set_size_request(width, height)
+
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -556,6 +563,11 @@ class BoardView (gtk.DrawingArea):
         s = square/self.FILES
         self.square = (xc, yc, square, s)
     
+    def save_board_size(self):
+        x, y, w, h = self.get_allocation()
+        conf.set("board_window_width",  w)
+        conf.set("board_window_height", h)
+        
     def expose(self, widget, event):
         context = widget.window.cairo_create()
         #r = (event.area.x, event.area.y, event.area.width, event.area.height)
