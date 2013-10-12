@@ -1,2 +1,2 @@
-VERSION = "0.12beta3"
+VERSION = "0.12beta4"
 VERSION_NAME = "Anderssen"
