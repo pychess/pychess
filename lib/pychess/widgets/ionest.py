@@ -90,6 +90,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 gamemodel.curplayer.emit("offer", Offer(action, param=param))
         gmwidg.board.connect("action", lambda b,action,param: emit_action(action, param))
     
+    log.debug("ionest.workfunc: calling gamemodel.setPlayers(): %s\n" % (gamemodel))
     gamemodel.setPlayers(players)
     
     # Starting
