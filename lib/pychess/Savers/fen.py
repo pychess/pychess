@@ -6,7 +6,7 @@ __label__ = _("Simple Chess Position")
 __ending__ = "fen"
 __append__ = True
 
-def save (file, model, position):
+def save (file, model, position=None):
     """Saves game to file in fen format"""
     
     print >> file, model.boards[-1].asFen()

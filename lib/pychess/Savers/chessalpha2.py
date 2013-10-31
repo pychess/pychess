@@ -56,7 +56,7 @@ table.pychess td.numa {width:0; text-align:right; padding-left:1em}
 table.pychess td.status {text-align:center; font-size:12pt; padding-right:2em}
 table.pychess pre {margin:0; padding:0; font-family:"Chess Alpha 2"; font-size:16pt; text-align:center; line-height:1}"""
 
-def save (file, model, position):
+def save (file, model, position=None):
     """Saves the position as a diagram using chess fonts"""
     
     print >> file, "<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>"
