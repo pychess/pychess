@@ -8,7 +8,7 @@ __label__ = _("Chess Position")
 __ending__ = "epd"
 __append__ = True
 
-def save (file, model, position):
+def save (file, model, position=None):
     """Saves game to file in fen format"""
     
     color = model.boards[-1].color

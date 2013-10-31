@@ -18,7 +18,7 @@ __endings__ = "pdb",
 __append__ = True
 
 
-def save (file, model):
+def save (file, model, position=None):
     movelist = array("H")
     comments = []
     walk(model.boards[0].board, movelist, comments)

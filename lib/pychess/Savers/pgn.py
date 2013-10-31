@@ -57,7 +57,7 @@ def parseClockTimeTag (tag):
         hour, min, sec, msec = match.groups()
         return int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
     
-def save (file, model, position):
+def save (file, model, position=None):
 
     status = reprResult[model.status]
 
