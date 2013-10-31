@@ -21,7 +21,7 @@ PADDING = 3
 SQUARE = 40
 
 
-def save(file, model, position):
+def save(file, model, position=None):
     """Export the current position into a .png file"""
 
     d = Diagram(model)
