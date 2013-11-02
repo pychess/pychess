@@ -160,9 +160,9 @@ def findMatch():
     pos = [(i,j) for i in xrange(len(engines))
                  for j in xrange(len(engines))
                  if i != j and results[i][j] == None]
-    pos = [(i,j) for i,j in pos if
-           "pychess" in discoverer.getName(engines[i]).lower() or
-           "pychess" in discoverer.getName(engines[j]).lower()]
+    #pos = [(i,j) for i,j in pos if
+    #       "pychess" in discoverer.getName(engines[i]).lower() or
+    #       "pychess" in discoverer.getName(engines[j]).lower()]
     if not pos:
         return None, None
     return random.choice(pos)
