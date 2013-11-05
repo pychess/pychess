@@ -550,10 +550,11 @@ class BoardView (gtk.DrawingArea):
     #############################
     
     def on_realized (self, widget):
-        # restore saved board size
-        width = conf.get("board_window_width", 100)
-        height = conf.get("board_window_height", 100)
-        widget.set_size_request(width, height)
+        if not self.preview:
+            # restore saved board size
+            width = conf.get("board_window_width", 100)
+            height = conf.get("board_window_height", 100)
+            widget.set_size_request(width, height)
 
         p = (1-self.padding)
         alloc = self.get_allocation()
