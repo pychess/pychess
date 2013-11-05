@@ -15,6 +15,8 @@ from pychess.Variants.atomic import AtomicChess, AtomicBoard
 from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
 from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
+from pychess.Variants.suicide import SuicideChess, SuicideBoard
+from pychess.Variants.losers import LosersChess, LosersBoard
 
 from pgnbase import PgnBase, pgn_load
 from ChessFile import LoadingError
@@ -92,6 +94,10 @@ def save (file, model, position=None):
         print >> file, '[Variant "Crazyhouse"]'
     elif issubclass(model.variant, WildcastleChess):
         print >> file, '[Variant "Wildcastle"]'
+    elif issubclass(model.variant, SuicideChess):
+        print >> file, '[Variant "Suicide"]'
+    elif issubclass(model.variant, LosersChess):
+        print >> file, '[Variant "Losers"]'
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
@@ -255,6 +261,10 @@ class PGNFile (PgnBase):
                 model.tags["Variant"] = "Crazyhouse"
             elif variant == "Wildcastle":
                 model.tags["Variant"] = "Wildcastle"
+            elif variant == "Suicide":
+                model.tags["Variant"] = "Suicide"
+            elif variant == "Losers":
+                model.tags["Variant"] = "Losers"
 
         if variant == "Fischerandom":
             board = LBoard(FISCHERRANDOMCHESS)
@@ -268,6 +278,12 @@ class PGNFile (PgnBase):
         elif variant == "Wildcastle":
             board = LBoard(WILDCASTLECHESS)
             model.variant = WildcastleChess
+        elif variant == "Suicide":
+            board = LBoard(SUICIDECHESS)
+            model.variant = SuicideChess
+        elif variant == "Losers":
+            board = LBoard(LOSERSCHESS)
+            model.variant = LosersChess
         else:
             board = LBoard()
 
@@ -308,6 +324,10 @@ class PGNFile (PgnBase):
                     board = CrazyhouseBoard(setup=node.asFen(), lboard=node)
                 elif variant == "Wildcastle":
                     board = WildcastleBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Suicide":
+                    board = SuicideBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Losers":
+                    board = LosersBoard(setup=node.asFen(), lboard=node)
                 else:
                     board = Board(setup=node.asFen(), lboard=node)
             else:
