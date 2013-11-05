@@ -180,6 +180,10 @@ class PgnBase(ChessFile):
                 return "Crazyhouse"
             elif "wildcastle" in variant.lower():
                 return "Wildcastle"
+            elif "suicide" in variant.lower():
+                return "Suicide"
+            elif "losers" in variant.lower():
+                return "Losers"
             else:
                 return ""
         else:
@@ -192,6 +196,10 @@ class PgnBase(ChessFile):
                 return "Crazyhouse"
             elif "wildcastle" in event.lower():
                 return "Wildcastle"
+            elif "suicide" in event.lower():
+                return "Suicide"
+            elif "losers" in event.lower():
+                return "Losers"
             else:
                 return ""
 
