@@ -185,6 +185,30 @@ class BoardManager (GObject):
             % (names, names, ratedexp),
             "", "<12> (.+)")
         
+        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek,
+            "Your seek matches one already posted by %s\." % names,
+            "",
+            "<sr> ([\d ]+)",
+            "fics%\s*",
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+            % (names, ratings, names, ratings, ratedexp),
+            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+            % (names, names, ratedexp),
+            "", "<12> (.+)")
+        
+        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek2,
+            "Your seek matches one already posted by %s\." % names,
+            "",
+            "<sr> ([\d ]+)",
+            "fics%\s*",
+            "<sr> ([\d ]+)",
+            "fics%\s*",
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+            % (names, ratings, names, ratings, ratedexp),
+            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+            % (names, names, ratedexp),
+            "", "<12> (.+)")
+        
         self.connection.expect_fromto (self.onObserveGameCreated,
             "Movelist for game (\d+):", "{Still in progress} \*")
         
@@ -402,6 +426,17 @@ class BoardManager (GObject):
         self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.emit("playGameCreated", game)
+    
+    def onPlayGameCreatedFromMatchingSeek (self, matchlist):
+        self.connection.glm.on_seek_remove(matchlist[2])
+        self.onPlayGameCreated(matchlist[4:8])
+    onPlayGameCreatedFromMatchingSeek.BLKCMD = BLKCMD_SEEK
+    
+    def onPlayGameCreatedFromMatchingSeek2 (self, matchlist):
+        self.connection.glm.on_seek_remove(matchlist[2])
+        self.connection.glm.on_seek_remove(matchlist[4])
+        self.onPlayGameCreated(matchlist[6:10])
+    onPlayGameCreatedFromMatchingSeek2.BLKCMD = BLKCMD_SEEK
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
         """ 

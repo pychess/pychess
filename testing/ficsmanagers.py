@@ -12,6 +12,12 @@ from pychess.ic.managers.ListAndVarManager import ListAndVarManager
 from pychess.ic.managers.BoardManager import BoardManager
 from pychess.ic.managers.OfferManager import OfferManager
 from pychess.ic.managers.HelperManager import HelperManager
+from pychess.ic.managers.ErrorManager import ErrorManager
+from pychess.ic.managers.FingerManager import FingerManager
+from pychess.ic.managers.NewsManager import NewsManager
+from pychess.ic.managers.ChatManager import ChatManager
+from pychess.ic.managers.AutoLogOutManager import AutoLogOutManager
+
 from Queue import Queue
 from pychess.ic.block_codes import *
 
@@ -74,11 +80,21 @@ class AdjournManagerTests(EmittingTestCase):
     
     def setUp (self):
         self.connection = DummyConnection()
-        self.connection.lvm = DummyVarManager()
-        self.connection.bm = BoardManager(self.connection)
-        self.connection.adm = AdjournManager(self.connection)
         self.connection.players = FICSPlayers(self.connection)
         self.connection.games = FICSGames(self.connection)
+        self.connection.lvm = DummyVarManager()
+        self.connection.em = ErrorManager(self.connection)
+        self.connection.glm = SeekManager(self.connection)
+        self.connection.bm = BoardManager(self.connection)
+        self.connection.fm = FingerManager(self.connection)
+        self.connection.nm = NewsManager(self.connection)
+        self.connection.om = OfferManager(self.connection)
+        self.connection.cm = ChatManager(self.connection)
+        self.connection.alm = AutoLogOutManager(self.connection)
+        self.connection.adm = AdjournManager(self.connection)
+        self.connection.bm.start()
+        self.connection.players.start()
+        self.connection.games.start()
         self.manager = self.connection.adm
         
     def test1(self):
@@ -265,19 +281,73 @@ class SeekManagerTests(EmittingTestCase):
                  "fics% Your seeks have been removed.",
                  BLOCK_END]
         self.runAndAssertEquals(signal, lines, ())
-    
-    def test6 (self):
-        # This test case should be implemented when the ficsmanager.py unit testing
-        # is able to chain managers like the real fics code does. This is because
-        # this test case tests verifies that this line is caught in BoardManager.py
-        # rather than being accidentally caught by the on_player_list() regex in
-        # GameManager.py (or elsewhere).
-        #
-        #lines = ['Game 342: Game clock paused.']
-        pass
-    
-    # And so on...
 
+class BoardManagerTests(EmittingTestCase):
+    
+    def setUp (self):
+        self.connection = DummyConnection()
+        self.connection.players = FICSPlayers(self.connection)
+        self.connection.games = FICSGames(self.connection)
+        self.connection.lvm = DummyVarManager()
+        self.connection.em = ErrorManager(self.connection)
+        self.connection.glm = SeekManager(self.connection)
+        self.connection.bm = BoardManager(self.connection)
+        self.connection.fm = FingerManager(self.connection)
+        self.connection.nm = NewsManager(self.connection)
+        self.connection.om = OfferManager(self.connection)
+        self.connection.cm = ChatManager(self.connection)
+        self.connection.alm = AutoLogOutManager(self.connection)
+        self.connection.adm = AdjournManager(self.connection)
+        self.connection.bm.start()
+        self.connection.players.start()
+        self.connection.games.start()
+        self.manager = self.connection.bm
+    
+    def test1 (self):
+        lines = [BLOCK_START + '110' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by Thegermain.",
+                 "",
+                 "<sr> 111 25",
+                 "fics%" ,
+                 "<sr> 153",
+                 "fics%" ,
+                 "Creating: mgatto (1327) Thegermain (1645) unrated blitz 4 0",
+                 "{Game 55 (mgatto vs. Thegermain) Creating unrated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 55 mgatto Thegermain 1 4 0 39 39 240000 240000 1 none (0:00.000) none 0 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me.addRating(TYPE_BLITZ, 1327)
+        opponent = self.connection.players.get(FICSPlayer('Thegermain'))
+        opponent.addRating(TYPE_BLITZ, 1645)
+        game = FICSGame(me, opponent, gameno=55, rated=False,
+            game_type=GAME_TYPES['blitz'], private=False, min=4, inc=0,
+            board=FICSBoard(240000, 240000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
+    def test2 (self):
+        lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by GuestRLJC.",
+                 "",
+                 "<sr> 135",
+                 "fics%" ,
+                 "Creating: mgatto (1305) GuestRLJC (++++) unrated blitz 5 0",
+                 "{Game 442 (mgatto vs. GuestRLJC) Creating unrated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 442 mgatto GuestRLJC 1 5 0 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me.addRating(TYPE_BLITZ, 1305)
+        opponent = self.connection.players.get(FICSPlayer('GuestRLJC'))
+        game = FICSGame(me, opponent, gameno=442, rated=False,
+            game_type=GAME_TYPES['blitz'], private=False, min=5, inc=0,
+            board=FICSBoard(300000, 300000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        
 ###############################################################################
 # OfferManager
 ###############################################################################
