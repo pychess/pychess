@@ -33,20 +33,26 @@ class SeekManager (GObject):
     
     def __init__ (self, connection):
         GObject.__init__(self)
-        
         self.connection = connection
         
         self.connection.expect_line (self.on_seek_clear, "<sc>")
         self.connection.expect_line (self.on_seek_add, "<s(?:n?)> (.+)")
+        self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
         self.connection.expect_n_lines (self.on_our_seeks_removed,
             "<sr> ([\d ]+)",
-            "fics% Your seeks have been removed\.")
-        self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
+            "Your seeks have been removed\.")
         self.connection.expect_n_lines (self.on_seek_updated,
             "Updating seek ad (\d+)(?:;?) (.*)\.",
             "",
             "<sr> (\d+)",
-            "fics%\s*",
+            "",
+            "<sn> (.+)")
+        self.connection.expect_n_lines (self.on_seek_updated,
+            "Updating seek ad (\d+)(?:;?) (.*)\.",
+            "Updating seek ad \d+(?:;?) (.*)\.",
+            "",
+            "<sr> (\d+)",
+            "",
             "<sn> (.+)")
         self.connection.lvm.setVariable("seekinfo", 1)
         self.connection.lvm.setVariable("seekremove", 1)
@@ -136,20 +142,28 @@ class SeekManager (GObject):
         self.emit("clearSeeks")
     
     def on_seek_remove (self, match):
+#         print "on_seek_remove: %s" % match.string
         for key in match.groups()[0].split(" "):
+#             print "on_seek_remove: key: %s" % key
             if not key: continue
             self.emit("removeSeek", key)
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
     
     def on_our_seeks_removed (self, matchlist):
+#         print "on_our_seeks_removed: matchlist[0]: %s" % matchlist[0].string
         self.on_seek_remove(matchlist[0])
         self.emit("our_seeks_removed")
     on_our_seeks_removed.BLKCMD = BLKCMD_UNSEEK
     
     def on_seek_updated (self, matchlist):
-        self.on_seek_remove(matchlist[2])
-        self.on_seek_add(matchlist[4])
-        self.emit("seek_updated", matchlist[0].groups()[1])
+        text = matchlist[0].groups()[1]
+        i = 0
+        if "Updating seek ad" in matchlist[1].string:
+            text += '; ' + matchlist[1].groups()[0]
+            i = 1
+        self.on_seek_remove(matchlist[i+2])
+        self.on_seek_add(matchlist[i+4])
+        self.emit("seek_updated", text)
     on_seek_updated.BLKCMD = BLKCMD_SEEK
     
     def refresh_seeks (self):
