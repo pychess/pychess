@@ -189,7 +189,7 @@ class BoardManager (GObject):
             "Your seek matches one already posted by %s\." % names,
             "",
             "<sr> ([\d ]+)",
-            "fics%\s*",
+            "",
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
             % (names, ratings, names, ratings, ratedexp),
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
@@ -200,9 +200,9 @@ class BoardManager (GObject):
             "Your seek matches one already posted by %s\." % names,
             "",
             "<sr> ([\d ]+)",
-            "fics%\s*",
+            "",
             "<sr> ([\d ]+)",
-            "fics%\s*",
+            "",
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
             % (names, ratings, names, ratings, ratedexp),
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."

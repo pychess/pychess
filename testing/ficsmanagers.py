@@ -1,5 +1,7 @@
 import unittest
 import datetime
+import Queue
+import random
 
 from pychess.Utils.const import WHITE
 from pychess.ic import *
@@ -17,22 +19,20 @@ from pychess.ic.managers.FingerManager import FingerManager
 from pychess.ic.managers.NewsManager import NewsManager
 from pychess.ic.managers.ChatManager import ChatManager
 from pychess.ic.managers.AutoLogOutManager import AutoLogOutManager
-
-from Queue import Queue
 from pychess.ic.block_codes import *
 
 class DummyConnection(Connection):
     class DummyClient(PredictionsTelnet):
         class DummyTelnet():
             def __init__(self):
-                self.Q = Queue()
+                self.Q = Queue.Queue()
                 self.name = "dummytelnet"
             def putline(self, line):
                 self.Q.put(line)
             def write(self, text):
                 pass
             def readline(self):
-                return self.Q.get()
+                return self.Q.get_nowait()
         
         def __init__(self, predictions, reply_cmd_dict):
             PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions, reply_cmd_dict)
@@ -41,13 +41,19 @@ class DummyConnection(Connection):
     
     def __init__(self):
         Connection.__init__(self, 'host', (0,), 'tester', '123456')
+        class fake_set (list):
+            def __init__(self, *args):
+                list.__init__(self, args)
+            def add(self, x):
+                self.append(x)
+        self.predictions = fake_set() # make predictions able to be reordered
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
         self.client.setBlockModeOn()
         self.client.setLinePrefix("fics%")
     def putline(self, line):
         self.client.putline(line)
-    def handleSomeText(self):
-        self.client.handleSomeText()
+    def process_line(self):
+        self.client.parse_line(self.client.get_line())
     def getUsername(self):
         return self.username
     
@@ -64,10 +70,15 @@ class EmittingTestCase(unittest.TestCase):
         self.args = None
         def handler(manager, *args): self.args = args
         self.manager.connect(signal, handler)
+        random.shuffle(self.connection.client.predictions)
         
         for line in lines:
             self.connection.putline(line)
-            self.connection.handleSomeText()
+        while True:
+            try:
+                self.connection.process_line()
+            except Queue.Empty:
+                break
         
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
         self.assertEqual(self.args, expectedResults)
@@ -248,16 +259,13 @@ class SeekManagerTests(EmittingTestCase):
         self.runAndAssertEquals('clearSeeks', ['<sc>'], ())
     
     def test3 (self):
-        """ Seek remove (ignore remove) """
+        """ Seek remove """
         lines = ['<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f',
-                 '<sr> 124',
-                 '']
+                 '<sr> 124', '']
         self.runAndAssertEquals('removeSeek', lines, ('124',))
     
     def test4 (self):
         """ Seek add resulting from a seek command reply """
-        
-        signal = 'addSeek'
         
         lines = [BLOCK_START + '54' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  '<sn> 121 w=mgatto ti=00 rt=1677  t=6 i=1 r=r tp=wild/4 c=? rr=0-9999 a=f f=f',
@@ -267,7 +275,7 @@ class SeekManagerTests(EmittingTestCase):
         expectedResult = {'gameno':'121', 'gametype': GAME_TYPES["wild/4"],
             'rmin':0, 'rmax':9999, 'cp':False, 'rt':'1677', 'manual':True,
             'color':None, 'title': '', 'w':'mgatto', 'r':'r', 't':'6', 'i':'1'}
-        self.runAndAssertEquals(signal, lines, (expectedResult,))
+        self.runAndAssertEquals('addSeek', lines, (expectedResult,))
     
     def test5 (self):
         """ Confirm that seeks remove resulting from an unseek command reply
@@ -278,9 +286,34 @@ class SeekManagerTests(EmittingTestCase):
         
         lines = [BLOCK_START + '54' + BLOCK_SEPARATOR + '156' + BLOCK_SEPARATOR,
                  "<sr> 8 17 30",
-                 "fics% Your seeks have been removed.",
+                 "Your seeks have been removed.",
                  BLOCK_END]
-        self.runAndAssertEquals(signal, lines, ())
+        self.runAndAssertEquals('our_seeks_removed', lines, ())
+
+    def test6 (self):
+        lines = [BLOCK_START + '62' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR +
+                 "Updating seek ad 105 to automatic.",
+                 "",
+                 "<sr> 105",
+                 "",
+                 "<sn> 105 w=mgatto ti=00 rt=1651  t=3 i=0 r=r tp=wild/4 c=? rr=1375-1925 a=t f=f",
+                 "Your seek has been posted with index 105.",
+                 "(2 player(s) saw the seek.)",
+                 BLOCK_END]
+        self.runAndAssertEquals('seek_updated', lines, ('to automatic',))
+    
+    def test7 (self):
+        lines = [BLOCK_START + '62' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR +
+                 "Updating seek ad 12 to manual.",
+                 "Updating seek ad 12; rating range now 0-9999.",
+                 "",
+                 "<sr> 12",
+                 "",
+                 "<sn> 12 w=mgatto ti=00 rt=1640  t=3 i=0 r=r tp=wild/4 c=? rr=0-9999 a=f f=f",
+                 "Your seek has been posted with index 12.",
+                 "(11 player(s) saw the seek.)",
+                 BLOCK_END]
+        self.runAndAssertEquals('seek_updated', lines, ('to manual; rating range now 0-9999',))
 
 class BoardManagerTests(EmittingTestCase):
     

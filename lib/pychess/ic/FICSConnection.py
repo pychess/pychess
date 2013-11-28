@@ -1,3 +1,4 @@
+import bisect
 import re
 import socket
 import time
@@ -27,7 +28,6 @@ from FICSObjects import FICSPlayers, FICSGames
 
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction
-from VerboseTelnet import ManyLinesPrediction
 from VerboseTelnet import FromPlusPrediction
 from VerboseTelnet import FromToPrediction
 from VerboseTelnet import PredictionsTelnet
@@ -67,8 +67,11 @@ class Connection (GObject, PooledThread):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
         if hasattr(prediction.callback, "BLKCMD"):
-            self.reply_cmd_dict[prediction.callback.BLKCMD].append(prediction)
-    
+            bisect.insort(self.reply_cmd_dict[prediction.callback.BLKCMD], prediction)
+            # Do sorted inserts so we can later test the longest predictions first.
+            # This is so that matching prefers the longest match for matches
+            # that start out with the same regexp line(s)
+            
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
         if hasattr(callback, "BLKCMD"):
@@ -80,9 +83,6 @@ class Connection (GObject, PooledThread):
     
     def expect_line (self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
-    
-    def expect_many_lines (self, callback, regexp):
-        self.expect(ManyLinesPrediction(callback, regexp))
     
     def expect_n_lines (self, callback, *regexps):
         self.expect(NLinesPrediction(callback, *regexps))
@@ -225,7 +225,8 @@ class FICSConnection (Connection):
                 # should be implemented into the FICSConnection somehow.
                 self.lvm = ListAndVarManager(self)
                 while not self.lvm.isReady():
-                    self.client.handleSomeText()
+                    self.client.parse_line(self.client.get_line())
+#                 print "self.lvm.setVariable"
                 self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
 
                 # FIXME: Some managers use each other to avoid regexp collapse. To
@@ -273,8 +274,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.handleSomeText()
-            
+                    self.client.parse_line(self.client.get_line())
             except Exception, e:
                 if self.connected:
                     self.connected = False
