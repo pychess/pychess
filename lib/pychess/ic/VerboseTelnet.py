@@ -1,3 +1,4 @@
+import collections
 import re
 
 from pychess.System.Log import log
@@ -16,9 +17,10 @@ class Prediction:
     def __init__ (self, callback, *regexps):
         self.callback = callback
         self.name = callback.__name__
-        
         self.regexps = []
+        self.matches = ()
         self.hash = hash(callback)
+
         for regexp in regexps:
             self.hash ^= hash(regexp)
             
@@ -35,7 +37,7 @@ class Prediction:
                self.regexps == other.regexps
 
 
-RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE = range(3)
+RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
 
 class LinePrediction (Prediction):
     def __init__ (self, callback, regexp):
@@ -44,28 +46,19 @@ class LinePrediction (Prediction):
     def handle(self, line):
         match = self.regexps[0].match(line)
         if match:
+            self.matches = (match.string,)
             self.callback(match)
             return RETURN_MATCH
         return RETURN_NO_MATCH
 
-class ManyLinesPrediction (Prediction):
-    def __init__ (self, callback, regexp):
-        Prediction.__init__(self, callback, regexp)
-        self.matchlist = []
-    
-    def handle(self, line):
-        match = self.regexps[0].match(line)
-        if match:
-            self.matchlist.append(match)
-            return RETURN_NEED_MORE
-        if self.matchlist:
-            self.callback(self.matchlist)
-        return RETURN_NO_MATCH
-
-class NLinesPrediction (Prediction):
+class MultipleLinesPrediction (Prediction):
     def __init__ (self, callback, *regexps):
         Prediction.__init__(self, callback, *regexps)
         self.matchlist = []
+
+class NLinesPrediction (MultipleLinesPrediction):
+    def __init__ (self, callback, *regexps):
+        MultipleLinesPrediction.__init__(self, callback, *regexps)
     
     def handle(self, line):
         regexp = self.regexps[len(self.matchlist)]
@@ -73,16 +66,16 @@ class NLinesPrediction (Prediction):
         if match:
             self.matchlist.append(match)
             if len(self.matchlist) == len(self.regexps):
+                self.matches = [m.string for m in self.matchlist]
                 self.callback(self.matchlist)
                 del self.matchlist[:]
                 return RETURN_MATCH
             return RETURN_NEED_MORE
         return RETURN_NO_MATCH
 
-class FromPlusPrediction (Prediction):
+class FromPlusPrediction (MultipleLinesPrediction):
     def __init__ (self, callback, regexp0, regexp1):
-        Prediction.__init__(self, callback, regexp0, regexp1)
-        self.matchlist = []
+        MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1)
     
     def handle (self, line):
         if not self.matchlist:
@@ -96,15 +89,15 @@ class FromPlusPrediction (Prediction):
                 self.matchlist.append(match)
                 return RETURN_NEED_MORE
             else:
+                self.matches = [m.string for m in self.matchlist]
                 self.callback(self.matchlist)
                 del self.matchlist[:]
-                return RETURN_NO_MATCH
+                return RETURN_MATCH_END
         return RETURN_NO_MATCH
 
-class FromToPrediction (Prediction):
+class FromToPrediction (MultipleLinesPrediction):
     def __init__ (self, callback, regexp0, regexp1):
-        Prediction.__init__(self, callback, regexp0, regexp1)
-        self.matchlist = []
+        MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1)
     
     def handle (self, line):
         if not self.matchlist:
@@ -115,8 +108,8 @@ class FromToPrediction (Prediction):
         else:
             match = self.regexps[1].match(line)
             if match:
-                #print "FromToPrediction %s (to) match: %s" % (self.name, line)
                 self.matchlist.append(match)
+                self.matches = [m if type(m) is str else m.string for m in self.matchlist]
                 self.callback(self.matchlist)
                 del self.matchlist[:]
                 return RETURN_MATCH
@@ -130,10 +123,8 @@ class PredictionsTelnet:
         self.telnet = telnet
         self.predictions = predictions
         self.reply_cmd_dict = reply_cmd_dict
-
+        self.lines = collections.deque()
         self.consolehandler = None
-      
-        self.__state = None
         self.__linePrefix = None
         self.__block_mode = False
         self.__command_id = 0
@@ -147,89 +138,86 @@ class PredictionsTelnet:
 
     def setBlockModeOn(self):
         self.__block_mode = True
-
-    def handleSomeText (self):
-        line = self.telnet.readline().strip()
-        if self.__block_mode and self._inReply:
-            id, code, text = self._inReply
-            if line.endswith(BLOCK_END):
-                self._inReply = None
-                line = line[:-1]
-                self.handle_command_reply(id, code, "%s\n%s" % (text, line))
-            else:
-                self._inReply = (id, code, "%s\n%s" % (text, line))
-            return
+    
+    def get_line (self):
+        block_code = None
+        try:
+            line, block_code = self.lines.popleft()
+        except IndexError:
+            line = self.telnet.readline().strip()
         
         if line.startswith(self.getLinePrefix()):
             line = line[len(self.getLinePrefix())+1:]
-
-        if self.__block_mode:
-            if line.startswith(BLOCK_START):
-                line = line[1:]
-                parts = line.split(BLOCK_SEPARATOR)
-                if len(parts) == 3:
-                    id, code, text = parts
-                elif len(parts) == 4:
-                    id, code, error_code, text = parts
-                else:
-                    print "Posing not supported yet..."
-                    return
-                line = text
-                if text.endswith(BLOCK_END):
-                    line = text[:-1]
-                    self.handle_command_reply(id, code, line)
-                else:
-                    self._inReply = (id, code, line)
-                return
         
-        self.parseNormalLine(line)
-
-    def parseNormalLine(self, line, block_code=None):
+        if self.__block_mode and line.startswith(BLOCK_START):
+            line, block_code = self.parse_cmd_reply(line)
+            
         log.debug(line+"\n", (self.telnet.name, "lines"))
-        origLine = line
-
-        if self.__state:
-            prediction = self.__state
-            answer = self.__state.handle(line)
-            if answer != RETURN_NO_MATCH:
-                log.debug(line+"\n", (self.telnet.name, prediction.name))
-            if answer in (RETURN_NO_MATCH, RETURN_MATCH):
-                self.__state = None
-            if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                if self.consolehandler is not None:
-                    self.consolehandler.handle(line, block_code)
-                return
+        if self.consolehandler is not None:
+            self.consolehandler.handle(line, block_code)
         
-        if not self.__state:
-            preds = self.reply_cmd_dict[block_code] if block_code in self.reply_cmd_dict else self.predictions
-            for prediction in preds:
-                answer = prediction.handle(line)
-                if answer != RETURN_NO_MATCH:
-                    log.debug(line+"\n", (self.telnet.name, prediction.name))
-                if answer == RETURN_NEED_MORE:
-                    self.__state = prediction
-                if answer in (RETURN_MATCH, RETURN_NEED_MORE):
-                    if self.consolehandler is not None:
-                        self.consolehandler.handle(line, block_code)
-                    break
-            else:
-                if self.consolehandler is not None:
-                    self.consolehandler.handle(line)
-                log.debug(origLine+"\n", (self.telnet.name, "nonmatched"))
+        return line, block_code
     
+    def parse_cmd_reply (self, line):
+        parts = line[1:].split(BLOCK_SEPARATOR)
+        if len(parts) == 3:
+            id, code, text = parts
+        elif len(parts) == 4:
+            id, code, error_code, text = parts
+        else:
+            log.warn("Posing not supported yet\n", (self.telnet.name, "lines"))
+            return
+        code = int(code)
+        line = text if text else self.telnet.readline().strip()
+        
+        while not line.endswith(BLOCK_END):
+            self.lines.append((line, code))
+            line = self.telnet.readline().strip()
+        self.lines.append((line[:-1], code))
+        
+        log.debug("%s %s %s\n" %
+                  (id, code, "\n".join(line[0] for line in self.lines)),
+                  (self.telnet.name, "command_reply"))
+        return self.lines.popleft()
+    
+    def parse_line(self, line):
+        line, code = line
+        if not line: return # TODO: necessary?
+        
+        for p in (reversed(self.reply_cmd_dict[code]) if code and code in \
+                self.reply_cmd_dict else self.predictions):
+#            print "parse_line: trying prediction %s for line '%s'" % (p.name, line)
+            answer = self.test_prediction(p, line, code)
+            if answer in (RETURN_MATCH, RETURN_MATCH_END):
+                log.debug("\n".join(p.matches)+"\n", (self.telnet.name, p.name))
+                break
+        else:
+            log.debug(line+"\n", (self.telnet.name, "nonmatched"))
+    
+    def test_prediction (self, prediction, line, code):
+        lines = []
+        answer = prediction.handle(line)        
+        while answer is RETURN_NEED_MORE:
+            line, code = self.get_line()
+            lines.append(line)
+            answer = prediction.handle(line)
+        
+        if lines and answer not in (RETURN_MATCH, RETURN_MATCH_END):
+            for line in reversed(lines):
+                self.lines.appendleft((line, code))
+        elif answer is RETURN_MATCH_END:
+            self.lines.appendleft((line, code)) # re-test last line that didn't match
+            
+        return answer
+        
     def run_command(self, text):
         if self.__block_mode:
-            # TODO: reuse id after command reply hadled
+            # TODO: reuse id after command reply handled
             self.__command_id += 1
             text = "%s %s\n" % (self.__command_id, text)
             return self.telnet.write(text)
         else:
             return self.telnet.write("%s\n" % text)
-
-    def handle_command_reply(self, id, code, text):
-        for line in text.splitlines():
-            self.parseNormalLine(line, int(code))
-        log.debug("%s %s %s" % (id, code, text) + "\n", (self.telnet.name, "command_reply"))
     
     def close (self):
         self.telnet.close()
