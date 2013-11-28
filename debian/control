@@ -1,41 +1,75 @@
 Source: pychess
 Section: games
 Priority: optional
-Maintainer: Thijs Vermeir <thijsvermeir@gmail.com>
-XS-Python-Version: >= 2.5
-Build-Depends: debhelper (>= 5.0.38), cdbs (>= 0.4.43), python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6), quilt
-Standards-Version: 3.7.2
+Maintainer: Varun Hiremath <varun@debian.org>
+Build-Depends: debhelper (>= 7.0.50~), python-all ( >=2.6.6-3~)
+Standards-Version: 3.9.3
+X-Python-Version: >= 2.5
+Homepage: http://pychess.org/
+Vcs-Hg: http://code.google.com/p/pychess/source/checkout
+Vcs-Browser: http://code.google.com/p/pychess/source/browse/
 
 Package: pychess
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
- gnome-icon-theme (>= 2.20.0), python-gtk2, python-gtksourceview2,
- python-glade2, python-gst0.10, python-rsvg, python-cairo,
- python-gobject
-XB-Python-Version: ${python:Versions}
-Description: chess graphical user interface for several chess engines
- The goal of pychess, is to provide a fully featured, nice looking,
- easy to use chess client for the gnome-desktop.
+ gnome-icon-theme (>= 2.20.0), python-gtk2, python-glade2,
+ python-gst0.10, python-gtksourceview2, python-cairo,
+ python-gobject, python-rsvg, gstreamer0.10-plugins-base,
+ libgaviotatb1, gaviotatb
+Description: chess graphical user interface for several chess engines and the Free Internet Chess Server (FICS)
+ PyChess is a fully featured, nice looking, and easy to use chess
+ client for the GNOME desktop. It is usable both for those totally new
+ to chess, as well as advanced users who want to use a computer to
+ further enhance their play.
  .
- The client should be usable both to those totally new to chess, and
- those who want to use a computer to further enchance their play.
+ PyChess has a builtin python chess engine and auto-detects most
+ popular chess engines (stockfish, Rybka, Houdini, Shredder, GNU Chess,
+ Crafty, Fruit, and many more).  All other engines which aren't
+ auto-detected can be manually added through the Engines dialog. Any
+ added or detected engine can be configured and fine-tuned in the
+ Engines dialog. These engines are available as opponents, and are used
+ to provide hints during games (via colored move arrows), to show
+ analysis in the Hints panel, and to show scores in the Score panel
+ (future). The Hints Panel also shows opening book moves for any
+ configured opening books, and end-game analysis using configured
+ Gaviota end-game tablebases (both on-disk and on-line). Both the
+ opening book and end-game tablebases locations can be configured in
+ the Preferences dialog.
  .
- Features include:
-  CECP and UCI Engine support
-  Free online play on the FICS chess servers
-  Read and writes the PGN, EPD and FEN chess fileformats
-  Builtin python based engine
-  Undo and pause functions
-  Board and piece animation
+ When you get sick of playing computer players you can login to FICS
+ and play against people all over the world. You can also observe other
+ games being played, create up to three custom seek profiles, browse
+ other players on-line and view their profiles, login and resume an
+ unfinished game after being disconnected, play any supported chess
+ variant, analyze both observed and completed games using any
+ configured analyzer, and chat with your opponent and anyone else
+ online. PyChess also has a built-in Timeseal client, so you won't lose
+ clock time during a game due to lag, and pre-move support, which means
+ you can select a piece, start dragging it, or even make a complete
+ move before your opponent has made their move (which will then be made
+ automatically for you when your opponent completes their move without
+ loss of clock time).
+ .
+ PyChess has many other features including:
+  CECP and UCI chess engine support with per-engine settings configurations
+  Free Internet Chess Server (FICS) support (http://www.freechess.org/)
+  Pre-move support (http://en.wikipedia.org/wiki/Premove)
+  Timeseal support for FICS
+  Built-in python based chess engine
+  Polyglot opening book support
+  Gaviota chess endgame tablebases support
+  Hint and Spy move arrows
+  Hint, Score, and Annotation panels
+  Play, examine, and analyze games in multiple game tabs
+  18 non-standard chess variants including Chess960, Suicide, Random/Shuffle, Piece Odds, and Atomic 
+  Reads and writes PGN, EPD and FEN chess file formats
+  Undo and pause chess games
+  Move animation
   Drag and drop
-  Tabbed interface
-  Hints and spyarrows
-  Openingbook sidepanel using Polyglot format
-  Scoreplot sidepanel
-  "Enter game" in pgn dialog
-  Internationalised or figure pieces in notation
-  Optional sounds
+  Optional game move and event sounds
+  Chess piece themes with 40 built-in piece themes
   Legal move highlighting
-  A nice and accesible look.
- .
-  Homepage: http://pychess.googlepages.com/
+  Direct copy+paste pgn game input via Enter Game Notation open-game dialog
+  Internationalised text and Figurine Algebraic Notation (FAN) support
+  Translated into 38 languages (languages with +5% strings translated) 
+  Easy to use and intuitive look and feel
