@@ -446,8 +446,9 @@ class PyChess:
 
 def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, ics_port):
     # Start logging
-    Log.LOG_LEVEL = logging.WARNING if no_debug is True else logging.DEBUG
-    Log.set_log_emitter(log_viewer)
+    log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
+    if log_viewer:
+        Log.set_gui_log_emitter()
 
     pychess = PyChess(log_viewer, chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
@@ -457,7 +458,7 @@ def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, 
     gtk.gdk.threads_init()
     
     glock.debug = glock_debug
-    log.debug("PyChess %s %s rev. %s %s started\n" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
+    log.warning("PyChess %s %s rev. %s %s started\n" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     if thread_debug:
         start_thread_dump()
 
