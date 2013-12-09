@@ -45,4 +45,4 @@ class Sidepanel:
     
     def foretold_end (self, oracle, moves, endtype):
         endtype = endtype == DRAW and "draw" or "mate"
-        log.warn("Foresaw %s in %d moves!" % (endtype, moves))
+        log.warning("Foresaw %s in %d moves!" % (endtype, moves))

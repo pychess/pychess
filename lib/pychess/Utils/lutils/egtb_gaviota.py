@@ -48,7 +48,7 @@ class egtb_gaviota:
             tbPathContents = os.listdir(tbPath)
         except OSError, e:
             if configuredTbPath:
-                log.warn("Unable to open Gaviota TB folder: %s" % repr(e))
+                log.warning("Unable to open Gaviota TB folder: %s" % repr(e))
             return
         
         # Find files named *.gtb.cp# and pick the most common "#".
@@ -61,7 +61,7 @@ class egtb_gaviota:
         compressionScheme = max(zip(schemeCount, range(10)))
         if compressionScheme[0] == 0:
             if configuredTbPath:
-                log.warn("Could not find any Gaviota TB files in %s" % configuredTbPath)
+                log.warning("Could not find any Gaviota TB files in %s" % configuredTbPath)
             return
         compressionScheme = compressionScheme[1]
         
@@ -75,7 +75,7 @@ class egtb_gaviota:
         initInfo = self.tb_init(True, compressionScheme, self.pathList)
         self.initialized = ( self.tb_is_initialized() != 0 )
         if not self.initialized:
-            log.warn(initInfo or "Failed to initialize Gaviota EGTB library")
+            log.warning(initInfo or "Failed to initialize Gaviota EGTB library")
             self.pathList = self.tbpaths_done(self.pathList)
             return
         elif initInfo:
@@ -84,7 +84,7 @@ class egtb_gaviota:
         # TODO: Set up a WDL cache area once the engine can use it.
         self.initialized &= self.tbcache_init(4*1024*1024, 0)
         if not self.initialized:
-            log.warn("Failed to initialize Gaviota EGTB cache")
+            log.warning("Failed to initialize Gaviota EGTB cache")
             self.tb_done()
             self.pathList = self.tbpaths_done(self.pathList)
             return
@@ -113,7 +113,7 @@ class egtb_gaviota:
             if not board.opIsChecked():
                 result, depth = self.scoreGame(board, False, False)
                 if result is None:
-                    log.warn("An EGTB file does not have all its dependencies")
+                    log.warning("An EGTB file does not have all its dependencies")
                     board.popMove()
                     return []
                 scores.append( (move, result, depth) )
@@ -178,7 +178,7 @@ class egtb_gaviota:
         try:
             self.libgtb = CDLL(libName)
         except OSError:
-            log.warn("Failed to load Gaviota EGTB library %s" % libName)
+            log.warning("Failed to load Gaviota EGTB library %s" % libName)
             return None
         return self.libgtb
     

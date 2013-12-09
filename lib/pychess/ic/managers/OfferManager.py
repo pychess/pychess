@@ -130,7 +130,7 @@ class OfferManager (GObject):
             # don't need this
             return
         if offertype not in strToOfferType:
-            log.warn("OfferManager.onOfferAdd: Declining unknown offer type: " + \
+            log.warning("OfferManager.onOfferAdd: Declining unknown offer type: " + \
                 "offertype=%s parameters=%s index=%s\n" % (offertype, parameters, index))
             self.connection.client.run_command("decline %s" % index)
         offertype = strToOfferType[offertype]
@@ -160,7 +160,7 @@ class OfferManager (GObject):
                 try:
                     gametype = GAME_TYPES[gametype]
                 except KeyError:
-                    log.warn("OfferManager.onOfferAdd: auto-declining " + \
+                    log.warning("OfferManager.onOfferAdd: auto-declining " + \
                         "unknown offer type: '%s'\n" % gametype)
                     self.decline(offer)
                     del self.offers[offer.index]

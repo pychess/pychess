@@ -25,9 +25,6 @@ if "PYTHONPATH" in os.environ:
         os.path.abspath(p) for p in os.environ["PYTHONPATH"].split(os.pathsep))
 
 ###############################################################################
-# Use standard logging
-#from pychess.Utils import const
-#const.STANDARD_LOGGING = True
 from pychess.System import Log
 Log.DEBUG = False
 

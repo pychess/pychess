@@ -10,8 +10,6 @@ import sys
 from time import time
 
 from pychess.Utils import const
-const.STANDARD_LOGGING = True
-
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *

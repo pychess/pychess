@@ -198,7 +198,7 @@ class ChatManager (GObject):
     
     def onChannelLogLine (self, match):
         if not self.currentLogChannel:
-            log.warn("Recieved log line before channel was set")
+            log.warning("Recieved log line before channel was set")
             return
         h, m, s, handle, text = match.groups()
         time = self.convTime(int(h), int(m), int(s))

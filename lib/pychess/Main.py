@@ -4,6 +4,7 @@ import os
 import webbrowser
 import math
 import atexit
+import logging
 import signal
 import subprocess
 import urllib 
@@ -21,7 +22,6 @@ from pychess.Utils.const import HINT, NAME, SPY
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
-from pychess.widgets import LogDialog
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets.BorderBox import BorderBox
 from pychess.widgets import gamewidget
@@ -159,7 +159,7 @@ class GladeHandlers:
         uri = selection.data.strip()
         uris = uri.split()
         if len(uris) > 1:
-            log.warn("%d files were dropped. Only loading the first" % len(uris))
+            log.warning("%d files were dropped. Only loading the first" % len(uris))
         uri = uris[0]
         newGameDialog.LoadFileExtension.run(uri)
     
@@ -235,6 +235,7 @@ class GladeHandlers:
         gamewidget.getWidgets()["aboutdialog1"].show()
     
     def on_log_viewer1_activate (widget):
+        from pychess.widgets import LogDialog
         if widget.get_active():
             LogDialog.show()
         else: LogDialog.hide()
@@ -293,14 +294,14 @@ dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
 
 
 class PyChess:
-    def __init__(self, chess_file):
+    def __init__(self, log_viewer, chess_file):
         self.hg_rev = ""
         self.hg_date = ""
         
-        self.initGlade()
+        self.initGlade(log_viewer)
         self.handleArgs(chess_file)
     
-    def initGlade(self):
+    def initGlade(self, log_viewer):
         #=======================================================================
         # Init glade and the 'GladeHandlers'
         #=======================================================================
@@ -359,8 +360,12 @@ class PyChess:
         #=======================================================================
         
         #------------------------------------------------------------ Log dialog
-        LogDialog.add_destroy_notify(lambda: widgets["log_viewer1"].set_active(0))
-        
+        if log_viewer:
+            from pychess.widgets import LogDialog
+            LogDialog.add_destroy_notify(lambda: widgets["log_viewer1"].set_active(0))
+        else:
+            widgets["log_viewer1"].set_property('sensitive', False)
+            
         #---------------------------------------------------------- About dialog
         aboutdialog = widgets["aboutdialog1"]
         clb = aboutdialog.get_child().get_children()[1].get_children()[2]
@@ -439,16 +444,18 @@ class PyChess:
                 newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port):
-    pychess = PyChess(chess_file)
+def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, ics_port):
+    # Start logging
+    Log.LOG_LEVEL = logging.WARNING if no_debug is True else logging.DEBUG
+    Log.set_log_emitter(log_viewer)
+
+    pychess = PyChess(log_viewer, chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
     gtk.gdk.threads_init()
     
-    # Start logging
-    Log.DEBUG = False if no_debug is True else True
     glock.debug = glock_debug
     log.debug("PyChess %s %s rev. %s %s started\n" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     if thread_debug:

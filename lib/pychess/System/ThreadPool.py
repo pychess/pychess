@@ -45,7 +45,7 @@ class ThreadPool:
             else:
                 a = self.queue.get(timeout=5)
                 from pychess.System.Log import log
-                log.warn("Couldn't get a thread after 5s")
+                log.warning("Couldn't get a thread after 5s")
                 a = self.queue.get()
         
         a.func = lambda: func(*args, **kw)

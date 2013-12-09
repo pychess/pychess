@@ -1,96 +1,83 @@
 import os
 import sys
 import time
+import logging
 
-from pychess.Utils.const import LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR, STANDARD_LOGGING
+from prefix import getUserDataPrefix, addUserDataPrefix
 
-if STANDARD_LOGGING:
-    import logging as log
-    log.messages = []
-    log.connect = lambda log, messages: None
-else:
-    import gobject
-    from GtkWorker import EmitPublisher, Publisher
-    from prefix import getUserDataPrefix, addUserDataPrefix
+LOG_LEVEL = logging.DEBUG
 
-    MAXFILES = 10
-    DEBUG = True
-    labels = {LOG_DEBUG: "Debug", LOG_INFO: "Info", LOG_WARNING: "Warning", LOG_ERROR: "Error"}
+oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
+MAXFILES = 10
+if len(oldlogs) >= MAXFILES:
+    oldlogs.sort()
+    try:
+        os.remove(addUserDataPrefix(oldlogs[0]))
+    except OSError, e:
+        pass
+newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 
+logformat = "%(asctime)s %(task)s %(levelname)s: %(message)s"
 
-    class Log (gobject.GObject):
-        
-        __gsignals__ = {
-            "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
-        }                                              # list of (str, float, str, int)
-        
-        def __init__ (self, logpath):
-            gobject.GObject.__init__(self)
-            
-            self.file = open(logpath, "w")
-            
-            self.printTime = True
-            
-            # We store everything in this list, so that the LogDialog, which is
-            # imported a little later, will have all data ever given to Log.
-            # When Dialog inits, it will set this list to None, and we will stop
-            # appending data to it. Ugly? Somewhat I guess.
-            self.messages = []
-            
-            self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
-            self.publisher.start()
-        
-        def _format (self, task, message, type):
-            t = time.strftime ("%H:%M:%S")
-            return "%s %s %s: %s" % (t, task, labels[type], message)
-        
-        def _log (self, task, message, type):
-            if not message: return
-            
-            if self.messages != None:
-                self.messages.append((task, time.time(), message, type))
-            self.publisher.put((task, time.time(), message, type))
-            
-            if self.printTime:
-                message = self._format(task, message, type)
-            self.printTime = message.endswith("\n")
-            
-            try:
-                self.file.write(message)
-                self.file.flush()
-            except IOError, e:
-                if not type == LOG_ERROR:
-                    self.error("Unable to write '%s' to log file because of error: %s" % \
-                            (message, ", ".join(str(a) for a in e.args)))
-            
-            if type in (LOG_ERROR, LOG_WARNING) and task != "stdout":
-                print message
-        
-        def debug (self, message, task="Default"):
-            if DEBUG:
-                self._log (task, message, LOG_DEBUG)
-        
-        def info (self, message, task="Default"):
-            self._log (task, message, LOG_INFO)
-        
-        def warn (self, message, task="Default"):
-            self._log (task, message, LOG_WARNING)
-        
-        def error (self, message, task="Default"):
-            self._log (task, message, LOG_ERROR)
-
-    oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
-    if len(oldlogs) >= MAXFILES:
-        oldlogs.sort()
-        try:
-            os.remove(addUserDataPrefix(oldlogs[0]))
-        except OSError, e:
-            pass
-    newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-
-    log = Log(addUserDataPrefix(newName))
+logging.basicConfig(filename=addUserDataPrefix(newName), format=logformat, datefmt='%H:%M:%S', level=LOG_LEVEL)
 
 
+class ExtraAdapter(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        kwargs["extra"] = kwargs.get("extra", {"task": "Default"})
+        return msg, kwargs
+
+
+class LogEmitter():
+    messages = []
+    def connect(self, signal, messages):
+        return
+
+logemitter = LogEmitter()
+
+
+def set_log_emitter(log_viewer):
+    global logemitter
+    if log_viewer:
+        import gobject
+        from GtkWorker import EmitPublisher, Publisher
+
+        class LogEmitter(gobject.GObject):
+            __gsignals__ = {
+                "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
+            }                                              # list of (str, float, str, int)
+            def __init__ (self):
+                gobject.GObject.__init__(self)
+
+                # We store everything in this list, so that the LogDialog, which is
+                # imported a little later, will have all data ever given to Log.
+                # When Dialog inits, it will set this list to None, and we will stop
+                # appending data to it. Ugly? Somewhat I guess.
+                self.messages = []
+
+                self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
+                self.publisher.start()
+
+        class GLogHandler(logging.Handler):
+            def __init__ (self, emitter):
+                logging.Handler.__init__(self)
+                self.emitter = emitter
+                
+            def emit(self, record):
+                message = self.format(record)
+                if self.emitter.messages != None:
+                    self.emitter.messages.append((record.task, time.time(), message, record.levelname))
+                
+                self.emitter.publisher.put((record.task, time.time(), message, record.levelname))
+
+        logemitter = LogEmitter()
+        logger.addHandler(GLogHandler(logemitter))
+    
+
+logger = logging.getLogger()
+log = ExtraAdapter(logger, {})
+    
+    
 class LogPipe:
     def __init__ (self, to, flag=""):
         self.to = to
@@ -106,15 +93,13 @@ class LogPipe:
             else:
                 log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
         if log:
-            log.debug (data, self.flag)
-        #self.flush()
+            log.debug (data, extra={"task": self.flag})
     
     def flush (self):
         self.to.flush()
-        #log.debug (".flush()", self.flag)
     
     def fileno (self):
         return self.to.fileno()
 
-sys.stdout = LogPipe(sys.stdout, "stdout")
-sys.stderr = LogPipe(sys.stderr, "stdout")
+#sys.stdout = LogPipe(sys.stdout, "stdout")
+#sys.stderr = LogPipe(sys.stderr, "stdout")

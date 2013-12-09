@@ -466,7 +466,7 @@ class EnterNotationExtension (_GameInitializationMode):
                 lang = man.get_language('pgn')
                 cls.sourcebuffer.set_language(lang)
             else:
-                log.warn("Unable to load pgn syntax-highlighting.")
+                log.warning("Unable to load pgn syntax-highlighting.")
             cls.sourcebuffer.set_highlight_syntax(True)
         # Init old version
         else:
@@ -477,7 +477,7 @@ class EnterNotationExtension (_GameInitializationMode):
                     cls.sourcebuffer.set_language(lang)
                     break
             else:
-                log.warn("Unable to load pgn syntax-highlighting.")
+                log.warning("Unable to load pgn syntax-highlighting.")
             cls.sourcebuffer.set_highlight(True)
 
     @classmethod

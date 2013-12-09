@@ -60,9 +60,9 @@ class Pinger (GObject):
     
     def __handleDead (self, subprocess):
         if self.deadCount < self.restartsOnDead:
-            log.warn("Pinger died and restarted (%d/%d)\n" %
+            log.warning("Pinger died and restarted (%d/%d)\n" %
                      (self.deadCount+1, self.restartsOnDead),
-                     self.subproc.defname)
+                     extra={"task": self.subproc.defname})
             self.stop()
             self.start()
             self.deadCount += 1
