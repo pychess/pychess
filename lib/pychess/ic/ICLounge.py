@@ -125,7 +125,7 @@ class ICLounge (GObject):
         self.widgets["fics_lounge"].present()
     
     def on_connection_error (self, connection, error):
-        log.warn("ICLounge.on_connection_error: %s\n" % repr(error))
+        log.warning("ICLounge.on_connection_error: %s\n" % repr(error))
         self.close()
     
     @glock.glocked

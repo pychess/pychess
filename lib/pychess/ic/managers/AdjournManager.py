@@ -124,28 +124,28 @@ class AdjournManager (GObject):
         """ This is (and draw and abort) are possible even when one's
             opponent is not logged on """
         if not game.opponent.adjournment:
-            log.warn("AdjournManager.resign: no adjourned game vs %s\n" % game.opponent)
+            log.warning("AdjournManager.resign: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.resign: resigning adjourned game=%s\n" % game)
         self.connection.client.run_command("resign %s" % game.opponent.name)
     
     def draw (self, game):
         if not game.opponent.adjournment:
-            log.warn("AdjournManager.draw: no adjourned game vs %s\n" % game.opponent)
+            log.warning("AdjournManager.draw: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.draw: offering sdraw for adjourned game=%s\n" % game)
         self.connection.client.run_command("sdraw %s" % game.opponent.name)
     
     def abort (self, game):
         if not game.opponent.adjournment:
-            log.warn("AdjournManager.abort: no adjourned game vs %s\n" % game.opponent)
+            log.warning("AdjournManager.abort: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.abort: offering sabort for adjourned game=%s\n" % game)
         self.connection.client.run_command("sabort %s" % game.opponent.name)
     
     def resume (self, game):
         if not game.opponent.adjournment:
-            log.warn("AdjournManager.resume: no adjourned game vs %s\n" % game.opponent)
+            log.warning("AdjournManager.resume: no adjourned game vs %s\n" % game.opponent)
             return
         log.info("AdjournManager.resume: offering resume for adjourned game=%s\n" % game)
         self.connection.client.run_command("match %s" % game.opponent.name)

@@ -144,7 +144,7 @@ class UCIEngine (ProtocolEngine):
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
-                        log.warn("Hung up Error", self.defname)
+                        log.warning("Hung up Error", extra={"task":self.defname})
                         return e.errno
                     else: raise
             
@@ -191,7 +191,7 @@ class UCIEngine (ProtocolEngine):
 
     
     def setBoard (self, board):
-        log.debug("setBoardAtPly: board=%s\n" % board, self.defname)
+        log.debug("setBoardAtPly: board=%s\n" % board, extra={"task":self.defname})
         self._recordMove(board, None, None)
         
         if not self.readyMoves:
@@ -200,7 +200,7 @@ class UCIEngine (ProtocolEngine):
 
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s\n" % \
-            (board1, move, board2, self.board), self.defname)
+            (board1, move, board2, self.board), extra={"task":self.defname})
         # If the spactator engine analyzing an older position, let it do
         if self.board != board2:
             return
@@ -213,7 +213,7 @@ class UCIEngine (ProtocolEngine):
     
     def makeMove (self, board1, move, board2):
         log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s\n" % \
-            (move, self.pondermove, board1, board2, self.board), self.defname)
+            (move, self.pondermove, board1, board2, self.board), extra={"task":self.defname})
         assert self.readyMoves
         
         with self.moveLock:
@@ -267,7 +267,7 @@ class UCIEngine (ProtocolEngine):
     
     def setOptionInitialBoard (self, model):
         log.debug("setOptionInitialBoard: self=%s, model=%s\n" % \
-            (self, model), self.defname)
+            (self, model), extra={"task":self.defname})
         self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
@@ -306,7 +306,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def pause (self):
-        log.debug("pause: self=%s\n" % self, self.defname)
+        log.debug("pause: self=%s\n" % self, extra={"task":self.defname})
         self.engine.pause()
         return
         
@@ -316,7 +316,7 @@ class UCIEngine (ProtocolEngine):
             print >> self.engine, "stop"
     
     def resume (self):
-        log.debug("resume: self=%s\n" % self, self.defname)
+        log.debug("resume: self=%s\n" % self, extra={"task":self.defname})
         self.engine.resume()
         return
         
@@ -330,7 +330,7 @@ class UCIEngine (ProtocolEngine):
     
     def hurry (self):
         log.debug("hurry: self.waitingForMove=%s self.readyForStop=%s\n" % \
-            (self.waitingForMove, self.readyForStop), self.defname)
+            (self.waitingForMove, self.readyForStop), extra={"task":self.defname})
         # sending this more than once per move will crash most engines
         # so we need to send only the first one, and then ignore every "hurry" request
         # after that until there is another outstanding "position..go"
@@ -341,7 +341,7 @@ class UCIEngine (ProtocolEngine):
     
     def playerUndoMoves (self, moves, gamemodel):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
-            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
 
         self._recordMoveList(gamemodel)
         
@@ -351,12 +351,12 @@ class UCIEngine (ProtocolEngine):
             # if it is was our move before undo and it is still our move after undo
             # since we need to send the engine the new FEN in makeMove()
             log.debug("playerUndoMoves: putting 'int' into self.returnQueue=%s\n" % \
-                self.returnQueue.queue, self.defname)
+                self.returnQueue.queue, extra={"task":self.defname})
             self.returnQueue.put("int")
     
     def spectatorUndoMoves (self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
-            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
 
         self._recordMoveList(gamemodel)
         
@@ -384,7 +384,7 @@ class UCIEngine (ProtocolEngine):
             engineDiscoverer or use the getOption, getOptions and hasOption
             methods, while you are in your 'readyForOptions' signal handler """ 
         if self.readyMoves:
-            log.warn("Options set after 'readyok' are not sent to the engine", self.defname)
+            log.warning("Options set after 'readyok' are not sent to the engine", extra={"task":self.defname})
         self.optionsToBeSent[key] = value
         self.ponderOn = key=="Ponder" and value is True
     
@@ -411,7 +411,7 @@ class UCIEngine (ProtocolEngine):
     
     def _searchNow (self, ponderhit=False):
         log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s\n" % \
-            (self.needBestmove, ponderhit, self.board), self.defname)
+            (self.needBestmove, ponderhit, self.board), extra={"task":self.defname})
 
         with self.moveLock:
             commands = []
@@ -442,6 +442,8 @@ class UCIEngine (ProtocolEngine):
                     commands.append("position %s" % self.uciPosition)
 
                 commands.append("go infinite")
+                #TODO: Issue #722: Add an option for maximum hint/spy analysis time with sensible default
+                #commands.append("go movetime 3000")
             
             if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
@@ -452,7 +454,7 @@ class UCIEngine (ProtocolEngine):
             if self.needBestmove:
                 self.commands.append(commands)
                 log.debug("_searchNow: self.needBestmove==True, appended to self.commands=%s\n" % \
-                    self.commands, self.defname)
+                    self.commands, extra={"task":self.defname})
             else:
                 for command in commands:
                     print >> self.engine, command
@@ -531,14 +533,14 @@ class UCIEngine (ProtocolEngine):
                 
                 if self.ignoreNext:
                     log.debug("__parseLine: line='%s' self.ignoreNext==True, returning\n" % \
-                        line.strip(), self.defname)
+                        line.strip(), extra={"task":self.defname})
                     self.ignoreNext = False
                     self.readyForStop = True
                     return
                 
                 if not self.waitingForMove:
-                    log.warn("__parseLine: self.waitingForMove==False, ignoring move=%s\n" % \
-                        parts[1], self.defname)
+                    log.warning("__parseLine: self.waitingForMove==False, ignoring move=%s\n" % \
+                        parts[1], extra={"task":self.defname})
                     self.pondermove = None
                     return
                 self.waitingForMove = False
@@ -553,13 +555,13 @@ class UCIEngine (ProtocolEngine):
                     # This is critical. To avoid game stalls, we need to resign on
                     # behalf of the engine.
                     log.error("__parseLine: move=%s didn't validate, putting 'del' in returnQueue. self.board=%s\n" % \
-                        (repr(move), self.board), self.defname)
+                        (repr(move), self.board), extra={"task":self.defname})
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
                 self._recordMove(self.board.move(move), move, self.board)
                 log.debug("__parseLine: applied move=%s to self.board=%s\n" % \
-                    (move, self.board), self.defname)
+                    (move, self.board), extra={"task":self.defname})
                 
                 if self.ponderOn:
                     self.pondermove = None
@@ -580,7 +582,7 @@ class UCIEngine (ProtocolEngine):
                 
                 self.returnQueue.put(move)
                 log.debug("__parseLine: put move=%s into self.returnQueue=%s\n" % \
-                    (move, self.returnQueue.queue), self.defname)
+                    (move, self.returnQueue.queue), extra={"task":self.defname})
                 return
         
         #----------------------------------------------------------- An Analysis
@@ -606,7 +608,7 @@ class UCIEngine (ProtocolEngine):
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
                 log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s\n" % \
-                    (' '.join(movstrs),e), self.defname)
+                    (' '.join(movstrs),e), extra={"task":self.defname})
                 return
             
             if multipv <= len(self.analysis):
@@ -619,7 +621,7 @@ class UCIEngine (ProtocolEngine):
         if self.mode != NORMAL and parts[0] == "bestmove":
             with self.moveLock:
                 log.debug("__parseLine: processing analyzer bestmove='%s'\n" % \
-                    line.strip(), self.defname)
+                    line.strip(), extra={"task":self.defname})
                 self.needBestmove = False
                 self.__sendQueuedGo(sendlast=True)
                 return
@@ -627,7 +629,7 @@ class UCIEngine (ProtocolEngine):
         #  Stockfish complaining it received a 'stop' without a corresponding 'position..go'
         if line.strip() == "Unknown command: stop":
             with self.moveLock:
-                log.debug("__parseLine: processing '%s'\n" % line.strip(), self.defname)
+                log.debug("__parseLine: processing '%s'\n" % line.strip(), extra={"task":self.defname})
                 self.ignoreNext = False
                 self.needBestmove = False
                 self.readyForStop = False
@@ -663,7 +665,7 @@ class UCIEngine (ProtocolEngine):
                     print >> self.engine, command
                 self.needBestmove = True
                 self.readyForStop = True
-                log.debug("__sendQueuedGo: sent queued go=%s\n" % commands, self.defname)
+                log.debug("__sendQueuedGo: sent queued go=%s\n" % commands, extra={"task":self.defname})
 
     #===========================================================================
     #    Info

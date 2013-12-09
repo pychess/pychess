@@ -222,7 +222,3 @@ MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
 ################################################################################
 
 SUBPROCESS_PTY, SUBPROCESS_SUBPROCESS, SUBPROCESS_FORK = range(3)
-
-LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR = range(4)
-
-STANDARD_LOGGING = False

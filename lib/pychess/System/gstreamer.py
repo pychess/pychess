@@ -37,7 +37,7 @@ else:
                 # Therefore we really can't do anything to test.
                 # self.emit("error", message)
                 simpleMessage, advMessage = message.parse_error()
-                log.warn("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
+                log.warning("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
                 self.__del__()
             elif message.type == gst.MESSAGE_EOS:
                 self.emit("end")

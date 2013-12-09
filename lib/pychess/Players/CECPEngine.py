@@ -3,6 +3,7 @@ import Queue
 import itertools
 import re
 import time
+
 import gtk, gobject
 
 from pychess.System import glock
@@ -218,7 +219,7 @@ class CECPEngine (ProtocolEngine):
                     # time to self.timeout
                     r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
             except Queue.Empty:
-                log.warn("Got timeout error\n", self.defname)
+                log.warning("Got timeout error\n", extra={"task":self.defname})
                 self.emit("readyForOptions")
                 self.emit("readyForMoves")
             else:
@@ -290,7 +291,7 @@ class CECPEngine (ProtocolEngine):
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
-                        log.warn("Hung up Error", self.defname)
+                        log.warning("Hung up Error", extra={"task":self.defname})
                         return e.errno
                     else: raise
             
@@ -348,7 +349,7 @@ class CECPEngine (ProtocolEngine):
             @return: The move the engine decided to make
         """
         log.debug("makeMove: move=%s self.movenext=%s board1=%s board2=%s self.board=%s\n" % \
-            (move, self.movenext, board1, board2, self.board), self.defname)
+            (move, self.movenext, board1, board2, self.board), extra={"task":self.defname})
         assert self.readyMoves
         
         self.boardLock.acquire()
@@ -371,7 +372,7 @@ class CECPEngine (ProtocolEngine):
         # Parse outputs
         r = self.returnQueue.get()
         if r == "not ready":
-            log.warn("Engine seems to be protover=2, but is treated as protover=1", self.defname)
+            log.warning("Engine seems to be protover=2, but is treated as protover=1", extra={"task":self.defname})
             r = self.returnQueue.get()
         if r == "ready":
             r = self.returnQueue.get()
@@ -439,7 +440,7 @@ class CECPEngine (ProtocolEngine):
     
     def setOptionVariant (self, variant):
         if self.features["variants"] is None:
-            log.warn("setOptionVariant: engine doesn't support variants\n", self.defname)
+            log.warning("setOptionVariant: engine doesn't support variants\n", extra={"task":self.defname})
             return
         
         if variant in variants.values() and not variant.standard_rules:
@@ -515,7 +516,7 @@ class CECPEngine (ProtocolEngine):
             engineDiscoverer or use the getOption, getOptions and hasOption
             methods, while you are in your 'readyForOptions' signal handler """ 
         if self.readyMoves:
-            log.warn("Options set after 'readyok' are not sent to the engine", self.defname)
+            log.warning("Options set after 'readyok' are not sent to the engine", extra={"task":self.defname})
         if key == "cores":
             self.optionQueue.append("cores %s" % value)
         elif key == "memory":
@@ -535,7 +536,7 @@ class CECPEngine (ProtocolEngine):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         
-        log.debug("pause: self=%s\n" % self, self.defname)
+        log.debug("pause: self=%s\n" % self, extra={"task":self.defname})
         self.engine.pause()
         return
         
@@ -549,7 +550,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def resume (self):
-        log.debug("resume: self=%s\n" % self, self.defname)
+        log.debug("resume: self=%s\n" % self, extra={"task":self.defname})
         self.engine.resume()
         return
         
@@ -564,7 +565,7 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def hurry (self):
         log.debug("hurry: self.waitingForMove=%s self.readyForMoveNowCommand=%s\n" % \
-            (self.waitingForMove, self.readyForMoveNowCommand), self.defname)
+            (self.waitingForMove, self.readyForMoveNowCommand), extra={"task":self.defname})
         if self.waitingForMove and self.readyForMoveNowCommand:
             self.__tellEngineToMoveNow()
             self.readyForMoveNowCommand = False
@@ -572,7 +573,7 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def spectatorUndoMoves (self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
-            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
             self.__printColor()
@@ -591,7 +592,7 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def playerUndoMoves (self, moves, gamemodel):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
-            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), self.defname)
+            (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         
         if gamemodel.curplayer != self and moves % 2 == 1:
             # Interrupt if we were searching, but should no longer do so
@@ -671,7 +672,7 @@ class CECPEngine (ProtocolEngine):
             self.mode = INVERSE_ANALYZING
         else:
             self.mode = ANALYZING
-        
+
         print >> self.engine, "post"
         print >> self.engine, "analyze"
         
@@ -679,7 +680,7 @@ class CECPEngine (ProtocolEngine):
         # http://code.google.com/p/pychess/issues/detail?id=515
         if "crafty" in self.features["myname"].lower():
             print >> self.engine, "noise 0"
-    
+   
     def __printColor (self):
         if self.features["colors"] or self.mode == INVERSE_ANALYZING:
             if self.board.color == WHITE:
@@ -724,14 +725,14 @@ class CECPEngine (ProtocolEngine):
     
     def _blockTillMove (self):
         saved_state = self.boardLock._release_save()
-        log.debug("_blockTillMove(): acquiring self.movecon lock\n", self.defname)
+        log.debug("_blockTillMove(): acquiring self.movecon lock\n", extra={"task":self.defname})
         self.movecon.acquire()
-        log.debug("_blockTillMove(): self.movecon acquired\n", self.defname)
+        log.debug("_blockTillMove(): self.movecon acquired\n", extra={"task":self.defname})
         try:
-            log.debug("_blockTillMove(): doing self.movecon.wait\n", self.defname)
+            log.debug("_blockTillMove(): doing self.movecon.wait\n", extra={"task":self.defname})
             self.movecon.wait()
         finally:
-            log.debug("_blockTillMove(): releasing self.movecon..\n", self.defname)
+            log.debug("_blockTillMove(): releasing self.movecon..\n", extra={"task":self.defname})
             self.movecon.release()
             self.boardLock._acquire_restore(saved_state)
     
@@ -748,7 +749,7 @@ class CECPEngine (ProtocolEngine):
             # Debug line which we shall ignore as specified in CECPv2 specs
             return
 
-#        log.debug("__parseLine: line=\"%s\"\n" % line.strip(), self.defname)
+#        log.debug("__parseLine: line=\"%s\"\n" % line.strip(), extra={"task":self.defname})
         parts = whitespaces.split(line.strip())
         
         if parts[0] == "pong":
@@ -757,8 +758,8 @@ class CECPEngine (ProtocolEngine):
         
         # Illegal Move
         if parts[0].lower().find("illegal") >= 0:
-            log.warn("__parseLine: illegal move: line=\"%s\", board=%s" \
-                % (line.strip(), self.board), self.defname)
+            log.warning("__parseLine: illegal move: line=\"%s\", board=%s" \
+                % (line.strip(), self.board), extra={"task":self.defname})
             if parts[-2] == "sd" and parts[-1].isdigit():
                 print >> self.engine, "depth", parts[-1] 
             return
@@ -774,7 +775,7 @@ class CECPEngine (ProtocolEngine):
                 movestr = False
             
             if movestr:
-                log.debug("__parseLine: acquiring self.boardLock\n", self.defname)
+                log.debug("__parseLine: acquiring self.boardLock\n", extra={"task":self.defname})
                 self.waitingForMove = False
                 self.readyForMoveNowCommand = False
                 self.boardLock.acquire()
@@ -783,7 +784,7 @@ class CECPEngine (ProtocolEngine):
                         # If engine was set in pause just before the engine sent its
                         # move, we ignore it. However the engine has to know that we
                         # ignored it, and thus we step it one back
-                        log.info("__parseLine: Discarding engine's move: %s\n" % movestr, self.defname)
+                        log.info("__parseLine: Discarding engine's move: %s\n" % movestr, extra={"task":self.defname})
                         print >> self.engine, "undo"
                         return
                     else:
@@ -800,7 +801,7 @@ class CECPEngine (ProtocolEngine):
                         self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                         return
                 finally:
-                    log.debug("__parseLine(): releasing self.boardLock\n", self.defname)
+                    log.debug("__parseLine(): releasing self.boardLock\n", extra={"task":self.defname})
                     self.boardLock.release()
                     self.movecon.acquire()
                     self.movecon.notifyAll()
@@ -831,7 +832,7 @@ class CECPEngine (ProtocolEngine):
                 except:
                     # Errors may happen when parsing "old" lines from
                     # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug('Ignored an "old" line from analyzer: %s\n' % mvstrs, self.defname)
+                    log.debug('Ignored an "old" line from analyzer: %s\n' % mvstrs, extra={"task":self.defname})
                     return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
@@ -912,7 +913,7 @@ class CECPEngine (ProtocolEngine):
                     i = rest.find('"')
                     j = rest.find("'")
                     if i + j == -2:
-                        log.warn("Missing endquotation in %s feature", self.defname)
+                        log.warning("Missing endquotation in %s feature", extra={"task":self.defname})
                         value = rest
                     elif min(i, j) != -1:
                         value = rest[:min(i, j)]
@@ -933,7 +934,7 @@ class CECPEngine (ProtocolEngine):
                         done1 = True
                         continue
                     elif value == 0:
-                        log.info("Adds %d seconds timeout\n" % TIME_OUT_SECOND, self.defname)
+                        log.info("Adds %d seconds timeout\n" % TIME_OUT_SECOND, extra={"task":self.defname})
                         # This'll buy you some more time
                         self.timeout = time.time()+TIME_OUT_SECOND
                         self.returnQueue.put("not ready")

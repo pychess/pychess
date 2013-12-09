@@ -39,7 +39,7 @@ class egtb_k4it:
         try:
             f = urllib.urlopen(url)
         except IOError, e:
-            log.warn("Unable to read endgame tablebase from the Internet: %s" % repr(e))
+            log.warning("Unable to read endgame tablebase from the Internet: %s" % repr(e))
             return []
         data = f.read()
         
@@ -81,12 +81,12 @@ class egtb_k4it:
                 if moves:
                     self.table[(fen,color)] = moves
                 elif color == board.color and board.opIsChecked():
-                    log.warn("Asked endgametable for a won position: %s" % fen)
+                    log.warning("Asked endgametable for a won position: %s" % fen)
                 elif color == board.color:
-                    log.warn("Couldn't get %s data for position %s.\nData was: %s" %
+                    log.warning("Couldn't get %s data for position %s.\nData was: %s" %
                              (reprColor[color], fen, repr(data)))
             except (KeyError, ValueError):
-                log.warn("Couldn't parse %s data for position %s.\nData was: %s" %
+                log.warning("Couldn't parse %s data for position %s.\nData was: %s" %
                          (reprColor[color], fen, repr(data)))
                 self.table[(fen, color)] = [] # Don't try again.
         
