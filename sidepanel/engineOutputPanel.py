@@ -351,7 +351,7 @@ class EngineOutput (gtk.VBox):
             # Detach from previous engine
             self.attached_engine.disconnect(self.attached_handler_id)
         # Attach to new engine:
-        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__() + "\n", engine.defname)
+        log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__() + "\n", extra={"task":engine.defname})
         self.attached_engine = engine
         self.attached_handler_id = engine.connect("line", self.parseLines)
         return
@@ -359,7 +359,7 @@ class EngineOutput (gtk.VBox):
     def detachEngine (self):
         # Detach from attached engine
         if not self.attached_engine is None:
-            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__() + "\n", self.attached_engine.defname)
+            log.debug("Detaching " + self.__str__() + " from engine " + self.attached_engine.__str__() + "\n", extra={"task":self.attached_engine.defname})
             self.attached_engine.disconnect(self.attached_handler_id)
             self.attached_engine = None
 

@@ -10,4 +10,4 @@ def load_icon(size, *alternatives):
     except:
         if alternatives:
             return load_icon(size, *alternatives)
-        log.warn("no %s icon in icon-theme-gnome" % name)
+        log.warning("no %s icon in icon-theme-gnome" % name)

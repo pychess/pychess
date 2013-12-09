@@ -142,7 +142,7 @@ class TimeSeal:
         self.writebuf = self.writebuf[i+1:]
         
         logstr = "*"*len(str) if self.sensitive else str
-        log.info(logstr+"\n", (self.name, "raw"))
+        log.info(logstr+"\n", extra={"task": (self.name, "raw")})
         str = self.encode(str)
         self.sock.send(str+"\n")
     
@@ -164,7 +164,7 @@ class TimeSeal:
             return
         
         if not self.connected:
-            log.debug(recv, (self.name, "raw"))
+            log.debug(recv, extra={"task": (self.name, "raw")})
             self.buf += recv
             
             if "FatICS" in self.buf:
@@ -176,7 +176,7 @@ class TimeSeal:
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace("\r","")
-            log.debug(recv, (self.name, "raw"))
+            log.debug(recv, extra={"task": (self.name, "raw")})
             
             for i in range(g_count):
                 print >> self, G_RESPONSE

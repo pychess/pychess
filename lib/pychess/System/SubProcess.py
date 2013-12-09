@@ -21,7 +21,7 @@ class TimeOutError (Exception): pass
 def searchPath (file, access=os.R_OK, altpath=None):
     if altpath and os.path.isfile(altpath):
         if not os.access (altpath, access):
-            log.warn("Not enough permissions on %s\n" % altpath)
+            log.warning("Not enough permissions on %s\n" % altpath)
         else:
             return altpath
 
@@ -59,7 +59,7 @@ class SubProcess (gobject.GObject):
         t = time.time()
         self.defname = (self.defname,
                         time.strftime("%H:%m:%%.3f",time.localtime(t)) % (t%60))
-        log.debug(path+"\n", self.defname)
+        log.debug(path+"\n", extra={"task":self.defname})
         
         argv = [str(u) for u in [self.path]+self.args]
         self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
@@ -115,8 +115,8 @@ class SubProcess (gobject.GObject):
         # Kill the engine on any signal but 'Resource temporarily unavailable'
         if code != errno.EWOULDBLOCK:
             if type(code) == str:
-                log.error(code+"\n", self.defname)
-            else: log.error(os.strerror(code)+"\n", self.defname)
+                log.error(code+"\n", extra={"task":self.defname})
+            else: log.error(os.strerror(code)+"\n", extra={"task":self.defname})
             self.emit("died")
             self.gentleKill()
     
@@ -131,27 +131,27 @@ class SubProcess (gobject.GObject):
             if not line:
                 return True
             if isstderr:
-                log.error(line, self.defname)
+                log.error(line, extra={"task":self.defname})
             else:
                 for word in self.warnwords:
                     if word in line:
-                        log.warn(line, self.defname)
+                        log.warning(line, extra={"task":self.defname})
                         break
-                else: log.debug(line, self.defname)
+                else: log.debug(line, extra={"task":self.defname})
             
             self.linePublisher.put(line)
 
     def write (self, data):
         if self.channelsClosed:
-            log.warn("Chan closed for %r" % data, self.defname)
+            log.warning("Chan closed for %r" % data, extra={"task":self.defname})
             return
-        log.info(data, self.defname)
+        log.info(data, extra={"task":self.defname})
         self.inChannel.write(data)
         if data.endswith("\n"):
             try:
                 self.inChannel.flush()
             except gobject.GError, e:
-                log.error(str(e)+". Last line wasn't sent.\n", self.defname)
+                log.error(str(e)+". Last line wasn't sent.\n", extra={"task":self.defname})
 
     def _wait4exit (self):
         try:

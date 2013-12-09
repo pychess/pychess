@@ -89,6 +89,7 @@ import pychess
 no_debug = False
 glock_debug = False
 thread_debug = False
+log_viewer = False
 
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 ics_host = None
@@ -111,6 +112,8 @@ else:
         help='turn on glock debugging output (WARNING: creates alot of output)')
     parser.add_argument('--thread-debug', action='store_true',
         help='turn on thread debugging output')
+    parser.add_argument('--log-viewer', action='store_true',
+        help='enable Log Viewer menu')
     parser.add_argument('--ics_host', action='store',
         help='the hostname of internet chess server (default is freechess.org)')
     parser.add_argument('--ics_port', action='store', type=int,
@@ -122,6 +125,7 @@ else:
     no_debug = args.no_debug
     glock_debug = args.glock_debug
     thread_debug = args.thread_debug
+    log_viewer = args.log_viewer
     chess_file = args.chess_file
     ics_host = args.ics_host
     ics_port = args.ics_port
@@ -130,4 +134,4 @@ else:
 # Let's rumble!
 
 import pychess.Main
-pychess.Main.run(no_debug, glock_debug, thread_debug, chess_file, ics_host, ics_port)
+pychess.Main.run(no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, ics_port)

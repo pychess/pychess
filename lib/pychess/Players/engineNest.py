@@ -74,7 +74,7 @@ class EngineDiscoverer (GObject, PooledThread):
         try:
             self._engines = json.load(open(self.jsonpath))
         except ValueError, e:
-            log.warn("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n" % (self.jsonpath,e))
+            log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n" % (self.jsonpath,e))
             os.rename(self.jsonpath, self.jsonpath+".bak")
             self._engines = deepcopy(backup)
         except IOError, e:
@@ -143,12 +143,12 @@ class EngineDiscoverer (GObject, PooledThread):
             subproc.prestart() # Sends the 'start line'
             subproc.start()
         except SubProcessError, e:
-            log.warn("Engine %s failed discovery: %s" % (engine["name"],e))
+            log.warning("Engine %s failed discovery: %s" % (engine["name"],e))
             self.emit("engine_failed", engine["name"], engine)
         except PlayerIsDead, e:
             # Check if the player died after engine_discovered by our own hands
             if not self.toBeRechecked[engine["name"]][1]:
-                log.warn("Engine %s failed discovery: %s" % (engine["name"],e))
+                log.warning("Engine %s failed discovery: %s" % (engine["name"],e))
                 self.emit("engine_failed", engine["name"], engine)
     
     def __discoverE2 (self, subproc, engine):
@@ -213,7 +213,7 @@ class EngineDiscoverer (GObject, PooledThread):
             backup_engine = (c for c in backup if c["name"] == engine["name"]).next()
             engine["country"] = backup_engine["country"]
         except StopIteration:
-            log.warn("Engine '%s' has not been tested and verified to work with PyChess\n" % \
+            log.warning("Engine '%s' has not been tested and verified to work with PyChess\n" % \
                 engine.get('name'))
             engine['recheck'] = True
 

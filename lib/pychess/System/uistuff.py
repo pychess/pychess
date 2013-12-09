@@ -160,7 +160,7 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
         try:
             v = conf.getStrict(key)
         except TypeError:
-            log.warn("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" % \
+            log.warning("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" % \
                      (key, type(conf.getStrict(key))))
             if first_value != None:
                 conf.set(key, first_value)
@@ -213,7 +213,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
         try:
             v = conf.getStrict(key)
         except TypeError:
-            log.warn("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" % \
+            log.warning("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" % \
                      (key, type(conf.getStrict(key))))
             if first_value != None:
                 conf.set(key, first_value)
@@ -224,7 +224,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
         conf.set(key, first_value)
         set_value(conf.getStrict(key))
     else:
-        log.warn("Didn't load widget \"%s\": no conf value and no first_value arg" % \
+        log.warning("Didn't load widget \"%s\": no conf value and no first_value arg" % \
                  widget_name)
 
 def saveDialogWidget (widget, widget_name, config_number, get_value_=None):

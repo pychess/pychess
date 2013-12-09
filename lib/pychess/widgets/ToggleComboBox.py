@@ -48,7 +48,7 @@ class ToggleComboBox (gtk.ToggleButton):
             raise TypeError
         if active == self._active: return
         if active >= len(self._items):
-            log.warn("Tried to set combobox to %d, but it has only got %d items"
+            log.warning("Tried to set combobox to %d, but it has only got %d items"
                      % (active, len(self._items)))
             return
         oldactive = self._active

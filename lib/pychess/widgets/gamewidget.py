@@ -528,7 +528,7 @@ class GameWidget (gobject.GObject):
         self.board.setLocked(locked)
         if not self.tabcontent.get_children(): return
         if len(self.tabcontent.child.get_children()) < 2:
-            log.warn("GameWidget.setLocked: Not removing last tabcontent child\n")
+            log.warning("GameWidget.setLocked: Not removing last tabcontent child\n")
             return
         glock.acquire()
         try:

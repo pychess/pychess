@@ -32,7 +32,7 @@ class Sidepanel:
             self.player = gamemodel.players[0]
             self.opplayer = gamemodel.players[1]
             if gamemodel.players[1].__type__ == LOCAL:
-                log.warn("Chatpanel loaded with two local players")
+                log.warning("Chatpanel loaded with two local players")
         elif gamemodel.players[1].__type__ == LOCAL:
             self.player = gamemodel.players[1]
             self.opplayer = gamemodel.players[0]
