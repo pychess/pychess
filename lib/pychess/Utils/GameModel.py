@@ -23,7 +23,7 @@ from const import *
 def undolocked (f):
     def newFunction(*args, **kw):
         self = args[0]
-        log.debug("undolocked: adding func to queue: %s %s %s\n" % \
+        log.debug("undolocked: adding func to queue: %s %s %s" % \
             (repr(f), repr(args), repr(kw)))
         self.undoQueue.put((f, args, kw))
         
@@ -33,7 +33,7 @@ def undolocked (f):
                 while True:
                     try:
                         func, args, kw = self.undoQueue.get_nowait()
-                        log.debug("undolocked: running queued func: %s %s %s\n" % \
+                        log.debug("undolocked: running queued func: %s %s %s" % \
                             (repr(func), repr(args), repr(kw)))
                         func(*args, **kw)
                     except Queue.Empty:
@@ -273,7 +273,7 @@ class GameModel (GObject, PooledThread):
         try:
             return self.players[self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s\n" % (self.players, self.getBoardAtPly(self.ply).color))
+            log.error("%s %s" % (self.players, self.getBoardAtPly(self.ply).color))
             raise
     curplayer = property(_get_curplayer)
     
@@ -281,7 +281,7 @@ class GameModel (GObject, PooledThread):
         try:
             return self.players[1 - self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s\n" % (self.players, 1 - self.getBoardAtPly(self.ply).color))
+            log.error("%s %s" % (self.players, 1 - self.getBoardAtPly(self.ply).color))
             raise
     waitingplayer = property(_get_waitingplayer)
     
@@ -295,14 +295,14 @@ class GameModel (GObject, PooledThread):
         try:
             return self.variations[variation][self._plyToIndex(ply)]
         except:
-            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.variations[variation])))
+            log.error("%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, len(self.variations[variation])))
             raise
     
     def getMoveAtPly (self, ply, variation=0):
         try:
             return Move(self.variations[variation][self._plyToIndex(ply)+1].board.lastMove)
         except IndexError:
-            log.error("%d\t%d\t%d\t%d\n" % (self.lowply, ply, self.ply, len(self.moves)))
+            log.error("%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
     
     def isObservationGame (self):
@@ -329,7 +329,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def offerRecieved (self, player, offer):
-        log.debug("GameModel.offerRecieved: offerer=%s %s\n" % (repr(player), offer))
+        log.debug("GameModel.offerRecieved: offerer=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -372,7 +372,7 @@ class GameModel (GObject, PooledThread):
         
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug("GameModel.offerRecieved: doing %s.offer(%s)\n" % \
+                log.debug("GameModel.offerRecieved: doing %s.offer(%s)" % \
                     (repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -382,7 +382,7 @@ class GameModel (GObject, PooledThread):
                     del self.offers[offer_]
     
     def withdrawRecieved (self, player, offer):
-        log.debug("GameModel.withdrawRecieved: withdrawer=%s %s\n" % \
+        log.debug("GameModel.withdrawRecieved: withdrawer=%s %s" % \
             (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -395,20 +395,20 @@ class GameModel (GObject, PooledThread):
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
     
     def declineRecieved (self, player, offer):
-        log.debug("GameModel.declineRecieved: decliner=%s %s\n" % (repr(player), offer))
+        log.debug("GameModel.declineRecieved: decliner=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
         if offer in self.offers and self.offers[offer] == opPlayer:
             del self.offers[offer]
-            log.debug("GameModel.declineRecieved: declining %s\n" % offer)
+            log.debug("GameModel.declineRecieved: declining %s" % offer)
             opPlayer.offerDeclined(offer)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
     
     def acceptRecieved (self, player, offer):
-        log.debug("GameModel.acceptRecieved: accepter=%s %s\n" % (repr(player), offer))
+        log.debug("GameModel.acceptRecieved: accepter=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -417,7 +417,7 @@ class GameModel (GObject, PooledThread):
             if offer.type == DRAW_OFFER:
                 self.end(DRAW, DRAW_AGREE)
             elif offer.type == TAKEBACK_OFFER:
-                log.debug("GameModel.acceptRecieved: undoMoves(%s)\n" % \
+                log.debug("GameModel.acceptRecieved: undoMoves(%s)" % \
                     (self.ply - offer.param))
                 self.undoMoves(self.ply - offer.param)
             elif offer.type == ADJOURN_OFFER:
@@ -499,7 +499,7 @@ class GameModel (GObject, PooledThread):
     ############################################################################
     
     def run (self):
-        log.debug("GameModel.run: Starting. self=%s\n" % self)
+        log.debug("GameModel.run: Starting. self=%s" % self)
         # Avoid racecondition when self.start is called while we are in self.end
         if self.status != WAITING_TO_START:
             return
@@ -508,7 +508,7 @@ class GameModel (GObject, PooledThread):
         for player in self.players + self.spectators.values():
             player.start()
         
-        log.debug("GameModel.run: emitting 'game_started' self=%s\n" % self)
+        log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
         self.emit("game_started")
         
         # Let GameModel end() itself on games started with loadAndStart()
@@ -519,20 +519,20 @@ class GameModel (GObject, PooledThread):
             curPlayer = self.players[curColor]
             
             if self.timemodel:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time\n" % \
+                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % \
                     (id(self), str(self.players), str(self.ply), str(curPlayer)))
                 curPlayer.updateTime(self.timemodel.getPlayerTime(curColor),
                                      self.timemodel.getPlayerTime(1-curColor))
             
             try:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()\n" % \
+                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % \
                     (id(self), str(self.players), self.ply, str(curPlayer)))
                 if self.ply > self.lowply:
                     move = curPlayer.makeMove(self.boards[-1],
                                               self.moves[-1],
                                               self.boards[-2])
                 else: move = curPlayer.makeMove(self.boards[-1], None, None)
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s\n" % \
+                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % \
                     (id(self), str(self.players), self.ply, move, str(curPlayer)))
             except PlayerIsDead, e:
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -545,16 +545,16 @@ class GameModel (GObject, PooledThread):
                     else: self.kill(BLACK_ENGINE_DIED)
                 break
             except TurnInterrupt:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt\n" % \
+                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % \
                     (id(self), str(self.players), self.ply))
                 continue
             
-            log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock\n" % \
+            log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock" % \
                 (id(self), str(self.players), self.ply))
             assert isinstance(move, Move), "%s" % repr(move)
             self.applyingMoveLock.acquire()
             try:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s\n" % \
+                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s" % \
                     (id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
@@ -582,7 +582,7 @@ class GameModel (GObject, PooledThread):
                 self.setOpening()
 
             finally:
-                log.debug("GameModel.run: releasing self.applyingMoveLock\n")
+                log.debug("GameModel.run: releasing self.applyingMoveLock")
                 self.applyingMoveLock.release()
     
     def checkStatus (self):
@@ -591,7 +591,7 @@ class GameModel (GObject, PooledThread):
             call mode.end(), or if moves have been undone from an otherwise
             ended position, this will call __resume and emit game_unended. """
          
-        log.debug("GameModel.checkStatus:\n")
+        log.debug("GameModel.checkStatus:")
         status, reason = getStatus(self.boards[-1])
          
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -612,7 +612,7 @@ class GameModel (GObject, PooledThread):
             self.emit("game_unended")
    
     def __pause (self):
-        log.debug("GameModel.__pause: %s\n" % self)
+        log.debug("GameModel.__pause: %s" % self)
         for player in self.players:
             player.pause()
         if self.timemodel:
@@ -649,14 +649,14 @@ class GameModel (GObject, PooledThread):
     
     def end (self, status, reason):
         if self.status not in UNFINISHED_STATES:
-            log.info("GameModel.end: Can't end a game that's already ended: %s %s\n" % (status, reason))
+            log.info("GameModel.end: Can't end a game that's already ended: %s %s" % (status, reason))
             return
         if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.needsSave = True
         
         #log.debug("Ending a game with status %d for reason %d\n%s" % (status, reason,
         #    "".join(traceback.format_list(traceback.extract_stack())).strip()))
-        log.debug("GameModel.end: players=%s, self.ply=%s: Ending a game with status %d for reason %d\n" % \
+        log.debug("GameModel.end: players=%s, self.ply=%s: Ending a game with status %d for reason %d" % \
             (repr(self.players), str(self.ply), status, reason))
         self.status = status
         self.reason = reason
@@ -719,9 +719,9 @@ class GameModel (GObject, PooledThread):
         
         log.debug("GameModel.undoMoves: players=%s, self.ply=%s, moves=%s, board=%s" % \
             (repr(self.players), self.ply, moves, self.boards[-1]))
-        log.debug("GameModel.undoMoves: acquiring self.applyingMoveLock\n")
+        log.debug("GameModel.undoMoves: acquiring self.applyingMoveLock")
         self.applyingMoveLock.acquire()
-        log.debug("GameModel.undoMoves: self.applyingMoveLock acquired\n")
+        log.debug("GameModel.undoMoves: self.applyingMoveLock acquired")
         try:
             self.emit("moves_undoing", moves)
             self.needsSave = True
@@ -736,14 +736,14 @@ class GameModel (GObject, PooledThread):
             for spectator in self.spectators.values():
                 spectator.spectatorUndoMoves(moves, self)
             
-            log.debug("GameModel.undoMoves: undoing timemodel\n")
+            log.debug("GameModel.undoMoves: undoing timemodel")
             if self.timemodel:
                 self.timemodel.undoMoves(moves)
             
             self.checkStatus()
             self.setOpening()
         finally:
-            log.debug("GameModel.undoMoves: releasing self.applyingMoveLock\n")
+            log.debug("GameModel.undoMoves: releasing self.applyingMoveLock")
             self.applyingMoveLock.release()
         
         self.emit("moves_undone", moves)

@@ -78,6 +78,8 @@ class InformationWindow:
         
         if type(message) == str:
             message = unicode(message, "utf-8", 'rawreplace')
+        if not message.endswith("\n"):
+            message = "%s\n" % message
         textview.get_buffer().insert_with_tags_by_name(
             textview.get_buffer().get_end_iter(), message, str(importance))
     

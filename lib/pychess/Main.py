@@ -458,7 +458,7 @@ def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, 
     gtk.gdk.threads_init()
     
     glock.debug = glock_debug
-    log.warning("PyChess %s %s rev. %s %s started\n" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
+    log.warning("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     if thread_debug:
         start_thread_dump()
 

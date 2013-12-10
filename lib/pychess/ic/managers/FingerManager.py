@@ -323,7 +323,7 @@ class FingerManager (GObject):
             elif groupdict["noteno"] != None:
                 finger.setNote(int(groupdict["noteno"])-1, groupdict["note"])
             else:
-                log.debug("Ignored fingerline: %s\n" % repr(match.group()))
+                log.debug("Ignored fingerline: %s" % repr(match.group()))
         
         self.emit ("fingeringFinished", finger)
     onFinger.BLKCMD = BLKCMD_FINGER

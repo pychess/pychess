@@ -142,7 +142,7 @@ class TimeSeal:
         self.writebuf = self.writebuf[i+1:]
         
         logstr = "*"*len(str) if self.sensitive else str
-        log.info(logstr+"\n", extra={"task": (self.name, "raw")})
+        log.info(logstr, extra={"task": (self.name, "raw")})
         str = self.encode(str)
         self.sock.send(str+"\n")
     

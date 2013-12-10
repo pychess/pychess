@@ -31,6 +31,6 @@ class ProtocolEngine (Engine):
         self.connected = True
         self.mode = NORMAL
         
-        log.debug(reprColor[color]+"\n", extra={"task":self.defname})
+        log.debug(reprColor[color], extra={"task":self.defname})
         
         self.movecon = Condition()

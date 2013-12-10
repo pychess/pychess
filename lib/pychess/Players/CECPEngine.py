@@ -219,7 +219,7 @@ class CECPEngine (ProtocolEngine):
                     # time to self.timeout
                     r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
             except Queue.Empty:
-                log.warning("Got timeout error\n", extra={"task":self.defname})
+                log.warning("Got timeout error", extra={"task":self.defname})
                 self.emit("readyForOptions")
                 self.emit("readyForMoves")
             else:
@@ -348,7 +348,7 @@ class CECPEngine (ProtocolEngine):
             @param board2: The board before the last move was made
             @return: The move the engine decided to make
         """
-        log.debug("makeMove: move=%s self.movenext=%s board1=%s board2=%s self.board=%s\n" % \
+        log.debug("makeMove: move=%s self.movenext=%s board1=%s board2=%s self.board=%s" % \
             (move, self.movenext, board1, board2, self.board), extra={"task":self.defname})
         assert self.readyMoves
         
@@ -389,8 +389,8 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def updateTime (self, secs, opsecs):
         if self.features["time"]:
-            print >> self.engine, "time", int(secs*100*self.timeHandicap)
-            print >> self.engine, "otim", int(opsecs*100)
+            print >> self.engine, "time %s" % int(secs*100*self.timeHandicap)
+            print >> self.engine, "otim %s" % int(opsecs*100)
     
     #===========================================================================
     #    Standard options
@@ -440,7 +440,7 @@ class CECPEngine (ProtocolEngine):
     
     def setOptionVariant (self, variant):
         if self.features["variants"] is None:
-            log.warning("setOptionVariant: engine doesn't support variants\n", extra={"task":self.defname})
+            log.warning("setOptionVariant: engine doesn't support variants", extra={"task":self.defname})
             return
         
         if variant in variants.values() and not variant.standard_rules:
@@ -536,7 +536,7 @@ class CECPEngine (ProtocolEngine):
             engine in force mode. By the specs the engine shouldn't ponder in
             force mode, but some of them do so anyways. """
         
-        log.debug("pause: self=%s\n" % self, extra={"task":self.defname})
+        log.debug("pause: self=%s" % self, extra={"task":self.defname})
         self.engine.pause()
         return
         
@@ -550,7 +550,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def resume (self):
-        log.debug("resume: self=%s\n" % self, extra={"task":self.defname})
+        log.debug("resume: self=%s" % self, extra={"task":self.defname})
         self.engine.resume()
         return
         
@@ -564,7 +564,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def hurry (self):
-        log.debug("hurry: self.waitingForMove=%s self.readyForMoveNowCommand=%s\n" % \
+        log.debug("hurry: self.waitingForMove=%s self.readyForMoveNowCommand=%s" % \
             (self.waitingForMove, self.readyForMoveNowCommand), extra={"task":self.defname})
         if self.waitingForMove and self.readyForMoveNowCommand:
             self.__tellEngineToMoveNow()
@@ -572,7 +572,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def spectatorUndoMoves (self, moves, gamemodel):
-        log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+        log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
@@ -591,7 +591,7 @@ class CECPEngine (ProtocolEngine):
     
     @semisynced
     def playerUndoMoves (self, moves, gamemodel):
-        log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s\n" % \
+        log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         
         if gamemodel.curplayer != self and moves % 2 == 1:
@@ -600,7 +600,7 @@ class CECPEngine (ProtocolEngine):
         
         self.__tellEngineToStopPlayingCurrentColor()
         if self.board and gamemodel.status in UNFINISHED_STATES:
-            log.debug("playerUndoMoves: self.__tellEngineToMoveNow(), self._blockTillMove()\n")
+            log.debug("playerUndoMoves: self.__tellEngineToMoveNow(), self._blockTillMove()")
             self.__tellEngineToMoveNow()
             self._blockTillMove()
         
@@ -725,14 +725,14 @@ class CECPEngine (ProtocolEngine):
     
     def _blockTillMove (self):
         saved_state = self.boardLock._release_save()
-        log.debug("_blockTillMove(): acquiring self.movecon lock\n", extra={"task":self.defname})
+        log.debug("_blockTillMove(): acquiring self.movecon lock", extra={"task":self.defname})
         self.movecon.acquire()
-        log.debug("_blockTillMove(): self.movecon acquired\n", extra={"task":self.defname})
+        log.debug("_blockTillMove(): self.movecon acquired", extra={"task":self.defname})
         try:
-            log.debug("_blockTillMove(): doing self.movecon.wait\n", extra={"task":self.defname})
+            log.debug("_blockTillMove(): doing self.movecon.wait", extra={"task":self.defname})
             self.movecon.wait()
         finally:
-            log.debug("_blockTillMove(): releasing self.movecon..\n", extra={"task":self.defname})
+            log.debug("_blockTillMove(): releasing self.movecon..", extra={"task":self.defname})
             self.movecon.release()
             self.boardLock._acquire_restore(saved_state)
     
@@ -749,7 +749,7 @@ class CECPEngine (ProtocolEngine):
             # Debug line which we shall ignore as specified in CECPv2 specs
             return
 
-#        log.debug("__parseLine: line=\"%s\"\n" % line.strip(), extra={"task":self.defname})
+#        log.debug("__parseLine: line=\"%s\"" % line.strip(), extra={"task":self.defname})
         parts = whitespaces.split(line.strip())
         
         if parts[0] == "pong":
@@ -775,7 +775,7 @@ class CECPEngine (ProtocolEngine):
                 movestr = False
             
             if movestr:
-                log.debug("__parseLine: acquiring self.boardLock\n", extra={"task":self.defname})
+                log.debug("__parseLine: acquiring self.boardLock", extra={"task":self.defname})
                 self.waitingForMove = False
                 self.readyForMoveNowCommand = False
                 self.boardLock.acquire()
@@ -784,7 +784,7 @@ class CECPEngine (ProtocolEngine):
                         # If engine was set in pause just before the engine sent its
                         # move, we ignore it. However the engine has to know that we
                         # ignored it, and thus we step it one back
-                        log.info("__parseLine: Discarding engine's move: %s\n" % movestr, extra={"task":self.defname})
+                        log.info("__parseLine: Discarding engine's move: %s" % movestr, extra={"task":self.defname})
                         print >> self.engine, "undo"
                         return
                     else:
@@ -801,7 +801,7 @@ class CECPEngine (ProtocolEngine):
                         self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                         return
                 finally:
-                    log.debug("__parseLine(): releasing self.boardLock\n", extra={"task":self.defname})
+                    log.debug("__parseLine(): releasing self.boardLock", extra={"task":self.defname})
                     self.boardLock.release()
                     self.movecon.acquire()
                     self.movecon.notifyAll()
@@ -832,7 +832,7 @@ class CECPEngine (ProtocolEngine):
                 except:
                     # Errors may happen when parsing "old" lines from
                     # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug('Ignored an "old" line from analyzer: %s\n' % mvstrs, extra={"task":self.defname})
+                    log.debug('Ignored an "old" line from analyzer: %s' % mvstrs, extra={"task":self.defname})
                     return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
@@ -886,7 +886,7 @@ class CECPEngine (ProtocolEngine):
         if parts[0][:4] == "tell" and \
                 parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
             
-            log.info("Ignoring tell %s: %s\n" % (parts[0][4:], " ".join(parts[1:])))
+            log.info("Ignoring tell %s: %s" % (parts[0][4:], " ".join(parts[1:])))
             return
         
         if "feature" in parts:
@@ -934,7 +934,7 @@ class CECPEngine (ProtocolEngine):
                         done1 = True
                         continue
                     elif value == 0:
-                        log.info("Adds %d seconds timeout\n" % TIME_OUT_SECOND, extra={"task":self.defname})
+                        log.info("Adds %d seconds timeout" % TIME_OUT_SECOND, extra={"task":self.defname})
                         # This'll buy you some more time
                         self.timeout = time.time()+TIME_OUT_SECOND
                         self.returnQueue.put("not ready")

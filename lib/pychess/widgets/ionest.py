@@ -28,7 +28,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
          A Savers.something module with a load function capable of loading it,
          An int of the game in file you want to load,
          The position from where to start the game) """
-    log.debug("ionest.generalStart: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
+    log.debug("ionest.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
     worker = GtkWorker (lambda w:
             workfunc(w, gamemodel, player0tup, player1tup, loaddata))
 
@@ -54,7 +54,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     worker.execute()
 
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
-    log.debug("ionest.workfunc: %s\n %s\n %s\n" % (gamemodel, player0tup, player1tup))
+    log.debug("ionest.workfunc: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
     gmwidg = gamewidget.GameWidget(gamemodel)
     worker.publish((gmwidg,gamemodel))
     
@@ -90,7 +90,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 gamemodel.curplayer.emit("offer", Offer(action, param=param))
         gmwidg.board.connect("action", lambda b,action,param: emit_action(action, param))
     
-    log.debug("ionest.workfunc: calling gamemodel.setPlayers(): %s\n" % (gamemodel))
+    log.debug("ionest.workfunc: calling gamemodel.setPlayers(): %s" % (gamemodel))
     gamemodel.setPlayers(players)
     
     # Starting
@@ -112,7 +112,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 player.setOptionInitialBoard(gamemodel)
         gamemodel.start()
     
-    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s\n" % \
+    log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s" % \
         (gmwidg, gamemodel))
     return gmwidg, gamemodel
 
