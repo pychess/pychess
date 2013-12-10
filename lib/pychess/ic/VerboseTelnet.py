@@ -152,7 +152,7 @@ class PredictionsTelnet:
         if self.__block_mode and line.startswith(BLOCK_START):
             line, block_code = self.parse_cmd_reply(line)
             
-        log.debug(line+"\n", extra={"task": (self.telnet.name, "lines")})
+        log.debug(line, extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler is not None:
             self.consolehandler.handle(line, block_code)
         
@@ -165,7 +165,7 @@ class PredictionsTelnet:
         elif len(parts) == 4:
             id, code, error_code, text = parts
         else:
-            log.warning("Posing not supported yet\n", extra={"task": (self.telnet.name, "lines")})
+            log.warning("Posing not supported yet", extra={"task": (self.telnet.name, "lines")})
             return
         code = int(code)
         line = text if text else self.telnet.readline().strip()
@@ -175,7 +175,7 @@ class PredictionsTelnet:
             line = self.telnet.readline().strip()
         self.lines.append((line[:-1], code))
         
-        log.debug("%s %s %s\n" %
+        log.debug("%s %s %s" %
                   (id, code, "\n".join(line[0] for line in self.lines)),
                   extra={"task": (self.telnet.name, "command_reply")})
         return self.lines.popleft()
@@ -189,10 +189,10 @@ class PredictionsTelnet:
 #            print "parse_line: trying prediction %s for line '%s'" % (p.name, line)
             answer = self.test_prediction(p, line, code)
             if answer in (RETURN_MATCH, RETURN_MATCH_END):
-                log.debug("\n".join(p.matches)+"\n", extra={"task": (self.telnet.name, p.name)})
+                log.debug("\n".join(p.matches), extra={"task": (self.telnet.name, p.name)})
                 break
         else:
-            log.debug(line+"\n", extra={"task": (self.telnet.name, "nonmatched")})
+            log.debug(line, extra={"task": (self.telnet.name, "nonmatched")})
     
     def test_prediction (self, prediction, line, code):
         lines = []

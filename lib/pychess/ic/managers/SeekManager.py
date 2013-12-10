@@ -60,7 +60,7 @@ class SeekManager (GObject):
         
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
-        log.debug("SeekManager.seek: %s %s %s %s %s %s %s\n" % \
+        log.debug("SeekManager.seek: %s %s %s %s %s %s %s" % \
             (startmin, incsec, game_type, rated, str(ratings), color, manual))
         rchar = "r" if rated else "u"
         if color != None:

@@ -360,7 +360,7 @@ class PGNFile (PgnBase):
                 [model.timemodel.intervals[0][0]]*(whites+1),
                 [model.timemodel.intervals[1][0]]*(blacks+1),
             ]
-            log.debug("pgn.loadToModel: intervals %s\n" % model.timemodel.intervals)
+            log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
         
         
         # Find the physical status of the game

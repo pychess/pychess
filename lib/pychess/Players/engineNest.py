@@ -74,11 +74,11 @@ class EngineDiscoverer (GObject, PooledThread):
         try:
             self._engines = json.load(open(self.jsonpath))
         except ValueError, e:
-            log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n" % (self.jsonpath,e))
+            log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s" % (self.jsonpath,e))
             os.rename(self.jsonpath, self.jsonpath+".bak")
             self._engines = deepcopy(backup)
         except IOError, e:
-            log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s\n" % e)
+            log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % e)
             self._engines = deepcopy(backup)
     
     ############################################################################
@@ -160,12 +160,12 @@ class EngineDiscoverer (GObject, PooledThread):
 
         exitcode = subproc.kill(UNKNOWN_REASON)
         if exitcode:
-            log.debug("Engine failed %s\n" % engine["name"])
+            log.debug("Engine failed %s" % engine["name"])
             self.emit("engine_failed", engine['name'], engine)
             return
         
         engine['recheck'] = False
-        log.debug("Engine finished %s\n" % engine["name"])
+        log.debug("Engine finished %s" % engine["name"])
         self.emit ("engine_discovered", engine['name'], engine)
     
     
@@ -213,7 +213,7 @@ class EngineDiscoverer (GObject, PooledThread):
             backup_engine = (c for c in backup if c["name"] == engine["name"]).next()
             engine["country"] = backup_engine["country"]
         except StopIteration:
-            log.warning("Engine '%s' has not been tested and verified to work with PyChess\n" % \
+            log.warning("Engine '%s' has not been tested and verified to work with PyChess" % \
                 engine.get('name'))
             engine['recheck'] = True
 
@@ -233,7 +233,7 @@ class EngineDiscoverer (GObject, PooledThread):
             with open(self.jsonpath, "w") as f:
                 json.dump(self._engines, f, indent=1, sort_keys=True)
         except IOError, e:
-            log.error("Saving engines.json raised exception: %s\n" % \
+            log.error("Saving engines.json raised exception: %s" % \
                       ", ".join(str(a) for a in e.args))
     
     def run (self):
@@ -437,7 +437,7 @@ def init_engine (analyzer_type, gamemodel, force=False):
         
         if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine):
             analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
-            log.debug("%s analyzer: %s\n" % (analyzer_type, repr(analyzer)))
+            log.debug("%s analyzer: %s" % (analyzer_type, repr(analyzer)))
         
     return analyzer
 

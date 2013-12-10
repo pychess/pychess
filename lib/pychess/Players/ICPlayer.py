@@ -43,7 +43,7 @@ class ICPlayer (Player):
     
     def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame():
-            log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s\n" % \
+            log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s" % \
                 (self.gameno, self.name, offer))
             self.offers[offer.index] = offer
             self.emit ("offer", offer)
@@ -52,12 +52,12 @@ class ICPlayer (Player):
         for offer_ in self.gamemodel.offers.keys():
             if offer.type == offer_.type:
                 offer.param = offer_.param
-        log.debug("ICPlayer.__onOfferDeclined: emitting decline for %s\n" % offer)
+        log.debug("ICPlayer.__onOfferDeclined: emitting decline for %s" % offer)
         self.emit("decline", offer)
     
     def __onOfferRemove (self, om, offer):
         if offer.index in self.offers:
-            log.debug("ICPlayer.__onOfferRemove: emitting withdraw: self.gameno=%s self.name=%s %s\n" % \
+            log.debug("ICPlayer.__onOfferRemove: emitting withdraw: self.gameno=%s self.name=%s %s" % \
                 (self.gameno, self.name, offer))
             self.emit ("withdraw", self.offers[offer.index])
             del self.offers[offer.index]
@@ -67,13 +67,13 @@ class ICPlayer (Player):
             self.emit("offer", Offer(CHAT_ACTION, param=text))
     
     def __boardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
-        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d\n" % \
+        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d" % \
             (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
             and wname == self.gamemodel.players[0].ichandle \
             and bname == self.gamemodel.players[1].ichandle:
-            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move\n" % \
+            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % \
                 (id(self), self, gameno))
             
             # In some cases (like lost on time) the last move is resent
@@ -81,7 +81,7 @@ class ICPlayer (Player):
                 return
             
             if 1-curcol == self.color:
-                log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue\n" % \
+                log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue" % \
                     (id(self), self, ply, lastmove))
                 self.queue.put((ply, lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
@@ -115,7 +115,7 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s\n" % \
+        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % \
             (id(self), self, move, board1, board2))
         if board2 and not self.gamemodel.isObservationGame():
             # TODO: Will this work if we just always use CASTLE_SAN?
@@ -135,18 +135,18 @@ class ICPlayer (Player):
             if ply < board1.ply:
                 # This should only happen in an observed game
                 board1 = self.gamemodel.getBoardAtPly(max(ply-1, 0))
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s\n" % \
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s" % \
                 (id(self), self, ply, sanmove))
             
             try:
                 move = parseSAN (board1, sanmove)
-                log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s\n" % \
+                log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % \
                     (id(self), self, move))
             except ParsingError, e:
                 raise
             return move
         finally:
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s\n" % \
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % \
                 (id(self), self, move))
             self.okqueue.put("ok")
     
@@ -167,7 +167,7 @@ class ICPlayer (Player):
         pass
     
     def playerUndoMoves (self, movecount, gamemodel):
-        log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d\n" % \
+        log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d" % \
             (id(self), self, movecount))
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
@@ -193,18 +193,18 @@ class ICPlayer (Player):
             self.gamemodel.ficsgame.rated)
     
     def offer (self, offer):
-        log.debug("ICPlayer.offer: self=%s %s\n" % (repr(self), offer))
+        log.debug("ICPlayer.offer: self=%s %s" % (repr(self), offer))
         if offer.type == TAKEBACK_OFFER:
             # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
             indexes = self.offers.keys()
             for index in indexes:
                 if self.offers[index].type == TAKEBACK_OFFER:
-                    log.debug("ICPlayer.offer: del self.offers[%s] %s\n" % (index, offer))
+                    log.debug("ICPlayer.offer: del self.offers[%s] %s" % (index, offer))
                     del self.offers[index]
         self.connection.om.offer(offer, self.gamemodel.ply)
     
     def offerDeclined (self, offer):
-        log.debug("ICPlayer.offerDeclined: sending decline for %s\n" % offer)
+        log.debug("ICPlayer.offerDeclined: sending decline for %s" % offer)
         self.connection.om.decline(offer)
     
     def offerWithdrawn (self, offer):

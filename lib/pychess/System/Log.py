@@ -63,9 +63,9 @@ def set_gui_log_emitter():
         def emit(self, record):
             message = self.format(record)
             if self.emitter.messages != None:
-                self.emitter.messages.append((record.task, time.time(), message, record.levelname))
+                self.emitter.messages.append((record.task, time.time(), message, record.levelno))
             
-            self.emitter.publisher.put((record.task, time.time(), message, record.levelname))
+            self.emitter.publisher.put((record.task, time.time(), message, record.levelno))
 
     logemitter = LogEmitter()
     logger.addHandler(GLogHandler(logemitter))
@@ -98,5 +98,5 @@ class LogPipe:
     def fileno (self):
         return self.to.fileno()
 
-#sys.stdout = LogPipe(sys.stdout, "stdout")
-#sys.stderr = LogPipe(sys.stderr, "stdout")
+sys.stdout = LogPipe(sys.stdout, "stdout")
+sys.stderr = LogPipe(sys.stderr, "stdout")

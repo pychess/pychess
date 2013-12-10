@@ -98,7 +98,7 @@ class OfferManager (GObject):
         self.connection.lvm.setVariable("pendinfo", 1)
     
     def onOfferDeclined (self, match):
-        log.debug("OfferManager.onOfferDeclined: match.string=%s\n" % match.string)
+        log.debug("OfferManager.onOfferDeclined: match.string=%s" % match.string)
         type = match.groups()[0]
         offer = Offer(strToOfferType[type])
         self.emit("onOfferDeclined", offer)
@@ -122,7 +122,7 @@ class OfferManager (GObject):
         self.emit("onActionError", offer, ACTION_ERROR_TOO_LARGE_UNDO)
     
     def onOfferAdd (self, match):
-        log.debug("OfferManager.onOfferAdd: match.string=%s\n" % match.string)
+        log.debug("OfferManager.onOfferAdd: match.string=%s" % match.string)
         tofrom, index, offertype, parameters = match.groups()
 
         if tofrom == "t":
@@ -176,11 +176,11 @@ class OfferManager (GObject):
             self.emit("onChallengeAdd", index, match)
         
         else:
-            log.debug("OfferManager.onOfferAdd: emitting onOfferAdd: %s\n" % offer)
+            log.debug("OfferManager.onOfferAdd: emitting onOfferAdd: %s" % offer)
             self.emit("onOfferAdd", offer)
     
     def onOfferRemove (self, match):
-        log.debug("OfferManager.onOfferRemove: match.string=%s\n" % match.string)
+        log.debug("OfferManager.onOfferRemove: match.string=%s" % match.string)
         index = int(match.groups()[0])
         if not index in self.offers:
             return
@@ -193,7 +193,7 @@ class OfferManager (GObject):
     ###
     
     def challenge (self, playerName, game_type, startmin, incsec, rated, color=None):
-        log.debug("OfferManager.challenge: %s %s %s %s %s %s\n" % \
+        log.debug("OfferManager.challenge: %s %s %s %s %s %s" % \
             (playerName, game_type, startmin, incsec, rated, color))
         rchar = rated and "r" or "u"
         if color != None:
@@ -206,7 +206,7 @@ class OfferManager (GObject):
         self.connection.client.run_command(s)
     
     def offer (self, offer, curply):
-        log.debug("OfferManager.offer: curply=%s %s\n" % (curply, offer))
+        log.debug("OfferManager.offer: curply=%s %s" % (curply, offer))
         self.lastPly = curply
         s = offerTypeToStr[offer.type]
         if offer.type == TAKEBACK_OFFER:
@@ -216,31 +216,31 @@ class OfferManager (GObject):
     ###
     
     def withdraw (self, offer):
-        log.debug("OfferManager.withdraw: %s\n" % offer)
+        log.debug("OfferManager.withdraw: %s" % offer)
         self.connection.client.run_command("withdraw t %s" % offerTypeToStr[offer.type])
     
     def accept (self, offer):
-        log.debug("OfferManager.accept: %s\n" % offer)
+        log.debug("OfferManager.accept: %s" % offer)
         if offer.index != None:
             self.acceptIndex(offer.index)
         else:
             self.connection.client.run_command("accept t %s" % offerTypeToStr[offer.type])
     
     def decline (self, offer):
-        log.debug("OfferManager.decline: %s\n" % offer)
+        log.debug("OfferManager.decline: %s" % offer)
         if offer.index != None:
             self.declineIndex(offer.index)
         else:
             self.connection.client.run_command("decline t %s" % offerTypeToStr[offer.type])
     
     def acceptIndex (self, index):
-        log.debug("OfferManager.acceptIndex: index=%s\n" % index)
+        log.debug("OfferManager.acceptIndex: index=%s" % index)
         self.connection.client.run_command("accept %s" % index)
     
     def declineIndex (self, index):
-        log.debug("OfferManager.declineIndex: index=%s\n" % index)
+        log.debug("OfferManager.declineIndex: index=%s" % index)
         self.connection.client.run_command("decline %s" % index)
     
     def playIndex (self, index):
-        log.debug("OfferManager.playIndex: index=%s\n" % index)
+        log.debug("OfferManager.playIndex: index=%s" % index)
         self.connection.client.run_command("play %s" % index)

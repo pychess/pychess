@@ -389,7 +389,7 @@ class BoardManager (GObject):
         return int(rating) if rating.isdigit() else 0
     
     def onPlayGameCreated (self, matchlist):
-        log.debug("BM.onPlayGameCreated: %s\n%s\n" % 
+        log.debug("BM.onPlayGameCreated: %s\n%s" %
                   (matchlist[0].string, matchlist[1].string))
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
         gameno, wname, bname, rated, type = matchlist[1].groups()
@@ -574,7 +574,7 @@ class BoardManager (GObject):
         else:
             if game_type.rating_type == TYPE_WILD:
                 # we need a style12 start position to correctly parse a wild/* board
-                log.error("BoardManager.parseGame: no style12 for %s board.\n" % game_type.fics_name)
+                log.error("BoardManager.parseGame: no style12 for %s board." % game_type.fics_name)
                 return None
             castleSigns = ("k", "q")
             initialfen = None
@@ -587,7 +587,7 @@ class BoardManager (GObject):
         wms = bms = minutes * 60 * 1000
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
-                log.error("BoardManager.parseGame: unmatched line: \"%s\"\n" % \
+                log.error("BoardManager.parseGame: unmatched line: \"%s\"" % \
                           repr(line))
                 raise
             moveno, wmove, wmin, wsec, wmsec, bmove, bmin, bsec, bmsec = \
@@ -704,7 +704,7 @@ class BoardManager (GObject):
     onObserveGameCreated.BLKCMD = BLKCMD_MOVES
 
     def onGameEnd (self, games, game):
-        log.debug("BM.onGameEnd: %s\n" % game)
+        log.debug("BM.onGameEnd: %s" % game)
         if game == self.theGameImPlaying:
             if game.gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[game.gameno].wait()
@@ -713,9 +713,9 @@ class BoardManager (GObject):
             del self.gamemodelStartedEvents[game.gameno]
             
         elif game in self.gamesImObserving:
-            log.debug("BM.onGameEnd: %s: gamesImObserving\n" % game)
+            log.debug("BM.onGameEnd: %s: gamesImObserving" % game)
             if game.gameno in self.queuedEmits:
-                log.debug("BM.onGameEnd: %s: queuedEmits\n" % game)
+                log.debug("BM.onGameEnd: %s: queuedEmits" % game)
                 self.queuedEmits[game.gameno].append(
                     lambda:self.emit("obsGameEnded", game))
             else:
@@ -724,7 +724,7 @@ class BoardManager (GObject):
                 except KeyError:
                     pass
                 else:
-                    log.debug("BM.onGameEnd: %s: event.wait()\n" % game)
+                    log.debug("BM.onGameEnd: %s: event.wait()" % game)
                     event.wait()
                 del self.gamesImObserving[game]
                 self.emit("obsGameEnded", game)
@@ -742,7 +742,7 @@ class BoardManager (GObject):
     
     def onUnobserveGame (self, match):
         gameno = int(match.groups()[0])
-        log.debug("BM.onUnobserveGame: gameno: %s\n" % gameno)
+        log.debug("BM.onUnobserveGame: gameno: %s" % gameno)
         try:
             del self.gamemodelStartedEvents[gameno]
             game = self.connection.games.get_game_by_gameno(gameno)

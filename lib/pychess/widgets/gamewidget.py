@@ -423,7 +423,7 @@ class GameWidget (gobject.GObject):
         for player in self.gamemodel.players:
             opplayercolor = BLACK if player == self.gamemodel.players[WHITE] else WHITE
             if player.__type__ == LOCAL and opplayercolor == color:
-                log.debug("gamewidget.zero_reached: LOCAL player=%s, color=%s\n" % \
+                log.debug("gamewidget.zero_reached: LOCAL player=%s, color=%s" % \
                           (repr(player), str(color)))
                 self.menuitems["call_flag"].sensitive = True
                 break
@@ -524,11 +524,11 @@ class GameWidget (gobject.GObject):
     
     def setLocked (self, locked):
         """ Makes the board insensitive and turns off the tab ready indicator """
-        log.debug("GameWidget.setLocked: %s locked=%s\n" % (self.gamemodel.players, str(locked)))
+        log.debug("GameWidget.setLocked: %s locked=%s" % (self.gamemodel.players, str(locked)))
         self.board.setLocked(locked)
         if not self.tabcontent.get_children(): return
         if len(self.tabcontent.child.get_children()) < 2:
-            log.warning("GameWidget.setLocked: Not removing last tabcontent child\n")
+            log.warning("GameWidget.setLocked: Not removing last tabcontent child")
             return
         glock.acquire()
         try:
@@ -540,7 +540,7 @@ class GameWidget (gobject.GObject):
             self.tabcontent.show_all()
         finally:
             glock.release()
-        log.debug("GameWidget.setLocked: %s: returning\n" % self.gamemodel.players)
+        log.debug("GameWidget.setLocked: %s: returning" % self.gamemodel.players)
     
     def status (self, message):
         glock.acquire()
