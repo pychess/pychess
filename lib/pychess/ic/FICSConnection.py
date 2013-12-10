@@ -136,11 +136,11 @@ class FICSConnection (Connection):
             
             self.emit('connectingMsg', _("Connecting to server"))
             for i, port in enumerate(self.ports):
-                log.debug("Trying port %d\n" % port, extra={"task": (self.host, "raw")})
+                log.debug("Trying port %d" % port, extra={"task": (self.host, "raw")})
                 try:
                     self.client.open(self.host, port)
                 except socket.error, e:
-                    log.debug("Failed to open port %d %s\n" % (port, e), extra={"task": (self.host, "raw")})
+                    log.debug("Failed to open port %d %s" % (port, e), extra={"task": (self.host, "raw")})
                     if i+1 == len(self.ports):
                         raise
                     else:

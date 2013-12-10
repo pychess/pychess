@@ -89,7 +89,7 @@ def on_gmwidg_title_changed (gmwidg, new_title):
 #===============================================================================
 
 def game_ended (gamemodel, reason, gmwidg):
-    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s\n" % \
+    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" % \
         (reason, gmwidg, gamemodel))
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
@@ -175,7 +175,7 @@ def game_changed (gamemodel, gmwidg):
     return False
     
 def game_unended (gamemodel, gmwidg):
-    log.debug("gamenanny.game_unended: %s\n" % gamemodel.boards[-1])
+    log.debug("gamenanny.game_unended: %s" % gamemodel.boards[-1])
     glock.acquire()
     try:
         gmwidg.clearMessages()

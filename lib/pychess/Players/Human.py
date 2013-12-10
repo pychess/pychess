@@ -117,7 +117,7 @@ class Human (Player):
         # If there are two or more tabs open, we have to ensure us that it is
         # us who are in the active tab, and not the others
         if not self.gmwidg.isInFront(): return
-        log.debug("Human.emit_action: self.name=%s, action=%s\n" % (self.name, action))
+        log.debug("Human.emit_action: self.name=%s, action=%s" % (self.name, action))
         
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
@@ -135,12 +135,12 @@ class Human (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, board1=%s board2=%s\n" % \
+        log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % \
             (move, board1, board2))
         if self.board.view.premovePiece and self.board.view.premove0 and self.board.view.premove1 and \
             self.color == self.board.view.premovePiece.color:
             if validate(board1, Move(self.board.view.premove0, self.board.view.premove1, board1, promotion=self.board.view.premovePromotion)):
-                log.debug("Human.makeMove: Setting move to premove %s %s\n" % \
+                log.debug("Human.makeMove: Setting move to premove %s %s" % \
                     (self.board.view.premove0, self.board.view.premove1))
                 self.board.emit_move_signal(self.board.view.premove0, self.board.view.premove1, promotion=self.board.view.premovePromotion)
             # reset premove
@@ -189,25 +189,25 @@ class Human (Player):
     
     @glock.glocked
     def resume (self):
-        log.debug("Human.resume: %s\n" % (self))
+        log.debug("Human.resume: %s" % (self))
         if self.board.view.model.curplayer == self:
             self.gmwidg.setLocked(False)
     
     def playerUndoMoves (self, movecount, gamemodel):
-        log.debug("Human.playerUndoMoves:  movecount=%s self=%s\n" % (movecount, self))
+        log.debug("Human.playerUndoMoves:  movecount=%s self=%s" % (movecount, self))
         #If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1:
             # If it is no longer us to move, we raise TurnInterruprt in order to
             # let GameModel continue the game.
             if gamemodel.curplayer != self:
-                log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.queue\n")
+                log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.queue")
                 self.queue.put("int")
         
         # If the movecount is even, we have to ensure the board is unlocked.
         # This is because it might have been locked by the game ending, but
         # perhaps we have now undone some moves, and it is no longer ended.
         elif movecount % 2 == 0 and gamemodel.curplayer == self:
-            log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked\n" % (self))
+            log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked" % (self))
             self.gmwidg.setLocked(False)
     
     def putMessage (self, text):
@@ -221,7 +221,7 @@ class Human (Player):
     #===========================================================================
     
     def offer (self, offer):
-        log.debug("Human.offer: self=%s %s\n" % (self, offer))
+        log.debug("Human.offer: self=%s %s" % (self, offer))
         assert offer.type in OFFER_MESSAGES
         heading, text, takes_param = OFFER_MESSAGES[offer.type]
         if takes_param:
@@ -246,7 +246,7 @@ class Human (Player):
         self._show_message(message)
     
     def offerDeclined (self, offer):
-        log.debug("Human.offerDeclined: self=%s %s\n" % (self, offer))
+        log.debug("Human.offerDeclined: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
         heading = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
         text = _("Resend %s?" % ACTION_NAMES[offer.type].lower())
@@ -261,7 +261,7 @@ class Human (Player):
         self._show_message(message)
     
     def offerWithdrawn (self, offer):
-        log.debug("Human.offerWithdrawn: self=%s %s\n" % (self, offer))
+        log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
         heading = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
         text = _("Your opponent seems to have changed their mind.")
@@ -273,7 +273,7 @@ class Human (Player):
         self._show_message(message)
     
     def offerError (self, offer, error):
-        log.debug("Human.offerError: self=%s error=%s %s\n" % (self, error, offer))
+        log.debug("Human.offerError: self=%s error=%s %s" % (self, error, offer))
         assert offer.type in ACTION_NAMES
         actionName = ACTION_NAMES[offer.type]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:

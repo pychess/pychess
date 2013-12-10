@@ -125,7 +125,7 @@ class ICLounge (GObject):
         self.widgets["fics_lounge"].present()
     
     def on_connection_error (self, connection, error):
-        log.warning("ICLounge.on_connection_error: %s\n" % repr(error))
+        log.warning("ICLounge.on_connection_error: %s" % repr(error))
         self.close()
     
     @glock.glocked
@@ -548,7 +548,7 @@ class SeekTabSection (ParrentListSection):
         self.__updateActiveSeeksLabel()
     
     def onChallengeAdd (self, index, match):
-        log.debug("onChallengeAdd: %s\n" % match)
+        log.debug("onChallengeAdd: %s" % match)
         SoundTab.playAction("aPlayerChecks")
         time = _("%(min)s min") % {'min': match["t"]}
         if match["i"] != "0":
@@ -1067,7 +1067,7 @@ class GameTabSection (ParrentListSection):
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onGameAdd (self, game):
-#        log.debug("GameTabSection.onGameAdd: %s\n" % repr(game))
+#        log.debug("GameTabSection.onGameAdd: %s" % repr(game))
         if game.min != None:
             length = game.min*60 + game.inc*40
         elif game.game_type.rating_type == TYPE_LIGHTNING:
@@ -1218,7 +1218,7 @@ class AdjournedTabSection (ParrentListSection):
             
     @glock.glocked
     def online_changed (self, player, property, game):
-        log.debug("AdjournedTabSection.online_changed: %s %s\n" % \
+        log.debug("AdjournedTabSection.online_changed: %s %s" % \
             (repr(player), repr(game)))
         if game in self.games and \
                 self.store.iter_is_valid(self.games[game]["ti"]):
@@ -1237,7 +1237,7 @@ class AdjournedTabSection (ParrentListSection):
         
     @glock.glocked
     def status_changed (self, player, prop, game):
-        log.debug("AdjournedTabSection.status_changed: %s %s\n" % \
+        log.debug("AdjournedTabSection.status_changed: %s %s" % \
             (repr(player), repr(game)))
         try:
             message = self.messages[player]
@@ -1313,7 +1313,7 @@ class AdjournedTabSection (ParrentListSection):
         self.connection.adm.queryMoves(game)
 
     def onGamePreview (self, ficsgame):
-        log.debug("ICLounge.onGamePreview: %s\n" % ficsgame)
+        log.debug("ICLounge.onGamePreview: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:
@@ -2098,7 +2098,7 @@ class CreatedBoards (Section):
         self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
 
     def onPlayGameCreated (self, bm, ficsgame):
-        log.debug("ICLounge.onPlayGameCreated: %s\n" % ficsgame)
+        log.debug("ICLounge.onPlayGameCreated: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:
@@ -2135,7 +2135,7 @@ class CreatedBoards (Section):
                                 (StringIO(ficsgame.board.fen), fen, 0, -1))
 
     def onObserveGameCreated (self, bm, ficsgame):
-        log.debug("ICLounge.onObserveGameCreated: %s\n" % ficsgame)
+        log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
             timemodel = None
         else:

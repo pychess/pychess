@@ -130,7 +130,7 @@ class TimeModel (GObject):
         self.ended = True
     
     def pause (self):
-        log.debug("TimeModel.pause: self=%s\n" % self)
+        log.debug("TimeModel.pause: self=%s" % self)
         if self.paused: return
         self.paused = True
         
@@ -142,7 +142,7 @@ class TimeModel (GObject):
         self.emit("pause_changed", True)
     
     def resume (self):
-        log.debug("TimeModel.resume: self=%s\n" % self)
+        log.debug("TimeModel.resume: self=%s" % self)
         if not self.paused: return
         
         self.paused = False
