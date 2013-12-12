@@ -380,6 +380,27 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
+    def test3 (self):
+        lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek qualifies for antiseptic's getgame.",
+                 "",
+                 "<sr> 145",
+                 "fics%" ,
+                 "Creating: antiseptic (1917) mgatto (1683) rated wild/4 5 2",
+                 "{Game 54 (antiseptic vs. mgatto) Creating rated wild/4 match.}",
+                 "",
+                 "<12> knnrrrqn pppppppp -------- -------- -------- -------- PPPPPPPP NRNKNQRR W -1 0 0 0 0 0 54 antiseptic mgatto -1 5 2 41 41 300000 300000 1 none (0:00.000) none 1 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me.addRating(TYPE_BLITZ, 1305)
+        opponent = self.connection.players.get(FICSPlayer('antiseptic'))
+        game = FICSGame(opponent, me, gameno=54, rated=True,
+            game_type=GAME_TYPES['wild/4'], private=False, min=5, inc=2,
+            board=FICSBoard(300000, 300000, fen="knnrrrqn pppppppp -------- -------- -------- -------- PPPPPPPP NRNKNQRR W -1 0 0 0 0 0"))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
         
 ###############################################################################
 # OfferManager
