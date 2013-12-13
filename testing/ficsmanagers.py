@@ -7,7 +7,7 @@ from pychess.Utils.const import WHITE
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
 from pychess.ic.FICSConnection import Connection
-from pychess.ic.VerboseTelnet import PredictionsTelnet
+from pychess.ic.VerboseTelnet import PredictionsTelnet, ConsoleHandler, TelnetLine
 from pychess.ic.managers.AdjournManager import AdjournManager
 from pychess.ic.managers.SeekManager import SeekManager
 from pychess.ic.managers.ListAndVarManager import ListAndVarManager
@@ -18,6 +18,7 @@ from pychess.ic.managers.ErrorManager import ErrorManager
 from pychess.ic.managers.FingerManager import FingerManager
 from pychess.ic.managers.NewsManager import NewsManager
 from pychess.ic.managers.ChatManager import ChatManager
+from pychess.ic.managers.ConsoleManager import ConsoleManager
 from pychess.ic.managers.AutoLogOutManager import AutoLogOutManager
 from pychess.ic.block_codes import *
 
@@ -48,12 +49,12 @@ class DummyConnection(Connection):
                 self.append(x)
         self.predictions = fake_set() # make predictions able to be reordered
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
-        self.client.setBlockModeOn()
-        self.client.setLinePrefix("fics%")
+        self.client.lines.block_mode = True
+        self.client.lines.line_prefix = "fics%"
     def putline(self, line):
         self.client.putline(line)
     def process_line(self):
-        self.client.parse_line(self.client.get_line())
+        self.client.parse()
     def getUsername(self):
         return self.username
     
@@ -66,6 +67,27 @@ class DummyVarManager:
 class EmittingTestCase(unittest.TestCase):
     ''' Helps working with unittests on emitting objects.
         Warning: Strong connection to fics managers '''
+    def setUp (self):
+        self.connection = DummyConnection()
+        self.connection.players = FICSPlayers(self.connection)
+        self.connection.games = FICSGames(self.connection)
+        # The real one freezes
+        #self.connection.lvm = ListAndVarManager(self.connection)
+        self.connection.lvm = DummyVarManager()
+        self.connection.em = ErrorManager(self.connection)
+        self.connection.glm = SeekManager(self.connection)
+        self.connection.bm = BoardManager(self.connection)
+        self.connection.fm = FingerManager(self.connection)
+        self.connection.nm = NewsManager(self.connection)
+        self.connection.om = OfferManager(self.connection)
+        self.connection.cm = ChatManager(self.connection)
+        self.connection.alm = AutoLogOutManager(self.connection)
+        self.connection.adm = AdjournManager(self.connection)
+        self.connection.com = ConsoleManager(self.connection)
+        self.connection.bm.start()
+        self.connection.players.start()
+        self.connection.games.start()
+        
     def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None
         def handler(manager, *args): self.args = args
@@ -90,22 +112,7 @@ class EmittingTestCase(unittest.TestCase):
 class AdjournManagerTests(EmittingTestCase):
     
     def setUp (self):
-        self.connection = DummyConnection()
-        self.connection.players = FICSPlayers(self.connection)
-        self.connection.games = FICSGames(self.connection)
-        self.connection.lvm = DummyVarManager()
-        self.connection.em = ErrorManager(self.connection)
-        self.connection.glm = SeekManager(self.connection)
-        self.connection.bm = BoardManager(self.connection)
-        self.connection.fm = FingerManager(self.connection)
-        self.connection.nm = NewsManager(self.connection)
-        self.connection.om = OfferManager(self.connection)
-        self.connection.cm = ChatManager(self.connection)
-        self.connection.alm = AutoLogOutManager(self.connection)
-        self.connection.adm = AdjournManager(self.connection)
-        self.connection.bm.start()
-        self.connection.players.start()
-        self.connection.games.start()
+        EmittingTestCase.setUp(self)
         self.manager = self.connection.adm
         
     def test1(self):
@@ -223,12 +230,7 @@ class AdjournManagerTests(EmittingTestCase):
 class SeekManagerTests(EmittingTestCase):
     
     def setUp (self):
-        self.connection = DummyConnection()
-        # The real one stucks
-        #self.connection.lvm = ListAndVarManager(self.connection)
-        self.connection.lvm = DummyVarManager()
-        self.connection.glm = SeekManager(self.connection)
-        self.connection.bm = BoardManager(self.connection)
+        EmittingTestCase.setUp(self)
         self.manager = self.connection.glm
     
     def test1 (self):
@@ -318,22 +320,7 @@ class SeekManagerTests(EmittingTestCase):
 class BoardManagerTests(EmittingTestCase):
     
     def setUp (self):
-        self.connection = DummyConnection()
-        self.connection.players = FICSPlayers(self.connection)
-        self.connection.games = FICSGames(self.connection)
-        self.connection.lvm = DummyVarManager()
-        self.connection.em = ErrorManager(self.connection)
-        self.connection.glm = SeekManager(self.connection)
-        self.connection.bm = BoardManager(self.connection)
-        self.connection.fm = FingerManager(self.connection)
-        self.connection.nm = NewsManager(self.connection)
-        self.connection.om = OfferManager(self.connection)
-        self.connection.cm = ChatManager(self.connection)
-        self.connection.alm = AutoLogOutManager(self.connection)
-        self.connection.adm = AdjournManager(self.connection)
-        self.connection.bm.start()
-        self.connection.players.start()
-        self.connection.games.start()
+        EmittingTestCase.setUp(self)
         self.manager = self.connection.bm
     
     def test1 (self):
@@ -401,19 +388,12 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
-        
-###############################################################################
-# OfferManager
-###############################################################################
 
 class OfferManagerTests(EmittingTestCase):
     
     def setUp (self):
-        self.connection = DummyConnection()
-        # The real one stucks
-        #self.connection.lvm = ListAndVarManager(self.connection)
-        self.connection.lvm = DummyVarManager()
-        self.manager = OfferManager(self.connection)
+        EmittingTestCase.setUp(self)
+        self.manager = self.connection.om
     
     def test1 (self):
         """ Challenges """
@@ -454,6 +434,40 @@ class OfferManagerTests(EmittingTestCase):
                 "rt": '0', "r": 'u', "t": "0", "i": "0", "color": "black",
                 "is_adjourned": False}
         self.runAndAssertEquals(signal, lines, ('7', expectedResult,))
+
+class ConsoleManagerTests(EmittingTestCase):
+    
+    def setUp (self):
+        EmittingTestCase.setUp(self)
+        self.manager = self.connection.com
+    
+    def test1 (self):
+        lines = [BLOCK_START + '138' + BLOCK_SEPARATOR + '37' + BLOCK_SEPARATOR,
+                 "Finger of mgatto:",
+                 "",
+                 "On for: 44 mins   Idle: 0 secs",
+                 "",
+                 "rating     RD      win    loss    draw   total   best",
+                 "Blitz      1343     51.5     937     781      58    1776   1729 (20-Feb-2000)",
+                 "Standard   1685    332.0      56      39       7     102   1813 (03-Sep-2004)",
+                 "Lightning  1269     64.4     653     718      32    1403   1873 (30-Jan-2000)",
+                 "Crazyhouse 1332    191.4       0       3       0       3",
+                 "Suicide    1254    350.0       0       3       0       3",
+                 "Atomic     1290    184.6       1       8       0       9",
+                 "",
+                 "Email      : mattgatto@gmail.com",
+                 "",
+                 "Total time online: 64 days, 20 hrs, 58 mins",
+                 "% of life online:  1.3  (since Sun Oct  3, 13:12 PDT 1999)",
+                 "",
+                 "Timeseal 1 : On",
+                 "",
+                 "1: I live in San Francisco and drive a taxi here",
+                 "2: If you're using Linux check out pychess: http://www.pychess.org",
+                 BLOCK_END]
+        expected_result = [TelnetLine(line, 37) for line in lines[1:-1]]
+        expected_result.append(TelnetLine('', 37))
+        self.runAndAssertEquals("consoleMessage", lines, (expected_result,))
 
 if __name__ == '__main__':
     unittest.main()

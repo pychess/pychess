@@ -36,14 +36,15 @@ class ConsoleWindow:
     def showConsole(self, *widget):
         self.window.show_all()
     
-    def onConsoleMessage(self, com, line, block_code):
-        # beep
-        if line == chr(7):
-            sys.stdout.write("\a")
-            sys.stdout.flush()
-            return
-        if not line.startswith('<'):
-            self.consoleView.addMessage(line)
+    def onConsoleMessage(self, com, lines):
+        for line in lines:
+            # beep
+            if line.line == chr(7):
+                sys.stdout.write("\a")
+                sys.stdout.flush()
+                return
+            if line.line and not line.line.startswith('<'):
+                self.consoleView.addMessage(line.line)
         
 
 class ConsoleView (gtk.VPaned):

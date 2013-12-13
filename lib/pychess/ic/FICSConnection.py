@@ -24,6 +24,7 @@ from managers.ListAndVarManager import ListAndVarManager
 from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
+
 from FICSObjects import FICSPlayers, FICSGames
 
 from TimeSeal import TimeSeal
@@ -185,18 +186,14 @@ class FICSConnection (Connection):
                     break
             
             self.FatICS = self.client.FatICS
-            
             self.client.name = self.username
-            
             self.client.readuntil("ics%")
-            
             self.emit('connectingMsg', _("Setting up environment"))
-            self.client = PredictionsTelnet(self.client, self.predictions, self.reply_cmd_dict)
-            self.client.setLinePrefix("fics%")
-            
+            self.client = PredictionsTelnet(self.client, self.predictions,
+                                            self.reply_cmd_dict)
+            self.client.lines.line_prefix = "fics%"
             self.client.run_command("iset block 1")
-            self.client.setBlockModeOn()
-            
+            self.client.lines.block_mode = True
             self.client.run_command("iset defprompt 1")
             
             # The helper just wants only player and game notifications
@@ -225,7 +222,7 @@ class FICSConnection (Connection):
                 # should be implemented into the FICSConnection somehow.
                 self.lvm = ListAndVarManager(self)
                 while not self.lvm.isReady():
-                    self.client.parse_line(self.client.get_line())
+                    self.client.parse()
 #                 print "self.lvm.setVariable"
                 self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
 
@@ -274,7 +271,7 @@ class FICSConnection (Connection):
                 if not self.isConnected():
                     self._connect()
                 while self.isConnected():
-                    self.client.parse_line(self.client.get_line())
+                    self.client.parse()
             except Exception, e:
                 if self.connected:
                     self.connected = False
