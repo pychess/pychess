@@ -39,7 +39,7 @@ class ChatManager (GObject):
         self.connection = connection
         
         self.connection.expect_line (self.onPrivateMessage,
-                "%s(\*)? (?:tells you|says): (.*)" % names)
+                "%s(\*)?(?:\[\d+\])? (?:tells you|says): (.*)" % names)
         self.connection.expect_line (self.onAnnouncement,
                 "\s*\*\*ANNOUNCEMENT\*\* (.*)")
         self.connection.expect_line (self.onChannelMessage,
