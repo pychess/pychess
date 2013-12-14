@@ -2,7 +2,7 @@ import atexit
 from threading import Semaphore
 
 
-from pychess.ic.block_codes import BLKCMD_SHOWLIST, BLKCMD_VARIABLES, BLKCMD_IVARIABLES
+from pychess.ic import BLKCMD_SHOWLIST, BLKCMD_VARIABLES, BLKCMD_IVARIABLES
 from pychess.System import conf
 
 

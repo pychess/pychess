@@ -6,7 +6,6 @@ from pychess.System.Log import log
 from pychess.Savers.pgn import msToClockTimeTag
 from pychess.Utils.const import *
 from pychess.ic import *
-from pychess.ic.block_codes import BLKCMD_UNOBSERVE, BLKCMD_MOVES, BLKCMD_SEEK
 from pychess.ic.VerboseTelnet import *
 from pychess.ic.FICSObjects import *
 
