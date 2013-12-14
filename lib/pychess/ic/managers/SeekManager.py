@@ -2,7 +2,6 @@ from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
-from pychess.ic.block_codes import BLKCMD_SEEK, BLKCMD_UNSEEK
 from pychess.ic.FICSObjects import *
 from pychess.ic.managers.BoardManager import parse_reason
 from pychess.System.Log import log

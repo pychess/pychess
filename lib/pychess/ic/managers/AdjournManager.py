@@ -4,7 +4,6 @@ from gobject import *
 
 from BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.ic import *
-from pychess.ic.block_codes import BLKCMD_SMOVES
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSPlayer
 from pychess.Utils.const import *
 from pychess.System.Log import log

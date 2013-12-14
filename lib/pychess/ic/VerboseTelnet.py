@@ -2,7 +2,7 @@ import collections
 import re
 
 from pychess.System.Log import log
-from pychess.ic.block_codes import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
+from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 
 class ConsoleHandler():
     def __init__ (self, callback):
