@@ -105,9 +105,9 @@ def game_ended (gamemodel, reason, gmwidg):
     content = InfoBar.get_message_content(m1, m2, gtk.STOCK_DIALOG_INFO)
     message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
     
-    if gamemodel.players[0].__type__ == LOCAL or gamemodel.players[1].__type__ == LOCAL:
-        if gamemodel.players[0].__type__ == REMOTE or gamemodel.players[1].__type__ == REMOTE:
-            def status_changed (player, property, message):
+    if gamemodel.hasLocalPlayer():
+        if isinstance(gamemodel, ICGameModel):
+            def status_changed (player, prop, message):
                 update_button_by_player_status(message.buttons[0], player)
             gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
             message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
@@ -149,9 +149,8 @@ def game_ended (gamemodel, reason, gmwidg):
     finally:
         glock.release()
 
-    if (isinstance(gamemodel, ICGameModel) and \
-            gamemodel.isObservationGame() is False) or \
-       gamemodel.isEngine2EngineGame():
+    if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
+            gamemodel.isEngine2EngineGame():
         gamemodel.restart_analyzer(HINT)
         gamemodel.restart_analyzer(SPY)
         if not conf.get("hint_mode", False):

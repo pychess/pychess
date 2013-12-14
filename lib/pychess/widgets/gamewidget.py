@@ -214,11 +214,22 @@ class GameWidget (gobject.GObject):
             and not self.gamemodel.isObservationGame()
     
     def _update_menu_pause_and_resume (self):
-        self.menuitems["pause1"].sensitive = self.gamemodel.status == RUNNING \
-            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
-        self.menuitems["resume1"].sensitive = self.gamemodel.status == PAUSED \
-            and (self.gamemodel.isEngine2EngineGame() or not self.gamemodel.isObservationGame())
-        # TODO: if IC game is over and opponent is available, enable Resume
+        def game_is_pausable ():
+            if self.gamemodel.isEngine2EngineGame() or \
+                (self.gamemodel.hasLocalPlayer() and \
+                 (self.gamemodel.isLocalGame() or \
+                  (isinstance(self.gamemodel, ICGameModel) and \
+                   self.gamemodel.ply > 1))):
+                return True
+            else:
+                return False
+        
+        self.menuitems["pause1"].sensitive = \
+            self.gamemodel.status == RUNNING and game_is_pausable()
+        self.menuitems["resume1"].sensitive =  \
+            self.gamemodel.status == PAUSED and game_is_pausable()
+        # TODO: if IC game is over and game ended in adjournment
+        #       and opponent is available, enable Resume
     
     def _update_menu_undo (self):
         if self.gamemodel.isObservationGame():
