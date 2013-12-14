@@ -1,7 +1,7 @@
 import re
 from gobject import *
 
-from pychess.ic.block_codes import BLKCMD_NEWS
+from pychess.ic import BLKCMD_NEWS
 
 days = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
 months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"

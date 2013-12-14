@@ -3,7 +3,6 @@ from gobject import *
 import re
 from time import time
 from pychess.ic import *
-from pychess.ic.block_codes import BLKCMD_FINGER
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating
 from pychess.System.Log import log

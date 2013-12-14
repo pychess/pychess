@@ -20,7 +20,6 @@ from pychess.ic.managers.NewsManager import NewsManager
 from pychess.ic.managers.ChatManager import ChatManager
 from pychess.ic.managers.ConsoleManager import ConsoleManager
 from pychess.ic.managers.AutoLogOutManager import AutoLogOutManager
-from pychess.ic.block_codes import *
 
 class DummyConnection(Connection):
     class DummyClient(PredictionsTelnet):
