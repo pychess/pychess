@@ -304,12 +304,21 @@ class GameModel (GObject, PooledThread):
         except IndexError:
             log.error("%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, len(self.moves)))
             raise
-    
-    def isObservationGame (self):
+
+    def hasLocalPlayer (self):
         if self.players[0].__type__ == LOCAL or self.players[1].__type__ == LOCAL:
-            return False
-        else:
             return True
+        else:
+            return False
+    
+    def isLocalGame (self):
+        if self.players[0].__type__ != REMOTE and self.players[1].__type__ != REMOTE:
+            return True
+        else:
+            return False
+        
+    def isObservationGame (self):
+        return not self.hasLocalPlayer()
 
     def isEngine2EngineGame (self):
         if self.players[0].__type__ == ARTIFICIAL and self.players[1].__type__ == ARTIFICIAL:
