@@ -214,9 +214,9 @@ class FICSPlayer (GObject):
         for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
                             TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
             if rating_type in self.ratings:
-                r += ", ratings[%s] = (" % \
-                    GAME_TYPES_BY_RATING_TYPE[rating_type].display_text
-                r +=  self.ratings[rating_type].__repr__() + ")"
+                r += ", %s=%s" % \
+                    (GAME_TYPES_BY_RATING_TYPE[rating_type].display_text,
+                     repr(self.ratings[rating_type].elo))
         return "<FICSPlayer " + r + ">"
     
     def isAvailableForGame (self):    

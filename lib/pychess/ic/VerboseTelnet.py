@@ -168,7 +168,8 @@ class TelnetLines (object):
             elif len(parts) == 4:
                 id, code, error_code, text = parts
             else:
-                log.warning("Posing not supported yet\n", extra={"task": (self.telnet.name, "lines")})
+                log.warning("Posing not supported yet",
+                            extra={"task": (self.telnet.name, "lines")})
                 return lines
             code = int(code)
             line = text if text else self.telnet.readline().strip()
@@ -178,13 +179,13 @@ class TelnetLines (object):
                 line = self.telnet.readline().strip()
             lines.append(TelnetLine(line[:-1], code))
             
-            log.debug("%s %s %s\n" %
-                      (id, code, "\n".join(line.line for line in lines)),
+            log.debug("%s %s %s" %
+                      (id, code, "\n".join(line.line for line in lines).strip()),
                       extra={"task": (self.telnet.name, "command_reply")})
         else:
             lines.append(TelnetLine(line, None))
 
-        log.debug("\n".join(line.line for line in lines),
+        log.debug("\n".join(line.line for line in lines).strip(),
                   extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
             self.consolehandler.handle(lines)
