@@ -4,7 +4,7 @@ Name=PyChess
 Comment=PyChess is a fully featured, nice looking, easy to use chess client for the Gnome desktop
 GenericName=Chess Game
 Icon=pychess
-Exec=pychess
+Exec=env UBUNTU_MENUPROXY= pychess
 Terminal=false
 Categories=Game;BoardGame;
 MimeType=application/x-chess-pgn;
