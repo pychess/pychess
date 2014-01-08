@@ -167,9 +167,9 @@ class LBoard:
                                 "Pos(%d) - %s") % (epChr, fenstr.rfind(epChr), \
                                  fenstr)
         
-        if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
-            if self.variant not in (ATOMICCHESS, SUICIDECHESS):
-                raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
+        #if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
+        #    if self.variant not in (ATOMICCHESS, SUICIDECHESS):
+        #        raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
         
         # Parse piece placement field
         
