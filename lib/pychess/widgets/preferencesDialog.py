@@ -222,6 +222,8 @@ class HintTab:
             lambda combobox, value: set_value(combobox, value, "spy_mode",
                                               "inv_analyzer_check", SPY))
         
+        uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin")
+        
 ################################################################################
 # Sound initing                                                                #
 ################################################################################

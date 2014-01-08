@@ -5,7 +5,7 @@ from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
-from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN
+from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lsearch import enableEGTB
 from pychess.Utils.lutils.validator import validateMove
@@ -222,8 +222,6 @@ class PyChessCECP(PyChess):
                         self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as e:
                         print "tellusererror Illegal position:", str(e)
-                    if self.analyzing:
-                        self.__analyze()
                 
                 # "edit" is unimplemented. See docs. Exiting edit mode returns to analyze mode.
      

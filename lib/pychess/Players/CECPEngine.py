@@ -1,4 +1,4 @@
-from threading import RLock
+from threading import RLock, Timer
 import Queue
 import itertools
 import re
@@ -7,6 +7,7 @@ import time
 import gtk, gobject
 
 from pychess.System import glock
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move
@@ -158,6 +159,7 @@ class CECPEngine (ProtocolEngine):
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
         # i.e. not thinking or playing, but still verifying move legality
         self.engineIsInNotPlaying = False 
+        self.engineIsAnalyzing = False
         self.movenext = False
         self.waitingForMove = False
         self.readyForMoveNowCommand = False
@@ -245,8 +247,11 @@ class CECPEngine (ProtocolEngine):
         # If we are an analyzer, this signal was already called in a different
         # thread, so we can safely block it.
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            if not self.board:
-                self.board = Board(setup=True)
+            # workaround for crafty not sending analysis after it has found a mating line
+            # http://code.google.com/p/pychess/issues/detail?id=515
+            if "crafty" in self.features["myname"].lower():
+                print >> self.engine, "noise 0"
+
             self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
         
         self.readyMoves = True
@@ -305,6 +310,7 @@ class CECPEngine (ProtocolEngine):
 
     def setBoard (self, board):
         self.setBoardList([board], [])
+        self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
     
     @semisynced
     def putMove (self, board1, move, board2):
@@ -313,34 +319,10 @@ class CECPEngine (ProtocolEngine):
             @param move: The last move made
             @param board2: The board before the last move was made
         """
-        # If the spactator engine analyzing an older position, let it do
-        if self.board != board2:
-            return
 
-        self.board = board1
-        
-        if not board2:
-            self.__tellEngineToPlayCurrentColorAndMakeMove()
-            self.movenext = False
-            return
-        
-        if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
-            self.__printColor()
-            if self.engineIsInNotPlaying: print >> self.engine, "force"
-        
-        self.__usermove(board2, move)
-        
-        if self.mode == INVERSE_ANALYZING:
-            if self.board.board.opIsChecked():
-                # Many engines don't like positions able to take down enemy
-                # king. Therefore we just return the "kill king" move
-                # automaticaly
-                self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
-                return
-            self.__printColor()
-            if self.engineIsInNotPlaying: print >> self.engine, "force"
-    
+        self.setBoardList([board1], [])
+        self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+
     def makeMove (self, board1, move, board2):
         """ Gets a move from the engine (for player engines).
             @param board1: The current board
@@ -351,7 +333,6 @@ class CECPEngine (ProtocolEngine):
         log.debug("makeMove: move=%s self.movenext=%s board1=%s board2=%s self.board=%s" % \
             (move, self.movenext, board1, board2, self.board), extra={"task":self.defname})
         assert self.readyMoves
-        
         self.boardLock.acquire()
         try:
             if self.board == board1 or not board2 or self.movenext:
@@ -409,14 +390,10 @@ class CECPEngine (ProtocolEngine):
         # Notice: If this method is to be called while playing, the engine will
         # need 'new' and an arrangement similar to that of 'pause' to avoid
         # the current thought move to appear
-        
         self.boardLock.acquire()
         try:
-            if self.mode == INVERSE_ANALYZING:
-                self.board = self.board.switchColor()
-                self.__printColor()
-            
-            self.__tellEngineToStopPlayingCurrentColor()
+            if self.mode not in (ANALYZING, INVERSE_ANALYZING):
+                self.__tellEngineToStopPlayingCurrentColor()
             
             self.__setBoard(boards[0])
             
@@ -426,12 +403,8 @@ class CECPEngine (ProtocolEngine):
             
             if self.mode in (ANALYZING, INVERSE_ANALYZING):
                 self.board = boards[-1]
-            
             if self.mode == INVERSE_ANALYZING:
                 self.board = self.board.switchColor()
-                self.__printColor()
-                if self.engineIsInNotPlaying:
-                    print >> self.engine, "force"
             
             # The called of setBoardList will have to repost/analyze the
             # analyzer engines at this point.
@@ -574,21 +547,12 @@ class CECPEngine (ProtocolEngine):
     def spectatorUndoMoves (self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
-        if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
-            self.__printColor()
-            if self.engineIsInNotPlaying: print >> self.engine, "force"
         
         for i in xrange(moves):
             print >> self.engine, "undo"
         
         self.board = gamemodel.boards[-1]
-        
-        if self.mode == INVERSE_ANALYZING:
-            self.board = self.board.switchColor()
-            self.__printColor()
-            if self.engineIsInNotPlaying: print >> self.engine, "force"
-    
+            
     @semisynced
     def playerUndoMoves (self, moves, gamemodel):
         log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % \
@@ -663,26 +627,31 @@ class CECPEngine (ProtocolEngine):
         self.engineIsInNotPlaying = False
     
     def __sendAnalyze (self, inverse=False):
-        self.__tellEngineToStopPlayingCurrentColor()
-        
-        if inverse:
-            self.board = self.board.setColor(1-self.color)
-            self.__printColor()
-            if self.engineIsInNotPlaying: print >> self.engine, "force"
-            self.mode = INVERSE_ANALYZING
-        else:
-            self.mode = ANALYZING
 
+        if inverse and self.board.board.opIsChecked():
+            # Many engines don't like positions able to take down enemy
+            # king. Therefore we just return the "kill king" move
+            # automaticaly
+            self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
+            return
+
+        def stop_analyze ():
+            if self.engineIsAnalyzing:
+                print >> self.engine, "exit"
+                # Some engines (crafty, gnuchess) doesn't respond to exit command
+                # we try to force them to stop with an empty board fen
+                print >> self.engine, "setboard 8/8/8/8/8/8/8/8 w - - 0 1"
+                self.engineIsAnalyzing = False
+        
         print >> self.engine, "post"
         print >> self.engine, "analyze"
+        self.engineIsAnalyzing = True
+
+        t = Timer(conf.get("max_analysis_spin", 3), stop_analyze)
+        t.start()
         
-        # workaround for crafty not sending analysis after it has found a mating line
-        # http://code.google.com/p/pychess/issues/detail?id=515
-        if "crafty" in self.features["myname"].lower():
-            print >> self.engine, "noise 0"
-   
     def __printColor (self):
-        if self.features["colors"] or self.mode == INVERSE_ANALYZING:
+        if self.features["colors"]: #or self.mode == INVERSE_ANALYZING:
             if self.board.color == WHITE:
                 print >> self.engine, "white"
             else: print >> self.engine, "black"
@@ -692,18 +661,14 @@ class CECPEngine (ProtocolEngine):
             self.__tellEngineToStopPlayingCurrentColor()
             fen = board.asFen()
             if self.mode == INVERSE_ANALYZING:
-                # Some engine doesn't support feature "colors" (f.e: TJchess)
-                # so "black" and "white" command doesn't change the side to move
                 fen_arr = fen.split()
-                if self.board.color == WHITE:
+                if not self.board.board.opIsChecked():
                     if fen_arr[1] == "b":
                         fen_arr[1] = "w"
-                        fen = " ".join(fen_arr)
-                else:
-                    if fen_arr[1] == "w":
+                    else:
                         fen_arr[1] = "b"
-                        fen = " ".join(fen_arr)
-            print >> self.engine, "setboard", fen
+                fen = " ".join(fen_arr)
+            print >> self.engine, "setboard %s" % fen
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
@@ -832,7 +797,7 @@ class CECPEngine (ProtocolEngine):
                 except:
                     # Errors may happen when parsing "old" lines from
                     # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug('Ignored an "old" line from analyzer: %s' % mvstrs, extra={"task":self.defname})
+                    log.debug('Ignored an "old" line from analyzer: %s %s' % (self.board, mvstrs), extra={"task":self.defname})
                     return
                 
                 # Don't emit if we weren't able to parse moves, or if we have a move
