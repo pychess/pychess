@@ -201,10 +201,6 @@ class UCIEngine (ProtocolEngine):
     def putMove (self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % \
             (board1, move, board2, self.board), extra={"task":self.defname})
-        # If the spactator engine analyzing an older position, let it do
-        if self.board != board2:
-            return
-
         self._recordMove(board1, move, board2)
         
         if not self.readyMoves:
@@ -441,10 +437,10 @@ class UCIEngine (ProtocolEngine):
                 else:
                     commands.append("position %s" % self.uciPosition)
 
-                commands.append("go infinite")
-                #TODO: Issue #722: Add an option for maximum hint/spy analysis time with sensible default
-                #commands.append("go movetime 3000")
-            
+                #commands.append("go infinite")
+                move_time = int(conf.get("max_analysis_spin", 3))*1000
+                commands.append("go movetime %s" % move_time)
+
             if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.multipvExpected = min(self.multipvSetting, legalMoveCount(self.board))
             else:
