@@ -59,7 +59,6 @@ class PyChessCECP(PyChess):
         sys.exit(0)
     
     def makeReady(self):
-        PyChess.makeReady(self)
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         signal.signal(signal.SIGTERM, self.handle_sigterm)
     
