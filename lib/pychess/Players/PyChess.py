@@ -37,13 +37,6 @@ class PyChess:
         self.post = False
         self.debug = True
     
-    def makeReady(self):
-        try:
-            import psyco
-            psyco.bind(alphaBeta)
-        except ImportError:
-            pass
-    
     #===========================================================================
     # Play related
     #===========================================================================
