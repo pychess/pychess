@@ -785,6 +785,9 @@ class GameModel (GObject, PooledThread):
             board = new
         
         if board0.board.next is None:
+            # If we are in the latest played board, and want to add a variation
+            # we have to add a not played yet board first 
+            # which can hold the variation as his child
             from pychess.Utils.lutils.LBoard import LBoard
             null_board = LBoard()
             null_board.prev = board0.board

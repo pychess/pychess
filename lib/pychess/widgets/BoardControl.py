@@ -107,7 +107,7 @@ class BoardControl (gtk.EventBox):
             move = Move(cord0, cord1, board, promotion)
         
         if self.view.model.curplayer.__type__ == LOCAL and self.view.shownIsMainLine() and \
-           board.board.next is None and self.view.model.status == RUNNING:
+           self.view.model.boards[-1] == board and self.view.model.status == RUNNING:
             self.emit("piece_moved", move, color)
         else:
             if board.board.next is None and not self.view.shownIsMainLine():
@@ -258,10 +258,10 @@ class BoardControl (gtk.EventBox):
                 self.keybuffer = ""
                 return
             if validate(board, move):
-                if self.view.shownIsMainLine() and board.board.next is None:
+                if self.view.shownIsMainLine() and self.view.model.boards[-1] == board:
                     self.emit("piece_moved", move, color)
                 else:
-                    if board.board.next is None:
+                    if board.board.next is None and not self.view.shownIsMainLine():
                         self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
                         self.view.shown += 1
                     else:

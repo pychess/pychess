@@ -400,7 +400,7 @@ class Sidepanel(gtk.TextView):
                 
                 buf.insert(end_iter(), " ")
 
-            if self.showEmt and level == 0 and self.gamemodel.timemodel is not None:
+            if self.showEmt and level == 0 and hasattr(node, "plyCount") and self.gamemodel.timemodel is not None:
                 elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
                 self.textbuffer.insert_with_tags_by_name(end_iter(), formatTime(elapsed) + " ", "emt")
 
