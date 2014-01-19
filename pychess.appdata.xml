@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2006 Thomas Dybdahl Ahle <lobais@gmail.com>, 2013 Tamás Bajusz <gbtami@gmail.com> -->
+<application>
+ <id type="desktop">pychess.desktop</id>
+ <licence>GFDL</licence>
+ <name>PyChess</name>
+ <summary>Chess client</summary>
+ <description>
+  <p>
+    PyChess is a chess client for playing and analyzing chess games. It is
+    intended to be usable both for those totally new to chess as well as
+    advanced users who want to use a computer to further enhance their play.
+  </p>
+  <p>
+    PyChess has a builtin python chess engine and auto-detects most
+    popular chess engines (Stockfish, Rybka, Houdini, Shredder, GNU Chess,
+    Crafty, Fruit, and many more). These engines are available as opponents,
+    and are used to provide hints and analysis. PyChess also shows analysis
+    from opening books and Gaviota end-game tablebases.
+  </p>
+  <p>
+    When you get sick of playing computer players you can login to FICS (the
+    Free Internet Chess Server) and play against people all over the world.
+    PyChess has a built-in Timeseal client, so you won't lose clock time during
+    a game due to lag. PyChess also has pre-move support, which means you can
+    make (or start making) a move before your opponent has made their move.
+  </p>
+  <p>PyChess has many other features including:</p>
+  <ul>
+   <li>CECP and UCI chess engine support with customizable engine configurations</li>
+   <li>Polyglot opening book support</li>
+   <li>Hint and Spy move arrows</li>
+   <li>Hint, Score, and Annotation panels</li>
+   <li>Play and analyze games in separate game tabs</li>
+   <li>18 chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Losers, Piece Odds, and Atomic</li>
+   <li>Reads and writes PGN, EPD and FEN chess file formats</li>
+   <li>Undo and pause chess games</li>
+   <li>Move animation in games</li>
+   <li>Drag and drop chess files</li>
+   <li>Optional game move and event sounds</li>
+   <li>Chess piece themes with 40 built-in piece themes</li>
+   <li>Legal move highlighting</li>
+   <li>Direct copy+paste pgn game input via Enter Game Notation open-game dialog</li>
+   <li>Internationalised text and Figurine Algebraic Notation (FAN) support</li>
+   <li>Translated into 38 languages (languages with +5% strings translated)</li>
+   <li>Easy to use and intuitive look and feel</li>
+  </ul>
+ </description>
+ <screenshots>
+  <screenshot type="default" width="450" height="438">http://pychess.org/images/feature-1.png</screenshot>
+  <screenshot width="532" height="421">http://pychess.org/images/feature-2.png</screenshot>
+  <screenshot width="470" height="392">http://pychess.org/images/feature-3.png</screenshot>
+ </screenshots>
+ <url type="homepage">http://pychess.org</url>
+ <updatecontact>pychess-people@googlegroups.com</updatecontact>
+</application>
+
