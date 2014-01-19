@@ -90,6 +90,7 @@ DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.glade'))]
 DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.py'))]
 
 # Data
+DATA_FILES += [('share/appdata', ['pychess.appdata.xml'])]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
