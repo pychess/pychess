@@ -641,6 +641,7 @@ class FICSGames (GObject):
         GObject.__init__(self)
         self.games = {}
         self.games_by_gameno = {}
+        self.adjourned_games = {}
         self.connection = connection
 
     def start (self):
@@ -665,14 +666,18 @@ class FICSGames (GObject):
             raise Exception("%s already exists in %s" % (repr(value), repr(self)))
         self.games[hash(value)] = value
         self.games_by_gameno[value.gameno] = value
-        
+        if isinstance(value, FICSAdjournedGame):        
+            self.adjourned_games[hash(value)] = value
+            
     def __delitem__ (self, game):
-        if not isinstance(game, FICSGame): raise TypeError
+        if not isinstance(game, FICSGame): raise TypeError, (repr(game), type(game))
         if game in self:
             del self.games[hash(game)]
         if game.gameno in self.games_by_gameno:
             del self.games_by_gameno[game.gameno]
-        
+        if game in self.adjourned_games:
+            del self.adjourned_games[hash(game)]
+            
     def __contains__ (self, game):
         if not isinstance(game, FICSGame): raise TypeError
         if hash(game) in self.games:
@@ -686,7 +691,7 @@ class FICSGames (GObject):
     
     def get_game_by_gameno (self, gameno):
         if type(gameno) is not int: raise TypeError
-        return self.games_by_gameno.get(gameno)
+        return self.games_by_gameno[gameno]
     
     def get (self, game, create=True, emit=True):
         # TODO: lock
@@ -708,21 +713,19 @@ class FICSGames (GObject):
             self.emit("FICSGameEnded", game)
     
     def onAdjournmentsList (self, adm, adjournments):
-        for game in self.values():
-            if isinstance(game, FICSAdjournedGame):
-                if game not in adjournments:
-                    del self[game]
-                    game.opponent.adjournment = False
-                    self.emit("FICSAdjournedGameRemoved", game)
+        for game in self.adjourned_games.values():
+            if game not in adjournments:
+                del self[game]
+                game.opponent.adjournment = False
+                self.emit("FICSAdjournedGameRemoved", game)
     
     def onCurGameEnded (self, bm, game):
-        for _game in self.values():
-            if isinstance(_game, FICSAdjournedGame):
-                for player in (game.wplayer, game.bplayer):
-                    if player == _game.opponent:
-                        del self[_game]
-                        _game.opponent.adjournment = False
-                        self.emit("FICSAdjournedGameRemoved", _game)
+        for adjourned_game in self.adjourned_games.values():
+            for player in (game.wplayer, game.bplayer):
+                if player == adjourned_game.opponent:
+                    del self[adjourned_game]
+                    adjourned_game.opponent.adjournment = False
+                    self.emit("FICSAdjournedGameRemoved", adjourned_game)
     
 class FICSSeek:
     def __init__ (self, name, min, inc, rated, color, game_type, rmin=0, rmax=9999):
