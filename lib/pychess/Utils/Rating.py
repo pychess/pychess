@@ -1,5 +1,5 @@
-from pychess.Utils.const import *
 import gobject
+from pychess.ic import *
 
 class Rating (gobject.GObject):
     def __init__(self, ratingtype, elo, deviation=DEVIATION_NONE, wins=0,
@@ -60,3 +60,4 @@ class Rating (gobject.GObject):
             self.bestElo = rating.bestElo
         elif self.bestTime != rating.bestTime:
             self.bestTime = rating.bestTime
+        

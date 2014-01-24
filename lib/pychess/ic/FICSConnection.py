@@ -33,6 +33,7 @@ from VerboseTelnet import FromPlusPrediction
 from VerboseTelnet import FromToPrediction
 from VerboseTelnet import PredictionsTelnet
 from VerboseTelnet import NLinesPrediction
+from pychess.ic import NAMES_RE, TITLES_RE
 
 class LogOnError (StandardError): pass
 
@@ -179,15 +180,20 @@ class FICSConnection (Connection):
                 if "Invalid password" in line:
                     raise LogOnError, BADPAS
                 
-                match = re.search("\*\*\*\* Starting FICS session as "+
-                                  "([A-Za-z]+)(?:\([A-Z*]+\))* \*\*\*\*", line)
+                match = re.search("\*\*\*\* Starting FICS session as " +
+                    "(%s)%s \*\*\*\*" % (NAMES_RE, TITLES_RE), line)
                 if match:
                     self.username = match.groups()[0]
                     break
+                
+            lines = self.client.readuntil("ics%")
+            notify_users = re.search(
+                "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
+            self.notify_users = notify_users.groups()[0].split(" ") \
+                if notify_users else None
             
             self.FatICS = self.client.FatICS
             self.client.name = self.username
-            self.client.readuntil("ics%")
             self.emit('connectingMsg', _("Setting up environment"))
             self.client = PredictionsTelnet(self.client, self.predictions,
                                             self.reply_cmd_dict)
