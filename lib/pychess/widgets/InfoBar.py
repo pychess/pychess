@@ -49,7 +49,9 @@ class InfoBarMessageButton (gobject.GObject):
 class InfoBarMessage (gobject.GObject):
     __gsignals__ = {
         "dismissed":  (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "updated": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
     }
+    
     def __init__ (self, message_type, content, callback):
         gobject.GObject.__init__(self)
         self.type = message_type
@@ -60,6 +62,7 @@ class InfoBarMessage (gobject.GObject):
         self.buttons = []
 
         self._dismissed_cid = None
+        self._updated_cid = None
         
     def add_button (self, button):
         """
@@ -71,6 +74,12 @@ class InfoBarMessage (gobject.GObject):
         
     def dismiss (self):
         self.emit("dismissed")
+    
+    def update_content (self, content):
+        container = gtk.HBox()
+        container.pack_start(content, expand=False, fill=False)
+        self.content = container
+        self.emit("updated")
         
 class InfoBar (gtk.InfoBar):
     """
@@ -91,6 +100,10 @@ class InfoBar (gtk.InfoBar):
         if message.handler_is_connected(message._dismissed_cid):
             message.disconnect(message._dismissed_cid)
         message._dismissed_cid = None
+
+        if message.handler_is_connected(message._updated_cid):
+            message.disconnect(message._updated_cid)
+        message._updated_cid = None
         
         for button in message.buttons:
             if button.handler_is_connected(button._sensitive_cid):
@@ -112,6 +125,20 @@ class InfoBar (gtk.InfoBar):
         self._disconnect_message(message)
         self.messages.remove(message)
         self._response_cb(self, None)
+        return False
+    
+    def _message_updated_cb (self, message):
+        try:
+            shown_message = self.messages[-1]
+        except IndexError:
+            return False
+        
+        if message == shown_message:
+            for widget in self.get_content_area():
+                self.get_content_area().remove(widget)
+            self.get_content_area().add(message.content)
+            self.show_all()
+        
         return False
     
     def _button_sensitive_cb (self, button, property, message):
@@ -171,6 +198,7 @@ class InfoBar (gtk.InfoBar):
             self._button_tooltip_cb(button, None, message)
         if message.callback:
             self.response_cid = self.connect("response", message.callback, message)
+        self.show_all()
         
     def push_message (self, message):
         if not isinstance(message, InfoBarMessage):
@@ -187,6 +215,8 @@ class InfoBar (gtk.InfoBar):
         self._load_message(message)
         message._dismissed_cid = message.connect("dismissed",
                                                  self._message_dismissed_cb)
+        message._updated_cid = message.connect("updated",
+                                               self._message_updated_cb)
         self.show_all()
 
     def clear_messages (self):

@@ -181,23 +181,6 @@ for cord, name in enumerate(reprCord):
     cordDic[name] = cord
 
 ################################################################################
-# Internet Chess                                                               #
-################################################################################
-
-IC_CONNECTED, IC_DISCONNECTED = range(2)
-
-IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
-IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, IC_POS_OBSERVING, IC_POS_INITIAL = range(7)
-
-# Rating deviations
-DEVIATION_NONE, DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL = range(3)
-
-IC_STATUS_PLAYING, IC_STATUS_ACTIVE, IC_STATUS_BUSY, IC_STATUS_OFFLINE, \
-IC_STATUS_AVAILABLE, IC_STATUS_NOT_AVAILABLE, IC_STATUS_EXAMINING, \
-IC_STATUS_IDLE, IC_STATUS_IN_TOURNAMENT, IC_STATUS_RUNNING_SIMUL_MATCH, \
-IC_STATUS_UNKNOWN = range(11)
-
-################################################################################
 # User interface                                                               #
 ################################################################################
 
