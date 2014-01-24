@@ -2008,17 +2008,30 @@ class SeekChallengeSection (ParrentListSection):
 # Relay server messages which aren't part of a game to the user            #
 ############################################################################
 
+class PlayerNotificationMessage (InfoBarMessage):
+    def __init__ (self, message_type, content, callback, player, text):
+        InfoBarMessage.__init__(self, message_type, content, callback)
+        self.player = player
+        self.text = text
+
 class Messages (Section):
     def __init__ (self, widgets, connection, infobar):
         self.connection = connection
         self.infobar = infobar
         self.messages = []
+        self.players = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.glm.connect("seek-updated", self.on_seek_updated)
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
-        
+        self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
+        self.connection.cm.connect("departedNotification", self.onDepartedNotification)
+        if self.connection.notify_users:
+            for user in self.connection.notify_users:
+                user = self.connection.players.get(FICSPlayer(user))
+                self.user_from_notify_list_is_present(user)
+                
     @glock.glocked
     def tooManySeeks (self, bm):
         label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
@@ -2040,7 +2053,7 @@ class Messages (Section):
     def onPlayGameCreated (self, bm, board):
         for message in self.messages:
             message.dismiss()
-        self.messages = []
+        del self.messages[:]
         return False
     
     @glock.glocked
@@ -2085,7 +2098,52 @@ class Messages (Section):
                                                 gtk.RESPONSE_CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
+            
+    def _connect_to_player_rating_changes (self, player):
+        for rt in (TYPE_BLITZ, TYPE_LIGHTNING):
+            player.ratings[rt].connect("notify::elo",
+                self._replace_notification_message, player)
+    
+    @glock.glocked
+    def _replace_notification_message (self, rating, prop, player):
+        for message in self.messages:
+            if isinstance(message, PlayerNotificationMessage) and \
+                    message.player == player:
+                message.update_content(
+                    self.get_infobarmessage_content(player, message.text))
+        return False
+    
+    def _add_notification_message (self, player, text):
+        content = self.get_infobarmessage_content(player, text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+#             self.messages.remove(message)
+            return False
+        message = PlayerNotificationMessage(gtk.MESSAGE_INFO, content,
+                                            response_cb, player, text)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+    
+    @glock.glocked
+    def onArrivalNotification (self, cm, player):
+        self._add_notification_message(player, _(" has arrived"))
+        if player not in self.players:
+            self.players.append(player)
+            self._connect_to_player_rating_changes(player)
+    
+    @glock.glocked
+    def onDepartedNotification (self, cm, player):
+        self._add_notification_message(player, _(" has departed"))
 
+    @glock.glocked
+    def user_from_notify_list_is_present (self, player):
+        self._add_notification_message(player, _(" is present"))
+        if player not in self.players:
+            self.players.append(player)
+            self._connect_to_player_rating_changes(player)
+    
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #
 ############################################################################

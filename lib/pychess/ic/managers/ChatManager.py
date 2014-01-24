@@ -5,6 +5,7 @@ from math import ceil
 import time
 
 from pychess.System.Log import log
+from pychess.ic.FICSObjects import FICSPlayer
 
 titles = "(?:\([A-Z*]+\))*"
 names = "([A-Za-z]+)"+titles
@@ -23,6 +24,9 @@ class ChatManager (GObject):
         'bughouseMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
         'announcement' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         
+        'arrivalNotification': (SIGNAL_RUN_FIRST, None, (object,)),
+        'departedNotification': (SIGNAL_RUN_FIRST, None, (object,)),
+
         'channelAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'channelRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'channelJoinError': (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
@@ -48,6 +52,11 @@ class ChatManager (GObject):
                 "%s(\*)? (c-)?shouts: (.*)" % names)
         self.connection.expect_line (self.onShoutMessage,
                 "--> %s(\*)?:? (.*)" % names)
+        
+        self.connection.expect_line(self.onArrivalNotification,
+                                    "Notification: %s has arrived\." % names)
+        self.connection.expect_line(self.onDepartedNotification,
+                                    "Notification: %s has departed\." % names)
         
         self.connection.expect_fromto (self.onChannelList,
                 "channels only for their designated topics.",
@@ -187,6 +196,22 @@ class ChatManager (GObject):
             self.emit("channelMessage", name, isadmin, isme, CHANNEL_CSHOUT, text)
         else:
             self.emit("channelMessage", name, isadmin, isme, CHANNEL_SHOUT, text)
+    
+    def onArrivalNotification (self, match):
+        name = match.groups()[0]
+        try:
+            player = self.connection.players.get(FICSPlayer(name))
+        except KeyError:
+            return
+        self.emit("arrivalNotification", player)
+    
+    def onDepartedNotification (self, match):
+        name = match.groups()[0]
+        try:
+            player = self.connection.players.get(FICSPlayer(name))
+        except KeyError:
+            return
+        self.emit("departedNotification", player)
     
     def toldChannel (self, match):
         amount, channel = match.groups()
