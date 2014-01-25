@@ -289,7 +289,7 @@ class LBoard:
         
         # Parse fullmove number
         
-        movenumber = int(moveNoChr)*2 -2
+        movenumber = max(int(moveNoChr),1)*2 -2
         if self.color == BLACK: movenumber += 1
         self.plyCount = movenumber
 
