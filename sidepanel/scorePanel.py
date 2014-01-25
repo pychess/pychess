@@ -35,6 +35,7 @@ class Sidepanel:
         self.boardview.connect('shown_changed', self.shown_changed)
         glock_connect(self.boardview.model, "game_changed", self.game_changed)
         glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
+        glock_connect(self.boardview.model, "analysis_changed", self.analysis_changed)
         
         # Add the initial board
         glock_connect(self.boardview.model, "game_started", self.game_changed)
@@ -113,6 +114,16 @@ class Sidepanel:
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)
             self.plot.redraw()
+
+    def analysis_changed (self, gamemodel, ply):
+        if not self.boardview.shownIsMainLine():
+            return
+        color = (ply-1) % 2
+        score = gamemodel.scores[ply][1]
+        score = score * -1 if color==WHITE else score
+        self.plot.changeScore(ply-gamemodel.lowply, score)
+        self.plot.select(ply)
+        self.plot.redraw()
     
     def plot_selected (self, plot, selected):
         board = self.boardview.model.boards[selected]
@@ -141,6 +152,9 @@ class ScorePlot (gtk.DrawingArea):
     def addScore (self, score):
         self.scores.append(score)
     
+    def changeScore(self, ply, score):
+        self.scores[ply] = score
+        
     def __len__ (self):
         return len(self.scores)
     
