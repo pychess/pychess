@@ -221,8 +221,12 @@ class TimeModel (GObject):
         return self.intervals[WHITE][0]
 
     def getElapsedMoveTime (self, ply):
-        movecount, color = divmod(ply, 2)
-        return self.intervals[1-color][movecount-1] - self.intervals[1-color][movecount] if movecount > 0 else 0
+        movecount, color = divmod(ply+1, 2)
+        gain = self.gain if ply > 2 else 0
+        if len(self.intervals[color]) > movecount:
+            return self.intervals[color][movecount-1] - self.intervals[color][movecount] + gain if movecount > 1 else 0
+        else:
+            return 0
         
     @property
     def display_text (self):
