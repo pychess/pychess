@@ -2,6 +2,8 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START
 from pychess.Utils.logic import getStatus
 
+from ChessFile import LoadingError
+
 __label__ = _("Simple Chess Position")
 __ending__ = "fen"
 __append__ = True
@@ -28,8 +30,13 @@ class FenFile (ChessFile):
         #if len(fenlist) == 6:
         #    fen = " ".join(fenlist[:5]) + " 1" 
         fen = self.games[gameno]
+        try:
+            board = model.variant.board(setup=fen)
+        except SyntaxError, e:
+            board = model.variant.board()
+            raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         
-        model.boards = [model.variant.board(setup=fen)]
+        model.boards = [board]
         model.variations = [model.boards]
         if model.status == WAITING_TO_START:
             model.status, model.reason = getStatus(model.boards[-1])
