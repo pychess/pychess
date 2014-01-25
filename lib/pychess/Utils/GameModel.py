@@ -100,6 +100,8 @@ class GameModel (GObject, PooledThread):
         "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         # variations_changed is emitted if a variation was added/deleted.
         "variations_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # scores_changed is emitted if the analyzing scores was changed.
+        "analysis_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
     }
     
     def __init__ (self, timemodel=None, variant=NormalChess):
@@ -109,6 +111,7 @@ class GameModel (GObject, PooledThread):
         self.boards = [variant.board(setup=True)]
         
         self.moves = []
+        self.scores = {}
         self.players = []
         
         self.gameno = 0
@@ -205,6 +208,8 @@ class GameModel (GObject, PooledThread):
         analyzer.setOptionInitialBoard(self)
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
+        if analyzer_type == HINT:
+            analyzer.connect("analyze", self.on_analyze)
         return analyzer
     
     def remove_analyzer (self, analyzer_type):
@@ -243,6 +248,14 @@ class GameModel (GObject, PooledThread):
         if self.isPlayingICSGame():
             self.pause_analyzer(analyzer_type)
     
+    def on_analyze(self, analyzer, analysis):
+        if analysis and analysis[0] is not None:
+            pv, score = analysis[0]
+            ply = analyzer.board.ply
+            if score != None:
+                self.scores[ply] = (pv, score)
+                self.emit("analysis_changed", ply)
+        
     def setOpening(self):
         if self.ply > 40:
             return
