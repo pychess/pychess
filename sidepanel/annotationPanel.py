@@ -43,15 +43,28 @@ class Sidepanel(gtk.TextView):
         
         self.textbuffer = self.get_buffer()
         
+        color0 = gtk.gdk.Color(red=0.0)
+        color1 = gtk.gdk.Color(red=0.2)
+        color2 = gtk.gdk.Color(red=0.4)
+        color3 = gtk.gdk.Color(red=0.6)
+        color4 = gtk.gdk.Color(red=0.8)
+        color5 = gtk.gdk.Color(red=1.0)
+
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=pango.WEIGHT_BOLD)
-        self.textbuffer.create_tag("node", weight=pango.WEIGHT_BOLD)
+        self.textbuffer.create_tag("node", weight=pango.WEIGHT_BOLD, background="white")
+        self.textbuffer.create_tag("scored0", foreground_gdk=color0)
+        self.textbuffer.create_tag("scored1", foreground_gdk=color1)
+        self.textbuffer.create_tag("scored2", foreground_gdk=color2)
+        self.textbuffer.create_tag("scored3", foreground_gdk=color3)
+        self.textbuffer.create_tag("scored4", foreground_gdk=color4)
+        self.textbuffer.create_tag("scored5", foreground_gdk=color5)
         self.textbuffer.create_tag("emt", foreground="darkgrey")
         self.textbuffer.create_tag("comment", foreground="darkblue")
         self.textbuffer.create_tag("variation-toplevel")
         self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
         self.textbuffer.create_tag("variation-uneven", foreground="darkred", style="italic")
-        self.textbuffer.create_tag("selected", background_full_height=True, background="black", foreground="white")
+        self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
         self.textbuffer.create_tag("margin", left_margin=4)
         self.textbuffer.create_tag("variation-margin0", left_margin=20)
         self.textbuffer.create_tag("variation-margin1", left_margin=36)
@@ -74,6 +87,7 @@ class Sidepanel(gtk.TextView):
         glock_connect(self.gamemodel, "opening_changed", self.update)
         glock_connect(self.gamemodel, "players_changed", self.update)
         glock_connect(self.gamemodel, "variations_changed", self.update)
+        glock_connect(self.gamemodel, "analysis_changed", self.analysis_changed)
 
         # Connect to preferences
         self.fan = conf.get("figuresInNotation", False)
@@ -88,6 +102,13 @@ class Sidepanel(gtk.TextView):
             self.showEmt = conf.get("showEmt", False)
             self.update()
         conf.notify_add("showEmt", showEmtCallback)
+
+        # Blunders
+        self.showBlunder = conf.get("showBlunder", False)
+        def showBlunderCallback(none):
+            self.showBlunder = conf.get("showBlunder", False)
+            self.update()
+        conf.notify_add("showBlunder", showBlunderCallback)
 
         return __widget__
 
@@ -321,6 +342,46 @@ class Sidepanel(gtk.TextView):
 
         self.update()
         self.gamemodel.needsSave = True
+
+    def colorize_node(self, ply, start, end):
+        self.textbuffer.remove_tag_by_name("scored5", start, end)
+        self.textbuffer.remove_tag_by_name("scored4", start, end)
+        self.textbuffer.remove_tag_by_name("scored3", start, end)
+        self.textbuffer.remove_tag_by_name("scored2", start, end)
+        self.textbuffer.remove_tag_by_name("scored1", start, end)
+        if self.showBlunder and ply-1 in self.gamemodel.scores and ply in self.gamemodel.scores:
+            color = (ply-1) % 2
+            oldmoves, oldscore = self.gamemodel.scores[ply-1]
+            oldscore = oldscore * -1 if color == BLACK else oldscore
+            moves, score = self.gamemodel.scores[ply]
+            score = score * -1 if color == WHITE else score
+            diff = score-oldscore
+            if (diff > 400 and color==BLACK) or (diff < -400 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored5", start, end)
+            elif (diff > 200 and color==BLACK) or (diff < -200 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored4", start, end)
+            elif (diff > 90 and color==BLACK) or (diff < -90 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored3", start, end)
+            elif (diff > 50 and color==BLACK) or (diff < -50 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored2", start, end)
+            elif (diff > 20 and color==BLACK) or (diff < -20 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored1", start, end)
+            else:
+                self.textbuffer.apply_tag_by_name("scored0", start, end)
+        else:
+            self.textbuffer.apply_tag_by_name("scored0", start, end)
+
+    # Update the score chenged node color
+    def analysis_changed(self, gamemodel, ply):
+        if not self.boardview.shownIsMainLine():
+            return
+        scored_board = gamemodel.getBoardAtPly(ply)
+        for ni in self.nodeIters:
+            if ni["node"] == scored_board.board:
+                start = self.textbuffer.get_iter_at_offset(ni["start"])
+                end = self.textbuffer.get_iter_at_offset(ni["end"])
+                self.colorize_node(ply, start, end)
+                break
         
     # Update the selected node highlight
     def update_selected_node(self):
@@ -374,10 +435,11 @@ class Sidepanel(gtk.TextView):
                 
                 startIter = buf.get_iter_at_offset(start)
                 endIter = buf.get_iter_at_offset(end_iter().get_offset())
-                
+
                 if level == 0:
                     buf.apply_tag_by_name("node", startIter, endIter)
                     buf.apply_tag_by_name("margin", startIter, endIter)
+                    self.colorize_node(ply, startIter, endIter)
                 elif level == 1:
                     buf.apply_tag_by_name("variation-toplevel", startIter, endIter)
                     buf.apply_tag_by_name("variation-margin0", startIter, endIter)
