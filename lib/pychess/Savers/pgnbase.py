@@ -158,13 +158,14 @@ class PgnBase(ChessFile):
         if gameno in self.tagcache:
             if tagkey in self.tagcache[gameno]:
                 return self.tagcache[gameno][tagkey]
-            else: return None
+            else:
+                return ""
         else:
             if self.games:
                 self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
                 return self._getTag(gameno, tagkey)
             else:
-                return None
+                return ""
 
     def get_movetext(self, no):
         return self.games[no][1]
