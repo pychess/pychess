@@ -25,8 +25,7 @@ from managers.AutoLogOutManager import AutoLogOutManager
 from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
 
-from FICSObjects import FICSPlayers, FICSGames
-
+from FICSObjects import *
 from TimeSeal import TimeSeal
 from VerboseTelnet import LinePrediction
 from VerboseTelnet import FromPlusPrediction
@@ -129,7 +128,9 @@ class FICSConnection (Connection):
         if self.conn is None:
             self.players = FICSPlayers(self)
             self.games = FICSGames(self)
-    
+            self.seeks = FICSSeeks(self)
+            self.challenges = FICSChallenges(self)
+            
     def _connect (self):
         self.connecting = True
         self.emit("connecting")
@@ -250,6 +251,8 @@ class FICSConnection (Connection):
                 self.bm.start()
                 self.players.start()
                 self.games.start()
+                self.seeks.start()
+                self.challenges.start()
 
                 # disable setting iveriables from console
                 self.lvm.setVariable("lock", 1)

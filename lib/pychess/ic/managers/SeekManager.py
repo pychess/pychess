@@ -1,9 +1,9 @@
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gobject import GObject, SIGNAL_RUN_FIRST
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
-from pychess.ic.managers.BoardManager import parse_reason
+from pychess.ic.managers.HelperManager import HelperManager
 from pychess.System.Log import log
 
 rated = "(rated|unrated)"
@@ -24,7 +24,7 @@ class SeekManager (GObject):
     
     __gsignals__ = {
         'addSeek' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'removeSeek' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'removeSeek' : (SIGNAL_RUN_FIRST, None, (int,)),
         'clearSeeks' : (SIGNAL_RUN_FIRST, None, ()),
         'our_seeks_removed' : (SIGNAL_RUN_FIRST, None, ()),
         'seek_updated' : (SIGNAL_RUN_FIRST, None, (str,)),
@@ -78,62 +78,64 @@ class SeekManager (GObject):
     ###
     
     def on_seek_add (self, match):
-        parts = match.groups()[0].split(" ")
         # The <s> message looks like:
         # <s> index w=name_from ti=titles rt=rating t=time i=increment
         #     r=rated('r')/unrated('u') tp=type("wild/fr", "wild/4","blitz")
         #     c=color rr=rating_range(lower-upper) a=automatic?('t'/'f')
         #     f=formula_checked('t'/f')
-        
-        seek = {"gameno": parts[0]}
+        parts = match.groups()[0].split(" ")
+        seek = {}
         for key, value in [p.split("=") for p in parts[1:] if p]:
-            if key in ('w', 'r', 't', 'i'):
-                seek[key] = value
-            if key == "tp":
-                try:
-                    seek["gametype"] = GAME_TYPES[value]
-                    if GAME_TYPES[value].variant_type in UNSUPPORTED:
-                        return
-                except KeyError:
-                    if self.connection.FatICS and value == "chess":
-                        # TODO: remove when fixed in FatICS
-                        expected_time = int(seek["t"]) + int(seek["i"])*2/3
-                        if expected_time == 0:
-                            value = "untimed"
-                        elif expected_time < 3:
-                            value = "lightning"
-                        elif expected_time < 15:
-                            value = "blitz"
-                        else:
-                            value = "standard"
-                        seek["gametype"] = GAME_TYPES[value]
-                    else:
-                        return
-            if key == "rr":
-                seek["rmin"], seek["rmax"] = value.split("-")
-                seek["rmin"] = int(seek["rmin"])
-                seek["rmax"] = int(seek["rmax"])                
-            elif key == "ti":
-                seek["cp"] = bool(int(value) & 2) # 0x2 - computer
-                title = ""
-                for hex in HEX_TO_TITLE.keys():
-                    if int(value, 16) & hex:
-                        title += "(" + \
-                            TITLE_TYPE_DISPLAY_TEXTS_SHORT[HEX_TO_TITLE[hex]] + ")"
-                seek["title"] = title
-            elif key == "rt":
-                if value[-1] in (" ", "P", "E"):
-                    seek[key] = value[:-1]
-                else: seek[key] = value
-            elif key == "a":
-                seek["manual"] = value == "f" # Must be accepted manually
-            elif key == "c":
-                if value == "?":
-                    seek["color"] = None
-                elif value == "W":
-                    seek["color"] = "white"
-                elif value == "B":
-                    seek["color"] = "black"
+            seek[key] = value
+        
+        try:
+            index = int(parts[0])
+            player = self.connection.players.get(FICSPlayer(seek['w']))
+            player.titles |= parse_title_hex(seek['ti'])
+            rated = seek['r'] == 'r'
+            minutes = int(seek['t'])
+            increment = int(seek['i'])
+            rmin, rmax = [int(r) for r in seek['rr'].split("-")]
+            rating = seek['rt']
+            deviation = None
+            if rating[-1] in (" ", "P", "E"):
+                deviation = DEVIATION[rating[-1]]
+                rating = rating[:-1]
+            rating = int(rating)
+            automatic = seek['a'] == 't'
+            color = None
+            if seek['c'] == "W":
+                color = "white"
+            elif seek['c'] == "B":
+                color = "black"
+        except KeyError, e:
+            log.warning("on_seek_add: KeyError: %s %s" % (repr(e), repr(seek)))
+            return
+        
+        try:
+            gametype = GAME_TYPES[seek["tp"]]
+        except KeyError:
+            if self.connection.FatICS and seek["tp"] == "chess":
+                # TODO: remove when fixed in FatICS
+                expected_time = minutes + increment*2/3
+                if expected_time == 0:
+                    gametype = "untimed"
+                elif expected_time < 3:
+                    gametype = "lightning"
+                elif expected_time < 15:
+                    gametype = "blitz"
+                else:
+                    gametype = "standard"
+                gametype = GAME_TYPES[gametype]
+            else:
+                return
+        if gametype.variant_type in UNSUPPORTED:
+            return
+        player.ratings[gametype.rating_type].elo = rating
+        player.ratings[gametype.rating_type].deviation = deviation
+        
+        seek = FICSSeek(index, player, minutes, increment, rated, color,
+                        gametype, rmin=rmin, rmax=rmax, automatic=automatic)
         self.emit("addSeek", seek)
     on_seek_add.BLKCMD = BLKCMD_SEEK
     
@@ -141,15 +143,12 @@ class SeekManager (GObject):
         self.emit("clearSeeks")
     
     def on_seek_remove (self, match):
-#         print "on_seek_remove: %s" % match.string
         for key in match.groups()[0].split(" "):
-#             print "on_seek_remove: key: %s" % key
             if not key: continue
-            self.emit("removeSeek", key)
+            self.emit("removeSeek", int(key))
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
     
     def on_our_seeks_removed (self, matchlist):
-#         print "on_our_seeks_removed: matchlist[0]: %s" % matchlist[0].string
         self.on_seek_remove(matchlist[0])
         self.emit("our_seeks_removed")
     on_our_seeks_removed.BLKCMD = BLKCMD_UNSEEK
