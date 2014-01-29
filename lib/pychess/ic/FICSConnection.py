@@ -191,7 +191,7 @@ class FICSConnection (Connection):
             notify_users = re.search(
                 "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
             self.notify_users = notify_users.groups()[0].split(" ") \
-                if notify_users else None
+                if notify_users else ()
             
             self.FatICS = self.client.FatICS
             self.client.name = self.username

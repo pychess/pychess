@@ -1978,11 +1978,10 @@ class Messages (Section):
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
         self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
         self.connection.cm.connect("departedNotification", self.onDepartedNotification)
-        if self.connection.notify_users:
-            for user in self.connection.notify_users:
-                user = self.connection.players.get(FICSPlayer(user))
-                self.user_from_notify_list_is_present(user)
-                
+        for user in self.connection.notify_users:
+            user = self.connection.players.get(FICSPlayer(user))
+            self.user_from_notify_list_is_present(user)
+        
     @glock.glocked
     def tooManySeeks (self, bm):
         label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
@@ -2049,14 +2048,16 @@ class Messages (Section):
                                                 gtk.RESPONSE_CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
-            
-    def _connect_to_player_rating_changes (self, player):
+        
+    def _connect_to_player_changes (self, player):
         for rt in (TYPE_BLITZ, TYPE_LIGHTNING):
             player.ratings[rt].connect("notify::elo",
                 self._replace_notification_message, player)
-    
+        player.connect("notify::titles",
+                       self._replace_notification_message, player)
+        
     @glock.glocked
-    def _replace_notification_message (self, rating, prop, player):
+    def _replace_notification_message (self, obj, prop, player):
         for message in self.messages:
             if isinstance(message, PlayerNotificationMessage) and \
                     message.player == player:
@@ -2082,7 +2083,7 @@ class Messages (Section):
         self._add_notification_message(player, _(" has arrived"))
         if player not in self.players:
             self.players.append(player)
-            self._connect_to_player_rating_changes(player)
+            self._connect_to_player_changes(player)
     
     @glock.glocked
     def onDepartedNotification (self, cm, player):
@@ -2093,7 +2094,7 @@ class Messages (Section):
         self._add_notification_message(player, _(" is present"))
         if player not in self.players:
             self.players.append(player)
-            self._connect_to_player_rating_changes(player)
+            self._connect_to_player_changes(player)
     
 ############################################################################
 # Initialize connects for createBoard and createObsBoard                   #

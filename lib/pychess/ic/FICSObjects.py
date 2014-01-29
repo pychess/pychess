@@ -457,7 +457,8 @@ class FICSPlayers (GObject):
             player = self[player]
             player.online = False
             player.status = IC_STATUS_OFFLINE
-            if not player.adjournment and not player.keep_after_logout:
+            if not player.adjournment and not player.keep_after_logout and \
+                    player.name not in self.connection.notify_users:
                 del self[player]
             self.emit('FICSPlayerExited', player)
     
