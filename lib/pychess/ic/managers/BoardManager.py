@@ -422,7 +422,7 @@ class BoardManager (GObject):
                     player.ratings[game_type.rating_type].elo != rating:
                 player.ratings[game_type.rating_type].elo = rating
         game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated,
-            game_type=game_type, min=int(min), inc=int(inc),
+            game_type=game_type, minutes=int(min), inc=int(inc),
             board=FICSBoard(wms, bms, fen=fen))
         game = self.connection.games.get(game)
 
@@ -696,7 +696,7 @@ class BoardManager (GObject):
                     player.ratings[game_type.rating_type].elo == 0:
                 player.ratings[game_type.rating_type].elo = rating
         game = gameclass(wplayer, bplayer, game_type=game_type,
-            rated=(rated.lower() == "rated"), min=minutes, inc=increment,
+            rated=(rated.lower() == "rated"), minutes=minutes, inc=increment,
             board=FICSBoard(wms, bms, pgn=pgn))
         if in_progress:
             game.gameno = gameno

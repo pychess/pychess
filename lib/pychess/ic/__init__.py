@@ -23,6 +23,23 @@ IC_STATUS_UNKNOWN = range(11)
 TITLES_RE = "(?:\([A-Z*]+\))*"
 NAMES_RE = "[A-Za-z]+"
 
+DEVIATION = {
+    "E": DEVIATION_ESTIMATED,
+    "P": DEVIATION_PROVISIONAL,
+    " ": DEVIATION_NONE,
+    "" : DEVIATION_NONE,
+}
+
+STATUS = {
+    "^": IC_STATUS_PLAYING,
+    " ": IC_STATUS_AVAILABLE,
+    ".": IC_STATUS_IDLE,
+    "#": IC_STATUS_EXAMINING,
+    ":": IC_STATUS_NOT_AVAILABLE,
+    "~": IC_STATUS_RUNNING_SIMUL_MATCH,
+    "&": IC_STATUS_IN_TOURNAMENT,
+}
+
 class GameType (object):
     def __init__ (self, fics_name, short_fics_name, rating_type,
                   display_text=None, variant_type=NORMALCHESS):
@@ -38,9 +55,6 @@ class GameType (object):
     def __repr__ (self):
         s = "<GameType "
         s += "fics_name='%s', " % self.fics_name
-        s += "short_fics_name='%s', " % self.short_fics_name
-        s += "rating_type=%d, " % self.rating_type
-        s += "variant_type=%d, " % self.variant_type
         s += "display_text='%s'>" % self.display_text
         return s
     
@@ -201,6 +215,13 @@ HEX_TO_TITLE = {
     0x40 : TYPE_WOMAN_INTERNATIONAL_MASTER,
     0x80 : TYPE_WOMAN_FIDE_MASTER,
 }
+
+def parse_title_hex (titlehex):
+    titles = set()
+    for key in HEX_TO_TITLE:
+        if int(titlehex, 16) & key:
+            titles.add(HEX_TO_TITLE[key])
+    return titles
 
 """
 Internal command codes used in FICS block mode
