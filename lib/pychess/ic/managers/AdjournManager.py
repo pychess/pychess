@@ -82,7 +82,7 @@ class AdjournManager (GObject):
                                                 else (opponent, user)
             game = FICSAdjournedGame(wplayer, bplayer, game_type=gametype,
                 rated=rated, our_color=our_color, length=length, time=gametime,
-                min=minutes, inc=gain, private=private)
+                minutes=minutes, inc=gain, private=private)
             if game.opponent.adjournment != True:
                 game.opponent.adjournment = True
             

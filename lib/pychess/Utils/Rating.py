@@ -19,6 +19,7 @@ class Rating (gobject.GObject):
     def get_elo (self):
         return self._elo
     def set_elo (self, elo):
+        assert type(elo) == int, type(elo)
         self._elo = elo
     elo = gobject.property(get_elo, set_elo)
     

@@ -5,6 +5,7 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.ic import *
+from pychess.ic.FICSObjects import *
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -54,8 +55,8 @@ class OfferManager (GObject):
         'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
         'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (object,)),
         'onOfferDeclined' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (str, object)),
-        'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (int,)),
         'onActionError' : (SIGNAL_RUN_FIRST, None, (object, int)),
     }
     
@@ -124,20 +125,21 @@ class OfferManager (GObject):
     def onOfferAdd (self, match):
         log.debug("OfferManager.onOfferAdd: match.string=%s" % match.string)
         tofrom, index, offertype, parameters = match.groups()
-
+        index = int(index)
+        
         if tofrom == "t":
             # ICGameModel keeps track of the offers we've sent ourselves, so we
             # don't need this
             return
         if offertype not in strToOfferType:
             log.warning("OfferManager.onOfferAdd: Declining unknown offer type: " + \
-                "offertype=%s parameters=%s index=%s\n" % (offertype, parameters, index))
-            self.connection.client.run_command("decline %s" % index)
+                "offertype=%s parameters=%s index=%d" % (offertype, parameters, index))
+            self.connection.client.run_command("decline %d" % index)
         offertype = strToOfferType[offertype]
         if offertype == TAKEBACK_OFFER:
-            offer = Offer(offertype, param=int(parameters), index=int(index))
+            offer = Offer(offertype, param=int(parameters), index=index)
         else:
-            offer = Offer(offertype, index=int(index))
+            offer = Offer(offertype, index=index)
         self.offers[offer.index] = offer
         
         if offer.type == MATCH_OFFER:
@@ -145,8 +147,8 @@ class OfferManager (GObject):
             if matchreUntimed.match(parameters) != None:
                 fname, frating, col, tname, trating, rated, type = \
                     matchreUntimed.match(parameters).groups()
-                mins = "0"
-                incr = "0"
+                mins = 0
+                incr = 0
                 gametype = GAME_TYPES["untimed"]
             else:
                 fname, frating, col, tname, trating, rated, gametype, mins, \
@@ -166,14 +168,15 @@ class OfferManager (GObject):
                     del self.offers[offer.index]
                     return
             
-            # TODO: get the ficsplayer and update their rating to this one
-            # rather than emitting it in match 
+            player = self.connection.players.get(FICSPlayer(fname))
             rating = frating.strip()
-            rating = rating.isdigit() and rating or "0"
-            rated = rated == "unrated" and "u" or "r"
-            match = {"gametype": gametype, "w": fname, "rt": rating, "color": col,
-                "r": rated, "t": mins, "i": incr, "is_adjourned": is_adjourned}
-            self.emit("onChallengeAdd", index, match)
+            rating = int(rating) if rating.isdigit() else 0
+            if gametype != GAME_TYPES["untimed"]:
+                player.ratings[gametype.rating_type].elo = rating
+            rated = rated != "unrated"
+            challenge = FICSChallenge(index, player, int(mins), int(incr), rated, col,
+                                      gametype, adjourned=is_adjourned)
+            self.emit("onChallengeAdd", challenge)
         
         else:
             log.debug("OfferManager.onOfferAdd: emitting onOfferAdd: %s" % offer)

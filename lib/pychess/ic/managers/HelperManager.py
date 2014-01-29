@@ -17,22 +17,6 @@ mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
 
-DEVIATION = {"E": DEVIATION_ESTIMATED,
-             "P": DEVIATION_PROVISIONAL,
-             " ": DEVIATION_NONE,
-             "" : DEVIATION_NONE,
-            }
-
-STATUS = {"^": IC_STATUS_PLAYING,
-          " ": IC_STATUS_AVAILABLE,
-          ".": IC_STATUS_IDLE,
-          "#": IC_STATUS_EXAMINING,
-          ":": IC_STATUS_NOT_AVAILABLE,
-          "~": IC_STATUS_RUNNING_SIMUL_MATCH,
-          "&": IC_STATUS_IN_TOURNAMENT,
-          }
-
-
 class HelperManager (GObject):
     
     def __init__ (self, helperconn, connection):
@@ -88,7 +72,7 @@ class HelperManager (GObject):
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
         game = FICSGame(wplayer, bplayer, gameno=int(gameno),
-            rated=(rated == "r"), private=(private == "p"), min=int(min),
+            rated=(rated == "r"), private=(private == "p"), minutes=int(min),
             inc=int(inc), game_type=gametype)
         
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
@@ -152,13 +136,6 @@ class HelperManager (GObject):
     def parseRating (rating):
         return int(rating) if rating.isdigit() else 0
     
-    def __parseTitleHex (self, titlehex):
-        titles = set()
-        for hex in HEX_TO_TITLE:
-            if int(titlehex, 16) & hex:
-                titles.add(HEX_TO_TITLE[hex])
-        return titles
-    
     def __parseTitles (self, titles):
         _titles = set()
         if titles:
@@ -177,7 +154,7 @@ class HelperManager (GObject):
         copy = player.copy()
         copy.online = True
         copy.status = STATUS[status]
-        copy.titles |= self.__parseTitleHex(titlehex)        
+        copy.titles |= parse_title_hex(titlehex)        
 
         for ratingtype, elo, dev in \
                 ((TYPE_BLITZ, blitz, blitzdev),

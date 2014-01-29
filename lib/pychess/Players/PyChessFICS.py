@@ -299,7 +299,7 @@ class PyChessFICS(PyChess):
     
     def __onGameCreated (self, boardManager, ficsgame):
         
-        base = int(ficsgame.min)*60
+        base = int(ficsgame.minutes)*60
         inc = int(ficsgame.inc)
         self.clock[:] = base, base
         self.increment[:] = inc, inc

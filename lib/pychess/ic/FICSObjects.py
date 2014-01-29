@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import gobject
 from gobject import GObject, SIGNAL_RUN_FIRST
 
+from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
 from pychess.Utils.const import *
@@ -464,7 +467,255 @@ class FICSPlayers (GObject):
 #            self[player].finger = finger
 #            # TODO: merge ratings and titles from finger object into ficsplayer object
 
-class FICSBoard:
+class FICSMatch (GObject):
+    def __init__ (self, minutes, inc, rated, game_type):
+        assert minutes is None or type(minutes) is int, type(minutes)
+        assert inc is None or type(inc) is int, inc
+        assert type(rated) is bool, rated
+        assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
+            or game_type in GAME_TYPES.values(), game_type
+        GObject.__init__(self)
+        self.minutes = minutes
+        self.inc = inc
+        self.rated = rated
+        self.game_type = game_type
+    
+    def __repr__ (self):
+        text = "%s %s" % (self.minutes, self.inc)
+        text += " %s" % ("rated" if self.rated else "unrated")
+        text += " %s" % self.game_type.display_text
+        return text
+
+    @property
+    def display_rated (self):
+        if self.rated: return _("Rated")
+        else: return _("Unrated")
+
+    @property
+    def display_timecontrol (self):
+        t = ""
+        if self.minutes is not None:
+            t = _("%d min") % self.minutes
+        if self.inc is not None and self.inc != 0:
+            t += _(" + %d sec") % self.inc
+        return t
+
+    @property
+    def sortable_time (self):
+        gainminutes = (self.inc*60)-1 if self.inc != None and self.inc > 0 else 0
+        return self.minutes*60 + gainminutes
+    
+def get_soughtmatch_tooltip_text (sought):
+    text = "%s" % sought.player.name
+    text += "%s" % sought.player.display_titles(long=True)
+    if not sought.player.isGuest():
+        text += " (%d)" % sought.player.getRating(sought.game_type.rating_type).elo
+    text += "\n%s %s" % (sought.display_rated, sought.game_type.display_text)
+    text += "\n" + sought.display_timecontrol
+    if sought.color:
+        text += "\n" + _("%(player)s plays %(color)s") \
+            % {"player": sought.player.name,
+               "color": _("white") if sought.color == "white" else _("black")} 
+    return text
+
+class FICSSoughtMatch (FICSMatch):
+    def __init__ (self, index, player, minutes, inc, rated, color, game_type):
+        assert index is None or type(index) is int, index
+        assert isinstance(player, FICSPlayer), player
+        FICSMatch.__init__(self, minutes, inc, rated, game_type)
+        self.index = index
+        self.player = player
+        self.color = color  # self.player plays color
+    
+    def __hash__ (self):
+        return self.index
+
+    def __eq__ (self, sought):
+        if type(self) == type(sought) and hash(self) == hash(sought):
+            return True
+        else:
+            return False
+    
+    def __ne__ (self, sought):
+        return not self == sought
+    
+    def __repr__ (self):
+        text = "%s" % self.index
+        text += " %s" % self.player.name
+        text += " %s" % FICSMatch.__repr__(self)        
+        return text
+    
+def get_challenge_tooltip_text (challenge):
+    text = get_soughtmatch_tooltip_text(challenge)
+    if challenge.adjourned:
+        text += "\n" + _("This is a continuation of an adjourned match")
+    return text
+
+class FICSChallenge (FICSSoughtMatch):
+    def __init__ (self, index, player, minutes, inc, rated, color, game_type,
+                  adjourned=False):
+        FICSSoughtMatch.__init__(self, index, player, minutes, inc, rated,
+                                 color, game_type)
+        self.adjourned = adjourned
+
+class FICSChallenges (GObject):
+    __gsignals__ = {
+        'FICSChallengeIssued' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSChallengeRemoved' : (SIGNAL_RUN_FIRST, None, (object,))
+    }
+    
+    def __init__ (self, connection):
+        GObject.__init__(self)
+        self.connection = connection
+        self.challenges = {}
+        
+    def start (self):
+        self.connection.om.connect("onChallengeAdd", self.onChallengeIssued)
+        self.connection.om.connect("onChallengeRemove", self.onChallengeRemoved)
+        self.connection.bm.connect("playGameCreated", self.onPlayingGame)
+        
+    def __getitem__ (self, index):
+        if not type(index) == int: raise TypeError
+        return self.challenges[index]
+
+    def __setitem__ (self, index, challenge):
+        if not type(index) == int: raise TypeError
+        if not isinstance(challenge, FICSSoughtMatch): raise TypeError
+        if index in self:
+            log.warning("FICSChallenges: not overwriting challenge %s" %
+                        repr(challenge))
+            return
+        self.challenges[index] = challenge
+        self.emit('FICSChallengeIssued', challenge)
+    
+    def __delitem__ (self, index):
+        if not type(index) == int: raise TypeError
+        try:
+            challenge = self.challenges[index]
+        except KeyError:
+            return
+        del self.challenges[index]
+        self.emit('FICSChallengeRemoved', challenge)
+        
+    def __contains__ (self, index):
+        if not type(index) == int: raise TypeError
+        if index in self.challenges:
+            return True
+        else:
+            return False
+    
+    def clear (self):
+        challenges = self.challenges.copy()
+        for key in challenges:
+            del self[key]
+        
+    def onChallengeIssued (self, om, challenge):
+        self[challenge.index] = challenge
+        
+    def onChallengeRemoved (self, om, index):
+        del self[index]
+        
+    def onPlayingGame (self, bm, game):
+        self.clear()
+
+def get_rating_range_display_text (rmin=0, rmax=9999):
+    assert type(rmin) is type(int()) and rmin >= 0 and rmin <= 9999, rmin
+    assert type(rmax) is type(int()) and rmax >= 0 and rmax <= 9999, rmax
+    if rmin > 0:
+        text = "%d" % rmin
+        if rmax == 9999:
+            text += "↑"
+        else:
+            text += "-%d" % rmax
+    elif rmax != 9999:
+        text = "%d↓" % rmax
+    else:
+        text = None
+    return text
+
+def get_seek_tooltip_text (seek):
+    text = get_soughtmatch_tooltip_text(seek)
+    rrtext = get_rating_range_display_text(seek.rmin, seek.rmax)
+    if rrtext:
+        text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
+    if not seek.automatic:
+        text += "\n%s" % _("Manual Accept")
+    return text
+
+class FICSSeek (FICSSoughtMatch):
+    def __init__ (self, index, player, minutes, inc, rated, color, game_type,
+                  rmin=0, rmax=9999, automatic=True, formula=False):
+        FICSSoughtMatch.__init__(self, index, player, minutes, inc, rated,
+                                 color, game_type)
+        self.rmin = rmin  # minimum rating one has to accept this seek
+        self.rmax = rmax  # maximum rating one has to accept this seek
+        self.automatic = automatic  # if True, auto accept; otherwise, manual accept
+        self.formula = formula  # players' formula will be used to screen responses
+
+class FICSSeeks (GObject):
+    __gsignals__ = {
+        'FICSSeekCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSSeekRemoved' : (SIGNAL_RUN_FIRST, None, (object,))
+    }
+    
+    def __init__ (self, connection):
+        GObject.__init__(self)
+        self.connection = connection
+        self.seeks = {}
+        
+    def start (self):
+        self.connection.glm.connect("addSeek", self.onAddSeek)
+        self.connection.glm.connect("removeSeek", self.onRemoveSeek)
+        self.connection.glm.connect("clearSeeks", self.onClearSeeks)
+        self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
+    
+    def __getitem__ (self, index):
+        if not type(index) == int: raise TypeError
+        return self.seeks[index]
+
+    def __setitem__ (self, index, seek):
+        if not type(index) == int: raise TypeError
+        if not isinstance(seek, FICSSoughtMatch): raise TypeError
+        if index in self:
+            log.warning("FICSSeeks: not overwriting seek %s" % repr(seek))
+            return
+        self.seeks[index] = seek
+        self.emit('FICSSeekCreated', seek)
+    
+    def __delitem__ (self, index):
+        if not type(index) == int: raise TypeError
+        try:
+            seek = self.seeks[index]
+        except KeyError:
+            return
+        del self.seeks[index]
+        self.emit('FICSSeekRemoved', seek)
+        
+    def __contains__ (self, index):
+        if not type(index) == int: raise TypeError
+        if index in self.seeks:
+            return True
+        else:
+            return False
+    
+    def clear (self):        
+        seeks = self.seeks.copy()
+        for key in seeks:
+            del self[key]
+        
+    def onAddSeek (self, glm, seek):
+        self[seek.index] = seek
+        
+    def onRemoveSeek (self, glm, index):
+        del self[index]
+    
+    def onClearSeeks (self, glm):
+        self.clear()
+        
+    def onCurGameEnded (self, bm, game):
+        self.connection.glm.refresh_seeks()
+    
+class FICSBoard (object):
     def __init__ (self, wms, bms, fen=None, pgn=None):
         assert type(wms) is int, wms
         assert type(bms) is int, bms
@@ -474,30 +725,21 @@ class FICSBoard:
         self.fen = fen
         self.pgn = pgn
 
-class FICSGame (GObject):
+class FICSGame (FICSMatch):
     def __init__ (self, wplayer, bplayer, gameno=None,
-                  game_type=None, rated=False, min=None, inc=None, result=None,
+                  game_type=None, rated=False, minutes=None, inc=None, result=None,
                   reason=None, board=None, private=False):
         assert isinstance(wplayer, FICSPlayer), wplayer
         assert isinstance(bplayer, FICSPlayer), bplayer
         assert gameno is None or type(gameno) is int, gameno
-        assert type(rated) is bool, rated
-        assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
-            or game_type in GAME_TYPES.values(), game_type
-        assert min is None or type(min) is int, min
-        assert inc is None or type(inc) is int, inc
         assert result is None or type(result) is int, result
         assert reason is None or type(reason) is int, reason
         assert board is None or isinstance(board, FICSBoard), board
         assert type(private) is bool, private
-        GObject.__init__(self)
+        FICSMatch.__init__(self, minutes, inc, rated, game_type)
         self.wplayer = wplayer
         self.bplayer = bplayer
         self.gameno = gameno
-        self.rated = rated
-        self.game_type = game_type
-        self.min = min  # not always set ("game created ..." message doesn't specify)
-        self.inc = inc  # not always set ("game created ..." message doesn't specify)
         self.result = result
         self.reason = reason
         self.board = board
@@ -520,8 +762,8 @@ class FICSGame (GObject):
             r += ", gameno=%d" % self.gameno
         r += ", game_type=%s" % self.game_type
         r += self.rated and ", rated=True" or ", rated=False"
-        if self.min != None:
-            r += ", min=%i" % self.min
+        if self.minutes != None:
+            r += ", minutes=%i" % self.minutes
         if self.inc != None:
             r += ", inc=%i" % self.inc
         if self.result != None:
@@ -536,11 +778,6 @@ class FICSGame (GObject):
     def set_private (self, private):
         self._private = private
     private = gobject.property(get_private, set_private)
- 
-    @property
-    def display_rated (self):
-        if self.rated: return _("Rated")
-        else: return _("Unrated")
         
     @property
     def display_text (self):
@@ -552,22 +789,13 @@ class FICSGame (GObject):
                 text += " (" + _("Private") + ")"
         return text
     
-    @property
-    def display_timecontrol (self):
-        t = ""
-        if self.min is not None:
-            t = _("%d min") % self.min
-        if self.inc is not None and self.inc != 0:
-            t += _(" + %d sec") % self.inc
-        return t
-    
     def update (self, game):
         if self.rated != game.rated:
             self.rated = game.rated
         if self.private != game.private:
             self.private = game.private
-        if game.min is not None and self.min != game.min:
-            self.min = game.min
+        if game.minutes is not None and self.minutes != game.minutes:
+            self.minutes = game.minutes
         if game.inc is not None and self.inc != game.inc:
             self.inc = game.inc
         if game.game_type is not None and \
@@ -593,16 +821,15 @@ class FICSGame (GObject):
 
 
 class FICSAdjournedGame (FICSGame):
-    def __init__ (self, wplayer, bplayer, our_color=None,
-                  length=None, time=None, rated=False, game_type=None,
-                  private=False, min=None, inc=None, result=None, reason=None,
-                  board=None):
+    def __init__ (self, wplayer, bplayer, our_color=None, length=None, time=None,
+                  rated=False, game_type=None, private=False, minutes=None,
+                  inc=None, result=None, reason=None, board=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
         assert length is None or type(length) is int, length
         assert time is None or type(time) is datetime.datetime, time        
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
-            game_type=game_type, min=min, inc=inc, result=result, reason=reason,
-            board=board)
+            game_type=game_type, minutes=minutes, inc=inc, result=result,
+            reason=reason, board=board)
         self.our_color = our_color
         self.length = length
         self.time = time
@@ -726,15 +953,3 @@ class FICSGames (GObject):
                     del self[adjourned_game]
                     adjourned_game.opponent.adjournment = False
                     self.emit("FICSAdjournedGameRemoved", adjourned_game)
-    
-class FICSSeek:
-    def __init__ (self, name, min, inc, rated, color, game_type, rmin=0, rmax=9999):
-        assert game_type in GAME_TYPES, game_type
-        self.seeker = name
-        self.min = min
-        self.inc = inc
-        self.rated = rated
-        self.color = color
-        self.game_type = game_type
-        self.rmin = rmin  # minimum rating one has to have to be offered this seek
-        self.rmax = rmax  # maximum rating one has to have to be offered this seek
