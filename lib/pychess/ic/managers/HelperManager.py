@@ -45,7 +45,7 @@ class HelperManager (GObject):
         self.helperconn.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.helperconn.expect_line (self.on_game_remove,
-                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+) (.+)\} (\*|1/2-1/2|1-0|0-1)$")
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
         self.helperconn.expect_line (self.on_player_unavailable, "%s is no longer available for matches." % names)
         self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
                 (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
@@ -105,7 +105,7 @@ class HelperManager (GObject):
         self.connection.games.get(game)
     
     def on_game_remove (self, match):
-        gameno, wname, bname, person, comment, result = match.groups()
+        gameno, wname, bname, comment, result = match.groups()
         result, reason = parse_reason(reprResult.index(result), comment, wname=wname)
         
         wplayer = FICSPlayer(wname)
