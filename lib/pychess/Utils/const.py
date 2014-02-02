@@ -194,7 +194,8 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 CLEAR, ENPAS = range(2)
 
 # Main menu items
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "export_position1", "properties1", "close1")
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "export_position1", "analyze_game1",
+                    "properties1", "close1")
 ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
