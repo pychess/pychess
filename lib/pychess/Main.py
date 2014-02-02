@@ -7,6 +7,8 @@ import atexit
 import logging
 import signal
 import subprocess
+import threading
+import time
 import urllib 
 from urlparse import urlparse
 
@@ -195,7 +197,21 @@ class GladeHandlers:
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
         ionest.saveGameAs (gameDic[gmwidg], position)
-    
+
+    def on_analyze_game_activate (widget):
+        gmwidg = gamewidget.cur_gmwidg()
+        gamemodel = gmwidg.gamemodel
+        analyzer = gamemodel.spectators[HINT]
+
+        def analyse_moves():
+            move_time = int(conf.get("max_analysis_spin", 3))
+            for ply, board in enumerate(gamemodel.boards):
+                analyzer.setBoard(board)
+                time.sleep(move_time)
+        keep_alive_thread = threading.Thread(target = analyse_moves)
+        keep_alive_thread.daemon = True
+        keep_alive_thread.start()
+
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
     
