@@ -22,7 +22,7 @@ from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
-    
+    log.debug("nurseGame: %s %s" % (gmwidg, gamemodel))
     gmwidg.connect("infront", on_gmwidg_infront)
     gmwidg.connect("closed", on_gmwidg_closed)
     gmwidg.connect("title_changed", on_gmwidg_title_changed)

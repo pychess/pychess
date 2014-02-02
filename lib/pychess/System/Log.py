@@ -6,7 +6,7 @@ import logging
 from prefix import getUserDataPrefix, addUserDataPrefix
 
 oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
-MAXFILES = 10
+MAXFILES = 50
 if len(oldlogs) >= MAXFILES:
     oldlogs.sort()
     try:
