@@ -894,9 +894,11 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def elo_changed (self, rating, prop, player):
+#        log.debug("elo_changed: %s %s" % (rating.elo, player))
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
+#        log.debug("elo_changed: %s" % (self.store.get(ti, 13)))
         self.store.set(ti, 1, player.getIcon())
         self.store.set(self.players[player]["ti"], 13,
                        get_player_tooltip_text(player))
@@ -2058,6 +2060,7 @@ class Messages (Section):
         
     @glock.glocked
     def _replace_notification_message (self, obj, prop, player):
+        log.debug("_replace_notification_message: %s %s" % (repr(obj), repr(player)))
         for message in self.messages:
             if isinstance(message, PlayerNotificationMessage) and \
                     message.player == player:

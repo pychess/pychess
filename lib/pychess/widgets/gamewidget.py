@@ -780,6 +780,7 @@ def _ensureReadForGameWidgets ():
         headbook.connect("page-reordered", page_reordered, headbook)
 
 def attachGameWidget (gmwidg):
+    log.debug("attachGameWidget: %s" % gmwidg)
     _ensureReadForGameWidgets()
     headbook = getheadbook()
     
