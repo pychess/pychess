@@ -128,6 +128,7 @@ class GladeHandlers:
             return False
     
     def on_gmwidg_created (handler, gmwidg, gamemodel):
+        log.debug("on_gmwidg_created: %s %s" % (gmwidg, gamemodel))
         gameDic[gmwidg] = gamemodel
         
         # Bring playing window to the front

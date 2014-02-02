@@ -231,6 +231,7 @@ class PredictionsTelnet (object):
         return answer
         
     def run_command(self, text):
+        log.debug(text, extra={"task": (self.telnet.name, "run_command")})
         if self.lines.block_mode:
             # TODO: reuse id after command reply handled
             self.__command_id += 1
