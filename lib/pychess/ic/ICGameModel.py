@@ -107,7 +107,10 @@ class ICGameModel (GameModel):
                     # (a counter-offer by the offeree for a takeback for a different number of
                     # moves replaces the initial offer) so we can safely remove all of them
                     del self.offers[offer]
-            self.undoMoves(self.ply-ply)
+
+            # In some cases (like lost on time) the last move is resent
+            if self.status != WON_CALLFLAG:
+                self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, ficsgame):
         if ficsgame == self.ficsgame and len(self.players) >= 2:
