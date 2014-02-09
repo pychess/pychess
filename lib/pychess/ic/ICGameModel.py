@@ -109,7 +109,7 @@ class ICGameModel (GameModel):
                     del self.offers[offer]
 
             # In some cases (like lost on time) the last move is resent
-            if self.status != WON_CALLFLAG:
+            if self.reason != WON_CALLFLAG:
                 self.undoMoves(self.ply-ply)
     
     def onGameEnded (self, bm, ficsgame):
