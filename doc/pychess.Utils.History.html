@@ -1,0 +1,236 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pychess.Utils.History</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="pychess.html"><font color="#ffffff">pychess</font></a>.<a href="pychess.Utils.html"><font color="#ffffff">Utils</font></a>.History</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/History.py">/home/thomas/Programmering/python/skak/svn/lib/pychess/Utils/History.py</a></font></td></tr></table>
+    <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;UTF-8&nbsp;-*-</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="pychess.Utils.validator.html">pychess.Utils.validator</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="gobject.html#GObject">gobject.GObject</a>(<a href="__builtin__.html#object">__builtin__.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pychess.Utils.History.html#History">History</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="pychess.Utils.History.html#HistoryPool">HistoryPool</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="History">class <strong>History</strong></a>(<a href="gobject.html#GObject">gobject.GObject</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;remembers&nbsp;all&nbsp;moves,&nbsp;and&nbsp;can&nbsp;give&nbsp;you<br>
+a&nbsp;two&nbsp;dimensional&nbsp;array&nbsp;(8x8)&nbsp;of&nbsp;Piece&nbsp;objects<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pychess.Utils.History.html#History">History</a></dd>
+<dd><a href="gobject.html#GObject">gobject.GObject</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="History-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Warning:&nbsp;Not&nbsp;complete&nbsp;equals&nbsp;test.<br>
+Only&nbsp;most&nbsp;important&nbsp;stuff&nbsp;is&nbsp;tested</tt></dd></dl>
+
+<dl><dt><a name="History-__getitem__"><strong>__getitem__</strong></a>(self, i)</dt></dl>
+
+<dl><dt><a name="History-__init__"><strong>__init__</strong></a>(self, mvlist<font color="#909090">=False</font>, special<font color="#909090">=False</font>)</dt></dl>
+
+<dl><dt><a name="History-__len__"><strong>__len__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="History-add"><strong>add</strong></a>(self, move, mvlist<font color="#909090">=False</font>)</dt></dl>
+
+<dl><dt><a name="History-clone"><strong>clone</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="History-curCol"><strong>curCol</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="History-reset"><strong>reset</strong></a>(self, mvlist<font color="#909090">=False</font>)</dt></dl>
+
+<dl><dt><a name="History-setStartingColor"><strong>setStartingColor</strong></a>(self, color)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType pychess+Utils+History+History (142792128)&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><a name="History-__cmp__"><strong>__cmp__</strong></a>(...)</dt><dd><tt>x.<a href="#History-__cmp__">__cmp__</a>(y)&nbsp;&lt;==&gt;&nbsp;cmp(x,y)</tt></dd></dl>
+
+<dl><dt><a name="History-__gobject_init__"><strong>__gobject_init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#History-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="History-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#History-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="History-chain"><strong>chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-connect"><strong>connect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-connect_after"><strong>connect_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-connect_object"><strong>connect_object</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-connect_object_after"><strong>connect_object_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-disconnect"><strong>disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-disconnect_by_func"><strong>disconnect_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-emit"><strong>emit</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-emit_stop_by_name"><strong>emit_stop_by_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-freeze_notify"><strong>freeze_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-get_data"><strong>get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-get_property"><strong>get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_block"><strong>handler_block</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_block_by_func"><strong>handler_block_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_disconnect"><strong>handler_disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_is_connected"><strong>handler_is_connected</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_unblock"><strong>handler_unblock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-handler_unblock_by_func"><strong>handler_unblock_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-notify"><strong>notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-set_data"><strong>set_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-set_property"><strong>set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-stop_emission"><strong>stop_emission</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="History-thaw_notify"><strong>thaw_notify</strong></a>(...)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="gobject.html#GObject">gobject.GObject</a>:<br>
+<dl><dt><strong>__dict__</strong> = &lt;dictproxy object&gt;</dl>
+
+<dl><dt><strong>__gdoc__</strong> = 'Object pychess+Utils+History+History<font color="#c040c0">\n\n</font>Class reme...ded ()<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'</dl>
+
+<dl><dt><strong>__grefcount__</strong> = &lt;attribute '__grefcount__' of 'gobject.GObject' objects&gt;</dl>
+
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#History-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<dl><dt><strong>props</strong> = &lt;gobject.GProps object&gt;</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="HistoryPool">class <strong>HistoryPool</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="HistoryPool-__init__"><strong>__init__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="HistoryPool-add"><strong>add</strong></a>(self, history)</dt></dl>
+
+<dl><dt><a name="HistoryPool-pop"><strong>pop</strong></a>(self, clear<font color="#909090">=True</font>)</dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-Lock"><strong>Lock</strong></a> = allocate_lock(...)</dt><dd><tt>allocate_lock()&nbsp;-&gt;&nbsp;lock&nbsp;object<br>
+(allocate()&nbsp;is&nbsp;an&nbsp;obsolete&nbsp;synonym)<br>
+&nbsp;<br>
+Create&nbsp;a&nbsp;new&nbsp;lock&nbsp;object.&nbsp;&nbsp;See&nbsp;LockType.__doc__&nbsp;for&nbsp;information&nbsp;about&nbsp;locks.</tt></dd></dl>
+ <dl><dt><a name="-rm"><strong>rm</strong></a>(var, opp)</dt></dl>
+ <dl><dt><a name="-startBoard"><strong>startBoard</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>AN</strong> = 3<br>
+<strong>ARTIFICIAL</strong> = 1<br>
+<strong>BISHOP</strong> = 3<br>
+<strong>BLACK</strong> = 1<br>
+<strong>BLACKWON</strong> = 3<br>
+<strong>BLACK_CASTLED</strong> = 32<br>
+<strong>BLACK_OO</strong> = 4<br>
+<strong>BLACK_OOO</strong> = 8<br>
+<strong>DRAW</strong> = 1<br>
+<strong>DRAW_50MOVES</strong> = 1<br>
+<strong>DRAW_ACCEPTION</strong> = 3<br>
+<strong>DRAW_AGREE</strong> = 3<br>
+<strong>DRAW_INSUFFICIENT</strong> = 4<br>
+<strong>DRAW_OFFER</strong> = 2<br>
+<strong>DRAW_REPITITION</strong> = 0<br>
+<strong>DRAW_STALEMATE</strong> = 2<br>
+<strong>FAN</strong> = 2<br>
+<strong>FLAG_CALL</strong> = 1<br>
+<strong>HINT</strong> = 0<br>
+<strong>KING</strong> = 0<br>
+<strong>KNIGHT</strong> = 4<br>
+<strong>LAN</strong> = 1<br>
+<strong>LOCAL</strong> = 0<br>
+<strong>NAME</strong> = 'PyChess'<br>
+<strong>PAWN</strong> = 5<br>
+<strong>PREFIX</strong> = '/home/thomas/Programmering/python/skak/svn'<br>
+<strong>QUEEN</strong> = 1<br>
+<strong>REMOTE</strong> = 2<br>
+<strong>RESIGNATION</strong> = 0<br>
+<strong>ROOK</strong> = 2<br>
+<strong>RUNNING</strong> = 0<br>
+<strong>SAN</strong> = 0<br>
+<strong>SIGNAL_RUN_FIRST</strong> = 1<br>
+<strong>SPY</strong> = 1<br>
+<strong>TYPE_NONE</strong> = &lt;GType void (4)&gt;<br>
+<strong>VERSION</strong> = '0.6.0_beta'<br>
+<strong>WHITE</strong> = 0<br>
+<strong>WHITEWON</strong> = 2<br>
+<strong>WHITE_CASTLED</strong> = 16<br>
+<strong>WHITE_OO</strong> = 1<br>
+<strong>WHITE_OOO</strong> = 2<br>
+<strong>WON_CALLFLAG</strong> = 6<br>
+<strong>WON_MATE</strong> = 7<br>
+<strong>WON_RESIGN</strong> = 5<br>
+<strong>chr2Sign</strong> = {'b': 3, 'k': 0, 'n': 4, 'p': 5, 'q': 1, 'r': 2}<br>
+<strong>hashfALPHA</strong> = 0<br>
+<strong>hashfBETA</strong> = 1<br>
+<strong>hashfEXACT</strong> = 2<br>
+<strong>hisPool</strong> = &lt;pychess.Utils.History.HistoryPool instance&gt;<br>
+<strong>localePrefixes</strong> = ('/usr/share/locale', '/usr/local/share/locale')<br>
+<strong>log</strong> = &lt;Log object (pychess+System+Log+Log)&gt;<br>
+<strong>prefixes</strong> = ('/usr/share', '/usr/local/share', '/usr/share/games', '/usr/local/share/games')<br>
+<strong>reprColor</strong> = ['White', 'Black']<br>
+<strong>reprMode</strong> = ['hint', 'spy']<br>
+<strong>reprPiece</strong> = ['King', 'Queen', 'Rook', 'Bishop', 'Knight', 'Pawn']<br>
+<strong>reprResult</strong> = ['*', '1/2-1/2', '1-0', '0-1']<br>
+<strong>reprSign</strong> = ['K', 'Q', 'R', 'B', 'N', 'P']</td></tr></table>
+</body></html>
