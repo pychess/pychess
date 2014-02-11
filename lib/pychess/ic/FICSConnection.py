@@ -124,6 +124,7 @@ class FICSConnection (Connection):
         Connection.__init__(self, host, ports, username, password)
         self.conn = conn
         self.registred = None
+        self.notify_users = []        
         
         if self.conn is None:
             self.players = FICSPlayers(self)
@@ -190,8 +191,8 @@ class FICSConnection (Connection):
             lines = self.client.readuntil("ics%")
             notify_users = re.search(
                 "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
-            self.notify_users = notify_users.groups()[0].split(" ") \
-                if notify_users else ()
+            if notify_users:
+                self.notify_users.extend(notify_users.groups()[0].split(" "))
             
             self.FatICS = self.client.FatICS
             self.client.name = self.username
