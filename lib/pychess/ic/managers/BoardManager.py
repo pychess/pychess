@@ -391,6 +391,8 @@ class BoardManager (GObject):
     
     @staticmethod
     def parseRating (rating):
+        if rating[-1].isalpha():
+            rating = rating[:-1]
         return int(rating) if rating.isdigit() else 0
     
     def onPlayGameCreated (self, matchlist):
