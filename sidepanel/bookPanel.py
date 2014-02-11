@@ -261,7 +261,7 @@ class EngineAdvisor(Advisor):
     def child_tooltip (self, i):
         if self.active:
             if i < self.linesExpected:
-                return _("Engine scores are in units of pawns, from White's point of view.")
+                return _("Engine scores are in units of pawns, from White's point of view. Double clicking on analysis lines you can insert them into Annotation panel as variations.")
             else:
                 return _("Adding suggestions can help you find ideas, but slows down the computer's analysis.")
         return ""
