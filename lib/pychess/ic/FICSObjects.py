@@ -64,7 +64,7 @@ class FICSPlayer (GObject):
         if ratings is None:
             self.ratings = {}
             for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                               TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
+                               TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD, TYPE_UNTIMED):
                 ratingobj = Rating(ratingtype, 0)
                 self.setRating(ratingtype, ratingobj)
         else:
