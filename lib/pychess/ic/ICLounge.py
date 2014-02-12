@@ -186,6 +186,7 @@ class UserInfoSection(Section):
         self.connection = connection
         self.host = host
         self.pinger = None
+        self.ping_label = None
 
         self.dock = self.widgets["fingerTableDock"]
 
@@ -269,19 +270,24 @@ class UserInfoSection(Section):
                 row += 1
 
             table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
-            pingLabel = gtk.Label(_("Connecting")+"...")
-            pingLabel.props.xalign = 0
-            self.pinger = pinger = Pinger(self.host)
+            if self.ping_label:
+                if self.dock.get_children():
+                    self.dock.get_children()[0].remove(self.ping_label)
+            else:
+                self.ping_label = gtk.Label(_("Connecting")+"...")
+                self.ping_label.props.xalign = 0
             def callback (pinger, pingtime):
                 if type(pingtime) == str:
-                    pingLabel.set_text(pingtime)
+                    self.ping_label.set_text(pingtime)
                 elif pingtime == -1:
-                    pingLabel.set_text(_("Unknown"))
-                else: pingLabel.set_text("%.0f ms" % pingtime)
-            pinger.connect("recieved", callback)
-            pinger.connect("error", callback)
-            pinger.start()
-            table.attach(pingLabel, 1, 6, row, row+1)
+                    self.ping_label.set_text(_("Unknown"))
+                else: self.ping_label.set_text("%.0f ms" % pingtime)
+            if not self.pinger:
+                self.pinger = Pinger(self.host)
+                self.pinger.start()
+                self.pinger.connect("recieved", callback)
+                self.pinger.connect("error", callback)
+            table.attach(self.ping_label, 1, 6, row, row+1)
             row += 1
 
             if not self.connection.isRegistred():
