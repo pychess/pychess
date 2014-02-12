@@ -802,7 +802,10 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def onPlayerAdded (self, players, player):
-        if player in self.players: return
+        log.debug("onPlayerAdded: %s" % repr(player))
+        if player in self.players:
+            log.debug("onPlayerAdded: %s already in self" % repr(player))
+            return
         
         ti = self.store.append([player, player.getIcon(),
             player.name + player.display_titles(), player.blitz, player.standard,
