@@ -203,6 +203,7 @@ class FICSConnection (Connection):
             self.client.run_command("iset block 1")
             self.client.lines.block_mode = True
             self.client.run_command("iset defprompt 1")
+            self.client.run_command("set seek 0")
             
             # The helper just wants only player and game notifications
             if self.conn:
@@ -210,7 +211,6 @@ class FICSConnection (Connection):
                 self.client.run_command("set open 1")
                 self.client.run_command("set shout 0")
                 self.client.run_command("set cshout 0")
-                self.client.run_command("set seek 0")
                 self.client.run_command("set tell 0")
                 self.client.run_command("set chanoff 1")
                 self.client.run_command("set gin 1")
