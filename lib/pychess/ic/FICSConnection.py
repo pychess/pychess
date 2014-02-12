@@ -123,6 +123,7 @@ class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password="", conn=None):
         Connection.__init__(self, host, ports, username, password)
         self.conn = conn
+        self.lvm = None
         self.registred = None
         self.notify_users = []        
         
@@ -298,7 +299,7 @@ class FICSConnection (Connection):
     
     def close (self):
         if self.isConnected():
-            if self.conn is None:
+            if self.conn is None and self.lvm:
                 self.lvm.stop()
             try:
                 self.client.run_command("quit")
