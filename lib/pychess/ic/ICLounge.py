@@ -138,12 +138,6 @@ class ICLounge (GObject):
                 if hasattr(sections[i], "__del__"):
                     sections[i].__del__()
         sections = None
-        if self.connection != None:
-            self.connection.close()
-        self.connection = None
-        if self.helperconn != None:
-            self.helperconn.close()
-        self.helperconn = None
         self.widgets = None
 
 ################################################################################

@@ -35,7 +35,6 @@ class ICLogon:
         self.widgets["fics_logon"].connect('key-press-event',
                 lambda w, e: e.keyval == gtk.keysyms.Escape and w.hide())
         
-        
         def on_logOnAsGuest_toggled (check):
             self.widgets["nameLabel"].set_sensitive(not check.get_active())
             self.widgets["nameEntry"].set_sensitive(not check.get_active())
@@ -94,8 +93,7 @@ class ICLogon:
     
     def onCancel (self, widget, hide):
         if self.connection and self.connection.isConnecting():
-            self.connection.close()
-            self.connection = None
+            self._disconnect()
             self.showNormal()
         if hide:
             self.widgets["fics_logon"].hide()
@@ -160,7 +158,7 @@ class ICLogon:
         content.pack_start(vbox, expand=False, fill=False, padding=7)
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
-        self.connection = None
+        self._disconnect()
     
     def onConnected (self, connection):
         self.lounge = ICLounge(connection, self.helperconn, self.host)
@@ -172,14 +170,22 @@ class ICLogon:
         self.showNormal()
         self.widgets["messagePanel"].hide()
     
+    def _disconnect (self):
+        for connection in (self.connection, self.helperconn):
+            if connection:
+                connection.close()
+        self.connection = None
+        self.helperconn = None
+        
     def onDisconnected (self, connection):
+        self._disconnect()
         global dialog
         dialog = None
     
     def onAutologout (self, alm):
         self.show()
         self.lounge = None
-        self.connection = None
+        self._disconnect()
         self.showError(None, AutoLogoutException())
     
     def onConnectClicked (self, button):
