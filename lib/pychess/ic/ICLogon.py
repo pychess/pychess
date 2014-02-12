@@ -160,6 +160,7 @@ class ICLogon:
         content.pack_start(vbox, expand=False, fill=False, padding=7)
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
+        self.connection = None
     
     def onConnected (self, connection):
         self.lounge = ICLounge(connection, self.helperconn, self.host)
@@ -182,6 +183,8 @@ class ICLogon:
         self.showError(None, AutoLogoutException())
     
     def onConnectClicked (self, button):
+        self.widgets["messagePanel"].hide()
+        
         if self.widgets["logOnAsGuest"].get_active():
             username = "guest"
             password = ""
