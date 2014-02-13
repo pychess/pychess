@@ -572,7 +572,8 @@ class ChatWindow:
         if not self.window:
             self.initUi()
         self.window.show_all()
-    
+        self.window.present()
+        
     def initUi (self):
         self.window = gtk.Window()
         self.window.set_border_width(12)
