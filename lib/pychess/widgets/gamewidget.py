@@ -734,18 +734,25 @@ def _ensureReadForGameWidgets ():
         leaf.setDockable(False)
 
         # S
-        epanel = leaf.dock(docks["engineOutputPanel"][1], SOUTH, docks["engineOutputPanel"][0], "engineOutputPanel")       
-        epanel.default_item_height = 60
+        epanel = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0],
+                           "bookPanel")       
+        epanel.default_item_height = 45
+        epanel = epanel.dock(docks["engineOutputPanel"][1], CENTER,
+                             docks["engineOutputPanel"][0], "engineOutputPanel")
  
         # NE
-        leaf = leaf.dock(docks["annotationPanel"][1], EAST, docks["annotationPanel"][0], "annotationPanel")
-        leaf = leaf.dock(docks["historyPanel"][1], CENTER, docks["historyPanel"][0], "historyPanel")
-        leaf = leaf.dock(docks["scorePanel"][1], CENTER, docks["scorePanel"][0], "scorePanel")
+        leaf = leaf.dock(docks["annotationPanel"][1], EAST,
+                         docks["annotationPanel"][0], "annotationPanel")
+        leaf = leaf.dock(docks["historyPanel"][1], CENTER,
+                         docks["historyPanel"][0], "historyPanel")
+        leaf = leaf.dock(docks["scorePanel"][1], CENTER,
+                         docks["scorePanel"][0], "scorePanel")
         
         # SE
-        leaf = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0], "bookPanel")
-        leaf = leaf.dock(docks["commentPanel"][1], CENTER, docks["commentPanel"][0], "commentPanel")
-        leaf = leaf.dock(docks["chatPanel"][1], CENTER, docks["chatPanel"][0], "chatPanel")
+        leaf = leaf.dock(docks["chatPanel"][1], SOUTH, docks["chatPanel"][0],
+                         "chatPanel")
+        leaf = leaf.dock(docks["commentPanel"][1], CENTER,
+                         docks["commentPanel"][0], "commentPanel")
     
     def unrealize (dock):
         # unhide the panel before saving so its configuration is saved correctly

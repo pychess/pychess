@@ -346,10 +346,10 @@ class PyChess:
         for widget in ("hint_mode", "spy_mode"):
             widgets[widget].set_sensitive(False)
 
-        uistuff.keep(widgets["hint_mode"], "hint_mode")
+        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
         uistuff.keep(widgets["spy_mode"], "spy_mode")
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
-        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag")
+        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
         
         #=======================================================================
         # Show main window and init d'n'd
