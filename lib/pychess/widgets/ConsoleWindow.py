@@ -35,7 +35,8 @@ class ConsoleWindow:
 
     def showConsole(self, *widget):
         self.window.show_all()
-    
+        self.window.present()
+        
     def onConsoleMessage(self, com, lines):
         for line in lines:
             # beep
