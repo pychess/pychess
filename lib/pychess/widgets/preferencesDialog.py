@@ -517,11 +517,7 @@ class ThemeTab:
 
     
     def __init__ (self, widgets):
-        
-        conf.set("pieceTheme", conf.get("pieceTheme", "pychess"))
-
         self.themes = self.discover_themes()
-        
         store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         
         for theme in self.themes:
@@ -535,7 +531,6 @@ class ThemeTab:
                 break
 
         iconView = widgets["pieceTheme"]
-        
         iconView.set_model(store)
         iconView.set_pixbuf_column(0)
         iconView.set_text_column(1)
@@ -545,7 +540,7 @@ class ThemeTab:
             selected = iconview.get_selected_items()
             
             if len(selected) == 0:
-                return conf.get("pieceTheme", "pychess")
+                return conf.get("pieceTheme", "Pychess")
             
             i = selected[0][0]
             theme = model[i][1]
@@ -559,7 +554,8 @@ class ThemeTab:
                 index = 0
             iconview.select_path((index,))
                 
-        uistuff.keep (widgets["pieceTheme"], "pieceTheme", _get_active, _set_active)
+        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
+                     _set_active, "Pychess")
 
     def discover_themes(self):
         themes = ['Pychess']
