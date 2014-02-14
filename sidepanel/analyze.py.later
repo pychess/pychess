@@ -1,0 +1,48 @@
+import gtk, gobject
+from System.Log import log
+from Utils.const import DRAW, WHITEWON, BLACKWON
+
+# TODO: If this makes an analyzer run, maybe that analyzer could also be used to add extra data in the scorepanel. So that the score of the analyzed moves apperes beneeth the real score plot.
+
+__title__ = _("Analyzis")
+
+def once (func):
+    def helper():
+        func()
+        return False
+    gobject.idle_add(helper)
+
+class Sidepanel:
+    
+    def load (self, window, page_num):
+        label = gtk.Label()
+        __widget__ = gtk.ScrolledWindow()
+        __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        __widget__.add_with_viewport(label)
+        __widget__.show_all()
+    
+        window.oracle.connect("foretold_move", self.foretold_move)
+        window.oracle.connect("foretold_end", self.foretold_end)
+        window.oracle.connect("clear", self.clear)
+        window.oracle.connect("rmfirst", self.rmfirst)
+        label.set_text("Waiting...")
+        
+        return __widget__
+        
+    def foretold_move (self, oracle, move, score):
+        no = len(oracle.history.moves)
+        if label.get_text() != "Waiting...":
+            text = "%s\n%d: %s\t%d" % (label.get_text(), no, str(move), score)
+        else: text = "%d: %s\t%d" % (no, str(move), score)
+        once (lambda: label.set_text(text))
+    
+    def clear (self, oracle):
+        once (lambda: label.set_text("Waiting..."))
+    
+    def rmfirst (self, oracle):
+        text = "\n".join(label.get_text().split("\n")[1:])
+        once (lambda: label.set_text(text))
+    
+    def foretold_end (self, oracle, moves, endtype):
+        endtype = endtype == DRAW and "draw" or "mate"
+        log.warning("Foresaw %s in %d moves!" % (endtype, moves))
