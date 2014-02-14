@@ -26,15 +26,42 @@ if len(sys.argv)>2 and sys.argv[1] == "bdist_rpm":
 # because pychess from another author already exist in pypi.
 VERSION = pychess.VERSION
 
-DESC = "Gnome chess game"
+DESC = "Chess client"
 
-LONG_DESC = """PyChess is a Gtk chess client, originally developed for Gnome, but running well under all other Linux desktops.
-(Which we know of, at least). PyChess is 100% python code, from the top of the UI to the bottom of the chess engine, and all code
-is licensed under the GNU General Public License.
+LONG_DESC = """PyChess is a chess client for playing and analyzing chess games. It is
+intended to be usable both for those totally new to chess as well as
+advanced users who want to use a computer to further enhance their play.
 
-The goal of PyChess is to provide an advanced chess client for Linux following the Gnome Human Interface Guidelines. The client should be usable
-to those new to chess, who just want to play a short game and get back to their work, as well as those who wants to use the computer to further
-enhance their play."""
+PyChess has a builtin python chess engine and auto-detects most
+popular chess engines (Stockfish, Rybka, Houdini, Shredder, GNU Chess,
+Crafty, Fruit, and many more). These engines are available as opponents,
+and are used to provide hints and analysis. PyChess also shows analysis
+from opening books and Gaviota end-game tablebases.
+
+When you get sick of playing computer players you can login to FICS (the
+Free Internet Chess Server) and play against people all over the world.
+PyChess has a built-in Timeseal client, so you won't lose clock time during
+a game due to lag. PyChess also has pre-move support, which means you can
+make (or start making) a move before your opponent has made their move.
+
+PyChess has many other features including:
+- CECP and UCI chess engine support with customizable engine configurations
+- Polyglot opening book support
+- Hint and Spy move arrows
+- Hint, Score, and Annotation panels
+- Play and analyze games in separate game tabs
+- 18 chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Losers, Piece Odds, and Atomic
+- Reads and writes PGN, EPD and FEN chess file formats
+- Undo and pause chess games
+- Move animation in games
+- Drag and drop chess files
+- Optional game move and event sounds
+- Chess piece themes with 40 built-in piece themes
+- Legal move highlighting
+- Direct copy+paste pgn game input via Enter Game Notation open-game dialog
+- Internationalised text and Figurine Algebraic Notation (FAN) support
+- Translated into 38 languages (languages with +5% strings translated)
+- Easy to use and intuitive look and feel"""
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
