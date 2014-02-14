@@ -369,6 +369,7 @@ class BoardManager (GObject):
             game = self.connection.games.get_game_by_gameno(gameno)
         except KeyError: return
         game.private = True
+    onWasPrivate.BLKCMD = BLKCMD_OBSERVE
     
     def tooManySeeks (self, match):
         self.emit("tooManySeeks")
