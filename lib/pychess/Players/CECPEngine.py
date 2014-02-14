@@ -659,7 +659,7 @@ class CECPEngine (ProtocolEngine):
     def __setBoard (self, board):
         if self.features["setboard"]:
             self.__tellEngineToStopPlayingCurrentColor()
-            fen = board.asFen()
+            fen = board.asFen(enable_bfen=False)
             if self.mode == INVERSE_ANALYZING:
                 fen_arr = fen.split()
                 if not self.board.board.opIsChecked():
