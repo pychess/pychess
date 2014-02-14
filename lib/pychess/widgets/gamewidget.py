@@ -543,11 +543,13 @@ class GameWidget (gobject.GObject):
             return
         glock.acquire()
         try:
-            self.tabcontent.child.remove(self.tabcontent.child.get_children()[0])
-            if not locked:
-                self.tabcontent.child.pack_start(createImage(light_on), expand=False)
-            else:
-                self.tabcontent.child.pack_start(createImage(light_off), expand=False)
+            child = self.tabcontent.child
+            if child:
+                child.remove(child.get_children()[0])
+                if not locked:
+                    child.pack_start(createImage(light_on), expand=False)
+                else:
+                    child.pack_start(createImage(light_off), expand=False)
             self.tabcontent.show_all()
         finally:
             glock.release()
