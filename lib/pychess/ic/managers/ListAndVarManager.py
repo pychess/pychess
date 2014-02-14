@@ -115,8 +115,7 @@ class ListAndVarManager:
             self.publicLists[listName] = items
         else:
             self.personalLists[listName] = items
-            if not listName in self.personalBackup:
-                self.personalBackup[listName] = items
+            self.personalBackup[listName] = items
         # Unlock if people are waiting of the backup
         if not self.listLock._Semaphore__value and \
                 len(self.personalLists) == len(self.personalBackup):
