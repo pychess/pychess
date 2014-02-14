@@ -1,0 +1,187 @@
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "grogers"]
+[Black "siggemannen"]
+[Result "0-1"]
+[WhiteElo "1885"]
+[BlackElo "2439"]
+[TimeControl "180"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. e3 Ng4 4. f4 b5 5. Nf5 e5 6. Nxg7 h5 7. Nc3 Nf2 
+8.
+Qf3 Nd3+ 9. Bxd3 exf4 10. d4 d5 11. h3 Qe7 12. Rf1 Qe4 13. Rf4 Nc6 14. 
+b4
+Bg4 15. a4 Ne7 16. axb5 a5 17. b5 a4 18. Ba3 c5 19. b6 Rb8 20. Rxe4 Be2 
+21.
+dxc5 Nc6 22. g4 Kd7 23. g5 fxg5 24. b7 Ne5 25. c4 Nf3+ 26. Kf2 Rg8 27. 
+Rd1
+Rg2#
+{grogers checkmated} 0-1
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "siggemannen"]
+[Black "grogers"]
+[Result "1-0"]
+[WhiteElo "2439"]
+[BlackElo "1885"]
+[TimeControl "180"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. Nf5 Nxf5 4. Nc3 c6 5. Ne4 d6 6. h3 Qa5 7. c3 
+Bf5 8.
+e3 Bxe4 9. Bb5 Qd8 10. Bd3 Na6 11. Bxh7 Nc5 12. Qh5+ g6 13. Qh7 Bg7 14. 
+Qg8+
+{grogers resigns} 1-0
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "grogers"]
+[Black "siggemannen"]
+[Result "0-1"]
+[WhiteElo "1885"]
+[BlackElo "2439"]
+[TimeControl "180"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. e3 Ng4 4. f4 b5 5. Nf5 e5 6. Nxg7 h5 7. d3 Nf2 
+8.
+Qf3 exf4 9. Nc3 d5 10. e4 Bg4 11. g3 Nxd3 12. Bh6 Bh3 13. Be2 Nc6 14. 
+O-O-O
+Nd4 15. c3 Nxe2 16. Rd1 Bg4 17. Rd2 d4 18. c4 bxc4 19. Bf8 Rb8 20. b3 
+Qd7
+21. Bc5 d3 22. h3 Rb4 23. e5 Rc4+ 24. Kb1 Rc1+ 25. Kb2 Rb1+
+{grogers resigns} 0-1
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "siggemannen"]
+[Black "grogers"]
+[Result "1-0"]
+[WhiteElo "2439"]
+[BlackElo "1885"]
+[TimeControl "180"]
+[Variant "atomic"]
+
+1. Nh3 f6 2. e4 c6 3. Nc3 Qb6 4. d4 Qxb2 5. d5 d6 6. dxc6 Bg4 7. f3 Nc6 
+8.
+Bb5 g6 9. Ng5 h5 10. Nf7 Bh6 11. Nxd6+ Kf8 12. Bc4 Be6 13. Qd7
+{grogers resigns} 1-0
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "grogers"]
+[Black "siggemannen"]
+[Result "0-1"]
+[WhiteElo "1885"]
+[BlackElo "2439"]
+[TimeControl "60"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. e3 Ng4 4. f4 b5 5. Nf5 e5 6. Nxg7 h5 7. a4 Nf2 
+8.
+Qxh5 d5 9. d4 Bg4 10. h4 Be2
+{grogers resigns} 0-1
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "siggemannen"]
+[Black "grogers"]
+[Result "1-0"]
+[WhiteElo "2439"]
+[BlackElo "1885"]
+[TimeControl "60"]
+[Variant "atomic"]
+
+1. Nc3 Nf6 2. e4 c6 3. Nd5 e5 4. Nc7+ Qxc7 5. f3 Bc5 6. d4 Bb6 7. dxe5 
+d6 8.
+Be3 Ba5+ 9. c3 Rd8 10. Nh3 f6 11. Bb5 O-O 12. O-O d5 13. Bh6 gxh6 14. 
+Ng5
+fxg5 15. e5 d4 16. e6 Rfe8 17. e7 Rd6 18. Bxc6 Bc7 19. g3 d3 20. Qb3+
+{grogers resigns} 1-0
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "grogers"]
+[Black "siggemannen"]
+[Result "0-1"]
+[WhiteElo "1885"]
+[BlackElo "2439"]
+[TimeControl "60"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. Nf5 Nxf5 4. d4 d5 5. Na3 b5 6. Bf4 e5 7. Bg3 g6 
+8.
+e3 Bh6 9. c3 Bg4 10. f3 Bxf3 11. Qg4 f5 12. Qd1 O-O 13. Be2 Bxe3 14. 
+Qe2 e4
+15. O-O Qh4
+{grogers resigns} 0-1
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "siggemannen"]
+[Black "grogers"]
+[Result "1-0"]
+[WhiteElo "2439"]
+[BlackElo "1885"]
+[TimeControl "60"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. e3 e5 3. Ng5 Nh6 4. Nf7 Qe7 5. Nd6+ Qxd6 6. Be2 Nf5 7. Bh5+ 
+Kd8
+8. Be8 d6 9. Bd7 Ke7 10. d4 Na6 11. dxe5 Nb4 12. Qf3 f5 13. Qh5
+{grogers resigns} 1-0
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "grogers"]
+[Black "siggemannen"]
+[Result "0-1"]
+[WhiteElo "1885"]
+[BlackElo "2439"]
+[TimeControl "300+12"]
+[Variant "atomic"]
+
+1. Nf3 f6 2. Nd4 Nh6 3. e3 Ng4 4. f4 b5 5. h3 d5 6. Nc6 Nxc6 7. Bd3 g6 
+8.
+Na3 Nf2 9. Qf3 Ne4 10. Kf1 Ng3+ 11. Ke1 Nf1
+{grogers resigns} 0-1
+
+[Event "ICS unrated atomic match"]
+[Site "freechess.org"]
+[Date "2005.09.26"]
+[Round "-"]
+[White "siggemannen"]
+[Black "grogers"]
+[Result "1-0"]
+[WhiteElo "2439"]
+[BlackElo "1885"]
+[TimeControl "300+12"]
+[Variant "atomic"]
+
+1. Nh3 f6 2. Nc3 c6 3. e3 d5 4. Nb5 Qa5 5. c3 Qa4 6. b3 Qg4 7. f3 Qxg2 
+8.
+Nxa7 Nh6 9. Ba3 c5 10. d4 e6 11. Qe2 b5 12. c4 Nf5 13. Qd1 b4 14. Bxb4 
+Nh4
+15. b4 Ng2+ 16. Kf1 g6 17. bxc5 Bd7 18. Rb1 Bb4 19. Qa4 Bb5 20. Qa7
+{grogers resigns} 1-0
+
