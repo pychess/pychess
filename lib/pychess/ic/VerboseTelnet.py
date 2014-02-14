@@ -70,6 +70,7 @@ class NLinesPrediction (MultipleLinesPrediction):
                 del self.matchlist[:]
                 return RETURN_MATCH
             return RETURN_NEED_MORE
+        del self.matchlist[:]
         return RETURN_NO_MATCH
 
 class FromPlusPrediction (MultipleLinesPrediction):
@@ -92,6 +93,7 @@ class FromPlusPrediction (MultipleLinesPrediction):
                 self.callback(self.matchlist)
                 del self.matchlist[:]
                 return RETURN_MATCH_END
+        del self.matchlist[:]
         return RETURN_NO_MATCH
 
 class FromToPrediction (MultipleLinesPrediction):
