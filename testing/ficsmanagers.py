@@ -388,6 +388,28 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
+    def test4 (self):
+        lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek qualifies for opmentor's getgame.",
+                 "",
+                 "<sr> 179",
+                 "fics%" ,
+                 "<sr> 3",
+                 "fics%" ,
+                 "Creating: opmentor (++++) mgatto (1343) unrated lightning 2 1",
+                 "{Game 107 (opmentor vs. mgatto) Creating unrated lightning match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 107 opmentor mgatto -1 2 1 39 39 120000 120000 1 none (0:00.000) none 1 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        opponent = self.connection.players.get(FICSPlayer('opmentor'))
+        game = FICSGame(opponent, me, gameno=107, rated=False,
+            game_type=GAME_TYPES['lightning'], private=False, minutes=2, inc=1,
+            board=FICSBoard(120000, 120000,  fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
 class OfferManagerTests(EmittingTestCase):
     
     def setUp (self):
