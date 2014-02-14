@@ -169,12 +169,12 @@ class PyChess:
             if not lsearch.searching:
                 break
             t = time()
+            board = self.board.clone()
+            mvs, scr = alphaBeta (board, depth)
             
-            mvs, scr = alphaBeta (self.board, depth)
-            
-            pv = " ".join(listToSan(self.board, mvs))
+            pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            print depth, scr, time_cs, lsearch.nodes, pv
+            print "%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv)
             
             lsearch.nodes = 0
     
