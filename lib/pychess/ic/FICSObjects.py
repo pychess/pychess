@@ -460,6 +460,8 @@ class FICSPlayers (GObject):
             if not player.adjournment and not player.keep_after_logout and \
                     player.name not in self.connection.notify_users:
                 del self[player]
+            else:
+                log.debug("player_disconnected: Not removing %s" % repr(player))
             self.emit('FICSPlayerExited', player)
     
 #    def onFinger (self, fm, finger):
