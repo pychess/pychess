@@ -504,13 +504,15 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
                 self.playersList.addRow(id, player.name + player.display_titles(),
                                         TYPE_PERSONAL)
         
-        self.connection.players.connect("FICSPlayerEntered",
-            lambda players, player: self.playersList.addRow(
-            self.compileId(player.name, TYPE_PERSONAL),
-            player.name + player.display_titles(), TYPE_PERSONAL))
-        self.connection.players.connect("FICSPlayerExited",
-            lambda players, player: self.playersList.removeRow(
-            self.compileId(player.name, TYPE_PERSONAL)))
+        def addPlayer (players, player):
+            self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
+                player.name + player.display_titles(), TYPE_PERSONAL)
+            return False
+        self.connection.players.connect("FICSPlayerEntered", addPlayer)
+        def removePlayer (players, player):
+            self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
+            return False
+        self.connection.players.connect("FICSPlayerExited", removePlayer)
     
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:
