@@ -2086,6 +2086,7 @@ class Messages (Section):
     
     @glock.glocked
     def onArrivalNotification (self, cm, player):
+        log.debug("onArrivalNotification: %s %s" % (id(player), repr(player)))
         self._add_notification_message(player, _(" has arrived"))
         if player not in self.players:
             self.players.append(player)
