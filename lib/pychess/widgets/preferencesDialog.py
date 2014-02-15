@@ -69,6 +69,7 @@ class HintTab:
         self.widgets = widgets
     
         # Opening book
+        conf.set("opening_check", conf.get("opening_check", 0))
         default_path = os.path.join(addDataPrefix("pychess_book.bin"))
         path = conf.get("opening_file_entry", default_path)
         conf.set("opening_file_entry", path)
@@ -103,6 +104,7 @@ class HintTab:
         uistuff.keep(widgets["opening_check"], "opening_check")
 
         # Endgame
+        conf.set("endgame_check", conf.get("endgame_check", 0))
         conf.set("online_egtb_check", conf.get("online_egtb_check", 0))
         uistuff.keep(widgets["online_egtb_check"], "online_egtb_check")
 
