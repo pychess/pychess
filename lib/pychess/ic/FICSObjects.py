@@ -192,7 +192,7 @@ class FICSPlayer (GObject):
 
     def __hash__ (self):
         """ Two players are equal if the first 10 characters of their name match.
-            This is to facilitate matching players from output of commands like the 'game'
+            This is to facilitate matching players from output of commands like the 'games'
             command which only return the first 10 characters of a player's name """
         return hash(self.name[0:10].lower())
     
