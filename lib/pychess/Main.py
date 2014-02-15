@@ -44,6 +44,8 @@ upkeys    = map(keyval_from_name, ("Up", "KP_Up"))
 downkeys  = map(keyval_from_name, ("Down", "KP_Down"))
 homekeys  = map(keyval_from_name, ("Home", "KP_Home"))
 endkeys   = map(keyval_from_name, ("End", "KP_End"))
+functionkeys = [keyval_from_name(k) for k in ("F1", "F2", "F3", "F4", "F5",
+                "F6", "F7", "F8", "F9", "F10", "F11")]
 
 ################################################################################
 # gameDic - containing the gamewidget:gamemodel of all open games              #
@@ -59,6 +61,7 @@ recentManager = gtk.recent_manager_get_default()
 class GladeHandlers:
     
     def on_window_key_press (window, event):
+        log.debug('on_window_key_press: %s %s' % (window.title, event))
         # Tabbing related shortcuts
         if not gamewidget.getheadbook():
             pagecount = 0
@@ -117,7 +120,9 @@ class GladeHandlers:
                 return True
 
             if (not event.state & gtk.gdk.CONTROL_MASK) and \
-                (not event.state & gtk.gdk.MOD1_MASK):
+                    (not event.state & gtk.gdk.MOD1_MASK) and \
+                    (event.keyval != gtk.keysyms.Escape) and \
+                    (event.keyval not in functionkeys):
                 # Enter moves with keyboard
                 board_control = gmwidg.board
                 keyname = gtk.gdk.keyval_name(event.keyval)
