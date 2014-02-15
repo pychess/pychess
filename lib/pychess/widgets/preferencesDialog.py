@@ -21,6 +21,7 @@ def run(widgets):
         initialize(widgets)
         firstRun = False
     widgets["preferences"].show()
+    widgets["preferences"].present()
 
 def initialize(widgets):
     GeneralTab(widgets)
