@@ -23,7 +23,7 @@ class Sidepanel:
     def load (self, gmwidg):
         self.boardview = gmwidg.board.view
         self.plot = ScorePlot(self.boardview)
-        __widget__ = gtk.ScrolledWindow()
+        self.sw = __widget__ = gtk.ScrolledWindow()
         __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         port = gtk.Viewport()
         port.add(self.plot)
@@ -114,6 +114,11 @@ class Sidepanel:
         if self.plot.selected != shown:
             self.plot.select(shown-self.boardview.model.lowply)
             self.plot.redraw()
+            adj = self.sw.get_vadjustment()
+
+            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)
+            if y < adj.value or y > adj.value + adj.page_size:
+                adj.set_value(min(y, adj.upper-adj.page_size))
 
     def analysis_changed (self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():
