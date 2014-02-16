@@ -59,17 +59,6 @@ class Sidepanel:
         self.boardview = gmwidg.board.view
         self.boardview.connect("shown_changed", self.shown_changed)
 
-        def changed (vadjust):
-            if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.upper-vadjust.page_size)
-                vadjust.need_scroll = True
-        scrollwin.get_vadjustment().connect("changed", changed)
-
-        def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                    vadjust.upper) < vadjust.step_increment
-        scrollwin.get_vadjustment().connect("value-changed", value_changed)
-        
         self.frozen = Switch()
 
         return scrollwin
@@ -90,6 +79,7 @@ class Sidepanel:
         try:
             iter = self.store.get_iter(row)
             self.tv.get_selection().select_iter(iter)
+            self.tv.scroll_to_cell(row)
         except ValueError:
             pass
             # deleted variations by moves_undoing
