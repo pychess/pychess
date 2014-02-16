@@ -37,6 +37,10 @@ class ConsoleWindow:
         self.window.show_all()
         self.window.present()
         
+        # scroll to the bottom
+        adj = self.consoleView.sw.get_vadjustment()
+        adj.set_value(adj.upper - adj.page_size)
+        
     def onConsoleMessage(self, com, lines):
         for line in lines:
             # beep
