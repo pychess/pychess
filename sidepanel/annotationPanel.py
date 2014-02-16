@@ -396,7 +396,7 @@ class Sidepanel(gtk.TextView):
                 break
 
         if start:
-            self.textview.scroll_to_iter(start, 0, use_align=False, yalign=0.1)
+            self.textview.scroll_to_iter(start, within_margin=0.03)
 
     # Recursively insert the node tree
     def insert_nodes(self, node, level=0, ply=0, parent=None, result=None):
