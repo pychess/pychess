@@ -211,9 +211,15 @@ class GladeHandlers:
 
         def analyse_moves():
             move_time = int(conf.get("max_analysis_spin", 3))
-            for ply, board in enumerate(gamemodel.boards):
+            for board in gamemodel.boards:
+                glock.acquire()
+                try:
+                    gmwidg.board.view.setShownBoard(board)
+                finally:
+                    glock.release()
                 analyzer.setBoard(board)
-                time.sleep(move_time)
+                time.sleep(move_time+0.1)
+
         keep_alive_thread = threading.Thread(target = analyse_moves)
         keep_alive_thread.daemon = True
         keep_alive_thread.start()
