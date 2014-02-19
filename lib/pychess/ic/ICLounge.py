@@ -293,14 +293,17 @@ class UserInfoSection(Section):
             if not self.connection.isRegistred():
                 vbox = gtk.VBox()
                 table.attach(vbox, 0, 6, row, row+1)
-                label0 = gtk.Label(_("You are currently logged in as a guest.\nA guest is not able to play rated games, and thus the offer of games will be smaller."))
+                label0 = gtk.Label()
                 label0.props.xalign = 0
                 label0.props.wrap = True
                 label0.props.width_request = 300
+                label0.set_markup(_("You are currently logged in as a guest.\n" + \
+                    "A guest can't play rated games and therefore isn't " + \
+                    "able to play as many of the types of matches offered as " + \
+                    "a registered user. To register an account, go to " + \
+                    "<a href=\"http://www.freechess.org/Register/index.html\">" + \
+                    "http://www.freechess.org/Register/index.html</a>."))
                 vbox.add(label0)
-                eventbox = uistuff.LinkLabel(_("Register now"),
-                        "http://www.freechess.org/Register/index.html")
-                vbox.add(eventbox)
 
             if self.dock.get_children():
                 self.dock.remove(self.dock.get_children()[0])
