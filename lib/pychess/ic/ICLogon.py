@@ -153,7 +153,7 @@ class ICLogon:
             label.props.wrap = True
             label.props.xalign = 0
             label.props.justify = gtk.JUSTIFY_LEFT
-            label.set_text(line)
+            label.set_markup(line)
             vbox.pack_start(label, expand=True, fill=False)
         content.pack_start(vbox, expand=False, fill=False, padding=7)
         content_area.add(content)
