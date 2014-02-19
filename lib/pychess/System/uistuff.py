@@ -417,30 +417,6 @@ def initTexviewLinks (textview, text):
     textview.connect("button_press_event", on_press_in_textview)
     textview.connect("button_release_event", on_release_in_textview)
 
-
-
-def LinkLabel (text, url):
-    label = gtk.Label()
-    
-    eventbox = gtk.EventBox()
-    label.set_markup("<span color='blue'><u>%s</u></span>" % text)
-    eventbox.add(label)
-    
-    def released (eventbox, event):
-        webbrowser.open(url)
-        label.set_markup("<span color='blue'><u>%s</u></span>" % text)
-    eventbox.connect("button_release_event", released)
-    
-    def pressed (eventbox, event):
-        label.set_markup("<span color='red'><u>%s</u></span>" % text)
-    eventbox.connect("button_press_event", pressed)
-    
-    eventbox.connect_after("realize",
-        lambda w: w.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2)))
-    
-    return eventbox
-
-
 cachedGlades = {}
 def cacheGladefile(filename):
     """ gtk.Builder automatically caches the file, so we only need to use this
