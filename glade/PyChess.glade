@@ -2969,7 +2969,7 @@ It will search positions from http://www.k4it.de/</property>
                       <object class="GtkImageMenuItem" id="analyze_game1">
                         <property name="label" translatable="yes">_Analyze Game</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="visible">False</property>
+                        <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
