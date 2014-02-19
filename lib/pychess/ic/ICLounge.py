@@ -802,9 +802,11 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def onPlayerAdded (self, players, player):
-        log.debug("onPlayerAdded: %s" % repr(player))
+        log.debug("%s" % player,
+                  extra={"task": (self.connection.username, "onPlayerAdded")})
         if player in self.players:
-            log.debug("onPlayerAdded: %s already in self" % repr(player))
+            log.warning("%s already in self" % player,
+                extra={"task": (self.connection.username, "onPlayerAdded")})
             return
         
         ti = self.store.append([player, player.getIcon(),
@@ -897,7 +899,8 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def elo_changed (self, rating, prop, player):
-        log.debug("elo_changed: %s %s" % (rating.elo, player))
+        log.debug("%s %s" % (rating.elo, player), extra={"task":
+            (self.connection.username, "PlayerTabSection.elo_changed")})
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
@@ -1182,6 +1185,8 @@ class AdjournedTabSection (ParrentListSection):
             content = self.get_infobarmessage_content(player, text,
                                                       gametype=game.game_type)
             def callback (infobar, response, message):
+                log.debug("%s" % player, extra={"task": (self.connection.username,
+                          "_infobar_adjourned_message.callback")})
                 if response == gtk.RESPONSE_ACCEPT:
                     self.connection.client.run_command("match %s" % player.name)
                 elif response == gtk.RESPONSE_HELP:
@@ -2063,7 +2068,8 @@ class Messages (Section):
         
     @glock.glocked
     def _replace_notification_message (self, obj, prop, player):
-        log.debug("_replace_notification_message: %s %s" % (repr(obj), repr(player)))
+        log.debug("%s %s" % (repr(obj), player), extra={"task":
+            (self.connection.username, "_replace_notification_message")})
         for message in self.messages:
             if isinstance(message, PlayerNotificationMessage) and \
                     message.player == player:
@@ -2086,7 +2092,8 @@ class Messages (Section):
     
     @glock.glocked
     def onArrivalNotification (self, cm, player):
-        log.debug("onArrivalNotification: %s %s" % (id(player), repr(player)))
+        log.debug("%s" % player, extra={"task":
+            (self.connection.username, "onArrivalNotification")})
         self._add_notification_message(player, _(" has arrived"))
         if player not in self.players:
             self.players.append(player)
