@@ -36,7 +36,8 @@ class ConsoleWindow:
     def showConsole(self, *widget):
         self.window.show_all()
         self.window.present()
-        
+        self.consoleView.writeView.grab_focus()
+
         # scroll to the bottom
         adj = self.consoleView.sw.get_vadjustment()
         adj.set_value(adj.upper - adj.page_size)
@@ -96,7 +97,6 @@ class ConsoleView (gtk.VPaned):
         handle_id = self.connect("expose-event", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
-        self.writeView.grab_focus()
 
     
     def addMessage (self, text, my=False):
