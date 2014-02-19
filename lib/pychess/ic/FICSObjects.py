@@ -204,6 +204,7 @@ class FICSPlayer (GObject):
         
     def __repr__ (self):
         r = "name='%s'" % (self.name + self.display_titles())
+        r += ", id=%s" % (id(self))
         r += ", online=%s" % repr(self.online)
         r += ", adjournment=%s" % repr(self.adjournment)
         r += ", status=%i" % self.status
@@ -453,6 +454,8 @@ class FICSPlayers (GObject):
         return player
         
     def player_disconnected (self, player):
+        log.debug("%s" % player,
+            extra={"task": (self.connection.username, "player_disconnected")})
         if player in self:
             player = self[player]
             player.online = False
@@ -461,7 +464,8 @@ class FICSPlayers (GObject):
                     player.name not in self.connection.notify_users:
                 del self[player]
             else:
-                log.debug("player_disconnected: Not removing %s" % repr(player))
+                log.debug("Not removing %s" % player, extra={"task":
+                    (self.connection.username, "player_disconnected")})
             self.emit('FICSPlayerExited', player)
     
 #    def onFinger (self, fm, finger):
