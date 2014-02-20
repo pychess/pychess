@@ -1314,6 +1314,10 @@ class AdjournedTabSection (ParrentListSection):
         else:
             timemodel = TimeModel(ficsgame.board.wms/1000., ficsgame.inc,
                 bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
+
+        timemodel.intervals[0][0] = ficsgame.minutes * 60
+        timemodel.intervals[1][0] = ficsgame.minutes * 60
+
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
         
         # The players need to start listening for moves IN this method if they
@@ -2168,6 +2172,10 @@ class CreatedBoards (Section):
         else:
             timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
                 bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
+
+        timemodel.intervals[0][0] = ficsgame.minutes * 60
+        timemodel.intervals[1][0] = ficsgame.minutes * 60
+
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
