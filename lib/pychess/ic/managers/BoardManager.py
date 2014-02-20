@@ -616,6 +616,7 @@ class BoardManager (GObject):
             self.castleSigns[gameno] = castleSigns
         
         moves = {}
+        times = {}
         wms = bms = minutes * 60 * 1000
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
@@ -625,9 +626,10 @@ class BoardManager (GObject):
             moveno, wmove, wmin, wsec, wmsec, bmove, bmin, bsec, bmsec = \
                 moveListMoves.match(line).groups()
             ply = int(moveno)*2-2
-            # TODO: add {[%emt 3.889]} move time PGN tags to each move
+            
             if wmove:
                 moves[ply] = wmove
+                times[ply] = "0:%02d:%02d.%03d" % (int(wmin), int(wsec), int(wmsec))
                 wms -= (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
                 if wmsec is not None:
                     wms -= int(wmsec)
@@ -635,6 +637,7 @@ class BoardManager (GObject):
                     wms += (increment * 1000)
             if bmove:
                 moves[ply+1] = bmove
+                times[ply+1] = "0:%02d:%02d.%03d" % (int(bmin), int(bsec), int(bmsec))
                 bms -= (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
                 if bmsec is not None:
                     bms -= int(bmsec)
@@ -670,9 +673,7 @@ class BoardManager (GObject):
             pgnHead += [ ("BlackElo", brating) ]
         if year and month and day and hour and minute:
             pgnHead += [
-                ("Year", int(year)),
-                ("Month", int(month)),
-                ("Day", int(day)),
+                ("Date", "%04d.%02d.%02d" % (int(year), int(month), int(day))),
                 ("Time", "%02d:%02d:00" % (int(hour), int(minute))),
             ]
         if initialfen:
@@ -702,7 +703,8 @@ class BoardManager (GObject):
         for ply, move in moves:
             if ply % 2 == 0:
                 pgn += "%d. " % (ply/2+1)
-            pgn += move + " "
+            time = times[ply]
+            pgn += "%s {[%%emt %s]} " % (move, time)
         pgn += "*\n"
         
         wplayer = self.connection.players.get(FICSPlayer(wname))

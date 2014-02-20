@@ -26,6 +26,8 @@ __label__ = _("Chess Game")
 __ending__ = "pgn"
 __append__ = True
 
+movetime = re.compile("\[%emt (\d):(\d\d):(\d\d)(?:\.(\d\d\d))?\]")
+
 def wrap (string, length):
     lines = []
     last = 0
@@ -362,7 +364,17 @@ class PGNFile (PgnBase):
             ]
             log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
         
-        
+            for ply, board in enumerate(boards):
+                for child in board.children:
+                    if isinstance(child, basestring):
+                        movecount, color = divmod(ply+1, 2)
+                        match = movetime.search(child)
+                        if match:
+                            hour, min, sec, msec = match.groups()
+                            prev = model.timemodel.intervals[color][movecount-1]
+                            msec = int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
+                            model.timemodel.intervals[color][movecount] = prev - msec/1000
+            
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
         
