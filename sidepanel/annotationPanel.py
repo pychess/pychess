@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-
+import re
 import datetime
 
 import gtk
@@ -502,6 +502,8 @@ class Sidepanel(gtk.TextView):
             buf.insert_with_tags_by_name(end_iter(), " "+result, "node")
 
     def insert_comment(self, comment, node, index, level=0):
+        comment = re.sub("\[%.*?\]", "", comment)
+        
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
@@ -522,15 +524,13 @@ class Sidepanel(gtk.TextView):
         buf.insert(end_iter(), " ")
 
     def insert_header(self, gm):
+        if gm.players:
+            text = repr(gm.players[0])
+        else:
+            return
+
         buf = self.textbuffer
         end_iter = buf.get_end_iter
-
-        #try:
-        #    text = gm.tags['White']
-        #except:
-        #    # pgn not processed yet
-        #    return
-        text = repr(gm.players[0])
 
         buf.insert_with_tags_by_name(end_iter(), text, "head2")
         white_elo = gm.tags.get('WhiteElo')
