@@ -1,5 +1,3 @@
-import time
-
 import gtk
 import gobject
 import pango
@@ -11,7 +9,6 @@ from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
-from pychess.ic.FICSObjects import FICSPlayer
 
 TYPE_PERSONAL, TYPE_CHANNEL = range(2)
 
@@ -508,11 +505,11 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
             self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
                 player.name + player.display_titles(), TYPE_PERSONAL)
             return False
-        self.connection.players.connect("FICSPlayerEntered", addPlayer)
+        glock_connect(self.connection.players, "FICSPlayerEntered", addPlayer)
         def removePlayer (players, player):
             self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             return False
-        self.connection.players.connect("FICSPlayerExited", removePlayer)
+        glock_connect(self.connection.players, "FICSPlayerExited", removePlayer)
     
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:
