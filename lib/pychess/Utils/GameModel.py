@@ -599,7 +599,9 @@ class GameModel (GObject, PooledThread):
                 self.emit("game_changed")
                 
                 for spectator in self.spectators.values():
-                    spectator.putMove(self.boards[-1], self.moves[-1], self.boards[-2])
+                    if spectator.board == self.boards[-2]:
+                        spectator.putMove(self.boards[-1], self.moves[-1],
+                                          self.boards[-2])
 
                 self.setOpening()
 
