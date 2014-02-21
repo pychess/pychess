@@ -36,8 +36,11 @@ class DummyConnection(Connection):
         
         def __init__(self, predictions, reply_cmd_dict):
             PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions, reply_cmd_dict)
+            self.commands = []
         def putline(self, line):
             self.telnet.putline(line)
+        def run_command(self, command):
+            self.commands.append(command)
     
     def __init__(self):
         Connection.__init__(self, 'host', (0,), 'tester', '123456')
@@ -50,12 +53,21 @@ class DummyConnection(Connection):
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
+        
+    def getUsername(self):
+        return self.username
     def putline(self, line):
         self.client.putline(line)
     def process_line(self):
         self.client.parse()
-    def getUsername(self):
-        return self.username
+    def process_lines(self, lines):
+        for line in lines:
+            self.putline(line)
+        while True:
+            try:
+                self.process_line()
+            except Queue.Empty:
+                break
     
 class DummyVarManager:
     def setVariable (self, name, value):
@@ -97,15 +109,7 @@ class EmittingTestCase(unittest.TestCase):
         def handler(manager, *args): self.args = args
         self.manager.connect(signal, handler)
         random.shuffle(self.connection.client.predictions)
-        
-        for line in lines:
-            self.connection.putline(line)
-        while True:
-            try:
-                self.connection.process_line()
-            except Queue.Empty:
-                break
-        
+        self.connection.process_lines(lines)
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
         self.assertEqual(self.args, expectedResults)
         
@@ -117,15 +121,7 @@ class EmittingTestCase(unittest.TestCase):
             self.prop_value = getattr(obj, prop)
         obj.connect('notify::'+prop, handler)
         random.shuffle(self.connection.client.predictions)
-        
-        for line in lines:
-            self.connection.putline(line)
-        while True:
-            try:
-                self.connection.process_line()
-            except Queue.Empty:
-                break
-        
+        self.connection.process_lines(lines)
         self.assertNotEqual(self.args, None,
             "no \'%s\' property change notification for %s" % (prop, repr(obj)))
         self.assertEqual(self.prop_value, expectedResults)
@@ -436,6 +432,16 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
+    def test5 (self):
+        """ Make sure observe-game-created messages are caught """
+        lines = [BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
+                 "You are now observing game 12.",
+                 "Game 12: electricbenj (1535) antonymelvin (1507) rated wild/fr 7 8",
+                 "<12> -------r pbp--p-- -pn-k--p -Q------ -----qP- -------- PPP--n-- -K-RR--- B -1 0 0 0 0 1 12 electricbenj antonymelvin 0 7 8 23 28 346573 428761 22 R/h1-e1 (0:11.807) Rhe1+ 0 1 0",
+                 BLOCK_END]
+        self.connection.process_lines(lines)
+        self.assertEqual(self.connection.client.commands[-1], "moves 12")
+        
 class GamesTests(EmittingTestCase):
     def setUp (self):
         EmittingTestCase.setUp(self)
