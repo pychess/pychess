@@ -256,7 +256,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     key = key + "window"
     
     def savePosition (window, *event):
-        
+        log.debug("keepWindowSize.savePosition: %s" % window.title)
         width = window.get_allocation().width
         height = window.get_allocation().height
         x, y = window.get_position()
@@ -266,25 +266,34 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
         if height <= 0:
             log.error("Setting height = '%d' for %s to conf" % (height,key))
         
+        log.debug("Saving window position width=%s height=%s x=%s y=%s" %
+                  (width, height, x, y))
         conf.set(key+"_width",  width)
         conf.set(key+"_height", height)
         conf.set(key+"_x", x)
         conf.set(key+"_y", y)
+        
+        return False
     window.connect("delete-event", savePosition, "delete-event")
     
     def loadPosition (window):
+        log.debug("keepWindowSize.loadPosition: %s" % window.title)
         width, height = window.get_size_request()
         
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
             width = conf.getStrict(key+"_width")
             height = conf.getStrict(key+"_height")
+            log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
         
         elif defaultSize:
             width, height = defaultSize
+            log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
         
         if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
+            log.debug("Moving window to x=%s y=%s" % (conf.getStrict(key+"_x"),
+                                                      conf.getStrict(key+"_y")))
             window.move(conf.getStrict(key+"_x"),
                         conf.getStrict(key+"_y"))
         
@@ -296,6 +305,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
             else:
                 # Place the window on the upper golden ratio line
                 y = int(monitor_height/2.618-height/2) + monitor_y
+            log.debug("Moving window to x=%s y=%s" % (x, y))
             window.move(x, y)
         
     loadPosition(window)
