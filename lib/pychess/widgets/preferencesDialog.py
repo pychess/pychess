@@ -30,17 +30,15 @@ def initialize(widgets):
     PanelTab(widgets)
     ThemeTab(widgets)
     
-    def delete_event (widget, *args):
-        widgets["preferences"].hide()
-        return False
-    widgets["preferences"].connect("delete-event", delete_event)
-    widgets["preferences_close_button"].connect("clicked", delete_event)
-    
-    widgets["preferences"].connect("key-press-event",
-        lambda w,e: delete_event(w) if e.keyval == gtk.keysyms.Escape else None)
-
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences"],
                            defaultPosition=POSITION_GOLDEN)
+    def delete_event (widget, *args):
+        widgets["preferences"].hide()
+        return True
+    widgets["preferences"].connect("delete-event", delete_event)
+    widgets["preferences"].connect("key-press-event",
+        lambda w,e: w.event(gtk.gdk.Event(gtk.gdk.DELETE))
+        if e.keyval == gtk.keysyms.Escape else None)
 
 ################################################################################
 # General initing                                                              #
