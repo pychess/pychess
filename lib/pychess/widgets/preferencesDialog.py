@@ -53,10 +53,14 @@ class GeneralTab:
         
         # Give to uistuff.keeper
         
-        for key in ("firstName", "secondName", "showBlunder", "showEmt",
-                    "hideTabs", "autoRotate", "faceToFace", "showCords", "showCaptured",
+        for key in ("firstName", "secondName", "showEmt", "showEval",
+                    "hideTabs", "faceToFace", "showCords", "showCaptured",
                     "figuresInNotation", "fullAnimation", "moveAnimation", "noAnimation"):
             uistuff.keep(widgets[key], key)
+
+        # Options on by default
+        for key in ("autoRotate", "fullAnimation", "showBlunder"):
+            uistuff.keep(widgets[key], key, first_value=True)
 
 ################################################################################
 # Hint initing                                                               #
@@ -65,9 +69,13 @@ class GeneralTab:
 class HintTab:
     def __init__ (self, widgets):
         self.widgets = widgets
+
+        # Options on by default
+        for key in ("opening_check", "endgame_check", "online_egtb_check",
+                    "analyzer_check", "inv_analyzer_check"):
+            uistuff.keep(widgets[key], key, first_value=True)
     
         # Opening book
-        conf.set("opening_check", conf.get("opening_check", 0))
         default_path = os.path.join(addDataPrefix("pychess_book.bin"))
         path = conf.get("opening_file_entry", default_path)
         conf.set("opening_file_entry", path)
@@ -99,13 +107,8 @@ class HintTab:
             widgets["opening_hbox"].set_sensitive(check.get_active())
         widgets["opening_check"].connect_after("toggled",
                                                 on_opening_check_toggled)
-        uistuff.keep(widgets["opening_check"], "opening_check")
 
         # Endgame
-        conf.set("endgame_check", conf.get("endgame_check", 0))
-        conf.set("online_egtb_check", conf.get("online_egtb_check", 0))
-        uistuff.keep(widgets["online_egtb_check"], "online_egtb_check")
-
         default_path = os.path.join(getDataPrefix())
         egtb_path = conf.get("egtb_path", default_path)
         conf.set("egtb_path", egtb_path)
@@ -130,7 +133,6 @@ class HintTab:
         
         widgets["endgame_check"].connect_after("toggled",
                                                 on_endgame_check_toggled)
-        uistuff.keep(widgets["endgame_check"], "endgame_check")
 
         # Analyzing engines
         uistuff.createCombo(widgets["ana_combobox"])
@@ -165,7 +167,6 @@ class HintTab:
         
         widgets["analyzer_check"].connect_after("toggled",
                                                 on_analyzer_check_toggled)
-        uistuff.keep(widgets["analyzer_check"], "analyzer_check")
         
         def on_invanalyzer_check_toggled (check):
             widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
@@ -182,7 +183,6 @@ class HintTab:
 
         widgets["inv_analyzer_check"].connect_after("toggled",
                                               on_invanalyzer_check_toggled)
-        uistuff.keep(widgets["inv_analyzer_check"], "inv_analyzer_check")
         
         # Give widgets to keeper
         
@@ -223,7 +223,7 @@ class HintTab:
             lambda combobox, value: set_value(combobox, value, "spy_mode",
                                               "inv_analyzer_check", SPY))
         
-        uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin")
+        uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
         
 ################################################################################
 # Sound initing                                                                #

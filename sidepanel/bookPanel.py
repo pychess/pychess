@@ -4,13 +4,13 @@ from Queue import Queue
 import gtk, gobject, cairo, pango
 
 from pychess.System import conf
+from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
-from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ThreadPool import PooledThread
 
@@ -223,7 +223,7 @@ class EngineAdvisor(Advisor):
             if self.engine.board.color == BLACK:
                 score = -score
             
-            self.store[self.path + (i,)] = [(board0, move, pv), (self.prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
+            self.store[self.path + (i,)] = [(board0, move, pv), (prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
     
     def start_stop(self, tb):
         if not tb:
@@ -265,20 +265,6 @@ class EngineAdvisor(Advisor):
             else:
                 return _("Adding suggestions can help you find ideas, but slows down the computer's analysis.")
         return ""
-
-    def prettyPrintScore (self, s):
-        if s is None: return "?"
-        if s == 0: return "0.00"
-        if s > 0:
-           pp = "+"
-        else:
-            pp = "-"
-            s = -s
-        
-        if abs(s) == MATE_VALUE:
-            return pp + "#%s" % MATE_VALUE
-        else:
-            return pp + "%0.2f" % (s / 100.0)
 
 
 class EndgameAdvisor(Advisor, PooledThread):
