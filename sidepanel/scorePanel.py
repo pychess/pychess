@@ -158,7 +158,8 @@ class ScorePlot (gtk.DrawingArea):
         self.scores.append(score)
     
     def changeScore(self, ply, score):
-        self.scores[ply] = score
+        if self.scores:
+            self.scores[ply] = score
         
     def __len__ (self):
         return len(self.scores)
