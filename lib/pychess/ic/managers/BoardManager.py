@@ -410,8 +410,9 @@ class BoardManager (GObject):
         return int(rating) if rating.isdigit() else 0
     
     def onPlayGameCreated (self, matchlist):
-        log.debug("BM.onPlayGameCreated: %s\n%s" %
-                  (matchlist[0].string, matchlist[1].string))
+        log.debug("'%s' '%s' '%s'" %
+            (matchlist[0].string, matchlist[1].string, matchlist[-1].string),
+            extra={"task": (self.connection.username, "BM.onPlayGameCreated")})
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
         gameno, wname, bname, rated, type = matchlist[1].groups()
         style12 = matchlist[-1].groups()[0]
@@ -729,6 +730,8 @@ class BoardManager (GObject):
         return game
         
     def onObserveGameCreated (self, matchlist):
+        log.debug("'%s'" % (matchlist[1].string),
+            extra={"task": (self.connection.username, "BM.onObserveGameCreated")})
         gameno, wname, wrating, bname, brating, rated = matchlist[1].groups()
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
@@ -753,6 +756,8 @@ class BoardManager (GObject):
     onFollowingPlayer.BLKCMD = BLKCMD_FOLLOW
     
     def onObserveGameMovesReceived (self, matchlist):
+        log.debug("'%s'" % (matchlist[0].string), extra={"task":
+            (self.connection.username, "BM.onObserveGameMovesReceived")})
         game = self.parseGame(matchlist, FICSGame, in_progress=True)
         self.emit ("obsGameCreated", game)
         try:
