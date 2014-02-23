@@ -1111,7 +1111,8 @@ class GameTabSection (ParrentListSection):
         for path in paths:
             rowiter = model.get_iter(path)
             game = model.get_value(rowiter, 0)
-            self.connection.bm.observe(game)
+            if game.supported:
+                self.connection.bm.observe(game)
 
     def onGameObserved (self, game):
         if game in self.games:
