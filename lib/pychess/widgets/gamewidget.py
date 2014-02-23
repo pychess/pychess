@@ -609,6 +609,13 @@ def delGameWidget (gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
     gmwidg.emit("closed")
     
+    called_from_preferences = False
+    wl = gtk.window_list_toplevels()
+    for window in wl:
+        if window.is_active() and window == widgets["preferences"]:
+            called_from_preferences = True
+            break
+            
     del key2gmwidg[gmwidg.notebookKey]
     pageNum = gmwidg.getPageNumber()
     headbook = getheadbook()
@@ -631,9 +638,13 @@ def delGameWidget (gmwidg):
         
         mainvbox.pack_end(background)
         background.show()
-        from pychess.ic.ICLogon import dialog
-        if dialog is not None and dialog.lounge is not None:
-            dialog.lounge.present()
+        
+        if not called_from_preferences:
+            # If the last (but not the designGW) gmwidg was closed
+            # and we are FICS-ing, present the FICS lounge
+            from pychess.ic.ICLogon import dialog
+            if dialog is not None and dialog.lounge is not None:
+                dialog.lounge.present()
     
     gmwidg.__del__()
 
