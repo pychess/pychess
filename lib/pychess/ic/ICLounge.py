@@ -277,11 +277,17 @@ class UserInfoSection(Section):
                 self.ping_label = gtk.Label(_("Connecting")+"...")
                 self.ping_label.props.xalign = 0
             def callback (pinger, pingtime):
-                if type(pingtime) == str:
-                    self.ping_label.set_text(pingtime)
-                elif pingtime == -1:
-                    self.ping_label.set_text(_("Unknown"))
-                else: self.ping_label.set_text("%.0f ms" % pingtime)
+                log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
+                    extra={"task": (self.connection.username, "UIS.oF.callback")})
+                glock.acquire()
+                try:
+                    if type(pingtime) == str:
+                        self.ping_label.set_text(pingtime)
+                    elif pingtime == -1:
+                        self.ping_label.set_text(_("Unknown"))
+                    else: self.ping_label.set_text("%.0f ms" % pingtime)
+                finally:
+                    glock.release()
             if not self.pinger:
                 self.pinger = Pinger(self.host)
                 self.pinger.start()
