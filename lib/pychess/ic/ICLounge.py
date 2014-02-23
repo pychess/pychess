@@ -113,7 +113,11 @@ class ICLounge (GObject):
             # observed
             CreatedBoards(self.widgets, self.connection)
         )
-
+        
+        self.connection.lounge_loaded_condition.acquire()
+        self.connection.lounge_loaded_condition.notify()
+        self.connection.lounge_loaded_condition.release()
+        
     @glock.glocked
     def on_news_item (self, nm, news):            
         self.widgets["show_chat_button"].set_sensitive(True)    
