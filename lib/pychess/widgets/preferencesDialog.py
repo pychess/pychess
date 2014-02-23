@@ -165,6 +165,8 @@ class HintTab:
                     for gmwidg in gameDic.keys():
                         gmwidg.gamemodel.remove_analyzer(HINT)
         
+        widgets["analyzers_vbox"].set_sensitive(
+            widgets["analyzer_check"].get_active())
         widgets["analyzer_check"].connect_after("toggled",
                                                 on_analyzer_check_toggled)
         
@@ -181,6 +183,8 @@ class HintTab:
                     for gmwidg in gameDic.keys():
                         gmwidg.gamemodel.remove_analyzer(SPY)
 
+        widgets["inv_analyzers_vbox"].set_sensitive(
+            widgets["inv_analyzer_check"].get_active())
         widgets["inv_analyzer_check"].connect_after("toggled",
                                               on_invanalyzer_check_toggled)
         
