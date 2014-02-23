@@ -131,7 +131,8 @@ class SeekManager (GObject):
                 return
         if gametype.variant_type in UNSUPPORTED:
             return
-        player.ratings[gametype.rating_type].elo = rating
+        if player.ratings[gametype.rating_type].elo != rating:
+            player.ratings[gametype.rating_type].elo = rating
         player.ratings[gametype.rating_type].deviation = deviation
         
         seek = FICSSeek(index, player, minutes, increment, rated, color,
