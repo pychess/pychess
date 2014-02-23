@@ -295,8 +295,11 @@ class GameWidget (gobject.GObject):
         self._update_menu_draw()
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
-        self._set_arrow(HINT, None)
-        self._set_arrow(SPY, None)
+        for analyzer_type in (HINT, SPY):
+            # only clear arrows if analyzer is examining the last position
+            if analyzer_type in gamemodel.spectators and \
+               gamemodel.spectators[analyzer_type].board == gamemodel.boards[-2]:
+                self._set_arrow(analyzer_type, None)
         self.name_changed(gamemodel.players[0]) #We may need to add * to name
         return False
     
