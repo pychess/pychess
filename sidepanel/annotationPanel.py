@@ -647,7 +647,7 @@ class Sidepanel(gtk.TextView):
         buf = self.textbuffer
         end_iter = buf.get_end_iter
 
-        if self.showEval:
+        if self.showEval and game.ply > 1:
             node = game.getBoardAtPly(game.ply-1, variation=0).board
             if node.plyCount in self.gamemodel.scores:
                 score = self.gamemodel.scores[node.plyCount][1]
@@ -657,7 +657,7 @@ class Sidepanel(gtk.TextView):
         start = end_iter().get_offset()
 
         node = game.getBoardAtPly(game.ply, variation=0).board
-        buf.insert(end_iter(), self.__movestr(node) + " ")
+        buf.insert(end_iter(), self.__movestr(node))
 
         startIter = buf.get_iter_at_offset(start)
         endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -671,6 +671,8 @@ class Sidepanel(gtk.TextView):
         ni["parent"] = None
 
         self.nodeIters.append(ni)
+
+        buf.insert(end_iter(), " ")
 
         if self.showEmt and self.gamemodel.timemodel is not None:
             elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
