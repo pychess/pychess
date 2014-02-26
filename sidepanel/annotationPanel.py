@@ -381,16 +381,57 @@ class Sidepanel(gtk.TextView):
 
     # Update the score chenged node color
     def analysis_changed(self, gamemodel, ply):
-        if (not self.boardview.shownIsMainLine()) or (not self.showBlunder):
+        if not self.boardview.shownIsMainLine():
             return
-        scored_board = gamemodel.getBoardAtPly(ply)
-        for ni in self.nodeIters:
-            if ni["node"] == scored_board.board:
-                start = self.textbuffer.get_iter_at_offset(ni["start"])
-                end = self.textbuffer.get_iter_at_offset(ni["end"])
-                self.colorize_node(ply, start, end)
-                break
+            
+        started = False
+        if self.showEval or self.showBlunder:
+            node = gamemodel.getBoardAtPly(ply).board
+            for ni in self.nodeIters:
+                if ni["node"] == node:
+                    start = self.textbuffer.get_iter_at_offset(ni["start"])
+                    end = self.textbuffer.get_iter_at_offset(ni["end"])
+                    started = True
+                    break
         
+        if not started:
+            return
+            
+        if self.showBlunder:
+            self.colorize_node(ply, start, end)
+
+        next_iter = None
+        if ply == len(gamemodel.moves):
+            self.textbuffer.delete(end, self.textbuffer.get_end_iter())
+        else:
+            next_node = gamemodel.getBoardAtPly(ply+1).board
+            for niter in self.nodeIters:
+                if niter["node"] == next_node:
+                    next_start = self.textbuffer.get_iter_at_offset(niter["start"])
+                    next_iter = niter
+                    break
+            if next_iter is not None:
+                self.textbuffer.delete(end, next_start)
+
+        emt_eval = ""
+        if self.showEmt and self.gamemodel.timemodel is not None:
+            elapsed = gamemodel.timemodel.getElapsedMoveTime(node.plyCount - gamemodel.lowply)
+            emt_eval = "%s " % formatTime(elapsed)
+
+        if self.showEval:
+            if node.plyCount in gamemodel.scores:
+                score = gamemodel.scores[node.plyCount][1]
+                score = score * -1 if node.color == BLACK else score
+                emt_eval += "%s " % prettyPrintScore(score)
+        
+        if emt_eval:
+            self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
+            if next_iter is not None:
+                diff = end.get_offset() - niter["start"]
+                for ni in self.nodeIters[self.nodeIters.index(next_iter):]:
+                    ni["start"] += diff
+                    ni["end"] += diff
+                
     # Update the selected node highlight
     def update_selected_node(self):
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
@@ -439,7 +480,7 @@ class Sidepanel(gtk.TextView):
                 ply += 1
 
                 movestr = self.__movestr(node)
-                buf.insert(end_iter(), movestr)
+                buf.insert(end_iter(), "%s " % movestr)
                 
                 startIter = buf.get_iter_at_offset(start)
                 endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -468,18 +509,15 @@ class Sidepanel(gtk.TextView):
                 ni["parent"] = parent
                 self.nodeIters.append(ni)
                 
-                buf.insert(end_iter(), " ")
-
             if self.showEmt and level == 0 and hasattr(node, "plyCount") and self.gamemodel.timemodel is not None:
                 elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
                 self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 
             if self.showEval and level == 0 and hasattr(node, "plyCount") and node.plyCount in self.gamemodel.scores:
-                if node.next is not None:
-                    score = self.gamemodel.scores[node.plyCount][1]
-                    score = score * -1 if node.color == BLACK else score
-                    endIter = buf.get_iter_at_offset(end_iter().get_offset())
-                    self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score), "emt")
+                score = self.gamemodel.scores[node.plyCount][1]
+                score = score * -1 if node.color == BLACK else score
+                endIter = buf.get_iter_at_offset(end_iter().get_offset())
+                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score), "emt")
 
             new_line = False
             for index, child in enumerate(node.children):
@@ -646,18 +684,10 @@ class Sidepanel(gtk.TextView):
 
         buf = self.textbuffer
         end_iter = buf.get_end_iter
-
-        if self.showEval and game.ply > 1:
-            node = game.getBoardAtPly(game.ply-1, variation=0).board
-            if node.plyCount in self.gamemodel.scores:
-                score = self.gamemodel.scores[node.plyCount][1]
-                score = score * -1 if node.color == BLACK else score
-                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score), "emt")
-
         start = end_iter().get_offset()
-
         node = game.getBoardAtPly(game.ply, variation=0).board
-        buf.insert(end_iter(), self.__movestr(node))
+
+        buf.insert(end_iter(), "%s " % self.__movestr(node))
 
         startIter = buf.get_iter_at_offset(start)
         endIter = buf.get_iter_at_offset(end_iter().get_offset())
@@ -671,8 +701,6 @@ class Sidepanel(gtk.TextView):
         ni["parent"] = None
 
         self.nodeIters.append(ni)
-
-        buf.insert(end_iter(), " ")
 
         if self.showEmt and self.gamemodel.timemodel is not None:
             elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
