@@ -350,7 +350,7 @@ class GameWidget (gobject.GObject):
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or \
                self.gamemodel.status not in UNFINISHED_STATES):
                 if moves[0].flag == DROP:
-                    board = self.gamemodel.boards[-1]
+                    board = analyzer.board 
                     piece = lmove.FCORD(moves[0].move)
                     color = board.color if analyzer_type == HINT else 1-board.color
                     cord0 = board.getHoldingCord(color, piece)
