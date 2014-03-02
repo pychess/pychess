@@ -107,6 +107,7 @@ def game_ended (gamemodel, reason, gmwidg):
     
     if gamemodel.hasLocalPlayer():
         if isinstance(gamemodel, ICGameModel):
+            @glock.glocked
             def status_changed (player, prop, message):
                 update_button_by_player_status(message.buttons[0], player)
             gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
