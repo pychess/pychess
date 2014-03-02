@@ -525,6 +525,8 @@ class SeekTabSection (ParrentListSection):
         self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
     
     def onAddSeek (self, seek):
+        log.debug("%s" % seek,
+                  extra={"task": (self.connection.username, "onAddSeek")})
         pix = self.seekPix if seek.automatic else self.manSeekPix
         textcolor = "grey" if seek.player.name == self.connection.getUsername() \
             else "black"
@@ -545,6 +547,8 @@ class SeekTabSection (ParrentListSection):
         self.__updateActiveSeeksLabel()
         
     def onRemoveSeek (self, seek):
+        log.debug("%s" % seek,
+                  extra={"task": (self.connection.username, "onRemoveSeek")})
         try:
             treeiter = self.seeks[hash(seek)]
         except KeyError:
@@ -557,7 +561,8 @@ class SeekTabSection (ParrentListSection):
         self.__updateActiveSeeksLabel()
     
     def onChallengeAdd (self, challenge):
-        log.debug("onChallengeAdd: %s" % challenge)
+        log.debug("%s" % challenge,
+                  extra={"task": (self.connection.username, "onChallengeAdd")})
         SoundTab.playAction("aPlayerChecks")
         
         # TODO: differentiate between challenges and manual-seek-accepts
@@ -607,7 +612,8 @@ class SeekTabSection (ParrentListSection):
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(ti))
 
     def onChallengeRemove (self, challenge):
-        log.debug("onChallengeRemove: %s" % repr(challenge))
+        log.debug("%s" % challenge,
+            extra={"task": (self.connection.username, "onChallengeRemove")})
         try:
             ti = self.challenges[hash(challenge)]
         except KeyError:
@@ -754,6 +760,8 @@ class SeekGraphSection (ParrentListSection):
         self.connection.bm.play(name)
     
     def onAddSought (self, sought):
+        log.debug("%s" % sought,
+                  extra={"task": (self.connection.username, "onAddSought")})
         x = XLOCATION(float(sought.minutes) + float(sought.inc) * GAME_LENGTH/60.)
         y = YLOCATION(float(sought.player.getRating(sought.game_type.rating_type).elo))
         type_ = 0 if sought.rated else 1
@@ -764,6 +772,8 @@ class SeekGraphSection (ParrentListSection):
         self.graph.addSpot(sought.index, tooltip_text, x, y, type_)
 
     def onRemoveSought (self, sought):
+        log.debug("%s" % sought,
+                  extra={"task": (self.connection.username, "onRemoveSought")})
         self.graph.removeSpot(sought.index)
 
     def onPlayingGame (self):
@@ -819,10 +829,10 @@ class PlayerTabSection (ParrentListSection):
     @glock.glocked
     def onPlayerAdded (self, players, player):
         log.debug("%s" % player,
-                  extra={"task": (self.connection.username, "onPlayerAdded")})
+                  extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
         if player in self.players:
             log.warning("%s already in self" % player,
-                extra={"task": (self.connection.username, "onPlayerAdded")})
+                extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
             return
         
         ti = self.store.append([player, player.getIcon(),
@@ -850,6 +860,8 @@ class PlayerTabSection (ParrentListSection):
         
     @glock.glocked
     def onPlayerRemoved (self, players, player):
+        log.debug("%s" % player,
+                  extra={"task": (self.connection.username, "PTS.onPlayerRemoved")})
         if player not in self.players: return
 
         if self.store.iter_is_valid(self.players[player]["ti"]):
@@ -874,6 +886,8 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def status_changed (self, player, property):
+        log.debug("%s" % player, extra={"task":
+            (self.connection.username, "PTS.status_changed")})
         if player not in self.players: return
 
         if self.store.iter_is_valid(self.players[player]["ti"]):
@@ -899,6 +913,8 @@ class PlayerTabSection (ParrentListSection):
     
     @glock.glocked
     def titles_changed (self, player, property):
+        log.debug("%s" % player, extra={"task":
+            (self.connection.username, "PTS.titles_changed")})
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         self.store.set(self.players[player]["ti"], 1, player.getIcon())
@@ -909,6 +925,8 @@ class PlayerTabSection (ParrentListSection):
         return False
         
     def private_changed (self, game, property, player):
+        log.debug("%s" % player, extra={"task":
+            (self.connection.username, "PTS.private_changed")})
         self.status_changed(player, property)
         self.onSelectionChanged(self.tv.get_selection())
         return False
@@ -916,7 +934,7 @@ class PlayerTabSection (ParrentListSection):
     @glock.glocked
     def elo_changed (self, rating, prop, player):
         log.debug("%s %s" % (rating.elo, player), extra={"task":
-            (self.connection.username, "PlayerTabSection.elo_changed")})
+            (self.connection.username, "PTS.elo_changed")})
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
@@ -1073,7 +1091,8 @@ class GameTabSection (ParrentListSection):
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
     def onGameAdd (self, game):
-#        log.debug("GameTabSection.onGameAdd: %s" % repr(game))
+        log.debug("%s" % game,
+                  extra={"task": (self.connection.username, "GTS.onGameAdd")})
         if game.minutes != None:
             length = game.minutes*60 + game.inc*40
         elif game.game_type.rating_type == TYPE_LIGHTNING:
@@ -1105,6 +1124,8 @@ class GameTabSection (ParrentListSection):
         return False
         
     def onGameRemove (self, game):
+        log.debug("%s" % game,
+                  extra={"task": (self.connection.username, "GTS.onGameRemove")})
         if game not in self.games: return
         if self.store.iter_is_valid(self.games[game]["ti"]):
             self.store.remove(self.games[game]["ti"])
