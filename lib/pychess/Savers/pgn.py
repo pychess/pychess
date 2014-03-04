@@ -149,11 +149,10 @@ def walk(node, result):
             continue
 
         movecount = move_count(node)
-        if movecount:
+        if movecount is not None:
             store(movecount)
-
-        move = node.lastMove
-        store(toSAN(node.prev, move))
+            move = node.lastMove
+            store(toSAN(node.prev, move))
 
         for nag in node.nags:
             if nag:
@@ -165,9 +164,16 @@ def walk(node, result):
                 store("{%s}" % child)
             else:
                 # variations
-                store("(")
-                walk(child[0], result)
-                store(")")
+                if node.fen_was_applied:
+                    store("(")
+                    walk(child[0], result)
+                    store(")")
+                    # variation after last played move is not valid pgn
+                    # but we will save it as in comment
+                else:
+                    store("{Analyzer's primary variation:")
+                    walk(child[0], result)
+                    store("}")
 
         if node.next:
             node = node.next
@@ -175,14 +181,16 @@ def walk(node, result):
             break
 
 def move_count(node):
-    ply = node.plyCount
-    if ply % 2 == 1:
-        mvcount = "%d." % (ply/2+1)
-    elif node.prev.prev is None or node != node.prev.next or node.prev.children:
-        # initial game move, or initial variation move or move after comment
-        mvcount = "%d..." % (ply/2)
-    else:
-        mvcount = ""        
+    mvcount = None
+    if node.fen_was_applied:
+        ply = node.plyCount
+        if ply % 2 == 1:
+            mvcount = "%d." % (ply/2+1)
+        elif node.prev.prev is None or node != node.prev.next or node.prev.children:
+            # initial game move, or initial variation move or move after comment
+            mvcount = "%d..." % (ply/2)
+        else:
+            mvcount = ""        
     return mvcount
 
 
