@@ -43,9 +43,11 @@ class LBoard:
         # The high level owner Board (with Piece objects) in gamemodel
         self.pieceBoard = None
         
+        self.fen_was_applied = False
+        
     @property
     def lastMove (self):
-        return self.hist_move[-1] if len(self.hist_move) > 0 else None
+        return self.hist_move[-1] if self.fen_was_applied and len(self.hist_move) > 0 else None
 
     def repetitionCount (self, drawThreshold=3):
         rc = 1
@@ -72,7 +74,7 @@ class LBoard:
             Pos(%d) specifying the string index of the problem.
             if an error is found, no changes will be made to the board. """
 
-        assert not hasattr(self, "boards"), "The applyFen() method can be used on new LBoard objects only!"
+        assert not self.fen_was_applied, "The applyFen() method can be used on new LBoard objects only!"
 
         # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = 0
@@ -292,6 +294,8 @@ class LBoard:
         movenumber = max(int(moveNoChr),1)*2 -2
         if self.color == BLACK: movenumber += 1
         self.plyCount = movenumber
+
+        self.fen_was_applied = True
 
     def isChecked (self):
         if self.variant == SUICIDECHESS:
@@ -808,5 +812,6 @@ class LBoard:
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
-            
+        
+        copy.fen_was_applied = self.fen_was_applied
         return copy
