@@ -160,8 +160,10 @@ def walk(node, result):
 
         for child in node.children:
             if isinstance(child, basestring):
+                child = re.sub("\[%.*?\]", "", child)
                 # comment
-                store("{%s}" % child)
+                if child:
+                    store("{%s}" % child)
             else:
                 # variations
                 if node.fen_was_applied:
