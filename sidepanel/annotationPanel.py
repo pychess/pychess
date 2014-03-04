@@ -35,7 +35,6 @@ class Sidepanel(gtk.TextView):
         self.textview = self
         
         self.nodeIters = []
-        self.commentIters = []
         self.oldWidth = 0
         self.autoUpdateSelected = True
         
@@ -139,10 +138,6 @@ class Sidepanel(gtk.TextView):
             if offset >= ni["start"] and offset < ni["end"]:
                 event.window.set_cursor(self.cursor_hand)
                 return True
-        for ci in self.commentIters:
-            if offset >= ci["start"] and offset < ci["end"]:
-                event.window.set_cursor(self.cursor_hand)
-                return True
         event.window.set_cursor(self.cursor_standard)
         return True
 
@@ -157,17 +152,17 @@ class Sidepanel(gtk.TextView):
             if offset >= ni["start"] and offset < ni["end"]:
                 node = ni
                 board = ni["node"]
-                parent = ni["parent"]
-                if event.button == 1:
-                    self.boardview.setShownBoard(board.pieceBoard)
-                    self.update_selected_node()
                 break
         
-        if node is None and event.button == 1:
-            for ci in self.commentIters:
-                if offset >= ci["start"] and offset < ci["end"]:
-                    self.edit_comment(board=ci["node"], index=ci["index"])
-                    break
+        if node is None:
+            return True
+            
+        if event.button == 1:
+            if "comment" in node:
+                self.edit_comment(board=board, index=node["index"])
+            else:
+                self.boardview.setShownBoard(board.pieceBoard)
+                self.update_selected_node()
 
         elif event.button == 3:
             if node is not None:
@@ -242,7 +237,7 @@ class Sidepanel(gtk.TextView):
                     for vari in self.gamemodel.variations[1:]:
                         if board.pieceBoard in vari:
                             menuitem = gtk.MenuItem(_("Remove variation"))
-                            menuitem.connect('activate', self.remove_variation, board, parent, vari)
+                            menuitem.connect('activate', self.remove_variation, board, node["parent"], vari)
                             menu.append(menuitem)
                             break
 
@@ -385,12 +380,14 @@ class Sidepanel(gtk.TextView):
             return
             
         started = False
+        node = gamemodel.getBoardAtPly(ply).board
+        iter = None
         if self.showEval or self.showBlunder:
-            node = gamemodel.getBoardAtPly(ply).board
             for ni in self.nodeIters:
                 if ni["node"] == node:
                     start = self.textbuffer.get_iter_at_offset(ni["start"])
                     end = self.textbuffer.get_iter_at_offset(ni["end"])
+                    iter = ni
                     started = True
                     break
         
@@ -400,18 +397,13 @@ class Sidepanel(gtk.TextView):
         if self.showBlunder:
             self.colorize_node(ply, start, end)
 
-        next_iter = None
-        if ply == len(gamemodel.moves):
+        if iter == self.nodeIters[-1]:
+            next_iter = None
             self.textbuffer.delete(end, self.textbuffer.get_end_iter())
         else:
-            next_node = gamemodel.getBoardAtPly(ply+1).board
-            for niter in self.nodeIters:
-                if niter["node"] == next_node:
-                    next_start = self.textbuffer.get_iter_at_offset(niter["start"])
-                    next_iter = niter
-                    break
-            if next_iter is not None:
-                self.textbuffer.delete(end, next_start)
+            next_iter = self.nodeIters[self.nodeIters.index(iter)+1]
+            next_start = self.textbuffer.get_iter_at_offset(next_iter["start"])
+            self.textbuffer.delete(end, next_start)
 
         emt_eval = ""
         if self.showEmt and self.gamemodel.timemodel is not None:
@@ -427,7 +419,9 @@ class Sidepanel(gtk.TextView):
         if emt_eval:
             self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
             if next_iter is not None:
-                diff = end.get_offset() - niter["start"]
+                if next_iter.has_key("vari"):
+                    self.textbuffer.insert_with_tags_by_name(end, "\n[", "variation-toplevel", "variation-margin0")
+                diff = end.get_offset() - next_iter["start"]
                 for ni in self.nodeIters[self.nodeIters.index(next_iter):]:
                     ni["start"] += diff
                     ni["end"] += diff
@@ -473,10 +467,7 @@ class Sidepanel(gtk.TextView):
                 node = node.next
                 continue
             
-            if hasattr(node, "hist_move"):
-                #if ply > 0 and not new_line:
-                #    buf.insert(end_iter(), " ")
-                
+            if node.fen_was_applied:
                 ply += 1
 
                 movestr = self.__movestr(node)
@@ -507,6 +498,8 @@ class Sidepanel(gtk.TextView):
                 ni["start"] = start       
                 ni["end"] = end_iter().get_offset()
                 ni["parent"] = parent
+                if level == 1:
+                    ni["vari"] = True
                 self.nodeIters.append(ni)
                 
             if self.showEmt and level == 0 and node.fen_was_applied and self.gamemodel.timemodel is not None:
@@ -566,13 +559,13 @@ class Sidepanel(gtk.TextView):
         else:
             buf.insert_with_tags_by_name(end_iter(), comment, "comment")
 
-        ci = {}
-        ci["node"] = node
-        ci["comment"] = comment
-        ci["index"] = index
-        ci["start"] = start     
-        ci["end"] = end_iter().get_offset()
-        self.commentIters.append(ci)
+        ni = {}
+        ni["node"] = node
+        ni["comment"] = comment
+        ni["index"] = index
+        ni["start"] = start     
+        ni["end"] = end_iter().get_offset()
+        self.nodeIters.append(ni)
         
         buf.insert(end_iter(), " ")
 
