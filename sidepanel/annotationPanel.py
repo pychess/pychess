@@ -509,11 +509,11 @@ class Sidepanel(gtk.TextView):
                 ni["parent"] = parent
                 self.nodeIters.append(ni)
                 
-            if self.showEmt and level == 0 and hasattr(node, "plyCount") and self.gamemodel.timemodel is not None:
+            if self.showEmt and level == 0 and node.fen_was_applied and self.gamemodel.timemodel is not None:
                 elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
                 self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 
-            if self.showEval and level == 0 and hasattr(node, "plyCount") and node.plyCount in self.gamemodel.scores:
+            if self.showEval and level == 0 and node.fen_was_applied and node.plyCount in self.gamemodel.scores:
                 score = self.gamemodel.scores[node.plyCount][1]
                 score = score * -1 if node.color == BLACK else score
                 endIter = buf.get_iter_at_offset(end_iter().get_offset())
