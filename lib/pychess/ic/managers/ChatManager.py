@@ -203,6 +203,8 @@ class ChatManager (GObject):
             player = self.connection.players.get(FICSPlayer(name))
         except KeyError:
             return
+        if player.name not in self.connection.notify_users:
+            self.connection.notify_users.append(player.name)
         self.emit("arrivalNotification", player)
     
     def onDepartedNotification (self, match):
