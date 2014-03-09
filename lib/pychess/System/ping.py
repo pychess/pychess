@@ -35,7 +35,8 @@ class Pinger (GObject):
     
     def start (self):
         assert not self.subproc
-        self.subproc = SubProcess(searchPath("ping"), [self.host], env={"LANG":"en"})
+        self.subproc = SubProcess(searchPath("ping"),
+                                  ["-i10", self.host], env={"LANG":"en"})
         self.conid1 = self.subproc.connect("line", self.__handleLines)
         self.conid2 = self.subproc.connect("died", self.__handleDead)
 
