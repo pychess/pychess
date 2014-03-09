@@ -62,19 +62,19 @@ class ICLounge (GObject):
             expand=False, fill=False)
 
         def on_window_delete (window, event):
-            self.close()
             self.emit("logout")
+            self.close()
             return True
         self.widgets["fics_lounge"].connect("delete-event", on_window_delete)
 
         def on_logoffButton_clicked (button):
-            self.close()
             self.emit("logout")
+            self.close()
         self.widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)        
 
         def on_autoLogout (alm):
-            self.close()
             self.emit("autoLogout")
+            self.close()
         self.connection.alm.connect("logOut", on_autoLogout)
 
         self.connection.connect("disconnected", lambda connection: self.close())
@@ -379,7 +379,10 @@ class ParrentListSection (Section):
                 func(*task[1:])
         self.listPublisher = Publisher(updateLists, Publisher.SEND_LIST)
         self.listPublisher.start()
-
+    
+    def __del__ (self):
+        self.listPublisher.__del__()
+    
     def addColumns (self, treeview, *columns, **keyargs):
         if "hide" in keyargs: hide = keyargs["hide"]
         else: hide = []
