@@ -274,9 +274,12 @@ class FICSConnection (Connection):
                 self.emit("connected")
 
             def keep_alive():
-                while(True):
-                    self.client.run_command("date")
-                    time.sleep(59*60)
+                last = time.time()
+                while self.isConnected():
+                    if time.time()-last > 59*60:
+                        self.client.run_command("date")
+                        last = time.time()
+                    time.sleep(30)
             keep_alive_thread = threading.Thread(target = keep_alive)
             keep_alive_thread.daemon = True
             keep_alive_thread.start()
