@@ -397,14 +397,6 @@ class Sidepanel(gtk.TextView):
         if self.showBlunder:
             self.colorize_node(ply, start, end)
 
-        if iter == self.nodeIters[-1]:
-            next_iter = None
-            self.textbuffer.delete(end, self.textbuffer.get_end_iter())
-        else:
-            next_iter = self.nodeIters[self.nodeIters.index(iter)+1]
-            next_start = self.textbuffer.get_iter_at_offset(next_iter["start"])
-            self.textbuffer.delete(end, next_start)
-
         emt_eval = ""
         if self.showEmt and self.gamemodel.timemodel is not None:
             elapsed = gamemodel.timemodel.getElapsedMoveTime(node.plyCount - gamemodel.lowply)
@@ -417,7 +409,16 @@ class Sidepanel(gtk.TextView):
                 emt_eval += "%s " % prettyPrintScore(score)
         
         if emt_eval:
+            if iter == self.nodeIters[-1]:
+                next_iter = None
+                self.textbuffer.delete(end, self.textbuffer.get_end_iter())
+            else:
+                next_iter = self.nodeIters[self.nodeIters.index(iter)+1]
+                next_start = self.textbuffer.get_iter_at_offset(next_iter["start"])
+                self.textbuffer.delete(end, next_start)
+                
             self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
+
             if next_iter is not None:
                 if next_iter.has_key("vari"):
                     self.textbuffer.insert_with_tags_by_name(end, "\n[", "variation-toplevel", "variation-margin0")
