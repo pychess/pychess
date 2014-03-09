@@ -210,7 +210,7 @@ class BoardView (gtk.DrawingArea):
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
-        if self.autoUpdateShown and self.shown+1 >= model.ply:
+        if self.autoUpdateShown and self.shown+1 >= model.ply and self.shownIsMainLine():
             self.shown = model.ply
             
             # Rotate board
