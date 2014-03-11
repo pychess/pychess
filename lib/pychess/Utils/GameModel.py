@@ -14,6 +14,7 @@ from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
 from pychess.Utils.eco import get_eco
+from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants.normal import NormalChess
 from pychess.Variants import variants
 
@@ -120,7 +121,10 @@ class GameModel (GObject, PooledThread):
         self.status = WAITING_TO_START
         self.reason = UNKNOWN_REASON
         
-        self.timemodel = timemodel
+        if timemodel is None:
+            self.timemodel = TimeModel()
+        else:
+            self.timemodel = timemodel
         
         self.connections = defaultdict(list)  # mainly for IC subclasses
         
@@ -136,7 +140,9 @@ class GameModel (GObject, PooledThread):
             "Result": "*",
         }
 
-        if self.timemodel:
+        self.timed = self.timemodel.secs!=0 or self.timemodel.gain!=0
+
+        if self.timed:
             self.tags["TimeControl"] = \
                 "%d+%d" % (self.timemodel.minutes*60, self.timemodel.gain)
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
@@ -172,13 +178,13 @@ class GameModel (GObject, PooledThread):
     
     @property
     def display_text (self):
-        if self.variant == NormalChess and self.timemodel is None:
+        if self.variant == NormalChess and not self.timed:
             return "[ " + _("Untimed") + " ]"
         else:
             t = "[ "
             if self.variant != NormalChess:
                 t += self.variant.name + " "
-            if self.timemodel is not None:
+            if self.timed:
                 t += self.timemodel.display_text + " "
             return t + "]"
         
@@ -368,7 +374,7 @@ class GameModel (GObject, PooledThread):
             else: self.end(WHITEWON, WON_RESIGN)
         
         elif offer.type == FLAG_CALL:
-            assert self.timemodel is not None
+            assert self.timed
             if self.timemodel.getPlayerTime(player.color) <= 0:
                 if self.timemodel.getPlayerTime(1-player.color) <= 0:
                     self.end(DRAW, DRAW_CALLFLAG)
@@ -492,11 +498,11 @@ class GameModel (GObject, PooledThread):
             spectator.setOptionInitialBoard(self)
         for player in self.players:
             player.setOptionInitialBoard(self)
-        if self.timemodel:
+        if self.timed:
             self.timemodel.setMovingColor(self.boards[-1].color)
         
         if self.status == RUNNING:
-            if self.timemodel and self.ply >= 2:
+            if self.timed and self.ply >= 2:
                 self.timemodel.start()
             
         self.status = WAITING_TO_START
@@ -540,7 +546,7 @@ class GameModel (GObject, PooledThread):
             curColor = self.boards[-1].color
             curPlayer = self.players[curColor]
             
-            if self.timemodel:
+            if self.timed:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % \
                     (id(self), str(self.players), str(self.ply), str(curPlayer)))
                 curPlayer.updateTime(self.timemodel.getPlayerTime(curColor),
@@ -591,7 +597,7 @@ class GameModel (GObject, PooledThread):
                 self.boards.append(newBoard)
                 self.moves.append(move)
 
-                if self.timemodel:
+                if self.timed:
                     self.timemodel.tap()
                 
                 self.checkStatus()
@@ -639,7 +645,7 @@ class GameModel (GObject, PooledThread):
         log.debug("GameModel.__pause: %s" % self)
         for player in self.players:
             player.pause()
-        if self.timemodel:
+        if self.timed:
             self.timemodel.pause()
     
     @inthread
@@ -658,7 +664,7 @@ class GameModel (GObject, PooledThread):
     def __resume (self):
         for player in self.players:
             player.resume()
-        if self.timemodel:
+        if self.timed:
             self.timemodel.resume()
         self.emit("game_resumed")
     
@@ -703,7 +709,7 @@ class GameModel (GObject, PooledThread):
         for spectator in self.spectators.values():
             spectator.end(self.status, reason)
         
-        if self.timemodel:
+        if self.timed:
             self.timemodel.end()
         
         self.emit("game_ended", reason)
@@ -718,7 +724,7 @@ class GameModel (GObject, PooledThread):
             for spectator in self.spectators.values():
                 spectator.end(self.status, self.reason)
             
-            if self.timemodel:
+            if self.timed:
                 self.timemodel.end()
         
         self.emit("game_terminated")
@@ -761,7 +767,7 @@ class GameModel (GObject, PooledThread):
                 spectator.spectatorUndoMoves(moves, self)
             
             log.debug("GameModel.undoMoves: undoing timemodel")
-            if self.timemodel:
+            if self.timed:
                 self.timemodel.undoMoves(moves)
             
             self.checkStatus()

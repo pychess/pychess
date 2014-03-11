@@ -337,7 +337,8 @@ class _GameInitializationMode:
             
             if secs > 0:
                 timemodel = TimeModel (secs, incr)
-            else: timemodel = None
+            else:
+                timemodel = TimeModel()
 
             gamemodel = GameModel (timemodel, variant)
 
@@ -548,14 +549,13 @@ def createRematch (gamemodel):
     """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
         new game, based on the info in gamemodel """
     
-    if gamemodel.timemodel:
+    if gamemodel.timed:
         secs = gamemodel.timemodel.intervals[0][WHITE]
         gain = gamemodel.timemodel.gain
-        newgamemodel = GameModel(TimeModel(secs, gain), gamemodel.variant)
     else:
         secs = 0
         gain = 0
-        newgamemodel = GameModel(variant=gamemodel.variant)
+    newgamemodel = GameModel(TimeModel(secs, gain), variant=gamemodel.variant)
 
     wp = gamemodel.players[WHITE]
     bp = gamemodel.players[BLACK]
