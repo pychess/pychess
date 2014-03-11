@@ -182,7 +182,7 @@ class ICPlayer (Player):
     #===========================================================================
     
     def offerRematch (self):
-        if self.gamemodel.timemodel:
+        if self.gamemodel.timed:
             min = int(self.gamemodel.timemodel.intervals[0][0])/60
             inc = self.gamemodel.timemodel.gain
         else:

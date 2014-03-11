@@ -36,7 +36,7 @@ class ICGameModel (GameModel):
     @property
     def display_text (self):
         t = "[ "
-        if self.timemodel:
+        if self.timed:
             t += self.timemodel.display_text + " "
         t += self.ficsgame.display_rated.lower() + " "
         if self.ficsgame.game_type.display_text:
@@ -91,7 +91,7 @@ class ICGameModel (GameModel):
         log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply" % \
             (id(self), str(self.players)))
         
-        if self.timemodel:
+        if self.timed:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" % \
                 (id(self), str(self.players)))
             self.timemodel.updatePlayer (WHITE, wms/1000.)

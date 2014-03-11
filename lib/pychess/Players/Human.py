@@ -94,7 +94,7 @@ class Human (Player):
         self.ichandle = ichandle
         self.icrating = icrating
         
-        if self.gamemodel.timemodel:
+        if self.gamemodel.timed:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
     
     #===========================================================================

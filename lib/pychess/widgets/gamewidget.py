@@ -137,7 +137,7 @@ class GameWidget (gobject.GObject):
         self.players_changed(gamemodel)
         if self.gamemodel.display_text:
             self.game_info_label.set_text(" " + self.gamemodel.display_text)
-        if gamemodel.timemodel:
+        if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
         # Help crazyhouse testing
@@ -199,7 +199,7 @@ class GameWidget (gobject.GObject):
             and not self.gamemodel.isObservationGame()
         
         def can_win (color):
-            if self.gamemodel.timemodel:
+            if self.gamemodel.timed:
                 return playerHasMatingMaterial(self.gamemodel.boards[-1], color) and \
                     self.gamemodel.timemodel.getPlayerTime(color) > 0
             else:
@@ -473,7 +473,7 @@ class GameWidget (gobject.GObject):
         boardvbox.set_spacing(2)
         infobar = InfoBar()
         
-        if gamemodel.timemodel:
+        if gamemodel.timed:
             ccalign = createAlignment(0, 0, 0, 0)
             cclock = ChessClock()
             cclock.setModel(gamemodel.timemodel)

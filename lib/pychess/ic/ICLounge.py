@@ -1324,7 +1324,7 @@ class AdjournedTabSection (ParrentListSection):
     def onGamePreview (self, ficsgame):
         log.debug("ICLounge.onGamePreview: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
-            timemodel = None
+            timemodel = TimeModel()
         else:
             timemodel = TimeModel(ficsgame.board.wms/1000., ficsgame.inc,
                 bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
@@ -2145,7 +2145,7 @@ class CreatedBoards (Section):
     def onPlayGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onPlayGameCreated: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
-            timemodel = None
+            timemodel = TimeModel()
         else:
             timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
                 bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
@@ -2182,7 +2182,7 @@ class CreatedBoards (Section):
     def onObserveGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
-            timemodel = None
+            timemodel = TimeModel()
         else:
             timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
                 bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)

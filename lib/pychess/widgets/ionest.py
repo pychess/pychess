@@ -8,7 +8,7 @@ from pychess.System import conf
 from pychess.System.GtkWorker import GtkWorker
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
-from pychess.System.uistuff import GladeWidgets
+from pychess.System.uistuff import GladeWidgets, keep
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
@@ -395,6 +395,15 @@ def closeGame (gmwidg, game):
         d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
         d.format_secondary_text (_(
             "It is not possible later to continue the game,\nif you don't save it."))
+        
+        # TODO: Unify all save menu and close dialogs with added enhance_save_check    
+        if 0:
+            dialogBox = d.get_content_area()
+            enhanced_save_check  = gtk.CheckButton(_("Save elapsed move times and analyzing engine evaluation values too."))
+            dialogBox.pack_end(enhanced_save_check)
+            keep(enhanced_save_check, "enhanced_save_check", first_value=False)
+            enhanced_save_check.show()            
+
         response = d.run()
         d.destroy()
 
