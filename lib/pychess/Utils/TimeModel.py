@@ -18,7 +18,7 @@ class TimeModel (GObject):
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs, gain, bsecs=-1, minutes=-1):
+    def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):
         GObject.__init__(self)
         
         if bsecs < 0: bsecs = secs
@@ -29,6 +29,7 @@ class TimeModel (GObject):
             # i.e. self.intervals[0][0])
         self.intervals = [[secs],[bsecs]]
         self.gain = gain
+        self.secs = secs
         
         self.paused = False
         # The left number of secconds at the time pause was turned on

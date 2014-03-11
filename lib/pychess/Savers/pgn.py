@@ -3,6 +3,7 @@
 import re
 from datetime import date
 
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
@@ -11,12 +12,14 @@ from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
+from pychess.Utils import prettyPrintScore
 from pychess.Variants.atomic import AtomicChess, AtomicBoard
 from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
 from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
 from pychess.Variants.suicide import SuicideChess, SuicideBoard
 from pychess.Variants.losers import LosersChess, LosersBoard
+from pychess.widgets.ChessClock import formatTime
 
 from pgnbase import PgnBase, pgn_load
 from ChessFile import LoadingError
@@ -83,7 +86,7 @@ def save (file, model, position=None):
         print >> file, '[TimeControl "%s"]' % model.tags["TimeControl"]
     if "Time" in model.tags:
         print >> file, '[Time "%s"]' % str(model.tags["Time"])
-    if model.timemodel:
+    if model.timed:
         print >> file, '[WhiteClock "%s"]' % \
             msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000))
         print >> file, '[BlackClock "%s"]' % \
@@ -111,7 +114,7 @@ def save (file, model, position=None):
     print >> file
 
     result = []
-    walk(model.boards[0].board, result)
+    walk(model.boards[0].board, result, model)
             
     result = " ".join(result)
     result = wrap(result, 80)
@@ -119,7 +122,7 @@ def save (file, model, position=None):
     print >> file
     file.close()
 
-def walk(node, result):
+def walk(node, result, model, vari=False):
     """Prepares a game data for .pgn storage.
        Recursively walks the node tree to collect moves and comments
        into a resulting movetext string.
@@ -128,6 +131,8 @@ def walk(node, result):
        node - list (a tree of lboards created by the pgn parser)
        result - str (movetext strings)"""
 
+    enhanced_save = conf.get("enhanced_save_check", False)
+    
     def store(text):
         if len(result) > 1 and result[-1] == "(":
             result[-1] = "(%s" % text
@@ -148,11 +153,23 @@ def walk(node, result):
             node = node.next
             continue
 
-        movecount = move_count(node)
+        movecount = move_count(node, black_needs=enhanced_save and "TimeControl" in model.tags)
         if movecount is not None:
-            store(movecount)
+            if movecount:
+                store(movecount)
             move = node.lastMove
             store(toSAN(node.prev, move))
+            if enhanced_save and not vari:
+                emt_eval = ""
+                if "TimeControl" in model.tags:
+                    elapsed = model.timemodel.getElapsedMoveTime(node.plyCount - model.lowply)
+                    emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
+                if node.plyCount in model.scores:
+                    score = model.scores[node.plyCount][1]
+                    score = score * -1 if node.color == BLACK else score
+                    emt_eval += "[%%eval %s]" % prettyPrintScore(score)
+                if emt_eval:
+                    store("{%s}" % emt_eval)
 
         for nag in node.nags:
             if nag:
@@ -168,13 +185,13 @@ def walk(node, result):
                 # variations
                 if node.fen_was_applied:
                     store("(")
-                    walk(child[0], result)
+                    walk(child[0], result, model, vari=True)
                     store(")")
                     # variation after last played move is not valid pgn
                     # but we will save it as in comment
                 else:
                     store("{Analyzer's primary variation:")
-                    walk(child[0], result)
+                    walk(child[0], result, model, vari=True)
                     store("}")
 
         if node.next:
@@ -182,15 +199,30 @@ def walk(node, result):
         else:
             break
 
-def move_count(node):
+def move_count(node, black_needs=False):
     mvcount = None
     if node.fen_was_applied:
         ply = node.plyCount
         if ply % 2 == 1:
             mvcount = "%d." % (ply/2+1)
-        elif node.prev.prev is None or node != node.prev.next or node.prev.children:
-            # initial game move, or initial variation move or move after comment
+        elif node.prev.prev is None or node != node.prev.next or black_needs:
+            # initial game move, or initial variation move
             mvcount = "%d..." % (ply/2)
+        elif node.prev.children:
+            # move after real(not [%foo bar]) comment
+            need_mvcount = False
+            for child in node.prev.children:
+                if isinstance(child, basestring):
+                    if not child.startswith("[%"):
+                        need_movecount = True
+                        break
+                else:
+                    need_mvcount = True
+                    break
+            if need_mvcount:
+                mvcount = "%d..." % (ply/2)
+            else:
+                mvcount = ""
         else:
             mvcount = ""        
     return mvcount
@@ -239,7 +271,7 @@ class PGNFile (PgnBase):
         # whether to use PGN's clock time, or their own custom time. Also,
         # dialog should set+insensitize variant based on the variant of the
         # game selected in the dialog
-#        if model.timemodel:
+#        if model.timed:
 #            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
 #                if self._getTag(gameno, tag):
 #                    try:
@@ -364,7 +396,7 @@ class PGNFile (PgnBase):
         walk(boards[0], [])
         model.boards = model.variations[0]
         
-        if model.timemodel:
+        if "TimeControl" in model.tags:
             blacks = len(model.moves)/2
             whites = len(model.moves)-blacks
 
@@ -380,9 +412,10 @@ class PGNFile (PgnBase):
                         movecount, color = divmod(ply+1, 2)
                         match = movetime.search(child)
                         if match:
-                            hour, min, sec, msec = match.groups()
+                            hour, minute, sec, msec = match.groups()
                             prev = model.timemodel.intervals[color][movecount-1]
-                            msec = int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
+                            msec = 0 if msec is None else int(msec)
+                            msec += int(sec)*1000 + int(minute)*60*1000 + int(hour)*60*60*1000
                             model.timemodel.intervals[color][movecount] = prev - msec/1000
             
         # Find the physical status of the game
