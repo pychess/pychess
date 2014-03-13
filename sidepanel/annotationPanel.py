@@ -173,9 +173,10 @@ class Sidepanel(gtk.TextView):
                         position = index
                         break
 
-                if board == self.gamemodel.boards[1].board and not self.gamemodel.boards[0].board.children:
+                if len(self.gamemodel.boards) > 1 and board == self.gamemodel.boards[1].board and \
+                    not self.gamemodel.boards[0].board.children:
                     menuitem = gtk.MenuItem(_("Add start comment"))
-                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0], 0)
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0].board, 0)
                     menu.append(menuitem)
 
                 if position == -1:
@@ -321,27 +322,42 @@ class Sidepanel(gtk.TextView):
             self.gamemodel.needsSave = True
 
     def remove_variation(self, widget, board, parent, vari):
-        for child in parent.children:
-            if isinstance(child, list) and board in child:
-                parent.children.remove(child)
-                break
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        in_vari = shown_board in vari
 
-        if self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx) in vari:
+        # Set new shown board if needed
+        if in_vari:
             if parent.pieceBoard is None:
                 # variation without played move at game end 
                 self.boardview.setShownBoard(self.gamemodel.boards[-1])
             else:
                 self.boardview.setShownBoard(parent.pieceBoard)
-        self.gamemodel.variations.remove(vari)
+        
+        # Remove the variation (list of lboards) containing board from parent's children list
+        for child in parent.children:
+            if isinstance(child, list) and board in child:
+                parent.children.remove(child)
+                break
 
+        # Remove all variations from gamemodel's variations list which contains this board
+        for vari in self.gamemodel.variations[1:]:
+            if board.pieceBoard in vari:
+                self.gamemodel.variations.remove(vari)
+
+        # Set new shownVariationIdx
         if parent.pieceBoard is None:
             self.boardview.shownVariationIdx = 0
             parent.prev.next = None
         else:
             for vari in self.gamemodel.variations:
-                if parent.pieceBoard in vari:
-                    self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
-                    break
+                if in_vari:
+                    if parent.pieceBoard in vari:
+                        self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
+                        break
+                else:
+                    if shown_board in vari:
+                        self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
+                        break
 
         self.update()
         self.gamemodel.needsSave = True
@@ -462,9 +478,9 @@ class Sidepanel(gtk.TextView):
                 for index, child in enumerate(node.children):
                     if isinstance(child, basestring):
                         if 0: # TODO node.plyCount == self.gamemodel.lowply:
-                            self.insert_comment(child + "\n", node, index, level)
+                            self.insert_comment(child + "\n", node, index, parent, level)
                         else:
-                            self.insert_comment(child, node, index, level)
+                            self.insert_comment(child, node, index, parent, level)
                 node = node.next
                 continue
             
@@ -517,7 +533,7 @@ class Sidepanel(gtk.TextView):
             for index, child in enumerate(node.children):
                 if isinstance(child, basestring):
                     # comment
-                    self.insert_comment(child, node, index, level)
+                    self.insert_comment(child, node, index, parent, level)
                 else:
                     # variation
                     if not new_line:
@@ -548,7 +564,7 @@ class Sidepanel(gtk.TextView):
         if result and result != "*":
             buf.insert_with_tags_by_name(end_iter(), " "+result, "node")
 
-    def insert_comment(self, comment, node, index, level=0):
+    def insert_comment(self, comment, node, index, parent, level=0):
         comment = re.sub("\[%.*?\]", "", comment)
         
         buf = self.textbuffer
@@ -566,6 +582,7 @@ class Sidepanel(gtk.TextView):
         ni["index"] = index
         ni["start"] = start     
         ni["end"] = end_iter().get_offset()
+        ni["parent"] = parent
         self.nodeIters.append(ni)
         
         buf.insert(end_iter(), " ")
