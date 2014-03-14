@@ -185,6 +185,12 @@ def getOpenAndSaveDialogs():
         savecombo.set_active(default)
         savedialog.set_extra_widget(savecombo)
 
+        dialogBox = savedialog.get_content_area()
+        enhanced_save_check  = gtk.CheckButton(_("Save elapsed move times and analyzing engine evaluation values."))
+        dialogBox.pack_end(enhanced_save_check, expand=False, fill=False, padding=0)
+        keep(enhanced_save_check, "enhanced_save_check", first_value=False)
+        enhanced_save_check.show()            
+
     return opendialog, savedialog, enddir, savecombo, savers
 
 ################################################################################
@@ -220,6 +226,7 @@ def saveGameAs (game, position=None):
     while True:
         savedialog.set_current_name("%s %s %s" %
                                    (game.players[0], _("vs."), game.players[1]))
+
         res = savedialog.run()
         if res != gtk.RESPONSE_ACCEPT:
             break
@@ -396,14 +403,6 @@ def closeGame (gmwidg, game):
         d.format_secondary_text (_(
             "It is not possible later to continue the game,\nif you don't save it."))
         
-        # TODO: Unify all save menu and close dialogs with added enhance_save_check    
-        if 0:
-            dialogBox = d.get_content_area()
-            enhanced_save_check  = gtk.CheckButton(_("Save elapsed move times and analyzing engine evaluation values too."))
-            dialogBox.pack_end(enhanced_save_check)
-            keep(enhanced_save_check, "enhanced_save_check", first_value=False)
-            enhanced_save_check.show()            
-
         response = d.run()
         d.destroy()
 
