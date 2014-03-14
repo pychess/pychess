@@ -167,7 +167,6 @@ def walk(node, result, model, vari=False):
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
                 if node.plyCount in model.scores:
                     score = model.scores[node.plyCount][1]
-                    score = score * -1 if node.color == BLACK else score
                     emt_eval += "[%%eval %s]" % prettyPrintScore(score)
                 if emt_eval:
                     store("{%s}" % emt_eval)
