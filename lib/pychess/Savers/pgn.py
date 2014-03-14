@@ -12,6 +12,7 @@ from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
+from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils import prettyPrintScore
 from pychess.Variants.atomic import AtomicChess, AtomicBoard
 from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
@@ -422,8 +423,9 @@ class PGNFile (PgnBase):
                         if match:
                             sign, num, fraction = match.groups()
                             sign = -1 if sign == "-" else 1
+                            num = int(num) if int(num) == MATE_VALUE else int(num)*100
                             fraction = 0 if fraction is None else int(fraction)
-                            value = sign * (int(num)*100 + fraction)
+                            value = sign * (num + fraction)
                             model.scores[ply] = ("", value)
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
