@@ -29,6 +29,7 @@ __label__ = _("Chess Game")
 __ending__ = "pgn"
 __append__ = True
 
+moveeval = re.compile("\[%eval ([+\-])(?:#)?(\d+)(?:\.(\d\d))?\]")
 movetime = re.compile("\[%emt (\d):(\d\d):(\d\d)(?:\.(\d\d\d))?\]")
 
 def wrap (string, length):
@@ -418,6 +419,13 @@ class PGNFile (PgnBase):
                             msec += int(sec)*1000 + int(minute)*60*1000 + int(hour)*60*60*1000
                             model.timemodel.intervals[color][movecount] = prev - msec/1000
             
+                        match = moveeval.search(child)
+                        if match:
+                            sign, num, fraction = match.groups()
+                            sign = -1 if sign == "-" else 1
+                            fraction = 0 if fraction is None else int(fraction)
+                            value = sign * (int(num)*100 + fraction)
+                            model.scores[ply] = ("", value)
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
         
