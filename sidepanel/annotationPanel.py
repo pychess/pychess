@@ -566,6 +566,8 @@ class Sidepanel(gtk.TextView):
 
     def insert_comment(self, comment, node, index, parent, level=0):
         comment = re.sub("\[%.*?\]", "", comment)
+        if not comment:
+            return
             
         buf = self.textbuffer
         end_iter = buf.get_end_iter
