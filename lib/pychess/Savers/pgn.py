@@ -30,7 +30,7 @@ __label__ = _("Chess Game")
 __ending__ = "pgn"
 __append__ = True
 
-moveeval = re.compile("\[%eval ([+\-])(?:#)?(\d+)(?:\.(\d\d))?\]")
+moveeval = re.compile("\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?\]")
 movetime = re.compile("\[%emt (\d):(\d\d):(\d\d)(?:\.(\d\d\d))?\]")
 
 def wrap (string, length):
@@ -168,7 +168,7 @@ def walk(node, result, model, vari=False):
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
                 if node.plyCount in model.scores:
                     score = model.scores[node.plyCount][1]
-                    emt_eval += "[%%eval %s]" % prettyPrintScore(score)
+                    emt_eval += "[%%eval %0.2f]" % score
                 if emt_eval:
                     store("{%s}" % emt_eval)
 
@@ -422,9 +422,9 @@ class PGNFile (PgnBase):
                         match = moveeval.search(child)
                         if match:
                             sign, num, fraction = match.groups()
-                            sign = -1 if sign == "-" else 1
-                            num = int(num) if int(num) == MATE_VALUE else int(num)*100
-                            fraction = 0 if fraction is None else int(fraction)
+                            sign = 1 if sign is None or sign == "+" else -1
+                            num = int(num) if int(num) == MATE_VALUE else int(num)
+                            fraction = 0 if fraction is None else float(fraction)/100
                             value = sign * (num + fraction)
                             model.scores[ply] = ("", value)
         # Find the physical status of the game
