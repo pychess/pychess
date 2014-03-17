@@ -414,7 +414,7 @@ class Sidepanel(gtk.TextView):
             self.colorize_node(ply, start, end)
 
         emt_eval = ""
-        if self.showEmt and self.gamemodel.timed:
+        if self.showEmt and self.gamemodel.timemodel.hasTimes:
             elapsed = gamemodel.timemodel.getElapsedMoveTime(node.plyCount - gamemodel.lowply)
             emt_eval = "%s " % formatTime(elapsed)
 
@@ -519,7 +519,7 @@ class Sidepanel(gtk.TextView):
                     ni["vari"] = True
                 self.nodeIters.append(ni)
                 
-            if self.showEmt and level == 0 and node.fen_was_applied and self.gamemodel.timed:
+            if self.showEmt and level == 0 and node.fen_was_applied and self.gamemodel.timemodel.hasTimes:
                 elapsed = self.gamemodel.timemodel.getElapsedMoveTime(node.plyCount - self.gamemodel.lowply)
                 self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 

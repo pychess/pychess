@@ -107,7 +107,7 @@ class GameWidget (gobject.GObject):
         self.gamemodel = gamemodel
         
         tabcontent, white_label, black_label, game_info_label = self.initTabcontents()
-        boardvbox, board, infobar = self.initBoardAndClock(gamemodel)
+        boardvbox, board, infobar, clock = self.initBoardAndClock(gamemodel)
         statusbar, stat_hbox = self.initStatusbar(board)
         
         self.tabcontent = tabcontent
@@ -116,6 +116,7 @@ class GameWidget (gobject.GObject):
         self.board = board
         self.statusbar = statusbar
         self.infobar = infobar
+        self.clock = clock
         self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
@@ -140,8 +141,7 @@ class GameWidget (gobject.GObject):
         if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         
-        # Help crazyhouse testing
-        #board.view.connect("shown_changed", self.shown_changed)
+        board.view.connect("shown_changed", self.shown_changed)
         
         self.analyzer_cids = {}
         
@@ -266,10 +266,15 @@ class GameWidget (gobject.GObject):
         self.status(figurines[BLACK] + "   " + figurines[WHITE])
 
     def shown_changed (self, boardview, shown):
-        if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
-            holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding
-            self._showHolding(holding)
-    
+        # Help crazyhouse testing
+        #if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
+        #    holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding
+        #    self._showHolding(holding)
+        if self.gamemodel.timemodel.hasTimes and self.gamemodel.endstatus and boardview.shownIsMainLine():
+            wmovecount, color = divmod(shown + 1, 2)
+            bmovecount = wmovecount if color == BLACK else wmovecount - 1
+            self.clock.update(wmovecount, bmovecount)
+        
     def game_started (self, gamemodel):
         self._update_menu_abort()
         self._update_menu_adjourn()
@@ -278,6 +283,9 @@ class GameWidget (gobject.GObject):
         self._update_menu_resign()
         self._update_menu_undo()
         self._update_menu_ask_to_move()
+
+        if not gamemodel.timed and not gamemodel.timemodel.hasTimes:
+            self.boardvbox.remove(self.clock.parent)
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:
@@ -473,13 +481,12 @@ class GameWidget (gobject.GObject):
         boardvbox.set_spacing(2)
         infobar = InfoBar()
         
-        if gamemodel.timed:
-            ccalign = createAlignment(0, 0, 0, 0)
-            cclock = ChessClock()
-            cclock.setModel(gamemodel.timemodel)
-            ccalign.add(cclock)
-            ccalign.set_size_request(-1, 32)
-            boardvbox.pack_start(ccalign, expand=False)
+        ccalign = createAlignment(0, 0, 0, 0)
+        cclock = ChessClock()
+        cclock.setModel(gamemodel.timemodel)
+        ccalign.add(cclock)
+        ccalign.set_size_request(-1, 32)
+        boardvbox.pack_start(ccalign, expand=False)
         
         actionMenuDic = {}
         for item in ACTION_MENU_ITEMS:
@@ -487,7 +494,7 @@ class GameWidget (gobject.GObject):
         
         board = BoardControl(gamemodel, actionMenuDic)
         boardvbox.pack_start(board)
-        return boardvbox, board, infobar
+        return boardvbox, board, infobar, cclock
     
     def initStatusbar(self, board):
         def tip (widget, x, y, keyboard_mode, tooltip, text):
