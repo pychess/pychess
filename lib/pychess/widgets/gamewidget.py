@@ -270,9 +270,12 @@ class GameWidget (gobject.GObject):
         #if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
         #    holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding
         #    self._showHolding(holding)
-        if self.gamemodel.timemodel.hasTimes and self.gamemodel.endstatus and boardview.shownIsMainLine():
+
+        if self.gamemodel.timemodel.hasTimes and \
+            (self.gamemodel.endstatus or self.gamemodel.status in (DRAW, WHITEWON, BLACKWON)) and \
+            boardview.shownIsMainLine():
             wmovecount, color = divmod(shown + 1, 2)
-            bmovecount = wmovecount if color == BLACK else wmovecount - 1
+            bmovecount = wmovecount -1 if color == WHITE else wmovecount
             self.clock.update(wmovecount, bmovecount)
         
     def game_started (self, gamemodel):
