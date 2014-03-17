@@ -211,7 +211,7 @@ class TimeModel (GObject):
     ############################################################################
     
     def getPlayerTime (self, color, movecount=-1):
-        if color == self.movingColor and self.started:
+        if color == self.movingColor and self.started and movecount == -1:
             if self.paused:
                 return self.intervals[color][movecount] - self.pauseInterval
             elif self.counter:

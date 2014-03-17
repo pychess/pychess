@@ -177,6 +177,8 @@ class ChessClock (gtk.DrawingArea):
         self.redraw_canvas()
     
     def update(self, wmovecount=-1, bmovecount=-1):
+        if self.model.paused and wmovecount == -1 and bmovecount == -1:
+            return True
         wt = formatTime (self.model.getPlayerTime(WHITE, wmovecount))
         bt = formatTime (self.model.getPlayerTime(BLACK, bmovecount))
         if self.formatedCache != [wt, bt]:
