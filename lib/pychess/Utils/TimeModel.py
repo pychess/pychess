@@ -118,7 +118,7 @@ class TimeModel (GObject):
             self.emit("time_changed")
         
         self.emit("player_changed")
-    
+
     def start (self):
         if self.started: return
         self.started = True
@@ -210,13 +210,13 @@ class TimeModel (GObject):
     # Info                                                                     #
     ############################################################################
     
-    def getPlayerTime (self, color):
+    def getPlayerTime (self, color, movecount=-1):
         if color == self.movingColor and self.started:
             if self.paused:
-                return self.intervals[color][-1] - self.pauseInterval
+                return self.intervals[color][movecount] - self.pauseInterval
             elif self.counter:
-                return self.intervals[color][-1] - (time() - self.counter)
-        return self.intervals[color][-1]
+                return self.intervals[color][movecount] - (time() - self.counter)
+        return self.intervals[color][movecount]
     
     def getInitialTime (self):
         return self.intervals[WHITE][0]
@@ -235,3 +235,7 @@ class TimeModel (GObject):
         if self.gain != 0:
             t += (" + %d " % self.gain) + _("sec")
         return t
+
+    @property
+    def hasTimes(self):
+        return len(self.intervals[0]) > 1

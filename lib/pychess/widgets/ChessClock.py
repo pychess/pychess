@@ -163,14 +163,12 @@ class ChessClock (gtk.DrawingArea):
     
     def setModel (self, model):
         self.model = model
-        if model != None:
-            self.model.connect("time_changed", self.time_changed)
-            self.model.connect("player_changed", self.player_changed)
-            self.formatedCache = [formatTime (
-                self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
+        self.model.connect("time_changed", self.time_changed)
+        self.model.connect("player_changed", self.player_changed)
+        self.formatedCache = [formatTime (
+            self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
+        if model.secs!=0 or model.gain!=0:
             repeat_sleep(self.update, 0.1)
-        else:
-            self.formatedCache = None
     
     def time_changed (self, model):
         self.update()
@@ -178,9 +176,9 @@ class ChessClock (gtk.DrawingArea):
     def player_changed (self, model):
         self.redraw_canvas()
     
-    def update(self):
-        wt = formatTime (self.model.getPlayerTime(WHITE))
-        bt = formatTime (self.model.getPlayerTime(BLACK))
+    def update(self, wmovecount=-1, bmovecount=-1):
+        wt = formatTime (self.model.getPlayerTime(WHITE, wmovecount))
+        bt = formatTime (self.model.getPlayerTime(BLACK, bmovecount))
         if self.formatedCache != [wt, bt]:
             self.formatedCache = [wt, bt]
             self.redraw_canvas()
