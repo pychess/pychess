@@ -140,6 +140,7 @@ class GameModel (GObject, PooledThread):
             "Result": "*",
         }
 
+        self.endstatus = None
         self.timed = self.timemodel.secs!=0 or self.timemodel.gain!=0
 
         if self.timed:
@@ -504,7 +505,10 @@ class GameModel (GObject, PooledThread):
         if self.status == RUNNING:
             if self.timed and self.ply >= 2:
                 self.timemodel.start()
-            
+        
+        # Store end status from Result tag
+        if self.status in (DRAW, WHITEWON, BLACKWON):
+            self.endstatus = self.status
         self.status = WAITING_TO_START
         self.start()
         
@@ -623,6 +627,10 @@ class GameModel (GObject, PooledThread):
          
         log.debug("GameModel.checkStatus:")
         status, reason = getStatus(self.boards[-1])
+
+        if self.endstatus is not None:
+            self.end(self.endstatus, reason)
+            return
          
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             engine_engine = self.players[WHITE].__type__ == ARTIFICIAL and self.players[BLACK].__type__ == ARTIFICIAL

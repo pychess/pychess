@@ -65,6 +65,16 @@ def parseClockTimeTag (tag):
     if match:
         hour, min, sec, msec = match.groups()
         return int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
+
+def parseTimeControlTag (tag):
+    """ 
+    Parses 'TimeControl' PGN header and returns the time and gain the
+    players have on game satrt in seconds
+    """
+    match = re.match("(\d+)(?:\+(\d+))?", tag)
+    if match:
+        secs, gain = match.groups()
+        return int(secs), int(gain) if gain is not None else 0
     
 def save (file, model, position=None):
 
@@ -358,6 +368,9 @@ class PGNFile (PgnBase):
             if board.lastMove is not None:
                 model.moves.append(Move(board.lastMove))
         
+        self.has_emt = False
+        self.has_eval = False
+        
         def walk(node, path):
             if node.prev is None:
                 # initial game board
@@ -389,6 +402,11 @@ class PGNFile (PgnBase):
                     if len(child) > 1:
                         # non empty variation, go walk
                         walk(child[1], list(path))
+                else:
+                    if not self.has_emt:
+                        self.has_emt = child.find("%emt") >= 0
+                    if not self.has_eval:
+                        self.has_eval = child.find("%eval") >= 0
         
         # Collect all variation paths into a list of board lists
         # where the first one will be the boards of mainline game.
@@ -397,36 +415,45 @@ class PGNFile (PgnBase):
         walk(boards[0], [])
         model.boards = model.variations[0]
         
-        if "TimeControl" in model.tags:
-            blacks = len(model.moves)/2
-            whites = len(model.moves)-blacks
+        self.has_emt = self.has_emt and "TimeControl" in model.tags
+        if self.has_emt or self.has_eval:
+            if self.has_emt:
+                blacks = len(model.moves)/2
+                whites = len(model.moves)-blacks
 
-            model.timemodel.intervals = [
-                [model.timemodel.intervals[0][0]]*(whites+1),
-                [model.timemodel.intervals[1][0]]*(blacks+1),
-            ]
-            log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
-        
+                model.timemodel.intervals = [
+                    [model.timemodel.intervals[0][0]]*(whites+1),
+                    [model.timemodel.intervals[1][0]]*(blacks+1),
+                ]
+                secs, gain = parseTimeControlTag(model.tags['TimeControl'])
+                model.timemodel.intervals[0][0] = secs
+                model.timemodel.intervals[1][0] = secs
+            
             for ply, board in enumerate(boards):
                 for child in board.children:
                     if isinstance(child, basestring):
-                        movecount, color = divmod(ply+1, 2)
-                        match = movetime.search(child)
-                        if match:
-                            hour, minute, sec, msec = match.groups()
-                            prev = model.timemodel.intervals[color][movecount-1]
-                            msec = 0 if msec is None else int(msec)
-                            msec += int(sec)*1000 + int(minute)*60*1000 + int(hour)*60*60*1000
-                            model.timemodel.intervals[color][movecount] = prev - msec/1000
-            
-                        match = moveeval.search(child)
-                        if match:
-                            sign, num, fraction = match.groups()
-                            sign = 1 if sign is None or sign == "+" else -1
-                            num = int(num) if int(num) == MATE_VALUE else int(num)
-                            fraction = 0 if fraction is None else float(fraction)/100
-                            value = sign * (num + fraction)
-                            model.scores[ply] = ("", value)
+                        if self.has_emt:
+                            match = movetime.search(child)
+                            if match:
+                                movecount, color = divmod(ply+1, 2)
+                                hour, minute, sec, msec = match.groups()
+                                prev = model.timemodel.intervals[color][movecount-1]
+                                msec = 0 if msec is None else int(msec)
+                                msec += int(sec)*1000 + int(minute)*60*1000 + int(hour)*60*60*1000
+                                model.timemodel.intervals[color][movecount] = prev - msec/1000
+                        
+                        if self.has_eval:
+                            match = moveeval.search(child)
+                            if match:
+                                sign, num, fraction = match.groups()
+                                sign = 1 if sign is None or sign == "+" else -1
+                                num = int(num) if int(num) == MATE_VALUE else int(num)
+                                fraction = 0 if fraction is None else float(fraction)/100
+                                value = sign * (num + fraction)
+                                model.scores[ply] = ("", value)
+
+            log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
+
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
         
