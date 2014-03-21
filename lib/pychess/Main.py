@@ -7,8 +7,6 @@ import atexit
 import logging
 import signal
 import subprocess
-import threading
-import time
 import urllib 
 from urlparse import urlparse
 
@@ -29,6 +27,7 @@ from pychess.widgets.BorderBox import BorderBox
 from pychess.widgets import gamewidget
 from pychess.widgets import gamenanny
 from pychess.widgets import ionest
+from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
@@ -205,24 +204,7 @@ class GladeHandlers:
         ionest.saveGameAs (gameDic[gmwidg], position)
 
     def on_analyze_game_activate (widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        gamemodel = gmwidg.gamemodel
-        analyzer = gamemodel.spectators[HINT]
-
-        def analyse_moves():
-            move_time = int(conf.get("max_analysis_spin", 3))
-            for board in gamemodel.boards:
-                glock.acquire()
-                try:
-                    gmwidg.board.view.setShownBoard(board)
-                finally:
-                    glock.release()
-                analyzer.setBoard(board)
-                time.sleep(move_time+0.1)
-
-        keep_alive_thread = threading.Thread(target = analyse_moves)
-        keep_alive_thread.daemon = True
-        keep_alive_thread.start()
+        analyzegameDialog.run(gamewidget.cur_gmwidg())
 
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
