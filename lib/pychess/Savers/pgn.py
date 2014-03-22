@@ -30,7 +30,7 @@ __label__ = _("Chess Game")
 __ending__ = "pgn"
 __append__ = True
 
-moveeval = re.compile("\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?\]")
+moveeval = re.compile("\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
 movetime = re.compile("\[%emt (\d):(\d\d):(\d\d)(?:\.(\d\d\d))?\]")
 
 def wrap (string, length):
@@ -177,8 +177,8 @@ def walk(node, result, model, vari=False):
                     elapsed = model.timemodel.getElapsedMoveTime(node.plyCount - model.lowply)
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
                 if node.plyCount in model.scores:
-                    score = model.scores[node.plyCount][1]
-                    emt_eval += "[%%eval %0.2f]" % score
+                    moves, score, depth = model.scores[node.plyCount]
+                    emt_eval += "[%%eval %0.2f/%s]" % (score, depth)
                 if emt_eval:
                     store("{%s}" % emt_eval)
 
@@ -445,12 +445,13 @@ class PGNFile (PgnBase):
                         if self.has_eval:
                             match = moveeval.search(child)
                             if match:
-                                sign, num, fraction = match.groups()
+                                sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
                                 num = int(num) if int(num) == MATE_VALUE else int(num)
                                 fraction = 0 if fraction is None else float(fraction)/100
                                 value = sign * (num + fraction)
-                                model.scores[ply] = ("", value)
+                                depth = "" if depth is None else depth
+                                model.scores[ply] = ("", value, depth)
 
             log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
 

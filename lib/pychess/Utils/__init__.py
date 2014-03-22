@@ -1,15 +1,24 @@
 from pychess.Utils.lutils.ldata import MATE_VALUE
 
-def prettyPrintScore(s):
-    if s is None: return "?"
-    if s == 0: return "0.00"
+def prettyPrintScore(s, depth):
+    if s is None:
+        return "?"
+
+    if s == 0:
+        return "0.00//%s" % depth
+
     if s > 0:
        pp = "+"
     else:
         pp = "-"
         s = -s
     
-    if abs(s) == MATE_VALUE:
-        return pp + "#%s" % MATE_VALUE
+    if depth:
+        depth = "/" + depth
     else:
-        return pp + "%0.2f" % (s / 100.0)
+        depth = ""
+        
+    if abs(s) == MATE_VALUE:
+        return "%s#%s%s" % (pp, MATE_VALUE. depth)
+    else:
+        return "%s%0.2f%s" % (pp, s / 100.0, depth)
