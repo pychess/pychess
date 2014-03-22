@@ -370,9 +370,9 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.remove_tag_by_name("scored1", start, end)
         if self.showBlunder and ply-1 in self.gamemodel.scores and ply in self.gamemodel.scores:
             color = (ply-1) % 2
-            oldmoves, oldscore = self.gamemodel.scores[ply-1]
+            oldmoves, oldscore, olddepth = self.gamemodel.scores[ply-1]
             oldscore = oldscore * -1 if color == BLACK else oldscore
-            moves, score = self.gamemodel.scores[ply]
+            moves, score, depth = self.gamemodel.scores[ply]
             score = score * -1 if color == WHITE else score
             diff = score-oldscore
             if (diff > 400 and color==BLACK) or (diff < -400 and color==WHITE):
@@ -420,9 +420,9 @@ class Sidepanel(gtk.TextView):
 
         if self.showEval:
             if node.plyCount in gamemodel.scores:
-                score = gamemodel.scores[node.plyCount][1]
+                moves, score, depth = gamemodel.scores[node.plyCount]
                 score = score * -1 if node.color == BLACK else score
-                emt_eval += "%s " % prettyPrintScore(score)
+                emt_eval += "%s " % prettyPrintScore(score, depth)
         
         if emt_eval:
             if iter == self.nodeIters[-1]:
@@ -524,10 +524,10 @@ class Sidepanel(gtk.TextView):
                 self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 
             if self.showEval and level == 0 and node.fen_was_applied and node.plyCount in self.gamemodel.scores:
-                score = self.gamemodel.scores[node.plyCount][1]
+                moves, score, depth = self.gamemodel.scores[node.plyCount]
                 score = score * -1 if node.color == BLACK else score
                 endIter = buf.get_iter_at_offset(end_iter().get_offset())
-                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score), "emt")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score, depth), "emt")
 
             new_line = False
             for index, child in enumerate(node.children):

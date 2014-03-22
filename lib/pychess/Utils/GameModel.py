@@ -257,10 +257,10 @@ class GameModel (GObject, PooledThread):
     
     def on_analyze(self, analyzer, analysis):
         if analysis and analysis[0] is not None:
-            pv, score = analysis[0]
+            pv, score, depth = analysis[0]
             ply = analyzer.board.ply
             if score != None:
-                self.scores[ply] = (pv, score)
+                self.scores[ply] = (pv, score, depth)
                 self.emit("analysis_changed", ply)
         
     def setOpening(self):

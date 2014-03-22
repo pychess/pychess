@@ -606,9 +606,14 @@ class UCIEngine (ProtocolEngine):
                 log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
                     (' '.join(movstrs),e), extra={"task":self.defname})
                 return
-            
+
+            if "depth" in parts:
+                depth = parts[parts.index("depth")+1]
+            else:
+                depth = ""
+                
             if multipv <= len(self.analysis):
-                self.analysis[multipv - 1] = (moves, score)
+                self.analysis[multipv - 1] = (moves, score, depth)
 
             self.emit("analyze", self.analysis)
             return
