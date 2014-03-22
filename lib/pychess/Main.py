@@ -204,7 +204,7 @@ class GladeHandlers:
         ionest.saveGameAs (gameDic[gmwidg], position)
 
     def on_analyze_game_activate (widget):
-        analyzegameDialog.run(gamewidget.cur_gmwidg())
+        analyzegameDialog.run(gameDic)
 
     def on_properties1_activate (widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)

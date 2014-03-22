@@ -1,7 +1,8 @@
 import time
 import threading
 
-from pychess.Utils.const import HINT
+import gamewidget
+from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System import glock
 from pychess.System import uistuff
@@ -12,20 +13,21 @@ widgets = uistuff.GladeWidgets("analyze_game.glade")
 stop_event = threading.Event()
 
 firstRun = True
-def run(gmwidg):
+def run(gameDic):
     global firstRun
     if firstRun:
-        initialize(widgets, gmwidg)
+        initialize(gameDic)
         firstRun = False
     stop_event.clear()
     widgets["analyze_game"].show()
     widgets["analyze_game"].present()
 
-def initialize(widgets, gmwidg):
+def initialize(gameDic):
     
     uistuff.keep(widgets["showEval"], "showEval")
     uistuff.keep(widgets["showBlunder"], "showBlunder", first_value=True)
     uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
+    uistuff.keep(widgets["variation_thresold_spin"], "variation_thresold_spin", first_value=50)
 
     # Analyzing engines
     uistuff.createCombo(widgets["ana_combobox"])
@@ -55,13 +57,14 @@ def initialize(widgets, gmwidg):
             except ValueError:
                 index = 0
             combobox.set_active(index)
-        
-        spectators = gmwidg.gamemodel.spectators
+
+        gamemodel = gameDic[gamewidget.cur_gmwidg()]
+        spectators = gamemodel.spectators
         md5 = engine.get('md5')
         
         if HINT in spectators and spectators[HINT].md5 != md5:
-            gmwidg.gamemodel.remove_analyzer(HINT)
-            gmwidg.gamemodel.start_analyzer(HINT)
+            gamemodel.remove_analyzer(HINT)
+            gamemodel.start_analyzer(HINT)
                     
     uistuff.keep(widgets["ana_combobox"], "ana_combobox", get_value,
         lambda combobox, value: set_value(combobox, value))
@@ -74,11 +77,13 @@ def initialize(widgets, gmwidg):
     
     def run_analyze(button, *args):
         widgets["analyze_ok_button"].set_sensitive(False)
-        gamemodel = gmwidg.gamemodel
+        gmwidg = gamewidget.cur_gmwidg()
+        gamemodel = gameDic[gmwidg]
         analyzer = gamemodel.spectators[HINT]
 
         def analyse_moves():
             move_time = int(conf.get("max_analysis_spin", 3))
+            thresold = int(conf.get("variation_thresold_spin", 50))
             for board in gamemodel.boards:
                 if stop_event.is_set():
                     break
@@ -90,6 +95,20 @@ def initialize(widgets, gmwidg):
                 analyzer.setBoard(board)
                 time.sleep(move_time+0.1)
 
+                ply = board.ply
+                if ply-1 in gamemodel.scores: 
+                    color = (ply-1) % 2
+                    oldmoves, oldscore, olddepth = gamemodel.scores[ply-1]
+                    oldscore = oldscore * -1 if color == BLACK else oldscore
+                    moves, score, depth = gamemodel.scores[ply]
+                    score = score * -1 if color == WHITE else score
+                    diff = score-oldscore
+                    if (diff > thresold and color==BLACK) or (diff < -1*thresold and color==WHITE):
+                        gamemodel.add_variation(gamemodel.boards[ply-1], oldmoves)
+            
+            widgets["analyze_game"].hide()
+            widgets["analyze_ok_button"].set_sensitive(True)
+                        
         keep_alive_thread = threading.Thread(target = analyse_moves)
         keep_alive_thread.daemon = True
         keep_alive_thread.start()
