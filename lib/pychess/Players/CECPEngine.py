@@ -56,9 +56,9 @@ d_plus_dot_expr = re.compile(r"\d+\.")
 
 anare = re.compile("""
     ^                        # beginning of string
-    \s*                      #
+    (\s*                     #
     \d+ [+\-\.]?             # The ply analyzed. Some engines end it with a dot, minus or plus
-    \s+                      #
+    \s+)                     #
     (-?Mat\s*\d+ | [+\-\d\.]+) # The score found in centipawns.
                              #   Mat1 is used by gnuchess to specify mate in one.
                              #   otherwise we should support a signed float
@@ -72,7 +72,7 @@ anare = re.compile("""
     $                        # end of string
     """, re.VERBOSE)
                    
-#anare = re.compile("\d+\.?\s+ (Mat\d+|[-\d\.]+) \s+ \d+\s+\d+\s+((?:%s\s*)+)" % mov)
+#anare = re.compile("\(d+)\.?\s+ (Mat\d+|[-\d\.]+) \s+ \d+\s+\d+\s+((?:%s\s*)+)" % mov)
 
 whitespaces = re.compile(r"\s+")
 
@@ -781,8 +781,8 @@ class CECPEngine (ProtocolEngine):
             
             match = anare.match(line)
             if match:
-                score, moves = match.groups()
-                
+                depth, score, moves = match.groups()
+
                 if "mat" in score.lower() or "#" in moves:
                     # Will look either like -Mat 3 or Mat3
                     scoreval = MATE_VALUE
@@ -803,7 +803,7 @@ class CECPEngine (ProtocolEngine):
                 # Don't emit if we weren't able to parse moves, or if we have a move
                 # to kill the opponent king - as it confuses many engines
                 if moves and not self.board.board.opIsChecked():
-                    self.emit("analyze", [(moves, scoreval)])
+                    self.emit("analyze", [(moves, scoreval, depth.strip())])
                 
                 return
         

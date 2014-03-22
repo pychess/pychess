@@ -198,7 +198,7 @@ class EngineAdvisor(Advisor):
                 self.store[self.path + (i,)] = self.textOnlyRow("")
                 continue
                 
-            pv, score = line
+            pv, score, depth = line
             move = None
             if pv:
                 move = pv[0]
@@ -223,7 +223,7 @@ class EngineAdvisor(Advisor):
             if self.engine.board.color == BLACK:
                 score = -score
             
-            self.store[self.path + (i,)] = [(board0, move, pv), (prettyPrintScore(score), 1, goodness), 0, False, " ".join(counted_pv), False, False]
+            self.store[self.path + (i,)] = [(board0, move, pv), (prettyPrintScore(score, depth), 1, goodness), 0, False, " ".join(counted_pv), False, False]
     
     def start_stop(self, tb):
         if not tb:
