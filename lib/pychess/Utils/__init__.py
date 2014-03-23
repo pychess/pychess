@@ -5,7 +5,7 @@ def prettyPrintScore(s, depth):
         return "?"
 
     if s == 0:
-        return "0.00//%s" % depth
+        return "0.00/%s" % depth
 
     if s > 0:
        pp = "+"
