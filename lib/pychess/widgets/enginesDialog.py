@@ -157,17 +157,15 @@ class EnginesDialog():
                             if e["name"] == binname:
                                 binname = e["name"] + "(1)"
                                 break
-                        self.widgets["engine_name_entry"].set_text(binname)
                         self.widgets["engine_command_entry"].set_text(new_engine)
                         self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
                         
-                        name = self.widgets["engine_name_entry"].get_text().strip()
                         active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if active==0 else "xboard"
                         
-                        discoverer.addEngine(name, new_engine, protocol)
-                        self.cur_engine = name
+                        discoverer.addEngine(binname, new_engine, protocol)
+                        self.cur_engine = binname
                         glock_connect_after(discoverer, "engine_discovered", update_store)
                         self.add = False
                         discoverer.start()
