@@ -225,7 +225,7 @@ def move_count(node, black_needs=False):
             for child in node.prev.children:
                 if isinstance(child, basestring):
                     if not child.startswith("[%"):
-                        need_movecount = True
+                        need_mvcount = True
                         break
                 else:
                     need_mvcount = True
