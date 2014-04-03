@@ -45,7 +45,7 @@ for filename in filenames:
         #    break
         model = pgnfile.loadToModel(i)
         result = []
-        walk(model.boards[0].board, result)
+        walk(model.boards[0].board, result, model)
         result = " ".join(result)
         status = reprResult[model.status]
         
