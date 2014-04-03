@@ -3,6 +3,7 @@ from random import random
 from heapq import heappush, heappop
 
 from lmovegen import genAllMoves, genCheckEvasions, genCaptures
+from egtb_gaviota import egtb_gaviota
 from pychess.Utils.const import *
 from pychess.Utils.Move import Move
 from pychess.Utils.logic import validate
@@ -316,7 +317,34 @@ def quiescent (board, alpha, beta, ply):
     else:
         return [], alpha
 
+
+class EndgameTable():
+    def __init__ (self):
+        self.provider = egtb_gaviota()
+    
+    def _pieceCounts (self, board):
+        return sorted([ bin(board.friends[i]).count("1") for i in range(2) ])
+    
+    def scoreAllMoves (self, lBoard):
+        """ Return each move's result and depth to mate.
+            
+            lBoard: A low-level board structure
+            Return value: a list, with best moves first, of:
+            move: A high-level move structure
+            game_result: Either WHITEWON, DRAW, BLACKWON
+            depth: Depth to mate
+        """
+        
+        pc = self._pieceCounts(lBoard)
+        if self.provider.supports(pc):
+            results = provider.scoreAllMoves(lBoard)
+            if results:
+                ret = []
+                for lMove, result, depth in results:
+                    ret.append( (Move(lMove), result, depth) )
+                return ret
+        return []
+
 def enableEGTB():
-    from pychess.Utils.EndgameTable import EndgameTable
     global egtb
     egtb = EndgameTable()
