@@ -834,6 +834,9 @@ class CECPEngine (ProtocolEngine):
         
         #Tell User Error
         if parts[0] == "tellusererror":
+            # We don't want to see our stop analyzer hack as an error message
+            if "8/8/8/8/8/8/8/8" in "".join(parts[1:]):
+                return
             # Create a non-modal non-blocking message dialog with the error:
             dlg = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format=None)
 
