@@ -53,12 +53,12 @@ class CECPTests(EmittingTestCase):
         analyzer.start()
         return engine, analyzer
     
-    def _testLine(self, engine, analyzer, board, analine, moves, score):
+    def _testLine(self, engine, analyzer, board, analine, moves, score, depth):
         self.traceSignal(analyzer, 'analyze')
         engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, ([(listToMoves(board,moves), score)],))
+        self.assertEqual(results, ([(listToMoves(board,moves), score, depth)],))
     
     def setUp (self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
@@ -73,14 +73,14 @@ class CECPTests(EmittingTestCase):
         
         self._testLine(self.engineA, self.analyzerA, board,
                        "1. Mat1 0 1     Bxb7#",
-                       ['Bxb7#'], MATE_VALUE)
+                       ['Bxb7#'], MATE_VALUE, "1.")
         
         # Notice, in the opposite situation there is no forced mate. Black can
         # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
         # recognizing this.
         self._testLine(self.engineI, self.analyzerI, board.switchColor(),
                        "10. -Mat 2 35 64989837     Bd4 Bxb7#",
-                       ['Bd4','Bxb7#'], -MATE_VALUE)
+                       ['Bd4','Bxb7#'], -MATE_VALUE, "10.")
     
     def test2(self):
         """ Test analyzing in promotion situations """
@@ -91,8 +91,11 @@ class CECPTests(EmittingTestCase):
         
         self._testLine(self.engineA, self.analyzerA, board,
                        "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
-                       ['a8=Q+','Kf7','Qa2+','Kf6','Qd2','Kf5','g4+'], 1833)
+                       ['a8=Q+','Kf7','Qa2+','Kf6','Qd2','Kf5','g4+'], 1833, "9.")
         
         self._testLine(self.engineI, self.analyzerI, board.switchColor(),
                        "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
-                       ['Kf7','a8=Q','Ke6','Qa6+','Ke5','Qd6+','Kf5'], -1883)
+                       ['Kf7','a8=Q','Ke6','Qa6+','Ke5','Qd6+','Kf5'], -1883, "10.")
+
+if __name__ == '__main__':
+    unittest.main()
