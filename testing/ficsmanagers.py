@@ -390,6 +390,62 @@ class BoardManagerTests(EmittingTestCase):
         self.runAndAssertEquals("playGameCreated", lines, (game,))
     
     def test3 (self):
+        lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by suugakusya.",
+                 "",
+                 "<sr> 89",
+                 "fics%" ,
+                 "<sr> 90",
+                 "fics% Challenge to archmagician withdrawn.",
+                 "",
+                 "<pr> 11",
+                 "fics%",
+                 "Creating: gbtami (1529) suugakusya (1425) rated blitz 5 5",
+                 "{Game 101 (gbtami vs. suugakusya) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 101 gbtami suugakusya 1 5 5 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 101: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.addRating(TYPE_BLITZ, 1529)
+        opponent = self.connection.players.get(FICSPlayer('suugakusya'))
+        opponent.addRating(TYPE_BLITZ, 1425)
+        game = FICSGame(me, opponent, gameno=101, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=5, inc=5,
+            board=FICSBoard(300000, 300000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
+    def test4 (self):
+        lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by suugakusya.",
+                 "",
+                 "<sr> 89",
+                 "fics% Challenge to archmagician withdrawn.",
+                 "",
+                 "<pr> 11",
+                 "fics%",
+                 "Creating: gbtami (1529) suugakusya (1425) rated blitz 5 5",
+                 "{Game 101 (gbtami vs. suugakusya) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 101 gbtami suugakusya 1 5 5 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 101: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.addRating(TYPE_BLITZ, 1529)
+        opponent = self.connection.players.get(FICSPlayer('suugakusya'))
+        opponent.addRating(TYPE_BLITZ, 1425)
+        game = FICSGame(me, opponent, gameno=101, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=5, inc=5,
+            board=FICSBoard(300000, 300000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
+    def test5 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek qualifies for antiseptic's getgame.",
                  "",
@@ -410,7 +466,7 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
-    def test4 (self):
+    def test6 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek qualifies for opmentor's getgame.",
                  "",
@@ -432,7 +488,7 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
-    def test5 (self):
+    def test7 (self):
         """ Make sure observe-game-created messages are caught """
         lines = [BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
                  "You are now observing game 12.",
