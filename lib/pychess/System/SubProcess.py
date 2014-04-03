@@ -62,25 +62,32 @@ class SubProcess (gobject.GObject):
         log.debug(path, extra={"task":self.defname})
         
         argv = [str(u) for u in [self.path]+self.args]
+        log.debug("SubProcess.__init__: spawning...",  extra={"task":self.defname})
         self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
                 working_directory=chdir, child_setup=self.__setup,
                 standard_input=True, standard_output=True, standard_error=True,
                 flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
         
+        log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
         self.__channelTags = []
         self.inChannel = self._initChannel(stdin, None, None, False)
         readFlags = gobject.IO_IN|gobject.IO_HUP#|gobject.IO_ERR
         self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
+        log.debug("SubProcess.__init__: channelsClosed...",  extra={"task":self.defname})
         self.channelsClosed = False
         self.channelsClosedLock = threading.Lock()
+        log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
         gobject.child_watch_add(self.pid, self.__child_watch_callback)
         
+        log.debug("SubProcess.__init__: subprocExitCode...",  extra={"task":self.defname})
         self.subprocExitCode = (None, None)
         self.subprocFinishedEvent = threading.Event()
         subprocesses.append(self)
+        log.debug("SubProcess.__init__: _wait4exit...",  extra={"task":self.defname})
         pool.start(self._wait4exit)
+        log.debug("SubProcess.__init__: finished",  extra={"task":self.defname})
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
         channel = gobject.IOChannel(filedesc)
@@ -112,6 +119,8 @@ class SubProcess (gobject.GObject):
         os.nice(15)
     
     def __child_watch_callback (self, pid, code):
+        log.debug("SubProcess.__child_watch_callback: %s" % repr(code), 
+                  extra={"task":self.defname})
         # Kill the engine on any signal but 'Resource temporarily unavailable'
         if code != errno.EWOULDBLOCK:
             if type(code) == str:
