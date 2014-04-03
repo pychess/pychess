@@ -19,6 +19,6 @@ def prettyPrintScore(s, depth):
         depth = ""
         
     if abs(s) == MATE_VALUE:
-        return "%s#%s%s" % (pp, MATE_VALUE, depth)
+        return "%s#%s" % (pp, MATE_VALUE)
     else:
         return "%s%0.2f%s" % (pp, s / 100.0, depth)
