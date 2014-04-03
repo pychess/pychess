@@ -965,7 +965,15 @@ class CECPEngine (ProtocolEngine):
             return {"type": "text", "name": name, "default": value}
         elif " -combo " in option:
             name, value = option.split(" -combo ")
-            return {"type": "combo", "name": name, "default": value}
+            choices = map(str.strip, value.split("///"))
+            default = ""
+            for choice in choices:
+                if choice.startswith("*"):
+                    index = choices.index(choice)
+                    default = choice[1:]
+                    choices[index] = default
+                    break
+            return {"type": "combo", "name": name, "default": default, "choices": choices}
         elif " -button" in option:
             pos = option.find(" -button")
             return {"type": "button", "name": option[:pos]}
