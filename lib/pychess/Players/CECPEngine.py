@@ -146,7 +146,7 @@ class CECPEngine (ProtocolEngine):
         self.supported_features = [
             "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
             "analyze", "myname", "variants", "colors", "pause", "done",
-            "debug", "smp", "memory", "option"
+            "egt", "debug", "smp", "memory", "option"
         ]
         
         self.options = {}
@@ -452,7 +452,8 @@ class CECPEngine (ProtocolEngine):
         self.__setPonder(strength >= 19 and not forcePonderOff)
         
         if strength == 20:
-            self.optionQueue.append("egtb")
+            if "gaviota" in self.features["egt"]:
+                self.optionQueue.append("egtpath %s" % conf.get("egtb_path", ""))
         else:
             self.optionQueue.append("random")
     

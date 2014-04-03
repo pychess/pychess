@@ -296,7 +296,9 @@ class UCIEngine (ProtocolEngine):
         
         if self.hasOption('Ponder'):
             self.setOption('Ponder', strength >= 19 and not forcePonderOff)
-    
+
+        if self.hasOption('GaviotaTbPath') and strength == 20:
+            self.setOption('GaviotaTbPath', conf.get("egtb_path", ""))
     #===========================================================================
     #    Interacting with the player
     #===========================================================================

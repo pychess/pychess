@@ -7,7 +7,6 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
 from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.lsearch import enableEGTB
 from pychess.Utils.lutils.validator import validateMove
 import pychess
 import re
@@ -48,9 +47,9 @@ class PyChessCECP(PyChess):
             "pause": 0, # Unimplemented
             "nps": 0, # Unimplemented
             "debug": 1,
-            "memory": 1,
+            "memory": 0, # Unimplemented
             "smp": 0, # Unimplemented
-            # "egt": "gaviota", # TODO: re-enable
+            "egt": "gaviota",
             "option": "skipPruneChance -slider 0 0 100"
         }
     
@@ -279,8 +278,10 @@ class PyChessCECP(PyChess):
                     pass # We aren't SMP-capable.
      
                 elif lines[0] == "egtpath":
-                    # TODO: Accept "egtpath TYPE PATH" commands, at least for Gaviota EGTBs
-                    pass
+                    if len(lines) >= 3 and lines[1] == "gaviota":
+                        conf.set("egtb_path", conf.get("egtb_path", lines[2]))
+                        from pychess.Utils.lutils.lsearch import enableEGTB
+                        enableEGTB()
      
                 elif lines[0] == "option" and len(lines) > 1:
                     name, eq, value = lines[1].partition("=")
@@ -303,9 +304,6 @@ class PyChessCECP(PyChess):
      
                 ########## Custom commands ##########
      
-                elif lines[0] == "egtb":
-                    enableEGTB()
-                
                 elif lines[0] == "benchmark":
                     benchmark()
                 
