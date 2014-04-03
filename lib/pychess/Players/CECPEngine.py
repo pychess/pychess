@@ -220,6 +220,9 @@ class CECPEngine (ProtocolEngine):
                     # The engine has sent done=0, and parseLine has added more
                     # time to self.timeout
                     r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
+                    # Gaviota sends done=0 after "xboard" and after "protover 2" too
+                    if r == "not ready":
+                        r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
             except Queue.Empty:
                 log.warning("Got timeout error", extra={"task":self.defname})
                 self.emit("readyForOptions")
