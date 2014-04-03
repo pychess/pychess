@@ -32,7 +32,7 @@ class DbTestCase(unittest.TestCase):
         model.players = (TestPlayer(p0), TestPlayer(p1))
 
         in_game = []
-        walk(model.boards[0].board, in_game)
+        walk(model.boards[0].board, in_game, model)
         in_game = " ".join(in_game)
         
         save(None, model)
@@ -46,7 +46,7 @@ class DbTestCase(unittest.TestCase):
         model = db.loadToModel(0)
 
         out_game = []
-        walk(model.boards[0].board, out_game)
+        walk(model.boards[0].board, out_game, model)
         out_game = " ".join(out_game)
         
         self.assertEqual(in_game, out_game)
