@@ -686,6 +686,7 @@ class Sidepanel(gtk.TextView):
         start = self.textbuffer.get_start_iter()
         end = self.textbuffer.get_end_iter()
         for ni in reversed(self.nodeIters):
+            self.nodeIters.remove(ni)
             if ni["node"].pieceBoard == self.gamemodel.variations[0][-moves]:
                 start = self.textbuffer.get_iter_at_offset(ni["start"])
                 break
