@@ -225,7 +225,7 @@ class BoardView (gtk.DrawingArea):
             # Go back to the mainline to let animation system work
             board = model.getBoardAtPly(self.shown, self.shownVariationIdx)
             while board not in model.variations[0]:
-                board = model.boards[board.ply-model.lowply-1]
+                board = model.variations[self.shownVariationIdx][board.ply-model.lowply-1]
             self.shown = board.ply
             self.shownVariationIdx = 0
             self.shown = model.ply-moves

@@ -134,7 +134,7 @@ class BoardControl (gtk.EventBox):
         elif key == "undo1":
             curColor = self.view.model.variations[0][-1].color
             curPlayer = self.view.model.players[curColor]
-            if curPlayer.__type__ == LOCAL and self.view.model.ply > 1:
+            if curPlayer.__type__ == LOCAL and self.view.model.ply - self.view.model.lowply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
             else:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
