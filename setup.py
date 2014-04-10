@@ -16,15 +16,11 @@ if sys.version_info < (2, 6, 0):
     print 'ERROR: PyChess requires Python >= 2.6'
     sys.exit(1)
 
-NAME = "pychess"
-if len(sys.argv)>2 and sys.argv[1] == "bdist_rpm":
-    if sys.argv[2].startswith("--python=") and sys.argv[2][-1].isdigit():
-        pyversion = sys.argv[2][-3:]
-        NAME = "pychess-py%s" % pyversion
-    
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
 # because pychess from another author already exist in pypi.
 VERSION = pychess.VERSION
+
+NAME = "pychess"
 
 DESC = "Chess client"
 
