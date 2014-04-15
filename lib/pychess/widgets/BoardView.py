@@ -156,6 +156,7 @@ class BoardView (gtk.DrawingArea):
         self.lastMove = None
         self.matrix = cairo.Matrix()
         self.matrixPi = cairo.Matrix.init_rotate(pi)
+        self.invmatrix = cairo.Matrix().invert()
         self.cordMatricesState = (0, 0)
         self._rotation = 0
         
