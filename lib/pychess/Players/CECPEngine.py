@@ -636,7 +636,7 @@ class CECPEngine (ProtocolEngine):
             # Many engines don't like positions able to take down enemy
             # king. Therefore we just return the "kill king" move
             # automaticaly
-            self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1)])
+            self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1, "")])
             return
 
         def stop_analyze ():
