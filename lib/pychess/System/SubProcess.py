@@ -85,8 +85,6 @@ class SubProcess (gobject.GObject):
         self.subprocExitCode = (None, None)
         self.subprocFinishedEvent = threading.Event()
         subprocesses.append(self)
-        log.debug("SubProcess.__init__: _wait4exit...",  extra={"task":self.defname})
-        pool.start(self._wait4exit)
         log.debug("SubProcess.__init__: finished",  extra={"task":self.defname})
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):
@@ -122,6 +120,7 @@ class SubProcess (gobject.GObject):
         log.debug("SubProcess.__child_watch_callback: %s" % repr(code), 
                   extra={"task":self.defname})
         # Kill the engine on any signal but 'Resource temporarily unavailable'
+        self.subprocExitCode = (code, os.strerror(code))
         if code != errno.EWOULDBLOCK:
             if type(code) == str:
                 log.error(code, extra={"task":self.defname})
@@ -134,9 +133,7 @@ class SubProcess (gobject.GObject):
             try:
                 line = channel.next()#readline()
             except StopIteration:
-                self._wait4exit()
-                self.__child_watch_callback(*self.subprocExitCode)
-                break
+                return False
             if not line:
                 return True
             if isstderr:
@@ -163,17 +160,6 @@ class SubProcess (gobject.GObject):
             except gobject.GError, e:
                 log.error(str(e)+". Last line wasn't sent.", extra={"task":self.defname})
 
-    def _wait4exit (self):
-        try:
-            pid, code = os.waitpid(self.pid, 0)
-        except OSError, error:
-            if error.errno == errno.ECHILD:
-                pid, code = self.pid, error.errno
-            else:
-                raise
-
-        self.subprocExitCode = (code, os.strerror(code))
-    
     def sendSignal (self, sign):
         try:
             if sys.platform != "win32":
