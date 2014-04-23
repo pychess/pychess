@@ -245,7 +245,7 @@ class PgnBase(ChessFile):
         return RUNNING
 
 
-tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+\"(.*?)\"\]")
+tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+['\"](.*?)['\"]\]")
 
 def pgn_load(file, klass=PgnBase):
     files = []
