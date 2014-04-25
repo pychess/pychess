@@ -45,10 +45,11 @@ except ImportError:
 
 if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
-if "PYTHONPATH" in os.environ:
-    os.environ["PYTHONPATH"] = os.pathsep.join(
-        os.path.abspath(p) for p in os.environ["PYTHONPATH"].split(os.pathsep))
 
+this_dir = os.path.dirname(os.path.abspath(__file__))
+if os.path.isdir(os.path.join(this_dir, ".hg")) and \
+        os.path.join(this_dir, "lib") not in sys.path:
+    sys.path = [os.path.join(this_dir, "lib")] + sys.path
 
 ###############################################################################
 # Ensure access to data store
@@ -114,9 +115,9 @@ else:
         help='turn on thread debugging output')
     parser.add_argument('--log-viewer', action='store_true',
         help='enable Log Viewer menu')
-    parser.add_argument('--ics_host', action='store',
+    parser.add_argument('--ics-host', action='store',
         help='the hostname of internet chess server (default is freechess.org)')
-    parser.add_argument('--ics_port', action='store', type=int,
+    parser.add_argument('--ics-port', action='store', type=int,
         help='the connection port of internet chess server (default is 5000)')
     parser.add_argument('chess_file', nargs='?', metavar='chessfile',
         help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
