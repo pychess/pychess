@@ -383,7 +383,7 @@ class PyChess:
         #aboutdialog.set_position(gtk.WIN_POS_CENTER)
         #aboutdialog.set_website_label(_("PyChess Homepage"))
         link = aboutdialog.get_website()
-        aboutdialog.set_copyright("Copyright © 2006-2013")
+        aboutdialog.set_copyright("Copyright © 2006-2014")
         aboutdialog.set_version(VERSION_NAME+" "+VERSION)
         if os.path.isdir(prefix.addDataPrefix(".hg")):
             cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
@@ -468,13 +468,13 @@ def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, 
     gtk.gdk.threads_init()
     
     glock.debug = glock_debug
-    log.warning("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
+    log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
+    log.info("Command line args: '%s'" % chess_file)
     if thread_debug:
         start_thread_dump()
 
     if ics_host:
         ICLogon.host = ics_host
-
     if ics_port:
         ICLogon.port = ics_port
     
