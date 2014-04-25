@@ -79,8 +79,6 @@ class BoardPreview:
     def on_file_activated (self, *args):
         filename = self._retrieve_filename()
         if filename:
-            if filename == self.get_filename():
-                return
             self.set_filename(filename)
         elif self.get_filename():
             filename = self.get_filename()
