@@ -137,7 +137,10 @@ class Sidepanel:
         self.plot.redraw()
     
     def plot_selected (self, plot, selected):
-        board = self.boardview.model.boards[selected]
+        try:
+            board = self.boardview.model.boards[selected]
+        except IndexError:
+            return
         self.boardview.setShownBoard(board)
 
 
