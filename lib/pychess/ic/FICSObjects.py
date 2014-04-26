@@ -136,6 +136,8 @@ class FICSPlayer (GObject):
     def get_game (self):
         return self._game
     def set_game (self, game):
+        if game is not None and not isinstance(game, FICSMatch):
+            raise TypeError(type(game))
         self._game = game
     game = gobject.property(get_game, set_game)
         
