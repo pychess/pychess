@@ -43,6 +43,7 @@ class BoardControl (gtk.EventBox):
         
         self.view.connect("shown_changed", self.shown_changed)
         gamemodel.connect("moves_undoing", self.moves_undone)
+        gamemodel.connect("game_ended", self.game_ended)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
@@ -150,6 +151,18 @@ class BoardControl (gtk.EventBox):
             del self.possibleBoards[self.view.shown-2]
     
     def moves_undone (self, gamemodel, moves):
+        self.stateLock.acquire()
+        try:
+            self.view.selected = None
+            self.view.active = None
+            self.view.hover = None
+            self.view.draggedPiece = None
+            self.view.startAnimation()
+            self.currentState = self.lockedNormalState
+        finally:
+            self.stateLock.release()
+    
+    def game_ended (self, gamemodel, reason):
         self.stateLock.acquire()
         try:
             self.view.selected = None
