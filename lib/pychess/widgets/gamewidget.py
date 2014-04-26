@@ -116,6 +116,7 @@ class GameWidget (gobject.GObject):
         self.board = board
         self.statusbar = statusbar
         self.infobar = infobar
+        infobar.connect("hide", self.infobar_hidden)
         self.clock = clock
         self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
         self.boardvbox = boardvbox
@@ -587,6 +588,10 @@ class GameWidget (gobject.GObject):
     
     def getPageNumber (self):
         return getheadbook().page_num(self.notebookKey)
+    
+    def infobar_hidden (self, infobar):
+        if self == cur_gmwidg():
+            notebooks["messageArea"].hide()
     
     def showMessage (self, message):
         self.infobar.push_message(message)
