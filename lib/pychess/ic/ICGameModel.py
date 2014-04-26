@@ -204,4 +204,7 @@ class ICGameModel (GameModel):
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
         
-        GameModel.end(self, status, reason)
+        if status == KILLED:
+            GameModel.kill(self, reason)
+        else:
+            GameModel.end(self, status, reason)

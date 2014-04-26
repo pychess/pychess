@@ -720,7 +720,7 @@ class GameModel (GObject, PooledThread):
         if self.timed:
             self.timemodel.end()
         
-        self.emit("game_ended", reason)
+        self.emit("game_terminated")
     
     def terminate (self):
         
