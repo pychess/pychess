@@ -122,7 +122,7 @@ def parse_reason (result, reason, wname=None):
             reason = ABORTED_AGREEMENT
         elif "moves" in reason:
             # lost connection and too few moves; game aborted *
-            reason = ABORTED_EARLY
+            reason = ABORTED_DISCONNECTION
         elif "move" in reason:
             # Game aborted on move 1 *
             reason = ABORTED_EARLY

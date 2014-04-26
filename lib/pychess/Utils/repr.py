@@ -55,6 +55,7 @@ reprReason_long = {
     ABORTED_AGREEMENT: _("Because both players agreed to abort the game. No rating changes have occurred."),
     ABORTED_COURTESY: _("Because of courtesy by a player. No rating changes have occurred."),
     ABORTED_EARLY: _("Because a player aborted the game. Either player can abort the game without the other's consent before the second move. No rating changes have occurred."),
+    ABORTED_DISCONNECTION: _("Because a player disconnected and there are too few moves to warrant adjournment. No rating changes have occurred."),
     ABORTED_SERVER_SHUTDOWN: _("Because the server was shut down. No rating changes have occurred."),
 
     WHITE_ENGINE_DIED: _("Because the %(white)s engine died"),
