@@ -317,7 +317,8 @@ class BoardState:
         return self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
     
     def validate (self, cord0, cord1):
-        assert cord0 != None and cord1 != None, "cord0: " + str(cord0) + ", cord1: " + str(cord1)
+        if cord0 is None or cord1 is None:
+            return False
         if self.getBoard()[cord0] == None:
             return False
         if cord1.x < 0 or cord1.x > self.FILES-1:
@@ -658,13 +659,13 @@ class LockedActiveState (LockedBoardState):
         self.parent.selected_last = self.view.selected
     
     def motion (self, x, y):
-        if not self.getBoard()[self.view.active]:
-            return
-
         BoardState.motion(self, x, y)
         fcord = self.view.active
+        if not fcord:
+            return
         piece = self.getBoard()[fcord]
-        
+        if not piece:
+            return
         if piece.color == self.getBoard().color:
             return
         
