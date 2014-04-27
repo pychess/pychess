@@ -132,7 +132,7 @@ class GladeHandlers:
             return False
     
     def on_gmwidg_created (handler, gmwidg, gamemodel):
-        log.debug("on_gmwidg_created: %s %s" % (gmwidg, gamemodel))
+        log.debug("GladeHandlers.on_gmwidg_created: starting")
         gameDic[gmwidg] = gamemodel
         
         # Bring playing window to the front
@@ -143,6 +143,7 @@ class GladeHandlers:
         
         # Make sure we can remove gamewidgets from gameDic later
         gmwidg.connect("closed", GladeHandlers.__dict__["on_gmwidg_closed"])
+        log.debug("GladeHandlers.on_gmwidg_created: returning")
 
     def on_recent_game_activated (gamemodel, uri):
         if isinstance(uri, basestring):

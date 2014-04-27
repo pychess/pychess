@@ -122,7 +122,9 @@ class Sidepanel:
         return
 
     def players_changed (self, model):
+        log.debug("engineOutputPanel.players_changed: starting")
         self.updateVisibleOutputs(model)
+        log.debug("engineOutputPanel.players_changed: returning")
         return
 
     def game_started (self, model):   
