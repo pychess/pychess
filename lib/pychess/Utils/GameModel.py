@@ -190,6 +190,7 @@ class GameModel (GObject, PooledThread):
             return t + "]"
         
     def setPlayers (self, players):
+        log.debug("GameModel.setPlayers: starting")
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
@@ -200,6 +201,7 @@ class GameModel (GObject, PooledThread):
         self.tags["White"] = str(self.players[WHITE])
         self.tags["Black"] = str(self.players[BLACK])
         self.emit("players_changed")
+        log.debug("GameModel.setPlayers: returning")
     
     def color (self, player):
         if player is self.players[0]:

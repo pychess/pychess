@@ -39,7 +39,9 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
                 gmwidg, game = val
                 gamewidget.attachGameWidget(gmwidg)
                 gamenanny.nurseGame(gmwidg, game)
+                log.debug("onPublished: -> emit gmwidg_created: %s" % (gmwidg))
                 handler.emit("gmwidg_created", gmwidg, game)
+                log.debug("onPublished: <- emit gmwidg_created: %s" % (gmwidg))
 
             # Then the worker will publish functions setting up widget stuff
             elif callable(val):
@@ -90,8 +92,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
                 gamemodel.curplayer.emit("offer", Offer(action, param=param))
         gmwidg.board.connect("action", lambda b,action,param: emit_action(action, param))
     
-    log.debug("ionest.workfunc: calling gamemodel.setPlayers(): %s" % (gamemodel))
+    log.debug("ionest.workfunc: -> gamemodel.setPlayers(): %s" % (gamemodel))
     gamemodel.setPlayers(players)
+    log.debug("ionest.workfunc: <- gamemodel.setPlayers(): %s" % (gamemodel))
     
     # Starting
     if loaddata:
@@ -110,7 +113,9 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         if gamemodel.variant.need_initial_board:
             for player in gamemodel.players:
                 player.setOptionInitialBoard(gamemodel)
+        log.debug("ionest.workfunc: -> gamemodel.start(): %s" % (gamemodel))
         gamemodel.start()
+        log.debug("ionest.workfunc: <- gamemodel.start(): %s" % (gamemodel))
     
     log.debug("ionest.workfunc: returning gmwidg=%s\n gamemodel=%s" % \
         (gmwidg, gamemodel))
