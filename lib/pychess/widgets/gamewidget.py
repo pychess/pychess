@@ -423,13 +423,16 @@ class GameWidget (gobject.GObject):
         return t
         
     def players_changed (self, gamemodel):
+        log.debug("GameWidget.players_changed: starting")
         for player in gamemodel.players:
             self.name_changed(player)
             # Notice that this may connect the same player many times. In
             # normal use that shouldn't be a problem.
             glock_connect(player, "name_changed", self.name_changed)
+        log.debug("GameWidget.players_changed: returning")
     
     def name_changed (self, player):
+        log.debug("GameWidget.name_changed: starting")
         color = self.gamemodel.color(player)
         self.player_name_labels[color].set_text(self.player_display_text(color=color))
         if isinstance(self.gamemodel, ICGameModel) and player.__type__ == REMOTE:
@@ -437,6 +440,7 @@ class GameWidget (gobject.GObject):
                 (self.gamemodel.ficsplayers[color], show_status=False))
         
         self.emit('title_changed', self.display_text)
+        log.debug("GameWidget.name_changed: returning")
     
     def zero_reached (self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES: return

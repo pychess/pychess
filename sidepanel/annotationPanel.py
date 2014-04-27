@@ -9,6 +9,7 @@ from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.glock import glock_connect
+from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
@@ -85,7 +86,7 @@ class Sidepanel(gtk.TextView):
         glock_connect(self.gamemodel, "game_ended", self.update)
         glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
         glock_connect(self.gamemodel, "opening_changed", self.update)
-        glock_connect(self.gamemodel, "players_changed", self.update)
+        glock_connect(self.gamemodel, "players_changed", self.players_changed)
         glock_connect(self.gamemodel, "variations_changed", self.update)
         glock_connect(self.gamemodel, "analysis_changed", self.analysis_changed)
 
@@ -721,7 +722,12 @@ class Sidepanel(gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 
         self.update_selected_node()
-
+    
+    def players_changed(self, model):
+        log.debug("annotationPanel.players_changed: starting")
+        self.update
+        log.debug("annotationPanel.players_changed: returning")
+    
     def __movestr(self, node):
         move = node.lastMove
         if self.fan:
