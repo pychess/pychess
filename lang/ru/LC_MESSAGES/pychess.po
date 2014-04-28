@@ -5,6 +5,7 @@
 # Translators:
 # milssky <2furius@gmail.com>, 2012
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007
+# arinov <i.arinov@iht.kz>, 2014
 # slav0nic <slav0nic0@gmail.com>, 2012
 # slav0nic <slav0nic0@gmail.com>, 2012
 msgid ""
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-03 23:04+0200\n"
-"PO-Revision-Date: 2014-04-04 08:17+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2014-04-04 20:46+0000\n"
+"Last-Translator: arinov <i.arinov@iht.kz>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/pychess/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -180,7 +181,7 @@ msgid ""
 "preserved when \n"
 "a) your rating for the type of game sought has changed\n"
 "b) you change the variant or the time control"
-msgstr ""
+msgstr "Когда эта кнопка в \"заблокированном\" состоянии, отношение между \"силой оппонента\" и \"вашей силой\" будет сохраняться при\nа) Ваш рейтинг для искомого типа игры был изменен\nб) Вы изменяете варианты управления временем"
 
 #: glade/fics_lounge.glade:1109
 msgid "Center:"
@@ -440,7 +441,7 @@ msgstr "Играть в Шахматные Поддавки"
 
 #: glade/newInOut.glade:869
 msgid "<b>Open Game</b>"
-msgstr ""
+msgstr "<b>Открыть игру</b>"
 
 #: glade/newInOut.glade:1116
 msgid "<b>Initial Position</b>"
@@ -651,7 +652,7 @@ msgstr "Показывать _координаты"
 msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
-msgstr ""
+msgstr "Если установлено, игровая доска будет отображать метки и ранг для каждого игрового поля. Это полезно для шахматной нотации."
 
 #: glade/PyChess.glade:1197
 msgid "Show _captured pieces"
@@ -1180,7 +1181,7 @@ msgstr ""
 #: lib/pychess/ic/FICSObjects.py:38 lib/pychess/ic/ICLounge.py:807
 #: lib/pychess/Variants/losers.py:12
 msgid "Losers"
-msgstr ""
+msgstr "Проигравшие"
 
 #: lib/pychess/ic/FICSObjects.py:40 lib/pychess/ic/ICLounge.py:807
 #: lib/pychess/Variants/suicide.py:19
@@ -1214,7 +1215,7 @@ msgstr "Бездействие"
 
 #: lib/pychess/ic/FICSObjects.py:126
 msgid "Examining"
-msgstr ""
+msgstr "Исследование"
 
 #: lib/pychess/ic/FICSObjects.py:128
 msgid "Not Available"
@@ -1222,11 +1223,11 @@ msgstr "Недоступен"
 
 #: lib/pychess/ic/FICSObjects.py:130
 msgid "Running Simul Match"
-msgstr ""
+msgstr "Запустить симуляционный матч"
 
 #: lib/pychess/ic/FICSObjects.py:132
 msgid "In Tournament"
-msgstr ""
+msgstr "В турнире"
 
 #: lib/pychess/ic/FICSObjects.py:289 lib/pychess/ic/FICSObjects.py:499
 #: lib/pychess/ic/ICLounge.py:1798
@@ -1291,7 +1292,7 @@ msgstr "Подключение было закрыто"
 
 #: lib/pychess/ic/ICLogon.py:126
 msgid "Address Error"
-msgstr ""
+msgstr "Ошибка адреса"
 
 #: lib/pychess/ic/ICLogon.py:129
 msgid "Auto-logout"
@@ -1317,7 +1318,7 @@ msgstr "Поражение"
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the following variants at "
 "all time controls:\n"
-msgstr ""
+msgstr "На FICS ваш \"Дикий\" рейтинг охватывает все представленные варианты во всех регламентах.\n"
 
 #: lib/pychess/ic/ICLounge.py:260
 msgid "Sanctions"
@@ -1459,7 +1460,7 @@ msgstr "Запросить продолжение"
 
 #: lib/pychess/ic/ICLounge.py:1241
 msgid "Examine Adjourned Game"
-msgstr ""
+msgstr "Исследовать отсроченную игру"
 
 #: lib/pychess/ic/ICLounge.py:1503
 msgid ""
@@ -1474,7 +1475,7 @@ msgstr "Вызов: "
 
 #: lib/pychess/ic/ICLounge.py:1578 lib/pychess/ic/ICLounge.py:1581
 msgid "This option is not applicable because you're challenging a player"
-msgstr ""
+msgstr "Это неподходящая опция, потому что вы вызываете игрока"
 
 #: lib/pychess/ic/ICLounge.py:1594
 msgid "Edit Seek: "
@@ -1516,7 +1517,7 @@ msgstr "и Гости не могут играть рейтинговые игр
 #: lib/pychess/ic/ICLounge.py:1852 lib/pychess/Variants/shuffle.py:31
 #: lib/pychess/widgets/newGameDialog.py:246
 msgid "Shuffle"
-msgstr ""
+msgstr "Перемешивать"
 
 #: lib/pychess/ic/ICLounge.py:1853 lib/pychess/widgets/newGameDialog.py:247
 msgid "Other (standard rules)"
@@ -1542,7 +1543,7 @@ msgstr "Изменить Толерантность"
 msgid ""
 "You may only have 3 outstanding seeks at the same time. If you want to add a"
 " new seek you must clear your currently active seeks. Clear your seeks?"
-msgstr ""
+msgstr "Вы можете себе позволить лишь 3 поиска в одно время. Если вы хотите добавить новый поиск, вы должны отменить ваши активные поиски. Отменить их?"
 
 #: lib/pychess/ic/ICLounge.py:2063
 msgid " has declined your offer for a match."
@@ -1582,7 +1583,7 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:93
 msgid "Examined"
-msgstr ""
+msgstr "Исследовано"
 
 #: lib/pychess/ic/__init__.py:94
 msgid "Other"
@@ -1822,11 +1823,11 @@ msgstr "Предложение отменить ход"
 
 #: lib/pychess/Players/Human.py:50
 msgid "resign"
-msgstr ""
+msgstr "сдаться"
 
 #: lib/pychess/Players/Human.py:51
 msgid "call your opponents flag"
-msgstr ""
+msgstr "бросить флаг противника"
 
 #: lib/pychess/Players/Human.py:52
 msgid "offer a draw"
@@ -1858,7 +1859,7 @@ msgstr "предложить отменить ход"
 
 #: lib/pychess/Players/Human.py:59
 msgid "ask your opponent to move"
-msgstr ""
+msgstr "попросить противника сделать ход"
 
 #: lib/pychess/Players/Human.py:64
 msgid "Your opponent is not out of time."
@@ -1953,7 +1954,7 @@ msgstr "Не удаётся прочитать игру до конца из-з�
 #: lib/pychess/Savers/pgnbase.py:100
 #, python-format
 msgid "The move failed because %s."
-msgstr ""
+msgstr "Ход не совершен из-за %s."
 
 #: lib/pychess/Savers/pgnbase.py:108
 #, python-format
@@ -1974,7 +1975,7 @@ msgstr "Целевой хост недоступен"
 
 #: lib/pychess/System/ping.py:71
 msgid "Died"
-msgstr ""
+msgstr "Мертв"
 
 #: lib/pychess/Utils/GameModel.py:133
 msgid "Local Event"
@@ -2053,7 +2054,7 @@ msgstr "Так как у обоих соперников кончилось вр
 #: lib/pychess/Utils/repr.py:28
 #, python-format
 msgid "Because %(mover)s stalemated"
-msgstr ""
+msgstr "Потому что %(mover)s вошел в пат"
 
 #: lib/pychess/Utils/repr.py:29
 msgid "Because both players agreed to a draw"
@@ -2065,7 +2066,7 @@ msgstr "По решению администратора"
 
 #: lib/pychess/Utils/repr.py:31
 msgid "Because the game exceed the max length"
-msgstr ""
+msgstr "Потому что игра превышает максимальную длительность"
 
 #: lib/pychess/Utils/repr.py:32
 #, python-format
@@ -2188,7 +2189,7 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:60
 #, python-format
 msgid "Because the %(white)s engine died"
-msgstr ""
+msgstr "Потому что движок %(white)s умер"
 
 #: lib/pychess/Utils/repr.py:61
 #, python-format
@@ -2223,7 +2224,7 @@ msgstr ""
 
 #: lib/pychess/Variants/asymmetricrandom.py:91
 msgid "Asymmetric Random"
-msgstr ""
+msgstr "Асимметричный рандом"
 
 #: lib/pychess/Variants/atomic.py:15
 msgid "FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html"
@@ -2238,7 +2239,7 @@ msgstr ""
 #: lib/pychess/Variants/blindfold.py:12
 #: lib/pychess/widgets/newGameDialog.py:244
 msgid "Blindfold"
-msgstr ""
+msgstr "Вслепую"
 
 #: lib/pychess/Variants/blindfold.py:25
 msgid ""
@@ -2248,7 +2249,7 @@ msgstr ""
 
 #: lib/pychess/Variants/blindfold.py:27
 msgid "Hidden pawns"
-msgstr ""
+msgstr "Скрытые пешки"
 
 #: lib/pychess/Variants/blindfold.py:40
 msgid ""
@@ -2258,7 +2259,7 @@ msgstr ""
 
 #: lib/pychess/Variants/blindfold.py:42
 msgid "Hidden pieces"
-msgstr ""
+msgstr "Скрытые фигуры"
 
 #: lib/pychess/Variants/blindfold.py:55
 msgid ""
@@ -2313,7 +2314,7 @@ msgstr "Неравенство коней"
 
 #: lib/pychess/Variants/losers.py:11
 msgid "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
-msgstr ""
+msgstr "Проигравшие FICS: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
 
 #: lib/pychess/Variants/normal.py:4
 msgid ""
@@ -2341,7 +2342,7 @@ msgstr ""
 
 #: lib/pychess/Variants/pawnspassed.py:22
 msgid "Pawns Passed"
-msgstr ""
+msgstr "Проходные пешки"
 
 #: lib/pychess/Variants/pawnspushed.py:19
 msgid ""
@@ -2351,15 +2352,15 @@ msgstr ""
 
 #: lib/pychess/Variants/pawnspushed.py:21
 msgid "Pawns Pushed"
-msgstr ""
+msgstr "Проведенные пешки"
 
 #: lib/pychess/Variants/queenodds.py:17
 msgid "One player starts with one less queen piece"
-msgstr ""
+msgstr "У одного из игроков на одну королеву меньше"
 
 #: lib/pychess/Variants/queenodds.py:18
 msgid "Queen odds"
-msgstr ""
+msgstr "Неравенство королев"
 
 #: lib/pychess/Variants/randomchess.py:28
 msgid ""
@@ -2417,7 +2418,7 @@ msgstr ""
 
 #: lib/pychess/Variants/upsidedown.py:21
 msgid "Upside Down"
-msgstr ""
+msgstr "Сверху вниз"
 
 #: lib/pychess/Variants/wildcastle.py:19
 msgid ""
@@ -2453,7 +2454,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatWindow.py:190
 msgid "You have opened no conversations yet"
-msgstr ""
+msgstr "У вас нет открытых бесед пока"
 
 #: lib/pychess/widgets/ChatWindow.py:222
 msgid "Only registered users may talk to this channel"
@@ -2461,7 +2462,7 @@ msgstr "В этом канале могут общаться только зар
 
 #: lib/pychess/widgets/ChatWindow.py:278
 msgid "No conversation's selected"
-msgstr ""
+msgstr "Нет выбранных бесед"
 
 #: lib/pychess/widgets/ChatWindow.py:315
 msgid "Loading player data"
@@ -2485,7 +2486,7 @@ msgstr "Беседы"
 
 #: lib/pychess/widgets/ChatWindow.py:597
 msgid "Conversation info"
-msgstr ""
+msgstr "Информация о беседе"
 
 #: lib/pychess/widgets/enginesDialog.py:130
 msgid "Select engine"
@@ -2529,7 +2530,7 @@ msgstr "Партия сохранена"
 
 #: lib/pychess/widgets/gamenanny.py:201
 msgid "Analyzer started"
-msgstr ""
+msgstr "Анализатор запущен"
 
 #: lib/pychess/widgets/gamenanny.py:250
 msgid "You sent an abort offer"
@@ -2597,7 +2598,7 @@ msgstr "Игра не может быть отложена, потому что 
 
 #: lib/pychess/widgets/gamewidget.py:210
 msgid "Claim Draw"
-msgstr ""
+msgstr "Потребовать ничью"
 
 #: lib/pychess/widgets/gamewidget.py:416 lib/pychess/widgets/gamewidget.py:471
 msgid "vs"
@@ -2621,13 +2622,13 @@ msgstr "Перейти к последней позиции"
 
 #: lib/pychess/widgets/gamewidget.py:748
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
-msgstr ""
+msgstr "<b><big>PyChess не в состоянии загрузить ваши настройки панели</big></b>"
 
 #: lib/pychess/widgets/gamewidget.py:749
 msgid ""
 "Your panel settings have been reset. If this problem repeats, you should "
 "report it to the developers"
-msgstr ""
+msgstr "Ваши настройки панели были сброшены. Если проблема повторится, вам следует доложить о ней разработчикам"
 
 #: lib/pychess/widgets/ionest.py:80 lib/pychess/widgets/newGameDialog.py:329
 #: lib/pychess/widgets/TaskerManager.py:201
@@ -2670,7 +2671,7 @@ msgstr "Сохранить игру"
 
 #: lib/pychess/widgets/ionest.py:224
 msgid "Export position"
-msgstr ""
+msgstr "Экспорт позиции"
 
 #: lib/pychess/widgets/ionest.py:228 lib/pychess/widgets/ionest.py:345
 msgid "vs."
@@ -2806,7 +2807,7 @@ msgstr "%(name)s %(minutes)d мин"
 
 #: lib/pychess/widgets/newGameDialog.py:245
 msgid "Odds"
-msgstr ""
+msgstr "Перевес"
 
 #: lib/pychess/widgets/newGameDialog.py:272
 msgid " chess"
@@ -2845,7 +2846,7 @@ msgid ""
 "You can start a new game by <b>Game</b> > <b>New Game</b>, in New Game "
 "window do you can choose <b>Players</b>, <b>Time Control</b> and <b>Chess "
 "Variants</b>."
-msgstr ""
+msgstr "Вы можете начать новую игру с помощью <b>Игра</b> > <b>Новая игра</b>, в онке Новая игра и выбрать <b>Игроков</b>, <b>Регламент</b> и <b>Разновидность шахмат</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
 msgid ""
@@ -2856,24 +2857,24 @@ msgstr "Вы можете выбирать из 8 различных уровн�
 msgid ""
 "Chess Variants are like the pieces of the last line will be placed on the "
 "board."
-msgstr ""
+msgstr "Разновидность шахмат отвечает за варианты расположения фигур на последних линиях на доске."
 
 #: lib/pychess/widgets/tipOfTheDay.py:55
 msgid ""
 "To save a game <b>Game</b> > <b>Save Game As</b>, give the filename and "
 "choose where you want to be saved. At the bottom choose extension type of "
 "the file, and <b>Save</b>."
-msgstr ""
+msgstr "Для сохранения игры выберите <b>Игра</b> > <b>Сохранить игру как</b>, задайте имя файла и выберите путь сохранения. Снизу выберите тип файла, и нажмите <b>Сохранить</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:56
 msgid ""
 "Do you know that you can call flag when the clock is with you, "
 "<b>Actions</b> > <b>Call Flag</b>."
-msgstr ""
+msgstr "Знаете ли вы, что вы можете бросить флаг, когда у вас все еще есть запас времени, выберите <b>Действия</b> > <b>Бросить флаг</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid "Pressing <b>Ctrl+Z</b> to offer opponent the possible rollback moves."
-msgstr ""
+msgstr "Нажатие <b>Ctrl+Z</b> предложит противнику возможность отменить ходы."
 
 #: lib/pychess/widgets/tipOfTheDay.py:58
 msgid ""
@@ -2883,19 +2884,19 @@ msgstr "Чтобы играть в <b>Полноэкранном режиме</b
 
 #: lib/pychess/widgets/tipOfTheDay.py:59
 msgid "<b>Hint mode</b> analyzing your game, enable this type <b>Ctrl+H</b>."
-msgstr ""
+msgstr "<b>Режим подсказки</b> анализирует вашу игру, для включения режима используйте <b>Ctrl+H</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:60
 msgid ""
 "<b>Spy mode</b> analyzing the oponnent game, enable this type <b>Ctrl+Y</b>."
-msgstr ""
+msgstr "<b>Шпионский режим</b> анализирует игру противника, для включения режима используйте <b>Ctrl+Y</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:61
 msgid ""
 "You can play chess listening to the sounds of the game, for that, "
 "<b>Settings</b> > <b>Preferences</b> > <b>Sound tab</b>, enable <b>Use "
 "sounds in PyChess</b> and choose your preferred sounds."
-msgstr ""
+msgstr "Вы можете играть в шахматы со звуками в игре, для этого войдите в <b>Настройки</b> > <b>Предпочтения</b> > <b>Звуки</b>, включите  <b>Использовать звуки в PyChess</b> и выберите звуки на свое усмотрение."
 
 #: lib/pychess/widgets/tipOfTheDay.py:62
 msgid ""
@@ -2916,7 +2917,7 @@ msgstr "Знаете ли вы, что количество возможных �
 
 #: lib/pychess/ic/managers/ChatManager.py:135
 msgid "Shout"
-msgstr ""
+msgstr "Крик"
 
 #: lib/pychess/ic/managers/ChatManager.py:136
 msgid "Chess Shout"
@@ -2929,7 +2930,7 @@ msgstr "Неофициальный канал %d"
 
 #: lib/pychess/Utils/lutils/lmove.py:258
 msgid "the move needs a piece and a cord"
-msgstr ""
+msgstr "для хода требуется фигура и координаты"
 
 #: lib/pychess/Utils/lutils/lmove.py:292 lib/pychess/Utils/lutils/lmove.py:513
 msgid "promotion move without promoted piece is incorrect"
@@ -3014,7 +3015,7 @@ msgstr "спасают %s"
 #: lib/pychess/Utils/lutils/strateval.py:289
 #, python-format
 msgid "threatens to win material by %s"
-msgstr ""
+msgstr "угрожает выиграть материал с %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:291
 #, python-format
@@ -3048,7 +3049,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:465
 msgid "half-open"
-msgstr ""
+msgstr "полуоткрыт"
 
 #: lib/pychess/Utils/lutils/strateval.py:467
 #, python-format

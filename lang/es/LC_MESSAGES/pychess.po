@@ -4,6 +4,8 @@
 # 
 # Translators:
 # Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2012
+# henderbj <henderbj@gmail.com>, 2014
+# henderbj <henderbj@gmail.com>, 2014
 # IgnotusConfutatis <ignotus@teksapiens.com>, 2013
 # karv <karvayoEdgar@gmail.com>, 2013
 msgid ""
@@ -11,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-03 23:04+0200\n"
-"PO-Revision-Date: 2014-04-04 08:17+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2014-04-27 23:38+0000\n"
+"Last-Translator: henderbj <henderbj@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/pychess/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,27 +25,27 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Ananlyze game"
-msgstr ""
+msgstr "Analizar juego"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
-msgstr ""
+msgstr "Utilizar analizador:"
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1804
 msgid "Maximum analysis time in seconds:"
-msgstr ""
+msgstr "Tiempo de análisis máximo en segundos:"
 
 #: glade/analyze_game.glade:168
 msgid "Create variation thresold in centipawns:"
-msgstr ""
+msgstr "Crear umbral de variación en centipeones:"
 
 #: glade/analyze_game.glade:204 glade/PyChess.glade:1231
 msgid "Colorize analyzed moves"
-msgstr ""
+msgstr "Colorear movimientos analizados"
 
 #: glade/analyze_game.glade:219 glade/PyChess.glade:1263
 msgid "Show evaluation values"
-msgstr ""
+msgstr "Mostrar valores de evaluación"
 
 #: glade/discovererDialog.glade:19
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -367,7 +369,7 @@ msgstr "<b>Herramientas</b>"
 
 #: glade/fics_lounge.glade:3279
 msgid "Asymmetric Random\t"
-msgstr ""
+msgstr "Aleatorio Asimétrico⇥"
 
 #: glade/findbar.glade:7
 msgid "window1"
@@ -532,11 +534,11 @@ msgstr "<b>Fecha de la partida</b>"
 
 #: glade/PyChess.glade:530
 msgid "Default"
-msgstr ""
+msgstr "Por Defecto"
 
 #: glade/PyChess.glade:533
 msgid "Knights"
-msgstr ""
+msgstr "Caballos"
 
 #: glade/PyChess.glade:544 lib/pychess/widgets/preferencesDialog.py:329
 msgid "Beep"
@@ -552,11 +554,11 @@ msgstr "Sin sonido"
 
 #: glade/PyChess.glade:561
 msgid "uci"
-msgstr ""
+msgstr "uci"
 
 #: glade/PyChess.glade:564
 msgid "xboard"
-msgstr ""
+msgstr "xboard"
 
 #: glade/PyChess.glade:572
 msgid "Manage engines"
@@ -672,19 +674,19 @@ msgstr "Activado, PyChess usará figuras para expresar los movimientos en vez de
 
 #: glade/PyChess.glade:1236
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
-msgstr ""
+msgstr "Si es fijado, PyChess coloreará los movimientos analizados sub-óptimos con rojo."
 
 #: glade/PyChess.glade:1247
 msgid "Show elapsed move times"
-msgstr ""
+msgstr "Mostrar tiempos de movimiento transcurrido"
 
 #: glade/PyChess.glade:1252
 msgid "If set, the elapsed time that a player used for the move is shown."
-msgstr ""
+msgstr "Si es fijado, se muestra el tiempo transcurrido que un jugador ha usado para el movimiento."
 
 #: glade/PyChess.glade:1268
 msgid "If set, the hint analyzer engine avaluation value is shown."
-msgstr ""
+msgstr "Si es fijado, se muestra el valor de evaluación del motor analizador de pista."
 
 #: glade/PyChess.glade:1292
 msgid "<b>General Display Options</b>"
@@ -905,7 +907,7 @@ msgstr "_Exportar posición"
 
 #: glade/PyChess.glade:3008
 msgid "_Analyze Game"
-msgstr ""
+msgstr "_Analyzar Juego"
 
 #: glade/PyChess.glade:3042
 msgid "Player _Rating"
@@ -1131,7 +1133,7 @@ msgstr "«%s» no es un nombre registrado"
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> to request a new one over email."
-msgstr ""
+msgstr "La clave entrada es inválida.\nSi ha olvidado su clave, vaya a <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> para solicitar una nueva por email."
 
 #: lib/pychess/ic/FICSConnection.py:145
 msgid "Connecting to server"
@@ -1262,7 +1264,7 @@ msgstr "negras"
 
 #: lib/pychess/ic/FICSObjects.py:558
 msgid "This is a continuation of an adjourned match"
-msgstr ""
+msgstr "Esto es una continuación de un juego suspendido"
 
 #: lib/pychess/ic/FICSObjects.py:647
 msgid "Opponent Rating"
@@ -1350,7 +1352,7 @@ msgstr "Desconocido"
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest can't play rated games and therefore isn't able to play as many of the types of matches offered as a registered user. To register an account, go to <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
-msgstr ""
+msgstr "Ud. ha ingresado como usuario invitado.\nUn invitado no puede jugar partidas puntuadas y por lo tanto no será capaz de jugar muchos de los tipos de encuentros ofrecidos a usuarios registrados. Para registrar una cuenta, vaya a <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
 
 #: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:805
 msgid "Name"
@@ -1374,7 +1376,7 @@ msgstr "Búsqiedas activas: %d"
 msgid ""
 " would like to resume your adjourned <b>%(time)s</b> <b>%(gametype)s</b> "
 "game."
-msgstr ""
+msgstr "Te gustaría continuar tu partida <b>%(time)s</b> <b>%(gametype)s</b> suspendida."
 
 #: lib/pychess/ic/ICLounge.py:577
 #, python-format
@@ -1450,7 +1452,7 @@ msgstr "Fecha/Hora"
 msgid ""
 " with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
 "game is online."
-msgstr ""
+msgstr "con quien tienes una partida pendiente <b>%(timecontrol)s</b> <b>%(gametype)s</b> está en línea."
 
 #: lib/pychess/ic/ICLounge.py:1239
 msgid "Request Continuation"
@@ -1569,15 +1571,15 @@ msgstr "Tus búsquedas han sido eliminadas"
 
 #: lib/pychess/ic/ICLounge.py:2139
 msgid " has arrived"
-msgstr ""
+msgstr "ha llegado"
 
 #: lib/pychess/ic/ICLounge.py:2146
 msgid " has departed"
-msgstr ""
+msgstr "se ha ido"
 
 #: lib/pychess/ic/ICLounge.py:2150
 msgid " is present"
-msgstr ""
+msgstr "está presente"
 
 #: lib/pychess/ic/__init__.py:93
 msgid "Examined"
@@ -2218,7 +2220,7 @@ msgid ""
 "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n"
 "* No castling\n"
 "* Black's arrangement DOES NOT mirrors white's"
-msgstr ""
+msgstr "FICS salvaje/4: http://www.freechess.org/Help/HelpFiles/wild.html\n* Piezas escogidas aleatoriamente (dos damas o tres torres es posible)\n* Solo un rey de cada color\n* Piezas ubicadas aleatoriamente detrás de los peones, CON LA CONDICION DE QUE LOS\nALFILES ESTEN BALANCEADOS\n* Sin enroques\n* El arreglo de las Negras NO ES un espejo de las Blancas"
 
 #: lib/pychess/Variants/asymmetricrandom.py:91
 msgid "Asymmetric Random"
@@ -2232,7 +2234,7 @@ msgstr "FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html"
 msgid ""
 "Classic chess rules with hidden figurines\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "Reglas de ajedrez clásico con figurines ocultos\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:12
 #: lib/pychess/widgets/newGameDialog.py:244
@@ -2243,7 +2245,7 @@ msgstr "A ciegas"
 msgid ""
 "Classic chess rules with hidden pawns\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "Reglas de ajedrez clásico con peones ocultos\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:27
 msgid "Hidden pawns"
@@ -2253,7 +2255,7 @@ msgstr "Peones cultos"
 msgid ""
 "Classic chess rules with hidden pieces\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "Reglas de ajedrez clásico con piezas ocultas\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:42
 msgid "Hidden pieces"
@@ -2263,7 +2265,7 @@ msgstr "Piezas ocultas"
 msgid ""
 "Classic chess rules with all pieces white\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "Reglas de ajedrez clásico con todas las piezas blancas\nhttp://es.wikipedia.org/wiki/Ajedrez_a_la_ciega"
 
 #: lib/pychess/Variants/blindfold.py:57
 msgid "All white"
@@ -2281,7 +2283,7 @@ msgid ""
 "* Bishops must start on opposite color squares\n"
 "* Black's starting position is obtained by rotating white's position 180 degrees around the board's center\n"
 "* No castling"
-msgstr ""
+msgstr "http://brainking.com/es/GameRules?tp=2\n* Ubicación de las piezas en la 1ra y 8va fila son aleatorias\n* El rey está en la esquina a mano derecha\n* Los alfiles deben iniciar en casillas de color opuesto\n* La posición de inicio de Negras es obtenida rotando la posición de Blancas 180 grados\nalrededor del centro del tablero\n* Sin enroques"
 
 #: lib/pychess/Variants/corner.py:37
 msgid "Corner"
@@ -2296,7 +2298,7 @@ msgstr "FICS crazyhouse: http://www.freechess.org/Help/HelpFiles/crazyhouse.html
 msgid ""
 "http://en.wikipedia.org/wiki/Chess960\n"
 "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html"
-msgstr ""
+msgstr "http://es.wikipedia.org/wiki/Chess960\nFICS salvaje/fr: http://www.freechess.org/Help/HelpFiles/wild.html"
 
 #: lib/pychess/Variants/fischerandom.py:220
 msgid "Fischer Random"
@@ -2318,7 +2320,7 @@ msgstr "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
 msgid ""
 "Classic chess rules\n"
 "http://en.wikipedia.org/wiki/Chess"
-msgstr ""
+msgstr "Reglas de ajedrez clásico\nhttp://es.wikipedia.org/wiki/Ajedrez"
 
 #: lib/pychess/Variants/normal.py:6 lib/pychess/widgets/newGameDialog.py:142
 msgid "Normal"
@@ -2336,7 +2338,7 @@ msgstr "Pawn odds"
 msgid ""
 "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "White pawns start on 5th rank and black pawns on the 4th rank"
-msgstr ""
+msgstr "FICS salvaje/8a: http://www.freechess.org/Help/HelpFiles/wild.html\nLos peones blancos inician en la 5ta fila y los peones negros en la 4ta fila"
 
 #: lib/pychess/Variants/pawnspassed.py:22
 msgid "Pawns Passed"
@@ -2346,7 +2348,7 @@ msgstr "Pawns Passed"
 msgid ""
 "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "Pawns start on 4th and 5th ranks rather than 2nd and 7th"
-msgstr ""
+msgstr "FICS salvaje/8: http://www.freechess.org/Help/HelpFiles/wild.html\nLos peones inician en la 4ta y 5ta filas en vez de las 2da y 7ma"
 
 #: lib/pychess/Variants/pawnspushed.py:21
 msgid "Pawns Pushed"
@@ -2368,7 +2370,7 @@ msgid ""
 "* Pieces placed randomly behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "FICS salvaje/3: http://www.freechess.org/Help/HelpFiles/wild.html\n* Piezas escogidas aleatoriamente (es posible dos damas o tres torres)\n* Solo un rey de cada color\n* Piezas ubicadas detrás de los peones aleatoriamente\n* Sin enroques\n* El arreglo de negras es un espejo del de blancas"
 
 #: lib/pychess/Variants/randomchess.py:34
 #: lib/pychess/widgets/TaskerManager.py:148
@@ -2390,7 +2392,7 @@ msgid ""
 "* Random arrangement of the pieces behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS salvaje/2: http://www.freechess.org/Help/HelpFiles/wild.html\n* Arreglo aleatorio de las piezas detrás de los peones\n* Sin enroques\n* El arreglo de negras es un espejo del de blancas"
 
 #: lib/pychess/Variants/suicide.py:18
 msgid ""
@@ -2412,7 +2414,7 @@ msgid ""
 "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "http://en.wikipedia.org/wiki/Chess_variant#Chess_with_different_starting_positions\n"
 "Pawns start on their 7th rank rather than their 2nd rank!"
-msgstr ""
+msgstr "FICS salvaje/5: http://www.freechess.org/Help/HelpFiles/wild.html\nhttp://es.wikipedia.org/wiki/Variante_del_ajedrez#Ajedrez_con_diferentes_posiciones_iniciales\n¡Los peones inician en su 7ma fila en vez de su 2da fila!"
 
 #: lib/pychess/Variants/upsidedown.py:21
 msgid "Upside Down"
@@ -2427,7 +2429,7 @@ msgid ""
 "* so they are not on the same files as White's King and Queen.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS salvaje/0: http://www.freechess.org/Help/HelpFiles/wild.html\n* Blancas tiene el arreglo típico al inicio.\n* Las piezas Negras de igual manera, excepto que el Rey y Dama están intercambiados,\n* por lo que no están en las mismas columnas que el Rey y Dama blancos.\n* El enroque es hecho de manera similar al ajedrez normal:\n* o-o-o indica enroque largo y o-o enroque corto."
 
 #: lib/pychess/Variants/wildcastle.py:26
 msgid "Wildcastle"
@@ -2444,7 +2446,7 @@ msgid ""
 "* Subject to these constraints the position of the pieces on their first ranks is random.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS salvaje/1: http://www.freechess.org/Help/HelpFiles/wild.html\n* En esta variante ambos lados tienen el mismo conjunto de piezas como en ajedrez normal.\n* El rey blanco inicia en d1 o e1 y el rey negro inicia en d8 o e8,\n* y las torres están en sus posiciones usuales.\n* Los alfiles están siempre en colores opuestos.\n* Sujeto a estas restricciones la posición de las piezas en sus primeras filas es aleatoria.\n* El enroque es hecho de manera similar al ajedrez normal:\n* o-o-o indica enroque largo y o-o enroque corto."
 
 #: lib/pychess/Variants/wildcastleshuffle.py:64
 msgid "Wildcastle shuffle"
@@ -2661,7 +2663,7 @@ msgstr "Archivos de ajedrez"
 
 #: lib/pychess/widgets/ionest.py:189
 msgid "Save elapsed move times and analyzing engine evaluation values."
-msgstr ""
+msgstr "Guardar tiempos de movimiento transcurrido y valores de evaluación del motor de análisis."
 
 #: lib/pychess/widgets/ionest.py:224
 msgid "Save Game"
@@ -3291,7 +3293,7 @@ msgid ""
 "Engine scores are in units of pawns, from White's point of view. Double "
 "clicking on analysis lines you can insert them into Annotation panel as "
 "variations."
-msgstr ""
+msgstr "La puntuación de los motores está en unidades de peón, desde el punto de vista de Blancas. Haciendo doble clic en las líneas de análisis puedes insertarlas en el panel de Anotación como variantes."
 
 #: sidepanel/bookPanel.py:266
 msgid ""

@@ -6,13 +6,14 @@
 # lepereporcher <damien@martin-damien.fr>, 2013-2014
 # minicore <minicore@jypino.eu>, 2013
 # Pierre Boulenguez, 2007
+# RyDroid <rydroid_trans@yahoo.fr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-03 23:04+0200\n"
-"PO-Revision-Date: 2014-04-04 08:17+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2014-04-13 03:20+0000\n"
+"Last-Translator: RyDroid <rydroid_trans@yahoo.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/pychess/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,7 +32,7 @@ msgstr ""
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1804
 msgid "Maximum analysis time in seconds:"
-msgstr ""
+msgstr "Temps maximum d'analyse en secondes :"
 
 #: glade/analyze_game.glade:168
 msgid "Create variation thresold in centipawns:"
@@ -355,7 +356,7 @@ msgstr "Montrer les conversations"
 
 #: glade/fics_lounge.glade:3208
 msgid "Show Console"
-msgstr ""
+msgstr "Voir la console"
 
 #: glade/fics_lounge.glade:3223
 msgid "_Log Off"
@@ -516,11 +517,11 @@ msgstr "Tour :"
 
 #: glade/PyChess.glade:262
 msgid "White:"
-msgstr ""
+msgstr "Blanc :"
 
 #: glade/PyChess.glade:274
 msgid "Black:"
-msgstr ""
+msgstr "Noir :"
 
 #: glade/PyChess.glade:331
 msgid "<b>Game data</b>"
@@ -560,23 +561,23 @@ msgstr ""
 
 #: glade/PyChess.glade:572
 msgid "Manage engines"
-msgstr ""
+msgstr "Gérer les moteurs"
 
 #: glade/PyChess.glade:668
 msgid "Command:"
-msgstr ""
+msgstr "Commande :"
 
 #: glade/PyChess.glade:682
 msgid "Protocol:"
-msgstr ""
+msgstr "Protocole :"
 
 #: glade/PyChess.glade:696
 msgid "Parameters:"
-msgstr ""
+msgstr "Paramètres :"
 
 #: glade/PyChess.glade:709
 msgid "Command line parameters needed by the engine."
-msgstr ""
+msgstr "Paramètres de la ligne de commande nécessaire au moteur."
 
 #: glade/PyChess.glade:737
 msgid ""
@@ -654,7 +655,7 @@ msgstr "Lorsque cette option est sélectionnée, les colonnes et les lignes de l
 
 #: glade/PyChess.glade:1197
 msgid "Show _captured pieces"
-msgstr ""
+msgstr "Montrer les pièces _capturées"
 
 #: glade/PyChess.glade:1202
 msgid "If set, the captured figurines will be shown next to the board."
@@ -747,7 +748,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1559
 msgid "Gaviota TB path:"
-msgstr ""
+msgstr "Chemin de Gaviota TB :"
 
 #: glade/PyChess.glade:1599
 msgid "Use _online tablebases"
@@ -913,11 +914,11 @@ msgstr "Niveau du joueur"
 
 #: glade/PyChess.glade:3087
 msgid "_Edit"
-msgstr ""
+msgstr "_Éditer"
 
 #: glade/PyChess.glade:3097
 msgid "_Engines"
-msgstr ""
+msgstr "_Moteurs"
 
 #: glade/PyChess.glade:3123
 msgid "_Actions"
@@ -1091,7 +1092,7 @@ msgstr "Résultat"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Event"
-msgstr ""
+msgstr "Événement"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Site"
@@ -1099,7 +1100,7 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Round"
-msgstr ""
+msgstr "Tour"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Date"
@@ -1111,7 +1112,7 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:62
 msgid "PyChess Game Database"
-msgstr ""
+msgstr "Base de données du jeu PyChess"
 
 #: lib/pychess/Database/PgnImport.py:184
 #, python-format
@@ -1254,11 +1255,11 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:525 lib/pychess/ic/ICLounge.py:584
 msgid "white"
-msgstr ""
+msgstr "blanc"
 
 #: lib/pychess/ic/FICSObjects.py:525 lib/pychess/ic/ICLounge.py:584
 msgid "black"
-msgstr ""
+msgstr "noir"
 
 #: lib/pychess/ic/FICSObjects.py:558
 msgid "This is a continuation of an adjourned match"
@@ -1389,11 +1390,11 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:597 lib/pychess/Players/Human.py:243
 msgid "Accept"
-msgstr ""
+msgstr "Accepter"
 
 #: lib/pychess/ic/ICLounge.py:598 lib/pychess/Players/Human.py:244
 msgid "Decline"
-msgstr ""
+msgstr "Décliner"
 
 #: lib/pychess/ic/ICLounge.py:738
 msgid " min"
@@ -1597,7 +1598,7 @@ msgstr "Compte \"à l'aveugle\" (blindfold)"
 
 #: lib/pychess/ic/__init__.py:173
 msgid "Computer"
-msgstr ""
+msgstr "Ordinateur"
 
 #: lib/pychess/ic/__init__.py:174
 msgid "Team Account"
@@ -1718,7 +1719,7 @@ msgstr "D"
 #: lib/pychess/Players/CECPEngine.py:849
 #, python-format
 msgid "The engine %s reports an error:"
-msgstr ""
+msgstr "Le moteur %s a signalé une erreur :"
 
 #: lib/pychess/Players/Human.py:18
 msgid "Your opponent has offered you a draw."
@@ -1732,7 +1733,7 @@ msgstr "Votre adversaire vous propose un nul. Si vous acceptez cette proposition
 
 #: lib/pychess/Players/Human.py:21
 msgid "Your opponent wants to abort the game."
-msgstr ""
+msgstr "Votre adversaire veut abandonner la partie."
 
 #: lib/pychess/Players/Human.py:22
 msgid ""
@@ -1754,7 +1755,7 @@ msgstr "Votre adversaire à demander d'ajourner la partie. Si vous acceptez cett
 #: lib/pychess/Players/Human.py:27
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
-msgstr ""
+msgstr "Votre adversaire veut annuler %s déplacement(s)."
 
 #: lib/pychess/Players/Human.py:28
 #, python-format
@@ -1765,7 +1766,7 @@ msgstr "Votre adversaire propose d'annuler le(s) %s coups précédents. Si vous 
 
 #: lib/pychess/Players/Human.py:30
 msgid "Your opponent wants to pause the game."
-msgstr ""
+msgstr "Votre adversaire veut mettre en pause la partie."
 
 #: lib/pychess/Players/Human.py:31
 msgid ""
@@ -1775,7 +1776,7 @@ msgstr "Votre adversaire souhaite faire une pause. Si vous acceptez cette propos
 
 #: lib/pychess/Players/Human.py:33
 msgid "Your opponent wants to resume the game."
-msgstr ""
+msgstr "Votre adversaire veut reprendre la partie."
 
 #: lib/pychess/Players/Human.py:34
 msgid ""
@@ -1928,7 +1929,7 @@ msgstr "Diagramme Chess Alpha 2"
 
 #: lib/pychess/Savers/database.py:16
 msgid "PyChess database"
-msgstr ""
+msgstr "Base de données de PyChess"
 
 #: lib/pychess/Savers/epd.py:7
 msgid "Chess Position"
@@ -1965,7 +1966,7 @@ msgstr "Partie d'Échecs"
 
 #: lib/pychess/Savers/png.py:16
 msgid "Png image"
-msgstr ""
+msgstr "Image PNG"
 
 #: lib/pychess/System/ping.py:27
 msgid "Destination Host Unreachable"
@@ -2097,7 +2098,7 @@ msgstr "Parce que %(loser)s a dépassé son temps réglementaire"
 #: lib/pychess/Utils/repr.py:38
 #, python-format
 msgid "Because %(loser)s was checkmated"
-msgstr ""
+msgstr "Parce %(loser)s était échec et mat"
 
 #: lib/pychess/Utils/repr.py:39
 #, python-format
@@ -2107,12 +2108,12 @@ msgstr "Parce que %(loser)s s'est déconnecté"
 #: lib/pychess/Utils/repr.py:41
 #, python-format
 msgid "Because %(winner)s has fewer pieces"
-msgstr ""
+msgstr "Parce que %(winner)s a moins de pièces"
 
 #: lib/pychess/Utils/repr.py:42
 #, python-format
 msgid "Because %(winner)s lost all pieces"
-msgstr ""
+msgstr "Parce que %(winner)s a perdu toutes ses pièces"
 
 #: lib/pychess/Utils/repr.py:43
 #, python-format
@@ -2488,11 +2489,11 @@ msgstr "Informations de la discussion"
 
 #: lib/pychess/widgets/enginesDialog.py:130
 msgid "Select engine"
-msgstr ""
+msgstr "Sélectionner un moteur"
 
 #: lib/pychess/widgets/enginesDialog.py:134
 msgid "Chess engines"
-msgstr ""
+msgstr "Moteurs d'échec"
 
 #: lib/pychess/widgets/enginesDialog.py:201
 msgid "Select working directory"
@@ -2831,7 +2832,7 @@ msgstr "Ouvrir le fichier de son"
 
 #: lib/pychess/widgets/preferencesDialog.py:320
 msgid "Sound files"
-msgstr ""
+msgstr "Fichiers de son"
 
 #: lib/pychess/widgets/preferencesDialog.py:465
 msgid "Undescribed panel"
@@ -3349,7 +3350,7 @@ msgstr "%(color)s déplace un %(piece)s en %(cord)s"
 
 #: sidepanel/engineOutputPanel.py:14
 msgid "Engines"
-msgstr ""
+msgstr "Moteurs"
 
 #: sidepanel/engineOutputPanel.py:19
 msgid ""
