@@ -170,7 +170,7 @@ class BoardControl (gtk.EventBox):
             self.view.hover = None
             self.view.draggedPiece = None
             self.view.startAnimation()
-            self.currentState = self.lockedNormalState
+            self.currentState = self.normalState
         finally:
             self.stateLock.release()
 
