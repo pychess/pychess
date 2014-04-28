@@ -317,14 +317,14 @@ class GameModel (GObject, PooledThread):
         try:
             return self.variations[variation][self._plyToIndex(ply)]
         except:
-            log.error("%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, len(self.variations[variation])))
+            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, variation, len(self.variations)))
             raise
     
     def getMoveAtPly (self, ply, variation=0):
         try:
             return Move(self.variations[variation][self._plyToIndex(ply)+1].board.lastMove)
         except IndexError:
-            log.error("%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, len(self.moves)))
+            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, variation, len(self.variations)))
             raise
 
     def hasLocalPlayer (self):
