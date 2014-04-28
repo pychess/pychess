@@ -1,5 +1,5 @@
 [main]
-host = https://www.transifex.net
+host = https://www.transifex.com
 
 [pychess.pychess]
 file_filter = lang/<lang>/LC_MESSAGES/pychess.po
