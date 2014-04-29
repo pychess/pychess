@@ -75,7 +75,7 @@ def parse_reason (result, reason, wname=None):
         if "repetition" in reason:
             reason = DRAW_REPITITION
         elif "material" in reason and "time" in reason:
-            if (wname + " ran out of time").lower() in reason:
+            if wname + " ran out of time" in reason:
                 reason = DRAW_BLACKINSUFFICIENTANDWHITETIME
             else:
                 reason = DRAW_WHITEINSUFFICIENTANDBLACKTIME
