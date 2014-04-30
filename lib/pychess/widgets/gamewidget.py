@@ -280,11 +280,23 @@ class GameWidget (gobject.GObject):
             self.clock.update(wmovecount, bmovecount)
         
     def game_started (self, gamemodel):
+        if self.gamemodel.isLocalGame():
+            self.menuitems["abort"].label = _("Abort")
         self._update_menu_abort()
         self._update_menu_adjourn()
         self._update_menu_draw()
+        if self.gamemodel.isLocalGame():
+            self.menuitems["pause1"].label = _("Pause")
+            self.menuitems["resume1"].label = _("Resume")
+        else:
+            self.menuitems["pause1"].label = _("Offer Pause")
+            self.menuitems["resume1"].label = _("Offer Resume")
         self._update_menu_pause_and_resume()
         self._update_menu_resign()
+        if self.gamemodel.isLocalGame():
+            self.menuitems["undo1"].label = _("Undo")
+        else:
+            self.menuitems["undo1"].label = _("Offer Undo")
         self._update_menu_undo()
         self._update_menu_ask_to_move()
 
