@@ -157,6 +157,7 @@ class BoardControl (gtk.EventBox):
             self.view.active = None
             self.view.hover = None
             self.view.draggedPiece = None
+            self.view.setPremove(None, None, None, None)
             self.view.startAnimation()
             self.currentState = self.lockedNormalState
         finally:
@@ -169,6 +170,7 @@ class BoardControl (gtk.EventBox):
             self.view.active = None
             self.view.hover = None
             self.view.draggedPiece = None
+            self.view.setPremove(None, None, None, None)
             self.view.startAnimation()
             self.currentState = self.normalState
         finally:
