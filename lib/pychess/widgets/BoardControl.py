@@ -501,14 +501,12 @@ class ActiveState (BoardState):
         self.parent.selected_last = self.view.selected
     
     def motion (self, x, y):
-        if not self.getBoard()[self.view.active]:
-            return
-
         BoardState.motion(self, x, y)
         fcord = self.view.active
+        if not fcord:
+            return
         piece = self.getBoard()[fcord]
-        
-        if piece.color != self.getBoard().color:
+        if not piece or piece.color != self.getBoard().color:
             return
         
         xc, yc, square, s = self.view.square
@@ -664,9 +662,7 @@ class LockedActiveState (LockedBoardState):
         if not fcord:
             return
         piece = self.getBoard()[fcord]
-        if not piece:
-            return
-        if piece.color == self.getBoard().color:
+        if not piece or piece.color == self.getBoard().color:
             return
         
         xc, yc, square, s = self.view.square
