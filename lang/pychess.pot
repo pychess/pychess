@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-30 17:49+0200\n"
+"POT-Creation-Date: 2014-04-30 18:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: glade/analyze_game.glade:22
-msgid "Ananlyze game"
+msgid "Analyze game"
 msgstr ""
 
 #: glade/analyze_game.glade:89
@@ -30,14 +30,23 @@ msgid "Maximum analysis time in seconds:"
 msgstr ""
 
 #: glade/analyze_game.glade:168
-msgid "Create variation thresold in centipawns:"
+msgid "Variation annotation creation thresold in centipawns:"
 msgstr ""
 
-#: glade/analyze_game.glade:204 glade/PyChess.glade:1231
+#: glade/analyze_game.glade:169
+msgid ""
+"If the analyzer finds a move where the evaluation difference (the difference "
+"between the evaluation for the move it thinks is the best move and the "
+"evaluation for the move made in the game) exceeds this value, it will add an "
+"annotation for that move (consisting of the engine's Principal Variation for "
+"the move) to the Annotation panel"
+msgstr ""
+
+#: glade/analyze_game.glade:205 glade/PyChess.glade:1231
 msgid "Colorize analyzed moves"
 msgstr ""
 
-#: glade/analyze_game.glade:219 glade/PyChess.glade:1263
+#: glade/analyze_game.glade:220 glade/PyChess.glade:1263
 msgid "Show evaluation values"
 msgstr ""
 
@@ -679,7 +688,7 @@ msgid "If set, the elapsed time that a player used for the move is shown."
 msgstr ""
 
 #: glade/PyChess.glade:1268
-msgid "If set, the hint analyzer engine avaluation value is shown."
+msgid "If set, the hint analyzer engine evaluation value is shown."
 msgstr ""
 
 #: glade/PyChess.glade:1292
