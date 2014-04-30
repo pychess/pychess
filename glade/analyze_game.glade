@@ -19,7 +19,7 @@
   <object class="GtkDialog" id="analyze_game">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Ananlyze game</property>
+    <property name="title" translatable="yes">Analyze game</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
@@ -165,7 +165,8 @@
                       <object class="GtkLabel" id="label2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Create variation thresold in centipawns:</property>
+                        <property name="label" translatable="yes">Variation annotation creation thresold in centipawns:</property>
+                        <property name="tooltip_text" translatable="yes">If the analyzer finds a move where the evaluation difference (the difference between the evaluation for the move it thinks is the best move and the evaluation for the move made in the game) exceeds this value, it will add an annotation for that move (consisting of the engine's Principal Variation for the move) to the Annotation panel</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
