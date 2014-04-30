@@ -125,6 +125,16 @@ class EmittingTestCase(unittest.TestCase):
         self.assertNotEqual(self.args, None,
             "no \'%s\' property change notification for %s" % (prop, repr(obj)))
         self.assertEqual(self.prop_value, expectedResults)
+
+    def runAndAssertEqualPropValue(self, signal, lines, prop, expectedResult):
+        self.prop_value = None
+        def handler(manager, arg):
+            self.prop_value = getattr(arg, prop)
+        self.manager.connect(signal, handler)
+        random.shuffle(self.connection.client.predictions)
+        self.connection.process_lines(lines)
+        self.assertNotEqual(self.prop_value, None, "%s signal wasn't sent" % signal)
+        self.assertEqual(self.prop_value, expectedResult)
         
 ###############################################################################
 # AdjournManager
@@ -516,6 +526,11 @@ class GamesTests(EmittingTestCase):
         game = self.connection.games[game]
         self.runAndAssertEqualsNotify(game, 'private', lines, True)
 
+    def test2 (self):
+        """ Make sure the correct draw reason was caught """
+        lines = ["{Game 117 (Hevonen vs. narutochess) Hevonen ran out of time and narutochess has no material to mate} 1/2-1/2"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_BLACKINSUFFICIENTANDWHITETIME)
+
 class HelperManagerTests(EmittingTestCase):
     def setUp (self):
         EmittingTestCase.setUp(self)
@@ -528,7 +543,7 @@ class HelperManagerTests(EmittingTestCase):
         player = self.connection.players.get(FICSPlayer('Artmachine'))
         self.runAndAssertEqualsNotify(player.ratings[TYPE_BLITZ], 'elo', lines,
                                       819)
-        
+
 class OfferManagerTests(EmittingTestCase):
     
     def setUp (self):
