@@ -129,6 +129,8 @@ class PyDockTop (TopDock):
             else:
                 childElement = document.createElement("h")
                 size = float(component.get_allocation().width)
+#             if component.getPosition() in (NORTH, SOUTH):
+#                 print "saving v position as %s out of %s (%s)" % (str(pos), str(size), str(pos/max(size,pos)))
             childElement.setAttribute("pos", str(pos/max(size,pos)))
             self.__addToXML(component.getComponents()[0], childElement, document)
             self.__addToXML(component.getComponents()[1], childElement, document)
@@ -167,14 +169,18 @@ class PyDockTop (TopDock):
                 new = PyDockComposite(EAST)
             else: new = PyDockComposite(SOUTH)
             new.initChildren(self.__createWidgetFromXML(child1, idToWidget),
-                             self.__createWidgetFromXML(child2, idToWidget))
+                             self.__createWidgetFromXML(child2, idToWidget),
+                             preserve_dimensions=True)
             def cb (widget, event, pos):
                 allocation = widget.get_allocation()
                 if parentElement.tagName == "h":
                     widget.set_position(int(allocation.width * pos))
-                else: widget.set_position(int(allocation.height * pos))
+                else:
+#                     print "loading v position as %s out of %s (%s)" % \
+#                     (int(allocation.height * pos), str(allocation.height), str(pos))
+                    widget.set_position(int(allocation.height * pos))
                 widget.disconnect(conid)
-            conid = new.paned.connect("expose-event", cb,
+            conid = new.paned.connect("size-allocate", cb,
                                       float(parentElement.getAttribute("pos")))
             return new
         

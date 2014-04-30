@@ -1,5 +1,4 @@
 import sys
-
 import gtk
 
 from __init__ import DockComposite
@@ -56,7 +55,7 @@ class PyDockComposite (gtk.Alignment, DockComposite):
     def getComponents (self):
         return self.paned.get_children()
     
-    def initChildren (self, old, new):
+    def initChildren (self, old, new, preserve_dimensions=False):
         if self.position == NORTH or self.position == WEST:
             self.paned.pack1(new, resize=False, shrink=False)
             self.paned.pack2(old, resize=False, shrink=False)
@@ -67,6 +66,7 @@ class PyDockComposite (gtk.Alignment, DockComposite):
         new.show()
         def cb (widget, allocation):
             if allocation.height != 1:
+#                 print "initChildren.cb: resetting"
                 if self.position == NORTH:
                     pos = 0.381966011 * allocation.height
                 elif self.position == SOUTH:
@@ -77,7 +77,8 @@ class PyDockComposite (gtk.Alignment, DockComposite):
                     pos = 0.618033989 * allocation.width
                 widget.set_position(int(pos+.5))
                 widget.disconnect(conid)
-        conid = self.paned.connect("size-allocate", cb)
+        if not preserve_dimensions:
+            conid = self.paned.connect("size-allocate", cb)
     
     def getPosition (self):
         return self.position
