@@ -528,8 +528,23 @@ class GamesTests(EmittingTestCase):
 
     def test2 (self):
         """ Make sure the correct draw reason was caught """
+        lines = ["{Game 117 (Hevonen vs. narutochess) narutochess ran out of time and Hevonen has no material to mate} 1/2-1/2"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_WHITEINSUFFICIENTANDBLACKTIME)
+
+    def test3 (self):
+        """ Make sure the correct draw reason was caught """
         lines = ["{Game 117 (Hevonen vs. narutochess) Hevonen ran out of time and narutochess has no material to mate} 1/2-1/2"]
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_BLACKINSUFFICIENTANDWHITETIME)
+
+    def test4 (self):
+        """ Make sure the correct draw reason was caught """
+        lines = ["{Game 117 (GuestBKKF vs. GuestTSNL) GuestBKKF ran out of time and GuestTSNL has no material to mate} 1/2-1/2"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_BLACKINSUFFICIENTANDWHITETIME)
+
+    def test5 (self):
+        """ Make sure the correct draw reason was caught """
+        lines = ["{Game 117 (GuestBKKF vs. GuestTSNL) GuestTSNL ran out of time and GuestBKKF has no material to mate} 1/2-1/2"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_WHITEINSUFFICIENTANDBLACKTIME)
 
 class HelperManagerTests(EmittingTestCase):
     def setUp (self):
