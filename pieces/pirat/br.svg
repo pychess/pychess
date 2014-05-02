@@ -51,7 +51,7 @@
      transform="matrix(1 0 0 -1 0 800)"
      id="g4">
     <path
-       fill="currentColor"
+       fill="#000000"
        d="M814 185l-137 160v233l88 71v167h-122v-57h-68v57h-122v-57h-68v57h-122v-165l90 -73v-233l-139 -160v-109h600v109zM385 551v27h258v-27h-258zM784 187v-33h-535v33h535z"
        id="path6" />
   </g>
