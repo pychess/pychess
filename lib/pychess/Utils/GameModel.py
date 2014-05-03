@@ -200,7 +200,9 @@ class GameModel (GObject, PooledThread):
             self.connections[player].append(player.connect("accept", self.acceptRecieved))
         self.tags["White"] = str(self.players[WHITE])
         self.tags["Black"] = str(self.players[BLACK])
+        log.debug("GameModel.setPlayers: -> emit players_changed")
         self.emit("players_changed")
+        log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
     
     def color (self, player):
