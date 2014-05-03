@@ -114,9 +114,7 @@ class ICLounge (GObject):
             CreatedBoards(self.widgets, self.connection)
         )
         
-        self.connection.lounge_loaded_condition.acquire()
-        self.connection.lounge_loaded_condition.notify()
-        self.connection.lounge_loaded_condition.release()
+        self.connection.lounge_loaded.set()
         
     @glock.glocked
     def on_news_item (self, nm, news):            
