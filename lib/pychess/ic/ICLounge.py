@@ -46,6 +46,7 @@ class ICLounge (GObject):
     }
     
     def __init__ (self, connection, helperconn, host):
+        log.debug("ICLounge.__init__: starting")
         GObject.__init__(self)
         self.connection = connection
         self.helperconn = helperconn
@@ -115,6 +116,7 @@ class ICLounge (GObject):
         )
         
         self.connection.lounge_loaded.set()
+        log.debug("ICLounge.__init__: finished")
         
     @glock.glocked
     def on_news_item (self, nm, news):            
