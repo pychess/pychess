@@ -5,7 +5,7 @@ import time
 import threading
 from gobject import GObject, SIGNAL_RUN_FIRST
 from collections import defaultdict
-from threading import Condition
+from threading import Event
 
 import pychess
 from pychess.System.Log import log
@@ -130,7 +130,7 @@ class FICSConnection (Connection):
         self.notify_users = []
         
         if self.conn is None:
-            self.lounge_loaded_condition = Condition()
+            self.lounge_loaded = Event()
             self.players = FICSPlayers(self)
             self.games = FICSGames(self)
             self.seeks = FICSSeeks(self)
@@ -212,9 +212,7 @@ class FICSConnection (Connection):
             
             # The helper just wants only player and game notifications
             if self.conn:
-                self.conn.lounge_loaded_condition.acquire()
-                self.conn.lounge_loaded_condition.wait()
-                self.conn.lounge_loaded_condition.release()
+                self.conn.lounge_loaded.wait()
                 
                 # set open 1 is a requirement for availinfo notifications
                 self.client.run_command("set open 1")
