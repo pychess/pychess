@@ -46,7 +46,10 @@ def getOpenings (board):
         while lo < hi:
             mid = (lo + hi) / 2
             bookFile.seek(mid * 16)
-            entry = BookEntry._make(entrystruct.unpack(bookFile.read(entrysize)))
+            entry = bookFile.read(entrysize)
+            if len(entry) != entrysize:
+                return openings
+            entry = BookEntry._make(entrystruct.unpack(entry))
             if entry.key < key:
                 lo = mid + 1
             else:
@@ -54,7 +57,10 @@ def getOpenings (board):
 
         bookFile.seek(lo * 16)
         while True:
-            entry = BookEntry._make(entrystruct.unpack(bookFile.read(entrysize)))
+            entry = bookFile.read(entrysize)
+            if len(entry) != entrysize:
+                return openings
+            entry = BookEntry._make(entrystruct.unpack(entry))
             if entry.key != key:
                 break
             mv = parsePolyglot(board, entry.move)
