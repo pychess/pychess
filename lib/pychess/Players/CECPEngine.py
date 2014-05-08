@@ -564,28 +564,21 @@ class CECPEngine (ProtocolEngine):
         
         if gamemodel.curplayer != self and moves % 2 == 1:
             # Interrupt if we were searching, but should no longer do so
-            print 'self.returnQueue.put("int")'
             self.returnQueue.put("int")
-        print "self.__tellEngineToStopPlayingCurrentColor()"
-        print self.board
+        
         self.__tellEngineToStopPlayingCurrentColor()
-        if 0: #self.board and gamemodel.status in UNFINISHED_STATES:
+        if self.board and gamemodel.status in UNFINISHED_STATES:
             log.debug("playerUndoMoves: self.__tellEngineToMoveNow(), self._blockTillMove()")
-            print "self.__tellEngineToMoveNow()"
             self.__tellEngineToMoveNow()
-            print "self._blockTillMove()"
             self._blockTillMove()
         
         for i in xrange(moves):
-            print 'print >> self.engine, "undo"'
             print >> self.engine, "undo"
         
         if gamemodel.curplayer == self:
             self.board = gamemodel.boards[-1]
-            print "self.__tellEngineToPlayCurrentColorAndMakeMove()"
             self.__tellEngineToPlayCurrentColorAndMakeMove()
         else:
-            print "self.board = None"
             self.board = None
     
     #===========================================================================
