@@ -13,6 +13,7 @@ from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ThreadPool import PooledThread
+from pychess.System.Log import log
 
 
 __title__ = _("Hints")
@@ -24,7 +25,7 @@ __desc__ = _("The hint panel will provide computer advice during each stage of t
 __about__ = _("Official PyChess panel.")
 
 
-class Advisor:
+class Advisor (object):
     def __init__ (self, store, name, mode):
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
@@ -48,6 +49,9 @@ class Advisor:
     
     def shown_changed (self, boardview, shown):
         """ Update the suggestions to match a changed position. """
+        pass
+
+    def gamewidget_closed (self, gamewidget):
         pass
     
     def child_tooltip (self, i):
@@ -278,15 +282,18 @@ class EndgameAdvisor(Advisor, PooledThread):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.egtb.connect("scored", self.on_scored)
-
         self.queue = Queue()
         self.start()
         
-    def run(self):
+    class StopNow (Exception): pass
+
+    def run (self):
         while True:
-            lboard = self.queue.get()
-            if lboard == self.board.board:
-                self.egtb.scoreAllMoves(lboard)
+            v = self.queue.get()
+            if v == self.StopNow:
+                break
+            elif v == self.board.board:
+                self.egtb.scoreAllMoves(v)
             self.queue.task_done()
 
     def shown_changed (self, boardview, shown):
@@ -297,6 +304,12 @@ class EndgameAdvisor(Advisor, PooledThread):
         self.parent = self.empty_parent()
         self.board = m.getBoardAtPly(shown, boardview.shownVariationIdx)
         self.queue.put(self.board.board)
+
+    def gamewidget_closed (self, gamewidget):
+        try:
+            self.queue.put_nowait(self.StopNow)
+        except Queue.Full:
+            log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
     def on_scored(self, w, ret):
         m = self.boardview.model
@@ -320,7 +333,7 @@ class EndgameAdvisor(Advisor, PooledThread):
             self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
         self.tv.expand_row(self.path, False)
 
-class Sidepanel:
+class Sidepanel (object):
     def load (self, gmwidg):
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
@@ -441,8 +454,10 @@ class Sidepanel:
         if conf.get("opening_check", 0):
             self.advisors.append(OpeningAdvisor(self.store, self.tv))
         if conf.get("endgame_check", 0):
-            self.advisors.append(EndgameAdvisor(self.store, self.tv, self.boardview))
-
+            advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
+            self.advisors.append(advisor)
+            gmwidg.connect("closed", advisor.gamewidget_closed)
+            
         gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
         gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
         gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused)
@@ -475,9 +490,11 @@ class Sidepanel:
                 advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shown_changed(self.boardview, self.boardview.shown)
+                gmwidg.connect("closed", advisor.gamewidget_closed)
             else:
                 for advisor in self.advisors:
                     if advisor.mode == ENDGAME:
+                        advisor.gamewidget_closed(gmwidg)
                         parent = advisor.empty_parent()
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
@@ -532,7 +549,7 @@ class Sidepanel:
         self.tv.expand_all()
         
         if self.sw.get_child() != self.tv:
-            print "???"
+            log.warning("bookPanel.Sidepanel.shown_changed: get_child() != tv")
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
 
