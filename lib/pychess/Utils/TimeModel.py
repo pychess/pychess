@@ -47,8 +47,9 @@ class TimeModel (GObject):
         self.heap = []
     
     def __repr__ (self):
-        s = "<TimeModel object at %s (White: %s Black: %s)>" % \
-            (id(self), str(self.getPlayerTime(WHITE)), str(self.getPlayerTime(BLACK)))
+        s = "<TimeModel object at %s (White: %s Black: %s ended=%s)>" % \
+            (id(self), str(self.getPlayerTime(WHITE)),
+             str(self.getPlayerTime(BLACK)), self.ended)
         return s
     
     def __zerolistener(self, *args):
@@ -127,6 +128,7 @@ class TimeModel (GObject):
         self.emit("time_changed")
     
     def end (self):
+        log.debug("TimeModel.end: self=%s" % self)
         self.pause()
         self.ended = True
     
