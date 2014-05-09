@@ -111,7 +111,7 @@ class ThreadPool:
                         self.queue.put(self)
                     
                     self.wcond.acquire()
-                    self.wcond.wait()
+                    self.wcond.wait()    # wait for work
                     self.wcond.release()
             except:
                 #self.threads -= 1
