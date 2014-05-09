@@ -727,7 +727,8 @@ class GameModel (GObject, PooledThread):
         self.emit("game_terminated")
     
     def terminate (self):
-        
+        log.debug("GameModel.terminate: %s" % repr(self))
+
         if self.status != KILLED:
             #self.resume()
             for player in self.players:
@@ -737,7 +738,9 @@ class GameModel (GObject, PooledThread):
                 spectator.end(self.status, self.reason)
             
             if self.timed:
+                log.debug("GameModel.terminate: -> timemodel.end()")
                 self.timemodel.end()
+                log.debug("GameModel.terminate: <- timemodel.end() %s" % repr(self.timemodel))
         
         self.emit("game_terminated")
     
