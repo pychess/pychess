@@ -11,11 +11,14 @@ def repeat (func, *args, **kwargs):
     pool.start(run, func)
 
 def repeat_sleep (func, sleeptime, recur=False):
-    """ Runs func in a threadpool, and repeats it approximately each sleeptime [s].
-        Notice that we sleep first, then run. Not the other way around.
-        If repeat_sleep is called with recur=True, each call will be called with
-        the return value of last call as argument. The argument has to be
-        optional, as it wont be used first time, and it has to be non None. """
+    """
+    Runs func in a threadpool, and repeats it approximately each sleeptime [s]
+    until func returns False. Notice that we sleep first, then run. Not the
+    other way around. If repeat_sleep is called with recur=True, each call
+    will be called with the return value of last call as argument. The
+    argument has to be optional, as it wont be used first time, and it has
+    to be non-None.
+    """
     def run ():
         last = time.time()
         val = None
