@@ -53,6 +53,9 @@ class TimeModel (GObject):
         return s
     
     def __zerolistener(self, *args):
+        if self.ended:
+            return False
+        
         # If we are called by a sleeper (rather than a signal) we need to pop
         # at least one time, as we might otherwise end up with items in the
         # heap, but no sleepers.
