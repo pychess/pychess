@@ -4,11 +4,16 @@ if __name__ == "__main__":
     print "feature done=0"
 
 import gettext
-import pychess
+import os
 import random
 import sys
 from time import time
 
+this_dir = os.path.dirname(os.path.abspath(__file__))
+if os.path.join(this_dir, "../..") not in sys.path:
+    sys.path = [os.path.join(this_dir, "../..")] + sys.path
+
+import pychess
 from pychess.Utils import const
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
