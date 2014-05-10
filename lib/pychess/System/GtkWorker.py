@@ -30,6 +30,7 @@ class Publisher (PooledThread):
             v = self.queue.get()
             if v == self.StopNow:
                 break
+            
             glock.acquire()
             try:
                 l = [v]
@@ -49,6 +50,9 @@ class Publisher (PooledThread):
                     self.func(l[-1])
             finally:
                 glock.release()
+
+            if v == self.StopNow:
+                break
     
     def put (self, task):
         self.queue.put(task)
