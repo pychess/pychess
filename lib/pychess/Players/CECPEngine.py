@@ -567,10 +567,6 @@ class CECPEngine (ProtocolEngine):
             self.returnQueue.put("int")
         
         self.__tellEngineToStopPlayingCurrentColor()
-        if self.board and gamemodel.status in UNFINISHED_STATES:
-            log.debug("playerUndoMoves: self.__tellEngineToMoveNow(), self._blockTillMove()")
-            self.__tellEngineToMoveNow()
-            self._blockTillMove()
         
         for i in xrange(moves):
             print >> self.engine, "undo"
