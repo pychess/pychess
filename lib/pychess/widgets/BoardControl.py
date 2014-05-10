@@ -158,10 +158,11 @@ class BoardControl (gtk.EventBox):
             self.view.hover = None
             self.view.draggedPiece = None
             self.view.setPremove(None, None, None, None)
-            self.view.startAnimation()
             self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
+
+        self.view.startAnimation()
     
     def game_ended (self, gamemodel, reason):
         self.stateLock.acquire()
@@ -171,10 +172,11 @@ class BoardControl (gtk.EventBox):
             self.view.hover = None
             self.view.draggedPiece = None
             self.view.setPremove(None, None, None, None)
-            self.view.startAnimation()
             self.currentState = self.normalState
         finally:
             self.stateLock.release()
+
+        self.view.startAnimation()
 
     def getBoard (self):
         return self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
@@ -183,15 +185,18 @@ class BoardControl (gtk.EventBox):
         return board == self.view.model.boards[-1]
     
     def setLocked (self, locked):
+        do_animation = False
+        
         self.stateLock.acquire()
         try:
-            if locked and self.isLastPlayed(self.getBoard()) and self.view.model.status == RUNNING:
+            if locked and self.isLastPlayed(self.getBoard()) and \
+                    self.view.model.status == RUNNING:
                 if self.view.model.status != RUNNING:
                     self.view.selected = None
                     self.view.active = None
                     self.view.hover = None
                     self.view.draggedPiece = None
-                    self.view.startAnimation()
+                    do_animation = True
 
                 if self.currentState == self.selectedState:
                     self.currentState = self.lockedSelectedState
@@ -208,7 +213,10 @@ class BoardControl (gtk.EventBox):
                     self.currentState = self.normalState
         finally:
             self.stateLock.release()
-    
+        
+        if do_animation:
+            self.view.startAnimation()
+
     def setStateSelected (self):
         self.stateLock.acquire()
         try:
