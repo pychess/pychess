@@ -347,8 +347,9 @@ class PyChessCECP(PyChess):
     
     def __go (self):
         def ondone (result):
-            self.board.applyMove(parseSAN(self.board,result))
-            print "move %s" % result
+            if not self.forced:
+                self.board.applyMove(parseSAN(self.board,result))
+                print "move %s" % result
             # TODO: start pondering, if enabled
         self.thread = threading.Thread(target=PyChess._PyChess__go, args=(self,ondone))
         self.thread.start()
