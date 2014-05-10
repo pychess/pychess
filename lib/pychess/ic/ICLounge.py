@@ -377,7 +377,8 @@ class ParrentListSection (Section):
             for task in queuedCalls:
                 func = task[0]
                 func(*task[1:])
-        self.listPublisher = Publisher(updateLists, Publisher.SEND_LIST)
+        self.listPublisher = Publisher(updateLists, self.__init__,
+                                       Publisher.SEND_LIST)
         self.listPublisher.start()
     
     def __del__ (self):

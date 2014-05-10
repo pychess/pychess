@@ -1,9 +1,8 @@
 """ This is a pool for reusing threads """
 
+import inspect
 from threading import Thread, Condition, Lock
 import Queue
-import inspect
-import os
 import sys
 import threading
 import traceback
@@ -31,7 +30,19 @@ class ThreadPool:
         self.lock = Lock()
         self.threads = 0
     
-    def start (self, func, *args, **kw):
+    def _get_thread_name (self, thread_name_obj):
+        if isinstance(thread_name_obj, str):
+            return thread_name_obj
+        
+        lineno = inspect.getsourcelines(thread_name_obj)[1]
+        if hasattr(thread_name_obj, 'im_class'):
+            func_parent = thread_name_obj.im_class.__name__
+        else:
+            func_parent = thread_name_obj.__module__.split('.')[-1]
+        return ':'.join(('.'.join((func_parent, thread_name_obj.__name__)),
+                         str(lineno)))
+    
+    def start (self, func, thread_name_obj, *args, **kw):
         self.lock.acquire()
         
         try:
@@ -49,42 +60,13 @@ class ThreadPool:
                 a = self.queue.get()
         
         a.func = lambda: func(*args, **kw)
-        a.name = self._getThreadName(a, func)
+        a.name = self._get_thread_name(thread_name_obj)
         
         a.wcond.acquire()
         a.wcond.notify()
         a.wcond.release()
         
         self.lock.release()
-        
-    def _getThreadName (self, thread, func):
-        try:
-            framerecord = inspect.stack()[2]
-        except TypeError:
-            return ""
-#        d = os.path.basename(os.path.dirname(framerecord[1]))
-        f = os.path.basename(framerecord[1])
-#        f = os.sep.join((d, f))
-        caller = ":".join([str(v) for v in (f,) + framerecord[2:4]])
-        module = inspect.getmodule(func)
-        lineno = inspect.getsourcelines(func)[1]
-        callee = ":".join((module.__name__, str(lineno), func.__name__))
-        import GtkWorker
-        if module is GtkWorker or "repeat" in str(module):
-            framerecord = inspect.stack()[3]
-#            d = os.path.basename(os.path.dirname(framerecord[1]))
-            f = os.path.basename(framerecord[1])
-#            f = os.sep.join((d, f))
-            callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
-
-            framerecord = inspect.stack()[4]
-            f = os.path.basename(framerecord[1])
-            callee += " -- " + ":".join([str(v) for v in (f,) + framerecord[2:4]])
-
-        s = caller + " -- " + callee
-        for repl in ("pychess.", "System.", "Players."):
-            s = s.replace(repl, "")
-        return s
     
     class Worker (threading.Thread):
         def __init__ (self, queue):
@@ -142,8 +124,23 @@ class ThreadPool:
 pool = ThreadPool()
 
 class PooledThread (object):
+    def __init__ (self, thread_name_obj=None):
+        if thread_name_obj:
+            self.thread_name_obj = thread_name_obj
+        else:
+            self.thread_name_obj = self.run
+        
+        try:
+            s = str(self.thread_naming_obj)
+        except AttributeError:
+            pass
+        else:
+            # lambda's can make debugging difficult so please don't use them!
+            if 'lambda' in s:
+                print "PooledThread.__init__\n%s" % "".join(traceback.format_stack())
+    
     def start (self):
-        pool.start(self.run)
+        pool.start(self.run, self.thread_name_obj)
     
     def run (self):
         pass

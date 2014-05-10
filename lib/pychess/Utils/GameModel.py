@@ -45,7 +45,7 @@ def undolocked (f):
 
 def inthread (f):
     def newFunction(*args, **kw):
-        pool.start(f, *args, **kw)
+        pool.start(f, f, *args, **kw)
     return newFunction
 
 class GameModel (GObject, PooledThread):
@@ -107,7 +107,7 @@ class GameModel (GObject, PooledThread):
     
     def __init__ (self, timemodel=None, variant=NormalChess):
         GObject.__init__(self)
-
+        PooledThread.__init__(self)
         self.variant = variant
         self.boards = [variant.board(setup=True)]
         
