@@ -8,7 +8,7 @@ def repeat (func, *args, **kwargs):
     def run ():
         while func(*args, **kwargs):
             pass
-    pool.start(run)
+    pool.start(run, func)
 
 def repeat_sleep (func, sleeptime, recur=False):
     """ Runs func in a threadpool, and repeats it approximately each sleeptime [s].
@@ -30,4 +30,4 @@ def repeat_sleep (func, sleeptime, recur=False):
                 val = func(val)
             else: val = func()
             if not val: break
-    pool.start(run)
+    pool.start(run, func)

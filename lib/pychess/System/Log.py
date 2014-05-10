@@ -3,28 +3,16 @@ import sys
 import time
 import logging
 
-from prefix import getUserDataPrefix, addUserDataPrefix
+from prefix import addUserDataPrefix
 
-oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
-MAXFILES = 50
-if len(oldlogs) >= MAXFILES:
-    oldlogs.sort()
-    try:
-        os.remove(addUserDataPrefix(oldlogs[0]))
-    except OSError, e:
-        pass
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-
 logformat = "%(asctime)s %(task)s %(levelname)s: %(message)s"
-
 logging.basicConfig(filename=addUserDataPrefix(newName), format=logformat, datefmt='%H:%M:%S')
-
 
 class ExtraAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         kwargs["extra"] = kwargs.get("extra", {"task": "Default"})
         return msg, kwargs
-
 
 class LogEmitter():
     messages = []
@@ -32,7 +20,6 @@ class LogEmitter():
         return
 
 logemitter = LogEmitter()
-
 
 def set_gui_log_emitter():
     global logemitter
@@ -52,7 +39,8 @@ def set_gui_log_emitter():
             # appending data to it. Ugly? Somewhat I guess.
             self.messages = []
 
-            self.publisher = EmitPublisher (self, "logged", Publisher.SEND_LIST)
+            self.publisher = EmitPublisher (self, "logged",
+                'LogEmitter.publisher.emit', Publisher.SEND_LIST)
             self.publisher.start()
 
     class GLogHandler(logging.Handler):

@@ -269,6 +269,7 @@ class EngineAdvisor(Advisor):
 
 class EndgameAdvisor(Advisor, PooledThread):
     def __init__ (self, store, tv, boardview):
+        PooledThread.__init__(self)
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         self.tv = tv

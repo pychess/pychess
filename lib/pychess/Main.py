@@ -18,6 +18,7 @@ from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
 from pychess.System.debug import start_thread_dump
+from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
@@ -455,11 +456,20 @@ class PyChess:
                 newGameDialog.LoadFileExtension.run(chess_file)
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
-def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, ics_port):
+def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
+         ics_host, ics_port):
     # Start logging
     log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
     if log_viewer:
         Log.set_gui_log_emitter()
+    oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
+    conf.set("max_log_files", conf.get("max_log_files", 10))
+    if len(oldlogs) >= conf.get("max_log_files", 10):
+        oldlogs.sort()
+        try:
+            os.remove(addUserDataPrefix(oldlogs[0]))
+        except OSError, e:
+            pass
 
     pychess = PyChess(log_viewer, chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
@@ -468,10 +478,10 @@ def run (no_debug, glock_debug, thread_debug, log_viewer, chess_file, ics_host, 
     atexit.register(cleanup)
     gtk.gdk.threads_init()
     
-    glock.debug = glock_debug
+    glock.debug = not no_glock_debug
     log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     log.info("Command line args: '%s'" % chess_file)
-    if thread_debug:
+    if not no_thread_debug:
         start_thread_dump()
 
     if ics_host:
