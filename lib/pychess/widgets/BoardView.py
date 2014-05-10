@@ -1,21 +1,18 @@
 # -*- coding: UTF-8 -*-
 
-import sys
 from math import floor, ceil, pi
-from time import time, sleep
+from time import time
 from threading import Lock, RLock
 
-import gtk, gtk.gdk, cairo
+import gtk.gdk, cairo
 from gobject import *
 import pango
 
-from pychess.System import glock, conf, gstreamer
+from pychess.System import glock, conf
 from pychess.System.glock import glock_connect, glock_connect_after
-from pychess.System.repeat import repeat, repeat_sleep
+from pychess.System.repeat import repeat
 from pychess.gfx import Pieces
-from pychess.Utils.Piece import Piece
 from pychess.Utils.Cord import Cord
-from pychess.Utils.Move import Move
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
