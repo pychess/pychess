@@ -29,8 +29,10 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
          An int of the game in file you want to load,
          The position from where to start the game) """
     log.debug("ionest.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
-    worker = GtkWorker (lambda w:
-            workfunc(w, gamemodel, player0tup, player1tup, loaddata))
+    
+    def work (w): 
+        return workfunc(w, gamemodel, player0tup, player1tup, loaddata)
+    worker = GtkWorker(work)
 
     def onPublished (worker, vallist):
         for val in vallist:

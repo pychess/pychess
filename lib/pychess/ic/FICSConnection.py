@@ -48,7 +48,7 @@ class Connection (GObject, PooledThread):
     
     def __init__ (self, host, ports, username, password):
         GObject.__init__(self)
-        
+        PooledThread.__init__(self)
         self.host = host
         self.ports = ports
         self.username = username
@@ -135,7 +135,7 @@ class FICSConnection (Connection):
             self.games = FICSGames(self)
             self.seeks = FICSSeeks(self)
             self.challenges = FICSChallenges(self)
-            
+        
     def _connect (self):
         self.connecting = True
         self.emit("connecting")

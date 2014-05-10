@@ -438,7 +438,7 @@ def cacheGladefile(filename):
             builder.set_translation_domain("pychess")
             builder.add_from_file(addDataPrefix("glade/%s" % filename))
             cachedGlades[filename].put(builder)
-        pool.start(readit)
+        pool.start(readit, readit)
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function

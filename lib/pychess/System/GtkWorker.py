@@ -19,9 +19,9 @@ class Publisher (PooledThread):
     
     SEND_LIST, SEND_LAST = range(2)
     
-    def __init__ (self, func, sendPolicy):
+    def __init__ (self, func, thread_name_obj, sendPolicy):
+        PooledThread.__init__(self, thread_name_obj=thread_name_obj)
         self.queue = Queue.Queue()
-        
         self.func = func
         self.sendPolicy = sendPolicy
     
@@ -61,8 +61,9 @@ class Publisher (PooledThread):
 class EmitPublisher (Publisher):
     """ EmitPublisher is a version of Publisher made for the common task of
         emitting a signal after waiting for the gdklock """
-    def __init__ (self, parrent, signal, sendPolicy):
-        Publisher.__init__(self, lambda v: parrent.emit(signal, v), sendPolicy)
+    def __init__ (self, parrent, signal, thread_name_obj, sendPolicy):
+        Publisher.__init__(self, lambda v: parrent.emit(signal, v),
+                           thread_name_obj, sendPolicy)
 
 class GtkWorker (GObject, Thread):
     
@@ -92,7 +93,8 @@ class GtkWorker (GObject, Thread):
         # Publish and progress queues                                          #
         ########################################################################
         
-        self.publisher = EmitPublisher (self, "published", Publisher.SEND_LIST)
+        self.publisher = EmitPublisher (self, "published",
+            'GtkWorker.publisher.emit', Publisher.SEND_LIST)
         self.publisher.start()
         
         #self.progressor = EmitPublisher (self, "progressed", Publisher.SEND_LAST)

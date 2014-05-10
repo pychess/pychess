@@ -67,9 +67,8 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def __init__ (self):
         GObject.__init__(self)
-        
+        PooledThread.__init__(self)
         self.engines = []
-        
         self.jsonpath = addUserConfigPrefix("engines.json")
         try:
             self._engines = json.load(open(self.jsonpath))
@@ -275,7 +274,7 @@ class EngineDiscoverer (GObject, PooledThread):
                 self.__discoverE(engine)
         else:
             self.emit("all_engines_discovered")
-            
+    
     ############################################################################
     # Interaction                                                              #
     ############################################################################

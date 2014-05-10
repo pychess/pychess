@@ -51,7 +51,8 @@ class SubProcess (gobject.GObject):
         self.env = env or os.environ
         self.buffer = ""
         
-        self.linePublisher = EmitPublisher(self, "line", EmitPublisher.SEND_LIST)
+        self.linePublisher = EmitPublisher(self, "line",
+            'SubProcess.linePublisher.emit', EmitPublisher.SEND_LIST)
         self.linePublisher.start()
         
         self.defname = os.path.split(path)[1]
@@ -173,7 +174,8 @@ class SubProcess (gobject.GObject):
     
     def gentleKill (self, first=1, second=1):
         if pool is not None:
-            pool.start(self.__gentleKill_inner, first, second)
+            pool.start(self.__gentleKill_inner, self.__gentleKill_inner,
+                       first, second)
     
     def __gentleKill_inner (self, first, second):
         self.resume()
