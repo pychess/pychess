@@ -129,6 +129,9 @@ class Sidepanel:
     def analysis_changed (self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():
             return
+        if ply-gamemodel.lowply > len(self.plot.scores)-1:
+            # analysis line of yet undone position
+            return
         color = (ply-1) % 2
         score = gamemodel.scores[ply][1]
         score = score * -1 if color==WHITE else score
