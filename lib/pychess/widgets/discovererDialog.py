@@ -30,7 +30,8 @@ class DiscovererDialog:
         glock_connect(discoverer, "engine_discovered", cls._onEngineDiscovered)
         glock_connect(discoverer, "all_engines_discovered", cls._onAllEnginesDiscovered)
         cls.finished = False
-    
+        cls.throbber = None
+        
     @classmethod
     def show (cls, discoverer, mainwindow):
         if cls.finished:
@@ -40,9 +41,9 @@ class DiscovererDialog:
         # Add throbber
         #=======================================================================
         
-        throbber = Throbber(100, 100)
-        throbber.set_size_request(100, 100)
-        cls.widgets["throbberDock"].add(throbber)
+        cls.throbber = Throbber(100, 100)
+        cls.throbber.set_size_request(100, 100)
+        cls.widgets["throbberDock"].add(cls.throbber)
         
         #=======================================================================
         # Show the window
@@ -74,4 +75,6 @@ class DiscovererDialog:
     @classmethod
     def _onAllEnginesDiscovered (cls, discoverer):
         cls.finished = True
+        if cls.throbber:
+            cls.throbber.stop()
         cls.widgets["discovererDialog"].hide()

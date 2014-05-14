@@ -27,6 +27,7 @@ class Throbber (gtk.DrawingArea):
         self.width = width
         self.height = height
         self.started = False
+        self.stopped = False
         repeat_sleep(self.redraw, 1./MAX_FPS)
     
     def __expose(self, widget, event):
@@ -47,6 +48,9 @@ class Throbber (gtk.DrawingArea):
         context.paint()
     
     def redraw (self):
+        if self.stopped:
+            return False
+        
         if self.window:
             glock.acquire()
             try:
@@ -58,7 +62,10 @@ class Throbber (gtk.DrawingArea):
                     return True
             finally:
                 glock.release()
-    
+
+    def stop (self):    
+        self.stopped = True
+        
     def __loadSvg (self, path, width, height):
         svg = rsvg.Handle(path)
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
