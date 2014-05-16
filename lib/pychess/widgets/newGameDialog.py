@@ -451,6 +451,8 @@ class EnterNotationExtension (_GameInitializationMode):
 
         cls.sourcebuffer = SourceBuffer()
         sourceview = SourceView(cls.sourcebuffer)
+        sourceview.set_tooltip_text(
+            _("Type or paste PGN game(s) or FEN positions here"))
         cls.widgets["scrolledwindow6"].add(sourceview)
         sourceview.show()
 
