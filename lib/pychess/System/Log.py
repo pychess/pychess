@@ -14,7 +14,7 @@ class ExtraAdapter(logging.LoggerAdapter):
         kwargs["extra"] = kwargs.get("extra", {"task": "Default"})
         return msg, kwargs
 
-class LogEmitter():
+class LogEmitter(object):
     messages = []
     def connect(self, signal, messages):
         return

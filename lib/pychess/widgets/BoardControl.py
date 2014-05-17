@@ -151,6 +151,7 @@ class BoardControl (gtk.EventBox):
             del self.possibleBoards[self.view.shown-2]
     
     def moves_undone (self, gamemodel, moves):
+        glock.acquire()
         self.stateLock.acquire()
         try:
             self.view.selected = None
@@ -161,10 +162,12 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
+            glock.release()
 
         self.view.startAnimation()
     
     def game_ended (self, gamemodel, reason):
+        glock.acquire()
         self.stateLock.acquire()
         try:
             self.view.selected = None
@@ -175,6 +178,7 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.normalState
         finally:
             self.stateLock.release()
+            glock.release()
 
         self.view.startAnimation()
 
@@ -187,6 +191,7 @@ class BoardControl (gtk.EventBox):
     def setLocked (self, locked):
         do_animation = False
         
+        glock.acquire()
         self.stateLock.acquire()
         try:
             if locked and self.isLastPlayed(self.getBoard()) and \
@@ -213,10 +218,12 @@ class BoardControl (gtk.EventBox):
                     self.currentState = self.normalState
         finally:
             self.stateLock.release()
+            glock.release()
         
         if do_animation:
             self.view.startAnimation()
-
+    
+    @glock.glocked
     def setStateSelected (self):
         self.stateLock.acquire()
         try:
@@ -229,6 +236,7 @@ class BoardControl (gtk.EventBox):
         finally:
             self.stateLock.release()
     
+    @glock.glocked
     def setStateActive (self):
         self.stateLock.acquire()
         try:
@@ -241,6 +249,7 @@ class BoardControl (gtk.EventBox):
         finally:
             self.stateLock.release()
     
+    @glock.glocked
     def setStateNormal (self):
         self.stateLock.acquire()
         try:
