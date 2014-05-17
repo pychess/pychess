@@ -4,7 +4,7 @@ import re
 from pychess.System.Log import log
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 
-class ConsoleHandler():
+class ConsoleHandler (object):
     def __init__ (self, callback):
         self.callback = callback
     
@@ -12,7 +12,7 @@ class ConsoleHandler():
         if line:
             self.callback(line)
 
-class Prediction:
+class Prediction (object):
     def __init__ (self, callback, *regexps):
         self.callback = callback
         self.name = callback.__name__

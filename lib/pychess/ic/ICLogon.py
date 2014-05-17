@@ -28,10 +28,13 @@ class AutoLogoutException (Exception): pass
 
 class ICLogon:
     def __init__ (self):
+        self.connection = None
+        self.lounge = None
+        self.canceled = False
+        
         self.widgets = uistuff.GladeWidgets("fics_logon.glade")
         uistuff.keepWindowSize("fics_logon", self.widgets["fics_logon"],
                                defaultPosition=uistuff.POSITION_GOLDEN)
-        
         self.widgets["fics_logon"].connect('key-press-event',
                 lambda w, e: e.keyval == gtk.keysyms.Escape and w.hide())
         
@@ -51,13 +54,8 @@ class ICLogon:
         
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
-        self.widgets["fics_logon"].connect("delete-event", self.onClose)
-        
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
-        
-        self.connection = None
-        self.lounge = None
     
     def show (self):
         self.widgets["fics_logon"].show()
@@ -92,6 +90,8 @@ class ICLogon:
         self.widgets["progressbar"].set_text(message)
     
     def onCancel (self, widget, hide):
+        self.canceled = True
+        
         if self.connection and self.connection.isConnecting():
             self._disconnect()
             self.showNormal()
@@ -99,18 +99,10 @@ class ICLogon:
             self.widgets["fics_logon"].hide()
         return True
     
-    def onClose (self, widget, event):
-        self.onCancel(widget, True)
-        return True
-    
     def onCreateNew (self, button):
         webbrowser.open("http://www.freechess.org/Register/index.html")
     
     def showError (self, connection, error):
-        # Don't bring up errors, if we have pressed "stop"
-        if self.connection != connection:
-            return True
-        
         text = str(error)
         if isinstance (error, IOError):
             title = _("Connection Error")
@@ -158,14 +150,14 @@ class ICLogon:
         content.pack_start(vbox, expand=False, fill=False, padding=7)
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
-        self._disconnect()
     
     def onConnected (self, connection):
         self.lounge = ICLounge(connection, self.helperconn, self.host)
         self.hide()
         self.lounge.show()
-        self.lounge.connect("logout", lambda iclounge: self.onDisconnected(None))
-        glock.glock_connect(self.lounge, "autoLogout", lambda iclounge: self.onAutologout(None))
+        self.lounge.connect("logout", lambda iclounge: self.onLogout(connection))
+        glock.glock_connect(self.lounge, "autoLogout",
+                            lambda iclounge: self.onAutologout(connection))
         
         self.showNormal()
         self.widgets["messagePanel"].hide()
@@ -176,19 +168,24 @@ class ICLogon:
                 connection.close()
         self.connection = None
         self.helperconn = None
-        
-    def onDisconnected (self, connection):
-        self._disconnect()
-        global dialog
-        dialog = None
-    
-    def onAutologout (self, alm):
-        self.show()
         self.lounge = None
+        
+    def onLogout (self, connection):
         self._disconnect()
-        self.showError(None, AutoLogoutException())
     
+    def onConnectionError (self, connection, error):
+        self._disconnect()
+        if not self.canceled:
+            self.showError(connection, error)
+            self.present()
+    
+    def onAutologout (self, connection, alm):
+        self._disconnect()
+        self.showError(connection, AutoLogoutException())
+        self.present()
+        
     def onConnectClicked (self, button):
+        self.canceled = False
         self.widgets["messagePanel"].hide()
         
         if self.widgets["logOnAsGuest"].get_active():
@@ -214,7 +211,7 @@ class ICLogon:
         self.helperconn.start()
 
         glock.glock_connect(self.connection, "connected", self.onConnected)
-        glock.glock_connect(self.connection, "error", self.showError)
+        glock.glock_connect(self.connection, "error", self.onConnectionError)
         glock.glock_connect(self.connection, "connectingMsg", self.showMessage)
         
         self.connection.start()

@@ -293,8 +293,7 @@ class FICSConnection (Connection):
                 while self.isConnected():
                     self.client.parse()
             except Exception, e:
-                if self.connected:
-                    self.connected = False
+                self.close()
                 for errortype in (IOError, LogOnError, EOFError,
                                   socket.error, socket.gaierror, socket.herror):
                     if isinstance(e, errortype):
@@ -308,6 +307,7 @@ class FICSConnection (Connection):
     
     def close (self):
         if self.isConnected():
+            self.connected = False
             if self.conn is None and self.lvm:
                 self.lvm.stop()
             try:
@@ -318,7 +318,6 @@ class FICSConnection (Connection):
                     if isinstance(e, errortype):
                         break
                 else: raise e
-            self.connected = False
         self.client.close()
     
     def isRegistred (self):
