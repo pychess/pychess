@@ -30,6 +30,7 @@ class ChatManager (GObject):
         'channelAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'channelRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
         'channelJoinError': (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
+        'channelsListed': (SIGNAL_RUN_FIRST, None, (object,)),
         
         'channelLog' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, str, str)),
         'toldChannel' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int)),
@@ -112,14 +113,9 @@ class ChatManager (GObject):
         
         self.connection.client.run_command("inchannel %s" % self.connection.username)
         self.connection.client.run_command("help channel_list")
-        
-        self.getChannelsLock = threading.Semaphore()
-        self.getChannelsLock.acquire()
         self.channels = {}
     
     def getChannels(self):
-        self.getChannelsLock.acquire()
-        self.getChannelsLock.release()
         return self.channels
     
     def getJoinedChannels(self):
@@ -144,8 +140,9 @@ class ChatManager (GObject):
                 self.channels.append((id, desc))
         for i in numbers:
             self.channels.append((str(i), _("Unofficial channel %d" % i)))
-        self.getChannelsLock.release()
-    
+        
+        self.emit('channelsListed', self.channels)
+        
     def getNoChannelPlayers (self, match):
         channel = match.groups()[0]
         self.emit('recievedNames', channel, [])

@@ -480,20 +480,14 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         self.playersList.connect("activated", self.onAdd)
         self.playersList.fixed_height_mode = True
         glock_connect(connection.cm, "privateMessage", self.onPersonMessage, after=True)
+        glock_connect(connection.cm, "channelsListed", self.onChannelsListed)
         expander.add(self.playersList)
+        self.channels = {}
     
     def start (self):
-        for id, name in self.connection.cm.getChannels():
-            id = self.compileId(id, TYPE_CHANNEL)
-            self.channelsList.addRow(id, str(id) + ": " + name, TYPE_CHANNEL)
-        
-        for id, name in self.connection.cm.getChannels():
-            if id in self.connection.cm.getJoinedChannels():
-                id = self.compileId(id, TYPE_CHANNEL)
-                if id.isdigit():
-                    self.onAdd(self.channelsList, id, str(id)+": "+name, TYPE_CHANNEL)
-                else:
-                    self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
+        self.channels = self.connection.cm.getChannels()
+        if self.channels:
+            self._addChannels(self.channels)
         
         for player in self.connection.players.values():
             if player.online:
@@ -510,7 +504,25 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
             self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             return False
         glock_connect(self.connection.players, "FICSPlayerExited", removePlayer)
-    
+        
+    def _addChannels (self, channels):
+        for id, name in channels:
+            id = self.compileId(id, TYPE_CHANNEL)
+            self.channelsList.addRow(id, str(id) + ": " + name, TYPE_CHANNEL)
+        
+        for id, name in channels:
+            if id in self.connection.cm.getJoinedChannels():
+                id = self.compileId(id, TYPE_CHANNEL)
+                if id.isdigit():
+                    self.onAdd(self.channelsList, id, str(id)+": "+name, TYPE_CHANNEL)
+                else:
+                    self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
+
+    def onChannelsListed (self, cm, channels):    
+        if not self.channels:
+            self.channels = channels
+            self._addChannels(channels)
+            
     def compileId (self, id, type):
         if type == TYPE_PERSONAL:
             id = "person" + id.lower()
