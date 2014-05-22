@@ -76,12 +76,14 @@ def on_gmwidg_closed (gmwidg):
     return False
 
 def on_gmwidg_title_changed (gmwidg, new_title):
+    log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
     glock.acquire()
     try:
         if gmwidg.isInFront():
             getWidgets()['window1'].set_title('%s - PyChess' % new_title)
     finally:
         glock.release()
+    log.debug("gamenanny.on_gmwidg_title_changed: returning")
     return False
 
 #===============================================================================
