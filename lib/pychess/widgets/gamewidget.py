@@ -435,7 +435,7 @@ class GameWidget (gobject.GObject):
         return t
         
     def players_changed (self, gamemodel):
-        log.debug("GameWidget.players_changed: starting")
+        log.debug("GameWidget.players_changed: starting %s" % repr(gamemodel))
         for player in gamemodel.players:
             self.name_changed(player)
             # Notice that this may connect the same player many times. In
@@ -444,13 +444,19 @@ class GameWidget (gobject.GObject):
         log.debug("GameWidget.players_changed: returning")
     
     def name_changed (self, player):
-        log.debug("GameWidget.name_changed: starting")
+        log.debug("GameWidget.name_changed: starting %s" % repr(player))
         color = self.gamemodel.color(player)
-        self.player_name_labels[color].set_text(self.player_display_text(color=color))
-        if isinstance(self.gamemodel, ICGameModel) and player.__type__ == REMOTE:
-            self.player_name_labels[color].set_tooltip_text(get_player_tooltip_text
-                (self.gamemodel.ficsplayers[color], show_status=False))
-        
+        glock.acquire()
+        try:
+            self.player_name_labels[color].set_text(
+                self.player_display_text(color=color))
+            if isinstance(self.gamemodel, ICGameModel) and \
+                    player.__type__ == REMOTE:
+                self.player_name_labels[color].set_tooltip_text(
+                    get_player_tooltip_text(self.gamemodel.ficsplayers[color],
+                                            show_status=False))
+        finally:
+            glock.release()
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
     
@@ -638,6 +644,7 @@ def splitit(widget):
 
 def delGameWidget (gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
+    log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
     gmwidg.emit("closed")
     
     called_from_preferences = False
