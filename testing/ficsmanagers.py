@@ -217,8 +217,8 @@ class AdjournManagerTests(EmittingTestCase):
         game = FICSAdjournedGame(FICSPlayer("BwanaSlei"), FICSPlayer("mgatto"),
             rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
             board=FICSBoard(300000, 300000, expectedPgn), reason=11)
-        game.wplayer.addRating(TYPE_BLITZ, 1137)
-        game.bplayer.addRating(TYPE_BLITZ, 1336)
+        game.wplayer.ratings[TYPE_BLITZ].elo = 1137
+        game.bplayer.ratings[TYPE_BLITZ].elo = 1336
         expectedResults = (game,)
         
         self.runAndAssertEquals(signal, lines, expectedResults)
@@ -249,8 +249,8 @@ class AdjournManagerTests(EmittingTestCase):
         game = FICSAdjournedGame(FICSPlayer("mgatto"), FICSPlayer("BabyLurking"),
             rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
             board=FICSBoard(294000, 300000, expectedPgn), reason=6)
-        game.wplayer.addRating(TYPE_BLITZ, 1233)
-        game.bplayer.addRating(TYPE_BLITZ, 1455)
+        game.wplayer.ratings[TYPE_BLITZ].elo = 1233
+        game.bplayer.ratings[TYPE_BLITZ].elo = 1455
         expectedResults = (game,)
         self.runAndAssertEquals(signal, lines, expectedResults)
 
@@ -267,7 +267,7 @@ class SeekManagerTests(EmittingTestCase):
     def test1 (self):
         lines = ['<s> 10 w=warbly ti=00 rt=1291  t=3 i=0 r=r tp=blitz c=? rr=1200-1400 a=t f=t']
         player = FICSPlayer('warbly')
-        player.getRating(TYPE_BLITZ).elo = 1291
+        player.ratings[TYPE_BLITZ].elo = 1291
         expectedResult = FICSSeek(10, player, 3, 0, True, None,
             GAME_TYPES["blitz"], rmin=1200, rmax=1400, formula=True)
         self.runAndAssertEquals('addSeek', lines, (expectedResult,))
@@ -275,8 +275,8 @@ class SeekManagerTests(EmittingTestCase):
     def test2 (self):
         lines = ['<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f']
         player = FICSPlayer('leaderbeans')
-        player.getRating(TYPE_BLITZ).elo = 1637
-        player.getRating(TYPE_BLITZ).deviation = DEVIATION_ESTIMATED
+        player.ratings[TYPE_BLITZ].elo = 1637
+        player.ratings[TYPE_BLITZ].deviation = DEVIATION_ESTIMATED
         player.titles |= set((TYPE_COMPUTER,))
         expectedResult = FICSSeek(124, player, 3, 0, False, 'black',
                                   GAME_TYPES["blitz"])
@@ -285,7 +285,7 @@ class SeekManagerTests(EmittingTestCase):
     def test3 (self):
         lines = ['<s> 14 w=microknight ti=00 rt=1294  t=15 i=0 r=u tp=standard c=? rr=1100-1450 a=f f=f']
         player = FICSPlayer('microknight')
-        player.getRating(TYPE_BLITZ).elo = 1294
+        player.ratings[TYPE_BLITZ].elo = 1294
         expectedResult = FICSSeek(14, player, 15, 0, False, None,
             GAME_TYPES["standard"], rmin=1100, rmax=1450, automatic=False)
         self.runAndAssertEquals('addSeek', lines, (expectedResult,))
@@ -308,7 +308,7 @@ class SeekManagerTests(EmittingTestCase):
                  '(9 player(s) saw the seek.)',
                  BLOCK_END]
         player = FICSPlayer('mgatto')
-        player.getRating(TYPE_BLITZ).elo = 1677
+        player.ratings[TYPE_BLITZ].elo = 1677
         expectedResult = FICSSeek(121, player, 6, 1, True, None,
             GAME_TYPES["wild/4"], automatic=False)
         self.runAndAssertEquals('addSeek', lines, (expectedResult,))
@@ -368,9 +368,9 @@ class BoardManagerTests(EmittingTestCase):
                  "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 55 mgatto Thegermain 1 4 0 39 39 240000 240000 1 none (0:00.000) none 0 0 0",
                  BLOCK_END]
         me = self.connection.players.get(FICSPlayer('mgatto'))
-        me.addRating(TYPE_BLITZ, 1327)
+        me.ratings[TYPE_BLITZ].elo = 1327
         opponent = self.connection.players.get(FICSPlayer('Thegermain'))
-        opponent.addRating(TYPE_BLITZ, 1645)
+        opponent.ratings[TYPE_BLITZ].elo = 1645
         game = FICSGame(me, opponent, gameno=55, rated=False,
             game_type=GAME_TYPES['blitz'], private=False, minutes=4, inc=0,
             board=FICSBoard(240000, 240000, fen=FEN_START))
@@ -390,7 +390,7 @@ class BoardManagerTests(EmittingTestCase):
                  "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 442 mgatto GuestRLJC 1 5 0 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
                  BLOCK_END]
         me = self.connection.players.get(FICSPlayer('mgatto'))
-        me.addRating(TYPE_BLITZ, 1305)
+        me.ratings[TYPE_BLITZ].elo = 1305
         opponent = self.connection.players.get(FICSPlayer('GuestRLJC'))
         game = FICSGame(me, opponent, gameno=442, rated=False,
             game_type=GAME_TYPES['blitz'], private=False, minutes=5, inc=0,
@@ -418,9 +418,9 @@ class BoardManagerTests(EmittingTestCase):
                  "Game 101: A disconnection will be considered a forfeit.",
                  BLOCK_END]
         me = self.connection.players.get(FICSPlayer('gbtami'))
-        me.addRating(TYPE_BLITZ, 1529)
+        me.ratings[TYPE_BLITZ].elo = 1529
         opponent = self.connection.players.get(FICSPlayer('suugakusya'))
-        opponent.addRating(TYPE_BLITZ, 1425)
+        opponent.ratings[TYPE_BLITZ].elo = 1425
         game = FICSGame(me, opponent, gameno=101, rated=True,
             game_type=GAME_TYPES['blitz'], private=False, minutes=5, inc=5,
             board=FICSBoard(300000, 300000, fen=FEN_START))
@@ -445,9 +445,9 @@ class BoardManagerTests(EmittingTestCase):
                  "Game 101: A disconnection will be considered a forfeit.",
                  BLOCK_END]
         me = self.connection.players.get(FICSPlayer('gbtami'))
-        me.addRating(TYPE_BLITZ, 1529)
+        me.ratings[TYPE_BLITZ].elo = 1529
         opponent = self.connection.players.get(FICSPlayer('suugakusya'))
-        opponent.addRating(TYPE_BLITZ, 1425)
+        opponent.ratings[TYPE_BLITZ].elo = 1425
         game = FICSGame(me, opponent, gameno=101, rated=True,
             game_type=GAME_TYPES['blitz'], private=False, minutes=5, inc=5,
             board=FICSBoard(300000, 300000, fen=FEN_START))
@@ -467,7 +467,7 @@ class BoardManagerTests(EmittingTestCase):
                  "<12> knnrrrqn pppppppp -------- -------- -------- -------- PPPPPPPP NRNKNQRR W -1 0 0 0 0 0 54 antiseptic mgatto -1 5 2 41 41 300000 300000 1 none (0:00.000) none 1 0 0",
                  BLOCK_END]
         me = self.connection.players.get(FICSPlayer('mgatto'))
-        me.addRating(TYPE_BLITZ, 1305)
+        me.ratings[TYPE_BLITZ].elo = 1305
         opponent = self.connection.players.get(FICSPlayer('antiseptic'))
         game = FICSGame(opponent, me, gameno=54, rated=True,
             game_type=GAME_TYPES['wild/4'], private=False, minutes=5, inc=2,
@@ -568,7 +568,7 @@ class OfferManagerTests(EmittingTestCase):
     def test1 (self):
         lines = ['<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)']
         player = FICSPlayer('antiseptic')
-        player.getRating(TYPE_WILD).elo = 1945
+        player.ratings[TYPE_WILD].elo = 1945
         expectedResult = FICSChallenge(59, player, 6, 1, True, None,
                                        GAME_TYPES["wild/4"], adjourned=True)
         self.runAndAssertEquals('onChallengeAdd', lines, (expectedResult,))
@@ -576,7 +576,7 @@ class OfferManagerTests(EmittingTestCase):
     def test2 (self):
         lines = ['<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)']
         player = FICSPlayer('joseph')
-        player.getRating(TYPE_WILD).elo = 1632
+        player.ratings[TYPE_WILD].elo = 1632
         expectedResult = FICSChallenge(71, player, 5, 1, True, None,
                                        GAME_TYPES["wild/fr"], adjourned=True)
         self.runAndAssertEquals('onChallengeAdd', lines, (expectedResult,))

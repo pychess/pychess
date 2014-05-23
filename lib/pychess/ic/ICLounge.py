@@ -532,8 +532,7 @@ class SeekTabSection (ParrentListSection):
         textcolor = "grey" if seek.player.name == self.connection.getUsername() \
             else "black"
         seek_ = [seek, seek.player.getIcon(gametype=seek.game_type), pix,
-            seek.player.name + seek.player.display_titles(),
-            seek.player.getRating(seek.game_type.rating_type).elo,
+            seek.player.name + seek.player.display_titles(), seek.player_rating,
             seek.display_rated, seek.game_type.display_text,
             seek.display_timecontrol, seek.sortable_time, textcolor,
             get_seek_tooltip_text(seek)]
@@ -604,9 +603,9 @@ class SeekTabSection (ParrentListSection):
         ti = self.store.prepend ([challenge,
             challenge.player.getIcon(gametype=challenge.game_type),
             self.chaPix, challenge.player.name + challenge.player.display_titles(),
-            challenge.player.getRating(challenge.game_type.rating_type).elo,
-            challenge.display_rated, challenge.game_type.display_text,
-            challenge.display_timecontrol, challenge.sortable_time, "black",
+            challenge.player_rating, challenge.display_rated,
+            challenge.game_type.display_text, challenge.display_timecontrol,
+            challenge.sortable_time, "black",
             get_challenge_tooltip_text(challenge)])
         self.challenges[hash(challenge)] = ti
         self.__updateActiveSeeksLabel()
@@ -764,7 +763,7 @@ class SeekGraphSection (ParrentListSection):
         log.debug("%s" % sought,
                   extra={"task": (self.connection.username, "onAddSought")})
         x = XLOCATION(float(sought.minutes) + float(sought.inc) * GAME_LENGTH/60.)
-        y = YLOCATION(float(sought.player.getRating(sought.game_type.rating_type).elo))
+        y = YLOCATION(float(sought.player_rating))
         type_ = 0 if sought.rated else 1
         if isinstance(sought, FICSChallenge):
             tooltip_text = get_challenge_tooltip_text(sought)
@@ -851,8 +850,7 @@ class PlayerTabSection (ParrentListSection):
         if player.game:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                   TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
+        for rt in RATING_TYPES:
             self.players[player][rt] = player.ratings[rt].connect(
                 "notify::elo", self.elo_changed, player)
         
@@ -875,8 +873,7 @@ class PlayerTabSection (ParrentListSection):
             player.game.handler_is_connected(
                 self.players[player]["private"]):
             player.game.disconnect(self.players[player]["private"])
-        for rt in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                   TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
+        for rt in RATING_TYPES:
             if player.ratings[rt].handler_is_connected(
                     self.players[player][rt]):
                 player.ratings[rt].disconnect(self.players[player][rt])
@@ -1107,9 +1104,9 @@ class GameTabSection (ParrentListSection):
         
         ti = self.store.append ([game, self.clearpix,
             game.wplayer.name + game.wplayer.display_titles(),
-            game.wplayer.getRatingForCurrentGame() or 0,
+            game.wplayer.getRatingForCurrentGame(),
             game.bplayer.name + game.bplayer.display_titles(),
-            game.bplayer.getRatingForCurrentGame() or 0,
+            game.bplayer.getRatingForCurrentGame(),
             game.display_text, length])
         self.games[game] = { "ti": ti }
         self.games[game]["private_cid"] = game.connect("notify::private",
@@ -1362,10 +1359,10 @@ class AdjournedTabSection (ParrentListSection):
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
         player0 = ICPlayer(gamemodel, wplayer.name, -1, WHITE,
             wplayer.long_name(game_type=ficsgame.game_type),
-            icrating=wplayer.getRating(ficsgame.game_type.rating_type).elo)
+            icrating=wplayer.getRatingByGameType(ficsgame.game_type))
         player1 = ICPlayer(gamemodel, bplayer.name, -1, BLACK,
             bplayer.long_name(game_type=ficsgame.game_type),
-            icrating=bplayer.getRating(ficsgame.game_type.rating_type).elo)
+            icrating=bplayer.getRatingByGameType(ficsgame.game_type))
         
         player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
         player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())

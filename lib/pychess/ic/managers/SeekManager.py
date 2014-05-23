@@ -97,11 +97,11 @@ class SeekManager (GObject):
             increment = int(seek['i'])
             rmin, rmax = [int(r) for r in seek['rr'].split("-")]
             rating = seek['rt']
-            deviation = None
             if rating[-1] in (" ", "P", "E"):
                 deviation = DEVIATION[rating[-1]]
                 rating = rating[:-1]
             rating = int(rating)
+            deviation = None
             automatic = seek['a'] == 't'
             color = None
             if seek['c'] == "W":
@@ -131,9 +131,13 @@ class SeekManager (GObject):
                 return
         if gametype.variant_type in UNSUPPORTED:
             return
-        if player.ratings[gametype.rating_type].elo != rating:
-            player.ratings[gametype.rating_type].elo = rating
-        player.ratings[gametype.rating_type].deviation = deviation
+        try:
+            ratingobj = player.ratings[gametype.rating_type]
+            if ratingobj.elo != rating:
+                ratingobj.elo = rating
+            ratingobj.deviation = deviation
+        except KeyError:
+            pass
         
         seek = FICSSeek(index, player, minutes, increment, rated, color,
                         gametype, rmin=rmin, rmax=rmax, automatic=automatic)
