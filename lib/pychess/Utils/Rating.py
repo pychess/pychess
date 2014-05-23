@@ -37,7 +37,7 @@ class Rating (gobject.GObject):
             r += ", bestElo=%s" % str(self.bestElo)
         if self.bestTime > 0:
             r += ", bestTime=%s" % str(self.bestTime)
-        return r
+        return "<Rating " + r + ">"
     
     def copy (self):
         return Rating(self.type, self.elo, deviation=self.deviation,

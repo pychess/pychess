@@ -171,7 +171,8 @@ class OfferManager (GObject):
             player = self.connection.players.get(FICSPlayer(fname))
             rating = frating.strip()
             rating = int(rating) if rating.isdigit() else 0
-            if gametype != GAME_TYPES["untimed"]:
+            if gametype.rating_type in player.ratings and \
+                    player.ratings[gametype.rating_type].elo != rating:
                 player.ratings[gametype.rating_type].elo = rating
             rated = rated != "unrated"
             challenge = FICSChallenge(index, player, int(mins), int(incr), rated, col,

@@ -81,7 +81,8 @@ class HelperManager (GObject):
             if player.game != game:
                 player.game = game
             rating = self.parseRating(rating)
-            if player.ratings[gametype.rating_type].elo != rating:
+            if gametype.rating_type in player.ratings and \
+                    player.ratings[gametype.rating_type].elo != rating:
                 player.ratings[gametype.rating_type].elo = rating
         
         self.connection.games.get(game)

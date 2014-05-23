@@ -10,6 +10,20 @@ from pychess.Utils.Rating import Rating
 from pychess.Utils.const import *
 from pychess.ic import *
 
+class FICSRatings (dict):
+    def __init__ (self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        
+        for ratingtype in RATING_TYPES:
+            self[ratingtype] = Rating(ratingtype, 0)
+    
+    def __setitem__ (self, key, val):
+        if key not in RATING_TYPES:
+            raise TypeError("bad key: %s %s" % (repr(key), type(key)))
+        elif not isinstance(val, Rating):
+            raise TypeError("bad val: %s %s" % (repr(val), type(val)))
+        dict.__setitem__(self, key, val)
+
 def update_button_by_player_status (button, player):
     if player.isAvailableForGame():
         button.set_property("sensitive", True)
@@ -43,10 +57,10 @@ def get_player_tooltip_text (player, show_status=True):
     if show_status:
         text += "\n%s" % player.display_status
     return text
-
+        
 class FICSPlayer (GObject):
-    def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN,
-                  game=None, titles=None, ratings=None):
+    def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN, game=None,
+                  titles=None):
         assert type(name) is str, name
         assert type(online) is bool, online
         GObject.__init__(self)
@@ -57,28 +71,19 @@ class FICSPlayer (GObject):
         self.game = None
         self.adjournment = False
         self.keep_after_logout = False  # Whether to remove from Players after they logout
+        self.ratings = FICSRatings()
         if titles is None:
             self.titles = set()
         else:
             self.titles = titles
-        if ratings is None:
-            self.ratings = {}
-            for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                               TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD, TYPE_UNTIMED):
-                ratingobj = Rating(ratingtype, 0)
-                self.setRating(ratingtype, ratingobj)
-        else:
-            self.ratings = ratings
     
     def long_name (self, game_type=None):
         name = self.name
         
-        if game_type is None:
-            rating = self.getRatingForCurrentGame()
+        if game_type:
+            rating = self.getRatingByGameType(game_type)
         else:
-            rating = self.getRating(game_type.rating_type)
-            if rating is not None:
-                rating = rating.elo
+            rating = self.getRatingForCurrentGame()
         if rating:
             name += " (%d)" % rating
             
@@ -158,39 +163,39 @@ class FICSPlayer (GObject):
 
     @property
     def blitz (self):
-        return self.getRating(TYPE_BLITZ).elo
+        return self.ratings[TYPE_BLITZ].elo
 
     @property
     def standard (self):
-        return self.getRating(TYPE_STANDARD).elo
+        return self.ratings[TYPE_STANDARD].elo
 
     @property
     def lightning (self):
-        return self.getRating(TYPE_LIGHTNING).elo
+        return self.ratings[TYPE_LIGHTNING].elo
 
     @property
     def atomic (self):
-        return self.getRating(TYPE_ATOMIC).elo
+        return self.ratings[TYPE_ATOMIC].elo
 
     @property
     def bughouse (self):
-        return self.getRating(TYPE_BUGHOUSE).elo
+        return self.ratings[TYPE_BUGHOUSE].elo
 
     @property
     def crazyhouse (self):
-        return self.getRating(TYPE_CRAZYHOUSE).elo
+        return self.ratings[TYPE_CRAZYHOUSE].elo
 
     @property
     def losers (self):
-        return self.getRating(TYPE_LOSERS).elo
+        return self.ratings[TYPE_LOSERS].elo
 
     @property
     def suicide (self):
-        return self.getRating(TYPE_SUICIDE).elo
+        return self.ratings[TYPE_SUICIDE].elo
 
     @property
     def wild (self):
-        return self.getRating(TYPE_WILD).elo
+        return self.ratings[TYPE_WILD].elo
 
     def __hash__ (self):
         """ Two players are equal if the first 10 characters of their name match.
@@ -217,8 +222,7 @@ class FICSPlayer (GObject):
             r += ", game.private=" + repr(game.private)
         else:
             r += ", game=None"
-        for rating_type in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                            TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
+        for rating_type in RATING_TYPES:
             if rating_type in self.ratings:
                 r += ", %s=%s" % \
                     (GAME_TYPES_BY_RATING_TYPE[rating_type].display_text,
@@ -270,8 +274,7 @@ class FICSPlayer (GObject):
             return load_icon(size, "security-high", "stock_book_blue")
         else:
             if gametype:
-                rating = self.getRating(gametype.rating_type)
-                rating = rating.elo if rating is not None else 0
+                rating = self.getRatingByGameType(gametype)
             else:
                 rating = self.getStrength()
             return self.getIconByRating(rating, size)
@@ -283,8 +286,7 @@ class FICSPlayer (GObject):
                 TITLE_TYPE_DISPLAY_TEXTS[TYPE_UNREGISTERED]
         else:
             if gametype:
-                rating = self.getRating(gametype.rating_type)
-                rating = rating.elo if rating is not None else 0
+                rating = self.getRatingByGameType(gametype)
             else:
                 rating = self.getStrength()
             if rating < 1:
@@ -295,24 +297,10 @@ class FICSPlayer (GObject):
                 markup += "<big>%s</big>" % self.display_titles(long=True)
             
         return markup
-
-    def getRating (self, rating_type):
-        if rating_type in self.ratings:
-            return self.ratings[rating_type]
-        else:
-            return None
-        
-    def setRating (self, rating_type, ratingobj):
-        self.ratings[rating_type] = ratingobj
-        
-    def addRating (self, rating_type, rating):
-        if rating == None: return
-        ratingobj = Rating(rating_type, rating)
-        self.ratings[rating_type] = ratingobj
     
     def copy (self):
         player = FICSPlayer(self.name, online=self.online, status=self.status,
-            titles=self.titles.copy(), ratings={})
+            titles=self.titles.copy())
         for ratingtype, rating in self.ratings.iteritems():
             player.ratings[ratingtype] = rating.copy()
         player.game = self.game
@@ -327,11 +315,11 @@ class FICSPlayer (GObject):
             self.adjournment = player.adjournment
         if not self.titles >= player.titles:
             self.titles |= player.titles
-        for ratingtype in (TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-                            TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD):
+        for ratingtype in RATING_TYPES:
             self.ratings[ratingtype].update(player.ratings[ratingtype])
         if self.status != player.status:
             self.status = player.status
+            
         # do last so rating info is there when notifications are generated
         if self.online != player.online:
             self.online = player.online
@@ -365,18 +353,20 @@ class FICSPlayer (GObject):
         else:
             return self.getRatingMean()
     
+    def getRatingByGameType (self, game_type):
+        try:
+            return self.ratings[game_type.rating_type].elo
+        except KeyError:
+            return 0
+        except AttributeError:
+            return 0
+    
     def getRatingForCurrentGame (self):
-        """
-        Note: This will not work for adjourned or history games since
-        player.game is not set in those cases
-        """
-        if self.game == None: return None
-        rating = self.getRating(self.game.game_type.rating_type)
-        if rating != None:
-            return rating.elo
-        else:
-            return None
-
+        try:
+            return self.getRatingByGameType(self.game.game_type)
+        except AttributeError:
+            return 0
+        
 class FICSPlayers (GObject):
     __gsignals__ = {
         'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, None, (object,)),
@@ -518,7 +508,7 @@ def get_soughtmatch_tooltip_text (sought):
     text = "%s" % sought.player.name
     text += "%s" % sought.player.display_titles(long=True)
     if not sought.player.isGuest():
-        text += " (%d)" % sought.player.getRating(sought.game_type.rating_type).elo
+        text += " (%d)" % sought.player_rating
     text += "\n%s %s" % (sought.display_rated, sought.game_type.display_text)
     text += "\n" + sought.display_timecontrol
     if sought.color:
@@ -554,6 +544,19 @@ class FICSSoughtMatch (FICSMatch):
         text += " %s" % FICSMatch.__repr__(self)        
         return text
     
+    @property
+    def player_rating (self):
+        """
+        This returns self.player's rating for the type of match being sought.
+        If self.player doesn't have a rating for the type of match being
+        sought, this returns 0. If the match is untimed we use self.player's
+        standard time-control rating if they have one.
+        """
+        game_type = self.game_type
+        if game_type == GAME_TYPES['untimed']:
+            game_type = GAME_TYPES['standard']
+        return self.player.getRatingByGameType(game_type)
+        
 def get_challenge_tooltip_text (challenge):
     text = get_soughtmatch_tooltip_text(challenge)
     if challenge.adjourned:
