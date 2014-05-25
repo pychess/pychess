@@ -29,6 +29,7 @@ from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
 from pychess.Savers import fen, pgn
+from pychess.Savers.ChessFile import LoadingError
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
@@ -277,11 +278,11 @@ class _GameInitializationMode:
         callback(selection)
 
     @classmethod
-    def _generalRun (cls, callback):
+    def _generalRun (cls, callback, validate):
         def onResponse(dialog, res):
-            cls.widgets["newgamedialog"].hide()
-            cls.widgets["newgamedialog"].disconnect(handlerId)
             if res != gtk.RESPONSE_OK:
+                cls.widgets["newgamedialog"].hide()
+                cls.widgets["newgamedialog"].disconnect(handlerId)
                 return
 
             # Find variant
@@ -342,7 +343,12 @@ class _GameInitializationMode:
 
             gamemodel = GameModel (timemodel, variant)
 
-            callback(gamemodel, playertups[0], playertups[1])
+            if not validate():
+                return
+            else:
+                cls.widgets["newgamedialog"].hide()
+                cls.widgets["newgamedialog"].disconnect(handlerId)
+                callback(gamemodel, playertups[0], playertups[1])
 
         handlerId = cls.widgets["newgamedialog"].connect("response", onResponse)
         cls.widgets["newgamedialog"].show()
@@ -371,9 +377,12 @@ class NewGameMode (_GameInitializationMode):
             cls.widgets["newgamedialog"].present()
             return
 
+        def _validate():
+            return True
+
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
-        cls._generalRun(ionest.generalStart)
+        cls._generalRun(ionest.generalStart, _validate)
 
 ################################################################################
 # LoadFileExtension                                                            #
@@ -410,6 +419,9 @@ class LoadFileExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
 
+        def _validate():
+            return True
+            
         def _callback (gamemodel, p0, p1):
             if not cls.loadSidePanel.is_empty():
                 uri =  cls.loadSidePanel.get_filename()
@@ -419,7 +431,7 @@ class LoadFileExtension (_GameInitializationMode):
                 ionest.generalStart(gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
                 ionest.generalStart(gamemodel, p0, p1)
-        cls._generalRun(_callback)
+        cls._generalRun(_callback, _validate)
 
 
 ################################################################################
@@ -452,7 +464,7 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.sourcebuffer = SourceBuffer()
         sourceview = SourceView(cls.sourcebuffer)
         sourceview.set_tooltip_text(
-            _("Type or paste PGN game(s) or FEN positions here"))
+            _("Type or paste PGN game or FEN positions here"))
         cls.widgets["scrolledwindow6"].add(sourceview)
         sourceview.show()
 
@@ -494,7 +506,7 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Enter Game"))
         cls.widgets["enterGameNotationSidePanel"].show()
 
-        def _callback (gamemodel, p0, p1):
+        def _get_text():
             text = cls.sourcebuffer.get_text(
                 cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
 
@@ -510,14 +522,36 @@ class EnterNotationExtension (_GameInitializationMode):
                 text = str(text)
 
             # First we try if it's just a FEN string
-            try:
-                LBoard(NORMALCHESS).applyFen(text)
+            parts_no = len(text.split())
+            if text.strip() == "":
+                text = FEN_START
                 loadType = fen
-            except:
+            elif parts_no > 0 and text.split()[0].count("/") == 7:
+                loadType = fen
+            else:
                 loadType = pgn
-
+            
+            return text, loadType
+            
+        def _validate():
+            try:
+                text, loadType = _get_text()
+                chessfile = loadType.load(StringIO(text))
+                chessfile.loadToModel(0, -1)
+                return True
+            except LoadingError, e:
+                d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
+                                        message_format=e.args[0])
+                d.format_secondary_text (e.args[1])
+                d.connect("response", lambda d,a: d.hide())
+                d.show()
+                return False
+            
+        def _callback (gamemodel, p0, p1):
+            text, loadType = _get_text()
             ionest.generalStart(gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
-        cls._generalRun(_callback)
+
+        cls._generalRun(_callback, _validate)
 
 class ImageButton(gtk.DrawingArea):
     def __init__ (self, imagePaths):

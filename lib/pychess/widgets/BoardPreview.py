@@ -120,8 +120,11 @@ class BoardPreview:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
             except LoadingError, e:
-                #TODO: Pressent this a little nicer
-                print e
+                d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
+                                        message_format=e.args[0])
+                d.format_secondary_text (e.args[1])
+                d.connect("response", lambda d,a: d.hide())
+                d.show()
             self.boardview.lastMove = None
             self.boardview._shown = self.gamemodel.lowply
             last = self.gamemodel.ply

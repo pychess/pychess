@@ -129,16 +129,11 @@ class LBoard:
         # Get information
         parts = fenstr.split()
         
-        if len(parts) > 6:
-            raise SyntaxError, "Can't have more than 6 fields in fenstr. "+ \
-                               "Pos(%d)" % fenstr.find(parts[6])
-        
         if STRICT_FEN and len(parts) != 6:
-            raise SyntaxError, "Needs 6 fields in fenstr. Pos(%d)" % len(fenstr)
+            raise SyntaxError, _("FEN needs 6 data fields. \n\n%s") % fenstr
         
-        elif len(parts) < 4:
-            raise SyntaxError, "Needs at least 6 fields in fenstr. Pos(%d)" % \
-                                                                     len(fenstr)
+        elif len(parts) < 2:
+            raise SyntaxError, _("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr
         
         elif len(parts) >= 6:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
@@ -146,9 +141,22 @@ class LBoard:
         elif len(parts) == 5:
             pieceChrs, colChr, castChr, epChr, fiftyChr = parts
             moveNoChr = "1"
-        
-        else:
+
+        elif len(parts) == 4:
             pieceChrs, colChr, castChr, epChr = parts
+            fiftyChr = "0"
+            moveNoChr = "1"
+
+        elif len(parts) == 3:
+            pieceChrs, colChr, castChr = parts
+            epChr = "-"
+            fiftyChr = "0"
+            moveNoChr = "1"
+
+        else:
+            pieceChrs, colChr = parts
+            castChr = "-"
+            epChr = "-"
             fiftyChr = "0"
             moveNoChr = "1"
         
@@ -157,18 +165,23 @@ class LBoard:
         
         slashes = len([c for c in pieceChrs if c == "/"])
         if slashes < 7:
-            raise SyntaxError, "Needs 7 slashes in piece placement field. "+ \
-                               "Pos(%d)" % fenstr.rfind("/")
+            raise SyntaxError, _("Needs 7 slashes in piece placement field. \n\n%s") % fenstr
         
         if not colChr.lower() in ("w", "b"):
-            raise SyntaxError, "Active color field must be one of w or b. "+ \
-                               "Pos(%d)" % fenstr.find(len(pieceChrs), colChr)
+            raise SyntaxError, _("Active color field must be one of w or b. \n\n%s") % fenstr
+
+        if castChr != "-":
+            for Chr in castChr:
+                valid_chars = "ABCDEFGHKQ" if self.variant==FISCHERRANDOMCHESS else "KQ"
+                if Chr.upper() not in valid_chars:
+                    raise SyntaxError, _("Castling availability field is not legal. \n\n%s") % fenstr
         
         if epChr != "-" and not epChr in cordDic:
-            raise SyntaxError, ("En passant cord %s is not legal. "+ \
-                                "Pos(%d) - %s") % (epChr, fenstr.rfind(epChr), \
-                                 fenstr)
-        
+            raise SyntaxError, _("En passant cord is not legal. \n\n%s") % fenstr
+                                 
+        # Put the next one into comment, because we use 
+        # "setboard 8/8/8/8/8/8/8/8 w - - 0 1" FEN to stop CECPEngine analyzers
+
         #if (not 'k' in pieceChrs) or (not 'K' in pieceChrs):
         #    if self.variant not in (ATOMICCHESS, SUICIDECHESS):
         #        raise SyntaxError, "FEN needs at least 'k' and 'K' in piece placement field."
@@ -283,17 +296,25 @@ class LBoard:
         
         if epChr == "-":
             self.setEnpassant (None) 
-        else: self.setEnpassant(cordDic[epChr])
+        else:
+            self.setEnpassant(cordDic[epChr])
         
         # Parse halfmove clock field
         
-        self.fifty = max(int(fiftyChr),0)
+        if fiftyChr.isdigit():
+            self.fifty = int(fiftyChr)
+        else:
+            self.fifty = 0
         
         # Parse fullmove number
         
-        movenumber = max(int(moveNoChr),1)*2 -2
-        if self.color == BLACK: movenumber += 1
-        self.plyCount = movenumber
+        if moveNoChr.isdigit():
+            movenumber = max(int(moveNoChr),1)*2 -2
+            if self.color == BLACK:
+                movenumber += 1
+            self.plyCount = movenumber
+        else:
+            self.plyCount = 1
 
         self.fen_was_applied = True
 
