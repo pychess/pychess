@@ -294,30 +294,25 @@ class FICSConnection (Connection):
                     self.client.parse()
             except Exception, e:
                 self.close()
-                for errortype in (IOError, LogOnError, EOFError,
-                                  socket.error, socket.gaierror, socket.herror):
-                    if isinstance(e, errortype):
-                        self.emit("error", e)
-                        break
+                if isinstance(e, (IOError, LogOnError, EOFError, socket.error,
+                                  socket.gaierror, socket.herror)):
+                    self.emit("error", e)
                 else:
                     raise
-        
         finally:
             self.emit("disconnected")
     
     def close (self):
         if self.isConnected():
             self.connected = False
-            if self.conn is None and self.lvm:
-                self.lvm.stop()
             try:
+                if self.conn is None and self.lvm:
+                    self.lvm.stop()
                 self.client.run_command("quit")
             except Exception, e:
-                for errortype in (IOError, LogOnError, EOFError,
-                                  socket.error, socket.gaierror, socket.herror):
-                    if isinstance(e, errortype):
-                        break
-                else: raise e
+                if not isinstance(e, (IOError, LogOnError, EOFError,
+                        socket.error, socket.gaierror, socket.herror)):
+                    raise
         self.client.close()
     
     def isRegistred (self):
