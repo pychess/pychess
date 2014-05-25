@@ -78,7 +78,7 @@ class UCIEngine (ProtocolEngine):
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            pool.start(self.__startBlocking)
+            pool.start(self.__startBlocking, self.__startBlocking)
         else:
             self.__startBlocking()
     
