@@ -49,7 +49,7 @@ class PyDockComposite (gtk.Alignment, DockComposite):
         while not isinstance(parent, DockComposite):
             parent = parent.get_parent()
         parent.changeComponent(self, new)
-        component.__del__() # TODO: is this necessary?
+        component._del() # TODO: is this necessary?
         new.show()
     
     def getComponents (self):

@@ -102,7 +102,7 @@ class PyDockLeaf (DockLeaf):
                 while not isinstance(parent, DockComposite):
                     parent = parent.get_parent()
                 parent.removeComponent(self)
-                self.__del__()
+                self._del()
             # We need to idle_add this, as the widget won't emit drag-ended, if
             # it is removed to early
             gobject.idle_add(cb)

@@ -52,7 +52,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
 
     def onDone (worker, (gmwidg, game)):
         gmwidg.connect("close_clicked", closeGame, game)
-        worker.__del__()
+        worker._del()
     worker.connect("done", onDone)
 
     worker.execute()

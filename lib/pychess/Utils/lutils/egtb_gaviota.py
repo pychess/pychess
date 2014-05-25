@@ -91,7 +91,7 @@ class egtb_gaviota:
         
         self.availability = self.tb_availability()
     
-    def __del__ (self):
+    def _del (self):
         if self.initialized:
             self.tb_done()
             self.pathList = self.tbpaths_done(self.pathList)
