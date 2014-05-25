@@ -139,8 +139,8 @@ class ICLounge (GObject):
         global sections
         if 'sections' in globals() and sections != None:
             for i in range(len(sections)):
-                if hasattr(sections[i], "__del__"):
-                    sections[i].__del__()
+                if hasattr(sections[i], "_del"):
+                    sections[i]._del()
         sections = None
         self.widgets = None
 
@@ -202,7 +202,7 @@ class UserInfoSection(Section):
         self.widgets["usernameLabel"].set_markup(
                 "<b>%s</b>" % self.connection.getUsername())
 
-    def __del__ (self):
+    def _del (self):
         if self.pinger != None:
             self.pinger.stop()
 
@@ -381,8 +381,8 @@ class ParrentListSection (Section):
                                        Publisher.SEND_LIST)
         self.listPublisher.start()
     
-    def __del__ (self):
-        self.listPublisher.__del__()
+    def _del (self):
+        self.listPublisher._del()
     
     def addColumns (self, treeview, *columns, **keyargs):
         if "hide" in keyargs: hide = keyargs["hide"]

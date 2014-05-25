@@ -57,7 +57,7 @@ class Publisher (PooledThread):
     def put (self, task):
         self.queue.put(task)
     
-    def __del__ (self):
+    def _del (self):
         self.queue.put(self.StopNow)
     
     class StopNow(Exception): pass
@@ -197,8 +197,8 @@ class GtkWorker (GObject, Thread):
                 ...
             """
         self.cancelled = True
-        self.publisher.__del__()
-        #self.progressor.__del__()
+        self.publisher._del()
+        #self.progressor._del()
     
     ############################################################################
     # Get stuf                                                                 #
@@ -240,7 +240,7 @@ class GtkWorker (GObject, Thread):
     # Other                                                                    #
     ############################################################################
     
-    def __del__ (self):
+    def _del (self):
         self.cancel()
 
 ################################################################################

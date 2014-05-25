@@ -193,7 +193,7 @@ class SubProcess (gobject.GObject):
             self.subprocFinishedEvent.set()
             return code
         self.subprocFinishedEvent.set()
-        self.linePublisher.__del__()
+        self.linePublisher._del()
         return code
     
     def pause (self):

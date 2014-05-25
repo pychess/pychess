@@ -155,8 +155,8 @@ class GameWidget (gobject.GObject):
         finally:
             glock.release()
     
-    def __del__ (self):
-        self.board.__del__()
+    def _del (self):
+        self.board._del()
     
     def _update_menu_abort (self):
         if self.gamemodel.isEngine2EngineGame():
@@ -681,10 +681,12 @@ def delGameWidget (gmwidg):
             # If the last (but not the designGW) gmwidg was closed
             # and we are FICS-ing, present the FICS lounge
             from pychess.ic.ICLogon import dialog
-            if dialog is not None and dialog.lounge is not None:
+            try:
                 dialog.lounge.present()
+            except AttributeError:
+                pass
     
-    gmwidg.__del__()
+    gmwidg._del()
 
 def _ensureReadForGameWidgets ():
     mainvbox = widgets["mainvbox"]
@@ -713,9 +715,9 @@ def _ensureReadForGameWidgets ():
     # The message area
     
     centerVBox.pack_start(notebooks["messageArea"], expand=False)
-    def callback (notebook, gpointer, page_num):
+    def ma_switch_page (notebook, gpointer, page_num):
         notebook.props.visible = notebook.get_nth_page(page_num).child.props.visible
-    notebooks["messageArea"].connect("switch-page", callback)
+    notebooks["messageArea"].connect("switch-page", ma_switch_page)
     
     # The dock
     
@@ -812,7 +814,7 @@ def _ensureReadForGameWidgets ():
         # unhide the panel before saving so its configuration is saved correctly
         notebooks["board"].get_parent().get_parent().zoomDown()
         dock.saveToXML(dockLocation)
-        dock.__del__()
+        dock._del()
     dock.connect("unrealize", unrealize)
     
     # The status bar
@@ -825,10 +827,10 @@ def _ensureReadForGameWidgets ():
     
     # Connecting headbook to other notebooks
     
-    def callback (notebook, gpointer, page_num):
+    def hb_switch_page (notebook, gpointer, page_num):
         for notebook in notebooks.values():
             notebook.set_current_page(page_num)
-    headbook.connect("switch-page", callback)
+    headbook.connect("switch-page", hb_switch_page)
     
     if hasattr(headbook, "set_tab_reorderable"):
         def page_reordered (widget, child, new_num, headbook):

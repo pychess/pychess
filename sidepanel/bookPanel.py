@@ -146,7 +146,7 @@ class EngineAdvisor(Advisor):
         self.connection = engine.connect("analyze", self.on_analyze)
         engine.connect("readyForOptions", self.on_ready_for_options)
     
-    def __del__ (self):
+    def _del (self):
         self.engine.disconnect(self.connection)
     
     def _create_new_expected_lines(self):

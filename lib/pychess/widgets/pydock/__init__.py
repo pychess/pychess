@@ -22,7 +22,7 @@ class TabReceiver (gtk.Alignment):
         gtk.Alignment.__init__(self,1,1,1,1)
         self.__instances.append(self)
     
-    def __del__ (self):
+    def _del (self):
         try:
             index = TabReceiver.__instances.index(self)
         except ValueError:
@@ -39,9 +39,9 @@ class TabReceiver (gtk.Alignment):
         raise NotImplementedError
 
 class DockComposite (DockComponent):
-    def __del__ (self):
+    def _del (self):
         for component in self.getComponents():
-            component.__del__()
+            component._del()
     
     def changeComponent (self, old, new):
         raise NotImplementedError
@@ -59,8 +59,8 @@ class DockComposite (DockComponent):
         raise NotImplementedError
 
 class DockLeaf (DockComponent, TabReceiver):
-    def __del__ (self):
-        TabReceiver.__del__(self)
+    def _del (self):
+        TabReceiver._del(self)
     
     def undock (self, widget):
         """ Removes the widget from the leaf, and if it is the only widget, it
@@ -92,9 +92,9 @@ class TopDock (DockComposite, TabReceiver):
         TabReceiver.__init__(self)
         self.__id = id
     
-    def __del__ (self):
-        TabReceiver.__del__(self)
-        DockComposite.__del__(self)
+    def _del (self):
+        TabReceiver._del(self)
+        DockComposite._del(self)
     
     def getPosition (self):
         return CENTER
