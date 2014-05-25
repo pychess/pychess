@@ -38,7 +38,7 @@ else:
                 # self.emit("error", message)
                 simpleMessage, advMessage = message.parse_error()
                 log.warning("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
-                self.__del__()
+                self._del()
             elif message.type == gst.MESSAGE_EOS:
                 self.emit("end")
             return True
@@ -48,5 +48,5 @@ else:
             self.player.set_property("uri", uri)
             self.player.set_state(gst.STATE_PLAYING)
         
-        def __del__ (self):
+        def _del (self):
             self.player.set_state(gst.STATE_NULL)

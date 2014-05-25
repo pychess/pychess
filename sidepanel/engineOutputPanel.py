@@ -201,7 +201,7 @@ class EngineOutput (gtk.VBox):
         self.re_extract_uci_score_upperbound = re.compile( r'score +upperbound +' )
         self.re_extract_uci_pv = re.compile( r'pv +([a-hA-HoO].*[^ ]) *$' )
 
-    def __del__ (self):
+    def _del (self):
         self.detachEngine()
 
     def appendNewline (self):

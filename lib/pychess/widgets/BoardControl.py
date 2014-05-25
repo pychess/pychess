@@ -72,7 +72,7 @@ class BoardControl (gtk.EventBox):
         gamemodel.connect("game_started", onGameStart)
         self.keybuffer = ""
         
-    def __del__ (self):
+    def _del (self):
         for menu, conid in self.connections.iteritems():
             menu.disconnect(conid)
         self.connections = {}

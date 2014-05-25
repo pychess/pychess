@@ -76,7 +76,7 @@ class ThreadPool:
             self.queue = queue
             
             self.running = True
-            atexit.register(self.__del__)
+            atexit.register(self._del)
             
             # We catch the trace from the thread, that created the worker
             stringio = cStringIO.StringIO()
@@ -118,7 +118,7 @@ class ThreadPool:
                 if self.running:
                     raise
         
-        def __del__ (self):
+        def _del (self):
             self.running = False
 
 pool = ThreadPool()
