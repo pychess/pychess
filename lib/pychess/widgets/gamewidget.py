@@ -105,6 +105,7 @@ class GameWidget (gobject.GObject):
     def __init__ (self, gamemodel):
         gobject.GObject.__init__(self)
         self.gamemodel = gamemodel
+        self.cids = {}
         
         tabcontent, white_label, black_label, game_info_label = self.initTabcontents()
         boardvbox, board, infobar, clock = self.initBoardAndClock(gamemodel)
@@ -144,8 +145,6 @@ class GameWidget (gobject.GObject):
         
         board.view.connect("shown_changed", self.shown_changed)
         
-        self.analyzer_cids = {}
-        
         # Some stuff in the sidepanels .load functions might change UI, so we
         # need glock
         # TODO: Really?
@@ -157,6 +156,12 @@ class GameWidget (gobject.GObject):
     
     def _del (self):
         self.board._del()
+        
+        for obj in self.cids:
+            if obj.handler_is_connected(self.cids[obj]):
+                log.debug("GameWidget._del: disconnecting %s" % repr(obj))
+                obj.disconnect(self.cids[obj])
+        self.cids.clear()
     
     def _update_menu_abort (self):
         if self.gamemodel.isEngine2EngineGame():
@@ -386,7 +391,7 @@ class GameWidget (gobject.GObject):
         return False
     
     def analyzer_added (self, gamemodel, analyzer, analyzer_type):
-        self.analyzer_cids[analyzer_type] = \
+        self.cids[analyzer] = \
             analyzer.connect("analyze", self._on_analyze, analyzer_type)
         #self.menuitems[analyzer_type + "_mode"].active = True
         self.menuitems[analyzer_type + "_mode"].sensitive = True
@@ -398,11 +403,11 @@ class GameWidget (gobject.GObject):
         self.menuitems[analyzer_type + "_mode"].sensitive = False
         
         try:
-            cid = self.analyzer_cids[analyzer_type]
-        except IndexError:
-            return False
-        if analyzer.handler_is_connected(cid):
-            analyzer.disconnect(cid)
+            if analyzer.handler_is_connected(self.cids[analyzer]):
+                analyzer.disconnect(self.cids[analyzer])
+            del self.cids[analyzer]
+        except KeyError:
+            pass
             
         return False
     
