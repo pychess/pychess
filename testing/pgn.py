@@ -9,7 +9,7 @@ from pychess.Utils.const import *
 class PgnTestCase(unittest.TestCase):
     def test_movre(self):
         """Testing SAN pattern regexp"""
-        moves = "e9 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# "+ \
+        moves = "e4 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# "+ \
                 "0-0-0 O-O-O 0-0 O-O Ka1 Kxf8 Kxd4+ "+ \
                 "Qc3 Rxh8 B1xg7 Nhxg2 Qe4xd5 Rb7+ Bxg4# N8xb2+ Qaxb7# Qd5xe4+"
         matches = [m[MOVE-1] for m in pattern.findall(moves)] 
