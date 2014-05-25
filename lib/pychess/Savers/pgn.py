@@ -165,7 +165,7 @@ def walk(node, result, model, vari=False):
             node = node.next
             continue
 
-        movecount = move_count(node, black_needs=enhanced_save and "TimeControl" in model.tags)
+        movecount = move_count(node, black_periods=enhanced_save and "TimeControl" in model.tags)
         if movecount is not None:
             if movecount:
                 store(movecount)
@@ -210,13 +210,13 @@ def walk(node, result, model, vari=False):
         else:
             break
 
-def move_count(node, black_needs=False):
+def move_count(node, black_periods=False):
     mvcount = None
     if node.fen_was_applied:
         ply = node.plyCount
         if ply % 2 == 1:
             mvcount = "%d." % (ply/2+1)
-        elif node.prev.prev is None or node != node.prev.next or black_needs:
+        elif node.prev.prev is None or node != node.prev.next or black_periods:
             # initial game move, or initial variation move
             mvcount = "%d..." % (ply/2)
         elif node.prev.children:
@@ -390,7 +390,10 @@ class PGNFile (PgnBase):
                     board = Board(setup=node.asFen(), lboard=node)
             else:
                 move = Move(node.lastMove)
-                board = node.prev.pieceBoard.move(move, lboard=node)
+                try:
+                    board = node.prev.pieceBoard.move(move, lboard=node)
+                except:
+                    raise LoadingError(_("Invalid move."), "%s%s" % (move_count(node, black_periods=True), move))
 
             if node.next is None:
                 model.variations.append(path+[board])

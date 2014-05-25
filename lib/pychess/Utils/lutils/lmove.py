@@ -247,7 +247,7 @@ def parseSAN (board, san):
     if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
-            raise ParsingError, (san, "invalid promoted piece", board.asFen())
+            raise ParsingError, (san, _("invalid promoted piece"), board.asFen())
             
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
@@ -306,7 +306,7 @@ def parseSAN (board, san):
     else:
         if not notat[-2:] in cordDic:
             raise ParsingError, (
-                    san, "the end cord (%s) is incorrect" % notat[-2:], board.asFen())
+                    san, _("the end cord (%s) is incorrect") % notat[-2:], board.asFen())
         
         tcord = cordDic[notat[-2:]]
         notat = notat[:-2]
