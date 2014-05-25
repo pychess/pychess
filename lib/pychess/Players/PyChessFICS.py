@@ -187,7 +187,7 @@ class PyChessFICS(PyChess):
         print "Session ended"
     
     def run(self):
-        pool.start(self.main)
+        pool.start(self.main, self.main)
         gtk.gdk.threads_init()
         gtk.main()
     
