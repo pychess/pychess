@@ -72,7 +72,8 @@ class Pinger (GObject):
             self.stop()
     
     def stop (self):
-        assert self.subproc
+        if not self.subproc:
+            return
         exitCode = self.subproc.gentleKill()
         self.subproc.disconnect(self.conid1)
         self.subproc.disconnect(self.conid2)
